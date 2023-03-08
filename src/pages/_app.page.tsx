@@ -6,6 +6,7 @@ import { initReactI18next, useTranslation } from "react-i18next";
 import ar from "@/languages/ar.json";
 import en from "@/languages/en.json";
 import he from "@/languages/he.json";
+import { ThemeProvider } from "@/providers";
 
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -43,6 +44,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <RecoilRoot>
+      <ThemeProvider />
       <style jsx global>{`
         html {
           direction: ${t("direction")};

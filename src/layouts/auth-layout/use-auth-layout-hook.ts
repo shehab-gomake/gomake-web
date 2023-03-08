@@ -1,19 +1,19 @@
+import { useGomakeAuth, useGomakeRouter } from "@/hooks";
 import { useEffect, useState } from "react";
 
 const useAuthLayoutHook = () => {
-  const [isAuth, setIsAuth] = useState(false);
-  const [isAuthCheckDone, setIsAuthCheckDone] = useState(false);
-
+  const { isAuth } = useGomakeAuth();
+  const { navigate } = useGomakeRouter();
+  const [canAccess, setCanAccess] = useState<boolean | null>(null);
   useEffect(() => {
-    setIsAuth(true);
-    setTimeout(() => {
-      setIsAuthCheckDone(true);
-    }, 1000);
-  }, []);
+    if (typeof isAuth === "boolean") {
+      setCanAccess(isAuth);
+    }
+  }, [isAuth]);
 
   return {
-    isAuth,
-    isAuthCheckDone,
+    canAccess,
+    navigate,
   };
 };
 export { useAuthLayoutHook };

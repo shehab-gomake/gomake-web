@@ -1,17 +1,19 @@
+import { WaitingAuth } from "@/widgets";
 import { IAuthLayout } from "./interfaces";
 import { useAuthLayoutHook } from "./use-auth-layout-hook";
 
 const AuthLayout = ({ children }: IAuthLayout) => {
-  const { isAuth, isAuthCheckDone } = useAuthLayoutHook();
+  const { canAccess, navigate } = useAuthLayoutHook();
 
-  if (isAuth) {
-    return <div>{children}</div>;
-  } else {
-    if (isAuthCheckDone) {
-      return <div>Not auth</div>;
+  if (typeof canAccess === "boolean") {
+    if (canAccess) {
+      return <div>{children}</div>;
     } else {
-      return <div>Waiting auth....</div>;
+      navigate("/login");
+      return <></>;
     }
+  } else {
+    return <WaitingAuth />;
   }
 };
 
