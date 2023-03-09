@@ -15,6 +15,9 @@ const useGomakeAuth = () => {
     //     setIsAuth(true);
     //   }, 3000);
     // }
+    setTimeout(() => {
+      setIsAuth(false);
+    }, 3000);
   }, [setUser, setIsAuth]);
 
   useEffect(() => {

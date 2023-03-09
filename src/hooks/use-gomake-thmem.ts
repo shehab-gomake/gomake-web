@@ -16,9 +16,7 @@ const useGomakeTheme = () => {
   const getColor = useCallback(
     (pattern: string, degree: number) => {
       const selectedTheme: any = theme.themeMode;
-      console.log("selectedTheme", selectedTheme);
       if (selectedTheme === "dark") {
-        console.log("HEREEEE");
         let darkDegree: number;
         switch (degree) {
           case 500:
@@ -41,11 +39,8 @@ const useGomakeTheme = () => {
             break;
         }
         // @ts-ignore
-        console.log("HEREEEE", theme[pattern].dark[darkDegree]);
-        // @ts-ignore
         return theme[pattern].dark[darkDegree];
       } else {
-        console.log("light HEREEEE");
         // @ts-ignore
         return theme[pattern].light[degree];
       }
