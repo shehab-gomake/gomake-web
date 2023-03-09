@@ -1,14 +1,16 @@
 const FONT_FAMILY = {
-  Outfit: (fontWeight: number) => {
+  Outfit: (fontWeight: number, fontSize: number) => {
     return {
       fontFamily: "Outfit",
-      fontWeight: fontWeight,
+      fontWeight,
+      fontSize,
     };
   },
-  Lexend: (fontWeight: number) => {
+  Lexend: (fontWeight: number, fontSize: number) => {
     return {
       fontFamily: "Lexend",
-      fontWeight: fontWeight,
+      fontWeight,
+      fontSize,
     };
   },
 };

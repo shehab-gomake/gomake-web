@@ -6,15 +6,12 @@ const useStyle = () => {
   const { theme, primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
-      container: {
-        backgroundColor: "#FFFFFF",
-        flex: 1,
+      leftContainer: {
         display: "flex",
-        flexDirection: "row" as "row",
+        justifyContent: "center",
         alignItems: "center",
-        justifyContent: "space-between" as "space-between",
-        minHeight: "100vh",
-        // ...FONT_FAMILY.Lexend(600),
+        flex: 0.5,
+        height: "100vh",
       },
     };
   }, [theme]);

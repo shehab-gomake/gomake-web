@@ -15,6 +15,10 @@ const useGomakeTheme = () => {
   }, []);
   const getColor = useCallback(
     (pattern: string, degree: number) => {
+      if (degree >= 500) {
+        // @ts-ignore
+        return theme[pattern].dark[degree];
+      }
       const selectedTheme: any = theme.themeMode;
       if (selectedTheme === "dark") {
         let darkDegree: number;
