@@ -40,7 +40,11 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(600, 20),
       },
       input: {
-        width: "78%",
+        width: "87%",
+      },
+      btnContainer: {
+        width: "53%",
+        marginTop: 62,
       },
     };
   }, [theme]);

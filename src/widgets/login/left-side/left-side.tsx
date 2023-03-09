@@ -1,4 +1,4 @@
-import { GomakeTextInput } from "@/components";
+import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 import Image from "next/image";
 import { useGomakeLogin } from "../use-login";
 import { InputContainer } from "./input";
@@ -7,7 +7,7 @@ import { useStyle } from "./style";
 
 const LoginLeftSide = () => {
   const { clasess } = useStyle();
-  const { errors, inputs, changeState } = useGomakeLogin();
+  const { errors, inputs, changeState, onClickLogin } = useGomakeLogin();
   return (
     <div style={clasess.leftContainer}>
       <div style={clasess.logoContainer}>
@@ -28,6 +28,9 @@ const LoginLeftSide = () => {
             error={errors[input.key]}
           />
         ))}
+      </div>
+      <div style={clasess.btnContainer}>
+        <GomakePrimaryButton onClick={onClickLogin}>Login</GomakePrimaryButton>
       </div>
     </div>
   );

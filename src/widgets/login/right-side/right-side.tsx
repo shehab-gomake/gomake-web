@@ -11,7 +11,7 @@ const LoginRightSide = () => {
       <div style={clasess.welcomeLbl}>{t("login.welcome")}</div>
       <div style={clasess.descriptionLbl}>{t("login.weAreExcited")}</div>
       <div>
-        <Image src={rocket} alt="gomake" />
+        <Image src={rocket} alt="gomake" priority />
       </div>
       <div style={clasess.poweredContainer}>
         <div style={clasess.poweredByLbl}>{t("login.poweredBy")}</div>
