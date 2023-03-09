@@ -1,4 +1,5 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thmem";
+import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
@@ -13,6 +14,7 @@ const useStyle = () => {
         alignItems: "center",
         justifyContent: "center",
         minHeight: "100vh",
+        ...FONT_FAMILY.Lexend(600),
       },
     };
   }, [theme]);

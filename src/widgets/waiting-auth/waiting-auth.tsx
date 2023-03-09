@@ -15,6 +15,7 @@ const WaitingAuth = () => {
 
   return (
     <div style={clasess.container}>
+      Username
       <Lottie options={defaultOptions} height={"25%"} width={"25%"} />
     </div>
   );
