@@ -1,4 +1,4 @@
-import { useGomakeTheme } from "@/hooks/use-gomake-thmem";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
@@ -8,10 +8,39 @@ const useStyle = () => {
     return {
       leftContainer: {
         display: "flex",
-        justifyContent: "center",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start" as "flex-start",
         alignItems: "center",
         flex: 0.5,
         height: "100vh",
+      },
+      logoContainer: {
+        marginTop: 100,
+        marginBottom: 100,
+        display: "flex",
+      },
+      loginContainer: {
+        alignItems: "flex-start",
+        width: "100%",
+        paddingLeft: 48,
+      },
+      loginLbl: {
+        color: primaryColor(600),
+        ...FONT_FAMILY.Outfit(600, 48),
+        marginBottom: 40,
+      },
+      inputContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: 16,
+        marginTop: 40,
+      },
+      inputLbl: {
+        color: primaryColor(900),
+        ...FONT_FAMILY.Lexend(600, 20),
+      },
+      input: {
+        width: "78%",
       },
     };
   }, [theme]);

@@ -1,8 +1,35 @@
+import { GomakeTextInput } from "@/components";
+import Image from "next/image";
+import { useGomakeLogin } from "../use-login";
+import { InputContainer } from "./input";
+import { IInput } from "./interfaces";
 import { useStyle } from "./style";
 
 const LoginLeftSide = () => {
   const { clasess } = useStyle();
-
-  return <div style={clasess.leftContainer}>Left</div>;
+  const { errors, inputs, changeState } = useGomakeLogin();
+  return (
+    <div style={clasess.leftContainer}>
+      <div style={clasess.logoContainer}>
+        <Image
+          src={"https://i.ibb.co/wzpwSq6/Group-1239.png"}
+          alt="logo"
+          width={100}
+          height={100}
+        />
+      </div>
+      <div style={clasess.loginContainer}>
+        <div style={clasess.loginLbl}>Login</div>
+        {inputs.map((input: IInput) => (
+          <InputContainer
+            key={input.key}
+            input={input}
+            changeState={changeState}
+            error={errors[input.key]}
+          />
+        ))}
+      </div>
+    </div>
+  );
 };
 export { LoginLeftSide };

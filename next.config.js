@@ -15,7 +15,7 @@ const nextConfig = {
     webpack5: true,
   },
   images: {
-    domains: [process.env.BASE_HOST || "localhost"],
+    domains: [process.env.BASE_HOST || "localhost","i.ibb.co"],
   },
   productionBrowserSourceMaps: true,  
     pageExtensions: ['page.tsx', 'page.ts', 'page.jsx', 'page.js']
