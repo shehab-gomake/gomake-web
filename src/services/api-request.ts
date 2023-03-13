@@ -4,11 +4,11 @@ import { getUserToken } from "./storage-data";
 // import { clearStorage } from './storage'
 const apiRequest = async (method = "GET", url: string, data: any = {}) => {
   try {
-    const SERVER = config.api_server;
-    // if(safdsa){
-    //     trh
-    // }
-    //const SERVER = 'http://localhost:3010'
+    // const SERVER = config.api_server;
+    // // if(safdsa){
+    // //     trh
+    // // }
+    const SERVER = 'http://localhost:5000'
     const reqUrl = SERVER + url;
     const options: any = {
       method,
