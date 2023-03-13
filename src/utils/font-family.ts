@@ -20,6 +20,13 @@ const FONT_FAMILY = {
       fontSize,
     };
   },
+  Poppins: (fontWeight: number, fontSize: number) => {
+    return {
+      fontFamily: "Poppins",
+      fontWeight,
+      fontSize,
+    };
+  }
 };
 
 export { FONT_FAMILY };
