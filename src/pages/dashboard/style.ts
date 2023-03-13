@@ -1,4 +1,5 @@
 import {useMemo} from "react";
+import {FONT_FAMILY} from "@/utils/font-family";
 
 const useStyle = () => {
     const classes = useMemo(() => {
@@ -11,7 +12,8 @@ const useStyle = () => {
                 minHeight: '100vh'
             },
             header: {
-                textAlign: 'center' as 'center'
+                textAlign: 'center' as 'center',
+                ...FONT_FAMILY.Lexend(400, 32)
             }
         };
     }, []);
