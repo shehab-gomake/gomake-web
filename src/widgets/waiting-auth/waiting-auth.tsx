@@ -1,4 +1,4 @@
-import Lottie from "react-lottie";
+import Lottie from "lottie-react";
 import * as animationData from "./loading.json";
 
 import { useStyle } from "./style";
@@ -15,7 +15,8 @@ const WaitingAuth = () => {
 
   return (
     <div style={clasess.container}>
-      <Lottie options={defaultOptions} height={"25%"} width={"25%"} />
+      {/*<Lottie options={defaultOptions} height={"25%"} width={"25%"} />*/}
+      
     </div>
   );
 };
