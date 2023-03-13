@@ -6,7 +6,7 @@ export default function Dashboard() {
     const {classes} = useStyle();
     return (
         <div style={classes.container}>
-            <h1 style={classes.header}>{t("dashboard.welcome")}</h1>
+            <h1 style={{...classes.header}}>{t("dashboard.welcome")}</h1>
         </div>
     );
 }
