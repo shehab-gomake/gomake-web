@@ -12,5 +12,8 @@
     "login": "Login",
     "username": "Username",
     "password": "Password"
+  },
+  "dashboard": {
+    "welcome": "Tasks dashboard"
   }
 }
