@@ -1,12 +1,13 @@
 import React from "react";
 import { useRecoilValue } from "recoil";
-import Lottie from "react-lottie";
 import { Backdrop } from "@mui/material";
+import Lottie from "lottie-react";
 import animationData from "../waiting-auth/loading.json";
 import { loadgingState } from "@/store/loading";
 
 const GomakeLoading = () => {
   const loading = useRecoilValue(loadgingState);
+  
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -24,7 +25,7 @@ const GomakeLoading = () => {
           left: 0,
         }}
       >
-        <Lottie options={defaultOptions} height={100} width={100} />
+          {/*<Lottie options={options} height={100} width={100} />*/}
       </div>
     </Backdrop>
   );
