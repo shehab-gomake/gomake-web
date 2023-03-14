@@ -1,27 +1,19 @@
 import { userState } from "@/store/user";
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
+import { useCustomer } from "./use-customer";
+import { useGomakeAxios } from "./use-gomake-axios";
+import { useGomakeRouter } from "./use-gomake-router";
 
 const useGomakeAuth = () => {
-  const [user, setUser] = useRecoilState(userState);
+  const { user, validate } = useCustomer();
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
-  const validate = useCallback(async () => {
-    // if (true) {
-    //   setTimeout(() => {
-    //     setUser({
-    //       email: "test@gmail.com",
-    //       _id: "1234",
-    //     });
-    //     setIsAuth(true);
-    //   }, 3000);
-    // }
-    setTimeout(() => {
-      setIsAuth(false);
-    }, 3000);
-  }, [setUser, setIsAuth]);
+  const check = useCallback(async () => {
+    setIsAuth(await validate());
+  }, [setIsAuth]);
 
   useEffect(() => {
-    validate();
+    check();
   }, []);
 
   return { user, isAuth };

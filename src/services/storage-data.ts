@@ -23,3 +23,7 @@ export const getUserToken = () => {
 export const updateTokenStorage = (token: string) => {
   setItem("auth-token", token);
 };
+
+export const clearStorage = () => {
+  localStorage.clear();
+};

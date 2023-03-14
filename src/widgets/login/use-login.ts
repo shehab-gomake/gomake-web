@@ -1,3 +1,6 @@
+import { useGomakeAxios, useGomakeRouter } from "@/hooks";
+import { useCustomer } from "@/hooks/use-customer";
+import { updateTokenStorage } from "@/services/storage-data";
 import { loadgingState } from "@/store/loading";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSetRecoilState } from "recoil";
@@ -5,8 +8,10 @@ import { useSetRecoilState } from "recoil";
 
 const useGomakeLogin = () => {
   // const { t } = useTranslation();
+  const { callApi } = useGomakeAxios();
+  const { navigate } = useGomakeRouter();
   const setLoadingState = useSetRecoilState(loadgingState);
-  const [state, setState] = useState({});
+  const [state, setState] = useState<any>({});
   const [errors, setErrors] = useState<{ [name: string]: boolean }>({
     username: false,
     password: false,
@@ -17,11 +22,16 @@ const useGomakeLogin = () => {
     },
     [state]
   );
-  const onClickLogin = useCallback(() => {
-    setLoadingState(true);
-    setTimeout(() => {
-      setLoadingState(false);
-    }, 3000);
+  const onClickLogin = useCallback(async () => {
+    const result = await callApi("POST", "/v1/auth/login-customer", {
+      userPrincipalName: state.username,
+      password: state.password,
+    });
+    console.log("result", result);
+    if (result?.data?.data?.customer?.token) {
+      updateTokenStorage(result?.data?.data?.customer?.token);
+      navigate("/");
+    }
   }, [state]);
   useEffect(() => {
     console.log(state);
