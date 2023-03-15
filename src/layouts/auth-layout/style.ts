@@ -90,6 +90,16 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         marginTop: convertHeightToVH(28),
         marginBottom: convertHeightToVH(32),
       },
+      tabList: {
+        paddingTop: convertWidthToVW(10),
+        paddingLeft: convertWidthToVW(40),
+        paddingRight: convertWidthToVW(40),
+      },
+      rotate90: {
+        "-webkit-animation": "rotate90 0.5s forwards ",
+        "-moz-animation": "rotate90 0.5s forwards ",
+        animation: "rotate90 0.5s forwards ",
+      },
     };
   }, [isHover]);
   return {

@@ -1,4 +1,5 @@
 import { TabCloseIcon } from "@/icons";
+import { Collapse } from "@mui/material";
 import Image from "next/image";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -30,32 +31,43 @@ const Tab = ({ tab }: IProps) => {
 
   const onClickTab = useCallback(() => {
     if (tab.isList) {
-      console.log("Here");
-      setIsListOpen(true);
+      setIsListOpen(!isListOpen);
     }
-  }, [tab, isListOpen]);
+  }, [tab, isListOpen, setIsListOpen]);
 
   return (
-    <div
-      style={clasess.tabContainer}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClick={onClickTab}
-    >
-      {tab.isList && (
-        <div>{isListOpen ? <TabCloseIcon /> : <TabCloseIcon />}</div>
-      )}
-      <div>{tab.icon()}</div>
-      <div style={clasess.tabTitle}>{tab.title}</div>
-      {isListOpen &&
-        tab.list?.map((list: any) => {
+    <>
+      <div
+        style={clasess.tabContainer}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={onClickTab}
+      >
+        {tab.isList && (
+          <div>
+            {isListOpen ? (
+              <div style={clasess.rotate90}>
+                <TabCloseIcon />
+              </div>
+            ) : (
+              <TabCloseIcon />
+            )}
+          </div>
+        )}
+        <div>{tab.icon()}</div>
+        <div style={clasess.tabTitle}>{tab.title}</div>
+      </div>
+      <Collapse in={isListOpen}>
+        {tab.list?.map((list: any) => {
+          console.log({ list });
           return (
             <div style={clasess.tabList} key={list.key}>
-              <div style={clasess.tabListTitle}>{list.title}</div>
+              <div style={clasess.tabTitle}>{list.title}</div>
             </div>
           );
         })}
-    </div>
+      </Collapse>
+    </>
   );
 };
 
