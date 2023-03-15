@@ -12,5 +12,17 @@
     "login": "Login",
     "username": "Username",
     "password": "Password"
+  },
+  "tabs": {
+    "home": "Home",
+    "productFloor": "Product Floor",
+    "products": "Products",
+    "sales": "Sales",
+    "shoping": "Shoping",
+    "customers": "Customers",
+    "suppliers": "Suppliers",
+    "reports": "Reports",
+    "addSales": "Add sales",
+    "listSales": "List sales"
   }
 }

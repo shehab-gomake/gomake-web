@@ -1,13 +1,97 @@
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
+import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = () => {
+const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
+  const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       container: {
-        // backgroundColor: "red",
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        flexDirection: "row" as "row",
+      },
+      logoContainer: {
+        display: "flex",
+      },
+      leftContainer: {
+        backgroundColor: primaryColor(500),
+        width: convertWidthToVW(281),
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between" as "space-between",
+        alignItems: "center",
+        paddingRight: convertWidthToVW(26),
+        paddingLeft: convertWidthToVW(26),
+        paddingTop: convertHeightToVH(40),
+        paddingBottom: convertHeightToVH(40),
+      },
+      rightContainer: {
+        backgroundColor: "#FDFDFD",
+        width: convertWidthToVW(1468 - 281),
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column" as "column",
+        padding: convertWidthToVW(20),
+      },
+      headerContainer: {
+        height: convertHeightToVH(101),
+        display: "flex",
+        flexDirection: "column" as "column",
+      },
+      bodyContainer: {
+        height: convertHeightToVH(1024 - 101),
+        display: "flex",
+        flexDirection: "column" as "column",
+      },
+      poweredContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 53,
+      },
+      poweredByLbl: {
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: "#FFF",
+      },
+      gomakeByLbl: {
+        ...FONT_FAMILY.Lexend(400, 28),
+        color: "#FFF",
+      },
+
+      ///Tab
+      tabsContainer: {
+        alignSelf: "flex-start",
+        height: "100%",
+        marginTop: convertHeightToVH(46),
+      },
+      tabContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start" as "flex-start",
+        alignItems: "center",
+        gap: convertWidthToVW(8),
+        marginTop: convertHeightToVH(28),
+        cursor: "pointer",
+        opacity: isHover ? 0.5 : 1,
+      },
+      tabTitle: {
+        ...FONT_FAMILY.Inter(400, 16),
+        color: "#FFF",
+      },
+      line: {
+        border: "1px solid #FFFFFF",
+        opacity: 0.4,
+        width: convertWidthToVW(207),
+        marginTop: convertHeightToVH(28),
+        marginBottom: convertHeightToVH(32),
       },
     };
-  }, []);
+  }, [isHover]);
   return {
     clasess,
   };

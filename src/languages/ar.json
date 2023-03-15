@@ -12,5 +12,9 @@
     "login": "Login",
     "username": "Username",
     "password": "Password"
+  },
+  "tabs": {
+    "home": "الرئيسية",
+    "productFloor": "Product Floor"
   }
 }

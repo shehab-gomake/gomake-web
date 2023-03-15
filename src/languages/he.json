@@ -12,5 +12,9 @@
     "login": "Login",
     "username": "Username",
     "password": "Password"
+  },
+  "tabs": {
+    "home": "Home",
+    "productFloor": "Product Floor"
   }
 }

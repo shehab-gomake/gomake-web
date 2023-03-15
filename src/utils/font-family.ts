@@ -13,6 +13,13 @@ const FONT_FAMILY = {
       fontSize,
     };
   },
+  Inter: (fontWeight: number, fontSize: number) => {
+    return {
+      fontFamily: "Inter",
+      fontWeight,
+      fontSize,
+    };
+  },
 };
 
 export { FONT_FAMILY };
