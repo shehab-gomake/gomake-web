@@ -1,13 +1,20 @@
-import {Card, CardContent} from "@mui/material";
+import {Card} from "@mui/material";
 import {IDashboardCard} from "@/components/dashboard-card/interface";
 import {useStyle} from "@/components/dashboard-card/style";
+import {CircularProgressWithLabel} from "@/components/progress-label-circle/progress";
 
-const DashboardCard = ({label, value, bgColor}: IDashboardCard) => {
+const DashboardCard = ({label, value, bgColor, children, progress}: IDashboardCard) => {
     const {classes} = useStyle();
     return (
         <Card style={{...classes.container, backgroundColor: bgColor}} variant={'outlined'}>
-            <CardContent style={classes.value}>{value}</CardContent>
-            <CardContent style={classes.label}>{label}</CardContent>
+            <div style={classes.progressWrapper}>
+                {progress && <CircularProgressWithLabel value={progress}/>}
+            </div>
+            <div style={classes.iconWrapper}>
+                {children}
+            </div>
+            <div style={classes.value}>{value}</div>
+            <div style={classes.label}>{label}</div>
         </Card>
     );
 }

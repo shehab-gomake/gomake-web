@@ -18,7 +18,7 @@ const apiRequest = async (method = "GET", url: string, data: any = {}) => {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        "project-name": "business-dashboard",
+        "project-name": "business-dashboard-widget",
         ...(getUserToken() && { "auth-token": getUserToken() }),
         ...(data.customAuth && { "auth-token": data.customAuth }),
       },

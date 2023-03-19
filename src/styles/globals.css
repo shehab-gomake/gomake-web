@@ -10,3 +10,9 @@ body {
   overflow-x: hidden;
 }
 
+.MuiInputBase-input {
+  width: 155px;
+  height: 40px;
+  box-sizing: border-box;
+}
+
