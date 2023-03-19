@@ -4,7 +4,7 @@ import { LeftSideLayout } from "./left-side";
 import { useStyle } from "./style";
 import { useAuthLayoutHook } from "./use-auth-layout-hook";
 
-const AuthLayout = ({ children }: IAuthLayout) => {
+const CustomerAuthLayout = ({ children }: IAuthLayout) => {
   const { canAccess, navigate } = useAuthLayoutHook();
   const { clasess } = useStyle({});
 
@@ -28,4 +28,4 @@ const AuthLayout = ({ children }: IAuthLayout) => {
   }
 };
 
-export { AuthLayout };
+export { CustomerAuthLayout };
