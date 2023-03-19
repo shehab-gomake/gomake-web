@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { useCustomer } from "./use-customer";
+import { useAdmin } from "./use-admin";
 
-const useGomakeAuth = () => {
-  const { user, validate } = useCustomer();
+const useGomakeAdminAuth = () => {
+  const { admin, validate } = useAdmin();
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
   const check = useCallback(async () => {
     setIsAuth(await validate());
@@ -12,7 +12,7 @@ const useGomakeAuth = () => {
     check();
   }, []);
 
-  return { user, isAuth };
+  return { admin, isAuth };
 };
 
-export { useGomakeAuth };
+export { useGomakeAdminAuth };
