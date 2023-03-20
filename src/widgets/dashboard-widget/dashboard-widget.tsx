@@ -29,7 +29,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
         getApiRequest('/boardMissions', {
             startDate: selectedDate.startDate.toISOString(),
             endDate: selectedDate.endDate.toISOString()
-        })
+        }, true)
             .then(
                 (res) => {
                     if (res && res.data) {

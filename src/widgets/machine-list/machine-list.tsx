@@ -51,7 +51,7 @@ const MachineList = ({}: IMachineList) => {
     }
 
     useEffect(() => {
-        getApiRequest('/machines', {}).then(
+        getApiRequest('/machines', {}, true).then(
             (res) => {
                 if (res && res.data) {
                     setMachines(res.data.map((m: IMachine) => ({...m, checked: true})));

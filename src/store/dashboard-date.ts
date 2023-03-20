@@ -11,7 +11,7 @@ const dashboardDateState = atom<IDateRange>({
 const boardMissions = selector({
     key: 'getBoardMissionsByDate',
     get: async ({get}) => {
-        return  await getApiRequest('/boardMissions', get(dashboardDateState))
+        return  await getApiRequest('/boardMissions', get(dashboardDateState), true)
     }
 });
 

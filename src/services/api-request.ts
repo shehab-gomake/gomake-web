@@ -2,14 +2,15 @@ import axios from "axios";
 import config from "@/config";
 import { getUserToken } from "./storage-data";
 // import { clearStorage } from './storage'
-const apiRequest = async (method = "GET", url: string, data: any = {}) => {
+const apiRequest = async (method = "GET", url: string, data: any = {}, secondServer: boolean = false) => {
   try {
-    // const SERVER = config.api_server;
+    const SERVER = config.api_server;
     // // if(safdsa){
     // //     trh
     // // }
-    const SERVER = 'http://localhost:5000'
-    const reqUrl = SERVER + url;
+    // const SERVER = 'http://localhost:3010';
+    const SERVER2 = 'http://localhost:5000';
+    const reqUrl = secondServer ? SERVER2 + url : SERVER + url;
     const options: any = {
       method,
       url: reqUrl,
@@ -63,8 +64,8 @@ const apiRequest = async (method = "GET", url: string, data: any = {}) => {
   }
 };
 
-export const getApiRequest = async (url: string, data: any) => {
-  return await apiRequest("GET", url, data);
+export const getApiRequest = async (url: string, data: any, secondServer?: boolean) => {
+  return await apiRequest("GET", url, data, !!secondServer );
 };
 export const postApiRequest = async (url: string, data: any) => {
   return await apiRequest("POST", url, data);
