@@ -10,21 +10,21 @@ body {
   overflow-x: hidden;
 }
 
-@-moz-keyframes rotate90 { 
-  100% { 
-    -moz-transform: rotate(90deg); 
-    transform:rotate(90deg); 
-  } 
+@-moz-keyframes rotate90 {
+  100% {
+    -moz-transform: rotate(90deg);
+    transform:rotate(90deg);
+  }
 }
-@-webkit-keyframes rotate90 { 
+@-webkit-keyframes rotate90 {
   100% {
      -webkit-transform: rotate(90deg);
-     transform:rotate(90deg); 
-     } 
+     transform:rotate(90deg);
+     }
 }
-@keyframes rotate90 { 
-  100% { 
-      -webkit-transform: rotate(90deg); 
-      transform:rotate(90deg); 
-  } 
+@keyframes rotate90 {
+  100% {
+      -webkit-transform: rotate(90deg);
+      transform:rotate(90deg);
+  }
 }

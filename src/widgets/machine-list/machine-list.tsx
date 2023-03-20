@@ -24,6 +24,7 @@ const MachineList = ({}: IMachineList) => {
     };
     const handleClose = () => {
         setAnchorEl(null);
+        setFilter('');
     };
     const {classes} = useStyle();
     const {t} = useTranslation();

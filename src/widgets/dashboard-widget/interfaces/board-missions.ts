@@ -1,3 +1,4 @@
+import {EMissionType} from "@/shared/enums/mission-type";
 
 export interface IBoardMissions {
     id: string;
@@ -5,7 +6,8 @@ export interface IBoardMissions {
     isReady?: boolean;
     isUrgent?: boolean;
     status: number;
-    machinesStatuses: Record<string, number>,
+    machinesStatuses: Record<string, number>;
+    missionType: EMissionType;
     currentStation: IBoardMissionsCurrentStation;
 }
 

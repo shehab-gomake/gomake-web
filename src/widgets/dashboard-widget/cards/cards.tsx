@@ -32,8 +32,9 @@ const Cards = ({data}: ICards) => {
 
                 <DashboardCard label={data?.progress?.label || ''}
                                value={(data?.inProcess?.value + data?.done?.value + data?.faults?.value) || 0}
-                               progress={(data?.progress?.value * 100) || 0}
-                               bgColor={'#9747FF'}>
+                               progressValue={(data?.progress?.value * 100) || 0}
+                               bgColor={'#9747FF'}
+                withProgressBar={true}>
                     <FactCheckOutlinedIcon/>
                 </DashboardCard>
 

@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import "@/styles/circle-progress.css"
 import type { AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
 import i18n from "i18next";
