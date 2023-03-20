@@ -11,6 +11,7 @@
     "rememberMe": "Remember me",
     "login": "Login",
     "username": "Username",
+    "email": "Email",
     "password": "Password"
   },
   "dashboard": {
