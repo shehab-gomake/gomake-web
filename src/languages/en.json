@@ -11,8 +11,11 @@
     "rememberMe": "Remember me",
     "login": "Login",
     "username": "Username",
-    "email": "Email",
     "password": "Password"
+  },
+  "dashboard": {
+    "welcome": "Tasks dashboard",
+    "machinesList": "Machine list"
   },
   "tabs": {
     "home": "Home",

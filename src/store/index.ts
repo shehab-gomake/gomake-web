@@ -5,3 +5,4 @@ export * from "./admin";
 export * from "./permissions";
 
 export * from './dashboard-date'
+export * from './dashboard-date'

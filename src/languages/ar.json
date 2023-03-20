@@ -17,6 +17,7 @@
   "tabs": {
     "home": "الرئيسية",
     "productFloor": "Product Floor"
+  },
   "dashboard": {
     "welcome": "Tasks dashboard",
     "machinesList": "Machine list"
