@@ -1,9 +1,25 @@
 import {Box, CircularProgress, CircularProgressProps, Typography} from "@mui/material";
 
+import React from "react";
+
+
 const CircularProgressWithLabel = (props: CircularProgressProps & { value: number }) => {
     return (
-        <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-            <CircularProgress size={60}  variant="determinate" color={'inherit'} thickness={6}   {...props} />
+        <Box sx={{position: 'relative', display: 'inline-flex'}}>
+            <CircularProgress
+                variant="determinate"
+                size={60}
+                thickness={6}
+                {...props}
+                className={"foreground"}
+            />
+            <CircularProgress
+                variant="determinate"
+                className={"background"}
+                thickness={6}
+                size={60}
+                value={100 - props.value}
+            />
             <Box
                 sx={{
                     top: 0,

@@ -1,8 +1,8 @@
-import {CSSProperties, useMemo} from "react";
+import {useMemo} from "react";
 import {FONT_FAMILY} from "@/utils/font-family";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 
-const useStyle = (): {classes: Record<string,  CSSProperties | undefined>} => {
+const useStyle = () => {
     const {theme, primaryColor} = useGomakeTheme();
     const BORDER = '0.1px solid #CECECE';
     const BORDER_RADIUS = '16px';
@@ -10,7 +10,28 @@ const useStyle = (): {classes: Record<string,  CSSProperties | undefined>} => {
         return {
             tableContainer: {
                 display: 'flex',
-                padding: '0 21px 0 32px',
+                margin: '0 21px 0 32px',
+            },
+
+            scrollTableWrapper: {
+                overflow: 'auto' as 'auto',
+                border: BORDER,
+                borderTopRightRadius: BORDER_RADIUS,
+                borderBottomRightRadius: BORDER_RADIUS,
+                borderLeft: 0
+            },
+            fixedTableWrapper: {
+                minWidth: '305px',
+                border: BORDER,
+                borderTopLeftRadius: BORDER_RADIUS,
+                borderBottomLeftRadius: BORDER_RADIUS,
+                overflow: 'hidden' as 'hidden',
+                borderRight: 0,
+
+            },
+            table: {
+                width: '100%',
+                borderCollapse: 'collapse' as 'collapse',
             },
             tableHead: {
                 backgroundColor: primaryColor(500),
@@ -19,47 +40,34 @@ const useStyle = (): {classes: Record<string,  CSSProperties | undefined>} => {
                 color: 'white',
                 textAlign: 'center' as 'center',
                 ...FONT_FAMILY.Lexend(500, 16),
-                boxSizing: 'border-box' as 'border-box',
+                padding: '0 10px'
+            },
+            tableRow: {
+                borderTop: BORDER,
+            },
+            fixedTableRow: {
+                borderTop: BORDER,
+                borderRight: BORDER
             },
             tableCell: {
-                border: BORDER,
                 textAlign: 'center' as 'center',
                 ...FONT_FAMILY.Lexend(500, 16),
                 lineHeight: 0,
                 height: '80px',
                 minWidth: '115px',
-
-            },
-            fixedTable: {
-                minWidth: '305px',
-                borderCollapse: 'collapse' as 'collapse',
-                position: 'relative' as 'relative'
-            },
-            scrollableTable: {
-                borderCollapse: 'collapse' as 'collapse',
-                width: '100%'
-            },
-            scrollTableWrapper: {
-                overflow: 'auto' as 'auto'
-            },
-            topLeftCell: {
-                borderTopLeftRadius: BORDER_RADIUS,
-                marginLeft: '-10px'
-            },
-            topRightCell: {
-                borderTopRightRadius: BORDER_RADIUS
+                border: BORDER,
+                borderTop: 0,
+                borderBottom: 0,
+                borderRight: 0
             },
             fixedTableCell: {
-                borderBottom: BORDER,
                 textAlign: 'center' as 'center',
                 ...FONT_FAMILY.Lexend(500, 16),
                 lineHeight: 0,
                 height: '80px',
+
             },
-            firstColumn: {
-                borderLeft: BORDER,
-            },
-            machineName: {
+            tdRows: {
                 display: 'flex',
                 flexDirection: 'column' as 'column',
                 justifyContent: 'space-around' as 'space-around',

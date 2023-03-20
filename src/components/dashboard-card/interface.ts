@@ -6,5 +6,6 @@ export interface IDashboardCard {
     value: number;
     bgColor: string;
     children?: React.ReactElement;
-    progress?: number;
+    progressValue?: number;
+    withProgressBar?: boolean
 }
