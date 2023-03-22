@@ -1,8 +1,5 @@
 import {Box, CircularProgress, CircularProgressProps, Typography} from "@mui/material";
 
-import React from "react";
-
-
 const CircularProgressWithLabel = (props: CircularProgressProps & { value: number }) => {
     return (
         <Box sx={{position: 'relative', display: 'inline-flex'}}>

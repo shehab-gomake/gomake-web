@@ -1,3 +1,4 @@
+
 const FONT_FAMILY = {
   Outfit: (fontWeight: number, fontSize: number) => {
     return {
@@ -26,6 +27,13 @@ const FONT_FAMILY = {
       fontWeight,
       fontSize,
     };
+  },
+  Heebo: (fontWeight: number, fontSize: number) => {
+    return {
+      fontFamily: "Heebo",
+      fontWeight,
+      fontSize
+    }
   }
 };
 

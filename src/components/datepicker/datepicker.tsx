@@ -9,8 +9,9 @@ import 'react-date-range/dist/theme/default.css';
 import Button from "@mui/material/Button";
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import {TODAY_DATE_RANGE} from "@/shared/constant";
+import {useGomakeDateRange} from "@/hooks";
 
-const GoMakeDatepicker = ({onChange}: IGoMakeDatepicker) => {
+const GoMakeDatepicker = ({}: IGoMakeDatepicker) => {
     const [state, setState] = useState({
         selection: {
             ...TODAY_DATE_RANGE,
@@ -19,13 +20,10 @@ const GoMakeDatepicker = ({onChange}: IGoMakeDatepicker) => {
     });
     const [openDatepicker, setOpenDatepicker] = useState<boolean>(false);
     const {classes} = useStyle();
-
+    const {newDateSelected} = useGomakeDateRange();
     const handleSelectDates = () => {
         setOpenDatepicker(false);
-        const {startDate, endDate} = state.selection;
-        console.log('state', {startDate, endDate});
-        console.log('today', TODAY_DATE_RANGE)
-        onChange({startDate, endDate});
+        newDateSelected(state.selection);
     }
     return (
         <div>
@@ -41,8 +39,6 @@ const GoMakeDatepicker = ({onChange}: IGoMakeDatepicker) => {
                     <DateRangePicker
                         onChange={item => setState({...state, ...item})}
                         months={1}
-                        minDate={undefined}
-                        maxDate={undefined}
                         direction="vertical"
                         scroll={{enabled: false}}
                         ranges={[state.selection]}

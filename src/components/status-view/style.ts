@@ -29,7 +29,7 @@ const useStyle = () => {
             label: {
                width: '99px',
                height: '40px',
-               ...FONT_FAMILY.Lexend(500, 16),
+               ...FONT_FAMILY.Heebo(500, 16),
                color: '#821A1A',
                 textAlign: 'center' as 'center',
                 padding: '20px 0',

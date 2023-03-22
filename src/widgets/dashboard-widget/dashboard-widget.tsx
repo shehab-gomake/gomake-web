@@ -13,7 +13,7 @@ import {useRecoilValue} from "recoil";
 import {machinesListState} from "@/store/machines";
 import {BoardMissionsTable} from "@/widgets/dashboard-widget/table";
 import {DashboardDates} from "@/widgets/dashboard-widget/dates/dates";
-import {dashboardDateState} from "@/store";
+import {useGomakeDateRange} from "@/hooks";
 
 const DashboardWidget = ({}: IDashboardWidget) => {
     const [boardsMissions, setBoardsMissions] = useState<IBoardMissions[]>();
@@ -24,11 +24,11 @@ const DashboardWidget = ({}: IDashboardWidget) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
 
-    const selectedDate = useRecoilValue(dashboardDateState);
+    const {date} = useGomakeDateRange();
     useEffect(() => {
         getApiRequest('/boardMissions', {
-            startDate: selectedDate.startDate.toISOString(),
-            endDate: selectedDate.endDate.toISOString()
+            startDate: date.startDate.toISOString(),
+            endDate: date.endDate.toISOString()
         }, true)
             .then(
                 (res) => {
@@ -63,7 +63,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
                 }
             );
 
-    }, [selectedDate, machines, setUsedMachines, setStatistics, setBoardsMissions])
+    }, [date, machines, setUsedMachines, setStatistics, setBoardsMissions])
 
     return (
         <div style={classes.container}>

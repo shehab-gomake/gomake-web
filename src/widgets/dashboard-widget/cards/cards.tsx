@@ -7,27 +7,15 @@ import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlin
 import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined';
 import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurnedInOutlined';
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {useRecoilValue} from "recoil";
-import {dashboardDateState} from "@/store";
-import {dateStringFormat, TODAY_DATE_RANGE, TOMORROW_DATE_RANGE} from "@/shared/constant";
+import {useGomakeDateRange} from "@/hooks";
 
 const Cards = ({data}: ICards) => {
     const {classes} = useStyle();
-    const selectedDate = useRecoilValue(dashboardDateState);
     const {successColor, warningColor, errorColor} = useGomakeTheme();
-    const getDateRangeText = (): string => {
-        if (selectedDate === TODAY_DATE_RANGE) {
-            return 'Today\'s Tasks'
-        }
-        if (selectedDate === TOMORROW_DATE_RANGE) {
-            return 'Tomorrow\'s Tasks'
-        }
-
-        return dateStringFormat(selectedDate.startDate) + ' - ' + dateStringFormat(selectedDate.endDate) + '  Task\'s';
-    }
+    const {selectedDateText} = useGomakeDateRange();
     return (
         <div style={classes.container}>
-            <h2 style={classes.header}>{getDateRangeText()}</h2>
+            <h2 style={classes.header}>{selectedDateText()}</h2>
             <div style={classes.statistics}>
 
                 <DashboardCard label={data?.progress?.label || ''}

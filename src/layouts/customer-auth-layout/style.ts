@@ -36,6 +36,7 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         display: "flex",
         flexDirection: "column" as "column",
         padding: convertWidthToVW(20),
+        overflow: 'auto' as 'auto'
       },
       headerContainer: {
         height: convertHeightToVH(101),

@@ -10,48 +10,58 @@ const useStyle = () => {
         return {
             tableContainer: {
                 display: 'flex',
-                margin: '0 21px 0 32px',
+                margin: '0 21px 15px 32px',
             },
-
             scrollTableWrapper: {
                 overflow: 'auto' as 'auto',
-                border: BORDER,
+                // border: BORDER,
+                borderRight: BORDER,
+                borderTop: BORDER,
+                borderBottom: BORDER,
+                borderLeft: 'unset' as 'unset',
                 borderTopRightRadius: BORDER_RADIUS,
                 borderBottomRightRadius: BORDER_RADIUS,
-                borderLeft: 0
+                marginLeft: '-2px'
             },
             fixedTableWrapper: {
                 minWidth: '305px',
-                border: BORDER,
+                // border: BORDER,
+                borderLeft: BORDER,
+                borderTop: BORDER,
+                borderBottom: BORDER,
+                borderRight: 'unset' as 'unset',
                 borderTopLeftRadius: BORDER_RADIUS,
                 borderBottomLeftRadius: BORDER_RADIUS,
                 overflow: 'hidden' as 'hidden',
-                borderRight: 0,
-
+                borderRightStyle:  'hidden' as 'hidden',
             },
             table: {
                 width: '100%',
                 borderCollapse: 'collapse' as 'collapse',
+                border: 'unset' as 'unset',
+                borderSpacing: '0px',
+
             },
             tableHead: {
                 backgroundColor: primaryColor(500),
+                minHeight: '80px',
                 height: '80px',
                 maxHeight: '80px',
                 color: 'white',
                 textAlign: 'center' as 'center',
-                ...FONT_FAMILY.Lexend(500, 16),
-                padding: '0 10px'
+                ...FONT_FAMILY.Heebo(500, 16),
+                padding: '0 10px',
             },
             tableRow: {
                 borderTop: BORDER,
             },
             fixedTableRow: {
                 borderTop: BORDER,
-                borderRight: BORDER
+                // borderRight: BORDER
             },
             tableCell: {
                 textAlign: 'center' as 'center',
-                ...FONT_FAMILY.Lexend(500, 16),
+                ...FONT_FAMILY.Heebo(500, 16),
                 lineHeight: 0,
                 height: '80px',
                 minWidth: '115px',
@@ -62,10 +72,9 @@ const useStyle = () => {
             },
             fixedTableCell: {
                 textAlign: 'center' as 'center',
-                ...FONT_FAMILY.Lexend(500, 16),
+                ...FONT_FAMILY.Heebo(500, 16),
                 lineHeight: 0,
                 height: '80px',
-
             },
             tdRows: {
                 display: 'flex',
@@ -73,7 +82,9 @@ const useStyle = () => {
                 justifyContent: 'space-around' as 'space-around',
                 alignItems: 'center' as 'center',
                 width: '100%',
-                height: '100%'
+                height: '100%',
+                maxHeight: '80px',
+                ...FONT_FAMILY.Heebo(500, 16)
             }
         };
     }, [theme]);
