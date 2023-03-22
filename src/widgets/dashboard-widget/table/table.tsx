@@ -54,9 +54,9 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                         <thead>
                         <tr>
                             {
-                                usedMachines.map((machine: IMachine, index: number) => {
+                                usedMachines.map((machine: IMachine) => {
                                     return (
-                                        <th key={index}
+                                        <th key={machine.id}
                                             style={classes.tableHead}>
                                             <div style={classes.tdRows}>
                                                 <div>{machine.name}</div>
@@ -73,11 +73,11 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                         {
                             boardsMissions?.map((board: IBoardMissions, index: number) => {
                                 return (
-                                    <tr style={classes.tableRow} key={index}>
+                                    <tr style={classes.tableRow} key={board.id + index}>
                                         {
                                             usedMachines.map((machine: IMachine, i: number) => {
                                                 return (
-                                                    <td key={i}
+                                                    <td key={machine.id + i}
                                                         style={classes.tableCell}>
                                                         <StatusView style={{margin: 'auto'}}
                                                                     status={board.machinesStatuses[machine.id]}/>

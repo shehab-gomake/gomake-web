@@ -3,6 +3,7 @@ import {dashboardDateState} from "@/store";
 import {useCallback} from "react";
 import {IDateRange} from "@/shared";
 import {dateStringFormat, TODAY_DATE_RANGE, TOMORROW_DATE_RANGE} from "@/shared/constant";
+import {endOfDay} from "date-fns/fp";
 
 const useGomakeDateRange = () => {
     const date = useRecoilValue(dashboardDateState);
@@ -10,7 +11,8 @@ const useGomakeDateRange = () => {
 
     const newDateSelected = useCallback((dateRange: IDateRange) => {
         if (date === dateRange) return;
-        setDate(dateRange);
+
+        setDate({...dateRange, endDate: endOfDay(dateRange.endDate)});
     }, []);
 
     const setTodayDateRange = useCallback(() => {
@@ -22,19 +24,19 @@ const useGomakeDateRange = () => {
     }, []);
 
     const isToday = useCallback(() => {
-        return TODAY_DATE_RANGE === date
+        return TODAY_DATE_RANGE.startDate.getTime() === date.startDate.getTime() && TODAY_DATE_RANGE.endDate.getTime() === date.endDate.getTime()
     }, [date]);
 
     const isTomorrow = useCallback(() => {
-        return TOMORROW_DATE_RANGE === date;
+        return TOMORROW_DATE_RANGE.startDate.getTime() === date.startDate.getTime() && TOMORROW_DATE_RANGE.endDate.getTime() === date.endDate.getTime()
     }, [date]);
 
 
     const selectedDateText = useCallback(() => {
-        if (date === TODAY_DATE_RANGE) {
+        if (isToday()) {
             return 'Today\'s Tasks'
         }
-        if (date === TOMORROW_DATE_RANGE) {
+        if (isTomorrow()) {
             return 'Tomorrow\'s Tasks'
         }
 
