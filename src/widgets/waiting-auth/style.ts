@@ -14,7 +14,6 @@ const useStyle = () => {
         alignItems: "center",
         justifyContent: "center",
         minHeight: "100vh",
-        ...FONT_FAMILY.Lexend(600),
       },
     };
   }, [theme]);
