@@ -4,30 +4,28 @@ import MenuItem from '@mui/material/MenuItem';
 import {IMachineList} from "@/widgets/machine-list/interface";
 import {useStyle} from "@/widgets/machine-list/style";
 import React, {FormEvent, useEffect, useState} from "react";
-import {getApiRequest} from "@/services/api-request";
-import {useRecoilState} from "recoil";
-import {machinesListState} from "@/store/machines";
 import {IMachine} from "@/shared/interfaces";
 import {Checkbox, FormControlLabel, FormGroup} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import {styled} from "@mui/material/styles";
 import {GomakeTextInput} from "@/components";
+import {useGomakeMachines} from "@/hooks";
 
 const MachineList = ({}: IMachineList) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [filter, setFilter] = useState<string>();
-    const [machines, setMachines] = useRecoilState(machinesListState);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
         setAnchorEl(null);
-        setFilter('');
     };
     const {classes} = useStyle();
     const {t} = useTranslation();
+
+    const {getMachinesList, machines, machineChecked} = useGomakeMachines();
 
     const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
         setFilter(event.currentTarget.value);
@@ -35,29 +33,16 @@ const MachineList = ({}: IMachineList) => {
 
     const getMachines = () => {
         if (filter) {
-            return machines.filter((machine) => machine.name.includes(filter));
+            return machines.filter((machine) => machine.name.toLowerCase().includes(filter.toLowerCase()));
         }else {
             return machines;
         }
     }
-    const handleChange = (id: string) => {
-        const updatedMachines: IMachine[] = machines.map((machine) => {
-            if (machine.id === id) {
-                return {...machine, checked: !machine.checked}
-            }
-            return machine
-        })
-        setMachines(updatedMachines);
-    }
+
 
     useEffect(() => {
-        getApiRequest('/machines', {}, true).then(
-            (res) => {
-                if (res && res.data) {
-                    setMachines(res.data.map((m: IMachine) => ({...m, checked: true})));
-                }
-            });
-    }, []);
+        getMachinesList();
+    }, [getMachinesList]);
 
     return (
         <div>
@@ -73,14 +58,14 @@ const MachineList = ({}: IMachineList) => {
                       'aria-labelledby': 'basic-button',
                   }}>
                 <FormGroup>
-                    <GomakeTextInput placeholder={'search machine'} onChange={handleFilterChange}/>
+                    <GomakeTextInput placeholder={'search machine'} value={filter} onChange={handleFilterChange}/>
                     {
                         getMachines().map((machine: IMachine) => {
                             return <MenuItem style={classes.machineName} key={machine.id}>
                                 <FormControlLabel  label={machine.name}
                                                   control={<Checkbox checked={machine.checked}
                                                                      onChange={() => {
-                                                                         handleChange(machine.id)
+                                                                         machineChecked(machine.id)
                                                                      }}/>}
                                 />
                             </MenuItem>

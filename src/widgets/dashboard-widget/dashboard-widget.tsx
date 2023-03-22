@@ -9,17 +9,15 @@ import {useEffect, useState} from "react";
 import {getApiRequest} from "@/services/api-request";
 import {Cards} from "@/widgets/dashboard-widget/cards/cards";
 import {IMachine, IMachineProgress} from "@/shared/interfaces";
-import {useRecoilValue} from "recoil";
-import {machinesListState} from "@/store/machines";
 import {BoardMissionsTable} from "@/widgets/dashboard-widget/table";
 import {DashboardDates} from "@/widgets/dashboard-widget/dates/dates";
-import {useGomakeDateRange} from "@/hooks";
+import {useGomakeDateRange, useGomakeMachines} from "@/hooks";
 
 const DashboardWidget = ({}: IDashboardWidget) => {
     const [boardsMissions, setBoardsMissions] = useState<IBoardMissions[]>();
     const [statistics, setStatistics] = useState<IDashboardStatistic>();
     const [usedMachines, setUsedMachines] = useState<IMachine[]>()
-    const machines: IMachine[] = useRecoilValue(machinesListState);
+    const {machines} = useGomakeMachines();
     const fMachines: IMachine[] = machines.filter((machine) => machine.checked);
     const {classes} = useStyle();
     const {t} = useTranslation();
@@ -63,7 +61,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
                 }
             );
 
-    }, [date, machines, setUsedMachines, setStatistics, setBoardsMissions])
+    }, [date, machines])
 
     return (
         <div style={classes.container}>

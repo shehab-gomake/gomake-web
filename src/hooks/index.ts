@@ -5,3 +5,4 @@ export * from "./use-gomake-router";
 export * from "./use-customer";
 export * from "./use-admin";
 export * from './use-gomake-date-range';
+export * from './use-gomake-machines';
