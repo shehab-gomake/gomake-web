@@ -1,0 +1,58 @@
+Index: src/languages/en.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\r\n  \"direction\": \"ltr\",\r\n  \"pageName\": {\r\n    \"welcome\": \"welcome\"\r\n  },\r\n  \"login\": {\r\n    \"welcome\": \"Welcome to our company\",\r\n    \"weAreExcited\": \"We're excited to work with you and deliver outstanding printing solutions that exceed your expectations.\",\r\n    \"poweredBy\": \"powered by\",\r\n    \"GoMake\": \"GoMake\",\r\n    \"rememberMe\": \"Remember me\",\r\n    \"login\": \"Login\",\r\n    \"username\": \"Username\",\r\n    \"email\": \"Email\",\r\n    \"password\": \"Password\"\r\n  },\r\n  \"tabs\": {\r\n    \"home\": \"Home\",\r\n    \"productFloor\": \"Product Floor\",\r\n    \"products\": \"Products\",\r\n    \"sales\": \"Sales\",\r\n    \"shoping\": \"Shoping\",\r\n    \"customers\": \"Customers\",\r\n    \"suppliers\": \"Suppliers\",\r\n    \"reports\": \"Reports\",\r\n    \"addSales\": \"Add sales\",\r\n    \"listSales\": \"List sales\"\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/languages/en.json b/src/languages/en.json
+--- a/src/languages/en.json	(revision d9c31226a45544bc6ddbc022eb2a727b806cb9bd)
++++ b/src/languages/en.json	(date 1679301755001)
+@@ -25,5 +25,9 @@
+     "reports": "Reports",
+     "addSales": "Add sales",
+     "listSales": "List sales"
++  },
++  "dashboard": {
++    "welcome": "Tasks dashboard",
++    "machinesList": "Machine list"
+   }
+ }
+Index: src/languages/he.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\r\n  \"direction\": \"rtl\",\r\n  \"pageName\": {\r\n    \"welcome\": \"ברוך הבא\"\r\n  },\r\n  \"login\": {\r\n    \"welcome\": \"Welcome to our company\",\r\n    \"weAreExcited\": \"We're excited to work with you and deliver outstanding printing solutions that exceed your expectations.\",\r\n    \"poweredBy\": \"powered by\",\r\n    \"GoMake\": \"GoMake\",\r\n    \"rememberMe\": \"Remember me\",\r\n    \"login\": \"Login\",\r\n    \"username\": \"Username\",\r\n    \"email\": \"Email\",\r\n    \"password\": \"Password\"\r\n  },\r\n  \"tabs\": {\r\n    \"home\": \"Home\",\r\n    \"productFloor\": \"Product Floor\"\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/languages/he.json b/src/languages/he.json
+--- a/src/languages/he.json	(revision d9c31226a45544bc6ddbc022eb2a727b806cb9bd)
++++ b/src/languages/he.json	(date 1679301775890)
+@@ -17,5 +17,9 @@
+   "tabs": {
+     "home": "Home",
+     "productFloor": "Product Floor"
++  },
++  "dashboard": {
++    "welcome": "Tasks dashboard",
++    "machinesList": "Machine list"
+   }
+ }
+Index: src/languages/ar.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\r\n  \"direction\": \"rtl\",\r\n  \"pageName\": {\r\n    \"welcome\": \"مرحبا\"\r\n  },\r\n  \"login\": {\r\n    \"welcome\": \"Welcome to our company\",\r\n    \"weAreExcited\": \"We're excited to work with you and deliver outstanding printing solutions that exceed your expectations.\",\r\n    \"poweredBy\": \"powered by\",\r\n    \"GoMake\": \"GoMake\",\r\n    \"rememberMe\": \"Remember me\",\r\n    \"login\": \"Login\",\r\n    \"username\": \"Username\",\r\n    \"email\": \"Email\",\r\n    \"password\": \"Password\"\r\n  },\r\n  \"tabs\": {\r\n    \"home\": \"الرئيسية\",\r\n    \"productFloor\": \"Product Floor\"\r\n  \"dashboard\": {\r\n    \"welcome\": \"Tasks dashboard\",\r\n    \"machinesList\": \"Machine list\"\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/languages/ar.json b/src/languages/ar.json
+--- a/src/languages/ar.json	(revision d9c31226a45544bc6ddbc022eb2a727b806cb9bd)
++++ b/src/languages/ar.json	(date 1679301707770)
+@@ -17,6 +17,7 @@
+   "tabs": {
+     "home": "الرئيسية",
+     "productFloor": "Product Floor"
++  },
+   "dashboard": {
+     "welcome": "Tasks dashboard",
+     "machinesList": "Machine list"

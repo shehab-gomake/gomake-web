@@ -1,0 +1,31 @@
+Index: src/pages/dashboard/index.page.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import {useTranslation} from \"react-i18next\";\r\nimport {useStyle} from \"@/pages/dashboard/style\";\r\nimport {DashboardWidget} from \"@/widgets\";\r\n\r\nexport default function Dashboard() {\r\n    const {t} = useTranslation();\r\n    const {classes} = useStyle();\r\n    return (\r\n        <div style={classes.container}>\r\n            <h1 style={{...classes.header}}>{t(\"dashboard-widget.welcome\")}</h1>\r\n            <DashboardWidget/>\r\n        </div>\r\n    );\r\n}
+===================================================================
+diff --git a/src/pages/dashboard/index.page.tsx b/src/pages/dashboard/index.page.tsx
+--- a/src/pages/dashboard/index.page.tsx	
++++ b/src/pages/dashboard/index.page.tsx	
+@@ -1,14 +1,17 @@
+ import {useTranslation} from "react-i18next";
+ import {useStyle} from "@/pages/dashboard/style";
+ import {DashboardWidget} from "@/widgets";
++import {CustomerAuthLayout} from "@/layouts";
+ 
+ export default function Dashboard() {
+     const {t} = useTranslation();
+     const {classes} = useStyle();
+     return (
+-        <div style={classes.container}>
+-            <h1 style={{...classes.header}}>{t("dashboard-widget.welcome")}</h1>
+-            <DashboardWidget/>
+-        </div>
++        <CustomerAuthLayout>
++            <div style={classes.container}>
++                <h1 style={{...classes.header}}>{t("dashboard-widget.welcome")}</h1>
++                <DashboardWidget/>
++            </div>
++        </CustomerAuthLayout>
+     );
+ }
+\ No newline at end of file
