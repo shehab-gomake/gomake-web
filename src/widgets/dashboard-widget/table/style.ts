@@ -12,34 +12,76 @@ const useStyle = () => {
                 display: 'flex',
                 margin: '0 21px 15px 32px',
             },
-            scrollTableWrapper: {
-                overflow: 'auto' as 'auto',
-                // border: BORDER,
-                borderRight: BORDER,
-                borderTop: BORDER,
-                borderBottom: BORDER,
-                borderLeft: 'unset' as 'unset',
-                borderTopRightRadius: BORDER_RADIUS,
-                borderBottomRightRadius: BORDER_RADIUS,
-                marginLeft: '-2px'
+            ltr: {
+                scrollTableWrapper: {
+                    overflow: 'auto' as 'auto',
+                    // border: BORDER,
+                    borderRight: BORDER,
+                    borderTop: BORDER,
+                    borderBottom: BORDER,
+                    borderLeft: 'unset' as 'unset',
+                    borderTopRightRadius: BORDER_RADIUS,
+                    borderBottomRightRadius: BORDER_RADIUS,
+                    marginLeft: '-2px'
+                },
+                fixedTableWrapper: {
+                    minWidth: '305px',
+                    // border: BORDER,
+                    borderLeft: BORDER,
+                    borderTop: BORDER,
+                    borderBottom: BORDER,
+                    borderRight: 'unset' as 'unset',
+                    borderTopLeftRadius: BORDER_RADIUS,
+                    borderBottomLeftRadius: BORDER_RADIUS,
+                    overflow: 'hidden' as 'hidden',
+                    borderRightStyle:  'hidden' as 'hidden',
+                },
+                tableCell: {
+                    textAlign: 'center' as 'center',
+                    ...FONT_FAMILY.Heebo(500, 16),
+                    lineHeight: 0,
+                    height: '80px',
+                    minWidth: '115px',
+                    borderLeft: BORDER,
+                },
             },
-            fixedTableWrapper: {
-                minWidth: '305px',
-                // border: BORDER,
-                borderLeft: BORDER,
-                borderTop: BORDER,
-                borderBottom: BORDER,
-                borderRight: 'unset' as 'unset',
-                borderTopLeftRadius: BORDER_RADIUS,
-                borderBottomLeftRadius: BORDER_RADIUS,
-                overflow: 'hidden' as 'hidden',
-                borderRightStyle:  'hidden' as 'hidden',
+
+            rtl: {
+                scrollTableWrapper: {
+                    overflow: 'auto' as 'auto',
+                    // border: BORDER,
+                    borderLeft: BORDER,
+                    borderTop: BORDER,
+                    borderBottom: BORDER,
+                    borderRight: 'unset' as 'unset',
+                    borderTopLeftRadius: BORDER_RADIUS,
+                    borderBottomLeftRadius: BORDER_RADIUS,
+                    marginRight: '-2px'
+                },
+                fixedTableWrapper: {
+                    minWidth: '305px',
+                    // border: BORDER,
+                    borderRight: BORDER,
+                    borderTop: BORDER,
+                    borderBottom: BORDER,
+                    borderLeft: 'unset' as 'unset',
+                    borderTopRightRadius: BORDER_RADIUS,
+                    borderBottomRightRadius: BORDER_RADIUS,
+                    overflow: 'hidden' as 'hidden',
+                    borderLeftStyle:  'hidden' as 'hidden',
+                },
+                tableCell: {
+                    textAlign: 'center' as 'center',
+                    ...FONT_FAMILY.Heebo(500, 16),
+                    lineHeight: 0,
+                    height: '80px',
+                    minWidth: '115px',
+                    borderRight: BORDER,
+                },
             },
             table: {
                 width: '100%',
                 borderCollapse: 'collapse' as 'collapse',
-                border: 'unset' as 'unset',
-                borderSpacing: '0px',
 
             },
             tableHead: {
@@ -57,18 +99,6 @@ const useStyle = () => {
             },
             fixedTableRow: {
                 borderTop: BORDER,
-                // borderRight: BORDER
-            },
-            tableCell: {
-                textAlign: 'center' as 'center',
-                ...FONT_FAMILY.Heebo(500, 16),
-                lineHeight: 0,
-                height: '80px',
-                minWidth: '115px',
-                border: BORDER,
-                borderTop: 0,
-                borderBottom: 0,
-                borderRight: 0
             },
             fixedTableCell: {
                 textAlign: 'center' as 'center',

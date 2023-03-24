@@ -5,25 +5,26 @@ import {IDashboardDates} from "@/widgets/dashboard-widget/dates/interface";
 import {GoMakeDatepicker} from "@/components/datepicker";
 import Button from "@mui/material/Button";
 import {useGomakeDateRange} from "@/hooks";
+import {useTranslation} from "react-i18next";
 
 
 const DashboardDates = ({}: IDashboardDates) => {
     const {classes} = useStyle();
+    const {t} = useTranslation();
     const { setTodayDateRange, setTomorrowDateRange, isTomorrow, isToday } = useGomakeDateRange();
-
     return (
         <div style={classes.container}>
             <div style={classes.datesContainer}>
                 {
-                    isToday() ? <GomakePrimaryButton style={classes.activeButton}>Today</GomakePrimaryButton> :
+                    isToday() ? <GomakePrimaryButton style={classes.activeButton}>{t('dashboard-widget.today')}</GomakePrimaryButton> :
                         <Button variant={'outlined'} onClick={() => setTodayDateRange()}
-                                style={classes.button}>Today</Button>
+                                style={classes.button}>{t('dashboard-widget.today')}</Button>
                 }
                 {
                     isTomorrow() ?
-                        <GomakePrimaryButton style={classes.activeButton}>Tomorrow</GomakePrimaryButton> :
+                        <GomakePrimaryButton style={classes.activeButton}>{t('dashboard-widget.tomorrow')}</GomakePrimaryButton> :
                         <Button variant={'outlined'} onClick={() => setTomorrowDateRange()}
-                                style={classes.button}>Tomorrow</Button>
+                                style={classes.button}>{t('dashboard-widget.tomorrow')}</Button>
                 }
                 <GoMakeDatepicker/>
             </div>

@@ -4,8 +4,10 @@ import {useCallback} from "react";
 import {IDateRange} from "@/shared";
 import {dateStringFormat, TODAY_DATE_RANGE, TOMORROW_DATE_RANGE} from "@/shared/constant";
 import {endOfDay} from "date-fns/fp";
+import {useTranslation} from "react-i18next";
 
 const useGomakeDateRange = () => {
+    const {t} = useTranslation();
     const date = useRecoilValue(dashboardDateState);
     const  setDate = useSetRecoilState(dashboardDateState);
 
@@ -34,13 +36,13 @@ const useGomakeDateRange = () => {
 
     const selectedDateText = useCallback(() => {
         if (isToday()) {
-            return 'Today\'s Tasks'
+            return t('dashboard-widget.today') + ' ' + t('dashboard-widget.tasks');
         }
         if (isTomorrow()) {
-            return 'Tomorrow\'s Tasks'
+            return t('dashboard-widget.tomorrow') + ' ' + t('dashboard-widget.tasks');
         }
 
-        return dateStringFormat(date.startDate) + ' - ' + dateStringFormat(date.endDate) + '  Task\'s';
+        return dateStringFormat(date.startDate) + ' - ' + dateStringFormat(date.endDate) + ' ' + t('dashboard-widget.tasks');
     }, [date])
     return {
         newDateSelected,

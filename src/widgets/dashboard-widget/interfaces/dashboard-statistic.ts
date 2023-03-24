@@ -9,7 +9,7 @@ export interface IDashboardStatistic {
 }
 
 export interface IStatisticValue {
-    label: string;
+    labelTranslationKey: string;
     value: number;
     progress?: number;
 }

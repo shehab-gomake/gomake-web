@@ -14,12 +14,35 @@
     "email": "Email",
     "password": "Password"
   },
+  "dashboard-page": {
+    "welcome": "דוח משימות"
+  },
+  "machines-list-widget": {
+    "machinesList": "רשימת מכונות"
+  },
+  "dashboard-widget": {
+    "tasks": "משימות",
+    "today": "היום",
+    "tomorrow": "מחר",
+    "chooseDate": "בחר תאריך",
+    "task": "משימה",
+    "status": "מצב",
+    "board_col_1": "Inner pages",
+    "board_col_2": "Inner pages 2",
+    "board_cover": "Cover",
+    "board_vorsats": "Vorsats",
+    "progress": "התקדמות",
+    "done":"בוצע",
+    "new": "נכנסו",
+    "inProcess": "בביצוע",
+    "fault": "תקוע"
+  },
+  "datepicker-component": {
+    "chooseDate": "בחר תאריך",
+    "choose": "בחר"
+  },
   "tabs": {
     "home": "Home",
     "productFloor": "Product Floor"
-  },
-  "dashboard": {
-    "welcome": "Tasks dashboard",
-    "machinesList": "Machine list"
   }
 }

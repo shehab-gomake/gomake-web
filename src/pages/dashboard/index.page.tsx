@@ -9,7 +9,7 @@ export default function Dashboard() {
     return (
         <CustomerAuthLayout>
             <div style={classes.container}>
-                <h1 style={{...classes.header}}>{t("dashboard-widget.welcome")}</h1>
+                <h1 style={{...classes.header}}>{t("dashboard-page.welcome")}</h1>
                 <DashboardWidget/>
             </div>
         </CustomerAuthLayout>

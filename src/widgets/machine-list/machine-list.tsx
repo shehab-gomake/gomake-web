@@ -25,7 +25,7 @@ const MachineList = ({}: IMachineList) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
 
-    const {getMachinesList, machines, machineChecked} = useGomakeMachines();
+    const {getMachinesList, machines, setMachineChecked} = useGomakeMachines();
 
     const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
         setFilter(event.currentTarget.value);
@@ -47,8 +47,7 @@ const MachineList = ({}: IMachineList) => {
     return (
         <div>
             <Button style={classes.button} variant={'contained'} onClick={handleClick}>
-                {/*<span>{t('dashboard-widget.machinesList')}</span>*/}
-                Machine list
+                <span>{t('machines-list-widget.machinesList')}</span>
                 <KeyboardArrowDownIcon/>
             </Button>
             <StyledMenu  anchorEl={anchorEl}
@@ -65,7 +64,7 @@ const MachineList = ({}: IMachineList) => {
                                 <FormControlLabel  label={machine.name}
                                                   control={<Checkbox checked={machine.checked}
                                                                      onChange={() => {
-                                                                         machineChecked(machine.id)
+                                                                         setMachineChecked(machine.id)
                                                                      }}/>}
                                 />
                             </MenuItem>

@@ -15,6 +15,7 @@ const useStyle = () => {
                 color: '#504FA1',
             },
             datepickerContainer: {
+                direction: 'ltr' as 'ltr',
                 position: 'absolute' as 'absolute',
                 top: '50%',
                 left: '50%',

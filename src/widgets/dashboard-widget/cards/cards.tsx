@@ -18,7 +18,7 @@ const Cards = ({data}: ICards) => {
             <h2 style={classes.header}>{selectedDateText()}</h2>
             <div style={classes.statistics}>
 
-                <DashboardCard label={data?.progress?.label || ''}
+                <DashboardCard label={data?.progress?.labelTranslationKey || ''}
                                value={(data?.inProcess?.value + data?.done?.value + data?.faults?.value) || 0}
                                progressValue={(data?.progress?.value * 100) || 0}
                                bgColor={'#9747FF'}
@@ -27,27 +27,27 @@ const Cards = ({data}: ICards) => {
                 </DashboardCard>
 
 
-                <DashboardCard label={data?.new?.label || ''}
+                <DashboardCard label={data?.new?.labelTranslationKey || ''}
                                value={data?.new?.value || 0}
                                bgColor={'#3DB2F9'}>
                     <AddTaskIcon/>
                 </DashboardCard>
 
 
-                <DashboardCard label={data?.done?.label || ''}
+                <DashboardCard label={data?.done?.labelTranslationKey || ''}
                                value={data?.done?.value || 0}
                                bgColor={successColor(500)}>
                     <AssignmentTurnedInOutlinedIcon/>
                 </DashboardCard>
 
 
-                <DashboardCard label={data?.inProcess?.label || ''}
+                <DashboardCard label={data?.inProcess?.labelTranslationKey || ''}
                                value={data?.inProcess?.value || 0}
                                bgColor={warningColor(500)}>
                     <LocalPrintshopOutlinedIcon/>
                 </DashboardCard>
 
-                <DashboardCard label={data?.faults?.label || ''}
+                <DashboardCard label={data?.faults?.labelTranslationKey || ''}
                                value={data?.faults?.value || 0}
                                bgColor={errorColor(500)}>
                     <DoNotDisturbOnOutlinedIcon/>

@@ -9,8 +9,10 @@ const useStyle = (bgColor: string) => {
                 width: '100%',
                 borderRadius: '16px',
                 padding: '20px',
-                position: 'relative' as 'relative',
-                backgroundColor: bgColor
+                backgroundColor: bgColor,
+                display: 'flex',
+                justifyContent: 'space-between' as 'space-between'
+
             },
             label: {
                ...FONT_FAMILY.Poppins(500, 16),
@@ -32,11 +34,7 @@ const useStyle = (bgColor: string) => {
                 alignItems: 'center' as 'center',
             },
             progressWrapper: {
-                position: 'absolute' as 'absolute',
-                top: '30px',
-                right: '20px',
-                color: '#fff',
-                opacity: 0.6,
+
             },
 
         };

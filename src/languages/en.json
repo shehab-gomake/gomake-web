@@ -14,9 +14,32 @@
     "email": "Email",
     "password": "Password"
   },
-  "dashboard": {
-    "welcome": "Tasks dashboard",
-    "machinesList": "Machine list"
+  "dashboard-page": {
+    "welcome": "Tasks dashboard"
+  },
+  "machines-list-widget": {
+    "machinesList": "machines list"
+  },
+  "dashboard-widget": {
+    "tasks": "Task's",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "chooseDate": "Choose Date",
+    "task": "Task",
+    "status": "Status",
+    "board_col_1": "Inner pages",
+    "board_col_2": "Inner pages 2",
+    "board_cover": "Cover",
+    "board_vorsats": "Vorsats",
+    "progress": "Progress",
+    "done":"Done",
+    "new": "New",
+    "inProcess": "In process",
+    "fault": "Fault"
+  },
+  "datepicker-component": {
+    "chooseDate": "Choose Date",
+    "choose": "choose"
   },
   "tabs": {
     "home": "Home",

@@ -22,7 +22,7 @@ const useGomakeMachines = () => {
         return machines.filter(machine => machine.checked)
     }, [machines]);
 
-    const machineChecked = useCallback((machineId: string) => {
+    const setMachineChecked = useCallback((machineId: string) => {
         const updatedMachines: IMachine[] = machines.map((machine) => {
             if (machine.id === machineId) {
                 return {...machine, checked: !machine.checked}
@@ -32,7 +32,7 @@ const useGomakeMachines = () => {
         setMachines(updatedMachines);
     }, [machines]);
 
-    return { getMachinesList, getCheckedMachines, machineChecked, machines };
+    return { getMachinesList, getCheckedMachines, setMachineChecked, machines };
 }
 
 export { useGomakeMachines };

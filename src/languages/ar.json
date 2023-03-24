@@ -14,12 +14,30 @@
     "email": "Email",
     "password": "Password"
   },
+  "dashboard-page": {
+    "welcome": "Tasks dashboard"
+  },
+  "machines-list-widget": {
+    "machinesList": "machines list"
+  },
+  "dashboard-widget": {
+    "tasks": "Task's",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "chooseDate": "Choose Date",
+    "task": "Task",
+    "status": "Status",
+    "board_col_1": "Inner pages",
+    "board_col_2": "Inner pages 2",
+    "board_cover": "Cover",
+    "board_vorsats": "Vorsats"
+  },
+  "datepicker-component": {
+    "chooseDate": "Choose Date",
+    "choose": "choose"
+  },
   "tabs": {
     "home": "الرئيسية",
     "productFloor": "Product Floor"
-  },
-  "dashboard": {
-    "welcome": "Tasks dashboard",
-    "machinesList": "Machine list"
   }
 }

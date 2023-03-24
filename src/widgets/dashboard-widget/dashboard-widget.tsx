@@ -4,7 +4,6 @@ import {
     IDashboardWidget,
 } from "@/widgets/dashboard-widget/interfaces";
 import {useStyle} from "@/widgets/dashboard-widget/style";
-import {useTranslation} from "react-i18next";
 import {useEffect, useState} from "react";
 import {getApiRequest} from "@/services/api-request";
 import {Cards} from "@/widgets/dashboard-widget/cards/cards";
@@ -17,11 +16,8 @@ const DashboardWidget = ({}: IDashboardWidget) => {
     const [boardsMissions, setBoardsMissions] = useState<IBoardMissions[]>();
     const [statistics, setStatistics] = useState<IDashboardStatistic>();
     const [usedMachines, setUsedMachines] = useState<IMachine[]>()
-    const {machines} = useGomakeMachines();
-    const fMachines: IMachine[] = machines.filter((machine) => machine.checked);
+    const {machines, getCheckedMachines} = useGomakeMachines();
     const {classes} = useStyle();
-    const {t} = useTranslation();
-
     const {date} = useGomakeDateRange();
     useEffect(() => {
         getApiRequest('/boardMissions', {
@@ -32,7 +28,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
                 (res) => {
                     if (res && res.data) {
                         const sortedBoards = res.data.boardsMissions.filter((boardMissions: IBoardMissions) => {
-                            return fMachines.some((m) => Object.keys(boardMissions.machinesStatuses).includes(m.id))
+                            return getCheckedMachines().some((m) => Object.keys(boardMissions.machinesStatuses).includes(m.id))
                         }).sort((v: IBoardMissions, v2: IBoardMissions) => Number(v.isReady) - Number(v2.isReady))
                             .sort((v: IBoardMissions, v2: IBoardMissions) => Number(v2.isUrgent) - Number(v.isUrgent))
                         setBoardsMissions(sortedBoards);

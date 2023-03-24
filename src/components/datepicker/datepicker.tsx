@@ -10,8 +10,10 @@ import Button from "@mui/material/Button";
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import {TODAY_DATE_RANGE} from "@/shared/constant";
 import {useGomakeDateRange} from "@/hooks";
+import {useTranslation} from "react-i18next";
 
 const GoMakeDatepicker = ({}: IGoMakeDatepicker) => {
+    const {t} = useTranslation();
     const [state, setState] = useState({
         selection: {
             ...TODAY_DATE_RANGE,
@@ -29,7 +31,7 @@ const GoMakeDatepicker = ({}: IGoMakeDatepicker) => {
         <div>
             <Button style={classes.button} onClick={() => setOpenDatepicker(true)}>
                 <AddBoxOutlinedIcon/>
-                <span>Choose date</span>
+                <span>{t('datepicker-component.chooseDate')}</span>
             </Button>
             <Modal
                 open={openDatepicker}
@@ -46,7 +48,7 @@ const GoMakeDatepicker = ({}: IGoMakeDatepicker) => {
                     />
                     <div>
                         <div style={{textAlign: 'center'}}>
-                            <GomakePrimaryButton onClick={handleSelectDates}>Choose</GomakePrimaryButton>
+                            <GomakePrimaryButton onClick={handleSelectDates}>{t('datepicker-component.choose')}</GomakePrimaryButton>
                         </div>
                     </div>
                 </div>

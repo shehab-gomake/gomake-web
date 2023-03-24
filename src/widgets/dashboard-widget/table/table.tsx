@@ -10,17 +10,18 @@ import {TYPE_MISSION_NAME_KEY} from "@/shared/constant";
 const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
+    const dir: 'ltr' | 'rtl' = t('direction');
     return (
         boardsMissions?.length > 0 ? <div>
             <div style={classes.tableContainer}>
-                <div style={classes.fixedTableWrapper}>
+                <div style={classes[dir].fixedTableWrapper}>
                     <table className={'table'} style={classes.table}>
                         <thead>
                         <tr>
                             <th style={classes.tableHead}>#</th>
                             <th style={classes.tableHead}></th>
-                            <th style={classes.tableHead}>Task</th>
-                            <th style={classes.tableHead}>Status</th>
+                            <th style={classes.tableHead}>{t('dashboard-widget.task')}</th>
+                            <th style={classes.tableHead}>{t('dashboard-widget.status')}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -49,7 +50,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                         </tbody>
                     </table>
                 </div>
-                <div style={classes.scrollTableWrapper}>
+                <div style={classes[dir].scrollTableWrapper}>
                     <table style={classes.table}>
                         <thead>
                         <tr>
@@ -78,7 +79,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                             usedMachines.map((machine: IMachine, i: number) => {
                                                 return (
                                                     <td key={machine.id + i}
-                                                        style={classes.tableCell}>
+                                                        style={classes[dir].tableCell}>
                                                         <StatusView style={{margin: 'auto'}}
                                                                     status={board.machinesStatuses[machine.id]}/>
                                                     </td>
