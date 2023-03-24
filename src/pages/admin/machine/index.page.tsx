@@ -1,6 +1,11 @@
 import {AdminAuthLayout} from "@/layouts";
+import {AddMachine} from "@/widgets/add-machine";
 
 export default function  Machine() {
-  return <AdminAuthLayout> <div>machine</div> </AdminAuthLayout>
+  return (
+      <AdminAuthLayout>
+        <AddMachine/>
+      </AdminAuthLayout>
+  );
 };
 
