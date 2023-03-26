@@ -15,7 +15,7 @@
     "password": "Password"
   },
   "dashboard-page": {
-    "welcome": "דוח משימות"
+    "welcome": "לוח בקרה לייצור"
   },
   "machines-list-widget": {
     "machinesList": "רשימת מכונות"
@@ -31,10 +31,10 @@
     "board_col_2": "Inner pages 2",
     "board_cover": "Cover",
     "board_vorsats": "Vorsats",
-    "progress": "התקדמות",
+    "progress": "סטטוס רצפת ייצור",
     "done":"בוצע",
-    "new": "נכנסו",
-    "inProcess": "בביצוע",
+    "new": "חדש",
+    "inProcess": "בתהליך",
     "fault": "תקוע"
   },
   "datepicker-component": {

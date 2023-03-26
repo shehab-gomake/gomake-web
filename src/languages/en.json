@@ -15,7 +15,7 @@
     "password": "Password"
   },
   "dashboard-page": {
-    "welcome": "Tasks dashboard"
+    "welcome": "Production dashboard"
   },
   "machines-list-widget": {
     "machinesList": "machines list"
@@ -31,7 +31,7 @@
     "board_col_2": "Inner pages 2",
     "board_cover": "Cover",
     "board_vorsats": "Vorsats",
-    "progress": "Progress",
+    "progress": "Production status",
     "done":"Done",
     "new": "New",
     "inProcess": "In process",

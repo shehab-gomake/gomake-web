@@ -38,7 +38,7 @@ const useStyle = () => {
                 },
                 tableCell: {
                     textAlign: 'center' as 'center',
-                    ...FONT_FAMILY.Heebo(500, 16),
+                    ...FONT_FAMILY.Lexend(500, 16),
                     lineHeight: 0,
                     height: '80px',
                     minWidth: '115px',
@@ -72,7 +72,7 @@ const useStyle = () => {
                 },
                 tableCell: {
                     textAlign: 'center' as 'center',
-                    ...FONT_FAMILY.Heebo(500, 16),
+                    ...FONT_FAMILY.Lexend(500, 16),
                     lineHeight: 0,
                     height: '80px',
                     minWidth: '115px',
@@ -91,7 +91,7 @@ const useStyle = () => {
                 maxHeight: '80px',
                 color: 'white',
                 textAlign: 'center' as 'center',
-                ...FONT_FAMILY.Heebo(500, 16),
+                ...FONT_FAMILY.Lexend(500, 16),
                 padding: '0 10px',
             },
             tableRow: {
@@ -102,7 +102,7 @@ const useStyle = () => {
             },
             fixedTableCell: {
                 textAlign: 'center' as 'center',
-                ...FONT_FAMILY.Heebo(500, 16),
+                ...FONT_FAMILY.Lexend(500, 16),
                 lineHeight: 0,
                 height: '80px',
             },
@@ -114,7 +114,7 @@ const useStyle = () => {
                 width: '100%',
                 height: '100%',
                 maxHeight: '80px',
-                ...FONT_FAMILY.Heebo(500, 16)
+                ...FONT_FAMILY.Lexend(500, 16)
             }
         };
     }, [theme]);
