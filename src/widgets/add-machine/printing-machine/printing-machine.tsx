@@ -3,6 +3,7 @@ import {FormControl, InputLabel, MenuItem, Select, Switch} from "@mui/material";
 import {GomakePrimaryButton, GomakeTextInput} from "@/components";
 
 const PrintingMachineForm = () => {
+    const inputs = [];
     return (
         <div>
             <TextField label={'Monthly maintenance cost'} variant={'outlined'}/>
@@ -38,9 +39,6 @@ const PrintingMachineForm = () => {
             <h3>Media Thickness</h3>
             <TextField label={'min'} variant={'outlined'}/>
             <TextField label={'max'} variant={'outlined'}/>
-            <h3>Media Thickness</h3>
-            <TextField label={'min'} variant={'outlined'}/>
-            <TextField label={'max'} variant={'outlined'}/>
             <h3>Media coating unit</h3>
             <InputLabel> media coating <Switch/> </InputLabel>
             <TextField label={'max'} variant={'outlined'}/>
@@ -48,7 +46,8 @@ const PrintingMachineForm = () => {
             <InputLabel> media coating <Switch/> </InputLabel>
             <TextField label={'max'} variant={'outlined'}/>
             <h3>Rated speed by paper size by number of colors</h3>
-                <GomakePrimaryButton>add color</GomakePrimaryButton>
+            <GomakePrimaryButton>add color</GomakePrimaryButton>
+
         </div>
     );
 }
