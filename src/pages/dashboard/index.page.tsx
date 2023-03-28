@@ -7,11 +7,9 @@ export default function Dashboard() {
     const {t} = useTranslation();
     const {classes} = useStyle();
     return (
-        <CustomerAuthLayout>
-            <div style={classes.container}>
-                <h1 style={{...classes.header}}>{t("dashboard-widget.welcome")}</h1>
-                <DashboardWidget/>
-            </div>
-        </CustomerAuthLayout>
+        <div style={classes.container}>
+            <h1 style={{...classes.header}}>{t("dashboard-widget.welcome")}</h1>
+            <DashboardWidget/>
+        </div>
     );
 }

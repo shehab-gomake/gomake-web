@@ -19,7 +19,9 @@ export const setItem = (key: string, value: any) => {
 export const getUserToken = () => {
   return getItem("auth-token");
 };
-
+export const getPrintHouseId = () => {
+  return getItem("printhouseid");
+};
 export const updateTokenStorage = (token: string) => {
   setItem("auth-token", token);
 };
