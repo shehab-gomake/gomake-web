@@ -1,6 +1,6 @@
 
 export interface IMachine {
-    Manufacturer: string;
+    manufacturer: string;
     model: string;
     code: string;
     nickName: string;
@@ -28,6 +28,7 @@ export interface IPrintingMachine extends IMachine{
     monthlyMaintenanceCost: number;
     electricityCostPerWorkingHour: number;
     dailyProductivityInHours: number;
+    monthlyCostOfSpace: number
     lifeExpectancyYears: number;
     printLife: number;
     minManpowerOperation: number;
