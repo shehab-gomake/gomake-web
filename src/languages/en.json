@@ -77,8 +77,57 @@
         "price":"price",
         "stock":"stock",
         "thicknesses":"thicknesses"
-        
+
       }
     }
+    "listSales": "List sales"
+  },
+  "adminAddMachine": {
+    "manufacturer": "Manufacturer",
+    "model": "Model",
+    "code": "Code",
+    "nickName": "Nick name",
+    "price": "Price",
+    "currency": "Currency",
+    "dollar": "Dollar",
+    "euro": "Euro",
+    "color": "Color",
+    "speed": "Speed",
+    "weight": "Weight",
+    "monthlyMaintenanceCost": "Monthly maintenance cost",
+    "electricityCostPerWorkingHour": "Electricity cost per working hour",
+    "dailyProductivityInHours": "Daily productivity in hours",
+    "lifeExpectancyYears": "Life expectancy years",
+    "printLife": "Print life",
+    "minManpowerOperation": "Min manpower operation",
+    "setupTimeMin": "Setup time min",
+    "resolution": "Resolution",
+    "minMediaDimensions": "Min media dimensions",
+    "maxMediaDimensions": "Max media dimensions",
+    "minMarginWithoutPrinting": "Min margin without printing",
+    "mediaWeight": "Media weight",
+    "mediaThickness": "Media thickness",
+    "monthlyCostOfSpace": "Monthly cost of space",
+    "speedPercentage": "Speed percentage",
+    "feederHeight": "Feeder height",
+    "feederNumber": "Feeder number",
+    "stackerNumber": "Stacker number",
+    "stackerHeight": "Stacker height",
+    "insertOption": "Insert Option",
+    "printingSides": "printing sides",
+    "doubleHead": "Double head for two-sided printing",
+    "basicsColors": "Basics colors",
+    "additionalColorsAmount": "Amount of additional color stations",
+    "printLayers": "Option to print layers",
+    "printLayersSameRun": "Option to print same run",
+    "printLayersMax": "Maximum layers",
+    "mediaLength": "Length",
+    "mediaWidth": "Width",
+    "cost": "Cost",
+    "coatingUnit": "Media coating unit",
+    "feederLength": "Feeder length",
+    "feederWidth": "Feeder width",
+    "stackerLength": "Stacker length",
+    "stackerWidth": "Stacker width"
   }
 }
