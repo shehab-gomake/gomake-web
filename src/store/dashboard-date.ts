@@ -1,6 +1,5 @@
-import {atom, selector} from "recoil";
+import {atom} from "recoil";
 import {IDateRange} from "@/shared";
-import {getApiRequest} from "@/services/api-request";
 import {TODAY_DATE_RANGE} from "@/shared/constant";
 
 const dashboardDateState = atom<IDateRange>({
@@ -8,14 +7,8 @@ const dashboardDateState = atom<IDateRange>({
     default: TODAY_DATE_RANGE, // default value (aka initial value)
 });
 
-const boardMissions = selector({
-    key: 'getBoardMissionsByDate',
-    get: async ({get}) => {
-        return  await getApiRequest('/boardMissions', get(dashboardDateState), true)
-    }
-});
 
 
 
 
-export {dashboardDateState, boardMissions}
+export {dashboardDateState}

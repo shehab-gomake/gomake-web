@@ -12,8 +12,6 @@ const useGomakeDateRange = () => {
     const  setDate = useSetRecoilState(dashboardDateState);
 
     const newDateSelected = useCallback((dateRange: IDateRange) => {
-        if (date === dateRange) return;
-
         setDate({...dateRange, endDate: endOfDay(dateRange.endDate)});
     }, []);
 
