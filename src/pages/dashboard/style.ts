@@ -1,7 +1,9 @@
 import {useMemo} from "react";
 import {FONT_FAMILY} from "@/utils/font-family";
+import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
+    const { primaryColor } = useGomakeTheme();
     const classes = useMemo(() => {
         return {
             container: {
@@ -12,7 +14,8 @@ const useStyle = () => {
             },
             header: {
                 textAlign: 'center' as 'center',
-                ...FONT_FAMILY.Lexend(400, 32)
+                ...FONT_FAMILY.Lexend(700, 32),
+                color: primaryColor(700)
             }
         };
     }, []);
