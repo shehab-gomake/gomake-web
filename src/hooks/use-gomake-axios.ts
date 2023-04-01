@@ -17,12 +17,13 @@ const useGomakeAxios = () => {
     method: string,
     url: string,
     data?: any,
-    lockScreen = true
+    lockScreen = true,
+    secondServer: boolean = false
   ) => {
     if (lockScreen) {
       setLoading(true);
     }
-    const result = await apiRequest(method, url, data);
+    const result = await apiRequest(method, url, data, secondServer);
     if (lockScreen) {
       setTimeout(() => {
         setLoading(false);
