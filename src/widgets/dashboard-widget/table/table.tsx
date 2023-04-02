@@ -6,17 +6,28 @@ import {IMachine} from "@/shared/interfaces";
 import {StatusView} from "@/components/status-view";
 import ElectricBoltSharpIcon from '@mui/icons-material/ElectricBoltSharp';
 import {TYPE_MISSION_NAME_KEY} from "@/shared/constant";
+import React, {UIEventHandler} from "react";
 
 const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
     const dir: 'ltr' | 'rtl' = t('direction');
+    const fixedTableId = 'fixedTable';
+    const scrollTableId = 'scrollTable';
+    const tableScrollHandler = (event: React.UIEvent<HTMLDivElement>) => {
+        const elID = event.currentTarget.id === fixedTableId ? scrollTableId : fixedTableId
+        const scrollTop = event?.currentTarget?.scrollTop;
+        const el = document.getElementById(elID);
+        if (el) {
+            el.scrollTop = scrollTop;
+        }
+    }
     return (
         boardsMissions?.length > 0 ? <div>
-            <div style={classes.tableContainer}>
-                <div style={classes[dir].fixedTableWrapper}>
-                    <table className={'table'} style={classes.table}>
-                        <thead>
+            <div id={'dashboard-table'} style={classes.tableContainer}>
+                <div id={fixedTableId} style={classes[dir].fixedTableWrapper} onScroll={tableScrollHandler}>
+                    <table  className={'table'} style={classes.table}>
+                        <thead >
                         <tr>
                             <th style={classes.tableHead}>#</th>
                             <th style={classes.tableHead}></th>
@@ -50,7 +61,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                         </tbody>
                     </table>
                 </div>
-                <div style={classes[dir].scrollTableWrapper}>
+                <div style={classes[dir].scrollTableWrapper} id={scrollTableId} onScroll={tableScrollHandler}>
                     <table style={classes.table}>
                         <thead>
                         <tr>

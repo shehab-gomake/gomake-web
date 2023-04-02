@@ -11,6 +11,7 @@ const useStyle = () => {
             tableContainer: {
                 display: 'flex',
                 margin: '0 21px 15px 32px',
+                maxHeight: 'calc(100vh - 540px)',
             },
             ltr: {
                 scrollTableWrapper: {
@@ -82,7 +83,6 @@ const useStyle = () => {
             table: {
                 width: '100%',
                 borderCollapse: 'collapse' as 'collapse',
-
             },
             tableHead: {
                 backgroundColor: primaryColor(500),
@@ -93,6 +93,10 @@ const useStyle = () => {
                 textAlign: 'center' as 'center',
                 ...FONT_FAMILY.Lexend(500, 16),
                 padding: '0 10px',
+                position: 'sticky' as 'sticky',
+                top: 0
+
+
             },
             tableRow: {
                 borderTop: BORDER,
