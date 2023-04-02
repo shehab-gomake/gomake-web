@@ -6,7 +6,8 @@ const useStyle = () => {
             container: {
                 display: 'flex',
                 flexDirection: 'column' as 'column',
-                gap: '30px'
+                gap: '30px',
+
             },
         };
     }, []);

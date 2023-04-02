@@ -21,6 +21,10 @@ const useStyle = () => {
             },
             machineName: {
                 ...FONT_FAMILY.Lexend(500, 12)
+            },
+            searchInput: {
+                maxWidth: '210px',
+                margin: '10px'
             }
 
         };

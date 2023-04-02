@@ -57,7 +57,7 @@ const MachineList = ({}: IMachineList) => {
                       'aria-labelledby': 'basic-button',
                   }}>
                 <FormGroup>
-                    <GomakeTextInput placeholder={'search machine'} value={filter} onChange={handleFilterChange}/>
+                    <div style={classes.searchInput}> <GomakeTextInput  placeholder={'search machine'} value={filter} onChange={handleFilterChange}/></div>
                     {
                         getMachines().map((machine: IMachine) => {
                             return <MenuItem style={classes.machineName} key={machine.id}>
@@ -92,7 +92,7 @@ const StyledMenu = styled((props: MenuProps) => (
 ))(() => ({
     '& .MuiPaper-root': {
         borderRadius: 6,
-        width: '190px',
+        width: '250px',
         height: 500,
         boxShadow:
             'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',

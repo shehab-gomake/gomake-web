@@ -15,7 +15,8 @@ const useStyle = () => {
             header: {
                 textAlign: 'center' as 'center',
                 ...FONT_FAMILY.Lexend(700, 32),
-                color: primaryColor(700)
+                color: primaryColor(700),
+                paddingTop: '48px'
             }
         };
     }, []);
