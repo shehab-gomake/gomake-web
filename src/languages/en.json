@@ -50,5 +50,10 @@
     "magnets": "Magnets",
     "packaging": "Packaging",
     "beat": "Beat"
+  },
+  "materials": {
+    "lamination":{
+      "title": "Lamination"
+    }
   }
 }

@@ -17,5 +17,10 @@
   "tabs": {
     "home": "Home",
     "productFloor": "Product Floor"
+  },
+  "materials": {
+    "lamination":{
+      "title": "Lamination"
+    }
   }
 }
