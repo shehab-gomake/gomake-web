@@ -1,8 +1,10 @@
 import { TabCloseIcon } from "@/icons";
 import { Collapse } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { useGomakeRouter } from "@/hooks";
+import { useRecoilState } from "recoil";
+import { selectedTabState } from "@/store";
 interface IProps {
   tab: {
     isLine?: boolean;
@@ -15,8 +17,10 @@ interface IProps {
   };
 }
 const Tab = ({ tab }: IProps) => {
+  const [selectedTabValue, setSelectedTabValue] =
+    useRecoilState(selectedTabState);
   const { navigate } = useGomakeRouter();
-  const [isListOpen, setIsListOpen] = useState(false);
+  const [isListOpen, setIsListOpen] = useState(tab?.key === selectedTabValue);
   const [isHover, setIsHover] = useState(false);
   const { clasess } = useStyle({ isHover });
   const handleMouseEnter = useCallback(() => {
@@ -31,10 +35,17 @@ const Tab = ({ tab }: IProps) => {
     if (tab.isList) {
       setIsListOpen(!isListOpen);
     }
+    setSelectedTabValue(tab.key || "");
   }, [tab, isListOpen, setIsListOpen]);
   const changeRoute = useCallback((route: string) => {
-    navigate(route)
-  }, [])
+    navigate(route);
+  }, []);
+
+  useEffect(() => {
+    if (tab.key === selectedTabValue) {
+      setIsListOpen(true);
+    }
+  }, [selectedTabValue]);
   return (
     <>
       <div
@@ -61,7 +72,12 @@ const Tab = ({ tab }: IProps) => {
         {tab.list?.map((list: any) => {
           return (
             <div style={clasess.tabList} key={list.key}>
-              <div onClick={() => changeRoute(list?.path)} style={clasess.tabTitle}>{list.title}</div>
+              <div
+                onClick={() => changeRoute(list?.path)}
+                style={clasess.tabTitle}
+              >
+                {list.title}
+              </div>
             </div>
           );
         })}

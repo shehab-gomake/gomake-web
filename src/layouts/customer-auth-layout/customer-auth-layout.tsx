@@ -1,4 +1,6 @@
+import { canAccessState } from "@/store/access";
 import { WaitingAuth } from "@/widgets";
+import { useRecoilState } from "recoil";
 import { IAuthLayout } from "./interfaces";
 import { LeftSideLayout } from "./left-side";
 import { useStyle } from "./style";
@@ -6,10 +8,11 @@ import { useAuthLayoutHook } from "./use-auth-layout-hook";
 
 const CustomerAuthLayout = ({ children }: IAuthLayout) => {
   const { canAccess, navigate } = useAuthLayoutHook();
+  const [canAccessvalue] = useRecoilState(canAccessState);
   const { clasess } = useStyle({});
 
-  if (typeof canAccess === "boolean") {
-    if (canAccess) {
+  if (canAccessvalue || typeof canAccess === "boolean") {
+    if (canAccessvalue || canAccess) {
       return (
         <div style={clasess.container}>
           <LeftSideLayout />
