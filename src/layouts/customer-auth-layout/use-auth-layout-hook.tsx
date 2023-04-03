@@ -45,6 +45,138 @@ const useAuthLayoutHook = () => {
       },
       {
         isLine: false,
+        key: "materials",
+        title: t("tabs.materials"),
+        path: "/product-floor",
+        isList: true,
+        list: [
+          {
+            key: "sheetPaper",
+            title: t("tabs.sheetPaper"),
+            path: "/materials/sheet-paper",
+          },
+          {
+            key: "lamination",
+            title: t("tabs.lamination"),
+            path: "/materials/lamination",
+          },
+          {
+            key: "braces",
+            title: t("tabs.braces"),
+            path: "/materials/braces",
+          },
+          {
+            key: "envelopes",
+            title: t("tabs.envelopes"),
+            path: "/materials/envelopes",
+          },
+          {
+            key: "kernels",
+            title: t("tabs.kernels"),
+            path: "/materials/kernels",
+          }, {
+            key: "printingMaterialsForRolls",
+            title: t("tabs.printingMaterialsForRolls"),
+            path: "/materials/printing-materials-for-rolls",
+          },
+          {
+            key: "hardboards",
+            title: t("tabs.hardboards"),
+            path: "/materials/hardboards",
+          },
+          {
+            key: "wideFormatPrintingMaterials",
+            title: t("tabs.wideFormatPrintingMaterials"),
+            path: "/materials/wide-format-printing-materials",
+          },
+          {
+            key: "profileFrames",
+            title: t("tabs.profileFrames"),
+            path: "/materials/profile-frames",
+          },
+          {
+            key: "applications",
+            title: t("tabs.applications"),
+            path: "/materials/applications",
+          }, {
+            key: "encapsulationRoll",
+            title: t("tabs.encapsulationRoll"),
+            path: "/materials/encapsulation-roll",
+          },
+          {
+            key: "extras",
+            title: t("tabs.extras"),
+            path: "/materials/extras",
+          },
+          {
+            key: "canvasFrames",
+            title: t("tabs.canvasFrames"),
+            path: "/materials/canvas-frames",
+          },
+          {
+            key: "frames",
+            title: t("tabs.frames"),
+            path: "/materials/frames",
+          },
+          {
+            key: "paperMoney",
+            title: t("tabs.paperMoney"),
+            path: "/materials/paperMoney",
+          },
+          {
+            key: "safarlaOnTheDrum",
+            title: t("tabs.safarlaOnTheDrum"),
+            path: "/materials/safarlaOnTheDrum",
+          },
+          {
+            key: "sprellaSingularity",
+            title: t("tabs.sprellaSingularity"),
+            path: "/materials/sprellaSingularity",
+          },
+          {
+            key: "encapsulationSheets",
+            title: t("tabs.encapsulationSheets"),
+            path: "/materials/encapsulationSheets",
+          },
+          {
+            key: "colors",
+            title: t("tabs.colors"),
+            path: "/materials/colors",
+          },
+          {
+            key: "rollOfDoubleSidedGlue",
+            title: t("tabs.rollOfDoubleSidedGlue"),
+            path: "/materials/rollOfDoubleSidedGlue",
+          },
+          {
+            key: "adhesives",
+            title: t("tabs.adhesives"),
+            path: "/materials/adhesives",
+          },
+          {
+            key: "magnets",
+            title: t("tabs.magnets"),
+            path: "/materials/magnets",
+          },
+          {
+            key: "packaging",
+            title: t("tabs.packaging"),
+            path: "/materials/packaging",
+          },
+          {
+            key: "beat",
+            title: t("tabs.beat"),
+            path: "/materials/beat",
+          },
+          
+
+        ],
+        icon: () => {
+          return <ProductsIcon />;
+        },
+      },
+      {
+        isLine: false,
         key: "products",
         title: t("tabs.products"),
         path: "/product-floor",

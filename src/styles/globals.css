@@ -28,3 +28,6 @@ body {
       transform:rotate(90deg); 
   } 
 }
+::-webkit-scrollbar {
+  display: none;
+}
