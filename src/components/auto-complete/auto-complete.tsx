@@ -2,6 +2,7 @@ import * as React from "react";
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import Autocomplete from "@mui/material/Autocomplete";
+import { ArrowDownIcon } from "@/icons/arrow-down";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
   backgroundColor: "var(--light)",
@@ -18,11 +19,9 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
   color: props?.error ? "red" : "#B9B9D9",
   border: props?.error ? "1px solid red" : "1px solid #9E9E9E",
   ">div>div>input": {
-    marginTop: props?.style?.height ? -10 : 0,
+    // marginTop: props?.style?.height ? -10 : 0,
   },
-  icon: {
-    fill: "red",
-},
+ 
   "& .MuiOutlinedInput-root": {
     color: props?.error ? "red" : "",
     height: props?.style?.height || 40,
@@ -33,6 +32,9 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
       border: "transparent",
       boxSizing: "border-box",
       borderRadius: "4px",
+    },
+    "& .MuiAutocomplete-input":{
+      padding:0
     },
   },
 }));
@@ -64,30 +66,18 @@ const GoMakeAutoComplate = ({
   defaultValue?: any;
   multiple?: any
 }) => {
-  const _renderOption = React.useCallback((op: string) => {
-    switch (op) {
-      case "admin":
-        return "مشاهدة اضافة تعديل وحذف";
-      case "write":
-        return "مشاهدة اضافة";
-      case "read":
-        return "مشاهدة";
-
-      default:
-        return op;
-    }
-  }, []);
   return (
     <StyledAutocomplete
       value={value}
       onChange={onChange}
       style={style}
       options={options}
+      popupIcon={<ArrowDownIcon />}
       renderInput={(params: any) => (
         <TextField
           {...params}
           placeholder={
-            !multiple && (defaultValue?.name || _renderOption(defaultValue) || placeholder)
+            !multiple && (defaultValue?.name || placeholder)
           }
         />
       )}
