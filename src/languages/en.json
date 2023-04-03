@@ -51,6 +51,9 @@
     "packaging": "Packaging",
     "beat": "Beat"
   },
+  "modal":{
+    "close":"Close"
+  },
   "materials": {
     "sheetPaper":{
       "title": "Sheet Paper",

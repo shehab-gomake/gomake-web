@@ -7,32 +7,30 @@ import { useStyle } from "./style";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
-  const { clasess } = useStyle()
-
+  const { clasess } = useStyle();
   return (
     <CustomerAuthLayout>
       <HeaderTitle title={t("materials.sheetPaper.title")} />
       <div style={clasess.filterContainer}>
-      <GoMakeAutoComplate
-        options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-         style={clasess.autoComplateStyle}
-        // onChange={(event: any, item: any) => onChange(item?.value)}
-        placeholder={t("materials.sheetPaper.category")} 
+        <GoMakeAutoComplate
+          options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+          style={clasess.autoComplateStyle}
+          // onChange={(event: any, item: any) => onChange(item?.value)}
+          placeholder={t("materials.sheetPaper.category")}
         />
-         <GoMakeAutoComplate
-        options={[]}
-        style={clasess.autoComplateStyle}
-        // onChange={(event: any, item: any) => onChange(item?.value)}
-        placeholder={t("materials.sheetPaper.supplier")} 
+        <GoMakeAutoComplate
+          options={[]}
+          style={clasess.autoComplateStyle}
+          // onChange={(event: any, item: any) => onChange(item?.value)}
+          placeholder={t("materials.sheetPaper.supplier")}
         />
-         <GoMakeAutoComplate
-        options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-         style={clasess.autoComplateStyle}
-        // onChange={(event: any, item: any) => onChange(item?.value)}
-        placeholder={t("materials.sheetPaper.search")}  
+        <GoMakeAutoComplate
+          options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+          style={clasess.autoComplateStyle}
+          // onChange={(event: any, item: any) => onChange(item?.value)}
+          placeholder={t("materials.sheetPaper.search")}
         />
       </div>
-      
     </CustomerAuthLayout>
   );
 }
