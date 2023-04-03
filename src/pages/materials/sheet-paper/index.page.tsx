@@ -1,21 +1,38 @@
+import { useTranslation } from "react-i18next";
+
 import { GoMakeAutoComplate } from "@/components";
 import { CustomerAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
-import { useTranslation } from "react-i18next";
+import { useStyle } from "./style";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
+  const { clasess } = useStyle()
 
   return (
     <CustomerAuthLayout>
-      <HeaderTitle title="sheet Paper" />
+      <HeaderTitle title={t("materials.sheetPaper.title")} />
+      <div style={clasess.filterContainer}>
       <GoMakeAutoComplate
-        // defaultValue={value}
-        // error={error}
         options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        // style={{ ...props.style }}
+         style={clasess.autoComplateStyle}
         // onChange={(event: any, item: any) => onChange(item?.value)}
-        placeholder="" />
+        placeholder={t("materials.sheetPaper.category")} 
+        />
+         <GoMakeAutoComplate
+        options={[]}
+        style={clasess.autoComplateStyle}
+        // onChange={(event: any, item: any) => onChange(item?.value)}
+        placeholder={t("materials.sheetPaper.supplier")} 
+        />
+         <GoMakeAutoComplate
+        options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+         style={clasess.autoComplateStyle}
+        // onChange={(event: any, item: any) => onChange(item?.value)}
+        placeholder={t("materials.sheetPaper.search")}  
+        />
+      </div>
+      
     </CustomerAuthLayout>
   );
 }

@@ -5,7 +5,6 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { ArrowDownIcon } from "@/icons/arrow-down";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
-  backgroundColor: "var(--light)",
   boxSizing: "border-box",
   borderRadius: "4px",
   height: props?.style?.height || 40,
@@ -18,10 +17,6 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
   alignItems: "center",
   color: props?.error ? "red" : "#B9B9D9",
   border: props?.error ? "1px solid red" : "1px solid #9E9E9E",
-  ">div>div>input": {
-    // marginTop: props?.style?.height ? -10 : 0,
-  },
- 
   "& .MuiOutlinedInput-root": {
     color: props?.error ? "red" : "",
     height: props?.style?.height || 40,
@@ -62,7 +57,7 @@ const GoMakeAutoComplate = ({
   getOptionLabel?: any;
   renderOption?: any;
   disableClearable?: any;
-  placeholder?: string;
+  placeholder?: any;
   defaultValue?: any;
   multiple?: any
 }) => {

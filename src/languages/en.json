@@ -52,6 +52,12 @@
     "beat": "Beat"
   },
   "materials": {
+    "sheetPaper":{
+      "title": "Sheet Paper",
+      "category":"Category",
+      "supplier":"Supplier",
+      "search":"Search"
+    },
     "lamination":{
       "title": "Lamination"
     }

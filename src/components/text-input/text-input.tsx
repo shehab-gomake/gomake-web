@@ -15,7 +15,7 @@ const StyledTextField = styled(TextField, {
     boxSizing: "border-box",
     borderRadius: props?.style?.borderRadius || 4,
     height: 56,
-    fontFamily: "Jost",
+    fontFamily: "Lexend",
     fontStyle: "normal",
     fontWeight: 300,
     fontSize: 14,
