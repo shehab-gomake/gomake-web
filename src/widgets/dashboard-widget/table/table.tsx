@@ -6,7 +6,8 @@ import {IMachine} from "@/shared/interfaces";
 import {StatusView} from "@/components/status-view";
 import ElectricBoltSharpIcon from '@mui/icons-material/ElectricBoltSharp';
 import {TYPE_MISSION_NAME_KEY} from "@/shared/constant";
-import React, {UIEventHandler} from "react";
+import React from "react";
+import {Link} from "@mui/material";
 
 const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable) => {
     const {classes} = useStyle();
@@ -14,6 +15,11 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
     const dir: 'ltr' | 'rtl' = t('direction');
     const fixedTableId = 'fixedTable';
     const scrollTableId = 'scrollTable';
+    const boardLink = (boardMissions: IBoardMissions): string => {
+        const hostName = window.location.hostname;
+        const testHostName = 'https://tests.gomake.co.il';
+        return `${hostName}/Kanban/Board/${boardMissions.boardId}?missionId=${boardMissions.id}`;
+    }
     const tableScrollHandler = (event: React.UIEvent<HTMLDivElement>) => {
         const elID = event.currentTarget.id === fixedTableId ? scrollTableId : fixedTableId
         const scrollTop = event?.currentTarget?.scrollTop;
@@ -45,7 +51,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                             <ElectricBoltSharpIcon color={"error"}/> : ''}</td>
                                         <td style={classes.fixedTableCell}>
                                             <div style={classes.tdRows}>
-                                                <div>{board.code}</div>
+                                                <div><Link href={boardLink(board)} target="_blank" rel="noopener">{board.code}</Link></div>
                                                 { board.missionType !== null && <div>{TYPE_MISSION_NAME_KEY[board.missionType]}</div>}
                                             </div>
                                         </td>

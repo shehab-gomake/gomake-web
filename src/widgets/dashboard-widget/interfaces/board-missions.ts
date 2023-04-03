@@ -9,6 +9,7 @@ export interface IBoardMissions {
     machinesStatuses: Record<string, number>;
     missionType: EMissionType;
     currentStation: IBoardMissionsCurrentStation;
+    boardId: string;
 }
 
 
