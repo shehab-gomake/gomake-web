@@ -32,9 +32,6 @@ const useGomakeAdminLogin = () => {
       navigate("/admin");
     }
   }, [state]);
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
   const inputs = useMemo(() => {
     return [
       {

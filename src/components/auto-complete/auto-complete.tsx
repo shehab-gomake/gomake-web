@@ -64,7 +64,6 @@ const GoMakeAutoComplate = ({
   defaultValue?: any;
   multiple?: any
 }) => {
-  console.log(defaultValue);
   const _renderOption = React.useCallback((op: string) => {
     switch (op) {
       case "admin":

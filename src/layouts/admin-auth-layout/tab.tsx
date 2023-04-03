@@ -59,7 +59,6 @@ const Tab = ({ tab }: IProps) => {
       </div>
       <Collapse in={isListOpen}>
         {tab.list?.map((list: any) => {
-          console.log({ list });
           return (
             <div style={clasess.tabList} key={list.key}>
               <div style={clasess.tabTitle}>{list.title}</div>

@@ -27,14 +27,10 @@ const useGomakeLogin = () => {
       userPrincipalName: state.username,
       password: state.password,
     });
-    console.log("result", result);
     if (result?.data?.data?.customer?.token) {
       updateTokenStorage(result?.data?.data?.customer?.token);
       navigate("/");
     }
-  }, [state]);
-  useEffect(() => {
-    console.log(state);
   }, [state]);
   const inputs = useMemo(() => {
     return [

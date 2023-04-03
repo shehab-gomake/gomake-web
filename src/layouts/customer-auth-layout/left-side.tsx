@@ -20,7 +20,6 @@ const LeftSideLayout = () => {
       </div>
       <div style={clasess.tabsContainer}>
         {tabs.map((tab) => {
-          console.log("tab",tab)
           if (tab.isLine) {
             return <div key={tab.key} style={clasess.line} />;
           } else {
