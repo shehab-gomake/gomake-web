@@ -4,3 +4,4 @@ export * from "./use-gomake-admin-auth";
 export * from "./use-gomake-router";
 export * from "./use-customer";
 export * from "./use-admin";
+export * from "./use-supplier";

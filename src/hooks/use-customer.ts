@@ -22,6 +22,7 @@ const useCustomer = () => {
     const validate: any = await callApi("GET", "/v1/auth/validate");
     if (validate?.success) {
       setUser(validate?.data?.data?.customer);
+
       //   setPermissions(validate?.data?.data?.permissions); will  be implemented later
       return true;
     }
