@@ -12,9 +12,6 @@ const WidgetName = () => {
         <div onClick={() => changeLanguage("en")}>English</div>
         <div onClick={() => changeLanguage("he")}>Hebrow</div>
       </div>
-      <ComponentName text="Hey mohanad" />
-      <ComponentName text="Hey faraj" />
-      <ComponentName text="Hey faraj" />
     </div>
   );
 };

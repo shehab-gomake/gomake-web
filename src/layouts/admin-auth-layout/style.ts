@@ -43,6 +43,9 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         height: convertHeightToVH(101),
         display: "flex",
         flexDirection: "column" as "column",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
       },
       bodyContainer: {
         height: convertHeightToVH(1024 - 101),

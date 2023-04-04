@@ -5,7 +5,6 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { ArrowDownIcon } from "@/icons/arrow-down";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
-  backgroundColor: "var(--light)",
   boxSizing: "border-box",
   borderRadius: "4px",
   height: props?.style?.height || 40,
@@ -18,10 +17,6 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
   alignItems: "center",
   color: props?.error ? "red" : "#B9B9D9",
   border: props?.error ? "1px solid red" : "1px solid #9E9E9E",
-  ">div>div>input": {
-    // marginTop: props?.style?.height ? -10 : 0,
-  },
- 
   "& .MuiOutlinedInput-root": {
     color: props?.error ? "red" : "",
     height: props?.style?.height || 40,
@@ -33,9 +28,12 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
       boxSizing: "border-box",
       borderRadius: "4px",
     },
-    "& .MuiAutocomplete-input":{
-      padding:0
+    "& .MuiAutocomplete-input": {
+      padding: 0,
     },
+  },
+  "& .MuiAutocomplete-endAdornment": {
+    top: "calc(50% - 12px)",
   },
 }));
 
@@ -51,7 +49,7 @@ const GoMakeAutoComplate = ({
   disableClearable,
   placeholder,
   defaultValue,
-  multiple = false
+  multiple = false,
 }: {
   value?: string;
   onChange?: any;
@@ -62,9 +60,9 @@ const GoMakeAutoComplate = ({
   getOptionLabel?: any;
   renderOption?: any;
   disableClearable?: any;
-  placeholder?: string;
+  placeholder?: any;
   defaultValue?: any;
-  multiple?: any
+  multiple?: any;
 }) => {
   return (
     <StyledAutocomplete
@@ -76,9 +74,7 @@ const GoMakeAutoComplate = ({
       renderInput={(params: any) => (
         <TextField
           {...params}
-          placeholder={
-            !multiple && (defaultValue?.name || placeholder)
-          }
+          placeholder={!multiple && (defaultValue?.name || placeholder)}
         />
       )}
       autoHighlight={autoHighlight}
@@ -89,7 +85,7 @@ const GoMakeAutoComplate = ({
       placeholder="Enter"
       multiple={multiple}
       getOptionSelected={(option: any, value: any) => {
-        return option.value === value.value
+        return option.value === value.value;
       }}
     />
   );

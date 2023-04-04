@@ -36,12 +36,15 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         display: "flex",
         flexDirection: "column" as "column",
         padding: convertWidthToVW(20),
-        overflowY: "scroll" as "scroll"
+        overflowY: "scroll" as "scroll",
       },
       headerContainer: {
         height: convertHeightToVH(101),
         display: "flex",
         flexDirection: "column" as "column",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
       },
       bodyContainer: {
         height: convertHeightToVH(1024 - 101),
@@ -96,7 +99,6 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         paddingTop: convertWidthToVW(15),
         paddingLeft: convertWidthToVW(40),
         paddingRight: convertWidthToVW(40),
-
       },
       rotate90: {
         "-webkit-animation": "rotate90 0.5s forwards ",

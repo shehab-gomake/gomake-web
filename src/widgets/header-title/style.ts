@@ -1,17 +1,20 @@
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
+  const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       container: {
+        marginTop: convertWidthToVW(40),
       },
       titleStyle: {
         display: "flex",
-        ...FONT_FAMILY.Lexend(700, 18),
-        paddingBottom: 15,
-        borderBottom:"1px solid #dc348b"
-      }
+        ...FONT_FAMILY.Lexend(600, 20),
+        color: primaryColor(500),
+      },
     };
   }, []);
   return {
