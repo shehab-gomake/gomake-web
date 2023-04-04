@@ -1,5 +1,5 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { convertHeightToVH } from "@/utils/adapter";
+import { convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
@@ -8,12 +8,13 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
       container: {
+        marginTop: convertWidthToVW(40),
       },
       titleStyle: {
         display: "flex",
         ...FONT_FAMILY.Lexend(600, 20),
-        color:primaryColor(500),
-      }
+        color: primaryColor(500),
+      },
     };
   }, []);
   return {

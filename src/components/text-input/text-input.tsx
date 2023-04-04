@@ -52,7 +52,6 @@ const StyledTextField = styled(TextField, {
 }));
 
 const GomakeTextInput = ({
-  labelText,
   value,
   onChange,
   style,

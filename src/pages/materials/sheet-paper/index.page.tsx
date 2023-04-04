@@ -15,22 +15,20 @@ export default function SheetPaper() {
         <GoMakeAutoComplate
           options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
           style={clasess.autoComplateStyle}
-          // onChange={(event: any, item: any) => onChange(item?.value)}
           placeholder={t("materials.sheetPaper.category")}
         />
         <GoMakeAutoComplate
           options={[]}
           style={clasess.autoComplateStyle}
-          // onChange={(event: any, item: any) => onChange(item?.value)}
           placeholder={t("materials.sheetPaper.supplier")}
         />
         <GoMakeAutoComplate
           options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
           style={clasess.autoComplateStyle}
-          // onChange={(event: any, item: any) => onChange(item?.value)}
           placeholder={t("materials.sheetPaper.search")}
         />
       </div>
+      <div style={{ marginTop: 20 }}></div>
     </CustomerAuthLayout>
   );
 }

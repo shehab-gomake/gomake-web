@@ -28,9 +28,12 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
       boxSizing: "border-box",
       borderRadius: "4px",
     },
-    "& .MuiAutocomplete-input":{
-      padding:0
+    "& .MuiAutocomplete-input": {
+      padding: 0,
     },
+  },
+  "& .MuiAutocomplete-endAdornment": {
+    top: "calc(50% - 12px)",
   },
 }));
 
@@ -46,7 +49,7 @@ const GoMakeAutoComplate = ({
   disableClearable,
   placeholder,
   defaultValue,
-  multiple = false
+  multiple = false,
 }: {
   value?: string;
   onChange?: any;
@@ -59,7 +62,7 @@ const GoMakeAutoComplate = ({
   disableClearable?: any;
   placeholder?: any;
   defaultValue?: any;
-  multiple?: any
+  multiple?: any;
 }) => {
   return (
     <StyledAutocomplete
@@ -71,9 +74,7 @@ const GoMakeAutoComplate = ({
       renderInput={(params: any) => (
         <TextField
           {...params}
-          placeholder={
-            !multiple && (defaultValue?.name || placeholder)
-          }
+          placeholder={!multiple && (defaultValue?.name || placeholder)}
         />
       )}
       autoHighlight={autoHighlight}
@@ -84,7 +85,7 @@ const GoMakeAutoComplate = ({
       placeholder="Enter"
       multiple={multiple}
       getOptionSelected={(option: any, value: any) => {
-        return option.value === value.value
+        return option.value === value.value;
       }}
     />
   );
