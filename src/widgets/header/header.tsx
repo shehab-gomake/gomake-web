@@ -11,10 +11,12 @@ import {
 } from "@/icons";
 
 import { useStyle } from "./style";
+import { useHeader } from "./use-header";
 
 const HeaderWidget = () => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
+  const { user } = useHeader();
 
   return (
     <div style={clasess.container}>
@@ -43,7 +45,7 @@ const HeaderWidget = () => {
           <IconButton>
             <ProfileImg />
           </IconButton>
-          <div style={clasess.userNameStyle}>Ahmed Ali</div>
+          <div style={clasess.userNameStyle}>{user?.displayName}</div>
         </div>
       </div>
     </div>

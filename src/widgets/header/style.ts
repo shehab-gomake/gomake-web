@@ -1,12 +1,11 @@
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { convertWidthToVW, leftRightAdapter } from "@/utils/adapter";
-import { FONT_FAMILY } from "@/utils/font-family";
-import i18next from "i18next";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import i18next from "i18next";
+
+import { convertWidthToVW, leftRightAdapter } from "@/utils/adapter";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-  const { primaryColor } = useGomakeTheme();
   const { t } = useTranslation();
   const clasess = useMemo(() => {
     return {
