@@ -7,3 +7,4 @@ export * from "./reports";
 export * from "./products";
 export * from "./tab-close";
 export * from "./product-floor";
+export * from "./more-circle";

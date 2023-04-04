@@ -9,6 +9,7 @@ export const defaultTheme: ITheme = {
       300: "#8283BE",
       200: "#ABACD3",
       100: "#D5D6E9",
+      50: "#EBECFF",
     },
     dark: {
       500: "#2E3092",

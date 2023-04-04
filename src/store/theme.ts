@@ -15,6 +15,7 @@ export interface ITheme {
       300: string;
       200: string;
       100: string;
+      50: string;
     };
     dark: {
       500: string;
