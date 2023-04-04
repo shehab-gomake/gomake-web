@@ -1,6 +1,6 @@
 import { useStyle } from "./style";
 
-const Row = ({ index, row, width }: any) => {
+const Row = ({ index, row, width, settings }: any) => {
   const { clasess } = useStyle({ width });
   return (
     <div style={index % 2 == 0 ? clasess.bodyRow : clasess.secondRow}>

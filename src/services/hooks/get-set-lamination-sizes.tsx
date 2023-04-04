@@ -1,6 +1,5 @@
-import Image from "next/image";
-import moreCircle from "@/icons/more-circle.png";
 import { returnResult } from "@/utils/helpers";
+import { MoreCircle } from "@/pages/materials/lamination/moreCircle";
 import { ICallApi, ISetState } from "./call-api.interface";
 
 const getAndSetLaminationSize = async (
@@ -15,7 +14,7 @@ const getAndSetLaminationSize = async (
       category: size.categoryName,
       height: size.height,
       width: size.width,
-      settings: <Image src={moreCircle} width={24} height={24} alt="More" />,
+      settings: <MoreCircle item={size} />,
     };
   });
   if (setState) {
