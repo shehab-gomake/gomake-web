@@ -65,7 +65,11 @@
       "search": "Search"
     },
     "lamination": {
-      "title": "Lamination"
+      "title": "Lamination",
+      "category": "category",
+      "height":"height",
+      "width":"width",
+      "settings":"settings"
     }
   }
 }
