@@ -8,7 +8,7 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
       container: {
-        marginTop: convertHeightToVH(10),
+        marginTop: convertHeightToVH(50),
       },
       header: {
         display: "flex",

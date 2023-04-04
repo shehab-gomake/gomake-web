@@ -12,7 +12,6 @@ const GoMakeModal = ({
   withClose = true,
   insideStyle,
   modalTitle,
-  keepMounted,
   ...props
 }: any) => {
   const { children }: any = props;
