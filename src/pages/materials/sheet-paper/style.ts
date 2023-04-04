@@ -1,4 +1,4 @@
-import { convertWidthToVW } from "@/utils/adapter";
+import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import i18next from "i18next";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -17,6 +17,9 @@ const useStyle = () => {
       },
       autoComplateStyle: {
         width: convertWidthToVW(200),
+      },
+      tableContainer: {
+        width: "85%",
       },
     };
   }, [i18next.language, t]);
