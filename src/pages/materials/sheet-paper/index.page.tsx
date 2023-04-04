@@ -5,17 +5,19 @@ import { CustomerAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 import { useStyle } from "./style";
 import { useSupplier } from "@/hooks";
+import { useSheetPaper } from "./use-sheet-paper";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const { suppliers } = useSupplier();
+  const { category } = useSheetPaper();
   return (
     <CustomerAuthLayout>
       <HeaderTitle title={t("materials.sheetPaper.title")} />
       <div style={clasess.filterContainer}>
         <GoMakeAutoComplate
-          options={[]}
+          options={category}
           style={clasess.autoComplateStyle}
           placeholder={t("materials.sheetPaper.category")}
         />

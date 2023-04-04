@@ -1,0 +1,13 @@
+import { returnResult } from "@/utils/helpers";
+import { ICallApi, ISetState } from "./call-api.interface";
+
+const getAndSetSheetCategory = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi("GET", "/v1/sheets/get-categories", data);
+  return returnResult(result, setState);
+};
+
+export { getAndSetSheetCategory };
