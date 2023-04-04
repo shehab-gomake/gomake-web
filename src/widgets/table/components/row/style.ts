@@ -2,7 +2,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const useStyle = () => {
+const useStyle = ({ width }: any) => {
   const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
@@ -33,7 +33,7 @@ const useStyle = () => {
         paddingBottom: 14,
         paddingLeft: 22,
         paddingRight: 22,
-        width: "20%",
+        width: `${width}`,
       },
     };
   }, []);

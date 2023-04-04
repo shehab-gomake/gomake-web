@@ -1,46 +1,38 @@
 import { GoMakeAutoComplate } from "@/components";
-import { MoreCircleIcon } from "@/icons";
 import { CustomerAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 
 import { useTranslation } from "react-i18next";
-import moreCircle from "@/icons/more-circle.png";
-import Image from "next/image";
 import { Table } from "@/widgets/table/table";
+import { useStyle } from "./style";
+import { useLamination } from "./use-lamination";
 export default function SheetPaper() {
   const { t } = useTranslation();
-
+  const { clasess } = useStyle();
+  const {
+    laminationSizes,
+    laminationCategores,
+    categoryName,
+    onChangeCategory,
+  } = useLamination();
   return (
     <CustomerAuthLayout>
       <HeaderTitle title={t("materials.lamination.title")} />
+
+      {laminationCategores?.length > 0 && (
+        <div style={clasess.filterContainer}>
+          <GoMakeAutoComplate
+            options={laminationCategores}
+            style={clasess.autoComplateStyle}
+            placeholder={t("materials.sheetPaper.category")}
+            onChange={onChangeCategory}
+            value={categoryName}
+          />
+        </div>
+      )}
       <Table
-        tableHeaders={["category", "street", "length", "definitions"]}
-        tableRows={[
-          {
-            category: "brilliant",
-            street: 10,
-            lLength: 10,
-            definitions: (
-              <Image src={moreCircle} width={24} height={24} alt="More" />
-            ),
-          },
-          {
-            category: "brilliant",
-            street: 10,
-            length: 10,
-            definitions: (
-              <Image src={moreCircle} width={24} height={24} alt="More" />
-            ),
-          },
-          {
-            category: "brilliant",
-            street: 10,
-            length: 10,
-            definitions: (
-              <Image src={moreCircle} width={24} height={24} alt="More" />
-            ),
-          },
-        ]}
+        tableHeaders={["category", "height", "width", "settings"]}
+        tableRows={laminationSizes}
       />
     </CustomerAuthLayout>
   );

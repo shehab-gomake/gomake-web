@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const useStyle = () => {
+const useStyle = ({ width }: any) => {
   const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
@@ -10,7 +10,7 @@ const useStyle = () => {
         justifyContent: "center",
         alignItems: "center",
         color: primaryColor(700),
-        width: "20%",
+        width: `${width}`,
         textalign: "center",
         paddingTop: 14,
         paddingBottom: 14,

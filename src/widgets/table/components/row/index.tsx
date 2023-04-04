@@ -1,7 +1,7 @@
 import { useStyle } from "./style";
 
-const Row = ({ index, row }: any) => {
-  const { clasess } = useStyle();
+const Row = ({ index, row, width }: any) => {
+  const { clasess } = useStyle({ width });
   return (
     <div style={index % 2 == 0 ? clasess.bodyRow : clasess.secondRow}>
       {Object.entries(row).map((entry: [string, any], index: number) => {
