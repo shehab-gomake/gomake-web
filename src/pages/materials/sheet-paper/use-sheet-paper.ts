@@ -1,17 +1,28 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+
 import {
   getAndSetSheetCategory,
   getAndSetSheetWeights,
 } from "@/services/hooks";
-import { useGomakeAxios, useSupplier } from "@/hooks";
+import { useGomakeAxios } from "@/hooks";
 
 const useSheetPaper = () => {
   const { callApi } = useGomakeAxios();
-  // const { suppliers } = useSupplier();
+  const { t } = useTranslation();
   const [sheetCategories, setSheetCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
   const [supplierId, setSupplierId] = useState(undefined);
   const [allWeights, setAllWeights] = useState([]);
+  const headerTable = useMemo(
+    () => [
+      t("materials.sheetPaper.weight"),
+      t("materials.sheetPaper.thickness"),
+      t("materials.sheetPaper.pricePerTon"),
+      t("materials.sheetPaper.settings"),
+    ],
+    []
+  );
 
   const getSheetWeights = useCallback(async () => {
     await getAndSetSheetWeights(callApi, setAllWeights, {
@@ -45,6 +56,7 @@ const useSheetPaper = () => {
     sheetCategories,
     allWeights,
     categoryName,
+    headerTable,
   };
 };
 
