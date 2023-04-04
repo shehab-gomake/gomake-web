@@ -1,5 +1,5 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { convertWidthToVW } from "@/utils/adapter";
+import { convertHeightToVH } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
@@ -8,7 +8,8 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
       container: {
-        marginTop: convertWidthToVW(40),
+        marginTop: convertHeightToVH(40),
+        marginBottom: convertHeightToVH(50),
       },
       titleStyle: {
         display: "flex",
