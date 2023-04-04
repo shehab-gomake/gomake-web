@@ -13,3 +13,4 @@ export * from "./statistics";
 export * from "./messages";
 export * from "./profile";
 export * from "./notifications";
+export * from "./more-circle";

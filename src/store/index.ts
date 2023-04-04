@@ -3,3 +3,4 @@ export * from "./theme";
 export * from "./user";
 export * from "./admin";
 export * from "./permissions";
+export * from "./selected-tab";

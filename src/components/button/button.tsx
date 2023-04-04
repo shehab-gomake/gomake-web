@@ -13,7 +13,7 @@ const StyledButton = styled(Button, {
   boxShadow: "none",
   textTransform: "none",
   padding: "14px",
-  lineHeight: 1.5,
+  lineHeight: "1.5px",
   backgroundColor: props.primaryColor(500),
   borderColor: "#FFFFFF",
   height: 56,

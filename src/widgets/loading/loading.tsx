@@ -7,7 +7,7 @@ import { loadgingState } from "@/store/loading";
 
 const GomakeLoading = () => {
   const loading = useRecoilValue(loadgingState);
-  
+
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -17,17 +17,18 @@ const GomakeLoading = () => {
     },
   };
   return (
-    <Backdrop open={loading}>
-      <div
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-        }}
-      >
-          {/*<Lottie options={options} height={100} width={100} />*/}
-      </div>
-    </Backdrop>
+    <></>
+    // <Backdrop open={loading}>
+    //   <div
+    //     style={{
+    //       position: "absolute",
+    //       bottom: 0,
+    //       left: 0,
+    //     }}
+    //   >
+    //     {/* <Lottie options={defaultOptions} height={100} width={100} /> */}
+    //   </div>
+    // </Backdrop>
   );
 };
 
