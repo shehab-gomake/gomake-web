@@ -1,14 +1,17 @@
 import { GoMakeModal } from "@/components";
 
-const SheetPageMoreModal = ({ openModal, setOpenModal }: any) => {
+import { useStyle } from "./style";
+
+const SheetPageMoreModal = ({ openModal, setOpenModal, data }: any) => {
+  const { clasess } = useStyle();
   return (
     <GoMakeModal
       openModal={openModal}
       modalTitle="Test"
       onClose={() => setOpenModal(false)}
-      insideStyle={{ width: "100%" }}
+      insideStyle={clasess.insideStyle}
     >
-      <div>"ggggg</div>
+      <div>{data?.weightId}</div>
     </GoMakeModal>
   );
 };

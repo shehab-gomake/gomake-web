@@ -1,7 +1,9 @@
-import { convertWidthToVW } from "@/utils/adapter";
-import i18next from "i18next";
 import { useMemo } from "react";
+import i18next from "i18next";
+
 import { useTranslation } from "react-i18next";
+
+import { convertWidthToVW } from "@/utils/adapter";
 
 const useStyle = () => {
   const { t } = useTranslation();

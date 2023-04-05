@@ -5,8 +5,8 @@ import { Table } from "@/widgets/table/table";
 import { HeaderTitle } from "@/widgets";
 
 import { useSheetPaper } from "./use-sheet-paper";
-import { useStyle } from "./style";
 import { HeaderFilter } from "./header-filter";
+import { useStyle } from "./style";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
