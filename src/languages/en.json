@@ -62,7 +62,11 @@
       "title": "Sheet Paper",
       "category": "Category",
       "supplier": "Supplier",
-      "search": "Search"
+      "search": "Search",
+      "weight": "Weight",
+      "thickness": "Thickness",
+      "pricePerTon": "Price Per Ton",
+      "settings": "Settings"
     },
     "lamination": {
       "title": "Lamination",

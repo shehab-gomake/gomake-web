@@ -11,9 +11,9 @@ const MoreCircleIcon = (props: any) => {
         d="M22.6111 12C22.6111 6.5 18.0236 2 12.4166 2C6.80967 2 2.22217 6.5 2.22217 12C2.22217 17.5 6.80967 22 12.4166 22C18.0236 22 22.6111 17.5 22.6111 12Z"
         fill="white"
         stroke="#5859A8"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         fill-rule="evenodd"
@@ -24,9 +24,9 @@ const MoreCircleIcon = (props: any) => {
       <path
         d="M12.4167 8.00354V7.99456"
         stroke="#5859A8"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         fill-rule="evenodd"
@@ -37,9 +37,9 @@ const MoreCircleIcon = (props: any) => {
       <path
         d="M12.4167 12.0045V11.9955"
         stroke="#5859A8"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         fill-rule="evenodd"
@@ -50,9 +50,9 @@ const MoreCircleIcon = (props: any) => {
       <path
         d="M12.4167 16.0055V15.9965"
         stroke="#5859A8"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

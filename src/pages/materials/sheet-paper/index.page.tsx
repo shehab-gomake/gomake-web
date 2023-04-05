@@ -1,36 +1,23 @@
 import { useTranslation } from "react-i18next";
 
-import { GoMakeAutoComplate } from "@/components";
 import { CustomerAuthLayout } from "@/layouts";
+import { Table } from "@/widgets/table/table";
 import { HeaderTitle } from "@/widgets";
-import { useStyle } from "./style";
-import { useSupplier } from "@/hooks";
+
 import { useSheetPaper } from "./use-sheet-paper";
+import { HeaderFilter } from "./header-filter";
+import { useStyle } from "./style";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const { suppliers } = useSupplier();
-  const { category } = useSheetPaper();
+  const { allWeights, headerTable } = useSheetPaper();
   return (
     <CustomerAuthLayout>
       <HeaderTitle title={t("materials.sheetPaper.title")} />
-      <div style={clasess.filterContainer}>
-        <GoMakeAutoComplate
-          options={category}
-          style={clasess.autoComplateStyle}
-          placeholder={t("materials.sheetPaper.category")}
-        />
-        <GoMakeAutoComplate
-          options={suppliers}
-          style={clasess.autoComplateStyle}
-          placeholder={t("materials.sheetPaper.supplier")}
-        />
-        {/* <GoMakeAutoComplate
-          options={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-          style={clasess.autoComplateStyle}
-          placeholder={t("materials.sheetPaper.search")}
-        /> */}
+      <HeaderFilter />
+      <div style={clasess.tableContainer}>
+        <Table tableHeaders={headerTable} tableRows={allWeights} />
       </div>
     </CustomerAuthLayout>
   );

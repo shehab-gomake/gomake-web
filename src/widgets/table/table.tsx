@@ -20,7 +20,7 @@ const Table = ({ tableHeaders, tableRows }: IProps) => {
         })}
       </div>
       <div style={clasess.tableBody}>
-        {tableRows.map((row: any, index: number) => {
+        {tableRows?.map((row: any, index: number) => {
           return (
             <Row
               key={`body_row${index}`}
