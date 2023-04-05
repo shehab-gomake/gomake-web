@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="563b2355-7e4d-460f-89bc-962e225666cb" name="Changes" comment="Bug fixes - first load - table size&#10;move logics to hook file">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_20_03_2023_10_47__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_20_03_2023_10_47__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/languages/he.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/languages/he.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/shared/constant/mission-type-translate-key.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/constant/mission-type-translate-key.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/style.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/style.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/table.tsx" afterDir="false" />
-    </list>
+    <list default="true" id="563b2355-7e4d-460f-89bc-962e225666cb" name="Changes" comment="board missions show missionType name" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -61,11 +52,30 @@
       <option name="presentableId" value="Default" />
       <updated>1680685266496</updated>
       <workItem from="1680685267638" duration="153000" />
-      <workItem from="1680685428641" duration="2197000" />
+      <workItem from="1680685428641" duration="2503000" />
     </task>
+    <task id="LOCAL‎-00001" summary="board missions show missionType name">
+      <created>1680688310600</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL‎-00001" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1680688310600</updated>
+    </task>
+    <task id="LOCAL‎-00002" summary="board missions show missionType name">
+      <created>1680688316490</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL‎-00002" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1680688316490</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="board missions show missionType name" />
+    <option name="LAST_COMMIT_MESSAGE" value="board missions show missionType name" />
   </component>
 </project>
