@@ -69,7 +69,16 @@
       "category": "category",
       "height":"height",
       "width":"width",
-      "settings":"settings"
+      "settings":"settings",
+      "modal":{
+        "code":"code",
+        "thickness":"thickness",
+        "cold/hot":"cold/hot",
+        "price":"price",
+        "stock":"stock",
+        "thicknesses":"thicknesses"
+        
+      }
     }
   }
 }
