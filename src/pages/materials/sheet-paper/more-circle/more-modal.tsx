@@ -1,11 +1,13 @@
 import { GoMakeModal } from "@/components";
 
 import { useStyle } from "./style";
+import { Table } from "@/widgets/table/table";
 import { useSheetModal } from "./use-sheet-modal";
 
-const SheetPageMoreModal = ({ openModal, setOpenModal, data }: any) => {
+const SheetPageMoreModal = ({ openModal, setOpenModal, sheetSizes }: any) => {
+  console.log("data", sheetSizes);
   const { clasess } = useStyle();
-  const {} = useSheetModal({ data });
+  const { headerTable } = useSheetModal({});
   return (
     <GoMakeModal
       openModal={openModal}
@@ -13,7 +15,7 @@ const SheetPageMoreModal = ({ openModal, setOpenModal, data }: any) => {
       onClose={() => setOpenModal(false)}
       insideStyle={clasess.insideStyle}
     >
-      <div>{data?.weightId}</div>
+      <Table tableHeaders={headerTable} tableRows={sheetSizes} />
     </GoMakeModal>
   );
 };
