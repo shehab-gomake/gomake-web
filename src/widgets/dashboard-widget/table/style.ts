@@ -50,11 +50,12 @@ const useStyle = () => {
             tdRows: {
                 display: 'flex',
                 flexDirection: 'column' as 'column',
-                justifyContent: 'space-around' as 'space-around',
                 alignItems: 'center' as 'center',
+                justifyContent: 'center' as 'center',
                 width: '100%',
                 height: '100%',
                 maxHeight: '80px',
+                gap: '20px',
                 ...FONT_FAMILY.Lexend(500, 16)
             },
 

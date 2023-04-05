@@ -56,12 +56,12 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                     <div style={{width: '10%'}}>{board.isUrgent ?
                                         <ElectricBoltSharpIcon color={"error"}/> : ''}
                                     </div>
-                                    <div style={{width: '40%'}}>
+                                    <div style={{width: '40%', height: '100%'}}>
                                         <div style={classes.tdRows}>
                                             <div><Link href={boardLink(board)} target="_blank"
                                                        rel="noopener">{board.code}</Link></div>
                                             {board.missionType !== null &&
-                                                <div>{TYPE_MISSION_NAME_KEY[board.missionType]}</div>}
+                                                <div>{t(TYPE_MISSION_NAME_KEY[board.missionType])}</div>}
                                         </div>
                                     </div>
                                     <div style={{width: '35%'}}>
