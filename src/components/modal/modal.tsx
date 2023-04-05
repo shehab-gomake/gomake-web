@@ -16,7 +16,7 @@ const GoMakeModal = ({
 }: any) => {
   const { children }: any = props;
   const { t } = useTranslation();
-  const { clasess } = useStyle();
+  const { clasess } = useStyle({ insideStyle });
   return (
     <Modal disableEnforceFocus open={openModal} onClose={onClose} {...props}>
       <div style={clasess.container}>

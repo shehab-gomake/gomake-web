@@ -3,7 +3,7 @@ import { convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = () => {
+const useStyle = ({ insideStyle }: any) => {
   const { primaryColor } = useGomakeTheme();
 
   const clasess = useMemo(() => {
@@ -17,7 +17,7 @@ const useStyle = () => {
         borderRadius: 16,
         backgroundColor: "#fff",
         position: "absolute" as "absolute",
-        left: "55%",
+        left: "50%",
         top: "50%",
         transform: "translate(-50%, -50%)",
         height: "80%",
@@ -26,6 +26,7 @@ const useStyle = () => {
         paddingLeft: convertWidthToVW(32),
         paddingRight: convertWidthToVW(20),
         paddingBottom: convertWidthToVW(20),
+        ...insideStyle,
       },
       closeIcon: {
         display: "flex",
@@ -54,7 +55,7 @@ const useStyle = () => {
         width: "100%",
       },
     };
-  }, []);
+  }, [insideStyle]);
   return {
     clasess,
   };
