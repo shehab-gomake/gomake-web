@@ -15,22 +15,25 @@ const useStyle = () => {
             },
             [EStatus.DONE]: {
                 backgroundColor: successColor(500),
+                color: successColor(700)
             },
             [EStatus.FAULT]: {
                 backgroundColor: errorColor(500),
+                color: errorColor(700)
             },
             [EStatus.IN_PROCESS]: {
                 backgroundColor: warningColor(500),
+                color: warningColor(700)
             },
             [EStatus.NOT_YET]: {
                 backgroundColor: '#fff',
-                border: '3px solid ' + warningColor(500)
+                border: '3px solid ' + warningColor(500),
+                color: warningColor(700)
             },
             label: {
                width: '99px',
                height: '40px',
                ...FONT_FAMILY.Heebo(500, 16),
-               color: '#821A1A',
                 textAlign: 'center' as 'center',
                 padding: '20px 0',
                 overFlow: 'hidden' as 'hidden',

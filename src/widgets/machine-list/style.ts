@@ -23,8 +23,8 @@ const useStyle = () => {
                 ...FONT_FAMILY.Lexend(500, 12)
             },
             searchInput: {
-                maxWidth: '210px',
-                margin: '10px'
+                maxWidth: '200px',
+                margin: '5px'
             }
 
         };

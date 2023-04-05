@@ -44,5 +44,8 @@
   "tabs": {
     "home": "Home",
     "productFloor": "Product Floor"
+  },
+  "status": {
+    "ready": "מוכן"
   }
 }

@@ -17,7 +17,7 @@ const GomakeLoading = () => {
     },
   };
   return (
-    <Backdrop open={loading}>
+    <Backdrop style={{zIndex: 1}} open={loading}>
       <div
         style={{
           position: "absolute",

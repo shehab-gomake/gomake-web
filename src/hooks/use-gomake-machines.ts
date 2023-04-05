@@ -2,7 +2,7 @@ import {useRecoilValue, useSetRecoilState} from "recoil";
 import {machinesListState} from "@/store/machines";
 import {useCallback} from "react";
 import {getApiRequest} from "@/services/api-request";
-import {IMachine} from "@/shared";
+import {IMachine, IMachineProgress} from "@/shared";
 
 const useGomakeMachines = () => {
     const machines = useRecoilValue(machinesListState);
@@ -22,6 +22,7 @@ const useGomakeMachines = () => {
         return machines.filter(machine => machine.checked)
     }, [machines]);
 
+
     const setMachineChecked = useCallback((machineId: string) => {
         const updatedMachines: IMachine[] = machines.map((machine) => {
             if (machine.id === machineId) {
@@ -32,7 +33,11 @@ const useGomakeMachines = () => {
         setMachines(updatedMachines);
     }, [machines]);
 
-    return { getMachinesList, getCheckedMachines, setMachineChecked, machines };
+    const addMachineProgress = (progress: Record<string, IMachineProgress>) => {
+        setMachines(machines.map(machine => progress[machine.id] ? {...machine, progress: progress[machine.id]} : machine));
+    }
+
+    return { getMachinesList, getCheckedMachines, setMachineChecked, machines, addMachineProgress };
 }
 
 export { useGomakeMachines };

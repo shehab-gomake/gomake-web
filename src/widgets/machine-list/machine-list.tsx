@@ -42,7 +42,7 @@ const MachineList = ({}: IMachineList) => {
 
     useEffect(() => {
         getMachinesList();
-    }, [getMachinesList]);
+    }, []);
 
     return (
         <div>
@@ -57,7 +57,9 @@ const MachineList = ({}: IMachineList) => {
                       'aria-labelledby': 'basic-button',
                   }}>
                 <FormGroup>
-                    <div style={classes.searchInput}> <GomakeTextInput  placeholder={'search machine'} value={filter} onChange={handleFilterChange}/></div>
+                    <div style={classes.searchInput}>
+                        <GomakeTextInput  placeholder={'search machine'} value={filter} onChange={handleFilterChange}/>
+                    </div>
                     {
                         getMachines().map((machine: IMachine) => {
                             return <MenuItem style={classes.machineName} key={machine.id}>

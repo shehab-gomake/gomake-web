@@ -7,7 +7,6 @@ const useStyle = () => {
                 display: 'flex',
                 flexDirection: 'column' as 'column',
                 gap: '30px',
-
             },
         };
     }, []);

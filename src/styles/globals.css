@@ -15,9 +15,10 @@ html *
     font-family: "Heebo", "sans-serif" !important;
 }
 
-#dashboard-table > *::-webkit-scrollbar {
+#dashboard-table::-webkit-scrollbar {
     width: 0;
 }
+
 @-moz-keyframes rotate90 {
   100% {
     -moz-transform: rotate(90deg);
