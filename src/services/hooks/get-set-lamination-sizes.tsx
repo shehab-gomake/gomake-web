@@ -1,8 +1,8 @@
 import { returnResult } from "@/utils/helpers";
 import { MoreCircle } from "@/pages/materials/lamination/moreCircle";
+import { UpdateStockLaminationThickness } from "@/pages/materials/lamination/moreCircle/update-stock-lamination-thickness";
+
 import { ICallApi, ISetState } from "./call-api.interface";
-import { GomakeTextInput } from "@/components";
-import { ChangeEvent, useState } from "react";
 
 const getAndSetLaminationSize = async (
   callApi: ICallApi,
@@ -56,17 +56,12 @@ const getAndSetLaminatioThicknes = async (
       thickness: thicknes.thickness,
       coldOrHot: thicknes.coldOrHot ? "hot" : "cold",
       price: thicknes.price,
-      // stock: thicknes.stock,
       stock: (
-        <GomakeTextInput
-          value={thicknes.stock}
-          onChange={(e: any) => {
-            console.log(e.target.value);
-          }}
-          style={{
-            height: 40,
-            width: 100,
-          }}
+        <UpdateStockLaminationThickness
+          categoryName={data.categoryName}
+          sizeId={data.sizeId}
+          stockValue={thicknes.stock}
+          thicknessId={thicknes.thicknessId}
         />
       ),
     };
