@@ -28,6 +28,7 @@ const useSheetModal = ({ item }: any) => {
       categoryName: item?.categoryName,
       weightId: item?.weightId,
       supplierId: item?.supplierId,
+      //sizeId: item?.sizeId,
     });
     if (data) {
       setOpenModal(true);

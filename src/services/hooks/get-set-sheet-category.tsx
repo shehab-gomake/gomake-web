@@ -1,7 +1,9 @@
 import { returnResult } from "@/utils/helpers";
-import { ICallApi, ISetState } from "./call-api.interface";
 import { SheetPageMoreCircle } from "@/pages/materials/sheet-paper/more-circle";
 import { ShowSupplierListForSheet } from "@/pages/materials/sheet-paper/show-supplier-list";
+import { UpdateStockSheetPaperSizeses } from "@/pages/materials/sheet-paper/more-circle/update-stock-sheet-paper";
+
+import { ICallApi, ISetState } from "./call-api.interface";
 
 const getAndSetSheetCategory = async (
   callApi: ICallApi,
@@ -42,7 +44,6 @@ const getAndSetSheetSizes = async (
 ) => {
   if (data?.categoryName) {
     const result: any = await callApi("GET", "/v1/sheets/get-sizes", data);
-    console.log("result", result);
     const _data = returnResult(result, undefined);
     const mapData = _data.map((item: any) => {
       return {
@@ -51,7 +52,15 @@ const getAndSetSheetSizes = async (
         pricePerUnit: item?.pricePerUnit,
         pricePerTon: item?.pricePerTon,
         direction: item?.direction,
-        stock: item?.stock,
+        //stock: item?.stock,
+        stock: (
+          <UpdateStockSheetPaperSizeses
+            categoryName={data.categoryName}
+            sizeId={item.sizeId}
+            stockValue={item.stock}
+            weightId={item.weightId}
+          />
+        ),
         settings: (
           <ShowSupplierListForSheet
             item={item}

@@ -21,7 +21,7 @@ const useStyle = () => {
         width: convertWidthToVW(200),
       },
       tableContainer: {
-        width: "85%",
+        width: "100%",
       },
     };
   }, [i18next.language, t]);

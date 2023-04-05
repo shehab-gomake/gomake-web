@@ -5,7 +5,6 @@ import { Table } from "@/widgets/table/table";
 import { useSheetModal } from "./use-sheet-modal";
 
 const SheetPageMoreModal = ({ openModal, setOpenModal, sheetSizes }: any) => {
-  console.log("data", sheetSizes);
   const { clasess } = useStyle();
   const { headerTable } = useSheetModal({});
   return (
