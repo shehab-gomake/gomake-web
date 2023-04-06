@@ -82,8 +82,6 @@ const useAddSupplier = ({ item }: any) => {
   );
   const updateSupplierSheet = useCallback(
     async (item: any) => {
-      console.log("dddd", item?.supplierId);
-      console.log("state", state[`currency-${item?.supplierId}`]?.value);
       const res = await callApi("POST", `/v1/sheets/update-supplier`, {
         categoryName: item?.categoryName,
         sizeId: item?.sizeId,

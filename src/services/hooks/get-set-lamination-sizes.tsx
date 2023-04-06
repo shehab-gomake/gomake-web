@@ -2,7 +2,6 @@ import { returnResult } from "@/utils/helpers";
 import { MoreCircle } from "@/pages/materials/lamination/moreCircle";
 import { ICallApi, ISetState } from "./call-api.interface";
 import { GomakeTextInput } from "@/components";
-import { ChangeEvent, useState } from "react";
 
 const getAndSetLaminationSize = async (
   callApi: ICallApi,

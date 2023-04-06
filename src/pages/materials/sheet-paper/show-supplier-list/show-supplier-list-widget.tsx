@@ -1,7 +1,7 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
-import { useTranslation } from "react-i18next";
 import { IconButton, Switch } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { Table } from "@/widgets/table/table";
