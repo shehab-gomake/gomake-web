@@ -64,10 +64,8 @@ const useAddSupplier = ({ item }: any) => {
         thickness: 0,
         isDefault: state?.isDefault || true,
       });
-      console.log(res);
       if (res?.success) {
         let temp = [...suppliersData];
-        console.log("temp", temp);
         temp.push({
           categoryName: item?.categoryName,
           sizeId: item?.sizeId,
@@ -140,12 +138,16 @@ const useAddSupplier = ({ item }: any) => {
         sizeId: item?.sizeId,
         weightId: item?.weightId,
         supplierId: item.supplierId,
-        pricePerUnit: state[`pricePerUnit-${item?.supplierId}`],
-        pricePerTon: state[`pricePerTon-${item?.supplierId}`],
-        currency: state[`currency-${item?.supplierId}`]?.value,
-        direction: state[`direction-${item?.supplierId}`]?.value,
+        pricePerUnit:
+          state[`pricePerUnit-${item?.supplierId}`] || item?.pricePerUnit,
+        pricePerTon:
+          state[`pricePerTon-${item?.supplierId}`] || item?.pricePerTon,
+        currency:
+          state[`currency-${item?.supplierId}`]?.value || item?.currency,
+        direction:
+          state[`direction-${item?.supplierId}`]?.value || item?.direction,
         thickness: 0,
-        isDefault: state[`isDefault-${item?.supplierId}`] || true,
+        isDefault: state[`isDefault-${item?.supplierId}`] || item?.isDefault,
       });
       if (res?.success) {
         setSnackbarStateValue({

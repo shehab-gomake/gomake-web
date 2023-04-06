@@ -6,7 +6,6 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
-import { useEffect, useState } from "react";
 
 const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
   const {
@@ -20,7 +19,6 @@ const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
   } = useAddSupplier({ item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
-  const [] = useState([]);
   return (
     <div style={clasess.inputDataContainer}>
       <div style={clasess.rowItemStyle}>
