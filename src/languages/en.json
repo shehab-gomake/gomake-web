@@ -55,7 +55,13 @@
     "beat": "Beat"
   },
   "modal": {
-    "close": "Close"
+    "close": "Close",
+    "addedSusuccessfully": "Added successfully",
+    "addedfailed": "Added failed",
+    "updatedSusuccessfully": "Updated successfully",
+    "updatedfailed": "Updated failed",
+    "deleteSusuccessfully": "Deleted successfully",
+    "deletefailed": "Deleted failed"
   },
   "materials": {
     "sheetPaper": {

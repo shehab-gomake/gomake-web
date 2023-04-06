@@ -1,4 +1,4 @@
-import { useGomakeAxios, useSupplier } from "@/hooks";
+import { useGomakeAxios, useSnackBar, useSupplier } from "@/hooks";
 import { getAndSetSheetDirection } from "@/services/hooks";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 const useAddSupplier = ({ item }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const { setSnackbarStateValue } = useSnackBar();
   const { suppliers, suppliersCurrencies, getSupplier, getSupplierCurrencies } =
     useSupplier();
   const [sheetDirection, setSheetDirection] = useState([]);
@@ -61,7 +62,19 @@ const useAddSupplier = ({ item }: any) => {
       thickness: 0,
       isDefault: state?.isDefault || true,
     });
-    return res;
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedfailed"),
+        type: "error",
+      });
+    }
   }, [state]);
   const deleteSupplierSheet = useCallback(
     async (item: any) => {
@@ -77,6 +90,19 @@ const useAddSupplier = ({ item }: any) => {
         thickness: item?.thickness,
         isDefault: item?.isDefault,
       });
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.deleteSusuccessfully"),
+          type: "sucess",
+        });
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.deletefailed"),
+          type: "error",
+        });
+      }
     },
     [state]
   );
@@ -94,7 +120,19 @@ const useAddSupplier = ({ item }: any) => {
         thickness: 0,
         isDefault: state[`isDefault-${item?.supplierId}`] || true,
       });
-      return res;
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedSusuccessfully"),
+          type: "sucess",
+        });
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedfailed"),
+          type: "error",
+        });
+      }
     },
     [state]
   );

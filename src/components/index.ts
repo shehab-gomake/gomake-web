@@ -4,3 +4,4 @@ export * from "./button";
 export * from "./auto-complete";
 export * from "./modal";
 export * from "./text-input-icon";
+export * from "./snackbar";
