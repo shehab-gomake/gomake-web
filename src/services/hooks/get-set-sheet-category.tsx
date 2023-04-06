@@ -14,6 +14,15 @@ const getAndSetSheetCategory = async (
   return returnResult(result, setState);
 };
 
+const getAndSetSheetDirection = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi("GET", "/v1/sheets/get-directions", data);
+  return returnResult(result, setState);
+};
+
 const getAndSetSheetWeights = async (
   callApi: ICallApi,
   setState?: ISetState,
@@ -48,7 +57,7 @@ const getAndSetSheetSizes = async (
     const mapData = _data.map((item: any) => {
       return {
         code: item?.code,
-        growingUp: `${item?.width}/${item?.height}`, //Width\Height
+        growingUp: `${item?.width}/${item?.height}`, //Width/Height
         pricePerUnit: item?.pricePerUnit,
         pricePerTon: item?.pricePerTon,
         direction: item?.direction,
@@ -79,4 +88,9 @@ const getAndSetSheetSizes = async (
   }
 };
 
-export { getAndSetSheetCategory, getAndSetSheetWeights, getAndSetSheetSizes };
+export {
+  getAndSetSheetCategory,
+  getAndSetSheetWeights,
+  getAndSetSheetSizes,
+  getAndSetSheetDirection,
+};

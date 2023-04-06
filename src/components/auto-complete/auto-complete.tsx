@@ -49,6 +49,7 @@ const GoMakeAutoComplate = ({
   disableClearable,
   placeholder,
   defaultValue,
+  disabled,
   multiple = false,
 }: {
   value?: string;
@@ -63,6 +64,7 @@ const GoMakeAutoComplate = ({
   placeholder?: any;
   defaultValue?: any;
   multiple?: any;
+  disabled?: any;
 }) => {
   return (
     <StyledAutocomplete
@@ -70,6 +72,7 @@ const GoMakeAutoComplate = ({
       onChange={onChange}
       style={style}
       options={options}
+      disabled={disabled}
       popupIcon={<ArrowDownIcon />}
       renderInput={(params: any) => (
         <TextField

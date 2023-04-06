@@ -7,7 +7,7 @@ import { SheetPageMoreModal } from "./more-modal";
 import { useSheetModal } from "./use-sheet-modal";
 
 const SheetPageMoreCircle = ({ item }: any) => {
-  const { openModal, OnClickGetSheetSizes, setOpenModal, sheetSizes } =
+  const { openModal, OnClickGetSheetSizes, sheetSizes, onCloseModal } =
     useSheetModal({
       item,
     });
@@ -19,7 +19,7 @@ const SheetPageMoreCircle = ({ item }: any) => {
       </IconButton>
       <SheetPageMoreModal
         openModal={openModal}
-        setOpenModal={setOpenModal}
+        onCloseModal={onCloseModal}
         sheetSizes={sheetSizes}
       />
     </>

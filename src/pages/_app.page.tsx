@@ -8,6 +8,7 @@ import en from "@/languages/en.json";
 import he from "@/languages/he.json";
 import { ThemeProvider } from "@/providers";
 import { GomakeLoading } from "@/widgets";
+import { GoMakeSnackBar } from "@/components";
 
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -52,6 +53,7 @@ export default function App({ Component, pageProps }: AppProps) {
         }
       `}</style>
       <Component {...pageProps} />
+      <GoMakeSnackBar />
       <GomakeLoading />
     </RecoilRoot>
   );

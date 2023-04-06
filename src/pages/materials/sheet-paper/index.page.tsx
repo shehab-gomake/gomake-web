@@ -6,19 +6,17 @@ import { HeaderTitle } from "@/widgets";
 
 import { useSheetPaper } from "./use-sheet-paper";
 import { HeaderFilter } from "./header-filter";
-import { useStyle } from "./style";
+import { useState } from "react";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
-  const { clasess } = useStyle();
-  const { allWeights, headerTable } = useSheetPaper();
+  const { headerTable } = useSheetPaper();
+  const [allWeights, setAllWeights] = useState([]);
   return (
     <CustomerAuthLayout>
       <HeaderTitle title={t("materials.sheetPaper.title")} />
-      <HeaderFilter />
-      <div style={clasess.tableContainer}>
-        <Table tableHeaders={headerTable} tableRows={allWeights} />
-      </div>
+      <HeaderFilter setAllWeights={setAllWeights} />
+      <Table tableHeaders={headerTable} tableRows={allWeights} />
     </CustomerAuthLayout>
   );
 }

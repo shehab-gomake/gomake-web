@@ -1,21 +1,33 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
+import { useRecoilState } from "recoil";
+
+import {
+  getAndSetSuppliers,
+  getAndSetSuppliersCurrencies,
+} from "@/services/hooks";
+import { supplierCurrencies, supplierLists } from "@/store";
+
 import { useGomakeAxios } from "./use-gomake-axios";
-import { getAndSetSuppliers } from "@/services/hooks";
 
 const useSupplier = () => {
   const { callApi } = useGomakeAxios();
-  const [suppliers, setSuppliers] = useState([]);
+  const [suppliers, setSuppliers] = useRecoilState(supplierLists);
+  const [suppliersCurrencies, setSuppliersCurrencies] =
+    useRecoilState(supplierCurrencies);
 
   const getSupplier = useCallback(async () => {
     await getAndSetSuppliers(callApi, setSuppliers);
   }, []);
 
-  useEffect(() => {
-    getSupplier();
+  const getSupplierCurrencies = useCallback(async () => {
+    await getAndSetSuppliersCurrencies(callApi, setSuppliersCurrencies);
   }, []);
 
   return {
+    getSupplier,
+    getSupplierCurrencies,
     suppliers,
+    suppliersCurrencies,
   };
 };
 
