@@ -1,7 +1,7 @@
-import { useStyle } from "./style";
-import { Row } from "./components";
 import { Header } from "./components";
 import { IProps } from "./interfaces";
+import { Row } from "./components";
+import { useStyle } from "./style";
 
 const Table = ({ tableHeaders, tableRows }: IProps) => {
   const { clasess } = useStyle();

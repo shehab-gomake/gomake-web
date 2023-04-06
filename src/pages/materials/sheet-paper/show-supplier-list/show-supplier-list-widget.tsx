@@ -9,6 +9,7 @@ import { Table } from "@/widgets/table/table";
 import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
+import { useEffect, useState } from "react";
 
 const ShowSupplierListWidgetForSheet = ({ item }: any) => {
   const {
@@ -23,6 +24,10 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
   } = useAddSupplier({ item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
+  const [suppliersData, setSuppliersData] = useState([]);
+  useEffect(() => {
+    setSuppliersData(item.sheetSuppliers);
+  }, [item.sheetSuppliers]);
 
   return (
     <div style={clasess.mainContainer}>
@@ -32,7 +37,7 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
       <div style={clasess.tableContainer}>
         <Table
           tableHeaders={headerTable}
-          tableRows={item.sheetSuppliers.map((item: any) => {
+          tableRows={suppliersData.map((item: any) => {
             const supplierId = item.supplierId;
 
             return {
@@ -115,7 +120,9 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
                   />
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() => deleteSupplierSheet(item)}
+                    onClick={() =>
+                      deleteSupplierSheet(item, suppliersData, setSuppliersData)
+                    }
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -131,7 +138,11 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
           })}
         />
       </div>
-      <AddSupplierWidget item={item} />
+      <AddSupplierWidget
+        item={item}
+        suppliersData={suppliersData}
+        setSuppliersData={setSuppliersData}
+      />
     </div>
   );
 };

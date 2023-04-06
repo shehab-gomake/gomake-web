@@ -50,35 +50,55 @@ const useAddSupplier = ({ item }: any) => {
     getSheetDirections();
   }, []);
 
-  const addNewSupplierSheet = useCallback(async () => {
-    const res = await callApi("POST", `/v1/sheets/add-supplier`, {
-      categoryName: item?.categoryName,
-      sizeId: item?.sizeId,
-      weightId: item?.weightId,
-      supplierId: state.supplierId?.value,
-      pricePerUnit: parseInt(state?.pricePerUnit),
-      pricePerTon: parseInt(state?.pricePerTon),
-      currency: state?.currency?.value,
-      direction: parseInt(state?.direction?.value),
-      thickness: 0,
-      isDefault: state?.isDefault || true,
-    });
-    if (res?.success) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedSusuccessfully"),
-        type: "sucess",
+  const addNewSupplierSheet = useCallback(
+    async (suppliersData: any, setSuppliersData: any) => {
+      const res = await callApi("POST", `/v1/sheets/add-supplier`, {
+        categoryName: item?.categoryName,
+        sizeId: item?.sizeId,
+        weightId: item?.weightId,
+        supplierId: state.supplierId?.value,
+        pricePerUnit: parseInt(state?.pricePerUnit),
+        pricePerTon: parseInt(state?.pricePerTon),
+        currency: state?.currency?.value,
+        direction: parseInt(state?.direction?.value),
+        thickness: 0,
+        isDefault: state?.isDefault || true,
       });
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedfailed"),
-        type: "error",
-      });
-    }
-  }, [state]);
+      console.log(res);
+      if (res?.success) {
+        let temp = [...suppliersData];
+        console.log("temp", temp);
+        temp.push({
+          categoryName: item?.categoryName,
+          sizeId: item?.sizeId,
+          weightId: item?.weightId,
+          supplierId: state.supplierId?.value,
+          pricePerUnit: parseInt(state?.pricePerUnit),
+          pricePerTon: parseInt(state?.pricePerTon),
+          currency: state?.currency?.value,
+          direction: parseInt(state?.direction?.value),
+          thickness: 0,
+          isDefault: state?.isDefault || true,
+        });
+        setSuppliersData(temp);
+
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [state]
+  );
   const deleteSupplierSheet = useCallback(
-    async (item: any) => {
+    async (item: any, suppliersData: any, setSuppliersData: any) => {
       const res = await callApi("POST", `/v1/sheets/delete-supplier`, {
         categoryName: item?.categoryName,
         sizeId: item?.sizeId,
@@ -92,6 +112,12 @@ const useAddSupplier = ({ item }: any) => {
         isDefault: item?.isDefault,
       });
       if (res?.success) {
+        const temp = [...suppliersData];
+        temp.splice(
+          temp.findIndex((x) => x.supplierId === item.supplierId),
+          1
+        );
+        setSuppliersData(temp);
         setSnackbarStateValue({
           state: true,
           message: t("modal.deleteSusuccessfully"),

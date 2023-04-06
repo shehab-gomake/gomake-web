@@ -1,8 +1,10 @@
 import { useRecoilValue } from "recoil";
-import { useStyle } from "./style";
+
 import { ShowSupplierList } from "@/store";
 
-const Row = ({ index, row, width, settings }: any) => {
+import { useStyle } from "./style";
+
+const Row = ({ index, row, width }: any) => {
   const { clasess } = useStyle({ width });
   const showUnderRowWidget = useRecoilValue(ShowSupplierList);
   return (

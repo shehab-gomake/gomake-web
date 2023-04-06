@@ -6,8 +6,9 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
+import { useEffect, useState } from "react";
 
-const AddSupplierWidget = ({ item }: any) => {
+const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
   const {
     headerTable,
     sheetDirection,
@@ -19,6 +20,7 @@ const AddSupplierWidget = ({ item }: any) => {
   } = useAddSupplier({ item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
+  const [] = useState([]);
   return (
     <div style={clasess.inputDataContainer}>
       <div style={clasess.rowItemStyle}>
@@ -84,12 +86,15 @@ const AddSupplierWidget = ({ item }: any) => {
         <Switch
           style={clasess.switchStyle}
           defaultChecked
-          checked={true}
+          checked={state?.isDefault}
           onChange={(e: any) =>
             onChangePrimaryState("isDefault", e.target.checked)
           }
         />
-        <IconButton style={clasess.iconStyle} onClick={addNewSupplierSheet}>
+        <IconButton
+          style={clasess.iconStyle}
+          onClick={() => addNewSupplierSheet(suppliersData, setSuppliersData)}
+        >
           <SaveIcon />
         </IconButton>
       </div>
