@@ -110,10 +110,8 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
                 <>
                   <Switch
                     style={clasess.switchStyle}
-                    defaultChecked
-                    checked={
-                      state[`isDefault-${supplierId}`] || item?.isDefault
-                    }
+                    defaultChecked={item?.isDefault}
+                    checked={state[`isDefault-${supplierId}`]}
                     onChange={(e: any) =>
                       onChangeState("isDefault", supplierId, e.target.checked)
                     }

@@ -52,6 +52,7 @@ const UpdateStockBrace = ({
     <GomakeTextInput
       key={sizeId}
       value={stock}
+      type={"number"}
       onChange={onChange}
       style={{
         height: 40,

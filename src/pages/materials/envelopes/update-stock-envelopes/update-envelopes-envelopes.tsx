@@ -51,6 +51,7 @@ const UpdateStockEnvelopes = ({
   return (
     <GomakeTextInput
       value={stock}
+      type={"number"}
       onChange={onChange}
       style={{
         height: 40,
