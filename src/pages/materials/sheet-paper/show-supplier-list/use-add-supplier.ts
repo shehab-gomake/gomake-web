@@ -1,14 +1,17 @@
-import { useGomakeAxios, useSnackBar, useSupplier } from "@/hooks";
-import { getAndSetSheetDirection } from "@/services/hooks";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
+
+import { getAndSetSheetDirection } from "@/services/hooks";
+import { supplierCurrencies, supplierLists } from "@/store";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 const useAddSupplier = ({ item }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const { setSnackbarStateValue } = useSnackBar();
-  const { suppliers, suppliersCurrencies, getSupplier, getSupplierCurrencies } =
-    useSupplier();
+  const suppliers = useRecoilValue(supplierLists);
+  const suppliersCurrencies = useRecoilValue(supplierCurrencies);
   const [sheetDirection, setSheetDirection] = useState([]);
   const [state, setState] = useState<any>({});
 
@@ -45,8 +48,6 @@ const useAddSupplier = ({ item }: any) => {
 
   useEffect(() => {
     getSheetDirections();
-    getSupplier();
-    getSupplierCurrencies();
   }, []);
 
   const addNewSupplierSheet = useCallback(async () => {

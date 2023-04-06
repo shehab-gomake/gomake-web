@@ -10,11 +10,12 @@ import { useEffect } from "react";
 const HeaderFilter = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const { suppliers, getSupplier } = useSupplier();
+  const { suppliers, getSupplier, getSupplierCurrencies } = useSupplier();
   const { sheetCategories, categoryName, onChangeCategory, onChangeSupplier } =
     useSheetPaper();
   useEffect(() => {
     getSupplier();
+    getSupplierCurrencies();
   }, []);
   return (
     <div style={clasess.filterContainer}>
