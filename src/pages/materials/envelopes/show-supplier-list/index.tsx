@@ -5,7 +5,7 @@ import { IconButton } from "@mui/material";
 import moreCircle from "@/icons/more-circle.png";
 import { useSheetModal } from "./use-show-supplier-list";
 
-const ShowSupplierListForBraces = ({ item }: any) => {
+const ShowSupplierListForEnvelopes = ({ item }: any) => {
   const { showUnderRowWidget, setShowUnderRowWidget } = useSheetModal();
 
   return (
@@ -25,4 +25,4 @@ const ShowSupplierListForBraces = ({ item }: any) => {
     </>
   );
 };
-export { ShowSupplierListForBraces };
+export { ShowSupplierListForEnvelopes };

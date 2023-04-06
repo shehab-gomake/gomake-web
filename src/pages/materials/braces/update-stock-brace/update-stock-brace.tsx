@@ -43,9 +43,14 @@ const UpdateStockBrace = ({
     if (finalStock && isChanged) {
       updateStock(categoryName, sizeId);
     }
-  }, [finalStock, isChanged, sizeId]);
+  }, [finalStock, isChanged, sizeId, stockValue]);
+  useEffect(() => {
+    setStock(stockValue);
+  }, [stockValue]);
+
   return (
     <GomakeTextInput
+      key={sizeId}
       value={stock}
       onChange={onChange}
       style={{

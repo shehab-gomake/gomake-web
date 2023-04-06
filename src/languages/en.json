@@ -93,7 +93,18 @@
       "stock":"stock",
       "price":"price",
       "settings":"settings"
-
+    },
+    "envelops":{
+      "title":"Envelopes",
+      "category":"category",
+      "supplier":"supplier",
+      "height":"height",
+      "width":"width",
+      "quantityInPackage":"quantityInPackage",
+      "withWindow":"withWindow",
+      "stock":"stock",
+      "price":"price",
+      "settings":"settings"
     }
   }
 }

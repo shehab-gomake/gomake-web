@@ -1,19 +1,23 @@
+import { ShowSupplierListForEnvelopes } from "@/pages/materials/envelopes/show-supplier-list";
+import { UpdateStockEnvelopes } from "@/pages/materials/envelopes/update-stock-envelopes/update-envelopes-envelopes";
 import { returnResult } from "@/utils/helpers";
-import { ShowSupplierListForBraces } from "@/pages/materials/braces/show-supplier-list";
-import { UpdateStockBrace } from "@/pages/materials/braces/update-stock-brace/update-stock-brace";
 
 import { ICallApi, ISetState } from "./call-api.interface";
 
-const getAndSetBraceCategores = async (
+const getAndSetEnvelopsCategores = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
 ) => {
-  const result: any = await callApi("GET", "/v1/plats/get-categories", data);
+  const result: any = await callApi(
+    "GET",
+    "/v1/envelopes/get-categories",
+    data
+  );
   return returnResult(result, setState);
 };
 
-const getAndSetBraceSuppliers = async (
+const getAndSetEnvelopsSuppliers = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
@@ -21,20 +25,23 @@ const getAndSetBraceSuppliers = async (
   const result: any = await callApi("GET", "/v1/suppliers/get-suppliers", data);
   return returnResult(result, setState);
 };
-const getAndSetBraceSize = async (
+
+const getAndSetEnvelopseSize = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
 ) => {
-  const result: any = await callApi("GET", "/v1/plats/get-sizes", data);
+  const result: any = await callApi("GET", "/v1/envelopes/get-sizes", data);
   const _data = returnResult(result, undefined);
   const mapData = _data.map((size: any) => {
     return {
-      code: size.code,
+      categoryName: size.categoryName,
       height: size.height,
       width: size.width,
+      quantityInPackage: size.quantityInPackage,
+      isWithWindow: size.isWithWindow ? "yes" : "no",
       stock: (
-        <UpdateStockBrace
+        <UpdateStockEnvelopes
           categoryName={size.categoryName}
           sizeId={size.sizeId}
           stockValue={size.stock}
@@ -42,8 +49,8 @@ const getAndSetBraceSize = async (
       ),
       price: size.price,
       settings: (
-        <ShowSupplierListForBraces
-          item={size}
+        <ShowSupplierListForEnvelopes
+          item={""}
           categoryName={""}
           weightId={""}
           supplierId={""}
@@ -58,4 +65,8 @@ const getAndSetBraceSize = async (
   return _data;
 };
 
-export { getAndSetBraceCategores, getAndSetBraceSuppliers, getAndSetBraceSize };
+export {
+  getAndSetEnvelopsCategores,
+  getAndSetEnvelopsSuppliers,
+  getAndSetEnvelopseSize,
+};
