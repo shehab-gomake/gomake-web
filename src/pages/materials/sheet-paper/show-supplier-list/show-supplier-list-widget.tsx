@@ -1,10 +1,14 @@
+import DeleteIcon from "@mui/icons-material/Delete";
+import SaveAsIcon from "@mui/icons-material/SaveAs";
+import { useTranslation } from "react-i18next";
 import { IconButton, Switch } from "@mui/material";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { Table } from "@/widgets/table/table";
-import SaveIcon from "@mui/icons-material/Save";
-import { useStyle } from "./style";
+
+import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
+import { useStyle } from "./style";
 
 const ShowSupplierListWidgetForSheet = ({ item }: any) => {
   const {
@@ -14,47 +18,62 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
     suppliers,
     suppliersCurrencies,
     onChangeState,
-    addNewSupplierSheet,
+    deleteSupplierSheet,
+    updateSupplierSheet,
   } = useAddSupplier({ item });
   const { clasess } = useStyle({ headerTable });
+  const { t } = useTranslation();
+
   return (
     <div style={clasess.mainContainer}>
-      <div style={clasess.headerTitle}>Supplier Sheet</div>
+      <div style={clasess.headerTitle}>
+        {t("materials.sheetPaper.supplierSheet")}
+      </div>
       <div style={clasess.tableContainer}>
         <Table
           tableHeaders={headerTable}
           tableRows={item.sheetSuppliers.map((item: any) => {
+            const supplierId = item.supplierId;
+
             return {
               supplierId: (
-                <GoMakeAutoComplate
-                  options={suppliers}
-                  // style={clasess.dropDownListContainer}
-                  placeholder="Select Supplier"
-                  value={state.supplierId || ""}
-                  onChange={(e: any, item: any) =>
-                    onChangeState("supplierId", item)
-                  }
-                />
+                <>
+                  {suppliers?.length > 0 && (
+                    <GoMakeAutoComplate
+                      options={suppliers}
+                      style={clasess.dropDownListContainer}
+                      placeholder={t("materials.sheetPaper.selectSupplier")}
+                      value={suppliers.find(
+                        (item: any) => item?.value === supplierId
+                      )}
+                      disabled={true}
+                    />
+                  )}
+                </>
               ),
               pricePerUnit: (
                 <GomakeTextInput
                   type="number"
-                  placeholder="Unit price"
+                  placeholder={t("materials.sheetPaper.unitPrice")}
                   style={clasess.textInputStyle}
-                  value={state.pricePerUnit || ""}
+                  value={
+                    state[`pricePerUnit-${supplierId}`] || item.pricePerUnit
+                  }
                   onChange={(e: any) =>
-                    onChangeState("pricePerUnit", e.target.value)
+                    onChangeState("pricePerUnit", supplierId, e.target.value)
                   }
                 />
               ),
               pricePerTon: (
                 <GomakeTextInput
                   type="number"
-                  placeholder="Price Per Ton"
+                  placeholder={t("materials.sheetPaper.pricePerTon")}
                   style={clasess.textInputStyle}
-                  value={state.pricePerTon || ""}
+                  value={
+                    state[`pricePerTon-${supplierId}`] || item.pricePerTon || ""
+                  }
                   onChange={(e: any) =>
-                    onChangeState("pricePerTon", e.target.value)
+                    onChangeState("pricePerTon", supplierId, e.target.value)
                   }
                 />
               ),
@@ -62,10 +81,10 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
                 <GoMakeAutoComplate
                   options={suppliersCurrencies}
                   style={clasess.dropDownListContainer}
-                  placeholder="Select Currency"
-                  value={state.currency || ""}
+                  placeholder={t("materials.sheetPaper.selectCurrency")}
+                  value={state[`currency-${supplierId}`] || item.currency || ""}
                   onChange={(e: any, item: any) =>
-                    onChangeState("currency", item)
+                    onChangeState("currency", supplierId, item)
                   }
                 />
               ),
@@ -73,99 +92,46 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
                 <GoMakeAutoComplate
                   options={sheetDirection}
                   style={clasess.dropDownListContainer}
-                  placeholder="Select Direction"
-                  value={state.direction || ""}
+                  placeholder={t("materials.sheetPaper.selectDirection")}
+                  value={
+                    state[`direction-${supplierId}`] || item.direction || ""
+                  }
                   onChange={(e: any, item: any) =>
-                    onChangeState("direction", item)
+                    onChangeState("direction", supplierId, item)
                   }
                 />
               ),
               isDefault: (
-                <Switch
-                  style={clasess.switchStyle}
-                  defaultChecked
-                  checked={true}
-                  onChange={(e: any) =>
-                    onChangeState("isDefault", e.target.checked)
-                  }
-                />
-                // <IconButton
-                //   style={clasess.iconStyle}
-                //   onClick={addNewSupplierSheet}
-                // >
-                //   <SaveIcon />
-                // </IconButton>
+                <>
+                  <Switch
+                    style={clasess.switchStyle}
+                    defaultChecked
+                    checked={
+                      state[`isDefault-${supplierId}`] || item?.isDefault
+                    }
+                    onChange={(e: any) =>
+                      onChangeState("isDefault", supplierId, e.target.checked)
+                    }
+                  />
+                  <IconButton
+                    style={clasess.updatedIcon}
+                    onClick={() => deleteSupplierSheet(item)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                  <IconButton
+                    style={clasess.updatedIcon}
+                    onClick={() => updateSupplierSheet(item)}
+                  >
+                    <SaveAsIcon />
+                  </IconButton>
+                </>
               ),
             };
           })}
         />
       </div>
-      <div style={clasess.inputDataContainer}>
-        <div style={clasess.rowItemStyle}>
-          <GoMakeAutoComplate
-            options={suppliers}
-            style={clasess.dropDownListContainer}
-            placeholder="Select Supplier"
-            value={state.supplierId || ""}
-            onChange={(e: any, item: any) => onChangeState("supplierId", item)}
-          />
-        </div>
-        <div style={clasess.rowItemStyle}>
-          <div style={{ width: "80%" }}>
-            <GomakeTextInput
-              type="number"
-              placeholder="Unit price"
-              style={clasess.textInputStyle}
-              value={state.pricePerUnit || ""}
-              onChange={(e: any) =>
-                onChangeState("pricePerUnit", e.target.value)
-              }
-            />
-          </div>
-        </div>
-        <div style={clasess.rowItemStyle}>
-          <div style={{ width: "80%" }}>
-            <GomakeTextInput
-              type="number"
-              placeholder="Price Per Ton"
-              style={clasess.textInputStyle}
-              value={state.pricePerTon || ""}
-              onChange={(e: any) =>
-                onChangeState("pricePerTon", e.target.value)
-              }
-            />
-          </div>
-        </div>
-        <div style={clasess.rowItemStyle}>
-          <GoMakeAutoComplate
-            options={suppliersCurrencies}
-            style={clasess.dropDownListContainer}
-            placeholder="Select Currency"
-            value={state.currency || ""}
-            onChange={(e: any, item: any) => onChangeState("currency", item)}
-          />
-        </div>
-        <div style={clasess.rowItemStyle}>
-          <GoMakeAutoComplate
-            options={sheetDirection}
-            style={clasess.dropDownListContainer}
-            placeholder="Select Direction"
-            value={state.direction || ""}
-            onChange={(e: any, item: any) => onChangeState("direction", item)}
-          />
-        </div>
-        <div style={clasess.rowItemStyle}>
-          <Switch
-            style={clasess.switchStyle}
-            defaultChecked
-            checked={true}
-            onChange={(e: any) => onChangeState("isDefault", e.target.checked)}
-          />
-          <IconButton style={clasess.iconStyle} onClick={addNewSupplierSheet}>
-            <SaveIcon />
-          </IconButton>
-        </div>
-      </div>
+      <AddSupplierWidget item={item} />
     </div>
   );
 };

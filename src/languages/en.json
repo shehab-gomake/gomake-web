@@ -66,22 +66,29 @@
       "weight": "Weight",
       "thickness": "Thickness",
       "pricePerTon": "Price Per Ton",
-      "settings": "Settings"
+      "settings": "Settings",
+      "supplierSheet": "Supplier Sheet",
+      "selectSupplier": "Select Supplier",
+      "unitPrice": "Unit Price",
+      "selectCurrency": "Select Currency",
+      "selectDirection": "SelectDirection",
+      "currency": "Currency",
+      "direction": "Direction",
+      "default": "Default"
     },
     "lamination": {
       "title": "Lamination",
       "category": "category",
-      "height":"height",
-      "width":"width",
-      "settings":"settings",
-      "modal":{
-        "code":"code",
-        "thickness":"thickness",
-        "cold/hot":"cold/hot",
-        "price":"price",
-        "stock":"stock",
-        "thicknesses":"thicknesses"
-        
+      "height": "height",
+      "width": "width",
+      "settings": "settings",
+      "modal": {
+        "code": "code",
+        "thickness": "thickness",
+        "cold/hot": "cold/hot",
+        "price": "price",
+        "stock": "stock",
+        "thicknesses": "thicknesses"
       }
     }
   }

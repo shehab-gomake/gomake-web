@@ -10,23 +10,31 @@ const useAddSupplier = ({ item }: any) => {
     useSupplier();
   const [sheetDirection, setSheetDirection] = useState([]);
   const [state, setState] = useState<any>({});
+
   const headerTable = useMemo(
     () => [
-      "Select a Supplier",
-      "Unit price",
-      "Price per ton",
-      "Currency",
-      "Direction",
-      "Default",
+      t("materials.sheetPaper.selectSupplier"),
+      t("materials.sheetPaper.unitPrice"),
+      t("materials.sheetPaper.pricePerTon"),
+      t("materials.sheetPaper.currency"),
+      t("materials.sheetPaper.direction"),
+      t("materials.sheetPaper.default"),
     ],
     []
   );
-  console.log("State", state);
-  const onChangeState = (key: any, value: any) => {
+  const onChangePrimaryState = (key: any, value: any) => {
     setState((prevState: any) => {
       return {
         ...prevState,
         [key]: value,
+      };
+    });
+  };
+  const onChangeState = (key: any, supplierId: string, value: any) => {
+    setState((prevState: any) => {
+      return {
+        ...prevState,
+        [`${key}-${supplierId}`]: value,
       };
     });
   };
@@ -55,7 +63,43 @@ const useAddSupplier = ({ item }: any) => {
     });
     return res;
   }, [state]);
-
+  const deleteSupplierSheet = useCallback(
+    async (item: any) => {
+      const res = await callApi("POST", `/v1/sheets/delete-supplier`, {
+        categoryName: item?.categoryName,
+        sizeId: item?.sizeId,
+        weightId: item?.weightId,
+        supplierId: item.supplierId,
+        pricePerUnit: item?.pricePerUnit,
+        pricePerTon: item?.pricePerTon,
+        currency: item?.currency,
+        direction: item?.direction,
+        thickness: item?.thickness,
+        isDefault: item?.isDefault,
+      });
+    },
+    [state]
+  );
+  const updateSupplierSheet = useCallback(
+    async (item: any) => {
+      console.log("dddd", item?.supplierId);
+      console.log("state", state[`currency-${item?.supplierId}`]?.value);
+      const res = await callApi("POST", `/v1/sheets/update-supplier`, {
+        categoryName: item?.categoryName,
+        sizeId: item?.sizeId,
+        weightId: item?.weightId,
+        supplierId: item.supplierId,
+        pricePerUnit: state[`pricePerUnit-${item?.supplierId}`],
+        pricePerTon: state[`pricePerTon-${item?.supplierId}`],
+        currency: state[`currency-${item?.supplierId}`]?.value,
+        direction: state[`direction-${item?.supplierId}`]?.value,
+        thickness: 0,
+        isDefault: state[`isDefault-${item?.supplierId}`] || true,
+      });
+      return res;
+    },
+    [state]
+  );
   return {
     sheetDirection,
     state,
@@ -63,7 +107,10 @@ const useAddSupplier = ({ item }: any) => {
     suppliersCurrencies,
     headerTable,
     onChangeState,
+    onChangePrimaryState,
     addNewSupplierSheet,
+    deleteSupplierSheet,
+    updateSupplierSheet,
   };
 };
 

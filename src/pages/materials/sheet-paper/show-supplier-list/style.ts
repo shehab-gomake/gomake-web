@@ -34,9 +34,10 @@ const useStyle = ({ headerTable }: any) => {
         alignItems: "center",
         width: "100%",
         marginTop: convertHeightToVH(10),
-        backgroundColor: "#F6F6F6",
+        backgroundColor: "#EBECFF",
         paddingTop: 10,
         paddingBottom: 10,
+        borderTop: `2px solid ${secondColor(500)}`,
       },
       rowItemStyle: {
         width: `${100 / headerTable.length}%`,
@@ -61,6 +62,9 @@ const useStyle = ({ headerTable }: any) => {
         position: "absolute" as "absolute",
         right: -0,
         // marginRight: convertWidthToVW(10),
+      },
+      updatedIcon: {
+        color: primaryColor(300),
       },
     };
   }, []);
