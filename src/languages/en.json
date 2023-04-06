@@ -81,8 +81,19 @@
         "price":"price",
         "stock":"stock",
         "thicknesses":"thicknesses"
-        
       }
+    },
+    "brace":{
+      "title":"Braces",
+      "category":"category",
+      "code":"code",
+      "supplier":"supplier",
+      "height":"height",
+      "width":"width",
+      "stock":"stock",
+      "price":"price",
+      "settings":"settings"
+
     }
   }
 }

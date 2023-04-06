@@ -1,15 +1,16 @@
-import { useGomakeAxios } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
+
+import { useGomakeAxios } from "@/hooks";
 import { GomakeTextInput } from "@/components";
 import { useDebounce } from "@/utils/use-debounce";
-import { IUpdateLaminationThicknessStock } from "./update-stock.interface";
 
-const UpdateStockLaminationThickness = ({
+import { IUpdateBraceStock } from "./update-stock.interface";
+
+const UpdateStockBrace = ({
   categoryName,
   sizeId,
   stockValue,
-  thicknessId,
-}: IUpdateLaminationThicknessStock) => {
+}: IUpdateBraceStock) => {
   const { callApi } = useGomakeAxios();
 
   const [stock, setStock] = useState(stockValue);
@@ -29,21 +30,20 @@ const UpdateStockLaminationThickness = ({
     [setIsChanged]
   );
   const updateStock = useCallback(
-    async (categoryName: string, sizeId: string, thicknessId: string) => {
-      await callApi("POST", "/v1/lamination/update-stock", {
+    async (categoryName: string, sizeId: string) => {
+      await callApi("POST", "/v1/plats/update-stock", {
         categoryName,
         sizeId,
-        thicknessId,
-        stock: parseInt(finalStock),
+        stock: finalStock,
       });
     },
     [finalStock]
   );
   useEffect(() => {
     if (finalStock && isChanged) {
-      updateStock(categoryName, sizeId, thicknessId);
+      updateStock(categoryName, sizeId);
     }
-  }, [finalStock, isChanged]);
+  }, [finalStock, isChanged, sizeId]);
   return (
     <GomakeTextInput
       value={stock}
@@ -55,4 +55,4 @@ const UpdateStockLaminationThickness = ({
     />
   );
 };
-export { UpdateStockLaminationThickness };
+export { UpdateStockBrace };

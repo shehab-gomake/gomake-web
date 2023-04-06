@@ -1,10 +1,16 @@
+import { useEffect, useState } from "react";
+
 import { useStyle } from "./style";
 import { Row } from "./components";
 import { Header } from "./components";
 import { IProps } from "./interfaces";
 
 const Table = ({ tableHeaders, tableRows }: IProps) => {
+  const [_tableRows, setTableRows] = useState(tableRows);
   const { clasess } = useStyle();
+  useEffect(() => {
+    setTableRows(tableRows);
+  }, [tableRows]);
   return (
     <div style={clasess.container}>
       <div style={clasess.header}>
@@ -20,7 +26,7 @@ const Table = ({ tableHeaders, tableRows }: IProps) => {
         })}
       </div>
       <div style={clasess.tableBody}>
-        {tableRows?.map((row: any, index: number) => {
+        {_tableRows?.map((row: any, index: number) => {
           return (
             <Row
               key={`body_row${index}`}
