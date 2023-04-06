@@ -105,6 +105,12 @@
       "stock":"stock",
       "price":"price",
       "settings":"settings"
+    },
+    "kernels":{
+      "title":"Kernels",
+      "category":"category",
+      "supplier":"supplier"
+
     }
   }
 }
