@@ -3,10 +3,11 @@ import Image from "next/image";
 import { IconButton } from "@mui/material";
 
 import moreCircle from "@/icons/more-circle.png";
-import { useSheetModal } from "./use-show-supplier-list";
+import { useShowSupplierList } from "./use-show-supplier-list";
+import { ShowSupplierListWidgetForSheet } from "./show-supplier-list-widget";
 
 const ShowSupplierListForSheet = ({ item }: any) => {
-  const { showUnderRowWidget, setShowUnderRowWidget } = useSheetModal();
+  const { setShowUnderRowWidget } = useShowSupplierList();
 
   return (
     <>
@@ -14,7 +15,7 @@ const ShowSupplierListForSheet = ({ item }: any) => {
         onClick={() =>
           setShowUnderRowWidget({
             stateShow: true,
-            widget: <div>Hey</div>,
+            widget: <ShowSupplierListWidgetForSheet item={item} />,
             item,
             key: "code",
           })

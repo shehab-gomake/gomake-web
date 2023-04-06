@@ -5,13 +5,17 @@ import { useSupplier } from "@/hooks";
 
 import { useSheetPaper } from "./use-sheet-paper";
 import { useStyle } from "./style";
+import { useEffect } from "react";
 
 const HeaderFilter = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const { suppliers } = useSupplier();
+  const { suppliers, getSupplier } = useSupplier();
   const { sheetCategories, categoryName, onChangeCategory, onChangeSupplier } =
     useSheetPaper();
+  useEffect(() => {
+    getSupplier();
+  }, []);
   return (
     <div style={clasess.filterContainer}>
       {sheetCategories?.length > 0 && (
