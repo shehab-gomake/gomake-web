@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import {
   getAndSetPrintingMaterialsCategores,
-  getAndSetPrintingMaterialsSuppliers,
   getAndSetPrintingMaterialsSize,
 } from "@/services/hooks";
 
@@ -13,13 +12,10 @@ const usePrintingMaterials = () => {
     []
   );
   const [supplierId, setSupplierId] = useState("");
-  const [printingMaterialsSuppliers, setPrintingMaterialsSuppliers] = useState(
-    []
-  );
+
   const [printingMaterialsSizes, setPrintingMaterialsSizes] = useState([]);
   useEffect(() => {
     getPrintingMaterialsCategores();
-    getPrintingMaterialsSuppliers();
     getPrintingMaterialsSizes();
   }, [categoryName, supplierId]);
 
@@ -32,13 +28,6 @@ const usePrintingMaterials = () => {
       setCategoryName(data[0]);
     }
   }, [categoryName]);
-
-  const getPrintingMaterialsSuppliers = useCallback(async () => {
-    const data = await getAndSetPrintingMaterialsSuppliers(
-      callApi,
-      setPrintingMaterialsSuppliers
-    );
-  }, [supplierId]);
 
   const getPrintingMaterialsSizes = useCallback(async () => {
     await getAndSetPrintingMaterialsSize(callApi, setPrintingMaterialsSizes, {
@@ -57,7 +46,6 @@ const usePrintingMaterials = () => {
   return {
     categoryName,
     printingMaterialsCategores,
-    printingMaterialsSuppliers,
     printingMaterialsSizes,
     onChangeCategory,
     onChangeSupplier,

@@ -3,19 +3,19 @@ import Image from "next/image";
 import { IconButton } from "@mui/material";
 
 import moreCircle from "@/icons/more-circle.png";
-import { usePrintingMaterialsModal } from "./use-show-supplier-list";
 
-const ShowSupplierListForPrintingMaterials = ({ item }: any) => {
-  const { showUnderRowWidget, setShowUnderRowWidget } =
-    usePrintingMaterialsModal();
+import { useShowThicknesList } from "./use-show-thicknes-list";
+import { ShowSizesListWidgetForPrintingMaterials } from "./show-sizes-list-widget";
 
+const ShowSubTableForPrintingMaterials = ({ item }: any) => {
+  const { setShowUnderRowWidget } = useShowThicknesList();
   return (
     <>
       <IconButton
         onClick={() =>
           setShowUnderRowWidget({
             stateShow: true,
-            widget: <div>Hey</div>,
+            widget: <ShowSizesListWidgetForPrintingMaterials item={item} />,
             item,
             key: "code",
           })
@@ -26,4 +26,4 @@ const ShowSupplierListForPrintingMaterials = ({ item }: any) => {
     </>
   );
 };
-export { ShowSupplierListForPrintingMaterials };
+export { ShowSubTableForPrintingMaterials };

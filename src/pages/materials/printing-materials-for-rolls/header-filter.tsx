@@ -5,6 +5,7 @@ import { GoMakeAutoComplate } from "@/components";
 import { usePrintingMaterials } from "./use-printing-materials-for-rolls";
 import { useStyle } from "./style";
 import { useEffect } from "react";
+import { useSupplier } from "@/hooks";
 
 const HeaderFilter = ({ setPrintingMaterialsSizes }: any) => {
   const { t } = useTranslation();
@@ -12,11 +13,15 @@ const HeaderFilter = ({ setPrintingMaterialsSizes }: any) => {
   const {
     categoryName,
     printingMaterialsCategores,
-    printingMaterialsSuppliers,
     printingMaterialsSizes,
     onChangeCategory,
     onChangeSupplier,
   } = usePrintingMaterials();
+  const { getSupplier, getSupplierCurrencies, suppliers } = useSupplier();
+  useEffect(() => {
+    getSupplier();
+    getSupplierCurrencies();
+  }, []);
   useEffect(() => {
     setPrintingMaterialsSizes(printingMaterialsSizes);
   }, [printingMaterialsSizes]);
@@ -32,9 +37,9 @@ const HeaderFilter = ({ setPrintingMaterialsSizes }: any) => {
           value={categoryName}
         />
       )}
-      {printingMaterialsSuppliers?.length > 0 && (
+      {suppliers?.length > 0 && (
         <GoMakeAutoComplate
-          options={printingMaterialsSuppliers}
+          options={suppliers}
           style={clasess.autoComplateStyle}
           placeholder={t("materials.printingMaterials.supplier")}
           onChange={onChangeSupplier}
