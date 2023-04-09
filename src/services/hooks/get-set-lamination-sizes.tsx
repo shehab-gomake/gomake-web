@@ -3,6 +3,7 @@ import { MoreCircle } from "@/pages/materials/lamination/more-circle";
 import { UpdateStockLaminationThickness } from "@/pages/materials/lamination/more-circle/update-stock-lamination-thickness";
 
 import { ICallApi, ISetState } from "./call-api.interface";
+import { ShowSubTableForLamination } from "@/pages/materials/lamination/show-thicknes-list";
 
 const getAndSetLaminationSize = async (
   callApi: ICallApi,
@@ -49,7 +50,7 @@ const getAndSetLaminatioThicknes = async (
     data
   );
   const _data = returnResult(result, undefined);
-
+  console.log("_data", _data);
   const mapData = _data.map((thicknes: any) => {
     return {
       code: thicknes.code,
@@ -62,6 +63,13 @@ const getAndSetLaminatioThicknes = async (
           sizeId={data.sizeId}
           stockValue={thicknes.stock}
           thicknessId={thicknes.thicknessId}
+        />
+      ),
+      settings: (
+        <ShowSubTableForLamination
+          item={thicknes}
+          categoryName={data?.categoryName}
+          sizeId={data?.sizeId}
         />
       ),
     };

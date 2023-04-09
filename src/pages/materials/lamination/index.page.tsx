@@ -1,14 +1,23 @@
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+
 import { GoMakeAutoComplate } from "@/components";
+import { Table } from "@/widgets/table/table";
 import { CustomerAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
+import { useSupplier } from "@/hooks";
 
-import { useTranslation } from "react-i18next";
-import { Table } from "@/widgets/table/table";
-import { useStyle } from "./style";
 import { useLamination } from "./use-lamination";
+import { useStyle } from "./style";
+
 export default function SheetPaper() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
+  const { suppliers, getSupplier, getSupplierCurrencies } = useSupplier();
+  useEffect(() => {
+    getSupplier();
+    getSupplierCurrencies();
+  }, []);
   const {
     laminationSizes,
     laminationCategores,

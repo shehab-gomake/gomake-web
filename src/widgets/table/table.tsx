@@ -4,6 +4,8 @@ import { Header } from "./components";
 import { IProps } from "./interfaces";
 import { Row } from "./components";
 import { useStyle } from "./style";
+import { ShowSupplierList } from "@/store";
+import { useSetRecoilState } from "recoil";
 
 const Table = ({ tableHeaders, tableRows }: IProps) => {
   const [_tableRows, setTableRows] = useState(tableRows);

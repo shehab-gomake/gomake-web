@@ -57,11 +57,10 @@ const getAndSetSheetSizes = async (
     const mapData = _data.map((item: any) => {
       return {
         code: item?.code,
-        growingUp: `${item?.width}/${item?.height}`, //Width/Height
+        growingUp: `${item?.width}/${item?.height}`,
         pricePerUnit: item?.pricePerUnit,
         pricePerTon: item?.pricePerTon,
         direction: item?.direction,
-        //stock: item?.stock,
         stock: (
           <UpdateStockSheetPaperSizeses
             categoryName={data.categoryName}
