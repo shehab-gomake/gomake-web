@@ -82,7 +82,6 @@ const useAddThickness = ({ item, categoryName, sizeId }: any) => {
   );
   const deleteSupplierLamination = useCallback(
     async (item: any, data: any, setData: any) => {
-      console.log("IITT", item);
       const res = await callApi("POST", `/v1/lamination/delete-supplier`, {
         categoryName: item?.categoryName,
         sizeId: item?.sizeId,
@@ -117,7 +116,6 @@ const useAddThickness = ({ item, categoryName, sizeId }: any) => {
   );
   const updateSupplierLamination = useCallback(
     async (item: any) => {
-      console.log("itemitemitemitem", item);
       const res = await callApi("POST", `/v1/lamination/update-supplier`, {
         categoryName: item?.categoryName,
         sizeId: item?.sizeId,

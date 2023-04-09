@@ -50,7 +50,6 @@ const getAndSetLaminatioThicknes = async (
     data
   );
   const _data = returnResult(result, undefined);
-  console.log("_data", _data);
   const mapData = _data.map((thicknes: any) => {
     return {
       code: thicknes.code,

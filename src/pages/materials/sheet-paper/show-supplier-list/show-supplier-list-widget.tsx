@@ -41,8 +41,6 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
             const supplierId = item.supplierId;
             const currencyVal = item?.currency;
             const directionVal = item?.direction;
-            console.log(directionVal);
-
             return {
               supplierId: (
                 <>
