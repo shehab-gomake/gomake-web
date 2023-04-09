@@ -47,7 +47,7 @@ const useAddSupplier = ({ item }: any) => {
         supplierId: state.supplierId?.value,
         price: parseInt(state?.priceUnit),
         currency: state?.currency?.value,
-        isDefault: state?.isDefault || true,
+        isDefault: state?.isDefault,
         width: item?.width,
         height: item?.height,
       });
@@ -59,7 +59,7 @@ const useAddSupplier = ({ item }: any) => {
           supplierId: state.supplierId?.value,
           price: parseInt(state?.priceUnit),
           currency: state?.currency?.value,
-          isDefault: state?.isDefault || true,
+          isDefault: state?.isDefault,
           width: item?.width,
           height: item?.height,
         });

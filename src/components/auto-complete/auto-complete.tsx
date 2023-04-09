@@ -87,7 +87,9 @@ const GoMakeAutoComplate = ({
       disableClearable={disableClearable}
       placeholder="Enter"
       multiple={multiple}
-      isOptionEqualToValue={(option: any, value: any) => option.id === value.id}
+      isOptionEqualToValue={(option: any, value: any) =>
+        option?.id === value?.id
+      }
     />
   );
 };

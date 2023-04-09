@@ -118,6 +118,7 @@
       "title": "Envelopes",
       "category": "Category",
       "supplier": "supplier",
+      "supplierTitle": "Supplier",
       "height": "Height",
       "width": "Width",
       "quantityInPackage": "Quantity in package",

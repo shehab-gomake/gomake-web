@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { supplierCurrencies, supplierLists } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const useAddThickness = ({ item, categoryName, sizeId }: any) => {
+const useAddSupplier = ({ item }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const { setSnackbarStateValue } = useSnackBar();
@@ -39,29 +39,29 @@ const useAddThickness = ({ item, categoryName, sizeId }: any) => {
       };
     });
   };
-  const addNewSupplierLamination = useCallback(
+  const addNewSupplierEnvelopes = useCallback(
     async (data: any, setData: any) => {
-      const res = await callApi("POST", `/v1/lamination/add-supplier`, {
-        categoryName: categoryName,
-        sizeId: sizeId,
-        thicknessId: item?.thicknessId,
+      const res = await callApi("POST", `/v1/envelopes/add-supplier`, {
+        categoryName: item?.categoryName,
+        sizeId: item?.sizeId,
         supplierId: state.supplierId?.value,
         price: parseInt(state?.priceUnit),
         currency: state?.currency?.value,
-        thickness: item?.thickness,
         isDefault: state?.isDefault,
+        width: item?.width,
+        height: item?.height,
       });
       if (res?.success) {
         let temp = [...data];
         temp.push({
           categoryName: item?.categoryName,
           sizeId: item?.sizeId,
-          thicknessId: item?.thicknessId,
           supplierId: state.supplierId?.value,
           price: parseInt(state?.priceUnit),
           currency: state?.currency?.value,
-          thickness: item?.thickness,
           isDefault: state?.isDefault,
+          width: item?.width,
+          height: item?.height,
         });
         setData(temp);
 
@@ -80,17 +80,17 @@ const useAddThickness = ({ item, categoryName, sizeId }: any) => {
     },
     [state]
   );
-  const deleteSupplierLamination = useCallback(
+  const deleteSupplierEnvelopes = useCallback(
     async (item: any, data: any, setData: any) => {
-      const res = await callApi("POST", `/v1/lamination/delete-supplier`, {
+      const res = await callApi("POST", `/v1/envelopes/delete-supplier`, {
         categoryName: item?.categoryName,
         sizeId: item?.sizeId,
-        thicknessId: item?.thicknessId,
         supplierId: item.supplierId,
-        price: item?.price,
+        price: item?.priceUnit,
         currency: item?.currency,
-        thickness: item?.thickness,
         isDefault: item?.isDefault,
+        width: item?.width,
+        height: item?.height,
       });
       if (res?.success) {
         const temp = [...data];
@@ -114,9 +114,9 @@ const useAddThickness = ({ item, categoryName, sizeId }: any) => {
     },
     [state]
   );
-  const updateSupplierLamination = useCallback(
+  const updateSupplierEnvelopes = useCallback(
     async (item: any) => {
-      const res = await callApi("POST", `/v1/lamination/update-supplier`, {
+      const res = await callApi("POST", `/v1/envelopes/update-supplier`, {
         categoryName: item?.categoryName,
         sizeId: item?.sizeId,
         thicknessId: item?.thicknessId,
@@ -150,10 +150,10 @@ const useAddThickness = ({ item, categoryName, sizeId }: any) => {
     headerTable,
     onChangeState,
     onChangePrimaryState,
-    addNewSupplierLamination,
-    deleteSupplierLamination,
-    updateSupplierLamination,
+    addNewSupplierEnvelopes,
+    deleteSupplierEnvelopes,
+    updateSupplierEnvelopes,
   };
 };
 
-export { useAddThickness };
+export { useAddSupplier };

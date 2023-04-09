@@ -5,6 +5,7 @@ import { GoMakeAutoComplate } from "@/components";
 import { useEnvelops } from "./use-envelops";
 import { useStyle } from "./style";
 import { useEffect } from "react";
+import { useSupplier } from "@/hooks";
 
 const HeaderFilter = ({ setEnvelopsSizes }: any) => {
   const { t } = useTranslation();
@@ -12,11 +13,15 @@ const HeaderFilter = ({ setEnvelopsSizes }: any) => {
   const {
     categoryName,
     envelopsCategores,
-    envelopsSuppliers,
     envelopsSizes,
     onChangeCategory,
     onChangeSupplier,
   } = useEnvelops();
+  const { getSupplier, getSupplierCurrencies, suppliers } = useSupplier();
+  useEffect(() => {
+    getSupplier();
+    getSupplierCurrencies();
+  }, []);
   useEffect(() => {
     setEnvelopsSizes(envelopsSizes);
   }, [envelopsSizes]);
@@ -32,9 +37,9 @@ const HeaderFilter = ({ setEnvelopsSizes }: any) => {
           value={categoryName}
         />
       )}
-      {envelopsSuppliers?.length > 0 && (
+      {suppliers?.length > 0 && (
         <GoMakeAutoComplate
-          options={envelopsSuppliers}
+          options={suppliers}
           style={clasess.autoComplateStyle}
           placeholder={t("materials.plat.supplier")}
           onChange={onChangeSupplier}

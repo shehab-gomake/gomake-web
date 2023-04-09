@@ -1,3 +1,4 @@
+import { ShowSubTableForEnvelopes } from "@/pages/materials/envelopes/show-sizes-list";
 import { ShowSupplierListForEnvelopes } from "@/pages/materials/envelopes/show-supplier-list";
 import { UpdateStockEnvelopes } from "@/pages/materials/envelopes/update-stock-envelopes/update-envelopes";
 import { returnResult } from "@/utils/helpers";
@@ -48,14 +49,7 @@ const getAndSetEnvelopseSize = async (
         />
       ),
       price: size.price,
-      settings: (
-        <ShowSupplierListForEnvelopes
-          item={""}
-          categoryName={""}
-          weightId={""}
-          supplierId={""}
-        />
-      ),
+      settings: <ShowSubTableForEnvelopes item={size} />,
     };
   });
   if (setState) {
