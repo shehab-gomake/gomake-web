@@ -1,12 +1,12 @@
 import { useCallback, useState } from "react";
 import Image from "next/image";
-import moreCircle from "@/icons/more-circle.png";
+
 import { IconButton } from "@mui/material";
-import { GoMakeModal } from "@/components";
-import { useStyle } from "./style";
-import { MoreModal } from "./more-modal";
 import { getAndSetLaminatioThicknes } from "@/services/hooks";
+import moreCircle from "@/icons/more-circle.png";
 import { useGomakeAxios } from "@/hooks";
+
+import { MoreModal } from "./more-modal";
 
 const MoreCircle = ({ item, categoryName }: any) => {
   const [openModal, setOpenModal] = useState(false);

@@ -17,6 +17,7 @@ const useStyle = ({ width }: any) => {
         paddingLeft: 22,
         paddingRight: 22,
       },
+      insideStyle: { width: "85%" },
     };
   }, []);
   return {

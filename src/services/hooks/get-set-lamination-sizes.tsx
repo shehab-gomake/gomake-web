@@ -1,6 +1,6 @@
 import { returnResult } from "@/utils/helpers";
-import { MoreCircle } from "@/pages/materials/lamination/moreCircle";
-import { UpdateStockLaminationThickness } from "@/pages/materials/lamination/moreCircle/update-stock-lamination-thickness";
+import { MoreCircle } from "@/pages/materials/lamination/more-circle";
+import { UpdateStockLaminationThickness } from "@/pages/materials/lamination/more-circle/update-stock-lamination-thickness";
 
 import { ICallApi, ISetState } from "./call-api.interface";
 

@@ -6,8 +6,6 @@ import { useTranslation } from "react-i18next";
 import { Table } from "@/widgets/table/table";
 import { useStyle } from "./style";
 import { useLamination } from "./use-lamination";
-import { useCallback } from "react";
-import { MoreCircle } from "@/pages/materials/lamination/moreCircle";
 export default function SheetPaper() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -15,6 +13,7 @@ export default function SheetPaper() {
     laminationSizes,
     laminationCategores,
     categoryName,
+    headerTable,
     onChangeCategory,
   } = useLamination();
 
@@ -33,15 +32,7 @@ export default function SheetPaper() {
           />
         </div>
       )}
-      <Table
-        tableHeaders={[
-          t("materials.lamination.category"),
-          t("materials.lamination.height"),
-          t("materials.lamination.width"),
-          t("materials.lamination.settings"),
-        ]}
-        tableRows={laminationSizes}
-      />
+      <Table tableHeaders={headerTable} tableRows={laminationSizes} />
     </CustomerAuthLayout>
   );
 }

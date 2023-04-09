@@ -2,27 +2,22 @@ import { useTranslation } from "react-i18next";
 
 import { GoMakeModal } from "@/components";
 import { Table } from "@/widgets/table/table";
+import { useStyle } from "./style";
+import { useLaminationModal } from "./use-lamination-modal";
 
 const MoreModal = ({ openModal, setOpenModal, laminatioThicknes }: any) => {
+  const { clasess } = useStyle({});
   const { t } = useTranslation();
+  const { headerTable } = useLaminationModal();
 
   return (
     <GoMakeModal
       openModal={openModal}
       modalTitle={t("materials.lamination.modal.thicknesses")}
       onClose={() => setOpenModal(false)}
-      insideStyle={{ width: "70%" }}
+      insideStyle={clasess.insideStyle}
     >
-      <Table
-        tableHeaders={[
-          t("materials.lamination.modal.code"),
-          t("materials.lamination.modal.thickness"),
-          t("materials.lamination.modal.cold/hot"),
-          t("materials.lamination.modal.price"),
-          t("materials.lamination.modal.stock"),
-        ]}
-        tableRows={laminatioThicknes}
-      />
+      <Table tableHeaders={headerTable} tableRows={laminatioThicknes} />
     </GoMakeModal>
   );
 };

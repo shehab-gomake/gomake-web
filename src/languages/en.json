@@ -76,12 +76,17 @@
       "supplierSheet": "Supplier Sheet",
       "selectSupplier": "Select Supplier",
       "unitPrice": "Unit Price",
+      "pricePerUnit": "Price Per Unit",
       "selectCurrency": "Select Currency",
       "selectDirection": "SelectDirection",
       "currency": "Currency",
       "direction": "Direction",
       "default": "Default",
-      "controls": "Controls"
+      "controls": "Controls",
+      "code": "Code",
+      "growingUp": "Growing Up",
+      "stock": "Stock",
+      "sizesAndPrices": "Sizes and Prices"
     },
     "lamination": {
       "title": "Lamination",
