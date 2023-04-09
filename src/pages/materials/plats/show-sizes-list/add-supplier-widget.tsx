@@ -14,7 +14,7 @@ const AddSupplierWidget = ({ item, data, setData }: any) => {
     suppliers,
     suppliersCurrencies,
     onChangePrimaryState,
-    addNewSupplierLamination,
+    addNewSupplierPlats,
   } = useAddSupplier({ item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
@@ -66,7 +66,7 @@ const AddSupplierWidget = ({ item, data, setData }: any) => {
         />
       </div>
       <div style={clasess.rowItemStyle}>
-        <IconButton onClick={() => addNewSupplierLamination(data, setData)}>
+        <IconButton onClick={() => addNewSupplierPlats(data, setData)}>
           <SaveIcon />
         </IconButton>
       </div>

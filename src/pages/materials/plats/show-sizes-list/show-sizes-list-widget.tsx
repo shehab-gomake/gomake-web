@@ -18,8 +18,8 @@ const ShowSizesListWidgetForPlats = ({ item }: any) => {
     suppliers,
     suppliersCurrencies,
     onChangeState,
-    deleteSupplierLamination,
-    updateSupplierLamination,
+    deleteSupplierPlats,
+    updateSupplierPlats,
   } = useAddSupplier({ item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
@@ -98,15 +98,13 @@ const ShowSizesListWidgetForPlats = ({ item }: any) => {
                 <>
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() =>
-                      deleteSupplierLamination(item, data, setData)
-                    }
+                    onClick={() => deleteSupplierPlats(item, data, setData)}
                   >
                     <DeleteIcon />
                   </IconButton>
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() => updateSupplierLamination(item)}
+                    onClick={() => updateSupplierPlats(item)}
                   >
                     <SaveAsIcon />
                   </IconButton>

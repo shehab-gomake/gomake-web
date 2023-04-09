@@ -39,7 +39,7 @@ const useAddSupplier = ({ item }: any) => {
       };
     });
   };
-  const addNewSupplierLamination = useCallback(
+  const addNewSupplierPlats = useCallback(
     async (data: any, setData: any) => {
       const res = await callApi("POST", `/v1/plats/add-supplier`, {
         categoryName: item?.categoryName,
@@ -80,7 +80,7 @@ const useAddSupplier = ({ item }: any) => {
     },
     [state]
   );
-  const deleteSupplierLamination = useCallback(
+  const deleteSupplierPlats = useCallback(
     async (item: any, data: any, setData: any) => {
       const res = await callApi("POST", `/v1/plats/delete-supplier`, {
         categoryName: item?.categoryName,
@@ -114,7 +114,7 @@ const useAddSupplier = ({ item }: any) => {
     },
     [state]
   );
-  const updateSupplierLamination = useCallback(
+  const updateSupplierPlats = useCallback(
     async (item: any) => {
       const res = await callApi("POST", `/v1/plats/update-supplier`, {
         categoryName: item?.categoryName,
@@ -150,9 +150,9 @@ const useAddSupplier = ({ item }: any) => {
     headerTable,
     onChangeState,
     onChangePrimaryState,
-    addNewSupplierLamination,
-    deleteSupplierLamination,
-    updateSupplierLamination,
+    addNewSupplierPlats,
+    deleteSupplierPlats,
+    updateSupplierPlats,
   };
 };
 
