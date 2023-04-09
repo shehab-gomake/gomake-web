@@ -1,10 +1,11 @@
+import { ShowSubTableForTubes } from "@/pages/materials/kernels/show-sizes-list";
 import { ShowSupplierListForKernels } from "@/pages/materials/kernels/show-supplier-list";
-import { UpdateStockKernels } from "@/pages/materials/kernels/update-stock-kernels/update-kernels";
+import { UpdateStockTubes } from "@/pages/materials/kernels/update-stock-kernels/update-kernels";
 import { returnResult } from "@/utils/helpers";
 
 import { ICallApi, ISetState } from "./call-api.interface";
 
-const getAndSetKernelsCategores = async (
+const getAndSetTubessCategores = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
@@ -13,7 +14,7 @@ const getAndSetKernelsCategores = async (
   return returnResult(result, setState);
 };
 
-const getAndSetKernelsSuppliers = async (
+const getAndSetTubessSuppliers = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
@@ -22,7 +23,7 @@ const getAndSetKernelsSuppliers = async (
   return returnResult(result, setState);
 };
 
-const getAndSetKernelsSize = async (
+const getAndSetTubessSize = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
@@ -36,21 +37,14 @@ const getAndSetKernelsSize = async (
       diameter: size.diameter,
       weight: size.weight,
       stock: (
-        <UpdateStockKernels
+        <UpdateStockTubes
           categoryName={size.categoryName}
           sizeId={size.sizeId}
           stockValue={size.stock}
         />
       ),
       price: size.price,
-      settings: (
-        <ShowSupplierListForKernels
-          item={size}
-          categoryName={""}
-          weightId={""}
-          supplierId={""}
-        />
-      ),
+      settings: <ShowSubTableForTubes item={size} />,
     };
   });
   if (setState) {
@@ -61,7 +55,7 @@ const getAndSetKernelsSize = async (
 };
 
 export {
-  getAndSetKernelsCategores,
-  getAndSetKernelsSuppliers,
-  getAndSetKernelsSize,
+  getAndSetTubessCategores,
+  getAndSetTubessSuppliers,
+  getAndSetTubessSize,
 };

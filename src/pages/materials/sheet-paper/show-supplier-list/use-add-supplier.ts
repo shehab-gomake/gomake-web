@@ -63,7 +63,8 @@ const useAddSupplier = ({ item }: any) => {
         currency: state?.currency?.value,
         direction: parseInt(state?.direction?.value),
         thickness: 0,
-        isDefault: state?.isDefault,
+        isDefault:
+          typeof state?.isDefault == "boolean" ? state?.isDefault : true,
       });
       if (res?.success) {
         let temp = [...suppliersData];
@@ -77,7 +78,8 @@ const useAddSupplier = ({ item }: any) => {
           currency: state?.currency?.value,
           direction: parseInt(state?.direction?.value),
           thickness: 0,
-          isDefault: state?.isDefault,
+          isDefault:
+            typeof state?.isDefault == "boolean" ? state?.isDefault : true,
         });
         setSuppliersData(temp);
 

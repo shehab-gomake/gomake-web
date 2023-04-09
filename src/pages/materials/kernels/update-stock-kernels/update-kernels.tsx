@@ -6,7 +6,7 @@ import { useDebounce } from "@/utils/use-debounce";
 
 import { IUpdateKernelsStock } from "./update-kernels.interface";
 
-const UpdateStockKernels = ({
+const UpdateStockTubes = ({
   categoryName,
   sizeId,
   stockValue,
@@ -60,4 +60,4 @@ const UpdateStockKernels = ({
     />
   );
 };
-export { UpdateStockKernels };
+export { UpdateStockTubes };

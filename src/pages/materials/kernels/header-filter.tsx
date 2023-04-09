@@ -2,41 +2,47 @@ import { useTranslation } from "react-i18next";
 
 import { GoMakeAutoComplate } from "@/components";
 
-import { useKernels } from "./use-kernels";
+import { useTubess } from "./use-kernels";
 import { useStyle } from "./style";
 import { useEffect } from "react";
+import { useSupplier } from "@/hooks";
 
 const HeaderFilter = ({ setKernelsSizes }: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const {
     categoryName,
-    kernelsCategores,
-    kernelsSuppliers,
-    kernelsSizes,
+    tubesCategores,
+    tubesSuppliers,
+    tubesSizes,
     onChangeCategory,
     onChangeSupplier,
-  } = useKernels();
+  } = useTubess();
+  const { getSupplier, getSupplierCurrencies, suppliers } = useSupplier();
   useEffect(() => {
-    setKernelsSizes(kernelsSizes);
-  }, [kernelsSizes]);
+    getSupplier();
+    getSupplierCurrencies();
+  }, []);
+  useEffect(() => {
+    setKernelsSizes(tubesSizes);
+  }, [tubesSizes]);
 
   return (
     <div style={clasess.filterContainer}>
-      {kernelsCategores?.length > 0 && (
+      {tubesCategores?.length > 0 && (
         <GoMakeAutoComplate
-          options={kernelsCategores}
+          options={tubesCategores}
           style={clasess.autoComplateStyle}
-          placeholder={t("materials.kernels.category")}
+          placeholder={t("materials.tubes.category")}
           onChange={onChangeCategory}
           value={categoryName}
         />
       )}
-      {kernelsSuppliers?.length > 0 && (
+      {tubesSuppliers?.length > 0 && (
         <GoMakeAutoComplate
-          options={kernelsSuppliers}
+          options={suppliers}
           style={clasess.autoComplateStyle}
-          placeholder={t("materials.kernels.supplier")}
+          placeholder={t("materials.tubes.supplier")}
           onChange={onChangeSupplier}
         />
       )}

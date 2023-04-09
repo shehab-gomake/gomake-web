@@ -11,23 +11,23 @@ import { Table } from "@/widgets/table/table";
 export default function SheetPaper() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const [kernelsSizes, setKernelsSizes] = useState([]);
+  const [tubesSizes, settubesSizes] = useState([]);
   return (
     <CustomerAuthLayout>
-      <HeaderTitle title={t("materials.kernels.title")} />
-      <HeaderFilter setKernelsSizes={setKernelsSizes} />
+      <HeaderTitle title={t("materials.tubes.title")} />
+      <HeaderFilter setKernelsSizes={settubesSizes} />
       <div style={clasess.tableContainer}>
         <Table
           tableHeaders={[
-            t("materials.kernels.code"),
-            t("materials.kernels.lenght"),
-            t("materials.kernels.diameter"),
-            t("materials.kernels.weight"),
-            t("materials.kernels.stock"),
-            t("materials.kernels.price"),
-            t("materials.kernels.settings"),
+            t("materials.tubes.code"),
+            t("materials.tubes.lenght"),
+            t("materials.tubes.diameter"),
+            t("materials.tubes.weight"),
+            t("materials.tubes.stock"),
+            t("materials.tubes.price"),
+            t("materials.tubes.settings"),
           ]}
-          tableRows={kernelsSizes}
+          tableRows={tubesSizes}
         />
       </div>
     </CustomerAuthLayout>

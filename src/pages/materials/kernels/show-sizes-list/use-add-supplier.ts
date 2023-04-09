@@ -39,31 +39,29 @@ const useAddSupplier = ({ item }: any) => {
       };
     });
   };
-  const addNewSupplierEnvelopes = useCallback(
+  const addNewSupplierTubes = useCallback(
     async (data: any, setData: any) => {
-      const res = await callApi("POST", `/v1/envelopes/add-supplier`, {
+      const res = await callApi("POST", `/v1/tubes/add-supplier`, {
         categoryName: item?.categoryName,
-        sizeId: item?.sizeId,
-        supplierId: state.supplierId?.value,
-        price: parseInt(state?.priceUnit),
         currency: state?.currency?.value,
         isDefault:
           typeof state?.isDefault == "boolean" ? state?.isDefault : true,
-        width: item?.width,
-        height: item?.height,
+        price: parseInt(state?.priceUnit),
+        sizeId: item?.sizeId,
+        stock: item?.stock,
+        supplierId: state.supplierId?.value,
       });
       if (res?.success) {
         let temp = [...data];
         temp.push({
           categoryName: item?.categoryName,
-          sizeId: item?.sizeId,
-          supplierId: state.supplierId?.value,
-          price: parseInt(state?.priceUnit),
           currency: state?.currency?.value,
           isDefault:
             typeof state?.isDefault == "boolean" ? state?.isDefault : true,
-          width: item?.width,
-          height: item?.height,
+          price: parseInt(state?.priceUnit),
+          sizeId: item?.sizeId,
+          stock: item?.stock,
+          supplierId: state.supplierId?.value,
         });
         setData(temp);
 
@@ -82,17 +80,16 @@ const useAddSupplier = ({ item }: any) => {
     },
     [state]
   );
-  const deleteSupplierEnvelopes = useCallback(
+  const deleteSupplierTubes = useCallback(
     async (item: any, data: any, setData: any) => {
-      const res = await callApi("POST", `/v1/envelopes/delete-supplier`, {
+      const res = await callApi("POST", `/v1/tubes/delete-supplier`, {
         categoryName: item?.categoryName,
-        sizeId: item?.sizeId,
-        supplierId: item.supplierId,
-        price: item?.priceUnit,
         currency: item?.currency,
         isDefault: item?.isDefault,
-        width: item?.width,
-        height: item?.height,
+        price: item?.priceUnit,
+        sizeId: item?.sizeId,
+        stock: item?.stock,
+        supplierId: item.supplierId,
       });
       if (res?.success) {
         const temp = [...data];
@@ -116,18 +113,17 @@ const useAddSupplier = ({ item }: any) => {
     },
     [state]
   );
-  const updateSupplierEnvelopes = useCallback(
+  const updateSupplierTubes = useCallback(
     async (item: any) => {
-      const res = await callApi("POST", `/v1/envelopes/update-supplier`, {
-        categoryName: item?.categoryName,
-        sizeId: item?.sizeId,
-        thicknessId: item?.thicknessId,
-        supplierId: item.supplierId,
-        price: state[`priceUnit-${item?.supplierId}`] || item?.price,
+      const res = await callApi("POST", `/v1/tubes/update-supplier`, {
         currency:
           state[`currency-${item?.supplierId}`]?.value || item?.currency,
-        thickness: item?.thickness,
         isDefault: state[`isDefault-${item?.supplierId}`] || item?.isDefault,
+        price: state[`priceUnit-${item?.supplierId}`] || item?.price,
+        sizeId: item?.sizeId,
+        categoryName: item?.categoryName,
+        stock: item?.stock,
+        supplierId: item.supplierId,
       });
       if (res?.success) {
         setSnackbarStateValue({
@@ -152,9 +148,9 @@ const useAddSupplier = ({ item }: any) => {
     headerTable,
     onChangeState,
     onChangePrimaryState,
-    addNewSupplierEnvelopes,
-    deleteSupplierEnvelopes,
-    updateSupplierEnvelopes,
+    addNewSupplierTubes,
+    deleteSupplierTubes,
+    updateSupplierTubes,
   };
 };
 

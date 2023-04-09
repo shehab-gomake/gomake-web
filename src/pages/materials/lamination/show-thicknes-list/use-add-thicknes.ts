@@ -49,7 +49,8 @@ const useAddThickness = ({ item, categoryName, sizeId }: any) => {
         price: parseInt(state?.priceUnit),
         currency: state?.currency?.value,
         thickness: item?.thickness,
-        isDefault: state?.isDefault,
+        isDefault:
+          typeof state?.isDefault == "boolean" ? state?.isDefault : true,
       });
       if (res?.success) {
         let temp = [...data];
@@ -61,7 +62,8 @@ const useAddThickness = ({ item, categoryName, sizeId }: any) => {
           price: parseInt(state?.priceUnit),
           currency: state?.currency?.value,
           thickness: item?.thickness,
-          isDefault: state?.isDefault,
+          isDefault:
+            typeof state?.isDefault == "boolean" ? state?.isDefault : true,
         });
         setData(temp);
 

@@ -33,7 +33,7 @@
     "lamination": "Lamination",
     "plats": "Plats",
     "envelopes": "Envelopes",
-    "kernels": "Kernels",
+    "tubes": "Tubes",
     "printingMaterialsForRolls": "Printing materials for rolls",
     "hardboards": "Hardboards",
     "wideFormatPrintingMaterials": "Wide format printing materials",
@@ -127,8 +127,8 @@
       "price": "Price",
       "settings": "Settings"
     },
-    "kernels":{
-      "title":"Kernels",
+    "tubes":{
+      "title":"Tubes",
       "category":"Category",
       "code":"Code",
       "supplier":"supplier",
