@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
-import { useStyle } from "./style";
 import { useAddThickness } from "./use-add-thicknes";
+import { useStyle } from "./style";
 
 const AddSupplierWidget = ({
   item,

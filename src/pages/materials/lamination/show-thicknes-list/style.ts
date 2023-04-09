@@ -1,7 +1,8 @@
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
-import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
+
+import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = ({ headerTable }: any) => {
   const { secondColor, primaryColor } = useGomakeTheme();

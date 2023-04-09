@@ -92,7 +92,6 @@ const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
       </div>
       <div style={clasess.rowItemStyle}>
         <IconButton
-          // style={clasess.iconStyle}
           onClick={() => addNewSupplierSheet(suppliersData, setSuppliersData)}
         >
           <SaveIcon />

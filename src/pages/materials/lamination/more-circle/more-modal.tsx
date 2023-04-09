@@ -1,12 +1,13 @@
-import { useTranslation } from "react-i18next";
-
-import { GoMakeModal } from "@/components";
-import { Table } from "@/widgets/table/table";
-import { useStyle } from "./style";
-import { useLaminationModal } from "./use-lamination-modal";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useSetRecoilState } from "recoil";
+
+import { Table } from "@/widgets/table/table";
+import { GoMakeModal } from "@/components";
 import { ShowSupplierList } from "@/store";
+
+import { useLaminationModal } from "./use-lamination-modal";
+import { useStyle } from "./style";
 
 const MoreModal = ({ openModal, setOpenModal, laminatioThicknes }: any) => {
   const { clasess } = useStyle({});

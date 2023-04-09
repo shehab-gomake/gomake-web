@@ -3,6 +3,7 @@ import Image from "next/image";
 import { IconButton } from "@mui/material";
 
 import moreCircle from "@/icons/more-circle.png";
+
 import { useShowThicknesList } from "./use-show-thicknes-list";
 import { ShowThicknesListWidgetForLamination } from "./show-thicknes-list-widget";
 
