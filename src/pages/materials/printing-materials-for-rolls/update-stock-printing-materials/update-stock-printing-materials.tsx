@@ -4,13 +4,13 @@ import { useGomakeAxios } from "@/hooks";
 import { GomakeTextInput } from "@/components";
 import { useDebounce } from "@/utils/use-debounce";
 
-import { IUpdateEnvelopesStock } from "./update-kernels.interface";
+import { IUpdatePrintingMaterialsStock } from "./update-stock-printing-materials.interface";
 
-const UpdateStockKernels = ({
+const UpdateStockPrintingMaterials = ({
   categoryName,
   sizeId,
   stockValue,
-}: IUpdateEnvelopesStock) => {
+}: IUpdatePrintingMaterialsStock) => {
   const { callApi } = useGomakeAxios();
 
   const [stock, setStock] = useState(stockValue);
@@ -31,7 +31,7 @@ const UpdateStockKernels = ({
   );
   const updateStock = useCallback(
     async (categoryName: string, sizeId: string) => {
-      await callApi("POST", "/v1/tubes/update-stock", {
+      await callApi("POST", "/v1/material-roll-printings/update-stock", {
         categoryName,
         sizeId,
         stock: finalStock,
@@ -60,4 +60,4 @@ const UpdateStockKernels = ({
     />
   );
 };
-export { UpdateStockKernels };
+export { UpdateStockPrintingMaterials };

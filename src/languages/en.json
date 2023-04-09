@@ -85,53 +85,67 @@
     },
     "lamination": {
       "title": "Lamination",
-      "category": "category",
-      "height": "height",
-      "width": "width",
-      "settings": "settings",
+      "category": "Category",
+      "height": "Height",
+      "width": "Width",
+      "settings": "Settings",
       "modal": {
-        "code": "code",
-        "thickness": "thickness",
-        "cold/hot": "cold/hot",
-        "price": "price",
-        "stock": "stock",
-        "thicknesses": "thicknesses"
+        "code": "Code",
+        "thickness": "Thickness",
+        "cold/hot": "Cold/Hot",
+        "price": "Price",
+        "stock": "Stock",
+        "thicknesses": "Thicknesses"
       }
     },
     "brace": {
       "title": "Braces",
-      "category": "category",
-      "code": "code",
+      "category": "Category",
+      "code": "Code",
       "supplier": "supplier",
-      "height": "height",
-      "width": "width",
-      "stock": "stock",
-      "price": "price",
-      "settings": "settings"
+      "height": "Height",
+      "width": "Width",
+      "stock": "Stock",
+      "price": "Price",
+      "settings": "Settings"
     },
     "envelops": {
       "title": "Envelopes",
-      "category": "category",
+      "category": "Category",
       "supplier": "supplier",
-      "height": "height",
-      "width": "width",
-      "quantityInPackage": "quantityInPackage",
-      "withWindow": "withWindow",
-      "stock": "stock",
-      "price": "price",
-      "settings": "settings"
+      "height": "Height",
+      "width": "Width",
+      "quantityInPackage": "Quantity in package",
+      "withWindow": "With window",
+      "stock": "Stock",
+      "price": "Price",
+      "settings": "Settings"
     },
     "kernels":{
       "title":"Kernels",
-      "category":"category",
-      "code":"code",
+      "category":"Category",
+      "code":"Code",
       "supplier":"supplier",
-      "lenght":"lenght",
-      "diameter":"diameter",
-      "weight":"weight",
-      "stock":"stock",
-      "price":"price",
-      "settings":"settings"
+      "lenght":"Lenght",
+      "diameter":"Diameter",
+      "weight":"Weight",
+      "stock":"Stock",
+      "price":"Price",
+      "settings":"Settings"
+    },
+    "printingMaterials":{
+      "title":"Printing material for rolls",
+      "category":"Category",
+      "supplier":"supplier",
+      "code":"Code",
+      "height":"height",
+      "width":"Width",
+      "stock":"Stock",
+      "pricePerSquareMeter":"Price per square meter",
+      "weightPerSquareMeter":"Weight per square meter",
+      "withPremier":"With premier",
+      "settings":"Settings"
+
     }
   }
 }

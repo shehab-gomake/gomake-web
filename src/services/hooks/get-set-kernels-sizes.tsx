@@ -1,5 +1,5 @@
 import { ShowSupplierListForKernels } from "@/pages/materials/kernels/show-supplier-list";
-import { UpdateStockKernels } from "@/pages/materials/kernels/update-stock-kernels/update-envelopes-kernels";
+import { UpdateStockKernels } from "@/pages/materials/kernels/update-stock-kernels/update-kernels";
 import { returnResult } from "@/utils/helpers";
 
 import { ICallApi, ISetState } from "./call-api.interface";

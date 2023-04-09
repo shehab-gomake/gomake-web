@@ -1,4 +1,4 @@
-export interface IUpdateKernelsStock {
+export interface IUpdatePrintingMaterialsStock {
   categoryName: string;
   sizeId: string;
   stockValue: string;
