@@ -1,6 +1,6 @@
-import { ShowSubTableForTubes } from "@/pages/materials/kernels/show-sizes-list";
-import { ShowSupplierListForKernels } from "@/pages/materials/kernels/show-supplier-list";
-import { UpdateStockTubes } from "@/pages/materials/kernels/update-stock-kernels/update-kernels";
+import { ShowSubTableForTubes } from "@/pages/materials/tubes/show-sizes-list";
+import { ShowSupplierListForKernels } from "@/pages/materials/tubes/show-supplier-list";
+import { UpdateStockTubes } from "@/pages/materials/tubes/update-stock-kernels/update-kernels";
 import { returnResult } from "@/utils/helpers";
 
 import { ICallApi, ISetState } from "./call-api.interface";
