@@ -13,7 +13,7 @@ import { useStyle } from "./style";
 export default function SheetPaper() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const { suppliers, getSupplier, getSupplierCurrencies } = useSupplier();
+  const { getSupplier, getSupplierCurrencies } = useSupplier();
   useEffect(() => {
     getSupplier();
     getSupplierCurrencies();

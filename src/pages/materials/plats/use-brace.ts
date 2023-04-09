@@ -1,22 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
-import {
-  getAndSetBraceCategores,
-  getAndSetBraceSuppliers,
-  getAndSetBraceSize,
-} from "@/services/hooks";
+import { getAndSetBraceCategores, getAndSetBraceSize } from "@/services/hooks";
 
 const useBrace = () => {
   const { callApi } = useGomakeAxios();
   const [categoryName, setCategoryName] = useState("");
   const [braceCategores, setBraceCategores] = useState([]);
   const [supplierId, setSupplierId] = useState("");
-  const [braceSuppliers, setBraceSuppliers] = useState([]);
   const [braceSizes, setBraceSizes] = useState([]);
 
   useEffect(() => {
     getBraceCategores();
-    getBraceSuppliers();
     getBraceSizes();
   }, [categoryName, supplierId]);
 
@@ -27,10 +21,6 @@ const useBrace = () => {
       setCategoryName(data[0]);
     }
   }, [categoryName]);
-
-  const getBraceSuppliers = useCallback(async () => {
-    const data = await getAndSetBraceSuppliers(callApi, setBraceSuppliers);
-  }, [supplierId]);
 
   const getBraceSizes = useCallback(async () => {
     await getAndSetBraceSize(callApi, setBraceSizes, {
@@ -49,7 +39,6 @@ const useBrace = () => {
   return {
     braceCategores,
     categoryName,
-    braceSuppliers,
     supplierId,
     braceSizes,
     onChangeCategory,

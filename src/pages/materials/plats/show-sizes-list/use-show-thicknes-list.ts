@@ -1,9 +1,7 @@
-import { useGomakeAxios } from "@/hooks";
 import { useRecoilState } from "recoil";
 import { ShowSupplierList } from "@/store";
 
-const useSheetModal = () => {
-  const { callApi } = useGomakeAxios();
+const useShowThicknesList = () => {
   const [showUnderRowWidget, setShowUnderRowWidget] =
     useRecoilState(ShowSupplierList);
 
@@ -13,4 +11,4 @@ const useSheetModal = () => {
   };
 };
 
-export { useSheetModal };
+export { useShowThicknesList };

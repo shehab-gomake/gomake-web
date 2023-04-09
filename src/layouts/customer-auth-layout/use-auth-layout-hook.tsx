@@ -61,9 +61,9 @@ const useAuthLayoutHook = () => {
             path: "/materials/lamination",
           },
           {
-            key: "braces",
-            title: t("tabs.braces"),
-            path: "/materials/braces",
+            key: "plats",
+            title: t("tabs.plats"),
+            path: "/materials/plats",
           },
           {
             key: "envelopes",
@@ -74,7 +74,8 @@ const useAuthLayoutHook = () => {
             key: "kernels",
             title: t("tabs.kernels"),
             path: "/materials/kernels",
-          }, {
+          },
+          {
             key: "printingMaterialsForRolls",
             title: t("tabs.printingMaterialsForRolls"),
             path: "/materials/printing-materials-for-rolls",
@@ -98,7 +99,8 @@ const useAuthLayoutHook = () => {
             key: "applications",
             title: t("tabs.applications"),
             path: "/materials/applications",
-          }, {
+          },
+          {
             key: "encapsulationRoll",
             title: t("tabs.encapsulationRoll"),
             path: "/materials/encapsulation-roll",
@@ -168,8 +170,6 @@ const useAuthLayoutHook = () => {
             title: t("tabs.beat"),
             path: "/materials/beat",
           },
-          
-
         ],
         icon: () => {
           return <ProductsIcon />;

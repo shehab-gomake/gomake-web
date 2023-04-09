@@ -3,10 +3,13 @@ import Image from "next/image";
 import { IconButton } from "@mui/material";
 
 import moreCircle from "@/icons/more-circle.png";
-import { useSheetModal } from "./use-show-supplier-list";
 
-const ShowSupplierListForBraces = ({ item }: any) => {
-  const { showUnderRowWidget, setShowUnderRowWidget } = useSheetModal();
+import { useShowThicknesList } from "./use-show-thicknes-list";
+import { ShowSizesListWidgetForPlats } from "./show-sizes-list-widget";
+
+const ShowSubTableForPlats = ({ item }: any) => {
+  console.log("it", item);
+  const { setShowUnderRowWidget } = useShowThicknesList();
 
   return (
     <>
@@ -14,7 +17,7 @@ const ShowSupplierListForBraces = ({ item }: any) => {
         onClick={() =>
           setShowUnderRowWidget({
             stateShow: true,
-            widget: <div>Hey</div>,
+            widget: <ShowSizesListWidgetForPlats item={item} />,
             item,
             key: "code",
           })
@@ -25,4 +28,4 @@ const ShowSupplierListForBraces = ({ item }: any) => {
     </>
   );
 };
-export { ShowSupplierListForBraces };
+export { ShowSubTableForPlats };

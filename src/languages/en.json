@@ -31,7 +31,7 @@
     "listSales": "List sales",
     "sheetPaper": "Sheet paper",
     "lamination": "Lamination",
-    "braces": "Braces",
+    "plats": "Plats",
     "envelopes": "Envelopes",
     "kernels": "Kernels",
     "printingMaterialsForRolls": "Printing materials for rolls",
@@ -103,8 +103,8 @@
         "thicknesses": "thicknesses"
       }
     },
-    "brace": {
-      "title": "Braces",
+    "plat": {
+      "title": "Plats",
       "category": "category",
       "code": "code",
       "supplier": "supplier",
