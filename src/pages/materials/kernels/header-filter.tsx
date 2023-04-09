@@ -13,12 +13,13 @@ const HeaderFilter = ({ setKernelsSizes }: any) => {
     categoryName,
     kernelsCategores,
     kernelsSuppliers,
+    kernelsSizes,
     onChangeCategory,
     onChangeSupplier,
   } = useKernels();
   useEffect(() => {
-    setKernelsSizes();
-  }, []);
+    setKernelsSizes(kernelsSizes);
+  }, [kernelsSizes]);
 
   return (
     <div style={clasess.filterContainer}>

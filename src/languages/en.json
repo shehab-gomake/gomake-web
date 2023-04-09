@@ -123,7 +123,14 @@
     "kernels":{
       "title":"Kernels",
       "category":"category",
-      "supplier":"supplier"
+      "code":"code",
+      "supplier":"supplier",
+      "lenght":"lenght",
+      "diameter":"diameter",
+      "weight":"weight",
+      "stock":"stock",
+      "price":"price",
+      "settings":"settings"
 
     }
   }

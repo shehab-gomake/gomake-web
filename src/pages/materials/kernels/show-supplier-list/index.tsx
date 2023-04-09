@@ -3,10 +3,10 @@ import Image from "next/image";
 import { IconButton } from "@mui/material";
 
 import moreCircle from "@/icons/more-circle.png";
-import { useBracesModal } from "./use-show-supplier-list";
+import { useKernelsModal } from "./use-show-supplier-list";
 
-const ShowSupplierListForBraces = ({ item }: any) => {
-  const { showUnderRowWidget, setShowUnderRowWidget } = useBracesModal();
+const ShowSupplierListForKernels = ({ item }: any) => {
+  const { showUnderRowWidget, setShowUnderRowWidget } = useKernelsModal();
 
   return (
     <>
@@ -25,4 +25,4 @@ const ShowSupplierListForBraces = ({ item }: any) => {
     </>
   );
 };
-export { ShowSupplierListForBraces };
+export { ShowSupplierListForKernels };

@@ -3,10 +3,10 @@ import Image from "next/image";
 import { IconButton } from "@mui/material";
 
 import moreCircle from "@/icons/more-circle.png";
-import { useSheetModal } from "./use-show-supplier-list";
+import { useEnvelopesModal } from "./use-show-supplier-list";
 
 const ShowSupplierListForEnvelopes = ({ item }: any) => {
-  const { showUnderRowWidget, setShowUnderRowWidget } = useSheetModal();
+  const { showUnderRowWidget, setShowUnderRowWidget } = useEnvelopesModal();
 
   return (
     <>

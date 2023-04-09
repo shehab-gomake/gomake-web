@@ -3,6 +3,7 @@ import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import {
   getAndSetKernelsCategores,
   getAndSetKernelsSuppliers,
+  getAndSetKernelsSize,
 } from "@/services/hooks";
 
 const useKernels = () => {
@@ -11,11 +12,13 @@ const useKernels = () => {
   const [kernelsCategores, setKernelsCategores] = useState([]);
   const [supplierId, setSupplierId] = useState("");
   const [kernelsSuppliers, setKernelssSuppliers] = useState([]);
+  const [kernelsSizes, setKernelssSizes] = useState([]);
 
   useEffect(() => {
     getKernelsCategores();
     getKernelsSuppliers();
-  }, [categoryName]);
+    getKernelsSizes();
+  }, [categoryName, supplierId]);
 
   const getKernelsCategores = useCallback(async () => {
     const data = await getAndSetKernelsCategores(callApi, setKernelsCategores);
@@ -28,6 +31,13 @@ const useKernels = () => {
     const data = await getAndSetKernelsSuppliers(callApi, setKernelssSuppliers);
   }, [supplierId]);
 
+  const getKernelsSizes = useCallback(async () => {
+    await getAndSetKernelsSize(callApi, setKernelssSizes, {
+      categoryName,
+      supplierId: supplierId || "",
+    });
+  }, [categoryName, supplierId, setKernelssSizes]);
+
   const onChangeCategory = useCallback(async (e: any, value: any) => {
     setCategoryName(value);
   }, []);
@@ -39,6 +49,7 @@ const useKernels = () => {
     categoryName,
     kernelsCategores,
     kernelsSuppliers,
+    kernelsSizes,
     onChangeCategory,
     onChangeSupplier,
   };
