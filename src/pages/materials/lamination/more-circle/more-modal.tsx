@@ -1,18 +1,19 @@
 import { useEffect } from "react";
-import { useSetRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
+import { useSetRecoilState } from "recoil";
 
 import { Table } from "@/widgets/table/table";
 import { GoMakeModal } from "@/components";
 import { ShowSupplierList } from "@/store";
 
-import { useSheetModal } from "./use-sheet-modal";
+import { useLaminationModal } from "./use-lamination-modal";
 import { useStyle } from "./style";
 
-const SheetPageMoreModal = ({ openModal, onCloseModal, sheetSizes }: any) => {
+const MoreModal = ({ openModal, setOpenModal, laminatioThicknes }: any) => {
+  const { clasess } = useStyle({});
   const { t } = useTranslation();
-  const { clasess } = useStyle();
-  const { headerTable } = useSheetModal({});
+  const { headerTable } = useLaminationModal();
+
   const setShowUnderRowWidget = useSetRecoilState(ShowSupplierList);
   useEffect(() => {
     setShowUnderRowWidget({
@@ -25,12 +26,12 @@ const SheetPageMoreModal = ({ openModal, onCloseModal, sheetSizes }: any) => {
   return (
     <GoMakeModal
       openModal={openModal}
-      modalTitle={t("materials.sheetPaper.sizesAndPrices")}
-      onClose={onCloseModal}
+      modalTitle={t("materials.lamination.modal.thicknesses")}
+      onClose={() => setOpenModal(false)}
       insideStyle={clasess.insideStyle}
     >
-      <Table tableHeaders={headerTable} tableRows={sheetSizes} />
+      <Table tableHeaders={headerTable} tableRows={laminatioThicknes} />
     </GoMakeModal>
   );
 };
-export { SheetPageMoreModal };
+export { MoreModal };

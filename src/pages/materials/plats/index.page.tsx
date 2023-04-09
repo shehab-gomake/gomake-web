@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { HeaderTitle } from "@/widgets";
 import { Table } from "@/widgets/table/table";
@@ -7,6 +7,7 @@ import { CustomerAuthLayout } from "@/layouts";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { HeaderFilter } from "./header-filter";
+import { useSupplier } from "@/hooks";
 
 export default function Braces() {
   const { t } = useTranslation();
@@ -14,17 +15,17 @@ export default function Braces() {
   const [braceSizes, setbraceSizes] = useState([]);
   return (
     <CustomerAuthLayout>
-      <HeaderTitle title={t("materials.brace.title")} />
+      <HeaderTitle title={t("materials.plat.title")} />
       <HeaderFilter setbraceSizes={setbraceSizes} />
       <div style={clasess.tableContainer}>
         <Table
           tableHeaders={[
-            t("materials.brace.code"),
-            t("materials.brace.height"),
-            t("materials.brace.width"),
-            t("materials.brace.stock"),
-            t("materials.brace.price"),
-            t("materials.brace.settings"),
+            t("materials.plat.code"),
+            t("materials.plat.height"),
+            t("materials.plat.width"),
+            t("materials.plat.stock"),
+            t("materials.plat.price"),
+            t("materials.plat.settings"),
           ]}
           tableRows={braceSizes}
         />

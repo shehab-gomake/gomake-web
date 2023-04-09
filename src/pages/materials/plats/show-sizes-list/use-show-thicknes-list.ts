@@ -1,8 +1,7 @@
 import { useRecoilState } from "recoil";
-
 import { ShowSupplierList } from "@/store";
 
-const useShowSupplierList = () => {
+const useShowThicknesList = () => {
   const [showUnderRowWidget, setShowUnderRowWidget] =
     useRecoilState(ShowSupplierList);
 
@@ -12,4 +11,4 @@ const useShowSupplierList = () => {
   };
 };
 
-export { useShowSupplierList };
+export { useShowThicknesList };

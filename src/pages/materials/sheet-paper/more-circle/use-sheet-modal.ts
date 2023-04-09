@@ -15,13 +15,13 @@ const useSheetModal = ({ item }: any) => {
   const [categoryName] = useState();
   const headerTable = useMemo(
     () => [
-      "Code",
-      "Growing Up",
-      "price Per Unit",
-      "price Per Ton",
-      "direction",
-      "stock",
-      "settings",
+      t("materials.sheetPaper.code"),
+      t("materials.sheetPaper.growingUp"),
+      t("materials.sheetPaper.pricePerUnit"),
+      t("materials.sheetPaper.pricePerTon"),
+      t("materials.sheetPaper.direction"),
+      t("materials.sheetPaper.stock"),
+      t("materials.sheetPaper.settings"),
     ],
     []
   );
@@ -30,7 +30,6 @@ const useSheetModal = ({ item }: any) => {
       categoryName: item?.categoryName,
       weightId: item?.weightId,
       supplierId: item?.supplierId,
-      //sizeId: item?.sizeId,
     });
     if (data) {
       setOpenModal(true);

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = ({ width }: any) => {
@@ -17,6 +18,7 @@ const useStyle = ({ width }: any) => {
         paddingLeft: 22,
         paddingRight: 22,
       },
+      insideStyle: { width: "85%" },
     };
   }, []);
   return {

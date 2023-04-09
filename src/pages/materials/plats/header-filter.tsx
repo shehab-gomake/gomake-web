@@ -13,11 +13,15 @@ const HeaderFilter = ({ setbraceSizes }: any) => {
   const {
     braceCategores,
     categoryName,
-    braceSuppliers,
     braceSizes,
     onChangeCategory,
     onChangeSupplier,
   } = useBrace();
+  const { getSupplier, getSupplierCurrencies, suppliers } = useSupplier();
+  useEffect(() => {
+    getSupplier();
+    getSupplierCurrencies();
+  }, []);
   useEffect(() => {
     setbraceSizes(braceSizes);
   }, [braceSizes]);
@@ -27,16 +31,16 @@ const HeaderFilter = ({ setbraceSizes }: any) => {
         <GoMakeAutoComplate
           options={braceCategores}
           style={clasess.autoComplateStyle}
-          placeholder={t("materials.brace.category")}
+          placeholder={t("materials.plat.category")}
           onChange={onChangeCategory}
           value={categoryName}
         />
       )}
-      {braceSuppliers?.length > 0 && (
+      {suppliers?.length > 0 && (
         <GoMakeAutoComplate
-          options={braceSuppliers}
+          options={suppliers}
           style={clasess.autoComplateStyle}
-          placeholder={t("materials.brace.supplier")}
+          placeholder={t("materials.plat.supplier")}
           onChange={onChangeSupplier}
         />
       )}

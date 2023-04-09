@@ -1,8 +1,8 @@
-import { ShowSupplierListForBraces } from "@/pages/materials/braces/show-supplier-list";
-import { UpdateStockBrace } from "@/pages/materials/braces/update-stock-brace/update-stock-brace";
 import { returnResult } from "@/utils/helpers";
+import { UpdateStockBrace } from "@/pages/materials/plats/update-stock-brace/update-stock-brace";
 
 import { ICallApi, ISetState } from "./call-api.interface";
+import { ShowSubTableForPlats } from "@/pages/materials/plats/show-sizes-list";
 
 const getAndSetBraceCategores = async (
   callApi: ICallApi,
@@ -41,14 +41,7 @@ const getAndSetBraceSize = async (
         />
       ),
       price: size.price,
-      settings: (
-        <ShowSupplierListForBraces
-          item={size}
-          categoryName={""}
-          weightId={""}
-          supplierId={""}
-        />
-      ),
+      settings: <ShowSubTableForPlats item={size} />,
     };
   });
   if (setState) {

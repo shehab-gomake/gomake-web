@@ -1,18 +1,29 @@
-import { useCallback, useEffect, useState } from "react";
-import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   getAndSetLaminationCategores,
   getAndSetLaminationSize,
   getAndSetLaminatioThicknes,
 } from "@/services/hooks";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 
 const useLamination = () => {
+  const { t } = useTranslation();
   const [categoryName, setCategoryName] = useState(undefined);
   const { callApi } = useGomakeAxios();
   const [laminationSizes, setLaminatioSizes] = useState([]);
   const [laminationCategores, setLaminatioCategores] = useState([]);
   const [laminationThicknes, setLaminatioThicknes] = useState([]);
 
+  const headerTable = useMemo(
+    () => [
+      t("materials.lamination.category"),
+      t("materials.lamination.height"),
+      t("materials.lamination.width"),
+      t("materials.lamination.settings"),
+    ],
+    []
+  );
   const getLaminationSizes = useCallback(async () => {
     await getAndSetLaminationSize(callApi, setLaminatioSizes, {
       categoryName,
@@ -50,6 +61,7 @@ const useLamination = () => {
     laminationThicknes,
     laminationSizes,
     categoryName,
+    headerTable,
   };
 };
 export { useLamination };

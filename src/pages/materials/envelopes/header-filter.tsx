@@ -36,7 +36,7 @@ const HeaderFilter = ({ setEnvelopsSizes }: any) => {
         <GoMakeAutoComplate
           options={envelopsSuppliers}
           style={clasess.autoComplateStyle}
-          placeholder={t("materials.brace.supplier")}
+          placeholder={t("materials.plat.supplier")}
           onChange={onChangeSupplier}
         />
       )}

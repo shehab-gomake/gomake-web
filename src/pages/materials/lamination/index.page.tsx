@@ -1,20 +1,28 @@
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+
 import { GoMakeAutoComplate } from "@/components";
+import { Table } from "@/widgets/table/table";
 import { CustomerAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
+import { useSupplier } from "@/hooks";
 
-import { useTranslation } from "react-i18next";
-import { Table } from "@/widgets/table/table";
-import { useStyle } from "./style";
 import { useLamination } from "./use-lamination";
-import { useCallback } from "react";
-import { MoreCircle } from "@/pages/materials/lamination/moreCircle";
+import { useStyle } from "./style";
+
 export default function SheetPaper() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
+  const { getSupplier, getSupplierCurrencies } = useSupplier();
+  useEffect(() => {
+    getSupplier();
+    getSupplierCurrencies();
+  }, []);
   const {
     laminationSizes,
     laminationCategores,
     categoryName,
+    headerTable,
     onChangeCategory,
   } = useLamination();
 
@@ -33,15 +41,7 @@ export default function SheetPaper() {
           />
         </div>
       )}
-      <Table
-        tableHeaders={[
-          t("materials.lamination.category"),
-          t("materials.lamination.height"),
-          t("materials.lamination.width"),
-          t("materials.lamination.settings"),
-        ]}
-        tableRows={laminationSizes}
-      />
+      <Table tableHeaders={headerTable} tableRows={laminationSizes} />
     </CustomerAuthLayout>
   );
 }

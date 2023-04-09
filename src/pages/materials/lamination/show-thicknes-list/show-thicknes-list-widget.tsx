@@ -8,39 +8,41 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { Table } from "@/widgets/table/table";
 
 import { AddSupplierWidget } from "./add-supplier-widget";
-import { useAddSupplier } from "./use-add-supplier";
+import { useAddThickness } from "./use-add-thicknes";
 import { useStyle } from "./style";
 
-const ShowSupplierListWidgetForSheet = ({ item }: any) => {
+const ShowThicknesListWidgetForLamination = ({
+  item,
+  categoryName,
+  sizeId,
+}: any) => {
   const {
     headerTable,
-    sheetDirection,
     state,
     suppliers,
     suppliersCurrencies,
     onChangeState,
-    deleteSupplierSheet,
-    updateSupplierSheet,
-  } = useAddSupplier({ item });
+    deleteSupplierLamination,
+    updateSupplierLamination,
+  } = useAddThickness({ item, categoryName, sizeId });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
-  const [suppliersData, setSuppliersData] = useState([]);
+  const [data, setData] = useState([]);
   useEffect(() => {
-    setSuppliersData(item.sheetSuppliers);
-  }, [item.sheetSuppliers]);
+    setData(item.laminationSuppliers);
+  }, [item.laminationSuppliers]);
 
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.headerTitle}>
-        {t("materials.sheetPaper.supplierSheet")}
+        {t("materials.lamination.modal.thickness")}
       </div>
       <div style={clasess.tableContainer}>
         <Table
           tableHeaders={headerTable}
-          tableRows={suppliersData.map((item: any) => {
+          tableRows={data?.map((item: any) => {
             const supplierId = item.supplierId;
             const currencyVal = item?.currency;
-            const directionVal = item?.direction;
             return {
               supplierId: (
                 <>
@@ -62,24 +64,9 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
                   type="number"
                   placeholder={t("materials.sheetPaper.unitPrice")}
                   style={clasess.textInputStyle}
-                  value={
-                    state[`pricePerUnit-${supplierId}`] || item.pricePerUnit
-                  }
+                  value={state[`priceUnit-${supplierId}`] || item.price}
                   onChange={(e: any) =>
-                    onChangeState("pricePerUnit", supplierId, e.target.value)
-                  }
-                />
-              ),
-              pricePerTon: (
-                <GomakeTextInput
-                  type="number"
-                  placeholder={t("materials.sheetPaper.pricePerTon")}
-                  style={clasess.textInputStyle}
-                  value={
-                    state[`pricePerTon-${supplierId}`] || item.pricePerTon || ""
-                  }
-                  onChange={(e: any) =>
-                    onChangeState("pricePerTon", supplierId, e.target.value)
+                    onChangeState("priceUnit", supplierId, e.target.value)
                   }
                 />
               ),
@@ -99,26 +86,6 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
                   }
                 />
               ),
-              direction: (
-                <>
-                  {sheetDirection?.length > 0 && (
-                    <GoMakeAutoComplate
-                      options={sheetDirection}
-                      style={clasess.dropDownListContainer}
-                      placeholder={t("materials.sheetPaper.selectDirection")}
-                      value={
-                        state[`direction-${supplierId}`] ||
-                        sheetDirection.find(
-                          (item: any) => item?.value === directionVal.toString()
-                        )
-                      }
-                      onChange={(e: any, item: any) =>
-                        onChangeState("direction", supplierId, item)
-                      }
-                    />
-                  )}
-                </>
-              ),
               isDefault: (
                 <>
                   <Switch
@@ -136,14 +103,14 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
                   <IconButton
                     style={clasess.updatedIcon}
                     onClick={() =>
-                      deleteSupplierSheet(item, suppliersData, setSuppliersData)
+                      deleteSupplierLamination(item, data, setData)
                     }
                   >
                     <DeleteIcon />
                   </IconButton>
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() => updateSupplierSheet(item)}
+                    onClick={() => updateSupplierLamination(item)}
                   >
                     <SaveAsIcon />
                   </IconButton>
@@ -155,10 +122,12 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
       </div>
       <AddSupplierWidget
         item={item}
-        suppliersData={suppliersData}
-        setSuppliersData={setSuppliersData}
+        data={data}
+        setData={setData}
+        categoryName={categoryName}
+        sizeId={sizeId}
       />
     </div>
   );
 };
-export { ShowSupplierListWidgetForSheet };
+export { ShowThicknesListWidgetForLamination };

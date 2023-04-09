@@ -7,15 +7,14 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
 
-const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
+const AddSupplierWidget = ({ item, data, setData }: any) => {
   const {
     headerTable,
-    sheetDirection,
     state,
     suppliers,
     suppliersCurrencies,
     onChangePrimaryState,
-    addNewSupplierSheet,
+    addNewSupplierPlats,
   } = useAddSupplier({ item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
@@ -38,22 +37,9 @@ const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
             type="number"
             placeholder={t("materials.sheetPaper.unitPrice")}
             style={clasess.textInputStyle}
-            value={state.pricePerUnit || ""}
+            value={state.priceUnit || ""}
             onChange={(e: any) =>
-              onChangePrimaryState("pricePerUnit", e.target.value)
-            }
-          />
-        </div>
-      </div>
-      <div style={clasess.rowItemStyle}>
-        <div style={{ width: "80%" }}>
-          <GomakeTextInput
-            type="number"
-            placeholder={t("materials.sheetPaper.pricePerTon")}
-            style={clasess.textInputStyle}
-            value={state.pricePerTon || ""}
-            onChange={(e: any) =>
-              onChangePrimaryState("pricePerTon", e.target.value)
+              onChangePrimaryState("priceUnit", e.target.value)
             }
           />
         </div>
@@ -70,17 +56,6 @@ const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
         />
       </div>
       <div style={clasess.rowItemStyle}>
-        <GoMakeAutoComplate
-          options={sheetDirection}
-          style={clasess.dropDownListContainer}
-          placeholder={t("materials.sheetPaper.selectDirection")}
-          value={state.direction || ""}
-          onChange={(e: any, item: any) =>
-            onChangePrimaryState("direction", item)
-          }
-        />
-      </div>
-      <div style={clasess.rowItemStyle}>
         <Switch
           style={clasess.switchStyle}
           defaultChecked
@@ -91,9 +66,7 @@ const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
         />
       </div>
       <div style={clasess.rowItemStyle}>
-        <IconButton
-          onClick={() => addNewSupplierSheet(suppliersData, setSuppliersData)}
-        >
+        <IconButton onClick={() => addNewSupplierPlats(data, setData)}>
           <SaveIcon />
         </IconButton>
       </div>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { CustomerAuthLayout } from "@/layouts";
@@ -6,7 +7,6 @@ import { HeaderTitle } from "@/widgets";
 
 import { useSheetPaper } from "./use-sheet-paper";
 import { HeaderFilter } from "./header-filter";
-import { useState } from "react";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
