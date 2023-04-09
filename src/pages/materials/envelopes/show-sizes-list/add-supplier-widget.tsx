@@ -61,7 +61,6 @@ const AddSupplierWidget = ({ item, data, setData }: any) => {
           defaultChecked
           checked={state?.isDefault}
           onChange={(e: any) => {
-            console.log("e.target.checked", e.target.checked);
             onChangePrimaryState("isDefault", e.target.checked);
           }}
         />

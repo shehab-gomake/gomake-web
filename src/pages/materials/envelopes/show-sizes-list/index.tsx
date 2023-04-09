@@ -8,7 +8,6 @@ import { useShowThicknesList } from "./use-show-thicknes-list";
 import { ShowSizesListWidgetForEnvelopes } from "./show-sizes-list-widget";
 
 const ShowSubTableForEnvelopes = ({ item }: any) => {
-  console.log("item2", item);
   const { setShowUnderRowWidget } = useShowThicknesList();
   return (
     <>
