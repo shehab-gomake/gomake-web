@@ -9,7 +9,6 @@ import { ShowSizesListWidgetForPlats } from "./show-sizes-list-widget";
 
 const ShowSubTableForPlats = ({ item }: any) => {
   const { setShowUnderRowWidget } = useShowThicknesList();
-
   return (
     <>
       <IconButton

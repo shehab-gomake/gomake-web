@@ -3,10 +3,11 @@ import Image from "next/image";
 import { IconButton } from "@mui/material";
 
 import moreCircle from "@/icons/more-circle.png";
-import { useEnvelopesModal } from "./use-show-supplier-list";
+import { usePrintingMaterialsModal } from "./use-show-supplier-list";
 
-const ShowSupplierListForEnvelopes = ({ item }: any) => {
-  const { showUnderRowWidget, setShowUnderRowWidget } = useEnvelopesModal();
+const ShowSupplierListForPrintingMaterials = ({ item }: any) => {
+  const { showUnderRowWidget, setShowUnderRowWidget } =
+    usePrintingMaterialsModal();
 
   return (
     <>
@@ -25,4 +26,4 @@ const ShowSupplierListForEnvelopes = ({ item }: any) => {
     </>
   );
 };
-export { ShowSupplierListForEnvelopes };
+export { ShowSupplierListForPrintingMaterials };

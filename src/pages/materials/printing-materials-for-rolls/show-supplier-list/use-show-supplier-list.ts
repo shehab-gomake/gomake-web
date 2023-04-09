@@ -2,7 +2,7 @@ import { useGomakeAxios } from "@/hooks";
 import { useRecoilState } from "recoil";
 import { ShowSupplierList } from "@/store";
 
-const useEnvelopesModal = () => {
+const usePrintingMaterialsModal = () => {
   const { callApi } = useGomakeAxios();
   const [showUnderRowWidget, setShowUnderRowWidget] =
     useRecoilState(ShowSupplierList);
@@ -13,4 +13,4 @@ const useEnvelopesModal = () => {
   };
 };
 
-export { useEnvelopesModal };
+export { usePrintingMaterialsModal };

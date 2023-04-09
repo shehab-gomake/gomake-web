@@ -2,41 +2,41 @@ import { useTranslation } from "react-i18next";
 
 import { GoMakeAutoComplate } from "@/components";
 
-import { useKernels } from "./use-kernels";
+import { usePrintingMaterials } from "./use-printing-materials-for-rolls";
 import { useStyle } from "./style";
 import { useEffect } from "react";
 
-const HeaderFilter = ({ setKernelsSizes }: any) => {
+const HeaderFilter = ({ setPrintingMaterialsSizes }: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const {
     categoryName,
-    kernelsCategores,
-    kernelsSuppliers,
-    kernelsSizes,
+    printingMaterialsCategores,
+    printingMaterialsSuppliers,
+    printingMaterialsSizes,
     onChangeCategory,
     onChangeSupplier,
-  } = useKernels();
+  } = usePrintingMaterials();
   useEffect(() => {
-    setKernelsSizes(kernelsSizes);
-  }, [kernelsSizes]);
+    setPrintingMaterialsSizes(printingMaterialsSizes);
+  }, [printingMaterialsSizes]);
 
   return (
     <div style={clasess.filterContainer}>
-      {kernelsCategores?.length > 0 && (
+      {printingMaterialsCategores?.length > 0 && (
         <GoMakeAutoComplate
-          options={kernelsCategores}
+          options={printingMaterialsCategores}
           style={clasess.autoComplateStyle}
-          placeholder={t("materials.kernels.category")}
+          placeholder={t("materials.printingMaterials.category")}
           onChange={onChangeCategory}
           value={categoryName}
         />
       )}
-      {kernelsSuppliers?.length > 0 && (
+      {printingMaterialsSuppliers?.length > 0 && (
         <GoMakeAutoComplate
-          options={kernelsSuppliers}
+          options={printingMaterialsSuppliers}
           style={clasess.autoComplateStyle}
-          placeholder={t("materials.kernels.supplier")}
+          placeholder={t("materials.printingMaterials.supplier")}
           onChange={onChangeSupplier}
         />
       )}
