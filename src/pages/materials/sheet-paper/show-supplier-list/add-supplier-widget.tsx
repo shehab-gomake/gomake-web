@@ -89,8 +89,10 @@ const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
             onChangePrimaryState("isDefault", e.target.checked)
           }
         />
+      </div>
+      <div style={clasess.rowItemStyle}>
         <IconButton
-          style={clasess.iconStyle}
+          // style={clasess.iconStyle}
           onClick={() => addNewSupplierSheet(suppliersData, setSuppliersData)}
         >
           <SaveIcon />
