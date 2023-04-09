@@ -80,7 +80,8 @@
       "selectDirection": "SelectDirection",
       "currency": "Currency",
       "direction": "Direction",
-      "default": "Default"
+      "default": "Default",
+      "controls": "Controls"
     },
     "lamination": {
       "title": "Lamination",
@@ -97,28 +98,28 @@
         "thicknesses": "thicknesses"
       }
     },
-    "brace":{
-      "title":"Braces",
-      "category":"category",
-      "code":"code",
-      "supplier":"supplier",
-      "height":"height",
-      "width":"width",
-      "stock":"stock",
-      "price":"price",
-      "settings":"settings"
+    "brace": {
+      "title": "Braces",
+      "category": "category",
+      "code": "code",
+      "supplier": "supplier",
+      "height": "height",
+      "width": "width",
+      "stock": "stock",
+      "price": "price",
+      "settings": "settings"
     },
-    "envelops":{
-      "title":"Envelopes",
-      "category":"category",
-      "supplier":"supplier",
-      "height":"height",
-      "width":"width",
-      "quantityInPackage":"quantityInPackage",
-      "withWindow":"withWindow",
-      "stock":"stock",
-      "price":"price",
-      "settings":"settings"
+    "envelops": {
+      "title": "Envelopes",
+      "category": "category",
+      "supplier": "supplier",
+      "height": "height",
+      "width": "width",
+      "quantityInPackage": "quantityInPackage",
+      "withWindow": "withWindow",
+      "stock": "stock",
+      "price": "price",
+      "settings": "settings"
     },
     "kernels":{
       "title":"Kernels",
@@ -131,7 +132,6 @@
       "stock":"stock",
       "price":"price",
       "settings":"settings"
-
     }
   }
 }

@@ -39,6 +39,9 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
           tableHeaders={headerTable}
           tableRows={suppliersData.map((item: any) => {
             const supplierId = item.supplierId;
+            const currencyVal = item?.currency;
+            const directionVal = item?.direction;
+            console.log(directionVal);
 
             return {
               supplierId: (
@@ -82,29 +85,41 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
                   }
                 />
               ),
-              currency: (
+              currency: suppliersCurrencies?.length > 0 && (
                 <GoMakeAutoComplate
                   options={suppliersCurrencies}
                   style={clasess.dropDownListContainer}
                   placeholder={t("materials.sheetPaper.selectCurrency")}
-                  value={state[`currency-${supplierId}`] || item.currency || ""}
+                  value={
+                    state[`currency-${supplierId}`] ||
+                    suppliersCurrencies.find(
+                      (item: any) => item?.value === currencyVal
+                    )
+                  }
                   onChange={(e: any, item: any) =>
                     onChangeState("currency", supplierId, item)
                   }
                 />
               ),
               direction: (
-                <GoMakeAutoComplate
-                  options={sheetDirection}
-                  style={clasess.dropDownListContainer}
-                  placeholder={t("materials.sheetPaper.selectDirection")}
-                  value={
-                    state[`direction-${supplierId}`] || item.direction || ""
-                  }
-                  onChange={(e: any, item: any) =>
-                    onChangeState("direction", supplierId, item)
-                  }
-                />
+                <>
+                  {sheetDirection?.length > 0 && (
+                    <GoMakeAutoComplate
+                      options={sheetDirection}
+                      style={clasess.dropDownListContainer}
+                      placeholder={t("materials.sheetPaper.selectDirection")}
+                      value={
+                        state[`direction-${supplierId}`] ||
+                        sheetDirection.find(
+                          (item: any) => item?.value === directionVal.toString()
+                        )
+                      }
+                      onChange={(e: any, item: any) =>
+                        onChangeState("direction", supplierId, item)
+                      }
+                    />
+                  )}
+                </>
               ),
               isDefault: (
                 <>
@@ -116,6 +131,10 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
                       onChangeState("isDefault", supplierId, e.target.checked)
                     }
                   />
+                </>
+              ),
+              controls: (
+                <>
                   <IconButton
                     style={clasess.updatedIcon}
                     onClick={() =>

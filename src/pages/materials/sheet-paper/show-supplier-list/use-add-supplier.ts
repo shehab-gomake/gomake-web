@@ -23,6 +23,7 @@ const useAddSupplier = ({ item }: any) => {
       t("materials.sheetPaper.currency"),
       t("materials.sheetPaper.direction"),
       t("materials.sheetPaper.default"),
+      t("materials.sheetPaper.controls"),
     ],
     []
   );
