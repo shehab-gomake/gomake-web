@@ -4,10 +4,9 @@ import { HeaderTitle } from "@/widgets";
 import { Table } from "@/widgets/table/table";
 import { CustomerAuthLayout } from "@/layouts";
 
-import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { HeaderFilter } from "./header-filter";
-import { useSupplier } from "@/hooks";
+import { useStyle } from "./style";
 
 export default function Braces() {
   const { t } = useTranslation();

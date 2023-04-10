@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { getAndSetBraceCategores, getAndSetBraceSize } from "@/services/hooks";
 
-const useBrace = () => {
+const usePlats = () => {
   const { callApi } = useGomakeAxios();
   const [categoryName, setCategoryName] = useState("");
   const [braceCategores, setBraceCategores] = useState([]);
@@ -45,4 +45,4 @@ const useBrace = () => {
     onChangeSupplier,
   };
 };
-export { useBrace };
+export { usePlats };

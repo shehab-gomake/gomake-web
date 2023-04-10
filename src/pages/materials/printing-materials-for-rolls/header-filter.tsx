@@ -6,6 +6,7 @@ import { usePrintingMaterials } from "./use-printing-materials-for-rolls";
 import { useStyle } from "./style";
 import { useEffect } from "react";
 import { useSupplier } from "@/hooks";
+import { Skeleton } from "@mui/material";
 
 const HeaderFilter = ({ setPrintingMaterialsSizes }: any) => {
   const { t } = useTranslation();
@@ -28,7 +29,7 @@ const HeaderFilter = ({ setPrintingMaterialsSizes }: any) => {
 
   return (
     <div style={clasess.filterContainer}>
-      {printingMaterialsCategores?.length > 0 && (
+      {printingMaterialsCategores?.length > 0 ? (
         <GoMakeAutoComplate
           options={printingMaterialsCategores}
           style={clasess.autoComplateStyle}
@@ -36,14 +37,18 @@ const HeaderFilter = ({ setPrintingMaterialsSizes }: any) => {
           onChange={onChangeCategory}
           value={categoryName}
         />
+      ) : (
+        <Skeleton variant="rectangular" width={200} height={40} />
       )}
-      {suppliers?.length > 0 && (
+      {suppliers?.length > 0 ? (
         <GoMakeAutoComplate
           options={suppliers}
           style={clasess.autoComplateStyle}
           placeholder={t("materials.printingMaterials.supplier")}
           onChange={onChangeSupplier}
         />
+      ) : (
+        <Skeleton variant="rectangular" width={200} height={40} />
       )}
     </div>
   );
