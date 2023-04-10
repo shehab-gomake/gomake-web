@@ -14,7 +14,7 @@ const AddSupplierWidget = ({ item, data, setData }: any) => {
     suppliers,
     suppliersCurrencies,
     onChangePrimaryState,
-    addNewSupplierEnvelopes,
+    addNewSupplierPrintingMaterials,
   } = useAddSupplier({ item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
@@ -60,13 +60,15 @@ const AddSupplierWidget = ({ item, data, setData }: any) => {
           style={clasess.switchStyle}
           defaultChecked
           checked={state?.isDefault}
-          onChange={(e: any) => {
-            onChangePrimaryState("isDefault", e.target.checked);
-          }}
+          onChange={(e: any) =>
+            onChangePrimaryState("isDefault", e.target.checked)
+          }
         />
       </div>
       <div style={clasess.rowItemStyle}>
-        <IconButton onClick={() => addNewSupplierEnvelopes(data, setData)}>
+        <IconButton
+          onClick={() => addNewSupplierPrintingMaterials(data, setData)}
+        >
           <SaveIcon />
         </IconButton>
       </div>

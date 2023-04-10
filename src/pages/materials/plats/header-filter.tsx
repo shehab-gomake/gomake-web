@@ -3,9 +3,10 @@ import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate } from "@/components";
 import { useSupplier } from "@/hooks";
 
-import { useBrace } from "./use-brace";
-import { useStyle } from "./style";
+import { usePlats } from "./use-plats";
 import { useEffect } from "react";
+import { Skeleton } from "@mui/material";
+import { useStyle } from "./style";
 
 const HeaderFilter = ({ setbraceSizes }: any) => {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ const HeaderFilter = ({ setbraceSizes }: any) => {
     braceSizes,
     onChangeCategory,
     onChangeSupplier,
-  } = useBrace();
+  } = usePlats();
   const { getSupplier, getSupplierCurrencies, suppliers } = useSupplier();
   useEffect(() => {
     getSupplier();
@@ -27,7 +28,7 @@ const HeaderFilter = ({ setbraceSizes }: any) => {
   }, [braceSizes]);
   return (
     <div style={clasess.filterContainer}>
-      {braceCategores?.length > 0 && (
+      {braceCategores?.length > 0 ? (
         <GoMakeAutoComplate
           options={braceCategores}
           style={clasess.autoComplateStyle}
@@ -35,14 +36,18 @@ const HeaderFilter = ({ setbraceSizes }: any) => {
           onChange={onChangeCategory}
           value={categoryName}
         />
+      ) : (
+        <Skeleton variant="rectangular" width={200} height={40} />
       )}
-      {suppliers?.length > 0 && (
+      {suppliers?.length > 0 ? (
         <GoMakeAutoComplate
           options={suppliers}
           style={clasess.autoComplateStyle}
           placeholder={t("materials.plat.supplier")}
           onChange={onChangeSupplier}
         />
+      ) : (
+        <Skeleton variant="rectangular" width={200} height={40} />
       )}
     </div>
   );

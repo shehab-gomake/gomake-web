@@ -26,6 +26,9 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         alignitems: "flex-start",
       },
+      skeletonRowStyle: {
+        marginTop: convertHeightToVH(10),
+      },
     };
   }, []);
   return {

@@ -1,9 +1,9 @@
 import { ColoredCycle } from "@/components";
-import { ShowSupplierListForPrintingMaterials } from "@/pages/materials/printing-materials-for-rolls/show-supplier-list";
 import { UpdateStockPrintingMaterials } from "@/pages/materials/printing-materials-for-rolls/update-stock-printing-materials/update-stock-printing-materials";
 import { returnResult } from "@/utils/helpers";
 
 import { ICallApi, ISetState } from "./call-api.interface";
+import { ShowSubTableForPrintingMaterials } from "@/pages/materials/printing-materials-for-rolls/show-sizes-list";
 
 const getAndSetPrintingMaterialsCategores = async (
   callApi: ICallApi,
@@ -58,7 +58,7 @@ const getAndSetPrintingMaterialsSize = async (
         <ColoredCycle backgroundColor={"green"} />
       ),
       settings: (
-        <ShowSupplierListForPrintingMaterials
+        <ShowSubTableForPrintingMaterials
           item={size}
           categoryName={""}
           weightId={""}

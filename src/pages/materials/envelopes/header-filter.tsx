@@ -6,6 +6,7 @@ import { useEnvelops } from "./use-envelops";
 import { useStyle } from "./style";
 import { useEffect } from "react";
 import { useSupplier } from "@/hooks";
+import { Skeleton } from "@mui/material";
 
 const HeaderFilter = ({ setEnvelopsSizes }: any) => {
   const { t } = useTranslation();
@@ -28,7 +29,7 @@ const HeaderFilter = ({ setEnvelopsSizes }: any) => {
 
   return (
     <div style={clasess.filterContainer}>
-      {envelopsCategores?.length > 0 && (
+      {envelopsCategores?.length > 0 ? (
         <GoMakeAutoComplate
           options={envelopsCategores}
           style={clasess.autoComplateStyle}
@@ -36,14 +37,18 @@ const HeaderFilter = ({ setEnvelopsSizes }: any) => {
           onChange={onChangeCategory}
           value={categoryName}
         />
+      ) : (
+        <Skeleton variant="rectangular" width={200} height={40} />
       )}
-      {suppliers?.length > 0 && (
+      {suppliers?.length > 0 ? (
         <GoMakeAutoComplate
           options={suppliers}
           style={clasess.autoComplateStyle}
           placeholder={t("materials.plat.supplier")}
           onChange={onChangeSupplier}
         />
+      ) : (
+        <Skeleton variant="rectangular" width={200} height={40} />
       )}
     </div>
   );
