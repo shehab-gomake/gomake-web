@@ -45,7 +45,7 @@
     "frames": "Frames",
     "paperMoney": "paper money",
     "safarlaOnTheDrum": "Safarla on the drum",
-    "sprellaSingularity": "Sprella Singularity",
+    "sprellaSingularity": "Sprella singularity",
     "encapsulationSheets": "Encapsulation sheets",
     "colors": "Colors",
     "rollOfDoubleSidedGlue": "Roll of double-sided glue",
@@ -65,20 +65,20 @@
   },
   "materials": {
     "sheetPaper": {
-      "title": "Sheet Paper",
+      "title": "Sheet paper",
       "category": "Category",
       "supplier": "Supplier",
       "search": "Search",
       "weight": "Weight",
       "thickness": "Thickness",
-      "pricePerTon": "Price Per Ton",
+      "pricePerTon": "Price per ton",
       "settings": "Settings",
-      "supplierSheet": "Supplier Sheet",
-      "selectSupplier": "Select Supplier",
+      "supplierSheet": "Supplier sheet",
+      "selectSupplier": "Select supplier",
       "unitPrice": "Unit Price",
-      "pricePerUnit": "Price Per Unit",
-      "selectCurrency": "Select Currency",
-      "selectDirection": "SelectDirection",
+      "pricePerUnit": "price per unit",
+      "selectCurrency": "Select currency",
+      "selectDirection": "Select direction",
       "currency": "Currency",
       "direction": "Direction",
       "default": "Default",
@@ -107,7 +107,7 @@
       "title": "Plats",
       "category": "Category",
       "code": "Code",
-      "supplier": "supplier",
+      "supplier": "Supplier",
       "height": "Height",
       "width": "Width",
       "stock": "Stock",
@@ -117,7 +117,7 @@
     "envelops": {
       "title": "Envelopes",
       "category": "Category",
-      "supplier": "supplier",
+      "supplier": "Supplier",
       "supplierTitle": "Supplier",
       "height": "Height",
       "width": "Width",
@@ -131,7 +131,7 @@
       "title":"Tubes",
       "category":"Category",
       "code":"Code",
-      "supplier":"supplier",
+      "supplier":"Supplier",
       "lenght":"Lenght",
       "diameter":"Diameter",
       "weight":"Weight",
@@ -142,7 +142,7 @@
     "printingMaterials":{
       "title":"Printing material for rolls",
       "category":"Category",
-      "supplier":"supplier",
+      "supplier":"Supplier",
       "code":"Code",
       "height":"height",
       "width":"Width",
@@ -152,6 +152,39 @@
       "withPremier":"With premier",
       "settings":"Settings"
 
+    },
+    "hardboards":{
+      "title":"Hardboards",
+      "category":"Category",
+      "supplier":"Supplier",
+      "height":"height",
+      "width":"Width",
+      "settings":"Settings",
+      "hardness":"Hardness",
+      "modal":{
+        "code":"Code",
+        "thicknessName":"Thickness name",
+        "pricePerSquareMeter":"Price per square meter",
+        "height":"Height",
+        "width":"Width",
+        "stock":"Stock",
+        "settings":"Settings"
+      },
+      "supplierModal":{
+        "thickness": "Thickness",
+           "supplierHardboard": "Supplier hardboard",
+           "selectSupplier": "Select supplier",
+           "pricePerTon": "Price per ton",
+           "unitPrice": "Unit price",
+           "pricePerSquareMeter":"Price per square meter",
+           "pricePerUnit": "PricepPer unit",
+           "selectCurrency": "Select currency",
+           "selectDirection": "Select direction",
+           "currency": "Currency",
+           "direction": "Direction",
+           "default": "Default",
+           "controls": "Controls"
+      }
     }
   }
 }

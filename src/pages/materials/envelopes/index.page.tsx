@@ -8,7 +8,7 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { HeaderFilter } from "./header-filter";
 
-export default function Braces() {
+export default function Envelopes() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const [envelopsSizes, setEnvelopsSizes] = useState([]);

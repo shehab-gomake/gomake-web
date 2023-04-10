@@ -10,7 +10,7 @@ import { useSupplier } from "@/hooks";
 import { useLamination } from "./use-lamination";
 import { useStyle } from "./style";
 
-export default function SheetPaper() {
+export default function Lamination() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const { getSupplier, getSupplierCurrencies } = useSupplier();
@@ -35,7 +35,7 @@ export default function SheetPaper() {
           <GoMakeAutoComplate
             options={laminationCategores}
             style={clasess.autoComplateStyle}
-            placeholder={t("materials.sheetPaper.category")}
+            placeholder={t("materials.lamination.category")}
             onChange={onChangeCategory}
             value={categoryName}
           />
