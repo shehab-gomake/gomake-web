@@ -9,6 +9,7 @@ import { useSupplier } from "@/hooks";
 
 import { useLamination } from "./use-lamination";
 import { useStyle } from "./style";
+import { Skeleton } from "@mui/material";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
@@ -30,7 +31,7 @@ export default function SheetPaper() {
     <CustomerAuthLayout>
       <HeaderTitle title={t("materials.lamination.title")} />
 
-      {laminationCategores?.length > 0 && (
+      {laminationCategores?.length > 0 ? (
         <div style={clasess.filterContainer}>
           <GoMakeAutoComplate
             options={laminationCategores}
@@ -40,6 +41,8 @@ export default function SheetPaper() {
             value={categoryName}
           />
         </div>
+      ) : (
+        <Skeleton variant="rectangular" width={200} height={40} />
       )}
       <Table tableHeaders={headerTable} tableRows={laminationSizes} />
     </CustomerAuthLayout>
