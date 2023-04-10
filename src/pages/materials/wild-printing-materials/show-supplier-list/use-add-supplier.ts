@@ -1,11 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
 import { supplierCurrencies, supplierLists } from "@/store";
-import { getAndSetSheetDirection } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { refetchMaterialDataState } from "@/store/refetch-material-data";
 
 const useAddSupplier = ({ item }: any) => {
   const { callApi } = useGomakeAxios();
@@ -13,16 +11,13 @@ const useAddSupplier = ({ item }: any) => {
   const { setSnackbarStateValue } = useSnackBar();
   const suppliers = useRecoilValue(supplierLists);
   const suppliersCurrencies = useRecoilValue(supplierCurrencies);
-  const [sheetDirection, setSheetDirection] = useState([]);
   const [state, setState] = useState<any>({});
 
   const headerTable = useMemo(
     () => [
       t("materials.sheetPaper.selectSupplier"),
       t("materials.sheetPaper.unitPrice"),
-      t("materials.sheetPaper.pricePerTon"),
       t("materials.sheetPaper.currency"),
-      t("materials.sheetPaper.direction"),
       t("materials.sheetPaper.default"),
       t("materials.sheetPaper.controls"),
     ],
@@ -44,34 +39,37 @@ const useAddSupplier = ({ item }: any) => {
       };
     });
   };
-  const getSheetDirections = useCallback(async () => {
-    await getAndSetSheetDirection(callApi, setSheetDirection);
-  }, []);
-
-  useEffect(() => {
-    getSheetDirections();
-  }, []);
-  const refetchMaterialData = useRecoilValue(refetchMaterialDataState);
-
   const addNewSupplierSheet = useCallback(
     async (suppliersData: any, setSuppliersData: any) => {
-      const res = await callApi("POST", `/v1/sheets/add-supplier`, {
-        categoryName: item?.categoryName,
-        sizeId: item?.sizeId,
-        weightId: item?.weightId,
-        supplierId: state.supplierId?.value,
-        pricePerUnit: parseInt(state?.pricePerUnit),
-        pricePerTon: parseInt(state?.pricePerTon),
-        currency: state?.currency?.value,
-        direction: parseInt(state?.direction?.value),
-        thickness: 0,
-        isDefault:
-          typeof state?.isDefault == "boolean" ? state?.isDefault : true,
-      });
+      console.log("item", item);
+      console.log("state", state);
+      const res = await callApi(
+        "POST",
+        `/v1/wide-format-material/add-supplier`,
+        {
+          categoryName: item?.categoryName,
+          sizeId: item?.sizeId,
+          typeId: item?.typeId,
+          supplierId: state.supplierId?.value,
+          pricePerMeterSquare: parseInt(state?.pricePerMeterSquare),
+          currency: state?.currency?.value,
+          isDefault:
+            typeof state?.isDefault == "boolean" ? state?.isDefault : true,
+        }
+      );
       if (res?.success) {
-        const data: any = await refetchMaterialData.refetch();
-        const _item: any = data.find((elem: any) => elem.code === item.code);
-        setSuppliersData(_item.sheetSuppliers);
+        let temp = [...suppliersData];
+        temp.push({
+          categoryName: item?.categoryName,
+          sizeId: item?.sizeId,
+          typeId: item?.typeId,
+          supplierId: state.supplierId?.value,
+          pricePerMeterSquare: parseInt(state?.pricePerMeterSquare),
+          currency: state?.currency?.value,
+          isDefault:
+            typeof state?.isDefault == "boolean" ? state?.isDefault : true,
+        });
+        setSuppliersData(temp);
 
         setSnackbarStateValue({
           state: true,
@@ -90,18 +88,19 @@ const useAddSupplier = ({ item }: any) => {
   );
   const deleteSupplierSheet = useCallback(
     async (item: any, suppliersData: any, setSuppliersData: any) => {
-      const res = await callApi("POST", `/v1/sheets/delete-supplier`, {
-        categoryName: item?.categoryName,
-        sizeId: item?.sizeId,
-        weightId: item?.weightId,
-        supplierId: item.supplierId,
-        pricePerUnit: item?.pricePerUnit,
-        pricePerTon: item?.pricePerTon,
-        currency: item?.currency,
-        direction: item?.direction,
-        thickness: item?.thickness,
-        isDefault: item?.isDefault,
-      });
+      const res = await callApi(
+        "POST",
+        `/v1/wide-format-material/delete-supplier`,
+        {
+          categoryName: item?.categoryName,
+          sizeId: item?.sizeId,
+          typeId: item?.typeId,
+          supplierId: item.supplierId,
+          pricePerMeterSquare: item?.pricePerMeterSquare,
+          currency: item?.currency,
+          isDefault: item?.isDefault,
+        }
+      );
       if (res?.success) {
         const temp = [...suppliersData];
         temp.splice(
@@ -125,34 +124,29 @@ const useAddSupplier = ({ item }: any) => {
     [state]
   );
   const updateSupplierSheet = useCallback(
-    async (item: any, setSuppliersData: any, selectedItem: any) => {
-      const res = await callApi("POST", `/v1/sheets/update-supplier`, {
-        categoryName: item?.categoryName,
-        sizeId: item?.sizeId,
-        weightId: item?.weightId,
-        supplierId: item.supplierId,
-        pricePerUnit:
-          state[`pricePerUnit-${item?.supplierId}`] || item?.pricePerUnit,
-        pricePerTon:
-          state[`pricePerTon-${item?.supplierId}`] || item?.pricePerTon,
-        currency:
-          state[`currency-${item?.supplierId}`]?.value || item?.currency,
-        direction:
-          state[`direction-${item?.supplierId}`]?.value || item?.direction,
-        thickness: 0,
-        isDefault: state[`isDefault-${item?.supplierId}`] || item?.isDefault,
-      });
+    async (item: any) => {
+      const res = await callApi(
+        "POST",
+        `/v1/wide-format-material/update-supplier`,
+        {
+          categoryName: item?.categoryName,
+          sizeId: item?.sizeId,
+          typeId: item?.typeId,
+          supplierId: item.supplierId,
+          pricePerMeterSquare:
+            state[`pricePerMeterSquare-${item?.supplierId}`] ||
+            item?.pricePerMeterSquare,
+          currency:
+            state[`currency-${item?.supplierId}`]?.value || item?.currency,
+          isDefault: state[`isDefault-${item?.supplierId}`] || item?.isDefault,
+        }
+      );
       if (res?.success) {
         setSnackbarStateValue({
           state: true,
           message: t("modal.updatedSusuccessfully"),
           type: "sucess",
         });
-        const data: any = await refetchMaterialData.refetch();
-        const _item: any = data.find(
-          (elem: any) => elem.code === selectedItem.code
-        );
-        setSuppliersData(_item.sheetSuppliers);
       } else {
         setSnackbarStateValue({
           state: true,
@@ -164,7 +158,6 @@ const useAddSupplier = ({ item }: any) => {
     [state]
   );
   return {
-    sheetDirection,
     state,
     suppliers,
     suppliersCurrencies,

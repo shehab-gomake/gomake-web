@@ -6,18 +6,13 @@ import { Table } from "@/widgets/table/table";
 import { GoMakeModal } from "@/components";
 import { ShowSupplierList } from "@/store";
 
-import { useSheetModal } from "./use-sheet-modal";
+import { useWildPrintingMatieralsModal } from "./use-wild-printing-material-modal";
 import { useStyle } from "./style";
 
-const SheetPageMoreModal = ({
-  openModal,
-  onCloseModal,
-  sheetSizes,
-  OnClickGetSheetSizes,
-}: any) => {
+const SheetPageMoreModal = ({ openModal, onCloseModal, sheetSizes }: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const { headerTable } = useSheetModal({});
+  const { headerTable } = useWildPrintingMatieralsModal({});
   const setShowUnderRowWidget = useSetRecoilState(ShowSupplierList);
   useEffect(() => {
     setShowUnderRowWidget({
