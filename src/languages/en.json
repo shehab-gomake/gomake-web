@@ -185,6 +185,31 @@
            "default": "Default",
            "controls": "Controls"
       }
+    },
+    "profileFrames":{
+      "title":"Profile frames",
+      "category":"Category",
+      "supplier":"Supplier",
+      "code":"Code",
+      "height":"Height",
+      "width":"Width",
+      "stock":"Stock",
+      "pricePerUnit":"Price per unit",
+      "pricePerMeter":"Price per meter",
+      "settings":"Settings",
+      "modal":{
+        "thickness":"Thickness",
+        "selectSupplier":"Select supplier",
+        "pricePerUnit":"Price per unit",
+        "pricePerMeter":"Price per meter",
+        "selectCurrency":"select currency",
+        "currency":"Currency",
+        "default":"Default",
+        "controls":"Controls"
+      }
     }
+   
+    
+    
   }
 }
