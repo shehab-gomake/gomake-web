@@ -36,7 +36,7 @@
     "tubes": "Tubes",
     "printingMaterialsForRolls": "Printing materials for rolls",
     "hardboards": "Hardboards",
-    "wideFormatPrintingMaterials": "Wide format printing materials",
+    "wildPrintingMaterials": "Wild Printing Materials",
     "profileFrames": "Profile frames",
     "applications": "Applications",
     "encapsulationRoll": "Encapsulation roll",
@@ -73,7 +73,7 @@
       "thickness": "Thickness",
       "pricePerTon": "Price per ton",
       "settings": "Settings",
-      "supplierSheet": "Supplier sheet",
+      "supplierSheet": "Supplier",
       "selectSupplier": "Select supplier",
       "unitPrice": "Unit Price",
       "pricePerUnit": "price per unit",
@@ -127,6 +127,17 @@
       "price": "Price",
       "settings": "Settings"
     },
+    "wildPrintingMaterials": {
+      "title": "Wild Printing Materials",
+      "settings": "Settings",
+      "thickness": "Thickness",
+      "weightPerMeterSquare": "Weight Per Meter Square",
+      "hardness": "Hardness",
+      "size": "Size",
+      "price": "Price",
+      "stock": "Stock",
+      "code": "Code"
+    },
     "tubes":{
       "title":"Tubes",
       "category":"Category",
@@ -151,7 +162,6 @@
       "weightPerSquareMeter":"Weight per square meter",
       "withPremier":"With premier",
       "settings":"Settings"
-
     },
     "hardboards":{
       "title":"Hardboards",

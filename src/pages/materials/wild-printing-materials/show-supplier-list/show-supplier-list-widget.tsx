@@ -11,23 +11,22 @@ import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
 
-const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
+const ShowSupplierListWidgetForWildPrintingMatieral = ({ item }: any) => {
   const {
     headerTable,
-    sheetDirection,
     state,
     suppliers,
     suppliersCurrencies,
     onChangeState,
     deleteSupplierSheet,
     updateSupplierSheet,
-  } = useAddSupplier({ item: _item });
+  } = useAddSupplier({ item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
   const [suppliersData, setSuppliersData] = useState([]);
   useEffect(() => {
-    setSuppliersData(_item.sheetSuppliers);
-  }, [_item.sheetSuppliers]);
+    setSuppliersData(item.wideFormatMaterialSuppliers);
+  }, [item.wideFormatMaterialSuppliers]);
 
   return (
     <div style={clasess.mainContainer}>
@@ -40,7 +39,6 @@ const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
           tableRows={suppliersData.map((item: any) => {
             const supplierId = item.supplierId;
             const currencyVal = item?.currency;
-            const directionVal = item?.direction;
             return {
               supplierId: (
                 <>
@@ -63,26 +61,19 @@ const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
                   placeholder={t("materials.sheetPaper.unitPrice")}
                   style={clasess.textInputStyle}
                   value={
-                    state[`pricePerUnit-${supplierId}`] || item.pricePerUnit
+                    state[`pricePerMeterSquare-${supplierId}`] ||
+                    item.pricePerMeterSquare
                   }
                   onChange={(e: any) =>
-                    onChangeState("pricePerUnit", supplierId, e.target.value)
+                    onChangeState(
+                      "pricePerMeterSquare",
+                      supplierId,
+                      e.target.value
+                    )
                   }
                 />
               ),
-              pricePerTon: (
-                <GomakeTextInput
-                  type="number"
-                  placeholder={t("materials.sheetPaper.pricePerTon")}
-                  style={clasess.textInputStyle}
-                  value={
-                    state[`pricePerTon-${supplierId}`] || item.pricePerTon || ""
-                  }
-                  onChange={(e: any) =>
-                    onChangeState("pricePerTon", supplierId, e.target.value)
-                  }
-                />
-              ),
+
               currency: suppliersCurrencies?.length > 0 && (
                 <GoMakeAutoComplate
                   options={suppliersCurrencies}
@@ -99,36 +90,17 @@ const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
                   }
                 />
               ),
-              direction: (
-                <>
-                  {sheetDirection?.length > 0 && (
-                    <GoMakeAutoComplate
-                      options={sheetDirection}
-                      style={clasess.dropDownListContainer}
-                      placeholder={t("materials.sheetPaper.selectDirection")}
-                      value={
-                        state[`direction-${supplierId}`] ||
-                        sheetDirection.find(
-                          (item: any) => item?.value === directionVal.toString()
-                        )
-                      }
-                      onChange={(e: any, item: any) =>
-                        onChangeState("direction", supplierId, item)
-                      }
-                    />
-                  )}
-                </>
-              ),
               isDefault: (
-                <Switch
-                  style={clasess.switchStyle}
-                  defaultChecked={item?.isDefault}
-                  checked={state[`isDefault-${supplierId}`]}
-                  onChange={(e: any) =>
-                    onChangeState("isDefault", supplierId, e.target.checked)
-                  }
-                  key={`test_${item?.isDefault}`}
-                />
+                <>
+                  <Switch
+                    style={clasess.switchStyle}
+                    defaultChecked={item?.isDefault}
+                    checked={state[`isDefault-${supplierId}`]}
+                    onChange={(e: any) =>
+                      onChangeState("isDefault", supplierId, e.target.checked)
+                    }
+                  />
+                </>
               ),
               controls: (
                 <>
@@ -142,9 +114,7 @@ const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
                   </IconButton>
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() =>
-                      updateSupplierSheet(item, setSuppliersData, _item)
-                    }
+                    onClick={() => updateSupplierSheet(item)}
                   >
                     <SaveAsIcon />
                   </IconButton>
@@ -155,11 +125,11 @@ const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
         />
       </div>
       <AddSupplierWidget
-        item={_item}
+        item={item}
         suppliersData={suppliersData}
         setSuppliersData={setSuppliersData}
       />
     </div>
   );
 };
-export { ShowSupplierListWidgetForSheet };
+export { ShowSupplierListWidgetForWildPrintingMatieral };
