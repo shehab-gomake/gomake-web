@@ -1,0 +1,96 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  aria-owns={null}
+  className="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon css-mz9wi4-MuiAutocomplete-root"
+  onClick={[Function]}
+  onKeyDown={[Function]}
+  onMouseDown={[Function]}
+  placeholder="Enter"
+>
+  <div
+    className="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
+  >
+    <div
+      className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedEnd MuiAutocomplete-inputRoot css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root"
+      onClick={[Function]}
+    >
+      <input
+        aria-activedescendant={null}
+        aria-autocomplete="list"
+        aria-expanded={false}
+        aria-invalid={false}
+        autoCapitalize="none"
+        autoComplete="off"
+        autoFocus={false}
+        className="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused css-nxo287-MuiInputBase-input-MuiOutlinedInput-input"
+        id=":r0:"
+        onAnimationStart={[Function]}
+        onBlur={[Function]}
+        onChange={[Function]}
+        onFocus={[Function]}
+        onMouseDown={[Function]}
+        readOnly={false}
+        required={false}
+        role="combobox"
+        spellCheck="false"
+        type="text"
+        value=""
+      />
+      <div
+        className="MuiAutocomplete-endAdornment css-1q60rmi-MuiAutocomplete-endAdornment"
+      >
+        <button
+          aria-label="Open"
+          className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiAutocomplete-popupIndicator css-qzbt6i-MuiButtonBase-root-MuiIconButton-root-MuiAutocomplete-popupIndicator"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={-1}
+          title="Open"
+          type="button"
+        >
+          <svg
+            fill="none"
+            height="11"
+            viewBox="0 0 20 11"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0.458303 1.525C0.11525 1.19167 0.0951939 0.854333 0.398138 0.513C0.701082 0.171666 1.16975 0.000666667 1.80414 0L18.1916 0C18.825 0 19.2936 0.171 19.5976 0.513C19.9016 0.855 19.8816 1.19233 19.5375 1.525L11.3437 9.675C11.0271 9.975 10.5784 10.125 9.99788 10.125C9.41733 10.125 8.96872 9.975 8.65205 9.675L0.458303 1.525Z"
+              fill="#F135A3"
+            />
+          </svg>
+        </button>
+      </div>
+      <fieldset
+        aria-hidden={true}
+        className="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+      >
+        <legend
+          className="css-ihdtdm"
+        >
+          <span
+            className="notranslate"
+          >
+            ​
+          </span>
+        </legend>
+      </fieldset>
+    </div>
+  </div>
+</div>
+`;
