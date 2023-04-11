@@ -7,14 +7,15 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
 
-const AddSupplierWidget = ({ item, data, setData }: any) => {
+const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
   const {
     headerTable,
+    applicationDirection,
     state,
     suppliers,
     suppliersCurrencies,
     onChangePrimaryState,
-    addNewSupplierTubes,
+    addNewSupplierSheet,
   } = useAddSupplier({ item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
@@ -24,7 +25,7 @@ const AddSupplierWidget = ({ item, data, setData }: any) => {
         <GoMakeAutoComplate
           options={suppliers}
           style={clasess.dropDownListContainer}
-          placeholder={t("materials.sheetPaper.selectSupplier")}
+          placeholder={t("materials.applications.selectSupplier")}
           value={state.supplierId || ""}
           onChange={(e: any, item: any) =>
             onChangePrimaryState("supplierId", item)
@@ -35,38 +36,42 @@ const AddSupplierWidget = ({ item, data, setData }: any) => {
         <div style={{ width: "80%" }}>
           <GomakeTextInput
             type="number"
-            placeholder={t("materials.sheetPaper.unitPrice")}
+            placeholder={t("materials.applications.pricePerSquareMeter")}
             style={clasess.textInputStyle}
-            value={state.priceUnit || ""}
+            value={state.pricePerSquareMeter || ""}
             onChange={(e: any) =>
-              onChangePrimaryState("priceUnit", e.target.value)
+              onChangePrimaryState("pricePerSquareMeter", e.target.value)
             }
           />
         </div>
       </div>
+
       <div style={clasess.rowItemStyle}>
         <GoMakeAutoComplate
           options={suppliersCurrencies}
           style={clasess.dropDownListContainer}
-          placeholder={t("materials.sheetPaper.selectCurrency")}
+          placeholder={t("materials.applications.selectCurrency")}
           value={state.currency || ""}
           onChange={(e: any, item: any) =>
             onChangePrimaryState("currency", item)
           }
         />
       </div>
+
       <div style={clasess.rowItemStyle}>
         <Switch
           style={clasess.switchStyle}
           defaultChecked
           checked={state?.isDefault}
-          onChange={(e: any) => {
-            onChangePrimaryState("isDefault", e.target.checked);
-          }}
+          onChange={(e: any) =>
+            onChangePrimaryState("isDefault", e.target.checked)
+          }
         />
       </div>
       <div style={clasess.rowItemStyle}>
-        <IconButton onClick={() => addNewSupplierTubes(data, setData)}>
+        <IconButton
+          onClick={() => addNewSupplierSheet(suppliersData, setSuppliersData)}
+        >
           <SaveIcon />
         </IconButton>
       </div>

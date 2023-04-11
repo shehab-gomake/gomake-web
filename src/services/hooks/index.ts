@@ -8,3 +8,4 @@ export * from "./get-set-printing-materials-sizes";
 export * from "./get-set-wild-printing-materials";
 export * from "./get-set-hardboards-sizes";
 export * from "./get-set-profile-frame-sizes";
+export * from "./get-set-applications-sizes";

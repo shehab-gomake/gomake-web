@@ -27,7 +27,7 @@ const Table = ({ tableHeaders, tableRows }: IProps) => {
         })}
       </div>
       <div style={clasess.tableBody}>
-        {_tableRows.length > 0 ? (
+        {_tableRows?.length > 0 ? (
           <>
             {_tableRows?.map((row: any, index: number) => {
               return (
