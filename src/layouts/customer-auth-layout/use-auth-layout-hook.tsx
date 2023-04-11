@@ -86,9 +86,9 @@ const useAuthLayoutHook = () => {
             path: "/materials/hardboards",
           },
           {
-            key: "wideFormatPrintingMaterials",
-            title: t("tabs.wideFormatPrintingMaterials"),
-            path: "/materials/wide-format-printing-materials",
+            key: "wildPrintingMaterials",
+            title: t("tabs.wildPrintingMaterials"),
+            path: "/materials/wild-printing-materials",
           },
           {
             key: "profileFrames",
