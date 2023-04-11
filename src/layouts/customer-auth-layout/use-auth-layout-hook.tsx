@@ -17,7 +17,7 @@ const useAuthLayoutHook = () => {
   const { isAuth } = useGomakeAuth();
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
-  const tabs = useMemo(() => {
+  const tabs: any = useMemo(() => {
     return [
       {
         isLine: false,

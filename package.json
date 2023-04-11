@@ -8,10 +8,13 @@
     "start": "next start",
     "lint": "next lint",
     "export": "next export",
-    "test": "jest --watch",
+    "test": "jest --coverage",
     "test:ci": "jest --ci"
   },
   "dependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.21.2",
+    "@babel/preset-env": "^7.21.4",
+    "@babel/preset-typescript": "^7.21.4",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.16",
