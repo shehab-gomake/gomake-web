@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSetRecoilState } from "recoil";
 
-import { getAndSetApplicationThickness } from "@/services/hooks";
+import { getAndSetEncapsulationRollsSizes } from "@/services/hooks";
 import { useGomakeAxios } from "@/hooks";
 import { ShowSupplierList } from "@/store";
 
@@ -11,23 +11,23 @@ const useApplicationModal = ({ item }: any) => {
   const { t } = useTranslation();
   const setShowUnderRowWidget = useSetRecoilState(ShowSupplierList);
   const [openModal, setOpenModal] = useState(false);
-  const [applicationThickness, setApplicationThickness] = useState([]);
+  const [encapsulationRollSizes, setEncapsulationRollSizes] = useState([]);
   const [categoryName] = useState();
   const headerTable = useMemo(
     () => [
-      t("materials.applications.code"),
-      t("materials.applications.thickness"),
-      t("materials.applications.sizeName"),
-      t("materials.applications.pricePerSquareMeter"),
-      t("materials.applications.stock"),
-      t("materials.applications.settings"),
+      t("materials.encapsulationRoll.code"),
+      t("materials.encapsulationRoll.thickness"),
+      t("materials.encapsulationRoll.sizeName"),
+      t("materials.encapsulationRoll.pricePerSquareMeter"),
+      t("materials.encapsulationRoll.stock"),
+      t("materials.encapsulationRoll.settings"),
     ],
     []
   );
-  const OnClickGetApplicationThickness = useCallback(async () => {
-    const data = await getAndSetApplicationThickness(
+  const OnClickGetEncapsulationSizes = useCallback(async () => {
+    const data = await getAndSetEncapsulationRollsSizes(
       callApi,
-      setApplicationThickness,
+      setEncapsulationRollSizes,
       {
         categoryName: item?.categoryName,
         thicknessId: item?.thicknessId,
@@ -38,8 +38,8 @@ const useApplicationModal = ({ item }: any) => {
       setOpenModal(true);
     }
   }, [item]);
-  const getApplicationThickness = useCallback(async (item: any) => {
-    const data = await getAndSetApplicationThickness(callApi, undefined, {
+  const getEncapsulationSizes = useCallback(async (item: any) => {
+    const data = await getAndSetEncapsulationRollsSizes(callApi, undefined, {
       categoryName: item?.categoryName,
       thicknessId: item?.thicknessId,
       supplierId: item?.supplierId || "",
@@ -58,14 +58,14 @@ const useApplicationModal = ({ item }: any) => {
   };
 
   return {
-    applicationThickness,
+    encapsulationRollSizes,
     categoryName,
     headerTable,
     openModal,
-    OnClickGetApplicationThickness,
+    OnClickGetEncapsulationSizes,
     setOpenModal,
     onCloseModal,
-    getApplicationThickness,
+    getEncapsulationSizes,
   };
 };
 

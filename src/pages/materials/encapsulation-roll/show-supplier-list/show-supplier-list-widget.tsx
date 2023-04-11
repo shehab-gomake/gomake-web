@@ -11,7 +11,7 @@ import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
 
-const ShowSupplierListInsideApplication = ({ item: _item }: any) => {
+const ShowSupplierListInsideEncapsulationRoll = ({ item: _item }: any) => {
   const {
     headerTable,
     state,
@@ -25,13 +25,13 @@ const ShowSupplierListInsideApplication = ({ item: _item }: any) => {
   const { t } = useTranslation();
   const [suppliersData, setSuppliersData] = useState([]);
   useEffect(() => {
-    setSuppliersData(_item.applicationSuppliers);
-  }, [_item.applicationSuppliers]);
+    setSuppliersData(_item.rollEncapsulationSuppliers);
+  }, [_item.rollEncapsulationSuppliers]);
 
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.headerTitle}>
-        {t("materials.applications.supplier")}
+        {t("materials.encapsulationRoll.supplier")}
       </div>
       <div style={clasess.tableContainer}>
         <Table
@@ -47,7 +47,9 @@ const ShowSupplierListInsideApplication = ({ item: _item }: any) => {
                     <GoMakeAutoComplate
                       options={suppliers}
                       style={clasess.dropDownListContainer}
-                      placeholder={t("materials.applications.selectSupplier")}
+                      placeholder={t(
+                        "materials.encapsulationRoll.selectSupplier"
+                      )}
                       value={suppliers.find(
                         (item: any) => item?.value === supplierId
                       )}
@@ -59,7 +61,9 @@ const ShowSupplierListInsideApplication = ({ item: _item }: any) => {
               pricePerSquareMeter: (
                 <GomakeTextInput
                   type="number"
-                  placeholder={t("materials.applications.pricePerSquareMeter")}
+                  placeholder={t(
+                    "materials.encapsulationRoll.pricePerSquareMeter"
+                  )}
                   style={clasess.textInputStyle}
                   value={
                     state[`pricePerSquareMeter-${supplierId}`] ||
@@ -79,7 +83,7 @@ const ShowSupplierListInsideApplication = ({ item: _item }: any) => {
                 <GoMakeAutoComplate
                   options={suppliersCurrencies}
                   style={clasess.dropDownListContainer}
-                  placeholder={t("materials.applications.selectCurrency")}
+                  placeholder={t("materials.encapsulationRoll.selectCurrency")}
                   value={
                     state[`currency-${supplierId}`] ||
                     suppliersCurrencies.find(
@@ -135,4 +139,4 @@ const ShowSupplierListInsideApplication = ({ item: _item }: any) => {
     </div>
   );
 };
-export { ShowSupplierListInsideApplication };
+export { ShowSupplierListInsideEncapsulationRoll };

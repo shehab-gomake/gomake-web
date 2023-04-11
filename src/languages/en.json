@@ -235,7 +235,25 @@
       "currency": "Currency",
       "default": "Default",
       "controls": "Controls",
-      "supplier": "Supplier"
+      "supplier": "Supplier",
+      "sizeName": "Size name"
+    },
+    "encapsulationRoll": {
+      "title": "Encapsulation roll",
+      "category": "Category",
+      "supplier": "supplier",
+      "categoryName": "Category name",
+      "thickness": "Thickness",
+      "settings": "Settings",
+      "weightPerSquareMeter": "Weight per square meter",
+      "code": "Code",
+      "width/height": "Width/Height",
+      "pricePerSquareMeter": "Price per square meter",
+      "stock": "Stock",
+      "sizeName": "Size name",
+      "selectCurrency": "Select currency",
+      "unitPrice": "Unit price",
+      "selectSupplier": "Select supplier"
     }
   }
 }

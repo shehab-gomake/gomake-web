@@ -9,3 +9,4 @@ export * from "./get-set-wild-printing-materials";
 export * from "./get-set-hardboards-sizes";
 export * from "./get-set-profile-frame-sizes";
 export * from "./get-set-applications-sizes";
+export * from "./get-set-encapsulation-roll-sizes";

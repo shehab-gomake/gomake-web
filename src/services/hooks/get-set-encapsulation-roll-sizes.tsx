@@ -1,31 +1,33 @@
 import { returnResult } from "@/utils/helpers";
 
 import { ICallApi, ISetState } from "./call-api.interface";
-import { ApplicationsMoreCircle } from "@/pages/materials/applications/more-circle";
-import { UpdateStockApplication } from "@/pages/materials/applications/more-circle/update-stock-application";
-import { ShowSupplierListForApplication } from "@/pages/materials/applications/show-supplier-list";
 
-const getAndSetApplicationsCategory = async (
+import { ShowSupplierListForApplication } from "@/pages/materials/applications/show-supplier-list";
+import { EncapsulationRollMoreCircle } from "@/pages/materials/encapsulation-roll/more-circle";
+import { UpdateStockEncapsulationRoll } from "@/pages/materials/encapsulation-roll/more-circle/update-stock-encapsulation-roll";
+import { ShowSupplierListForEncapsulationRoll } from "@/pages/materials/encapsulation-roll/show-supplier-list";
+
+const getAndSetEncapsulationRollsCategory = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
 ) => {
   const result: any = await callApi(
     "GET",
-    "/v1/applications/get-categories",
+    "/v1/roll-encapsulations/get-categories",
     data
   );
   return returnResult(result, setState);
 };
 
-const getAndSetApplicationSizes = async (
+const getAndSetEncapsulationRollsThickness = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
 ) => {
   const result: any = await callApi(
     "GET",
-    "/v1/applications/get-thickness",
+    "/v1/roll-encapsulations/get-thickness",
     data
   );
   const _data = returnResult(result, undefined);
@@ -34,7 +36,7 @@ const getAndSetApplicationSizes = async (
       categoryName: size.categoryName,
       thickness: size.thickness,
       weightPerSquareMeter: size.weightPerSquareMeter,
-      settings: <ApplicationsMoreCircle item={size} />,
+      settings: <EncapsulationRollMoreCircle item={size} />,
     };
   });
   if (setState) {
@@ -43,7 +45,7 @@ const getAndSetApplicationSizes = async (
   return _data;
 };
 
-const getAndSetApplicationThickness = async (
+const getAndSetEncapsulationRollsSizes = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
@@ -51,7 +53,7 @@ const getAndSetApplicationThickness = async (
   if (data?.categoryName) {
     const result: any = await callApi(
       "GET",
-      "/v1/applications/get-sizes",
+      "/v1/roll-encapsulations/get-sizes",
       data
     );
     const _data = returnResult(result, undefined);
@@ -62,14 +64,14 @@ const getAndSetApplicationThickness = async (
         sizeName: item?.sizeName,
         pricePerSquareMeter: item?.pricePerSquareMeter,
         stock: (
-          <UpdateStockApplication
+          <UpdateStockEncapsulationRoll
             categoryName={data.categoryName}
             sizeId={item.sizeId}
             stockValue={item.stock}
             thicknessId={item.thicknessId}
           />
         ),
-        settings: <ShowSupplierListForApplication item={item} />,
+        settings: <ShowSupplierListForEncapsulationRoll item={item} />,
       };
     });
     if (setState) {
@@ -80,7 +82,7 @@ const getAndSetApplicationThickness = async (
   }
 };
 export {
-  getAndSetApplicationsCategory,
-  getAndSetApplicationSizes,
-  getAndSetApplicationThickness,
+  getAndSetEncapsulationRollsCategory,
+  getAndSetEncapsulationRollsThickness,
+  getAndSetEncapsulationRollsSizes,
 };
