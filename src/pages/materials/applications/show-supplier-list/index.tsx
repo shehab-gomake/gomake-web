@@ -3,19 +3,19 @@ import Image from "next/image";
 import { IconButton } from "@mui/material";
 
 import moreCircle from "@/icons/more-circle.png";
+import { useShowSupplierList } from "./use-show-supplier-list";
+import { ShowSupplierListInsideApplication } from "./show-supplier-list-widget";
 
-import { useShowThicknesList } from "./use-show-thicknes-list";
-import { ShowSizesListWidgetForTubes } from "./show-sizes-list-widget";
+const ShowSupplierListForApplication = ({ item }: any) => {
+  const { setShowUnderRowWidget } = useShowSupplierList();
 
-const ShowSubTableForTubes = ({ item }: any) => {
-  const { setShowUnderRowWidget } = useShowThicknesList();
   return (
     <>
       <IconButton
         onClick={() =>
           setShowUnderRowWidget({
             stateShow: true,
-            widget: <ShowSizesListWidgetForTubes item={item} />,
+            widget: <ShowSupplierListInsideApplication item={item} />,
             item,
             key: "code",
           })
@@ -26,4 +26,4 @@ const ShowSubTableForTubes = ({ item }: any) => {
     </>
   );
 };
-export { ShowSubTableForTubes };
+export { ShowSupplierListForApplication };

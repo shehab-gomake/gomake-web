@@ -1,9 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
 import { supplierCurrencies, supplierLists } from "@/store";
+import { getAndSetSheetDirection } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { refetchMaterialDataState } from "@/store/refetch-material-data";
 
 const useAddSupplier = ({ item }: any) => {
   const { callApi } = useGomakeAxios();
@@ -11,15 +13,16 @@ const useAddSupplier = ({ item }: any) => {
   const { setSnackbarStateValue } = useSnackBar();
   const suppliers = useRecoilValue(supplierLists);
   const suppliersCurrencies = useRecoilValue(supplierCurrencies);
+  const [applicationDirection, setAapplicationDirection] = useState([]);
   const [state, setState] = useState<any>({});
 
   const headerTable = useMemo(
     () => [
-      t("materials.sheetPaper.selectSupplier"),
-      t("materials.sheetPaper.unitPrice"),
-      t("materials.sheetPaper.currency"),
-      t("materials.sheetPaper.default"),
-      t("materials.sheetPaper.controls"),
+      t("materials.applications.selectSupplier"),
+      t("materials.applications.pricePerSquareMeter"),
+      t("materials.applications.currency"),
+      t("materials.applications.default"),
+      t("materials.applications.controls"),
     ],
     []
   );
@@ -39,35 +42,36 @@ const useAddSupplier = ({ item }: any) => {
       };
     });
   };
+  const getSheetDirections = useCallback(async () => {
+    await getAndSetSheetDirection(callApi, setAapplicationDirection);
+  }, []);
+
+  useEffect(() => {
+    getSheetDirections();
+  }, []);
+  const refetchMaterialData = useRecoilValue(refetchMaterialDataState);
+
   const addNewSupplierSheet = useCallback(
     async (suppliersData: any, setSuppliersData: any) => {
       const res = await callApi(
         "POST",
-        `/v1/wide-format-material/add-supplier`,
+        `/v1/roll-encapsulations/add-supplier`,
         {
           categoryName: item?.categoryName,
           sizeId: item?.sizeId,
-          typeId: item?.typeId,
+          thicknessId: item?.thicknessId,
           supplierId: state.supplierId?.value,
-          pricePerMeterSquare: parseInt(state?.pricePerMeterSquare),
+          pricePerSquareMeter: parseInt(state?.pricePerSquareMeter),
           currency: state?.currency?.value,
           isDefault:
             typeof state?.isDefault == "boolean" ? state?.isDefault : true,
         }
       );
       if (res?.success) {
-        let temp = [...suppliersData];
-        temp.push({
-          categoryName: item?.categoryName,
-          sizeId: item?.sizeId,
-          typeId: item?.typeId,
-          supplierId: state.supplierId?.value,
-          pricePerMeterSquare: parseInt(state?.pricePerMeterSquare),
-          currency: state?.currency?.value,
-          isDefault:
-            typeof state?.isDefault == "boolean" ? state?.isDefault : true,
-        });
-        setSuppliersData(temp);
+        const data: any = await refetchMaterialData.refetch();
+        const _item: any = data.find((elem: any) => elem.code === item.code);
+
+        setSuppliersData(_item.rollEncapsulationSuppliers);
 
         setSnackbarStateValue({
           state: true,
@@ -84,17 +88,18 @@ const useAddSupplier = ({ item }: any) => {
     },
     [state]
   );
+
   const deleteSupplierSheet = useCallback(
     async (item: any, suppliersData: any, setSuppliersData: any) => {
       const res = await callApi(
         "POST",
-        `/v1/wide-format-material/delete-supplier`,
+        `/v1/roll-encapsulations/delete-supplier`,
         {
           categoryName: item?.categoryName,
           sizeId: item?.sizeId,
-          typeId: item?.typeId,
+          thicknessId: item?.thicknessId,
           supplierId: item.supplierId,
-          pricePerMeterSquare: item?.pricePerMeterSquare,
+          pricePerSquareMeter: item?.pricePerSquareMeter,
           currency: item?.currency,
           isDefault: item?.isDefault,
         }
@@ -121,19 +126,20 @@ const useAddSupplier = ({ item }: any) => {
     },
     [state]
   );
+
   const updateSupplierSheet = useCallback(
-    async (item: any) => {
+    async (item: any, setSuppliersData: any, selectedItem: any) => {
       const res = await callApi(
         "POST",
-        `/v1/wide-format-material/update-supplier`,
+        `/v1/roll-encapsulations/update-supplier`,
         {
           categoryName: item?.categoryName,
+          thicknessId: item?.thicknessId,
           sizeId: item?.sizeId,
-          typeId: item?.typeId,
-          supplierId: item.supplierId,
-          pricePerMeterSquare:
-            state[`pricePerMeterSquare-${item?.supplierId}`] ||
-            item?.pricePerMeterSquare,
+          supplierId: item?.supplierId,
+          pricePerSquareMeter:
+            state[`pricePerSquareMeter-${item?.supplierId}`] ||
+            item?.pricePerSquareMeter,
           currency:
             state[`currency-${item?.supplierId}`]?.value || item?.currency,
           isDefault: state[`isDefault-${item?.supplierId}`] || item?.isDefault,
@@ -145,6 +151,11 @@ const useAddSupplier = ({ item }: any) => {
           message: t("modal.updatedSusuccessfully"),
           type: "sucess",
         });
+        const data: any = await refetchMaterialData.refetch();
+        const _item: any = data.find(
+          (elem: any) => elem.code === selectedItem.code
+        );
+        setSuppliersData(_item.rollEncapsulationSuppliers);
       } else {
         setSnackbarStateValue({
           state: true,
@@ -156,6 +167,7 @@ const useAddSupplier = ({ item }: any) => {
     [state]
   );
   return {
+    applicationDirection,
     state,
     suppliers,
     suppliersCurrencies,
