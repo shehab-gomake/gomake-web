@@ -271,6 +271,15 @@
       "currency": "Currency",
       "default": "Default",
       "controls": "Controls"
+    },
+    "canvasFrames": {
+      "title": "Canvas frames",
+      "code": "Code",
+      "height": "Height",
+      "width": "Width",
+      "stock": "Stock",
+      "price": "Price",
+      "settings": "Settings"
     }
   }
 }

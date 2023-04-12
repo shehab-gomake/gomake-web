@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { HeaderTitle } from "@/widgets";
 import { Table } from "@/widgets/table/table";
@@ -14,8 +14,12 @@ import { refetchMaterialDataState } from "@/store/refetch-material-data";
 export default function Additions() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const { allAdditions, tabelHeaders, setAllAdditions, getAllAddition } =
-    useCanvasFrames({});
+  const {
+    canvasFramesSizes,
+    tabelHeaders,
+    setCanvasFramesSizes,
+    getAllAddition,
+  } = useCanvasFrames({});
   const setRefetchMaterialDataState = useSetRecoilState(
     refetchMaterialDataState
   );
@@ -27,10 +31,10 @@ export default function Additions() {
 
   return (
     <CustomerAuthLayout>
-      <HeaderTitle title={t("materials.additions.title")} />
-      <HeaderFilter setAllAdditions={setAllAdditions} />
+      <HeaderTitle title={t("materials.canvasFrames.title")} />
+      <HeaderFilter setAllAdditions={setCanvasFramesSizes} />
       <div style={clasess.tableContainer}>
-        <Table tableHeaders={tabelHeaders} tableRows={allAdditions} />
+        <Table tableHeaders={tabelHeaders} tableRows={canvasFramesSizes} />
       </div>
     </CustomerAuthLayout>
   );

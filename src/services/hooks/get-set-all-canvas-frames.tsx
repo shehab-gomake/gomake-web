@@ -23,12 +23,13 @@ const getAndSetCanvasFramesSizes = async (
   const mapData = _data.map((size: any) => {
     return {
       code: size.code,
-      name: size.name,
-      weight: size.weight,
-      adaptationField: size.adaptationField,
+      width: size.width,
+      height: size.height,
+      stock: size.stock,
       // stock: <UpdateStockAdditions code={size.code} stockValue={size.stock} />,
       price: size.price,
-      // settings: <ShowSubTableForAdditions item={size} />,
+      settings: "ff",
+      //  <ShowSubTableForAdditions item={size} />
     };
   });
   if (setState) {

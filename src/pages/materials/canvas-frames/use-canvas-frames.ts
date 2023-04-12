@@ -3,6 +3,7 @@ import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import {
   getAndCanvasFramesCategory,
   getAndSetAllAdditions,
+  getAndSetCanvasFramesSizes,
 } from "@/services/hooks";
 import { useTranslation } from "react-i18next";
 
@@ -10,19 +11,18 @@ const useCanvasFrames = ({ item }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [supplierId, setSupplierId] = useState("");
-  const [CanvasFramesCategories, setCanvasFramesCategories] = useState([]);
+  const [canvasFramesCategories, setCanvasFramesCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
-  const [allAdditions, setAllAdditions] = useState([]);
+  const [canvasFramesSizes, setCanvasFramesSizes] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const tabelHeaders = useMemo(
     () => [
-      t("materials.additions.code"),
-      t("materials.additions.name"),
-      t("materials.additions.weight"),
-      t("materials.additions.adaptationField"),
-      t("materials.additions.stock"),
-      t("materials.additions.price"),
-      t("materials.additions.settings"),
+      t("materials.canvasFrames.code"),
+      t("materials.canvasFrames.width"),
+      t("materials.canvasFrames.height"),
+      t("materials.canvasFrames.stock"),
+      t("materials.canvasFrames.price"),
+      t("materials.canvasFrames.settings"),
     ],
     []
   );
@@ -46,21 +46,31 @@ const useCanvasFrames = ({ item }: any) => {
   }, [categoryName, supplierId]);
 
   const OnClickGetAllAddition = useCallback(async () => {
-    const data = await getAndSetAllAdditions(callApi, setAllAdditions, {
-      supplierId: item?.supplierId || "",
-    });
+    const data = await getAndSetCanvasFramesSizes(
+      callApi,
+      setCanvasFramesSizes,
+      {
+        supplierId: item?.supplierId || "",
+        categoryName: categoryName,
+      }
+    );
     if (data) {
       setOpenModal(true);
     }
-  }, [item]);
+  }, [item, categoryName, supplierId]);
   const getAllAddition = useCallback(
     async (item: any) => {
-      const data = await getAndSetAllAdditions(callApi, setAllAdditions, {
-        supplierId: item?.supplierId || "",
-      });
+      const data = await getAndSetCanvasFramesSizes(
+        callApi,
+        setCanvasFramesSizes,
+        {
+          supplierId: item?.supplierId || "",
+          categoryName: categoryName,
+        }
+      );
       return data;
     },
-    [supplierId, setAllAdditions]
+    [supplierId, categoryName, setCanvasFramesSizes]
   );
 
   const onChangeSupplier = useCallback(async (e: any, value: any) => {
@@ -71,20 +81,21 @@ const useCanvasFrames = ({ item }: any) => {
   };
   const getAllAdditionRefetch = useCallback(
     async (item: any) => {
-      const data = await getAndSetAllAdditions(callApi, undefined, {
+      const data = await getAndSetCanvasFramesSizes(callApi, undefined, {
         supplierId: item?.supplierId || "",
+        categoryName: categoryName,
       });
       return data;
     },
-    [supplierId, setAllAdditions]
+    [supplierId, setCanvasFramesSizes]
   );
   return {
     tabelHeaders,
     supplierId,
-    allAdditions,
     openModal,
-    CanvasFramesCategories,
+    canvasFramesCategories,
     categoryName,
+    canvasFramesSizes,
     onChangeCategory,
     onChangeSupplier,
     setOpenModal,
@@ -92,7 +103,7 @@ const useCanvasFrames = ({ item }: any) => {
     getAllAddition,
     OnClickGetAllAddition,
     getAllAdditionRefetch,
-    setAllAdditions,
+    setCanvasFramesSizes,
   };
 };
 export { useCanvasFrames };

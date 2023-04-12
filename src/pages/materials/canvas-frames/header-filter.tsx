@@ -12,11 +12,11 @@ const HeaderFilter = ({ setAllAdditions }: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const {
-    allAdditions,
     onChangeSupplier,
-    CanvasFramesCategories,
-    categoryName,
     onChangeCategory,
+    canvasFramesCategories,
+    categoryName,
+    canvasFramesSizes,
   } = useCanvasFrames({});
   const { getSupplier, getSupplierCurrencies, suppliers } = useSupplier();
   useEffect(() => {
@@ -24,13 +24,13 @@ const HeaderFilter = ({ setAllAdditions }: any) => {
     getSupplierCurrencies();
   }, []);
   useEffect(() => {
-    setAllAdditions(allAdditions);
-  }, [allAdditions]);
+    setAllAdditions(canvasFramesSizes);
+  }, [canvasFramesSizes]);
   return (
     <div style={clasess.filterContainer}>
-      {CanvasFramesCategories?.length > 0 ? (
+      {canvasFramesCategories?.length > 0 ? (
         <GoMakeAutoComplate
-          options={CanvasFramesCategories}
+          options={canvasFramesCategories}
           style={clasess.autoComplateStyle}
           placeholder={t("materials.sheetPaper.category")}
           onChange={onChangeCategory}
