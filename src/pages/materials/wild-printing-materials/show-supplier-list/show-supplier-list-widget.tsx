@@ -93,6 +93,7 @@ const ShowSupplierListWidgetForWildPrintingMatieral = ({ item }: any) => {
               isDefault: (
                 <>
                   <Switch
+                    key={`test_${item?.isDefault}`}
                     style={clasess.switchStyle}
                     defaultChecked={item?.isDefault}
                     checked={state[`isDefault-${supplierId}`]}

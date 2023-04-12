@@ -11,34 +11,35 @@ import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
 
-const ShowSizesListWidgetForTubes = ({ item }: any) => {
+const ShowSizesListWidgetForAdditions = ({ item: _item }: any) => {
   const {
     headerTable,
     state,
     suppliers,
     suppliersCurrencies,
     onChangeState,
-    deleteSupplierTubes,
-    updateSupplierTubes,
-  } = useAddSupplier({ item });
+    deleteSupplierAdditions,
+    updateSupplierAdditions,
+  } = useAddSupplier({ item: _item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
-  const [data, setData] = useState([]);
+  const [additionsData, setAdditionsData] = useState([]);
   useEffect(() => {
-    setData(item.tubeSuppliers);
-  }, [item.tubeSuppliers]);
+    setAdditionsData(_item.additionSuppliers);
+  }, [_item.additionSuppliers]);
 
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.headerTitle}>
-        {t("materials.envelops.supplierTitle")}
+        {t("materials.additions.selectSupplier")}
       </div>
       <div style={clasess.tableContainer}>
         <Table
           tableHeaders={headerTable}
-          tableRows={data?.map((item: any) => {
+          tableRows={additionsData?.map((item: any) => {
             const supplierId = item.supplierId;
             const currencyVal = item?.currency;
+            const directionVal = item?.direction;
             return {
               supplierId: (
                 <>
@@ -46,7 +47,7 @@ const ShowSizesListWidgetForTubes = ({ item }: any) => {
                     <GoMakeAutoComplate
                       options={suppliers}
                       style={clasess.dropDownListContainer}
-                      placeholder={t("materials.sheetPaper.selectSupplier")}
+                      placeholder={t("materials.additions.selectSupplier")}
                       value={suppliers.find(
                         (item: any) => item?.value === supplierId
                       )}
@@ -58,7 +59,7 @@ const ShowSizesListWidgetForTubes = ({ item }: any) => {
               pricePerUnit: (
                 <GomakeTextInput
                   type="number"
-                  placeholder={t("materials.sheetPaper.unitPrice")}
+                  placeholder={t("materials.additions.unitPrice")}
                   style={clasess.textInputStyle}
                   value={state[`priceUnit-${supplierId}`] || item.price}
                   onChange={(e: any) =>
@@ -70,7 +71,7 @@ const ShowSizesListWidgetForTubes = ({ item }: any) => {
                 <GoMakeAutoComplate
                   options={suppliersCurrencies}
                   style={clasess.dropDownListContainer}
-                  placeholder={t("materials.sheetPaper.selectCurrency")}
+                  placeholder={t("materials.additions.selectCurrency")}
                   value={
                     state[`currency-${supplierId}`] ||
                     suppliersCurrencies.find(
@@ -99,13 +100,21 @@ const ShowSizesListWidgetForTubes = ({ item }: any) => {
                 <>
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() => deleteSupplierTubes(item, data, setData)}
+                    onClick={() =>
+                      deleteSupplierAdditions(
+                        item,
+                        setAdditionsData,
+                        additionsData
+                      )
+                    }
                   >
                     <DeleteIcon />
                   </IconButton>
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() => updateSupplierTubes(item)}
+                    onClick={() =>
+                      updateSupplierAdditions(item, setAdditionsData, _item)
+                    }
                   >
                     <SaveAsIcon />
                   </IconButton>
@@ -115,8 +124,12 @@ const ShowSizesListWidgetForTubes = ({ item }: any) => {
           })}
         />
       </div>
-      <AddSupplierWidget item={item} data={data} setData={setData} />
+      <AddSupplierWidget
+        item={_item}
+        additionsData={additionsData}
+        setAdditionsData={setAdditionsData}
+      />
     </div>
   );
 };
-export { ShowSizesListWidgetForTubes };
+export { ShowSizesListWidgetForAdditions };

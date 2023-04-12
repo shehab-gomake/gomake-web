@@ -7,14 +7,14 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
 
-const AddSupplierWidget = ({ item, data, setData }: any) => {
+const AddSupplierWidget = ({ item, additionsData, setAdditionsData }: any) => {
   const {
     headerTable,
     state,
     suppliers,
     suppliersCurrencies,
     onChangePrimaryState,
-    addNewSupplierTubes,
+    addNewSupplierAdditions,
   } = useAddSupplier({ item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
@@ -24,7 +24,7 @@ const AddSupplierWidget = ({ item, data, setData }: any) => {
         <GoMakeAutoComplate
           options={suppliers}
           style={clasess.dropDownListContainer}
-          placeholder={t("materials.sheetPaper.selectSupplier")}
+          placeholder={t("materials.additions.selectSupplier")}
           value={state.supplierId || ""}
           onChange={(e: any, item: any) =>
             onChangePrimaryState("supplierId", item)
@@ -35,7 +35,7 @@ const AddSupplierWidget = ({ item, data, setData }: any) => {
         <div style={{ width: "80%" }}>
           <GomakeTextInput
             type="number"
-            placeholder={t("materials.sheetPaper.unitPrice")}
+            placeholder={t("materials.additions.unitPrice")}
             style={clasess.textInputStyle}
             value={state.priceUnit || ""}
             onChange={(e: any) =>
@@ -48,7 +48,7 @@ const AddSupplierWidget = ({ item, data, setData }: any) => {
         <GoMakeAutoComplate
           options={suppliersCurrencies}
           style={clasess.dropDownListContainer}
-          placeholder={t("materials.sheetPaper.selectCurrency")}
+          placeholder={t("materials.additions.selectCurrency")}
           value={state.currency || ""}
           onChange={(e: any, item: any) =>
             onChangePrimaryState("currency", item)
@@ -61,13 +61,17 @@ const AddSupplierWidget = ({ item, data, setData }: any) => {
           style={clasess.switchStyle}
           defaultChecked
           checked={state?.isDefault}
-          onChange={(e: any) => {
-            onChangePrimaryState("isDefault", e.target.checked);
-          }}
+          onChange={(e: any) =>
+            onChangePrimaryState("isDefault", e.target.checked)
+          }
         />
       </div>
       <div style={clasess.rowItemStyle}>
-        <IconButton onClick={() => addNewSupplierTubes(data, setData)}>
+        <IconButton
+          onClick={() =>
+            addNewSupplierAdditions(additionsData, setAdditionsData)
+          }
+        >
           <SaveIcon />
         </IconButton>
       </div>

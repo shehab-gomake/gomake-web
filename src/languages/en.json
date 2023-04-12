@@ -40,7 +40,7 @@
     "profileFrames": "Profile frames",
     "applications": "Applications",
     "encapsulationRoll": "Encapsulation roll",
-    "extras": "Extras",
+    "additions": "Additions",
     "canvasFrames": "Canvas frames",
     "frames": "Frames",
     "paperMoney": "paper money",
@@ -254,6 +254,23 @@
       "selectCurrency": "Select currency",
       "unitPrice": "Unit price",
       "selectSupplier": "Select supplier"
+    },
+    "additions": {
+      "title": "Additions",
+      "supplier": "Supplier",
+      "code": "Code",
+      "name": "Name",
+      "weight": "Weight",
+      "adaptationField": "Adaptation field",
+      "stock": "Stock",
+      "price": "Price",
+      "settings": "Settings",
+      "selectSupplier": "Select supplier",
+      "unitPrice": "Unit price",
+      "selectCurrency": "Select currency",
+      "currency": "Currency",
+      "default": "Default",
+      "controls": "Controls"
     }
   }
 }

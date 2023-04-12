@@ -106,9 +106,9 @@ const useAuthLayoutHook = () => {
             path: "/materials/encapsulation-roll",
           },
           {
-            key: "extras",
-            title: t("tabs.extras"),
-            path: "/materials/extras",
+            key: "additions",
+            title: t("tabs.additions"),
+            path: "/materials/additions",
           },
           {
             key: "canvasFrames",

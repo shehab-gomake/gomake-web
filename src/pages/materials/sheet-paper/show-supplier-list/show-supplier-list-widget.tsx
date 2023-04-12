@@ -121,13 +121,13 @@ const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
               ),
               isDefault: (
                 <Switch
+                  key={`test_${item?.isDefault}`}
                   style={clasess.switchStyle}
                   defaultChecked={item?.isDefault}
                   checked={state[`isDefault-${supplierId}`]}
                   onChange={(e: any) =>
                     onChangeState("isDefault", supplierId, e.target.checked)
                   }
-                  key={`test_${item?.isDefault}`}
                 />
               ),
               controls: (

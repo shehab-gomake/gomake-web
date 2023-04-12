@@ -59,6 +59,7 @@ const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
 
       <div style={clasess.rowItemStyle}>
         <Switch
+          key={`test_${item?.isDefault}`}
           style={clasess.switchStyle}
           defaultChecked
           checked={state?.isDefault}
