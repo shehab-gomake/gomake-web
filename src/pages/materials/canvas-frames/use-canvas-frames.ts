@@ -1,13 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
-import { getAndSetAllAdditions } from "@/services/hooks";
+import {
+  getAndCanvasFramesCategory,
+  getAndSetAllAdditions,
+} from "@/services/hooks";
 import { useTranslation } from "react-i18next";
-import { useRouter } from "next/router";
 
 const useCanvasFrames = ({ item }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [supplierId, setSupplierId] = useState("");
+  const [CanvasFramesCategories, setCanvasFramesCategories] = useState([]);
+  const [categoryName, setCategoryName] = useState(undefined);
   const [allAdditions, setAllAdditions] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const tabelHeaders = useMemo(
@@ -22,10 +26,24 @@ const useCanvasFrames = ({ item }: any) => {
     ],
     []
   );
-  const route = useRouter();
+  const getCategory = useCallback(async () => {
+    const data = await getAndCanvasFramesCategory(
+      callApi,
+      setCanvasFramesCategories
+    );
+    if (!categoryName) {
+      setCategoryName(data[0]);
+    }
+  }, [categoryName, supplierId]);
+
+  const onChangeCategory = useCallback(async (e: any, value: any) => {
+    setCategoryName(value);
+  }, []);
+
   useEffect(() => {
+    getCategory();
     getAllAddition(item);
-  }, [supplierId]);
+  }, [categoryName, supplierId]);
 
   const OnClickGetAllAddition = useCallback(async () => {
     const data = await getAndSetAllAdditions(callApi, setAllAdditions, {
@@ -64,8 +82,11 @@ const useCanvasFrames = ({ item }: any) => {
     tabelHeaders,
     supplierId,
     allAdditions,
-    onChangeSupplier,
     openModal,
+    CanvasFramesCategories,
+    categoryName,
+    onChangeCategory,
+    onChangeSupplier,
     setOpenModal,
     onCloseModal,
     getAllAddition,
