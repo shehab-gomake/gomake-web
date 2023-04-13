@@ -2,12 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import {
   getAndCanvasFramesCategory,
-  getAndSetAllAdditions,
   getAndSetCanvasFramesSizes,
 } from "@/services/hooks";
 import { useTranslation } from "react-i18next";
 
-const useCanvasFrames = ({ item }: any) => {
+const useCanvasFrames = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [supplierId, setSupplierId] = useState("");
@@ -27,6 +26,7 @@ const useCanvasFrames = ({ item }: any) => {
     []
   );
   const getCategory = useCallback(async () => {
+    console.log("HERE getCategory");
     const data = await getAndCanvasFramesCategory(
       callApi,
       setCanvasFramesCategories
@@ -34,44 +34,46 @@ const useCanvasFrames = ({ item }: any) => {
     if (!categoryName) {
       setCategoryName(data[0]);
     }
-  }, [categoryName, supplierId]);
+  }, [categoryName]);
 
   const onChangeCategory = useCallback(async (e: any, value: any) => {
     setCategoryName(value);
   }, []);
 
   useEffect(() => {
-    getCategory();
-    getAllAddition(item);
+    getCanvasFrameSizes();
   }, [categoryName, supplierId]);
-
-  const OnClickGetAllAddition = useCallback(async () => {
+  useEffect(() => {
+    getCategory();
+  }, []);
+  const OnClickCanvasFrameSizes = useCallback(async () => {
     const data = await getAndSetCanvasFramesSizes(
       callApi,
       setCanvasFramesSizes,
       {
-        supplierId: item?.supplierId || "",
-        categoryName: categoryName,
+        categoryName,
+        supplierId,
       }
     );
     if (data) {
       setOpenModal(true);
     }
-  }, [item, categoryName, supplierId]);
-  const getAllAddition = useCallback(
-    async (item: any) => {
+  }, [categoryName, supplierId]);
+  const getCanvasFrameSizes = useCallback(async () => {
+    if (categoryName?.length) {
+      console.log("HERE getCanvasFrameSizes");
       const data = await getAndSetCanvasFramesSizes(
         callApi,
         setCanvasFramesSizes,
         {
-          supplierId: item?.supplierId || "",
-          categoryName: categoryName,
+          categoryName,
+          supplierId,
         }
       );
       return data;
-    },
-    [supplierId, categoryName, setCanvasFramesSizes]
-  );
+    }
+    return null;
+  }, [supplierId, categoryName]);
 
   const onChangeSupplier = useCallback(async (e: any, value: any) => {
     setSupplierId(value?.value);
@@ -79,16 +81,13 @@ const useCanvasFrames = ({ item }: any) => {
   const onCloseModal = () => {
     setOpenModal(false);
   };
-  const getAllAdditionRefetch = useCallback(
-    async (item: any) => {
-      const data = await getAndSetCanvasFramesSizes(callApi, undefined, {
-        supplierId: item?.supplierId || "",
-        categoryName: categoryName,
-      });
-      return data;
-    },
-    [supplierId, setCanvasFramesSizes]
-  );
+  const getAllAdditionRefetch = useCallback(async () => {
+    const data = await getAndSetCanvasFramesSizes(callApi, undefined, {
+      categoryName,
+      supplierId,
+    });
+    return data;
+  }, [supplierId, setCanvasFramesSizes]);
   return {
     tabelHeaders,
     supplierId,
@@ -100,8 +99,8 @@ const useCanvasFrames = ({ item }: any) => {
     onChangeSupplier,
     setOpenModal,
     onCloseModal,
-    getAllAddition,
-    OnClickGetAllAddition,
+    getCanvasFrameSizes,
+    OnClickCanvasFrameSizes,
     getAllAdditionRefetch,
     setCanvasFramesSizes,
   };

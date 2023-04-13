@@ -18,21 +18,33 @@ export default function Additions() {
     canvasFramesSizes,
     tabelHeaders,
     setCanvasFramesSizes,
-    getAllAddition,
-  } = useCanvasFrames({});
+    getCanvasFrameSizes,
+    supplierId,
+    categoryName,
+    onChangeSupplier,
+    onChangeCategory,
+    canvasFramesCategories,
+  } = useCanvasFrames();
   const setRefetchMaterialDataState = useSetRecoilState(
     refetchMaterialDataState
   );
   useEffect(() => {
     setRefetchMaterialDataState({
-      refetch: () => getAllAddition({}),
+      refetch: () => getCanvasFrameSizes(),
     });
-  }, []);
+  }, [supplierId, categoryName]);
 
   return (
     <CustomerAuthLayout>
       <HeaderTitle title={t("materials.canvasFrames.title")} />
-      <HeaderFilter setAllAdditions={setCanvasFramesSizes} />
+      <HeaderFilter
+        setAllCanvasFrame={setCanvasFramesSizes}
+        onChangeSupplier={onChangeSupplier}
+        onChangeCategory={onChangeCategory}
+        canvasFramesCategories={canvasFramesCategories}
+        categoryName={categoryName}
+        canvasFramesSizes={canvasFramesSizes}
+      />
       <div style={clasess.tableContainer}>
         <Table tableHeaders={tabelHeaders} tableRows={canvasFramesSizes} />
       </div>

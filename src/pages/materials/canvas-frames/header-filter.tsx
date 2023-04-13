@@ -8,23 +8,23 @@ import { useEffect } from "react";
 import { Skeleton } from "@mui/material";
 import { useStyle } from "./style";
 
-const HeaderFilter = ({ setAllAdditions }: any) => {
+const HeaderFilter = ({
+  setAllCanvasFrame,
+  onChangeSupplier,
+  onChangeCategory,
+  canvasFramesCategories,
+  categoryName,
+  canvasFramesSizes,
+}: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const {
-    onChangeSupplier,
-    onChangeCategory,
-    canvasFramesCategories,
-    categoryName,
-    canvasFramesSizes,
-  } = useCanvasFrames({});
   const { getSupplier, getSupplierCurrencies, suppliers } = useSupplier();
   useEffect(() => {
     getSupplier();
     getSupplierCurrencies();
   }, []);
   useEffect(() => {
-    setAllAdditions(canvasFramesSizes);
+    setAllCanvasFrame(canvasFramesSizes);
   }, [canvasFramesSizes]);
   return (
     <div style={clasess.filterContainer}>

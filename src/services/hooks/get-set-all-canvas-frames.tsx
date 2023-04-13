@@ -1,6 +1,7 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "./call-api.interface";
 import { UpdateStockCanvasFrames } from "@/pages/materials/canvas-frames/update-stock-additions/update-stock-additions";
+import { ShowSubTableForCanvasFrames } from "@/pages/materials/canvas-frames/show-sizes-list";
 
 const getAndCanvasFramesCategory = async (
   callApi: ICallApi,
@@ -22,7 +23,6 @@ const getAndSetCanvasFramesSizes = async (
   const result: any = await callApi("GET", "/v1/canvas-frames/get-sizes", data);
   const _data = returnResult(result, undefined);
   const mapData = _data.map((size: any) => {
-    console.log(size);
     return {
       code: size.code,
       width: size.width,
@@ -36,8 +36,7 @@ const getAndSetCanvasFramesSizes = async (
         />
       ),
       price: size.price,
-      settings: "ff",
-      //  <ShowSubTableForAdditions item={size} />
+      settings: <ShowSubTableForCanvasFrames item={size} />,
     };
   });
   if (setState) {
