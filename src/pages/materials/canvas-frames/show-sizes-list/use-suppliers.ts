@@ -45,6 +45,8 @@ const useNewSupplier = ({ item }: any) => {
     async (supplierData: any, setNewSupplier: any) => {
       const res = await callApi("POST", `/v1/canvas-frames/add-supplier`, {
         supplierId: state.supplierId?.value,
+        categoryName: item?.categoryName,
+        sizeId: item?.sizeId,
         price: parseInt(state?.price),
         currency: state?.currency?.value,
         isDefault:
@@ -53,7 +55,6 @@ const useNewSupplier = ({ item }: any) => {
         height: item?.height,
         weight: item?.weight,
         thickness: item?.thickness || 0,
-        code: item?.code,
       });
       if (res?.success) {
         const data: any = await refetchMaterialData.refetch();
@@ -82,14 +83,15 @@ const useNewSupplier = ({ item }: any) => {
     async (item: any, setAdditionsData: any, additionsData: any) => {
       const res = await callApi("POST", `/v1/canvas-frames/delete-supplier`, {
         supplierId: item.supplierId,
-        price: item?.priceUnit,
+        categoryName: item?.categoryName,
+        sizeId: item?.sizeId,
+        price: item.price,
         currency: item?.currency,
         isDefault: item?.isDefault,
-        additionCode: item?.code,
-        additionName: item?.name,
+        width: item?.width,
+        height: item?.height,
         weight: item?.weight,
-        adaptationField: item?.adaptationField,
-        code: item?.code,
+        thickness: item?.thickness,
       });
       if (res?.success) {
         const temp = [...additionsData];
@@ -115,18 +117,21 @@ const useNewSupplier = ({ item }: any) => {
   );
 
   const updateSupplierAdditions = useCallback(
-    async (item: any, setAdditionsData: any, selectedItem: any) => {
+    async (item: any, setNewSupplier: any, selectedItem: any) => {
+      console.log("item", item);
+      console.log("selectedItem", selectedItem);
       const res = await callApi("POST", `/v1/canvas-frames/update-supplier`, {
         supplierId: item.supplierId,
-        price: state[`priceUnit-${item?.supplierId}`] || item?.price,
+        categoryName: item?.categoryName,
+        sizeId: item?.sizeId,
+        price: state[`price-${item?.supplierId}`] || item?.price,
         currency:
           state[`currency-${item?.supplierId}`]?.value || item?.currency,
         isDefault: state[`isDefault-${item?.supplierId}`] || item?.isDefault,
-        additionCode: item?.additionCode,
-        additionName: item?.additionName,
+        width: item?.width,
+        height: item?.height,
         weight: item?.weight,
-        code: item?.code,
-        adaptationField: item?.adaptationField,
+        thickness: item?.thickness || 0,
       });
       if (res?.success) {
         setSnackbarStateValue({
@@ -135,11 +140,12 @@ const useNewSupplier = ({ item }: any) => {
           type: "sucess",
         });
         const data: any = await refetchMaterialData.refetch();
+        console.log("dataaaaaa", data);
         const _item: any = data.find(
           (elem: any) => elem.code === selectedItem.code
         );
-
-        setAdditionsData(_item.additionSuppliers);
+        console.log("_itemaaaaa", _item);
+        setNewSupplier(_item.canvasFrameSuppliers);
       } else {
         setSnackbarStateValue({
           state: true,

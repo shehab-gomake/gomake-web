@@ -21,10 +21,10 @@ const ShowSizesListWidgetForCanvasFrames = ({ item: _item }: any) => {
     deleteSupplierAdditions,
     updateSupplierAdditions,
   } = useNewSupplier({ item: _item });
-  console.log("_item", _item);
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
   const [supplierData, setNewSupplier] = useState([]);
+
   useEffect(() => {
     setNewSupplier(_item.canvasFrameSuppliers);
   }, [_item.canvasFrameSuppliers]);
