@@ -58,9 +58,7 @@ const useNewSupplier = ({ item }: any) => {
       });
       if (res?.success) {
         const data: any = await refetchMaterialData.refetch();
-        console.log("data", data);
         const _item: any = data?.find((elem: any) => elem.code === item.code);
-        console.log("_item", _item);
 
         setNewSupplier(_item?.canvasFrameSuppliers);
         setSnackbarStateValue({
@@ -118,8 +116,6 @@ const useNewSupplier = ({ item }: any) => {
 
   const updateSupplierAdditions = useCallback(
     async (item: any, setNewSupplier: any, selectedItem: any) => {
-      console.log("item", item);
-      console.log("selectedItem", selectedItem);
       const res = await callApi("POST", `/v1/canvas-frames/update-supplier`, {
         supplierId: item.supplierId,
         categoryName: item?.categoryName,
@@ -140,11 +136,9 @@ const useNewSupplier = ({ item }: any) => {
           type: "sucess",
         });
         const data: any = await refetchMaterialData.refetch();
-        console.log("dataaaaaa", data);
         const _item: any = data.find(
           (elem: any) => elem.code === selectedItem.code
         );
-        console.log("_itemaaaaa", _item);
         setNewSupplier(_item.canvasFrameSuppliers);
       } else {
         setSnackbarStateValue({

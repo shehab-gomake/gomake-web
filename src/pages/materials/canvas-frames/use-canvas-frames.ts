@@ -26,7 +26,6 @@ const useCanvasFrames = () => {
     []
   );
   const getCategory = useCallback(async () => {
-    console.log("HERE getCategory");
     const data = await getAndCanvasFramesCategory(
       callApi,
       setCanvasFramesCategories
@@ -61,7 +60,6 @@ const useCanvasFrames = () => {
   }, [categoryName, supplierId]);
   const getCanvasFrameSizes = useCallback(async () => {
     if (categoryName?.length) {
-      console.log("HERE getCanvasFrameSizes");
       const data = await getAndSetCanvasFramesSizes(
         callApi,
         setCanvasFramesSizes,
