@@ -12,3 +12,4 @@ export * from "./get-set-applications-sizes";
 export * from "./get-set-encapsulation-roll-sizes";
 export * from "./get-set-all-additions";
 export * from "./get-set-all-canvas-frames";
+export * from "./get-set-frames";

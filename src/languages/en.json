@@ -280,6 +280,27 @@
       "stock": "Stock",
       "price": "Price",
       "settings": "Settings"
+    },
+
+    "frames": {
+      "title": "Frames",
+      "categoryName": "Category name",
+      "height": "Height",
+      "width": "Width",
+      "weight": "Weight",
+      "color": "Color",
+      "thickness": "Thickness",
+      "stock": "Stock",
+      "price": "Price",
+      "settings": "Settings",
+      "category": "Category",
+      "supplier": "Supplier",
+      "selectCurrency": "Select currency",
+      "currency": "Currency",
+      "default": "Default",
+      "controls": "Controls",
+      "selectSupplier": "Select supplier",
+      "code": "Code"
     }
   }
 }
