@@ -79,11 +79,11 @@ const useAddSupplier = ({ item }: any) => {
     async (item: any, setAdditionsData: any, additionsData: any) => {
       const res = await callApi("POST", `/v1/additions/delete-supplier`, {
         supplierId: item.supplierId,
-        price: item?.priceUnit,
+        price: item?.price,
         currency: item?.currency,
         isDefault: item?.isDefault,
-        additionCode: item?.code,
-        additionName: item?.name,
+        additionCode: item?.additionCode,
+        additionName: item?.additionName,
         weight: item?.weight,
         adaptationField: item?.adaptationField,
         code: item?.code,
