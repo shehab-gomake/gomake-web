@@ -43,7 +43,7 @@
     "additions": "Additions",
     "canvasFrames": "Canvas frames",
     "frames": "Frames",
-    "paperMoney": "paper money",
+    "foils": "Foils",
     "safarlaOnTheDrum": "Safarla on the drum",
     "sprellaSingularity": "Sprella singularity",
     "encapsulationSheets": "Encapsulation sheets",
@@ -301,6 +301,25 @@
       "controls": "Controls",
       "selectSupplier": "Select supplier",
       "code": "Code"
+    },
+    "foils": {
+      "title": "Foils",
+      "code": "Code",
+      "categoryName": "Category name",
+      "height": "Height",
+      "width": "Width",
+      "stock": "Stock",
+      "pricePerRoll": "Price per roll",
+      "weightPerSquareMeter": "Weight per square meter",
+      "pricePerSquareMeter": "Price per square meter",
+      "thickness": "Thickness",
+      "settings": "Settings",
+      "selectSupplier": "Select supplier",
+      "selectCurrency": "Select currency",
+      "currency": "Currency",
+      "default": "Default",
+      "controls": "Controls",
+      "supplier": "Supplier"
     }
   }
 }

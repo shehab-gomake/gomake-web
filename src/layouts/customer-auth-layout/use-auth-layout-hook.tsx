@@ -121,9 +121,9 @@ const useAuthLayoutHook = () => {
             path: "/materials/frames",
           },
           {
-            key: "paperMoney",
-            title: t("tabs.paperMoney"),
-            path: "/materials/paperMoney",
+            key: "foils",
+            title: t("tabs.foils"),
+            path: "/materials/foils",
           },
           {
             key: "safarlaOnTheDrum",
