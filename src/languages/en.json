@@ -373,6 +373,23 @@
       "default": "Default",
       "controls": "Controls",
       "supplier": "Supplier"
+    },
+    "colors": {
+      "title": "Colors",
+      "supplier": "Supplier",
+      "code": "Code",
+      "colorName": "Color name",
+      "volumeInLiters": "Volume in liters",
+      "literInSquareMeter": "Liter in square meter",
+      "pricePerContainer": "Price per container",
+      "stock": "Stock",
+      "pricePerLiter": "Price per liter",
+      "settings": "Settings",
+      "selectSupplier": "Select supplier",
+      "selectCurrency": "Select currency",
+      "currency": "Currency",
+      "default": "Default",
+      "controls": "Controls"
     }
   }
 }

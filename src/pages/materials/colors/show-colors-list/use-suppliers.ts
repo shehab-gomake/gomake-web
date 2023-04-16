@@ -17,15 +17,14 @@ const useNewSupplier = ({ item }: any) => {
 
   const headerTable = useMemo(
     () => [
-      t("materials.sheetEncapsulation.selectSupplier"),
-      t("materials.sheetEncapsulation.pricePerUnit"),
-      t("materials.sheetEncapsulation.height"),
-      t("materials.sheetEncapsulation.width"),
-      t("materials.sheetEncapsulation.weight"),
-      t("materials.sheetEncapsulation.thickness"),
-      t("materials.sheetEncapsulation.currency"),
-      t("materials.sheetEncapsulation.default"),
-      t("materials.sheetEncapsulation.controls"),
+      t("materials.colors.selectSupplier"),
+      t("materials.colors.pricePerLiter"),
+      t("materials.colors.volumeInLiters"),
+      t("materials.colors.literInSquareMeter"),
+      t("materials.colors.pricePerContainer"),
+      t("materials.colors.currency"),
+      t("materials.colors.default"),
+      t("materials.colors.controls"),
     ],
     []
   );
@@ -45,30 +44,26 @@ const useNewSupplier = ({ item }: any) => {
       };
     });
   };
+
   const addNewSupplier = useCallback(
     async (supplierData: any, setNewSupplier: any) => {
-      const res = await callApi(
-        "POST",
-        `/v1/sheet-encapsulation/add-supplier`,
-        {
-          supplierId: state.supplierId?.value,
-          categoryName: item?.categoryName,
-          sizeId: item?.sizeId,
-          pricePerUnit: parseInt(state?.pricePerUnit),
-          currency: state?.currency?.value,
-          isDefault:
-            typeof state?.isDefault == "boolean" ? state?.isDefault : true,
-          thickness: state?.thickness,
-          height: state?.height,
-          width: state?.width,
-          weight: state?.weight,
-        }
-      );
+      const res = await callApi("POST", `/v1/colors/add-supplier`, {
+        supplierId: state.supplierId?.value,
+        pricePerLiter: parseFloat(state?.pricePerLiter),
+        pricePerContainer: parseFloat(state?.pricePerContainer),
+        currency: state?.currency?.value,
+        isDefault:
+          typeof state?.isDefault == "boolean" ? state?.isDefault : true,
+        colorCode: item?.code,
+        colorName: item?.colorName,
+        volumeInLiters: 0,
+        literInSquareMeter: 0,
+      });
       if (res?.success) {
         const data: any = await refetchMaterialData.refetch();
         const _item: any = data?.find((elem: any) => elem.code === item.code);
 
-        setNewSupplier(_item?.sheetEncapsulationSuppliers);
+        setNewSupplier(_item?.colorSuppliers);
         setSnackbarStateValue({
           state: true,
           message: t("modal.addedSusuccessfully"),
@@ -84,24 +79,21 @@ const useNewSupplier = ({ item }: any) => {
     },
     [state]
   );
+
   const deleteSupplier = useCallback(
     async (item: any, setData: any, data: any) => {
-      const res = await callApi(
-        "POST",
-        `/v1/sheet-encapsulation/delete-supplier`,
-        {
-          supplierId: item.supplierId,
-          categoryName: item?.categoryName,
-          sizeId: item?.sizeId,
-          pricePerUnit: item.pricePerUnit,
-          currency: item?.currency,
-          isDefault: item?.isDefault,
-          thickness: item?.thickness,
-          height: item?.height,
-          width: item?.width,
-          weight: item?.weight,
-        }
-      );
+      const res = await callApi("POST", `/v1/colors/delete-supplier`, {
+        supplierId: item.supplierId,
+        pricePerLiter: item?.pricePerLiter,
+        pricePerContainer: item?.pricePerContainer,
+        pricePerUnit: item.pricePerUnit,
+        currency: item?.currency,
+        isDefault: item?.isDefault,
+        colorCode: item?.colorCode,
+        colorName: item?.colorName,
+        volumeInLiters: item?.volumeInLiters,
+        literInSquareMeter: item?.literInSquareMeter,
+      });
       if (res?.success) {
         const temp = [...data];
         temp.splice(
@@ -124,26 +116,26 @@ const useNewSupplier = ({ item }: any) => {
     },
     [state]
   );
+
   const updateSupplier = useCallback(
     async (item: any, setNewSupplier: any, selectedItem: any) => {
-      const res = await callApi(
-        "POST",
-        `/v1/sheet-encapsulation/update-supplier`,
-        {
-          supplierId: item.supplierId,
-          categoryName: item?.categoryName,
-          sizeId: item?.sizeId,
-          pricePerUnit:
-            state[`pricePerUnit-${item?.supplierId}`] || item?.pricePerUnit,
-          thickness: state[`thickness-${item?.supplierId}`] || item?.thickness,
-          height: state[`height-${item?.supplierId}`] || item?.height,
-          width: state[`width-${item?.supplierId}`] || item?.width,
-          weight: state[`weight-${item?.supplierId}`] || item?.weight,
-          currency:
-            state[`currency-${item?.supplierId}`]?.value || item?.currency,
-          isDefault: state[`isDefault-${item?.supplierId}`] || item?.isDefault,
-        }
-      );
+      const res = await callApi("POST", `/v1/colors/update-supplier`, {
+        supplierId: item.supplierId,
+        colorCode: item.colorCode,
+        pricePerLiter:
+          state[`pricePerLiter-${item?.supplierId}`] || item?.pricePerLiter,
+        pricePerContainer:
+          state[`pricePerContainer-${item?.supplierId}`] ||
+          item?.pricePerContainer,
+        volumeInLiters:
+          state[`volumeInLiters-${item?.supplierId}`] || item?.volumeInLiters,
+        literInSquareMeter:
+          state[`literInSquareMeter-${item?.supplierId}`] ||
+          item?.literInSquareMeter,
+        currency:
+          state[`currency-${item?.supplierId}`]?.value || item?.currency,
+        isDefault: state[`isDefault-${item?.supplierId}`] || item?.isDefault,
+      });
       if (res?.success) {
         setSnackbarStateValue({
           state: true,
@@ -154,7 +146,7 @@ const useNewSupplier = ({ item }: any) => {
         const _item: any = data.find(
           (elem: any) => elem.code === selectedItem.code
         );
-        setNewSupplier(_item.sheetEncapsulationSuppliers);
+        setNewSupplier(_item.colorSuppliers);
       } else {
         setSnackbarStateValue({
           state: true,

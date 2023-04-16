@@ -17,3 +17,4 @@ export * from "./get-set-foils";
 export * from "./get-set-pack-in-drums";
 export * from "./get-set-pack-in-units";
 export * from "./get-set-sheet-encapsulation";
+export * from "./get-set-colors";
