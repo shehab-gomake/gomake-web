@@ -43,19 +43,10 @@ const ShowSizesListWidgetForSheetEncapsulation = ({ item: _item }: any) => {
             return {
               supplierId: (
                 <>
-                  {suppliers?.length > 0 && (
-                    <GoMakeAutoComplate
-                      options={suppliers}
-                      style={clasess.dropDownListContainer}
-                      placeholder={t(
-                        "materials.sheetEncapsulation.selectSupplier"
-                      )}
-                      value={suppliers.find(
-                        (item: any) => item?.value === supplierId
-                      )}
-                      disabled={true}
-                    />
-                  )}
+                  {
+                    suppliers.find((item: any) => item?.value === supplierId)
+                      .label
+                  }
                 </>
               ),
               pricePerUnit: (
@@ -73,6 +64,7 @@ const ShowSizesListWidgetForSheetEncapsulation = ({ item: _item }: any) => {
               ),
               height: (
                 <GomakeTextInput
+                  disabled={true}
                   type="number"
                   placeholder={t("materials.sheetEncapsulation.height")}
                   style={clasess.textInputStyle}
@@ -84,6 +76,7 @@ const ShowSizesListWidgetForSheetEncapsulation = ({ item: _item }: any) => {
               ),
               width: (
                 <GomakeTextInput
+                  disabled={true}
                   type="number"
                   placeholder={t("materials.sheetEncapsulation.width")}
                   style={clasess.textInputStyle}
@@ -95,6 +88,7 @@ const ShowSizesListWidgetForSheetEncapsulation = ({ item: _item }: any) => {
               ),
               weight: (
                 <GomakeTextInput
+                  disabled={true}
                   type="number"
                   placeholder={t("materials.sheetEncapsulation.weight")}
                   style={clasess.textInputStyle}
@@ -106,6 +100,7 @@ const ShowSizesListWidgetForSheetEncapsulation = ({ item: _item }: any) => {
               ),
               thickness: (
                 <GomakeTextInput
+                  disabled={true}
                   type="number"
                   placeholder={t("materials.sheetEncapsulation.thickness")}
                   style={clasess.textInputStyle}

@@ -47,6 +47,7 @@ const AddSupplierWidget = ({ item, supplierData, setNewSupplier }: any) => {
       <div style={clasess.rowItemStyle}>
         <div style={{ width: "80%" }}>
           <GomakeTextInput
+            disabled={true}
             type="number"
             placeholder={t("materials.sheetEncapsulation.height")}
             style={clasess.textInputStyle}
@@ -60,6 +61,7 @@ const AddSupplierWidget = ({ item, supplierData, setNewSupplier }: any) => {
       <div style={clasess.rowItemStyle}>
         <div style={{ width: "80%" }}>
           <GomakeTextInput
+            disabled={true}
             type="number"
             placeholder={t("materials.sheetEncapsulation.width")}
             style={clasess.textInputStyle}
@@ -71,6 +73,7 @@ const AddSupplierWidget = ({ item, supplierData, setNewSupplier }: any) => {
       <div style={clasess.rowItemStyle}>
         <div style={{ width: "80%" }}>
           <GomakeTextInput
+            disabled={true}
             type="number"
             placeholder={t("materials.sheetEncapsulation.weight")}
             style={clasess.textInputStyle}
@@ -84,6 +87,7 @@ const AddSupplierWidget = ({ item, supplierData, setNewSupplier }: any) => {
       <div style={clasess.rowItemStyle}>
         <div style={{ width: "80%" }}>
           <GomakeTextInput
+            disabled={true}
             type="number"
             placeholder={t("materials.sheetEncapsulation.thickness")}
             style={clasess.textInputStyle}
