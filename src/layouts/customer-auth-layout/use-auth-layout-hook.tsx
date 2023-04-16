@@ -136,9 +136,9 @@ const useAuthLayoutHook = () => {
             path: "/materials/packin-units",
           },
           {
-            key: "encapsulationSheets",
-            title: t("tabs.encapsulationSheets"),
-            path: "/materials/encapsulationSheets",
+            key: "sheetEncapsulation",
+            title: t("tabs.sheetEncapsulation"),
+            path: "/materials/sheet-encapsulation",
           },
           {
             key: "colors",
