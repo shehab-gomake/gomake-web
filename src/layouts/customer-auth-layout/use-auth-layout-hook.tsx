@@ -131,9 +131,9 @@ const useAuthLayoutHook = () => {
             path: "/materials/packin-drums",
           },
           {
-            key: "sprellaSingularity",
-            title: t("tabs.sprellaSingularity"),
-            path: "/materials/sprellaSingularity",
+            key: "packinUnits",
+            title: t("tabs.packinUnits"),
+            path: "/materials/packin-units",
           },
           {
             key: "encapsulationSheets",
