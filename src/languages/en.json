@@ -65,6 +65,11 @@
   },
   "materials": {
     "sheetPaper": {
+      "admin": {
+        "title": "Sheets",
+        "categoryName": "Category name",
+        "addNewSheet": "Add New Sheet"
+      },
       "title": "Sheet paper",
       "category": "Category",
       "supplier": "Supplier",

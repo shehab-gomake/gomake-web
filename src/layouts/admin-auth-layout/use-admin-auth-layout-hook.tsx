@@ -45,6 +45,23 @@ const useAuthLayoutHook = () => {
       },
       {
         isLine: false,
+        key: "materials",
+        title: t("tabs.materials"),
+        path: "/product-floor",
+        isList: true,
+        list: [
+          {
+            key: "sheet",
+            title: t("materials.sheetPaper.admin.title"),
+            path: "admin/materials/sheets",
+          },
+        ],
+        icon: () => {
+          return <ProductsIcon />;
+        },
+      },
+      {
+        isLine: false,
         key: "products",
         title: t("tabs.products"),
         path: "/product-floor",

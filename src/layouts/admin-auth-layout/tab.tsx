@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { useAuthLayoutHook } from "./use-admin-auth-layout-hook";
+import { useGomakeRouter } from "@/hooks";
 interface IProps {
   tab: {
     isLine?: boolean;
@@ -21,6 +22,7 @@ const Tab = ({ tab }: IProps) => {
   const [isHover, setIsHover] = useState(false);
   const { clasess } = useStyle({ isHover });
   const { t } = useTranslation();
+  const { navigate } = useGomakeRouter();
   const handleMouseEnter = useCallback(() => {
     setIsHover(true);
   }, []);
@@ -34,7 +36,9 @@ const Tab = ({ tab }: IProps) => {
       setIsListOpen(!isListOpen);
     }
   }, [tab, isListOpen, setIsListOpen]);
-
+  const changeRoute = useCallback((route: string) => {
+    navigate(route);
+  }, []);
   return (
     <>
       <div
@@ -61,7 +65,12 @@ const Tab = ({ tab }: IProps) => {
         {tab.list?.map((list: any) => {
           return (
             <div style={clasess.tabList} key={list.key}>
-              <div style={clasess.tabTitle}>{list.title}</div>
+              <div
+                onClick={() => changeRoute(list?.path)}
+                style={clasess.tabTitle}
+              >
+                {list.title}
+              </div>
             </div>
           );
         })}
