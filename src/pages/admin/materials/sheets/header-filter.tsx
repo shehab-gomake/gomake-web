@@ -9,6 +9,9 @@ const HeaderFilter = ({
   openAddSheetModal,
   onCloseModalAdded,
   onOpnModalAdded,
+  changeItems,
+  setItems,
+  items,
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -26,6 +29,9 @@ const HeaderFilter = ({
       <AddSheetModal
         openModal={openAddSheetModal}
         onCloseModal={onCloseModalAdded}
+        changeItems={changeItems}
+        items={items}
+        setItems={setItems}
       />
     </>
   );

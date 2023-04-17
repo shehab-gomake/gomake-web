@@ -13,8 +13,11 @@ export default function Sheets() {
     headerTable,
     allSheets,
     openAddSheetModal,
+    items,
     onCloseModalAdded,
     onOpnModalAdded,
+    changeItems,
+    setItems,
   } = useSheets();
   return (
     <AdminAuthLayout>
@@ -23,6 +26,9 @@ export default function Sheets() {
         openAddSheetModal={openAddSheetModal}
         onCloseModalAdded={onCloseModalAdded}
         onOpnModalAdded={onOpnModalAdded}
+        items={items}
+        changeItems={changeItems}
+        setItems={setItems}
       />
       <Table tableHeaders={headerTable} tableRows={allSheets} />
     </AdminAuthLayout>

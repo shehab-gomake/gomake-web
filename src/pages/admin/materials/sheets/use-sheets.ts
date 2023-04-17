@@ -7,8 +7,6 @@ import { useGomakeAxios } from "@/hooks";
 const useSheets = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const [openAddSheetModal, setOpenAddSheetModal] = useState(false);
-  const [allSheets, setAllSheets] = useState([]);
   const headerTable = useMemo(
     () => [
       t("materials.sheetPaper.admin.categoryName"),
@@ -16,6 +14,22 @@ const useSheets = () => {
     ],
     []
   );
+  const [openAddSheetModal, setOpenAddSheetModal] = useState(false);
+  const [allSheets, setAllSheets] = useState([]);
+
+  const [items, setItems] = useState([
+    {
+      weight: "",
+      name: "",
+      thickness: "",
+      index: "",
+    },
+  ]);
+  const changeItems = (index: number, filedName: string, value: any) => {
+    let temp = [...items];
+    temp[index][filedName] = value;
+    setItems(temp);
+  };
 
   const getCategory = useCallback(async () => {
     await getAndSetGetAllSheets(callApi, setAllSheets);
@@ -34,8 +48,11 @@ const useSheets = () => {
     headerTable,
     allSheets,
     openAddSheetModal,
+    items,
     onCloseModalAdded,
     onOpnModalAdded,
+    changeItems,
+    setItems,
   };
 };
 
