@@ -20,3 +20,4 @@ export * from "./get-set-sheet-encapsulation";
 export * from "./get-set-colors";
 export * from "./get-set-double-sided-tape-rolls";
 export * from "./get-set-glues";
+export * from "./get-set-magnets";

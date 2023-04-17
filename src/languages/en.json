@@ -423,6 +423,25 @@
       "controls": "Controls",
       "selectSupplier": "Select supplier",
       "selectCurrency": "Select currency"
+    },
+    "magnets": {
+      "title": "Magnets",
+      "code": "Code",
+      "name": "Name",
+      "weight": "Weight",
+      "withGlue": "With glue",
+      "directPrinting": "Direct printing",
+      "height": "Height",
+      "width": "Width",
+      "stock": "Stock",
+      "price": "Price",
+      "settings": "Settings",
+      "default": "Default",
+      "controls": "Controls",
+      "currency": "Currency",
+      "supplier": "Supplier",
+      "selectSupplier": "Select supplier",
+      "selectCurrency": "Select currency"
     }
   }
 }

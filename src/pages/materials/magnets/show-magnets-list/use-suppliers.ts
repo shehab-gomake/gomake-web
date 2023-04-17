@@ -17,13 +17,13 @@ const useNewSupplier = ({ item }: any) => {
 
   const headerTable = useMemo(
     () => [
-      t("materials.glues.selectSupplier"),
-      t("materials.glues.literInSquareMeter"),
-      t("materials.glues.volumeInLiters"),
-      t("materials.glues.pricePerContainer"),
-      t("materials.glues.currency"),
-      t("materials.glues.default"),
-      t("materials.glues.controls"),
+      t("materials.magnets.selectSupplier"),
+      t("materials.magnets.price"),
+      t("materials.magnets.width"),
+      t("materials.magnets.height"),
+      t("materials.magnets.currency"),
+      t("materials.magnets.default"),
+      t("materials.magnets.controls"),
     ],
     []
   );
@@ -46,24 +46,26 @@ const useNewSupplier = ({ item }: any) => {
 
   const addNewSupplier = useCallback(
     async (supplierData: any, setNewSupplier: any) => {
-      const res = await callApi("POST", `/v1/glues/add-supplier`, {
+      const res = await callApi("POST", `/v1/magnets/add-supplier`, {
         supplierId: state.supplierId?.value,
-        pricePerLiter: item?.pricePerLiter,
-        pricePerContainer: parseFloat(state?.pricePerContainer),
+        price: parseFloat(state?.price),
         currency: state?.currency?.value,
         isDefault:
           typeof state?.isDefault == "boolean" ? state?.isDefault : true,
-        glueCode: item?.code,
-        typeName: item?.typeName,
-        volumeInLiters: 0,
-        literInSquareMeter: 0,
-        weightPerLiter: item?.weightPerLiter,
+        magnetCode: item?.code,
+        magnetName: item?.magnetName,
+        weight: item?.weight,
+        withGlue: item?.withGlue,
+        directPrinting: item?.directPrinting,
+        linkage: item?.linkage,
+        width: 0,
+        height: 0,
       });
       if (res?.success) {
         const data: any = await refetchMaterialData.refetch();
         const _item: any = data?.find((elem: any) => elem.code === item.code);
 
-        setNewSupplier(_item?.glueSuppliers);
+        setNewSupplier(_item?.magnetSuppliers);
         setSnackbarStateValue({
           state: true,
           message: t("modal.addedSusuccessfully"),
@@ -82,17 +84,19 @@ const useNewSupplier = ({ item }: any) => {
 
   const deleteSupplier = useCallback(
     async (item: any, setData: any, data: any) => {
-      const res = await callApi("POST", `/v1/glues/delete-supplier`, {
+      const res = await callApi("POST", `/v1/magnets/delete-supplier`, {
         supplierId: item.supplierId,
-        pricePerLiter: item?.pricePerLiter,
-        pricePerContainer: item?.pricePerContainer,
+        price: item?.price,
         currency: item?.currency,
         isDefault: item?.isDefault,
-        glueCode: item?.glueCode,
-        typeName: item?.typeName,
-        volumeInLiters: item?.volumeInLiters,
-        literInSquareMeter: item?.literInSquareMeter,
-        weightPerLiter: item?.weightPerLiter,
+        magnetCode: item?.magnetCode,
+        magnetName: item?.magnetName,
+        weight: item?.weight,
+        withGlue: item?.withGlue,
+        directPrinting: item?.directPrinting,
+        linkage: item?.linkage,
+        width: item?.width,
+        height: item?.height,
       });
       if (res?.success) {
         const temp = [...data];
@@ -118,14 +122,10 @@ const useNewSupplier = ({ item }: any) => {
   );
   const updateSupplier = useCallback(
     async (item: any, setNewSupplier: any, selectedItem: any) => {
-      const res = await callApi("POST", `/v1/glues/update-supplier`, {
+      const res = await callApi("POST", `/v1/magnets/update-supplier`, {
         supplierId: item.supplierId,
-        glueCode: item.glueCode,
-        pricePerLiter:
-          state[`pricePerLiter-${item?.supplierId}`] || item?.pricePerLiter,
-        pricePerContainer:
-          state[`pricePerContainer-${item?.supplierId}`] ||
-          item?.pricePerContainer,
+        magnetCode: item.magnetCode,
+        price: state[`price-${item?.supplierId}`] || item?.price,
         currency:
           state[`currency-${item?.supplierId}`]?.value || item?.currency,
         isDefault: state[`isDefault-${item?.supplierId}`] || item?.isDefault,
@@ -140,7 +140,7 @@ const useNewSupplier = ({ item }: any) => {
         const _item: any = data.find(
           (elem: any) => elem.code === selectedItem.code
         );
-        setNewSupplier(_item.glueSuppliers);
+        setNewSupplier(_item.magnetSuppliers);
       } else {
         setSnackbarStateValue({
           state: true,
