@@ -146,9 +146,9 @@ const useAuthLayoutHook = () => {
             path: "/materials/colors",
           },
           {
-            key: "rollOfDoubleSidedGlue",
-            title: t("tabs.rollOfDoubleSidedGlue"),
-            path: "/materials/rollOfDoubleSidedGlue",
+            key: "doubleSidedTapeRolls",
+            title: t("tabs.doubleSidedTapeRolls"),
+            path: "/materials/double-sided-tape-rolls",
           },
           {
             key: "adhesives",
