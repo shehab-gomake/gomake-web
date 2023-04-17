@@ -49,7 +49,7 @@
     "sheetEncapsulation": "Sheet encapsulation",
     "colors": "Colors",
     "doubleSidedTapeRolls": "Double sided tape rolls",
-    "adhesives": "Adhesives",
+    "glues": "Glues",
     "magnets": "Magnets",
     "packaging": "Packaging",
     "beat": "Beat"
@@ -404,7 +404,25 @@
       "width": "Width",
       "currency": "Currency",
       "default": "Default",
-      "controls": "Controls"
+      "controls": "Controls",
+      "selectCurrency": "Select currency"
+    },
+    "glues": {
+      "title": "Glues",
+      "code": "Code",
+      "typeName": "TypeName",
+      "volumeInLiters": "Volume in liters",
+      "weightPerLiter": "Weight per liter",
+      "literInSquareMeter": "Liter in square meter",
+      "stock": "Stock",
+      "pricePerContainer": "Price per container",
+      "pricePerLiter": "Price per liter",
+      "settings": "Settings",
+      "currency": "Currency",
+      "default": "Default",
+      "controls": "Controls",
+      "selectSupplier": "Select supplier",
+      "selectCurrency": "Select currency"
     }
   }
 }
