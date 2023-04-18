@@ -39,7 +39,7 @@ const useApplications = () => {
     if (!categoryName) {
       setCategoryName(data[0]);
     }
-  }, [categoryName, supplierId]);
+  }, [categoryName]);
 
   const onChangeCategory = useCallback(async (e: any, value: any) => {
     setCategoryName(value);
@@ -49,13 +49,16 @@ const useApplications = () => {
   }, []);
 
   useEffect(() => {
-    getCategory();
     getApplicationSizes();
   }, [categoryName, supplierId]);
+  useEffect(() => {
+    getCategory();
+  }, []);
 
   return {
     onChangeCategory,
     onChangeSupplier,
+    setAllSizes,
     applicationCategories,
     allSizes,
     categoryName,

@@ -8,17 +8,18 @@ import { useApplications } from "./use-applications";
 import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
 
-const HeaderFilter = ({ setAllSizes }: any) => {
+const HeaderFilter = ({
+  setAllSizes,
+  applicationCategories,
+  categoryName,
+  allSizes,
+  onChangeCategory,
+  onChangeSupplier,
+}: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const { suppliers, getSupplier, getSupplierCurrencies } = useSupplier();
-  const {
-    applicationCategories,
-    categoryName,
-    allSizes,
-    onChangeCategory,
-    onChangeSupplier,
-  } = useApplications();
+
   useEffect(() => {
     getSupplier();
     getSupplierCurrencies();

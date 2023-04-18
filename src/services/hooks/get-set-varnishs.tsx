@@ -1,7 +1,8 @@
+import { ShowSubTableForVarnishs } from "@/pages/materials/varnishs/show-colors-list";
 import { ICallApi, ISetState } from "./call-api.interface";
 
 import { UpdateVarnishsStock } from "@/pages/materials/varnishs/update-varnishs-stock/update-varnishs-stock";
-import { ShowSubTableForVarnishs } from "@/pages/materials/varnishs/show-varnishs-list";
+
 import { returnResult } from "@/utils/helpers";
 
 const getAndSetAllVarnishs = async (

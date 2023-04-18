@@ -13,7 +13,6 @@ const usePackings = () => {
   const [packingsCategories, setPackingsCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
   const [packingsVolumes, setPackingsVolumes] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
   const tabelHeaders = useMemo(
     () => [
       t("materials.packings.code"),
@@ -60,20 +59,15 @@ const usePackings = () => {
   const onChangeSupplier = useCallback(async (e: any, value: any) => {
     setSupplierId(value?.value);
   }, []);
-  const onCloseModal = () => {
-    setOpenModal(false);
-  };
+
   return {
     tabelHeaders,
     supplierId,
-    openModal,
     packingsCategories,
     categoryName,
     packingsVolumes,
     onChangeCategory,
     onChangeSupplier,
-    setOpenModal,
-    onCloseModal,
     getPackingsVolumes,
     setPackingsVolumes,
   };
