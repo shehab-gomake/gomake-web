@@ -51,7 +51,7 @@
     "doubleSidedTapeRolls": "Double sided tape rolls",
     "glues": "Glues",
     "magnets": "Magnets",
-    "packaging": "Packaging",
+    "packings": "Packings",
     "beat": "Beat"
   },
   "modal": {
@@ -440,6 +440,22 @@
       "controls": "Controls",
       "currency": "Currency",
       "supplier": "Supplier",
+      "selectSupplier": "Select supplier",
+      "selectCurrency": "Select currency"
+    },
+    "packings": {
+      "title": "Packings",
+      "code": "Code",
+      "height": "Height",
+      "width": "Width",
+      "stock": "Stock",
+      "pricePerUnit": "Price per unit",
+      "settings": "Settings",
+      "default": "Default",
+      "controls": "Controls",
+      "currency": "Currency",
+      "supplier": "Supplier",
+      "category": "Category",
       "selectSupplier": "Select supplier",
       "selectCurrency": "Select currency"
     }
