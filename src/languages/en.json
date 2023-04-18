@@ -52,7 +52,7 @@
     "glues": "Glues",
     "magnets": "Magnets",
     "packings": "Packings",
-    "beat": "Beat"
+    "varnishs": "Varnishs"
   },
   "modal": {
     "close": "Close",
@@ -450,6 +450,25 @@
       "width": "Width",
       "stock": "Stock",
       "pricePerUnit": "Price per unit",
+      "settings": "Settings",
+      "default": "Default",
+      "controls": "Controls",
+      "currency": "Currency",
+      "supplier": "Supplier",
+      "category": "Category",
+      "selectSupplier": "Select supplier",
+      "selectCurrency": "Select currency"
+    },
+    "varnishs": {
+      "title": "Varnish",
+      "code": "Code",
+      "typeName": "Type name",
+      "volumeInLiters": "Volume in liters",
+      "weightPerLiter": "Weight per liter",
+      "literInSquareMeter": "Liter in square meter",
+      "stock": "Stock",
+      "pricePerContainer": "Price per container",
+      "pricePerLiter": "Price per liter",
       "settings": "Settings",
       "default": "Default",
       "controls": "Controls",
