@@ -68,7 +68,18 @@
       "admin": {
         "title": "Sheets",
         "categoryName": "Category name",
-        "addNewSheet": "Add New Sheet"
+        "addNewSheet": "Add New Sheet",
+        "sheetWeightsSection": "Sheet Weights Section",
+        "weight": "Weight",
+        "enterWeight": "Enter Weight",
+        "name": "Name",
+        "enterName": "Enter Name",
+        "thickness": "Thickness",
+        "enterThickness": "Enter Thickness",
+        "index": "Index",
+        "enterIndex": "Enter Index",
+        "addSheetWeight": "Add new sheet weight",
+        "removeSheetWeight": "Remove last sheet weight"
       },
       "title": "Sheet paper",
       "category": "Category",
