@@ -94,6 +94,9 @@
       "height": "Height",
       "width": "Width",
       "settings": "Settings",
+      "unitPrice": "Unit Price",
+      "pricePerUnit": "price per unit",
+      "selectCurrency": "Select currency",
       "modal": {
         "code": "Code",
         "thickness": "Thickness",

@@ -55,7 +55,7 @@ const ShowThicknesListWidgetForLamination = ({
               pricePerUnit: (
                 <GomakeTextInput
                   type="number"
-                  placeholder={t("materials.sheetPaper.unitPrice")}
+                  placeholder={t("materials.lamination.unitPrice")}
                   style={clasess.textInputStyle}
                   value={state[`priceUnit-${supplierId}`] || item.price}
                   onChange={(e: any) =>
@@ -67,7 +67,7 @@ const ShowThicknesListWidgetForLamination = ({
                 <GoMakeAutoComplate
                   options={suppliersCurrencies}
                   style={clasess.dropDownListContainer}
-                  placeholder={t("materials.sheetPaper.selectCurrency")}
+                  placeholder={t("materials.lamination.selectCurrency")}
                   value={
                     state[`currency-${supplierId}`] ||
                     suppliersCurrencies.find(

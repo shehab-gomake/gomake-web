@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { CustomerAuthLayout } from "@/layouts";
@@ -10,12 +9,26 @@ import { HeaderFilter } from "./header-filter";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
-  const { headerTable } = useSheetPaper();
-  const [allWeights, setAllWeights] = useState([]);
+  const {
+    onChangeCategory,
+    onChangeSupplier,
+    setAllWeights,
+    sheetCategories,
+    categoryName,
+    allWeights,
+    headerTable,
+  } = useSheetPaper();
   return (
     <CustomerAuthLayout>
       <HeaderTitle title={t("materials.sheetPaper.title")} />
-      <HeaderFilter setAllWeights={setAllWeights} />
+      <HeaderFilter
+        setAllWeights={setAllWeights}
+        allWeights={allWeights}
+        sheetCategories={sheetCategories}
+        categoryName={categoryName}
+        onChangeCategory={onChangeCategory}
+        onChangeSupplier={onChangeSupplier}
+      />
       <Table tableHeaders={headerTable} tableRows={allWeights} />
     </CustomerAuthLayout>
   );
