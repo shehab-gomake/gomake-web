@@ -15,9 +15,11 @@ const usePrintingMaterials = () => {
 
   const [printingMaterialsSizes, setPrintingMaterialsSizes] = useState([]);
   useEffect(() => {
-    getPrintingMaterialsCategores();
     getPrintingMaterialsSizes();
   }, [categoryName, supplierId]);
+  useEffect(() => {
+    getPrintingMaterialsCategores();
+  }, []);
 
   const getPrintingMaterialsCategores = useCallback(async () => {
     const data = await getAndSetPrintingMaterialsCategores(
@@ -30,11 +32,19 @@ const usePrintingMaterials = () => {
   }, [categoryName]);
 
   const getPrintingMaterialsSizes = useCallback(async () => {
-    await getAndSetPrintingMaterialsSize(callApi, setPrintingMaterialsSizes, {
-      categoryName,
-      supplierId: supplierId || "",
-    });
-  }, [categoryName, supplierId, setPrintingMaterialsSizes]);
+    if (categoryName?.length) {
+      const data = await getAndSetPrintingMaterialsSize(
+        callApi,
+        setPrintingMaterialsSizes,
+        {
+          categoryName,
+          supplierId: supplierId || "",
+        }
+      );
+      return data;
+    }
+    return null;
+  }, [categoryName, supplierId]);
 
   const onChangeCategory = useCallback(async (e: any, value: any) => {
     setCategoryName(value);
@@ -44,9 +54,12 @@ const usePrintingMaterials = () => {
   }, []);
 
   return {
-    categoryName,
+    supplierId,
     printingMaterialsCategores,
+    categoryName,
     printingMaterialsSizes,
+    getPrintingMaterialsSizes,
+    setPrintingMaterialsSizes,
     onChangeCategory,
     onChangeSupplier,
   };

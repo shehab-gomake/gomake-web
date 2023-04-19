@@ -120,7 +120,7 @@ const useAddSupplier = ({ item }: any) => {
   );
 
   const updateSupplierSheet = useCallback(
-    async (item: any, setSuppliersData: any) => {
+    async (item: any, setSuppliersData: any, selectedItem: any) => {
       const res = await callApi("POST", `/v1/hardboards/update-supplier`, {
         categoryName: item?.categoryName,
         sizeId: item?.sizeId,
@@ -140,7 +140,9 @@ const useAddSupplier = ({ item }: any) => {
           type: "sucess",
         });
         const data: any = await refetchMaterialData.refetch();
-        const _item: any = data.find((elem: any) => elem.code === item.code);
+        const _item: any = data.find(
+          (elem: any) => elem.code === selectedItem.code
+        );
 
         setSuppliersData(_item.hardboardSuppliers);
       } else {

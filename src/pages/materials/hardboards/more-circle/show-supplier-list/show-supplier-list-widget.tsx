@@ -11,7 +11,7 @@ import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
 
-const ShowSupplierListWidgetForSheet = ({ item }: any) => {
+const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
   const {
     headerTable,
     state,
@@ -20,14 +20,14 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
     onChangeState,
     deleteSupplierSheet,
     updateSupplierSheet,
-  } = useAddSupplier({ item });
+  } = useAddSupplier({ _item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
   const [suppliersData, setSuppliersData] = useState([]);
 
   useEffect(() => {
-    setSuppliersData(item.hardboardSuppliers);
-  }, [item.hardboardSuppliers]);
+    setSuppliersData(_item.hardboardSuppliers);
+  }, [_item.hardboardSuppliers]);
 
   return (
     <div style={clasess.mainContainer}>
@@ -114,7 +114,9 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
                   </IconButton>
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() => updateSupplierSheet(item, setSuppliersData)}
+                    onClick={() =>
+                      updateSupplierSheet(item, setSuppliersData, _item)
+                    }
                   >
                     <SaveAsIcon />
                   </IconButton>
@@ -125,7 +127,7 @@ const ShowSupplierListWidgetForSheet = ({ item }: any) => {
         />
       </div>
       <AddSupplierWidget
-        item={item}
+        item={_item}
         suppliersData={suppliersData}
         setSuppliersData={setSuppliersData}
       />

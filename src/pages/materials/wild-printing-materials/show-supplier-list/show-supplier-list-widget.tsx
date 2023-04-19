@@ -11,7 +11,9 @@ import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
 
-const ShowSupplierListWidgetForWildPrintingMatieral = ({ item }: any) => {
+const ShowSupplierListWidgetForWildPrintingMatieral = ({
+  item: _item,
+}: any) => {
   const {
     headerTable,
     state,
@@ -20,13 +22,13 @@ const ShowSupplierListWidgetForWildPrintingMatieral = ({ item }: any) => {
     onChangeState,
     deleteSupplierSheet,
     updateSupplierSheet,
-  } = useAddSupplier({ item });
+  } = useAddSupplier({ _item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
   const [suppliersData, setSuppliersData] = useState([]);
   useEffect(() => {
-    setSuppliersData(item.wideFormatMaterialSuppliers);
-  }, [item.wideFormatMaterialSuppliers]);
+    setSuppliersData(_item.wideFormatMaterialSuppliers);
+  }, [_item.wideFormatMaterialSuppliers]);
 
   return (
     <div style={clasess.mainContainer}>
@@ -108,7 +110,9 @@ const ShowSupplierListWidgetForWildPrintingMatieral = ({ item }: any) => {
                   </IconButton>
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() => updateSupplierSheet(item, setSuppliersData)}
+                    onClick={() =>
+                      updateSupplierSheet(item, setSuppliersData, _item)
+                    }
                   >
                     <SaveAsIcon />
                   </IconButton>
@@ -119,7 +123,7 @@ const ShowSupplierListWidgetForWildPrintingMatieral = ({ item }: any) => {
         />
       </div>
       <AddSupplierWidget
-        item={item}
+        item={_item}
         suppliersData={suppliersData}
         setSuppliersData={setSuppliersData}
       />

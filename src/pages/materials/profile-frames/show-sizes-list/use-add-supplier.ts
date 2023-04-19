@@ -118,7 +118,7 @@ const useAddSupplier = ({ item }: any) => {
   );
 
   const updateSupplierProfileFrame = useCallback(
-    async (item: any, setData: any) => {
+    async (item: any, setData: any, selectedItem: any) => {
       const res = await callApi("POST", `/v1/profile-frames/update-supplier`, {
         supplierId: item.supplierId,
         categoryName: item?.categoryName,
@@ -139,7 +139,9 @@ const useAddSupplier = ({ item }: any) => {
           type: "sucess",
         });
         const data: any = await refetchMaterialData.refetch();
-        const _item: any = data?.find((elem: any) => elem.code === item.code);
+        const _item: any = data?.find(
+          (elem: any) => elem.code === selectedItem.code
+        );
 
         setData(_item.profileFrameSuppliers);
       } else {
