@@ -164,6 +164,7 @@
       "settings": "Settings"
     },
     "hardboards": {
+      "code": "Code",
       "title": "Hardboards",
       "category": "Category",
       "supplier": "Supplier",

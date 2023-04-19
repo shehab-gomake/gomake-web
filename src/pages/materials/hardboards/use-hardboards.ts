@@ -50,15 +50,19 @@ const useSheetPaper = () => {
   }, []);
 
   useEffect(() => {
-    getCategory();
     getHardboardsSizes();
   }, [categoryName, supplierId]);
+
+  useEffect(() => {
+    getCategory();
+  }, []);
 
   return {
     categoryName,
     hardboardsCategores,
     hardboardsSizes,
     tabelHeaders,
+    setHardboardSizes,
     onChangeCategory,
     onChangeSupplier,
   };

@@ -5,6 +5,7 @@ import { useRecoilValue } from "recoil";
 import { supplierCurrencies, supplierLists } from "@/store";
 import { getAndSetSheetDirection } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { refetchMaterialDataState } from "@/store/refetch-material-data";
 
 const useAddSupplier = ({ item }: any) => {
   const { callApi } = useGomakeAxios();
@@ -14,6 +15,7 @@ const useAddSupplier = ({ item }: any) => {
   const suppliersCurrencies = useRecoilValue(supplierCurrencies);
   const [sheetDirection, setSheetDirection] = useState([]);
   const [state, setState] = useState<any>({});
+  const refetchMaterialData = useRecoilValue(refetchMaterialDataState);
 
   const headerTable = useMemo(
     () => [
@@ -62,18 +64,10 @@ const useAddSupplier = ({ item }: any) => {
           typeof state?.isDefault == "boolean" ? state?.isDefault : true,
       });
       if (res?.success) {
-        let temp = [...suppliersData];
-        temp.push({
-          categoryName: item?.categoryName,
-          sizeId: item?.sizeId,
-          thicknessId: item?.thicknessId,
-          supplierId: state.supplierId?.value,
-          pricePerSquareMeter: parseInt(state?.pricePerSquareMeter),
-          currency: state?.currency?.value,
-          isDefault:
-            typeof state?.isDefault == "boolean" ? state?.isDefault : true,
-        });
-        setSuppliersData(temp);
+        const data: any = await refetchMaterialData.refetch();
+        const _item: any = data.find((elem: any) => elem.code === item.code);
+
+        setSuppliersData(_item.hardboardSuppliers);
 
         setSnackbarStateValue({
           state: true,
@@ -126,7 +120,7 @@ const useAddSupplier = ({ item }: any) => {
   );
 
   const updateSupplierSheet = useCallback(
-    async (item: any) => {
+    async (item: any, setSuppliersData: any) => {
       const res = await callApi("POST", `/v1/hardboards/update-supplier`, {
         categoryName: item?.categoryName,
         sizeId: item?.sizeId,
@@ -145,6 +139,10 @@ const useAddSupplier = ({ item }: any) => {
           message: t("modal.updatedSusuccessfully"),
           type: "sucess",
         });
+        const data: any = await refetchMaterialData.refetch();
+        const _item: any = data.find((elem: any) => elem.code === item.code);
+
+        setSuppliersData(_item.hardboardSuppliers);
       } else {
         setSnackbarStateValue({
           state: true,
