@@ -79,7 +79,10 @@
         "index": "Index",
         "enterIndex": "Enter Index",
         "addSheetWeight": "Add new sheet weight",
-        "removeSheetWeight": "Remove last sheet weight"
+        "removeSheetWeight": "Remove last sheet weight",
+        "addSheetSize": "Add new sheet size",
+        "removeSheetSize": "Remove last sheet size",
+        "sheetSizeSection": "Sheet Size Section"
       },
       "title": "Sheet paper",
       "category": "Category",

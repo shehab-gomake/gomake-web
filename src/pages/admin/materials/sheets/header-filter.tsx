@@ -4,35 +4,29 @@ import { GomakePrimaryButton } from "@/components";
 
 import { useStyle } from "./style";
 import { AddSheetModal } from "./add-sheet-modal";
+import { useRecoilValue } from "recoil";
+import { materialSheetsState } from "./store/sheets";
 
-const HeaderFilter = ({
-  openAddSheetModal,
-  onCloseModalAdded,
-  onOpnModalAdded,
-  changeItems,
-  setItems,
-  items,
-}) => {
+const HeaderFilter = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
+  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+
   return (
     <>
       <div style={clasess.addBtnStyle}>
         <GomakePrimaryButton
           style={clasess.btnStyle}
           leftIcon={<AddIcon />}
-          onClick={onOpnModalAdded}
+          onClick={() => {
+            console.log(materialSheetsStateValue);
+            materialSheetsStateValue?.onOpnModalAdded();
+          }}
         >
           {t("materials.sheetPaper.admin.addNewSheet")}
         </GomakePrimaryButton>
       </div>
-      <AddSheetModal
-        openModal={openAddSheetModal}
-        onCloseModal={onCloseModalAdded}
-        changeItems={changeItems}
-        items={items}
-        setItems={setItems}
-      />
+      <AddSheetModal />
     </>
   );
 };
