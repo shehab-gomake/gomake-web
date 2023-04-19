@@ -20,14 +20,18 @@ const DashboardCard = ({
                 <div style={classes.iconWrapper}>
                     {children}
                 </div>
+            </div>
+            <div style={classes.cardValue}>
                 <div style={classes.value}>{value}</div>
                 <div style={classes.label}>{t(label)}</div>
             </div>
-            {
-                withProgressBar && <div style={classes.progressWrapper}>
-                    <CircularProgressWithLabel value={progressValue}/>
-                </div>
-            }
+            <div>
+                {
+                    withProgressBar && <div >
+                        <CircularProgressWithLabel value={progressValue}/>
+                    </div>
+                }
+            </div>
         </Card>
     );
 }

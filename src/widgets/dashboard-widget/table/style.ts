@@ -41,7 +41,7 @@ const useStyle = () => {
                 textAlign: 'center' as 'center',
                 ...FONT_FAMILY.Lexend(500, 16),
                 lineHeight: 0,
-                height: '80px',
+                height: '60px',
                 minWidth: '115px',
                 border: BORDER,
                 borderTop: 0,

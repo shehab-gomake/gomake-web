@@ -15,13 +15,14 @@ const useStyle = (bgColor: string) => {
 
             },
             label: {
-               ...FONT_FAMILY.Poppins(500, 16),
-                color: '#FFFFFF'
+               ...FONT_FAMILY.Poppins(500, 30),
+                color: '#FFFFFF',
+                textAlign: 'center' as 'center'
+
             },
             value: {
-                ...FONT_FAMILY.Poppins(600, 24),
+                ...FONT_FAMILY.Poppins(600, 40),
                 color: '#FFFFFF',
-                margin: '16px 0 8px 0',
             },
             iconWrapper: {
                 backgroundColor: 'white',
@@ -33,8 +34,11 @@ const useStyle = (bgColor: string) => {
                 justifyContent: 'center' as 'center',
                 alignItems: 'center' as 'center',
             },
-            progressWrapper: {
-
+            cardValue: {
+                display: 'flex',
+                justifyContent: 'flex-start' as 'flex-start',
+                alignItems: 'center' as 'center',
+                flexDirection: 'column' as 'column',
             },
 
         };
