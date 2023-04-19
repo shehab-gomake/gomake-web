@@ -5,29 +5,36 @@ import { getAndSetBraceCategores, getAndSetBraceSize } from "@/services/hooks";
 const usePlats = () => {
   const { callApi } = useGomakeAxios();
   const [categoryName, setCategoryName] = useState("");
-  const [braceCategores, setBraceCategores] = useState([]);
+  const [platsCategores, setPlatsCategores] = useState([]);
   const [supplierId, setSupplierId] = useState("");
-  const [braceSizes, setBraceSizes] = useState([]);
+  const [platsSizes, setPlatsSizes] = useState([]);
+
+  useEffect(() => {
+    getPlatsSizes();
+  }, [categoryName, supplierId]);
 
   useEffect(() => {
     getBraceCategores();
-    getBraceSizes();
-  }, [categoryName, supplierId]);
+  }, []);
 
   const getBraceCategores = useCallback(async () => {
-    const data = await getAndSetBraceCategores(callApi, setBraceCategores);
+    const data = await getAndSetBraceCategores(callApi, setPlatsCategores);
 
     if (!categoryName) {
       setCategoryName(data[0]);
     }
   }, [categoryName]);
 
-  const getBraceSizes = useCallback(async () => {
-    await getAndSetBraceSize(callApi, setBraceSizes, {
-      categoryName,
-      supplierId: supplierId || "",
-    });
-  }, [categoryName, supplierId, setBraceSizes]);
+  const getPlatsSizes = useCallback(async () => {
+    if (categoryName?.length) {
+      const data = await getAndSetBraceSize(callApi, setPlatsSizes, {
+        categoryName,
+        supplierId: supplierId || "",
+      });
+      return data;
+    }
+    return null;
+  }, [categoryName, supplierId]);
 
   const onChangeCategory = useCallback(async (e: any, value: any) => {
     setCategoryName(value);
@@ -37,10 +44,12 @@ const usePlats = () => {
     setSupplierId(value?.value);
   }, []);
   return {
-    braceCategores,
-    categoryName,
     supplierId,
-    braceSizes,
+    platsCategores,
+    categoryName,
+    platsSizes,
+    setPlatsSizes,
+    getPlatsSizes,
     onChangeCategory,
     onChangeSupplier,
   };

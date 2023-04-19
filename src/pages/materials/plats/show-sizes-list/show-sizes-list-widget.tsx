@@ -11,7 +11,7 @@ import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
 
-const ShowSizesListWidgetForPlats = ({ item }: any) => {
+const ShowSizesListWidgetForPlats = ({ item: _item }: any) => {
   const {
     headerTable,
     state,
@@ -20,13 +20,13 @@ const ShowSizesListWidgetForPlats = ({ item }: any) => {
     onChangeState,
     deleteSupplierPlats,
     updateSupplierPlats,
-  } = useAddSupplier({ item });
+  } = useAddSupplier({ _item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
   const [data, setData] = useState([]);
   useEffect(() => {
-    setData(item.platSuppliers);
-  }, [item.platSuppliers]);
+    setData(_item.platSuppliers);
+  }, [_item.platSuppliers]);
 
   return (
     <div style={clasess.mainContainer}>
@@ -41,19 +41,12 @@ const ShowSizesListWidgetForPlats = ({ item }: any) => {
             const currencyVal = item?.currency;
             return {
               supplierId: (
-                <>
-                  {suppliers?.length > 0 && (
-                    <GoMakeAutoComplate
-                      options={suppliers}
-                      style={clasess.dropDownListContainer}
-                      placeholder={t("materials.sheetPaper.selectSupplier")}
-                      value={suppliers.find(
-                        (item: any) => item?.value === supplierId
-                      )}
-                      disabled={true}
-                    />
-                  )}
-                </>
+                <div style={clasess.supplierNameCointaner}>
+                  {
+                    suppliers.find((item: any) => item?.value === supplierId)
+                      .label
+                  }
+                </div>
               ),
               pricePerUnit: (
                 <GomakeTextInput
@@ -105,7 +98,7 @@ const ShowSizesListWidgetForPlats = ({ item }: any) => {
                   </IconButton>
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() => updateSupplierPlats(item)}
+                    onClick={() => updateSupplierPlats(item, setData, _item)}
                   >
                     <SaveAsIcon />
                   </IconButton>
@@ -115,7 +108,7 @@ const ShowSizesListWidgetForPlats = ({ item }: any) => {
           })}
         />
       </div>
-      <AddSupplierWidget item={item} data={data} setData={setData} />
+      <AddSupplierWidget item={_item} data={data} setData={setData} />
     </div>
   );
 };

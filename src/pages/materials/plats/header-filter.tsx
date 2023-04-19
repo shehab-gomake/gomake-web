@@ -8,29 +8,29 @@ import { useEffect } from "react";
 import { Skeleton } from "@mui/material";
 import { useStyle } from "./style";
 
-const HeaderFilter = ({ setbraceSizes }: any) => {
+const HeaderFilter = ({
+  setPlatsSizes,
+  platsSizes,
+  categoryName,
+  platsCategores,
+  onChangeCategory,
+  onChangeSupplier,
+}: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const {
-    braceCategores,
-    categoryName,
-    braceSizes,
-    onChangeCategory,
-    onChangeSupplier,
-  } = usePlats();
   const { getSupplier, getSupplierCurrencies, suppliers } = useSupplier();
   useEffect(() => {
     getSupplier();
     getSupplierCurrencies();
   }, []);
   useEffect(() => {
-    setbraceSizes(braceSizes);
-  }, [braceSizes]);
+    setPlatsSizes(platsSizes);
+  }, [platsSizes]);
   return (
     <div style={clasess.filterContainer}>
-      {braceCategores?.length > 0 ? (
+      {platsCategores?.length > 0 ? (
         <GoMakeAutoComplate
-          options={braceCategores}
+          options={platsCategores}
           style={clasess.autoComplateStyle}
           placeholder={t("materials.plat.category")}
           onChange={onChangeCategory}
