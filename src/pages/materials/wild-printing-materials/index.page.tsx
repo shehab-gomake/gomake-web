@@ -10,13 +10,27 @@ import { HeaderFilter } from "./header-filter";
 
 export default function WildPrintingMaterials() {
   const { t } = useTranslation();
-  const { headerTable } = useWildPrintingMaterials();
-  const [allWeights, setAllWeights] = useState([]);
+  const {
+    onChangeCategory,
+    onChangeSupplier,
+    setAllTypes,
+    WildPrintingMaterialCategories,
+    allTypes,
+    categoryName,
+    headerTable,
+  } = useWildPrintingMaterials();
   return (
     <CustomerAuthLayout>
       <HeaderTitle title={t("materials.wildPrintingMaterials.title")} />
-      <HeaderFilter setAllWeights={setAllWeights} />
-      <Table tableHeaders={headerTable} tableRows={allWeights} />
+      <HeaderFilter
+        allTypes={allTypes}
+        WildPrintingMaterialCategories={WildPrintingMaterialCategories}
+        categoryName={categoryName}
+        setAllTypes={setAllTypes}
+        onChangeCategory={onChangeCategory}
+        onChangeSupplier={onChangeSupplier}
+      />
+      <Table tableHeaders={headerTable} tableRows={allTypes} />
     </CustomerAuthLayout>
   );
 }

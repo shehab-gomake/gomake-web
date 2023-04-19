@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
+import { refetchMaterialDataState } from "@/store/refetch-material-data";
 
 import { supplierCurrencies, supplierLists } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
@@ -39,6 +40,7 @@ const useAddSupplier = ({ item }: any) => {
       };
     });
   };
+  const refetchMaterialData = useRecoilValue(refetchMaterialDataState);
   const addNewSupplierSheet = useCallback(
     async (suppliersData: any, setSuppliersData: any) => {
       const res = await callApi(
@@ -56,18 +58,10 @@ const useAddSupplier = ({ item }: any) => {
         }
       );
       if (res?.success) {
-        let temp = [...suppliersData];
-        temp.push({
-          categoryName: item?.categoryName,
-          sizeId: item?.sizeId,
-          typeId: item?.typeId,
-          supplierId: state.supplierId?.value,
-          pricePerMeterSquare: parseInt(state?.pricePerMeterSquare),
-          currency: state?.currency?.value,
-          isDefault:
-            typeof state?.isDefault == "boolean" ? state?.isDefault : true,
-        });
-        setSuppliersData(temp);
+        const data: any = await refetchMaterialData.refetch();
+        const _item: any = data.find((elem: any) => elem.code === item.code);
+
+        setSuppliersData(_item.wideFormatMaterialSuppliers);
 
         setSnackbarStateValue({
           state: true,
@@ -122,7 +116,7 @@ const useAddSupplier = ({ item }: any) => {
     [state]
   );
   const updateSupplierSheet = useCallback(
-    async (item: any) => {
+    async (item: any, setSuppliersData: any) => {
       const res = await callApi(
         "POST",
         `/v1/wide-format-material/update-supplier`,
@@ -145,6 +139,10 @@ const useAddSupplier = ({ item }: any) => {
           message: t("modal.updatedSusuccessfully"),
           type: "sucess",
         });
+        const data: any = await refetchMaterialData.refetch();
+        const _item: any = data.find((elem: any) => elem.code === item.code);
+
+        setSuppliersData(_item.wideFormatMaterialSuppliers);
       } else {
         setSnackbarStateValue({
           state: true,

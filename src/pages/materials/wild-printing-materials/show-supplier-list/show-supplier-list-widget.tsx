@@ -41,19 +41,12 @@ const ShowSupplierListWidgetForWildPrintingMatieral = ({ item }: any) => {
             const currencyVal = item?.currency;
             return {
               supplierId: (
-                <>
-                  {suppliers?.length > 0 && (
-                    <GoMakeAutoComplate
-                      options={suppliers}
-                      style={clasess.dropDownListContainer}
-                      placeholder={t("materials.sheetPaper.selectSupplier")}
-                      value={suppliers.find(
-                        (item: any) => item?.value === supplierId
-                      )}
-                      disabled={true}
-                    />
-                  )}
-                </>
+                <div style={clasess.supplierNameCointaner}>
+                  {
+                    suppliers.find((item: any) => item?.value === supplierId)
+                      .label
+                  }
+                </div>
               ),
               pricePerUnit: (
                 <GomakeTextInput
@@ -115,7 +108,7 @@ const ShowSupplierListWidgetForWildPrintingMatieral = ({ item }: any) => {
                   </IconButton>
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() => updateSupplierSheet(item)}
+                    onClick={() => updateSupplierSheet(item, setSuppliersData)}
                   >
                     <SaveAsIcon />
                   </IconButton>
