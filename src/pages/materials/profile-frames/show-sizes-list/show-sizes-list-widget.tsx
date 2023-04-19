@@ -127,7 +127,7 @@ const ShowSizesListWidgetForProfileFrame = ({ item }: any) => {
                   </IconButton>
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() => updateSupplierProfileFrame(item)}
+                    onClick={() => updateSupplierProfileFrame(item, setData)}
                   >
                     <SaveAsIcon />
                   </IconButton>
