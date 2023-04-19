@@ -1,8 +1,9 @@
-import i18next from "i18next";
 import { useMemo } from "react";
+import i18next from "i18next";
+
 import { useTranslation } from "react-i18next";
 
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
+import { convertWidthToVW } from "@/utils/adapter";
 
 const useStyle = () => {
   const { t } = useTranslation();
@@ -15,10 +16,12 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         gap: convertWidthToVW(50),
-        marginTop: convertHeightToVH(50),
       },
       autoComplateStyle: {
         width: convertWidthToVW(200),
+      },
+      tableContainer: {
+        width: "100%",
       },
     };
   }, [i18next.language, t]);
