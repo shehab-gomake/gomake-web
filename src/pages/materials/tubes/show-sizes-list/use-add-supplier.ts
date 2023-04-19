@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { supplierCurrencies, supplierLists } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { refetchMaterialDataState } from "@/store/refetch-material-data";
 
 const useAddSupplier = ({ item }: any) => {
   const { callApi } = useGomakeAxios();
@@ -12,6 +13,7 @@ const useAddSupplier = ({ item }: any) => {
   const suppliers = useRecoilValue(supplierLists);
   const suppliersCurrencies = useRecoilValue(supplierCurrencies);
   const [state, setState] = useState<any>({});
+  const refetchMaterialData = useRecoilValue(refetchMaterialDataState);
 
   const headerTable = useMemo(
     () => [
@@ -52,19 +54,10 @@ const useAddSupplier = ({ item }: any) => {
         supplierId: state.supplierId?.value,
       });
       if (res?.success) {
-        let temp = [...data];
-        temp.push({
-          categoryName: item?.categoryName,
-          currency: state?.currency?.value,
-          isDefault:
-            typeof state?.isDefault == "boolean" ? state?.isDefault : true,
-          price: parseInt(state?.priceUnit),
-          sizeId: item?.sizeId,
-          stock: item?.stock,
-          supplierId: state.supplierId?.value,
-        });
-        setData(temp);
+        const data: any = await refetchMaterialData.refetch();
+        const _item: any = data?.find((elem: any) => elem.code === item.code);
 
+        setData(_item.tubeSuppliers);
         setSnackbarStateValue({
           state: true,
           message: t("modal.addedSusuccessfully"),
@@ -114,7 +107,7 @@ const useAddSupplier = ({ item }: any) => {
     [state]
   );
   const updateSupplierTubes = useCallback(
-    async (item: any) => {
+    async (item: any, setData: any, selectedItem: any) => {
       const res = await callApi("POST", `/v1/tubes/update-supplier`, {
         currency:
           state[`currency-${item?.supplierId}`]?.value || item?.currency,
@@ -131,6 +124,12 @@ const useAddSupplier = ({ item }: any) => {
           message: t("modal.updatedSusuccessfully"),
           type: "sucess",
         });
+        const data: any = await refetchMaterialData.refetch();
+        const _item: any = data?.find(
+          (elem: any) => elem.code === selectedItem.code
+        );
+
+        setData(_item.tubeSuppliers);
       } else {
         setSnackbarStateValue({
           state: true,

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import {
   getAndSetTubessCategores,
-  getAndSetTubessSuppliers,
   getAndSetTubessSize,
 } from "@/services/hooks";
 
@@ -11,14 +10,14 @@ const useTubess = () => {
   const [categoryName, setCategoryName] = useState("");
   const [tubesCategores, setTubessCategores] = useState([]);
   const [supplierId, setSupplierId] = useState("");
-  const [tubesSuppliers, setTubesssSuppliers] = useState([]);
   const [tubesSizes, setTubesssSizes] = useState([]);
 
   useEffect(() => {
-    getTubessCategores();
-    getTubessSuppliers();
     getTubessSizes();
   }, [categoryName, supplierId]);
+  useEffect(() => {
+    getTubessCategores();
+  }, []);
 
   const getTubessCategores = useCallback(async () => {
     const data = await getAndSetTubessCategores(callApi, setTubessCategores);
@@ -27,16 +26,16 @@ const useTubess = () => {
     }
   }, [categoryName]);
 
-  const getTubessSuppliers = useCallback(async () => {
-    const data = await getAndSetTubessSuppliers(callApi, setTubesssSuppliers);
-  }, [supplierId]);
-
   const getTubessSizes = useCallback(async () => {
-    await getAndSetTubessSize(callApi, setTubesssSizes, {
-      categoryName,
-      supplierId: supplierId || "",
-    });
-  }, [categoryName, supplierId, setTubesssSizes]);
+    if (categoryName?.length) {
+      const data = await getAndSetTubessSize(callApi, setTubesssSizes, {
+        categoryName,
+        supplierId: supplierId || "",
+      });
+      return data;
+    }
+    return null;
+  }, [categoryName, supplierId]);
 
   const onChangeCategory = useCallback(async (e: any, value: any) => {
     setCategoryName(value);
@@ -46,10 +45,12 @@ const useTubess = () => {
   }, []);
 
   return {
+    supplierId,
     categoryName,
     tubesCategores,
-    tubesSuppliers,
     tubesSizes,
+    getTubessSizes,
+    setTubesssSizes,
     onChangeCategory,
     onChangeSupplier,
   };
