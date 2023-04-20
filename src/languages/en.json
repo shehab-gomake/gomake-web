@@ -40,7 +40,8 @@
     "clients": "Clients",
     "search": "Search",
     "all": "All",
-    "waiting": "Waiting"
+    "waiting": "Waiting",
+    "shortWaiting": "Waiting"
   },
   "datepicker-component": {
     "chooseDate": "Choose Date",

@@ -40,7 +40,8 @@
     "clients": "לקוחות",
     "search": "חיפוש",
     "all": "הכל",
-    "waiting": "ממתין ללקוח"
+    "waiting": "ממתין לאישור ללקוח",
+    "shortWaiting": "בהמתנה"
   },
   "datepicker-component": {
     "chooseDate": "בחר תאריך",
