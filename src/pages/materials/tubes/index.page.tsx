@@ -5,17 +5,44 @@ import { HeaderTitle } from "@/widgets";
 
 import { useStyle } from "./style";
 import { HeaderFilter } from "./header-filter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Table } from "@/widgets/table/table";
+import { useTubess } from "./use-tubes";
+import { useSetRecoilState } from "recoil";
+import { refetchMaterialDataState } from "@/store/refetch-material-data";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const [tubesSizes, settubesSizes] = useState([]);
+  const {
+    supplierId,
+    categoryName,
+    tubesCategores,
+    tubesSizes,
+    getTubessSizes,
+    setTubesssSizes,
+    onChangeCategory,
+    onChangeSupplier,
+  } = useTubess();
+  const setRefetchMaterialDataState = useSetRecoilState(
+    refetchMaterialDataState
+  );
+  useEffect(() => {
+    setRefetchMaterialDataState({
+      refetch: () => getTubessSizes(),
+    });
+  }, [supplierId, categoryName]);
   return (
     <CustomerAuthLayout>
       <HeaderTitle title={t("materials.tubes.title")} />
-      <HeaderFilter setKernelsSizes={settubesSizes} />
+      <HeaderFilter
+        setTubesssSizes={setTubesssSizes}
+        onChangeCategory={onChangeCategory}
+        onChangeSupplier={onChangeSupplier}
+        categoryName={categoryName}
+        tubesCategores={tubesCategores}
+        tubesSizes={tubesSizes}
+      />
       <div style={clasess.tableContainer}>
         <Table
           tableHeaders={[

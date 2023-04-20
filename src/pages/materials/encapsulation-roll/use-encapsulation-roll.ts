@@ -40,7 +40,7 @@ const useEncapsulationRoll = () => {
     if (!categoryName) {
       setCategoryName(data[0]);
     }
-  }, [categoryName, supplierId]);
+  }, [categoryName]);
 
   const onChangeCategory = useCallback(async (e: any, value: any) => {
     setCategoryName(value);
@@ -50,13 +50,16 @@ const useEncapsulationRoll = () => {
   }, []);
 
   useEffect(() => {
-    getCategory();
     EncapsulationRollsThickness();
   }, [categoryName, supplierId]);
+  useEffect(() => {
+    getCategory();
+  }, []);
 
   return {
     onChangeCategory,
     onChangeSupplier,
+    setAllThickness,
     encapsulationRollCategories,
     allThickness,
     categoryName,

@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
+import { refetchMaterialDataState } from "@/store/refetch-material-data";
 
 import { supplierCurrencies, supplierLists } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
@@ -12,6 +13,7 @@ const useAddSupplier = ({ item }: any) => {
   const suppliers = useRecoilValue(supplierLists);
   const suppliersCurrencies = useRecoilValue(supplierCurrencies);
   const [state, setState] = useState<any>({});
+  const refetchMaterialData = useRecoilValue(refetchMaterialDataState);
 
   const headerTable = useMemo(
     () => [
@@ -58,21 +60,10 @@ const useAddSupplier = ({ item }: any) => {
           typeof state?.isDefault == "boolean" ? state?.isDefault : true,
       });
       if (res?.success) {
-        let temp = [...data];
-        temp.push({
-          categoryName: item?.categoryName,
-          currency: state?.currency?.value,
-          width: item?.width,
-          height: item?.height,
-          sizeId: item?.sizeId,
-          supplierId: state.supplierId?.value,
-          pricePerMeter: parseInt(state?.pricePerMeter),
-          pricePerUnit: parseInt(state?.pricePerUnit),
-          isDefault:
-            typeof state?.isDefault == "boolean" ? state?.isDefault : true,
-        });
-        setData(temp);
+        const data: any = await refetchMaterialData.refetch();
+        const _item: any = data?.find((elem: any) => elem.code === item.code);
 
+        setData(_item.profileFrameSuppliers);
         setSnackbarStateValue({
           state: true,
           message: t("modal.addedSusuccessfully"),
@@ -127,7 +118,7 @@ const useAddSupplier = ({ item }: any) => {
   );
 
   const updateSupplierProfileFrame = useCallback(
-    async (item: any) => {
+    async (item: any, setData: any, selectedItem: any) => {
       const res = await callApi("POST", `/v1/profile-frames/update-supplier`, {
         supplierId: item.supplierId,
         categoryName: item?.categoryName,
@@ -147,6 +138,12 @@ const useAddSupplier = ({ item }: any) => {
           message: t("modal.updatedSusuccessfully"),
           type: "sucess",
         });
+        const data: any = await refetchMaterialData.refetch();
+        const _item: any = data?.find(
+          (elem: any) => elem.code === selectedItem.code
+        );
+
+        setData(_item.profileFrameSuppliers);
       } else {
         setSnackbarStateValue({
           state: true,

@@ -11,7 +11,7 @@ import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
 
-const ShowSizesListWidgetForEnvelopes = ({ item }: any) => {
+const ShowSizesListWidgetForEnvelopes = ({ item: _item }: any) => {
   const {
     headerTable,
     state,
@@ -20,13 +20,14 @@ const ShowSizesListWidgetForEnvelopes = ({ item }: any) => {
     onChangeState,
     deleteSupplierEnvelopes,
     updateSupplierEnvelopes,
-  } = useAddSupplier({ item });
+  } = useAddSupplier({ _item });
+
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
   const [data, setData] = useState([]);
   useEffect(() => {
-    setData(item.envelopeSuppliers);
-  }, [item.envelopeSuppliers]);
+    setData(_item.envelopeSuppliers);
+  }, [_item.envelopeSuppliers]);
 
   return (
     <div style={clasess.mainContainer}>
@@ -41,19 +42,12 @@ const ShowSizesListWidgetForEnvelopes = ({ item }: any) => {
             const currencyVal = item?.currency;
             return {
               supplierId: (
-                <>
-                  {suppliers?.length > 0 && (
-                    <GoMakeAutoComplate
-                      options={suppliers}
-                      style={clasess.dropDownListContainer}
-                      placeholder={t("materials.sheetPaper.selectSupplier")}
-                      value={suppliers.find(
-                        (item: any) => item?.value === supplierId
-                      )}
-                      disabled={true}
-                    />
-                  )}
-                </>
+                <div style={clasess.supplierNameCointaner}>
+                  {
+                    suppliers.find((item: any) => item?.value === supplierId)
+                      .label
+                  }
+                </div>
               ),
               pricePerUnit: (
                 <GomakeTextInput
@@ -105,7 +99,9 @@ const ShowSizesListWidgetForEnvelopes = ({ item }: any) => {
                   </IconButton>
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() => updateSupplierEnvelopes(item)}
+                    onClick={() =>
+                      updateSupplierEnvelopes(item, setData, _item)
+                    }
                   >
                     <SaveAsIcon />
                   </IconButton>
@@ -115,7 +111,7 @@ const ShowSizesListWidgetForEnvelopes = ({ item }: any) => {
           })}
         />
       </div>
-      <AddSupplierWidget item={item} data={data} setData={setData} />
+      <AddSupplierWidget item={_item} data={data} setData={setData} />
     </div>
   );
 };

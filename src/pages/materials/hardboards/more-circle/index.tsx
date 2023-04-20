@@ -7,34 +7,39 @@ import moreCircle from "@/icons/more-circle.png";
 import { useGomakeAxios } from "@/hooks";
 
 import { MoreModal } from "./more-modal";
+import { useHardboardsModal } from "./use-hardboards-modal";
+import { useSetRecoilState } from "recoil";
+import { refetchMaterialDataState } from "@/store/refetch-material-data";
 
-const MoreCircle = ({ item, categoryName }: any) => {
-  const [openModal, setOpenModal] = useState(false);
-  const { callApi } = useGomakeAxios();
-  const [hardboardsThicknes, setHardboardsThicknes] = useState({});
-  const onClickBtn = useCallback(async () => {
-    const data = await getAndSetHardboardsThicknes(
-      callApi,
-      setHardboardsThicknes,
-      {
-        categoryName: item.categoryName,
-        sizeId: item.sizeId,
-        supplierId: "",
-      }
-    );
-    if (data) {
-      setOpenModal(true);
-    }
-  }, [categoryName]);
+const MoreCircle = ({ item }: any) => {
+  const {
+    openModal,
+    onClickHardboardsThickness,
+    getHardboardsThickness,
+    hardboardThickness,
+    onCloseModal,
+  } = useHardboardsModal({
+    item,
+  });
+  const setRefetchMaterialDataState = useSetRecoilState(
+    refetchMaterialDataState
+  );
+  const onClickGetSheetSizesInside = () => {
+    onClickHardboardsThickness();
+    setRefetchMaterialDataState({
+      refetch: () => getHardboardsThickness(item),
+    });
+  };
+
   return (
     <>
-      <IconButton onClick={onClickBtn}>
+      <IconButton onClick={onClickGetSheetSizesInside}>
         <Image src={moreCircle} width={24} height={24} alt="More" />
       </IconButton>
       <MoreModal
         openModal={openModal}
-        setOpenModal={setOpenModal}
-        hardboardsThicknes={hardboardsThicknes}
+        onCloseModal={onCloseModal}
+        hardboardThickness={hardboardThickness}
       />
     </>
   );

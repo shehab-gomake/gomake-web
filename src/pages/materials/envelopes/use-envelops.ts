@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import {
   getAndSetEnvelopsCategores,
-  getAndSetEnvelopsSuppliers,
   getAndSetEnvelopseSize,
 } from "@/services/hooks";
 
@@ -15,10 +14,12 @@ const useEnvelops = () => {
   const [envelopsSizes, setEnvelopsSizes] = useState([]);
 
   useEffect(() => {
-    getEnvelopsCategores();
-    getEnvelopsSuppliers();
-    getBraceSizes();
+    getEnvelopsSizes();
   }, [categoryName, supplierId]);
+
+  useEffect(() => {
+    getEnvelopsCategores();
+  }, []);
 
   const getEnvelopsCategores = useCallback(async () => {
     const data = await getAndSetEnvelopsCategores(
@@ -30,19 +31,16 @@ const useEnvelops = () => {
     }
   }, [categoryName]);
 
-  const getEnvelopsSuppliers = useCallback(async () => {
-    const data = await getAndSetEnvelopsSuppliers(
-      callApi,
-      setEnvelopsSuppliers
-    );
-  }, [supplierId]);
-
-  const getBraceSizes = useCallback(async () => {
-    await getAndSetEnvelopseSize(callApi, setEnvelopsSizes, {
-      categoryName,
-      supplierId: supplierId || "",
-    });
-  }, [categoryName, supplierId, setEnvelopsSizes]);
+  const getEnvelopsSizes = useCallback(async () => {
+    if (categoryName?.length) {
+      const data = await getAndSetEnvelopseSize(callApi, setEnvelopsSizes, {
+        categoryName,
+        supplierId: supplierId || "",
+      });
+      return data;
+    }
+    return null;
+  }, [categoryName, supplierId]);
 
   const onChangeCategory = useCallback(async (e: any, value: any) => {
     setCategoryName(value);
@@ -52,12 +50,14 @@ const useEnvelops = () => {
   }, []);
 
   return {
+    supplierId,
     categoryName,
     envelopsCategores,
-    envelopsSuppliers,
     envelopsSizes,
     onChangeCategory,
     onChangeSupplier,
+    setEnvelopsSizes,
+    getEnvelopsSizes,
   };
 };
 export { useEnvelops };

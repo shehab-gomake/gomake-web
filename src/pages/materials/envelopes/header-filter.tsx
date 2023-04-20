@@ -8,16 +8,17 @@ import { useEffect } from "react";
 import { useSupplier } from "@/hooks";
 import { Skeleton } from "@mui/material";
 
-const HeaderFilter = ({ setEnvelopsSizes }: any) => {
+const HeaderFilter = ({
+  setEnvelopsSizes,
+  envelopsSizes,
+  categoryName,
+  envelopsCategores,
+  onChangeCategory,
+  onChangeSupplier,
+}: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const {
-    categoryName,
-    envelopsCategores,
-    envelopsSizes,
-    onChangeCategory,
-    onChangeSupplier,
-  } = useEnvelops();
+
   const { getSupplier, getSupplierCurrencies, suppliers } = useSupplier();
   useEffect(() => {
     getSupplier();

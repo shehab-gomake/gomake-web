@@ -1,40 +1,42 @@
-import { useCallback, useState } from "react";
 import Image from "next/image";
 
 import { IconButton } from "@mui/material";
-import { getAndSetLaminatioThicknes } from "@/services/hooks";
+
 import moreCircle from "@/icons/more-circle.png";
-import { useGomakeAxios } from "@/hooks";
+import { SheetPageMoreModal } from "./more-modal";
+import { useLaminationModal } from "./use-lamination-modal";
+import { useEffect } from "react";
+import { useSetRecoilState } from "recoil";
+import { refetchMaterialDataState } from "@/store/refetch-material-data";
 
-import { MoreModal } from "./more-modal";
-
-const MoreCircle = ({ item, categoryName }: any) => {
-  const [openModal, setOpenModal] = useState(false);
-  const { callApi } = useGomakeAxios();
-  const [laminatioThicknes, setLaminatioThicknes] = useState({});
-  const onClickBtn = useCallback(async () => {
-    const data = await getAndSetLaminatioThicknes(
-      callApi,
-      setLaminatioThicknes,
-      {
-        categoryName: item.categoryName,
-        sizeId: item.sizeId,
-        supplierId: "",
-      }
-    );
-    if (data) {
-      setOpenModal(true);
-    }
-  }, [categoryName]);
+const MoreCircle = ({ item }: any) => {
+  const {
+    laminationThickness,
+    openModal,
+    OnClickGetLaminationThickness,
+    onCloseModal,
+    getLaminationThickness,
+  } = useLaminationModal({
+    item,
+  });
+  const setRefetchMaterialDataState = useSetRecoilState(
+    refetchMaterialDataState
+  );
+  const onClickGetSheetSizesInside = () => {
+    OnClickGetLaminationThickness();
+    setRefetchMaterialDataState({
+      refetch: () => getLaminationThickness(item),
+    });
+  };
   return (
     <>
-      <IconButton onClick={onClickBtn}>
+      <IconButton onClick={onClickGetSheetSizesInside}>
         <Image src={moreCircle} width={24} height={24} alt="More" />
       </IconButton>
-      <MoreModal
+      <SheetPageMoreModal
         openModal={openModal}
-        setOpenModal={setOpenModal}
-        laminatioThicknes={laminatioThicknes}
+        onCloseModal={onCloseModal}
+        laminationThickness={laminationThickness}
       />
     </>
   );

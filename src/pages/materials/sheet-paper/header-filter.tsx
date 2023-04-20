@@ -8,17 +8,17 @@ import { useSheetPaper } from "./use-sheet-paper";
 import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
 
-const HeaderFilter = ({ setAllWeights }: any) => {
+const HeaderFilter = ({
+  setAllWeights,
+  allWeights,
+  sheetCategories,
+  categoryName,
+  onChangeCategory,
+  onChangeSupplier,
+}: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const { suppliers, getSupplier, getSupplierCurrencies } = useSupplier();
-  const {
-    sheetCategories,
-    categoryName,
-    allWeights,
-    onChangeCategory,
-    onChangeSupplier,
-  } = useSheetPaper();
   useEffect(() => {
     getSupplier();
     getSupplierCurrencies();

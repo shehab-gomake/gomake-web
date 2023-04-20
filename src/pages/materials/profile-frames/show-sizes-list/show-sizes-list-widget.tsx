@@ -11,7 +11,7 @@ import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
 
-const ShowSizesListWidgetForProfileFrame = ({ item }: any) => {
+const ShowSizesListWidgetForProfileFrame = ({ item: _item }: any) => {
   const {
     headerTable,
     state,
@@ -20,13 +20,13 @@ const ShowSizesListWidgetForProfileFrame = ({ item }: any) => {
     onChangeState,
     deleteSupplierProfileFrame,
     updateSupplierProfileFrame,
-  } = useAddSupplier({ item });
+  } = useAddSupplier({ _item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
   const [data, setData] = useState([]);
   useEffect(() => {
-    setData(item.profileFrameSuppliers);
-  }, [item.profileFrameSuppliers]);
+    setData(_item.profileFrameSuppliers);
+  }, [_item.profileFrameSuppliers]);
 
   return (
     <div style={clasess.mainContainer}>
@@ -41,21 +41,12 @@ const ShowSizesListWidgetForProfileFrame = ({ item }: any) => {
             const currencyVal = item?.currency;
             return {
               supplierId: (
-                <>
-                  {suppliers?.length > 0 && (
-                    <GoMakeAutoComplate
-                      options={suppliers}
-                      style={clasess.dropDownListContainer}
-                      placeholder={t(
-                        "materials.profileFrames.modal.selectSupplier"
-                      )}
-                      value={suppliers.find(
-                        (item: any) => item?.value === supplierId
-                      )}
-                      disabled={true}
-                    />
-                  )}
-                </>
+                <div style={clasess.supplierNameCointaner}>
+                  {
+                    suppliers.find((item: any) => item?.value === supplierId)
+                      .label
+                  }
+                </div>
               ),
               pricePerUnit: (
                 <GomakeTextInput
@@ -127,7 +118,9 @@ const ShowSizesListWidgetForProfileFrame = ({ item }: any) => {
                   </IconButton>
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() => updateSupplierProfileFrame(item)}
+                    onClick={() =>
+                      updateSupplierProfileFrame(item, setData, _item)
+                    }
                   >
                     <SaveAsIcon />
                   </IconButton>
@@ -137,7 +130,7 @@ const ShowSizesListWidgetForProfileFrame = ({ item }: any) => {
           })}
         />
       </div>
-      <AddSupplierWidget item={item} data={data} setData={setData} />
+      <AddSupplierWidget item={_item} data={data} setData={setData} />
     </div>
   );
 };

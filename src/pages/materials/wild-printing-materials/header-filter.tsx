@@ -8,23 +8,24 @@ import { useWildPrintingMaterials } from "./use-wild-printing-materials";
 import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
 
-const HeaderFilter = ({ setAllWeights }: any) => {
+const HeaderFilter = ({
+  allTypes,
+  WildPrintingMaterialCategories,
+  categoryName,
+  setAllTypes,
+  onChangeCategory,
+  onChangeSupplier,
+}: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const { suppliers, getSupplier, getSupplierCurrencies } = useSupplier();
-  const {
-    WildPrintingMaterialCategories,
-    categoryName,
-    allTypes,
-    onChangeCategory,
-    onChangeSupplier,
-  } = useWildPrintingMaterials();
+
   useEffect(() => {
     getSupplier();
     getSupplierCurrencies();
   }, []);
   useEffect(() => {
-    setAllWeights(allTypes);
+    setAllTypes(allTypes);
   }, [allTypes]);
 
   return (

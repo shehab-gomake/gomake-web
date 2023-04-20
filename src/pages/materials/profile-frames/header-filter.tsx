@@ -8,23 +8,23 @@ import { useEffect } from "react";
 import { Skeleton } from "@mui/material";
 import { useStyle } from "./style";
 
-const HeaderFilter = ({ setProfileFramSizes }: any) => {
+const HeaderFilter = ({
+  setProfileFrameSizes,
+  profileFrameSizes,
+  categoryName,
+  profileFrameCategores,
+  onChangeCategory,
+  onChangeSupplier,
+}: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const {
-    profileFrameCategores,
-    categoryName,
-    profileFrameSizes,
-    onChangeCategory,
-    onChangeSupplier,
-  } = useProfileFrames();
   const { getSupplier, getSupplierCurrencies, suppliers } = useSupplier();
   useEffect(() => {
     getSupplier();
     getSupplierCurrencies();
   }, []);
   useEffect(() => {
-    setProfileFramSizes(profileFrameSizes);
+    setProfileFrameSizes(profileFrameSizes);
   }, [profileFrameSizes]);
   return (
     <div style={clasess.filterContainer}>

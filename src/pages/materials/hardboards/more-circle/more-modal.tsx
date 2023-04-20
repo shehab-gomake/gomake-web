@@ -9,10 +9,10 @@ import { ShowSupplierList } from "@/store";
 import { useHardboardsModal } from "./use-hardboards-modal";
 import { useStyle } from "./style";
 
-const MoreModal = ({ openModal, setOpenModal, hardboardsThicknes }: any) => {
+const MoreModal = ({ openModal, onCloseModal, hardboardThickness }: any) => {
   const { clasess } = useStyle({});
   const { t } = useTranslation();
-  const { headerTable } = useHardboardsModal();
+  const { headerTable } = useHardboardsModal({});
 
   const setShowUnderRowWidget = useSetRecoilState(ShowSupplierList);
   useEffect(() => {
@@ -27,10 +27,10 @@ const MoreModal = ({ openModal, setOpenModal, hardboardsThicknes }: any) => {
     <GoMakeModal
       openModal={openModal}
       modalTitle={t("materials.lamination.modal.thicknesses")}
-      onClose={() => setOpenModal(false)}
+      onClose={() => onCloseModal(false)}
       insideStyle={clasess.insideStyle}
     >
-      <Table tableHeaders={headerTable} tableRows={hardboardsThicknes} />
+      <Table tableHeaders={headerTable} tableRows={hardboardThickness} />
     </GoMakeModal>
   );
 };

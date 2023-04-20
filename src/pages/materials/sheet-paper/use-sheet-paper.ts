@@ -27,7 +27,7 @@ const useSheetPaper = () => {
   const getSheetWeights = useCallback(async () => {
     await getAndSetSheetWeights(callApi, setAllWeights, {
       categoryName,
-      supplierId,
+      supplierId: supplierId || "",
     });
   }, [categoryName, supplierId]);
 
@@ -46,16 +46,19 @@ const useSheetPaper = () => {
   }, []);
 
   useEffect(() => {
-    getCategory();
     getSheetWeights();
   }, [categoryName, supplierId]);
+  useEffect(() => {
+    getCategory();
+  }, []);
 
   return {
     onChangeCategory,
     onChangeSupplier,
+    setAllWeights,
     sheetCategories,
-    allWeights,
     categoryName,
+    allWeights,
     headerTable,
   };
 };

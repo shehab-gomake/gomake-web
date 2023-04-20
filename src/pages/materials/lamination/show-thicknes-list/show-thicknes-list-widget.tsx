@@ -12,7 +12,7 @@ import { useAddThickness } from "./use-add-thicknes";
 import { useStyle } from "./style";
 
 const ShowThicknesListWidgetForLamination = ({
-  item,
+  item: _item,
   categoryName,
   sizeId,
 }: any) => {
@@ -24,13 +24,13 @@ const ShowThicknesListWidgetForLamination = ({
     onChangeState,
     deleteSupplierLamination,
     updateSupplierLamination,
-  } = useAddThickness({ item, categoryName, sizeId });
+  } = useAddThickness({ _item, categoryName, sizeId });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
   const [data, setData] = useState([]);
   useEffect(() => {
-    setData(item.laminationSuppliers);
-  }, [item.laminationSuppliers]);
+    setData(_item.laminationSuppliers);
+  }, [_item.laminationSuppliers]);
 
   return (
     <div style={clasess.mainContainer}>
@@ -45,24 +45,17 @@ const ShowThicknesListWidgetForLamination = ({
             const currencyVal = item?.currency;
             return {
               supplierId: (
-                <>
-                  {suppliers?.length > 0 && (
-                    <GoMakeAutoComplate
-                      options={suppliers}
-                      style={clasess.dropDownListContainer}
-                      placeholder={t("materials.sheetPaper.selectSupplier")}
-                      value={suppliers.find(
-                        (item: any) => item?.value === supplierId
-                      )}
-                      disabled={true}
-                    />
-                  )}
-                </>
+                <div style={clasess.supplierNameCointaner}>
+                  {
+                    suppliers.find((item: any) => item?.value === supplierId)
+                      .label
+                  }
+                </div>
               ),
               pricePerUnit: (
                 <GomakeTextInput
                   type="number"
-                  placeholder={t("materials.sheetPaper.unitPrice")}
+                  placeholder={t("materials.lamination.unitPrice")}
                   style={clasess.textInputStyle}
                   value={state[`priceUnit-${supplierId}`] || item.price}
                   onChange={(e: any) =>
@@ -74,7 +67,7 @@ const ShowThicknesListWidgetForLamination = ({
                 <GoMakeAutoComplate
                   options={suppliersCurrencies}
                   style={clasess.dropDownListContainer}
-                  placeholder={t("materials.sheetPaper.selectCurrency")}
+                  placeholder={t("materials.lamination.selectCurrency")}
                   value={
                     state[`currency-${supplierId}`] ||
                     suppliersCurrencies.find(
@@ -111,7 +104,9 @@ const ShowThicknesListWidgetForLamination = ({
                   </IconButton>
                   <IconButton
                     style={clasess.updatedIcon}
-                    onClick={() => updateSupplierLamination(item)}
+                    onClick={() =>
+                      updateSupplierLamination(item, setData, _item)
+                    }
                   >
                     <SaveAsIcon />
                   </IconButton>
@@ -122,7 +117,7 @@ const ShowThicknesListWidgetForLamination = ({
         />
       </div>
       <AddSupplierWidget
-        item={item}
+        item={_item}
         data={data}
         setData={setData}
         categoryName={categoryName}

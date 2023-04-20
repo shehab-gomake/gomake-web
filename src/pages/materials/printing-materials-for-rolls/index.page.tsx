@@ -5,17 +5,44 @@ import { HeaderTitle } from "@/widgets";
 
 import { useStyle } from "./style";
 import { HeaderFilter } from "./header-filter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Table } from "@/widgets/table/table";
+import { useSetRecoilState } from "recoil";
+import { usePrintingMaterials } from "./use-printing-materials-for-rolls";
+import { refetchMaterialDataState } from "@/store/refetch-material-data";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const [printingMaterialsSizes, setPrintingMaterialsSizes] = useState([]);
+  const {
+    supplierId,
+    printingMaterialsCategores,
+    categoryName,
+    printingMaterialsSizes,
+    getPrintingMaterialsSizes,
+    setPrintingMaterialsSizes,
+    onChangeCategory,
+    onChangeSupplier,
+  } = usePrintingMaterials();
+  const setRefetchMaterialDataState = useSetRecoilState(
+    refetchMaterialDataState
+  );
+  useEffect(() => {
+    setRefetchMaterialDataState({
+      refetch: () => getPrintingMaterialsSizes(),
+    });
+  }, [supplierId, categoryName]);
   return (
     <CustomerAuthLayout>
       <HeaderTitle title={t("materials.printingMaterials.title")} />
-      <HeaderFilter setPrintingMaterialsSizes={setPrintingMaterialsSizes} />
+      <HeaderFilter
+        setPrintingMaterialsSizes={setPrintingMaterialsSizes}
+        printingMaterialsSizes={printingMaterialsSizes}
+        categoryName={categoryName}
+        printingMaterialsCategores={printingMaterialsCategores}
+        onChangeCategory={onChangeCategory}
+        onChangeSupplier={onChangeSupplier}
+      />
       <div style={clasess.tableContainer}>
         <Table
           tableHeaders={[
