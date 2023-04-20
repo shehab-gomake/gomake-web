@@ -8,7 +8,7 @@ import {useGomakeDateRange} from "@/hooks";
 import {useTranslation} from "react-i18next";
 
 
-const DashboardDates = ({}: IDashboardDates) => {
+const DashboardDates = ({children}: IDashboardDates) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
     const { setTodayDateRange, setTomorrowDateRange, isTomorrow, isToday } = useGomakeDateRange();
@@ -28,6 +28,7 @@ const DashboardDates = ({}: IDashboardDates) => {
                 }
                 <GoMakeDatepicker/>
             </div>
+            {children}
             <MachineList/>
         </div>
     );

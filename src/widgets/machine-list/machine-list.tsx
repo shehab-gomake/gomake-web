@@ -25,7 +25,7 @@ const MachineList = ({}: IMachineList) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
 
-    const {getMachinesList, machines, setMachineChecked} = useGomakeMachines();
+    const {getMachinesList, machines, setMachineChecked, checkAllMachines} = useGomakeMachines();
 
     const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
         setFilter(event.currentTarget.value);
@@ -60,6 +60,14 @@ const MachineList = ({}: IMachineList) => {
                     <div style={classes.searchInput}>
                         <GomakeTextInput  placeholder={'search machine'} value={filter} onChange={handleFilterChange}/>
                     </div>
+                    <MenuItem style={classes.machineName}>
+                        <FormControlLabel  label={t('dashboard-widget.all')}
+                                           control={<Checkbox checked={getMachines().every(machine => machine.checked)}
+                                                              onChange={() => {
+                                                                  checkAllMachines();
+                                                              }}/>}
+                        />
+                    </MenuItem>
                     {
                         getMachines().map((machine: IMachine) => {
                             return <MenuItem style={classes.machineName} key={machine.id}>

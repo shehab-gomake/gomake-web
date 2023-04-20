@@ -30,6 +30,10 @@ const useStyle = () => {
                 border: '3px solid ' + warningColor(500),
                 color: warningColor(700)
             },
+            [EStatus.WAITING]: {
+                backgroundColor: '#D98E2C',
+                color: '#83561A'
+            },
             label: {
                width: '99px',
                height: '40px',

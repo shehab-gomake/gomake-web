@@ -8,21 +8,24 @@ const useStyle = (bgColor: string) => {
                 height: '100%',
                 width: '100%',
                 borderRadius: '16px',
-                padding: '20px',
+                padding: '20px 20px 5px 20px',
                 backgroundColor: bgColor,
-                display: 'flex',
-                justifyContent: 'space-between' as 'space-between'
-
             },
             label: {
-               ...FONT_FAMILY.Poppins(500, 30),
+               ...FONT_FAMILY.Poppins(500, 40),
                 color: '#FFFFFF',
-                textAlign: 'center' as 'center'
+                display: 'flex',
+                alignItems: 'center' as 'center',
+                justifyContent: 'center' as 'center',
+                height: '50%',
+                textAlign: 'center' as 'center',
+                paddingBottom: '20px'
 
             },
             value: {
-                ...FONT_FAMILY.Poppins(600, 40),
+                ...FONT_FAMILY.Poppins(600, 55),
                 color: '#FFFFFF',
+                textAlign: 'center' as 'center',
             },
             iconWrapper: {
                 backgroundColor: 'white',
@@ -34,12 +37,8 @@ const useStyle = (bgColor: string) => {
                 justifyContent: 'center' as 'center',
                 alignItems: 'center' as 'center',
             },
-            cardValue: {
-                display: 'flex',
-                justifyContent: 'flex-start' as 'flex-start',
-                alignItems: 'center' as 'center',
-                flexDirection: 'column' as 'column',
-            },
+            progressWrapper: {
+            }
 
         };
     }, []);

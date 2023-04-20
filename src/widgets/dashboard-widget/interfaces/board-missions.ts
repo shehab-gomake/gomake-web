@@ -2,7 +2,7 @@ import {EMissionType} from "@/shared/enums/mission-type";
 
 export interface IBoardMissions {
     id: string;
-    code: number;
+    code: string;
     isReady?: boolean;
     isUrgent?: boolean;
     status: number;
@@ -10,6 +10,8 @@ export interface IBoardMissions {
     missionType: EMissionType;
     currentStation: IBoardMissionsCurrentStation;
     boardId: string;
+    orderNumber: string;
+    clientId: string;
 }
 
 

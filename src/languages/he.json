@@ -35,7 +35,12 @@
     "done":"בוצע",
     "new": "חדש",
     "inProcess": "בתהליך",
-    "fault": "תקוע"
+    "fault": "תקוע",
+    "orderNumber": "הזמנה",
+    "clients": "לקוחות",
+    "search": "חיפוש",
+    "all": "הכל",
+    "waiting": "ממתין ללקוח"
   },
   "datepicker-component": {
     "chooseDate": "בחר תאריך",

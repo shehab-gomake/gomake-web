@@ -15,23 +15,30 @@ const DashboardCard = ({
     const {classes} = useStyle(bgColor);
     const {t} = useTranslation();
     return (
+
         <Card style={classes.container} variant={'outlined'}>
-            <div>
-                <div style={classes.iconWrapper}>
-                    {children}
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between' as 'space-between',
+
+            }}>
+                <div>
+                    <div style={classes.iconWrapper}>
+                        {children}
+                    </div>
+                </div>
+
+                <div style={classes.value}>{value}</div>
+
+                <div style={classes.progressWrapper}>
+                    {
+                        withProgressBar && <div>
+                            <CircularProgressWithLabel value={progressValue}/>
+                        </div>
+                    }
                 </div>
             </div>
-            <div style={classes.cardValue}>
-                <div style={classes.value}>{value}</div>
-                <div style={classes.label}>{t(label)}</div>
-            </div>
-            <div>
-                {
-                    withProgressBar && <div >
-                        <CircularProgressWithLabel value={progressValue}/>
-                    </div>
-                }
-            </div>
+            <div style={classes.label}><span>{t(label)}</span></div>
         </Card>
     );
 }

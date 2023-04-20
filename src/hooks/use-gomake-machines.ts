@@ -34,10 +34,19 @@ const useGomakeMachines = () => {
     }, [machines]);
 
     const addMachineProgress = (progress: Record<string, IMachineProgress>) => {
-        setMachines(machines.map(machine => progress[machine.id] ? {...machine, progress: progress[machine.id]} : machine));
+        setMachines(machines.map(machine => progress[machine.id] ? {
+            ...machine,
+            progress: progress[machine.id]
+        } : machine));
     }
 
-    return { getMachinesList, getCheckedMachines, setMachineChecked, machines, addMachineProgress };
+    const checkAllMachines = () => {
+        const isChecked = machines.every(machine => machine.checked);
+        const updatedMachines = machines.map(machine => ({...machine, checked: !isChecked}));
+        setMachines(updatedMachines);
+    }
+
+    return {getMachinesList, getCheckedMachines, setMachineChecked, machines, addMachineProgress, checkAllMachines};
 }
 
-export { useGomakeMachines };
+export {useGomakeMachines};

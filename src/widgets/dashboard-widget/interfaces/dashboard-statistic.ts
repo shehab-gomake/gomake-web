@@ -5,7 +5,7 @@ export interface IDashboardStatistic {
     done: IStatisticValue;
     inProcess: IStatisticValue;
     new: IStatisticValue;
-
+    waiting: IStatisticValue;
 }
 
 export interface IStatisticValue {

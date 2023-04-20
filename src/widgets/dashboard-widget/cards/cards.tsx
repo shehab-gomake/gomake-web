@@ -6,6 +6,7 @@ import DoNotDisturbOnOutlinedIcon from '@mui/icons-material/DoNotDisturbOnOutlin
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined';
 import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurnedInOutlined';
+import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {useGomakeDateRange} from "@/hooks";
 
@@ -45,6 +46,12 @@ const Cards = ({data}: ICards) => {
                                value={data?.inProcess?.value || 0}
                                bgColor={warningColor(500)}>
                     <LocalPrintshopOutlinedIcon/>
+                </DashboardCard>
+
+                <DashboardCard label={data?.waiting?.labelTranslationKey || ''}
+                               value={data?.waiting?.value || 0}
+                               bgColor={'#D98E2C'}>
+                    <HourglassTopIcon/>
                 </DashboardCard>
 
                 <DashboardCard label={data?.faults?.labelTranslationKey || ''}
