@@ -482,5 +482,8 @@
       "selectSupplier": "Select supplier",
       "selectCurrency": "Select currency"
     }
+  },
+  "skeleton": {
+    "noData": "No data"
   }
 }
