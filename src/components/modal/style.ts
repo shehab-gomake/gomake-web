@@ -15,7 +15,7 @@ const useStyle = ({ insideStyle }: any) => {
         alignItems: "flex-start",
         width: "45%",
         borderRadius: 16,
-        backgroundColor: "#fff",
+        backgroundColor: "#FFFFFF",
         position: "absolute" as "absolute",
         left: "50%",
         top: "50%",

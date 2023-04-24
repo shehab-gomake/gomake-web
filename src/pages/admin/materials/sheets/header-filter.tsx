@@ -19,7 +19,6 @@ const HeaderFilter = () => {
           style={clasess.btnStyle}
           leftIcon={<AddIcon />}
           onClick={() => {
-            console.log(materialSheetsStateValue);
             materialSheetsStateValue?.onOpnModalAdded();
           }}
         >

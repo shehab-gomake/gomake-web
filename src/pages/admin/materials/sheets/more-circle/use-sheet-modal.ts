@@ -94,6 +94,7 @@ const useSheetModal = ({ item }: any) => {
     onCloseDeleteModal,
     onOpenDeleteModal,
     deleteSheetByCategoryName,
+    t,
   };
 };
 

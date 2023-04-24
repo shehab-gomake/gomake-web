@@ -16,7 +16,9 @@ const useSheets = () => {
     []
   );
   const [openAddSheetModal, setOpenAddSheetModal] = useState(false);
+  const [openUpdateSheetModal, setOpenUpdateSheetModal] = useState(false);
   const [allSheets, setAllSheets] = useState([]);
+  const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
   const [items, setItems] = useState([
     {
@@ -40,11 +42,7 @@ const useSheets = () => {
   ]);
 
   const changeItems = (index: number, filedName: string, value: any) => {
-    console.log("index", index);
-    console.log("filedName", filedName);
-    console.log("value", value);
     let temp = [...items];
-    console.log("temp", temp);
     temp[index] = {
       ...temp[index],
       [filedName]: value,
@@ -74,6 +72,13 @@ const useSheets = () => {
   };
   const onOpnModalAdded = () => {
     setOpenAddSheetModal(true);
+  };
+  const onCloseUpdateModal = () => {
+    setOpenUpdateSheetModal(false);
+  };
+  const onOpnUpdateModal = (item) => {
+    setSelectedEditItem(item);
+    setOpenUpdateSheetModal(true);
   };
 
   const addNewSupplierSheet = useCallback(async () => {
@@ -106,6 +111,8 @@ const useSheets = () => {
     openAddSheetModal,
     items,
     categoryName,
+    openUpdateSheetModal,
+    selectedEditItem,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
@@ -113,6 +120,9 @@ const useSheets = () => {
     setCategoryName,
     addNewSupplierSheet,
     changeItemsSheetSize,
+    setOpenUpdateSheetModal,
+    onCloseUpdateModal,
+    onOpnUpdateModal,
   };
 };
 

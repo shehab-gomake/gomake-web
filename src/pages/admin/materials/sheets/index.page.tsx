@@ -19,6 +19,8 @@ export default function Sheets() {
     openAddSheetModal,
     items,
     categoryName,
+    openUpdateSheetModal,
+    selectedEditItem,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
@@ -26,6 +28,9 @@ export default function Sheets() {
     setCategoryName,
     addNewSupplierSheet,
     changeItemsSheetSize,
+    setOpenUpdateSheetModal,
+    onCloseUpdateModal,
+    onOpnUpdateModal,
   } = useSheets();
 
   useEffect(() => {
@@ -35,6 +40,8 @@ export default function Sheets() {
       openAddSheetModal,
       items,
       categoryName,
+      openUpdateSheetModal,
+      selectedEditItem,
       onCloseModalAdded,
       onOpnModalAdded,
       changeItems,
@@ -42,6 +49,9 @@ export default function Sheets() {
       setCategoryName,
       addNewSupplierSheet,
       changeItemsSheetSize,
+      setOpenUpdateSheetModal,
+      onCloseUpdateModal,
+      onOpnUpdateModal,
     });
   }, [
     headerTable,
@@ -49,6 +59,8 @@ export default function Sheets() {
     openAddSheetModal,
     items,
     categoryName,
+    openUpdateSheetModal,
+    selectedEditItem,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
@@ -56,6 +68,9 @@ export default function Sheets() {
     setCategoryName,
     addNewSupplierSheet,
     changeItemsSheetSize,
+    setOpenUpdateSheetModal,
+    onCloseUpdateModal,
+    onOpnUpdateModal,
   ]);
   return (
     <AdminAuthLayout>

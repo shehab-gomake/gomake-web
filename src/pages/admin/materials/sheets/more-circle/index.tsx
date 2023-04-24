@@ -1,59 +1,53 @@
 import Image from "next/image";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
-import { refetchMaterialDataState } from "@/store/refetch-material-data";
 import DeleteIcon from "@mui/icons-material/Delete";
 import moreCircle from "@/icons/more-circle.png";
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 
-import { SheetPageMoreModal } from "./more-modal";
 import { useSheetModal } from "./use-sheet-modal";
 import { GoMakeDeleteModal } from "@/components";
+import { UpdateSheetModal } from "../update-sheet-modal";
+import { materialSheetsState } from "../store/sheets";
 
 const SheetPageMoreCircle = ({ item }: any) => {
   const {
-    sheetSizes,
-    openModal,
     openDeleteModal,
-    OnClickGetSheetSizes,
-    onCloseModal,
-    getSheetSizes,
     onCloseDeleteModal,
     onOpenDeleteModal,
     deleteSheetByCategoryName,
+    t,
   } = useSheetModal({
     item,
   });
-  const setRefetchMaterialDataState = useSetRecoilState(
-    refetchMaterialDataState
-  );
-  const onClickGetSheetSizesInside = () => {
-    OnClickGetSheetSizes();
-    setRefetchMaterialDataState({
-      refetch: () => getSheetSizes(item),
-    });
-  };
+  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+
   return (
     <>
-      <IconButton onClick={onClickGetSheetSizesInside}>
-        <Image src={moreCircle} width={24} height={24} alt="More" />
-      </IconButton>
-      <IconButton onClick={onOpenDeleteModal}>
-        <DeleteIcon style={{ color: "#a1a2cd" }} />
-      </IconButton>
-      <SheetPageMoreModal
-        openModal={openModal}
-        onCloseModal={onCloseModal}
-        sheetSizes={sheetSizes}
-      />
+      <Tooltip title={"Edit"}>
+        <IconButton
+          onClick={() => {
+            materialSheetsStateValue?.onOpnUpdateModal(item);
+          }}
+        >
+          <Image src={moreCircle} width={24} height={24} alt="More" />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title={"Delete"}>
+        <IconButton onClick={onOpenDeleteModal}>
+          <DeleteIcon style={{ color: "#a1a2cd" }} />
+        </IconButton>
+      </Tooltip>
+
       <GoMakeDeleteModal
-        title={"Delete"}
+        title={"Delete Sheet"}
         yesBtn={"Delete"}
         openModal={openDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle="Are you sure you delete sheet?"
+        subTitle={`Are you sure you delete sheet by categoryName ${item?.categoryName} ?`}
         onClickDelete={deleteSheetByCategoryName}
       />
+      <UpdateSheetModal />
     </>
   );
 };
