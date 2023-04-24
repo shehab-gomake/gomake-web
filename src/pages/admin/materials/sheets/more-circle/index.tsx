@@ -1,14 +1,13 @@
 import Image from "next/image";
 import { useRecoilValue } from "recoil";
 
-import DeleteIcon from "@mui/icons-material/Delete";
 import moreCircle from "@/icons/more-circle.png";
 import { IconButton, Tooltip } from "@mui/material";
 
 import { useSheetModal } from "./use-sheet-modal";
-import { GoMakeDeleteModal } from "@/components";
 import { UpdateSheetModal } from "../update-sheet-modal";
 import { materialSheetsState } from "../store/sheets";
+import { GoMakeDeleteMaterialModal } from "@/widgets";
 
 const SheetPageMoreCircle = ({ item }: any) => {
   const {
@@ -33,19 +32,13 @@ const SheetPageMoreCircle = ({ item }: any) => {
           <Image src={moreCircle} width={24} height={24} alt="More" />
         </IconButton>
       </Tooltip>
-      <Tooltip title={"Delete"}>
-        <IconButton onClick={onOpenDeleteModal}>
-          <DeleteIcon style={{ color: "#a1a2cd" }} />
-        </IconButton>
-      </Tooltip>
 
-      <GoMakeDeleteModal
-        title={"Delete Sheet"}
-        yesBtn={"Delete"}
+      <GoMakeDeleteMaterialModal
         openModal={openDeleteModal}
+        onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`Are you sure you delete sheet by categoryName ${item?.categoryName} ?`}
         onClickDelete={deleteSheetByCategoryName}
+        subTitle={`Are you sure you delete sheet by categoryName ${item?.categoryName} ?`}
       />
       <UpdateSheetModal />
     </>
