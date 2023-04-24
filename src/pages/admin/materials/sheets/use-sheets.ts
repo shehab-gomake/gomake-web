@@ -66,7 +66,7 @@ const useSheets = () => {
     changeItems(sheetWeightIndex, "sheetSizes", temp);
   };
 
-  const getCategory = useCallback(async () => {
+  const getSheets = useCallback(async () => {
     await getAndSetGetAllSheets(callApi, setAllSheets);
   }, []);
   const onCloseModalAdded = () => {
@@ -87,7 +87,7 @@ const useSheets = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      getCategory();
+      getSheets();
       onCloseModalAdded();
     } else {
       setSnackbarStateValue({
@@ -98,7 +98,7 @@ const useSheets = () => {
     }
   }, [categoryName, items]);
   useEffect(() => {
-    getCategory();
+    getSheets();
   }, []);
   return {
     headerTable,
