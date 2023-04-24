@@ -46,7 +46,7 @@ const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
                 <div style={clasess.supplierNameCointaner}>
                   {
                     suppliers.find((item: any) => item?.value === supplierId)
-                      .label
+                      ?.label
                   }
                 </div>
               ),

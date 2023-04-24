@@ -6,6 +6,7 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
+import { useCallback, useEffect, useState } from "react";
 
 const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
   const {
@@ -19,11 +20,34 @@ const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
   } = useAddSupplier({ item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
+  const [optionSuppliers, setOptionSuppliers] = useState([]);
+  useEffect(() => {
+    const arrayDisplay = [...item?.sheetSuppliers];
+    const result = arrayDisplay.map((supplier) => supplier.supplierId);
+    setOptionSuppliers(
+      suppliers.filter((item) => !result.includes(item?.value))
+    );
+  }, [item]);
+
+  // const selectSupplier = useCallback(() => {
+  //   return (
+  //     <GoMakeAutoComplate
+  //       options={optionSuppliers}
+  //       style={clasess.dropDownListContainer}
+  //       placeholder={t("materials.sheetPaper.selectSupplier")}
+  //       value={state.supplierId || ""}
+  //       onChange={(e: any, item: any) =>
+  //         onChangePrimaryState("supplierId", item)
+  //       }
+  //     />
+  //   );
+  // }, [optionSuppliers, onChangePrimaryState]);
   return (
     <div style={clasess.inputDataContainer}>
       <div style={clasess.rowItemStyle}>
+        {" "}
         <GoMakeAutoComplate
-          options={suppliers}
+          options={optionSuppliers}
           style={clasess.dropDownListContainer}
           placeholder={t("materials.sheetPaper.selectSupplier")}
           value={state.supplierId || ""}
