@@ -6,6 +6,8 @@ import { SheetWeightsMapping } from "./sheet-weight-mapping";
 import { useStyle } from "./style";
 import { materialSheetsState } from "../store/sheets";
 import { useRecoilValue } from "recoil";
+import { IconButton, Tooltip } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 const UpdateSheetModal = () => {
   const { t } = useTranslation();
@@ -41,6 +43,23 @@ const UpdateSheetModal = () => {
               <div style={clasess.firstSectionTitleStyle}>
                 {t("materials.sheetPaper.admin.sheetWeightsSection")}
               </div>
+              <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
+                <IconButton
+                  onClick={() => {
+                    // const temp = [...materialSheetsStateValue?.items];
+                    // temp.push({
+                    //   weight: "",
+                    //   name: "",
+                    //   thickness: "",
+                    //   index: "",
+                    //   sheetSizes: [],
+                    // });
+                    // materialSheetsStateValue?.setItems(temp);
+                  }}
+                >
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
             </div>
             {selectedItem?.sheetWeights?.map((item: any, index: number) => {
               return (
