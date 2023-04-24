@@ -2,33 +2,33 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import { GoMakeAutoComplate } from "@/components";
+import { Skeleton } from "@mui/material";
 import { useSupplier } from "@/hooks";
 
-import { useSheetPaper } from "./use-hardboards";
 import { useStyle } from "./style";
 
-const HeaderFilter = ({ setHardboardsSizes }: any) => {
+const HeaderFilter = ({
+  hardboardsSizes,
+  hardboardsCategores,
+  categoryName,
+  setHardboardSizes,
+  onChangeCategory,
+  onChangeSupplier,
+}: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const { suppliers, getSupplier, getSupplierCurrencies } = useSupplier();
-  const {
-    categoryName,
-    hardboardsCategores,
-    hardboardsSizes,
-    onChangeCategory,
-    onChangeSupplier,
-  } = useSheetPaper();
   useEffect(() => {
     getSupplier();
     getSupplierCurrencies();
   }, []);
   useEffect(() => {
-    setHardboardsSizes(hardboardsSizes);
+    setHardboardSizes(hardboardsSizes);
   }, [hardboardsSizes]);
 
   return (
     <div style={clasess.filterContainer}>
-      {hardboardsCategores?.length > 0 && (
+      {hardboardsCategores?.length > 0 ? (
         <GoMakeAutoComplate
           options={hardboardsCategores}
           style={clasess.autoComplateStyle}
@@ -36,14 +36,18 @@ const HeaderFilter = ({ setHardboardsSizes }: any) => {
           onChange={onChangeCategory}
           value={categoryName}
         />
+      ) : (
+        <Skeleton variant="rectangular" width={200} height={40} />
       )}
-      {suppliers?.length > 0 && (
+      {suppliers?.length > 0 ? (
         <GoMakeAutoComplate
           options={suppliers}
           style={clasess.autoComplateStyle}
           placeholder={t("materials.hardboards.supplier")}
           onChange={onChangeSupplier}
         />
+      ) : (
+        <Skeleton variant="rectangular" width={200} height={40} />
       )}
     </div>
   );

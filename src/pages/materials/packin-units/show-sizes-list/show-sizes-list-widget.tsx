@@ -42,19 +42,12 @@ const ShowSizesListWidgetForPackinUnits = ({ item: _item }: any) => {
             const currencyVal = item?.currency;
             return {
               supplierId: (
-                <>
-                  {suppliers?.length > 0 && (
-                    <GoMakeAutoComplate
-                      options={suppliers}
-                      style={clasess.dropDownListContainer}
-                      placeholder={t("materials.packinUnits.selectSupplier")}
-                      value={suppliers.find(
-                        (item: any) => item?.value === supplierId
-                      )}
-                      disabled={true}
-                    />
-                  )}
-                </>
+                <div style={clasess.supplierNameCointaner}>
+                  {
+                    suppliers.find((item: any) => item?.value === supplierId)
+                      .label
+                  }
+                </div>
               ),
               pricePerUnit: (
                 <GomakeTextInput

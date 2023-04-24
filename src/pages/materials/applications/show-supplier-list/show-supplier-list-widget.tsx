@@ -42,19 +42,12 @@ const ShowSupplierListInsideApplication = ({ item: _item }: any) => {
             const directionVal = item?.direction;
             return {
               supplierId: (
-                <>
-                  {suppliers?.length > 0 && (
-                    <GoMakeAutoComplate
-                      options={suppliers}
-                      style={clasess.dropDownListContainer}
-                      placeholder={t("materials.applications.selectSupplier")}
-                      value={suppliers.find(
-                        (item: any) => item?.value === supplierId
-                      )}
-                      disabled={true}
-                    />
-                  )}
-                </>
+                <div style={clasess.supplierNameCointaner}>
+                  {
+                    suppliers.find((item: any) => item?.value === supplierId)
+                      .label
+                  }
+                </div>
               ),
               pricePerSquareMeter: (
                 <GomakeTextInput
@@ -101,7 +94,6 @@ const ShowSupplierListInsideApplication = ({ item: _item }: any) => {
                   onChange={(e: any) =>
                     onChangeState("isDefault", supplierId, e.target.checked)
                   }
-                  key={`test_${item?.isDefault}`}
                 />
               ),
               controls: (

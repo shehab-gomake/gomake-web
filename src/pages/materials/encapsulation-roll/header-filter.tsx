@@ -8,18 +8,17 @@ import { useEncapsulationRoll } from "./use-encapsulation-roll";
 import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
 
-const HeaderFilter = ({ setAllThickness }: any) => {
+const HeaderFilter = ({
+  setAllThickness,
+  onChangeCategory,
+  onChangeSupplier,
+  encapsulationRollCategories,
+  allThickness,
+  categoryName,
+}: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const { suppliers, getSupplier, getSupplierCurrencies } = useSupplier();
-  const {
-    onChangeCategory,
-    onChangeSupplier,
-    encapsulationRollCategories,
-    allThickness,
-    categoryName,
-    headerTable,
-  } = useEncapsulationRoll();
   useEffect(() => {
     getSupplier();
     getSupplierCurrencies();

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { supplierCurrencies, supplierLists } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { refetchMaterialDataState } from "@/store/refetch-material-data";
 
 const useAddThickness = ({ item, categoryName, sizeId }: any) => {
   const { callApi } = useGomakeAxios();
@@ -12,6 +13,7 @@ const useAddThickness = ({ item, categoryName, sizeId }: any) => {
   const suppliers = useRecoilValue(supplierLists);
   const suppliersCurrencies = useRecoilValue(supplierCurrencies);
   const [state, setState] = useState<any>({});
+  const refetchMaterialData = useRecoilValue(refetchMaterialDataState);
 
   const headerTable = useMemo(
     () => [
@@ -53,19 +55,10 @@ const useAddThickness = ({ item, categoryName, sizeId }: any) => {
           typeof state?.isDefault == "boolean" ? state?.isDefault : true,
       });
       if (res?.success) {
-        let temp = [...data];
-        temp.push({
-          categoryName: item?.categoryName,
-          sizeId: item?.sizeId,
-          thicknessId: item?.thicknessId,
-          supplierId: state.supplierId?.value,
-          price: parseInt(state?.priceUnit),
-          currency: state?.currency?.value,
-          thickness: item?.thickness,
-          isDefault:
-            typeof state?.isDefault == "boolean" ? state?.isDefault : true,
-        });
-        setData(temp);
+        const data: any = await refetchMaterialData.refetch();
+        const _item: any = data.find((elem: any) => elem.code === item.code);
+
+        setData(_item.laminationSuppliers);
 
         setSnackbarStateValue({
           state: true,
@@ -117,7 +110,7 @@ const useAddThickness = ({ item, categoryName, sizeId }: any) => {
     [state]
   );
   const updateSupplierLamination = useCallback(
-    async (item: any) => {
+    async (item: any, setData: any, selectedItem: any) => {
       const res = await callApi("POST", `/v1/lamination/update-supplier`, {
         categoryName: item?.categoryName,
         sizeId: item?.sizeId,
@@ -135,6 +128,12 @@ const useAddThickness = ({ item, categoryName, sizeId }: any) => {
           message: t("modal.updatedSusuccessfully"),
           type: "sucess",
         });
+        const data: any = await refetchMaterialData.refetch();
+        const _item: any = data.find(
+          (elem: any) => elem.code === selectedItem.code
+        );
+
+        setData(_item.laminationSuppliers);
       } else {
         setSnackbarStateValue({
           state: true,

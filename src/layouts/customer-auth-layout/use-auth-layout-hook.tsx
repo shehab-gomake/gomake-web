@@ -151,9 +151,9 @@ const useAuthLayoutHook = () => {
             path: "/materials/double-sided-tape-rolls",
           },
           {
-            key: "adhesives",
-            title: t("tabs.adhesives"),
-            path: "/materials/adhesives",
+            key: "glues",
+            title: t("tabs.glues"),
+            path: "/materials/glues",
           },
           {
             key: "magnets",
@@ -161,14 +161,14 @@ const useAuthLayoutHook = () => {
             path: "/materials/magnets",
           },
           {
-            key: "packaging",
-            title: t("tabs.packaging"),
-            path: "/materials/packaging",
+            key: "packings",
+            title: t("tabs.packings"),
+            path: "/materials/packings",
           },
           {
-            key: "beat",
-            title: t("tabs.beat"),
-            path: "/materials/beat",
+            key: "varnishs",
+            title: t("tabs.varnishs"),
+            path: "/materials/varnishs",
           },
         ],
         icon: () => {

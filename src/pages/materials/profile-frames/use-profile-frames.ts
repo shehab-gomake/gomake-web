@@ -28,9 +28,11 @@ const useProfileFrames = () => {
   );
 
   useEffect(() => {
-    getProfileFrameCategores();
     getProfileFrameSizes();
   }, [categoryName, supplierId]);
+  useEffect(() => {
+    getProfileFrameCategores();
+  }, []);
 
   const getProfileFrameCategores = useCallback(async () => {
     const data = await getAndSetProfileFrameCategores(
@@ -43,11 +45,19 @@ const useProfileFrames = () => {
   }, [categoryName]);
 
   const getProfileFrameSizes = useCallback(async () => {
-    await getAndSetProfileFramesSize(callApi, setProfileFrameSizes, {
-      categoryName,
-      supplierId: supplierId || "",
-    });
-  }, [categoryName, supplierId, setProfileFrameSizes]);
+    if (categoryName?.length) {
+      const data = await getAndSetProfileFramesSize(
+        callApi,
+        setProfileFrameSizes,
+        {
+          categoryName,
+          supplierId: supplierId || "",
+        }
+      );
+      return data;
+    }
+    return null;
+  }, [categoryName, supplierId]);
 
   const onChangeCategory = useCallback(async (e: any, value: any) => {
     setCategoryName(value);
@@ -57,11 +67,13 @@ const useProfileFrames = () => {
     setSupplierId(value?.value);
   }, []);
   return {
+    supplierId,
     tabelHeaders,
     profileFrameCategores,
     categoryName,
-    supplierId,
     profileFrameSizes,
+    getProfileFrameSizes,
+    setProfileFrameSizes,
     onChangeCategory,
     onChangeSupplier,
   };

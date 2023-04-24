@@ -30,7 +30,7 @@ const AddSupplierWidget = ({
         <GoMakeAutoComplate
           options={suppliers}
           style={clasess.dropDownListContainer}
-          placeholder={t("materials.sheetPaper.selectSupplier")}
+          placeholder={t("materials.lamination.selectSupplier")}
           value={state.supplierId || ""}
           onChange={(e: any, item: any) =>
             onChangePrimaryState("supplierId", item)
@@ -41,7 +41,7 @@ const AddSupplierWidget = ({
         <div style={{ width: "80%" }}>
           <GomakeTextInput
             type="number"
-            placeholder={t("materials.sheetPaper.unitPrice")}
+            placeholder={t("materials.lamination.unitPrice")}
             style={clasess.textInputStyle}
             value={state.priceUnit || ""}
             onChange={(e: any) =>

@@ -19,4 +19,8 @@ export * from "./get-set-pack-in-units";
 export * from "./get-set-sheet-encapsulation";
 export * from "./get-set-colors";
 export * from "./get-set-double-sided-tape-rolls";
+export * from "./get-set-glues";
+export * from "./get-set-magnets";
+export * from "./get-set-packings";
+export * from "./get-set-varnishs";
 export * from "./admin-side";

@@ -8,16 +8,16 @@ import { useEffect } from "react";
 import { useSupplier } from "@/hooks";
 import { Skeleton } from "@mui/material";
 
-const HeaderFilter = ({ setPrintingMaterialsSizes }: any) => {
+const HeaderFilter = ({
+  setPrintingMaterialsSizes,
+  printingMaterialsSizes,
+  categoryName,
+  printingMaterialsCategores,
+  onChangeCategory,
+  onChangeSupplier,
+}: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const {
-    categoryName,
-    printingMaterialsCategores,
-    printingMaterialsSizes,
-    onChangeCategory,
-    onChangeSupplier,
-  } = usePrintingMaterials();
   const { getSupplier, getSupplierCurrencies, suppliers } = useSupplier();
   useEffect(() => {
     getSupplier();

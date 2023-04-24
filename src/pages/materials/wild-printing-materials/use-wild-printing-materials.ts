@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
-  getAndSetSheetWeights,
   getAndSetWildPrintingMaterialCategory,
   getAndSetWildPrintingMaterialTypes,
 } from "@/services/hooks";
@@ -51,13 +50,16 @@ const useWildPrintingMaterials = () => {
   }, []);
 
   useEffect(() => {
-    getCategory();
     getWildPrintingMaterialTypes();
   }, [categoryName, supplierId]);
+  useEffect(() => {
+    getCategory();
+  }, []);
 
   return {
     onChangeCategory,
     onChangeSupplier,
+    setAllTypes,
     WildPrintingMaterialCategories,
     allTypes,
     categoryName,

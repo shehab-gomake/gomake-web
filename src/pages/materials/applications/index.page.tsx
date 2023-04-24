@@ -10,12 +10,26 @@ import { HeaderFilter } from "./header-filter";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
-  const { headerTable } = useApplications();
-  const [allSizes, setAllSizes] = useState([]);
+  const {
+    onChangeCategory,
+    onChangeSupplier,
+    setAllSizes,
+    applicationCategories,
+    allSizes,
+    categoryName,
+    headerTable,
+  } = useApplications();
   return (
     <CustomerAuthLayout>
       <HeaderTitle title={t("materials.applications.title")} />
-      <HeaderFilter setAllSizes={setAllSizes} />
+      <HeaderFilter
+        setAllSizes={setAllSizes}
+        allSizes={allSizes}
+        applicationCategories={applicationCategories}
+        categoryName={categoryName}
+        onChangeCategory={onChangeCategory}
+        onChangeSupplier={onChangeSupplier}
+      />
       <Table tableHeaders={headerTable} tableRows={allSizes} />
     </CustomerAuthLayout>
   );

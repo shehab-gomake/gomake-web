@@ -67,6 +67,9 @@ const useStyle = ({ headerTable }: any) => {
       updatedIcon: {
         color: primaryColor(300),
       },
+      supplierNameCointaner: {
+        ...FONT_FAMILY.Lexend(600, 14),
+      },
     };
   }, []);
   return {

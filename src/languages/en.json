@@ -49,10 +49,10 @@
     "sheetEncapsulation": "Sheet encapsulation",
     "colors": "Colors",
     "doubleSidedTapeRolls": "Double sided tape rolls",
-    "adhesives": "Adhesives",
+    "glues": "Glues",
     "magnets": "Magnets",
-    "packaging": "Packaging",
-    "beat": "Beat"
+    "packings": "Packings",
+    "varnishs": "Varnishs"
   },
   "modal": {
     "close": "Close",
@@ -125,6 +125,9 @@
       "height": "Height",
       "width": "Width",
       "settings": "Settings",
+      "unitPrice": "Unit Price",
+      "pricePerUnit": "price per unit",
+      "selectCurrency": "Select currency",
       "modal": {
         "code": "Code",
         "thickness": "Thickness",
@@ -195,6 +198,7 @@
       "settings": "Settings"
     },
     "hardboards": {
+      "code": "Code",
       "title": "Hardboards",
       "category": "Category",
       "supplier": "Supplier",
@@ -435,7 +439,82 @@
       "width": "Width",
       "currency": "Currency",
       "default": "Default",
-      "controls": "Controls"
+      "controls": "Controls",
+      "selectCurrency": "Select currency"
+    },
+    "glues": {
+      "title": "Glues",
+      "code": "Code",
+      "typeName": "TypeName",
+      "volumeInLiters": "Volume in liters",
+      "weightPerLiter": "Weight per liter",
+      "literInSquareMeter": "Liter in square meter",
+      "stock": "Stock",
+      "pricePerContainer": "Price per container",
+      "pricePerLiter": "Price per liter",
+      "settings": "Settings",
+      "currency": "Currency",
+      "default": "Default",
+      "controls": "Controls",
+      "selectSupplier": "Select supplier",
+      "selectCurrency": "Select currency"
+    },
+    "magnets": {
+      "title": "Magnets",
+      "code": "Code",
+      "name": "Name",
+      "weight": "Weight",
+      "withGlue": "With glue",
+      "directPrinting": "Direct printing",
+      "height": "Height",
+      "width": "Width",
+      "stock": "Stock",
+      "price": "Price",
+      "settings": "Settings",
+      "default": "Default",
+      "controls": "Controls",
+      "currency": "Currency",
+      "supplier": "Supplier",
+      "selectSupplier": "Select supplier",
+      "selectCurrency": "Select currency"
+    },
+    "packings": {
+      "title": "Packings",
+      "code": "Code",
+      "height": "Height",
+      "width": "Width",
+      "stock": "Stock",
+      "pricePerUnit": "Price per unit",
+      "settings": "Settings",
+      "default": "Default",
+      "controls": "Controls",
+      "currency": "Currency",
+      "supplier": "Supplier",
+      "category": "Category",
+      "selectSupplier": "Select supplier",
+      "selectCurrency": "Select currency"
+    },
+    "varnishs": {
+      "title": "Varnish",
+      "code": "Code",
+      "typeName": "Type name",
+      "volumeInLiters": "Volume in liters",
+      "weightPerLiter": "Weight per liter",
+      "literInSquareMeter": "Liter in square meter",
+      "stock": "Stock",
+      "pricePerContainer": "Price per container",
+      "pricePerLiter": "Price per liter",
+      "settings": "Settings",
+      "default": "Default",
+      "controls": "Controls",
+      "currency": "Currency",
+      "supplier": "Supplier",
+      "category": "Category",
+      "selectSupplier": "Select supplier",
+      "selectCurrency": "Select currency"
     }
+  },
+  "skeleton": {
+    "noData": "No data"
   }
 }

@@ -2,30 +2,28 @@ import { useTranslation } from "react-i18next";
 
 import { GoMakeAutoComplate } from "@/components";
 
-import { useTubess } from "./use-kernels";
 import { useStyle } from "./style";
 import { useEffect } from "react";
 import { useSupplier } from "@/hooks";
 import { Skeleton } from "@mui/material";
 
-const HeaderFilter = ({ setKernelsSizes }: any) => {
+const HeaderFilter = ({
+  setTubesssSizes,
+  categoryName,
+  tubesCategores,
+  tubesSizes,
+  onChangeCategory,
+  onChangeSupplier,
+}: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const {
-    categoryName,
-    tubesCategores,
-    tubesSuppliers,
-    tubesSizes,
-    onChangeCategory,
-    onChangeSupplier,
-  } = useTubess();
   const { getSupplier, getSupplierCurrencies, suppliers } = useSupplier();
   useEffect(() => {
     getSupplier();
     getSupplierCurrencies();
   }, []);
   useEffect(() => {
-    setKernelsSizes(tubesSizes);
+    setTubesssSizes(tubesSizes);
   }, [tubesSizes]);
 
   return (
@@ -41,7 +39,7 @@ const HeaderFilter = ({ setKernelsSizes }: any) => {
       ) : (
         <Skeleton variant="rectangular" width={200} height={40} />
       )}
-      {tubesSuppliers?.length > 0 ? (
+      {suppliers?.length > 0 ? (
         <GoMakeAutoComplate
           options={suppliers}
           style={clasess.autoComplateStyle}

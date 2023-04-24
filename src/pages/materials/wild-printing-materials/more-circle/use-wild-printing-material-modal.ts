@@ -39,6 +39,18 @@ const useWildPrintingMatieralsModal = ({ item }: any) => {
       setOpenModal(true);
     }
   }, [item]);
+  const getSheetSizes = useCallback(async (item: any) => {
+    const data = await getAndSetWildPrintingMaterialSizes(
+      callApi,
+      setSheetSizes,
+      {
+        categoryName: item?.categoryName,
+        typeId: item?.typeId,
+        supplierId: item?.supplierId,
+      }
+    );
+    return data;
+  }, []);
   const onCloseModal = () => {
     setOpenModal(false);
     setShowUnderRowWidget({
@@ -54,6 +66,7 @@ const useWildPrintingMatieralsModal = ({ item }: any) => {
     categoryName,
     headerTable,
     openModal,
+    getSheetSizes,
     OnClickGetSheetSizes,
     setOpenModal,
     onCloseModal,

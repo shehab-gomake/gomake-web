@@ -42,12 +42,12 @@ const ShowListWidgetForDoubleSidedTapeRolls = ({ item: _item }: any) => {
             const currencyVal = item?.currency;
             return {
               supplierId: (
-                <>
+                <div style={clasess.supplierNameCointaner}>
                   {
                     suppliers.find((item: any) => item?.value === supplierId)
                       .label
                   }
-                </>
+                </div>
               ),
               pricePerUnit: (
                 <GomakeTextInput
