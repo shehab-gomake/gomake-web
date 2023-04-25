@@ -92,9 +92,10 @@
         "defaultPricePerTon": "Default Price Per Ton",
         "enterDefaultPricePerTon": "Enter Default Price Per Ton",
         "defaultPricePerUnit": "Default Price Per Unit",
-        "EnterDefaultPricePerUnit": "Enter Default Price Per Unit",
+        "enterDefaultPricePerUnit": "Enter Default Price Per Unit",
         "direction": "Direction",
-        "enterDirection": "Enter Direction"
+        "enterDirection": "Enter Direction",
+        "cancel": "Cancel"
       },
       "title": "Sheet paper",
       "category": "Category",

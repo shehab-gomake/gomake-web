@@ -8,13 +8,13 @@ import { materialSheetsState } from "../store/sheets";
 import { useRecoilValue } from "recoil";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { AddSheetWeightsMapping } from "./add-sheet-weight-mapping";
 
 const UpdateSheetModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
   const selectedItem = materialSheetsStateValue?.selectedEditItem;
-  console.log("selectedItem", selectedItem);
 
   return (
     <>
@@ -43,24 +43,21 @@ const UpdateSheetModal = () => {
               <div style={clasess.firstSectionTitleStyle}>
                 {t("materials.sheetPaper.admin.sheetWeightsSection")}
               </div>
-              <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
-                <IconButton
-                  onClick={() => {
-                    // const temp = [...materialSheetsStateValue?.items];
-                    // temp.push({
-                    //   weight: "",
-                    //   name: "",
-                    //   thickness: "",
-                    //   index: "",
-                    //   sheetSizes: [],
-                    // });
-                    // materialSheetsStateValue?.setItems(temp);
-                  }}
-                >
-                  <AddIcon />
-                </IconButton>
-              </Tooltip>
+              {!materialSheetsStateValue?.isAddNewSheetWights && (
+                <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
+                  <IconButton
+                    onClick={() => {
+                      materialSheetsStateValue?.setIsAddNewSheetWights(true);
+                    }}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
             </div>
+            {materialSheetsStateValue?.isAddNewSheetWights && (
+              <AddSheetWeightsMapping index={0} selectedItem={selectedItem} />
+            )}
             {selectedItem?.sheetWeights?.map((item: any, index: number) => {
               return (
                 <SheetWeightsMapping
@@ -71,13 +68,6 @@ const UpdateSheetModal = () => {
               );
             })}
           </div>
-          {/* <div style={clasess.addSheetBtnContainer}>
-            <GomakePrimaryButton
-              onClick={materialSheetsStateValue?.addNewSupplierSheet}
-            >
-              {t("materials.sheetPaper.admin.addNewSheet")}
-            </GomakePrimaryButton>
-          </div> */}
         </div>
       </GoMakeModal>
     </>

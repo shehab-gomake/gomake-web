@@ -39,15 +39,19 @@ const SheetPageMoreCircle = ({ item }: any) => {
         </IconButton>
       </Tooltip>
 
-      <GoMakeDeleteModal
-        title={"Delete Sheet"}
-        yesBtn={"Delete"}
-        openModal={openDeleteModal}
-        onClose={onCloseDeleteModal}
-        subTitle={`Are you sure you delete sheet by categoryName ${item?.categoryName} ?`}
-        onClickDelete={deleteSheetByCategoryName}
-      />
-      <UpdateSheetModal />
+      {item === materialSheetsStateValue.selectedEditItem && (
+        <>
+          <GoMakeDeleteModal
+            title={"Delete Sheet"}
+            yesBtn={"Delete"}
+            openModal={openDeleteModal}
+            onClose={onCloseDeleteModal}
+            subTitle={`Are you sure you delete sheet by categoryName ${item?.categoryName} ?`}
+            onClickDelete={deleteSheetByCategoryName}
+          />
+          <UpdateSheetModal />
+        </>
+      )}
     </>
   );
 };

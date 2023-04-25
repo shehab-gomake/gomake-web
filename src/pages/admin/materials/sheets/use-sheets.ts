@@ -20,6 +20,7 @@ const useSheets = () => {
   const [allSheets, setAllSheets] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
+  const [isAddNewSheetWights, setIsAddNewSheetWights] = useState(false);
   const [items, setItems] = useState([
     {
       weight: "",
@@ -40,7 +41,6 @@ const useSheets = () => {
       ],
     },
   ]);
-
   const changeItems = (index: number, filedName: string, value: any) => {
     let temp = [...items];
     temp[index] = {
@@ -75,6 +75,7 @@ const useSheets = () => {
   };
   const onCloseUpdateModal = () => {
     setOpenUpdateSheetModal(false);
+    setIsAddNewSheetWights(false);
   };
   const onOpnUpdateModal = (item) => {
     setSelectedEditItem(item);
@@ -102,6 +103,33 @@ const useSheets = () => {
       });
     }
   }, [categoryName, items]);
+  const addNewSheeWeightByCategoryName = useCallback(
+    async (selectedItem) => {
+      const res = await callApi(
+        "POST",
+        `/v1/administrator/sheet/add-sheet-weight?categoryName=${selectedItem?.categoryName}`,
+        {
+          ...items[0],
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getSheets();
+        onCloseUpdateModal();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [items]
+  );
   useEffect(() => {
     getSheets();
   }, []);
@@ -113,6 +141,7 @@ const useSheets = () => {
     categoryName,
     openUpdateSheetModal,
     selectedEditItem,
+    isAddNewSheetWights,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
@@ -123,6 +152,8 @@ const useSheets = () => {
     setOpenUpdateSheetModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
+    setIsAddNewSheetWights,
+    addNewSheeWeightByCategoryName,
   };
 };
 

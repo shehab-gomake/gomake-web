@@ -9,6 +9,8 @@ import { HeaderFilter } from "./header-filter";
 import { useSetRecoilState } from "recoil";
 import { materialSheetsState } from "./store/sheets";
 import { useEffect } from "react";
+import { GoMakeDeleteModal } from "@/components";
+import { UpdateSheetModal } from "./update-sheet-modal";
 
 export default function Sheets() {
   const { t } = useTranslation();
@@ -21,6 +23,7 @@ export default function Sheets() {
     categoryName,
     openUpdateSheetModal,
     selectedEditItem,
+    isAddNewSheetWights,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
@@ -31,6 +34,8 @@ export default function Sheets() {
     setOpenUpdateSheetModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
+    setIsAddNewSheetWights,
+    addNewSheeWeightByCategoryName,
   } = useSheets();
 
   useEffect(() => {
@@ -42,6 +47,7 @@ export default function Sheets() {
       categoryName,
       openUpdateSheetModal,
       selectedEditItem,
+      isAddNewSheetWights,
       onCloseModalAdded,
       onOpnModalAdded,
       changeItems,
@@ -52,6 +58,8 @@ export default function Sheets() {
       setOpenUpdateSheetModal,
       onCloseUpdateModal,
       onOpnUpdateModal,
+      setIsAddNewSheetWights,
+      addNewSheeWeightByCategoryName,
     });
   }, [
     headerTable,
@@ -61,6 +69,7 @@ export default function Sheets() {
     categoryName,
     openUpdateSheetModal,
     selectedEditItem,
+    isAddNewSheetWights,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
@@ -71,6 +80,8 @@ export default function Sheets() {
     setOpenUpdateSheetModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
+    setIsAddNewSheetWights,
+    addNewSheeWeightByCategoryName,
   ]);
   return (
     <AdminAuthLayout>
