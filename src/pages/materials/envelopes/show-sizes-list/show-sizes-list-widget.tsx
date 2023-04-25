@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import { IconButton, Switch } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -10,6 +9,7 @@ import { Table } from "@/widgets/table/table";
 import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
+import { GoMakeDeleteMaterialModal } from "@/widgets";
 
 const ShowSizesListWidgetForEnvelopes = ({ item: _item }: any) => {
   const {
@@ -17,6 +17,10 @@ const ShowSizesListWidgetForEnvelopes = ({ item: _item }: any) => {
     state,
     suppliers,
     suppliersCurrencies,
+    selectedItem,
+    openDeleteModal,
+    onOpenDeleteModal,
+    onCloseDeleteModal,
     onChangeState,
     deleteSupplierEnvelopes,
     updateSupplierEnvelopes,
@@ -91,12 +95,16 @@ const ShowSizesListWidgetForEnvelopes = ({ item: _item }: any) => {
               ),
               controls: (
                 <>
-                  <IconButton
-                    style={clasess.updatedIcon}
-                    onClick={() => deleteSupplierEnvelopes(item, data, setData)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <GoMakeDeleteMaterialModal
+                    isOpen={selectedItem === item}
+                    openModal={openDeleteModal}
+                    onOpen={() => onOpenDeleteModal(item)}
+                    onClose={onCloseDeleteModal}
+                    onClickDelete={() =>
+                      deleteSupplierEnvelopes(item, data, setData)
+                    }
+                    subTitle={t("deleteModal.deleteSupplier")}
+                  />
                   <IconButton
                     style={clasess.updatedIcon}
                     onClick={() =>
