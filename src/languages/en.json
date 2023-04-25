@@ -358,7 +358,7 @@
       "supplier": "Supplier"
     },
     "packinDrums": {
-      "title": "Packin drums",
+      "title": "Pack in drums",
       "code": "Code",
       "material": "Material",
       "sizeName": "Size name",
