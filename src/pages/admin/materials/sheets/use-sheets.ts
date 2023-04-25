@@ -107,7 +107,6 @@ const useSheets = () => {
     setOpenDeleteModal(false);
   };
   const onOpenDeleteModal = (item) => {
-    console.log("A", item);
     setOpenDeleteModal(true);
     setSelectedSheetWeight(item);
   };

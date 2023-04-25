@@ -3,9 +3,9 @@ import { useRecoilValue } from "recoil";
 
 import { GomakeTextInput } from "@/components";
 
+import { ControlIconsWidget } from "./control-icons-widget";
 import { materialSheetsState } from "../store/sheets";
 import { useStyle } from "./style";
-import { ControlIconsWidget } from "./control-icons-widget";
 
 const SheetSizeMapping = ({
   index,
