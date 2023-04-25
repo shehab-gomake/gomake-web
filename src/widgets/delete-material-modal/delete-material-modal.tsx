@@ -8,6 +8,7 @@ const GoMakeDeleteMaterialModal = ({
   openModal,
   onClickDelete,
   subTitle,
+  isOpen,
 }: any) => {
   return (
     <>
@@ -16,14 +17,19 @@ const GoMakeDeleteMaterialModal = ({
           <DeleteIcon style={{ color: "#a1a2cd" }} />
         </IconButton>
       </Tooltip>
-      <GoMakeDeleteModal
-        title={"Delete Sheet"}
-        yesBtn={"Delete"}
-        openModal={openModal}
-        onClose={onClose}
-        subTitle={subTitle}
-        onClickDelete={onClickDelete}
-      />
+      {isOpen && (
+        <GoMakeDeleteModal
+          title={"Delete Sheet"}
+          yesBtn={"Delete"}
+          openModal={openModal}
+          onClose={onClose}
+          subTitle={subTitle}
+          onClickDelete={() => {
+            onClickDelete();
+            onClose();
+          }}
+        />
+      )}
     </>
   );
 };

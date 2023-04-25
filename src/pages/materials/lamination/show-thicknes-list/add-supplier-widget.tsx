@@ -6,6 +6,7 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { useAddThickness } from "./use-add-thicknes";
 import { useStyle } from "./style";
+import { useEffect, useState } from "react";
 
 const AddSupplierWidget = ({
   item,
@@ -24,11 +25,20 @@ const AddSupplierWidget = ({
   } = useAddThickness({ item, categoryName, sizeId });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
+
+  const [optionSuppliers, setOptionSuppliers] = useState([]);
+  useEffect(() => {
+    const arrayDisplay = [...item?.laminationSuppliers];
+    const result = arrayDisplay.map((supplier) => supplier.supplierId);
+    setOptionSuppliers(
+      suppliers.filter((item) => !result.includes(item?.value))
+    );
+  }, [item]);
   return (
     <div style={clasess.inputDataContainer}>
       <div style={clasess.rowItemStyle}>
         <GoMakeAutoComplate
-          options={suppliers}
+          options={optionSuppliers}
           style={clasess.dropDownListContainer}
           placeholder={t("materials.lamination.selectSupplier")}
           value={state.supplierId || ""}

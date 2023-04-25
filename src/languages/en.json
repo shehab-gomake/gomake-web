@@ -122,6 +122,7 @@
     "lamination": {
       "title": "Lamination",
       "category": "Category",
+      "selectSupplier": "Select supplier",
       "height": "Height",
       "width": "Width",
       "settings": "Settings",
@@ -516,5 +517,8 @@
   },
   "skeleton": {
     "noData": "No data"
+  },
+  "deleteModal": {
+    "deleteSupplier": "Are you sure to delete the supplier?"
   }
 }

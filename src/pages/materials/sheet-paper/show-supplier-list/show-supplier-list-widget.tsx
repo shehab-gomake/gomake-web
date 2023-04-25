@@ -4,12 +4,17 @@ import SaveAsIcon from "@mui/icons-material/SaveAs";
 import { IconButton, Switch } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+  GomakeTextInput,
+} from "@/components";
 import { Table } from "@/widgets/table/table";
 
 import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
+import { GoMakeDeleteMaterialModal } from "@/widgets";
 
 const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
   const {
@@ -18,9 +23,13 @@ const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
     state,
     suppliers,
     suppliersCurrencies,
+    openDeleteModal,
+    selectedItem,
     onChangeState,
     deleteSupplierSheet,
     updateSupplierSheet,
+    onCloseDeleteModal,
+    onOpenDeleteModal,
   } = useAddSupplier({ item: _item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
@@ -125,14 +134,20 @@ const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
               ),
               controls: (
                 <>
-                  <IconButton
-                    style={clasess.updatedIcon}
-                    onClick={() =>
-                      deleteSupplierSheet(item, suppliersData, setSuppliersData)
-                    }
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <GoMakeDeleteMaterialModal
+                    isOpen={selectedItem === item}
+                    openModal={openDeleteModal}
+                    onOpen={() => onOpenDeleteModal(item)}
+                    onClose={onCloseDeleteModal}
+                    onClickDelete={() => {
+                      deleteSupplierSheet(
+                        item,
+                        suppliersData,
+                        setSuppliersData
+                      );
+                    }}
+                    subTitle={t("deleteModal.deleteSupplier")}
+                  />
                   <IconButton
                     style={clasess.updatedIcon}
                     onClick={() =>

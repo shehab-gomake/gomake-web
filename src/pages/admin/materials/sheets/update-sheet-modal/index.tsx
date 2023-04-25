@@ -14,7 +14,6 @@ const UpdateSheetModal = () => {
   const { clasess } = useStyle();
   const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
   const selectedItem = materialSheetsStateValue?.selectedEditItem;
-  console.log("selectedItem", selectedItem);
 
   return (
     <>
