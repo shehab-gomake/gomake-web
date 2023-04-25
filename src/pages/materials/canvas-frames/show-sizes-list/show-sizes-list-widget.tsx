@@ -10,6 +10,7 @@ import { Table } from "@/widgets/table/table";
 import { AddSupplierWidget } from "./add-supplier-widget";
 import { useNewSupplier } from "./use-suppliers";
 import { useStyle } from "./style";
+import { GoMakeDeleteMaterialModal } from "@/widgets";
 
 const ShowSizesListWidgetForCanvasFrames = ({ item: _item }: any) => {
   const {
@@ -17,6 +18,10 @@ const ShowSizesListWidgetForCanvasFrames = ({ item: _item }: any) => {
     state,
     suppliers,
     suppliersCurrencies,
+    selectedItem,
+    openDeleteModal,
+    onOpenDeleteModal,
+    onCloseDeleteModal,
     onChangeState,
     deleteSupplierAdditions,
     updateSupplierAdditions,
@@ -91,18 +96,20 @@ const ShowSizesListWidgetForCanvasFrames = ({ item: _item }: any) => {
               ),
               controls: (
                 <>
-                  <IconButton
-                    style={clasess.updatedIcon}
-                    onClick={() =>
+                  <GoMakeDeleteMaterialModal
+                    isOpen={selectedItem === item}
+                    openModal={openDeleteModal}
+                    onOpen={() => onOpenDeleteModal(item)}
+                    onClose={onCloseDeleteModal}
+                    onClickDelete={() => {
                       deleteSupplierAdditions(
                         item,
                         setNewSupplier,
                         supplierData
-                      )
-                    }
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                      );
+                    }}
+                    subTitle={t("deleteModal.deleteSupplier")}
+                  />
                   <IconButton
                     style={clasess.updatedIcon}
                     onClick={() =>
