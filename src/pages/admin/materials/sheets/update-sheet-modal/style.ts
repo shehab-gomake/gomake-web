@@ -155,6 +155,13 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
       },
+      controlsIconContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
+        alignSelf: "end",
+      },
     };
   }, []);
   return {

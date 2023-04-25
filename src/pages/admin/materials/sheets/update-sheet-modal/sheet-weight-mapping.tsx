@@ -1,20 +1,36 @@
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
 
 import { GomakeTextInput } from "@/components";
 
+import { ControlIconsWidget } from "./control-icons-widget";
 import { SheetSizeMapping } from "./sheet-size-mapping";
+import { materialSheetsState } from "../store/sheets";
 import { useStyle } from "./style";
 
-const SheetWeightsMapping = ({ index, item }) => {
+const SheetWeightsMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-
+  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
   return (
     <>
       <div
         key={index}
         style={index & 1 ? clasess.tableSecondSections : clasess.tableSections}
       >
+        <ControlIconsWidget
+          t={t}
+          item={item}
+          onClickDelete={() =>
+            materialSheetsStateValue.deleteSheetweight(
+              item?.id,
+              selectedItem?.categoryName
+            )
+          }
+          onClickUpdate
+          title={"Delete Sheet Weight"}
+          subTitle={"Are you sure you want to delete sheet weight?"}
+        />
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
@@ -90,13 +106,15 @@ const SheetWeightsMapping = ({ index, item }) => {
             {t("materials.sheetPaper.admin.sheetSizeSection")}
           </div>
         </div>
-        {item?.sheetSizes?.map((item: any, index2: number) => {
+        {item?.sheetSizes?.map((item2: any, index2: number) => {
           return (
             <SheetSizeMapping
               key={`SheetSizeMapping_${index2}`}
               index={index2}
               sheetWeightIndex={index}
-              sheetSize={item}
+              sheetWeight={item}
+              sheetSize={item2}
+              selectedItem={selectedItem}
             />
           );
         })}

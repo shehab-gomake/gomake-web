@@ -5,8 +5,15 @@ import { GomakeTextInput } from "@/components";
 
 import { materialSheetsState } from "../store/sheets";
 import { useStyle } from "./style";
+import { ControlIconsWidget } from "./control-icons-widget";
 
-const SheetSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
+const SheetSizeMapping = ({
+  index,
+  sheetWeightIndex,
+  sheetSize,
+  sheetWeight,
+  selectedItem,
+}) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
@@ -14,6 +21,20 @@ const SheetSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
   return (
     <>
       <div key={index} style={clasess.addSizesInputsSecondSelection}>
+        <ControlIconsWidget
+          t={t}
+          onClickDelete={() =>
+            materialSheetsStateValue.deleteSheetweightSize(
+              selectedItem?.categoryName,
+              sheetWeight?.id,
+              sheetSize?.id
+            )
+          }
+          item={sheetSize}
+          onClickUpdate
+          title={"Delete Sheet Weight Size"}
+          subTitle={"Are you sure you want to delete sheet weight size?"}
+        />
         <div style={clasess.inputSizesContainer}>
           <div>
             <div style={clasess.lableTextStyle}>

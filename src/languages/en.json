@@ -99,7 +99,9 @@
         "edit": "Edit",
         "delete": "Delete",
         "deleteSheet": "Delete Sheet",
-        "subTitleDeleteModal": "Are you sure you delete sheet by categoryName"
+        "subTitleDeleteModal": "Are you sure you delete sheet by categoryName",
+        "saveModifications": "Save modifications",
+        "save": "Save"
       },
       "title": "Sheet paper",
       "category": "Category",

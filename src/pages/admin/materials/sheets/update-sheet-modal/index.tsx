@@ -64,6 +64,7 @@ const UpdateSheetModal = () => {
                   key={`SheetWeightsMapping_${index}`}
                   index={index}
                   item={item}
+                  selectedItem={selectedItem}
                 />
               );
             })}

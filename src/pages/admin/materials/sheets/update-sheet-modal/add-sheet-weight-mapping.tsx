@@ -168,7 +168,7 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
               }
               style={clasess.addBtnStyle}
             >
-              {t("materials.sheetPaper.admin.addNewSheet")}
+              {t("materials.sheetPaper.admin.save")}
             </GomakePrimaryButton>
           </div>
         </div>
