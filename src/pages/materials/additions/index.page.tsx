@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-
-import { HeaderTitle } from "@/widgets";
-import { Table } from "@/widgets/table/table";
-import { CustomerAuthLayout } from "@/layouts";
-
 import { useTranslation } from "react-i18next";
-import { HeaderFilter } from "./header-filter";
-import { useStyle } from "./style";
-import { useAdditions } from "./use-additions";
 import { useSetRecoilState } from "recoil";
+import { useEffect } from "react";
+
 import { refetchMaterialDataState } from "@/store/refetch-material-data";
+import { CustomerAuthLayout } from "@/layouts";
+import { Table } from "@/widgets/table/table";
+import { HeaderTitle } from "@/widgets";
+
+import { HeaderFilter } from "./header-filter";
+import { useAdditions } from "./use-additions";
+import { useStyle } from "./style";
 
 export default function Additions() {
   const { t } = useTranslation();

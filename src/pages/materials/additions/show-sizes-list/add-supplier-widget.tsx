@@ -1,12 +1,12 @@
-import { IconButton, Switch } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
 import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import { IconButton, Switch } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
 
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
-import { useEffect, useState } from "react";
 
 const AddSupplierWidget = ({ item, additionsData, setAdditionsData }: any) => {
   const {

@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import {
   getAndCanvasFramesCategory,
   getAndSetCanvasFramesSizes,
 } from "@/services/hooks";
-import { useTranslation } from "react-i18next";
 
 const useCanvasFrames = () => {
   const { callApi } = useGomakeAxios();

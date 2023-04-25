@@ -1,8 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
+
+import { GoMakeDeleteMaterialModal } from "@/widgets";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import { IconButton, Switch } from "@mui/material";
-import { useTranslation } from "react-i18next";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { Table } from "@/widgets/table/table";
@@ -10,7 +11,6 @@ import { Table } from "@/widgets/table/table";
 import { AddSupplierWidget } from "./add-supplier-widget";
 import { useNewSupplier } from "./use-suppliers";
 import { useStyle } from "./style";
-import { GoMakeDeleteMaterialModal } from "@/widgets";
 
 const ShowSizesListWidgetForCanvasFrames = ({ item: _item }: any) => {
   const {

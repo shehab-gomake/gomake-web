@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { getAndSetAllColors } from "@/services/hooks";
-import { useTranslation } from "react-i18next";
 
 const useColors = () => {
   const { callApi } = useGomakeAxios();
