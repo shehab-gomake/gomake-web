@@ -29,6 +29,7 @@ const SheetSettingsWidget = ({ item }: any) => {
         onOpenDeleteModal={onOpenDeleteModal}
       />
       <GoMakeDeleteModal
+        hideIcon={true}
         title={t("materials.sheetPaper.admin.deleteSheet")}
         yesBtn={t("materials.sheetPaper.admin.delete")}
         openModal={openDeleteModal}

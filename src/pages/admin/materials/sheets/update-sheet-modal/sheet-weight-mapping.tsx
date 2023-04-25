@@ -27,7 +27,12 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               selectedItem?.categoryName
             )
           }
-          onClickUpdate
+          onClickUpdate={() =>
+            materialSheetsStateValue.updateSheetweight(
+              item?.id,
+              selectedItem?.categoryName
+            )
+          }
           title={"Delete Sheet Weight"}
           subTitle={"Are you sure you want to delete sheet weight?"}
         />
@@ -39,14 +44,14 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterWeight")}
               style={clasess.textInputStyle}
-              value={item?.weight}
-              // onChange={(e: any) => {
-              //   materialSheetsStateValue?.changeItems(
-              //     index,
-              //     "weight",
-              //     e.target.value
-              //   );
-              // }}
+              value={materialSheetsStateValue?.updateState[item?.id]?.weight}
+              onChange={(e: any) => {
+                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                  item?.id,
+                  "weight",
+                  e.target.value
+                );
+              }}
             />
           </div>
           <div>
@@ -56,14 +61,14 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterName")}
               style={clasess.textInputStyle}
-              value={item?.name}
-              // onChange={(e: any) => {
-              //   materialSheetsStateValue?.changeItems(
-              //     index,
-              //     "name",
-              //     e.target.value
-              //   );
-              // }}
+              value={materialSheetsStateValue?.updateState[item?.id]?.name}
+              onChange={(e: any) => {
+                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                  item?.id,
+                  "name",
+                  e.target.value
+                );
+              }}
             />
           </div>
           <div>
@@ -73,14 +78,14 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterThickness")}
               style={clasess.textInputStyle}
-              value={item?.thickness}
-              // onChange={(e: any) => {
-              //   materialSheetsStateValue?.changeItems(
-              //     index,
-              //     "thickness",
-              //     e.target.value
-              //   );
-              // }}
+              value={materialSheetsStateValue?.updateState[item?.id]?.thickness}
+              onChange={(e: any) => {
+                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                  item?.id,
+                  "thickness",
+                  e.target.value
+                );
+              }}
             />
           </div>
           <div>
@@ -90,14 +95,14 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterIndex")}
               style={clasess.textInputStyle}
-              value={item?.index}
-              // onChange={(e: any) => {
-              //   materialSheetsStateValue?.changeItems(
-              //     index,
-              //     "index",
-              //     e.target.value
-              //   );
-              // }}
+              value={materialSheetsStateValue?.updateState[item?.id]?.index}
+              onChange={(e: any) => {
+                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                  item?.id,
+                  "index",
+                  e.target.value
+                );
+              }}
             />
           </div>
         </div>
@@ -111,7 +116,6 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <SheetSizeMapping
               key={`SheetSizeMapping_${index2}`}
               index={index2}
-              sheetWeightIndex={index}
               sheetWeight={item}
               sheetSize={item2}
               selectedItem={selectedItem}

@@ -65,6 +65,35 @@ const useSheets = () => {
     };
     changeItems(sheetWeightIndex, "sheetSizes", temp);
   };
+  const [updateState, setUpdateState] = useState([]);
+  const onChangeUpdateStateSheetWeights = useCallback(
+    (index: string, filedName: string, value: any) => {
+      let temp: any = { ...updateState };
+      temp[`${index}`] = {
+        ...temp[`${index}`],
+        [filedName]: value,
+      };
+      setUpdateState(temp);
+    },
+    [updateState]
+  );
+  const initialStateSheetWeights = (item: any) => {
+    let temp = [...item?.sheetWeights];
+    let final: any = [];
+    temp.map((sheetWeight) => {
+      final[sheetWeight?.id] = {
+        ...sheetWeight,
+      };
+      sheetWeight?.sheetSizes?.map((sheetSize) => {
+        final[sheetSize?.id] = {
+          ...sheetSize,
+        };
+      });
+    });
+
+    console.log("final", final);
+    setUpdateState(final);
+  };
 
   const getSheets = useCallback(async () => {
     await getAndSetGetAllSheets(callApi, setAllSheets);
@@ -78,28 +107,9 @@ const useSheets = () => {
   const onCloseUpdateModal = () => {
     setOpenUpdateSheetModal(false);
     setIsAddNewSheetWights(false);
-    setItems([
-      {
-        weight: "",
-        name: "",
-        thickness: "",
-        index: "",
-        sheetSizes: [
-          {
-            code: "",
-            name: "",
-            width: "",
-            height: "",
-            defaultPricePerTon: "",
-            defaultPricePerUnit: "",
-            direction: "",
-            index: "",
-          },
-        ],
-      },
-    ]);
   };
   const onOpnUpdateModal = (item) => {
+    initialStateSheetWeights(item);
     setSelectedEditItem(item);
     setOpenUpdateSheetModal(true);
   };
@@ -159,29 +169,32 @@ const useSheets = () => {
     },
     [items]
   );
-  const deleteSheetweight = useCallback(async (weightId, categoryName) => {
-    const res = await callApi(
-      "POST",
-      `/v1/administrator/sheet/delete-sheet-weight?categoryName=${categoryName}&weightId=${weightId}`
-    );
-    if (res?.success) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedSusuccessfully"),
-        type: "sucess",
-      });
-      getSheets();
-      onCloseDeleteModal();
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedfailed"),
-        type: "error",
-      });
-    }
-  }, []);
+  const deleteSheetweight = useCallback(
+    async (weightId: string, categoryName: string) => {
+      const res = await callApi(
+        "POST",
+        `/v1/administrator/sheet/delete-sheet-weight?categoryName=${categoryName}&weightId=${weightId}`
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getSheets();
+        onCloseDeleteModal();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    []
+  );
   const deleteSheetweightSize = useCallback(
-    async (categoryName, weightId, sizeId) => {
+    async (categoryName: string, weightId: string, sizeId: string) => {
       const res = await callApi(
         "POST",
         `/v1/administrator/sheet/delete-sheet-weight-size?categoryName=${categoryName}&weightId=${weightId}&sizeId=${sizeId}`
@@ -204,6 +217,61 @@ const useSheets = () => {
     },
     []
   );
+  const updateSheetweight = useCallback(
+    async (weightId: string, categoryName: string) => {
+      const res = await callApi(
+        "POST",
+        `/v1/administrator/sheet/update-sheet-weight?categoryName=${categoryName}&weightId=${weightId}`,
+        {
+          ...updateState[weightId],
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getSheets();
+        onCloseUpdateModal();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [updateState]
+  );
+  const updateSheetWeightSizes = useCallback(
+    async (categoryName: string, weightId: string, sizeId: string) => {
+      console.log("updateState", updateState);
+      const res = await callApi(
+        "POST",
+        `/v1/administrator/sheet/update-sheet-weight-size?categoryName=${categoryName}&weightId=${weightId}&sizeId=${sizeId}`,
+        {
+          ...updateState[sizeId],
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getSheets();
+        onCloseUpdateModal();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [updateState]
+  );
   useEffect(() => {
     getSheets();
   }, []);
@@ -218,6 +286,8 @@ const useSheets = () => {
     isAddNewSheetWights,
     openDeleteModal,
     selectedSheetWeight,
+    updateState,
+    onChangeUpdateStateSheetWeights,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
@@ -235,6 +305,8 @@ const useSheets = () => {
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
+    updateSheetweight,
+    updateSheetWeightSizes,
   };
 };
 

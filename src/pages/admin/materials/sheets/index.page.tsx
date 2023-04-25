@@ -24,6 +24,7 @@ export default function Sheets() {
     isAddNewSheetWights,
     openDeleteModal,
     selectedSheetWeight,
+    updateState,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
@@ -41,6 +42,9 @@ export default function Sheets() {
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
+    onChangeUpdateStateSheetWeights,
+    updateSheetweight,
+    updateSheetWeightSizes,
   } = useSheets();
 
   useEffect(() => {
@@ -55,6 +59,7 @@ export default function Sheets() {
       isAddNewSheetWights,
       openDeleteModal,
       selectedSheetWeight,
+      updateState,
       onCloseModalAdded,
       onOpnModalAdded,
       changeItems,
@@ -72,6 +77,9 @@ export default function Sheets() {
       setOpenDeleteModal,
       onCloseDeleteModal,
       onOpenDeleteModal,
+      onChangeUpdateStateSheetWeights,
+      updateSheetweight,
+      updateSheetWeightSizes,
     });
   }, [
     headerTable,
@@ -84,6 +92,7 @@ export default function Sheets() {
     isAddNewSheetWights,
     openDeleteModal,
     selectedSheetWeight,
+    updateState,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
@@ -101,6 +110,9 @@ export default function Sheets() {
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
+    onChangeUpdateStateSheetWeights,
+    updateSheetweight,
+    updateSheetWeightSizes,
   ]);
   return (
     <AdminAuthLayout>

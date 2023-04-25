@@ -7,17 +7,13 @@ import { ControlIconsWidget } from "./control-icons-widget";
 import { materialSheetsState } from "../store/sheets";
 import { useStyle } from "./style";
 
-const SheetSizeMapping = ({
-  index,
-  sheetWeightIndex,
-  sheetSize,
-  sheetWeight,
-  selectedItem,
-}) => {
+const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
-
+  console.log("sheetSize", sheetSize);
+  console.log("sheetWeight", sheetWeight);
+  console.log("selectedItem", selectedItem);
   return (
     <>
       <div key={index} style={clasess.addSizesInputsSecondSelection}>
@@ -31,7 +27,13 @@ const SheetSizeMapping = ({
             )
           }
           item={sheetSize}
-          onClickUpdate
+          onClickUpdate={() =>
+            materialSheetsStateValue.updateSheetWeightSizes(
+              selectedItem?.categoryName,
+              sheetWeight?.id,
+              sheetSize?.id
+            )
+          }
           title={"Delete Sheet Weight Size"}
           subTitle={"Are you sure you want to delete sheet weight size?"}
         />
@@ -43,15 +45,14 @@ const SheetSizeMapping = ({
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterCode")}
               style={clasess.textInputStyle}
-              value={sheetSize?.code}
-              // onChange={(e: any) => {
-              //   materialSheetsStateValue?.changeItemsSheetSize(
-              //     sheetWeightIndex,
-              //     index,
-              //     "code",
-              //     e.target.value
-              //   );
-              // }}
+              value={materialSheetsStateValue?.updateState[sheetSize?.id]?.code}
+              onChange={(e: any) => {
+                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                  sheetSize?.id,
+                  "code",
+                  e.target.value
+                );
+              }}
             />
           </div>
           <div>
@@ -61,15 +62,14 @@ const SheetSizeMapping = ({
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterName")}
               style={clasess.textInputStyle}
-              value={sheetSize?.name}
-              // onChange={(e: any) => {
-              //   materialSheetsStateValue?.changeItemsSheetSize(
-              //     sheetWeightIndex,
-              //     index,
-              //     "name",
-              //     e.target.value
-              //   );
-              // }}
+              value={materialSheetsStateValue?.updateState[sheetSize?.id]?.name}
+              onChange={(e: any) => {
+                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                  sheetSize?.id,
+                  "name",
+                  e.target.value
+                );
+              }}
             />
           </div>
           <div>
@@ -79,15 +79,16 @@ const SheetSizeMapping = ({
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterWidth")}
               style={clasess.textInputStyle}
-              value={sheetSize?.width}
-              // onChange={(e: any) => {
-              //   materialSheetsStateValue?.changeItemsSheetSize(
-              //     sheetWeightIndex,
-              //     index,
-              //     "width",
-              //     e.target.value
-              //   );
-              // }}
+              value={
+                materialSheetsStateValue?.updateState[sheetSize?.id]?.width
+              }
+              onChange={(e: any) => {
+                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                  sheetSize?.id,
+                  "width",
+                  e.target.value
+                );
+              }}
             />
           </div>
           <div>
@@ -97,15 +98,16 @@ const SheetSizeMapping = ({
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterHeight")}
               style={clasess.textInputStyle}
-              value={sheetSize?.height}
-              // onChange={(e: any) => {
-              //   materialSheetsStateValue?.changeItemsSheetSize(
-              //     sheetWeightIndex,
-              //     index,
-              //     "height",
-              //     e.target.value
-              //   );
-              // }}
+              value={
+                materialSheetsStateValue?.updateState[sheetSize?.id]?.height
+              }
+              onChange={(e: any) => {
+                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                  sheetSize?.id,
+                  "height",
+                  e.target.value
+                );
+              }}
             />
           </div>
         </div>
@@ -120,15 +122,17 @@ const SheetSizeMapping = ({
                 "materials.sheetPaper.admin.enterDefaultPricePerTon"
               )}
               style={clasess.textInputStyle}
-              value={sheetSize?.defaultPricePerTon}
-              // onChange={(e: any) => {
-              //   materialSheetsStateValue?.changeItemsSheetSize(
-              //     sheetWeightIndex,
-              //     index,
-              //     "defaultPricePerTon",
-              //     e.target.value
-              //   );
-              // }}
+              value={
+                materialSheetsStateValue?.updateState[sheetSize?.id]
+                  ?.defaultPricePerTon
+              }
+              onChange={(e: any) => {
+                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                  sheetSize?.id,
+                  "defaultPricePerTon",
+                  e.target.value
+                );
+              }}
             />
           </div>
           <div>
@@ -140,15 +144,17 @@ const SheetSizeMapping = ({
                 "materials.sheetPaper.admin.enterDefaultPricePerUnit"
               )}
               style={clasess.textInputStyle}
-              value={sheetSize?.defaultPricePerUnit}
-              // onChange={(e: any) => {
-              //   materialSheetsStateValue?.changeItemsSheetSize(
-              //     sheetWeightIndex,
-              //     index,
-              //     "defaultPricePerUnit",
-              //     e.target.value
-              //   );
-              // }}
+              value={
+                materialSheetsStateValue?.updateState[sheetSize?.id]
+                  ?.defaultPricePerUnit
+              }
+              onChange={(e: any) => {
+                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                  sheetSize?.id,
+                  "defaultPricePerUnit",
+                  e.target.value
+                );
+              }}
             />
           </div>
           <div>
@@ -158,15 +164,16 @@ const SheetSizeMapping = ({
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterDirection")}
               style={clasess.textInputStyle}
-              value={sheetSize?.direction}
-              // onChange={(e: any) => {
-              //   materialSheetsStateValue?.changeItemsSheetSize(
-              //     sheetWeightIndex,
-              //     index,
-              //     "direction",
-              //     e.target.value
-              //   );
-              // }}
+              value={
+                materialSheetsStateValue?.updateState[sheetSize?.id]?.direction
+              }
+              onChange={(e: any) => {
+                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                  sheetSize?.id,
+                  "direction",
+                  e.target.value
+                );
+              }}
             />
           </div>
           <div>
@@ -176,15 +183,16 @@ const SheetSizeMapping = ({
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterIndex")}
               style={clasess.textInputStyle}
-              value={sheetSize?.index}
-              // onChange={(e: any) => {
-              //   materialSheetsStateValue?.changeItemsSheetSize(
-              //     sheetWeightIndex,
-              //     index,
-              //     "index",
-              //     e.target.value
-              //   );
-              // }}
+              value={
+                materialSheetsStateValue?.updateState[sheetSize?.id]?.index
+              }
+              onChange={(e: any) => {
+                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                  sheetSize?.id,
+                  "index",
+                  e.target.value
+                );
+              }}
             />
           </div>
         </div>
