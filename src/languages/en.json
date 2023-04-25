@@ -41,7 +41,9 @@
     "search": "Search",
     "all": "All",
     "waiting": "Waiting",
-    "shortWaiting": "Waiting"
+    "shortWaiting": "Waiting",
+    "lateMissions": "Late",
+    "client": "Client"
   },
   "datepicker-component": {
     "chooseDate": "Choose Date",

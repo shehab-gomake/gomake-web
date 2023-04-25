@@ -31,7 +31,7 @@
     "board_col_2": "עמודים פנימיים2",
     "board_cover": "כריכה",
     "board_vorsats": "פורזאץ",
-    "progress": "סטטוס רצפת ייצור",
+    "progress": "מצב ייצור",
     "done":"בוצע",
     "new": "חדש",
     "inProcess": "בתהליך",
@@ -40,8 +40,11 @@
     "clients": "לקוחות",
     "search": "חיפוש",
     "all": "הכל",
-    "waiting": "ממתין לאישור ללקוח",
-    "shortWaiting": "בהמתנה"
+    "waiting": "ממתין לאישור",
+    "shortWaiting": "באישורים",
+    "lateMissions": "באיחור",
+    "client": "לקוח"
+
   },
   "datepicker-component": {
     "chooseDate": "בחר תאריך",

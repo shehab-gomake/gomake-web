@@ -12,6 +12,7 @@ export interface IBoardMissions {
     boardId: string;
     orderNumber: string;
     clientId: string;
+    clientName?: string;
 }
 
 

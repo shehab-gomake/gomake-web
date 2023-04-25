@@ -36,10 +36,13 @@ const useStyle = () => {
             },
             label: {
                width: '99px',
-               height: '40px',
-               ...FONT_FAMILY.Heebo(500, 16),
+               height: '25px',
+               ...FONT_FAMILY.Heebo(500, 14),
+                display: 'flex',
+                justifyContent: 'center' as 'center',
+                alignItems: 'center' as 'center',
                 textAlign: 'center' as 'center',
-                padding: '20px 0',
+                // padding: '50px 0',
                 overFlow: 'hidden' as 'hidden',
                 borderRadius: '8px'
             }

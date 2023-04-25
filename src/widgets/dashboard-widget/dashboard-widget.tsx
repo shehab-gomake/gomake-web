@@ -15,15 +15,15 @@ import {useTranslation} from "react-i18next";
 import {ClientsList} from "@/widgets/clients/clients-list";
 import {useRecoilValue} from "recoil";
 import {selectedClientIdState} from "@/widgets/clients/state/selected-client-id";
-import {styled} from "@mui/material/styles";
-import TextField from "@mui/material/TextField";
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import {SearchInput} from "@/widgets/dashboard-widget/components/search-input";
+import {clientsState} from "@/store/clients-state";
 
 const DashboardWidget = ({}: IDashboardWidget) => {
     const INTERVAL_TIMEOUT = 5 * 60 * 1000;
     const {machines, addMachineProgress} = useGomakeMachines();
     const [tasksFilter, setTasksFilter] = useState<string>('');
     const selectedClient = useRecoilValue(selectedClientIdState);
+    const clients = useRecoilValue(clientsState);
     const {classes} = useStyle();
     const {date} = useGomakeDateRange();
     const {t} = useTranslation();
@@ -32,11 +32,17 @@ const DashboardWidget = ({}: IDashboardWidget) => {
         statistics,
         machinesProgress,
         boardsMissions,
-        getFilteredBoardsMissions
+        getFilteredBoardsMissions,
+        getLateBoardsMissions
     } = useBoardMissions();
 
     useEffect(() => {
-        getBoardsMissionsByDateRange(date).then();
+        if (!!date.startDate && !!date.endDate) {
+            getBoardsMissionsByDateRange(date).then();
+        }
+        else {
+            getLateBoardsMissions().then();
+        }
     }, [date])
 
     useEffect(() => {
@@ -45,10 +51,14 @@ const DashboardWidget = ({}: IDashboardWidget) => {
 
     useEffect(() => {
         const interval = setInterval(async () => {
-            await getBoardsMissionsByDateRange(date);
+            if (date.startDate && date.endDate) {
+                await getBoardsMissionsByDateRange(date);
+            }else {
+                await getLateBoardsMissions();
+            }
         }, INTERVAL_TIMEOUT);
         return () => clearInterval(interval);
-    }, []);
+    }, [date]);
 
     const handelSearchValueChange = (event: ChangeEvent<HTMLInputElement>) => {
         const {value} = event.target;
@@ -66,7 +76,16 @@ const DashboardWidget = ({}: IDashboardWidget) => {
     }, [machines]);
 
     const tasks = useCallback(() => {
-        let tasksArray = getFilteredBoardsMissions();
+        let tasksArray = getFilteredBoardsMissions().map(board => {
+            if (clients.length > 0) {
+                const name = clients.find(client => client.id === board.clientId);
+                return {
+                    ...board,
+                    clientName: name?.name
+                }
+            }
+            return board
+        });
         if (selectedClient) {
             tasksArray = getFilteredBoardsMissions().filter(board => board.clientId === selectedClient);
         }
@@ -81,8 +100,9 @@ const DashboardWidget = ({}: IDashboardWidget) => {
         <div style={classes.container}>
             <Cards data={statistics ? statistics : {} as IDashboardStatistic}/>
             <DashboardDates>
-                <div style={{display: 'flex', gap: '5px', width: 'fit-content', alignItems: 'center',}}>
-                    <StyledTextField placeholder={t('dashboard-widget.search') as string} onChange={handelSearchValueChange}/>
+                <div style={{display: 'flex', gap: '16px', width: 'fit-content', alignItems: 'center',}}>
+                    <SearchInput placeholder={t('dashboard-widget.search') as string}
+                                     onChange={handelSearchValueChange}/>
                     <ClientsList/>
                 </div>
             </DashboardDates>
@@ -97,39 +117,4 @@ const DashboardWidget = ({}: IDashboardWidget) => {
 }
 export {DashboardWidget}
 
-export const StyledTextField = styled(TextField)(() => {
-    const {primaryColor} = useGomakeTheme();
-    return {
-    input: {
-        backgroundColor: "#FFFFFF",
-        boxSizing: "border-box",
-        borderRadius: '10px',
-        height: 40,
-        fontFamily: "Jost",
-        fontStyle: "normal",
-        fontWeight: 300,
-        fontSize: 14,
-        lineHeight: "21px",
-        display: "flex",
-        alignItems: "center",
-        color: primaryColor(500),
-    },
 
-    "& .MuiOutlinedInput-root": {
-        "&:hover fieldset": {
-            border: `2px solid ${primaryColor(500)}`
-
-        },
-        "& fieldset": {
-            border: `1px solid ${primaryColor(500)}`,
-            boxSizing: "border-box",
-            borderRadius: 10,
-            width: "100%",
-        },
-        "&.Mui-focused fieldset": {
-            borderColor:primaryColor(500),
-            borderRadius: 10,
-            width: "100%",
-        },
-    },
-}});

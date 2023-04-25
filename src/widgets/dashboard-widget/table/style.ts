@@ -14,7 +14,7 @@ const useStyle = () => {
                 borderRight: 0,
                 padding: 0,
                 margin: '10px 21px 15px 21px',
-                overflow: 'auto' as 'auto',
+                overflow: 'overlay' as 'overlay',
                 width: 'fit-content',
                 maxHeight: '80vh',
                 maxWidth: '96vw',
@@ -41,7 +41,7 @@ const useStyle = () => {
                 textAlign: 'center' as 'center',
                 ...FONT_FAMILY.Lexend(500, 16),
                 lineHeight: 0,
-                height: '60px',
+                height: '40px',
                 minWidth: '115px',
                 border: BORDER,
                 borderTop: 0,
@@ -55,7 +55,7 @@ const useStyle = () => {
                 width: '100%',
                 height: '100%',
                 maxHeight: '80px',
-                gap: '20px',
+                gap: '14px',
                 ...FONT_FAMILY.Lexend(500, 16)
             },
 
@@ -77,12 +77,8 @@ const useStyle = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 minWidth: '350px',
-                position: 'sticky' as 'sticky',
-                right: 0,
                 backgroundColor: '#ffffff',
-                borderLeft: 0,
-                padding: '0 5px'
-
+                padding: ' 5px',
             },
 
         };

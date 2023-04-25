@@ -38,6 +38,7 @@ const useStyle = (bgColor: string) => {
                 alignItems: 'center' as 'center',
             },
             progressWrapper: {
+                minWidth: '60px'
             }
 
         };

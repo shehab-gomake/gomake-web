@@ -16,7 +16,20 @@ html *
 }
 
 #dashboard-table::-webkit-scrollbar {
-    width: 0;
+    width: 4px;
+}
+#dashboard-table::-webkit-scrollbar-track {
+    margin: 16px 0;
+}
+#dashboard-table::-webkit-scrollbar-track-piece {
+    background-color: inherit;
+
+}
+#dashboard-table::-webkit-scrollbar-thumb {
+    background-color: #2E3092;
+    outline: 1px solid #2E3092;
+    border-radius: 60px;
+    z-index: 9999999999999999999999999999999;
 }
 
 @-moz-keyframes rotate90 {

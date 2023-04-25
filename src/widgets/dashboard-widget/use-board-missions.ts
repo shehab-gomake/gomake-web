@@ -12,10 +12,17 @@ const useBoardMissions = () => {
 
     const getBoardsMissionsByDateRange = async (dateRange: IDateRange) => {
         const res = await callApi("GET", '/boardMissions', {
-            startDate: dateRange.startDate.toISOString(),
-            endDate: dateRange.endDate.toISOString()
+            startDate: dateRange?.startDate?.toISOString(),
+            endDate: dateRange?.endDate?.toISOString()
         }, true, true);
 
+        setBoardsMissions(res?.data?.boardsMissions);
+        setMachinesProgress(res?.data?.machinesProgress);
+        setStatistics(res?.data?.statistics);
+    };
+
+    const getLateBoardsMissions = async () => {
+        const res = await callApi("GET", '/lateBoardMissions', {}, true, true);
         setBoardsMissions(res?.data?.boardsMissions);
         setMachinesProgress(res?.data?.machinesProgress);
         setStatistics(res?.data?.statistics);
@@ -43,7 +50,7 @@ const useBoardMissions = () => {
             boards = sortBoardMissionsByUrgent(boards);
             boards = sortBoardMissionsByReady(boards);
         }
-        return boards.filter((boardMissions: IBoardMissions) => {
+        return boards?.filter((boardMissions: IBoardMissions) => {
             return getCheckedMachines().some((m) => Object.keys(boardMissions.machinesStatuses).includes(m.id))
         });
     }, [boardsMissions, machinesProgress, machines])
@@ -83,6 +90,7 @@ const useBoardMissions = () => {
     return {
         statistics,
         getBoardsMissionsByDateRange,
+        getLateBoardsMissions,
         filterMachinesOfBoards,
         getBoardsMissions,
         updateBoardMissions,

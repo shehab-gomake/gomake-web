@@ -1,4 +1,4 @@
-import { useRecoilValue, useSetRecoilState} from "recoil";
+import {useRecoilValue, useSetRecoilState} from "recoil";
 import {dashboardDateState} from "@/store";
 import {useCallback} from "react";
 import {IDateRange} from "@/shared";
@@ -9,10 +9,12 @@ import {useTranslation} from "react-i18next";
 const useGomakeDateRange = () => {
     const {t} = useTranslation();
     const date = useRecoilValue(dashboardDateState);
-    const  setDate = useSetRecoilState(dashboardDateState);
+    const setDate = useSetRecoilState(dashboardDateState);
 
     const newDateSelected = useCallback((dateRange: IDateRange) => {
-        setDate({...dateRange, endDate: endOfDay(dateRange.endDate)});
+        if (dateRange.endDate) {
+            setDate({...dateRange, endDate: endOfDay(dateRange.endDate)});
+        }
     }, []);
 
     const setTodayDateRange = useCallback(() => {
@@ -23,12 +25,20 @@ const useGomakeDateRange = () => {
         newDateSelected(TOMORROW_DATE_RANGE);
     }, []);
 
+    const setNullDate = useCallback(() => {
+        setDate({startDate: null, endDate: null})
+    }, [])
+
+    const isNullDate = useCallback(() => {
+        return date.endDate === null && date.startDate === null
+    }, [date]);
+
     const isToday = useCallback(() => {
-        return TODAY_DATE_RANGE.startDate.getTime() === date.startDate.getTime() && TODAY_DATE_RANGE.endDate.getTime() === date.endDate.getTime()
+        return TODAY_DATE_RANGE?.startDate?.getTime() === date?.startDate?.getTime() && TODAY_DATE_RANGE.endDate?.getTime() === date?.endDate?.getTime()
     }, [date]);
 
     const isTomorrow = useCallback(() => {
-        return TOMORROW_DATE_RANGE.startDate.getTime() === date.startDate.getTime() && TOMORROW_DATE_RANGE.endDate.getTime() === date.endDate.getTime()
+        return TOMORROW_DATE_RANGE?.startDate?.getTime() === date?.startDate?.getTime() && TOMORROW_DATE_RANGE.endDate?.getTime() === date.endDate?.getTime()
     }, [date]);
 
 
@@ -40,7 +50,11 @@ const useGomakeDateRange = () => {
             return t('dashboard-widget.tomorrow') + ' ' + t('dashboard-widget.tasks');
         }
 
-        return dateStringFormat(date.startDate) + ' - ' + dateStringFormat(date.endDate) + ' ' + t('dashboard-widget.tasks');
+        if (date.startDate === null && date.endDate === null) {
+            return t('dashboard-widget.tasks') + ' ' + t('dashboard-widget.lateMissions')
+        }
+
+        return date.endDate && date.startDate && dateStringFormat(date.startDate) + ' - ' + dateStringFormat(date.endDate) + ' ' + t('dashboard-widget.tasks');
     }, [date])
     return {
         newDateSelected,
@@ -49,8 +63,10 @@ const useGomakeDateRange = () => {
         setTomorrowDateRange,
         isToday,
         isTomorrow,
-        selectedDateText
+        isNullDate,
+        selectedDateText,
+        setNullDate
     };
 }
 
-export { useGomakeDateRange };
+export {useGomakeDateRange};

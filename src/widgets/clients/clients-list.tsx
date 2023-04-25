@@ -77,7 +77,7 @@ const ClientsList = () => {
     }, [])
 
     const getClientsList = useCallback(() => {
-        return clients.map(client => ({label: client.name, id: client.id}))
+        return clients.map(client => ({label: client.name + client.code, id: client.id}))
     }, [clients]);
 
     const handleChange = (event: object, value: any) => {
