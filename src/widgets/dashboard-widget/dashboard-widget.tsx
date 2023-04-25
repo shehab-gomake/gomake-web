@@ -78,16 +78,16 @@ const DashboardWidget = ({}: IDashboardWidget) => {
     const tasks = useCallback(() => {
         let tasksArray = getFilteredBoardsMissions().map(board => {
             if (clients.length > 0) {
-                const name = clients.find(client => client.id === board.clientId);
+                const client = clients.find(client => client.id === board.clientId);
                 return {
                     ...board,
-                    clientName: name?.name
+                    clientName: client?.name
                 }
             }
             return board
         });
         if (selectedClient) {
-            tasksArray = getFilteredBoardsMissions().filter(board => board.clientId === selectedClient);
+            tasksArray = tasksArray.filter(board => board.clientId === selectedClient);
         }
         return tasksFilter ?
             tasksArray.filter((boardsMissions: IBoardMissions) => {
