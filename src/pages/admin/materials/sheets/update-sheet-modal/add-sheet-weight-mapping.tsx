@@ -1,14 +1,14 @@
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
 
+import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
 
-import { useStyle } from "./style";
-import { useRecoilValue } from "recoil";
-import { materialSheetsState } from "../store/sheets";
 import { AddsheetSizeMapping } from "./add-sheet-size-mapping";
+import { materialSheetsState } from "../store/sheets";
+import { useStyle } from "./style";
 
 const AddSheetWeightsMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
@@ -144,7 +144,6 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
                 index={index2}
                 sheetWeightIndex={index}
                 sheetSize={materialSheetsStateValue?.items[index]["sheetSizes"]}
-                selectedItem={selectedItem}
               />
             );
           }

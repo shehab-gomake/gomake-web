@@ -1,8 +1,11 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
+
 import { Modal } from "@mui/material";
 import { Wastebasket } from "@/icons";
-import { useStyle } from "./style";
+
 import { GomakePrimaryButton } from "../button";
+import { useStyle } from "./style";
 
 const GoMakeDeleteModal = ({
   openModal,
@@ -16,6 +19,8 @@ const GoMakeDeleteModal = ({
   ...props
 }: any) => {
   const { clasess } = useStyle();
+  const { t } = useTranslation();
+
   return (
     <Modal
       disableEnforceFocus
@@ -43,7 +48,7 @@ const GoMakeDeleteModal = ({
               {yesBtn}
             </GomakePrimaryButton>{" "}
             <GomakePrimaryButton style={clasess.cancelBtn} onClick={onClose}>
-              Cancel
+              {t("materials.sheetPaper.admin.cancel")}
             </GomakePrimaryButton>
           </div>
         </div>

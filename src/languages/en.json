@@ -95,7 +95,11 @@
         "enterDefaultPricePerUnit": "Enter Default Price Per Unit",
         "direction": "Direction",
         "enterDirection": "Enter Direction",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "edit": "Edit",
+        "delete": "Delete",
+        "deleteSheet": "Delete Sheet",
+        "subTitleDeleteModal": "Are you sure you delete sheet by categoryName"
       },
       "title": "Sheet paper",
       "category": "Category",

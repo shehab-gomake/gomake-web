@@ -1,17 +1,12 @@
 import { useTranslation } from "react-i18next";
-
-import { GomakePrimaryButton, GomakeTextInput } from "@/components";
-
-import { useStyle } from "./style";
 import { useRecoilValue } from "recoil";
-import { materialSheetsState } from "../store/sheets";
 
-const AddsheetSizeMapping = ({
-  index,
-  sheetWeightIndex,
-  sheetSize,
-  selectedItem,
-}) => {
+import { GomakeTextInput } from "@/components";
+
+import { materialSheetsState } from "../store/sheets";
+import { useStyle } from "./style";
+
+const AddsheetSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);

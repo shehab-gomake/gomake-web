@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
 
 import { GomakeTextInput } from "@/components";
 
-import { useStyle } from "./style";
-import { useRecoilValue } from "recoil";
 import { materialSheetsState } from "../store/sheets";
+import { useStyle } from "./style";
 
 const SheetSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
   const { t } = useTranslation();

@@ -1,16 +1,13 @@
-import Image from "next/image";
 import { useRecoilValue } from "recoil";
 
-import DeleteIcon from "@mui/icons-material/Delete";
-import moreCircle from "@/icons/more-circle.png";
-import { IconButton, Tooltip } from "@mui/material";
-
-import { useSheetModal } from "./use-sheet-modal";
 import { GoMakeDeleteModal } from "@/components";
+
 import { UpdateSheetModal } from "../update-sheet-modal";
 import { materialSheetsState } from "../store/sheets";
+import { useSheetModal } from "./use-sheet-modal";
+import { IconWidget } from "./icon-widget";
 
-const SheetPageMoreCircle = ({ item }: any) => {
+const SheetSettingsWidget = ({ item }: any) => {
   const {
     openDeleteModal,
     onCloseDeleteModal,
@@ -24,35 +21,27 @@ const SheetPageMoreCircle = ({ item }: any) => {
 
   return (
     <>
-      <Tooltip title={"Edit"}>
-        <IconButton
-          onClick={() => {
-            materialSheetsStateValue?.onOpnUpdateModal(item);
-          }}
-        >
-          <Image src={moreCircle} width={24} height={24} alt="More" />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title={"Delete"}>
-        <IconButton onClick={onOpenDeleteModal}>
-          <DeleteIcon style={{ color: "#a1a2cd" }} />
-        </IconButton>
-      </Tooltip>
-
+      <IconWidget
+        t={t}
+        onOpnUpdateModal={() => {
+          materialSheetsStateValue?.onOpnUpdateModal(item);
+        }}
+        onOpenDeleteModal={onOpenDeleteModal}
+      />
+      <GoMakeDeleteModal
+        title={t("materials.sheetPaper.admin.deleteSheet")}
+        yesBtn={t("materials.sheetPaper.admin.delete")}
+        openModal={openDeleteModal}
+        onClose={onCloseDeleteModal}
+        subTitle={`${t("materials.sheetPaper.admin.subTitleDeleteModal")} ${
+          item?.categoryName
+        } ?`}
+        onClickDelete={deleteSheetByCategoryName}
+      />
       {item === materialSheetsStateValue.selectedEditItem && (
-        <>
-          <GoMakeDeleteModal
-            title={"Delete Sheet"}
-            yesBtn={"Delete"}
-            openModal={openDeleteModal}
-            onClose={onCloseDeleteModal}
-            subTitle={`Are you sure you delete sheet by categoryName ${item?.categoryName} ?`}
-            onClickDelete={deleteSheetByCategoryName}
-          />
-          <UpdateSheetModal />
-        </>
+        <UpdateSheetModal />
       )}
     </>
   );
 };
-export { SheetPageMoreCircle };
+export { SheetSettingsWidget };

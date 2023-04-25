@@ -1,14 +1,14 @@
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
 
 import { GoMakeModal, GomakeTextInput } from "@/components";
-
-import { SheetWeightsMapping } from "./sheet-weight-mapping";
-import { useStyle } from "./style";
-import { materialSheetsState } from "../store/sheets";
-import { useRecoilValue } from "recoil";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+
 import { AddSheetWeightsMapping } from "./add-sheet-weight-mapping";
+import { SheetWeightsMapping } from "./sheet-weight-mapping";
+import { materialSheetsState } from "../store/sheets";
+import { useStyle } from "./style";
 
 const UpdateSheetModal = () => {
   const { t } = useTranslation();

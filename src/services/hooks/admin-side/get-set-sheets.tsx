@@ -1,6 +1,6 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../call-api.interface";
-import { SheetPageMoreCircle } from "@/pages/admin/materials/sheets/more-circle";
+import { SheetSettingsWidget } from "@/pages/admin/materials/sheets/more-circle";
 
 const getAndSetGetAllSheets = async (
   callApi: ICallApi,
@@ -16,7 +16,7 @@ const getAndSetGetAllSheets = async (
   const mapData = _data.map((item: any) => {
     return {
       categoryName: item?.categoryName,
-      settings: <SheetPageMoreCircle item={item} />,
+      settings: <SheetSettingsWidget item={item} />,
     };
   });
   if (setState) {

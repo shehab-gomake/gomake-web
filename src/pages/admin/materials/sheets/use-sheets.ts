@@ -76,6 +76,26 @@ const useSheets = () => {
   const onCloseUpdateModal = () => {
     setOpenUpdateSheetModal(false);
     setIsAddNewSheetWights(false);
+    setItems([
+      {
+        weight: "",
+        name: "",
+        thickness: "",
+        index: "",
+        sheetSizes: [
+          {
+            code: "",
+            name: "",
+            width: "",
+            height: "",
+            defaultPricePerTon: "",
+            defaultPricePerUnit: "",
+            direction: "",
+            index: "",
+          },
+        ],
+      },
+    ]);
   };
   const onOpnUpdateModal = (item) => {
     setSelectedEditItem(item);
