@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import { IconButton, Switch } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -10,6 +9,7 @@ import { Table } from "@/widgets/table/table";
 import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
+import { GoMakeDeleteMaterialModal } from "@/widgets";
 
 const ShowSizesListWidgetForPlats = ({ item: _item }: any) => {
   const {
@@ -17,6 +17,10 @@ const ShowSizesListWidgetForPlats = ({ item: _item }: any) => {
     state,
     suppliers,
     suppliersCurrencies,
+    selectedItem,
+    openDeleteModal,
+    onOpenDeleteModal,
+    onCloseDeleteModal,
     onChangeState,
     deleteSupplierPlats,
     updateSupplierPlats,
@@ -90,12 +94,16 @@ const ShowSizesListWidgetForPlats = ({ item: _item }: any) => {
               ),
               controls: (
                 <>
-                  <IconButton
-                    style={clasess.updatedIcon}
-                    onClick={() => deleteSupplierPlats(item, data, setData)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <GoMakeDeleteMaterialModal
+                    isOpen={selectedItem === item}
+                    openModal={openDeleteModal}
+                    onOpen={() => onOpenDeleteModal(item)}
+                    onClose={onCloseDeleteModal}
+                    onClickDelete={() =>
+                      deleteSupplierPlats(item, data, setData)
+                    }
+                    subTitle={t("deleteModal.deleteSupplier")}
+                  />
                   <IconButton
                     style={clasess.updatedIcon}
                     onClick={() => updateSupplierPlats(item, setData, _item)}

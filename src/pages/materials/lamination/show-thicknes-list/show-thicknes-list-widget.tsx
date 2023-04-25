@@ -109,14 +109,6 @@ const ShowThicknesListWidgetForLamination = ({
                     }
                     subTitle={t("deleteModal.deleteSupplier")}
                   />
-                  {/* <IconButton
-                    style={clasess.updatedIcon}
-                    onClick={() =>
-                      deleteSupplierLamination(item, data, setData)
-                    }
-                  >
-                    <DeleteIcon />
-                  </IconButton> */}
                   <IconButton
                     style={clasess.updatedIcon}
                     onClick={() =>
