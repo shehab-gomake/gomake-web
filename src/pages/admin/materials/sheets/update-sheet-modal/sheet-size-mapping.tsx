@@ -11,9 +11,6 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
-  console.log("sheetSize", sheetSize);
-  console.log("sheetWeight", sheetWeight);
-  console.log("selectedItem", selectedItem);
   return (
     <>
       <div key={index} style={clasess.addSizesInputsSecondSelection}>

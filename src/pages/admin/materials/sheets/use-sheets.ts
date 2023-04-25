@@ -91,7 +91,6 @@ const useSheets = () => {
       });
     });
 
-    console.log("final", final);
     setUpdateState(final);
   };
 
@@ -246,7 +245,6 @@ const useSheets = () => {
   );
   const updateSheetWeightSizes = useCallback(
     async (categoryName: string, weightId: string, sizeId: string) => {
-      console.log("updateState", updateState);
       const res = await callApi(
         "POST",
         `/v1/administrator/sheet/update-sheet-weight-size?categoryName=${categoryName}&weightId=${weightId}&sizeId=${sizeId}`,
