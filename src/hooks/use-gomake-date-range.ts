@@ -30,7 +30,7 @@ const useGomakeDateRange = () => {
     }, [])
 
     const isNullDate = useCallback(() => {
-        return date.endDate === null && date.startDate === null
+        return date.endDate === undefined && date.startDate === undefined
     }, [date]);
 
     const isToday = useCallback(() => {
@@ -50,7 +50,7 @@ const useGomakeDateRange = () => {
             return t('dashboard-widget.tomorrow') + ' ' + t('dashboard-widget.tasks');
         }
 
-        if (date.startDate === null && date.endDate === null) {
+        if (date.startDate === undefined && date.endDate === undefined) {
             return t('dashboard-widget.tasks') + ' ' + t('dashboard-widget.lateMissions')
         }
 
