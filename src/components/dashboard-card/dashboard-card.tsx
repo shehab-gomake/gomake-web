@@ -19,10 +19,8 @@ const DashboardCard = ({
         <Card style={classes.container} variant={'outlined'}>
             <div style={{
                 display: 'flex',
-                justifyContent: 'space-between' as 'space-between',
-
             }}>
-                <div>
+                <div style={{width: '60px'}}>
                     <div style={classes.iconWrapper}>
                         {children}
                     </div>

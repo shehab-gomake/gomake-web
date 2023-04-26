@@ -26,6 +26,7 @@ const useStyle = (bgColor: string) => {
                 ...FONT_FAMILY.Poppins(600, 55),
                 color: '#FFFFFF',
                 textAlign: 'center' as 'center',
+                flex: 1
             },
             iconWrapper: {
                 backgroundColor: 'white',
