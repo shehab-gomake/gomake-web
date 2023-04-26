@@ -17,7 +17,8 @@ import {useRecoilValue} from "recoil";
 import {selectedClientIdState} from "@/widgets/clients/state/selected-client-id";
 import {SearchInput} from "@/widgets/dashboard-widget/components/search-input";
 import {clientsState} from "@/store/clients-state";
-
+import {Box} from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
 const DashboardWidget = ({}: IDashboardWidget) => {
     const INTERVAL_TIMEOUT = 5 * 60 * 1000;
     const {machines, addMachineProgress} = useGomakeMachines();
@@ -101,8 +102,12 @@ const DashboardWidget = ({}: IDashboardWidget) => {
             <Cards data={statistics ? statistics : {} as IDashboardStatistic}/>
             <DashboardDates>
                 <div style={{display: 'flex', gap: '16px', width: 'fit-content', alignItems: 'center',}}>
-                    <SearchInput placeholder={t('dashboard-widget.search') as string}
+                    <Box sx={{ position: 'relative' }}>
+                        <SearchInput placeholder={t('dashboard-widget.search') as string}
                                      onChange={handelSearchValueChange}/>
+                        <SearchIcon sx={{ position: 'absolute', left: '5px', top: '8px', color: 'action.active'}} />
+                    </Box>
+
                     <ClientsList/>
                 </div>
             </DashboardDates>

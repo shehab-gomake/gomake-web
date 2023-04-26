@@ -2,12 +2,13 @@ import {useCallback, useEffect} from "react";
 import {useGomakeAxios} from "@/hooks";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {clientsState} from "@/store/clients-state";
-import {Autocomplete} from "@mui/material";
+import {Autocomplete, Box} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import {selectedClientIdState} from "@/widgets/clients/state/selected-client-id";
 import {useTranslation} from "react-i18next";
 import {styled} from "@mui/material/styles";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import { AccountCircle } from "@mui/icons-material";
 
 
 
@@ -77,7 +78,7 @@ const ClientsList = () => {
     }, [])
 
     const getClientsList = useCallback(() => {
-        return clients.map(client => ({label: client.name + client.code, id: client.id}))
+        return clients.map(client => ({label: client.code + ' - ' + client.name, id: client.id}))
     }, [clients]);
 
     const handleChange = (event: object, value: any) => {
@@ -89,10 +90,15 @@ const ClientsList = () => {
                 fullWidth={true}
                 forcePopupIcon={false}
                 onChange={handleChange}
-                renderInput={(params) => <Input   {...params} placeholder={t('dashboard-widget.clients') as string}/>}
+                renderInput={(params) => <Box sx={{ position: 'relative' }}>
+                    <Input {...params} placeholder={t('dashboard-widget.clients') as string}/>
+                    <AccountCircle sx={{ position: 'absolute', left: '5px', top: '8px', color: 'action.active'}} />
+                </Box>}
                 options={getClientsList()}/>
         </div>
     );
 };
 
 export {ClientsList}
+
+
