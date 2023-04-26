@@ -15,7 +15,7 @@ const Table = ({ tableHeaders, tableRows }: IProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsTimeOut(true);
-    }, 10000);
+    }, 15000);
     return () => clearTimeout(timer);
   }, []);
   useEffect(() => {

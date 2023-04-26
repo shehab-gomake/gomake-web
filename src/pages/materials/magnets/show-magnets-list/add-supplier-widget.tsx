@@ -6,6 +6,7 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { useNewSupplier } from "./use-suppliers";
 import { useStyle } from "./style";
+import { useEffect, useState } from "react";
 
 const AddSupplierWidget = ({ item, supplierData, setNewSupplier }: any) => {
   const {
@@ -18,11 +19,19 @@ const AddSupplierWidget = ({ item, supplierData, setNewSupplier }: any) => {
   } = useNewSupplier({ item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
+  const [optionSuppliers, setOptionSuppliers] = useState([]);
+  useEffect(() => {
+    const arrayDisplay = [...item?.magnetSuppliers];
+    const result = arrayDisplay.map((supplier) => supplier.supplierId);
+    setOptionSuppliers(
+      suppliers.filter((item) => !result.includes(item?.value))
+    );
+  }, [item]);
   return (
     <div style={clasess.inputDataContainer}>
       <div style={clasess.rowItemStyle}>
         <GoMakeAutoComplate
-          options={suppliers}
+          options={optionSuppliers}
           style={clasess.dropDownListContainer}
           placeholder={t("materials.magnets.selectSupplier")}
           value={state.supplierId || ""}

@@ -1,13 +1,12 @@
+import { useSetRecoilState } from "recoil";
 import Image from "next/image";
 
+import { refetchMaterialDataState } from "@/store/refetch-material-data";
+import moreCircle from "@/icons/more-circle.png";
 import { IconButton } from "@mui/material";
 
-import moreCircle from "@/icons/more-circle.png";
-import { SheetPageMoreModal } from "./more-modal";
 import { useApplicationModal } from "./use-application-modal";
-import { useEffect } from "react";
-import { useSetRecoilState } from "recoil";
-import { refetchMaterialDataState } from "@/store/refetch-material-data";
+import { SheetPageMoreModal } from "./more-modal";
 
 const ApplicationsMoreCircle = ({ item }: any) => {
   const {

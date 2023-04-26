@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useGomakeAxios } from "@/hooks";
-import { GomakeTextInput } from "@/components";
 import { useDebounce } from "@/utils/use-debounce";
+import { GomakeTextInput } from "@/components";
+import { useGomakeAxios } from "@/hooks";
 
 import { IUpdateStokColors } from "./update-colors.interface";
 

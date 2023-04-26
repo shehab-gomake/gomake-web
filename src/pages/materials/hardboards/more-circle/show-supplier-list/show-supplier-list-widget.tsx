@@ -10,6 +10,7 @@ import { Table } from "@/widgets/table/table";
 import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
+import { GoMakeDeleteMaterialModal } from "@/widgets";
 
 const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
   const {
@@ -17,6 +18,10 @@ const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
     state,
     suppliers,
     suppliersCurrencies,
+    selectedItem,
+    openDeleteModal,
+    onOpenDeleteModal,
+    onCloseDeleteModal,
     onChangeState,
     deleteSupplierSheet,
     updateSupplierSheet,
@@ -104,14 +109,20 @@ const ShowSupplierListWidgetForSheet = ({ item: _item }: any) => {
               ),
               controls: (
                 <>
-                  <IconButton
-                    style={clasess.updatedIcon}
-                    onClick={() =>
-                      deleteSupplierSheet(item, suppliersData, setSuppliersData)
-                    }
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <GoMakeDeleteMaterialModal
+                    isOpen={selectedItem === item}
+                    openModal={openDeleteModal}
+                    onOpen={() => onOpenDeleteModal(item)}
+                    onClose={onCloseDeleteModal}
+                    onClickDelete={() => {
+                      deleteSupplierSheet(
+                        item,
+                        suppliersData,
+                        setSuppliersData
+                      );
+                    }}
+                    subTitle={t("deleteModal.deleteSupplier")}
+                  />
                   <IconButton
                     style={clasess.updatedIcon}
                     onClick={() =>

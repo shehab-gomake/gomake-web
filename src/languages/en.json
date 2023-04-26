@@ -129,6 +129,7 @@
     "lamination": {
       "title": "Lamination",
       "category": "Category",
+      "selectSupplier": "Select supplier",
       "height": "Height",
       "width": "Width",
       "settings": "Settings",
@@ -364,7 +365,7 @@
       "supplier": "Supplier"
     },
     "packinDrums": {
-      "title": "Packin drums",
+      "title": "Pack in drums",
       "code": "Code",
       "material": "Material",
       "sizeName": "Size name",
@@ -523,5 +524,8 @@
   },
   "skeleton": {
     "noData": "No data"
+  },
+  "deleteModal": {
+    "deleteSupplier": "Are you sure to delete the supplier?"
   }
 }

@@ -1,8 +1,9 @@
 import { IconButton, Switch } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
 import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import SaveIcon from "@mui/icons-material/Save";
 
 import { useNewSupplier } from "./use-suppliers";
 import { useStyle } from "./style";
@@ -18,11 +19,19 @@ const AddSupplierWidget = ({ item, supplierData, setNewSupplier }: any) => {
   } = useNewSupplier({ item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
+  const [optionSuppliers, setOptionSuppliers] = useState([]);
+  useEffect(() => {
+    const arrayDisplay = [...item?.canvasFrameSuppliers];
+    const result = arrayDisplay.map((supplier) => supplier.supplierId);
+    setOptionSuppliers(
+      suppliers.filter((item) => !result.includes(item?.value))
+    );
+  }, [item]);
   return (
     <div style={clasess.inputDataContainer}>
       <div style={clasess.rowItemStyle}>
         <GoMakeAutoComplate
-          options={suppliers}
+          options={optionSuppliers}
           style={clasess.dropDownListContainer}
           placeholder={t("materials.additions.selectSupplier")}
           value={state.supplierId || ""}

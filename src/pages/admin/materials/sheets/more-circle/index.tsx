@@ -1,11 +1,13 @@
 import { useRecoilValue } from "recoil";
 
 import { GoMakeDeleteModal } from "@/components";
-
+import { IconWidget } from "./icon-widget";
+import moreCircle from "@/icons/more-circle.png";
+import { IconButton, Tooltip } from "@mui/material";
+import { useSheetModal } from "./use-sheet-modal";
 import { UpdateSheetModal } from "../update-sheet-modal";
 import { materialSheetsState } from "../store/sheets";
-import { useSheetModal } from "./use-sheet-modal";
-import { IconWidget } from "./icon-widget";
+import { GoMakeDeleteMaterialModal } from "@/widgets";
 
 const SheetSettingsWidget = ({ item }: any) => {
   const {
@@ -33,6 +35,7 @@ const SheetSettingsWidget = ({ item }: any) => {
         title={t("materials.sheetPaper.admin.deleteSheet")}
         yesBtn={t("materials.sheetPaper.admin.delete")}
         openModal={openDeleteModal}
+        onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
         subTitle={`${t("materials.sheetPaper.admin.subTitleDeleteModal")} ${
           item?.categoryName

@@ -1,14 +1,15 @@
+import { useTranslation } from "react-i18next";
+import { useSetRecoilState } from "recoil";
 import { useEffect } from "react";
 
-import { HeaderTitle } from "@/widgets";
-import { Table } from "@/widgets/table/table";
 import { CustomerAuthLayout } from "@/layouts";
+import { Table } from "@/widgets/table/table";
+import { HeaderTitle } from "@/widgets";
 
-import { useTranslation } from "react-i18next";
 import { HeaderFilter } from "./header-filter";
-import { useStyle } from "./style";
 import { useColors } from "./use-colors";
-import { useSetRecoilState } from "recoil";
+import { useStyle } from "./style";
+
 import { refetchMaterialDataState } from "@/store/refetch-material-data";
 
 export default function Colors() {

@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SaveAsIcon from "@mui/icons-material/SaveAs";
-import { IconButton, Switch } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import { GoMakeDeleteMaterialModal } from "@/widgets";
+import SaveAsIcon from "@mui/icons-material/SaveAs";
+import { IconButton, Switch } from "@mui/material";
 import { Table } from "@/widgets/table/table";
 
 import { AddSupplierWidget } from "./add-supplier-widget";
@@ -17,6 +17,10 @@ const ShowSizesListWidgetForAdditions = ({ item: _item }: any) => {
     state,
     suppliers,
     suppliersCurrencies,
+    selectedItem,
+    openDeleteModal,
+    onOpenDeleteModal,
+    onCloseDeleteModal,
     onChangeState,
     deleteSupplierAdditions,
     updateSupplierAdditions,
@@ -91,18 +95,20 @@ const ShowSizesListWidgetForAdditions = ({ item: _item }: any) => {
               ),
               controls: (
                 <>
-                  <IconButton
-                    style={clasess.updatedIcon}
-                    onClick={() =>
+                  <GoMakeDeleteMaterialModal
+                    isOpen={selectedItem === item}
+                    openModal={openDeleteModal}
+                    onOpen={() => onOpenDeleteModal(item)}
+                    onClose={onCloseDeleteModal}
+                    onClickDelete={() => {
                       deleteSupplierAdditions(
                         item,
                         setAdditionsData,
                         additionsData
-                      )
-                    }
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                      );
+                    }}
+                    subTitle={t("deleteModal.deleteSupplier")}
+                  />
                   <IconButton
                     style={clasess.updatedIcon}
                     onClick={() =>
