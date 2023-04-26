@@ -26,7 +26,7 @@ const useGomakeDateRange = () => {
     }, []);
 
     const setNullDate = useCallback(() => {
-        setDate({startDate: undefined, endDate: undefined})
+        setDate({startDate: null, endDate: null})
     }, [])
 
     const isNullDate = useCallback(() => {
