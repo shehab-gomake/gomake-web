@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="563b2355-7e4d-460f-89bc-962e225666cb" name="Changes" comment="fix when filter by client">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hooks/use-gomake-date-range.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/use-gomake-date-range.ts" afterDir="false" />
-    </list>
+    <list default="true" id="563b2355-7e4d-460f-89bc-962e225666cb" name="Changes" comment="bug fix" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -65,7 +62,7 @@
       <updated>1680685266496</updated>
       <workItem from="1680685267638" duration="153000" />
       <workItem from="1680685428641" duration="2503000" />
-      <workItem from="1682403700256" duration="21178000" />
+      <workItem from="1682403700256" duration="21543000" />
     </task>
     <task id="LOCAL‎-00001" summary="board missions show missionType name">
       <created>1680688310600</created>
@@ -123,7 +120,14 @@
       <option name="project" value="LOCAL‎" />
       <updated>1682442948881</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL‎-00009" summary="bug fix">
+      <created>1682495607260</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL‎-00009" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1682495607260</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -148,6 +152,7 @@
     <MESSAGE value="fix production status value" />
     <MESSAGE value="client name in table&#10;css fixes &#10;late missions" />
     <MESSAGE value="fix when filter by client" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix when filter by client" />
+    <MESSAGE value="bug fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="bug fix" />
   </component>
 </project>
