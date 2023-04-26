@@ -25,6 +25,9 @@ export default function Sheets() {
     openDeleteModal,
     selectedSheetWeight,
     updateState,
+    isAddNewSheetWightSize,
+    selectedSheetWeightSize,
+    onChangeUpdateStateSheetWeights,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
@@ -42,9 +45,11 @@ export default function Sheets() {
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    onChangeUpdateStateSheetWeights,
     updateSheetweight,
     updateSheetWeightSizes,
+    setIsAddNewSheetWightSize,
+    onClickOpenSheetWeightSizeWidget,
+    addNewSheeWeightSizeByCategoryName,
   } = useSheets();
 
   useEffect(() => {
@@ -60,6 +65,9 @@ export default function Sheets() {
       openDeleteModal,
       selectedSheetWeight,
       updateState,
+      isAddNewSheetWightSize,
+      selectedSheetWeightSize,
+      onChangeUpdateStateSheetWeights,
       onCloseModalAdded,
       onOpnModalAdded,
       changeItems,
@@ -77,9 +85,11 @@ export default function Sheets() {
       setOpenDeleteModal,
       onCloseDeleteModal,
       onOpenDeleteModal,
-      onChangeUpdateStateSheetWeights,
       updateSheetweight,
       updateSheetWeightSizes,
+      setIsAddNewSheetWightSize,
+      onClickOpenSheetWeightSizeWidget,
+      addNewSheeWeightSizeByCategoryName,
     });
   }, [
     headerTable,
@@ -93,6 +103,9 @@ export default function Sheets() {
     openDeleteModal,
     selectedSheetWeight,
     updateState,
+    isAddNewSheetWightSize,
+    selectedSheetWeightSize,
+    onChangeUpdateStateSheetWeights,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
@@ -110,9 +123,11 @@ export default function Sheets() {
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    onChangeUpdateStateSheetWeights,
     updateSheetweight,
     updateSheetWeightSizes,
+    setIsAddNewSheetWightSize,
+    onClickOpenSheetWeightSizeWidget,
+    addNewSheeWeightSizeByCategoryName,
   ]);
   return (
     <AdminAuthLayout>

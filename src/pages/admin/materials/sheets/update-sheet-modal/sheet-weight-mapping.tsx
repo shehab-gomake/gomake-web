@@ -1,12 +1,15 @@
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
+import { IconButton, Tooltip } from "@mui/material";
 import { GomakeTextInput } from "@/components";
+import AddIcon from "@mui/icons-material/Add";
 
 import { ControlIconsWidget } from "./control-icons-widget";
 import { SheetSizeMapping } from "./sheet-size-mapping";
 import { materialSheetsState } from "../store/sheets";
 import { useStyle } from "./style";
+import { AddSheetWeightSizeMapping } from "./add-sheet-weight-size-mapping";
 
 const SheetWeightsMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();
@@ -110,7 +113,26 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
           <div style={clasess.sizeSectionTitleStyle}>
             {t("materials.sheetPaper.admin.sheetSizeSection")}
           </div>
+
+          <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
+            <IconButton
+              onClick={() =>
+                materialSheetsStateValue.onClickOpenSheetWeightSizeWidget(item)
+              }
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
         </div>
+        {materialSheetsStateValue?.isAddNewSheetWightSize &&
+          materialSheetsStateValue?.selectedSheetWeightSize.id === item?.id && (
+            <AddSheetWeightSizeMapping
+              key={`SheetSizeMapping_${item?.id}`}
+              index={0}
+              sheetSize={item}
+              selectedItem={selectedItem}
+            />
+          )}
         {item?.sheetSizes?.map((item2: any, index2: number) => {
           return (
             <SheetSizeMapping

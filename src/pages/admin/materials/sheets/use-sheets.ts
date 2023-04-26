@@ -22,7 +22,9 @@ const useSheets = () => {
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
   const [isAddNewSheetWights, setIsAddNewSheetWights] = useState(false);
+  const [isAddNewSheetWightSize, setIsAddNewSheetWightSize] = useState(false);
   const [selectedSheetWeight, setSelectedSheetWeight] = useState({});
+  const [selectedSheetWeightSize, setSelectedSheetWeightSize] = useState({});
   const [items, setItems] = useState([
     {
       weight: "",
@@ -66,6 +68,30 @@ const useSheets = () => {
     changeItems(sheetWeightIndex, "sheetSizes", temp);
   };
   const [updateState, setUpdateState] = useState([]);
+  const onClickOpenSheetWeightSizeWidget = (item) => {
+    setSelectedSheetWeightSize(item);
+    setIsAddNewSheetWightSize(true);
+    setItems([
+      {
+        weight: "",
+        name: "",
+        thickness: "",
+        index: "",
+        sheetSizes: [
+          {
+            code: "",
+            name: "",
+            width: "",
+            height: "",
+            defaultPricePerTon: "",
+            defaultPricePerUnit: "",
+            direction: "",
+            index: "",
+          },
+        ],
+      },
+    ]);
+  };
   const onChangeUpdateStateSheetWeights = useCallback(
     (index: string, filedName: string, value: any) => {
       let temp: any = { ...updateState };
@@ -271,6 +297,33 @@ const useSheets = () => {
     },
     [updateState]
   );
+  const addNewSheeWeightSizeByCategoryName = useCallback(
+    async (categoryName: string, weightId: string) => {
+      const res = await callApi(
+        "POST",
+        `/v1/administrator/sheet/add-sheet-weight=size?categoryName=${categoryName}&weightId=${weightId}`,
+        {
+          ...items[0]?.sheetSizes[0],
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getSheets();
+        setIsAddNewSheetWightSize(false);
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [items]
+  );
   useEffect(() => {
     getSheets();
   }, []);
@@ -286,6 +339,8 @@ const useSheets = () => {
     openDeleteModal,
     selectedSheetWeight,
     updateState,
+    isAddNewSheetWightSize,
+    selectedSheetWeightSize,
     onChangeUpdateStateSheetWeights,
     onCloseModalAdded,
     onOpnModalAdded,
@@ -306,6 +361,9 @@ const useSheets = () => {
     onOpenDeleteModal,
     updateSheetweight,
     updateSheetWeightSizes,
+    setIsAddNewSheetWightSize,
+    onClickOpenSheetWeightSizeWidget,
+    addNewSheeWeightSizeByCategoryName,
   };
 };
 

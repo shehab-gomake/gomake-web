@@ -47,6 +47,26 @@ const UpdateSheetModal = () => {
                 <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
                   <IconButton
                     onClick={() => {
+                      materialSheetsStateValue.setItems([
+                        {
+                          weight: "",
+                          name: "",
+                          thickness: "",
+                          index: "",
+                          sheetSizes: [
+                            {
+                              code: "",
+                              name: "",
+                              width: "",
+                              height: "",
+                              defaultPricePerTon: "",
+                              defaultPricePerUnit: "",
+                              direction: "",
+                              index: "",
+                            },
+                          ],
+                        },
+                      ]);
                       materialSheetsStateValue?.setIsAddNewSheetWights(true);
                     }}
                   >
