@@ -103,7 +103,8 @@ const useSheets = () => {
   const onOpnModalAdded = () => {
     setOpenAddSheetModal(true);
   };
-  const onCloseUpdateModal = () => {
+  const onCloseUpdateModal = async () => {
+    getSheets();
     setOpenUpdateSheetModal(false);
     setIsAddNewSheetWights(false);
   };
@@ -131,7 +132,7 @@ const useSheets = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      getSheets();
+      await getSheets();
       onCloseModalAdded();
     } else {
       setSnackbarStateValue({
@@ -231,8 +232,8 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
-        onCloseUpdateModal();
+        // getSheets();
+        // onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
           state: true,
@@ -258,8 +259,8 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
-        onCloseUpdateModal();
+        // getSheets();
+        // onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
           state: true,
