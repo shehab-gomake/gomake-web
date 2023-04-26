@@ -146,6 +146,9 @@
       }
     },
     "plat": {
+      "admin": {
+        "title": "Plats"
+      },
       "title": "Plats",
       "category": "Category",
       "code": "Code",

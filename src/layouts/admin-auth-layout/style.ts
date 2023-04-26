@@ -86,6 +86,7 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
       },
       tabTitle: {
         ...FONT_FAMILY.Inter(400, 16),
+        cursor: "pointer",
         color: "#FFF",
       },
       line: {
