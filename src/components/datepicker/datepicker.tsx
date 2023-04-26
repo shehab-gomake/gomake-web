@@ -46,7 +46,6 @@ const GoMakeDatepicker = ({}: IGoMakeDatepicker) => {
                         direction="vertical"
                         scroll={{enabled: false}}
                         ranges={[state.selection]}
-
                     />
                     <div>
                         <div style={{textAlign: 'center'}}>
