@@ -176,6 +176,25 @@
       "settings": "Settings"
     },
     "envelops": {
+      "admin": {
+        "title": "Envelops",
+        "addNewEnvelops": "Add New Envelops",
+        "platSizeSection": "Plat Size Section",
+        "addPlatSize": "Add new plat size",
+        "removePlatSize": "Remove last plat size",
+        "code": "Code",
+        "enterCode": "Enter Code",
+        "name": "Name",
+        "enterName": "Enter Name",
+        "width": "Width",
+        "enterWidth": "Enter Width",
+        "height": "Height",
+        "enterHeight": "Enter Height",
+        "defaultPrice": "Default Price",
+        "enterDefaultPrice": "Enter Default Price",
+        "deletePlat": "Delete Plat",
+        "subTitleDeleteModal": "Are you sure you delete plat by categoryName"
+      },
       "title": "Envelopes",
       "category": "Category",
       "supplier": "Supplier",
