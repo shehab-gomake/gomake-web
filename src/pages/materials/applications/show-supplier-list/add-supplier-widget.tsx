@@ -6,11 +6,11 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
+import { useEffect, useState } from "react";
 
 const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
   const {
     headerTable,
-    applicationDirection,
     state,
     suppliers,
     suppliersCurrencies,
@@ -19,11 +19,19 @@ const AddSupplierWidget = ({ item, suppliersData, setSuppliersData }: any) => {
   } = useAddSupplier({ item });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
+  const [optionSuppliers, setOptionSuppliers] = useState([]);
+  useEffect(() => {
+    const arrayDisplay = [...item?.applicationSuppliers];
+    const result = arrayDisplay.map((supplier) => supplier.supplierId);
+    setOptionSuppliers(
+      suppliers.filter((item) => !result.includes(item?.value))
+    );
+  }, [item]);
   return (
     <div style={clasess.inputDataContainer}>
       <div style={clasess.rowItemStyle}>
         <GoMakeAutoComplate
-          options={suppliers}
+          options={optionSuppliers}
           style={clasess.dropDownListContainer}
           placeholder={t("materials.applications.selectSupplier")}
           value={state.supplierId || ""}

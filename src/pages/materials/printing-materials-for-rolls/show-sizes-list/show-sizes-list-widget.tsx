@@ -10,6 +10,7 @@ import { Table } from "@/widgets/table/table";
 import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddSupplier } from "./use-add-supplier";
 import { useStyle } from "./style";
+import { GoMakeDeleteMaterialModal } from "@/widgets";
 
 const ShowSizesListWidgetForPrintingMaterials = ({ item: _item }: any) => {
   const {
@@ -17,6 +18,10 @@ const ShowSizesListWidgetForPrintingMaterials = ({ item: _item }: any) => {
     state,
     suppliers,
     suppliersCurrencies,
+    selectedItem,
+    openDeleteModal,
+    onOpenDeleteModal,
+    onCloseDeleteModal,
     onChangeState,
     deleteSupplierPrintingMaterials,
     updateSupplierPrintingMaterials,
@@ -97,14 +102,16 @@ const ShowSizesListWidgetForPrintingMaterials = ({ item: _item }: any) => {
               ),
               controls: (
                 <>
-                  <IconButton
-                    style={clasess.updatedIcon}
-                    onClick={() =>
-                      deleteSupplierPrintingMaterials(item, data, setData)
-                    }
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <GoMakeDeleteMaterialModal
+                    isOpen={selectedItem === item}
+                    openModal={openDeleteModal}
+                    onOpen={() => onOpenDeleteModal(item)}
+                    onClose={onCloseDeleteModal}
+                    onClickDelete={() => {
+                      deleteSupplierPrintingMaterials(item, data, setData);
+                    }}
+                    subTitle={t("deleteModal.deleteSupplier")}
+                  />
                   <IconButton
                     style={clasess.updatedIcon}
                     onClick={() =>

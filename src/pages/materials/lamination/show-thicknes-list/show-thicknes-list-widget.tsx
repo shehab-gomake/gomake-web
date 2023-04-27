@@ -10,6 +10,7 @@ import { Table } from "@/widgets/table/table";
 import { AddSupplierWidget } from "./add-supplier-widget";
 import { useAddThickness } from "./use-add-thicknes";
 import { useStyle } from "./style";
+import { GoMakeDeleteMaterialModal } from "@/widgets";
 
 const ShowThicknesListWidgetForLamination = ({
   item: _item,
@@ -21,9 +22,13 @@ const ShowThicknesListWidgetForLamination = ({
     state,
     suppliers,
     suppliersCurrencies,
+    openDeleteModal,
+    selectedItem,
+    onCloseDeleteModal,
     onChangeState,
     deleteSupplierLamination,
     updateSupplierLamination,
+    onOpenDeleteModal,
   } = useAddThickness({ _item, categoryName, sizeId });
   const { clasess } = useStyle({ headerTable });
   const { t } = useTranslation();
@@ -94,14 +99,16 @@ const ShowThicknesListWidgetForLamination = ({
               ),
               controls: (
                 <>
-                  <IconButton
-                    style={clasess.updatedIcon}
-                    onClick={() =>
+                  <GoMakeDeleteMaterialModal
+                    isOpen={selectedItem === item}
+                    openModal={openDeleteModal}
+                    onOpen={() => onOpenDeleteModal(item)}
+                    onClose={onCloseDeleteModal}
+                    onClickDelete={() =>
                       deleteSupplierLamination(item, data, setData)
                     }
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                    subTitle={t("deleteModal.deleteSupplier")}
+                  />
                   <IconButton
                     style={clasess.updatedIcon}
                     onClick={() =>

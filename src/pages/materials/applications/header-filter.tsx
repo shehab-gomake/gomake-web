@@ -1,12 +1,11 @@
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 import { GoMakeAutoComplate } from "@/components";
+import { Skeleton } from "@mui/material";
 import { useSupplier } from "@/hooks";
 
-import { useApplications } from "./use-applications";
 import { useStyle } from "./style";
-import { Skeleton } from "@mui/material";
 
 const HeaderFilter = ({
   setAllSizes,

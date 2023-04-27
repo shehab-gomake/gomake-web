@@ -65,6 +65,44 @@
   },
   "materials": {
     "sheetPaper": {
+      "admin": {
+        "title": "Sheets",
+        "categoryName": "Category name",
+        "addNewSheet": "Add New Sheet",
+        "sheetWeightsSection": "Sheet Weights Section",
+        "weight": "Weight",
+        "enterWeight": "Enter Weight",
+        "name": "Name",
+        "enterName": "Enter Name",
+        "thickness": "Thickness",
+        "enterThickness": "Enter Thickness",
+        "index": "Index",
+        "enterIndex": "Enter Index",
+        "addSheetWeight": "Add new sheet weight",
+        "removeSheetWeight": "Remove last sheet weight",
+        "addSheetSize": "Add new sheet size",
+        "removeSheetSize": "Remove last sheet size",
+        "sheetSizeSection": "Sheet Size Section",
+        "code": "Code",
+        "enterCode": "Enter Code",
+        "width": "Width",
+        "enterWidth": "Enter Width",
+        "height": "Height",
+        "enterHeight": "Enter Height",
+        "defaultPricePerTon": "Default Price Per Ton",
+        "enterDefaultPricePerTon": "Enter Default Price Per Ton",
+        "defaultPricePerUnit": "Default Price Per Unit",
+        "enterDefaultPricePerUnit": "Enter Default Price Per Unit",
+        "direction": "Direction",
+        "enterDirection": "Enter Direction",
+        "cancel": "Cancel",
+        "edit": "Edit",
+        "delete": "Delete",
+        "deleteSheet": "Delete Sheet",
+        "subTitleDeleteModal": "Are you sure you delete sheet by categoryName",
+        "saveModifications": "Save modifications",
+        "save": "Save"
+      },
       "title": "Sheet paper",
       "category": "Category",
       "supplier": "Supplier",
@@ -91,6 +129,7 @@
     "lamination": {
       "title": "Lamination",
       "category": "Category",
+      "selectSupplier": "Select supplier",
       "height": "Height",
       "width": "Width",
       "settings": "Settings",
@@ -326,7 +365,7 @@
       "supplier": "Supplier"
     },
     "packinDrums": {
-      "title": "Packin drums",
+      "title": "Pack in drums",
       "code": "Code",
       "material": "Material",
       "sizeName": "Size name",
@@ -482,9 +521,11 @@
       "selectSupplier": "Select supplier",
       "selectCurrency": "Select currency"
     }
-    
   },
-  "customers": {
-    "title": "customers"
+  "skeleton": {
+    "noData": "No data"
+  },
+  "deleteModal": {
+    "deleteSupplier": "Are you sure to delete the supplier?"
   }
 }

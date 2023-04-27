@@ -14,6 +14,8 @@ const useAddThickness = ({ item, categoryName, sizeId }: any) => {
   const suppliersCurrencies = useRecoilValue(supplierCurrencies);
   const [state, setState] = useState<any>({});
   const refetchMaterialData = useRecoilValue(refetchMaterialDataState);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState({});
 
   const headerTable = useMemo(
     () => [
@@ -144,11 +146,24 @@ const useAddThickness = ({ item, categoryName, sizeId }: any) => {
     },
     [state]
   );
+  const onCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+  };
+
+  const onOpenDeleteModal = (item: any) => {
+    setOpenDeleteModal(true);
+    setSelectedItem(item);
+  };
   return {
     state,
     suppliers,
     suppliersCurrencies,
     headerTable,
+    openDeleteModal,
+    selectedItem,
+    onCloseDeleteModal,
+    onOpenDeleteModal,
+    setOpenDeleteModal,
     onChangeState,
     onChangePrimaryState,
     addNewSupplierLamination,

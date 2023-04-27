@@ -15,6 +15,8 @@ const useAddSupplier = ({ item }: any) => {
   const suppliersCurrencies = useRecoilValue(supplierCurrencies);
   const [applicationDirection, setAapplicationDirection] = useState([]);
   const [state, setState] = useState<any>({});
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState({});
 
   const headerTable = useMemo(
     () => [
@@ -166,12 +168,24 @@ const useAddSupplier = ({ item }: any) => {
     },
     [state]
   );
+  const onCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+  };
+
+  const onOpenDeleteModal = (item: any) => {
+    setOpenDeleteModal(true);
+    setSelectedItem(item);
+  };
   return {
     applicationDirection,
     state,
     suppliers,
     suppliersCurrencies,
     headerTable,
+    openDeleteModal,
+    selectedItem,
+    onCloseDeleteModal,
+    onOpenDeleteModal,
     onChangeState,
     onChangePrimaryState,
     addNewSupplierSheet,

@@ -1,15 +1,15 @@
+import { useTranslation } from "react-i18next";
+import { useSetRecoilState } from "recoil";
 import { useEffect } from "react";
 
-import { HeaderTitle } from "@/widgets";
-import { Table } from "@/widgets/table/table";
+import { refetchMaterialDataState } from "@/store/refetch-material-data";
 import { CustomerAuthLayout } from "@/layouts";
+import { Table } from "@/widgets/table/table";
+import { HeaderTitle } from "@/widgets";
 
-import { useTranslation } from "react-i18next";
+import { useCanvasFrames } from "./use-canvas-frames";
 import { HeaderFilter } from "./header-filter";
 import { useStyle } from "./style";
-import { useCanvasFrames } from "./use-canvas-frames";
-import { useSetRecoilState } from "recoil";
-import { refetchMaterialDataState } from "@/store/refetch-material-data";
 
 export default function Additions() {
   const { t } = useTranslation();

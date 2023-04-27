@@ -1,6 +1,6 @@
-import { useEffect } from "react";
-import { useSetRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
+import { useSetRecoilState } from "recoil";
+import { useEffect } from "react";
 
 import { Table } from "@/widgets/table/table";
 import { GoMakeModal } from "@/components";
