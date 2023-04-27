@@ -1,6 +1,6 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../call-api.interface";
-import { SheetSettingsWidget } from "@/pages/admin/materials/plats/more-circle";
+import { PlatSettingsWidget } from "@/pages/admin/materials/plats/more-circle";
 
 const getAndSetGetAllPlats = async (
   callApi: ICallApi,
@@ -16,7 +16,7 @@ const getAndSetGetAllPlats = async (
   const mapData = _data.map((item: any) => {
     return {
       categoryName: item?.categoryName,
-      settings: <SheetSettingsWidget item={item} />,
+      settings: <PlatSettingsWidget item={item} />,
     };
   });
   if (setState) {

@@ -2,19 +2,19 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeDeleteModal } from "@/components";
 
-import { UpdateSheetModal } from "../update-sheet-modal";
+import { UpdatePlatModal } from "../update-plats-modal";
 import { materialPlatsState } from "../store/plat";
-import { useSheetModal } from "./use-sheet-modal";
+import { usePlatsModal } from "./use-plat-modal";
 import { IconWidget } from "./icon-widget";
 
-const SheetSettingsWidget = ({ item }: any) => {
+const PlatSettingsWidget = ({ item }: any) => {
   const {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deleteSheetByCategoryName,
+    deletePlatByCategoryName,
     t,
-  } = useSheetModal({
+  } = usePlatsModal({
     item,
   });
   const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
@@ -38,12 +38,10 @@ const SheetSettingsWidget = ({ item }: any) => {
         subTitle={`${t("materials.plat.admin.subTitleDeleteModal")} ${
           item?.categoryName
         } ?`}
-        onClickDelete={deleteSheetByCategoryName}
+        onClickDelete={deletePlatByCategoryName}
       />
-      {item === materialPlatsStateValue.selectedEditItem && (
-        <UpdateSheetModal />
-      )}
+      {item === materialPlatsStateValue.selectedEditItem && <UpdatePlatModal />}
     </>
   );
 };
-export { SheetSettingsWidget };
+export { PlatSettingsWidget };

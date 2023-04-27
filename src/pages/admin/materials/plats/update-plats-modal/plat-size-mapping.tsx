@@ -45,7 +45,7 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               style={clasess.textInputStyle}
               value={materialPlatsStateValue?.updateState[item?.id]?.code}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStateSheetWeights(
+                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
                   item?.id,
                   "code",
                   e.target.value
@@ -62,7 +62,7 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               style={clasess.textInputStyle}
               value={materialPlatsStateValue?.updateState[item?.id]?.name}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStateSheetWeights(
+                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
                   item?.id,
                   "name",
                   e.target.value
@@ -79,7 +79,7 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               style={clasess.textInputStyle}
               value={materialPlatsStateValue?.updateState[item?.id]?.width}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStateSheetWeights(
+                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
                   item?.id,
                   "width",
                   e.target.value
@@ -96,7 +96,7 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               style={clasess.textInputStyle}
               value={materialPlatsStateValue?.updateState[item?.id]?.height}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStateSheetWeights(
+                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
                   item?.id,
                   "height",
                   e.target.value
@@ -115,7 +115,7 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
                 materialPlatsStateValue?.updateState[item?.id]?.defaultPrice
               }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStateSheetWeights(
+                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
                   item?.id,
                   "defaultPrice",
                   e.target.value

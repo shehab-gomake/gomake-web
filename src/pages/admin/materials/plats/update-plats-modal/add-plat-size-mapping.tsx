@@ -2,15 +2,11 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
 import { GomakePrimaryButton, GomakeTextInput } from "@/components";
-import { IconButton, Tooltip } from "@mui/material";
-import RemoveIcon from "@mui/icons-material/Remove";
-import AddIcon from "@mui/icons-material/Add";
 
-import { AddsheetSizeMapping } from "./add-sheet-size-mapping";
 import { materialPlatsState } from "../store/plat";
 import { useStyle } from "./style";
 
-const AddSheetWeightsMapping = ({ index, selectedItem }) => {
+const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
@@ -119,7 +115,7 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.addNewSheeWeightByCategoryName(
+                materialPlatsStateValue?.addNewPlatSizeByCategoryName(
                   selectedItem
                 )
               }
@@ -133,4 +129,4 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
     </>
   );
 };
-export { AddSheetWeightsMapping };
+export { AddPlatSizeWeightsMapping };

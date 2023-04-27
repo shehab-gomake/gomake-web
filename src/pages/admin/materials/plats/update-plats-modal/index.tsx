@@ -5,12 +5,12 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddSheetWeightsMapping } from "./add-sheet-weight-mapping";
-import { SheetWeightsMapping } from "./sheet-weight-mapping";
+import { AddPlatSizeWeightsMapping } from "./add-plat-size-mapping";
+import { SheetWeightsMapping } from "./plat-size-mapping";
 import { materialPlatsState } from "../store/plat";
 import { useStyle } from "./style";
 
-const UpdateSheetModal = () => {
+const UpdatePlatModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
@@ -65,7 +65,10 @@ const UpdateSheetModal = () => {
               )}
             </div>
             {materialPlatsStateValue?.isAddNewSheetWights && (
-              <AddSheetWeightsMapping index={0} selectedItem={selectedItem} />
+              <AddPlatSizeWeightsMapping
+                index={0}
+                selectedItem={selectedItem}
+              />
             )}
             {selectedItem?.platSizes?.map((item: any, index: number) => {
               return (
@@ -83,4 +86,4 @@ const UpdateSheetModal = () => {
     </>
   );
 };
-export { UpdateSheetModal };
+export { UpdatePlatModal };

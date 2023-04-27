@@ -22,9 +22,9 @@ const useSheets = () => {
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
   const [isAddNewSheetWights, setIsAddNewSheetWights] = useState(false);
-  const [isAddNewSheetWightSize, setIsAddNewSheetWightSize] = useState(false);
   const [selectedSheetWeight, setSelectedSheetWeight] = useState({});
-  const [selectedSheetWeightSize, setSelectedSheetWeightSize] = useState({});
+  const [updateState, setUpdateState] = useState([]);
+
   const [items, setItems] = useState([
     {
       code: "",
@@ -42,37 +42,7 @@ const useSheets = () => {
     };
     setItems(temp);
   };
-
-  const changeItemsSheetSize = (
-    sheetWeightIndex: number,
-    sheetSizeIndex: number,
-    filedName: string,
-    value: any
-  ) => {
-    let temp = [...items[sheetWeightIndex]["sheetSizes"]];
-    temp[sheetSizeIndex] = {
-      ...temp[sheetSizeIndex],
-      [filedName]: value,
-    };
-    changeItems(sheetWeightIndex, "sheetSizes", temp);
-  };
-  const [updateState, setUpdateState] = useState([]);
-  console.log("updateState", updateState);
-
-  const onClickOpenSheetWeightSizeWidget = (item) => {
-    setSelectedSheetWeightSize(item);
-    setIsAddNewSheetWightSize(true);
-    setItems([
-      {
-        code: "",
-        name: "",
-        width: "",
-        height: "",
-        defaultPrice: "",
-      },
-    ]);
-  };
-  const onChangeUpdateStateSheetWeights = useCallback(
+  const onChangeUpdateStatePlatSize = useCallback(
     (index: string, filedName: string, value: any) => {
       let temp: any = { ...updateState };
       temp[`${index}`] = {
@@ -143,8 +113,8 @@ const useSheets = () => {
       });
     }
   }, [categoryName, items]);
-  const addNewSheeWeightByCategoryName = useCallback(
-    async (selectedItem) => {
+  const addNewPlatSizeByCategoryName = useCallback(
+    async (selectedItem: any) => {
       const res = await callApi(
         "POST",
         `/v1/administrator/plat/add-plat-size?categoryName=${selectedItem?.categoryName}`,
@@ -235,28 +205,23 @@ const useSheets = () => {
     openDeleteModal,
     selectedSheetWeight,
     updateState,
-    isAddNewSheetWightSize,
-    selectedSheetWeightSize,
-    onChangeUpdateStateSheetWeights,
+    onChangeUpdateStatePlatSize,
     onCloseAddNewPlatModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
     addNewPlatsSize,
-    changeItemsSheetSize,
     setOpenUpdateSheetModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
     setIsAddNewSheetWights,
-    addNewSheeWeightByCategoryName,
+    addNewPlatSizeByCategoryName,
     deletePlatSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
     updatePlatSize,
-    setIsAddNewSheetWightSize,
-    onClickOpenSheetWeightSizeWidget,
   };
 };
 
