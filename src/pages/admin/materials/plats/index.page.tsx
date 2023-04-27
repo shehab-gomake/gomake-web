@@ -6,17 +6,17 @@ import { Table } from "@/widgets/table/table";
 import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 
-import { materialSheetsState } from "./store/sheets";
+import { materialPlatsState } from "./store/plat";
 import { HeaderFilter } from "./header-filter";
-import { useSheets } from "./use-sheets";
+import { useSheets } from "./use-plats";
 
 export default function Sheets() {
   const { t } = useTranslation();
-  const setMaterialSheetsState = useSetRecoilState<any>(materialSheetsState);
+  const setMaterialSheetsState = useSetRecoilState<any>(materialPlatsState);
   const {
     headerTable,
-    allSheets,
-    openAddSheetModal,
+    allPlats,
+    openAddNewPlatModal,
     items,
     categoryName,
     openUpdateSheetModal,
@@ -28,12 +28,12 @@ export default function Sheets() {
     isAddNewSheetWightSize,
     selectedSheetWeightSize,
     onChangeUpdateStateSheetWeights,
-    onCloseModalAdded,
+    onCloseAddNewPlatModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewSupplierSheet,
+    addNewPlatsSize,
     changeItemsSheetSize,
     setOpenUpdateSheetModal,
     onCloseUpdateModal,
@@ -55,8 +55,8 @@ export default function Sheets() {
   useEffect(() => {
     setMaterialSheetsState({
       headerTable,
-      allSheets,
-      openAddSheetModal,
+      allPlats,
+      openAddNewPlatModal,
       items,
       categoryName,
       openUpdateSheetModal,
@@ -68,12 +68,12 @@ export default function Sheets() {
       isAddNewSheetWightSize,
       selectedSheetWeightSize,
       onChangeUpdateStateSheetWeights,
-      onCloseModalAdded,
+      onCloseAddNewPlatModal,
       onOpnModalAdded,
       changeItems,
       setItems,
       setCategoryName,
-      addNewSupplierSheet,
+      addNewPlatsSize,
       changeItemsSheetSize,
       setOpenUpdateSheetModal,
       onCloseUpdateModal,
@@ -93,8 +93,8 @@ export default function Sheets() {
     });
   }, [
     headerTable,
-    allSheets,
-    openAddSheetModal,
+    allPlats,
+    openAddNewPlatModal,
     items,
     categoryName,
     openUpdateSheetModal,
@@ -106,12 +106,12 @@ export default function Sheets() {
     isAddNewSheetWightSize,
     selectedSheetWeightSize,
     onChangeUpdateStateSheetWeights,
-    onCloseModalAdded,
+    onCloseAddNewPlatModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewSupplierSheet,
+    addNewPlatsSize,
     changeItemsSheetSize,
     setOpenUpdateSheetModal,
     onCloseUpdateModal,
@@ -131,9 +131,9 @@ export default function Sheets() {
   ]);
   return (
     <AdminAuthLayout>
-      <HeaderTitle title={t("materials.sheetPaper.admin.title")} />
+      <HeaderTitle title={t("materials.plat.admin.title")} />
       <HeaderFilter />
-      <Table tableHeaders={headerTable} tableRows={allSheets} />
+      <Table tableHeaders={headerTable} tableRows={allPlats} />
     </AdminAuthLayout>
   );
 }

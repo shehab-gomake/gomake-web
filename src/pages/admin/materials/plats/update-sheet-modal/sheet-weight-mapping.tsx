@@ -7,7 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 
 import { ControlIconsWidget } from "./control-icons-widget";
 import { SheetSizeMapping } from "./sheet-size-mapping";
-import { materialSheetsState } from "../store/sheets";
+import { materialSheetsState } from "../store/plat";
 import { useStyle } from "./style";
 import { AddSheetWeightSizeMapping } from "./add-sheet-weight-size-mapping";
 

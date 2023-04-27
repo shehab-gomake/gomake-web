@@ -147,7 +147,21 @@
     },
     "plat": {
       "admin": {
-        "title": "Plats"
+        "title": "Plats",
+        "addNewPlat": "Add New Plat",
+        "platSizeSection": "Plat Size Section",
+        "addPlatSize": "Add new plat size",
+        "removePlatSize": "Remove last plat size",
+        "code": "Code",
+        "enterCode": "Enter Code",
+        "name": "Name",
+        "enterName": "Enter Name",
+        "width": "Width",
+        "enterWidth": "Enter Width",
+        "height": "Height",
+        "enterHeight": "Enter Height",
+        "defaultPrice": "Default Price",
+        "enterDefaultPrice": "Enter Default Price"
       },
       "title": "Plats",
       "category": "Category",

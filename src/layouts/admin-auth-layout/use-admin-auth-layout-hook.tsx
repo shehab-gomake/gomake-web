@@ -53,12 +53,12 @@ const useAuthLayoutHook = () => {
           {
             key: "sheet",
             title: t("materials.sheetPaper.admin.title"),
-            path: "admin/materials/sheets",
+            path: "/admin/materials/sheets",
           },
           {
             key: "plats",
             title: t("materials.plat.admin.title"),
-            path: "admin/materials/plats",
+            path: "/admin/materials/plats",
           },
         ],
         icon: () => {

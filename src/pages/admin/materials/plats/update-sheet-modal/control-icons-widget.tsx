@@ -4,7 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton, Tooltip } from "@mui/material";
 import { GoMakeDeleteModal } from "@/components";
 import SaveIcon from "@mui/icons-material/Save";
-import { materialSheetsState } from "../store/sheets";
+import { materialSheetsState } from "../store/plat";
 
 import { useStyle } from "./style";
 

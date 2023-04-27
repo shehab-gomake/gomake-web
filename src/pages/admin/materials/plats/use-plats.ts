@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { getAndSetGetAllSheets } from "@/services/hooks";
+import { getAndSetGetAllPlats, getAndSetGetAllSheets } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 const useSheets = () => {
@@ -15,10 +15,10 @@ const useSheets = () => {
     ],
     []
   );
-  const [openAddSheetModal, setOpenAddSheetModal] = useState(false);
+  const [openAddNewPlatModal, setOpenAddNewPlatModal] = useState(false);
   const [openUpdateSheetModal, setOpenUpdateSheetModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [allSheets, setAllSheets] = useState([]);
+  const [allPlats, setAllPlats] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
   const [isAddNewSheetWights, setIsAddNewSheetWights] = useState(false);
@@ -27,24 +27,14 @@ const useSheets = () => {
   const [selectedSheetWeightSize, setSelectedSheetWeightSize] = useState({});
   const [items, setItems] = useState([
     {
-      weight: "",
+      code: "",
       name: "",
-      thickness: "",
-      index: "",
-      sheetSizes: [
-        {
-          code: "",
-          name: "",
-          width: "",
-          height: "",
-          defaultPricePerTon: "",
-          defaultPricePerUnit: "",
-          direction: "",
-          index: "",
-        },
-      ],
+      width: "",
+      height: "",
+      defaultPrice: "",
     },
   ]);
+  console.log("items", items);
   const changeItems = (index: number, filedName: string, value: any) => {
     let temp = [...items];
     temp[index] = {
@@ -73,22 +63,11 @@ const useSheets = () => {
     setIsAddNewSheetWightSize(true);
     setItems([
       {
-        weight: "",
+        code: "",
         name: "",
-        thickness: "",
-        index: "",
-        sheetSizes: [
-          {
-            code: "",
-            name: "",
-            width: "",
-            height: "",
-            defaultPricePerTon: "",
-            defaultPricePerUnit: "",
-            direction: "",
-            index: "",
-          },
-        ],
+        width: "",
+        height: "",
+        defaultPrice: "",
       },
     ]);
   };
@@ -120,17 +99,17 @@ const useSheets = () => {
     setUpdateState(final);
   };
 
-  const getSheets = useCallback(async () => {
-    await getAndSetGetAllSheets(callApi, setAllSheets);
+  const getPlats = useCallback(async () => {
+    await getAndSetGetAllPlats(callApi, setAllPlats);
   }, []);
-  const onCloseModalAdded = () => {
-    setOpenAddSheetModal(false);
+  const onCloseAddNewPlatModal = () => {
+    setOpenAddNewPlatModal(false);
   };
   const onOpnModalAdded = () => {
-    setOpenAddSheetModal(true);
+    setOpenAddNewPlatModal(true);
   };
   const onCloseUpdateModal = async () => {
-    getSheets();
+    getPlats();
     setOpenUpdateSheetModal(false);
     setIsAddNewSheetWights(false);
   };
@@ -147,10 +126,10 @@ const useSheets = () => {
     setSelectedSheetWeight(item);
   };
 
-  const addNewSupplierSheet = useCallback(async () => {
-    const res = await callApi("POST", `/v1/administrator/sheet/add-sheet`, {
+  const addNewPlatsSize = useCallback(async () => {
+    const res = await callApi("POST", `/v1/administrator/plat/add-plat`, {
       categoryName,
-      sheetWeights: items,
+      platSizes: items,
     });
     if (res?.success) {
       setSnackbarStateValue({
@@ -158,8 +137,8 @@ const useSheets = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      await getSheets();
-      onCloseModalAdded();
+      await getPlats();
+      onCloseAddNewPlatModal();
     } else {
       setSnackbarStateValue({
         state: true,
@@ -183,7 +162,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        getPlats();
         onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -207,7 +186,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        getPlats();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -231,7 +210,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        getPlats();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -258,7 +237,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        // getSheets();
+        // getPlats();
         // onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -285,7 +264,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        // getSheets();
+        // getPlats();
         // onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -303,7 +282,7 @@ const useSheets = () => {
         "POST",
         `/v1/administrator/sheet/add-sheet-weight=size?categoryName=${categoryName}&weightId=${weightId}`,
         {
-          ...items[0]?.sheetSizes[0],
+          // ...items[0]?.sheetSizes[0],
         }
       );
       if (res?.success) {
@@ -312,7 +291,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        getPlats();
         setIsAddNewSheetWightSize(false);
       } else {
         setSnackbarStateValue({
@@ -325,12 +304,12 @@ const useSheets = () => {
     [items]
   );
   useEffect(() => {
-    getSheets();
+    getPlats();
   }, []);
   return {
     headerTable,
-    allSheets,
-    openAddSheetModal,
+    allPlats,
+    openAddNewPlatModal,
     items,
     categoryName,
     openUpdateSheetModal,
@@ -342,12 +321,12 @@ const useSheets = () => {
     isAddNewSheetWightSize,
     selectedSheetWeightSize,
     onChangeUpdateStateSheetWeights,
-    onCloseModalAdded,
+    onCloseAddNewPlatModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewSupplierSheet,
+    addNewPlatsSize,
     changeItemsSheetSize,
     setOpenUpdateSheetModal,
     onCloseUpdateModal,

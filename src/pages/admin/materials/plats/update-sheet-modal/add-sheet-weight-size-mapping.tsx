@@ -4,7 +4,7 @@ import { useRecoilValue } from "recoil";
 import { GomakePrimaryButton } from "@/components";
 
 import { AddsheetSizeMapping } from "./add-sheet-size-mapping";
-import { materialSheetsState } from "../store/sheets";
+import { materialSheetsState } from "../store/plat";
 import { useStyle } from "./style";
 
 const AddSheetWeightSizeMapping = ({ index, selectedItem, sheetSize }) => {

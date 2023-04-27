@@ -6,7 +6,7 @@ import moreCircle from "@/icons/more-circle.png";
 import { IconButton, Tooltip } from "@mui/material";
 import { useSheetModal } from "./use-sheet-modal";
 import { UpdateSheetModal } from "../update-sheet-modal";
-import { materialSheetsState } from "../store/sheets";
+import { materialSheetsState } from "../store/plat";
 import { GoMakeDeleteMaterialModal } from "@/widgets";
 
 const SheetSettingsWidget = ({ item }: any) => {

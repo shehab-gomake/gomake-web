@@ -10,21 +10,21 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { SheetWeightsMapping } from "./sheet-weight-mapping";
-import { materialSheetsState } from "../store/sheets";
+import { PlatSizeMapping } from "./plat-size-mapping";
+import { materialPlatsState } from "../store/plat";
 import { useStyle } from "./style";
 
-const AddSheetModal = () => {
+const AddNewPlatModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
 
   return (
     <>
       <GoMakeModal
-        openModal={materialSheetsStateValue?.openAddSheetModal}
-        modalTitle={t("materials.sheetPaper.admin.addNewSheet")}
-        onClose={materialSheetsStateValue?.onCloseModalAdded}
+        openModal={materialPlatsStateValue?.openAddNewPlatModal}
+        modalTitle={t("materials.plat.admin.addNewPlat")}
+        onClose={materialPlatsStateValue?.onCloseAddNewPlatModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -36,9 +36,9 @@ const AddSheetModal = () => {
               <GomakeTextInput
                 placeholder={t("materials.sheetPaper.admin.categoryName")}
                 style={clasess.textInputStyle}
-                value={materialSheetsStateValue?.categoryName}
+                value={materialPlatsStateValue?.categoryName}
                 onChange={(e: any) => {
-                  materialSheetsStateValue?.setCategoryName(e.target.value);
+                  materialPlatsStateValue?.setCategoryName(e.target.value);
                 }}
               />
             </div>
@@ -46,55 +46,51 @@ const AddSheetModal = () => {
           <div style={clasess.secondSectionContainer}>
             <div style={clasess.titlePlusContainer}>
               <div style={clasess.firstSectionTitleStyle}>
-                {t("materials.sheetPaper.admin.sheetWeightsSection")}
+                {t("materials.plat.admin.platSizeSection")}
               </div>
-              <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
+              <Tooltip title={t("materials.plat.admin.addPlatSize")}>
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialSheetsStateValue?.items];
+                    const temp = [...materialPlatsStateValue?.items];
                     temp.push({
-                      weight: "",
+                      code: "",
                       name: "",
-                      thickness: "",
-                      index: "",
-                      sheetSizes: [],
+                      width: "",
+                      height: "",
+                      defaultPrice: "",
                     });
-                    materialSheetsStateValue?.setItems(temp);
+                    materialPlatsStateValue?.setItems(temp);
                   }}
                 >
                   <AddIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip
-                title={t("materials.sheetPaper.admin.removeSheetWeight")}
-              >
+              <Tooltip title={t("materials.plat.admin.removePlatSize")}>
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialSheetsStateValue?.items];
+                    const temp = [...materialPlatsStateValue?.items];
                     temp.pop();
-                    materialSheetsStateValue?.setItems(temp);
+                    materialPlatsStateValue?.setItems(temp);
                   }}
                 >
                   <RemoveIcon />
                 </IconButton>
               </Tooltip>
             </div>
-            {materialSheetsStateValue?.items?.map(
-              (item: any, index: number) => {
-                return (
-                  <SheetWeightsMapping
-                    key={`SheetWeightsMapping_${index}`}
-                    index={index}
-                  />
-                );
-              }
-            )}
+            {materialPlatsStateValue?.items?.map((item: any, index: number) => {
+              return (
+                <PlatSizeMapping
+                  key={`platSizeMapping_${index}`}
+                  index={index}
+                />
+              );
+            })}
           </div>
-          <div style={clasess.addSheetBtnContainer}>
+          <div style={clasess.addBtnContainer}>
             <GomakePrimaryButton
-              onClick={materialSheetsStateValue?.addNewSupplierSheet}
+              onClick={materialPlatsStateValue?.addNewPlatsSize}
             >
-              {t("materials.sheetPaper.admin.addNewSheet")}
+              {t("materials.plat.admin.addNewPlat")}
             </GomakePrimaryButton>
           </div>
         </div>
@@ -102,4 +98,4 @@ const AddSheetModal = () => {
     </>
   );
 };
-export { AddSheetModal };
+export { AddNewPlatModal };

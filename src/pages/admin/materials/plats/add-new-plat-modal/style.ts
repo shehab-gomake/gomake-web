@@ -108,7 +108,7 @@ const useStyle = () => {
         paddingBottom: 20,
         borderRadius: 4,
       },
-      addSheetBtnContainer: {
+      addBtnContainer: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -119,9 +119,11 @@ const useStyle = () => {
       mainWaightsContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
+        flexWrap: "wrap" as "wrap",
+        gap: 20,
       },
     };
   }, []);

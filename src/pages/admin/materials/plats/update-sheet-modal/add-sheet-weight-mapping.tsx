@@ -7,7 +7,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 
 import { AddsheetSizeMapping } from "./add-sheet-size-mapping";
-import { materialSheetsState } from "../store/sheets";
+import { materialSheetsState } from "../store/plat";
 import { useStyle } from "./style";
 
 const AddSheetWeightsMapping = ({ index, selectedItem }) => {

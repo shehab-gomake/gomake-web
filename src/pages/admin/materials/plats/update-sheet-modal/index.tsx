@@ -7,7 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 
 import { AddSheetWeightsMapping } from "./add-sheet-weight-mapping";
 import { SheetWeightsMapping } from "./sheet-weight-mapping";
-import { materialSheetsState } from "../store/sheets";
+import { materialSheetsState } from "../store/plat";
 import { useStyle } from "./style";
 
 const UpdateSheetModal = () => {
