@@ -527,5 +527,8 @@
   },
   "deleteModal": {
     "deleteSupplier": "Are you sure to delete the supplier?"
+  },
+  "customers": {
+    "title": "customers"
   }
 }
