@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
-import { GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { materialEnvelopeState } from "../store/plat";
 import { useStyle } from "./style";
@@ -81,6 +81,58 @@ const PlatSizeMapping = ({ index }) => {
                 materialPlatsStateValue?.changeItems(
                   index,
                   "height",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.envelops.admin.stock")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.envelops.admin.enterStock")}
+              style={clasess.textInputStyle}
+              value={materialPlatsStateValue?.items[index]["stock"]}
+              onChange={(e: any) => {
+                materialPlatsStateValue?.changeItems(
+                  index,
+                  "stock",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.envelops.admin.quantityInPackage")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.envelops.admin.enterQuantityInPackage")}
+              style={clasess.textInputStyle}
+              value={materialPlatsStateValue?.items[index]["quantityInPackage"]}
+              onChange={(e: any) => {
+                materialPlatsStateValue?.changeItems(
+                  index,
+                  "quantityInPackage",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div style={{ width: 193.6 }}>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.envelops.admin.isWithWindow")}
+            </div>
+            <GoMakeAutoComplate
+              options={[true, false]}
+              style={clasess.textInputStyle}
+              placeholder={t("materials.envelops.admin.enterisWithWindow")}
+              value={materialPlatsStateValue?.items[index]["isWithWindow"]}
+              onChange={(e: any) => {
+                materialPlatsStateValue?.changeItems(
+                  index,
+                  "isWithWindow",
                   e.target.value
                 );
               }}

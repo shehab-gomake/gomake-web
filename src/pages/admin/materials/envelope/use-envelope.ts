@@ -94,10 +94,14 @@ const useAllEnvelops = () => {
   };
 
   const addNewPlatsSize = useCallback(async () => {
-    const res = await callApi("POST", `/v1/administrator/plat/add-plat`, {
-      categoryName,
-      platSizes: items,
-    });
+    const res = await callApi(
+      "POST",
+      `/v1/administrator/envelope/add-envelope`,
+      {
+        categoryName,
+        envelopeSizes: items,
+      }
+    );
     if (res?.success) {
       setSnackbarStateValue({
         state: true,

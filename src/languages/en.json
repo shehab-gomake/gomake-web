@@ -178,10 +178,10 @@
     "envelops": {
       "admin": {
         "title": "Envelops",
-        "addNewEnvelops": "Add New Envelops",
-        "platSizeSection": "Plat Size Section",
-        "addPlatSize": "Add new plat size",
-        "removePlatSize": "Remove last plat size",
+        "addNewEnvelops": "Add New Envelop",
+        "envelopSizeSection": "Envelop Size Section",
+        "addEnvelopSize": "Add new envelop size",
+        "removeEnvelopSize": "Remove last envelop size",
         "code": "Code",
         "enterCode": "Enter Code",
         "name": "Name",
@@ -192,6 +192,13 @@
         "enterHeight": "Enter Height",
         "defaultPrice": "Default Price",
         "enterDefaultPrice": "Enter Default Price",
+        "stock": "stock",
+        "enterStock": "Enter Stock",
+        "quantityInPackage": "Quantity in package",
+        "enterQuantityInPackage": "Enter Quantity in package",
+
+        "isWithWindow": "is with window",
+        "enterisWithWindow": "Choose true or false",
         "deletePlat": "Delete Plat",
         "subTitleDeleteModal": "Are you sure you delete plat by categoryName"
       },

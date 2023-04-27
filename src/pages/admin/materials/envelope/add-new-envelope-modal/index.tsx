@@ -23,7 +23,7 @@ const AddNewEnvelopeModal = () => {
     <>
       <GoMakeModal
         openModal={materialPlatsStateValue?.openAddNewPlatModal}
-        modalTitle={t("materials.plat.admin.addNewPlat")}
+        modalTitle={t("materials.envelops.admin.addNewEnvelops")}
         onClose={materialPlatsStateValue?.onCloseAddNewPlatModal}
         insideStyle={clasess.insideStyle}
       >
@@ -46,9 +46,9 @@ const AddNewEnvelopeModal = () => {
           <div style={clasess.secondSectionContainer}>
             <div style={clasess.titlePlusContainer}>
               <div style={clasess.firstSectionTitleStyle}>
-                {t("materials.plat.admin.platSizeSection")}
+                {t("materials.envelops.admin.envelopSizeSection")}
               </div>
-              <Tooltip title={t("materials.plat.admin.addPlatSize")}>
+              <Tooltip title={t("materials.envelops.admin.addEnvelopSize")}>
                 <IconButton
                   onClick={() => {
                     const temp = [...materialPlatsStateValue?.items];
@@ -57,6 +57,9 @@ const AddNewEnvelopeModal = () => {
                       name: "",
                       width: "",
                       height: "",
+                      stock: "",
+                      quantityInPackage: "",
+                      isWithWindow: false,
                       defaultPrice: "",
                     });
                     materialPlatsStateValue?.setItems(temp);
@@ -65,7 +68,7 @@ const AddNewEnvelopeModal = () => {
                   <AddIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip title={t("materials.plat.admin.removePlatSize")}>
+              <Tooltip title={t("materials.envelops.admin.removeEnvelopSize")}>
                 <IconButton
                   onClick={() => {
                     const temp = [...materialPlatsStateValue?.items];
@@ -90,7 +93,7 @@ const AddNewEnvelopeModal = () => {
             <GomakePrimaryButton
               onClick={materialPlatsStateValue?.addNewPlatsSize}
             >
-              {t("materials.plat.admin.addNewPlat")}
+              {t("materials.envelops.admin.addNewEnvelops")}
             </GomakePrimaryButton>
           </div>
         </div>
