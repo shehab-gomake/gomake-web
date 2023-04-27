@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { getAndSetGetAllPlats, getAndSetGetAllSheets } from "@/services/hooks";
+import { getAndSetGetAllPlats } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 const useSheets = () => {
@@ -34,7 +34,6 @@ const useSheets = () => {
       defaultPrice: "",
     },
   ]);
-  console.log("items", items);
   const changeItems = (index: number, filedName: string, value: any) => {
     let temp = [...items];
     temp[index] = {
@@ -58,6 +57,8 @@ const useSheets = () => {
     changeItems(sheetWeightIndex, "sheetSizes", temp);
   };
   const [updateState, setUpdateState] = useState([]);
+  console.log("updateState", updateState);
+
   const onClickOpenSheetWeightSizeWidget = (item) => {
     setSelectedSheetWeightSize(item);
     setIsAddNewSheetWightSize(true);
@@ -83,17 +84,12 @@ const useSheets = () => {
     [updateState]
   );
   const initialStateSheetWeights = (item: any) => {
-    let temp = [...item?.sheetWeights];
+    let temp = [...item?.platSizes];
     let final: any = [];
-    temp.map((sheetWeight) => {
-      final[sheetWeight?.id] = {
-        ...sheetWeight,
+    temp.map((platSize) => {
+      final[platSize?.id] = {
+        ...platSize,
       };
-      sheetWeight?.sheetSizes?.map((sheetSize) => {
-        final[sheetSize?.id] = {
-          ...sheetSize,
-        };
-      });
     });
 
     setUpdateState(final);
@@ -151,7 +147,7 @@ const useSheets = () => {
     async (selectedItem) => {
       const res = await callApi(
         "POST",
-        `/v1/administrator/sheet/add-sheet-weight?categoryName=${selectedItem?.categoryName}`,
+        `/v1/administrator/plat/add-plat-size?categoryName=${selectedItem?.categoryName}`,
         {
           ...items[0],
         }
@@ -174,11 +170,11 @@ const useSheets = () => {
     },
     [items]
   );
-  const deleteSheetweight = useCallback(
-    async (weightId: string, categoryName: string) => {
+  const deletePlatSize = useCallback(
+    async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
-        `/v1/administrator/sheet/delete-sheet-weight?categoryName=${categoryName}&weightId=${weightId}`
+        `/v1/administrator/plat/delete-plat-size?categoryName=${categoryName}&sizeId=${sizeId}`
       );
       if (res?.success) {
         setSnackbarStateValue({
@@ -198,62 +194,12 @@ const useSheets = () => {
     },
     []
   );
-  const deleteSheetweightSize = useCallback(
-    async (categoryName: string, weightId: string, sizeId: string) => {
+
+  const updatePlatSize = useCallback(
+    async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
-        `/v1/administrator/sheet/delete-sheet-weight-size?categoryName=${categoryName}&weightId=${weightId}&sizeId=${sizeId}`
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        getPlats();
-        onCloseDeleteModal();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
-    },
-    []
-  );
-  const updateSheetweight = useCallback(
-    async (weightId: string, categoryName: string) => {
-      const res = await callApi(
-        "POST",
-        `/v1/administrator/sheet/update-sheet-weight?categoryName=${categoryName}&weightId=${weightId}`,
-        {
-          ...updateState[weightId],
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        // getPlats();
-        // onCloseUpdateModal();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
-    },
-    [updateState]
-  );
-  const updateSheetWeightSizes = useCallback(
-    async (categoryName: string, weightId: string, sizeId: string) => {
-      const res = await callApi(
-        "POST",
-        `/v1/administrator/sheet/update-sheet-weight-size?categoryName=${categoryName}&weightId=${weightId}&sizeId=${sizeId}`,
+        `/v1/administrator/plat/update-plat-size?categoryName=${categoryName}&sizeId=${sizeId}`,
         {
           ...updateState[sizeId],
         }
@@ -264,8 +210,6 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        // getPlats();
-        // onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
           state: true,
@@ -275,33 +219,6 @@ const useSheets = () => {
       }
     },
     [updateState]
-  );
-  const addNewSheeWeightSizeByCategoryName = useCallback(
-    async (categoryName: string, weightId: string) => {
-      const res = await callApi(
-        "POST",
-        `/v1/administrator/sheet/add-sheet-weight=size?categoryName=${categoryName}&weightId=${weightId}`,
-        {
-          // ...items[0]?.sheetSizes[0],
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        getPlats();
-        setIsAddNewSheetWightSize(false);
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
-    },
-    [items]
   );
   useEffect(() => {
     getPlats();
@@ -333,16 +250,13 @@ const useSheets = () => {
     onOpnUpdateModal,
     setIsAddNewSheetWights,
     addNewSheeWeightByCategoryName,
-    deleteSheetweight,
-    deleteSheetweightSize,
+    deletePlatSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updateSheetweight,
-    updateSheetWeightSizes,
+    updatePlatSize,
     setIsAddNewSheetWightSize,
     onClickOpenSheetWeightSizeWidget,
-    addNewSheeWeightSizeByCategoryName,
   };
 };
 

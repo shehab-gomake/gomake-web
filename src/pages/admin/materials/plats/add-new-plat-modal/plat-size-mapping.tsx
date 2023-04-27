@@ -9,7 +9,7 @@ import { useStyle } from "./style";
 const PlatSizeMapping = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
 
   return (
     <>
@@ -25,9 +25,9 @@ const PlatSizeMapping = ({ index }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterCode")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.items[index]["code"]}
+              value={materialPlatsStateValue?.items[index]["code"]}
               onChange={(e: any) => {
-                materialSheetsStateValue?.changeItems(
+                materialPlatsStateValue?.changeItems(
                   index,
                   "code",
                   e.target.value
@@ -42,9 +42,9 @@ const PlatSizeMapping = ({ index }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterName")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.items[index]["name"]}
+              value={materialPlatsStateValue?.items[index]["name"]}
               onChange={(e: any) => {
-                materialSheetsStateValue?.changeItems(
+                materialPlatsStateValue?.changeItems(
                   index,
                   "name",
                   e.target.value
@@ -59,9 +59,9 @@ const PlatSizeMapping = ({ index }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterWidth")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.items[index]["width"]}
+              value={materialPlatsStateValue?.items[index]["width"]}
               onChange={(e: any) => {
-                materialSheetsStateValue?.changeItems(
+                materialPlatsStateValue?.changeItems(
                   index,
                   "width",
                   e.target.value
@@ -76,9 +76,9 @@ const PlatSizeMapping = ({ index }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterHeight")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.items[index]["height"]}
+              value={materialPlatsStateValue?.items[index]["height"]}
               onChange={(e: any) => {
-                materialSheetsStateValue?.changeItems(
+                materialPlatsStateValue?.changeItems(
                   index,
                   "height",
                   e.target.value
@@ -93,9 +93,9 @@ const PlatSizeMapping = ({ index }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterDefaultPrice")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.items[index]["defaultPrice"]}
+              value={materialPlatsStateValue?.items[index]["defaultPrice"]}
               onChange={(e: any) => {
-                materialSheetsStateValue?.changeItems(
+                materialPlatsStateValue?.changeItems(
                   index,
                   "defaultPrice",
                   e.target.value

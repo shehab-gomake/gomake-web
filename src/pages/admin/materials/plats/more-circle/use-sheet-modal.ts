@@ -17,7 +17,7 @@ const useSheetModal = ({ item }: any) => {
   };
 
   const deleteSheetByCategoryName = useCallback(async () => {
-    const res = await callApi("POST", `/v1/administrator/sheet/delete-sheet`, {
+    const res = await callApi("POST", `/v1/administrator/plat/delete-plat`, {
       categoryName: item?.categoryName,
     });
     if (res?.success) {

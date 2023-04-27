@@ -4,7 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton, Tooltip } from "@mui/material";
 import { GoMakeDeleteModal } from "@/components";
 import SaveIcon from "@mui/icons-material/Save";
-import { materialSheetsState } from "../store/plat";
+import { materialPlatsState } from "../store/plat";
 
 import { useStyle } from "./style";
 
@@ -17,13 +17,13 @@ const ControlIconsWidget = ({
   item,
 }) => {
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
   return (
     <>
       <div style={clasess.controlsIconContainer}>
         <Tooltip title={t("materials.sheetPaper.admin.delete")}>
           <IconButton
-            onClick={() => materialSheetsStateValue.onOpenDeleteModal(item)}
+            onClick={() => materialPlatsStateValue.onOpenDeleteModal(item)}
           >
             <DeleteIcon style={{ color: "#a1a2cd" }} />
           </IconButton>
@@ -35,12 +35,12 @@ const ControlIconsWidget = ({
         </Tooltip>
       </div>
 
-      {item === materialSheetsStateValue.selectedSheetWeight && (
+      {item === materialPlatsStateValue.selectedSheetWeight && (
         <GoMakeDeleteModal
           title={title}
           yesBtn={t("materials.sheetPaper.admin.delete")}
-          openModal={materialSheetsStateValue.openDeleteModal}
-          onClose={materialSheetsStateValue.onCloseDeleteModal}
+          openModal={materialPlatsStateValue.openDeleteModal}
+          onClose={materialPlatsStateValue.onCloseDeleteModal}
           subTitle={subTitle}
           onClickDelete={onClickDelete}
         />

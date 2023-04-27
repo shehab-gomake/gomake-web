@@ -12,7 +12,7 @@ import { useSheets } from "./use-plats";
 
 export default function Sheets() {
   const { t } = useTranslation();
-  const setMaterialSheetsState = useSetRecoilState<any>(materialPlatsState);
+  const setMaterialPlatsState = useSetRecoilState<any>(materialPlatsState);
   const {
     headerTable,
     allPlats,
@@ -40,20 +40,17 @@ export default function Sheets() {
     onOpnUpdateModal,
     setIsAddNewSheetWights,
     addNewSheeWeightByCategoryName,
-    deleteSheetweight,
-    deleteSheetweightSize,
+    deletePlatSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updateSheetweight,
-    updateSheetWeightSizes,
+    updatePlatSize,
     setIsAddNewSheetWightSize,
     onClickOpenSheetWeightSizeWidget,
-    addNewSheeWeightSizeByCategoryName,
   } = useSheets();
 
   useEffect(() => {
-    setMaterialSheetsState({
+    setMaterialPlatsState({
       headerTable,
       allPlats,
       openAddNewPlatModal,
@@ -80,16 +77,14 @@ export default function Sheets() {
       onOpnUpdateModal,
       setIsAddNewSheetWights,
       addNewSheeWeightByCategoryName,
-      deleteSheetweight,
-      deleteSheetweightSize,
+      deletePlatSize,
+
       setOpenDeleteModal,
       onCloseDeleteModal,
       onOpenDeleteModal,
-      updateSheetweight,
-      updateSheetWeightSizes,
+      updatePlatSize,
       setIsAddNewSheetWightSize,
       onClickOpenSheetWeightSizeWidget,
-      addNewSheeWeightSizeByCategoryName,
     });
   }, [
     headerTable,
@@ -118,16 +113,13 @@ export default function Sheets() {
     onOpnUpdateModal,
     setIsAddNewSheetWights,
     addNewSheeWeightByCategoryName,
-    deleteSheetweight,
-    deleteSheetweightSize,
+    deletePlatSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updateSheetweight,
-    updateSheetWeightSizes,
+    updatePlatSize,
     setIsAddNewSheetWightSize,
     onClickOpenSheetWeightSizeWidget,
-    addNewSheeWeightSizeByCategoryName,
   ]);
   return (
     <AdminAuthLayout>

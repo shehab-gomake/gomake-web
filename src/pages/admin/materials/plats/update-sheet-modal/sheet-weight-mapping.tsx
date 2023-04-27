@@ -1,20 +1,16 @@
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
-import { IconButton, Tooltip } from "@mui/material";
 import { GomakeTextInput } from "@/components";
-import AddIcon from "@mui/icons-material/Add";
 
 import { ControlIconsWidget } from "./control-icons-widget";
-import { SheetSizeMapping } from "./sheet-size-mapping";
-import { materialSheetsState } from "../store/plat";
+import { materialPlatsState } from "../store/plat";
 import { useStyle } from "./style";
-import { AddSheetWeightSizeMapping } from "./add-sheet-weight-size-mapping";
 
 const SheetWeightsMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
   return (
     <>
       <div
@@ -25,13 +21,13 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
           t={t}
           item={item}
           onClickDelete={() =>
-            materialSheetsStateValue.deleteSheetweight(
+            materialPlatsStateValue.deletePlatSize(
               item?.id,
               selectedItem?.categoryName
             )
           }
           onClickUpdate={() =>
-            materialSheetsStateValue.updateSheetweight(
+            materialPlatsStateValue.updatePlatSize(
               item?.id,
               selectedItem?.categoryName
             )
@@ -42,16 +38,16 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.weight")}
+              {t("materials.plat.admin.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterWeight")}
+              placeholder={t("materials.plat.admin.enterCode")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[item?.id]?.weight}
+              value={materialPlatsStateValue?.updateState[item?.id]?.code}
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialPlatsStateValue?.onChangeUpdateStateSheetWeights(
                   item?.id,
-                  "weight",
+                  "code",
                   e.target.value
                 );
               }}
@@ -59,14 +55,14 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.name")}
+              {t("materials.plat.admin.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterName")}
+              placeholder={t("materials.plat.admin.enterName")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[item?.id]?.name}
+              value={materialPlatsStateValue?.updateState[item?.id]?.name}
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialPlatsStateValue?.onChangeUpdateStateSheetWeights(
                   item?.id,
                   "name",
                   e.target.value
@@ -76,16 +72,16 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.thickness")}
+              {t("materials.plat.admin.width")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterThickness")}
+              placeholder={t("materials.plat.admin.enterWidth")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[item?.id]?.thickness}
+              value={materialPlatsStateValue?.updateState[item?.id]?.width}
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialPlatsStateValue?.onChangeUpdateStateSheetWeights(
                   item?.id,
-                  "thickness",
+                  "width",
                   e.target.value
                 );
               }}
@@ -93,57 +89,41 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.index")}
+              {t("materials.plat.admin.height")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterIndex")}
+              placeholder={t("materials.plat.admin.enterHeight")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[item?.id]?.index}
+              value={materialPlatsStateValue?.updateState[item?.id]?.height}
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialPlatsStateValue?.onChangeUpdateStateSheetWeights(
                   item?.id,
-                  "index",
+                  "height",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.plat.admin.defaultPrice")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.plat.admin.enterDefaultPrice")}
+              style={clasess.textInputStyle}
+              value={
+                materialPlatsStateValue?.updateState[item?.id]?.defaultPrice
+              }
+              onChange={(e: any) => {
+                materialPlatsStateValue?.onChangeUpdateStateSheetWeights(
+                  item?.id,
+                  "defaultPrice",
                   e.target.value
                 );
               }}
             />
           </div>
         </div>
-        <div style={clasess.titlePlusContainer}>
-          <div style={clasess.sizeSectionTitleStyle}>
-            {t("materials.sheetPaper.admin.sheetSizeSection")}
-          </div>
-
-          <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
-            <IconButton
-              onClick={() =>
-                materialSheetsStateValue.onClickOpenSheetWeightSizeWidget(item)
-              }
-            >
-              <AddIcon />
-            </IconButton>
-          </Tooltip>
-        </div>
-        {materialSheetsStateValue?.isAddNewSheetWightSize &&
-          materialSheetsStateValue?.selectedSheetWeightSize.id === item?.id && (
-            <AddSheetWeightSizeMapping
-              key={`SheetSizeMapping_${item?.id}`}
-              index={0}
-              sheetSize={item}
-              selectedItem={selectedItem}
-            />
-          )}
-        {item?.sheetSizes?.map((item2: any, index2: number) => {
-          return (
-            <SheetSizeMapping
-              key={`SheetSizeMapping_${index2}`}
-              index={index2}
-              sheetWeight={item}
-              sheetSize={item2}
-              selectedItem={selectedItem}
-            />
-          );
-        })}
       </div>
     </>
   );

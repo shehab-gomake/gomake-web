@@ -161,7 +161,9 @@
         "height": "Height",
         "enterHeight": "Enter Height",
         "defaultPrice": "Default Price",
-        "enterDefaultPrice": "Enter Default Price"
+        "enterDefaultPrice": "Enter Default Price",
+        "deletePlat": "Delete Plat",
+        "subTitleDeleteModal": "Are you sure you delete plat by categoryName"
       },
       "title": "Plats",
       "category": "Category",

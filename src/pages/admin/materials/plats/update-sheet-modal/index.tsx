@@ -7,21 +7,21 @@ import AddIcon from "@mui/icons-material/Add";
 
 import { AddSheetWeightsMapping } from "./add-sheet-weight-mapping";
 import { SheetWeightsMapping } from "./sheet-weight-mapping";
-import { materialSheetsState } from "../store/plat";
+import { materialPlatsState } from "../store/plat";
 import { useStyle } from "./style";
 
 const UpdateSheetModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
-  const selectedItem = materialSheetsStateValue?.selectedEditItem;
+  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const selectedItem = materialPlatsStateValue?.selectedEditItem;
 
   return (
     <>
       <GoMakeModal
-        openModal={materialSheetsStateValue?.openUpdateSheetModal}
-        modalTitle={`Edit ${selectedItem?.categoryName} Sheet`}
-        onClose={materialSheetsStateValue?.onCloseUpdateModal}
+        openModal={materialPlatsStateValue?.openUpdateSheetModal}
+        modalTitle={`Edit ${selectedItem?.categoryName} Plat`}
+        onClose={materialPlatsStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -41,33 +41,22 @@ const UpdateSheetModal = () => {
           <div style={clasess.secondSectionContainer}>
             <div style={clasess.titlePlusContainer}>
               <div style={clasess.firstSectionTitleStyle}>
-                {t("materials.sheetPaper.admin.sheetWeightsSection")}
+                {t("materials.plat.admin.platSizeSection")}
               </div>
-              {!materialSheetsStateValue?.isAddNewSheetWights && (
+              {!materialPlatsStateValue?.isAddNewSheetWights && (
                 <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
                   <IconButton
                     onClick={() => {
-                      materialSheetsStateValue.setItems([
+                      materialPlatsStateValue.setItems([
                         {
-                          weight: "",
+                          code: "",
                           name: "",
-                          thickness: "",
-                          index: "",
-                          sheetSizes: [
-                            {
-                              code: "",
-                              name: "",
-                              width: "",
-                              height: "",
-                              defaultPricePerTon: "",
-                              defaultPricePerUnit: "",
-                              direction: "",
-                              index: "",
-                            },
-                          ],
+                          width: "",
+                          height: "",
+                          defaultPrice: "",
                         },
                       ]);
-                      materialSheetsStateValue?.setIsAddNewSheetWights(true);
+                      materialPlatsStateValue?.setIsAddNewSheetWights(true);
                     }}
                   >
                     <AddIcon />
@@ -75,13 +64,13 @@ const UpdateSheetModal = () => {
                 </Tooltip>
               )}
             </div>
-            {materialSheetsStateValue?.isAddNewSheetWights && (
+            {materialPlatsStateValue?.isAddNewSheetWights && (
               <AddSheetWeightsMapping index={0} selectedItem={selectedItem} />
             )}
-            {selectedItem?.sheetWeights?.map((item: any, index: number) => {
+            {selectedItem?.platSizes?.map((item: any, index: number) => {
               return (
                 <SheetWeightsMapping
-                  key={`SheetWeightsMapping_${index}`}
+                  key={`platSizeMapping_${index}`}
                   index={index}
                   item={item}
                   selectedItem={selectedItem}

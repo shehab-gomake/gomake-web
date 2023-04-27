@@ -7,13 +7,13 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 
 import { AddsheetSizeMapping } from "./add-sheet-size-mapping";
-import { materialSheetsState } from "../store/plat";
+import { materialPlatsState } from "../store/plat";
 import { useStyle } from "./style";
 
 const AddSheetWeightsMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
 
   return (
     <>
@@ -21,16 +21,16 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.weight")}
+              {t("materials.plat.admin.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterWeight")}
+              placeholder={t("materials.plat.admin.enterCode")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.items[index]["weight"]}
+              value={materialPlatsStateValue?.items[index]["code"]}
               onChange={(e: any) => {
-                materialSheetsStateValue?.changeItems(
+                materialPlatsStateValue?.changeItems(
                   index,
-                  "weight",
+                  "code",
                   e.target.value
                 );
               }}
@@ -38,14 +38,14 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.name")}
+              {t("materials.plat.admin.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterName")}
+              placeholder={t("materials.plat.admin.enterName")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.items[index]["name"]}
+              value={materialPlatsStateValue?.items[index]["name"]}
               onChange={(e: any) => {
-                materialSheetsStateValue?.changeItems(
+                materialPlatsStateValue?.changeItems(
                   index,
                   "name",
                   e.target.value
@@ -55,16 +55,16 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.thickness")}
+              {t("materials.plat.admin.width")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterThickness")}
+              placeholder={t("materials.plat.admin.enterWidth")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.items[index]["thickness"]}
+              value={materialPlatsStateValue?.items[index]["width"]}
               onChange={(e: any) => {
-                materialSheetsStateValue?.changeItems(
+                materialPlatsStateValue?.changeItems(
                   index,
-                  "thickness",
+                  "width",
                   e.target.value
                 );
               }}
@@ -72,87 +72,44 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.index")}
+              {t("materials.plat.admin.height")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterIndex")}
+              placeholder={t("materials.plat.admin.enterHeight")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.items[index]["index"]}
+              value={materialPlatsStateValue?.items[index]["height"]}
               onChange={(e: any) => {
-                materialSheetsStateValue?.changeItems(
+                materialPlatsStateValue?.changeItems(
                   index,
-                  "index",
+                  "height",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.plat.admin.defaultPrice")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.plat.admin.enterDefaultPrice")}
+              style={clasess.textInputStyle}
+              value={materialPlatsStateValue?.items[index]["defaultPrice"]}
+              onChange={(e: any) => {
+                materialPlatsStateValue?.changeItems(
+                  index,
+                  "defaultPrice",
                   e.target.value
                 );
               }}
             />
           </div>
         </div>
-        <div style={clasess.titlePlusContainer}>
-          <div style={clasess.sizeSectionTitleStyle}>
-            {t("materials.sheetPaper.admin.sheetSizeSection")}
-          </div>
-          <Tooltip title={t("materials.sheetPaper.admin.addSheetSize")}>
-            <IconButton
-              onClick={() => {
-                const temp = [
-                  ...materialSheetsStateValue?.items[index]["sheetSizes"],
-                ];
-                temp.push({
-                  code: "",
-                  name: "",
-                  width: "",
-                  height: "",
-                  defaultPricePerTon: "",
-                  defaultPricePerUnit: "",
-                  direction: "",
-                  index: "",
-                });
-                materialSheetsStateValue?.changeItems(
-                  index,
-                  "sheetSizes",
-                  temp
-                );
-              }}
-            >
-              <AddIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={t("materials.sheetPaper.admin.removeSheetSize")}>
-            <IconButton
-              onClick={() => {
-                const temp = [
-                  ...materialSheetsStateValue?.items[index]["sheetSizes"],
-                ];
-                temp.pop();
-                materialSheetsStateValue?.changeItems(
-                  index,
-                  "sheetSizes",
-                  temp
-                );
-              }}
-            >
-              <RemoveIcon />
-            </IconButton>
-          </Tooltip>
-        </div>
-        {materialSheetsStateValue?.items[index]["sheetSizes"]?.map(
-          (item: any, index2: number) => {
-            return (
-              <AddsheetSizeMapping
-                key={`SheetSizeMapping_${index2}`}
-                index={index2}
-                sheetWeightIndex={index}
-                sheetSize={materialSheetsStateValue?.items[index]["sheetSizes"]}
-              />
-            );
-          }
-        )}
         <div style={clasess.btnsWightSheetContainer}>
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialSheetsStateValue?.setIsAddNewSheetWights(false)
+                materialPlatsStateValue?.setIsAddNewSheetWights(false)
               }
               style={clasess.cancelBtnStyle}
             >
@@ -162,7 +119,7 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialSheetsStateValue?.addNewSheeWeightByCategoryName(
+                materialPlatsStateValue?.addNewSheeWeightByCategoryName(
                   selectedItem
                 )
               }

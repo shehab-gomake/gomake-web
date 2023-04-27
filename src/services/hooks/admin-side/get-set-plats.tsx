@@ -1,6 +1,6 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../call-api.interface";
-import { SheetSettingsWidget } from "@/pages/admin/materials/sheets/more-circle";
+import { SheetSettingsWidget } from "@/pages/admin/materials/plats/more-circle";
 
 const getAndSetGetAllPlats = async (
   callApi: ICallApi,
