@@ -15,7 +15,7 @@ const useLaminations = () => {
     ],
     []
   );
-  const [openAddSheetModal, setOpenAddSheetModal] = useState(false);
+  const [openAddLaminationModal, setOpenAddLaminationModal] = useState(false);
   const [openUpdateLaminationModal, setOpenUpdateLaminationModal] =
     useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -26,20 +26,17 @@ const useLaminations = () => {
   const [selectedLaminationSize, setSelectedLaminationSize] = useState({});
   const [items, setItems] = useState([
     {
-      weight: "",
+      code: "",
+      fitToPrintType: "",
+      height: "",
       name: "",
-      thickness: "",
-      index: "",
-      sheetSizes: [
+      width: "",
+      laminationThicknesses: [
         {
           code: "",
-          name: "",
-          width: "",
-          height: "",
-          defaultPricePerTon: "",
-          defaultPricePerUnit: "",
-          direction: "",
-          index: "",
+          coldOrHot: "",
+          defaultPrice: "",
+          thickness: "",
         },
       ],
     },
@@ -59,12 +56,12 @@ const useLaminations = () => {
     filedName: string,
     value: any
   ) => {
-    let temp = [...items[sheetWeightIndex]["sheetSizes"]];
+    let temp = [...items[sheetWeightIndex]["laminationThicknesses"]];
     temp[sheetSizeIndex] = {
       ...temp[sheetSizeIndex],
       [filedName]: value,
     };
-    changeItems(sheetWeightIndex, "sheetSizes", temp);
+    changeItems(sheetWeightIndex, "laminationThicknesses", temp);
   };
   const [updateState, setUpdateState] = useState([]);
   const onChangeUpdateStateSheetWeights = useCallback(
@@ -79,7 +76,6 @@ const useLaminations = () => {
     [updateState]
   );
   const initialStateLaminationSizes = (item: any) => {
-    console.log("item", item);
     let temp = [...item?.laminationSizes];
     let final: any = [];
     temp.map((laminationSize) => {
@@ -100,10 +96,27 @@ const useLaminations = () => {
     await getAndSetGetAllLaminations(callApi, setAllLaminations);
   }, []);
   const onCloseModalAdded = () => {
-    setOpenAddSheetModal(false);
+    setOpenAddLaminationModal(false);
   };
   const onOpnModalAdded = () => {
-    setOpenAddSheetModal(true);
+    setItems([
+      {
+        code: "",
+        fitToPrintType: "",
+        height: "",
+        name: "",
+        width: "",
+        laminationThicknesses: [
+          {
+            code: "",
+            coldOrHot: "",
+            defaultPrice: "",
+            thickness: "",
+          },
+        ],
+      },
+    ]);
+    setOpenAddLaminationModal(true);
   };
   const onCloseUpdateModal = async () => {
     getSheets();
@@ -123,8 +136,8 @@ const useLaminations = () => {
     setSelectedLaminationSize(item);
   };
 
-  const addNewSupplierSheet = useCallback(async () => {
-    const res = await callApi("POST", `/v1/administrator/sheet/add-sheet`, {
+  const addNewSupplierLamination = useCallback(async () => {
+    const res = await callApi("POST", `/v1/administrator/add-lamination`, {
       categoryName,
       laminationSizes: items,
     });
@@ -279,7 +292,7 @@ const useLaminations = () => {
   return {
     headerTable,
     allLaminations,
-    openAddSheetModal,
+    openAddLaminationModal,
     items,
     categoryName,
     openUpdateLaminationModal,
@@ -294,7 +307,7 @@ const useLaminations = () => {
     changeItems,
     setItems,
     setCategoryName,
-    addNewSupplierSheet,
+    addNewSupplierLamination,
     changeItemsSheetSize,
     setOpenUpdateLaminationModal,
     onCloseUpdateModal,

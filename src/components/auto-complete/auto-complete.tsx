@@ -52,7 +52,7 @@ const GoMakeAutoComplate = ({
   disabled,
   multiple = false,
 }: {
-  value?: string;
+  value?: string | string[];
   onChange?: any;
   style?: any;
   error?: any;
@@ -90,6 +90,9 @@ const GoMakeAutoComplate = ({
       isOptionEqualToValue={(option: any, value: any) =>
         option?.id === value?.id
       }
+      getOptionSelected={(option: any, value: any) => {
+        return option.value === value.value;
+      }}
     />
   );
 };

@@ -7,6 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { materialLaminationsState } from "./store/lamination";
 //import { AddSheetModal } from "./add-sheet-modal";
 import { useStyle } from "./style";
+import { AddLaminationModal } from "./add-sheet-modal";
 
 const HeaderFilter = () => {
   const { t } = useTranslation();
@@ -25,9 +26,10 @@ const HeaderFilter = () => {
             materialLaminationsStateValue?.onOpnModalAdded();
           }}
         >
-          {t("materials.sheetPaper.admin.addNewSheet")}
+          {t("materials.lamination.admin.addNewLamination")}
         </GomakePrimaryButton>
       </div>
+      <AddLaminationModal />
     </>
   );
 };
