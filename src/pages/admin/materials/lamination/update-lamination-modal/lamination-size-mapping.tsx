@@ -148,6 +148,7 @@ const LaminationSizesMapping = ({ index, item, selectedItem }) => {
               // materialLaminationsStateValue?.updateState[item?.id]
               // ?.fitToPrintType[0]
               // }
+
               value={
                 materialLaminationsStateValue?.updateState[item?.id]
                   ?.fitToPrintType
