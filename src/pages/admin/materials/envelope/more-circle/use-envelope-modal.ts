@@ -17,9 +17,13 @@ const usePlatsModal = ({ item }: any) => {
   };
 
   const deletePlatByCategoryName = useCallback(async () => {
-    const res = await callApi("POST", `/v1/administrator/plat/delete-plat`, {
-      categoryName: item?.categoryName,
-    });
+    const res = await callApi(
+      "POST",
+      `/v1/administrator/envelope/delete-envelope`,
+      {
+        categoryName: item?.categoryName,
+      }
+    );
     if (res?.success) {
       setSnackbarStateValue({
         state: true,

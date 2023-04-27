@@ -53,6 +53,9 @@ const UpdatePlatModal = () => {
                           name: "",
                           width: "",
                           height: "",
+                          stock: "",
+                          quantityInPackage: "",
+                          isWithWindow: false,
                           defaultPrice: "",
                         },
                       ]);
@@ -70,7 +73,7 @@ const UpdatePlatModal = () => {
                 selectedItem={selectedItem}
               />
             )}
-            {selectedItem?.platSizes?.map((item: any, index: number) => {
+            {selectedItem?.envelopeSizes?.map((item: any, index: number) => {
               return (
                 <SheetWeightsMapping
                   key={`platSizeMapping_${index}`}

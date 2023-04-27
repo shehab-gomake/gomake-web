@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { getAndSetGetAllPlats } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getAndSetGetAllEnvelope } from "@/services/hooks/admin-side/get-set-envelope";
 
@@ -32,6 +31,9 @@ const useAllEnvelops = () => {
       name: "",
       width: "",
       height: "",
+      stock: "",
+      quantityInPackage: "",
+      isWithWindow: false,
       defaultPrice: "",
     },
   ]);
@@ -55,11 +57,11 @@ const useAllEnvelops = () => {
     [updateState]
   );
   const initialStateSheetWeights = (item: any) => {
-    let temp = [...item?.platSizes];
+    let temp = [...item?.envelopeSizes];
     let final: any = [];
-    temp.map((platSize) => {
-      final[platSize?.id] = {
-        ...platSize,
+    temp.map((envelopeSize) => {
+      final[envelopeSize?.id] = {
+        ...envelopeSize,
       };
     });
 
@@ -122,7 +124,7 @@ const useAllEnvelops = () => {
     async (selectedItem: any) => {
       const res = await callApi(
         "POST",
-        `/v1/administrator/plat/add-plat-size?categoryName=${selectedItem?.categoryName}`,
+        `/v1/administrator/envelope/add-envelope-size?categoryName=${selectedItem?.categoryName}`,
         {
           ...items[0],
         }
@@ -149,7 +151,7 @@ const useAllEnvelops = () => {
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
-        `/v1/administrator/plat/delete-plat-size?categoryName=${categoryName}&sizeId=${sizeId}`
+        `/v1/administrator/envelope/delete-envelope-size?categoryName=${categoryName}&sizeId=${sizeId}`
       );
       if (res?.success) {
         setSnackbarStateValue({
@@ -174,7 +176,7 @@ const useAllEnvelops = () => {
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
-        `/v1/administrator/plat/update-plat-size?categoryName=${categoryName}&sizeId=${sizeId}`,
+        `/v1/administrator/envelope/update-envelope-size?categoryName=${categoryName}&sizeId=${sizeId}`,
         {
           ...updateState[sizeId],
         }

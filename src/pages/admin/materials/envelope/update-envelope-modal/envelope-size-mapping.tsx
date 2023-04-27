@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
-import { GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { ControlIconsWidget } from "./control-icons-widget";
 import { materialEnvelopeState } from "../store/plat";
@@ -100,6 +100,63 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
                   item?.id,
                   "height",
                   e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.envelops.admin.stock")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.envelops.admin.enterStock")}
+              style={clasess.textInputStyle}
+              value={materialPlatsStateValue?.updateState[item?.id]?.stock}
+              onChange={(e: any) => {
+                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                  item?.id,
+                  "stock",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.envelops.admin.quantityInPackage")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.envelops.admin.enterQuantityInPackage")}
+              style={clasess.textInputStyle}
+              value={
+                materialPlatsStateValue?.updateState[item?.id]
+                  ?.quantityInPackage
+              }
+              onChange={(e: any) => {
+                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                  item?.id,
+                  "quantityInPackage",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div style={{ width: 193.6 }}>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.envelops.admin.isWithWindow")}
+            </div>
+            <GoMakeAutoComplate
+              options={[true, false]}
+              style={clasess.textInputStyle}
+              placeholder={t("materials.envelops.admin.enterisWithWindow")}
+              value={
+                materialPlatsStateValue?.updateState[item?.id]?.isWithWindow
+              }
+              onChange={(e: any, value: any) => {
+                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                  item?.id,
+                  "isWithWindow",
+                  value
                 );
               }}
             />

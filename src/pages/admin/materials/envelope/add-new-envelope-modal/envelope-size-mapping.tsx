@@ -129,11 +129,11 @@ const PlatSizeMapping = ({ index }) => {
               style={clasess.textInputStyle}
               placeholder={t("materials.envelops.admin.enterisWithWindow")}
               value={materialPlatsStateValue?.items[index]["isWithWindow"]}
-              onChange={(e: any) => {
+              onChange={(e: any, value: any) => {
                 materialPlatsStateValue?.changeItems(
                   index,
                   "isWithWindow",
-                  e.target.value
+                  value
                 );
               }}
             />

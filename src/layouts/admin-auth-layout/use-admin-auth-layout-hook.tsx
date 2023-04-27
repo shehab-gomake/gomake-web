@@ -56,6 +56,11 @@ const useAuthLayoutHook = () => {
             path: "/admin/materials/sheets",
           },
           {
+            key: "lamination",
+            title: t("materials.lamination.admin.title"),
+            path: "/admin/materials/lamination",
+          },
+          {
             key: "plats",
             title: t("materials.plat.admin.title"),
             path: "/admin/materials/plats",
@@ -64,11 +69,6 @@ const useAuthLayoutHook = () => {
             key: "envelopes",
             title: t("materials.envelops.admin.title"),
             path: "/admin/materials/envelope",
-          },
-          {
-            key: "lamination",
-            title: t("materials.lamination.admin.title"),
-            path: "admin/materials/lamination",
           },
         ],
         icon: () => {
