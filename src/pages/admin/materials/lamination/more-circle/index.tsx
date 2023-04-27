@@ -4,7 +4,7 @@ import { GoMakeDeleteModal } from "@/components";
 import { IconWidget } from "./icon-widget";
 import moreCircle from "@/icons/more-circle.png";
 import { IconButton, Tooltip } from "@mui/material";
-import { useSheetModal } from "./use-sheet-modal";
+import { useSheetModal } from "./use-lamination-modal";
 import { UpdateSheetModal } from "../update-lamination-modal";
 import { materialLaminationsState } from "../store/lamination";
 import { GoMakeDeleteMaterialModal } from "@/widgets";
