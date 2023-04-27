@@ -162,6 +162,14 @@ const useStyle = () => {
         alignItems: "center",
         alignSelf: "end",
       },
+      multiSelectStyle: {
+        backgroundColor: "#FFFFFF",
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignitems: "center",
+        justifyContent: "center",
+      },
     };
   }, []);
   return {

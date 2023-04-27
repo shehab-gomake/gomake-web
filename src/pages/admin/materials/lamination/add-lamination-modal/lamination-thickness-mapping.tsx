@@ -3,44 +3,23 @@ import { useRecoilValue } from "recoil";
 
 import { GomakeTextInput } from "@/components";
 
-import { ControlIconsWidget } from "./control-icons-widget";
 import { materialLaminationsState } from "../store/lamination";
 import { useStyle } from "./style";
 
 const LaminationThicknessesMapping = ({
   index,
-  laminationThicknes,
   laminationSize,
-  selectedItem,
+  laminationThicknes,
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(
+  const materialLaminationsStateValue = useRecoilValue<any>(
     materialLaminationsState
   );
+
   return (
     <>
       <div key={index} style={clasess.addSizesInputsSecondSelection}>
-        <ControlIconsWidget
-          t={t}
-          onClickDelete={() =>
-            materialSheetsStateValue.deleteSheetweightSize(
-              selectedItem?.categoryName,
-              laminationSize?.id,
-              laminationThicknes?.id
-            )
-          }
-          item={laminationThicknes}
-          onClickUpdate={() =>
-            materialSheetsStateValue.updateSheetWeightSizes(
-              selectedItem?.categoryName,
-              laminationSize?.id,
-              laminationThicknes?.id
-            )
-          }
-          title={"Delete Sheet Weight Size"}
-          subTitle={"Are you sure you want to delete sheet weight size?"}
-        />
         <div style={clasess.inputSizesContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
@@ -49,13 +28,11 @@ const LaminationThicknessesMapping = ({
             <GomakeTextInput
               placeholder={t("materials.lamination.admin.enterCode")}
               style={clasess.textInputStyle}
-              value={
-                materialSheetsStateValue?.updateState[laminationThicknes?.id]
-                  ?.code
-              }
+              value={laminationThicknes[index]["code"]}
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
-                  laminationThicknes?.id,
+                materialLaminationsStateValue?.changeItemsSheetSize(
+                  laminationSize,
+                  index,
                   "code",
                   e.target.value
                 );
@@ -69,13 +46,11 @@ const LaminationThicknessesMapping = ({
             <GomakeTextInput
               placeholder={t("materials.lamination.admin.enterColdOrHot")}
               style={clasess.textInputStyle}
-              value={
-                materialSheetsStateValue?.updateState[laminationThicknes?.id]
-                  ?.coldOrHot
-              }
+              value={laminationThicknes[index]["coldOrHot"]}
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
-                  laminationThicknes?.id,
+                materialLaminationsStateValue?.changeItemsSheetSize(
+                  laminationSize,
+                  index,
                   "coldOrHot",
                   e.target.value
                 );
@@ -89,13 +64,11 @@ const LaminationThicknessesMapping = ({
             <GomakeTextInput
               placeholder={t("materials.lamination.admin.enterDefaultPrice")}
               style={clasess.textInputStyle}
-              value={
-                materialSheetsStateValue?.updateState[laminationThicknes?.id]
-                  ?.defaultPrice
-              }
+              value={laminationThicknes[index]["defaultPrice"]}
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
-                  laminationThicknes?.id,
+                materialLaminationsStateValue?.changeItemsSheetSize(
+                  laminationSize,
+                  index,
                   "defaultPrice",
                   e.target.value
                 );
@@ -109,13 +82,11 @@ const LaminationThicknessesMapping = ({
             <GomakeTextInput
               placeholder={t("materials.lamination.admin.enterThickness")}
               style={clasess.textInputStyle}
-              value={
-                materialSheetsStateValue?.updateState[laminationThicknes?.id]
-                  ?.thickness
-              }
+              value={laminationThicknes[index]["thickness"]}
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
-                  laminationThicknes?.id,
+                materialLaminationsStateValue?.changeItemsSheetSize(
+                  laminationSize,
+                  index,
                   "thickness",
                   e.target.value
                 );

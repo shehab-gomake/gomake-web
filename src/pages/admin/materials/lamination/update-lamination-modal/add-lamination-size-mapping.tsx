@@ -1,27 +1,31 @@
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
-import { IconButton, TextField, Tooltip } from "@mui/material";
+import {
+  GoMakeAutoComplate,
+  GomakePrimaryButton,
+  GomakeTextInput,
+} from "@/components";
+import { IconButton, Tooltip } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
 
-import { LaminationThicknessesMapping } from "./lamination-thickness-mapping";
+import { AddLaminationThicknessMapping } from "./add-lamination-thicknesses-mapping";
 import { materialLaminationsState } from "../store/lamination";
 import { useStyle } from "./style";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-const LaminationSizesMapping = ({ index }) => {
+const AddLaminationSizeMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const [fit, setFit] = useState([]);
   const materialLaminationsStateValue = useRecoilValue<any>(
     materialLaminationsState
   );
-
+  const [fit, setFit] = useState([]);
   const onChangeFit = useCallback(async (e: any, value: any) => {
     setFit(value);
   }, []);
+
   useEffect(() => {
     const mappedFit = fit.map((item) => item.lable);
     materialLaminationsStateValue?.changeItems(
@@ -37,13 +41,9 @@ const LaminationSizesMapping = ({ index }) => {
       { lable: "String3", id: 3 },
     ];
   }, []);
-
   return (
     <>
-      <div
-        key={index}
-        style={index & 1 ? clasess.tableSecondSections : clasess.tableSections}
-      >
+      <div key={index} style={clasess.tableSecondSections}>
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
@@ -119,14 +119,7 @@ const LaminationSizesMapping = ({ index }) => {
             </div>
             <GoMakeAutoComplate
               options={muliSelectOptions}
-              style={{
-                backgroundColor: "#FFFFFF",
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                alignitems: "center",
-                justifyContent: "center",
-              }}
+              style={clasess.multiSelectStyle}
               placeholder={t("materials.lamination.admin.fitToPrintType")}
               multiple
               getOptionLabel={(option: any) => option.lable}
@@ -136,10 +129,10 @@ const LaminationSizesMapping = ({ index }) => {
         </div>
         <div style={clasess.titlePlusContainer}>
           <div style={clasess.sizeSectionTitleStyle}>
-            {t("materials.lamination.admin.laminationThicknessesSection")}
+            {t("materials.lamination.admin.laminationThicknessSection")}
           </div>
           <Tooltip
-            title={t("materials.lamination.admin.addNewLaminationThicknes")}
+            title={t("materials.lamination.admin.addNewLaminationThickness")}
           >
             <IconButton
               onClick={() => {
@@ -164,9 +157,7 @@ const LaminationSizesMapping = ({ index }) => {
               <AddIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip
-            title={t("materials.lamination.admin.removeLaminationThicknes")}
-          >
+          <Tooltip title={t("materials.sheetPaper.admin.removeSheetSize")}>
             <IconButton
               onClick={() => {
                 const temp = [
@@ -190,11 +181,11 @@ const LaminationSizesMapping = ({ index }) => {
           "laminationThicknesses"
         ]?.map((item: any, index2: number) => {
           return (
-            <LaminationThicknessesMapping
-              key={`LaminationThicknessesMapping_${index2}`}
+            <AddLaminationThicknessMapping
+              key={`laminationSizesMapping_${index2}`}
               index={index2}
-              laminationSize={index}
-              laminationThicknes={
+              laminationSizeIndex={index}
+              laminationThickness={
                 materialLaminationsStateValue?.items[index][
                   "laminationThicknesses"
                 ]
@@ -202,8 +193,32 @@ const LaminationSizesMapping = ({ index }) => {
             />
           );
         })}
+        <div style={clasess.btnsWightSheetContainer}>
+          <div style={clasess.addSheetBtnContainer}>
+            <GomakePrimaryButton
+              onClick={() =>
+                materialLaminationsStateValue?.setIsAddNewLaminationSizes(false)
+              }
+              style={clasess.cancelBtnStyle}
+            >
+              {t("materials.sheetPaper.admin.cancel")}
+            </GomakePrimaryButton>
+          </div>
+          <div style={clasess.addSheetBtnContainer}>
+            <GomakePrimaryButton
+              onClick={() =>
+                materialLaminationsStateValue?.addNewSheeWeightByCategoryName(
+                  selectedItem
+                )
+              }
+              style={clasess.addBtnStyle}
+            >
+              {t("materials.sheetPaper.admin.save")}
+            </GomakePrimaryButton>
+          </div>
+        </div>
       </div>
     </>
   );
 };
-export { LaminationSizesMapping };
+export { AddLaminationSizeMapping };

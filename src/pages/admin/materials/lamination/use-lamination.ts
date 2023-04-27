@@ -161,7 +161,7 @@ const useLaminations = () => {
     async (selectedItem) => {
       const res = await callApi(
         "POST",
-        `/v1/administrator/sheet/add-sheet-weight?categoryName=${selectedItem?.categoryName}`,
+        `/v1/administrator/lamination/add-lamination-size?categoryName=${selectedItem?.categoryName}`,
         {
           ...items[0],
         }
@@ -188,7 +188,7 @@ const useLaminations = () => {
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
-        `/Administrator/DeleteLaminationSize?categoryName=${categoryName}&sizeId=${sizeId}`
+        `/v1/administrator/delete-lamination-size?categoryName=${categoryName}&sizeId=${sizeId}`
       );
       if (res?.success) {
         setSnackbarStateValue({
@@ -208,11 +208,11 @@ const useLaminations = () => {
     },
     []
   );
-  const deleteSheetweightSize = useCallback(
-    async (categoryName: string, weightId: string, sizeId: string) => {
+  const deletelLaminationSizeThickness = useCallback(
+    async (categoryName: string, thicknessId: string, sizeId: string) => {
       const res = await callApi(
         "POST",
-        `/v1/administrator/sheet/delete-sheet-weight-size?categoryName=${categoryName}&weightId=${weightId}&sizeId=${sizeId}`
+        `/v1/administrator/delete-lamination-size-thickness?categoryName=${categoryName}&thicknessId=${thicknessId}&sizeId=${sizeId}`
       );
       if (res?.success) {
         setSnackbarStateValue({
@@ -232,13 +232,13 @@ const useLaminations = () => {
     },
     []
   );
-  const updateSheetweight = useCallback(
-    async (weightId: string, categoryName: string) => {
+  const updateLaminationSize = useCallback(
+    async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
-        `/v1/administrator/sheet/update-sheet-weight?categoryName=${categoryName}&weightId=${weightId}`,
+        `/v1/administrator/update-lamination-size?categoryName=${categoryName}&sizeId=${sizeId}`,
         {
-          ...updateState[weightId],
+          ...updateState[sizeId],
         }
       );
       if (res?.success) {
@@ -259,11 +259,11 @@ const useLaminations = () => {
     },
     [updateState]
   );
-  const updateSheetWeightSizes = useCallback(
-    async (categoryName: string, weightId: string, sizeId: string) => {
+  const updateLaminationSizeThickness = useCallback(
+    async (categoryName: string, thicknessId: string, sizeId: string) => {
       const res = await callApi(
         "POST",
-        `/v1/administrator/sheet/update-sheet-weight-size?categoryName=${categoryName}&weightId=${weightId}&sizeId=${sizeId}`,
+        ` /v1/administrator/update-lamination-size-thickness?categoryName=${categoryName}&thicknessId=${thicknessId}&sizeId=${sizeId}`,
         {
           ...updateState[sizeId],
         }
@@ -315,12 +315,12 @@ const useLaminations = () => {
     setIsAddNewLaminationSizes,
     addNewSheeWeightByCategoryName,
     deleteLaminationSize,
-    deleteSheetweightSize,
+    deletelLaminationSizeThickness,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updateSheetweight,
-    updateSheetWeightSizes,
+    updateLaminationSize,
+    updateLaminationSizeThickness,
   };
 };
 

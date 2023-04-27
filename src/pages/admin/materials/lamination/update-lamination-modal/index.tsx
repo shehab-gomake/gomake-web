@@ -5,7 +5,7 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddSheetWeightsMapping } from "./add-sheet-weight-mapping";
+import { AddLaminationSizeMapping } from "./add-lamination-size-mapping";
 import { LaminationSizesMapping } from "./lamination-size-mapping";
 import { materialLaminationsState } from "../store/lamination";
 import { useStyle } from "./style";
@@ -17,7 +17,6 @@ const UpdateSheetModal = () => {
     materialLaminationsState
   );
   const selectedItem = materialLaminationsStateValue?.selectedEditItem;
-  console.log("materialLaminationsStateValue", materialLaminationsStateValue);
   return (
     <>
       <GoMakeModal
@@ -64,7 +63,7 @@ const UpdateSheetModal = () => {
               )}
             </div>
             {materialLaminationsStateValue?.isAddNewLaminationSizes && (
-              <AddSheetWeightsMapping index={0} selectedItem={selectedItem} />
+              <AddLaminationSizeMapping index={0} selectedItem={selectedItem} />
             )}
             {selectedItem?.laminationSizes?.map((item: any, index: number) => {
               return (

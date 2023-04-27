@@ -14,7 +14,6 @@ const getAndSetGetAllLaminations = async (
   );
   const _data = returnResult(result, undefined);
   const mapData = _data.map((item: any) => {
-    console.log("item", item);
     return {
       categoryName: item?.categoryName,
       settings: <LaminationSettingsWidget item={item} />,

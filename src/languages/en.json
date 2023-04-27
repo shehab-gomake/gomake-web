@@ -138,6 +138,8 @@
         "subTitleDeleteModal": "Are you sure to delete the lamination by category name",
         "laminationSizesSection": "Lamination sizes section",
         "addNewLaminationSize": "Add new lamination size",
+        "laminationThicknessSection": "Lamination thicknesses section",
+        "addNewLaminationThickness": "Add new lamination thickness",
         "removeLaminationSize": "Remove lamination size",
         "lamination": "Lamination",
         "height": "Height",
@@ -159,7 +161,11 @@
         "enterDefaultPrice": "Enter default price",
         "thickness": "Thickness",
         "enterThickness": "Enter Thickness",
-        "addNewLamination": "Add new Lamination"
+        "addNewLamination": "Add new Lamination",
+        "deleteLaminationSizeTitle": "Delete lamination size",
+        "deleteLaminationSizeSubTitle": "Are you sure you want to delete lamination size?",
+        "deleteLaminationSizetTicknessTitle": "Delete lamination size tickness",
+        "deleteLaminationSizethicknessSubTitle": "Are you sure you want to delete lamination size Tickness?"
       },
       "title": "Lamination",
       "category": "Category",

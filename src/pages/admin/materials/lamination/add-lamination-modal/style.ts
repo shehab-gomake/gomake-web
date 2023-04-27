@@ -123,6 +123,14 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
       },
+      multiSelectStyle: {
+        backgroundColor: "#FFFFFF",
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignitems: "center",
+        justifyContent: "center",
+      },
     };
   }, []);
   return {

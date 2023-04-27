@@ -7,7 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { materialLaminationsState } from "./store/lamination";
 //import { AddSheetModal } from "./add-sheet-modal";
 import { useStyle } from "./style";
-import { AddLaminationModal } from "./add-sheet-modal";
+import { AddLaminationModal } from "./add-lamination-modal";
 
 const HeaderFilter = () => {
   const { t } = useTranslation();

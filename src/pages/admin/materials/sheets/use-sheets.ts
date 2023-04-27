@@ -78,7 +78,6 @@ const useSheets = () => {
     [updateState]
   );
   const initialStateSheetWeights = (item: any) => {
-    console.log("item", item);
     let temp = [...item?.sheetWeights];
     let final: any = [];
     temp.map((sheetWeight) => {
