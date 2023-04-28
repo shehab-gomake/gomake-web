@@ -8,25 +8,23 @@ import { LaminationThicknessesMapping } from "./lamination-thicknesses-mapping";
 import { materialLaminationsState } from "../store/lamination";
 import { useStyle } from "./style";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { AddLaminationThicknessMapping } from "./add-lamination-thicknesses-mapping";
 
 const LaminationSizesMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const [fit, setFit] = useState([]);
   const materialLaminationsStateValue = useRecoilValue<any>(
     materialLaminationsState
   );
-  const onChangeFit = useCallback(async (e: any, value: any) => {
-    setFit(value);
-  }, []);
-  useEffect(() => {
-    const mappedFit = fit.map((item) => item.lable);
-    materialLaminationsStateValue?.changeItems(
-      index,
-      "fitToPrintType",
-      mappedFit
-    );
-  }, [fit]);
+
+  // useEffect(() => {
+  //   const mappedFit = fit.map((item) => item?.lable);
+  //   materialLaminationsStateValue?.changeItems(
+  //     index,
+  //     "fitToPrintType",
+  //     mappedFit
+  //   );
+  // }, [fit]);
   const muliSelectOptions = useMemo(() => {
     return [
       { lable: "String1", id: 1 },
@@ -142,13 +140,14 @@ const LaminationSizesMapping = ({ index, item, selectedItem }) => {
               style={clasess.multiSelectStyle}
               placeholder={t("materials.lamination.admin.fitToPrintType")}
               multiple
-              getOptionLabel={(option: any) => option.lable}
-              onChange={onChangeFit}
-              //defaultValue={
-              // materialLaminationsStateValue?.updateState[item?.id]
-              // ?.fitToPrintType[0]
-              // }
-
+              getOptionLabel={(option: any) => option}
+              onChange={(e: any, value: any) => {
+                materialLaminationsStateValue?.onChangeUpdateStateSheetWeights(
+                  item?.id,
+                  "fitToPrintType",
+                  value.map((item: any) => item?.lable)
+                );
+              }}
               value={
                 materialLaminationsStateValue?.updateState[item?.id]
                   ?.fitToPrintType
