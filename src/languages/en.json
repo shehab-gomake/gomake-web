@@ -291,6 +291,22 @@
       "settings": "Settings"
     },
     "printingMaterials": {
+      "admin": {
+        "title": "Material Roll Printing",
+        "addNewMaterialRollPrinting": "Add New Material Roll Printing",
+        "materialRollPrintingSizeSection": "Material Roll Printing Size Section",
+        "addNewMaterialRollPrintingSize": "Add new Material Roll Printing size",
+        "removeMaterialRollPrintingSize": "Remove last Material Roll Printing size",
+        "weightPerSquareMeter": "Weight per square meter",
+        "enterWeightPerSquareMeter": "Enter Weight Per Square Meter",
+        "deleteTube": "Delete tube",
+        "withPremier": "With premier",
+        "selectWithPremier": "Select With Premier",
+        "stock": "Stock",
+        "enterStock": "Enter Stock",
+        "defaultPricePerSquareMeter": "Default Price Per Square",
+        "enterDefaultPricePerSquareMeter": "Enter Default Price Per Square Meter"
+      },
       "title": "Printing material for rolls",
       "category": "Category",
       "supplier": "Supplier",
