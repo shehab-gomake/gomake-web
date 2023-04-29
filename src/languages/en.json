@@ -236,7 +236,6 @@
         "enterStock": "Enter Stock",
         "quantityInPackage": "Quantity in package",
         "enterQuantityInPackage": "Enter Quantity in package",
-
         "isWithWindow": "is with window",
         "enterisWithWindow": "Choose true or false",
         "deletePlat": "Delete Plat",
@@ -266,6 +265,20 @@
       "code": "Code"
     },
     "tubes": {
+      "admin": {
+        "title": "Tubes",
+        "addNewTubes": "Add New Tube",
+        "tubesSizeSection": "Tube Size Section",
+        "addTubesSize": "Add new tube size",
+        "removeTubesSize": "Remove last tube size",
+        "lenght": "Lenght",
+        "enterLenght": "Enter Lenght",
+        "diameter": "Diameter",
+        "enterDiameter": "Enter Diameter",
+        "weight": "Weight",
+        "enterWeight": "Enter Weight",
+        "deleteTube": "Delete tube"
+      },
       "title": "Tubes",
       "category": "Category",
       "code": "Code",

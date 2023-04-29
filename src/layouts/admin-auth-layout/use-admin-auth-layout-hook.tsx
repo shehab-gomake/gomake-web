@@ -70,6 +70,11 @@ const useAuthLayoutHook = () => {
             title: t("materials.envelops.admin.title"),
             path: "/admin/materials/envelope",
           },
+          {
+            key: "tubes",
+            title: t("materials.tubes.admin.title"),
+            path: "/admin/materials/tube",
+          },
         ],
         icon: () => {
           return <ProductsIcon />;
