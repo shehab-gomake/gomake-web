@@ -9,6 +9,7 @@ import {getCategoryFeedersStackersInputs} from "@/widgets/admin-machines/add-mac
 import {getCategoryColorsInputs} from "@/widgets/admin-machines/add-machine/inputs/colors-inputs";
 import {getCategoryBeatsInputs} from "@/widgets/admin-machines/add-machine/inputs/beats-inputs";
 import {getCategoryMachineDimensionsInputs} from "@/widgets/admin-machines/add-machine/inputs/machine-dimensions";
+import {IInput, IMachineMultiInput} from "@/widgets/admin-machines/interfaces/inputs-interfaces";
 
 const useMachineAttributes = () => {
     const machineState = useRecoilValue(STATE);
@@ -30,6 +31,21 @@ const useMachineAttributes = () => {
         })
     }
 
+    const isValidStep = (attributes: (IInput | IMachineMultiInput)[]): boolean => {
+        if (attributes.every(a => a.isValid)) {
+            return true;
+        } else {
+            const stepErrors: Record<string, boolean> = {};
+            attributes.forEach(attribute => {
+                if (!attribute.isValid) {
+                    stepErrors[attribute.parameterKey] = true;
+                }
+            });
+            setErrors({...errors, ...stepErrors});
+            return false;
+        }
+    }
+
     const machineGeneralAttributes = machineInputs(machineState);
     const machineBasicAttributes = () => !!machineState.category ? getCategoryBasicInputs(machineState.category, machineState) : [];
     const machineMediaAttributes = () => !!machineState.category ? getCategoryMediaInputs(machineState.category, machineState) : [];
@@ -38,7 +54,6 @@ const useMachineAttributes = () => {
     const machineColorsAttributes = () => !!machineState.category ? getCategoryColorsInputs(machineState.category, machineState) : [];
     const machineBeatsAttributes = () => !!machineState.category ? getCategoryBeatsInputs(machineState.category, machineState) : [];
     const machineDimensionsAttributes = () => !!machineState.category ? getCategoryMachineDimensionsInputs(machineState.category, machineState) : [];
-
 
     return {
         machineGeneralAttributes,
@@ -51,7 +66,8 @@ const useMachineAttributes = () => {
         machineDimensionsAttributes,
         changeMachineAttributes,
         changeMachineGeneralAttributes,
-        errors
+        errors,
+        isValidStep
     };
 }
 

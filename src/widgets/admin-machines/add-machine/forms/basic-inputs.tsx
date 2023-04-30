@@ -6,9 +6,13 @@ import {useMachineAttributes} from "@/widgets/admin-machines/hooks/use-machine-a
 
 const BasicInputsComponent = ({navigateNext, navigateBack, hasNext, hasBack}: IStepFormProps) => {
     const {classes} = useStyle();
-    const {machineGeneralAttributes, machineBasicAttributes, changeMachineGeneralAttributes, changeMachineAttributes, errors} = useMachineAttributes()
+    const {machineGeneralAttributes, machineBasicAttributes, changeMachineGeneralAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes()
     const onClickNext = () => {
+        const s = isValidStep(machineGeneralAttributes);
+        if (s) {
+
         navigateNext();
+        }
     }
     const onClickBack = () => {
         navigateBack();
