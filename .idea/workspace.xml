@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="563b2355-7e4d-460f-89bc-962e225666cb" name="Changes" comment="add icons to search inputs">
+    <list default="true" id="563b2355-7e4d-460f-89bc-962e225666cb" name="Changes" comment="fix dashboard card value center">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/dashboard-card/dashboard-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/dashboard-card/dashboard-card.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/dashboard-card/style.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/dashboard-card/style.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,7 +129,14 @@
       <option name="project" value="LOCAL‎" />
       <updated>1682495607260</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL‎-00010" summary="fix dashboard card value center">
+      <created>1682512974856</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL‎-00010" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1682512974856</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -158,6 +163,7 @@
     <MESSAGE value="fix when filter by client" />
     <MESSAGE value="bug fix" />
     <MESSAGE value="add icons to search inputs" />
-    <option name="LAST_COMMIT_MESSAGE" value="add icons to search inputs" />
+    <MESSAGE value="fix dashboard card value center" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix dashboard card value center" />
   </component>
 </project>
