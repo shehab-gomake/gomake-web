@@ -354,6 +354,21 @@
       }
     },
     "profileFrames": {
+      "admin": {
+        "title": "Profile Frame",
+        "addNewProfileFrame": "Add New Profile Frame",
+        "profileFrameSizeSection": "Profile Frame Size Section",
+        "addProfileFrameize": "Add new profile frame size",
+        "removeProfileFrameSize": "Remove last profile frame size",
+        "lenght": "Lenght",
+        "enterLenght": "Enter Lenght",
+        "stock": "Stock",
+        "enterStock": "Enter Stock",
+        "defaultPricePerUnit": "Default Price Per Unit",
+        "enterDefaultPricePerUnit": "Enter Default Price Per Unit",
+        "defaultPricePerMeter": "Default Price Per Meter",
+        "enterDefaultPricePerMeter": "Enter Default Price Per Meter"
+      },
       "title": "Profile frames",
       "category": "Category",
       "supplier": "Supplier",

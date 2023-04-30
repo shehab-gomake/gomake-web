@@ -80,6 +80,11 @@ const useAuthLayoutHook = () => {
             title: t("materials.printingMaterials.admin.title"),
             path: "/admin/materials/material-roll-printing",
           },
+          {
+            key: "profileFrame",
+            title: t("materials.profileFrames.admin.title"),
+            path: "/admin/materials/profile-frame",
+          },
         ],
         icon: () => {
           return <ProductsIcon />;
