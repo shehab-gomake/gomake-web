@@ -6,7 +6,6 @@ export interface IMachine {
     nickName: string;
     price: number;
     currency: string;
-
 }
 
 export interface MinMaxValue {

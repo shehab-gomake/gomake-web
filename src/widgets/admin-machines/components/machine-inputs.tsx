@@ -2,7 +2,7 @@ import {GomakeTextInput} from "@/components";
 import {ChangeEvent, useState} from "react";
 import {useTranslation} from "react-i18next";
 
-import {useStyle} from "@/widgets/admin-machines/add-machine/style";
+import {useStyle} from "@/widgets/admin-machines/components/style";
 import {MenuItem, Select, SelectChangeEvent} from "@mui/material";
 import {IMachineInput} from "@/widgets/admin-machines/interfaces/inputs-interfaces";
 

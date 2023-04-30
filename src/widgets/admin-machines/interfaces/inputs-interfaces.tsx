@@ -9,7 +9,8 @@ export interface IInput {
   value?: string;
   disabled?: boolean;
   machineInputType?: MachineInputType;
-  inputs: IInput[]
+  inputs: IInput[];
+  isValid: boolean;
 }
 export interface IMachineInput {
   input: IInput;
@@ -36,7 +37,7 @@ export interface IMachineMultiInput {
   inputs: IInput[]
   machineInputType?: MachineInputType;
   value?: any
-
+  isValid: boolean;
 }
 
 export interface IMachineInputContainer {
