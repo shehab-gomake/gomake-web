@@ -1,16 +1,17 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
+import {FONT_FAMILY} from "@/utils/font-family";
 
 const useStyle = () => {
-  const { theme } = useGomakeTheme();
+  const { theme, primaryColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       container: {
+
       },
       inputsRow: {
         display: 'flex',
         alignItems: 'center' as 'center',
-        padding: '5px 0',
         gap: '15px'
       },
       inputs: {
@@ -28,6 +29,18 @@ const useStyle = () => {
       },
       addColor: {
         alignSelf: 'flex-end',
+      },
+      inputContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: 10,
+      },
+      inputLbl: {
+        color: primaryColor(900),
+        ...FONT_FAMILY.Lexend(600, 15),
+      },
+      input: {
+        // width: "87%",
       },
 
     };
