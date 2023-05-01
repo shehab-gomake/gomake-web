@@ -20,7 +20,7 @@ import {clientsState} from "@/store/clients-state";
 import {Box} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 const DashboardWidget = ({}: IDashboardWidget) => {
-    const INTERVAL_TIMEOUT = 5 * 60 * 1000;
+    const INTERVAL_TIMEOUT = 2 * 60 * 1000;
     const {machines, addMachineProgress} = useGomakeMachines();
     const [tasksFilter, setTasksFilter] = useState<string>('');
     const selectedClient = useRecoilValue(selectedClientIdState);
@@ -59,7 +59,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
             }
         }, INTERVAL_TIMEOUT);
         return () => clearInterval(interval);
-    }, [date]);
+    }, []);
 
     const handelSearchValueChange = (event: ChangeEvent<HTMLInputElement>) => {
         const {value} = event.target;

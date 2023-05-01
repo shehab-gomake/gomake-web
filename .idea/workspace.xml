@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="563b2355-7e4d-460f-89bc-962e225666cb" name="Changes" comment="fix dashboard card value center">
+    <list default="true" id="563b2355-7e4d-460f-89bc-962e225666cb" name="Changes" comment="wip">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/dashboard-widget.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/dashboard-widget.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
