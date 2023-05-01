@@ -7,11 +7,12 @@ const InputContainer = ({attribute, updateState, error}: IMachineInputContainer)
     {
         switch (attribute.machineInputType) {
             case 'multiArrayInput':
-                return <MachineMultiArrayInput name={attribute.name} parameterKey={attribute.parameterKey} value={attribute.value} inputs={attribute.inputs} updateState={updateState}/>
+                return <MachineMultiArrayInput name={attribute.name} parameterKey={attribute.parameterKey} value={attribute.value} inputs={attribute.inputs} updateState={updateState} isValid/>
             case 'multiInput':
                 return <MachineMultiInput name={attribute.name} parameterKey={attribute.parameterKey}
                                           updateState={updateState}
-                                          inputs={attribute.inputs}/>
+                                          value={attribute.value}
+                                          inputs={attribute.inputs} isValid/>
             default:
                 return <MachineInput
                     key={attribute.parameterKey}

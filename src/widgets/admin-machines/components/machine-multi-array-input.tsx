@@ -53,29 +53,12 @@ const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value}
 
     return (
         <div style={classes.container}>
-            <h3>{name}</h3>
-            {
-                value.map((v: Record<string, string>, index: number) => {
-                    return <div key={'row' + index} style={classes.inputsRow}>
-                        {
-                            Object.keys(v).map((key) => <input type="text"
-                                                               key={key}
-                                                               style={classes.inputs}
-                                                               name={key}
-                                                               data-index={index}
-                                                               onChange={handleValuesChange}
-                                                               value={v[key]}/>)
-                        }
-
-                        <DeleteIcon onClick={() => handleRemoveRow(index)} style={classes.deleteIcon}/>
-                    </div>
-                })
-            }
+            <h3 style={{...classes.multiInputLabel, margin: '0 0 16px 0'}}>{name}</h3>
             <div style={classes.inputsRow}>
                 {
                     inputs.map((input: IInput, index: number) => {
                         input.value = state[input.parameterKey] ? state[input.parameterKey] : '';
-                        return <MachineInput key={input.parameterKey}
+                        return <MachineInput key={input.parameterKey + index}
                                                input={input}
                                                error={!!(errors && errors[input.parameterKey])}
                                                changeState={handleInputChanges1}/>
@@ -85,6 +68,18 @@ const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value}
                     <GomakePrimaryButton onClick={addParameter} style={classes.button}>Add</GomakePrimaryButton>
                 </div>
             </div>
+            {
+                value.map((v: Record<string, string>, index: number) => {
+                    return <div key={'row' + index} style={classes.inputsRow}>
+                        {
+                            inputs.map((input) => <MachineInput input={{...input, label: '', value: v[input.parameterKey], disabled: true}} error={false} changeState={() => {}}
+                            />)
+                        }
+
+                        <DeleteIcon onClick={() => handleRemoveRow(index)} style={classes.deleteIcon}/>
+                    </div>
+                })
+            }
         </div>
     );
 }

@@ -6,8 +6,9 @@ const digitalPrinting = (state: Record<string, any>) => {
                     {
                         name: 'speed by colors number',
                         parameterKey: 'speedByColor',
-                        value: state.attributes['speedByColor'] || [],
+                        value: state.attributes?.speedByColor || [],
                         machineInputType: 'multiArrayInput',
+                        isValid: state.attributes?.speedByColor?.length > 0,
                         inputs: [
                             {
                                 name: "color",
@@ -33,7 +34,8 @@ const digitalPrinting = (state: Record<string, any>) => {
                     {
                         name: 'The speed coefficient according to Media Weight ',
                         parameterKey: 'speedByMediaWeight',
-                        value: state.attributes['speedByMediaWeight'] || [],
+                        value: state.attributes?.speedByMediaWeight || [],
+                        isValid: state.attributes?.speedByMediaWeight?.length > 0,
                         machineInputType: 'multiArrayInput',
                         inputs: [
                             {
@@ -64,8 +66,9 @@ const digitalPrinting = (state: Record<string, any>) => {
                     {
                         name: 'Speed by paper size by colors number',
                         parameterKey: 'speedByPaperSizeByColor',
-                        value: state.attributes['speedByPaperSizeByColor'] || [],
+                        value: state.attributes?.speedByColor || [],
                         machineInputType: 'multiArrayInput',
+                        isValid: state.attributes?.speedByColor?.length > 0,
                         inputs: [
                             {
                                 name: "color",
@@ -109,7 +112,8 @@ const digitalPrinting = (state: Record<string, any>) => {
                     {
                         name: 'The speed coefficient according to Media Weight ',
                         parameterKey: 'speedByMediaWeight',
-                        value: state.attributes['speedByMediaWeight'] || [],
+                        value: state.attributes?.speedByMediaWeight || [],
+                        isValid: state.attributes?.speedByMediaWeight?.length > 0,
                         machineInputType: 'multiArrayInput',
                         inputs: [
                             {

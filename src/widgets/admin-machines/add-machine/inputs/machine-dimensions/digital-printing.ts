@@ -5,6 +5,9 @@ const digitalPrinting = (state: Record<string, any>) => {
             parameterKey: 'machineDimensions',
             machineInputType: 'multiInput',
             value: state.attributes?.machineDimensions ? state.attributes?.machineDimensions : {},
+            isValid: !!state?.attributes?.machineDimensions?.height &&
+                !!state?.attributes?.machineDimensions?.length &&
+                !!state?.attributes?.machineDimensions?.width,
             inputs: [
                 {
                     name: "",

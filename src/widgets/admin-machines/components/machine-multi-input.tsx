@@ -2,16 +2,23 @@ import {IMachineMultiInput} from "@/widgets/admin-machines/interfaces/inputs-int
 import {useEffect, useState} from "react";
 import {MachineInput} from "@/widgets/admin-machines/components/machine-inputs";
 import {useStyle} from "@/widgets/admin-machines/components/style";
+import {useTranslation} from "react-i18next";
 
 const MachineMultiInput = ({parameterKey, inputs, name, updateState, value}: IMachineMultiInput) => {
     const {classes} = useStyle();
-    const [state, setState] = useState<Record<string, any>>(value);
+    const {t} = useTranslation();
+    const [state, setState] = useState<Record<string, any>>();
     const onchange = (key: string, value: any) => {
         setState({
             ...state,
             [key]: value,
         })
     }
+    useEffect(() => {
+        if (value) {
+            setState(value);
+        }
+    }, [value])
 
     useEffect(() => {
         if (state) {
@@ -20,8 +27,8 @@ const MachineMultiInput = ({parameterKey, inputs, name, updateState, value}: IMa
     }, [state])
 
     return (
-        <div>
-            <h3>{name}</h3>
+        <div style={classes.multiInputContainer}>
+            <h3 style={classes.multiInputLabel}>{t(name)}</h3>
             <div style={classes.inputsRow}>
                 {
                     inputs.map(input => <MachineInput input={input} changeState={onchange} error={false}/>)

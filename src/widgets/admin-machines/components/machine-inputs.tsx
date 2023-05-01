@@ -1,10 +1,11 @@
 import {GomakeTextInput} from "@/components";
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, ReactNode, useState} from "react";
 import {useTranslation} from "react-i18next";
 
 import {useStyle} from "@/widgets/admin-machines/components/style";
-import {MenuItem, Select, SelectChangeEvent} from "@mui/material";
+import {MenuItem, SelectChangeEvent} from "@mui/material";
 import {IMachineInput} from "@/widgets/admin-machines/interfaces/inputs-interfaces";
+import {FormSelect} from "@/widgets/admin-machines/components/form-select";
 
 const MachineInput = ({input, error, changeState}: IMachineInput) => {
     const [state, setState] = useState<string>(input.type === 'select' ? input.options[0]?.value : []);
@@ -13,7 +14,7 @@ const MachineInput = ({input, error, changeState}: IMachineInput) => {
     const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
         changeState(input.parameterKey, e.target.value as string);
     };
-    const selectChange = (event: SelectChangeEvent) => {
+    const selectChange = (event: SelectChangeEvent<any>, child: ReactNode): void => {
         changeState(input.parameterKey, event.target.value)
         setState(event.target.value);
     }
@@ -23,18 +24,20 @@ const MachineInput = ({input, error, changeState}: IMachineInput) => {
             <div style={classes.input}>
                 {
                     input.type === 'select' ?
-                        <Select
+                        <FormSelect
                             style={{height: '40px'}}
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
                             label={input.label}
                             onChange={selectChange}
-                            value={input.value || state}
+                            value={input.value}
+                            error={false}
                             disabled={!!input.disabled}>
+
                             {
                                 input.options.map(option => <MenuItem key={option.value} value={option.value}>{t(option.text)}</MenuItem>)
                             }
-                        </Select> :
+                        </FormSelect> :
                         <GomakeTextInput
                             style={{height: '40px'}}
                             onChange={onChangeState}

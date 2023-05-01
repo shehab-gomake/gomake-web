@@ -3,16 +3,18 @@ import { useMemo } from "react";
 import {FONT_FAMILY} from "@/utils/font-family";
 
 const useStyle = () => {
-  const { theme, primaryColor } = useGomakeTheme();
+  const { theme, primaryColor, secondColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       container: {
-
+        width: '100%',
+        padding: '16px 0',
+        gap: 16
       },
       inputsRow: {
         display: 'flex',
         alignItems: 'center' as 'center',
-        gap: '15px'
+        gap: '16px'
       },
       inputs: {
         boxSizing: 'border-box' as 'border-box',
@@ -37,12 +39,21 @@ const useStyle = () => {
       },
       inputLbl: {
         color: primaryColor(900),
-        ...FONT_FAMILY.Lexend(600, 15),
+        ...FONT_FAMILY.Lexend(600, 14),
       },
       input: {
-        // width: "87%",
       },
+      multiInputLabel: {
+        ...FONT_FAMILY.Lexend(600, 16),
+        color: secondColor(500),
 
+      },
+      multiInputContainer: {
+        display: 'flex',
+        flexDirection: 'column' as 'column',
+        gap: 16,
+        width: '100%'
+      },
     };
   }, [theme]);
   return {

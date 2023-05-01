@@ -10,6 +10,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             options: [],
             value: state.attributes?.monthlyMaintenanceCost ? state.attributes?.monthlyMaintenanceCost : '',
             machineInputType: 'input',
+            isValid: !!state?.attributes?.monthlyMaintenanceCost,
         },
         {
             name: "electricityCostPerWorkingHour",
@@ -21,6 +22,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             options: [],
             value: state.attributes?.electricityCostPerWorkingHour ? state.attributes?.electricityCostPerWorkingHour : '',
             machineInputType: 'input',
+            isValid: !!state?.attributes?.electricityCostPerWorkingHour,
         },
         {
             name: "monthlyCostOfSpace",
@@ -32,6 +34,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             options: [],
             value: state.attributes?.monthlyCostOfSpace ? state.attributes?.monthlyCostOfSpace : '',
             machineInputType: 'input',
+            isValid: !!state?.attributes?.monthlyCostOfSpace,
         },
         {
             name: "dailyProductivityInHours",
@@ -43,6 +46,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             options: [],
             value: state.attributes?.dailyProductivityInHours ? state.attributes?.dailyProductivityInHours : '',
             machineInputType: 'input',
+            isValid: !!state?.attributes?.dailyProductivityInHours,
 
         },
         {
@@ -55,6 +59,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             options: [],
             value: state.attributes?.lifeExpectancyYears ? state.attributes?.lifeExpectancyYears : '',
             machineInputType: 'input',
+            isValid: !!state?.attributes?.lifeExpectancyYears,
         },
         {
             name: "printLife",
@@ -66,6 +71,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             options: [],
             value: state.attributes?.printLife ? state.attributes?.printLife : '',
             machineInputType: 'input',
+            isValid: !!state?.attributes?.printLife,
 
         },
         {
@@ -78,6 +84,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             options: [],
             value: state.attributes?.minManpowerOperation ? state.attributes?.minManpowerOperation : '',
             machineInputType: 'input',
+            isValid: !!state?.attributes?.minManpowerOperation,
 
         },
         {
@@ -88,8 +95,9 @@ const digitalPrinting = (state: Record<string, any>) => {
             required: true,
             parameterKey: "resolution",
             value: state.attributes?.resolution,
-            options: [{value: 1, text: '2438 X 2438 dpi'}, {value: 2, text: '2400 X 2400 dpi'}],
+            options: [{value: 0, text: '2438 X 2438 dpi'}, {value: 1, text: '2400 X 2400 dpi'}],
             machineInputType: 'input',
+            isValid: true,
         },
         {
             name: "printingSides",
@@ -101,6 +109,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             options: [],
             value: state.attributes?.printingSides ? state.attributes?.printingSides : '',
             machineInputType: 'input',
+            isValid: !!state?.attributes?.printingSides,
         },
         {
             name: "doubleHead",
@@ -112,6 +121,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             value: state.attributes?.doubleHead,
             options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
             machineInputType: 'input',
+            isValid: true,
         },
 
 

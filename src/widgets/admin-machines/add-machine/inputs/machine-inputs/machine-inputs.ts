@@ -1,4 +1,5 @@
-const machineInputs = (state: Record<string, any>) => {
+
+const machineInputs = (state: Record<string, any>)  => {
     return [
         {
             name: "manufacturer",
@@ -50,9 +51,10 @@ const machineInputs = (state: Record<string, any>) => {
         },
         {
             machineInputType: 'multiInput',
-            name: '',
+            name: 'adminAddMachine.price',
             parameterKey: 'price',
-            isValid: !!state.price.price && !!state.price.currency,
+            isValid: !!state?.price?.price,
+            value: state?.price,
             inputs: [
                 {
                     name: "price",
@@ -62,8 +64,8 @@ const machineInputs = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "price",
                     options: [],
-                    value: state?.price?.price ? state.price.price : ''
-
+                    value: state?.price?.price ? state.price.price : '',
+                    isValid: !!state?.price?.price,
                 },
                 {
                     name: "currency",
@@ -73,7 +75,8 @@ const machineInputs = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "currency",
                     value: state?.price?.currency ? state?.price?.currency : 0,
-                    options: [{value: 0, text: 'adminAddMachine.dollar'}, {value: 1, text: 'adminAddMachine.euro'}]
+                    options: [{value: 0, text: 'adminAddMachine.dollar'}, {value: 1, text: 'adminAddMachine.euro'}],
+                    isValid: true,
                 },
             ]
         }

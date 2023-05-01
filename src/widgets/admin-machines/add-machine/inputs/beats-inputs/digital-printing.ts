@@ -5,6 +5,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             parameterKey: 'beats',
             value: state?.attributes?.beats ? state?.attributes?.beats : [],
             machineInputType: 'multiArrayInput',
+            isValid: state?.attributes?.beats?.length > 0,
             inputs: [
                 {
                     name: "",

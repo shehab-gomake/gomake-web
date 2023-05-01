@@ -4,31 +4,46 @@ import {IStepFormProps} from "@/widgets/admin-machines/add-machine/forms/interfa
 import {InputContainer} from "@/widgets/admin-machines/components/input-container";
 import {useMachineAttributes} from "@/widgets/admin-machines/hooks/use-machine-attributes";
 
-const ColorsInputsComponent = ({navigateBack, navigateNext, hasBack, hasNext}: IStepFormProps) => {
+const ColorsInputsComponent = ({navigateBack, navigateNext, hasBack, hasNext, canAddMachine, canUpdate, onClickAdd, onClickUpdate}: IStepFormProps) => {
     const {classes} = useStyle();
-    const {machineColorsAttributes, changeMachineAttributes, errors} = useMachineAttributes();
+    const {machineColorsAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
     const onClickBack = () => {
-        navigateBack();
+       navigateBack();
     }
     const onClickNext = () => {
-        navigateNext();
-    }
-    const submit = () => {
+        const validStep = isValidStep(machineColorsAttributes());
+        if (validStep) {
             navigateNext();
+        }
     }
 
+    const handleUpdate = () => {
+        const validStep = isValidStep(machineColorsAttributes());
+        if (validStep) {
+            onClickUpdate();
+        }
+    };
+    const handleAddMachine = () => {
+        const validStep = isValidStep(machineColorsAttributes());
+        if (validStep) {
+            onClickAdd();
+        }
+    };
+
     return (
-        <>
         <div style={classes.container}>
-            {
-              machineColorsAttributes().map((property: any) => (
-                    <InputContainer key={property.parameterKey} attribute={property} updateState={changeMachineAttributes} error={errors[property.parameterKey]}/>
-                ))
-            }
-        </div>
-            <NavigationButtons onClickNext={onClickNext} onClickBack={onClickBack} hasBack={hasBack} hasNext={hasNext}/>
-    </>
-            );
+            <div style={classes.inputsContainer}>
+                {
+                    machineColorsAttributes().map((property: any) => (
+                        <InputContainer key={property.parameterKey} attribute={property}
+                                        updateState={changeMachineAttributes} error={errors[property.parameterKey]}/>
+                    ))
+                }
+            </div>
+            <NavigationButtons canAddMachine={canAddMachine} canUpdate={canUpdate} onClickAddMachine={handleAddMachine}
+                               onClickUpdate={handleUpdate} onClickNext={onClickNext} onClickBack={onClickBack}
+                               hasBack={hasBack} hasNext={hasNext}/>        </div>
+    );
 }
 
 export {ColorsInputsComponent};

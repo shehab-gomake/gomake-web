@@ -4,6 +4,10 @@ const digitalPrinting = (state: Record<string, any>) => {
             name: 'Feeders',
             parameterKey: 'feeders',
             machineInputType: 'multiInput',
+            isValid: !!state?.attributes?.feeders?.number &&
+                !!state?.attributes?.feeders?.height &&
+                !!state?.attributes?.feeders?.length &&
+                !!state?.attributes?.feeders?.width ,
             inputs: [
                 {
                     name: "",
@@ -55,6 +59,10 @@ const digitalPrinting = (state: Record<string, any>) => {
             name: 'Stackers',
             parameterKey: 'stackers',
             machineInputType: 'multiInput',
+            isValid: !!state?.attributes?.stackers?.number &&
+                !!state?.attributes?.stackers?.height &&
+                !!state?.attributes?.stackers?.length &&
+                !!state?.attributes?.stackers?.width ,
             inputs: [
                 {
                     name: "",
