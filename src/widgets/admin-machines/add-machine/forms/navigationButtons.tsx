@@ -36,7 +36,7 @@ const PreviousButton = styled(Button)((props: any) => {
         width: 99,
         backgroundColor: "#FFFFFF",
         borderRadius: 4,
-        border: 'solid 1px' + primaryColor(500) ,
+        border: 'solid 1px' + primaryColor(500),
         gap: 7,
         color: primaryColor(500),
         "&:hover": {
@@ -50,29 +50,33 @@ const PreviousButton = styled(Button)((props: any) => {
 const NavigationButtons = ({
                                onClickNext,
                                onClickBack,
-    onClickUpdate,
-    onClickAddMachine,
+                               onClickUpdate,
+                               onClickAddMachine,
                                hasBack = true,
                                hasNext = true,
-    canUpdate,
-    canAddMachine
-                           }: { onClickNext: () => void,
+                               canUpdate,
+                               canAddMachine
+                           }: {
+    onClickNext: () => void,
     onClickBack: () => void,
     onClickUpdate: () => void,
     onClickAddMachine: () => void,
     hasBack: boolean,
     hasNext: boolean,
     canUpdate: boolean,
-    canAddMachine: boolean,}) => {
+    canAddMachine: boolean,
+}) => {
     const {classes} = useStyle();
     return (
         <div style={classes.navigationButtons}>
             <div>
-                {hasBack && <PreviousButton   onClick={onClickBack}>Back</PreviousButton>}
+                {hasBack && <PreviousButton onClick={onClickBack}>Back</PreviousButton>}
             </div>
             <div>
-                {canUpdate && <GomakePrimaryButton style={{height:40 }}   onClick={onClickUpdate}>Update</GomakePrimaryButton>}
-                {canAddMachine && <GomakePrimaryButton style={{height:40 }}  onClick={onClickAddMachine}>Add machine</GomakePrimaryButton>}
+                {canUpdate &&
+                    <GomakePrimaryButton style={{height: 40}} onClick={onClickUpdate}>Update</GomakePrimaryButton>}
+                {canAddMachine && <GomakePrimaryButton style={{height: 40}} onClick={onClickAddMachine}>Add
+                    machine</GomakePrimaryButton>}
 
             </div>
             <div>
