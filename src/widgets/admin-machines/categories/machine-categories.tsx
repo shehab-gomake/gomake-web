@@ -14,7 +14,7 @@ const MachineCategories = () => {
             <div style={{display: 'flex', gap: '20px', flexWrap: 'wrap'}}>
                 {
                     categories.map((category) => <Button component={Link} href={category.id.toString()}
-                                                         variant={"contained"}> {category.name}</Button>)
+                                                         variant={categoryId === category.id ? 'contained' : 'outlined'}> {category.name}</Button>)
                 }
             </div>
             <div style={{width: 'fit-content'}}>

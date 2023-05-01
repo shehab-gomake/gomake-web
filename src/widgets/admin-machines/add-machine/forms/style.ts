@@ -7,7 +7,14 @@ const useStyle = () => {
     return {
       container: {
         display: 'flex',
-        gap: '15px',
+        flexDirection: 'column' as 'column',
+        gap: 61,
+        padding: '20px 0'
+      },
+      inputsContainer: {
+        display: 'flex',
+        rowGap: 24,
+        columnGap: 16,
         flexWrap: 'wrap' as 'wrap'
       },
       navigationButtons: {

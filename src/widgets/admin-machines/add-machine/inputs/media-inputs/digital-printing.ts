@@ -9,7 +9,8 @@ const digitalPrinting = (state: Record<string, any>) => {
             parameterKey: "setupTimeMin",
             options: [],
             value: state?.attributes?.setupTimeMin ? state?.attributes?.setupTimeMin : '',
-            machineInputType: 'input'
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.setupTimeMin,
         },
         {
             name: "coatingUnit",
@@ -18,9 +19,10 @@ const digitalPrinting = (state: Record<string, any>) => {
             placeholder: "Media coating unit",
             required: true,
             parameterKey: "coatingUnit",
-            value: state["coatingUnit"],
+            value: state?.attributes?.coatingUnit,
             options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
-            machineInputType: 'input'
+            machineInputType: 'input',
+            isValid: true,
         },
         {
             name: "coatingUnitCost",
@@ -30,14 +32,19 @@ const digitalPrinting = (state: Record<string, any>) => {
             required: state['coatingUnitCost'],
             parameterKey: "coatingUnitCost",
             options: [],
-            disabled: !state["coatingUnit"],
-            value: state?.attributes?.coatingUnitCost ? state?.attributes?.coatingUnitCost : '',
-            machineInputType: 'input'
+            disabled: !state?.attributes?.coatingUnit,
+            value: state?.attributes?.coatingUnit && state?.attributes?.coatingUnitCost ? state?.attributes?.coatingUnitCost : '',
+            machineInputType: 'input',
+            isValid: true,
         },
         {
             name: 'Media Dimensions',
             parameterKey: 'mediaDimensions',
             machineInputType: 'multiInput',
+            isValid: !!state?.attributes?.mediaDimensions?.minWidth &&
+                !!state?.attributes?.mediaDimensions?.minLength &&
+                !!state?.attributes?.mediaDimensions?.maxWidth &&
+                !!state?.attributes?.mediaDimensions?.maxLength ,
             inputs: [
                 {
                     name: "",
@@ -48,7 +55,6 @@ const digitalPrinting = (state: Record<string, any>) => {
                     parameterKey: "minWidth",
                     options: [],
                     value: state.attributes?.mediaDimensions?.minWidth ? state.attributes?.mediaDimensions?.minWidth : ''
-
                 },
                 {
                     name: "",
@@ -89,6 +95,8 @@ const digitalPrinting = (state: Record<string, any>) => {
             name: 'Minimal margin without printing',
             parameterKey: 'minMarginWithoutPrinting',
             machineInputType: 'multiInput',
+            isValid: !!state?.attributes?.minMarginWithoutPrinting?.width &&
+                !!state?.attributes?.minMarginWithoutPrinting?.length  ,
             inputs: [
                 {
                     name: "minMarginWithoutPrinting",
@@ -118,6 +126,8 @@ const digitalPrinting = (state: Record<string, any>) => {
             name: 'Media Weight ',
             parameterKey: 'mediaWeight',
             machineInputType: 'multiInput',
+            isValid: !!state?.attributes?.mediaWeight?.min &&
+                !!state?.attributes?.mediaWeight?.max  ,
             inputs: [
                 {
                     name: "",
@@ -128,7 +138,6 @@ const digitalPrinting = (state: Record<string, any>) => {
                     parameterKey: "min",
                     options: [],
                     value: state.attributes?.mediaWeight?.min ? state.attributes?.mediaWeight?.min : ''
-
                 },
                 {
                     name: "",
@@ -148,6 +157,8 @@ const digitalPrinting = (state: Record<string, any>) => {
             name: 'Media thickness ',
             parameterKey: 'mediaThickness',
             machineInputType: 'multiInput',
+            isValid: !!state?.attributes?.mediaThickness?.min &&
+                !!state?.attributes?.mediaThickness?.max  ,
             inputs: [
                 {
                     name: "",
@@ -169,7 +180,6 @@ const digitalPrinting = (state: Record<string, any>) => {
                     parameterKey: "max",
                     options: [],
                     value: state.attributes?.mediaThickness?.max ? state.attributes?.mediaThickness?.max : ''
-
                 },
             ]
         },

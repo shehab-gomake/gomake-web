@@ -9,7 +9,7 @@ import {getCategoryFeedersStackersInputs} from "@/widgets/admin-machines/add-mac
 import {getCategoryColorsInputs} from "@/widgets/admin-machines/add-machine/inputs/colors-inputs";
 import {getCategoryBeatsInputs} from "@/widgets/admin-machines/add-machine/inputs/beats-inputs";
 import {getCategoryMachineDimensionsInputs} from "@/widgets/admin-machines/add-machine/inputs/machine-dimensions";
-import {IInput, IMachineMultiInput} from "@/widgets/admin-machines/interfaces/inputs-interfaces";
+
 
 const useMachineAttributes = () => {
     const machineState = useRecoilValue(STATE);
@@ -22,6 +22,7 @@ const useMachineAttributes = () => {
     };
 
     const changeMachineAttributes = (key: string, value: any) => {
+        setErrors({...errors, [key]: false});
         setMachine({
             ...machineState,
             attributes: {
@@ -31,7 +32,7 @@ const useMachineAttributes = () => {
         })
     }
 
-    const isValidStep = (attributes: (IInput | IMachineMultiInput)[]): boolean => {
+    const isValidStep = (attributes: {isValid: boolean; parameterKey: string;}[]): boolean => {
         if (attributes.every(a => a.isValid)) {
             return true;
         } else {

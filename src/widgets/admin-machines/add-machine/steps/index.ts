@@ -1,12 +1,13 @@
 import {printingMachineSteps} from "@/widgets/admin-machines/add-machine/steps/digital-printing-steps";
 import {IStep} from "@/widgets/admin-machines/add-machine/interface/step";
 import {demoMachineSteps} from "@/widgets/admin-machines/add-machine/steps/demo-printing-steps";
+import {ECategoryId} from "@/widgets/admin-machines/enums/category-id";
 
-const getSteps = (categoryId: string | undefined | string[]): IStep[] => {
+const getSteps = (categoryId: ECategoryId): IStep[] => {
     switch (categoryId) {
-        case '1':
+        case ECategoryId.DIGITAL_PRINTING:
             return printingMachineSteps;
-        case '2':
+        case ECategoryId.CATEGORY2:
             return demoMachineSteps;
         default:
             return []

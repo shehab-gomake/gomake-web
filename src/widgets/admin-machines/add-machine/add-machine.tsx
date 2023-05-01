@@ -3,11 +3,12 @@ import {useRouter} from "next/router";
 import {useRecoilValue} from "recoil";
 import {machineCategoriesState} from "@/store/machine-categories";
 import {getSteps} from "@/widgets/admin-machines/add-machine/steps";
-import {Step, StepContent, StepLabel, Stepper} from "@mui/material";
+import {Step, StepContent, Stepper} from "@mui/material";
 import {IStep} from "@/widgets/admin-machines/add-machine/interface/step";
 import {ReactNode, useEffect, useState} from "react";
-import {GomakePrimaryButton} from "@/components";
 import {useAddMachine} from "@/widgets/admin-machines/hooks/use-add-machine";
+import {StyledStepLabel} from "@/widgets/admin-machines/components/step-label";
+import {ECategoryId} from "@/widgets/admin-machines/enums/category-id";
 
 const AddMachine = () => {
     const [activeStep, setActiveStep] = useState<number>(0);
@@ -16,7 +17,7 @@ const AddMachine = () => {
     const {categoryId} = router.query;
     const categories = useRecoilValue(machineCategoriesState);
     const categoryName = !!categoryId ? categories.find(category => category.id === categoryId)?.name : null;
-    const machineSteps = getSteps(categoryId);
+    const machineSteps = getSteps(categoryId as ECategoryId);
     const {onClickAddMachine} = useAddMachine();
     const navigateBack = () => {
         setActiveStep(activeStep - 1);
@@ -36,14 +37,18 @@ const AddMachine = () => {
                         const labelProps: { optional?: ReactNode; } = {};
                         return (
                             <Step key={step.label} {...stepProps}>
-                                <StepLabel {...labelProps}>
-                                    <div style={classes.stepLabelContainer}>
+                                <StyledStepLabel {...labelProps}>
                                         <span style={classes.stepLabel}>{step.label}</span>
-                                    </div>
-                                </StepLabel>
-                                <StepContent style={{border: 0}}>
-                                    <step.component navigateBack={navigateBack} navigateNext={navigateNext} hasBack={index > 0} hasNext={index + 1 < machineSteps.length}/>
-                                {activeStep + 1 === machineSteps.length && <GomakePrimaryButton onClick={onClickAddMachine}>submit</GomakePrimaryButton>}
+                                </StyledStepLabel>
+                                <StepContent style={classes.stepContainer}>
+                                    <step.component navigateBack={navigateBack}
+                                                    navigateNext={navigateNext}
+                                                    canAddMachine={activeStep + 1 === machineSteps.length}
+                                                    canUpdate={false}
+                                                    onClickAdd={onClickAddMachine}
+                                                    onClickUpdate={() =>{}}
+                                                    hasBack={index > 0}
+                                                    hasNext={index + 1 < machineSteps.length}/>
                                 </StepContent>
                             </Step>
                         )

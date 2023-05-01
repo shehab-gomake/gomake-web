@@ -1,14 +1,14 @@
 export interface IInput {
   name: string;
   label: string;
-  type: 'text' | 'select';
+  type: string;
   placeholder: string;
   required: boolean;
   parameterKey: string;
   options: {value: any; text: string}[];
   value?: string;
   disabled?: boolean;
-  machineInputType?: MachineInputType;
+  machineInputType?: string;
   inputs: IInput[];
   isValid: boolean;
 }
@@ -25,7 +25,8 @@ export interface IMachineMultiArrayInput {
   value: any[];
   inputs: IInput[];
   updateState: (key: string, value: any) => void;
-  machineInputType?: MachineInputType;
+  machineInputType?: string;
+  isValid: boolean;
 
 }
 
@@ -35,7 +36,7 @@ export interface IMachineMultiInput {
   parameterKey: string;
   updateState: (key: string, value: any) => void
   inputs: IInput[]
-  machineInputType?: MachineInputType;
+  machineInputType?: string;
   value?: any
   isValid: boolean;
 }
@@ -47,4 +48,4 @@ export interface IMachineInputContainer {
 
 }
 
-type MachineInputType = 'input' | 'multiInput' | 'multiArrayInput'
+export type TMachineInput = IMachineMultiInput | IInput | IMachineMultiArrayInput;
