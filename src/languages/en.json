@@ -390,6 +390,25 @@
         "controls": "Controls"
       }
     },
+    "wideFormatMaterial": {
+      "admin": {
+        "title": "Wide Format Material",
+        "addNewWideFormatMaterial": "Add New Wide Format Material",
+        "WideFormatMaterialTypeSection": "Wide Format Material Type Section",
+        "addWideFormatMaterialType": "Add new wide format material type",
+        "removeWideFormatMaterialType": "Remove last wide format material type",
+        "addWideFormatMaterialSize": "Add new wide format material size",
+        "removeWideFormatMaterialSize": "Remove last wide format material size",
+        "WideFormatMaterialSizeSection": "Wide Format Material Size Section",
+        "weightPerMeterSquare": "Weight Per Meter Square",
+        "enterWeightPerMeterSquare": "Enter Weight Per Meter Square",
+        "hardness": "Hardness",
+        "enterHardness": "Enter Hardness",
+        "defaultPricePerMeterSquare": "Default Price Per Meter Square",
+        "enterDefaultPricePerMeterSquare": "Enter Default Price Per Meter Square"
+      }
+    },
+
     "applications": {
       "title": "Applications",
       "category": "Category",
