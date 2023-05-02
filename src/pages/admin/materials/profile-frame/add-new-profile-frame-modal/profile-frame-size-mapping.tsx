@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { ProfileFormSizeInputs } from "../shared-inputs-widget/profile-frame-size-inputs";
 
-const PlatSizeMapping = ({ index }) => {
+const ProfileFrameSizeMapping = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
 
@@ -18,4 +18,4 @@ const PlatSizeMapping = ({ index }) => {
     </>
   );
 };
-export { PlatSizeMapping };
+export { ProfileFrameSizeMapping };

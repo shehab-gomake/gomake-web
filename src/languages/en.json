@@ -413,7 +413,11 @@
         "defaultPricePerUnit": "Default Price Per Unit",
         "enterDefaultPricePerUnit": "Enter Default Price Per Unit",
         "defaultPricePerMeter": "Default Price Per Meter",
-        "enterDefaultPricePerMeter": "Enter Default Price Per Meter"
+        "enterDefaultPricePerMeter": "Enter Default Price Per Meter",
+        "deleteProfileFrameTitle": "Delete profile frame",
+        "deleteLProfileFrameSubTitle": "Are you sure you want to delete profile frame?",
+        "deleteProfileFrameSizeTitle": "Delete profile frame size",
+        "deleteLProfileFrameSizeSubTitle": "Are you sure you want to delete profile frame size?"
       },
       "title": "Profile frames",
       "category": "Category",

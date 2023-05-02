@@ -10,21 +10,23 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { PlatSizeMapping } from "./profile-frame-size-mapping";
-import { materialPlatsState } from "../store/plat";
+import { ProfileFrameSizeMapping } from "./profile-frame-size-mapping";
+import { materialProfileFrameState } from "../store/profile-frame";
 import { useStyle } from "./style";
 
-const AddNewPlatModal = () => {
+const AddNewProfileFrameModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialProfileFrameStateValue = useRecoilValue<any>(
+    materialProfileFrameState
+  );
 
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openAddNewPlatModal}
+        openModal={materialProfileFrameStateValue?.openAddNewProfileFrameModal}
         modalTitle={t("materials.profileFrames.admin.addNewProfileFrame")}
-        onClose={materialPlatsStateValue?.onCloseAddNewPlatModal}
+        onClose={materialProfileFrameStateValue?.onCloseAddNewProfileFrameModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -36,9 +38,11 @@ const AddNewPlatModal = () => {
               <GomakeTextInput
                 placeholder={t("materials.sheetPaper.admin.categoryName")}
                 style={clasess.textInputStyle}
-                value={materialPlatsStateValue?.categoryName}
+                value={materialProfileFrameStateValue?.categoryName}
                 onChange={(e: any) => {
-                  materialPlatsStateValue?.setCategoryName(e.target.value);
+                  materialProfileFrameStateValue?.setCategoryName(
+                    e.target.value
+                  );
                 }}
               />
             </div>
@@ -53,7 +57,7 @@ const AddNewPlatModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialPlatsStateValue?.items];
+                    const temp = [...materialProfileFrameStateValue?.items];
                     temp.push({
                       code: "",
                       name: "",
@@ -64,7 +68,7 @@ const AddNewPlatModal = () => {
                       defaultPricePerMeter: "",
                       defaultPricePerUnit: "",
                     });
-                    materialPlatsStateValue?.setItems(temp);
+                    materialProfileFrameStateValue?.setItems(temp);
                   }}
                 >
                   <AddIcon />
@@ -77,27 +81,29 @@ const AddNewPlatModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialPlatsStateValue?.items];
+                    const temp = [...materialProfileFrameStateValue?.items];
                     temp.pop();
-                    materialPlatsStateValue?.setItems(temp);
+                    materialProfileFrameStateValue?.setItems(temp);
                   }}
                 >
                   <RemoveIcon />
                 </IconButton>
               </Tooltip>
             </div>
-            {materialPlatsStateValue?.items?.map((item: any, index: number) => {
-              return (
-                <PlatSizeMapping
-                  key={`platSizeMapping_${index}`}
-                  index={index}
-                />
-              );
-            })}
+            {materialProfileFrameStateValue?.items?.map(
+              (item: any, index: number) => {
+                return (
+                  <ProfileFrameSizeMapping
+                    key={`platSizeMapping_${index}`}
+                    index={index}
+                  />
+                );
+              }
+            )}
           </div>
           <div style={clasess.addBtnContainer}>
             <GomakePrimaryButton
-              onClick={materialPlatsStateValue?.addNewPlatsSize}
+              onClick={materialProfileFrameStateValue?.addNewProfileFrameSize}
             >
               {t("materials.profileFrames.admin.addNewProfileFrame")}
             </GomakePrimaryButton>
@@ -107,4 +113,4 @@ const AddNewPlatModal = () => {
     </>
   );
 };
-export { AddNewPlatModal };
+export { AddNewProfileFrameModal };

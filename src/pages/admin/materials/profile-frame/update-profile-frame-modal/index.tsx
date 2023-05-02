@@ -5,23 +5,25 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddPlatSizeWeightsMapping } from "./add-profile-frame-size-mapping";
-import { SheetWeightsMapping } from "./profile-frame-size-mapping";
-import { materialPlatsState } from "../store/plat";
+import { AddProfileFrameSizeWeightsMapping } from "./add-profile-frame-size-mapping";
+import { ProfileFrameWeightsMapping } from "./profile-frame-size-mapping";
+import { materialProfileFrameState } from "../store/profile-frame";
 import { useStyle } from "./style";
 
-const UpdatePlatModal = () => {
+const UpdateProfileFrameModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
-  const selectedItem = materialPlatsStateValue?.selectedEditItem;
+  const materialProfileFrameStateValue = useRecoilValue<any>(
+    materialProfileFrameState
+  );
+  const selectedItem = materialProfileFrameStateValue?.selectedEditItem;
 
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openUpdateSheetModal}
+        openModal={materialProfileFrameStateValue?.openUpdateProfileFrameModal}
         modalTitle={`Edit ${selectedItem?.categoryName} Profile Frame`}
-        onClose={materialPlatsStateValue?.onCloseUpdateModal}
+        onClose={materialProfileFrameStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -43,11 +45,11 @@ const UpdatePlatModal = () => {
               <div style={clasess.firstSectionTitleStyle}>
                 {t("materials.plat.admin.platSizeSection")}
               </div>
-              {!materialPlatsStateValue?.isAddNewSheetWights && (
+              {!materialProfileFrameStateValue?.isAddNewProfileFrameWights && (
                 <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
                   <IconButton
                     onClick={() => {
-                      materialPlatsStateValue.setItems([
+                      materialProfileFrameStateValue.setItems([
                         {
                           code: "",
                           name: "",
@@ -59,7 +61,9 @@ const UpdatePlatModal = () => {
                           defaultPricePerUnit: "",
                         },
                       ]);
-                      materialPlatsStateValue?.setIsAddNewSheetWights(true);
+                      materialProfileFrameStateValue?.setIsAddNewProfileFrameWights(
+                        true
+                      );
                     }}
                   >
                     <AddIcon />
@@ -67,8 +71,8 @@ const UpdatePlatModal = () => {
                 </Tooltip>
               )}
             </div>
-            {materialPlatsStateValue?.isAddNewSheetWights && (
-              <AddPlatSizeWeightsMapping
+            {materialProfileFrameStateValue?.isAddNewProfileFrameWights && (
+              <AddProfileFrameSizeWeightsMapping
                 index={0}
                 selectedItem={selectedItem}
               />
@@ -76,7 +80,7 @@ const UpdatePlatModal = () => {
             {selectedItem?.profileFrameSizes?.map(
               (item: any, index: number) => {
                 return (
-                  <SheetWeightsMapping
+                  <ProfileFrameWeightsMapping
                     key={`profileFrameSizeMapping_${index}`}
                     index={index}
                     item={item}
@@ -91,4 +95,4 @@ const UpdatePlatModal = () => {
     </>
   );
 };
-export { UpdatePlatModal };
+export { UpdateProfileFrameModal };
