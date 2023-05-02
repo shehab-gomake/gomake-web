@@ -6,3 +6,4 @@ export * from "./get-set-envelope";
 export * from "./get-set-material-roll-printing";
 export * from "./get-set-hardboards";
 export * from "./get-set-applications";
+export * from "./get-set-additions";
