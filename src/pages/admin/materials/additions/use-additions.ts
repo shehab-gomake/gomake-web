@@ -23,14 +23,7 @@ const useApplications = () => {
   const [allAdditions, setAllAdditions] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
-  const [hardness, setHardness] = useState();
-  const [isAddNewApplicationThickness, setIsAddNewApplicationThickness] =
-    useState(false);
-  const [selectedLaminationSize, setSelectedLaminationSize] = useState({});
-  const [selecteApplicationThicknessSize, setSelecteApplicationThicknessSize] =
-    useState({});
-  const [isAddNeApplicationThicknessSize, setIsAddNewApplicationThicknessSize] =
-    useState(false);
+  const [selectedAddition, setSelectedAddition] = useState({});
   const [items, setItems] = useState([
     {
       code: "",
@@ -76,8 +69,6 @@ const useApplications = () => {
     [updateState]
   );
   const onClickOpenHardboardSizeThicknessWidget = (item) => {
-    setSelecteApplicationThicknessSize(item);
-    setIsAddNewApplicationThicknessSize(true);
     setItems([
       {
         code: "",
@@ -113,7 +104,6 @@ const useApplications = () => {
   const onCloseUpdateModal = async () => {
     getSheets();
     setOpenUpdatalApplicationModal(false);
-    setIsAddNewApplicationThickness(false);
   };
   const onOpnUpdateModal = (item) => {
     initialStateApplicationThickness(item);
@@ -125,7 +115,7 @@ const useApplications = () => {
   };
   const onOpenDeleteModal = (item) => {
     setOpenDeleteModal(true);
-    setSelectedLaminationSize(item);
+    setSelectedAddition(item);
   };
 
   const addNewAddition = useCallback(async () => {
@@ -147,7 +137,7 @@ const useApplications = () => {
         type: "error",
       });
     }
-  }, [categoryName, hardness, items]);
+  }, [categoryName, items]);
   const addNewApplicationThicknessByCategoryName = useCallback(
     async (selectedItem) => {
       const res = await callApi(
@@ -164,7 +154,6 @@ const useApplications = () => {
           type: "sucess",
         });
         getSheets();
-        setIsAddNewApplicationThicknessSize(false);
         onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -291,7 +280,6 @@ const useApplications = () => {
           type: "sucess",
         });
         getSheets();
-        setIsAddNewApplicationThicknessSize(false);
       } else {
         setSnackbarStateValue({
           state: true,
@@ -311,31 +299,24 @@ const useApplications = () => {
     openAddApplicationsModal,
     items,
     categoryName,
-    hardness,
     openUpdatalApplicationModal,
     selectedEditItem,
-    isAddNewApplicationThickness,
     openDeleteModal,
-    selectedLaminationSize,
+    selectedAddition,
     updateState,
-    selecteApplicationThicknessSize,
-    isAddNeApplicationThicknessSize,
     addNewApplicationThicknesSizeByCategoryName,
     onClickOpenHardboardSizeThicknessWidget,
-    setIsAddNewApplicationThicknessSize,
     onChangeUpdateStateAddition,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    setHardness,
     addNewAddition,
     changeItemsApplicationThickness,
     setOpenUpdatalApplicationModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewApplicationThickness,
     addNewApplicationThicknessByCategoryName,
     deleteAddition,
     deleteApplicationThicknessSize,

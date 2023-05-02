@@ -35,7 +35,7 @@ const ControlIconsWidget = ({
         </Tooltip>
       </div>
 
-      {item === materialSheetsStateValue.selectedLaminationSize && (
+      {item === materialSheetsStateValue.selectedAddition && (
         <GoMakeDeleteModal
           title={title}
           yesBtn={t("materials.sheetPaper.admin.delete")}
