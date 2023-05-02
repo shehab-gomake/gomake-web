@@ -4,13 +4,13 @@ import { useRecoilValue } from "recoil";
 import { GomakeTextInput } from "@/components";
 
 import { ControlIconsWidget } from "./control-icons-widget";
-import { materialPlatsState } from "../store/plat";
+import { materialTubeState } from "../store/tube";
 import { useStyle } from "./style";
 
-const SheetWeightsMapping = ({ index, item, selectedItem }) => {
+const TubeWeightsMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialTubeStateValue = useRecoilValue<any>(materialTubeState);
   return (
     <>
       <div
@@ -21,19 +21,19 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
           t={t}
           item={item}
           onClickDelete={() =>
-            materialPlatsStateValue.deletePlatSize(
+            materialTubeStateValue.deleteTubeSize(
               item?.id,
               selectedItem?.categoryName
             )
           }
           onClickUpdate={() =>
-            materialPlatsStateValue.updatePlatSize(
+            materialTubeStateValue.updateTubeSize(
               item?.id,
               selectedItem?.categoryName
             )
           }
-          title={"Delete Sheet Weight"}
-          subTitle={"Are you sure you want to delete sheet weight?"}
+          title={t("materials.tubes.admin.deleteTubeSize")}
+          subTitle={t("materials.tubes.admin.subTitleDeleteModalSize")}
         />
         <div style={clasess.mainWaightsContainer}>
           <div>
@@ -43,9 +43,9 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterCode")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.code}
+              value={materialTubeStateValue?.updateState[item?.id]?.code}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialTubeStateValue?.onChangeUpdateStateTubeSize(
                   item?.id,
                   "code",
                   e.target.value
@@ -60,9 +60,9 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterName")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.name}
+              value={materialTubeStateValue?.updateState[item?.id]?.name}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialTubeStateValue?.onChangeUpdateStateTubeSize(
                   item?.id,
                   "name",
                   e.target.value
@@ -77,9 +77,9 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.tubes.admin.enterLenght")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.lenght}
+              value={materialTubeStateValue?.updateState[item?.id]?.lenght}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialTubeStateValue?.onChangeUpdateStateTubeSize(
                   item?.id,
                   "lenght",
                   e.target.value
@@ -94,9 +94,9 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.tubes.admin.enterDiameter")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.diameter}
+              value={materialTubeStateValue?.updateState[item?.id]?.diameter}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialTubeStateValue?.onChangeUpdateStateTubeSize(
                   item?.id,
                   "diameter",
                   e.target.value
@@ -111,9 +111,9 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.tubes.admin.enterWeight")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.weight}
+              value={materialTubeStateValue?.updateState[item?.id]?.weight}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialTubeStateValue?.onChangeUpdateStateTubeSize(
                   item?.id,
                   "weight",
                   e.target.value
@@ -129,10 +129,10 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               placeholder={t("materials.plat.admin.enterDefaultPrice")}
               style={clasess.textInputStyle}
               value={
-                materialPlatsStateValue?.updateState[item?.id]?.defaultPrice
+                materialTubeStateValue?.updateState[item?.id]?.defaultPrice
               }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialTubeStateValue?.onChangeUpdateStateTubeSize(
                   item?.id,
                   "defaultPrice",
                   e.target.value
@@ -145,4 +145,4 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
     </>
   );
 };
-export { SheetWeightsMapping };
+export { TubeWeightsMapping };

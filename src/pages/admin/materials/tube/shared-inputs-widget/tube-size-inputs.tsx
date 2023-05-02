@@ -3,13 +3,13 @@ import { useRecoilValue } from "recoil";
 
 import { GomakeTextInput } from "@/components";
 
-import { materialPlatsState } from "../store/plat";
+import { materialTubeState } from "../store/tube";
 import { useStyle } from "../add-new-tube-modal/style";
 
 const TubeSizeInputs = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialTubeStateValue = useRecoilValue<any>(materialTubeState);
 
   return (
     <>
@@ -21,9 +21,9 @@ const TubeSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterCode")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["code"]}
+            value={materialTubeStateValue?.items[index]["code"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialTubeStateValue?.changeItems(
                 index,
                 "code",
                 e.target.value
@@ -38,9 +38,9 @@ const TubeSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterName")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["name"]}
+            value={materialTubeStateValue?.items[index]["name"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialTubeStateValue?.changeItems(
                 index,
                 "name",
                 e.target.value
@@ -55,9 +55,9 @@ const TubeSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.tubes.admin.enterLenght")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["lenght"]}
+            value={materialTubeStateValue?.items[index]["lenght"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialTubeStateValue?.changeItems(
                 index,
                 "lenght",
                 e.target.value
@@ -72,9 +72,9 @@ const TubeSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.tubes.admin.enterDiameter")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["diameter"]}
+            value={materialTubeStateValue?.items[index]["diameter"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialTubeStateValue?.changeItems(
                 index,
                 "diameter",
                 e.target.value
@@ -89,9 +89,9 @@ const TubeSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.tubes.admin.enterWeight")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["weight"]}
+            value={materialTubeStateValue?.items[index]["weight"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialTubeStateValue?.changeItems(
                 index,
                 "weight",
                 e.target.value
@@ -106,9 +106,9 @@ const TubeSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterDefaultPrice")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["defaultPrice"]}
+            value={materialTubeStateValue?.items[index]["defaultPrice"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialTubeStateValue?.changeItems(
                 index,
                 "defaultPrice",
                 e.target.value

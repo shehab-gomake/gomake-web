@@ -281,7 +281,10 @@
         "enterDiameter": "Enter Diameter",
         "weight": "Weight",
         "enterWeight": "Enter Weight",
-        "deleteTube": "Delete tube"
+        "deleteTube": "Delete tube",
+        "subTitleDeleteModal": "Are you sure you delete tube by categoryName",
+        "deleteTubeSize": "Delete Tube Size",
+        "subTitleDeleteModalSize": "Are you sure you want to delete tube size?"
       },
       "title": "Tubes",
       "category": "Category",

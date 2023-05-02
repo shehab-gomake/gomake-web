@@ -6,110 +6,111 @@ import { Table } from "@/widgets/table/table";
 import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 
-import { materialPlatsState } from "./store/plat";
+import { materialTubeState } from "./store/tube";
 import { HeaderFilter } from "./header-filter";
-import { useSheets } from "./use-tube";
+import { useTube } from "./use-tube";
 
-export default function Sheets() {
+export default function Tube() {
   const { t } = useTranslation();
-  const setMaterialPlatsState = useSetRecoilState<any>(materialPlatsState);
+  const setMaterialTubeState = useSetRecoilState<any>(materialTubeState);
   const {
     headerTable,
-    allPlats,
-    openAddNewPlatModal,
+    allTube,
+    openAddNewTubeModal,
     items,
     categoryName,
-    openUpdateSheetModal,
+    openUpdateTubeModal,
     selectedEditItem,
-    isAddNewSheetWights,
+    isAddNewTubeWights,
     openDeleteModal,
-    selectedSheetWeight,
+    selectedTubeWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStateTubeSize,
+    onCloseAddNewTubeModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdateSheetModal,
+    addNewTubeSize,
+    setOpenUpdateTubeModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewSheetWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewTubeWights,
+    addNewTubeSizeByCategoryName,
+    deleteTubeSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
-  } = useSheets();
+    updateTubeSize,
+  } = useTube();
 
   useEffect(() => {
-    setMaterialPlatsState({
+    setMaterialTubeState({
       headerTable,
-      allPlats,
-      openAddNewPlatModal,
+      allTube,
+      openAddNewTubeModal,
       items,
       categoryName,
-      openUpdateSheetModal,
+      openUpdateTubeModal,
       selectedEditItem,
-      isAddNewSheetWights,
+      isAddNewTubeWights,
       openDeleteModal,
-      selectedSheetWeight,
+      selectedTubeWeight,
       updateState,
-      onChangeUpdateStatePlatSize,
-      onCloseAddNewPlatModal,
+      onChangeUpdateStateTubeSize,
+      onCloseAddNewTubeModal,
       onOpnModalAdded,
       changeItems,
       setItems,
       setCategoryName,
-      addNewPlatsSize,
-      setOpenUpdateSheetModal,
+      addNewTubeSize,
+      setOpenUpdateTubeModal,
       onCloseUpdateModal,
       onOpnUpdateModal,
-      setIsAddNewSheetWights,
-      addNewPlatSizeByCategoryName,
-      deletePlatSize,
+      setIsAddNewTubeWights,
+      addNewTubeSizeByCategoryName,
+      deleteTubeSize,
       setOpenDeleteModal,
       onCloseDeleteModal,
       onOpenDeleteModal,
-      updatePlatSize,
+      updateTubeSize,
     });
   }, [
     headerTable,
-    allPlats,
-    openAddNewPlatModal,
+    headerTable,
+    allTube,
+    openAddNewTubeModal,
     items,
     categoryName,
-    openUpdateSheetModal,
+    openUpdateTubeModal,
     selectedEditItem,
-    isAddNewSheetWights,
+    isAddNewTubeWights,
     openDeleteModal,
-    selectedSheetWeight,
+    selectedTubeWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStateTubeSize,
+    onCloseAddNewTubeModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdateSheetModal,
+    addNewTubeSize,
+    setOpenUpdateTubeModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewSheetWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewTubeWights,
+    addNewTubeSizeByCategoryName,
+    deleteTubeSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
+    updateTubeSize,
   ]);
   return (
     <AdminAuthLayout>
       <HeaderTitle title={t("materials.tubes.admin.title")} />
       <HeaderFilter />
-      <Table tableHeaders={headerTable} tableRows={allPlats} />
+      <Table tableHeaders={headerTable} tableRows={allTube} />
     </AdminAuthLayout>
   );
 }

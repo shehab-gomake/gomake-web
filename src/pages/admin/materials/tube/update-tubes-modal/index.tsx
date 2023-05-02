@@ -5,23 +5,23 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddPlatSizeWeightsMapping } from "./add-plat-size-mapping";
-import { SheetWeightsMapping } from "./plat-size-mapping";
-import { materialPlatsState } from "../store/plat";
+import { AddTubeSizeWeightsMapping } from "./add-tube-size-mapping";
+import { TubeWeightsMapping } from "./tube-size-mapping";
+import { materialTubeState } from "../store/tube";
 import { useStyle } from "./style";
 
-const UpdatePlatModal = () => {
+const UpdateTubeModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
-  const selectedItem = materialPlatsStateValue?.selectedEditItem;
+  const materialTubeStateValue = useRecoilValue<any>(materialTubeState);
+  const selectedItem = materialTubeStateValue?.selectedEditItem;
 
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openUpdateSheetModal}
+        openModal={materialTubeStateValue?.openUpdateTubeModal}
         modalTitle={`Edit ${selectedItem?.categoryName} Tube`}
-        onClose={materialPlatsStateValue?.onCloseUpdateModal}
+        onClose={materialTubeStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -43,11 +43,11 @@ const UpdatePlatModal = () => {
               <div style={clasess.firstSectionTitleStyle}>
                 {t("materials.plat.admin.platSizeSection")}
               </div>
-              {!materialPlatsStateValue?.isAddNewSheetWights && (
+              {!materialTubeStateValue?.isAddNewTubeWights && (
                 <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
                   <IconButton
                     onClick={() => {
-                      materialPlatsStateValue.setItems([
+                      materialTubeStateValue.setItems([
                         {
                           code: "",
                           name: "",
@@ -57,7 +57,7 @@ const UpdatePlatModal = () => {
                           defaultPrice: "",
                         },
                       ]);
-                      materialPlatsStateValue?.setIsAddNewSheetWights(true);
+                      materialTubeStateValue?.setIsAddNewTubeWights(true);
                     }}
                   >
                     <AddIcon />
@@ -65,15 +65,15 @@ const UpdatePlatModal = () => {
                 </Tooltip>
               )}
             </div>
-            {materialPlatsStateValue?.isAddNewSheetWights && (
-              <AddPlatSizeWeightsMapping
+            {materialTubeStateValue?.isAddNewTubeWights && (
+              <AddTubeSizeWeightsMapping
                 index={0}
                 selectedItem={selectedItem}
               />
             )}
             {selectedItem?.tubeSizes?.map((item: any, index: number) => {
               return (
-                <SheetWeightsMapping
+                <TubeWeightsMapping
                   key={`platSizeMapping_${index}`}
                   index={index}
                   item={item}
@@ -87,4 +87,4 @@ const UpdatePlatModal = () => {
     </>
   );
 };
-export { UpdatePlatModal };
+export { UpdateTubeModal };
