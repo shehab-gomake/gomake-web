@@ -7,7 +7,7 @@ import { ControlIconsWidget } from "./control-icons-widget";
 import { materialPlatsState } from "../store/plat";
 import { useStyle } from "./style";
 
-const SheetWeightsMapping = ({ index, item, selectedItem }) => {
+const PlatWeightsMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
@@ -32,8 +32,8 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               selectedItem?.categoryName
             )
           }
-          title={"Delete Sheet Weight"}
-          subTitle={"Are you sure you want to delete sheet weight?"}
+          title={t("materials.plat.admin.deletePlatSize")}
+          subTitle={t("materials.plat.admin.subTitleDeleteSizeModal")}
         />
         <div style={clasess.mainWaightsContainer}>
           <div>
@@ -128,4 +128,4 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
     </>
   );
 };
-export { SheetWeightsMapping };
+export { PlatWeightsMapping };

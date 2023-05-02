@@ -203,7 +203,9 @@
         "defaultPrice": "Default Price",
         "enterDefaultPrice": "Enter Default Price",
         "deletePlat": "Delete Plat",
-        "subTitleDeleteModal": "Are you sure you delete plat by categoryName"
+        "subTitleDeleteModal": "Are you sure you delete plat by categoryName",
+        "deletePlatSize": "Delete Plat Size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete plat size?"
       },
       "title": "Plats",
       "category": "Category",
