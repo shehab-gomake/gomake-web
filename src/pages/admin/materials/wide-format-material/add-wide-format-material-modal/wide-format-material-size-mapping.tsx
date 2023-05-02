@@ -3,7 +3,11 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { WideFormatMaterialsSizeInputs } from "../shared-inputs-widget/wide-format-material-size-inputs";
 
-const SheetSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
+const WideFormatMaterialSizeMapping = ({
+  index,
+  sheetWeightIndex,
+  sheetSize,
+}) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
 
@@ -19,4 +23,4 @@ const SheetSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
     </>
   );
 };
-export { SheetSizeMapping };
+export { WideFormatMaterialSizeMapping };

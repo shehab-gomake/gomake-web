@@ -1,16 +1,11 @@
 import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
 
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-
-import { materialPlatsState } from "../store/plat";
 import { useStyle } from "./style";
 import { RollPrintingSizeInputs } from "../shared-inputs-widget/material-roll-printing-size-inputs";
 
-const PlatSizeMapping = ({ index }) => {
+const MaterialRollPrintingSizeMapping = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
 
   return (
     <>
@@ -23,4 +18,4 @@ const PlatSizeMapping = ({ index }) => {
     </>
   );
 };
-export { PlatSizeMapping };
+export { MaterialRollPrintingSizeMapping };

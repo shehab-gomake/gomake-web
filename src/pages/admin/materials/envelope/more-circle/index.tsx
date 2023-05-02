@@ -2,9 +2,9 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeDeleteModal } from "@/components";
 
-import { UpdatePlatModal } from "../update-envelope-modal";
-import { materialEnvelopeState } from "../store/plat";
-import { usePlatsModal } from "./use-envelope-modal";
+import { UpdateEnvelopeModal } from "../update-envelope-modal";
+import { materialEnvelopeState } from "../store/envelope";
+import { useEnvelopesModal } from "./use-envelope-modal";
 import { IconWidget } from "./icon-widget";
 
 const EnvelopsSettingsWidget = ({ item }: any) => {
@@ -12,35 +12,39 @@ const EnvelopsSettingsWidget = ({ item }: any) => {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deletePlatByCategoryName,
+    deleteEnvelopeByCategoryName,
     t,
-  } = usePlatsModal({
+  } = useEnvelopesModal({
     item,
   });
-  const materialPlatsStateValue = useRecoilValue<any>(materialEnvelopeState);
+  const materialEnvelopesStateValue = useRecoilValue<any>(
+    materialEnvelopeState
+  );
 
   return (
     <>
       <IconWidget
         t={t}
         onOpnUpdateModal={() => {
-          materialPlatsStateValue?.onOpnUpdateModal(item);
+          materialEnvelopesStateValue?.onOpnUpdateModal(item);
         }}
         onOpenDeleteModal={onOpenDeleteModal}
       />
       <GoMakeDeleteModal
         hideIcon={true}
-        title={t("materials.plat.admin.deletePlat")}
+        title={t("materials.envelops.admin.deleteEnvelope")}
         yesBtn={t("materials.sheetPaper.admin.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.plat.admin.subTitleDeleteModal")} ${
+        subTitle={`${t("materials.envelops.admin.subTitleDeleteModal")} ${
           item?.categoryName
         } ?`}
-        onClickDelete={deletePlatByCategoryName}
+        onClickDelete={deleteEnvelopeByCategoryName}
       />
-      {item === materialPlatsStateValue.selectedEditItem && <UpdatePlatModal />}
+      {item === materialEnvelopesStateValue.selectedEditItem && (
+        <UpdateEnvelopeModal />
+      )}
     </>
   );
 };

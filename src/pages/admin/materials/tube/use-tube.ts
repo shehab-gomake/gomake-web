@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getAndSetGetAllTube } from "@/services/hooks";
 
-const useSheets = () => {
+const useTube = () => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
@@ -15,14 +15,14 @@ const useSheets = () => {
     ],
     []
   );
-  const [openAddNewPlatModal, setOpenAddNewPlatModal] = useState(false);
-  const [openUpdateSheetModal, setOpenUpdateSheetModal] = useState(false);
+  const [openAddNewTubeModal, setOpenAddNewTubeModal] = useState(false);
+  const [openUpdateTubeModal, setOpenUpdateTubeModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [allPlats, setAllPlats] = useState([]);
+  const [allTube, setAllTube] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
-  const [isAddNewSheetWights, setIsAddNewSheetWights] = useState(false);
-  const [selectedSheetWeight, setSelectedSheetWeight] = useState({});
+  const [isAddNewTubeWights, setIsAddNewTubeWights] = useState(false);
+  const [selectedTubeWeight, setSelectedTubeWeight] = useState({});
   const [updateState, setUpdateState] = useState([]);
 
   const [items, setItems] = useState([
@@ -43,7 +43,7 @@ const useSheets = () => {
     };
     setItems(temp);
   };
-  const onChangeUpdateStatePlatSize = useCallback(
+  const onChangeUpdateStateTubeSize = useCallback(
     (index: string, filedName: string, value: any) => {
       let temp: any = { ...updateState };
       temp[`${index}`] = {
@@ -54,7 +54,7 @@ const useSheets = () => {
     },
     [updateState]
   );
-  const initialStateSheetWeights = (item: any) => {
+  const initialStateTubeWeights = (item: any) => {
     let temp = [...item?.tubeSizes];
     let final: any = [];
     temp.map((tubeSize) => {
@@ -66,34 +66,34 @@ const useSheets = () => {
     setUpdateState(final);
   };
 
-  const getPlats = useCallback(async () => {
-    await getAndSetGetAllTube(callApi, setAllPlats);
+  const getTube = useCallback(async () => {
+    await getAndSetGetAllTube(callApi, setAllTube);
   }, []);
-  const onCloseAddNewPlatModal = () => {
-    setOpenAddNewPlatModal(false);
+  const onCloseAddNewTubeModal = () => {
+    setOpenAddNewTubeModal(false);
   };
   const onOpnModalAdded = () => {
-    setOpenAddNewPlatModal(true);
+    setOpenAddNewTubeModal(true);
   };
   const onCloseUpdateModal = async () => {
-    getPlats();
-    setOpenUpdateSheetModal(false);
-    setIsAddNewSheetWights(false);
+    getTube();
+    setOpenUpdateTubeModal(false);
+    setIsAddNewTubeWights(false);
   };
   const onOpnUpdateModal = (item) => {
-    initialStateSheetWeights(item);
+    initialStateTubeWeights(item);
     setSelectedEditItem(item);
-    setOpenUpdateSheetModal(true);
+    setOpenUpdateTubeModal(true);
   };
   const onCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
   const onOpenDeleteModal = (item) => {
     setOpenDeleteModal(true);
-    setSelectedSheetWeight(item);
+    setSelectedTubeWeight(item);
   };
 
-  const addNewPlatsSize = useCallback(async () => {
+  const addNewTubeSize = useCallback(async () => {
     const res = await callApi("POST", `/v1/administrator/tube/add-tube`, {
       categoryName,
       tubeSizes: items,
@@ -104,8 +104,8 @@ const useSheets = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      await getPlats();
-      onCloseAddNewPlatModal();
+      await getTube();
+      onCloseAddNewTubeModal();
     } else {
       setSnackbarStateValue({
         state: true,
@@ -114,7 +114,7 @@ const useSheets = () => {
       });
     }
   }, [categoryName, items]);
-  const addNewPlatSizeByCategoryName = useCallback(
+  const addNewTubeSizeByCategoryName = useCallback(
     async (selectedItem: any) => {
       const res = await callApi(
         "POST",
@@ -129,7 +129,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getPlats();
+        getTube();
         onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -141,7 +141,7 @@ const useSheets = () => {
     },
     [items]
   );
-  const deletePlatSize = useCallback(
+  const deleteTubeSize = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -153,7 +153,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getPlats();
+        getTube();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -166,7 +166,7 @@ const useSheets = () => {
     []
   );
 
-  const updatePlatSize = useCallback(
+  const updateTubeSize = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -192,38 +192,38 @@ const useSheets = () => {
     [updateState]
   );
   useEffect(() => {
-    getPlats();
+    getTube();
   }, []);
   return {
     headerTable,
-    allPlats,
-    openAddNewPlatModal,
+    allTube,
+    openAddNewTubeModal,
     items,
     categoryName,
-    openUpdateSheetModal,
+    openUpdateTubeModal,
     selectedEditItem,
-    isAddNewSheetWights,
+    isAddNewTubeWights,
     openDeleteModal,
-    selectedSheetWeight,
+    selectedTubeWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStateTubeSize,
+    onCloseAddNewTubeModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdateSheetModal,
+    addNewTubeSize,
+    setOpenUpdateTubeModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewSheetWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewTubeWights,
+    addNewTubeSizeByCategoryName,
+    deleteTubeSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
+    updateTubeSize,
   };
 };
 
-export { useSheets };
+export { useTube };

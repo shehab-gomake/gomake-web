@@ -4,14 +4,16 @@ import { useRecoilValue } from "recoil";
 import { GomakePrimaryButton } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddNewPlatModal } from "./add-new-profile-frame-modal";
-import { materialPlatsState } from "./store/plat";
+import { AddNewProfileFrameModal } from "./add-new-profile-frame-modal";
+import { materialProfileFrameState } from "./store/profile-frame";
 import { useStyle } from "./style";
 
 const HeaderFilter = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialProfileFrameStateValue = useRecoilValue<any>(
+    materialProfileFrameState
+  );
 
   return (
     <>
@@ -20,13 +22,13 @@ const HeaderFilter = () => {
           style={clasess.btnStyle}
           leftIcon={<AddIcon />}
           onClick={() => {
-            materialPlatsStateValue?.onOpnModalAdded();
+            materialProfileFrameStateValue?.onOpnModalAdded();
           }}
         >
           {t("materials.profileFrames.admin.addNewProfileFrame")}
         </GomakePrimaryButton>
       </div>
-      <AddNewPlatModal />
+      <AddNewProfileFrameModal />
     </>
   );
 };

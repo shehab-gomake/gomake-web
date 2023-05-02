@@ -20,7 +20,7 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.setIsAddNewSheetWights(false)
+                materialPlatsStateValue?.setIsAddNewPlatWights(false)
               }
               style={clasess.cancelBtnStyle}
             >

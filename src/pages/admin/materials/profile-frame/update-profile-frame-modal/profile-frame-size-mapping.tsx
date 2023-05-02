@@ -4,13 +4,15 @@ import { useRecoilValue } from "recoil";
 import { GomakeTextInput } from "@/components";
 
 import { ControlIconsWidget } from "./control-icons-widget";
-import { materialPlatsState } from "../store/plat";
+import { materialProfileFrameState } from "../store/profile-frame";
 import { useStyle } from "./style";
 
-const SheetWeightsMapping = ({ index, item, selectedItem }) => {
+const ProfileFrameWeightsMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialProfileFrameStateValue = useRecoilValue<any>(
+    materialProfileFrameState
+  );
   return (
     <>
       <div
@@ -21,19 +23,21 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
           t={t}
           item={item}
           onClickDelete={() =>
-            materialPlatsStateValue.deletePlatSize(
+            materialProfileFrameStateValue.deleteProfileFrameSize(
               item?.id,
               selectedItem?.categoryName
             )
           }
           onClickUpdate={() =>
-            materialPlatsStateValue.updatePlatSize(
+            materialProfileFrameStateValue.updateProfileFrameSize(
               item?.id,
               selectedItem?.categoryName
             )
           }
-          title={"Delete Sheet Weight"}
-          subTitle={"Are you sure you want to delete sheet weight?"}
+          title={t("materials.profileFrames.admin.deleteProfileFrameSizeTitle")}
+          subTitle={t(
+            "materials.profileFrames.admin.deleteLProfileFrameSizeSubTitle"
+          )}
         />
         <div style={clasess.mainWaightsContainer}>
           <div>
@@ -43,9 +47,11 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterCode")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.code}
+              value={
+                materialProfileFrameStateValue?.updateState[item?.id]?.code
+              }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialProfileFrameStateValue?.onChangeUpdateStateProfileFrameSize(
                   item?.id,
                   "code",
                   e.target.value
@@ -60,9 +66,11 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterName")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.name}
+              value={
+                materialProfileFrameStateValue?.updateState[item?.id]?.name
+              }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialProfileFrameStateValue?.onChangeUpdateStateProfileFrameSize(
                   item?.id,
                   "name",
                   e.target.value
@@ -77,9 +85,11 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterWidth")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.width}
+              value={
+                materialProfileFrameStateValue?.updateState[item?.id]?.width
+              }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialProfileFrameStateValue?.onChangeUpdateStateProfileFrameSize(
                   item?.id,
                   "width",
                   e.target.value
@@ -94,9 +104,11 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterHeight")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.height}
+              value={
+                materialProfileFrameStateValue?.updateState[item?.id]?.height
+              }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialProfileFrameStateValue?.onChangeUpdateStateProfileFrameSize(
                   item?.id,
                   "height",
                   e.target.value
@@ -111,9 +123,11 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.profileFrames.admin.enterLenght")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.length}
+              value={
+                materialProfileFrameStateValue?.updateState[item?.id]?.length
+              }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialProfileFrameStateValue?.onChangeUpdateStateProfileFrameSize(
                   item?.id,
                   "length",
                   e.target.value
@@ -128,9 +142,11 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.profileFrames.admin.enterStock")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.height}
+              value={
+                materialProfileFrameStateValue?.updateState[item?.id]?.stock
+              }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialProfileFrameStateValue?.onChangeUpdateStateProfileFrameSize(
                   item?.id,
                   "stock",
                   e.target.value
@@ -148,11 +164,11 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               )}
               style={clasess.textInputStyle}
               value={
-                materialPlatsStateValue?.updateState[item?.id]
+                materialProfileFrameStateValue?.updateState[item?.id]
                   ?.defaultPricePerMeter
               }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialProfileFrameStateValue?.onChangeUpdateStateProfileFrameSize(
                   item?.id,
                   "defaultPricePerMeter",
                   e.target.value
@@ -170,11 +186,11 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               )}
               style={clasess.textInputStyle}
               value={
-                materialPlatsStateValue?.updateState[item?.id]
+                materialProfileFrameStateValue?.updateState[item?.id]
                   ?.defaultPricePerUnit
               }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialProfileFrameStateValue?.onChangeUpdateStateProfileFrameSize(
                   item?.id,
                   "defaultPricePerUnit",
                   e.target.value
@@ -187,4 +203,4 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
     </>
   );
 };
-export { SheetWeightsMapping };
+export { ProfileFrameWeightsMapping };

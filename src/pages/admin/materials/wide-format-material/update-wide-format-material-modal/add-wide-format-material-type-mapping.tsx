@@ -7,14 +7,16 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 
 import { AddsheetSizeMapping } from "./add-wide-format-material-size-mapping";
-import { materialSheetsState } from "../store/sheets";
+import { materialWideFormatMaterialState } from "../store/wide-format-material";
 import { useStyle } from "./style";
 import { WideFormatMatrtialTypeInputs } from "../shared-inputs-widget/wide-format-material-type-inputs";
 
-const AddSheetWeightsMapping = ({ index, selectedItem }) => {
+const AddWideFormatMaterialWeightsMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialWideFormatMaterialStateValue = useRecoilValue<any>(
+    materialWideFormatMaterialState
+  );
 
   return (
     <>
@@ -22,13 +24,19 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
         <WideFormatMatrtialTypeInputs index={index} />
         <div style={clasess.titlePlusContainer}>
           <div style={clasess.sizeSectionTitleStyle}>
-            {t("materials.sheetPaper.admin.sheetSizeSection")}
+            {t(
+              "materials.wideFormatMaterial.admin.WideFormatMaterialSizeSection"
+            )}
           </div>
-          <Tooltip title={t("materials.sheetPaper.admin.addSheetSize")}>
+          <Tooltip
+            title={t(
+              "materials.wideFormatMaterial.admin.addWideFormatMaterialSize"
+            )}
+          >
             <IconButton
               onClick={() => {
                 const temp = [
-                  ...materialSheetsStateValue?.items[index][
+                  ...materialWideFormatMaterialStateValue?.items[index][
                     "wideFormatMaterialSizes"
                   ],
                 ];
@@ -40,7 +48,7 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
                   defaultPricePerMeterSquare: "",
                   index: "",
                 });
-                materialSheetsStateValue?.changeItems(
+                materialWideFormatMaterialStateValue?.changeItems(
                   index,
                   "wideFormatMaterialSizes",
                   temp
@@ -50,16 +58,20 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
               <AddIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title={t("materials.sheetPaper.admin.removeSheetSize")}>
+          <Tooltip
+            title={t(
+              "materials.wideFormatMaterial.admin.removeWideFormatMaterialSize"
+            )}
+          >
             <IconButton
               onClick={() => {
                 const temp = [
-                  ...materialSheetsStateValue?.items[index][
+                  ...materialWideFormatMaterialStateValue?.items[index][
                     "wideFormatMaterialSizes"
                   ],
                 ];
                 temp.pop();
-                materialSheetsStateValue?.changeItems(
+                materialWideFormatMaterialStateValue?.changeItems(
                   index,
                   "wideFormatMaterialSizes",
                   temp
@@ -70,37 +82,39 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
             </IconButton>
           </Tooltip>
         </div>
-        {materialSheetsStateValue?.items[index]["wideFormatMaterialSizes"]?.map(
-          (item: any, index2: number) => {
-            return (
-              <AddsheetSizeMapping
-                key={`SheetSizeMapping_${index2}`}
-                index={index2}
-                sheetWeightIndex={index}
-                sheetSize={
-                  materialSheetsStateValue?.items[index][
-                    "wideFormatMaterialSizes"
-                  ]
-                }
-              />
-            );
-          }
-        )}
-        <div style={clasess.btnsWightSheetContainer}>
-          <div style={clasess.addSheetBtnContainer}>
+        {materialWideFormatMaterialStateValue?.items[index][
+          "wideFormatMaterialSizes"
+        ]?.map((item: any, index2: number) => {
+          return (
+            <AddsheetSizeMapping
+              key={`WideFormatMaterialSizeMapping_${index2}`}
+              index={index2}
+              sheetWeightIndex={index}
+              sheetSize={
+                materialWideFormatMaterialStateValue?.items[index][
+                  "wideFormatMaterialSizes"
+                ]
+              }
+            />
+          );
+        })}
+        <div style={clasess.btnsTypeWideFormatMaterialContainer}>
+          <div style={clasess.addWideFormatMaterialBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialSheetsStateValue?.setIsAddNewSheetWights(false)
+                materialWideFormatMaterialStateValue?.setIsAddNewWideFormatMaterialType(
+                  false
+                )
               }
               style={clasess.cancelBtnStyle}
             >
               {t("materials.sheetPaper.admin.cancel")}
             </GomakePrimaryButton>
           </div>
-          <div style={clasess.addSheetBtnContainer}>
+          <div style={clasess.addWideFormatMaterialBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialSheetsStateValue?.addNewSheeWeightByCategoryName(
+                materialWideFormatMaterialStateValue?.addNewSheeWeightByCategoryName(
                   selectedItem
                 )
               }
@@ -114,4 +128,4 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
     </>
   );
 };
-export { AddSheetWeightsMapping };
+export { AddWideFormatMaterialWeightsMapping };

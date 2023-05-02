@@ -3,13 +3,15 @@ import { useRecoilValue } from "recoil";
 
 import { GomakeTextInput } from "@/components";
 
-import { materialPlatsState } from "../store/plat";
+import { materialProfileFrameState } from "../store/profile-frame";
 import { useStyle } from "../add-new-profile-frame-modal/style";
 
 const ProfileFormSizeInputs = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialProfileFrameStateValue = useRecoilValue<any>(
+    materialProfileFrameState
+  );
 
   return (
     <>
@@ -21,9 +23,9 @@ const ProfileFormSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterCode")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["code"]}
+            value={materialProfileFrameStateValue?.items[index]["code"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialProfileFrameStateValue?.changeItems(
                 index,
                 "code",
                 e.target.value
@@ -38,9 +40,9 @@ const ProfileFormSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterName")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["name"]}
+            value={materialProfileFrameStateValue?.items[index]["name"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialProfileFrameStateValue?.changeItems(
                 index,
                 "name",
                 e.target.value
@@ -55,9 +57,9 @@ const ProfileFormSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterWidth")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["width"]}
+            value={materialProfileFrameStateValue?.items[index]["width"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialProfileFrameStateValue?.changeItems(
                 index,
                 "width",
                 e.target.value
@@ -72,9 +74,9 @@ const ProfileFormSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterHeight")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["height"]}
+            value={materialProfileFrameStateValue?.items[index]["height"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialProfileFrameStateValue?.changeItems(
                 index,
                 "height",
                 e.target.value
@@ -89,9 +91,9 @@ const ProfileFormSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.profileFrames.admin.enterLenght")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["length"]}
+            value={materialProfileFrameStateValue?.items[index]["length"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialProfileFrameStateValue?.changeItems(
                 index,
                 "length",
                 e.target.value
@@ -106,9 +108,9 @@ const ProfileFormSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.profileFrames.admin.enterStock")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["stock"]}
+            value={materialProfileFrameStateValue?.items[index]["stock"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialProfileFrameStateValue?.changeItems(
                 index,
                 "stock",
                 e.target.value
@@ -126,10 +128,12 @@ const ProfileFormSizeInputs = ({ index }) => {
             )}
             style={clasess.textInputStyle}
             value={
-              materialPlatsStateValue?.items[index]["defaultPricePerMeter"]
+              materialProfileFrameStateValue?.items[index][
+                "defaultPricePerMeter"
+              ]
             }
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialProfileFrameStateValue?.changeItems(
                 index,
                 "defaultPricePerMeter",
                 e.target.value
@@ -146,9 +150,13 @@ const ProfileFormSizeInputs = ({ index }) => {
               "materials.profileFrames.admin.enterDefaultPricePerUnit"
             )}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["defaultPricePerUnit"]}
+            value={
+              materialProfileFrameStateValue?.items[index][
+                "defaultPricePerUnit"
+              ]
+            }
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialProfileFrameStateValue?.changeItems(
                 index,
                 "defaultPricePerUnit",
                 e.target.value

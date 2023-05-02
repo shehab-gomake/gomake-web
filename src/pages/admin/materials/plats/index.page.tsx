@@ -8,9 +8,9 @@ import { HeaderTitle } from "@/widgets";
 
 import { materialPlatsState } from "./store/plat";
 import { HeaderFilter } from "./header-filter";
-import { useSheets } from "./use-plats";
+import { usePlat } from "./use-plats";
 
-export default function Sheets() {
+export default function Plat() {
   const { t } = useTranslation();
   const setMaterialPlatsState = useSetRecoilState<any>(materialPlatsState);
   const {
@@ -19,11 +19,11 @@ export default function Sheets() {
     openAddNewPlatModal,
     items,
     categoryName,
-    openUpdateSheetModal,
+    openUpdatePlatModal,
     selectedEditItem,
-    isAddNewSheetWights,
+    isAddNewPlatWights,
     openDeleteModal,
-    selectedSheetWeight,
+    selectedPlatWeight,
     updateState,
     onChangeUpdateStatePlatSize,
     onCloseAddNewPlatModal,
@@ -32,17 +32,17 @@ export default function Sheets() {
     setItems,
     setCategoryName,
     addNewPlatsSize,
-    setOpenUpdateSheetModal,
+    setOpenUpdatePlatModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewSheetWights,
+    setIsAddNewPlatWights,
     addNewPlatSizeByCategoryName,
     deletePlatSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
     updatePlatSize,
-  } = useSheets();
+  } = usePlat();
 
   useEffect(() => {
     setMaterialPlatsState({
@@ -51,11 +51,11 @@ export default function Sheets() {
       openAddNewPlatModal,
       items,
       categoryName,
-      openUpdateSheetModal,
+      openUpdatePlatModal,
       selectedEditItem,
-      isAddNewSheetWights,
+      isAddNewPlatWights,
       openDeleteModal,
-      selectedSheetWeight,
+      selectedPlatWeight,
       updateState,
       onChangeUpdateStatePlatSize,
       onCloseAddNewPlatModal,
@@ -64,10 +64,10 @@ export default function Sheets() {
       setItems,
       setCategoryName,
       addNewPlatsSize,
-      setOpenUpdateSheetModal,
+      setOpenUpdatePlatModal,
       onCloseUpdateModal,
       onOpnUpdateModal,
-      setIsAddNewSheetWights,
+      setIsAddNewPlatWights,
       addNewPlatSizeByCategoryName,
       deletePlatSize,
       setOpenDeleteModal,
@@ -81,11 +81,11 @@ export default function Sheets() {
     openAddNewPlatModal,
     items,
     categoryName,
-    openUpdateSheetModal,
+    openUpdatePlatModal,
     selectedEditItem,
-    isAddNewSheetWights,
+    isAddNewPlatWights,
     openDeleteModal,
-    selectedSheetWeight,
+    selectedPlatWeight,
     updateState,
     onChangeUpdateStatePlatSize,
     onCloseAddNewPlatModal,
@@ -94,10 +94,10 @@ export default function Sheets() {
     setItems,
     setCategoryName,
     addNewPlatsSize,
-    setOpenUpdateSheetModal,
+    setOpenUpdatePlatModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewSheetWights,
+    setIsAddNewPlatWights,
     addNewPlatSizeByCategoryName,
     deletePlatSize,
     setOpenDeleteModal,

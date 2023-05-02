@@ -5,13 +5,15 @@ import { GomakePrimaryButton } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
 
 import { AddNewEnvelopeModal } from "./add-new-envelope-modal";
-import { materialEnvelopeState } from "./store/plat";
+import { materialEnvelopeState } from "./store/envelope";
 import { useStyle } from "./style";
 
 const HeaderFilter = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialEnvelopeState);
+  const materialEnvelopesStateValue = useRecoilValue<any>(
+    materialEnvelopeState
+  );
 
   return (
     <>
@@ -20,7 +22,7 @@ const HeaderFilter = () => {
           style={clasess.btnStyle}
           leftIcon={<AddIcon />}
           onClick={() => {
-            materialPlatsStateValue?.onOpnModalAdded();
+            materialEnvelopesStateValue?.onOpnModalAdded();
           }}
         >
           {t("materials.envelops.admin.addNewEnvelops")}

@@ -109,7 +109,7 @@ const useStyle = () => {
         paddingBottom: 20,
         borderRadius: 4,
       },
-      addSheetBtnContainer: {
+      addWideFormatMaterialBtnContainer: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

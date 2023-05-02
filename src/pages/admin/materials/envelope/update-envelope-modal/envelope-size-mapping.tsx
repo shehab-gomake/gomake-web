@@ -4,13 +4,15 @@ import { useRecoilValue } from "recoil";
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { ControlIconsWidget } from "./control-icons-widget";
-import { materialEnvelopeState } from "../store/plat";
+import { materialEnvelopeState } from "../store/envelope";
 import { useStyle } from "./style";
 
-const SheetWeightsMapping = ({ index, item, selectedItem }) => {
+const EnvelopeWeightsMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialEnvelopeState);
+  const materialEnvelopesStateValue = useRecoilValue<any>(
+    materialEnvelopeState
+  );
   return (
     <>
       <div
@@ -21,19 +23,19 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
           t={t}
           item={item}
           onClickDelete={() =>
-            materialPlatsStateValue.deletePlatSize(
+            materialEnvelopesStateValue.deleteEnvelopeSize(
               item?.id,
               selectedItem?.categoryName
             )
           }
           onClickUpdate={() =>
-            materialPlatsStateValue.updatePlatSize(
+            materialEnvelopesStateValue.updateEnvelopeSize(
               item?.id,
               selectedItem?.categoryName
             )
           }
-          title={"Delete Sheet Weight"}
-          subTitle={"Are you sure you want to delete sheet weight?"}
+          title={t("materials.envelops.admin.deleteEnvelopeSize")}
+          subTitle={t("materials.envelops.admin.subTitleDeleteModalSize")}
         />
         <div style={clasess.mainWaightsContainer}>
           <div>
@@ -43,9 +45,9 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterCode")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.code}
+              value={materialEnvelopesStateValue?.updateState[item?.id]?.code}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialEnvelopesStateValue?.onChangeUpdateStateEnvelopeSize(
                   item?.id,
                   "code",
                   e.target.value
@@ -60,9 +62,9 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterName")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.name}
+              value={materialEnvelopesStateValue?.updateState[item?.id]?.name}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialEnvelopesStateValue?.onChangeUpdateStateEnvelopeSize(
                   item?.id,
                   "name",
                   e.target.value
@@ -77,9 +79,9 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterWidth")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.width}
+              value={materialEnvelopesStateValue?.updateState[item?.id]?.width}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialEnvelopesStateValue?.onChangeUpdateStateEnvelopeSize(
                   item?.id,
                   "width",
                   e.target.value
@@ -94,9 +96,9 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterHeight")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.height}
+              value={materialEnvelopesStateValue?.updateState[item?.id]?.height}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialEnvelopesStateValue?.onChangeUpdateStateEnvelopeSize(
                   item?.id,
                   "height",
                   e.target.value
@@ -111,9 +113,9 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.envelops.admin.enterStock")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.stock}
+              value={materialEnvelopesStateValue?.updateState[item?.id]?.stock}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialEnvelopesStateValue?.onChangeUpdateStateEnvelopeSize(
                   item?.id,
                   "stock",
                   e.target.value
@@ -129,11 +131,11 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               placeholder={t("materials.envelops.admin.enterQuantityInPackage")}
               style={clasess.textInputStyle}
               value={
-                materialPlatsStateValue?.updateState[item?.id]
+                materialEnvelopesStateValue?.updateState[item?.id]
                   ?.quantityInPackage
               }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialEnvelopesStateValue?.onChangeUpdateStateEnvelopeSize(
                   item?.id,
                   "quantityInPackage",
                   e.target.value
@@ -150,10 +152,10 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               style={clasess.textInputStyle}
               placeholder={t("materials.envelops.admin.enterisWithWindow")}
               value={
-                materialPlatsStateValue?.updateState[item?.id]?.isWithWindow
+                materialEnvelopesStateValue?.updateState[item?.id]?.isWithWindow
               }
               onChange={(e: any, value: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialEnvelopesStateValue?.onChangeUpdateStateEnvelopeSize(
                   item?.id,
                   "isWithWindow",
                   value
@@ -169,10 +171,10 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               placeholder={t("materials.plat.admin.enterDefaultPrice")}
               style={clasess.textInputStyle}
               value={
-                materialPlatsStateValue?.updateState[item?.id]?.defaultPrice
+                materialEnvelopesStateValue?.updateState[item?.id]?.defaultPrice
               }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialEnvelopesStateValue?.onChangeUpdateStateEnvelopeSize(
                   item?.id,
                   "defaultPrice",
                   e.target.value
@@ -185,4 +187,4 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
     </>
   );
 };
-export { SheetWeightsMapping };
+export { EnvelopeWeightsMapping };

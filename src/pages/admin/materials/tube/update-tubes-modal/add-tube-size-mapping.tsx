@@ -3,14 +3,14 @@ import { useRecoilValue } from "recoil";
 
 import { GomakePrimaryButton } from "@/components";
 
-import { materialPlatsState } from "../store/plat";
+import { materialTubeState } from "../store/tube";
 import { useStyle } from "./style";
 import { TubeSizeInputs } from "../shared-inputs-widget/tube-size-inputs";
 
-const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
+const AddTubeSizeWeightsMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialTubeStateValue = useRecoilValue<any>(materialTubeState);
 
   return (
     <>
@@ -20,7 +20,7 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.setIsAddNewSheetWights(false)
+                materialTubeStateValue?.setIsAddNewTubeWights(false)
               }
               style={clasess.cancelBtnStyle}
             >
@@ -30,7 +30,7 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.addNewPlatSizeByCategoryName(
+                materialTubeStateValue?.addNewTubeSizeByCategoryName(
                   selectedItem
                 )
               }
@@ -44,4 +44,4 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
     </>
   );
 };
-export { AddPlatSizeWeightsMapping };
+export { AddTubeSizeWeightsMapping };

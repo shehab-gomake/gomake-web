@@ -10,21 +10,21 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { PlatSizeMapping } from "./plat-size-mapping";
-import { materialPlatsState } from "../store/plat";
+import { TubeSizeMapping } from "./tube-size-mapping";
+import { materialTubeState } from "../store/tube";
 import { useStyle } from "./style";
 
 const AddNewTubeModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialTubeStateValue = useRecoilValue<any>(materialTubeState);
 
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openAddNewPlatModal}
+        openModal={materialTubeStateValue?.openAddNewTubeModal}
         modalTitle={t("materials.tubes.admin.addNewTubes")}
-        onClose={materialPlatsStateValue?.onCloseAddNewPlatModal}
+        onClose={materialTubeStateValue?.onCloseAddNewTubeModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -36,9 +36,9 @@ const AddNewTubeModal = () => {
               <GomakeTextInput
                 placeholder={t("materials.sheetPaper.admin.categoryName")}
                 style={clasess.textInputStyle}
-                value={materialPlatsStateValue?.categoryName}
+                value={materialTubeStateValue?.categoryName}
                 onChange={(e: any) => {
-                  materialPlatsStateValue?.setCategoryName(e.target.value);
+                  materialTubeStateValue?.setCategoryName(e.target.value);
                 }}
               />
             </div>
@@ -51,7 +51,7 @@ const AddNewTubeModal = () => {
               <Tooltip title={t("materials.tubes.admin.addTubesSize")}>
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialPlatsStateValue?.items];
+                    const temp = [...materialTubeStateValue?.items];
                     temp.push({
                       code: "",
                       name: "",
@@ -60,7 +60,7 @@ const AddNewTubeModal = () => {
                       weight: "",
                       defaultPrice: "",
                     });
-                    materialPlatsStateValue?.setItems(temp);
+                    materialTubeStateValue?.setItems(temp);
                   }}
                 >
                   <AddIcon />
@@ -69,18 +69,18 @@ const AddNewTubeModal = () => {
               <Tooltip title={t("materials.tubes.admin.removeTubesSize")}>
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialPlatsStateValue?.items];
+                    const temp = [...materialTubeStateValue?.items];
                     temp.pop();
-                    materialPlatsStateValue?.setItems(temp);
+                    materialTubeStateValue?.setItems(temp);
                   }}
                 >
                   <RemoveIcon />
                 </IconButton>
               </Tooltip>
             </div>
-            {materialPlatsStateValue?.items?.map((item: any, index: number) => {
+            {materialTubeStateValue?.items?.map((item: any, index: number) => {
               return (
-                <PlatSizeMapping
+                <TubeSizeMapping
                   key={`platSizeMapping_${index}`}
                   index={index}
                 />
@@ -89,7 +89,7 @@ const AddNewTubeModal = () => {
           </div>
           <div style={clasess.addBtnContainer}>
             <GomakePrimaryButton
-              onClick={materialPlatsStateValue?.addNewPlatsSize}
+              onClick={materialTubeStateValue?.addNewTubeSize}
             >
               {t("materials.tubes.admin.addNewTubes")}
             </GomakePrimaryButton>

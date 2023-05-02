@@ -5,23 +5,25 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddPlatSizeWeightsMapping } from "./add-envelope-size-mapping";
-import { SheetWeightsMapping } from "./envelope-size-mapping";
-import { materialEnvelopeState } from "../store/plat";
+import { AddEnvelopeSizeWeightsMapping } from "./add-envelope-size-mapping";
+import { EnvelopeWeightsMapping } from "./envelope-size-mapping";
+import { materialEnvelopeState } from "../store/envelope";
 import { useStyle } from "./style";
 
-const UpdatePlatModal = () => {
+const UpdateEnvelopeModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialEnvelopeState);
-  const selectedItem = materialPlatsStateValue?.selectedEditItem;
+  const materialEnvelopesStateValue = useRecoilValue<any>(
+    materialEnvelopeState
+  );
+  const selectedItem = materialEnvelopesStateValue?.selectedEditItem;
 
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openUpdateSheetModal}
-        modalTitle={`Edit ${selectedItem?.categoryName} Plat`}
-        onClose={materialPlatsStateValue?.onCloseUpdateModal}
+        openModal={materialEnvelopesStateValue?.openUpdateEnvelopeModal}
+        modalTitle={`Edit ${selectedItem?.categoryName} Envelope`}
+        onClose={materialEnvelopesStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -41,13 +43,13 @@ const UpdatePlatModal = () => {
           <div style={clasess.secondSectionContainer}>
             <div style={clasess.titlePlusContainer}>
               <div style={clasess.firstSectionTitleStyle}>
-                {t("materials.plat.admin.platSizeSection")}
+                {t("materials.envelops.admin.envelopSizeSection")}
               </div>
-              {!materialPlatsStateValue?.isAddNewSheetWights && (
-                <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
+              {!materialEnvelopesStateValue?.isAddNewEnvelopeWights && (
+                <Tooltip title={t("materials.envelops.admin.addEnvelopSize")}>
                   <IconButton
                     onClick={() => {
-                      materialPlatsStateValue.setItems([
+                      materialEnvelopesStateValue.setItems([
                         {
                           code: "",
                           name: "",
@@ -59,7 +61,9 @@ const UpdatePlatModal = () => {
                           defaultPrice: "",
                         },
                       ]);
-                      materialPlatsStateValue?.setIsAddNewSheetWights(true);
+                      materialEnvelopesStateValue?.setIsAddNewEnvelopeWights(
+                        true
+                      );
                     }}
                   >
                     <AddIcon />
@@ -67,15 +71,15 @@ const UpdatePlatModal = () => {
                 </Tooltip>
               )}
             </div>
-            {materialPlatsStateValue?.isAddNewSheetWights && (
-              <AddPlatSizeWeightsMapping
+            {materialEnvelopesStateValue?.isAddNewEnvelopeWights && (
+              <AddEnvelopeSizeWeightsMapping
                 index={0}
                 selectedItem={selectedItem}
               />
             )}
             {selectedItem?.envelopeSizes?.map((item: any, index: number) => {
               return (
-                <SheetWeightsMapping
+                <EnvelopeWeightsMapping
                   key={`platSizeMapping_${index}`}
                   index={index}
                   item={item}
@@ -89,4 +93,4 @@ const UpdatePlatModal = () => {
     </>
   );
 };
-export { UpdatePlatModal };
+export { UpdateEnvelopeModal };

@@ -203,7 +203,9 @@
         "defaultPrice": "Default Price",
         "enterDefaultPrice": "Enter Default Price",
         "deletePlat": "Delete Plat",
-        "subTitleDeleteModal": "Are you sure you delete plat by categoryName"
+        "subTitleDeleteModal": "Are you sure you delete plat by categoryName",
+        "deletePlatSize": "Delete Plat Size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete plat size?"
       },
       "title": "Plats",
       "category": "Category",
@@ -238,8 +240,10 @@
         "enterQuantityInPackage": "Enter Quantity in package",
         "isWithWindow": "is with window",
         "enterisWithWindow": "Choose true or false",
-        "deletePlat": "Delete Plat",
-        "subTitleDeleteModal": "Are you sure you delete plat by categoryName"
+        "deleteEnvelope": "Delete Envelop",
+        "subTitleDeleteModal": "Are you sure you delete envelop by categoryName",
+        "deleteEnvelopeSize": "Delete Envelope Size",
+        "subTitleDeleteModalSize": "Are you sure you want to delete envelope size?"
       },
       "title": "Envelopes",
       "category": "Category",
@@ -277,7 +281,10 @@
         "enterDiameter": "Enter Diameter",
         "weight": "Weight",
         "enterWeight": "Enter Weight",
-        "deleteTube": "Delete tube"
+        "deleteTube": "Delete tube",
+        "subTitleDeleteModal": "Are you sure you delete tube by categoryName",
+        "deleteTubeSize": "Delete Tube Size",
+        "subTitleDeleteModalSize": "Are you sure you want to delete tube size?"
       },
       "title": "Tubes",
       "category": "Category",
@@ -295,17 +302,20 @@
         "title": "Material Roll Printing",
         "addNewMaterialRollPrinting": "Add New Material Roll Printing",
         "materialRollPrintingSizeSection": "Material Roll Printing Size Section",
-        "addNewMaterialRollPrintingSize": "Add new Material Roll Printing size",
-        "removeMaterialRollPrintingSize": "Remove last Material Roll Printing size",
+        "addNewMaterialRollPrintingSize": "Add new material roll printing size",
+        "removeMaterialRollPrintingSize": "Remove last material roll printing size",
         "weightPerSquareMeter": "Weight per square meter",
         "enterWeightPerSquareMeter": "Enter Weight Per Square Meter",
-        "deleteTube": "Delete tube",
+        "deletePrintingMaterials": "Delete Roll Printing",
+        "subTitleDeleteModal": "Are you sure to delete roll printing by categoryName",
         "withPremier": "With premier",
         "selectWithPremier": "Select With Premier",
         "stock": "Stock",
         "enterStock": "Enter Stock",
         "defaultPricePerSquareMeter": "Default Price Per Square",
-        "enterDefaultPricePerSquareMeter": "Enter Default Price Per Square Meter"
+        "enterDefaultPricePerSquareMeter": "Enter Default Price Per Square Meter",
+        "deleteMaterialRollPrintingSize": "Delete Material Roll Printing Size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete Material Roll Printing Size?"
       },
       "title": "Printing material for rolls",
       "category": "Category",
@@ -406,7 +416,11 @@
         "defaultPricePerUnit": "Default Price Per Unit",
         "enterDefaultPricePerUnit": "Enter Default Price Per Unit",
         "defaultPricePerMeter": "Default Price Per Meter",
-        "enterDefaultPricePerMeter": "Enter Default Price Per Meter"
+        "enterDefaultPricePerMeter": "Enter Default Price Per Meter",
+        "deleteProfileFrameTitle": "Delete profile frame",
+        "deleteLProfileFrameSubTitle": "Are you sure you want to delete profile frame?",
+        "deleteProfileFrameSizeTitle": "Delete profile frame size",
+        "deleteLProfileFrameSizeSubTitle": "Are you sure you want to delete profile frame size?"
       },
       "title": "Profile frames",
       "category": "Category",
@@ -444,7 +458,11 @@
         "hardness": "Hardness",
         "enterHardness": "Enter Hardness",
         "defaultPricePerMeterSquare": "Default Price Per Meter Square",
-        "enterDefaultPricePerMeterSquare": "Enter Default Price Per Meter Square"
+        "enterDefaultPricePerMeterSquare": "Enter Default Price Per Meter Square",
+        "deleteWideFormatMaterialSize": "Delete Wide Format Material Size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete wide format material size?",
+        "deleteWideFormatMaterialType": "Delete Wide Format Material Type",
+        "subTitleDeleteTypeModal": "Are you sure you want to delete wide format material type?"
       }
     },
 

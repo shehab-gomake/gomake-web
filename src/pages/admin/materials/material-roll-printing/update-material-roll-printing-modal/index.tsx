@@ -5,23 +5,27 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddPlatSizeWeightsMapping } from "./add-plat-size-mapping";
-import { SheetWeightsMapping } from "./plat-size-mapping";
-import { materialPlatsState } from "../store/plat";
+import { AddMaterialRollPrintingSizeWeightsMapping } from "./add-material-roll-printing-size-mapping";
+import { MaterialRollPrintingWeightsMapping } from "./material-roll-printing-mapping";
+import { materialMaterialRollPrintingState } from "../store/material-roll-printing";
 import { useStyle } from "./style";
 
-const UpdatePlatModal = () => {
+const UpdateMaterialRollPrintingModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
-  const selectedItem = materialPlatsStateValue?.selectedEditItem;
+  const materialMaterialRollPrintingStateValue = useRecoilValue<any>(
+    materialMaterialRollPrintingState
+  );
+  const selectedItem = materialMaterialRollPrintingStateValue?.selectedEditItem;
 
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openUpdateSheetModal}
+        openModal={
+          materialMaterialRollPrintingStateValue?.openUpdateMaterialRollPrintingModal
+        }
         modalTitle={`Edit ${selectedItem?.categoryName} Material Roll Printing`}
-        onClose={materialPlatsStateValue?.onCloseUpdateModal}
+        onClose={materialMaterialRollPrintingStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -41,13 +45,19 @@ const UpdatePlatModal = () => {
           <div style={clasess.secondSectionContainer}>
             <div style={clasess.titlePlusContainer}>
               <div style={clasess.firstSectionTitleStyle}>
-                {t("materials.plat.admin.platSizeSection")}
+                {t(
+                  "materials.printingMaterials.admin.materialRollPrintingSizeSection"
+                )}
               </div>
-              {!materialPlatsStateValue?.isAddNewSheetWights && (
-                <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
+              {!materialMaterialRollPrintingStateValue?.isAddNewMaterialRollPrintingWights && (
+                <Tooltip
+                  title={t(
+                    "materials.printingMaterials.admin.addNewMaterialRollPrintingSize"
+                  )}
+                >
                   <IconButton
                     onClick={() => {
-                      materialPlatsStateValue.setItems([
+                      materialMaterialRollPrintingStateValue.setItems([
                         {
                           code: "",
                           name: "",
@@ -59,7 +69,9 @@ const UpdatePlatModal = () => {
                           defaultPricePerSquareMeter: "",
                         },
                       ]);
-                      materialPlatsStateValue?.setIsAddNewSheetWights(true);
+                      materialMaterialRollPrintingStateValue?.setIsAddNewMaterialRollPrintingWights(
+                        true
+                      );
                     }}
                   >
                     <AddIcon />
@@ -67,8 +79,8 @@ const UpdatePlatModal = () => {
                 </Tooltip>
               )}
             </div>
-            {materialPlatsStateValue?.isAddNewSheetWights && (
-              <AddPlatSizeWeightsMapping
+            {materialMaterialRollPrintingStateValue?.isAddNewMaterialRollPrintingWights && (
+              <AddMaterialRollPrintingSizeWeightsMapping
                 index={0}
                 selectedItem={selectedItem}
               />
@@ -76,8 +88,8 @@ const UpdatePlatModal = () => {
             {selectedItem?.materialRollPrintingSizes?.map(
               (item: any, index: number) => {
                 return (
-                  <SheetWeightsMapping
-                    key={`platSizeMapping_${index}`}
+                  <MaterialRollPrintingWeightsMapping
+                    key={`materialRollPrintingSizeMapping_${index}`}
                     index={index}
                     item={item}
                     selectedItem={selectedItem}
@@ -91,4 +103,4 @@ const UpdatePlatModal = () => {
     </>
   );
 };
-export { UpdatePlatModal };
+export { UpdateMaterialRollPrintingModal };

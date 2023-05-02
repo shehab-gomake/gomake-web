@@ -36,6 +36,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(700, 16),
         color: primaryColor(500),
         marginBottom: 14,
+        textAlign: "center" as "center",
       },
       subTitle: {
         ...FONT_FAMILY.Lexend(400, 12),

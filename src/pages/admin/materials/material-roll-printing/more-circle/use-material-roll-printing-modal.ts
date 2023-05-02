@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const usePlatsModal = ({ item }: any) => {
+const useMaterialRollPrintingsModal = ({ item }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const { setSnackbarStateValue } = useSnackBar();
@@ -16,7 +16,7 @@ const usePlatsModal = ({ item }: any) => {
     setOpenDeleteModal(true);
   };
 
-  const deletePlatByCategoryName = useCallback(async () => {
+  const deleteMaterialRollPrintingByCategoryName = useCallback(async () => {
     const res = await callApi(
       "POST",
       `/v1/administrator/material-roll-printing/delete-material-roll-printing`,
@@ -43,9 +43,9 @@ const usePlatsModal = ({ item }: any) => {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deletePlatByCategoryName,
+    deleteMaterialRollPrintingByCategoryName,
     t,
   };
 };
 
-export { usePlatsModal };
+export { useMaterialRollPrintingsModal };

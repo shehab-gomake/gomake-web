@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { getAndSetGetAllWideFormatMaterial } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const useSheets = () => {
+const useWideFormatMaterial = () => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
@@ -15,16 +15,30 @@ const useSheets = () => {
     ],
     []
   );
-  const [openAddSheetModal, setOpenAddSheetModal] = useState(false);
-  const [openUpdateSheetModal, setOpenUpdateSheetModal] = useState(false);
+  const [openAddWideFormatMaterialModal, setOpenAddWideFormatMaterialModal] =
+    useState(false);
+  const [
+    openUpdateWideFormatMaterialModal,
+    setOpenUpdateWideFormatMaterialModal,
+  ] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [allWideFormatMaterial, setAllWideFormatMaterial] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
-  const [isAddNewSheetWights, setIsAddNewSheetWights] = useState(false);
-  const [isAddNewSheetWightSize, setIsAddNewSheetWightSize] = useState(false);
-  const [selectedSheetWeight, setSelectedSheetWeight] = useState({});
-  const [selectedSheetWeightSize, setSelectedSheetWeightSize] = useState({});
+  const [isAddNewWideFormatMaterialType, setIsAddNewWideFormatMaterialType] =
+    useState(false);
+  const [
+    isAddNewWideFormatMaterialTypeSize,
+    setIsAddNewWideFormatMaterialTypeSize,
+  ] = useState(false);
+  const [
+    selectedWideFormatMaterialWeight,
+    setSelectedWideFormatMaterialWeight,
+  ] = useState({});
+  const [
+    selectedWideFormatMaterialWeightSize,
+    setSelectedWideFormatMaterialWeightSize,
+  ] = useState({});
   const [items, setItems] = useState([
     {
       name: "",
@@ -53,7 +67,7 @@ const useSheets = () => {
     setItems(temp);
   };
 
-  const changeItemsSheetSize = (
+  const changeItemsWideFormatMaterialSize = (
     sheetWeightIndex: number,
     sheetSizeIndex: number,
     filedName: string,
@@ -67,9 +81,9 @@ const useSheets = () => {
     changeItems(sheetWeightIndex, "wideFormatMaterialSizes", temp);
   };
   const [updateState, setUpdateState] = useState([]);
-  const onClickOpenSheetWeightSizeWidget = (item) => {
-    setSelectedSheetWeightSize(item);
-    setIsAddNewSheetWightSize(true);
+  const onClickOpenWideFormatMaterialWeightSizeWidget = (item) => {
+    setSelectedWideFormatMaterialWeightSize(item);
+    setIsAddNewWideFormatMaterialTypeSize(true);
     setItems([
       {
         name: "",
@@ -90,7 +104,7 @@ const useSheets = () => {
       },
     ]);
   };
-  const onChangeUpdateStateSheetWeights = useCallback(
+  const onChangeUpdateStateWideFormatMaterialWeights = useCallback(
     (index: string, filedName: string, value: any) => {
       let temp: any = { ...updateState };
       temp[`${index}`] = {
@@ -101,7 +115,7 @@ const useSheets = () => {
     },
     [updateState]
   );
-  const initialStateSheetWeights = (item: any) => {
+  const initialStateWideFormatMaterialWeights = (item: any) => {
     let temp = [...item?.wideFormatMaterialTypes];
     let final: any = [];
     temp.map((wideFormatMaterialType) => {
@@ -120,34 +134,34 @@ const useSheets = () => {
     setUpdateState(final);
   };
 
-  const getSheets = useCallback(async () => {
+  const getWideFormatMaterial = useCallback(async () => {
     await getAndSetGetAllWideFormatMaterial(callApi, setAllWideFormatMaterial);
   }, []);
   const onCloseModalAdded = () => {
-    setOpenAddSheetModal(false);
+    setOpenAddWideFormatMaterialModal(false);
   };
   const onOpnModalAdded = () => {
-    setOpenAddSheetModal(true);
+    setOpenAddWideFormatMaterialModal(true);
   };
   const onCloseUpdateModal = async () => {
-    getSheets();
-    setOpenUpdateSheetModal(false);
-    setIsAddNewSheetWights(false);
+    getWideFormatMaterial();
+    setOpenUpdateWideFormatMaterialModal(false);
+    setIsAddNewWideFormatMaterialType(false);
   };
   const onOpnUpdateModal = (item) => {
-    initialStateSheetWeights(item);
+    initialStateWideFormatMaterialWeights(item);
     setSelectedEditItem(item);
-    setOpenUpdateSheetModal(true);
+    setOpenUpdateWideFormatMaterialModal(true);
   };
   const onCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
   const onOpenDeleteModal = (item) => {
     setOpenDeleteModal(true);
-    setSelectedSheetWeight(item);
+    setSelectedWideFormatMaterialWeight(item);
   };
 
-  const addNewSupplierSheet = useCallback(async () => {
+  const addNewSupplierWideFormatMaterial = useCallback(async () => {
     const res = await callApi(
       "POST",
       `/v1/administrator/wide-format-material/add-wide-format-material`,
@@ -162,7 +176,7 @@ const useSheets = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      await getSheets();
+      await getWideFormatMaterial();
       onCloseModalAdded();
     } else {
       setSnackbarStateValue({
@@ -187,7 +201,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        getWideFormatMaterial();
         onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -199,7 +213,7 @@ const useSheets = () => {
     },
     [items]
   );
-  const deleteSheetweight = useCallback(
+  const deleteWideFormatMaterialweight = useCallback(
     async (typeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -211,7 +225,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        getWideFormatMaterial();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -223,7 +237,7 @@ const useSheets = () => {
     },
     []
   );
-  const deleteSheetweightSize = useCallback(
+  const deleteWideFormatMaterialweightSize = useCallback(
     async (categoryName: string, typeId: string, sizeId: string) => {
       const res = await callApi(
         "POST",
@@ -235,7 +249,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        getWideFormatMaterial();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -247,7 +261,7 @@ const useSheets = () => {
     },
     []
   );
-  const updateSheetweight = useCallback(
+  const updateWideFormatMaterialweight = useCallback(
     async (typeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -262,7 +276,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        // getSheets();
+        // getWideFormatMaterial();
         // onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -274,7 +288,7 @@ const useSheets = () => {
     },
     [updateState]
   );
-  const updateSheetWeightSizes = useCallback(
+  const updateWideFormatMaterialWeightSizes = useCallback(
     async (categoryName: string, typeId: string, sizeId: string) => {
       const res = await callApi(
         "POST",
@@ -314,8 +328,8 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
-        setIsAddNewSheetWightSize(false);
+        getWideFormatMaterial();
+        setIsAddNewWideFormatMaterialTypeSize(false);
       } else {
         setSnackbarStateValue({
           state: true,
@@ -327,46 +341,46 @@ const useSheets = () => {
     [items]
   );
   useEffect(() => {
-    getSheets();
+    getWideFormatMaterial();
   }, []);
   return {
     headerTable,
     allWideFormatMaterial,
-    openAddSheetModal,
+    openAddWideFormatMaterialModal,
     items,
     categoryName,
-    openUpdateSheetModal,
+    openUpdateWideFormatMaterialModal,
     selectedEditItem,
-    isAddNewSheetWights,
+    isAddNewWideFormatMaterialType,
     openDeleteModal,
-    selectedSheetWeight,
+    selectedWideFormatMaterialWeight,
     updateState,
-    isAddNewSheetWightSize,
-    selectedSheetWeightSize,
-    onChangeUpdateStateSheetWeights,
+    isAddNewWideFormatMaterialTypeSize,
+    selectedWideFormatMaterialWeightSize,
+    onChangeUpdateStateWideFormatMaterialWeights,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewSupplierSheet,
-    changeItemsSheetSize,
-    setOpenUpdateSheetModal,
+    addNewSupplierWideFormatMaterial,
+    changeItemsWideFormatMaterialSize,
+    setOpenUpdateWideFormatMaterialModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewSheetWights,
+    setIsAddNewWideFormatMaterialType,
     addNewSheeWeightByCategoryName,
-    deleteSheetweight,
-    deleteSheetweightSize,
+    deleteWideFormatMaterialweight,
+    deleteWideFormatMaterialweightSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updateSheetweight,
-    updateSheetWeightSizes,
-    setIsAddNewSheetWightSize,
-    onClickOpenSheetWeightSizeWidget,
+    updateWideFormatMaterialweight,
+    updateWideFormatMaterialWeightSizes,
+    setIsAddNewWideFormatMaterialTypeSize,
+    onClickOpenWideFormatMaterialWeightSizeWidget,
     addNewSheeWeightSizeByCategoryName,
   };
 };
 
-export { useSheets };
+export { useWideFormatMaterial };

@@ -10,23 +10,29 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { PlatSizeMapping } from "./plat-size-mapping";
-import { materialPlatsState } from "../store/plat";
+import { MaterialRollPrintingSizeMapping } from "./material-roll-printing-size-mapping";
+import { materialMaterialRollPrintingState } from "../store/material-roll-printing";
 import { useStyle } from "./style";
 
-const AddNewTubeModal = () => {
+const AddNewMaterialRollPrintingModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialMaterialRollPrintingsStateValue = useRecoilValue<any>(
+    materialMaterialRollPrintingState
+  );
 
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openAddNewPlatModal}
+        openModal={
+          materialMaterialRollPrintingsStateValue?.openAddNewMaterialRollPrintingModal
+        }
         modalTitle={t(
           "materials.printingMaterials.admin.addNewMaterialRollPrinting"
         )}
-        onClose={materialPlatsStateValue?.onCloseAddNewPlatModal}
+        onClose={
+          materialMaterialRollPrintingsStateValue?.onCloseAddNewMaterialRollPrintingModal
+        }
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -38,9 +44,11 @@ const AddNewTubeModal = () => {
               <GomakeTextInput
                 placeholder={t("materials.sheetPaper.admin.categoryName")}
                 style={clasess.textInputStyle}
-                value={materialPlatsStateValue?.categoryName}
+                value={materialMaterialRollPrintingsStateValue?.categoryName}
                 onChange={(e: any) => {
-                  materialPlatsStateValue?.setCategoryName(e.target.value);
+                  materialMaterialRollPrintingsStateValue?.setCategoryName(
+                    e.target.value
+                  );
                 }}
               />
             </div>
@@ -59,7 +67,9 @@ const AddNewTubeModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialPlatsStateValue?.items];
+                    const temp = [
+                      ...materialMaterialRollPrintingsStateValue?.items,
+                    ];
                     temp.push({
                       code: "",
                       name: "",
@@ -70,7 +80,7 @@ const AddNewTubeModal = () => {
                       stock: "",
                       defaultPricePerSquareMeter: "",
                     });
-                    materialPlatsStateValue?.setItems(temp);
+                    materialMaterialRollPrintingsStateValue?.setItems(temp);
                   }}
                 >
                   <AddIcon />
@@ -83,27 +93,33 @@ const AddNewTubeModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialPlatsStateValue?.items];
+                    const temp = [
+                      ...materialMaterialRollPrintingsStateValue?.items,
+                    ];
                     temp.pop();
-                    materialPlatsStateValue?.setItems(temp);
+                    materialMaterialRollPrintingsStateValue?.setItems(temp);
                   }}
                 >
                   <RemoveIcon />
                 </IconButton>
               </Tooltip>
             </div>
-            {materialPlatsStateValue?.items?.map((item: any, index: number) => {
-              return (
-                <PlatSizeMapping
-                  key={`platSizeMapping_${index}`}
-                  index={index}
-                />
-              );
-            })}
+            {materialMaterialRollPrintingsStateValue?.items?.map(
+              (item: any, index: number) => {
+                return (
+                  <MaterialRollPrintingSizeMapping
+                    key={`platSizeMapping_${index}`}
+                    index={index}
+                  />
+                );
+              }
+            )}
           </div>
           <div style={clasess.addBtnContainer}>
             <GomakePrimaryButton
-              onClick={materialPlatsStateValue?.addNewPlatsSize}
+              onClick={
+                materialMaterialRollPrintingsStateValue?.addNewMaterialRollPrintingsSize
+              }
             >
               {t(
                 "materials.printingMaterials.admin.addNewMaterialRollPrinting"
@@ -115,4 +131,4 @@ const AddNewTubeModal = () => {
     </>
   );
 };
-export { AddNewTubeModal };
+export { AddNewMaterialRollPrintingModal };

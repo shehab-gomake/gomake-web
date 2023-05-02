@@ -3,13 +3,15 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
-import { materialPlatsState } from "../store/plat";
+import { materialMaterialRollPrintingState } from "../store/material-roll-printing";
 import { useStyle } from "../add-new-material-roll-printing-modal/style";
 
 const RollPrintingSizeInputs = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialMaterialRollPrintingStateValue = useRecoilValue<any>(
+    materialMaterialRollPrintingState
+  );
 
   return (
     <>
@@ -21,9 +23,9 @@ const RollPrintingSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterCode")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["code"]}
+            value={materialMaterialRollPrintingStateValue?.items[index]["code"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialMaterialRollPrintingStateValue?.changeItems(
                 index,
                 "code",
                 e.target.value
@@ -38,9 +40,9 @@ const RollPrintingSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterName")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["name"]}
+            value={materialMaterialRollPrintingStateValue?.items[index]["name"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialMaterialRollPrintingStateValue?.changeItems(
                 index,
                 "name",
                 e.target.value
@@ -55,9 +57,11 @@ const RollPrintingSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.envelops.admin.enterWidth")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["width"]}
+            value={
+              materialMaterialRollPrintingStateValue?.items[index]["width"]
+            }
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialMaterialRollPrintingStateValue?.changeItems(
                 index,
                 "width",
                 e.target.value
@@ -72,9 +76,11 @@ const RollPrintingSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.envelops.admin.enterHeight")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["height"]}
+            value={
+              materialMaterialRollPrintingStateValue?.items[index]["height"]
+            }
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialMaterialRollPrintingStateValue?.changeItems(
                 index,
                 "height",
                 e.target.value
@@ -92,10 +98,12 @@ const RollPrintingSizeInputs = ({ index }) => {
             )}
             style={clasess.textInputStyle}
             value={
-              materialPlatsStateValue?.items[index]["weightPerSquareMeter"]
+              materialMaterialRollPrintingStateValue?.items[index][
+                "weightPerSquareMeter"
+              ]
             }
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialMaterialRollPrintingStateValue?.changeItems(
                 index,
                 "weightPerSquareMeter",
                 e.target.value
@@ -113,9 +121,17 @@ const RollPrintingSizeInputs = ({ index }) => {
             placeholder={t(
               "materials.printingMaterials.admin.selectWithPremier"
             )}
-            value={materialPlatsStateValue?.items[index]["withPremier"]}
+            value={
+              materialMaterialRollPrintingStateValue?.items[index][
+                "withPremier"
+              ]
+            }
             onChange={(e: any, value: any) => {
-              materialPlatsStateValue?.changeItems(index, "withPremier", value);
+              materialMaterialRollPrintingStateValue?.changeItems(
+                index,
+                "withPremier",
+                value
+              );
             }}
           />
         </div>
@@ -126,9 +142,11 @@ const RollPrintingSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.printingMaterials.admin.enterStock")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["stock"]}
+            value={
+              materialMaterialRollPrintingStateValue?.items[index]["stock"]
+            }
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialMaterialRollPrintingStateValue?.changeItems(
                 index,
                 "stock",
                 e.target.value
@@ -146,12 +164,12 @@ const RollPrintingSizeInputs = ({ index }) => {
             )}
             style={clasess.textInputStyle}
             value={
-              materialPlatsStateValue?.items[index][
+              materialMaterialRollPrintingStateValue?.items[index][
                 "defaultPricePerSquareMeter"
               ]
             }
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialMaterialRollPrintingStateValue?.changeItems(
                 index,
                 "defaultPricePerSquareMeter",
                 e.target.value

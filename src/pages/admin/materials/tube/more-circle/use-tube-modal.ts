@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const usePlatsModal = ({ item }: any) => {
+const useTubeModal = ({ item }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const { setSnackbarStateValue } = useSnackBar();
@@ -16,7 +16,7 @@ const usePlatsModal = ({ item }: any) => {
     setOpenDeleteModal(true);
   };
 
-  const deletePlatByCategoryName = useCallback(async () => {
+  const deleteTubeByCategoryName = useCallback(async () => {
     const res = await callApi("POST", `/v1/administrator/tube/delete-tube`, {
       categoryName: item?.categoryName,
     });
@@ -39,9 +39,9 @@ const usePlatsModal = ({ item }: any) => {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deletePlatByCategoryName,
+    deleteTubeByCategoryName,
     t,
   };
 };
 
-export { usePlatsModal };
+export { useTubeModal };

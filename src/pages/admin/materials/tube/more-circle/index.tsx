@@ -2,9 +2,9 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeDeleteModal } from "@/components";
 
-import { UpdatePlatModal } from "../update-tubes-modal";
-import { materialPlatsState } from "../store/plat";
-import { usePlatsModal } from "./use-tube-modal";
+import { UpdateTubeModal } from "../update-tubes-modal";
+import { materialTubeState } from "../store/tube";
+import { useTubeModal } from "./use-tube-modal";
 import { IconWidget } from "./icon-widget";
 
 const TubeSettingsWidget = ({ item }: any) => {
@@ -12,19 +12,19 @@ const TubeSettingsWidget = ({ item }: any) => {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deletePlatByCategoryName,
+    deleteTubeByCategoryName,
     t,
-  } = usePlatsModal({
+  } = useTubeModal({
     item,
   });
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialTubeStateValue = useRecoilValue<any>(materialTubeState);
 
   return (
     <>
       <IconWidget
         t={t}
         onOpnUpdateModal={() => {
-          materialPlatsStateValue?.onOpnUpdateModal(item);
+          materialTubeStateValue?.onOpnUpdateModal(item);
         }}
         onOpenDeleteModal={onOpenDeleteModal}
       />
@@ -35,12 +35,12 @@ const TubeSettingsWidget = ({ item }: any) => {
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.plat.admin.subTitleDeleteModal")} ${
+        subTitle={`${t("materials.tubes.admin.subTitleDeleteModal")} ${
           item?.categoryName
         } ?`}
-        onClickDelete={deletePlatByCategoryName}
+        onClickDelete={deleteTubeByCategoryName}
       />
-      {item === materialPlatsStateValue.selectedEditItem && <UpdatePlatModal />}
+      {item === materialTubeStateValue.selectedEditItem && <UpdateTubeModal />}
     </>
   );
 };

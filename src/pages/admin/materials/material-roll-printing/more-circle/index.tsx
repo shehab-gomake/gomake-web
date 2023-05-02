@@ -2,9 +2,9 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeDeleteModal } from "@/components";
 
-import { UpdatePlatModal } from "../update-material-roll-printing-modal";
-import { materialPlatsState } from "../store/plat";
-import { usePlatsModal } from "./use-tube-modal";
+import { UpdateMaterialRollPrintingModal } from "../update-material-roll-printing-modal";
+import { materialMaterialRollPrintingState } from "../store/material-roll-printing";
+import { useMaterialRollPrintingsModal } from "./use-material-roll-printing-modal";
 import { IconWidget } from "./icon-widget";
 
 const MaterialRollPrintingSettingsWidget = ({ item }: any) => {
@@ -12,35 +12,39 @@ const MaterialRollPrintingSettingsWidget = ({ item }: any) => {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deletePlatByCategoryName,
+    deleteMaterialRollPrintingByCategoryName,
     t,
-  } = usePlatsModal({
+  } = useMaterialRollPrintingsModal({
     item,
   });
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialMaterialRollPrintingsStateValue = useRecoilValue<any>(
+    materialMaterialRollPrintingState
+  );
 
   return (
     <>
       <IconWidget
         t={t}
         onOpnUpdateModal={() => {
-          materialPlatsStateValue?.onOpnUpdateModal(item);
+          materialMaterialRollPrintingsStateValue?.onOpnUpdateModal(item);
         }}
         onOpenDeleteModal={onOpenDeleteModal}
       />
       <GoMakeDeleteModal
         hideIcon={true}
-        title={t("materials.tubes.admin.deleteTube")}
+        title={t("materials.printingMaterials.admin.deletePrintingMaterials")}
         yesBtn={t("materials.sheetPaper.admin.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.plat.admin.subTitleDeleteModal")} ${
-          item?.categoryName
-        } ?`}
-        onClickDelete={deletePlatByCategoryName}
+        subTitle={`${t(
+          "materials.printingMaterials.admin.subTitleDeleteModal"
+        )} ${item?.categoryName} ?`}
+        onClickDelete={deleteMaterialRollPrintingByCategoryName}
       />
-      {item === materialPlatsStateValue.selectedEditItem && <UpdatePlatModal />}
+      {item === materialMaterialRollPrintingsStateValue.selectedEditItem && (
+        <UpdateMaterialRollPrintingModal />
+      )}
     </>
   );
 };

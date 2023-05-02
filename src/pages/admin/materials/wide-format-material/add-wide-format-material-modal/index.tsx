@@ -10,23 +10,27 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { materialSheetsState } from "../store/sheets";
+import { materialWideFormatMaterialState } from "../store/wide-format-material";
 import { useStyle } from "./style";
-import { SheetWeightsMapping } from "./wide-format-material-type-mapping";
+import { WideFormatMaterialWeightsMapping } from "./wide-format-material-type-mapping";
 
-const AddSheetModal = () => {
+const AddWideFormatMaterialModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialWideFormatMaterialStateValue = useRecoilValue<any>(
+    materialWideFormatMaterialState
+  );
 
   return (
     <>
       <GoMakeModal
-        openModal={materialSheetsStateValue?.openAddSheetModal}
+        openModal={
+          materialWideFormatMaterialStateValue?.openAddWideFormatMaterialModal
+        }
         modalTitle={t(
           "materials.wideFormatMaterial.admin.addNewWideFormatMaterial"
         )}
-        onClose={materialSheetsStateValue?.onCloseModalAdded}
+        onClose={materialWideFormatMaterialStateValue?.onCloseModalAdded}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -38,9 +42,11 @@ const AddSheetModal = () => {
               <GomakeTextInput
                 placeholder={t("materials.sheetPaper.admin.categoryName")}
                 style={clasess.textInputStyle}
-                value={materialSheetsStateValue?.categoryName}
+                value={materialWideFormatMaterialStateValue?.categoryName}
                 onChange={(e: any) => {
-                  materialSheetsStateValue?.setCategoryName(e.target.value);
+                  materialWideFormatMaterialStateValue?.setCategoryName(
+                    e.target.value
+                  );
                 }}
               />
             </div>
@@ -59,7 +65,9 @@ const AddSheetModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialSheetsStateValue?.items];
+                    const temp = [
+                      ...materialWideFormatMaterialStateValue?.items,
+                    ];
                     temp.push({
                       name: "",
                       weightPerMeterSquare: "",
@@ -68,7 +76,7 @@ const AddSheetModal = () => {
                       index: "",
                       wideFormatMaterialSizes: [],
                     });
-                    materialSheetsStateValue?.setItems(temp);
+                    materialWideFormatMaterialStateValue?.setItems(temp);
                   }}
                 >
                   <AddIcon />
@@ -81,29 +89,33 @@ const AddSheetModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialSheetsStateValue?.items];
+                    const temp = [
+                      ...materialWideFormatMaterialStateValue?.items,
+                    ];
                     temp.pop();
-                    materialSheetsStateValue?.setItems(temp);
+                    materialWideFormatMaterialStateValue?.setItems(temp);
                   }}
                 >
                   <RemoveIcon />
                 </IconButton>
               </Tooltip>
             </div>
-            {materialSheetsStateValue?.items?.map(
+            {materialWideFormatMaterialStateValue?.items?.map(
               (item: any, index: number) => {
                 return (
-                  <SheetWeightsMapping
-                    key={`SheetWeightsMapping_${index}`}
+                  <WideFormatMaterialWeightsMapping
+                    key={`WideFormatMaterialWeightsMapping_${index}`}
                     index={index}
                   />
                 );
               }
             )}
           </div>
-          <div style={clasess.addSheetBtnContainer}>
+          <div style={clasess.addWideFormatMaterialBtnContainer}>
             <GomakePrimaryButton
-              onClick={materialSheetsStateValue?.addNewSupplierSheet}
+              onClick={
+                materialWideFormatMaterialStateValue?.addNewSupplierWideFormatMaterial
+              }
             >
               {t("materials.wideFormatMaterial.admin.addNewWideFormatMaterial")}
             </GomakePrimaryButton>
@@ -113,4 +125,4 @@ const AddSheetModal = () => {
     </>
   );
 };
-export { AddSheetModal };
+export { AddWideFormatMaterialModal };

@@ -4,20 +4,27 @@ import { useRecoilValue } from "recoil";
 import { GomakeTextInput } from "@/components";
 
 import { ControlIconsWidget } from "./control-icons-widget";
-import { materialSheetsState } from "../store/sheets";
+import { materialWideFormatMaterialState } from "../store/wide-format-material";
 import { useStyle } from "./style";
 
-const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
+const WideFormatMaterialSizeMapping = ({
+  index,
+  sheetSize,
+  sheetWeight,
+  selectedItem,
+}) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialWideFormatMaterialStateValue = useRecoilValue<any>(
+    materialWideFormatMaterialState
+  );
   return (
     <>
       <div key={index} style={clasess.addSizesInputsSecondSelection}>
         <ControlIconsWidget
           t={t}
           onClickDelete={() =>
-            materialSheetsStateValue.deleteSheetweightSize(
+            materialWideFormatMaterialStateValue.deleteWideFormatMaterialweightSize(
               selectedItem?.categoryName,
               sheetWeight?.id,
               sheetSize?.id
@@ -25,14 +32,18 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
           }
           item={sheetSize}
           onClickUpdate={() =>
-            materialSheetsStateValue.updateSheetWeightSizes(
+            materialWideFormatMaterialStateValue.updateWideFormatMaterialWeightSizes(
               selectedItem?.categoryName,
               sheetWeight?.id,
               sheetSize?.id
             )
           }
-          title={"Delete Sheet Weight Size"}
-          subTitle={"Are you sure you want to delete sheet weight size?"}
+          title={t(
+            "materials.wideFormatMaterial.admin.deleteWideFormatMaterialSize"
+          )}
+          subTitle={t(
+            "materials.wideFormatMaterial.admin.subTitleDeleteSizeModal"
+          )}
         />
         <div style={clasess.inputSizesContainer}>
           <div>
@@ -42,9 +53,12 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterCode")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[sheetSize?.id]?.code}
+              value={
+                materialWideFormatMaterialStateValue?.updateState[sheetSize?.id]
+                  ?.code
+              }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialWideFormatMaterialStateValue?.onChangeUpdateStateWideFormatMaterialWeights(
                   sheetSize?.id,
                   "code",
                   e.target.value
@@ -59,9 +73,12 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterName")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[sheetSize?.id]?.name}
+              value={
+                materialWideFormatMaterialStateValue?.updateState[sheetSize?.id]
+                  ?.name
+              }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialWideFormatMaterialStateValue?.onChangeUpdateStateWideFormatMaterialWeights(
                   sheetSize?.id,
                   "name",
                   e.target.value
@@ -77,10 +94,11 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
               placeholder={t("materials.sheetPaper.admin.enterWidth")}
               style={clasess.textInputStyle}
               value={
-                materialSheetsStateValue?.updateState[sheetSize?.id]?.width
+                materialWideFormatMaterialStateValue?.updateState[sheetSize?.id]
+                  ?.width
               }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialWideFormatMaterialStateValue?.onChangeUpdateStateWideFormatMaterialWeights(
                   sheetSize?.id,
                   "width",
                   e.target.value
@@ -96,10 +114,11 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
               placeholder={t("materials.sheetPaper.admin.enterHeight")}
               style={clasess.textInputStyle}
               value={
-                materialSheetsStateValue?.updateState[sheetSize?.id]?.height
+                materialWideFormatMaterialStateValue?.updateState[sheetSize?.id]
+                  ?.height
               }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialWideFormatMaterialStateValue?.onChangeUpdateStateWideFormatMaterialWeights(
                   sheetSize?.id,
                   "height",
                   e.target.value
@@ -117,11 +136,11 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
               )}
               style={clasess.textInputStyle}
               value={
-                materialSheetsStateValue?.updateState[sheetSize?.id]
+                materialWideFormatMaterialStateValue?.updateState[sheetSize?.id]
                   ?.defaultPricePerMeterSquare
               }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialWideFormatMaterialStateValue?.onChangeUpdateStateWideFormatMaterialWeights(
                   sheetSize?.id,
                   "defaultPricePerMeterSquare",
                   e.target.value
@@ -137,10 +156,11 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
               placeholder={t("materials.sheetPaper.admin.enterIndex")}
               style={clasess.textInputStyle}
               value={
-                materialSheetsStateValue?.updateState[sheetSize?.id]?.index
+                materialWideFormatMaterialStateValue?.updateState[sheetSize?.id]
+                  ?.index
               }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialWideFormatMaterialStateValue?.onChangeUpdateStateWideFormatMaterialWeights(
                   sheetSize?.id,
                   "index",
                   e.target.value
@@ -153,4 +173,4 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
     </>
   );
 };
-export { SheetSizeMapping };
+export { WideFormatMaterialSizeMapping };

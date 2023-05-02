@@ -6,7 +6,7 @@ import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
 import { AddPlatSizeWeightsMapping } from "./add-plat-size-mapping";
-import { SheetWeightsMapping } from "./plat-size-mapping";
+import { PlatWeightsMapping } from "./plat-size-mapping";
 import { materialPlatsState } from "../store/plat";
 import { useStyle } from "./style";
 
@@ -19,7 +19,7 @@ const UpdatePlatModal = () => {
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openUpdateSheetModal}
+        openModal={materialPlatsStateValue?.openUpdatePlatModal}
         modalTitle={`Edit ${selectedItem?.categoryName} Plat`}
         onClose={materialPlatsStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
@@ -43,8 +43,8 @@ const UpdatePlatModal = () => {
               <div style={clasess.firstSectionTitleStyle}>
                 {t("materials.plat.admin.platSizeSection")}
               </div>
-              {!materialPlatsStateValue?.isAddNewSheetWights && (
-                <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
+              {!materialPlatsStateValue?.isAddNewPlatWights && (
+                <Tooltip title={t("materials.plat.admin.addPlatSize")}>
                   <IconButton
                     onClick={() => {
                       materialPlatsStateValue.setItems([
@@ -56,7 +56,7 @@ const UpdatePlatModal = () => {
                           defaultPrice: "",
                         },
                       ]);
-                      materialPlatsStateValue?.setIsAddNewSheetWights(true);
+                      materialPlatsStateValue?.setIsAddNewPlatWights(true);
                     }}
                   >
                     <AddIcon />
@@ -64,7 +64,7 @@ const UpdatePlatModal = () => {
                 </Tooltip>
               )}
             </div>
-            {materialPlatsStateValue?.isAddNewSheetWights && (
+            {materialPlatsStateValue?.isAddNewPlatWights && (
               <AddPlatSizeWeightsMapping
                 index={0}
                 selectedItem={selectedItem}
@@ -72,7 +72,7 @@ const UpdatePlatModal = () => {
             )}
             {selectedItem?.platSizes?.map((item: any, index: number) => {
               return (
-                <SheetWeightsMapping
+                <PlatWeightsMapping
                   key={`platSizeMapping_${index}`}
                   index={index}
                   item={item}

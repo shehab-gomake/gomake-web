@@ -5,23 +5,27 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddSheetWeightsMapping } from "./add-wide-format-material-type-mapping";
-import { SheetWeightsMapping } from "./wide-format-material-type-mapping";
-import { materialSheetsState } from "../store/sheets";
+import { AddWideFormatMaterialWeightsMapping } from "./add-wide-format-material-type-mapping";
+import { WideFormatMaterialWeightsMapping } from "./wide-format-material-type-mapping";
+import { materialWideFormatMaterialState } from "../store/wide-format-material";
 import { useStyle } from "./style";
 
-const UpdateSheetModal = () => {
+const UpdateWideFormatMaterialModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
-  const selectedItem = materialSheetsStateValue?.selectedEditItem;
+  const materialWideFormatMaterialStateValue = useRecoilValue<any>(
+    materialWideFormatMaterialState
+  );
+  const selectedItem = materialWideFormatMaterialStateValue?.selectedEditItem;
 
   return (
     <>
       <GoMakeModal
-        openModal={materialSheetsStateValue?.openUpdateSheetModal}
+        openModal={
+          materialWideFormatMaterialStateValue?.openUpdateWideFormatMaterialModal
+        }
         modalTitle={`Edit ${selectedItem?.categoryName} Wide Fromat Material`}
-        onClose={materialSheetsStateValue?.onCloseUpdateModal}
+        onClose={materialWideFormatMaterialStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -41,13 +45,19 @@ const UpdateSheetModal = () => {
           <div style={clasess.secondSectionContainer}>
             <div style={clasess.titlePlusContainer}>
               <div style={clasess.firstSectionTitleStyle}>
-                {t("materials.sheetPaper.admin.sheetWeightsSection")}
+                {t(
+                  "materials.wideFormatMaterial.admin.WideFormatMaterialTypeSection"
+                )}
               </div>
-              {!materialSheetsStateValue?.isAddNewSheetWights && (
-                <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
+              {!materialWideFormatMaterialStateValue?.isAddNewWideFormatMaterialType && (
+                <Tooltip
+                  title={t(
+                    "materials.wideFormatMaterial.admin.addWideFormatMaterialType"
+                  )}
+                >
                   <IconButton
                     onClick={() => {
-                      materialSheetsStateValue.setItems([
+                      materialWideFormatMaterialStateValue.setItems([
                         {
                           name: "",
                           weightPerMeterSquare: "",
@@ -66,7 +76,9 @@ const UpdateSheetModal = () => {
                           ],
                         },
                       ]);
-                      materialSheetsStateValue?.setIsAddNewSheetWights(true);
+                      materialWideFormatMaterialStateValue?.setIsAddNewWideFormatMaterialType(
+                        true
+                      );
                     }}
                   >
                     <AddIcon />
@@ -74,14 +86,17 @@ const UpdateSheetModal = () => {
                 </Tooltip>
               )}
             </div>
-            {materialSheetsStateValue?.isAddNewSheetWights && (
-              <AddSheetWeightsMapping index={0} selectedItem={selectedItem} />
+            {materialWideFormatMaterialStateValue?.isAddNewWideFormatMaterialType && (
+              <AddWideFormatMaterialWeightsMapping
+                index={0}
+                selectedItem={selectedItem}
+              />
             )}
             {selectedItem?.wideFormatMaterialTypes?.map(
               (item: any, index: number) => {
                 return (
-                  <SheetWeightsMapping
-                    key={`SheetWeightsMapping_${index}`}
+                  <WideFormatMaterialWeightsMapping
+                    key={`WideFormatMaterialWeightsMapping_${index}`}
                     index={index}
                     item={item}
                     selectedItem={selectedItem}
@@ -95,4 +110,4 @@ const UpdateSheetModal = () => {
     </>
   );
 };
-export { UpdateSheetModal };
+export { UpdateWideFormatMaterialModal };

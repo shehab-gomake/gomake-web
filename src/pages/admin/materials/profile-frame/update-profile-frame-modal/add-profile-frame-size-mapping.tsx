@@ -3,14 +3,16 @@ import { useRecoilValue } from "recoil";
 
 import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 
-import { materialPlatsState } from "../store/plat";
+import { materialProfileFrameState } from "../store/profile-frame";
 import { useStyle } from "./style";
 import { ProfileFormSizeInputs } from "../shared-inputs-widget/profile-frame-size-inputs";
 
-const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
+const AddProfileFrameSizeWeightsMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialProfileFrameStateValue = useRecoilValue<any>(
+    materialProfileFrameState
+  );
 
   return (
     <>
@@ -20,7 +22,9 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.setIsAddNewSheetWights(false)
+                materialProfileFrameStateValue?.setIsAddNewProfileFrameWights(
+                  false
+                )
               }
               style={clasess.cancelBtnStyle}
             >
@@ -30,7 +34,7 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.addNewPlatSizeByCategoryName(
+                materialProfileFrameStateValue?.addNewProfileFrameSizeByCategoryName(
                   selectedItem
                 )
               }
@@ -44,4 +48,4 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
     </>
   );
 };
-export { AddPlatSizeWeightsMapping };
+export { AddProfileFrameSizeWeightsMapping };

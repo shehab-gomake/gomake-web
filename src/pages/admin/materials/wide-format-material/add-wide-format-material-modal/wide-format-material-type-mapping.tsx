@@ -5,15 +5,17 @@ import { IconButton, Tooltip } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 
-import { SheetSizeMapping } from "./wide-format-material-size-mapping";
-import { materialSheetsState } from "../store/sheets";
+import { WideFormatMaterialSizeMapping } from "./wide-format-material-size-mapping";
+import { materialWideFormatMaterialState } from "../store/wide-format-material";
 import { useStyle } from "./style";
 import { WideFormatMatrtialTypeInputs } from "../shared-inputs-widget/wide-format-material-type-inputs";
 
-const SheetWeightsMapping = ({ index }) => {
+const WideFormatMaterialWeightsMapping = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialWideFormatMaterialStateValue = useRecoilValue<any>(
+    materialWideFormatMaterialState
+  );
 
   return (
     <>
@@ -36,7 +38,7 @@ const SheetWeightsMapping = ({ index }) => {
             <IconButton
               onClick={() => {
                 const temp = [
-                  ...materialSheetsStateValue?.items[index][
+                  ...materialWideFormatMaterialStateValue?.items[index][
                     "wideFormatMaterialSizes"
                   ],
                 ];
@@ -48,7 +50,7 @@ const SheetWeightsMapping = ({ index }) => {
                   defaultPricePerMeterSquare: "",
                   index: "",
                 });
-                materialSheetsStateValue?.changeItems(
+                materialWideFormatMaterialStateValue?.changeItems(
                   index,
                   "wideFormatMaterialSizes",
                   temp
@@ -66,12 +68,12 @@ const SheetWeightsMapping = ({ index }) => {
             <IconButton
               onClick={() => {
                 const temp = [
-                  ...materialSheetsStateValue?.items[index][
+                  ...materialWideFormatMaterialStateValue?.items[index][
                     "wideFormatMaterialSizes"
                   ],
                 ];
                 temp.pop();
-                materialSheetsStateValue?.changeItems(
+                materialWideFormatMaterialStateValue?.changeItems(
                   index,
                   "wideFormatMaterialSizes",
                   temp
@@ -82,24 +84,24 @@ const SheetWeightsMapping = ({ index }) => {
             </IconButton>
           </Tooltip>
         </div>
-        {materialSheetsStateValue?.items[index]["wideFormatMaterialSizes"]?.map(
-          (item: any, index2: number) => {
-            return (
-              <SheetSizeMapping
-                key={`SheetSizeMapping_${index2}`}
-                index={index2}
-                sheetWeightIndex={index}
-                sheetSize={
-                  materialSheetsStateValue?.items[index][
-                    "wideFormatMaterialSizes"
-                  ]
-                }
-              />
-            );
-          }
-        )}
+        {materialWideFormatMaterialStateValue?.items[index][
+          "wideFormatMaterialSizes"
+        ]?.map((item: any, index2: number) => {
+          return (
+            <WideFormatMaterialSizeMapping
+              key={`WideFormatMaterialSizeMapping_${index2}`}
+              index={index2}
+              sheetWeightIndex={index}
+              sheetSize={
+                materialWideFormatMaterialStateValue?.items[index][
+                  "wideFormatMaterialSizes"
+                ]
+              }
+            />
+          );
+        })}
       </div>
     </>
   );
 };
-export { SheetWeightsMapping };
+export { WideFormatMaterialWeightsMapping };

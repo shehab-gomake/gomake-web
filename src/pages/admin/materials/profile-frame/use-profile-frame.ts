@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { getAndSetGetAllProfileFrame } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const useSheets = () => {
+const useProfileFrames = () => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
@@ -15,14 +15,19 @@ const useSheets = () => {
     ],
     []
   );
-  const [openAddNewPlatModal, setOpenAddNewPlatModal] = useState(false);
-  const [openUpdateSheetModal, setOpenUpdateSheetModal] = useState(false);
+  const [openAddNewProfileFrameModal, setOpenAddNewProfileFrameModal] =
+    useState(false);
+  const [openUpdateProfileFrameModal, setOpenUpdateProfileFrameModal] =
+    useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [allProfileFrame, setAllProfileFrame] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
-  const [isAddNewSheetWights, setIsAddNewSheetWights] = useState(false);
-  const [selectedSheetWeight, setSelectedSheetWeight] = useState({});
+  const [isAddNewProfileFrameWights, setIsAddNewProfileFrameWights] =
+    useState(false);
+  const [selectedProfileFrameWeight, setSelectedProfileFrameWeight] = useState(
+    {}
+  );
   const [updateState, setUpdateState] = useState([]);
 
   const [items, setItems] = useState([
@@ -45,7 +50,7 @@ const useSheets = () => {
     };
     setItems(temp);
   };
-  const onChangeUpdateStatePlatSize = useCallback(
+  const onChangeUpdateStateProfileFrameSize = useCallback(
     (index: string, filedName: string, value: any) => {
       let temp: any = { ...updateState };
       temp[`${index}`] = {
@@ -56,7 +61,7 @@ const useSheets = () => {
     },
     [updateState]
   );
-  const initialStateSheetWeights = (item: any) => {
+  const initialStateProfileFrameWeights = (item: any) => {
     let temp = [...item?.profileFrameSizes];
     let final: any = [];
     temp.map((profileFrameSize) => {
@@ -68,34 +73,34 @@ const useSheets = () => {
     setUpdateState(final);
   };
 
-  const getPlats = useCallback(async () => {
+  const getProfileFrame = useCallback(async () => {
     await getAndSetGetAllProfileFrame(callApi, setAllProfileFrame);
   }, []);
-  const onCloseAddNewPlatModal = () => {
-    setOpenAddNewPlatModal(false);
+  const onCloseAddNewProfileFrameModal = () => {
+    setOpenAddNewProfileFrameModal(false);
   };
   const onOpnModalAdded = () => {
-    setOpenAddNewPlatModal(true);
+    setOpenAddNewProfileFrameModal(true);
   };
   const onCloseUpdateModal = async () => {
-    getPlats();
-    setOpenUpdateSheetModal(false);
-    setIsAddNewSheetWights(false);
+    getProfileFrame();
+    setOpenUpdateProfileFrameModal(false);
+    setIsAddNewProfileFrameWights(false);
   };
   const onOpnUpdateModal = (item) => {
-    initialStateSheetWeights(item);
+    initialStateProfileFrameWeights(item);
     setSelectedEditItem(item);
-    setOpenUpdateSheetModal(true);
+    setOpenUpdateProfileFrameModal(true);
   };
   const onCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
   const onOpenDeleteModal = (item) => {
     setOpenDeleteModal(true);
-    setSelectedSheetWeight(item);
+    setSelectedProfileFrameWeight(item);
   };
 
-  const addNewPlatsSize = useCallback(async () => {
+  const addNewProfileFrameSize = useCallback(async () => {
     const res = await callApi(
       "POST",
       `/v1/administrator/profile-frame/add-profile-frame`,
@@ -110,8 +115,8 @@ const useSheets = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      await getPlats();
-      onCloseAddNewPlatModal();
+      await getProfileFrame();
+      onCloseAddNewProfileFrameModal();
     } else {
       setSnackbarStateValue({
         state: true,
@@ -120,7 +125,7 @@ const useSheets = () => {
       });
     }
   }, [categoryName, items]);
-  const addNewPlatSizeByCategoryName = useCallback(
+  const addNewProfileFrameSizeByCategoryName = useCallback(
     async (selectedItem: any) => {
       const res = await callApi(
         "POST",
@@ -135,7 +140,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getPlats();
+        getProfileFrame();
         onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -147,7 +152,7 @@ const useSheets = () => {
     },
     [items]
   );
-  const deletePlatSize = useCallback(
+  const deleteProfileFrameSize = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -159,7 +164,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getPlats();
+        getProfileFrame();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -172,7 +177,7 @@ const useSheets = () => {
     []
   );
 
-  const updatePlatSize = useCallback(
+  const updateProfileFrameSize = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -198,38 +203,38 @@ const useSheets = () => {
     [updateState]
   );
   useEffect(() => {
-    getPlats();
+    getProfileFrame();
   }, []);
   return {
     headerTable,
     allProfileFrame,
-    openAddNewPlatModal,
+    openAddNewProfileFrameModal,
     items,
     categoryName,
-    openUpdateSheetModal,
+    openUpdateProfileFrameModal,
     selectedEditItem,
-    isAddNewSheetWights,
+    isAddNewProfileFrameWights,
     openDeleteModal,
-    selectedSheetWeight,
+    selectedProfileFrameWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStateProfileFrameSize,
+    onCloseAddNewProfileFrameModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdateSheetModal,
+    addNewProfileFrameSize,
+    setOpenUpdateProfileFrameModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewSheetWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewProfileFrameWights,
+    addNewProfileFrameSizeByCategoryName,
+    deleteProfileFrameSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
+    updateProfileFrameSize,
   };
 };
 
-export { useSheets };
+export { useProfileFrames };

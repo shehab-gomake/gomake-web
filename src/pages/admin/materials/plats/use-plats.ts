@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { getAndSetGetAllPlats } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const useSheets = () => {
+const usePlat = () => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
@@ -16,13 +16,13 @@ const useSheets = () => {
     []
   );
   const [openAddNewPlatModal, setOpenAddNewPlatModal] = useState(false);
-  const [openUpdateSheetModal, setOpenUpdateSheetModal] = useState(false);
+  const [openUpdatePlatModal, setOpenUpdatePlatModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [allPlats, setAllPlats] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
-  const [isAddNewSheetWights, setIsAddNewSheetWights] = useState(false);
-  const [selectedSheetWeight, setSelectedSheetWeight] = useState({});
+  const [isAddNewPlatWights, setIsAddNewPlatWights] = useState(false);
+  const [selectedPlatWeight, setSelectedPlatWeight] = useState({});
   const [updateState, setUpdateState] = useState([]);
 
   const [items, setItems] = useState([
@@ -53,7 +53,7 @@ const useSheets = () => {
     },
     [updateState]
   );
-  const initialStateSheetWeights = (item: any) => {
+  const initialStatePlatWeights = (item: any) => {
     let temp = [...item?.platSizes];
     let final: any = [];
     temp.map((platSize) => {
@@ -76,20 +76,20 @@ const useSheets = () => {
   };
   const onCloseUpdateModal = async () => {
     getPlats();
-    setOpenUpdateSheetModal(false);
-    setIsAddNewSheetWights(false);
+    setOpenUpdatePlatModal(false);
+    setIsAddNewPlatWights(false);
   };
   const onOpnUpdateModal = (item) => {
-    initialStateSheetWeights(item);
+    initialStatePlatWeights(item);
     setSelectedEditItem(item);
-    setOpenUpdateSheetModal(true);
+    setOpenUpdatePlatModal(true);
   };
   const onCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
   const onOpenDeleteModal = (item) => {
     setOpenDeleteModal(true);
-    setSelectedSheetWeight(item);
+    setSelectedPlatWeight(item);
   };
 
   const addNewPlatsSize = useCallback(async () => {
@@ -199,11 +199,11 @@ const useSheets = () => {
     openAddNewPlatModal,
     items,
     categoryName,
-    openUpdateSheetModal,
+    openUpdatePlatModal,
     selectedEditItem,
-    isAddNewSheetWights,
+    isAddNewPlatWights,
     openDeleteModal,
-    selectedSheetWeight,
+    selectedPlatWeight,
     updateState,
     onChangeUpdateStatePlatSize,
     onCloseAddNewPlatModal,
@@ -212,10 +212,10 @@ const useSheets = () => {
     setItems,
     setCategoryName,
     addNewPlatsSize,
-    setOpenUpdateSheetModal,
+    setOpenUpdatePlatModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewSheetWights,
+    setIsAddNewPlatWights,
     addNewPlatSizeByCategoryName,
     deletePlatSize,
     setOpenDeleteModal,
@@ -225,4 +225,4 @@ const useSheets = () => {
   };
 };
 
-export { useSheets };
+export { usePlat };

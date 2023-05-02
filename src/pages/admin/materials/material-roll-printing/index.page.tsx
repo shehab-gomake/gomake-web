@@ -6,104 +6,106 @@ import { Table } from "@/widgets/table/table";
 import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 
-import { materialPlatsState } from "./store/plat";
+import { materialMaterialRollPrintingState } from "./store/material-roll-printing";
 import { HeaderFilter } from "./header-filter";
-import { useSheets } from "./use-material-roll-printing";
+import { useMaterialRollPrinting } from "./use-material-roll-printing";
 
-export default function Sheets() {
+export default function MaterialRollPrinting() {
   const { t } = useTranslation();
-  const setMaterialPlatsState = useSetRecoilState<any>(materialPlatsState);
+  const setMaterialMaterialRollPrintingState = useSetRecoilState<any>(
+    materialMaterialRollPrintingState
+  );
   const {
     headerTable,
     allAllMaterialRollPrinting,
-    openAddNewPlatModal,
+    openAddNewMaterialRollPrintingModal,
     items,
     categoryName,
-    openUpdateSheetModal,
+    openUpdateMaterialRollPrintingModal,
     selectedEditItem,
-    isAddNewSheetWights,
+    isAddNewMaterialRollPrintingWights,
     openDeleteModal,
-    selectedSheetWeight,
+    selectedMaterialRollPrintingWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStateMaterialRollPrintingSize,
+    onCloseAddNewMaterialRollPrintingModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdateSheetModal,
+    addNewMaterialRollPrintingsSize,
+    setOpenUpdateMaterialRollPrintingModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewSheetWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewMaterialRollPrintingWights,
+    addNewMaterialRollPrintingSizeByCategoryName,
+    deleteMaterialRollPrintingSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
-  } = useSheets();
+    updateMaterialRollPrintingSize,
+  } = useMaterialRollPrinting();
 
   useEffect(() => {
-    setMaterialPlatsState({
+    setMaterialMaterialRollPrintingState({
       headerTable,
       allAllMaterialRollPrinting,
-      openAddNewPlatModal,
+      openAddNewMaterialRollPrintingModal,
       items,
       categoryName,
-      openUpdateSheetModal,
+      openUpdateMaterialRollPrintingModal,
       selectedEditItem,
-      isAddNewSheetWights,
+      isAddNewMaterialRollPrintingWights,
       openDeleteModal,
-      selectedSheetWeight,
+      selectedMaterialRollPrintingWeight,
       updateState,
-      onChangeUpdateStatePlatSize,
-      onCloseAddNewPlatModal,
+      onChangeUpdateStateMaterialRollPrintingSize,
+      onCloseAddNewMaterialRollPrintingModal,
       onOpnModalAdded,
       changeItems,
       setItems,
       setCategoryName,
-      addNewPlatsSize,
-      setOpenUpdateSheetModal,
+      addNewMaterialRollPrintingsSize,
+      setOpenUpdateMaterialRollPrintingModal,
       onCloseUpdateModal,
       onOpnUpdateModal,
-      setIsAddNewSheetWights,
-      addNewPlatSizeByCategoryName,
-      deletePlatSize,
+      setIsAddNewMaterialRollPrintingWights,
+      addNewMaterialRollPrintingSizeByCategoryName,
+      deleteMaterialRollPrintingSize,
       setOpenDeleteModal,
       onCloseDeleteModal,
       onOpenDeleteModal,
-      updatePlatSize,
+      updateMaterialRollPrintingSize,
     });
   }, [
     headerTable,
     allAllMaterialRollPrinting,
-    openAddNewPlatModal,
+    openAddNewMaterialRollPrintingModal,
     items,
     categoryName,
-    openUpdateSheetModal,
+    openUpdateMaterialRollPrintingModal,
     selectedEditItem,
-    isAddNewSheetWights,
+    isAddNewMaterialRollPrintingWights,
     openDeleteModal,
-    selectedSheetWeight,
+    selectedMaterialRollPrintingWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStateMaterialRollPrintingSize,
+    onCloseAddNewMaterialRollPrintingModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdateSheetModal,
+    addNewMaterialRollPrintingsSize,
+    setOpenUpdateMaterialRollPrintingModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewSheetWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewMaterialRollPrintingWights,
+    addNewMaterialRollPrintingSizeByCategoryName,
+    deleteMaterialRollPrintingSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
+    updateMaterialRollPrintingSize,
   ]);
   return (
     <AdminAuthLayout>

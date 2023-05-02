@@ -5,13 +5,13 @@ import { GomakePrimaryButton } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
 
 import { AddNewTubeModal } from "./add-new-tube-modal";
-import { materialPlatsState } from "./store/plat";
+import { materialTubeState } from "./store/tube";
 import { useStyle } from "./style";
 
 const HeaderFilter = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialTubeStateValue = useRecoilValue<any>(materialTubeState);
 
   return (
     <>
@@ -20,7 +20,7 @@ const HeaderFilter = () => {
           style={clasess.btnStyle}
           leftIcon={<AddIcon />}
           onClick={() => {
-            materialPlatsStateValue?.onOpnModalAdded();
+            materialTubeStateValue?.onOpnModalAdded();
           }}
         >
           {t("materials.tubes.admin.addNewTubes")}
