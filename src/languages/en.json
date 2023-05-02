@@ -458,7 +458,11 @@
         "hardness": "Hardness",
         "enterHardness": "Enter Hardness",
         "defaultPricePerMeterSquare": "Default Price Per Meter Square",
-        "enterDefaultPricePerMeterSquare": "Enter Default Price Per Meter Square"
+        "enterDefaultPricePerMeterSquare": "Enter Default Price Per Meter Square",
+        "deleteWideFormatMaterialSize": "Delete Wide Format Material Size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete wide format material size?",
+        "deleteWideFormatMaterialType": "Delete Wide Format Material Type",
+        "subTitleDeleteTypeModal": "Are you sure you want to delete wide format material type?"
       }
     },
 

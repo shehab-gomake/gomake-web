@@ -3,7 +3,7 @@ import { useRecoilValue } from "recoil";
 
 import { GomakeTextInput } from "@/components";
 
-import { materialSheetsState } from "../store/sheets";
+import { materialWideFormatMaterialState } from "../store/wide-format-material";
 import { useStyle } from "../add-wide-format-material-modal/style";
 
 const WideFormatMaterialsSizeInputs = ({
@@ -13,7 +13,9 @@ const WideFormatMaterialsSizeInputs = ({
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialWideFormatMaterialStateValue = useRecoilValue<any>(
+    materialWideFormatMaterialState
+  );
 
   return (
     <>
@@ -27,7 +29,7 @@ const WideFormatMaterialsSizeInputs = ({
             style={clasess.textInputStyle}
             value={sheetSize[index]["code"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialWideFormatMaterialStateValue?.changeItemsWideFormatMaterialSize(
                 sheetWeightIndex,
                 index,
                 "code",
@@ -45,7 +47,7 @@ const WideFormatMaterialsSizeInputs = ({
             style={clasess.textInputStyle}
             value={sheetSize[index]["name"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialWideFormatMaterialStateValue?.changeItemsWideFormatMaterialSize(
                 sheetWeightIndex,
                 index,
                 "name",
@@ -63,7 +65,7 @@ const WideFormatMaterialsSizeInputs = ({
             style={clasess.textInputStyle}
             value={sheetSize[index]["width"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialWideFormatMaterialStateValue?.changeItemsWideFormatMaterialSize(
                 sheetWeightIndex,
                 index,
                 "width",
@@ -81,7 +83,7 @@ const WideFormatMaterialsSizeInputs = ({
             style={clasess.textInputStyle}
             value={sheetSize[index]["height"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialWideFormatMaterialStateValue?.changeItemsWideFormatMaterialSize(
                 sheetWeightIndex,
                 index,
                 "height",
@@ -101,7 +103,7 @@ const WideFormatMaterialsSizeInputs = ({
             style={clasess.textInputStyle}
             value={sheetSize[index]["defaultPricePerMeterSquare"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialWideFormatMaterialStateValue?.changeItemsWideFormatMaterialSize(
                 sheetWeightIndex,
                 index,
                 "defaultPricePerMeterSquare",
@@ -119,7 +121,7 @@ const WideFormatMaterialsSizeInputs = ({
             style={clasess.textInputStyle}
             value={sheetSize[index]["index"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialWideFormatMaterialStateValue?.changeItemsWideFormatMaterialSize(
                 sheetWeightIndex,
                 index,
                 "index",

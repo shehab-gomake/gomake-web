@@ -60,7 +60,7 @@ const useStyle = () => {
         paddingBottom: 20,
         borderRadius: 4,
       },
-      newAddWightsByCatagory: {
+      newAddTypeByCatagory: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
@@ -123,7 +123,7 @@ const useStyle = () => {
         paddingBottom: 20,
         borderRadius: 4,
       },
-      addSheetBtnContainer: {
+      addWideFormatMaterialBtnContainer: {
         display: "flex",
         justifyContent: "flex-end",
         alignItems: "flex-end",
@@ -131,7 +131,7 @@ const useStyle = () => {
         alignContent: "flex-end",
         marginTop: 25,
       },
-      btnsWightSheetContainer: {
+      btnsTypeWideFormatMaterialContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "center",

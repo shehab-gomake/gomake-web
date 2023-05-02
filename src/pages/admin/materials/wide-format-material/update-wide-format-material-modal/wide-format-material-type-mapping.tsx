@@ -6,15 +6,17 @@ import { GomakeTextInput } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
 
 import { ControlIconsWidget } from "./control-icons-widget";
-import { SheetSizeMapping } from "./wide-format-material-size-mapping";
-import { materialSheetsState } from "../store/sheets";
+import { WideFormatMaterialSizeMapping } from "./wide-format-material-size-mapping";
+import { materialWideFormatMaterialState } from "../store/wide-format-material";
 import { useStyle } from "./style";
-import { AddSheetWeightSizeMapping } from "./add-wide-format-material-type-size-mapping";
+import { AddWideFormatMaterialWeightSizeMapping } from "./add-wide-format-material-type-size-mapping";
 
-const SheetWeightsMapping = ({ index, item, selectedItem }) => {
+const WideFormatMaterialWeightsMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialWideFormatMaterialStateValue = useRecoilValue<any>(
+    materialWideFormatMaterialState
+  );
   return (
     <>
       <div
@@ -25,19 +27,23 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
           t={t}
           item={item}
           onClickDelete={() =>
-            materialSheetsStateValue.deleteSheetweight(
+            materialWideFormatMaterialStateValue.deleteWideFormatMaterialweight(
               item?.id,
               selectedItem?.categoryName
             )
           }
           onClickUpdate={() =>
-            materialSheetsStateValue.updateSheetweight(
+            materialWideFormatMaterialStateValue.updateWideFormatMaterialweight(
               item?.id,
               selectedItem?.categoryName
             )
           }
-          title={"Delete Sheet Weight"}
-          subTitle={"Are you sure you want to delete sheet weight?"}
+          title={t(
+            "materials.wideFormatMaterial.admin.deleteWideFormatMaterialType"
+          )}
+          subTitle={t(
+            "materials.wideFormatMaterial.admin.subTitleDeleteTypeModal"
+          )}
         />
         <div style={clasess.mainWaightsContainer}>
           <div>
@@ -47,9 +53,12 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterName")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[item?.id]?.name}
+              value={
+                materialWideFormatMaterialStateValue?.updateState[item?.id]
+                  ?.name
+              }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialWideFormatMaterialStateValue?.onChangeUpdateStateWideFormatMaterialWeights(
                   item?.id,
                   "name",
                   e.target.value
@@ -67,11 +76,11 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               )}
               style={clasess.textInputStyle}
               value={
-                materialSheetsStateValue?.updateState[item?.id]
+                materialWideFormatMaterialStateValue?.updateState[item?.id]
                   ?.weightPerMeterSquare
               }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialWideFormatMaterialStateValue?.onChangeUpdateStateWideFormatMaterialWeights(
                   item?.id,
                   "weightPerMeterSquare",
                   e.target.value
@@ -86,9 +95,12 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterThickness")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[item?.id]?.thickness}
+              value={
+                materialWideFormatMaterialStateValue?.updateState[item?.id]
+                  ?.thickness
+              }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialWideFormatMaterialStateValue?.onChangeUpdateStateWideFormatMaterialWeights(
                   item?.id,
                   "thickness",
                   e.target.value
@@ -105,9 +117,12 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
                 "materials.wideFormatMaterial.admin.enterHardness"
               )}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[item?.id]?.hardness}
+              value={
+                materialWideFormatMaterialStateValue?.updateState[item?.id]
+                  ?.hardness
+              }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialWideFormatMaterialStateValue?.onChangeUpdateStateWideFormatMaterialWeights(
                   item?.id,
                   "hardness",
                   e.target.value
@@ -122,9 +137,12 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterIndex")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[item?.id]?.index}
+              value={
+                materialWideFormatMaterialStateValue?.updateState[item?.id]
+                  ?.index
+              }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialWideFormatMaterialStateValue?.onChangeUpdateStateWideFormatMaterialWeights(
                   item?.id,
                   "index",
                   e.target.value
@@ -135,23 +153,32 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
         </div>
         <div style={clasess.titlePlusContainer}>
           <div style={clasess.sizeSectionTitleStyle}>
-            {t("materials.sheetPaper.admin.sheetSizeSection")}
+            {t(
+              "materials.wideFormatMaterial.admin.WideFormatMaterialSizeSection"
+            )}
           </div>
 
-          <Tooltip title={t("materials.sheetPaper.admin.addSheetWeight")}>
+          <Tooltip
+            title={t(
+              "materials.wideFormatMaterial.admin.addWideFormatMaterialSize"
+            )}
+          >
             <IconButton
               onClick={() =>
-                materialSheetsStateValue.onClickOpenSheetWeightSizeWidget(item)
+                materialWideFormatMaterialStateValue.onClickOpenWideFormatMaterialWeightSizeWidget(
+                  item
+                )
               }
             >
               <AddIcon />
             </IconButton>
           </Tooltip>
         </div>
-        {materialSheetsStateValue?.isAddNewSheetWightSize &&
-          materialSheetsStateValue?.selectedSheetWeightSize.id === item?.id && (
-            <AddSheetWeightSizeMapping
-              key={`SheetSizeMapping_${item?.id}`}
+        {materialWideFormatMaterialStateValue?.isAddNewWideFormatMaterialTypeSize &&
+          materialWideFormatMaterialStateValue
+            ?.selectedWideFormatMaterialWeightSize.id === item?.id && (
+            <AddWideFormatMaterialWeightSizeMapping
+              key={`WideFormatMaterialSizeMapping_${item?.id}`}
               index={0}
               sheetSize={item}
               selectedItem={selectedItem}
@@ -159,8 +186,8 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
           )}
         {item?.wideFormatMaterialSizes?.map((item2: any, index2: number) => {
           return (
-            <SheetSizeMapping
-              key={`SheetSizeMapping_${index2}`}
+            <WideFormatMaterialSizeMapping
+              key={`WideFormatMaterialSizeMapping_${index2}`}
               index={index2}
               sheetWeight={item}
               sheetSize={item2}
@@ -172,4 +199,4 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
     </>
   );
 };
-export { SheetWeightsMapping };
+export { WideFormatMaterialWeightsMapping };

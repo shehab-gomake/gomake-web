@@ -4,14 +4,16 @@ import { useRecoilValue } from "recoil";
 import { GomakePrimaryButton } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
 
-import { materialSheetsState } from "./store/sheets";
-import { AddSheetModal } from "./add-wide-format-material-modal";
+import { materialWideFormatMaterialState } from "./store/wide-format-material";
+import { AddWideFormatMaterialModal } from "./add-wide-format-material-modal";
 import { useStyle } from "./style";
 
 const HeaderFilter = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialWideFormatMaterialStateValue = useRecoilValue<any>(
+    materialWideFormatMaterialState
+  );
   return (
     <>
       <div style={clasess.addBtnStyle}>
@@ -19,13 +21,13 @@ const HeaderFilter = () => {
           style={clasess.btnStyle}
           leftIcon={<AddIcon />}
           onClick={() => {
-            materialSheetsStateValue?.onOpnModalAdded();
+            materialWideFormatMaterialStateValue?.onOpnModalAdded();
           }}
         >
           {t("materials.wideFormatMaterial.admin.addNewWideFormatMaterial")}
         </GomakePrimaryButton>
       </div>
-      <AddSheetModal />
+      <AddWideFormatMaterialModal />
     </>
   );
 };

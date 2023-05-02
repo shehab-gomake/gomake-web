@@ -3,13 +3,15 @@ import { useRecoilValue } from "recoil";
 
 import { GomakeTextInput } from "@/components";
 
-import { materialSheetsState } from "../store/sheets";
+import { materialWideFormatMaterialState } from "../store/wide-format-material";
 import { useStyle } from "../add-wide-format-material-modal/style";
 
 const WideFormatMatrtialTypeInputs = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialWideFormatMaterialStateValue = useRecoilValue<any>(
+    materialWideFormatMaterialState
+  );
 
   return (
     <>
@@ -21,9 +23,9 @@ const WideFormatMatrtialTypeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.sheetPaper.admin.enterName")}
             style={clasess.textInputStyle}
-            value={materialSheetsStateValue?.items[index]["name"]}
+            value={materialWideFormatMaterialStateValue?.items[index]["name"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItems(
+              materialWideFormatMaterialStateValue?.changeItems(
                 index,
                 "name",
                 e.target.value
@@ -41,10 +43,12 @@ const WideFormatMatrtialTypeInputs = ({ index }) => {
             )}
             style={clasess.textInputStyle}
             value={
-              materialSheetsStateValue?.items[index]["weightPerMeterSquare"]
+              materialWideFormatMaterialStateValue?.items[index][
+                "weightPerMeterSquare"
+              ]
             }
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItems(
+              materialWideFormatMaterialStateValue?.changeItems(
                 index,
                 "weightPerMeterSquare",
                 e.target.value
@@ -59,9 +63,11 @@ const WideFormatMatrtialTypeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.sheetPaper.admin.enterThickness")}
             style={clasess.textInputStyle}
-            value={materialSheetsStateValue?.items[index]["thickness"]}
+            value={
+              materialWideFormatMaterialStateValue?.items[index]["thickness"]
+            }
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItems(
+              materialWideFormatMaterialStateValue?.changeItems(
                 index,
                 "thickness",
                 e.target.value
@@ -76,9 +82,11 @@ const WideFormatMatrtialTypeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.wideFormatMaterial.admin.enterHardness")}
             style={clasess.textInputStyle}
-            value={materialSheetsStateValue?.items[index]["hardness"]}
+            value={
+              materialWideFormatMaterialStateValue?.items[index]["hardness"]
+            }
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItems(
+              materialWideFormatMaterialStateValue?.changeItems(
                 index,
                 "hardness",
                 e.target.value
@@ -93,9 +101,9 @@ const WideFormatMatrtialTypeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.sheetPaper.admin.enterIndex")}
             style={clasess.textInputStyle}
-            value={materialSheetsStateValue?.items[index]["index"]}
+            value={materialWideFormatMaterialStateValue?.items[index]["index"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItems(
+              materialWideFormatMaterialStateValue?.changeItems(
                 index,
                 "index",
                 e.target.value

@@ -2,34 +2,36 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeDeleteModal } from "@/components";
 import { IconWidget } from "./icon-widget";
-import { useSheetModal } from "./use-wide-format-material-modal";
-import { UpdateSheetModal } from "../update-wide-format-material-modal";
-import { materialSheetsState } from "../store/sheets";
+import { useWideFormatMaterialModal } from "./use-wide-format-material-modal";
+import { UpdateWideFormatMaterialModal } from "../update-wide-format-material-modal";
+import { materialWideFormatMaterialState } from "../store/wide-format-material";
 
 const WideFormatMaterialSettingsWidget = ({ item }: any) => {
   const {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deleteSheetByCategoryName,
+    deleteWideFormatMaterialByCategoryName,
     t,
-  } = useSheetModal({
+  } = useWideFormatMaterialModal({
     item,
   });
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialWideFormatMaterialStateValue = useRecoilValue<any>(
+    materialWideFormatMaterialState
+  );
 
   return (
     <>
       <IconWidget
         t={t}
         onOpnUpdateModal={() => {
-          materialSheetsStateValue?.onOpnUpdateModal(item);
+          materialWideFormatMaterialStateValue?.onOpnUpdateModal(item);
         }}
         onOpenDeleteModal={onOpenDeleteModal}
       />
       <GoMakeDeleteModal
         hideIcon={true}
-        title={t("materials.sheetPaper.admin.deleteSheet")}
+        title={t("materials.sheetPaper.admin.deleteWideFormatMaterial")}
         yesBtn={t("materials.sheetPaper.admin.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
@@ -37,10 +39,10 @@ const WideFormatMaterialSettingsWidget = ({ item }: any) => {
         subTitle={`${t("materials.sheetPaper.admin.subTitleDeleteModal")} ${
           item?.categoryName
         } ?`}
-        onClickDelete={deleteSheetByCategoryName}
+        onClickDelete={deleteWideFormatMaterialByCategoryName}
       />
-      {item === materialSheetsStateValue.selectedEditItem && (
-        <UpdateSheetModal />
+      {item === materialWideFormatMaterialStateValue.selectedEditItem && (
+        <UpdateWideFormatMaterialModal />
       )}
     </>
   );

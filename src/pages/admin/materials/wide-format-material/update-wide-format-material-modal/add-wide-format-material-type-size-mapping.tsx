@@ -4,48 +4,56 @@ import { useRecoilValue } from "recoil";
 import { GomakePrimaryButton } from "@/components";
 
 import { AddsheetSizeMapping } from "./add-wide-format-material-size-mapping";
-import { materialSheetsState } from "../store/sheets";
+import { materialWideFormatMaterialState } from "../store/wide-format-material";
 import { useStyle } from "./style";
 
-const AddSheetWeightSizeMapping = ({ index, selectedItem, sheetSize }) => {
+const AddWideFormatMaterialWeightSizeMapping = ({
+  index,
+  selectedItem,
+  sheetSize,
+}) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialWideFormatMaterialStateValue = useRecoilValue<any>(
+    materialWideFormatMaterialState
+  );
 
   return (
     <>
       <div style={clasess.tableSecondSections}>
-        {materialSheetsStateValue?.items[index]["wideFormatMaterialSizes"]?.map(
-          (item: any, index2: number) => {
-            return (
-              <AddsheetSizeMapping
-                key={`SheetSizeMapping_${index2}`}
-                index={index2}
-                sheetWeightIndex={index}
-                sheetSize={
-                  materialSheetsStateValue?.items[index][
-                    "wideFormatMaterialSizes"
-                  ]
-                }
-              />
-            );
-          }
-        )}
-        <div style={clasess.btnsWightSheetContainer}>
-          <div style={clasess.addSheetBtnContainer}>
+        {materialWideFormatMaterialStateValue?.items[index][
+          "wideFormatMaterialSizes"
+        ]?.map((item: any, index2: number) => {
+          return (
+            <AddsheetSizeMapping
+              key={`WideFormatMaterialSizeMapping_${index2}`}
+              index={index2}
+              sheetWeightIndex={index}
+              sheetSize={
+                materialWideFormatMaterialStateValue?.items[index][
+                  "wideFormatMaterialSizes"
+                ]
+              }
+            />
+          );
+        })}
+        <div style={clasess.btnsTypeWideFormatMaterialContainer}>
+          <div style={clasess.addWideFormatMaterialBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialSheetsStateValue?.setIsAddNewSheetWightSize(false)
+                materialWideFormatMaterialStateValue?.setIsAddNewWideFormatMaterialTypeSize(
+                  false
+                )
               }
               style={clasess.cancelBtnStyle}
             >
               {t("materials.sheetPaper.admin.cancel")}
             </GomakePrimaryButton>
           </div>
-          <div style={clasess.addSheetBtnContainer}>
+          <div style={clasess.addWideFormatMaterialBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialSheetsStateValue?.addNewSheeWeightSizeByCategoryName(
+                materialWideFormatMaterialStateValue?.addNewSheeWeightSizeByCategoryName(
                   selectedItem?.categoryName,
                   sheetSize?.id
                 )
@@ -60,4 +68,4 @@ const AddSheetWeightSizeMapping = ({ index, selectedItem, sheetSize }) => {
     </>
   );
 };
-export { AddSheetWeightSizeMapping };
+export { AddWideFormatMaterialWeightSizeMapping };
