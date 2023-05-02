@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getAndSetGetAllMaterialRollPrinting } from "@/services/hooks";
 
-const useSheets = () => {
+const useMaterialRollPrinting = () => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
@@ -15,14 +15,26 @@ const useSheets = () => {
     ],
     []
   );
-  const [openAddNewPlatModal, setOpenAddNewPlatModal] = useState(false);
-  const [openUpdateSheetModal, setOpenUpdateSheetModal] = useState(false);
+  const [
+    openAddNewMaterialRollPrintingModal,
+    setOpenAddNewMaterialRollPrintingModal,
+  ] = useState(false);
+  const [
+    openUpdateMaterialRollPrintingModal,
+    setOpenUpdateMaterialRollPrintingModal,
+  ] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [allAllMaterialRollPrinting, setAllMaterialRollPrinting] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
-  const [isAddNewSheetWights, setIsAddNewSheetWights] = useState(false);
-  const [selectedSheetWeight, setSelectedSheetWeight] = useState({});
+  const [
+    isAddNewMaterialRollPrintingWights,
+    setIsAddNewMaterialRollPrintingWights,
+  ] = useState(false);
+  const [
+    selectedMaterialRollPrintingWeight,
+    setSelectedMaterialRollPrintingWeight,
+  ] = useState({});
   const [updateState, setUpdateState] = useState([]);
 
   const [items, setItems] = useState([
@@ -45,7 +57,7 @@ const useSheets = () => {
     };
     setItems(temp);
   };
-  const onChangeUpdateStatePlatSize = useCallback(
+  const onChangeUpdateStateMaterialRollPrintingSize = useCallback(
     (index: string, filedName: string, value: any) => {
       let temp: any = { ...updateState };
       temp[`${index}`] = {
@@ -56,7 +68,7 @@ const useSheets = () => {
     },
     [updateState]
   );
-  const initialStateSheetWeights = (item: any) => {
+  const initialStateMaterialRollPrintingWeights = (item: any) => {
     let temp = [...item?.materialRollPrintingSizes];
     let final: any = [];
     temp.map((materialRollPrinting) => {
@@ -74,31 +86,31 @@ const useSheets = () => {
       setAllMaterialRollPrinting
     );
   }, []);
-  const onCloseAddNewPlatModal = () => {
-    setOpenAddNewPlatModal(false);
+  const onCloseAddNewMaterialRollPrintingModal = () => {
+    setOpenAddNewMaterialRollPrintingModal(false);
   };
   const onOpnModalAdded = () => {
-    setOpenAddNewPlatModal(true);
+    setOpenAddNewMaterialRollPrintingModal(true);
   };
   const onCloseUpdateModal = async () => {
     getMaterialRollPrinting();
-    setOpenUpdateSheetModal(false);
-    setIsAddNewSheetWights(false);
+    setOpenUpdateMaterialRollPrintingModal(false);
+    setIsAddNewMaterialRollPrintingWights(false);
   };
   const onOpnUpdateModal = (item) => {
-    initialStateSheetWeights(item);
+    initialStateMaterialRollPrintingWeights(item);
     setSelectedEditItem(item);
-    setOpenUpdateSheetModal(true);
+    setOpenUpdateMaterialRollPrintingModal(true);
   };
   const onCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
   const onOpenDeleteModal = (item) => {
     setOpenDeleteModal(true);
-    setSelectedSheetWeight(item);
+    setSelectedMaterialRollPrintingWeight(item);
   };
 
-  const addNewPlatsSize = useCallback(async () => {
+  const addNewMaterialRollPrintingsSize = useCallback(async () => {
     const res = await callApi(
       "POST",
       `/v1/administrator/material-roll-printing/add-material-roll-printing`,
@@ -114,7 +126,7 @@ const useSheets = () => {
         type: "sucess",
       });
       await getMaterialRollPrinting();
-      onCloseAddNewPlatModal();
+      onCloseAddNewMaterialRollPrintingModal();
     } else {
       setSnackbarStateValue({
         state: true,
@@ -123,7 +135,7 @@ const useSheets = () => {
       });
     }
   }, [categoryName, items]);
-  const addNewPlatSizeByCategoryName = useCallback(
+  const addNewMaterialRollPrintingSizeByCategoryName = useCallback(
     async (selectedItem: any) => {
       const res = await callApi(
         "POST",
@@ -150,7 +162,7 @@ const useSheets = () => {
     },
     [items]
   );
-  const deletePlatSize = useCallback(
+  const deleteMaterialRollPrintingSize = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -175,7 +187,7 @@ const useSheets = () => {
     []
   );
 
-  const updatePlatSize = useCallback(
+  const updateMaterialRollPrintingSize = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -206,33 +218,33 @@ const useSheets = () => {
   return {
     headerTable,
     allAllMaterialRollPrinting,
-    openAddNewPlatModal,
+    openAddNewMaterialRollPrintingModal,
     items,
     categoryName,
-    openUpdateSheetModal,
+    openUpdateMaterialRollPrintingModal,
     selectedEditItem,
-    isAddNewSheetWights,
+    isAddNewMaterialRollPrintingWights,
     openDeleteModal,
-    selectedSheetWeight,
+    selectedMaterialRollPrintingWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStateMaterialRollPrintingSize,
+    onCloseAddNewMaterialRollPrintingModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdateSheetModal,
+    addNewMaterialRollPrintingsSize,
+    setOpenUpdateMaterialRollPrintingModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewSheetWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewMaterialRollPrintingWights,
+    addNewMaterialRollPrintingSizeByCategoryName,
+    deleteMaterialRollPrintingSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
+    updateMaterialRollPrintingSize,
   };
 };
 
-export { useSheets };
+export { useMaterialRollPrinting };

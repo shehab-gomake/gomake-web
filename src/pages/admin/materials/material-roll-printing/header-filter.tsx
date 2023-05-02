@@ -4,14 +4,16 @@ import { useRecoilValue } from "recoil";
 import { GomakePrimaryButton } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddNewTubeModal } from "./add-new-material-roll-printing-modal";
-import { materialPlatsState } from "./store/plat";
+import { AddNewMaterialRollPrintingModal } from "./add-new-material-roll-printing-modal";
+import { materialMaterialRollPrintingState } from "./store/material-roll-printing";
 import { useStyle } from "./style";
 
 const HeaderFilter = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialMaterialRollPrintingStateValue = useRecoilValue<any>(
+    materialMaterialRollPrintingState
+  );
 
   return (
     <>
@@ -20,13 +22,13 @@ const HeaderFilter = () => {
           style={clasess.btnStyle}
           leftIcon={<AddIcon />}
           onClick={() => {
-            materialPlatsStateValue?.onOpnModalAdded();
+            materialMaterialRollPrintingStateValue?.onOpnModalAdded();
           }}
         >
           {t("materials.printingMaterials.admin.addNewMaterialRollPrinting")}
         </GomakePrimaryButton>
       </div>
-      <AddNewTubeModal />
+      <AddNewMaterialRollPrintingModal />
     </>
   );
 };

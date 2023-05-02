@@ -1,20 +1,18 @@
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
-import {
-  GoMakeAutoComplate,
-  GomakePrimaryButton,
-  GomakeTextInput,
-} from "@/components";
+import { GomakePrimaryButton } from "@/components";
 
-import { materialPlatsState } from "../store/plat";
+import { materialMaterialRollPrintingState } from "../store/material-roll-printing";
 import { useStyle } from "./style";
 import { RollPrintingSizeInputs } from "../shared-inputs-widget/material-roll-printing-size-inputs";
 
-const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
+const AddMaterialRollPrintingSizeWeightsMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialMaterialRollPrintingStateValue = useRecoilValue<any>(
+    materialMaterialRollPrintingState
+  );
 
   return (
     <>
@@ -24,7 +22,9 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.setIsAddNewSheetWights(false)
+                materialMaterialRollPrintingStateValue?.setIsAddNewMaterialRollPrintingWights(
+                  false
+                )
               }
               style={clasess.cancelBtnStyle}
             >
@@ -34,7 +34,7 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.addNewPlatSizeByCategoryName(
+                materialMaterialRollPrintingStateValue?.addNewMaterialRollPrintingSizeByCategoryName(
                   selectedItem
                 )
               }
@@ -48,4 +48,4 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
     </>
   );
 };
-export { AddPlatSizeWeightsMapping };
+export { AddMaterialRollPrintingSizeWeightsMapping };
