@@ -8,3 +8,4 @@ export * from "./get-set-profile-frame";
 export * from "./get-set-wide-format-material";
 export * from "./get-set-hardboards";
 export * from "./get-set-applications";
+export * from "./get-set-additions";
