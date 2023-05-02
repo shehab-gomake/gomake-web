@@ -105,9 +105,11 @@ const useStyle = () => {
       inputSizesContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
+        flexWrap: "wrap" as "wrap",
+        gap: 20,
         marginBottom: 15,
       },
       addSizesInputsSecondSelection: {
@@ -151,9 +153,11 @@ const useStyle = () => {
       mainWaightsContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
+        flexWrap: "wrap" as "wrap",
+        gap: 20,
       },
       controlsIconContainer: {
         display: "flex",

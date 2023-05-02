@@ -393,6 +393,21 @@
       }
     },
     "profileFrames": {
+      "admin": {
+        "title": "Profile Frame",
+        "addNewProfileFrame": "Add New Profile Frame",
+        "profileFrameSizeSection": "Profile Frame Size Section",
+        "addProfileFrameize": "Add new profile frame size",
+        "removeProfileFrameSize": "Remove last profile frame size",
+        "lenght": "Lenght",
+        "enterLenght": "Enter Lenght",
+        "stock": "Stock",
+        "enterStock": "Enter Stock",
+        "defaultPricePerUnit": "Default Price Per Unit",
+        "enterDefaultPricePerUnit": "Enter Default Price Per Unit",
+        "defaultPricePerMeter": "Default Price Per Meter",
+        "enterDefaultPricePerMeter": "Enter Default Price Per Meter"
+      },
       "title": "Profile frames",
       "category": "Category",
       "supplier": "Supplier",
@@ -414,6 +429,25 @@
         "controls": "Controls"
       }
     },
+    "wideFormatMaterial": {
+      "admin": {
+        "title": "Wide Format Material",
+        "addNewWideFormatMaterial": "Add New Wide Format Material",
+        "WideFormatMaterialTypeSection": "Wide Format Material Type Section",
+        "addWideFormatMaterialType": "Add new wide format material type",
+        "removeWideFormatMaterialType": "Remove last wide format material type",
+        "addWideFormatMaterialSize": "Add new wide format material size",
+        "removeWideFormatMaterialSize": "Remove last wide format material size",
+        "WideFormatMaterialSizeSection": "Wide Format Material Size Section",
+        "weightPerMeterSquare": "Weight Per Meter Square",
+        "enterWeightPerMeterSquare": "Enter Weight Per Meter Square",
+        "hardness": "Hardness",
+        "enterHardness": "Enter Hardness",
+        "defaultPricePerMeterSquare": "Default Price Per Meter Square",
+        "enterDefaultPricePerMeterSquare": "Enter Default Price Per Meter Square"
+      }
+    },
+
     "applications": {
       "admin": {
         "title": "Applications",

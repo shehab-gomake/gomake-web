@@ -107,9 +107,6 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
               }}
             />
           </div>
-        </div>
-
-        <div style={clasess.inputSizesContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
               {t("materials.sheetPaper.admin.defaultPricePerTon")}
