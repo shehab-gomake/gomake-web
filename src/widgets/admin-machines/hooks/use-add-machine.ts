@@ -20,8 +20,13 @@ const useAddMachine = () => {
 
     const curMachineCategoryId = useCallback(() => state?.category ? state?.category.toString() : '', [state]);
 
-    const onClickAddMachine = useCallback(() => {
-        callApi('POST', '/v1/administrator/add-machine', {...state}).then()
+    const onClickAddMachine = useCallback( () => {
+        callApi('POST', '/v1/administrator/add-machine', {...state}).then(res => {
+            if (res?.success) {
+                 router.push(`/admin/machine/category/${state?.category}`).then()
+
+            }
+        })
     }, [state]);
 
     useEffect(() => {
