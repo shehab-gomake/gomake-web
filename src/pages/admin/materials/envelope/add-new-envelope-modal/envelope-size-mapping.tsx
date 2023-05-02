@@ -1,16 +1,8 @@
-import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
-
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-
-import { materialEnvelopeState } from "../store/plat";
-import { useStyle } from "./style";
 import { EnvelopeSizeInputs } from "../shared-inputs-widget/envelope-size-inputs";
+import { useStyle } from "./style";
 
-const PlatSizeMapping = ({ index }) => {
-  const { t } = useTranslation();
+const EnvelopeSizeMapping = ({ index }) => {
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialEnvelopeState);
 
   return (
     <>
@@ -23,4 +15,4 @@ const PlatSizeMapping = ({ index }) => {
     </>
   );
 };
-export { PlatSizeMapping };
+export { EnvelopeSizeMapping };

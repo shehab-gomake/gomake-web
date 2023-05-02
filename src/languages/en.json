@@ -238,8 +238,10 @@
         "enterQuantityInPackage": "Enter Quantity in package",
         "isWithWindow": "is with window",
         "enterisWithWindow": "Choose true or false",
-        "deletePlat": "Delete Plat",
-        "subTitleDeleteModal": "Are you sure you delete plat by categoryName"
+        "deleteEnvelope": "Delete Envelop",
+        "subTitleDeleteModal": "Are you sure you delete envelop by categoryName",
+        "deleteEnvelopeSize": "Delete Envelope Size",
+        "subTitleDeleteModalSize": "Are you sure you want to delete envelope size?"
       },
       "title": "Envelopes",
       "category": "Category",

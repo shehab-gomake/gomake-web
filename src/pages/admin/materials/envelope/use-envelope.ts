@@ -15,14 +15,14 @@ const useAllEnvelops = () => {
     ],
     []
   );
-  const [openAddNewPlatModal, setOpenAddNewPlatModal] = useState(false);
-  const [openUpdateSheetModal, setOpenUpdateSheetModal] = useState(false);
+  const [openAddNewEnvelopeModal, setOpenAddNewEnvelopeModal] = useState(false);
+  const [openUpdateEnvelopeModal, setOpenUpdateEnvelopeModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [allEnvelops, setAllEnvelops] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
-  const [isAddNewSheetWights, setIsAddNewSheetWights] = useState(false);
-  const [selectedSheetWeight, setSelectedSheetWeight] = useState({});
+  const [isAddNewEnvelopeWights, setIsAddNewEnvelopeWights] = useState(false);
+  const [selectedEnvelopeWeight, setSelectedEnvelopeWeight] = useState({});
   const [updateState, setUpdateState] = useState([]);
 
   const [items, setItems] = useState([
@@ -45,7 +45,7 @@ const useAllEnvelops = () => {
     };
     setItems(temp);
   };
-  const onChangeUpdateStatePlatSize = useCallback(
+  const onChangeUpdateStateEnvelopeSize = useCallback(
     (index: string, filedName: string, value: any) => {
       let temp: any = { ...updateState };
       temp[`${index}`] = {
@@ -56,7 +56,7 @@ const useAllEnvelops = () => {
     },
     [updateState]
   );
-  const initialStateSheetWeights = (item: any) => {
+  const initialStateEnvelopeWeights = (item: any) => {
     let temp = [...item?.envelopeSizes];
     let final: any = [];
     temp.map((envelopeSize) => {
@@ -68,34 +68,34 @@ const useAllEnvelops = () => {
     setUpdateState(final);
   };
 
-  const getPlats = useCallback(async () => {
+  const getEnvelopes = useCallback(async () => {
     await getAndSetGetAllEnvelope(callApi, setAllEnvelops);
   }, []);
-  const onCloseAddNewPlatModal = () => {
-    setOpenAddNewPlatModal(false);
+  const onCloseAddNewEnvelopeModal = () => {
+    setOpenAddNewEnvelopeModal(false);
   };
   const onOpnModalAdded = () => {
-    setOpenAddNewPlatModal(true);
+    setOpenAddNewEnvelopeModal(true);
   };
   const onCloseUpdateModal = async () => {
-    getPlats();
-    setOpenUpdateSheetModal(false);
-    setIsAddNewSheetWights(false);
+    getEnvelopes();
+    setOpenUpdateEnvelopeModal(false);
+    setIsAddNewEnvelopeWights(false);
   };
   const onOpnUpdateModal = (item) => {
-    initialStateSheetWeights(item);
+    initialStateEnvelopeWeights(item);
     setSelectedEditItem(item);
-    setOpenUpdateSheetModal(true);
+    setOpenUpdateEnvelopeModal(true);
   };
   const onCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
-  const onOpenDeleteModal = (item) => {
+  const onOpenDeleteModal = (item: any) => {
     setOpenDeleteModal(true);
-    setSelectedSheetWeight(item);
+    setSelectedEnvelopeWeight(item);
   };
 
-  const addNewPlatsSize = useCallback(async () => {
+  const addNewEnvelopesSize = useCallback(async () => {
     const res = await callApi(
       "POST",
       `/v1/administrator/envelope/add-envelope`,
@@ -110,8 +110,8 @@ const useAllEnvelops = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      await getPlats();
-      onCloseAddNewPlatModal();
+      await getEnvelopes();
+      onCloseAddNewEnvelopeModal();
     } else {
       setSnackbarStateValue({
         state: true,
@@ -120,7 +120,7 @@ const useAllEnvelops = () => {
       });
     }
   }, [categoryName, items]);
-  const addNewPlatSizeByCategoryName = useCallback(
+  const addNewEnvelopeSizeByCategoryName = useCallback(
     async (selectedItem: any) => {
       const res = await callApi(
         "POST",
@@ -135,7 +135,7 @@ const useAllEnvelops = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getPlats();
+        getEnvelopes();
         onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -147,7 +147,7 @@ const useAllEnvelops = () => {
     },
     [items]
   );
-  const deletePlatSize = useCallback(
+  const deleteEnvelopeSize = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -159,7 +159,7 @@ const useAllEnvelops = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getPlats();
+        getEnvelopes();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -172,7 +172,7 @@ const useAllEnvelops = () => {
     []
   );
 
-  const updatePlatSize = useCallback(
+  const updateEnvelopeSize = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -198,37 +198,37 @@ const useAllEnvelops = () => {
     [updateState]
   );
   useEffect(() => {
-    getPlats();
+    getEnvelopes();
   }, []);
   return {
     headerTable,
     allEnvelops,
-    openAddNewPlatModal,
+    openAddNewEnvelopeModal,
     items,
     categoryName,
-    openUpdateSheetModal,
+    openUpdateEnvelopeModal,
     selectedEditItem,
-    isAddNewSheetWights,
+    isAddNewEnvelopeWights,
     openDeleteModal,
-    selectedSheetWeight,
+    selectedEnvelopeWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStateEnvelopeSize,
+    onCloseAddNewEnvelopeModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdateSheetModal,
+    addNewEnvelopesSize,
+    setOpenUpdateEnvelopeModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewSheetWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewEnvelopeWights,
+    addNewEnvelopeSizeByCategoryName,
+    deleteEnvelopeSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
+    updateEnvelopeSize,
   };
 };
 

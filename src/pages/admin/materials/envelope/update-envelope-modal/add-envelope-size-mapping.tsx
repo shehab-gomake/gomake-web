@@ -7,14 +7,16 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { materialEnvelopeState } from "../store/plat";
+import { materialEnvelopeState } from "../store/envelope";
 import { useStyle } from "./style";
 import { EnvelopeSizeInputs } from "../shared-inputs-widget/envelope-size-inputs";
 
-const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
+const AddEnvelopeSizeWeightsMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialEnvelopeState);
+  const materialEnvelopesStateValue = useRecoilValue<any>(
+    materialEnvelopeState
+  );
 
   return (
     <>
@@ -24,7 +26,7 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.setIsAddNewSheetWights(false)
+                materialEnvelopesStateValue?.setIsAddNewSheetWights(false)
               }
               style={clasess.cancelBtnStyle}
             >
@@ -34,7 +36,7 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.addNewPlatSizeByCategoryName(
+                materialEnvelopesStateValue?.addNewEnvelopeSizeByCategoryName(
                   selectedItem
                 )
               }
@@ -48,4 +50,4 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
     </>
   );
 };
-export { AddPlatSizeWeightsMapping };
+export { AddEnvelopeSizeWeightsMapping };

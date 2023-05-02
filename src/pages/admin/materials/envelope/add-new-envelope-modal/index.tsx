@@ -10,21 +10,23 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { PlatSizeMapping } from "./envelope-size-mapping";
-import { materialEnvelopeState } from "../store/plat";
+import { EnvelopeSizeMapping } from "./envelope-size-mapping";
+import { materialEnvelopeState } from "../store/envelope";
 import { useStyle } from "./style";
 
 const AddNewEnvelopeModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialEnvelopeState);
+  const materialEnvelopesStateValue = useRecoilValue<any>(
+    materialEnvelopeState
+  );
 
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openAddNewPlatModal}
+        openModal={materialEnvelopesStateValue?.openAddNewEnvelopeModal}
         modalTitle={t("materials.envelops.admin.addNewEnvelops")}
-        onClose={materialPlatsStateValue?.onCloseAddNewPlatModal}
+        onClose={materialEnvelopesStateValue?.onCloseAddNewEnvelopeModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -36,9 +38,9 @@ const AddNewEnvelopeModal = () => {
               <GomakeTextInput
                 placeholder={t("materials.sheetPaper.admin.categoryName")}
                 style={clasess.textInputStyle}
-                value={materialPlatsStateValue?.categoryName}
+                value={materialEnvelopesStateValue?.categoryName}
                 onChange={(e: any) => {
-                  materialPlatsStateValue?.setCategoryName(e.target.value);
+                  materialEnvelopesStateValue?.setCategoryName(e.target.value);
                 }}
               />
             </div>
@@ -51,7 +53,7 @@ const AddNewEnvelopeModal = () => {
               <Tooltip title={t("materials.envelops.admin.addEnvelopSize")}>
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialPlatsStateValue?.items];
+                    const temp = [...materialEnvelopesStateValue?.items];
                     temp.push({
                       code: "",
                       name: "",
@@ -62,7 +64,7 @@ const AddNewEnvelopeModal = () => {
                       isWithWindow: false,
                       defaultPrice: "",
                     });
-                    materialPlatsStateValue?.setItems(temp);
+                    materialEnvelopesStateValue?.setItems(temp);
                   }}
                 >
                   <AddIcon />
@@ -71,27 +73,29 @@ const AddNewEnvelopeModal = () => {
               <Tooltip title={t("materials.envelops.admin.removeEnvelopSize")}>
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialPlatsStateValue?.items];
+                    const temp = [...materialEnvelopesStateValue?.items];
                     temp.pop();
-                    materialPlatsStateValue?.setItems(temp);
+                    materialEnvelopesStateValue?.setItems(temp);
                   }}
                 >
                   <RemoveIcon />
                 </IconButton>
               </Tooltip>
             </div>
-            {materialPlatsStateValue?.items?.map((item: any, index: number) => {
-              return (
-                <PlatSizeMapping
-                  key={`platSizeMapping_${index}`}
-                  index={index}
-                />
-              );
-            })}
+            {materialEnvelopesStateValue?.items?.map(
+              (item: any, index: number) => {
+                return (
+                  <EnvelopeSizeMapping
+                    key={`platSizeMapping_${index}`}
+                    index={index}
+                  />
+                );
+              }
+            )}
           </div>
           <div style={clasess.addBtnContainer}>
             <GomakePrimaryButton
-              onClick={materialPlatsStateValue?.addNewPlatsSize}
+              onClick={materialEnvelopesStateValue?.addNewEnvelopesSize}
             >
               {t("materials.envelops.admin.addNewEnvelops")}
             </GomakePrimaryButton>

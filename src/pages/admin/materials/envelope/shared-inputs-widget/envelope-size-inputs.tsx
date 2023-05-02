@@ -3,13 +3,15 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
-import { materialEnvelopeState } from "../store/plat";
+import { materialEnvelopeState } from "../store/envelope";
 import { useStyle } from "../add-new-envelope-modal/style";
 
 const EnvelopeSizeInputs = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialEnvelopeState);
+  const materialEnvelopesStateValue = useRecoilValue<any>(
+    materialEnvelopeState
+  );
 
   return (
     <>
@@ -21,9 +23,9 @@ const EnvelopeSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterCode")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["code"]}
+            value={materialEnvelopesStateValue?.items[index]["code"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialEnvelopesStateValue?.changeItems(
                 index,
                 "code",
                 e.target.value
@@ -38,9 +40,9 @@ const EnvelopeSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterName")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["name"]}
+            value={materialEnvelopesStateValue?.items[index]["name"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialEnvelopesStateValue?.changeItems(
                 index,
                 "name",
                 e.target.value
@@ -55,9 +57,9 @@ const EnvelopeSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterWidth")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["width"]}
+            value={materialEnvelopesStateValue?.items[index]["width"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialEnvelopesStateValue?.changeItems(
                 index,
                 "width",
                 e.target.value
@@ -72,9 +74,9 @@ const EnvelopeSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterHeight")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["height"]}
+            value={materialEnvelopesStateValue?.items[index]["height"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialEnvelopesStateValue?.changeItems(
                 index,
                 "height",
                 e.target.value
@@ -89,9 +91,9 @@ const EnvelopeSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.envelops.admin.enterStock")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["stock"]}
+            value={materialEnvelopesStateValue?.items[index]["stock"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialEnvelopesStateValue?.changeItems(
                 index,
                 "stock",
                 e.target.value
@@ -106,9 +108,11 @@ const EnvelopeSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.envelops.admin.enterQuantityInPackage")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["quantityInPackage"]}
+            value={
+              materialEnvelopesStateValue?.items[index]["quantityInPackage"]
+            }
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialEnvelopesStateValue?.changeItems(
                 index,
                 "quantityInPackage",
                 e.target.value
@@ -123,10 +127,11 @@ const EnvelopeSizeInputs = ({ index }) => {
           <GoMakeAutoComplate
             options={[true, false]}
             style={clasess.textInputStyle}
+            // renderOption={(value: boolean) => value}
             placeholder={t("materials.envelops.admin.enterisWithWindow")}
-            value={materialPlatsStateValue?.items[index]["isWithWindow"]}
+            value={materialEnvelopesStateValue?.items[index]["isWithWindow"]}
             onChange={(e: any, value: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialEnvelopesStateValue?.changeItems(
                 index,
                 "isWithWindow",
                 value
@@ -141,9 +146,9 @@ const EnvelopeSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterDefaultPrice")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["defaultPrice"]}
+            value={materialEnvelopesStateValue?.items[index]["defaultPrice"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialEnvelopesStateValue?.changeItems(
                 index,
                 "defaultPrice",
                 e.target.value
