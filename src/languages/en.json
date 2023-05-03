@@ -688,6 +688,23 @@
       "code": "Code"
     },
     "foils": {
+      "admin": {
+        "title": "Foil",
+        "addNewFoil": "Add new  Foil",
+        "foilSizeSection": " foil size section",
+        "addFoilSize": "Add new foil size",
+        "removeFoilSize": "Remove last foil size ",
+        "deleteFoilSize": "Delete Foil Size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete foil size?",
+        "deleteFoil": "Delete Foil ",
+        "subTitleDeleteModal": "Are you sure you want to delete foil?",
+        "enterWeightPerSquareMeter": "Enter Weight Per Square Meter",
+        "weightPerSquareMeter": "Weight per square meter",
+        "enterDefaultPricePerSquareMeter": "Enter Default Price Per Square Meter",
+        "defaultPricePerSquareMeter": "Default price per square meter",
+        "defaultPricePerRoll": "Default Price Per Roll",
+        "enterDefaultPricePerRoll": "Edit Default Price Per Roll"
+      },
       "title": "Foils",
       "code": "Code",
       "categoryName": "Category name",
