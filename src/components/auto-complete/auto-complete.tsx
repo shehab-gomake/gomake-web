@@ -77,9 +77,10 @@ const GoMakeAutoComplate = ({
       renderInput={(params: any) => (
         <TextField
           {...params}
-          placeholder={!multiple && (defaultValue?.name || placeholder)}
+          placeholder={!multiple && (defaultValue?.label || placeholder)}
         />
       )}
+      defaultValue={defaultValue}
       autoHighlight={autoHighlight}
       getOptionLabel={getOptionLabel}
       renderOption={renderOption}
@@ -91,7 +92,7 @@ const GoMakeAutoComplate = ({
         option?.id === value?.id
       }
       getOptionSelected={(option: any, value: any) => {
-        return option.value === value.value;
+        return option.id === value.id;
       }}
     />
   );
