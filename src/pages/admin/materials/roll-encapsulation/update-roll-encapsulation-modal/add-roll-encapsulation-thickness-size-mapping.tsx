@@ -3,8 +3,8 @@ import { useRecoilValue } from "recoil";
 
 import { GomakePrimaryButton } from "@/components";
 
-import { AddsheetSizeMapping } from "./add-sheet-size-mapping";
-import { materialSheetsState } from "../store/sheets";
+import { AddsheetSizeMapping } from "./add-roll-encapsulation-size-mapping";
+import { materialSheetsState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
 
 const AddSheetWeightSizeMapping = ({ index, selectedItem, sheetSize }) => {

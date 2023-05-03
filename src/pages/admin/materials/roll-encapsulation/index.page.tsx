@@ -6,9 +6,9 @@ import { Table } from "@/widgets/table/table";
 import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 
-import { materialSheetsState } from "./store/sheets";
+import { materialSheetsState } from "./store/roll-encapsulation";
 import { HeaderFilter } from "./header-filter";
-import { useSheets } from "./use-sheets";
+import { useSheets } from "./use-roll-encapsulation";
 
 export default function Sheets() {
   const { t } = useTranslation();

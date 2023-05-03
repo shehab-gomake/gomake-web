@@ -10,8 +10,8 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { SheetWeightsMapping } from "./sheet-weight-mapping";
-import { materialSheetsState } from "../store/sheets";
+import { SheetWeightsMapping } from "./roll-encapsulation-thickness-mapping";
+import { materialSheetsState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
 
 const AddSheetModal = () => {

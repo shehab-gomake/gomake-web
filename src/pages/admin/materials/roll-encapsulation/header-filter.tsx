@@ -4,8 +4,8 @@ import { useRecoilValue } from "recoil";
 import { GomakePrimaryButton } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
 
-import { materialSheetsState } from "./store/sheets";
-import { AddSheetModal } from "./add-sheet-modal";
+import { materialSheetsState } from "./store/roll-encapsulation";
+import { AddSheetModal } from "./add-roll-encapsulation-modal";
 import { useStyle } from "./style";
 
 const HeaderFilter = () => {

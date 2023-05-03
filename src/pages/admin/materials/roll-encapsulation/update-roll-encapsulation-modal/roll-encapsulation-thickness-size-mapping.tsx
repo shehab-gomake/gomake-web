@@ -4,7 +4,7 @@ import { useRecoilValue } from "recoil";
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { ControlIconsWidget } from "./control-icons-widget";
-import { materialSheetsState } from "../store/sheets";
+import { materialSheetsState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
 import { useMemo } from "react";
 

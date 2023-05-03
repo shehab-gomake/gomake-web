@@ -5,9 +5,9 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddSheetWeightsMapping } from "./add-sheet-weight-mapping";
-import { SheetWeightsMapping } from "./sheet-weight-mapping";
-import { materialSheetsState } from "../store/sheets";
+import { AddSheetWeightsMapping } from "./add-roll-encapsulation-thickness-mapping";
+import { SheetWeightsMapping } from "./roll-encapsulation-thickness-mapping";
+import { materialSheetsState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
 
 const UpdateSheetModal = () => {

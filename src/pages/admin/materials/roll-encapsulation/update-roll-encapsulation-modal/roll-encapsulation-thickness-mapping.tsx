@@ -6,10 +6,10 @@ import { GomakeTextInput } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
 
 import { ControlIconsWidget } from "./control-icons-widget";
-import { SheetSizeMapping } from "./sheet-size-mapping";
-import { materialSheetsState } from "../store/sheets";
+import { SheetSizeMapping } from "./roll-encapsulation-thickness-size-mapping";
+import { materialSheetsState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
-import { AddSheetWeightSizeMapping } from "./add-sheet-weight-size-mapping";
+import { AddSheetWeightSizeMapping } from "./add-roll-encapsulation-thickness-size-mapping";
 
 const SheetWeightsMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();

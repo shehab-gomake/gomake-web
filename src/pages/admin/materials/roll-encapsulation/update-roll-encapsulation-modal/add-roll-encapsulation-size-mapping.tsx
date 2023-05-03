@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
 
-import { SheetSizeInputs } from "../shared-inputs-widget/sheet-size-inputs";
+import { SheetSizeInputs } from "../shared-inputs-widget/roll-encapsulation-thickness-size-inputs";
 import { useStyle } from "./style";
 
-const SheetSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
+const AddsheetSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
 
@@ -19,4 +19,4 @@ const SheetSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
     </>
   );
 };
-export { SheetSizeMapping };
+export { AddsheetSizeMapping };

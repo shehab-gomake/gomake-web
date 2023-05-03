@@ -2,12 +2,10 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeDeleteModal } from "@/components";
 import { IconWidget } from "./icon-widget";
-import moreCircle from "@/icons/more-circle.png";
-import { IconButton, Tooltip } from "@mui/material";
-import { useSheetModal } from "./use-sheet-modal";
-import { UpdateSheetModal } from "../update-sheet-modal";
-import { materialSheetsState } from "../store/sheets";
-import { GoMakeDeleteMaterialModal } from "@/widgets";
+
+import { useSheetModal } from "./use-roll-encapsulation-modal";
+import { UpdateSheetModal } from "../update-roll-encapsulation-modal";
+import { materialSheetsState } from "../store/roll-encapsulation";
 
 const RollEncapsulationSettingsWidget = ({ item }: any) => {
   const {
