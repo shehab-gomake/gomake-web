@@ -649,6 +649,25 @@
     },
 
     "frames": {
+      "admin": {
+        "title": "Frame",
+        "addNewFrame": "Add new  Frame",
+        "frameSizeSection": " frame size section",
+        "addFrameSize": "Add new frame size",
+        "removeFrameSize": "Remove last frame size ",
+        "color": "Color",
+        "enterColor": "Enter color",
+        "thickness": "Thickness",
+        "enterThickness": "Enter Thickness",
+        "weight": "Weight",
+        "enterWeight": "Enter Weight",
+        "stock": "Stock",
+        "enterStock": "Enter Stock",
+        "deleteFrameSize": "Delete Frame Size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete frame size?",
+        "deleteFrame": "Delete Frame ",
+        "subTitleDeleteModal": "Are you sure you want to delete frame?"
+      },
       "title": "Frames",
       "categoryName": "Category name",
       "height": "Height",
