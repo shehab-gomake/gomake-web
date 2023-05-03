@@ -5,7 +5,7 @@ import { useStyle } from "./style";
 
 const RollEncapsulationSizeMapping = ({
   index,
-  sheetWeightIndex,
+  sheetThicknessIndex,
   sheetSize,
 }) => {
   const { t } = useTranslation();
@@ -16,7 +16,7 @@ const RollEncapsulationSizeMapping = ({
       <div key={index} style={clasess.addSizesInputsSecondSelection}>
         <RollEncapsulationSizeInputs
           index={index}
-          sheetWeightIndex={sheetWeightIndex}
+          sheetThicknessIndex={sheetThicknessIndex}
           sheetSize={sheetSize}
         />
       </div>

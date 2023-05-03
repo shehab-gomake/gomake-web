@@ -9,9 +9,9 @@ import AddIcon from "@mui/icons-material/Add";
 import { AddsheetSizeMapping } from "./add-roll-encapsulation-size-mapping";
 import { materialRollEncapsulationState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
-import { RollEncapsulationWeightsInputs } from "../shared-inputs-widget/roll-encapsulation-thickness-inputs";
+import { RollEncapsulationThicknesssInputs } from "../shared-inputs-widget/roll-encapsulation-thickness-inputs";
 
-const AddRollEncapsulationWeightsMapping = ({ index, selectedItem }) => {
+const AddRollEncapsulationThicknesssMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialRollEncapsulationStateValue = useRecoilValue<any>(
@@ -21,7 +21,7 @@ const AddRollEncapsulationWeightsMapping = ({ index, selectedItem }) => {
   return (
     <>
       <div key={index} style={clasess.tableSecondSections}>
-        <RollEncapsulationWeightsInputs index={index} />
+        <RollEncapsulationThicknesssInputs index={index} />
         <div style={clasess.titlePlusContainer}>
           <div style={clasess.sizeSectionTitleStyle}>
             {t("materials.sheetPaper.admin.sheetSizeSection")}
@@ -83,7 +83,7 @@ const AddRollEncapsulationWeightsMapping = ({ index, selectedItem }) => {
             <AddsheetSizeMapping
               key={`RollEncapsulationSizeMapping_${index2}`}
               index={index2}
-              sheetWeightIndex={index}
+              sheetThicknessIndex={index}
               sheetSize={
                 materialRollEncapsulationStateValue?.items[index][
                   "rollEncapsulationSizes"
@@ -96,7 +96,7 @@ const AddRollEncapsulationWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addRollEncapsulationBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialRollEncapsulationStateValue?.setIsAddNewRollEncapsulationWights(
+                materialRollEncapsulationStateValue?.setIsAddNewRollEncapsulationThickness(
                   false
                 )
               }
@@ -108,7 +108,7 @@ const AddRollEncapsulationWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addRollEncapsulationBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialRollEncapsulationStateValue?.addNewSheeWeightByCategoryName(
+                materialRollEncapsulationStateValue?.addNewSheeThicknessByCategoryName(
                   selectedItem
                 )
               }
@@ -122,4 +122,4 @@ const AddRollEncapsulationWeightsMapping = ({ index, selectedItem }) => {
     </>
   );
 };
-export { AddRollEncapsulationWeightsMapping };
+export { AddRollEncapsulationThicknesssMapping };

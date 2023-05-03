@@ -8,9 +8,9 @@ import AddIcon from "@mui/icons-material/Add";
 import { RollEncapsulationSizeMapping } from "./roll-encapsulation-size-mapping";
 import { materialRollEncapsulationState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
-import { RollEncapsulationWeightsInputs } from "../shared-inputs-widget/roll-encapsulation-thickness-inputs";
+import { RollEncapsulationThicknesssInputs } from "../shared-inputs-widget/roll-encapsulation-thickness-inputs";
 
-const RollEncapsulationWeightsMapping = ({ index }) => {
+const RollEncapsulationThicknesssMapping = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialRollEncapsulationStateValue = useRecoilValue<any>(
@@ -23,7 +23,7 @@ const RollEncapsulationWeightsMapping = ({ index }) => {
         key={index}
         style={index & 1 ? clasess.tableSecondSections : clasess.tableSections}
       >
-        <RollEncapsulationWeightsInputs index={index} />
+        <RollEncapsulationThicknesssInputs index={index} />
         <div style={clasess.titlePlusContainer}>
           <div style={clasess.sizeSectionTitleStyle}>
             {t(
@@ -91,7 +91,7 @@ const RollEncapsulationWeightsMapping = ({ index }) => {
             <RollEncapsulationSizeMapping
               key={`RollEncapsulationSizeMapping_${index2}`}
               index={index2}
-              sheetWeightIndex={index}
+              sheetThicknessIndex={index}
               sheetSize={
                 materialRollEncapsulationStateValue?.items[index][
                   "rollEncapsulationSizes"
@@ -104,4 +104,4 @@ const RollEncapsulationWeightsMapping = ({ index }) => {
     </>
   );
 };
-export { RollEncapsulationWeightsMapping };
+export { RollEncapsulationThicknesssMapping };

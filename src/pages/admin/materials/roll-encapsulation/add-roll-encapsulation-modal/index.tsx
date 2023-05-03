@@ -10,7 +10,7 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { RollEncapsulationWeightsMapping } from "./roll-encapsulation-thickness-mapping";
+import { RollEncapsulationThicknesssMapping } from "./roll-encapsulation-thickness-mapping";
 import { materialRollEncapsulationState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
 
@@ -102,8 +102,8 @@ const AddRollEncapsulationModal = () => {
             {materialRollEncapsulationStateValue?.items?.map(
               (item: any, index: number) => {
                 return (
-                  <RollEncapsulationWeightsMapping
-                    key={`RollEncapsulationWeightsMapping_${index}`}
+                  <RollEncapsulationThicknesssMapping
+                    key={`RollEncapsulationThicknesssMapping_${index}`}
                     index={index}
                   />
                 );

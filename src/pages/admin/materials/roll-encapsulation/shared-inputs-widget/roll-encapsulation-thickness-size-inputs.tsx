@@ -9,7 +9,7 @@ import { useMemo } from "react";
 
 const RollEncapsulationSizeInputs = ({
   index,
-  sheetWeightIndex,
+  sheetThicknessIndex,
   sheetSize,
 }) => {
   const { t } = useTranslation();
@@ -38,7 +38,7 @@ const RollEncapsulationSizeInputs = ({
             value={sheetSize[index]["code"]}
             onChange={(e: any) => {
               materialRollEncapsulationStateValue?.changeItemsRollEncapsulationSize(
-                sheetWeightIndex,
+                sheetThicknessIndex,
                 index,
                 "code",
                 e.target.value
@@ -56,7 +56,7 @@ const RollEncapsulationSizeInputs = ({
             value={sheetSize[index]["name"]}
             onChange={(e: any) => {
               materialRollEncapsulationStateValue?.changeItemsRollEncapsulationSize(
-                sheetWeightIndex,
+                sheetThicknessIndex,
                 index,
                 "name",
                 e.target.value
@@ -74,7 +74,7 @@ const RollEncapsulationSizeInputs = ({
             value={sheetSize[index]["width"]}
             onChange={(e: any) => {
               materialRollEncapsulationStateValue?.changeItemsRollEncapsulationSize(
-                sheetWeightIndex,
+                sheetThicknessIndex,
                 index,
                 "width",
                 e.target.value
@@ -92,7 +92,7 @@ const RollEncapsulationSizeInputs = ({
             value={sheetSize[index]["height"]}
             onChange={(e: any) => {
               materialRollEncapsulationStateValue?.changeItemsRollEncapsulationSize(
-                sheetWeightIndex,
+                sheetThicknessIndex,
                 index,
                 "height",
                 e.target.value
@@ -112,7 +112,7 @@ const RollEncapsulationSizeInputs = ({
             value={sheetSize[index]["defaultPricePerSquareMeter"]}
             onChange={(e: any) => {
               materialRollEncapsulationStateValue?.changeItemsRollEncapsulationSize(
-                sheetWeightIndex,
+                sheetThicknessIndex,
                 index,
                 "defaultPricePerSquareMeter",
                 e.target.value
@@ -132,7 +132,7 @@ const RollEncapsulationSizeInputs = ({
             getOptionLabel={(option: any) => option.lable}
             onChange={(e: any, value: any) => {
               materialRollEncapsulationStateValue?.changeItemsRollEncapsulationSize(
-                sheetWeightIndex,
+                sheetThicknessIndex,
                 index,
                 "fitToPrintType",
                 value.map((item: any) => item?.lable)

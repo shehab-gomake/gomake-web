@@ -5,8 +5,8 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddRollEncapsulationWeightsMapping } from "./add-roll-encapsulation-thickness-mapping";
-import { RollEncapsulationWeightsMapping } from "./roll-encapsulation-thickness-mapping";
+import { AddRollEncapsulationThicknesssMapping } from "./add-roll-encapsulation-thickness-mapping";
+import { RollEncapsulationThicknesssMapping } from "./roll-encapsulation-thickness-mapping";
 import { materialRollEncapsulationState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
 
@@ -49,7 +49,7 @@ const UpdateRollEncapsulationModal = () => {
                   "materials.encapsulationRoll.admin.rollEncapsulationThicknessSection"
                 )}
               </div>
-              {!materialRollEncapsulationStateValue?.isAddNewRollEncapsulationWights && (
+              {!materialRollEncapsulationStateValue?.isAddNewRollEncapsulationThickness && (
                 <Tooltip
                   title={t(
                     "materials.encapsulationRoll.admin.addRollEncapsulationThickness"
@@ -75,7 +75,7 @@ const UpdateRollEncapsulationModal = () => {
                           ],
                         },
                       ]);
-                      materialRollEncapsulationStateValue?.setIsAddNewRollEncapsulationWights(
+                      materialRollEncapsulationStateValue?.setIsAddNewRollEncapsulationThickness(
                         true
                       );
                     }}
@@ -85,8 +85,8 @@ const UpdateRollEncapsulationModal = () => {
                 </Tooltip>
               )}
             </div>
-            {materialRollEncapsulationStateValue?.isAddNewRollEncapsulationWights && (
-              <AddRollEncapsulationWeightsMapping
+            {materialRollEncapsulationStateValue?.isAddNewRollEncapsulationThickness && (
+              <AddRollEncapsulationThicknesssMapping
                 index={0}
                 selectedItem={selectedItem}
               />
@@ -94,8 +94,8 @@ const UpdateRollEncapsulationModal = () => {
             {selectedItem?.rollEncapsulationThicknesses?.map(
               (item: any, index: number) => {
                 return (
-                  <RollEncapsulationWeightsMapping
-                    key={`RollEncapsulationWeightsMapping_${index}`}
+                  <RollEncapsulationThicknesssMapping
+                    key={`RollEncapsulationThicknesssMapping_${index}`}
                     index={index}
                     item={item}
                     selectedItem={selectedItem}

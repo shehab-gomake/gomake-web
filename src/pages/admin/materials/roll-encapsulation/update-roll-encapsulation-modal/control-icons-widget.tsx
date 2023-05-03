@@ -40,7 +40,7 @@ const ControlIconsWidget = ({
       </div>
 
       {item ===
-        materialRollEncapsulationStateValue.selectedRollEncapsulationWeight && (
+        materialRollEncapsulationStateValue.selectedRollEncapsulationThickness && (
         <GoMakeDeleteModal
           title={title}
           yesBtn={t("materials.sheetPaper.admin.delete")}

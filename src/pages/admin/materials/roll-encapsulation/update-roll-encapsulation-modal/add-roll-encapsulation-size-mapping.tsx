@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { RollEncapsulationSizeInputs } from "../shared-inputs-widget/roll-encapsulation-thickness-size-inputs";
 import { useStyle } from "./style";
 
-const AddsheetSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
+const AddsheetSizeMapping = ({ index, sheetThicknessIndex, sheetSize }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
 
@@ -12,7 +12,7 @@ const AddsheetSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
       <div key={index} style={clasess.addSizesInputsSecondSelection}>
         <RollEncapsulationSizeInputs
           index={index}
-          sheetWeightIndex={sheetWeightIndex}
+          sheetThicknessIndex={sheetThicknessIndex}
           sheetSize={sheetSize}
         />
       </div>

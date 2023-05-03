@@ -6,7 +6,7 @@ import { GomakeTextInput } from "@/components";
 import { materialRollEncapsulationState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
 
-const RollEncapsulationWeightsInputs = ({ index }) => {
+const RollEncapsulationThicknesssInputs = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialRollEncapsulationStateValue = useRecoilValue<any>(
@@ -75,7 +75,7 @@ const RollEncapsulationWeightsInputs = ({ index }) => {
           </div>
           <GomakeTextInput
             placeholder={t(
-              "materials.applications.admin.enterWeightPerSquareMeter"
+              "materials.applications.admin.enterThicknessPerSquareMeter"
             )}
             style={clasess.textInputStyle}
             value={
@@ -96,4 +96,4 @@ const RollEncapsulationWeightsInputs = ({ index }) => {
     </>
   );
 };
-export { RollEncapsulationWeightsInputs };
+export { RollEncapsulationThicknesssInputs };

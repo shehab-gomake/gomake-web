@@ -9,9 +9,9 @@ import { ControlIconsWidget } from "./control-icons-widget";
 import { RollEncapsulationSizeMapping } from "./roll-encapsulation-thickness-size-mapping";
 import { materialRollEncapsulationState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
-import { AddRollEncapsulationWeightSizeMapping } from "./add-roll-encapsulation-thickness-size-mapping";
+import { AddRollEncapsulationThicknessSizeMapping } from "./add-roll-encapsulation-thickness-size-mapping";
 
-const RollEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
+const RollEncapsulationThicknesssMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialRollEncapsulationStateValue = useRecoilValue<any>(
@@ -38,7 +38,7 @@ const RollEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
               selectedItem?.categoryName
             )
           }
-          title={"Delete RollEncapsulation Weight"}
+          title={"Delete RollEncapsulation Thickness"}
           subTitle={"Are you sure you want to delete sheet weight?"}
         />
         <div style={clasess.mainWaightsContainer}>
@@ -53,7 +53,7 @@ const RollEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
                 materialRollEncapsulationStateValue?.updateState[item?.id]?.code
               }
               onChange={(e: any) => {
-                materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationWeights(
+                materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationThicknesss(
                   item?.id,
                   "code",
                   e.target.value
@@ -72,7 +72,7 @@ const RollEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
                 materialRollEncapsulationStateValue?.updateState[item?.id]?.name
               }
               onChange={(e: any) => {
-                materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationWeights(
+                materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationThicknesss(
                   item?.id,
                   "name",
                   e.target.value
@@ -92,7 +92,7 @@ const RollEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
                   ?.thickness
               }
               onChange={(e: any) => {
-                materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationWeights(
+                materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationThicknesss(
                   item?.id,
                   "thickness",
                   e.target.value
@@ -106,7 +106,7 @@ const RollEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
             </div>
             <GomakeTextInput
               placeholder={t(
-                "materials.printingMaterials.admin.enterWeightPerSquareMeter"
+                "materials.printingMaterials.admin.enterThicknessPerSquareMeter"
               )}
               style={clasess.textInputStyle}
               value={
@@ -114,7 +114,7 @@ const RollEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
                   ?.weightPerSquareMeter
               }
               onChange={(e: any) => {
-                materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationWeights(
+                materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationThicknesss(
                   item?.id,
                   "weightPerSquareMeter",
                   e.target.value
@@ -137,7 +137,7 @@ const RollEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
           >
             <IconButton
               onClick={() =>
-                materialRollEncapsulationStateValue.onClickOpenRollEncapsulationWeightSizeWidget(
+                materialRollEncapsulationStateValue.onClickOpenRollEncapsulationThicknessSizeWidget(
                   item
                 )
               }
@@ -148,8 +148,8 @@ const RollEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
         </div>
         {materialRollEncapsulationStateValue?.isAddNewRollEncapsulationWightSize &&
           materialRollEncapsulationStateValue
-            ?.selectedRollEncapsulationWeightSize.id === item?.id && (
-            <AddRollEncapsulationWeightSizeMapping
+            ?.selectedRollEncapsulationThicknessSize.id === item?.id && (
+            <AddRollEncapsulationThicknessSizeMapping
               key={`RollEncapsulationSizeMapping_${item?.id}`}
               index={0}
               sheetSize={item}
@@ -161,7 +161,7 @@ const RollEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
             <RollEncapsulationSizeMapping
               key={`RollEncapsulationSizeMapping_${index2}`}
               index={index2}
-              sheetWeight={item}
+              sheetThickness={item}
               sheetSize={item2}
               selectedItem={selectedItem}
             />
@@ -171,4 +171,4 @@ const RollEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
     </>
   );
 };
-export { RollEncapsulationWeightsMapping };
+export { RollEncapsulationThicknesssMapping };

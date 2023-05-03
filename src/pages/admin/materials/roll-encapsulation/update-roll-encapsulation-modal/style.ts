@@ -60,7 +60,7 @@ const useStyle = () => {
         paddingBottom: 20,
         borderRadius: 4,
       },
-      newAddWightsByCatagory: {
+      newAddThicknessByCatagory: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",

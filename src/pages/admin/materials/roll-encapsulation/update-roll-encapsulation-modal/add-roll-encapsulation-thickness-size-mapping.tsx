@@ -7,7 +7,7 @@ import { AddsheetSizeMapping } from "./add-roll-encapsulation-size-mapping";
 import { materialRollEncapsulationState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
 
-const AddRollEncapsulationWeightSizeMapping = ({
+const AddRollEncapsulationThicknessSizeMapping = ({
   index,
   selectedItem,
   sheetSize,
@@ -28,7 +28,7 @@ const AddRollEncapsulationWeightSizeMapping = ({
             <AddsheetSizeMapping
               key={`RollEncapsulationSizeMapping_${index2}`}
               index={index2}
-              sheetWeightIndex={index}
+              sheetThicknessIndex={index}
               sheetSize={
                 materialRollEncapsulationStateValue?.items[index][
                   "rollEncapsulationSizes"
@@ -53,7 +53,7 @@ const AddRollEncapsulationWeightSizeMapping = ({
           <div style={clasess.addRollEncapsulationBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialRollEncapsulationStateValue?.addNewSheeWeightSizeByCategoryName(
+                materialRollEncapsulationStateValue?.addNewSheeThicknessSizeByCategoryName(
                   selectedItem?.categoryName,
                   sheetSize?.id
                 )
@@ -68,4 +68,4 @@ const AddRollEncapsulationWeightSizeMapping = ({
     </>
   );
 };
-export { AddRollEncapsulationWeightSizeMapping };
+export { AddRollEncapsulationThicknessSizeMapping };
