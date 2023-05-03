@@ -9,10 +9,12 @@ import {ReactNode, useEffect, useState} from "react";
 import {useAddMachine} from "@/widgets/admin-machines/hooks/use-add-machine";
 import {StyledStepLabel} from "@/widgets/admin-machines/components/step-label";
 import {ECategoryId} from "@/widgets/admin-machines/enums/category-id";
+import {useTranslation} from "react-i18next";
 
 const AddMachine = () => {
     const [activeStep, setActiveStep] = useState<number>(0);
     const {classes} = useStyle();
+    const {t} = useTranslation();
     const router = useRouter();
     const {categoryId} = router.query;
     const categories = useRecoilValue(machineCategoriesState);
@@ -38,7 +40,7 @@ const AddMachine = () => {
                         return (
                             <Step key={step.label} {...stepProps}>
                                 <StyledStepLabel {...labelProps}>
-                                        <span style={classes.stepLabel}>{step.label}</span>
+                                        <span style={classes.stepLabel}>{t('machineSteps.' + step.label)}</span>
                                 </StyledStepLabel>
                                 <StepContent style={classes.stepContainer}>
                                     <step.component navigateBack={navigateBack}

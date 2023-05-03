@@ -9,6 +9,9 @@ import {getCategoryFeedersStackersInputs} from "@/widgets/admin-machines/add-mac
 import {getCategoryColorsInputs} from "@/widgets/admin-machines/add-machine/inputs/colors-inputs";
 import {getCategoryBeatsInputs} from "@/widgets/admin-machines/add-machine/inputs/beats-inputs";
 import {getCategoryMachineDimensionsInputs} from "@/widgets/admin-machines/add-machine/inputs/machine-dimensions";
+import {getCategoryCoatingInputs} from "@/widgets/admin-machines/add-machine/inputs/coating-inputs";
+import {getCategoryPlateInputs} from "@/widgets/admin-machines/add-machine/inputs/plate-inputs";
+import {getCategoryBlanketCylinderInputs} from "@/widgets/admin-machines/add-machine/inputs/blanket-cylinder-inputs";
 
 
 const useMachineAttributes = () => {
@@ -55,6 +58,9 @@ const useMachineAttributes = () => {
     const machineColorsAttributes = () => !!machineState.category ? getCategoryColorsInputs(machineState.category, machineState) : [];
     const machineBeatsAttributes = () => !!machineState.category ? getCategoryBeatsInputs(machineState.category, machineState) : [];
     const machineDimensionsAttributes = () => !!machineState.category ? getCategoryMachineDimensionsInputs(machineState.category, machineState) : [];
+    const machineCoatingAttributes = () => !!machineState.category ? getCategoryCoatingInputs(machineState.category, machineState) : [];
+    const machinePlateAttributes = () => !!machineState.category ? getCategoryPlateInputs(machineState.category, machineState) : [];
+    const machineBlanketCylinderAttributes = () => !!machineState.category ? getCategoryBlanketCylinderInputs(machineState.category, machineState) : [];
 
     return {
         machineGeneralAttributes,
@@ -65,6 +71,9 @@ const useMachineAttributes = () => {
         machineColorsAttributes,
         machineBeatsAttributes,
         machineDimensionsAttributes,
+        machineCoatingAttributes,
+        machinePlateAttributes,
+        machineBlanketCylinderAttributes,
         changeMachineAttributes,
         changeMachineGeneralAttributes,
         errors,

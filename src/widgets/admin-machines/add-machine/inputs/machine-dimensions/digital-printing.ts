@@ -11,9 +11,9 @@ const digitalPrinting = (state: Record<string, any>) => {
             inputs: [
                 {
                     name: "",
-                    label: "Height",
+                    label: "machineAttributes.height",
                     type: "text",
-                    placeholder: "Height",
+                    placeholder: "machineAttributes.height",
                     required: true,
                     parameterKey: "height",
                     options: [],
@@ -22,9 +22,9 @@ const digitalPrinting = (state: Record<string, any>) => {
                 },
                 {
                     name: "",
-                    label: "Length",
+                    label: "machineAttributes.length",
                     type: "text",
-                    placeholder: "Length",
+                    placeholder: "machineAttributes.length",
                     required: true,
                     parameterKey: "length",
                     options: [],
@@ -33,9 +33,9 @@ const digitalPrinting = (state: Record<string, any>) => {
                 },
                 {
                     name: "",
-                    label: "width",
+                    label: "machineAttributes.width",
                     type: "text",
-                    placeholder: "width",
+                    placeholder: "machineAttributes.width",
                     required: true,
                     parameterKey: "width",
                     options: [],

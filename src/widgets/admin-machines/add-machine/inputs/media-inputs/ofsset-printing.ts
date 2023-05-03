@@ -1,16 +1,52 @@
-const digitalPrinting = (state: Record<string, any>) => {
+const ofssetPrinting = (state: Record<string, any>) => {
     return [
         {
-            name: "setupTimeMin",
-            label: "machineAttributes.setupTimeMin",
+            name: 'machineAttributes.setupTime',
+            parameterKey: 'setupTime',
+            value: state.attributes?.setupTime || [],
+            machineInputType: 'multiArrayInput',
+            isValid: state.attributes?.setupTime?.length > 0,
+            inputs: [
+                {
+                    name: "color",
+                    label: "machineAttributes.upToMediaWeight",
+                    type: "text",
+                    placeholder: "machineAttributes.upToMediaWeight",
+                    required: true,
+                    parameterKey: "mediaWeight",
+                    options: []
+                },
+                {
+                    name: "time",
+                    label: "machineAttributes.time",
+                    type: "text",
+                    placeholder: "machineAttributes.time",
+                    required: true,
+                    parameterKey: "time",
+                    options: []
+                },
+                {
+                    name: "sheetLost",
+                    label: "machineAttributes.sheetsLost",
+                    type: "text",
+                    placeholder: "machineAttributes.sheetsLost",
+                    required: true,
+                    parameterKey: "sheetsLost",
+                    options: []
+                },
+            ]
+        },
+        {
+            name: "stationWashTime",
+            label: "machineAttributes.stationWashTime",
             type: "text",
-            placeholder: "machineAttributes.setupTimeMin",
+            placeholder: "machineAttributes.stationWashTime",
             required: true,
-            parameterKey: "setupTimeMin",
+            parameterKey: "stationWashTime",
             options: [],
-            value: state?.attributes?.setupTimeMin ? state?.attributes?.setupTimeMin : '',
+            value: state?.attributes?.stationWashTime ? state?.attributes?.stationWashTime : '',
             machineInputType: 'input',
-            isValid: !!state?.attributes?.setupTimeMin,
+            isValid: !!state?.attributes?.stationWashTime,
         },
         {
             name: "coatingUnit",
@@ -29,7 +65,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             label: "machineAttributes.coatingUnitCost",
             type: "text",
             placeholder: "machineAttributes.coatingUnitCost",
-            required: state?.coatingUnitCost,
+            required: state['coatingUnitCost'],
             parameterKey: "coatingUnitCost",
             options: [],
             disabled: !state?.attributes?.coatingUnit,
@@ -187,4 +223,4 @@ const digitalPrinting = (state: Record<string, any>) => {
 }
 
 
-export {digitalPrinting};
+export {ofssetPrinting};

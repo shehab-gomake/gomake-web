@@ -1,11 +1,12 @@
+import {CURRENCY} from "@/widgets/admin-machines/const/currency";
 
 const machineInputs = (state: Record<string, any>)  => {
     return [
         {
             name: "manufacturer",
-            label: "adminAddMachine.manufacturer",
+            label: "machineAttributes.manufacturer",
             type: "text",
-            placeholder: "Manufacturer",
+            placeholder: "machineAttributes.manufacturer",
             required: true,
             parameterKey: "manufacturer",
             options: [],
@@ -15,9 +16,9 @@ const machineInputs = (state: Record<string, any>)  => {
         },
         {
             name: "model",
-            label: "adminAddMachine.model",
+            label: "machineAttributes.model",
             type: "text",
-            placeholder: "Model",
+            placeholder: "machineAttributes.model",
             required: true,
             parameterKey: "model",
             options: [],
@@ -27,9 +28,9 @@ const machineInputs = (state: Record<string, any>)  => {
         },
         {
             name: "code",
-            label: "adminAddMachine.code",
+            label: "machineAttributes.code",
             type: "text",
-            placeholder: "Code",
+            placeholder: "machineAttributes.code",
             required: true,
             parameterKey: "code",
             options: [],
@@ -39,9 +40,9 @@ const machineInputs = (state: Record<string, any>)  => {
         },
         {
             name: "nickName",
-            label: "adminAddMachine.nickName",
+            label: "machineAttributes.nickName",
             type: "text",
-            placeholder: "Nick name",
+            placeholder: "machineAttributes.nickName",
             required: true,
             parameterKey: "nickName",
             options: [],
@@ -51,16 +52,16 @@ const machineInputs = (state: Record<string, any>)  => {
         },
         {
             machineInputType: 'multiInput',
-            name: 'adminAddMachine.price',
+            name: 'machineAttributes.price',
             parameterKey: 'price',
             isValid: !!state?.price?.price,
             value: state?.price,
             inputs: [
                 {
                     name: "price",
-                    label: "adminAddMachine.price",
+                    label: "machineAttributes.price",
                     type: "text",
-                    placeholder: "Price",
+                    placeholder: "machineAttributes.price",
                     required: true,
                     parameterKey: "price",
                     options: [],
@@ -69,13 +70,13 @@ const machineInputs = (state: Record<string, any>)  => {
                 },
                 {
                     name: "currency",
-                    label: "adminAddMachine.currency",
+                    label: "machineAttributes.currency",
                     type: "select",
-                    placeholder: "Currency",
+                    placeholder: "machineAttributes.currency",
                     required: true,
                     parameterKey: "currency",
                     value: state?.price?.currency ? state?.price?.currency : 0,
-                    options: [{value: 0, text: 'adminAddMachine.dollar'}, {value: 1, text: 'adminAddMachine.euro'}],
+                    options: CURRENCY,
                     isValid: true,
                 },
             ]

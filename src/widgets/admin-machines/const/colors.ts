@@ -6,4 +6,10 @@ const COLORS = [
     {value: 5, text: 'Magenta'}
 ];
 
-export {COLORS};
+
+const COLOR_TYPES = [
+    {value: 1, text: 'Matt'},
+    {value: 2, text: 'Semi matt'},
+    {value: 3, text: 'Glossy'},
+];
+export {COLORS, COLOR_TYPES};

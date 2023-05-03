@@ -7,9 +7,11 @@ import {IStep} from "@/widgets/admin-machines/add-machine/interface/step";
 import {ReactNode, useEffect, useState} from "react";
 import {useUpdateMachine} from "@/widgets/admin-machines/hooks/use-update-machine";
 import {StyledStepLabel} from "@/widgets/admin-machines/components/step-label";
+import {useTranslation} from "react-i18next";
 
 const UpdateMachine = () => {
     const [activeStep, setActiveStep] = useState<number>(0);
+    const {t} = useTranslation();
     const categories = useRecoilValue(machineCategoriesState);
     const [categoryName, setCategoryName] = useState<string>();
     const [machineSteps, setMachineSteps] = useState<IStep[]>([]);
@@ -43,7 +45,7 @@ const UpdateMachine = () => {
                         return (
                             <Step key={step.label} {...stepProps}>
                                 <StyledStepLabel {...labelProps}>
-                                    <span style={classes.stepLabel}>{step.label}</span>
+                                    <span style={classes.stepLabel}>{t('machineSteps.' + step.label)}</span>
                                 </StyledStepLabel>
                                 <StepContent style={{border: 0}}>
                                     <step.component navigateBack={navigateBack}

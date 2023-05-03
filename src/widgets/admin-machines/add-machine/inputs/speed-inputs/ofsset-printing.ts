@@ -1,32 +1,51 @@
-const digitalPrinting = (state: Record<string, any>) => {
-    const speedByMediaWeight = {
-        name: 'machineAttributes.speedByMediaWeight',
-        parameterKey: 'speedByMediaWeight',
-        value: state.attributes?.speedByMediaWeight || [],
-        isValid: state.attributes?.speedByMediaWeight?.length > 0,
-        machineInputType: 'multiArrayInput',
-        inputs: [
-            {
-                name: "weight",
-                label: "machineAttributes.weight",
-                type: "text",
-                placeholder: "machineAttributes.weight",
-                required: true,
-                parameterKey: "weight",
-                options: []
-            },
-            {
-                name: "speedPercentage",
-                label: "machineAttributes.speedPercentage",
-                type: "text",
-                placeholder: "machineAttributes.speedPercentage",
-                required: true,
-                parameterKey: "speedPercentage",
-                options: []
-            },
+import {ESpeedInputMethods} from "@/widgets/admin-machines/add-machine/inputs/speed-inputs/digital-printing";
 
-        ]
-    }
+const ofssetPrinting = (state: Record<string, any>) => {
+    const speedByPaperThickness =  {
+            name: 'machineAttributes.speedByPaperThickness',
+            parameterKey: 'speedByPaperThickness',
+            value: state.attributes?.speedByPaperThickness || [],
+            isValid: state.attributes?.speedByPaperThickness?.length > 0,
+            machineInputType: 'multiArrayInput',
+            inputs: [
+                {
+                    name: "weight",
+                    label: "machineAttributes.mediaWeightMainSpeed",
+                    type: "text",
+                    placeholder: "machineAttributes.mediaWeightMainSpeed",
+                    required: true,
+                    parameterKey: "mediaWeightMainSpeed",
+                    options: []
+                },
+                {
+                    name: "",
+                    label: "machineAttributes.maxTargetMediaWeight",
+                    type: "text",
+                    placeholder: "machineAttributes.maxTargetMediaWeight",
+                    required: true,
+                    parameterKey: "maxTargetMediaWeight",
+                    options: []
+                },
+                {
+                    name: "",
+                    label: "machineAttributes.minTargetMediaWeight",
+                    type: "text",
+                    placeholder: "machineAttributes.minTargetMediaWeight",
+                    required: true,
+                    parameterKey: "minTargetMediaWeight",
+                    options: []
+                },
+                {
+                    name: "speedPercentage",
+                    label: "machineAttributes.speedPercentage",
+                    type: "text",
+                    placeholder: "machineAttributes.speedPercentage",
+                    required: true,
+                    parameterKey: "speedPercentage",
+                    options: []
+                },
+            ]
+        };
      const inputs =  (method: ESpeedInputMethods): any[] =>  {
         switch (method) {
             case ESpeedInputMethods.COLOR_SPEED:
@@ -58,13 +77,13 @@ const digitalPrinting = (state: Record<string, any>) => {
                             },
                         ]
                     },
-                    speedByMediaWeight
+                    speedByPaperThickness
                 ];
             case ESpeedInputMethods.COLOR_SIZE_SPEED:
                 return [
 
                     {
-                        name: 'speedByPaperSizeByColor',
+                        name: 'machineAttributes.speedByPaperSizeByColor',
                         parameterKey: 'machineAttributes.speedByPaperSizeByColor',
                         value: state.attributes?.speedByColor || [],
                         machineInputType: 'multiArrayInput',
@@ -108,7 +127,7 @@ const digitalPrinting = (state: Record<string, any>) => {
                             },
                         ]
                     },
-                    speedByMediaWeight
+                    speedByPaperThickness
                 ];
             default:
                 return []
@@ -118,13 +137,6 @@ const digitalPrinting = (state: Record<string, any>) => {
     return inputs
 }
 
-export {digitalPrinting};
-
-
-
-export enum ESpeedInputMethods {
-    COLOR_SPEED = 1,
-    COLOR_SIZE_SPEED = 2
-}
+export {ofssetPrinting};
 
 

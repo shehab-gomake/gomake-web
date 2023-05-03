@@ -4,10 +4,12 @@ import {useStyle} from "@/widgets/admin-machines/components/style";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {IMachineMultiArrayInput, IInput} from "@/widgets/admin-machines/interfaces/inputs-interfaces";
 import {MachineInput} from "@/widgets/admin-machines/components/machine-inputs";
+import {useTranslation} from "react-i18next";
 
-const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value}: IMachineMultiArrayInput) => {
+const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value, isValid}: IMachineMultiArrayInput) => {
     const [state, setState] = useState<Record<string, any>>({});
-    const [errors, setErrors] = useState<Record<string, boolean>>()
+    const [errors, setErrors] = useState<Record<string, boolean>>();
+    const {t} = useTranslation();
     const {classes} = useStyle();
     const addParameter = () => {
         let canAdd: boolean = true;
@@ -53,14 +55,14 @@ const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value}
 
     return (
         <div style={classes.container}>
-            <h3 style={{...classes.multiInputLabel, margin: '0 0 16px 0'}}>{name}</h3>
+            <h3 style={{...classes.multiInputLabel, margin: '0 0 16px 0'}}>{t(name)}</h3>
             <div style={classes.inputsRow}>
                 {
                     inputs.map((input: IInput, index: number) => {
                         input.value = state[input.parameterKey] ? state[input.parameterKey] : '';
                         return <MachineInput key={input.parameterKey + index}
                                                input={input}
-                                               error={!!(errors && errors[input.parameterKey])}
+                                               error={!!(errors && errors[input.parameterKey]) || !isValid}
                                                changeState={handleInputChanges1}/>
                     })
                 }

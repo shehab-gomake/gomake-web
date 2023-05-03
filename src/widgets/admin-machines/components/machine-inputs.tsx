@@ -43,7 +43,7 @@ const MachineInput = ({input, error, changeState}: IMachineInput) => {
                             onChange={onChangeState}
                             type={input.type}
                             error={error}
-                            placeholder={input.placeholder}
+                            placeholder={t(input.placeholder)}
                             disabled={!!input.disabled}
                             value={input.value}
                         />

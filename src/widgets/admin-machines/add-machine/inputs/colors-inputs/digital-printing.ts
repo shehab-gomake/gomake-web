@@ -4,9 +4,9 @@ const digitalPrinting = (state: Record<string, any>) => {
     return [
         {
             name: "basicsColors",
-            label: "adminAddMachine.basicsColors",
+            label: "machineAttributes.basicsColors",
             type: "select",
-            placeholder: "Basics colors",
+            placeholder: "machineAttributes.basicsColors",
             required: true,
             parameterKey: "basicsColors",
             value: state?.attributes?.basicsColors,
@@ -17,9 +17,9 @@ const digitalPrinting = (state: Record<string, any>) => {
 
         {
             name: "additionalColorsAmount",
-            label: "adminAddMachine.additionalColorsAmount",
+            label: "machineAttributes.additionalColorsAmount",
             type: "text",
-            placeholder: "Colors number",
+            placeholder: "machineAttributes.additionalColorsAmount",
             required: true,
             parameterKey: "additionalColorsAmount",
             options: [],
@@ -29,9 +29,9 @@ const digitalPrinting = (state: Record<string, any>) => {
         },
         {
             name: "printLayers",
-            label: "adminAddMachine.printLayers",
+            label: "machineAttributes.printLayers",
             type: "select",
-            placeholder: "Option to print layers",
+            placeholder: "",
             required: true,
             parameterKey: "printLayers",
             value: state?.attributes?.printLayers,
@@ -41,9 +41,9 @@ const digitalPrinting = (state: Record<string, any>) => {
         },
         {
             name: "printLayersSameRun",
-            label: "adminAddMachine.printLayersSameRun",
+            label: "machineAttributes.printLayersSameRun",
             type: "select",
-            placeholder: "Option to print same run",
+            placeholder: "",
             required: true,
             parameterKey: "printLayersSameRun",
             value: state?.attributes?.printLayers ? state?.attributes?.printLayersSameRun : false ,
@@ -54,9 +54,9 @@ const digitalPrinting = (state: Record<string, any>) => {
         },
         {
             name: "printLayersMax",
-            label: "adminAddMachine.printLayersMax",
+            label: "machineAttributes.printLayersMax",
             type: "text",
-            placeholder: "Maximum layers",
+            placeholder: "machineAttributes.printLayersMax",
             required: true,
             parameterKey: "printLayersMax",
             options: [],
@@ -67,7 +67,7 @@ const digitalPrinting = (state: Record<string, any>) => {
 
         },
         {
-            name: 'Additional colors',
+            name: 'machineAttributes.additionalColorsCoast',
             parameterKey: 'additionalColorsCoast',
             value: state?.attributes?.additionalColorsCoast ? state?.attributes?.additionalColorsCoast : [],
             machineInputType: 'multiArrayInput',
@@ -75,9 +75,9 @@ const digitalPrinting = (state: Record<string, any>) => {
             inputs: [
                 {
                     name: "color",
-                    label: "adminAddMachine.color",
+                    label: "machineAttributes.color",
                     type: "select",
-                    placeholder: "Color",
+                    placeholder: "machineAttributes.color",
                     required: true,
                     parameterKey: "color",
                     value: COLORS[0].value,
@@ -85,9 +85,9 @@ const digitalPrinting = (state: Record<string, any>) => {
                 },
                 {
                     name: "cost",
-                    label: "adminAddMachine.cost",
+                    label: "machineAttributes.cost",
                     type: "text",
-                    placeholder: "Coast",
+                    placeholder: "machineAttributes.cost",
                     required: true,
                     parameterKey: "cost",
                     options: []

@@ -1,4 +1,4 @@
-const digitalPrinting = (state: Record<string, any>) => {
+const ofssetPrinting = (state: Record<string, any>) => {
     return [
         {
             name: "monthlyMaintenanceCost",
@@ -75,7 +75,7 @@ const digitalPrinting = (state: Record<string, any>) => {
 
         },
         {
-            name: "machineAttributes",
+            name: "minManpowerOperation",
             label: "machineAttributes.minManpowerOperation",
             type: "text",
             placeholder: "machineAttributes.minManpowerOperation",
@@ -91,7 +91,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             name: "resolution",
             label: "machineAttributes.resolution",
             type: "select",
-            placeholder: "",
+            placeholder: "machineAttributes.resolution",
             required: true,
             parameterKey: "resolution",
             value: state.attributes?.resolution,
@@ -103,7 +103,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             name: "printingSides",
             label: "machineAttributes.printingSides",
             type: "text",
-            placeholder: "machineAttributes.printingSides",
+            placeholder: "Sides",
             required: true,
             parameterKey: "printingSides",
             options: [],
@@ -128,4 +128,4 @@ const digitalPrinting = (state: Record<string, any>) => {
     ];
 }
 
-export {digitalPrinting};
+export {ofssetPrinting};

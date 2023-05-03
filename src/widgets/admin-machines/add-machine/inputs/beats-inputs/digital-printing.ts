@@ -1,7 +1,7 @@
 const digitalPrinting = (state: Record<string, any>) => {
     return [
         {
-            name: 'Beat cost according to size scale according to the amount of colors',
+            name: 'machineAttributes.beatByColorsBySize',
             parameterKey: 'beats',
             value: state?.attributes?.beats ? state?.attributes?.beats : [],
             machineInputType: 'multiArrayInput',
@@ -9,36 +9,36 @@ const digitalPrinting = (state: Record<string, any>) => {
             inputs: [
                 {
                     name: "",
-                    label: "adminAddMachine.color",
+                    label: "machineAttributes.color",
                     type: "text",
-                    placeholder: "Color",
+                    placeholder: "machineAttributes.color",
                     required: true,
                     parameterKey: "color",
                     options: []
                 },
                 {
                     name: "",
-                    label: "media length",
+                    label: "machineAttributes.mediaLength",
                     type: "text",
-                    placeholder: "media length",
+                    placeholder: "machineAttributes.mediaLength",
                     required: true,
                     parameterKey: "mediaLength",
                     options: []
                 },
                 {
                     name: "",
-                    label: "media width",
+                    label: "machineAttributes.mediaWidth",
                     type: "text",
-                    placeholder: "media width",
+                    placeholder: "machineAttributes.mediaWidth",
                     required: true,
                     parameterKey: "mediaWidth",
                     options: []
                 },
                 {
                     name: "",
-                    label: "coast",
+                    label: "machineAttributes.coast",
                     type: "text",
-                    placeholder: "coast",
+                    placeholder: "machineAttributes.coast",
                     required: true,
                     parameterKey: "coast",
                     options: []

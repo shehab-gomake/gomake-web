@@ -5,7 +5,7 @@ const getCategoryMachineDimensionsInputs = (categoryId: string, state: Record<st
     switch (categoryId) {
         case ECategoryId.DIGITAL_PRINTING:
             return digitalPrinting(state);
-        case ECategoryId.CATEGORY2:
+        case ECategoryId.OFSSET_PRINTING:
             return digitalPrinting(state);
         default:
             return []

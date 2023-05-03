@@ -13,10 +13,16 @@ const initState: Record<string, Record<string, any>> = {
             coatingUnit: false
         }
     },
-    [ECategoryId.CATEGORY2]: {
-        category:ECategoryId.CATEGORY2,
+    [ECategoryId.OFSSET_PRINTING]: {
+        category:ECategoryId.OFSSET_PRINTING,
         price: {price: 0, currency: 0},
-        attributes: {}
+        attributes: {
+            resolution: 0,
+            doubleHead: false,
+            coatingUnit: false,
+            basicsColors: 1,
+            varnish: false
+        }
     }
 }
 export {initState};

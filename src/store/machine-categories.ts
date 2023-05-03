@@ -5,9 +5,9 @@ export const machineCategoriesState = atom({
     key: "machinesCategoryState",
     default: [
         {id: ECategoryId.DIGITAL_PRINTING, name: 'Digital Printing'},
-        {id: ECategoryId.CATEGORY2, name: 'category 2'},
-        {id: ECategoryId.CATEGORY3, name: 'category 3'},
-        {id: ECategoryId.CATEGORY4, name: 'category 4'},
+        {id: ECategoryId.OFSSET_PRINTING, name: 'Ofsset Printing'},
+        {id: ECategoryId.ROLL_DIGITAL_PRINTING, name: 'Roll Digital'},
+        {id: ECategoryId.FLEXO_PRINTING, name: 'Flexo Printing'},
         {id: ECategoryId.CATEGORY5, name: 'category 5'},
         {id: ECategoryId.CATEGORY6, name: 'category 6'},
         {id: ECategoryId.CATEGORY7, name: 'category 7'},
