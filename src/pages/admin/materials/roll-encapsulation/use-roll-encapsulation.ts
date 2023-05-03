@@ -295,6 +295,9 @@ const useRollEncapsulation = () => {
         `/v1/administrator/roll-encapsulation/update-roll-encapsulation-thickness-size?categoryName=${categoryName}&thicknessId=${thicknessId}&sizeId=${sizeId}`,
         {
           ...updateState[sizeId],
+          // fitToPrintType: updateState[sizeId].fitToPrintType?.map(
+          //   (item: any) => item?.label
+          // ),
         }
       );
       if (res?.success) {

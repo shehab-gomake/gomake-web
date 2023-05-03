@@ -21,9 +21,9 @@ const RollEncapsulationSizeMapping = ({
   );
   const muliSelectOptions = useMemo(() => {
     return [
-      { lable: "String1", id: 1 },
-      { lable: "String2", id: 2 },
-      { lable: "String3", id: 3 },
+      { label: "String1", id: "String1" },
+      { label: "String2", id: "String2" },
+      { label: "String3", id: "String3" },
     ];
   }, []);
   return (
@@ -160,19 +160,29 @@ const RollEncapsulationSizeMapping = ({
               options={muliSelectOptions}
               style={clasess.multiSelectStyle}
               placeholder={t("materials.lamination.admin.fitToPrintType")}
-              multiple
-              getOptionLabel={(option: any) => option}
+              multiple={true}
               onChange={(e: any, value: any) => {
+                console.log("item", value);
                 materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationThicknesss(
                   sheetSize?.id,
                   "fitToPrintType",
-                  value.map((item: any) => item?.lable)
+                  value?.map((item: any) => item?.label)
                 );
               }}
-              value={
-                materialRollEncapsulationStateValue?.updateState[sheetSize?.id]
-                  ?.fitToPrintType
-              }
+              {...(materialRollEncapsulationStateValue?.updateState[
+                sheetSize?.id
+              ]?.fitToPrintType
+                ? {
+                    value: materialRollEncapsulationStateValue?.updateState[
+                      sheetSize?.id
+                    ]?.fitToPrintType.map((item: any) => {
+                      return {
+                        label: item,
+                        id: item,
+                      };
+                    }),
+                  }
+                : null)}
             />
           </div>
         </div>
