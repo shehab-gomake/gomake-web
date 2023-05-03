@@ -3,13 +3,13 @@ import { useRecoilValue } from "recoil";
 
 import { GomakeTextInput } from "@/components";
 
-import { materialPlatsState } from "../store/frame";
+import { materialFrameState } from "../store/frame";
 import { useStyle } from "../add-new-frame-modal/style";
 
-const PlatSizeInputs = ({ index }) => {
+const FrameSizeInputs = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialFrameStateValue = useRecoilValue<any>(materialFrameState);
 
   return (
     <>
@@ -21,9 +21,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterCode")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["code"]}
+            value={materialFrameStateValue?.items[index]["code"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialFrameStateValue?.changeItems(
                 index,
                 "code",
                 e.target.value
@@ -38,9 +38,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterName")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["name"]}
+            value={materialFrameStateValue?.items[index]["name"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialFrameStateValue?.changeItems(
                 index,
                 "name",
                 e.target.value
@@ -55,9 +55,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.frames.admin.enterColor")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["color"]}
+            value={materialFrameStateValue?.items[index]["color"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialFrameStateValue?.changeItems(
                 index,
                 "color",
                 e.target.value
@@ -72,9 +72,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterWidth")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["width"]}
+            value={materialFrameStateValue?.items[index]["width"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialFrameStateValue?.changeItems(
                 index,
                 "width",
                 e.target.value
@@ -89,9 +89,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterHeight")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["height"]}
+            value={materialFrameStateValue?.items[index]["height"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialFrameStateValue?.changeItems(
                 index,
                 "height",
                 e.target.value
@@ -106,9 +106,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.frames.admin.enterthickness")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["thickness"]}
+            value={materialFrameStateValue?.items[index]["thickness"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialFrameStateValue?.changeItems(
                 index,
                 "thickness",
                 e.target.value
@@ -123,9 +123,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.frames.admin.enterWeight")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["weight"]}
+            value={materialFrameStateValue?.items[index]["weight"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialFrameStateValue?.changeItems(
                 index,
                 "weight",
                 e.target.value
@@ -140,9 +140,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.frames.admin.enterStock")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["stock"]}
+            value={materialFrameStateValue?.items[index]["stock"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialFrameStateValue?.changeItems(
                 index,
                 "stock",
                 e.target.value
@@ -157,9 +157,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterDefaultPrice")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["defaultPrice"]}
+            value={materialFrameStateValue?.items[index]["defaultPrice"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialFrameStateValue?.changeItems(
                 index,
                 "defaultPrice",
                 e.target.value
@@ -171,4 +171,4 @@ const PlatSizeInputs = ({ index }) => {
     </>
   );
 };
-export { PlatSizeInputs };
+export { FrameSizeInputs };

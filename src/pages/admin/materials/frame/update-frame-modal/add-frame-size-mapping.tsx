@@ -3,24 +3,24 @@ import { useRecoilValue } from "recoil";
 
 import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 
-import { materialPlatsState } from "../store/frame";
+import { materialFrameState } from "../store/frame";
 import { useStyle } from "./style";
-import { PlatSizeInputs } from "../shared-inputs-widget/frame-sizes-inputs";
+import { FrameSizeInputs } from "../shared-inputs-widget/frame-sizes-inputs";
 
-const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
+const AddFrameSizeWeightsMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialFrameStateValue = useRecoilValue<any>(materialFrameState);
 
   return (
     <>
       <div key={index} style={clasess.tableSecondSections}>
-        <PlatSizeInputs index={index} />
+        <FrameSizeInputs index={index} />
         <div style={clasess.btnsWightSheetContainer}>
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.setIsAddNewPlatWights(false)
+                materialFrameStateValue?.setIsAddNewFrameWights(false)
               }
               style={clasess.cancelBtnStyle}
             >
@@ -30,7 +30,7 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.addNewPlatSizeByCategoryName(
+                materialFrameStateValue?.addNewFrameSizeByCategoryName(
                   selectedItem
                 )
               }
@@ -44,4 +44,4 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
     </>
   );
 };
-export { AddPlatSizeWeightsMapping };
+export { AddFrameSizeWeightsMapping };

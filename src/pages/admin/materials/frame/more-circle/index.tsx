@@ -2,9 +2,9 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeDeleteModal } from "@/components";
 
-import { UpdatePlatModal } from "../update-frame-modal";
-import { materialPlatsState } from "../store/frame";
-import { usePlatsModal } from "./use-frame-modal";
+import { UpdateFrameModal } from "../update-frame-modal";
+import { materialFrameState } from "../store/frame";
+import { useFrameModal } from "./use-frame-modal";
 import { IconWidget } from "./icon-widget";
 
 const FrameSettingsWidget = ({ item }: any) => {
@@ -12,19 +12,19 @@ const FrameSettingsWidget = ({ item }: any) => {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deletePlatByCategoryName,
+    deleteFrameByCategoryName,
     t,
-  } = usePlatsModal({
+  } = useFrameModal({
     item,
   });
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialFrameStateValue = useRecoilValue<any>(materialFrameState);
 
   return (
     <>
       <IconWidget
         t={t}
         onOpnUpdateModal={() => {
-          materialPlatsStateValue?.onOpnUpdateModal(item);
+          materialFrameStateValue?.onOpnUpdateModal(item);
         }}
         onOpenDeleteModal={onOpenDeleteModal}
       />
@@ -38,9 +38,11 @@ const FrameSettingsWidget = ({ item }: any) => {
         subTitle={`${t("materials.frames.admin.subTitleDeleteModal")} ${
           item?.categoryName
         } ?`}
-        onClickDelete={deletePlatByCategoryName}
+        onClickDelete={deleteFrameByCategoryName}
       />
-      {item === materialPlatsStateValue.selectedEditItem && <UpdatePlatModal />}
+      {item === materialFrameStateValue.selectedEditItem && (
+        <UpdateFrameModal />
+      )}
     </>
   );
 };

@@ -6,110 +6,110 @@ import { Table } from "@/widgets/table/table";
 import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 
-import { materialPlatsState } from "./store/frame";
+import { materialFrameState } from "./store/frame";
 import { HeaderFilter } from "./header-filter";
-import { usePlat } from "./use-frame";
+import { useFrame } from "./use-frame";
 
-export default function Plat() {
+export default function Frame() {
   const { t } = useTranslation();
-  const setMaterialPlatsState = useSetRecoilState<any>(materialPlatsState);
+  const setMaterialFrameState = useSetRecoilState<any>(materialFrameState);
   const {
     headerTable,
-    allPlats,
-    openAddNewPlatModal,
+    allFrame,
+    openAddNewFrameModal,
     items,
     categoryName,
-    openUpdatePlatModal,
+    openUpdateFrameModal,
     selectedEditItem,
-    isAddNewPlatWights,
+    isAddNewFrameWights,
     openDeleteModal,
-    selectedPlatWeight,
+    selectedFrameWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStateFrameSize,
+    onCloseAddNewFrameModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdatePlatModal,
+    addNewFrameSize,
+    setOpenUpdateFrameModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewPlatWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewFrameWights,
+    addNewFrameSizeByCategoryName,
+    deleteFrameSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
-  } = usePlat();
+    updateFrameSize,
+  } = useFrame();
 
   useEffect(() => {
-    setMaterialPlatsState({
+    setMaterialFrameState({
       headerTable,
-      allPlats,
-      openAddNewPlatModal,
+      allFrame,
+      openAddNewFrameModal,
       items,
       categoryName,
-      openUpdatePlatModal,
+      openUpdateFrameModal,
       selectedEditItem,
-      isAddNewPlatWights,
+      isAddNewFrameWights,
       openDeleteModal,
-      selectedPlatWeight,
+      selectedFrameWeight,
       updateState,
-      onChangeUpdateStatePlatSize,
-      onCloseAddNewPlatModal,
+      onChangeUpdateStateFrameSize,
+      onCloseAddNewFrameModal,
       onOpnModalAdded,
       changeItems,
       setItems,
       setCategoryName,
-      addNewPlatsSize,
-      setOpenUpdatePlatModal,
+      addNewFrameSize,
+      setOpenUpdateFrameModal,
       onCloseUpdateModal,
       onOpnUpdateModal,
-      setIsAddNewPlatWights,
-      addNewPlatSizeByCategoryName,
-      deletePlatSize,
+      setIsAddNewFrameWights,
+      addNewFrameSizeByCategoryName,
+      deleteFrameSize,
       setOpenDeleteModal,
       onCloseDeleteModal,
       onOpenDeleteModal,
-      updatePlatSize,
+      updateFrameSize,
     });
   }, [
     headerTable,
-    allPlats,
-    openAddNewPlatModal,
+    allFrame,
+    openAddNewFrameModal,
     items,
     categoryName,
-    openUpdatePlatModal,
+    openUpdateFrameModal,
     selectedEditItem,
-    isAddNewPlatWights,
+    isAddNewFrameWights,
     openDeleteModal,
-    selectedPlatWeight,
+    selectedFrameWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStateFrameSize,
+    onCloseAddNewFrameModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdatePlatModal,
+    addNewFrameSize,
+    setOpenUpdateFrameModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewPlatWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewFrameWights,
+    addNewFrameSizeByCategoryName,
+    deleteFrameSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
+    updateFrameSize,
   ]);
   return (
     <AdminAuthLayout>
       <HeaderTitle title={t("materials.frames.admin.title")} />
       <HeaderFilter />
-      <Table tableHeaders={headerTable} tableRows={allPlats} />
+      <Table tableHeaders={headerTable} tableRows={allFrame} />
     </AdminAuthLayout>
   );
 }

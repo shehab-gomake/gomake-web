@@ -5,23 +5,23 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddPlatSizeWeightsMapping } from "./add-frame-size-mapping";
-import { PlatWeightsMapping } from "./frame-size-mapping";
-import { materialPlatsState } from "../store/frame";
+import { AddFrameSizeWeightsMapping } from "./add-frame-size-mapping";
+import { FrameWeightsMapping } from "./frame-size-mapping";
+import { materialFrameState } from "../store/frame";
 import { useStyle } from "./style";
 
-const UpdatePlatModal = () => {
+const UpdateFrameModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
-  const selectedItem = materialPlatsStateValue?.selectedEditItem;
+  const materialFrameStateValue = useRecoilValue<any>(materialFrameState);
+  const selectedItem = materialFrameStateValue?.selectedEditItem;
 
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openUpdatePlatModal}
+        openModal={materialFrameStateValue?.openUpdateFrameModal}
         modalTitle={`Edit ${selectedItem?.categoryName} Frame`}
-        onClose={materialPlatsStateValue?.onCloseUpdateModal}
+        onClose={materialFrameStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -43,11 +43,11 @@ const UpdatePlatModal = () => {
               <div style={clasess.firstSectionTitleStyle}>
                 {t("materials.frames.admin.frameSizeSection")}
               </div>
-              {!materialPlatsStateValue?.isAddNewPlatWights && (
-                <Tooltip title={t("materials.plat.admin.addPlatSize")}>
+              {!materialFrameStateValue?.isAddNewFrameWights && (
+                <Tooltip title={t("materials.plat.admin.addFrameSize")}>
                   <IconButton
                     onClick={() => {
-                      materialPlatsStateValue.setItems([
+                      materialFrameStateValue.setItems([
                         {
                           code: "",
                           name: "",
@@ -60,7 +60,7 @@ const UpdatePlatModal = () => {
                           defaultPrice: "",
                         },
                       ]);
-                      materialPlatsStateValue?.setIsAddNewPlatWights(true);
+                      materialFrameStateValue?.setIsAddNewFrameWights(true);
                     }}
                   >
                     <AddIcon />
@@ -68,15 +68,15 @@ const UpdatePlatModal = () => {
                 </Tooltip>
               )}
             </div>
-            {materialPlatsStateValue?.isAddNewPlatWights && (
-              <AddPlatSizeWeightsMapping
+            {materialFrameStateValue?.isAddNewFrameWights && (
+              <AddFrameSizeWeightsMapping
                 index={0}
                 selectedItem={selectedItem}
               />
             )}
             {selectedItem?.frameSizes?.map((item: any, index: number) => {
               return (
-                <PlatWeightsMapping
+                <FrameWeightsMapping
                   key={`platSizeMapping_${index}`}
                   index={index}
                   item={item}
@@ -90,4 +90,4 @@ const UpdatePlatModal = () => {
     </>
   );
 };
-export { UpdatePlatModal };
+export { UpdateFrameModal };

@@ -10,21 +10,21 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { PlatSizeMapping } from "./frame-size-mapping";
-import { materialPlatsState } from "../store/frame";
+import { FrameSizeMapping } from "./frame-size-mapping";
+import { materialFrameState } from "../store/frame";
 import { useStyle } from "./style";
 
-const AddNewPlatModal = () => {
+const AddNewFrameModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialFrameStateValue = useRecoilValue<any>(materialFrameState);
 
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openAddNewPlatModal}
+        openModal={materialFrameStateValue?.openAddNewFrameModal}
         modalTitle={t("materials.frames.admin.addNewFrame")}
-        onClose={materialPlatsStateValue?.onCloseAddNewPlatModal}
+        onClose={materialFrameStateValue?.onCloseAddNewFrameModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -36,9 +36,9 @@ const AddNewPlatModal = () => {
               <GomakeTextInput
                 placeholder={t("materials.sheetPaper.admin.categoryName")}
                 style={clasess.textInputStyle}
-                value={materialPlatsStateValue?.categoryName}
+                value={materialFrameStateValue?.categoryName}
                 onChange={(e: any) => {
-                  materialPlatsStateValue?.setCategoryName(e.target.value);
+                  materialFrameStateValue?.setCategoryName(e.target.value);
                 }}
               />
             </div>
@@ -51,7 +51,7 @@ const AddNewPlatModal = () => {
               <Tooltip title={t("materials.frames.admin.addFrameSize")}>
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialPlatsStateValue?.items];
+                    const temp = [...materialFrameStateValue?.items];
                     temp.push({
                       code: "",
                       name: "",
@@ -63,7 +63,7 @@ const AddNewPlatModal = () => {
                       stock: "",
                       defaultPrice: "",
                     });
-                    materialPlatsStateValue?.setItems(temp);
+                    materialFrameStateValue?.setItems(temp);
                   }}
                 >
                   <AddIcon />
@@ -72,18 +72,18 @@ const AddNewPlatModal = () => {
               <Tooltip title={t("materials.frames.admin.removeFrameSize")}>
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialPlatsStateValue?.items];
+                    const temp = [...materialFrameStateValue?.items];
                     temp.pop();
-                    materialPlatsStateValue?.setItems(temp);
+                    materialFrameStateValue?.setItems(temp);
                   }}
                 >
                   <RemoveIcon />
                 </IconButton>
               </Tooltip>
             </div>
-            {materialPlatsStateValue?.items?.map((item: any, index: number) => {
+            {materialFrameStateValue?.items?.map((item: any, index: number) => {
               return (
-                <PlatSizeMapping
+                <FrameSizeMapping
                   key={`platSizeMapping_${index}`}
                   index={index}
                 />
@@ -92,7 +92,7 @@ const AddNewPlatModal = () => {
           </div>
           <div style={clasess.addBtnContainer}>
             <GomakePrimaryButton
-              onClick={materialPlatsStateValue?.addNewPlatsSize}
+              onClick={materialFrameStateValue?.addNewFrameSize}
             >
               {t("materials.frames.admin.addNewFrame")}
             </GomakePrimaryButton>
@@ -102,4 +102,4 @@ const AddNewPlatModal = () => {
     </>
   );
 };
-export { AddNewPlatModal };
+export { AddNewFrameModal };

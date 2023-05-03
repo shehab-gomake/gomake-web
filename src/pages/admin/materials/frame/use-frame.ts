@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { getAndSetGetAllFrames } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const usePlat = () => {
+const useFrame = () => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
@@ -15,14 +15,14 @@ const usePlat = () => {
     ],
     []
   );
-  const [openAddNewPlatModal, setOpenAddNewPlatModal] = useState(false);
-  const [openUpdatePlatModal, setOpenUpdatePlatModal] = useState(false);
+  const [openAddNewFrameModal, setOpenAddNewFrameModal] = useState(false);
+  const [openUpdateFrameModal, setOpenUpdateFrameModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [allPlats, setAllPlats] = useState([]);
+  const [allFrame, setAllFrame] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
-  const [isAddNewPlatWights, setIsAddNewPlatWights] = useState(false);
-  const [selectedPlatWeight, setSelectedPlatWeight] = useState({});
+  const [isAddNewFrameWights, setIsAddNewFrameWights] = useState(false);
+  const [selectedFrameWeight, setSelectedFrameWeight] = useState({});
   const [updateState, setUpdateState] = useState([]);
 
   const [items, setItems] = useState([
@@ -46,7 +46,7 @@ const usePlat = () => {
     };
     setItems(temp);
   };
-  const onChangeUpdateStatePlatSize = useCallback(
+  const onChangeUpdateStateFrameSize = useCallback(
     (index: string, filedName: string, value: any) => {
       let temp: any = { ...updateState };
       temp[`${index}`] = {
@@ -57,7 +57,7 @@ const usePlat = () => {
     },
     [updateState]
   );
-  const initialStatePlatWeights = (item: any) => {
+  const initialStateFrameWeights = (item: any) => {
     let temp = [...item?.frameSizes];
     let final: any = [];
     temp.map((frameSize) => {
@@ -69,34 +69,34 @@ const usePlat = () => {
     setUpdateState(final);
   };
 
-  const getPlats = useCallback(async () => {
-    await getAndSetGetAllFrames(callApi, setAllPlats);
+  const getFrame = useCallback(async () => {
+    await getAndSetGetAllFrames(callApi, setAllFrame);
   }, []);
-  const onCloseAddNewPlatModal = () => {
-    setOpenAddNewPlatModal(false);
+  const onCloseAddNewFrameModal = () => {
+    setOpenAddNewFrameModal(false);
   };
   const onOpnModalAdded = () => {
-    setOpenAddNewPlatModal(true);
+    setOpenAddNewFrameModal(true);
   };
   const onCloseUpdateModal = async () => {
-    getPlats();
-    setOpenUpdatePlatModal(false);
-    setIsAddNewPlatWights(false);
+    getFrame();
+    setOpenUpdateFrameModal(false);
+    setIsAddNewFrameWights(false);
   };
   const onOpnUpdateModal = (item) => {
-    initialStatePlatWeights(item);
+    initialStateFrameWeights(item);
     setSelectedEditItem(item);
-    setOpenUpdatePlatModal(true);
+    setOpenUpdateFrameModal(true);
   };
   const onCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
   const onOpenDeleteModal = (item) => {
     setOpenDeleteModal(true);
-    setSelectedPlatWeight(item);
+    setSelectedFrameWeight(item);
   };
 
-  const addNewPlatsSize = useCallback(async () => {
+  const addNewFrameSize = useCallback(async () => {
     const res = await callApi("POST", `/v1/administrator/frame/add-frame`, {
       categoryName,
       frameSizes: items,
@@ -107,8 +107,8 @@ const usePlat = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      await getPlats();
-      onCloseAddNewPlatModal();
+      await getFrame();
+      onCloseAddNewFrameModal();
     } else {
       setSnackbarStateValue({
         state: true,
@@ -117,7 +117,7 @@ const usePlat = () => {
       });
     }
   }, [categoryName, items]);
-  const addNewPlatSizeByCategoryName = useCallback(
+  const addNewFrameSizeByCategoryName = useCallback(
     async (selectedItem: any) => {
       const res = await callApi(
         "POST",
@@ -132,7 +132,7 @@ const usePlat = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getPlats();
+        getFrame();
         onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -144,7 +144,7 @@ const usePlat = () => {
     },
     [items]
   );
-  const deletePlatSize = useCallback(
+  const deleteFrameSize = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -156,7 +156,7 @@ const usePlat = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getPlats();
+        getFrame();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -169,7 +169,7 @@ const usePlat = () => {
     []
   );
 
-  const updatePlatSize = useCallback(
+  const updateFrameSize = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -195,38 +195,38 @@ const usePlat = () => {
     [updateState]
   );
   useEffect(() => {
-    getPlats();
+    getFrame();
   }, []);
   return {
     headerTable,
-    allPlats,
-    openAddNewPlatModal,
+    allFrame,
+    openAddNewFrameModal,
     items,
     categoryName,
-    openUpdatePlatModal,
+    openUpdateFrameModal,
     selectedEditItem,
-    isAddNewPlatWights,
+    isAddNewFrameWights,
     openDeleteModal,
-    selectedPlatWeight,
+    selectedFrameWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStateFrameSize,
+    onCloseAddNewFrameModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdatePlatModal,
+    addNewFrameSize,
+    setOpenUpdateFrameModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewPlatWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewFrameWights,
+    addNewFrameSizeByCategoryName,
+    deleteFrameSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
+    updateFrameSize,
   };
 };
 
-export { usePlat };
+export { useFrame };
