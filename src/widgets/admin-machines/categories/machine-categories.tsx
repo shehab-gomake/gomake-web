@@ -1,9 +1,9 @@
-import Button from "@mui/material/Button";
 import {useRouter} from "next/router";
 import Link from "next/link";
 import {GomakePrimaryButton} from "@/components";
 import {useRecoilValue} from "recoil";
 import {machineCategoriesState} from "@/store/machine-categories";
+import {CategoryButton} from "@/widgets/admin-machines/components/category-button";
 
 const MachineCategories = () => {
     const router = useRouter();
@@ -13,12 +13,18 @@ const MachineCategories = () => {
         <div style={{display: 'flex', flexDirection: 'column', gap: '40px'}}>
             <div style={{display: 'flex', gap: '20px', flexWrap: 'wrap'}}>
                 {
-                    categories.map((category) => <Button component={Link} href={category.id.toString()}
-                                                         variant={categoryId === category.id ? 'contained' : 'outlined'}> {category.name}</Button>)
+                    categories.map((category) => {
+                        // @ts-ignore
+                        return <CategoryButton component={Link} href={category.id.toString()}
+                                               color={categoryId === category.id ? 'secondary' : 'primary'}
+                                               variant={'contained'}> {category.name}
+                        </CategoryButton>
+                    })
                 }
             </div>
             <div style={{width: 'fit-content'}}>
-                <GomakePrimaryButton  href={`/admin/machine/add-machine/category/${categoryId}`}>Add machine</GomakePrimaryButton>
+                <GomakePrimaryButton href={`/admin/machine/add-machine/category/${categoryId}`}>Add
+                    machine</GomakePrimaryButton>
             </div>
         </div>
     );

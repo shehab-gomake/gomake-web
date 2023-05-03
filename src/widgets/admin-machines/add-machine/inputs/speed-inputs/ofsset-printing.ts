@@ -84,7 +84,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
 
                     {
                         name: 'machineAttributes.speedByPaperSizeByColor',
-                        parameterKey: 'machineAttributes.speedByPaperSizeByColor',
+                        parameterKey: 'speedByColor',
                         value: state.attributes?.speedByColor || [],
                         machineInputType: 'multiArrayInput',
                         isValid: state.attributes?.speedByColor?.length > 0,

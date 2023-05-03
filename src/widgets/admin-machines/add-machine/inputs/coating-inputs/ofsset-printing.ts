@@ -40,7 +40,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "length",
                     options: [],
-                    value: state.attributes?.feeders?.length ? state.attributes?.feeders?.length : ''
+                    value: state.attributes?.coatingBlanket?.length ? state.attributes?.coatingBlanket?.length : ''
 
                 },
                 {
@@ -51,7 +51,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "width",
                     options: [],
-                    value: state.attributes?.feeders?.width ? state.attributes?.feeders?.width : ''
+                    value: state.attributes?.coatingBlanket?.width ? state.attributes?.coatingBlanket?.width : ''
 
                 },
             ]
@@ -71,7 +71,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "length",
                     options: [],
-                    value: state.attributes?.feeders?.length ? state.attributes?.feeders?.length : ''
+                    value: state.attributes?.coatingPlate?.length ? state.attributes?.coatingPlate?.length : ''
 
                 },
                 {
@@ -82,7 +82,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "width",
                     options: [],
-                    value: state.attributes?.feeders?.width ? state.attributes?.feeders?.width : ''
+                    value: state.attributes?.coatingPlate?.width ? state.attributes?.coatingPlate?.width : ''
 
                 },
             ]
@@ -102,7 +102,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "length",
                     options: [],
-                    value: state.attributes?.feeders?.length ? state.attributes?.feeders?.length : ''
+                    value: state.attributes?.maxCoatingArea?.length ? state.attributes?.maxCoatingArea?.length : ''
 
                 },
                 {
@@ -113,7 +113,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "width",
                     options: [],
-                    value: state.attributes?.feeders?.width ? state.attributes?.feeders?.width : ''
+                    value: state.attributes?.maxCoatingArea?.width ? state.attributes?.maxCoatingArea?.width : ''
 
                 },
             ]
