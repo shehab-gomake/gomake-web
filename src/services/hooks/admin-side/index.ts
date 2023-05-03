@@ -9,4 +9,5 @@ export * from "./get-set-wide-format-material";
 export * from "./get-set-hardboards";
 export * from "./get-set-applications";
 export * from "./get-set-additions";
+export * from "./get-set-canvas-frames";
 export * from "./get-set-roll-encapsulation";
