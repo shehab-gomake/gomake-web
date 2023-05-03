@@ -105,6 +105,11 @@ const useAuthLayoutHook = () => {
             title: t("materials.additions.admin.title"),
             path: "/admin/materials/additions",
           },
+          {
+            key: "canvasFrames",
+            title: t("materials.canvasFrames.admin.title"),
+            path: "/admin/materials/canvans-frames",
+          },
         ],
         icon: () => {
           return <ProductsIcon />;
