@@ -3,14 +3,20 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
-import { materialSheetsState } from "../store/roll-encapsulation";
+import { materialRollEncapsulationState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
 import { useMemo } from "react";
 
-const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
+const RollEncapsulationSizeInputs = ({
+  index,
+  sheetWeightIndex,
+  sheetSize,
+}) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialRollEncapsulationStateValue = useRecoilValue<any>(
+    materialRollEncapsulationState
+  );
   const muliSelectOptions = useMemo(() => {
     return [
       { lable: "String1", id: 1 },
@@ -31,7 +37,7 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
             style={clasess.textInputStyle}
             value={sheetSize[index]["code"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialRollEncapsulationStateValue?.changeItemsRollEncapsulationSize(
                 sheetWeightIndex,
                 index,
                 "code",
@@ -49,7 +55,7 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
             style={clasess.textInputStyle}
             value={sheetSize[index]["name"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialRollEncapsulationStateValue?.changeItemsRollEncapsulationSize(
                 sheetWeightIndex,
                 index,
                 "name",
@@ -67,7 +73,7 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
             style={clasess.textInputStyle}
             value={sheetSize[index]["width"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialRollEncapsulationStateValue?.changeItemsRollEncapsulationSize(
                 sheetWeightIndex,
                 index,
                 "width",
@@ -85,7 +91,7 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
             style={clasess.textInputStyle}
             value={sheetSize[index]["height"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialRollEncapsulationStateValue?.changeItemsRollEncapsulationSize(
                 sheetWeightIndex,
                 index,
                 "height",
@@ -105,7 +111,7 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
             style={clasess.textInputStyle}
             value={sheetSize[index]["defaultPricePerSquareMeter"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialRollEncapsulationStateValue?.changeItemsRollEncapsulationSize(
                 sheetWeightIndex,
                 index,
                 "defaultPricePerSquareMeter",
@@ -125,7 +131,7 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
             multiple
             getOptionLabel={(option: any) => option.lable}
             onChange={(e: any, value: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialRollEncapsulationStateValue?.changeItemsRollEncapsulationSize(
                 sheetWeightIndex,
                 index,
                 "fitToPrintType",
@@ -138,4 +144,4 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
     </>
   );
 };
-export { SheetSizeInputs };
+export { RollEncapsulationSizeInputs };

@@ -3,34 +3,36 @@ import { useRecoilValue } from "recoil";
 import { GoMakeDeleteModal } from "@/components";
 import { IconWidget } from "./icon-widget";
 
-import { useSheetModal } from "./use-roll-encapsulation-modal";
-import { UpdateSheetModal } from "../update-roll-encapsulation-modal";
-import { materialSheetsState } from "../store/roll-encapsulation";
+import { useRollEncapsulationModal } from "./use-roll-encapsulation-modal";
+import { UpdateRollEncapsulationModal } from "../update-roll-encapsulation-modal";
+import { materialRollEncapsulationState } from "../store/roll-encapsulation";
 
 const RollEncapsulationSettingsWidget = ({ item }: any) => {
   const {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deleteSheetByCategoryName,
+    deleteRollEncapsulationByCategoryName,
     t,
-  } = useSheetModal({
+  } = useRollEncapsulationModal({
     item,
   });
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialRollEncapsulationStateValue = useRecoilValue<any>(
+    materialRollEncapsulationState
+  );
 
   return (
     <>
       <IconWidget
         t={t}
         onOpnUpdateModal={() => {
-          materialSheetsStateValue?.onOpnUpdateModal(item);
+          materialRollEncapsulationStateValue?.onOpnUpdateModal(item);
         }}
         onOpenDeleteModal={onOpenDeleteModal}
       />
       <GoMakeDeleteModal
         hideIcon={true}
-        title={t("materials.sheetPaper.admin.deleteSheet")}
+        title={t("materials.sheetPaper.admin.deleteRollEncapsulation")}
         yesBtn={t("materials.sheetPaper.admin.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
@@ -38,10 +40,10 @@ const RollEncapsulationSettingsWidget = ({ item }: any) => {
         subTitle={`${t("materials.sheetPaper.admin.subTitleDeleteModal")} ${
           item?.categoryName
         } ?`}
-        onClickDelete={deleteSheetByCategoryName}
+        onClickDelete={deleteRollEncapsulationByCategoryName}
       />
-      {item === materialSheetsStateValue.selectedEditItem && (
-        <UpdateSheetModal />
+      {item === materialRollEncapsulationStateValue.selectedEditItem && (
+        <UpdateRollEncapsulationModal />
       )}
     </>
   );

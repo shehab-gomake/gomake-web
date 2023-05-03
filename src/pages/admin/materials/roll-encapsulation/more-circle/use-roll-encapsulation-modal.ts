@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const useSheetModal = ({ item }: any) => {
+const useRollEncapsulationModal = ({ item }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const { setSnackbarStateValue } = useSnackBar();
@@ -16,7 +16,7 @@ const useSheetModal = ({ item }: any) => {
     setOpenDeleteModal(true);
   };
 
-  const deleteSheetByCategoryName = useCallback(async () => {
+  const deleteRollEncapsulationByCategoryName = useCallback(async () => {
     const res = await callApi(
       "POST",
       `/v1/administrator/roll-encapsulation/delete-roll-encapsulation`,
@@ -43,9 +43,9 @@ const useSheetModal = ({ item }: any) => {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deleteSheetByCategoryName,
+    deleteRollEncapsulationByCategoryName,
     t,
   };
 };
 
-export { useSheetModal };
+export { useRollEncapsulationModal };

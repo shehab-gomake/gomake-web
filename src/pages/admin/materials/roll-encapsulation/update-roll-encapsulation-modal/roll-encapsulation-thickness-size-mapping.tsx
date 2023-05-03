@@ -4,14 +4,21 @@ import { useRecoilValue } from "recoil";
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { ControlIconsWidget } from "./control-icons-widget";
-import { materialSheetsState } from "../store/roll-encapsulation";
+import { materialRollEncapsulationState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
 import { useMemo } from "react";
 
-const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
+const RollEncapsulationSizeMapping = ({
+  index,
+  sheetSize,
+  sheetWeight,
+  selectedItem,
+}) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialRollEncapsulationStateValue = useRecoilValue<any>(
+    materialRollEncapsulationState
+  );
   const muliSelectOptions = useMemo(() => {
     return [
       { lable: "String1", id: 1 },
@@ -25,7 +32,7 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
         <ControlIconsWidget
           t={t}
           onClickDelete={() =>
-            materialSheetsStateValue.deleteSheetweightSize(
+            materialRollEncapsulationStateValue.deleteRollEncapsulationweightSize(
               selectedItem?.categoryName,
               sheetWeight?.id,
               sheetSize?.id
@@ -33,13 +40,13 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
           }
           item={sheetSize}
           onClickUpdate={() =>
-            materialSheetsStateValue.updateSheetWeightSizes(
+            materialRollEncapsulationStateValue.updateRollEncapsulationWeightSizes(
               selectedItem?.categoryName,
               sheetWeight?.id,
               sheetSize?.id
             )
           }
-          title={"Delete Sheet Weight Size"}
+          title={"Delete RollEncapsulation Weight Size"}
           subTitle={"Are you sure you want to delete sheet weight size?"}
         />
         <div style={clasess.inputSizesContainer}>
@@ -50,9 +57,12 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterCode")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[sheetSize?.id]?.code}
+              value={
+                materialRollEncapsulationStateValue?.updateState[sheetSize?.id]
+                  ?.code
+              }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationWeights(
                   sheetSize?.id,
                   "code",
                   e.target.value
@@ -67,9 +77,12 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterName")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[sheetSize?.id]?.name}
+              value={
+                materialRollEncapsulationStateValue?.updateState[sheetSize?.id]
+                  ?.name
+              }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationWeights(
                   sheetSize?.id,
                   "name",
                   e.target.value
@@ -85,10 +98,11 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
               placeholder={t("materials.sheetPaper.admin.enterWidth")}
               style={clasess.textInputStyle}
               value={
-                materialSheetsStateValue?.updateState[sheetSize?.id]?.width
+                materialRollEncapsulationStateValue?.updateState[sheetSize?.id]
+                  ?.width
               }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationWeights(
                   sheetSize?.id,
                   "width",
                   e.target.value
@@ -104,10 +118,11 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
               placeholder={t("materials.sheetPaper.admin.enterHeight")}
               style={clasess.textInputStyle}
               value={
-                materialSheetsStateValue?.updateState[sheetSize?.id]?.height
+                materialRollEncapsulationStateValue?.updateState[sheetSize?.id]
+                  ?.height
               }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationWeights(
                   sheetSize?.id,
                   "height",
                   e.target.value
@@ -125,11 +140,11 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
               )}
               style={clasess.textInputStyle}
               value={
-                materialSheetsStateValue?.updateState[sheetSize?.id]
+                materialRollEncapsulationStateValue?.updateState[sheetSize?.id]
                   ?.defaultPricePerSquareMeter
               }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationWeights(
                   sheetSize?.id,
                   "defaultPricePerSquareMeter",
                   e.target.value
@@ -148,14 +163,14 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
               multiple
               getOptionLabel={(option: any) => option}
               onChange={(e: any, value: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialRollEncapsulationStateValue?.onChangeUpdateStateRollEncapsulationWeights(
                   sheetSize?.id,
                   "fitToPrintType",
                   value.map((item: any) => item?.lable)
                 );
               }}
               value={
-                materialSheetsStateValue?.updateState[sheetSize?.id]
+                materialRollEncapsulationStateValue?.updateState[sheetSize?.id]
                   ?.fitToPrintType
               }
             />
@@ -165,4 +180,4 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
     </>
   );
 };
-export { SheetSizeMapping };
+export { RollEncapsulationSizeMapping };

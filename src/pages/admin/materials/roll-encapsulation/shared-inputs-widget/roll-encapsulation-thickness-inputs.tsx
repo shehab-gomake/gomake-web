@@ -3,13 +3,15 @@ import { useRecoilValue } from "recoil";
 
 import { GomakeTextInput } from "@/components";
 
-import { materialSheetsState } from "../store/roll-encapsulation";
+import { materialRollEncapsulationState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
 
-const SheetWeightsInputs = ({ index }) => {
+const RollEncapsulationWeightsInputs = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialRollEncapsulationStateValue = useRecoilValue<any>(
+    materialRollEncapsulationState
+  );
 
   return (
     <>
@@ -21,9 +23,9 @@ const SheetWeightsInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterCode")}
             style={clasess.textInputStyle}
-            value={materialSheetsStateValue?.items[index]["code"]}
+            value={materialRollEncapsulationStateValue?.items[index]["code"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItems(
+              materialRollEncapsulationStateValue?.changeItems(
                 index,
                 "code",
                 e.target.value
@@ -38,9 +40,9 @@ const SheetWeightsInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.sheetPaper.admin.enterName")}
             style={clasess.textInputStyle}
-            value={materialSheetsStateValue?.items[index]["name"]}
+            value={materialRollEncapsulationStateValue?.items[index]["name"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItems(
+              materialRollEncapsulationStateValue?.changeItems(
                 index,
                 "name",
                 e.target.value
@@ -55,9 +57,11 @@ const SheetWeightsInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.sheetPaper.admin.enterThickness")}
             style={clasess.textInputStyle}
-            value={materialSheetsStateValue?.items[index]["thickness"]}
+            value={
+              materialRollEncapsulationStateValue?.items[index]["thickness"]
+            }
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItems(
+              materialRollEncapsulationStateValue?.changeItems(
                 index,
                 "thickness",
                 e.target.value
@@ -75,10 +79,12 @@ const SheetWeightsInputs = ({ index }) => {
             )}
             style={clasess.textInputStyle}
             value={
-              materialSheetsStateValue?.items[index]["weightPerSquareMeter"]
+              materialRollEncapsulationStateValue?.items[index][
+                "weightPerSquareMeter"
+              ]
             }
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItems(
+              materialRollEncapsulationStateValue?.changeItems(
                 index,
                 "weightPerSquareMeter",
                 e.target.value
@@ -90,4 +96,4 @@ const SheetWeightsInputs = ({ index }) => {
     </>
   );
 };
-export { SheetWeightsInputs };
+export { RollEncapsulationWeightsInputs };

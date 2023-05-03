@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { getAndSetGetAllRollEncapsulation } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const useSheets = () => {
+const useRollEncapsulation = () => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
@@ -15,16 +15,28 @@ const useSheets = () => {
     ],
     []
   );
-  const [openAddSheetModal, setOpenAddSheetModal] = useState(false);
-  const [openUpdateSheetModal, setOpenUpdateSheetModal] = useState(false);
+  const [openAddRollEncapsulationModal, setOpenAddRollEncapsulationModal] =
+    useState(false);
+  const [
+    openUpdateRollEncapsulationModal,
+    setOpenUpdateRollEncapsulationModal,
+  ] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [allSheets, setAllSheets] = useState([]);
+  const [allRollEncapsulation, setAllRollEncapsulation] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
-  const [isAddNewSheetWights, setIsAddNewSheetWights] = useState(false);
-  const [isAddNewSheetWightSize, setIsAddNewSheetWightSize] = useState(false);
-  const [selectedSheetWeight, setSelectedSheetWeight] = useState({});
-  const [selectedSheetWeightSize, setSelectedSheetWeightSize] = useState({});
+  const [isAddNewRollEncapsulationWights, setIsAddNewRollEncapsulationWights] =
+    useState(false);
+  const [
+    isAddNewRollEncapsulationWightSize,
+    setIsAddNewRollEncapsulationWightSize,
+  ] = useState(false);
+  const [selectedRollEncapsulationWeight, setSelectedRollEncapsulationWeight] =
+    useState({});
+  const [
+    selectedRollEncapsulationWeightSize,
+    setSelectedRollEncapsulationWeightSize,
+  ] = useState({});
   const [items, setItems] = useState([
     {
       code: "",
@@ -52,7 +64,7 @@ const useSheets = () => {
     setItems(temp);
   };
 
-  const changeItemsSheetSize = (
+  const changeItemsRollEncapsulationSize = (
     sheetWeightIndex: number,
     sheetSizeIndex: number,
     filedName: string,
@@ -66,9 +78,9 @@ const useSheets = () => {
     changeItems(sheetWeightIndex, "rollEncapsulationSizes", temp);
   };
   const [updateState, setUpdateState] = useState([]);
-  const onClickOpenSheetWeightSizeWidget = (item) => {
-    setSelectedSheetWeightSize(item);
-    setIsAddNewSheetWightSize(true);
+  const onClickOpenRollEncapsulationWeightSizeWidget = (item) => {
+    setSelectedRollEncapsulationWeightSize(item);
+    setIsAddNewRollEncapsulationWightSize(true);
     setItems([
       {
         code: "",
@@ -88,7 +100,7 @@ const useSheets = () => {
       },
     ]);
   };
-  const onChangeUpdateStateSheetWeights = useCallback(
+  const onChangeUpdateStateRollEncapsulationWeights = useCallback(
     (index: string, filedName: string, value: any) => {
       let temp: any = { ...updateState };
       temp[`${index}`] = {
@@ -99,7 +111,7 @@ const useSheets = () => {
     },
     [updateState]
   );
-  const initialStateSheetWeights = (item: any) => {
+  const initialStateRollEncapsulationWeights = (item: any) => {
     let temp = [...item?.rollEncapsulationThicknesses];
     let final: any = [];
     temp.map((rollEncapsulationThicknesse) => {
@@ -118,34 +130,34 @@ const useSheets = () => {
     setUpdateState(final);
   };
 
-  const getSheets = useCallback(async () => {
-    await getAndSetGetAllRollEncapsulation(callApi, setAllSheets);
+  const getRollEncapsulation = useCallback(async () => {
+    await getAndSetGetAllRollEncapsulation(callApi, setAllRollEncapsulation);
   }, []);
   const onCloseModalAdded = () => {
-    setOpenAddSheetModal(false);
+    setOpenAddRollEncapsulationModal(false);
   };
   const onOpnModalAdded = () => {
-    setOpenAddSheetModal(true);
+    setOpenAddRollEncapsulationModal(true);
   };
   const onCloseUpdateModal = async () => {
-    getSheets();
-    setOpenUpdateSheetModal(false);
-    setIsAddNewSheetWights(false);
+    getRollEncapsulation();
+    setOpenUpdateRollEncapsulationModal(false);
+    setIsAddNewRollEncapsulationWights(false);
   };
   const onOpnUpdateModal = (item) => {
-    initialStateSheetWeights(item);
+    initialStateRollEncapsulationWeights(item);
     setSelectedEditItem(item);
-    setOpenUpdateSheetModal(true);
+    setOpenUpdateRollEncapsulationModal(true);
   };
   const onCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
   const onOpenDeleteModal = (item) => {
     setOpenDeleteModal(true);
-    setSelectedSheetWeight(item);
+    setSelectedRollEncapsulationWeight(item);
   };
 
-  const addNewSupplierSheet = useCallback(async () => {
+  const addNewSupplierRollEncapsulation = useCallback(async () => {
     const res = await callApi(
       "POST",
       `/v1/administrator/roll-encapsulation/add-roll-encapsulation`,
@@ -160,7 +172,7 @@ const useSheets = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      await getSheets();
+      await getRollEncapsulation();
       onCloseModalAdded();
     } else {
       setSnackbarStateValue({
@@ -185,7 +197,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        getRollEncapsulation();
         onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -197,7 +209,7 @@ const useSheets = () => {
     },
     [items]
   );
-  const deleteSheetweight = useCallback(
+  const deleteRollEncapsulationweight = useCallback(
     async (thicknessId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -209,7 +221,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        getRollEncapsulation();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -221,7 +233,7 @@ const useSheets = () => {
     },
     []
   );
-  const deleteSheetweightSize = useCallback(
+  const deleteRollEncapsulationweightSize = useCallback(
     async (categoryName: string, thicknessId: string, sizeId: string) => {
       const res = await callApi(
         "POST",
@@ -233,7 +245,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        getRollEncapsulation();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -245,7 +257,7 @@ const useSheets = () => {
     },
     []
   );
-  const updateSheetweight = useCallback(
+  const updateRollEncapsulationweight = useCallback(
     async (thicknessId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -260,7 +272,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        // getSheets();
+        // getRollEncapsulation();
         // onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -272,7 +284,7 @@ const useSheets = () => {
     },
     [updateState]
   );
-  const updateSheetWeightSizes = useCallback(
+  const updateRollEncapsulationWeightSizes = useCallback(
     async (categoryName: string, thicknessId: string, sizeId: string) => {
       const res = await callApi(
         "POST",
@@ -287,7 +299,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        // getSheets();
+        // getRollEncapsulation();
         // onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -314,8 +326,8 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
-        setIsAddNewSheetWightSize(false);
+        getRollEncapsulation();
+        setIsAddNewRollEncapsulationWightSize(false);
       } else {
         setSnackbarStateValue({
           state: true,
@@ -327,46 +339,46 @@ const useSheets = () => {
     [items]
   );
   useEffect(() => {
-    getSheets();
+    getRollEncapsulation();
   }, []);
   return {
     headerTable,
-    allSheets,
-    openAddSheetModal,
+    allRollEncapsulation,
+    openAddRollEncapsulationModal,
     items,
     categoryName,
-    openUpdateSheetModal,
+    openUpdateRollEncapsulationModal,
     selectedEditItem,
-    isAddNewSheetWights,
+    isAddNewRollEncapsulationWights,
     openDeleteModal,
-    selectedSheetWeight,
+    selectedRollEncapsulationWeight,
     updateState,
-    isAddNewSheetWightSize,
-    selectedSheetWeightSize,
-    onChangeUpdateStateSheetWeights,
+    isAddNewRollEncapsulationWightSize,
+    selectedRollEncapsulationWeightSize,
+    onChangeUpdateStateRollEncapsulationWeights,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewSupplierSheet,
-    changeItemsSheetSize,
-    setOpenUpdateSheetModal,
+    addNewSupplierRollEncapsulation,
+    changeItemsRollEncapsulationSize,
+    setOpenUpdateRollEncapsulationModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewSheetWights,
+    setIsAddNewRollEncapsulationWights,
     addNewSheeWeightByCategoryName,
-    deleteSheetweight,
-    deleteSheetweightSize,
+    deleteRollEncapsulationweight,
+    deleteRollEncapsulationweightSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updateSheetweight,
-    updateSheetWeightSizes,
-    setIsAddNewSheetWightSize,
-    onClickOpenSheetWeightSizeWidget,
+    updateRollEncapsulationweight,
+    updateRollEncapsulationWeightSizes,
+    setIsAddNewRollEncapsulationWightSize,
+    onClickOpenRollEncapsulationWeightSizeWidget,
     addNewSheeWeightSizeByCategoryName,
   };
 };
 
-export { useSheets };
+export { useRollEncapsulation };

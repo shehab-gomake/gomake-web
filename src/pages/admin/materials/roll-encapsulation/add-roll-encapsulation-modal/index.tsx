@@ -10,23 +10,27 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { SheetWeightsMapping } from "./roll-encapsulation-thickness-mapping";
-import { materialSheetsState } from "../store/roll-encapsulation";
+import { RollEncapsulationWeightsMapping } from "./roll-encapsulation-thickness-mapping";
+import { materialRollEncapsulationState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
 
-const AddSheetModal = () => {
+const AddRollEncapsulationModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialRollEncapsulationStateValue = useRecoilValue<any>(
+    materialRollEncapsulationState
+  );
 
   return (
     <>
       <GoMakeModal
-        openModal={materialSheetsStateValue?.openAddSheetModal}
+        openModal={
+          materialRollEncapsulationStateValue?.openAddRollEncapsulationModal
+        }
         modalTitle={t(
           "materials.encapsulationRoll.admin.addNewRollEncapsulation"
         )}
-        onClose={materialSheetsStateValue?.onCloseModalAdded}
+        onClose={materialRollEncapsulationStateValue?.onCloseModalAdded}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -38,9 +42,11 @@ const AddSheetModal = () => {
               <GomakeTextInput
                 placeholder={t("materials.sheetPaper.admin.categoryName")}
                 style={clasess.textInputStyle}
-                value={materialSheetsStateValue?.categoryName}
+                value={materialRollEncapsulationStateValue?.categoryName}
                 onChange={(e: any) => {
-                  materialSheetsStateValue?.setCategoryName(e.target.value);
+                  materialRollEncapsulationStateValue?.setCategoryName(
+                    e.target.value
+                  );
                 }}
               />
             </div>
@@ -59,7 +65,9 @@ const AddSheetModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialSheetsStateValue?.items];
+                    const temp = [
+                      ...materialRollEncapsulationStateValue?.items,
+                    ];
                     temp.push({
                       code: "",
                       name: "",
@@ -67,7 +75,7 @@ const AddSheetModal = () => {
                       weightPerSquareMeter: "",
                       rollEncapsulationSizes: [],
                     });
-                    materialSheetsStateValue?.setItems(temp);
+                    materialRollEncapsulationStateValue?.setItems(temp);
                   }}
                 >
                   <AddIcon />
@@ -80,29 +88,33 @@ const AddSheetModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialSheetsStateValue?.items];
+                    const temp = [
+                      ...materialRollEncapsulationStateValue?.items,
+                    ];
                     temp.pop();
-                    materialSheetsStateValue?.setItems(temp);
+                    materialRollEncapsulationStateValue?.setItems(temp);
                   }}
                 >
                   <RemoveIcon />
                 </IconButton>
               </Tooltip>
             </div>
-            {materialSheetsStateValue?.items?.map(
+            {materialRollEncapsulationStateValue?.items?.map(
               (item: any, index: number) => {
                 return (
-                  <SheetWeightsMapping
-                    key={`SheetWeightsMapping_${index}`}
+                  <RollEncapsulationWeightsMapping
+                    key={`RollEncapsulationWeightsMapping_${index}`}
                     index={index}
                   />
                 );
               }
             )}
           </div>
-          <div style={clasess.addSheetBtnContainer}>
+          <div style={clasess.addRollEncapsulationBtnContainer}>
             <GomakePrimaryButton
-              onClick={materialSheetsStateValue?.addNewSupplierSheet}
+              onClick={
+                materialRollEncapsulationStateValue?.addNewSupplierRollEncapsulation
+              }
             >
               {t("materials.encapsulationRoll.admin.addNewRollEncapsulation")}
             </GomakePrimaryButton>
@@ -112,4 +124,4 @@ const AddSheetModal = () => {
     </>
   );
 };
-export { AddSheetModal };
+export { AddRollEncapsulationModal };

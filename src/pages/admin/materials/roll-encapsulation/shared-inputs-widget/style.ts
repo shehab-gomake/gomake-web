@@ -118,7 +118,7 @@ const useStyle = () => {
         paddingBottom: 20,
         borderRadius: 4,
       },
-      addSheetBtnContainer: {
+      addRollEncapsulationBtnContainer: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

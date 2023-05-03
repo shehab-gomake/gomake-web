@@ -5,23 +5,27 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddSheetWeightsMapping } from "./add-roll-encapsulation-thickness-mapping";
-import { SheetWeightsMapping } from "./roll-encapsulation-thickness-mapping";
-import { materialSheetsState } from "../store/roll-encapsulation";
+import { AddRollEncapsulationWeightsMapping } from "./add-roll-encapsulation-thickness-mapping";
+import { RollEncapsulationWeightsMapping } from "./roll-encapsulation-thickness-mapping";
+import { materialRollEncapsulationState } from "../store/roll-encapsulation";
 import { useStyle } from "./style";
 
-const UpdateSheetModal = () => {
+const UpdateRollEncapsulationModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
-  const selectedItem = materialSheetsStateValue?.selectedEditItem;
+  const materialRollEncapsulationStateValue = useRecoilValue<any>(
+    materialRollEncapsulationState
+  );
+  const selectedItem = materialRollEncapsulationStateValue?.selectedEditItem;
 
   return (
     <>
       <GoMakeModal
-        openModal={materialSheetsStateValue?.openUpdateSheetModal}
-        modalTitle={`Edit ${selectedItem?.categoryName} Sheet`}
-        onClose={materialSheetsStateValue?.onCloseUpdateModal}
+        openModal={
+          materialRollEncapsulationStateValue?.openUpdateRollEncapsulationModal
+        }
+        modalTitle={`Edit ${selectedItem?.categoryName} RollEncapsulation`}
+        onClose={materialRollEncapsulationStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -45,7 +49,7 @@ const UpdateSheetModal = () => {
                   "materials.encapsulationRoll.admin.rollEncapsulationThicknessSection"
                 )}
               </div>
-              {!materialSheetsStateValue?.isAddNewSheetWights && (
+              {!materialRollEncapsulationStateValue?.isAddNewRollEncapsulationWights && (
                 <Tooltip
                   title={t(
                     "materials.encapsulationRoll.admin.addRollEncapsulationThickness"
@@ -53,7 +57,7 @@ const UpdateSheetModal = () => {
                 >
                   <IconButton
                     onClick={() => {
-                      materialSheetsStateValue.setItems([
+                      materialRollEncapsulationStateValue.setItems([
                         {
                           code: "",
                           name: "",
@@ -71,7 +75,9 @@ const UpdateSheetModal = () => {
                           ],
                         },
                       ]);
-                      materialSheetsStateValue?.setIsAddNewSheetWights(true);
+                      materialRollEncapsulationStateValue?.setIsAddNewRollEncapsulationWights(
+                        true
+                      );
                     }}
                   >
                     <AddIcon />
@@ -79,14 +85,17 @@ const UpdateSheetModal = () => {
                 </Tooltip>
               )}
             </div>
-            {materialSheetsStateValue?.isAddNewSheetWights && (
-              <AddSheetWeightsMapping index={0} selectedItem={selectedItem} />
+            {materialRollEncapsulationStateValue?.isAddNewRollEncapsulationWights && (
+              <AddRollEncapsulationWeightsMapping
+                index={0}
+                selectedItem={selectedItem}
+              />
             )}
             {selectedItem?.rollEncapsulationThicknesses?.map(
               (item: any, index: number) => {
                 return (
-                  <SheetWeightsMapping
-                    key={`SheetWeightsMapping_${index}`}
+                  <RollEncapsulationWeightsMapping
+                    key={`RollEncapsulationWeightsMapping_${index}`}
                     index={index}
                     item={item}
                     selectedItem={selectedItem}
@@ -100,4 +109,4 @@ const UpdateSheetModal = () => {
     </>
   );
 };
-export { UpdateSheetModal };
+export { UpdateRollEncapsulationModal };
