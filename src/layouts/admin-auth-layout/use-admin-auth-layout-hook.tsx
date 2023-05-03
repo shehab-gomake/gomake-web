@@ -101,6 +101,11 @@ const useAuthLayoutHook = () => {
             path: "/admin/materials/applications",
           },
           {
+            key: "rollEncapsulation",
+            title: t("materials.encapsulationRoll.admin.title"),
+            path: "/admin/materials/roll-encapsulation",
+          },
+          {
             key: "additions",
             title: t("materials.additions.admin.title"),
             path: "/admin/materials/additions",

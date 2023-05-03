@@ -524,6 +524,28 @@
       "sizeName": "Size name"
     },
     "encapsulationRoll": {
+      "admin": {
+        "title": "Roll Encapsulation",
+        "addNewRollEncapsulation": "Add New Roll Encapsulation",
+        "rollEncapsulationThicknessSection": "Roll Encapsulation Thickness Section",
+        "rollEncapsulationSizeSection": "Roll Encapsulation Thickness Size Section",
+        "addRollEncapsulationThickness": "Add new roll encapsulation thickness",
+        "removeRollEncapsulationThickness": "Remove last roll encapsulation thickness",
+        "addRollEncapsulationize": "Add new roll encapsulation size",
+        "removeRollEncapsulationSize": "Remove last roll encapsulation size",
+        "lenght": "Lenght",
+        "enterLenght": "Enter Lenght",
+        "stock": "Stock",
+        "enterStock": "Enter Stock",
+        "defaultPricePerUnit": "Default Price Per Unit",
+        "enterDefaultPricePerUnit": "Enter Default Price Per Unit",
+        "defaultPricePerMeter": "Default Price Per Meter",
+        "enterDefaultPricePerMeter": "Enter Default Price Per Meter",
+        "deleteRollEncapsulationTitle": "Delete roll encapsulation",
+        "deleteLRollEncapsulationSubTitle": "Are you sure you want to delete roll encapsulation?",
+        "deleteRollEncapsulationSizeTitle": "Delete roll encapsulation size",
+        "deleteLRollEncapsulationSizeSubTitle": "Are you sure you want to delete roll encapsulation size?"
+      },
       "title": "Encapsulation roll",
       "category": "Category",
       "supplier": "supplier",
