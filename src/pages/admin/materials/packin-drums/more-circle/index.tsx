@@ -2,9 +2,9 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeDeleteModal } from "@/components";
 
-import { UpdatePlatModal } from "../update-packin-drum-modal";
-import { materialPlatsState } from "../store/packin-drum";
-import { usePlatsModal } from "./use-packin-drum-modal";
+import { UpdatePackinDrumModal } from "../update-packin-drum-modal";
+import { materialPackinDrumState } from "../store/packin-drum";
+import { usePackinDrumModal } from "./use-packin-drum-modal";
 import { IconWidget } from "./icon-widget";
 
 const PackinDrumSettingsWidget = ({ item }: any) => {
@@ -12,19 +12,21 @@ const PackinDrumSettingsWidget = ({ item }: any) => {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deletePlatByCategoryName,
+    deletePackinDrumByCategoryName,
     t,
-  } = usePlatsModal({
+  } = usePackinDrumModal({
     item,
   });
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialPackinDrumStateValue = useRecoilValue<any>(
+    materialPackinDrumState
+  );
 
   return (
     <>
       <IconWidget
         t={t}
         onOpnUpdateModal={() => {
-          materialPlatsStateValue?.onOpnUpdateModal(item);
+          materialPackinDrumStateValue?.onOpnUpdateModal(item);
         }}
         onOpenDeleteModal={onOpenDeleteModal}
       />
@@ -38,9 +40,11 @@ const PackinDrumSettingsWidget = ({ item }: any) => {
         subTitle={`${t("materials.packinDrums.admin.subTitleDeleteModal")} ${
           item?.categoryName
         } ?`}
-        onClickDelete={deletePlatByCategoryName}
+        onClickDelete={deletePackinDrumByCategoryName}
       />
-      {item === materialPlatsStateValue.selectedEditItem && <UpdatePlatModal />}
+      {item === materialPackinDrumStateValue.selectedEditItem && (
+        <UpdatePackinDrumModal />
+      )}
     </>
   );
 };

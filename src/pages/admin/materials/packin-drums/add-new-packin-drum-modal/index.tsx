@@ -10,21 +10,23 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { PlatSizeMapping } from "./packin-drum-size-mapping";
-import { materialPlatsState } from "../store/packin-drum";
+import { PackinDrumSizeMapping } from "./packin-drum-size-mapping";
+import { materialPackinDrumState } from "../store/packin-drum";
 import { useStyle } from "./style";
 
-const AddNewPlatModal = () => {
+const AddNewPackinDrumModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialPackinDrumStateValue = useRecoilValue<any>(
+    materialPackinDrumState
+  );
 
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openAddNewPlatModal}
+        openModal={materialPackinDrumStateValue?.openAddNewPackinDrumModal}
         modalTitle={t("materials.packinDrums.admin.addNewPackinDrum")}
-        onClose={materialPlatsStateValue?.onCloseAddNewPlatModal}
+        onClose={materialPackinDrumStateValue?.onCloseAddNewPackinDrumModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -36,9 +38,9 @@ const AddNewPlatModal = () => {
               <GomakeTextInput
                 placeholder={t("materials.sheetPaper.admin.categoryName")}
                 style={clasess.textInputStyle}
-                value={materialPlatsStateValue?.categoryName}
+                value={materialPackinDrumStateValue?.categoryName}
                 onChange={(e: any) => {
-                  materialPlatsStateValue?.setCategoryName(e.target.value);
+                  materialPackinDrumStateValue?.setCategoryName(e.target.value);
                 }}
               />
             </div>
@@ -53,7 +55,7 @@ const AddNewPlatModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialPlatsStateValue?.items];
+                    const temp = [...materialPackinDrumStateValue?.items];
                     temp.push({
                       code: "",
                       material: "",
@@ -63,7 +65,7 @@ const AddNewPlatModal = () => {
                       weight: "",
                       defaultPricePerDrum: "",
                     });
-                    materialPlatsStateValue?.setItems(temp);
+                    materialPackinDrumStateValue?.setItems(temp);
                   }}
                 >
                   <AddIcon />
@@ -74,27 +76,29 @@ const AddNewPlatModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialPlatsStateValue?.items];
+                    const temp = [...materialPackinDrumStateValue?.items];
                     temp.pop();
-                    materialPlatsStateValue?.setItems(temp);
+                    materialPackinDrumStateValue?.setItems(temp);
                   }}
                 >
                   <RemoveIcon />
                 </IconButton>
               </Tooltip>
             </div>
-            {materialPlatsStateValue?.items?.map((item: any, index: number) => {
-              return (
-                <PlatSizeMapping
-                  key={`platSizeMapping_${index}`}
-                  index={index}
-                />
-              );
-            })}
+            {materialPackinDrumStateValue?.items?.map(
+              (item: any, index: number) => {
+                return (
+                  <PackinDrumSizeMapping
+                    key={`platSizeMapping_${index}`}
+                    index={index}
+                  />
+                );
+              }
+            )}
           </div>
           <div style={clasess.addBtnContainer}>
             <GomakePrimaryButton
-              onClick={materialPlatsStateValue?.addNewPlatsSize}
+              onClick={materialPackinDrumStateValue?.addNewPackinDrumSize}
             >
               {t("materials.packinDrums.admin.addNewPackinDrum")}
             </GomakePrimaryButton>
@@ -104,4 +108,4 @@ const AddNewPlatModal = () => {
     </>
   );
 };
-export { AddNewPlatModal };
+export { AddNewPackinDrumModal };

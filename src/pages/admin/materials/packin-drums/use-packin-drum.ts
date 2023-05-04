@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { getAndSetGetAllPackinDrums } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const usePlat = () => {
+const usePackinDrum = () => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
@@ -15,14 +15,17 @@ const usePlat = () => {
     ],
     []
   );
-  const [openAddNewPlatModal, setOpenAddNewPlatModal] = useState(false);
-  const [openUpdatePlatModal, setOpenUpdatePlatModal] = useState(false);
+  const [openAddNewPackinDrumModal, setOpenAddNewPackinDrumModal] =
+    useState(false);
+  const [openUpdatePackinDrumModal, setOpenUpdatePackinDrumModal] =
+    useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [allPlats, setAllPlats] = useState([]);
+  const [allPackinDrum, setAllPackinDrum] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
-  const [isAddNewPlatWights, setIsAddNewPlatWights] = useState(false);
-  const [selectedPlatWeight, setSelectedPlatWeight] = useState({});
+  const [isAddNewPackinDrumWights, setIsAddNewPackinDrumWights] =
+    useState(false);
+  const [selectedPackinDrumWeight, setSelectedPackinDrumWeight] = useState({});
   const [updateState, setUpdateState] = useState([]);
 
   const [items, setItems] = useState([
@@ -44,7 +47,7 @@ const usePlat = () => {
     };
     setItems(temp);
   };
-  const onChangeUpdateStatePlatSize = useCallback(
+  const onChangeUpdateStatePackinDrumSize = useCallback(
     (index: string, filedName: string, value: any) => {
       let temp: any = { ...updateState };
       temp[`${index}`] = {
@@ -55,7 +58,7 @@ const usePlat = () => {
     },
     [updateState]
   );
-  const initialStatePlatWeights = (item: any) => {
+  const initialStatePackinDrumWeights = (item: any) => {
     let temp = [...item?.packinDrumSizes];
     let final: any = [];
     temp.map((packinDrumSize) => {
@@ -67,34 +70,34 @@ const usePlat = () => {
     setUpdateState(final);
   };
 
-  const getPlats = useCallback(async () => {
-    await getAndSetGetAllPackinDrums(callApi, setAllPlats);
+  const getPackinDrum = useCallback(async () => {
+    await getAndSetGetAllPackinDrums(callApi, setAllPackinDrum);
   }, []);
-  const onCloseAddNewPlatModal = () => {
-    setOpenAddNewPlatModal(false);
+  const onCloseAddNewPackinDrumModal = () => {
+    setOpenAddNewPackinDrumModal(false);
   };
   const onOpnModalAdded = () => {
-    setOpenAddNewPlatModal(true);
+    setOpenAddNewPackinDrumModal(true);
   };
   const onCloseUpdateModal = async () => {
-    getPlats();
-    setOpenUpdatePlatModal(false);
-    setIsAddNewPlatWights(false);
+    getPackinDrum();
+    setOpenUpdatePackinDrumModal(false);
+    setIsAddNewPackinDrumWights(false);
   };
   const onOpnUpdateModal = (item) => {
-    initialStatePlatWeights(item);
+    initialStatePackinDrumWeights(item);
     setSelectedEditItem(item);
-    setOpenUpdatePlatModal(true);
+    setOpenUpdatePackinDrumModal(true);
   };
   const onCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
   const onOpenDeleteModal = (item) => {
     setOpenDeleteModal(true);
-    setSelectedPlatWeight(item);
+    setSelectedPackinDrumWeight(item);
   };
 
-  const addNewPlatsSize = useCallback(async () => {
+  const addNewPackinDrumSize = useCallback(async () => {
     const res = await callApi(
       "POST",
       `/v1/administrator/packin-drums/add-packin-drums`,
@@ -109,8 +112,8 @@ const usePlat = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      await getPlats();
-      onCloseAddNewPlatModal();
+      await getPackinDrum();
+      onCloseAddNewPackinDrumModal();
     } else {
       setSnackbarStateValue({
         state: true,
@@ -119,7 +122,7 @@ const usePlat = () => {
       });
     }
   }, [categoryName, items]);
-  const addNewPlatSizeByCategoryName = useCallback(
+  const addNewPackinDrumSizeByCategoryName = useCallback(
     async (selectedItem: any) => {
       const res = await callApi(
         "POST",
@@ -134,7 +137,7 @@ const usePlat = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getPlats();
+        getPackinDrum();
         onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -146,7 +149,7 @@ const usePlat = () => {
     },
     [items]
   );
-  const deletePlatSize = useCallback(
+  const deletePackinDrumSize = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -158,7 +161,7 @@ const usePlat = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getPlats();
+        getPackinDrum();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -171,7 +174,7 @@ const usePlat = () => {
     []
   );
 
-  const updatePlatSize = useCallback(
+  const updatePackinDrumSize = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -197,38 +200,38 @@ const usePlat = () => {
     [updateState]
   );
   useEffect(() => {
-    getPlats();
+    getPackinDrum();
   }, []);
   return {
     headerTable,
-    allPlats,
-    openAddNewPlatModal,
+    allPackinDrum,
+    openAddNewPackinDrumModal,
     items,
     categoryName,
-    openUpdatePlatModal,
+    openUpdatePackinDrumModal,
     selectedEditItem,
-    isAddNewPlatWights,
+    isAddNewPackinDrumWights,
     openDeleteModal,
-    selectedPlatWeight,
+    selectedPackinDrumWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStatePackinDrumSize,
+    onCloseAddNewPackinDrumModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdatePlatModal,
+    addNewPackinDrumSize,
+    setOpenUpdatePackinDrumModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewPlatWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewPackinDrumWights,
+    addNewPackinDrumSizeByCategoryName,
+    deletePackinDrumSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
+    updatePackinDrumSize,
   };
 };
 
-export { usePlat };
+export { usePackinDrum };

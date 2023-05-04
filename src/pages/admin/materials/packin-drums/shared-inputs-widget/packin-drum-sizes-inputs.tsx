@@ -3,13 +3,15 @@ import { useRecoilValue } from "recoil";
 
 import { GomakeTextInput } from "@/components";
 
-import { materialPlatsState } from "../store/packin-drum";
+import { materialPackinDrumState } from "../store/packin-drum";
 import { useStyle } from "../add-new-packin-drum-modal/style";
 
-const PlatSizeInputs = ({ index }) => {
+const PackinDrumSizeInputs = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialPackinDrumStateValue = useRecoilValue<any>(
+    materialPackinDrumState
+  );
 
   return (
     <>
@@ -21,9 +23,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterCode")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["code"]}
+            value={materialPackinDrumStateValue?.items[index]["code"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialPackinDrumStateValue?.changeItems(
                 index,
                 "code",
                 e.target.value
@@ -38,9 +40,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.packinDrums.admin.enterMaterial")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["material"]}
+            value={materialPackinDrumStateValue?.items[index]["material"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialPackinDrumStateValue?.changeItems(
                 index,
                 "material",
                 e.target.value
@@ -55,9 +57,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.packinDrums.admin.enterSize")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["size"]}
+            value={materialPackinDrumStateValue?.items[index]["size"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialPackinDrumStateValue?.changeItems(
                 index,
                 "size",
                 e.target.value
@@ -72,9 +74,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.packinDrums.admin.enterSizeName")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["sizeName"]}
+            value={materialPackinDrumStateValue?.items[index]["sizeName"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialPackinDrumStateValue?.changeItems(
                 index,
                 "sizeName",
                 e.target.value
@@ -89,9 +91,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.packinDrums.admin.enterDrumRingNumber")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["drumRingNumber"]}
+            value={materialPackinDrumStateValue?.items[index]["drumRingNumber"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialPackinDrumStateValue?.changeItems(
                 index,
                 "drumRingNumber",
                 e.target.value
@@ -106,9 +108,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.packinDrums.admin.enterWeight")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["weight"]}
+            value={materialPackinDrumStateValue?.items[index]["weight"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialPackinDrumStateValue?.changeItems(
                 index,
                 "weight",
                 e.target.value
@@ -125,9 +127,11 @@ const PlatSizeInputs = ({ index }) => {
               "materials.packinDrums.admin.enterDefaultPricePerDrum"
             )}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["defaultPricePerDrum"]}
+            value={
+              materialPackinDrumStateValue?.items[index]["defaultPricePerDrum"]
+            }
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialPackinDrumStateValue?.changeItems(
                 index,
                 "defaultPricePerDrum",
                 e.target.value
@@ -139,4 +143,4 @@ const PlatSizeInputs = ({ index }) => {
     </>
   );
 };
-export { PlatSizeInputs };
+export { PackinDrumSizeInputs };

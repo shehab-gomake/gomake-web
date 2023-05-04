@@ -4,13 +4,15 @@ import { useRecoilValue } from "recoil";
 import { GomakeTextInput } from "@/components";
 
 import { ControlIconsWidget } from "./control-icons-widget";
-import { materialPlatsState } from "../store/packin-drum";
+import { materialPackinDrumState } from "../store/packin-drum";
 import { useStyle } from "./style";
 
-const PlatWeightsMapping = ({ index, item, selectedItem }) => {
+const PackinDrumWeightsMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialPackinDrumStateValue = useRecoilValue<any>(
+    materialPackinDrumState
+  );
   return (
     <>
       <div
@@ -21,19 +23,19 @@ const PlatWeightsMapping = ({ index, item, selectedItem }) => {
           t={t}
           item={item}
           onClickDelete={() =>
-            materialPlatsStateValue.deletePlatSize(
+            materialPackinDrumStateValue.deletePackinDrumSize(
               item?.id,
               selectedItem?.categoryName
             )
           }
           onClickUpdate={() =>
-            materialPlatsStateValue.updatePlatSize(
+            materialPackinDrumStateValue.updatePackinDrumSize(
               item?.id,
               selectedItem?.categoryName
             )
           }
-          title={t("materials.plat.admin.deletePlatSize")}
-          subTitle={t("materials.plat.admin.subTitleDeleteSizeModal")}
+          title={t("materials.packinDrums.admin.deletePackinDrumSize")}
+          subTitle={t("materials.packinDrums.admin.subTitleDeleteSizeModal")}
         />
         <div style={clasess.mainWaightsContainer}>
           <div>
@@ -43,9 +45,9 @@ const PlatWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.plat.admin.enterCode")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.code}
+              value={materialPackinDrumStateValue?.updateState[item?.id]?.code}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialPackinDrumStateValue?.onChangeUpdateStatePackinDrumSize(
                   item?.id,
                   "code",
                   e.target.value
@@ -60,9 +62,11 @@ const PlatWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.packinDrums.admin.enterMaterial")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.material}
+              value={
+                materialPackinDrumStateValue?.updateState[item?.id]?.material
+              }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialPackinDrumStateValue?.onChangeUpdateStatePackinDrumSize(
                   item?.id,
                   "material",
                   e.target.value
@@ -77,9 +81,9 @@ const PlatWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.packinDrums.admin.enterSize")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.size}
+              value={materialPackinDrumStateValue?.updateState[item?.id]?.size}
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialPackinDrumStateValue?.onChangeUpdateStatePackinDrumSize(
                   item?.id,
                   "size",
                   e.target.value
@@ -94,9 +98,11 @@ const PlatWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.packinDrums.admin.enterSizeName")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.sizeName}
+              value={
+                materialPackinDrumStateValue?.updateState[item?.id]?.sizeName
+              }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialPackinDrumStateValue?.onChangeUpdateStatePackinDrumSize(
                   item?.id,
                   "sizeName",
                   e.target.value
@@ -112,10 +118,11 @@ const PlatWeightsMapping = ({ index, item, selectedItem }) => {
               placeholder={t("materials.packinDrums.admin.enterDrumRingNumber")}
               style={clasess.textInputStyle}
               value={
-                materialPlatsStateValue?.updateState[item?.id]?.drumRingNumber
+                materialPackinDrumStateValue?.updateState[item?.id]
+                  ?.drumRingNumber
               }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialPackinDrumStateValue?.onChangeUpdateStatePackinDrumSize(
                   item?.id,
                   "drumRingNumber",
                   e.target.value
@@ -130,9 +137,11 @@ const PlatWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.packinDrums.admin.enterWeight")}
               style={clasess.textInputStyle}
-              value={materialPlatsStateValue?.updateState[item?.id]?.weight}
+              value={
+                materialPackinDrumStateValue?.updateState[item?.id]?.weight
+              }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialPackinDrumStateValue?.onChangeUpdateStatePackinDrumSize(
                   item?.id,
                   "weight",
                   e.target.value
@@ -150,11 +159,11 @@ const PlatWeightsMapping = ({ index, item, selectedItem }) => {
               )}
               style={clasess.textInputStyle}
               value={
-                materialPlatsStateValue?.updateState[item?.id]
+                materialPackinDrumStateValue?.updateState[item?.id]
                   ?.defaultPricePerDrum
               }
               onChange={(e: any) => {
-                materialPlatsStateValue?.onChangeUpdateStatePlatSize(
+                materialPackinDrumStateValue?.onChangeUpdateStatePackinDrumSize(
                   item?.id,
                   "defaultPricePerDrum",
                   e.target.value
@@ -167,4 +176,4 @@ const PlatWeightsMapping = ({ index, item, selectedItem }) => {
     </>
   );
 };
-export { PlatWeightsMapping };
+export { PackinDrumWeightsMapping };

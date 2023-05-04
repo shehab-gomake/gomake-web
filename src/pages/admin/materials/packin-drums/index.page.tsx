@@ -6,110 +6,112 @@ import { Table } from "@/widgets/table/table";
 import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 
-import { materialPlatsState } from "./store/packin-drum";
+import { materialPackinDrumState } from "./store/packin-drum";
 import { HeaderFilter } from "./header-filter";
-import { usePlat } from "./use-packin-drum";
+import { usePackinDrum } from "./use-packin-drum";
 
-export default function Plat() {
+export default function PackinDrum() {
   const { t } = useTranslation();
-  const setMaterialPlatsState = useSetRecoilState<any>(materialPlatsState);
+  const setMaterialPackinDrumState = useSetRecoilState<any>(
+    materialPackinDrumState
+  );
   const {
     headerTable,
-    allPlats,
-    openAddNewPlatModal,
+    allPackinDrum,
+    openAddNewPackinDrumModal,
     items,
     categoryName,
-    openUpdatePlatModal,
+    openUpdatePackinDrumModal,
     selectedEditItem,
-    isAddNewPlatWights,
+    isAddNewPackinDrumWights,
     openDeleteModal,
-    selectedPlatWeight,
+    selectedPackinDrumWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStatePackinDrumSize,
+    onCloseAddNewPackinDrumModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdatePlatModal,
+    addNewPackinDrumSize,
+    setOpenUpdatePackinDrumModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewPlatWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewPackinDrumWights,
+    addNewPackinDrumSizeByCategoryName,
+    deletePackinDrumSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
-  } = usePlat();
+    updatePackinDrumSize,
+  } = usePackinDrum();
 
   useEffect(() => {
-    setMaterialPlatsState({
+    setMaterialPackinDrumState({
       headerTable,
-      allPlats,
-      openAddNewPlatModal,
+      allPackinDrum,
+      openAddNewPackinDrumModal,
       items,
       categoryName,
-      openUpdatePlatModal,
+      openUpdatePackinDrumModal,
       selectedEditItem,
-      isAddNewPlatWights,
+      isAddNewPackinDrumWights,
       openDeleteModal,
-      selectedPlatWeight,
+      selectedPackinDrumWeight,
       updateState,
-      onChangeUpdateStatePlatSize,
-      onCloseAddNewPlatModal,
+      onChangeUpdateStatePackinDrumSize,
+      onCloseAddNewPackinDrumModal,
       onOpnModalAdded,
       changeItems,
       setItems,
       setCategoryName,
-      addNewPlatsSize,
-      setOpenUpdatePlatModal,
+      addNewPackinDrumSize,
+      setOpenUpdatePackinDrumModal,
       onCloseUpdateModal,
       onOpnUpdateModal,
-      setIsAddNewPlatWights,
-      addNewPlatSizeByCategoryName,
-      deletePlatSize,
+      setIsAddNewPackinDrumWights,
+      addNewPackinDrumSizeByCategoryName,
+      deletePackinDrumSize,
       setOpenDeleteModal,
       onCloseDeleteModal,
       onOpenDeleteModal,
-      updatePlatSize,
+      updatePackinDrumSize,
     });
   }, [
     headerTable,
-    allPlats,
-    openAddNewPlatModal,
+    allPackinDrum,
+    openAddNewPackinDrumModal,
     items,
     categoryName,
-    openUpdatePlatModal,
+    openUpdatePackinDrumModal,
     selectedEditItem,
-    isAddNewPlatWights,
+    isAddNewPackinDrumWights,
     openDeleteModal,
-    selectedPlatWeight,
+    selectedPackinDrumWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStatePackinDrumSize,
+    onCloseAddNewPackinDrumModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdatePlatModal,
+    addNewPackinDrumSize,
+    setOpenUpdatePackinDrumModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewPlatWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewPackinDrumWights,
+    addNewPackinDrumSizeByCategoryName,
+    deletePackinDrumSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
+    updatePackinDrumSize,
   ]);
   return (
     <AdminAuthLayout>
       <HeaderTitle title={t("materials.packinDrums.admin.title")} />
       <HeaderFilter />
-      <Table tableHeaders={headerTable} tableRows={allPlats} />
+      <Table tableHeaders={headerTable} tableRows={allPackinDrum} />
     </AdminAuthLayout>
   );
 }

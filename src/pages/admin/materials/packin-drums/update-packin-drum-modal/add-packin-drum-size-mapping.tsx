@@ -3,24 +3,26 @@ import { useRecoilValue } from "recoil";
 
 import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 
-import { materialPlatsState } from "../store/packin-drum";
+import { materialPackinDrumState } from "../store/packin-drum";
 import { useStyle } from "./style";
-import { PlatSizeInputs } from "../shared-inputs-widget/packin-drum-sizes-inputs";
+import { PackinDrumSizeInputs } from "../shared-inputs-widget/packin-drum-sizes-inputs";
 
-const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
+const AddPackinDrumSizeWeightsMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialPackinDrumStateValue = useRecoilValue<any>(
+    materialPackinDrumState
+  );
 
   return (
     <>
       <div key={index} style={clasess.tableSecondSections}>
-        <PlatSizeInputs index={index} />
+        <PackinDrumSizeInputs index={index} />
         <div style={clasess.btnsWightSheetContainer}>
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.setIsAddNewPlatWights(false)
+                materialPackinDrumStateValue?.setIsAddNewPackinDrumWights(false)
               }
               style={clasess.cancelBtnStyle}
             >
@@ -30,7 +32,7 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.addNewPlatSizeByCategoryName(
+                materialPackinDrumStateValue?.addNewPackinDrumSizeByCategoryName(
                   selectedItem
                 )
               }
@@ -44,4 +46,4 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
     </>
   );
 };
-export { AddPlatSizeWeightsMapping };
+export { AddPackinDrumSizeWeightsMapping };

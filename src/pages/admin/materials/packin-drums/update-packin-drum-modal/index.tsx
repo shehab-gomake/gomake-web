@@ -5,23 +5,25 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddPlatSizeWeightsMapping } from "./add-packin-drum-size-mapping";
-import { PlatWeightsMapping } from "./packin-drum-size-mapping";
-import { materialPlatsState } from "../store/packin-drum";
+import { AddPackinDrumSizeWeightsMapping } from "./add-packin-drum-size-mapping";
+import { PackinDrumWeightsMapping } from "./packin-drum-size-mapping";
+import { materialPackinDrumState } from "../store/packin-drum";
 import { useStyle } from "./style";
 
-const UpdatePlatModal = () => {
+const UpdatePackinDrumModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
-  const selectedItem = materialPlatsStateValue?.selectedEditItem;
+  const materialPackinDrumStateValue = useRecoilValue<any>(
+    materialPackinDrumState
+  );
+  const selectedItem = materialPackinDrumStateValue?.selectedEditItem;
 
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openUpdatePlatModal}
+        openModal={materialPackinDrumStateValue?.openUpdatePackinDrumModal}
         modalTitle={`Edit ${selectedItem?.categoryName} Packin Drum`}
-        onClose={materialPlatsStateValue?.onCloseUpdateModal}
+        onClose={materialPackinDrumStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -43,13 +45,13 @@ const UpdatePlatModal = () => {
               <div style={clasess.firstSectionTitleStyle}>
                 {t("materials.packinDrums.admin.packinDrumSizeSection")}
               </div>
-              {!materialPlatsStateValue?.isAddNewPlatWights && (
+              {!materialPackinDrumStateValue?.isAddNewPackinDrumWights && (
                 <Tooltip
                   title={t("materials.packinDrums.admin.addPackinDrumSize")}
                 >
                   <IconButton
                     onClick={() => {
-                      materialPlatsStateValue.setItems([
+                      materialPackinDrumStateValue.setItems([
                         {
                           code: "",
                           material: "",
@@ -60,7 +62,9 @@ const UpdatePlatModal = () => {
                           defaultPricePerDrum: "",
                         },
                       ]);
-                      materialPlatsStateValue?.setIsAddNewPlatWights(true);
+                      materialPackinDrumStateValue?.setIsAddNewPackinDrumWights(
+                        true
+                      );
                     }}
                   >
                     <AddIcon />
@@ -68,15 +72,15 @@ const UpdatePlatModal = () => {
                 </Tooltip>
               )}
             </div>
-            {materialPlatsStateValue?.isAddNewPlatWights && (
-              <AddPlatSizeWeightsMapping
+            {materialPackinDrumStateValue?.isAddNewPackinDrumWights && (
+              <AddPackinDrumSizeWeightsMapping
                 index={0}
                 selectedItem={selectedItem}
               />
             )}
             {selectedItem?.packinDrumSizes?.map((item: any, index: number) => {
               return (
-                <PlatWeightsMapping
+                <PackinDrumWeightsMapping
                   key={`platSizeMapping_${index}`}
                   index={index}
                   item={item}
@@ -90,4 +94,4 @@ const UpdatePlatModal = () => {
     </>
   );
 };
-export { UpdatePlatModal };
+export { UpdatePackinDrumModal };
