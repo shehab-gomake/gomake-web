@@ -136,6 +136,11 @@ const useAuthLayoutHook = () => {
             title: t("materials.packinDrums.admin.title"),
             path: "/admin/materials/packin-drums",
           },
+          {
+            key: "doubleSidedTapeRoll",
+            title: t("materials.doubleSidedTapeRolls.admin.title"),
+            path: "/admin/materials/double-sided-tape-roll",
+          },
         ],
         icon: () => {
           return <ProductsIcon />;

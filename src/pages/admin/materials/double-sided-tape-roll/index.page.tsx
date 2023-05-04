@@ -6,14 +6,14 @@ import { Table } from "@/widgets/table/table";
 import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 
-import { materialAdditionsState } from "./store/additions";
+import { materialDoublesidedTapeRollState } from "./store/double-sided-tape-roll";
 import { HeaderFilter } from "./header-filter";
-import { useApplications } from "./use-additions";
+import { useDoubleSidedTapeRoll } from "./use-double-sided-tape-roll";
 
 export default function Additions() {
   const { t } = useTranslation();
   const setMaterialHardboardsState = useSetRecoilState<any>(
-    materialAdditionsState
+    materialDoublesidedTapeRollState
   );
   const {
     headerTable,
@@ -21,28 +21,30 @@ export default function Additions() {
     openAddApplicationsModal,
     items,
     categoryName,
-    openUpdatalApplicationModal,
+    openUpdateDoubleSidedTapeRollModal,
     selectedEditItem,
     openDeleteModal,
     selectedAddition,
     updateState,
-    onClickOpenHardboardSizeThicknessWidget,
-    onChangeUpdateStateAddition,
+    addNewApplicationThicknesSizeByCategoryName,
+    onChangeUpdateStateDoubleSidedTapeRoll,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewAddition,
-    setOpenUpdatalApplicationModal,
+    addDoubleSidedTapeRoll,
+    setOpenUpdateDoubleSidedTapeRollModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    deleteAddition,
+    deleteDoubleSidedTapeRoll,
+    deleteApplicationThicknessSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updateAddition,
-  } = useApplications();
+    updateDoubleSidedTapeRoll,
+    updateApplicationThicknessSize,
+  } = useDoubleSidedTapeRoll();
 
   useEffect(() => {
     setMaterialHardboardsState({
@@ -51,27 +53,29 @@ export default function Additions() {
       openAddApplicationsModal,
       items,
       categoryName,
-      openUpdatalApplicationModal,
+      openUpdateDoubleSidedTapeRollModal,
       selectedEditItem,
       openDeleteModal,
       selectedAddition,
       updateState,
-      onClickOpenHardboardSizeThicknessWidget,
-      onChangeUpdateStateAddition,
+      addNewApplicationThicknesSizeByCategoryName,
+      onChangeUpdateStateDoubleSidedTapeRoll,
       onCloseModalAdded,
       onOpnModalAdded,
       changeItems,
       setItems,
       setCategoryName,
-      addNewAddition,
-      setOpenUpdatalApplicationModal,
+      addDoubleSidedTapeRoll,
+      setOpenUpdateDoubleSidedTapeRollModal,
       onCloseUpdateModal,
       onOpnUpdateModal,
-      deleteAddition,
+      deleteDoubleSidedTapeRoll,
+      deleteApplicationThicknessSize,
       setOpenDeleteModal,
       onCloseDeleteModal,
       onOpenDeleteModal,
-      updateAddition,
+      updateDoubleSidedTapeRoll,
+      updateApplicationThicknessSize,
     });
   }, [
     headerTable,
@@ -79,31 +83,33 @@ export default function Additions() {
     openAddApplicationsModal,
     items,
     categoryName,
-    openUpdatalApplicationModal,
+    openUpdateDoubleSidedTapeRollModal,
     selectedEditItem,
     openDeleteModal,
     selectedAddition,
     updateState,
-    onClickOpenHardboardSizeThicknessWidget,
-    onChangeUpdateStateAddition,
+    addNewApplicationThicknesSizeByCategoryName,
+    onChangeUpdateStateDoubleSidedTapeRoll,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewAddition,
-    setOpenUpdatalApplicationModal,
+    addDoubleSidedTapeRoll,
+    setOpenUpdateDoubleSidedTapeRollModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    deleteAddition,
+    deleteDoubleSidedTapeRoll,
+    deleteApplicationThicknessSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updateAddition,
+    updateDoubleSidedTapeRoll,
+    updateApplicationThicknessSize,
   ]);
   return (
     <AdminAuthLayout>
-      <HeaderTitle title={t("materials.additions.admin.subTitle")} />
+      <HeaderTitle title={t("materials.doubleSidedTapeRolls.admin.title")} />
       <HeaderFilter />
       <Table tableHeaders={headerTable} tableRows={allAdditions} />
     </AdminAuthLayout>

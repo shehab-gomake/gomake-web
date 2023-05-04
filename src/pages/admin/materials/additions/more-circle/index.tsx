@@ -37,7 +37,7 @@ const AdditionSettingsWidget = ({ item }: any) => {
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
         subTitle={`${t("materials.additions.admin.subTitleDeleteModal")} ${
-          item?.code
+          item?.name
         } ?`}
         onClickDelete={deleteAdditionByCode}
       />
