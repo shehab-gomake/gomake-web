@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const usePlatsModal = ({ item }: any) => {
+const usePackinUnitModal = ({ item }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const { setSnackbarStateValue } = useSnackBar();
@@ -16,10 +16,10 @@ const usePlatsModal = ({ item }: any) => {
     setOpenDeleteModal(true);
   };
 
-  const deleteCanvasFrameByCategoryName = useCallback(async () => {
+  const deletePackinUnitByCategoryName = useCallback(async () => {
     const res = await callApi(
       "POST",
-      `/v1/administrator/canvas-frame/delete-canvas-frame`,
+      `/v1/administrator/packin-unit/delete-packin-unit`,
       {
         categoryName: item?.categoryName,
       }
@@ -43,9 +43,9 @@ const usePlatsModal = ({ item }: any) => {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deleteCanvasFrameByCategoryName,
+    deletePackinUnitByCategoryName,
     t,
   };
 };
 
-export { usePlatsModal };
+export { usePackinUnitModal };
