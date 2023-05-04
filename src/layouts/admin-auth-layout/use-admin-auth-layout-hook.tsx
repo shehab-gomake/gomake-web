@@ -130,7 +130,6 @@ const useAuthLayoutHook = () => {
             title: t("materials.foils.admin.title"),
             path: "/admin/materials/foil",
           },
-
           {
             key: "packinDrums",
             title: t("materials.packinDrums.admin.title"),
@@ -140,6 +139,11 @@ const useAuthLayoutHook = () => {
             key: "doubleSidedTapeRoll",
             title: t("materials.doubleSidedTapeRolls.admin.title"),
             path: "/admin/materials/double-sided-tape-roll",
+          },
+          {
+            key: "sheetEncapsulation",
+            title: t("materials.sheetEncapsulation.admin.title"),
+            path: "/admin/materials/sheet-encapsulation",
           },
         ],
         icon: () => {

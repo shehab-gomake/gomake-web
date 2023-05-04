@@ -16,3 +16,4 @@ export * from "./get-set-frames";
 export * from "./get-set-foil";
 export * from "./get-set-packin-drums";
 export * from "./get-set-double-sided-tape-roll";
+export * from "./get-set-sheet-encapsulation";
