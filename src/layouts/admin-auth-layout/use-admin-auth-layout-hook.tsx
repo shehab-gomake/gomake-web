@@ -130,11 +130,15 @@ const useAuthLayoutHook = () => {
             title: t("materials.foils.admin.title"),
             path: "/admin/materials/foil",
           },
-
           {
             key: "packinDrums",
             title: t("materials.packinDrums.admin.title"),
             path: "/admin/materials/packin-drums",
+          },
+          {
+            key: "sheetEncapsulation",
+            title: t("materials.sheetEncapsulation.admin.title"),
+            path: "/admin/materials/sheet-encapsulation",
           },
         ],
         icon: () => {
