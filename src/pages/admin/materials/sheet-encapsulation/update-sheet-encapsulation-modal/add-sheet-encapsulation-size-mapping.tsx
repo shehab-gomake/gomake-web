@@ -3,24 +3,28 @@ import { useRecoilValue } from "recoil";
 
 import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 
-import { materialPlatsState } from "../store/sheet-encapsulation";
+import { materialSheetEncapsulationState } from "../store/sheet-encapsulation";
 import { useStyle } from "./style";
-import { PlatSizeInputs } from "../shared-inputs-widget/sheet-encapsulation-sizes-inputs";
+import { SheetEncapsulationSizeInputs } from "../shared-inputs-widget/sheet-encapsulation-sizes-inputs";
 
-const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
+const AddSheetEncapsulationSizeWeightsMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialSheetEncapsulationStateValue = useRecoilValue<any>(
+    materialSheetEncapsulationState
+  );
 
   return (
     <>
       <div key={index} style={clasess.tableSecondSections}>
-        <PlatSizeInputs index={index} />
+        <SheetEncapsulationSizeInputs index={index} />
         <div style={clasess.btnsWightSheetContainer}>
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.setIsAddNewPlatWights(false)
+                materialSheetEncapsulationStateValue?.setIsAddNewSheetEncapsulationWights(
+                  false
+                )
               }
               style={clasess.cancelBtnStyle}
             >
@@ -30,7 +34,7 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.addSheetBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialPlatsStateValue?.addNewPlatSizeByCategoryName(
+                materialSheetEncapsulationStateValue?.addNewSheetEncapsulationSizeByCategoryName(
                   selectedItem
                 )
               }
@@ -44,4 +48,4 @@ const AddPlatSizeWeightsMapping = ({ index, selectedItem }) => {
     </>
   );
 };
-export { AddPlatSizeWeightsMapping };
+export { AddSheetEncapsulationSizeWeightsMapping };

@@ -1,7 +1,7 @@
 import { atom } from "recoil";
 
-export const materialPlatsState = atom({
-  key: "materialPlatsState",
+export const materialSheetEncapsulationState = atom({
+  key: "materialSheetEncapsulationState",
   default: {
     openAddNewPlatModal: false,
   },

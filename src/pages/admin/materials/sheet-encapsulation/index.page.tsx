@@ -6,110 +6,112 @@ import { Table } from "@/widgets/table/table";
 import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 
-import { materialPlatsState } from "./store/sheet-encapsulation";
+import { materialSheetEncapsulationState } from "./store/sheet-encapsulation";
 import { HeaderFilter } from "./header-filter";
-import { usePlat } from "./use-sheet-encapsulation";
+import { useSheetEncapsulation } from "./use-sheet-encapsulation";
 
-export default function Plat() {
+export default function SheetEncapsulation() {
   const { t } = useTranslation();
-  const setMaterialPlatsState = useSetRecoilState<any>(materialPlatsState);
+  const setMaterialSheetEncapsulationState = useSetRecoilState<any>(
+    materialSheetEncapsulationState
+  );
   const {
     headerTable,
-    allPlats,
-    openAddNewPlatModal,
+    allSheetEncapsulation,
+    openAddNewSheetEncapsulationModal,
     items,
     categoryName,
-    openUpdatePlatModal,
+    openUpdateSheetEncapsulationModal,
     selectedEditItem,
-    isAddNewPlatWights,
+    isAddNewSheetEncapsulationWights,
     openDeleteModal,
-    selectedPlatWeight,
+    selectedSheetEncapsulationWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStateSheetEncapsulationSize,
+    onCloseAddNewSheetEncapsulationModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdatePlatModal,
+    addNewSheetEncapsulationSize,
+    setOpenUpdateSheetEncapsulationModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewPlatWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewSheetEncapsulationWights,
+    addNewSheetEncapsulationSizeByCategoryName,
+    deleteSheetEncapsulationSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
-  } = usePlat();
+    updateSheetEncapsulationSize,
+  } = useSheetEncapsulation();
 
   useEffect(() => {
-    setMaterialPlatsState({
+    setMaterialSheetEncapsulationState({
       headerTable,
-      allPlats,
-      openAddNewPlatModal,
+      allSheetEncapsulation,
+      openAddNewSheetEncapsulationModal,
       items,
       categoryName,
-      openUpdatePlatModal,
+      openUpdateSheetEncapsulationModal,
       selectedEditItem,
-      isAddNewPlatWights,
+      isAddNewSheetEncapsulationWights,
       openDeleteModal,
-      selectedPlatWeight,
+      selectedSheetEncapsulationWeight,
       updateState,
-      onChangeUpdateStatePlatSize,
-      onCloseAddNewPlatModal,
+      onChangeUpdateStateSheetEncapsulationSize,
+      onCloseAddNewSheetEncapsulationModal,
       onOpnModalAdded,
       changeItems,
       setItems,
       setCategoryName,
-      addNewPlatsSize,
-      setOpenUpdatePlatModal,
+      addNewSheetEncapsulationSize,
+      setOpenUpdateSheetEncapsulationModal,
       onCloseUpdateModal,
       onOpnUpdateModal,
-      setIsAddNewPlatWights,
-      addNewPlatSizeByCategoryName,
-      deletePlatSize,
+      setIsAddNewSheetEncapsulationWights,
+      addNewSheetEncapsulationSizeByCategoryName,
+      deleteSheetEncapsulationSize,
       setOpenDeleteModal,
       onCloseDeleteModal,
       onOpenDeleteModal,
-      updatePlatSize,
+      updateSheetEncapsulationSize,
     });
   }, [
     headerTable,
-    allPlats,
-    openAddNewPlatModal,
+    allSheetEncapsulation,
+    openAddNewSheetEncapsulationModal,
     items,
     categoryName,
-    openUpdatePlatModal,
+    openUpdateSheetEncapsulationModal,
     selectedEditItem,
-    isAddNewPlatWights,
+    isAddNewSheetEncapsulationWights,
     openDeleteModal,
-    selectedPlatWeight,
+    selectedSheetEncapsulationWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStateSheetEncapsulationSize,
+    onCloseAddNewSheetEncapsulationModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdatePlatModal,
+    addNewSheetEncapsulationSize,
+    setOpenUpdateSheetEncapsulationModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewPlatWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewSheetEncapsulationWights,
+    addNewSheetEncapsulationSizeByCategoryName,
+    deleteSheetEncapsulationSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
+    updateSheetEncapsulationSize,
   ]);
   return (
     <AdminAuthLayout>
       <HeaderTitle title={t("materials.sheetEncapsulation.admin.title")} />
       <HeaderFilter />
-      <Table tableHeaders={headerTable} tableRows={allPlats} />
+      <Table tableHeaders={headerTable} tableRows={allSheetEncapsulation} />
     </AdminAuthLayout>
   );
 }

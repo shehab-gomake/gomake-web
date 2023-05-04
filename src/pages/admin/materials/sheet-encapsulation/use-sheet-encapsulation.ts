@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { getAndSetGetAllSheetEncapsulation } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const usePlat = () => {
+const useSheetEncapsulation = () => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
@@ -15,14 +15,26 @@ const usePlat = () => {
     ],
     []
   );
-  const [openAddNewPlatModal, setOpenAddNewPlatModal] = useState(false);
-  const [openUpdatePlatModal, setOpenUpdatePlatModal] = useState(false);
+  const [
+    openAddNewSheetEncapsulationModal,
+    setOpenAddNewSheetEncapsulationModal,
+  ] = useState(false);
+  const [
+    openUpdateSheetEncapsulationModal,
+    setOpenUpdateSheetEncapsulationModal,
+  ] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [allPlats, setAllPlats] = useState([]);
+  const [allSheetEncapsulation, setAllSheetEncapsulation] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
-  const [isAddNewPlatWights, setIsAddNewPlatWights] = useState(false);
-  const [selectedPlatWeight, setSelectedPlatWeight] = useState({});
+  const [
+    isAddNewSheetEncapsulationWights,
+    setIsAddNewSheetEncapsulationWights,
+  ] = useState(false);
+  const [
+    selectedSheetEncapsulationWeight,
+    setSelectedSheetEncapsulationWeight,
+  ] = useState({});
   const [updateState, setUpdateState] = useState([]);
 
   const [items, setItems] = useState([
@@ -45,7 +57,7 @@ const usePlat = () => {
     };
     setItems(temp);
   };
-  const onChangeUpdateStatePlatSize = useCallback(
+  const onChangeUpdateStateSheetEncapsulationSize = useCallback(
     (index: string, filedName: string, value: any) => {
       let temp: any = { ...updateState };
       temp[`${index}`] = {
@@ -56,7 +68,7 @@ const usePlat = () => {
     },
     [updateState]
   );
-  const initialStatePlatWeights = (item: any) => {
+  const initialStateSheetEncapsulationWeights = (item: any) => {
     let temp = [...item?.sheetEncapsulationSizes];
     let final: any = [];
     temp.map((sheetEncapsulationSize) => {
@@ -68,34 +80,34 @@ const usePlat = () => {
     setUpdateState(final);
   };
 
-  const getPlats = useCallback(async () => {
-    await getAndSetGetAllSheetEncapsulation(callApi, setAllPlats);
+  const getSheetEncapsulation = useCallback(async () => {
+    await getAndSetGetAllSheetEncapsulation(callApi, setAllSheetEncapsulation);
   }, []);
-  const onCloseAddNewPlatModal = () => {
-    setOpenAddNewPlatModal(false);
+  const onCloseAddNewSheetEncapsulationModal = () => {
+    setOpenAddNewSheetEncapsulationModal(false);
   };
   const onOpnModalAdded = () => {
-    setOpenAddNewPlatModal(true);
+    setOpenAddNewSheetEncapsulationModal(true);
   };
   const onCloseUpdateModal = async () => {
-    getPlats();
-    setOpenUpdatePlatModal(false);
-    setIsAddNewPlatWights(false);
+    getSheetEncapsulation();
+    setOpenUpdateSheetEncapsulationModal(false);
+    setIsAddNewSheetEncapsulationWights(false);
   };
   const onOpnUpdateModal = (item) => {
-    initialStatePlatWeights(item);
+    initialStateSheetEncapsulationWeights(item);
     setSelectedEditItem(item);
-    setOpenUpdatePlatModal(true);
+    setOpenUpdateSheetEncapsulationModal(true);
   };
   const onCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
   const onOpenDeleteModal = (item) => {
     setOpenDeleteModal(true);
-    setSelectedPlatWeight(item);
+    setSelectedSheetEncapsulationWeight(item);
   };
 
-  const addNewPlatsSize = useCallback(async () => {
+  const addNewSheetEncapsulationSize = useCallback(async () => {
     const res = await callApi(
       "POST",
       `/v1/administrator/sheet-encapsulation/add-sheet-encapsulation`,
@@ -110,8 +122,8 @@ const usePlat = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      await getPlats();
-      onCloseAddNewPlatModal();
+      await getSheetEncapsulation();
+      onCloseAddNewSheetEncapsulationModal();
     } else {
       setSnackbarStateValue({
         state: true,
@@ -120,7 +132,7 @@ const usePlat = () => {
       });
     }
   }, [categoryName, items]);
-  const addNewPlatSizeByCategoryName = useCallback(
+  const addNewSheetEncapsulationSizeByCategoryName = useCallback(
     async (selectedItem: any) => {
       const res = await callApi(
         "POST",
@@ -135,7 +147,7 @@ const usePlat = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getPlats();
+        getSheetEncapsulation();
         onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -147,7 +159,7 @@ const usePlat = () => {
     },
     [items]
   );
-  const deletePlatSize = useCallback(
+  const deleteSheetEncapsulationSize = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -159,7 +171,7 @@ const usePlat = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getPlats();
+        getSheetEncapsulation();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -172,7 +184,7 @@ const usePlat = () => {
     []
   );
 
-  const updatePlatSize = useCallback(
+  const updateSheetEncapsulationSize = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
@@ -198,38 +210,38 @@ const usePlat = () => {
     [updateState]
   );
   useEffect(() => {
-    getPlats();
+    getSheetEncapsulation();
   }, []);
   return {
     headerTable,
-    allPlats,
-    openAddNewPlatModal,
+    allSheetEncapsulation,
+    openAddNewSheetEncapsulationModal,
     items,
     categoryName,
-    openUpdatePlatModal,
+    openUpdateSheetEncapsulationModal,
     selectedEditItem,
-    isAddNewPlatWights,
+    isAddNewSheetEncapsulationWights,
     openDeleteModal,
-    selectedPlatWeight,
+    selectedSheetEncapsulationWeight,
     updateState,
-    onChangeUpdateStatePlatSize,
-    onCloseAddNewPlatModal,
+    onChangeUpdateStateSheetEncapsulationSize,
+    onCloseAddNewSheetEncapsulationModal,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addNewPlatsSize,
-    setOpenUpdatePlatModal,
+    addNewSheetEncapsulationSize,
+    setOpenUpdateSheetEncapsulationModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewPlatWights,
-    addNewPlatSizeByCategoryName,
-    deletePlatSize,
+    setIsAddNewSheetEncapsulationWights,
+    addNewSheetEncapsulationSizeByCategoryName,
+    deleteSheetEncapsulationSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updatePlatSize,
+    updateSheetEncapsulationSize,
   };
 };
 
-export { usePlat };
+export { useSheetEncapsulation };

@@ -10,23 +10,29 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { PlatSizeMapping } from "./sheet-encapsulation-size-mapping";
-import { materialPlatsState } from "../store/sheet-encapsulation";
+import { SheetEncapsulationSizeMapping } from "./sheet-encapsulation-size-mapping";
+import { materialSheetEncapsulationState } from "../store/sheet-encapsulation";
 import { useStyle } from "./style";
 
-const AddNewPlatModal = () => {
+const AddNewSheetEncapsulationModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialSheetEncapsulationStateValue = useRecoilValue<any>(
+    materialSheetEncapsulationState
+  );
 
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openAddNewPlatModal}
+        openModal={
+          materialSheetEncapsulationStateValue?.openAddNewSheetEncapsulationModal
+        }
         modalTitle={t(
           "materials.sheetEncapsulation.admin.addNewSheetEncapsulation"
         )}
-        onClose={materialPlatsStateValue?.onCloseAddNewPlatModal}
+        onClose={
+          materialSheetEncapsulationStateValue?.onCloseAddNewSheetEncapsulationModal
+        }
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -38,9 +44,11 @@ const AddNewPlatModal = () => {
               <GomakeTextInput
                 placeholder={t("materials.sheetPaper.admin.categoryName")}
                 style={clasess.textInputStyle}
-                value={materialPlatsStateValue?.categoryName}
+                value={materialSheetEncapsulationStateValue?.categoryName}
                 onChange={(e: any) => {
-                  materialPlatsStateValue?.setCategoryName(e.target.value);
+                  materialSheetEncapsulationStateValue?.setCategoryName(
+                    e.target.value
+                  );
                 }}
               />
             </div>
@@ -59,7 +67,9 @@ const AddNewPlatModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialPlatsStateValue?.items];
+                    const temp = [
+                      ...materialSheetEncapsulationStateValue?.items,
+                    ];
                     temp.push({
                       code: "",
                       thickness: "",
@@ -70,7 +80,7 @@ const AddNewPlatModal = () => {
                       quantityInPackage: "",
                       defaultPricePerUnit: "",
                     });
-                    materialPlatsStateValue?.setItems(temp);
+                    materialSheetEncapsulationStateValue?.setItems(temp);
                   }}
                 >
                   <AddIcon />
@@ -83,27 +93,33 @@ const AddNewPlatModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialPlatsStateValue?.items];
+                    const temp = [
+                      ...materialSheetEncapsulationStateValue?.items,
+                    ];
                     temp.pop();
-                    materialPlatsStateValue?.setItems(temp);
+                    materialSheetEncapsulationStateValue?.setItems(temp);
                   }}
                 >
                   <RemoveIcon />
                 </IconButton>
               </Tooltip>
             </div>
-            {materialPlatsStateValue?.items?.map((item: any, index: number) => {
-              return (
-                <PlatSizeMapping
-                  key={`platSizeMapping_${index}`}
-                  index={index}
-                />
-              );
-            })}
+            {materialSheetEncapsulationStateValue?.items?.map(
+              (item: any, index: number) => {
+                return (
+                  <SheetEncapsulationSizeMapping
+                    key={`platSizeMapping_${index}`}
+                    index={index}
+                  />
+                );
+              }
+            )}
           </div>
           <div style={clasess.addBtnContainer}>
             <GomakePrimaryButton
-              onClick={materialPlatsStateValue?.addNewPlatsSize}
+              onClick={
+                materialSheetEncapsulationStateValue?.addNewSheetEncapsulationSize
+              }
             >
               {t("materials.sheetEncapsulation.admin.addNewSheetEncapsulation")}
             </GomakePrimaryButton>
@@ -113,4 +129,4 @@ const AddNewPlatModal = () => {
     </>
   );
 };
-export { AddNewPlatModal };
+export { AddNewSheetEncapsulationModal };

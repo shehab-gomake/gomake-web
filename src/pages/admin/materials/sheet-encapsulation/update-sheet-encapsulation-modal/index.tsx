@@ -5,23 +5,27 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddPlatSizeWeightsMapping } from "./add-sheet-encapsulation-size-mapping";
-import { PlatWeightsMapping } from "./sheet-encapsulation-size-mapping";
-import { materialPlatsState } from "../store/sheet-encapsulation";
+import { AddSheetEncapsulationSizeWeightsMapping } from "./add-sheet-encapsulation-size-mapping";
+import { SheetEncapsulationWeightsMapping } from "./sheet-encapsulation-size-mapping";
+import { materialSheetEncapsulationState } from "../store/sheet-encapsulation";
 import { useStyle } from "./style";
 
-const UpdatePlatModal = () => {
+const UpdateSheetEncapsulationModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
-  const selectedItem = materialPlatsStateValue?.selectedEditItem;
+  const materialSheetEncapsulationStateValue = useRecoilValue<any>(
+    materialSheetEncapsulationState
+  );
+  const selectedItem = materialSheetEncapsulationStateValue?.selectedEditItem;
 
   return (
     <>
       <GoMakeModal
-        openModal={materialPlatsStateValue?.openUpdatePlatModal}
-        modalTitle={`Edit ${selectedItem?.categoryName} Plat`}
-        onClose={materialPlatsStateValue?.onCloseUpdateModal}
+        openModal={
+          materialSheetEncapsulationStateValue?.openUpdateSheetEncapsulationModal
+        }
+        modalTitle={`Edit ${selectedItem?.categoryName} SheetEncapsulation`}
+        onClose={materialSheetEncapsulationStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -45,7 +49,7 @@ const UpdatePlatModal = () => {
                   "materials.sheetEncapsulation.admin.sheetEncapsulationSizeSection"
                 )}
               </div>
-              {!materialPlatsStateValue?.isAddNewPlatWights && (
+              {!materialSheetEncapsulationStateValue?.isAddNewSheetEncapsulationWights && (
                 <Tooltip
                   title={t(
                     "materials.sheetEncapsulation.admin.addSheetEncapsulationSize"
@@ -53,7 +57,7 @@ const UpdatePlatModal = () => {
                 >
                   <IconButton
                     onClick={() => {
-                      materialPlatsStateValue.setItems([
+                      materialSheetEncapsulationStateValue.setItems([
                         {
                           code: "",
                           thickness: "",
@@ -65,7 +69,9 @@ const UpdatePlatModal = () => {
                           defaultPricePerUnit: "",
                         },
                       ]);
-                      materialPlatsStateValue?.setIsAddNewPlatWights(true);
+                      materialSheetEncapsulationStateValue?.setIsAddNewSheetEncapsulationWights(
+                        true
+                      );
                     }}
                   >
                     <AddIcon />
@@ -73,8 +79,8 @@ const UpdatePlatModal = () => {
                 </Tooltip>
               )}
             </div>
-            {materialPlatsStateValue?.isAddNewPlatWights && (
-              <AddPlatSizeWeightsMapping
+            {materialSheetEncapsulationStateValue?.isAddNewSheetEncapsulationWights && (
+              <AddSheetEncapsulationSizeWeightsMapping
                 index={0}
                 selectedItem={selectedItem}
               />
@@ -82,7 +88,7 @@ const UpdatePlatModal = () => {
             {selectedItem?.sheetEncapsulationSizes?.map(
               (item: any, index: number) => {
                 return (
-                  <PlatWeightsMapping
+                  <SheetEncapsulationWeightsMapping
                     key={`platSizeMapping_${index}`}
                     index={index}
                     item={item}
@@ -97,4 +103,4 @@ const UpdatePlatModal = () => {
     </>
   );
 };
-export { UpdatePlatModal };
+export { UpdateSheetEncapsulationModal };

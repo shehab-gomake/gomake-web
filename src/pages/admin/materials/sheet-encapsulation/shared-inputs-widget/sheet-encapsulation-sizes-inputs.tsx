@@ -3,13 +3,15 @@ import { useRecoilValue } from "recoil";
 
 import { GomakeTextInput } from "@/components";
 
-import { materialPlatsState } from "../store/sheet-encapsulation";
+import { materialSheetEncapsulationState } from "../store/sheet-encapsulation";
 import { useStyle } from "../add-new-sheet-encapsulation-modal/style";
 
-const PlatSizeInputs = ({ index }) => {
+const SheetEncapsulationSizeInputs = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialSheetEncapsulationStateValue = useRecoilValue<any>(
+    materialSheetEncapsulationState
+  );
 
   return (
     <>
@@ -21,9 +23,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterCode")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["code"]}
+            value={materialSheetEncapsulationStateValue?.items[index]["code"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialSheetEncapsulationStateValue?.changeItems(
                 index,
                 "code",
                 e.target.value
@@ -38,9 +40,11 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.sheetEncapsulation.admin.enterThickness")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["thickness"]}
+            value={
+              materialSheetEncapsulationStateValue?.items[index]["thickness"]
+            }
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialSheetEncapsulationStateValue?.changeItems(
                 index,
                 "thickness",
                 e.target.value
@@ -55,9 +59,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.sheetEncapsulation.admin.enterWeight")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["weight"]}
+            value={materialSheetEncapsulationStateValue?.items[index]["weight"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialSheetEncapsulationStateValue?.changeItems(
                 index,
                 "weight",
                 e.target.value
@@ -72,9 +76,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterWidth")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["width"]}
+            value={materialSheetEncapsulationStateValue?.items[index]["width"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialSheetEncapsulationStateValue?.changeItems(
                 index,
                 "width",
                 e.target.value
@@ -89,9 +93,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterHeight")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["height"]}
+            value={materialSheetEncapsulationStateValue?.items[index]["height"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialSheetEncapsulationStateValue?.changeItems(
                 index,
                 "height",
                 e.target.value
@@ -106,9 +110,9 @@ const PlatSizeInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.plat.admin.enterName")}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["name"]}
+            value={materialSheetEncapsulationStateValue?.items[index]["name"]}
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialSheetEncapsulationStateValue?.changeItems(
                 index,
                 "name",
                 e.target.value
@@ -125,9 +129,13 @@ const PlatSizeInputs = ({ index }) => {
               "materials.sheetEncapsulation.admin.enterQuantityInPackage"
             )}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["quantityInPackage"]}
+            value={
+              materialSheetEncapsulationStateValue?.items[index][
+                "quantityInPackage"
+              ]
+            }
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialSheetEncapsulationStateValue?.changeItems(
                 index,
                 "quantityInPackage",
                 e.target.value
@@ -144,9 +152,13 @@ const PlatSizeInputs = ({ index }) => {
               "materials.sheetEncapsulation.admin.enterDefaultPricePerUnit"
             )}
             style={clasess.textInputStyle}
-            value={materialPlatsStateValue?.items[index]["defaultPricePerUnit"]}
+            value={
+              materialSheetEncapsulationStateValue?.items[index][
+                "defaultPricePerUnit"
+              ]
+            }
             onChange={(e: any) => {
-              materialPlatsStateValue?.changeItems(
+              materialSheetEncapsulationStateValue?.changeItems(
                 index,
                 "defaultPricePerUnit",
                 e.target.value
@@ -158,4 +170,4 @@ const PlatSizeInputs = ({ index }) => {
     </>
   );
 };
-export { PlatSizeInputs };
+export { SheetEncapsulationSizeInputs };

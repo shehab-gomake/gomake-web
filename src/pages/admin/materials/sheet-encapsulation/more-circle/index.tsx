@@ -2,9 +2,9 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeDeleteModal } from "@/components";
 
-import { UpdatePlatModal } from "../update-sheet-encapsulation-modal";
-import { materialPlatsState } from "../store/sheet-encapsulation";
-import { usePlatsModal } from "./use-sheet-encapsulation-modal";
+import { UpdateSheetEncapsulationModal } from "../update-sheet-encapsulation-modal";
+import { materialSheetEncapsulationState } from "../store/sheet-encapsulation";
+import { useSheetEncapsulationModal } from "./use-sheet-encapsulation-modal";
 import { IconWidget } from "./icon-widget";
 
 const SheetEncapsulationSettingsWidget = ({ item }: any) => {
@@ -12,19 +12,21 @@ const SheetEncapsulationSettingsWidget = ({ item }: any) => {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deletePlatByCategoryName,
+    deleteSheetEncapsulationByCategoryName,
     t,
-  } = usePlatsModal({
+  } = useSheetEncapsulationModal({
     item,
   });
-  const materialPlatsStateValue = useRecoilValue<any>(materialPlatsState);
+  const materialSheetEncapsulationStateValue = useRecoilValue<any>(
+    materialSheetEncapsulationState
+  );
 
   return (
     <>
       <IconWidget
         t={t}
         onOpnUpdateModal={() => {
-          materialPlatsStateValue?.onOpnUpdateModal(item);
+          materialSheetEncapsulationStateValue?.onOpnUpdateModal(item);
         }}
         onOpenDeleteModal={onOpenDeleteModal}
       />
@@ -38,9 +40,11 @@ const SheetEncapsulationSettingsWidget = ({ item }: any) => {
         subTitle={`${t(
           "materials.sheetEncapsulation.admin.subTitleDeleteModal"
         )} ${item?.categoryName} ?`}
-        onClickDelete={deletePlatByCategoryName}
+        onClickDelete={deleteSheetEncapsulationByCategoryName}
       />
-      {item === materialPlatsStateValue.selectedEditItem && <UpdatePlatModal />}
+      {item === materialSheetEncapsulationStateValue.selectedEditItem && (
+        <UpdateSheetEncapsulationModal />
+      )}
     </>
   );
 };
