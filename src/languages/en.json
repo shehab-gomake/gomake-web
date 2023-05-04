@@ -782,6 +782,25 @@
       "supplier": "Supplier"
     },
     "sheetEncapsulation": {
+      "admin": {
+        "title": "Sheet encapsulation",
+        "addNewSheetEncapsulation": "Add new  Sheet encapsulation",
+        "sheetEncapsulationSizeSection": " sheet encapsulation size section",
+        "addSheetEncapsulationSize": "Add new sheet encapsulation size",
+        "removeSheetEncapsulationSize": "Remove last sheet encapsulation size ",
+        "deleteSheetEncapsulationSize": "Delete Sheet encapsulation Size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete sheet encapsulation size?",
+        "deleteSheetEncapsulation": "Delete Sheet encapsulation ",
+        "subTitleDeleteModal": "Are you sure you want to delete sheet encapsulation?",
+        "thickness": "Thickness",
+        "enterThickness": "Enter Thickness",
+        "weight": "Weight",
+        "enterWeight": "Enter Weight",
+        "quantityInPackage": "Quantity in package",
+        "enterQuantityInPackage": "Enter Quantity in package",
+        "defaultPricePerUnit": "Default Price Per Unit",
+        "enterDefaultPricePerUnit": "Enter Default Price Per Unit"
+      },
       "title": "Sheet encapsulation",
       "code": "Code",
       "width": "Width",
