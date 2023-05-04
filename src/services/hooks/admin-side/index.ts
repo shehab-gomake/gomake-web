@@ -13,3 +13,4 @@ export * from "./get-set-canvas-frames";
 export * from "./get-set-roll-encapsulation";
 export * from "./get-set-frames";
 export * from "./get-set-foil";
+export * from "./get-set-packin-drums";
