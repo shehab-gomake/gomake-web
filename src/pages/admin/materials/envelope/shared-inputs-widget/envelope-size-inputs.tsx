@@ -125,16 +125,26 @@ const EnvelopeSizeInputs = ({ index }) => {
             {t("materials.envelops.admin.isWithWindow")}
           </div>
           <GoMakeAutoComplate
-            options={[true, false]}
+            options={[
+              { label: "Yes", value: true },
+              { label: "No", value: false },
+            ]}
             style={clasess.textInputStyle}
             // renderOption={(value: boolean) => value}
             placeholder={t("materials.envelops.admin.enterisWithWindow")}
-            value={materialEnvelopesStateValue?.items[index]["isWithWindow"]}
+            value={
+              materialEnvelopesStateValue?.items[index]["isWithWindowLabel"]
+            }
             onChange={(e: any, value: any) => {
               materialEnvelopesStateValue?.changeItems(
                 index,
+                "isWithWindowLabel",
+                value?.label
+              );
+              materialEnvelopesStateValue?.changeItems(
+                index,
                 "isWithWindow",
-                value
+                value?.value
               );
             }}
           />
