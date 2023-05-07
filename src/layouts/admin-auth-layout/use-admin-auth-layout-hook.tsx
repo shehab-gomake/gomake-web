@@ -65,26 +65,26 @@ const useAuthLayoutHook = () => {
             title: t("materials.plat.admin.title"),
             path: "/admin/materials/plats",
           },
-          //{
-          // key: "envelopes",
-          // title: t("materials.envelops.admin.title"),
-          // path: "/admin/materials/envelope",
-          // },
-          // {
-          // key: "tubes",
-          // title: t("materials.tubes.admin.title"),
-          // path: "/admin/materials/tube",
-          // },
-          // {
-          // key: "materialRollPrinting",
-          // title: t("materials.printingMaterials.admin.title"),
-          // path: "/admin/materials/material-roll-printing",
-          // },
-          // {
-          // key: "wideFormatMaterial",
-          // title: t("materials.wideFormatMaterial.admin.title"),
-          // path: "/admin/materials/wide-format-material",
-          // },
+          {
+            key: "envelopes",
+            title: t("materials.envelops.admin.title"),
+            path: "/admin/materials/envelope",
+          },
+          {
+            key: "tubes",
+            title: t("materials.tubes.admin.title"),
+            path: "/admin/materials/tube",
+          },
+          {
+            key: "materialRollPrinting",
+            title: t("materials.printingMaterials.admin.title"),
+            path: "/admin/materials/material-roll-printing",
+          },
+          {
+            key: "wideFormatMaterial",
+            title: t("materials.wideFormatMaterial.admin.title"),
+            path: "/admin/materials/wide-format-material",
+          },
           {
             key: "hardboards",
             title: t("materials.hardboards.admin.title"),
