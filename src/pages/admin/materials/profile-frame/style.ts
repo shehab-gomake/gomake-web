@@ -28,7 +28,7 @@ const useStyle = () => {
       },
       addBtnStyle: {
         display: "flex",
-        width: "24%",
+        width: 300,
       },
       btnStyle: {
         borderRadius: 4,
