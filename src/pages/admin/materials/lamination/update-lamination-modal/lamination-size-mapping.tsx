@@ -46,8 +46,10 @@ const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
               selectedItem?.categoryName
             )
           }
-          title={"Delete Lamination Weight"}
-          subTitle={"Are you sure you want to delete sheet weight?"}
+          title={t("materials.lamination.admin.deleteLaminationthicknesses")}
+          subTitle={t(
+            "materials.lamination.admin.subTitleDeleteThicknessesModal"
+          )}
         />
         <div style={clasess.mainWaightsContainer}>
           <div>

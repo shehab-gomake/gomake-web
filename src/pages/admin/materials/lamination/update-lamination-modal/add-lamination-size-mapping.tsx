@@ -25,7 +25,7 @@ const AddLaminationWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.sizeSectionTitleStyle}>
             {t("materials.sheetPaper.admin.sheetSizeSection")}
           </div>
-          <Tooltip title={t("materials.sheetPaper.admin.addLaminationSize")}>
+          <Tooltip title={t("materials.lamination.admin.addNewLaminationSize")}>
             <IconButton
               onClick={() => {
                 const temp = [
@@ -49,7 +49,7 @@ const AddLaminationWeightsMapping = ({ index, selectedItem }) => {
               <AddIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title={t("materials.sheetPaper.admin.removeLaminationSize")}>
+          <Tooltip title={t("materials.lamination.admin.removeLaminationSize")}>
             <IconButton
               onClick={() => {
                 const temp = [
