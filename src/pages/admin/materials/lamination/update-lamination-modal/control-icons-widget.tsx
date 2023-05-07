@@ -4,7 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton, Tooltip } from "@mui/material";
 import { GoMakeDeleteModal } from "@/components";
 import SaveIcon from "@mui/icons-material/Save";
-import { materialLaminationsState } from "../store/lamination";
+import { materialSheetsState } from "../store/lamination";
 
 import { useStyle } from "./style";
 
@@ -17,9 +17,7 @@ const ControlIconsWidget = ({
   item,
 }) => {
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(
-    materialLaminationsState
-  );
+  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
   return (
     <>
       <div style={clasess.controlsIconContainer}>
@@ -37,7 +35,7 @@ const ControlIconsWidget = ({
         </Tooltip>
       </div>
 
-      {item === materialSheetsStateValue.selectedLaminationSize && (
+      {item === materialSheetsStateValue.selectedSheetWeight && (
         <GoMakeDeleteModal
           title={title}
           yesBtn={t("materials.sheetPaper.admin.delete")}

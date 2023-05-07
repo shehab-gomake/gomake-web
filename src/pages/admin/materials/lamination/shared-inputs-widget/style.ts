@@ -1,11 +1,9 @@
-import { useMemo } from "react";
-
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useMemo } from "react";
 
 const useStyle = () => {
-  const { secondColor, neutralColor, errorColor, primaryColor } =
-    useGomakeTheme();
+  const { secondColor, neutralColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       insideStyle: { width: "95%" },
@@ -56,18 +54,6 @@ const useStyle = () => {
         width: "100%",
         marginTop: 10,
         backgroundColor: "rgba(0,0,0,0.1)",
-        padding: 20,
-        paddingBottom: 20,
-        borderRadius: 4,
-      },
-      newAddWightsByCatagory: {
-        display: "flex",
-        flexDirection: "column" as "column",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
-        width: "100%",
-        marginTop: 10,
-        backgroundColor: "#f0f1f9",
         padding: 20,
         paddingBottom: 20,
         borderRadius: 4,
@@ -134,29 +120,11 @@ const useStyle = () => {
       },
       addSheetBtnContainer: {
         display: "flex",
-        justifyContent: "flex-end",
-        alignItems: "flex-end",
-        alignSelf: "flex-end",
-        alignContent: "flex-end",
-        marginTop: 25,
-      },
-      btnsWightSheetContainer: {
-        display: "flex",
-        flexDirection: "row" as "row",
         justifyContent: "center",
         alignItems: "center",
-        alignSelf: "end",
-        gap: 15,
-      },
-      addBtnStyle: {
-        height: 40,
-        backgroundColor: primaryColor(800),
-        ...FONT_FAMILY.Lexend(400, 14),
-      },
-      cancelBtnStyle: {
-        height: 40,
-        backgroundColor: errorColor(500),
-        ...FONT_FAMILY.Lexend(400, 14),
+        alignSelf: "center",
+        alignContent: "center",
+        width: "25%",
       },
       mainWaightsContainer: {
         display: "flex",
@@ -166,13 +134,6 @@ const useStyle = () => {
         width: "100%",
         flexWrap: "wrap" as "wrap",
         gap: 20,
-      },
-      controlsIconContainer: {
-        display: "flex",
-        flexDirection: "row" as "row",
-        justifyContent: "center",
-        alignItems: "center",
-        alignSelf: "end",
       },
     };
   }, []);

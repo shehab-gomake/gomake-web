@@ -1,8 +1,8 @@
 import { atom } from "recoil";
 
-export const materialLaminationsState = atom({
-  key: "materialLaminationsState",
+export const materialSheetsState = atom({
+  key: "materialSheetsState",
   default: {
-    openAddLaminationModal: false,
+    openAddSheetModal: false,
   },
 });

@@ -27,14 +27,14 @@ const useSheetModal = ({ item }: any) => {
     if (res?.success) {
       setSnackbarStateValue({
         state: true,
-        message: t("modal.deleteSusuccessfully"),
+        message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
       onCloseDeleteModal();
     } else {
       setSnackbarStateValue({
         state: true,
-        message: t("modal.deletefailed"),
+        message: t("modal.addedfailed"),
         type: "error",
       });
     }

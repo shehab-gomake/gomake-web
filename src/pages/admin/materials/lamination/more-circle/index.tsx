@@ -2,12 +2,9 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeDeleteModal } from "@/components";
 import { IconWidget } from "./icon-widget";
-import moreCircle from "@/icons/more-circle.png";
-import { IconButton, Tooltip } from "@mui/material";
 import { useSheetModal } from "./use-lamination-modal";
 import { UpdateSheetModal } from "../update-lamination-modal";
-import { materialLaminationsState } from "../store/lamination";
-import { GoMakeDeleteMaterialModal } from "@/widgets";
+import { materialSheetsState } from "../store/lamination";
 
 const LaminationSettingsWidget = ({ item }: any) => {
   const {
@@ -19,32 +16,30 @@ const LaminationSettingsWidget = ({ item }: any) => {
   } = useSheetModal({
     item,
   });
-  const materialLaminationsStateValue = useRecoilValue<any>(
-    materialLaminationsState
-  );
+  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
 
   return (
     <>
       <IconWidget
         t={t}
         onOpnUpdateModal={() => {
-          materialLaminationsStateValue?.onOpnUpdateModal(item);
+          materialSheetsStateValue?.onOpnUpdateModal(item);
         }}
         onOpenDeleteModal={onOpenDeleteModal}
       />
       <GoMakeDeleteModal
         hideIcon={true}
-        title={t("materials.lamination.admin.deleteLamination")}
-        yesBtn={t("materials.lamination.admin.delete")}
+        title={t("materials.sheetPaper.admin.deleteSheet")}
+        yesBtn={t("materials.sheetPaper.admin.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.lamination.admin.subTitleDeleteModal")} ${
+        subTitle={`${t("materials.sheetPaper.admin.subTitleDeleteModal")} ${
           item?.categoryName
         } ?`}
         onClickDelete={deleteSheetByCategoryName}
       />
-      {item === materialLaminationsStateValue.selectedEditItem && (
+      {item === materialSheetsStateValue.selectedEditItem && (
         <UpdateSheetModal />
       )}
     </>
