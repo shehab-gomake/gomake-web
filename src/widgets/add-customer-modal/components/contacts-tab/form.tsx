@@ -17,9 +17,9 @@ const ContactForm = ({contact,onDelete}: any) => {
     );
 
     return (
-        <div style={{ marginBottom: '20px' }} >
+        <div style={{ marginBottom: '20px'}} >
             <div style={{ display: "flex", alignItems: "center",  width: "63%" , justifyContent:"space-between" , marginBottom: '8px'}} >
-                <div >
+                <div>
                     <h3 style={clasess.headersStyle} >First name:</h3>
                     <input style={clasess.inputStyle} type="text" />
                 </div>

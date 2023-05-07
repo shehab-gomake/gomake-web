@@ -1,27 +1,16 @@
 import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Skeleton } from "@mui/material";
 import { useStyle } from "./style";
+import { useSupplier } from "@/hooks";
 
-const HeaderFilter = () => {
+const HeaderFilter = ({ customersCategores , agentsCategores, customerType , status , categoryName , onChangeAgent , onChangeCustomer , onChangeCustomerType, onChangeSupplier , onChangeStatus
+  }: any) => {
     const { t } = useTranslation();
-    const agentsCategores = useMemo(
-        () => [t("agent1"),
-        t("agent2"),
-        t("agent3"),],
-        []
-    );
-    const customersCategores = useMemo(
-        () => [t("Cust1"), t("Cust2"),], []
-    );
-    const customersTypeCategores = useMemo(
-        () => [t("client"),], []
-    );
-    const statusCategores = useMemo(
-        () => [t("active"),], []
-    );
     const { clasess } = useStyle();
+
+   
 
     return (
         <div >
@@ -30,6 +19,7 @@ const HeaderFilter = () => {
                     options={agentsCategores}
                     style={clasess.autoComplateStyle}
                     placeholder={t("Select agent")}
+                    onChange={onChangeSupplier}
                 />
             ) : (
                 <Skeleton variant="rectangular" width={200} height={40} />
@@ -40,21 +30,24 @@ const HeaderFilter = () => {
                         options={customersCategores}
                         style={clasess.autoComplateStyle}
                         placeholder={t("Select customer")}
+                        onChange={onChangeCustomer}
                     />
                 ) : (<Skeleton variant="rectangular" width={200} height={40} />)}
 
-                {customersTypeCategores?.length > 0 ? (
+                {customerType?.length > 0 ? (
                     <GoMakeAutoComplate
-                        options={customersTypeCategores}
+                        options={customerType}
                         style={clasess.autoComplateStyle}
                         placeholder={t("Select customer type")}
+                        onChange={onChangeCustomerType}
                     />
                 ) : (<Skeleton variant="rectangular" width={200} height={40} />)}
-                {statusCategores?.length > 0 ? (
+                {status?.length > 0 ? (
                     <GoMakeAutoComplate
-                        options={statusCategores}
+                        options={status}
                         style={clasess.autoComplateStyle}
                         placeholder={t("Select status")}
+                        onChange={onChangeStatus}
                     />
                 ) : (
                     <Skeleton variant="rectangular" width={200} height={40} />

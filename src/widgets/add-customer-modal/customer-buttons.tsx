@@ -15,6 +15,7 @@ import { PriceListForm } from "./components/priceList-tab/form";
 import { CustomerForm } from "./components/gomakeUser-tab/CustomerForm";
 import AddIcon from '@mui/icons-material/Add';
 import { IPaddressForm } from "./components/gomakeUser-tab/IPAddressForm";
+import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 
 
 const ButtonsWidget = () => {
@@ -353,7 +354,7 @@ const ButtonsWidget = () => {
                   selectedTab == 5 &&
                   <div >
                   <div>
-                    <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyClient} >
+                    <a style={ { display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyClient} >
                       <AddIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddIcon>
                       <Button style={{ color: "#8283BE" }}>new client</Button>
                     </a>
