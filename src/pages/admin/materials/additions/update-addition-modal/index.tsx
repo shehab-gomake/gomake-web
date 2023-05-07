@@ -38,7 +38,6 @@ const UpdatalAdditionModal = () => {
                 key={`AdditionMapping_${selectedItem?.code}`}
                 index={selectedItem?.code}
                 item={selectedItem}
-                selectedItem={selectedItem}
               />
             }
           </div>

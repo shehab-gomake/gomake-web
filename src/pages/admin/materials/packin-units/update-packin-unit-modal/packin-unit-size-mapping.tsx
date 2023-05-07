@@ -124,9 +124,6 @@ const PackinUnitSizeMapping = ({ index, item, selectedItem }) => {
                 }}
               />
             </div>
-          </div>
-
-          <div style={clasess.mainWaightsContainer}>
             <div>
               <div style={clasess.lableTextStyle}>
                 {t("materials.packinUnits.admin.width")}

@@ -37,176 +37,159 @@ const CanvasFrameWeightsMapping = ({ index, item, selectedItem }) => {
           title={t("materials.canvasFrames.admin.deleteCanvasFrame")}
           subTitle={t("materials.canvasFrames.admin.subTitleDeleteSizeModal")}
         />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            height: "100%",
-            justifyContent: "space-between",
-            gap: 10,
-          }}
-        >
-          <div style={clasess.mainWaightsContainer}>
-            <div>
-              <div style={clasess.lableTextStyle}>
-                {t("materials.canvasFrames.admin.code")}
-              </div>
-              <GomakeTextInput
-                placeholder={t("materials.canvasFrames.admin.enterCode")}
-                style={clasess.textInputStyle}
-                value={
-                  materialCanvasFramesStateValue?.updateState[item?.id]?.code
-                }
-                onChange={(e: any) => {
-                  materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
-                    item?.id,
-                    "code",
-                    e.target.value
-                  );
-                }}
-              />
+        <div style={clasess.mainWaightsContainer}>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.canvasFrames.admin.code")}
             </div>
-            <div>
-              <div style={clasess.lableTextStyle}>
-                {t("materials.canvasFrames.admin.defaultPrice")}
-              </div>
-              <GomakeTextInput
-                placeholder={t(
-                  "materials.canvasFrames.admin.enterDefaultPrice"
-                )}
-                style={clasess.textInputStyle}
-                value={
-                  materialCanvasFramesStateValue?.updateState[item?.id]
-                    ?.defaultPrice
-                }
-                onChange={(e: any) => {
-                  materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
-                    item?.id,
-                    "defaultPrice",
-                    e.target.value
-                  );
-                }}
-              />
-            </div>
-            <div>
-              <div style={clasess.lableTextStyle}>
-                {t("materials.canvasFrames.admin.height")}
-              </div>
-              <GomakeTextInput
-                placeholder={t("materials.canvasFrames.admin.enterHeight")}
-                style={clasess.textInputStyle}
-                value={
-                  materialCanvasFramesStateValue?.updateState[item?.id]?.height
-                }
-                onChange={(e: any) => {
-                  materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
-                    item?.id,
-                    "height",
-                    e.target.value
-                  );
-                }}
-              />
-            </div>
-            <div>
-              <div style={clasess.lableTextStyle}>
-                {t("materials.canvasFrames.admin.name")}
-              </div>
-              <GomakeTextInput
-                placeholder={t("materials.canvasFrames.admin.entername")}
-                style={clasess.textInputStyle}
-                value={
-                  materialCanvasFramesStateValue?.updateState[item?.id]?.name
-                }
-                onChange={(e: any) => {
-                  materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
-                    item?.id,
-                    "name",
-                    e.target.value
-                  );
-                }}
-              />
-            </div>
+            <GomakeTextInput
+              placeholder={t("materials.canvasFrames.admin.enterCode")}
+              style={clasess.textInputStyle}
+              value={
+                materialCanvasFramesStateValue?.updateState[item?.id]?.code
+              }
+              onChange={(e: any) => {
+                materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
+                  item?.id,
+                  "code",
+                  e.target.value
+                );
+              }}
+            />
           </div>
-          <div style={clasess.mainWaightsContainer}>
-            <div>
-              <div style={clasess.lableTextStyle}>
-                {t("materials.canvasFrames.admin.stock")}
-              </div>
-              <GomakeTextInput
-                placeholder={t("materials.canvasFrames.admin.enterStock")}
-                style={clasess.textInputStyle}
-                value={
-                  materialCanvasFramesStateValue?.updateState[item?.id]?.stock
-                }
-                onChange={(e: any) => {
-                  materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
-                    item?.id,
-                    "stock",
-                    e.target.value
-                  );
-                }}
-              />
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.canvasFrames.admin.defaultPrice")}
             </div>
-            <div>
-              <div style={clasess.lableTextStyle}>
-                {t("materials.canvasFrames.admin.thickness")}
-              </div>
-              <GomakeTextInput
-                placeholder={t("materials.canvasFrames.admin.enterthickness")}
-                style={clasess.textInputStyle}
-                value={
-                  materialCanvasFramesStateValue?.updateState[item?.id]
-                    ?.thickness
-                }
-                onChange={(e: any) => {
-                  materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
-                    item?.id,
-                    "thickness",
-                    e.target.value
-                  );
-                }}
-              />
+            <GomakeTextInput
+              placeholder={t("materials.canvasFrames.admin.enterDefaultPrice")}
+              style={clasess.textInputStyle}
+              value={
+                materialCanvasFramesStateValue?.updateState[item?.id]
+                  ?.defaultPrice
+              }
+              onChange={(e: any) => {
+                materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
+                  item?.id,
+                  "defaultPrice",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.canvasFrames.admin.height")}
             </div>
-            <div>
-              <div style={clasess.lableTextStyle}>
-                {t("materials.canvasFrames.admin.thickness")}
-              </div>
-              <GomakeTextInput
-                placeholder={t("materials.canvasFrames.admin.enterthickness")}
-                style={clasess.textInputStyle}
-                value={
-                  materialCanvasFramesStateValue?.updateState[item?.id]
-                    ?.thickness
-                }
-                onChange={(e: any) => {
-                  materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
-                    item?.id,
-                    "thickness",
-                    e.target.value
-                  );
-                }}
-              />
+            <GomakeTextInput
+              placeholder={t("materials.canvasFrames.admin.enterHeight")}
+              style={clasess.textInputStyle}
+              value={
+                materialCanvasFramesStateValue?.updateState[item?.id]?.height
+              }
+              onChange={(e: any) => {
+                materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
+                  item?.id,
+                  "height",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.canvasFrames.admin.name")}
             </div>
-            <div>
-              <div style={clasess.lableTextStyle}>
-                {t("materials.canvasFrames.admin.width")}
-              </div>
-              <GomakeTextInput
-                placeholder={t("materials.canvasFrames.admin.enterWidth")}
-                style={clasess.textInputStyle}
-                value={
-                  materialCanvasFramesStateValue?.updateState[item?.id]?.width
-                }
-                onChange={(e: any) => {
-                  materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
-                    item?.id,
-                    "width",
-                    e.target.value
-                  );
-                }}
-              />
+            <GomakeTextInput
+              placeholder={t("materials.canvasFrames.admin.entername")}
+              style={clasess.textInputStyle}
+              value={
+                materialCanvasFramesStateValue?.updateState[item?.id]?.name
+              }
+              onChange={(e: any) => {
+                materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
+                  item?.id,
+                  "name",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.canvasFrames.admin.stock")}
             </div>
+            <GomakeTextInput
+              placeholder={t("materials.canvasFrames.admin.enterStock")}
+              style={clasess.textInputStyle}
+              value={
+                materialCanvasFramesStateValue?.updateState[item?.id]?.stock
+              }
+              onChange={(e: any) => {
+                materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
+                  item?.id,
+                  "stock",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.canvasFrames.admin.thickness")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.canvasFrames.admin.enterthickness")}
+              style={clasess.textInputStyle}
+              value={
+                materialCanvasFramesStateValue?.updateState[item?.id]?.thickness
+              }
+              onChange={(e: any) => {
+                materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
+                  item?.id,
+                  "thickness",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.canvasFrames.admin.thickness")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.canvasFrames.admin.enterthickness")}
+              style={clasess.textInputStyle}
+              value={
+                materialCanvasFramesStateValue?.updateState[item?.id]?.thickness
+              }
+              onChange={(e: any) => {
+                materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
+                  item?.id,
+                  "thickness",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.canvasFrames.admin.width")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.canvasFrames.admin.enterWidth")}
+              style={clasess.textInputStyle}
+              value={
+                materialCanvasFramesStateValue?.updateState[item?.id]?.width
+              }
+              onChange={(e: any) => {
+                materialCanvasFramesStateValue?.onChangeUpdateStatePlatSize(
+                  item?.id,
+                  "width",
+                  e.target.value
+                );
+              }}
+            />
           </div>
         </div>
       </div>
