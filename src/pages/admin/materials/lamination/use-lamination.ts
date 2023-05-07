@@ -46,7 +46,6 @@ const useLamination = () => {
       fitToPrintType: [],
     },
   ]);
-  console.log("items", items);
   const changeItems = (index: number, filedName: string, value: any) => {
     let temp = [...items];
     temp[index] = {

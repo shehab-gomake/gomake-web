@@ -131,7 +131,6 @@ const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
               placeholder={t("materials.lamination.admin.fitToPrintType")}
               multiple={true}
               onChange={(e: any, value: any) => {
-                console.log("item", value);
                 materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
                   item?.id,
                   "fitToPrintType",

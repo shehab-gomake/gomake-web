@@ -17,11 +17,6 @@ const AddLaminationWeightsMapping = ({ index, selectedItem }) => {
   const materialLaminationStateValue = useRecoilValue<any>(
     materialLaminationState
   );
-  console.log("index", index);
-  console.log(
-    "materialLaminationStateValue?.items[index]",
-    materialLaminationStateValue?.items
-  );
   return (
     <>
       <div key={index} style={clasess.tableSecondSections}>
