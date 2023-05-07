@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { LaminationSizeInputs } from "../shared-inputs-widget/lamination-thickness-inputs";
 import { useStyle } from "./style";
 
-const LaminationSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
+const AddsheetSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
 
@@ -19,4 +19,4 @@ const LaminationSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
     </>
   );
 };
-export { LaminationSizeMapping };
+export { AddsheetSizeMapping };

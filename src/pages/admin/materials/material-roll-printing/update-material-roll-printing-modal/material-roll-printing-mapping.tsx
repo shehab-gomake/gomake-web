@@ -149,7 +149,10 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
               {t("materials.printingMaterials.admin.withPremier")}
             </div>
             <GoMakeAutoComplate
-              options={[true, false]}
+              options={[
+                { label: "Yes", value: true },
+                { label: "No", value: false },
+              ]}
               style={clasess.textInputStyle}
               placeholder={t(
                 "materials.printingMaterials.admin.selectWithPremier"
@@ -157,12 +160,19 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
               value={
                 materialMaterialRollPrintingStateValue?.updateState[item?.id]
                   ?.withPremier
+                  ? "Yes"
+                  : "No"
               }
               onChange={(e: any, value: any) => {
                 materialMaterialRollPrintingStateValue?.onChangeUpdateStateMaterialRollPrintingSize(
                   item?.id,
+                  "withPremierLabel",
+                  value?.label
+                );
+                materialMaterialRollPrintingStateValue?.onChangeUpdateStateMaterialRollPrintingSize(
+                  item?.id,
                   "withPremier",
-                  value
+                  value?.value
                 );
               }}
             />

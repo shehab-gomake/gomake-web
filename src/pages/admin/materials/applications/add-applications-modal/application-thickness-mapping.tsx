@@ -108,10 +108,6 @@ const ApplicationThicknessMapping = ({ index }) => {
           >
             <IconButton
               onClick={() => {
-                console.log(
-                  "materialApplicationsStateValue?.items[index]",
-                  materialApplicationsStateValue?.items[index]
-                );
                 const temp = [
                   ...materialApplicationsStateValue?.items[index][
                     "applicationSizes"

@@ -7,7 +7,7 @@ import { ControlIconsWidget } from "./control-icons-widget";
 import { materialAdditionsState } from "../store/additions";
 import { useStyle } from "./style";
 
-const AdditionMapping = ({ index, item, selectedItem }) => {
+const AdditionMapping = ({ index, item }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialAdditionsStateValue = useRecoilValue<any>(

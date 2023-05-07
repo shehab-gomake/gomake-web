@@ -88,12 +88,22 @@ const useStyle = () => {
         color: neutralColor(800),
         marginBottom: 10,
       },
+      multiSelectStyle: {
+        backgroundColor: "#FFFFFF",
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignitems: "center",
+        justifyContent: "center",
+      },
       inputSizesContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
+        flexWrap: "wrap" as "wrap",
+        gap: 20,
         marginBottom: 15,
       },
       addSizesInputsSecondSelection: {
@@ -119,9 +129,11 @@ const useStyle = () => {
       mainWaightsContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
+        flexWrap: "wrap" as "wrap",
+        gap: 20,
       },
     };
   }, []);
