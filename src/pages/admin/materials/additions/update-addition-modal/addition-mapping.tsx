@@ -13,7 +13,6 @@ const AdditionMapping = ({ index, item, selectedItem }) => {
   const materialAdditionsStateValue = useRecoilValue<any>(
     materialAdditionsState
   );
-  console.log("item", item);
   return (
     <>
       <div
