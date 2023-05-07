@@ -10,7 +10,7 @@ import { materialVarnishState } from "./store/varnish";
 import { HeaderFilter } from "./header-filter";
 import { useVarnish } from "./use-varnish";
 
-export default function Additions() {
+export default function Varnish() {
   const { t } = useTranslation();
   const setMaterialHardboardsState =
     useSetRecoilState<any>(materialVarnishState);
