@@ -277,7 +277,7 @@ const useSheets = () => {
         "POST",
         `/v1/administrator/lamination/update-lamination-size-thickness?categoryName=${categoryName}&sizeId=${sizeId}&thicknessId=${thicknessId}`,
         {
-          ...updateState[sizeId],
+          ...updateState[thicknessId],
         }
       );
       if (res?.success) {
