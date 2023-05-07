@@ -4,48 +4,52 @@ import { useRecoilValue } from "recoil";
 import { GomakePrimaryButton } from "@/components";
 
 import { AddsheetSizeMapping } from "./add-lamination-thickness-mapping";
-import { materialSheetsState } from "../store/lamination";
+import { materialLaminationState } from "../store/lamination";
 import { useStyle } from "./style";
 
-const AddSheetWeightSizeMapping = ({ index, selectedItem, sheetSize }) => {
+const AddLaminationWeightSizeMapping = ({ index, selectedItem, sheetSize }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
+  );
 
   return (
     <>
       <div style={clasess.tableSecondSections}>
-        {materialSheetsStateValue?.items[index]["laminationThicknesses"]?.map(
-          (item: any, index2: number) => {
-            return (
-              <AddsheetSizeMapping
-                key={`SheetSizeMapping_${index2}`}
-                index={index2}
-                sheetWeightIndex={index}
-                sheetSize={
-                  materialSheetsStateValue?.items[index][
-                    "laminationThicknesses"
-                  ]
-                }
-              />
-            );
-          }
-        )}
-        <div style={clasess.btnsWightSheetContainer}>
-          <div style={clasess.addSheetBtnContainer}>
+        {materialLaminationStateValue?.items[index][
+          "laminationThicknesses"
+        ]?.map((item: any, index2: number) => {
+          return (
+            <AddsheetSizeMapping
+              key={`LaminationSizeMapping_${index2}`}
+              index={index2}
+              sheetWeightIndex={index}
+              sheetSize={
+                materialLaminationStateValue?.items[index][
+                  "laminationThicknesses"
+                ]
+              }
+            />
+          );
+        })}
+        <div style={clasess.btnsWightLaminationContainer}>
+          <div style={clasess.addLaminationBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialSheetsStateValue?.setIsAddNewSheetWightSize(false)
+                materialLaminationStateValue?.setIsAddNewLaminationWightSize(
+                  false
+                )
               }
               style={clasess.cancelBtnStyle}
             >
               {t("materials.sheetPaper.admin.cancel")}
             </GomakePrimaryButton>
           </div>
-          <div style={clasess.addSheetBtnContainer}>
+          <div style={clasess.addLaminationBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialSheetsStateValue?.addNewSheeWeightSizeByCategoryName(
+                materialLaminationStateValue?.addNewSheeWeightSizeByCategoryName(
                   selectedItem?.categoryName,
                   sheetSize?.id
                 )
@@ -60,4 +64,4 @@ const AddSheetWeightSizeMapping = ({ index, selectedItem, sheetSize }) => {
     </>
   );
 };
-export { AddSheetWeightSizeMapping };
+export { AddLaminationWeightSizeMapping };

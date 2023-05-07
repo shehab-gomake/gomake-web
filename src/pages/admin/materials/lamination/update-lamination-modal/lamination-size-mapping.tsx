@@ -6,16 +6,18 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
 
 import { ControlIconsWidget } from "./control-icons-widget";
-import { SheetSizeMapping } from "./lamination-thickness-mapping";
-import { materialSheetsState } from "../store/lamination";
+import { LaminationSizeMapping } from "./lamination-thickness-mapping";
+import { materialLaminationState } from "../store/lamination";
 import { useStyle } from "./style";
-import { AddSheetWeightSizeMapping } from "./add-lamination-size-thickness-mapping";
+import { AddLaminationWeightSizeMapping } from "./add-lamination-size-thickness-mapping";
 import { useMemo } from "react";
 
-const SheetWeightsMapping = ({ index, item, selectedItem }) => {
+const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
+  );
   const muliSelectOptions = useMemo(() => {
     return [
       { label: "String1", id: "String1" },
@@ -33,18 +35,18 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
           t={t}
           item={item}
           onClickDelete={() =>
-            materialSheetsStateValue.deleteSheetweight(
+            materialLaminationStateValue.deleteLaminationweight(
               item?.id,
               selectedItem?.categoryName
             )
           }
           onClickUpdate={() =>
-            materialSheetsStateValue.updateSheetweight(
+            materialLaminationStateValue.updateLaminationweight(
               item?.id,
               selectedItem?.categoryName
             )
           }
-          title={"Delete Sheet Weight"}
+          title={"Delete Lamination Weight"}
           subTitle={"Are you sure you want to delete sheet weight?"}
         />
         <div style={clasess.mainWaightsContainer}>
@@ -55,9 +57,9 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterCode")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[item?.id]?.code}
+              value={materialLaminationStateValue?.updateState[item?.id]?.code}
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
                   item?.id,
                   "code",
                   e.target.value
@@ -73,9 +75,9 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterWidth")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[item?.id]?.width}
+              value={materialLaminationStateValue?.updateState[item?.id]?.width}
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
                   item?.id,
                   "width",
                   e.target.value
@@ -90,9 +92,11 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterIndex")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[item?.id]?.height}
+              value={
+                materialLaminationStateValue?.updateState[item?.id]?.height
+              }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
                   item?.id,
                   "height",
                   e.target.value
@@ -107,9 +111,9 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterName")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[item?.id]?.name}
+              value={materialLaminationStateValue?.updateState[item?.id]?.name}
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
                   item?.id,
                   "name",
                   e.target.value
@@ -128,16 +132,16 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               multiple={true}
               onChange={(e: any, value: any) => {
                 console.log("item", value);
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
                   item?.id,
                   "fitToPrintType",
                   value?.map((item: any) => item?.label)
                 );
               }}
-              {...(materialSheetsStateValue?.updateState[item?.id]
+              {...(materialLaminationStateValue?.updateState[item?.id]
                 ?.fitToPrintType
                 ? {
-                    value: materialSheetsStateValue?.updateState[
+                    value: materialLaminationStateValue?.updateState[
                       item?.id
                     ]?.fitToPrintType.map((item: any) => {
                       return {
@@ -158,17 +162,20 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
           <Tooltip title={t("materials.lamination.admin.addNewLaminationSize")}>
             <IconButton
               onClick={() =>
-                materialSheetsStateValue.onClickOpenSheetWeightSizeWidget(item)
+                materialLaminationStateValue.onClickOpenLaminationWeightSizeWidget(
+                  item
+                )
               }
             >
               <AddIcon />
             </IconButton>
           </Tooltip>
         </div>
-        {materialSheetsStateValue?.isAddNewSheetWightSize &&
-          materialSheetsStateValue?.selectedSheetWeightSize.id === item?.id && (
-            <AddSheetWeightSizeMapping
-              key={`SheetSizeMapping_${item?.id}`}
+        {materialLaminationStateValue?.isAddNewLaminationWightSize &&
+          materialLaminationStateValue?.selectedLaminationWeightSize.id ===
+            item?.id && (
+            <AddLaminationWeightSizeMapping
+              key={`LaminationSizeMapping_${item?.id}`}
               index={0}
               sheetSize={item}
               selectedItem={selectedItem}
@@ -176,8 +183,8 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
           )}
         {item?.laminationThicknesses?.map((item2: any, index2: number) => {
           return (
-            <SheetSizeMapping
-              key={`SheetSizeMapping_${index2}`}
+            <LaminationSizeMapping
+              key={`LaminationSizeMapping_${index2}`}
               index={index2}
               sheetWeight={item}
               sheetSize={item2}
@@ -189,4 +196,4 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
     </>
   );
 };
-export { SheetWeightsMapping };
+export { LaminationWeightsMapping };

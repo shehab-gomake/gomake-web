@@ -2,45 +2,47 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeDeleteModal } from "@/components";
 import { IconWidget } from "./icon-widget";
-import { useSheetModal } from "./use-lamination-modal";
-import { UpdateSheetModal } from "../update-lamination-modal";
-import { materialSheetsState } from "../store/lamination";
+import { useLaminationModal } from "./use-lamination-modal";
+import { UpdateLaminationModal } from "../update-lamination-modal";
+import { materialLaminationState } from "../store/lamination";
 
 const LaminationSettingsWidget = ({ item }: any) => {
   const {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deleteSheetByCategoryName,
+    deleteLaminationByCategoryName,
     t,
-  } = useSheetModal({
+  } = useLaminationModal({
     item,
   });
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
+  );
 
   return (
     <>
       <IconWidget
         t={t}
         onOpnUpdateModal={() => {
-          materialSheetsStateValue?.onOpnUpdateModal(item);
+          materialLaminationStateValue?.onOpnUpdateModal(item);
         }}
         onOpenDeleteModal={onOpenDeleteModal}
       />
       <GoMakeDeleteModal
         hideIcon={true}
-        title={t("materials.sheetPaper.admin.deleteSheet")}
+        title={t("materials.lamination.admin.deleteLamination")}
         yesBtn={t("materials.sheetPaper.admin.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.sheetPaper.admin.subTitleDeleteModal")} ${
+        subTitle={`${t("materials.lamination.admin.subTitleDeleteModal")} ${
           item?.categoryName
         } ?`}
-        onClickDelete={deleteSheetByCategoryName}
+        onClickDelete={deleteLaminationByCategoryName}
       />
-      {item === materialSheetsStateValue.selectedEditItem && (
-        <UpdateSheetModal />
+      {item === materialLaminationStateValue.selectedEditItem && (
+        <UpdateLaminationModal />
       )}
     </>
   );

@@ -5,15 +5,17 @@ import { IconButton, Tooltip } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 
-import { SheetSizeMapping } from "./lamination-thickness-mapping";
-import { materialSheetsState } from "../store/lamination";
+import { LaminationSizeMapping } from "./lamination-thickness-mapping";
+import { materialLaminationState } from "../store/lamination";
 import { useStyle } from "./style";
-import { SheetWeightsInputs } from "../shared-inputs-widget/lamination-size-inputs";
+import { LaminationWeightsInputs } from "../shared-inputs-widget/lamination-size-inputs";
 
-const SheetWeightsMapping = ({ index }) => {
+const LaminationWeightsMapping = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
+  );
 
   return (
     <>
@@ -21,7 +23,7 @@ const SheetWeightsMapping = ({ index }) => {
         key={index}
         style={index & 1 ? clasess.tableSecondSections : clasess.tableSections}
       >
-        <SheetWeightsInputs index={index} />
+        <LaminationWeightsInputs index={index} />
         <div style={clasess.titlePlusContainer}>
           <div style={clasess.sizeSectionTitleStyle}>
             {t("materials.lamination.admin.laminationThicknessSection")}
@@ -32,7 +34,7 @@ const SheetWeightsMapping = ({ index }) => {
             <IconButton
               onClick={() => {
                 const temp = [
-                  ...materialSheetsStateValue?.items[index][
+                  ...materialLaminationStateValue?.items[index][
                     "laminationThicknesses"
                   ],
                 ];
@@ -42,7 +44,7 @@ const SheetWeightsMapping = ({ index }) => {
                   defaultPrice: "",
                   coldOrHot: "",
                 });
-                materialSheetsStateValue?.changeItems(
+                materialLaminationStateValue?.changeItems(
                   index,
                   "laminationThicknesses",
                   temp
@@ -60,12 +62,12 @@ const SheetWeightsMapping = ({ index }) => {
             <IconButton
               onClick={() => {
                 const temp = [
-                  ...materialSheetsStateValue?.items[index][
+                  ...materialLaminationStateValue?.items[index][
                     "laminationThicknesses"
                   ],
                 ];
                 temp.pop();
-                materialSheetsStateValue?.changeItems(
+                materialLaminationStateValue?.changeItems(
                   index,
                   "laminationThicknesses",
                   temp
@@ -76,24 +78,24 @@ const SheetWeightsMapping = ({ index }) => {
             </IconButton>
           </Tooltip>
         </div>
-        {materialSheetsStateValue?.items[index]["laminationThicknesses"]?.map(
-          (item: any, index2: number) => {
-            return (
-              <SheetSizeMapping
-                key={`SheetSizeMapping_${index2}`}
-                index={index2}
-                sheetWeightIndex={index}
-                sheetSize={
-                  materialSheetsStateValue?.items[index][
-                    "laminationThicknesses"
-                  ]
-                }
-              />
-            );
-          }
-        )}
+        {materialLaminationStateValue?.items[index][
+          "laminationThicknesses"
+        ]?.map((item: any, index2: number) => {
+          return (
+            <LaminationSizeMapping
+              key={`LaminationSizeMapping_${index2}`}
+              index={index2}
+              sheetWeightIndex={index}
+              sheetSize={
+                materialLaminationStateValue?.items[index][
+                  "laminationThicknesses"
+                ]
+              }
+            />
+          );
+        })}
       </div>
     </>
   );
 };
-export { SheetWeightsMapping };
+export { LaminationWeightsMapping };

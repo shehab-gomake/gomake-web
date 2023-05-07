@@ -7,32 +7,34 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 
 import { AddsheetSizeMapping } from "./add-lamination-thickness-mapping";
-import { materialSheetsState } from "../store/lamination";
+import { materialLaminationState } from "../store/lamination";
 import { useStyle } from "./style";
-import { SheetWeightsInputs } from "../shared-inputs-widget/lamination-size-inputs";
+import { LaminationWeightsInputs } from "../shared-inputs-widget/lamination-size-inputs";
 
-const AddSheetWeightsMapping = ({ index, selectedItem }) => {
+const AddLaminationWeightsMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
+  );
   console.log("index", index);
   console.log(
-    "materialSheetsStateValue?.items[index]",
-    materialSheetsStateValue?.items
+    "materialLaminationStateValue?.items[index]",
+    materialLaminationStateValue?.items
   );
   return (
     <>
       <div key={index} style={clasess.tableSecondSections}>
-        <SheetWeightsInputs index={index} />
+        <LaminationWeightsInputs index={index} />
         <div style={clasess.titlePlusContainer}>
           <div style={clasess.sizeSectionTitleStyle}>
             {t("materials.sheetPaper.admin.sheetSizeSection")}
           </div>
-          <Tooltip title={t("materials.sheetPaper.admin.addSheetSize")}>
+          <Tooltip title={t("materials.sheetPaper.admin.addLaminationSize")}>
             <IconButton
               onClick={() => {
                 const temp = [
-                  ...materialSheetsStateValue?.items[index][
+                  ...materialLaminationStateValue?.items[index][
                     "laminationThicknesses"
                   ],
                 ];
@@ -42,7 +44,7 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
                   defaultPrice: "",
                   coldOrHot: "",
                 });
-                materialSheetsStateValue?.changeItems(
+                materialLaminationStateValue?.changeItems(
                   index,
                   "laminationThicknesses",
                   temp
@@ -52,16 +54,16 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
               <AddIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title={t("materials.sheetPaper.admin.removeSheetSize")}>
+          <Tooltip title={t("materials.sheetPaper.admin.removeLaminationSize")}>
             <IconButton
               onClick={() => {
                 const temp = [
-                  ...materialSheetsStateValue?.items[index][
+                  ...materialLaminationStateValue?.items[index][
                     "laminationThicknesses"
                   ],
                 ];
                 temp.pop();
-                materialSheetsStateValue?.changeItems(
+                materialLaminationStateValue?.changeItems(
                   index,
                   "laminationThicknesses",
                   temp
@@ -72,37 +74,37 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
             </IconButton>
           </Tooltip>
         </div>
-        {materialSheetsStateValue?.items[index]["laminationThicknesses"]?.map(
-          (item: any, index2: number) => {
-            return (
-              <AddsheetSizeMapping
-                key={`SheetSizeMapping_${index2}`}
-                index={index2}
-                sheetWeightIndex={index}
-                sheetSize={
-                  materialSheetsStateValue?.items[index][
-                    "laminationThicknesses"
-                  ]
-                }
-              />
-            );
-          }
-        )}
-        <div style={clasess.btnsWightSheetContainer}>
-          <div style={clasess.addSheetBtnContainer}>
+        {materialLaminationStateValue?.items[index][
+          "laminationThicknesses"
+        ]?.map((item: any, index2: number) => {
+          return (
+            <AddsheetSizeMapping
+              key={`LaminationSizeMapping_${index2}`}
+              index={index2}
+              sheetWeightIndex={index}
+              sheetSize={
+                materialLaminationStateValue?.items[index][
+                  "laminationThicknesses"
+                ]
+              }
+            />
+          );
+        })}
+        <div style={clasess.btnsWightLaminationContainer}>
+          <div style={clasess.addLaminationBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialSheetsStateValue?.setIsAddNewSheetWights(false)
+                materialLaminationStateValue?.setIsAddNewLaminationWights(false)
               }
               style={clasess.cancelBtnStyle}
             >
               {t("materials.sheetPaper.admin.cancel")}
             </GomakePrimaryButton>
           </div>
-          <div style={clasess.addSheetBtnContainer}>
+          <div style={clasess.addLaminationBtnContainer}>
             <GomakePrimaryButton
               onClick={() =>
-                materialSheetsStateValue?.addNewSheeWeightByCategoryName(
+                materialLaminationStateValue?.addNewSheeWeightByCategoryName(
                   selectedItem
                 )
               }
@@ -116,4 +118,4 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
     </>
   );
 };
-export { AddSheetWeightsMapping };
+export { AddLaminationWeightsMapping };

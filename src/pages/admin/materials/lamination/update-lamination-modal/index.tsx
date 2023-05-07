@@ -5,23 +5,25 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddSheetWeightsMapping } from "./add-lamination-size-mapping";
-import { SheetWeightsMapping } from "./lamination-size-mapping";
-import { materialSheetsState } from "../store/lamination";
+import { AddLaminationWeightsMapping } from "./add-lamination-size-mapping";
+import { LaminationWeightsMapping } from "./lamination-size-mapping";
+import { materialLaminationState } from "../store/lamination";
 import { useStyle } from "./style";
 
-const UpdateSheetModal = () => {
+const UpdateLaminationModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
-  const selectedItem = materialSheetsStateValue?.selectedEditItem;
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
+  );
+  const selectedItem = materialLaminationStateValue?.selectedEditItem;
 
   return (
     <>
       <GoMakeModal
-        openModal={materialSheetsStateValue?.openUpdateSheetModal}
+        openModal={materialLaminationStateValue?.openUpdateLaminationModal}
         modalTitle={`Edit ${selectedItem?.categoryName} Lamination`}
-        onClose={materialSheetsStateValue?.onCloseUpdateModal}
+        onClose={materialLaminationStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -43,13 +45,13 @@ const UpdateSheetModal = () => {
               <div style={clasess.firstSectionTitleStyle}>
                 {t("materials.lamination.admin.laminationSizesSection")}
               </div>
-              {!materialSheetsStateValue?.isAddNewSheetWights && (
+              {!materialLaminationStateValue?.isAddNewLaminationWights && (
                 <Tooltip
                   title={t("materials.lamination.admin.addNewLaminationSize")}
                 >
                   <IconButton
                     onClick={() => {
-                      materialSheetsStateValue.setItems([
+                      materialLaminationStateValue.setItems([
                         {
                           code: "",
                           width: "",
@@ -66,7 +68,9 @@ const UpdateSheetModal = () => {
                           fitToPrintType: [],
                         },
                       ]);
-                      materialSheetsStateValue?.setIsAddNewSheetWights(true);
+                      materialLaminationStateValue?.setIsAddNewLaminationWights(
+                        true
+                      );
                     }}
                   >
                     <AddIcon />
@@ -74,13 +78,16 @@ const UpdateSheetModal = () => {
                 </Tooltip>
               )}
             </div>
-            {materialSheetsStateValue?.isAddNewSheetWights && (
-              <AddSheetWeightsMapping index={0} selectedItem={selectedItem} />
+            {materialLaminationStateValue?.isAddNewLaminationWights && (
+              <AddLaminationWeightsMapping
+                index={0}
+                selectedItem={selectedItem}
+              />
             )}
             {selectedItem?.laminationSizes?.map((item: any, index: number) => {
               return (
-                <SheetWeightsMapping
-                  key={`SheetWeightsMapping_${index}`}
+                <LaminationWeightsMapping
+                  key={`LaminationWeightsMapping_${index}`}
                   index={index}
                   item={item}
                   selectedItem={selectedItem}
@@ -93,4 +100,4 @@ const UpdateSheetModal = () => {
     </>
   );
 };
-export { UpdateSheetModal };
+export { UpdateLaminationModal };

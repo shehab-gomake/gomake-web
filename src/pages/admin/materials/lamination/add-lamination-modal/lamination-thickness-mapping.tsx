@@ -1,16 +1,16 @@
 import { useTranslation } from "react-i18next";
 
-import { SheetSizeInputs } from "../shared-inputs-widget/lamination-thickness-inputs";
+import { LaminationSizeInputs } from "../shared-inputs-widget/lamination-thickness-inputs";
 import { useStyle } from "./style";
 
-const SheetSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
+const LaminationSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
 
   return (
     <>
       <div key={index} style={clasess.addSizesInputsSecondSelection}>
-        <SheetSizeInputs
+        <LaminationSizeInputs
           index={index}
           sheetWeightIndex={sheetWeightIndex}
           sheetSize={sheetSize}
@@ -19,4 +19,4 @@ const SheetSizeMapping = ({ index, sheetWeightIndex, sheetSize }) => {
     </>
   );
 };
-export { SheetSizeMapping };
+export { LaminationSizeMapping };

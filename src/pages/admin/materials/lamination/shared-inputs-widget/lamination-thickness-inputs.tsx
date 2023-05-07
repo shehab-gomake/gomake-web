@@ -3,13 +3,15 @@ import { useRecoilValue } from "recoil";
 
 import { GomakeTextInput } from "@/components";
 
-import { materialSheetsState } from "../store/lamination";
+import { materialLaminationState } from "../store/lamination";
 import { useStyle } from "./style";
 
-const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
+const LaminationSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
+  );
 
   return (
     <>
@@ -23,7 +25,7 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
             style={clasess.textInputStyle}
             value={sheetSize[index]["code"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialLaminationStateValue?.changeItemsLaminationSize(
                 sheetWeightIndex,
                 index,
                 "code",
@@ -41,7 +43,7 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
             style={clasess.textInputStyle}
             value={sheetSize[index]["thickness"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialLaminationStateValue?.changeItemsLaminationSize(
                 sheetWeightIndex,
                 index,
                 "thickness",
@@ -59,7 +61,7 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
             style={clasess.textInputStyle}
             value={sheetSize[index]["defaultPrice"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialLaminationStateValue?.changeItemsLaminationSize(
                 sheetWeightIndex,
                 index,
                 "defaultPrice",
@@ -77,7 +79,7 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
             style={clasess.textInputStyle}
             value={sheetSize[index]["coldOrHot"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItemsSheetSize(
+              materialLaminationStateValue?.changeItemsLaminationSize(
                 sheetWeightIndex,
                 index,
                 "coldOrHot",
@@ -90,4 +92,4 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
     </>
   );
 };
-export { SheetSizeInputs };
+export { LaminationSizeInputs };

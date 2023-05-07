@@ -3,14 +3,16 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
-import { materialSheetsState } from "../store/lamination";
+import { materialLaminationState } from "../store/lamination";
 import { useStyle } from "./style";
 import { useMemo } from "react";
 
-const SheetWeightsInputs = ({ index }) => {
+const LaminationWeightsInputs = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
+  );
   const muliSelectOptions = useMemo(() => {
     return [
       { label: "String1", id: "String1" },
@@ -28,9 +30,9 @@ const SheetWeightsInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.sheetPaper.admin.enterCode")}
             style={clasess.textInputStyle}
-            value={materialSheetsStateValue?.items[index]["code"]}
+            value={materialLaminationStateValue?.items[index]["code"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItems(
+              materialLaminationStateValue?.changeItems(
                 index,
                 "code",
                 e.target.value
@@ -45,9 +47,9 @@ const SheetWeightsInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.sheetPaper.admin.enterWidth")}
             style={clasess.textInputStyle}
-            value={materialSheetsStateValue?.items[index]["width"]}
+            value={materialLaminationStateValue?.items[index]["width"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItems(
+              materialLaminationStateValue?.changeItems(
                 index,
                 "width",
                 e.target.value
@@ -62,9 +64,9 @@ const SheetWeightsInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.sheetPaper.admin.enterHeight")}
             style={clasess.textInputStyle}
-            value={materialSheetsStateValue?.items[index]["height"]}
+            value={materialLaminationStateValue?.items[index]["height"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItems(
+              materialLaminationStateValue?.changeItems(
                 index,
                 "height",
                 e.target.value
@@ -79,9 +81,9 @@ const SheetWeightsInputs = ({ index }) => {
           <GomakeTextInput
             placeholder={t("materials.sheetPaper.admin.enterName")}
             style={clasess.textInputStyle}
-            value={materialSheetsStateValue?.items[index]["name"]}
+            value={materialLaminationStateValue?.items[index]["name"]}
             onChange={(e: any) => {
-              materialSheetsStateValue?.changeItems(
+              materialLaminationStateValue?.changeItems(
                 index,
                 "name",
                 e.target.value
@@ -100,7 +102,7 @@ const SheetWeightsInputs = ({ index }) => {
             multiple
             // getOptionLabel={(option: any) => option.lable}
             onChange={(e: any, value: any) => {
-              materialSheetsStateValue?.changeItems(
+              materialLaminationStateValue?.changeItems(
                 index,
                 "fitToPrintType",
                 value.map((item: any) => item?.label)
@@ -112,4 +114,4 @@ const SheetWeightsInputs = ({ index }) => {
     </>
   );
 };
-export { SheetWeightsInputs };
+export { LaminationWeightsInputs };

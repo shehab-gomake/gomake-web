@@ -10,21 +10,23 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { SheetWeightsMapping } from "./lamination-size-mapping";
-import { materialSheetsState } from "../store/lamination";
+import { LaminationWeightsMapping } from "./lamination-size-mapping";
+import { materialLaminationState } from "../store/lamination";
 import { useStyle } from "./style";
 
-const AddSheetModal = () => {
+const AddLaminationModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
+  );
 
   return (
     <>
       <GoMakeModal
-        openModal={materialSheetsStateValue?.openAddSheetModal}
+        openModal={materialLaminationStateValue?.openAddLaminationModal}
         modalTitle={t("materials.lamination.admin.addNewLamination")}
-        onClose={materialSheetsStateValue?.onCloseModalAdded}
+        onClose={materialLaminationStateValue?.onCloseModalAdded}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -36,9 +38,9 @@ const AddSheetModal = () => {
               <GomakeTextInput
                 placeholder={t("materials.sheetPaper.admin.categoryName")}
                 style={clasess.textInputStyle}
-                value={materialSheetsStateValue?.categoryName}
+                value={materialLaminationStateValue?.categoryName}
                 onChange={(e: any) => {
-                  materialSheetsStateValue?.setCategoryName(e.target.value);
+                  materialLaminationStateValue?.setCategoryName(e.target.value);
                 }}
               />
             </div>
@@ -53,7 +55,7 @@ const AddSheetModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialSheetsStateValue?.items];
+                    const temp = [...materialLaminationStateValue?.items];
                     temp.push({
                       code: "",
                       width: "",
@@ -69,7 +71,7 @@ const AddSheetModal = () => {
                       ],
                       fitToPrintType: [],
                     });
-                    materialSheetsStateValue?.setItems(temp);
+                    materialLaminationStateValue?.setItems(temp);
                   }}
                 >
                   <AddIcon />
@@ -80,29 +82,29 @@ const AddSheetModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialSheetsStateValue?.items];
+                    const temp = [...materialLaminationStateValue?.items];
                     temp.pop();
-                    materialSheetsStateValue?.setItems(temp);
+                    materialLaminationStateValue?.setItems(temp);
                   }}
                 >
                   <RemoveIcon />
                 </IconButton>
               </Tooltip>
             </div>
-            {materialSheetsStateValue?.items?.map(
+            {materialLaminationStateValue?.items?.map(
               (item: any, index: number) => {
                 return (
-                  <SheetWeightsMapping
-                    key={`SheetWeightsMapping_${index}`}
+                  <LaminationWeightsMapping
+                    key={`LaminationWeightsMapping_${index}`}
                     index={index}
                   />
                 );
               }
             )}
           </div>
-          <div style={clasess.addSheetBtnContainer}>
+          <div style={clasess.addLaminationBtnContainer}>
             <GomakePrimaryButton
-              onClick={materialSheetsStateValue?.addNewSupplierSheet}
+              onClick={materialLaminationStateValue?.addNewSupplierLamination}
             >
               {t("materials.lamination.admin.addNewLamination")}
             </GomakePrimaryButton>
@@ -112,4 +114,4 @@ const AddSheetModal = () => {
     </>
   );
 };
-export { AddSheetModal };
+export { AddLaminationModal };

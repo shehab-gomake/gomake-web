@@ -4,20 +4,27 @@ import { useRecoilValue } from "recoil";
 import { GomakeTextInput } from "@/components";
 
 import { ControlIconsWidget } from "./control-icons-widget";
-import { materialSheetsState } from "../store/lamination";
+import { materialLaminationState } from "../store/lamination";
 import { useStyle } from "./style";
 
-const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
+const LaminationSizeMapping = ({
+  index,
+  sheetSize,
+  sheetWeight,
+  selectedItem,
+}) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
+  );
   return (
     <>
       <div key={index} style={clasess.addSizesInputsSecondSelection}>
         <ControlIconsWidget
           t={t}
           onClickDelete={() =>
-            materialSheetsStateValue.deleteSheetweightSize(
+            materialLaminationStateValue.deleteLaminationweightSize(
               selectedItem?.categoryName,
               sheetWeight?.id,
               sheetSize?.id
@@ -25,13 +32,13 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
           }
           item={sheetSize}
           onClickUpdate={() =>
-            materialSheetsStateValue.updateSheetWeightSizes(
+            materialLaminationStateValue.updateLaminationWeightSizes(
               selectedItem?.categoryName,
               sheetWeight?.id,
               sheetSize?.id
             )
           }
-          title={"Delete Sheet Weight Size"}
+          title={"Delete Lamination Weight Size"}
           subTitle={"Are you sure you want to delete sheet weight size?"}
         />
         <div style={clasess.inputSizesContainer}>
@@ -42,9 +49,11 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.sheetPaper.admin.enterCode")}
               style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.updateState[sheetSize?.id]?.code}
+              value={
+                materialLaminationStateValue?.updateState[sheetSize?.id]?.code
+              }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
                   sheetSize?.id,
                   "code",
                   e.target.value
@@ -60,10 +69,11 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
               placeholder={t("materials.sheetPaper.admin.enterThickness")}
               style={clasess.textInputStyle}
               value={
-                materialSheetsStateValue?.updateState[sheetSize?.id]?.thickness
+                materialLaminationStateValue?.updateState[sheetSize?.id]
+                  ?.thickness
               }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
                   sheetSize?.id,
                   "thickness",
                   e.target.value
@@ -79,11 +89,11 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
               placeholder={t("materials.plat.admin.enterDefaultPrice")}
               style={clasess.textInputStyle}
               value={
-                materialSheetsStateValue?.updateState[sheetSize?.id]
+                materialLaminationStateValue?.updateState[sheetSize?.id]
                   ?.defaultPrice
               }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
                   sheetSize?.id,
                   "defaultPrice",
                   e.target.value
@@ -99,10 +109,11 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
               placeholder={t("materials.lamination.admin.enterColdOrHot")}
               style={clasess.textInputStyle}
               value={
-                materialSheetsStateValue?.updateState[sheetSize?.id]?.coldOrHot
+                materialLaminationStateValue?.updateState[sheetSize?.id]
+                  ?.coldOrHot
               }
               onChange={(e: any) => {
-                materialSheetsStateValue?.onChangeUpdateStateSheetWeights(
+                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
                   sheetSize?.id,
                   "coldOrHot",
                   e.target.value
@@ -115,4 +126,4 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
     </>
   );
 };
-export { SheetSizeMapping };
+export { LaminationSizeMapping };

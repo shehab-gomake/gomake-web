@@ -4,14 +4,16 @@ import { useRecoilValue } from "recoil";
 import { GomakePrimaryButton } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
 
-import { materialSheetsState } from "./store/lamination";
-import { AddSheetModal } from "./add-lamination-modal";
+import { materialLaminationState } from "./store/lamination";
+import { AddLaminationModal } from "./add-lamination-modal";
 import { useStyle } from "./style";
 
 const HeaderFilter = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
+  );
   return (
     <>
       <div style={clasess.addBtnStyle}>
@@ -19,13 +21,13 @@ const HeaderFilter = () => {
           style={clasess.btnStyle}
           leftIcon={<AddIcon />}
           onClick={() => {
-            materialSheetsStateValue?.onOpnModalAdded();
+            materialLaminationStateValue?.onOpnModalAdded();
           }}
         >
           {t("materials.lamination.admin.addNewLamination")}
         </GomakePrimaryButton>
       </div>
-      <AddSheetModal />
+      <AddLaminationModal />
     </>
   );
 };

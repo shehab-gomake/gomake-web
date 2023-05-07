@@ -132,7 +132,7 @@ const useStyle = () => {
         paddingBottom: 20,
         borderRadius: 4,
       },
-      addSheetBtnContainer: {
+      addLaminationBtnContainer: {
         display: "flex",
         justifyContent: "flex-end",
         alignItems: "flex-end",
@@ -140,7 +140,7 @@ const useStyle = () => {
         alignContent: "flex-end",
         marginTop: 25,
       },
-      btnsWightSheetContainer: {
+      btnsWightLaminationContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "center",
