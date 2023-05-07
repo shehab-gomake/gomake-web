@@ -84,7 +84,7 @@ const useAuthLayoutHook = () => {
           // key: "wideFormatMaterial",
           // title: t("materials.wideFormatMaterial.admin.title"),
           // path: "/admin/materials/wide-format-material",
-           },
+          // },
           {
             key: "hardboards",
             title: t("materials.hardboards.admin.title"),
@@ -141,25 +141,24 @@ const useAuthLayoutHook = () => {
             path: "/admin/materials/double-sided-tape-roll",
           },
           {
-           key: "sheetEncapsulation",
-          title: t("materials.sheetEncapsulation.admin.title"),
-           path: "/admin/materials/sheet-encapsulation",
-           },
+            key: "sheetEncapsulation",
+            title: t("materials.sheetEncapsulation.admin.title"),
+            path: "/admin/materials/sheet-encapsulation",
+          },
           {
             key: "magnet",
             title: t("materials.magnets.admin.title"),
             path: "/admin/materials/magnets",
           },
           {
-
             key: "packings",
             title: t("materials.packings.title"),
             path: "/admin/materials/packings",
-},{
+          },
+          {
             key: "varnish",
             title: t("materials.varnishs.title"),
             path: "/admin/materials/varnish",
-
           },
         ],
         icon: () => {
