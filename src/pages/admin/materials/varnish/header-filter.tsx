@@ -4,14 +4,14 @@ import { useRecoilValue } from "recoil";
 import { GomakePrimaryButton } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
 
-import { materialMagnetState } from "./store/varnish";
+import { materialVarnishState } from "./store/varnish";
 import { useStyle } from "./style";
-import { AddMagnet } from "./add-varnish";
+import { AddVarnish } from "./add-varnish";
 
 const HeaderFilter = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialMagnetStateValue = useRecoilValue<any>(materialMagnetState);
+  const materialVarnishStateValue = useRecoilValue<any>(materialVarnishState);
 
   return (
     <>
@@ -20,13 +20,13 @@ const HeaderFilter = () => {
           style={clasess.btnStyle}
           leftIcon={<AddIcon />}
           onClick={() => {
-            materialMagnetStateValue?.onOpnModalAdded();
+            materialVarnishStateValue?.onOpnModalAdded();
           }}
         >
           {t("materials.varnishs.admin.addNewVarnishs")}
         </GomakePrimaryButton>
       </div>
-      <AddMagnet />
+      <AddVarnish />
     </>
   );
 };

@@ -1000,7 +1000,11 @@
         "defaultPricePerLiter": "Default price per liter",
         "enterDefaultPricePerLiter": "Enter default price per liter",
         "defaultPricePerContainer": "Default price per container",
-        "enterDefaultPricePerContainer": "Enter default price per container"
+        "enterDefaultPricePerContainer": "Enter default price per container",
+        "deleteVarnishs": "Delete Varnish",
+        "subTitleDeleteModal": "Are you sure to delete {{name}}",
+        "edit": "Edit",
+        "varnishs": "varnish"
       },
       "title": "Varnish",
       "code": "Code",

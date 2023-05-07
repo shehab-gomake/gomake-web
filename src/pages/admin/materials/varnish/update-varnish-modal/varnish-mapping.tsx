@@ -4,13 +4,13 @@ import { useRecoilValue } from "recoil";
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { ControlIconsWidget } from "./control-icons-widget";
-import { materialMagnetState } from "../store/varnish";
+import { materialVarnishState } from "../store/varnish";
 import { useStyle } from "./style";
 
 const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialMagnetStateValue = useRecoilValue<any>(materialMagnetState);
+  const materialVarnishStateValue = useRecoilValue<any>(materialVarnishState);
 
   return (
     <>
@@ -22,12 +22,12 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
           t={t}
           item={item}
           onClickDelete={() =>
-            materialMagnetStateValue.deleteMagnet(item?.code)
+            materialVarnishStateValue.deleteVarnish(item?.code)
           }
           onClickUpdate={() =>
-            materialMagnetStateValue.updateMagnet(item?.code)
+            materialVarnishStateValue.updateVarnish(item?.code)
           }
-          title={t("materials.magnets.admin.deleteMagnet")}
+          title={t("materials.magnets.admin.deleteVarnish")}
           subTitle={t("materials.magnets.admin.subTitleDeleteModal")}
         />
         <div style={clasess.mainWaightsContainer}>
@@ -38,9 +38,9 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.varnishs.admin.enterTypeName")}
               style={clasess.textInputStyle}
-              value={materialMagnetStateValue?.updateState?.typeName}
+              value={materialVarnishStateValue?.updateState?.typeName}
               onChange={(e: any) => {
-                materialMagnetStateValue?.onChangeUpdateStateMagnet(
+                materialVarnishStateValue?.onChangeUpdateStateVarnish(
                   "typeName",
                   e.target.value
                 );
@@ -54,9 +54,9 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.varnishs.admin.enterVolumeInLiters")}
               style={clasess.textInputStyle}
-              value={materialMagnetStateValue?.updateState?.volumeInLiters}
+              value={materialVarnishStateValue?.updateState?.volumeInLiters}
               onChange={(e: any) => {
-                materialMagnetStateValue?.onChangeUpdateStateMagnet(
+                materialVarnishStateValue?.onChangeUpdateStateVarnish(
                   "volumeInLiters",
                   e.target.value
                 );
@@ -70,9 +70,9 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.varnishs.admin.enterWeightPerLiter")}
               style={clasess.textInputStyle}
-              value={materialMagnetStateValue?.updateState?.weightPerLiter}
+              value={materialVarnishStateValue?.updateState?.weightPerLiter}
               onChange={(e: any) => {
-                materialMagnetStateValue?.onChangeUpdateStateMagnet(
+                materialVarnishStateValue?.onChangeUpdateStateVarnish(
                   "weightPerLiter",
                   e.target.value
                 );
@@ -88,9 +88,9 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
                 "materials.varnishs.admin.enterLiterInSquareMeter"
               )}
               style={clasess.textInputStyle}
-              value={materialMagnetStateValue?.updateState?.literInSquareMeter}
+              value={materialVarnishStateValue?.updateState?.literInSquareMeter}
               onChange={(e: any) => {
-                materialMagnetStateValue?.onChangeUpdateStateMagnet(
+                materialVarnishStateValue?.onChangeUpdateStateVarnish(
                   "literInSquareMeter",
                   e.target.value
                 );
@@ -107,10 +107,10 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
               )}
               style={clasess.textInputStyle}
               value={
-                materialMagnetStateValue?.updateState?.defaultPricePerLiter
+                materialVarnishStateValue?.updateState?.defaultPricePerLiter
               }
               onChange={(e: any) => {
-                materialMagnetStateValue?.onChangeUpdateStateMagnet(
+                materialVarnishStateValue?.onChangeUpdateStateVarnish(
                   "defaultPricePerLiter",
                   e.target.value
                 );
@@ -127,10 +127,10 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
               )}
               style={clasess.textInputStyle}
               value={
-                materialMagnetStateValue?.updateState?.defaultPricePerContainer
+                materialVarnishStateValue?.updateState?.defaultPricePerContainer
               }
               onChange={(e: any) => {
-                materialMagnetStateValue?.onChangeUpdateStateMagnet(
+                materialVarnishStateValue?.onChangeUpdateStateVarnish(
                   "defaultPricePerContainer",
                   e.target.value
                 );

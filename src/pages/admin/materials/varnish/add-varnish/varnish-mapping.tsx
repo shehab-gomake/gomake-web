@@ -2,13 +2,13 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-import { materialMagnetState } from "../store/varnish";
+import { materialVarnishState } from "../store/varnish";
 import { useStyle } from "./style";
 
-const MagnetMapping = ({ index }) => {
+const VarnishMapping = ({ index }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialMagnetStateValue = useRecoilValue<any>(materialMagnetState);
+  const materialVarnishStateValue = useRecoilValue<any>(materialVarnishState);
 
   return (
     <>
@@ -24,9 +24,9 @@ const MagnetMapping = ({ index }) => {
             <GomakeTextInput
               placeholder={t("materials.varnishs.admin.enterTypeName")}
               style={clasess.textInputStyle}
-              value={materialMagnetStateValue?.items[index]["typeName"]}
+              value={materialVarnishStateValue?.items[index]["typeName"]}
               onChange={(e: any) => {
-                materialMagnetStateValue?.changeItems(
+                materialVarnishStateValue?.changeItems(
                   index,
                   "typeName",
                   e.target.value
@@ -41,9 +41,9 @@ const MagnetMapping = ({ index }) => {
             <GomakeTextInput
               placeholder={t("materials.varnishs.admin.enterVolumeInLiters")}
               style={clasess.textInputStyle}
-              value={materialMagnetStateValue?.items[index]["volumeInLiters"]}
+              value={materialVarnishStateValue?.items[index]["volumeInLiters"]}
               onChange={(e: any) => {
-                materialMagnetStateValue?.changeItems(
+                materialVarnishStateValue?.changeItems(
                   index,
                   "volumeInLiters",
                   e.target.value
@@ -58,9 +58,9 @@ const MagnetMapping = ({ index }) => {
             <GomakeTextInput
               placeholder={t("materials.varnishs.admin.enterWeightPerLiter")}
               style={clasess.textInputStyle}
-              value={materialMagnetStateValue?.items[index]["weightPerLiter"]}
+              value={materialVarnishStateValue?.items[index]["weightPerLiter"]}
               onChange={(e: any) => {
-                materialMagnetStateValue?.changeItems(
+                materialVarnishStateValue?.changeItems(
                   index,
                   "weightPerLiter",
                   e.target.value
@@ -78,10 +78,10 @@ const MagnetMapping = ({ index }) => {
               )}
               style={clasess.textInputStyle}
               value={
-                materialMagnetStateValue?.items[index]["literInSquareMeter"]
+                materialVarnishStateValue?.items[index]["literInSquareMeter"]
               }
               onChange={(e: any) => {
-                materialMagnetStateValue?.changeItems(
+                materialVarnishStateValue?.changeItems(
                   index,
                   "literInSquareMeter",
                   e.target.value
@@ -99,10 +99,10 @@ const MagnetMapping = ({ index }) => {
               )}
               style={clasess.textInputStyle}
               value={
-                materialMagnetStateValue?.items[index]["defaultPricePerLiter"]
+                materialVarnishStateValue?.items[index]["defaultPricePerLiter"]
               }
               onChange={(e: any) => {
-                materialMagnetStateValue?.changeItems(
+                materialVarnishStateValue?.changeItems(
                   index,
                   "defaultPricePerLiter",
                   e.target.value
@@ -120,12 +120,12 @@ const MagnetMapping = ({ index }) => {
               )}
               style={clasess.textInputStyle}
               value={
-                materialMagnetStateValue?.items[index][
+                materialVarnishStateValue?.items[index][
                   "defaultPricePerContainer"
                 ]
               }
               onChange={(e: any) => {
-                materialMagnetStateValue?.changeItems(
+                materialVarnishStateValue?.changeItems(
                   index,
                   "defaultPricePerContainer",
                   e.target.value
@@ -138,4 +138,4 @@ const MagnetMapping = ({ index }) => {
     </>
   );
 };
-export { MagnetMapping };
+export { VarnishMapping };

@@ -3,23 +3,23 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeModal } from "@/components";
 import { DoubleSidedTapeRollMapping } from "./varnish-mapping";
-import { materialMagnetState } from "../store/varnish";
+import { materialVarnishState } from "../store/varnish";
 import { useStyle } from "./style";
 
-const UpdateMagnetModal = () => {
+const UpdateVarnishModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialMagnetStateValue = useRecoilValue<any>(materialMagnetState);
-  const selectedItem = materialMagnetStateValue?.selectedEditItem;
+  const materialVarnishStateValue = useRecoilValue<any>(materialVarnishState);
+  const selectedItem = materialVarnishStateValue?.selectedEditItem;
 
   return (
     <>
       <GoMakeModal
-        openModal={materialMagnetStateValue?.openUpdateMagnetModal}
-        modalTitle={`${t("materials.doubleSidedTapeRolls.admin.edit")} ${
-          selectedItem?.name
-        } ${t("materials.doubleSidedTapeRolls.admin.doubleSidedTapeRoll")}`}
-        onClose={materialMagnetStateValue?.onCloseUpdateModal}
+        openModal={materialVarnishStateValue?.openUpdateVarnishModal}
+        modalTitle={`${t("materials.varnishs.admin.edit")} ${
+          selectedItem?.typeName
+        } ${t("materials.varnishs.admin.varnishs")}`}
+        onClose={materialVarnishStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >
         <div
@@ -45,4 +45,4 @@ const UpdateMagnetModal = () => {
     </>
   );
 };
-export { UpdateMagnetModal };
+export { UpdateVarnishModal };

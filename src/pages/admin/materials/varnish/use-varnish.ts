@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { getAndSetGetAllVarnish } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const useDoubleSidedTapeRoll = () => {
+const useVarnish = () => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
@@ -15,13 +15,13 @@ const useDoubleSidedTapeRoll = () => {
     ],
     []
   );
-  const [openAddMagnetModal, setOpenAddApplicationsModal] = useState(false);
-  const [openUpdateMagnetModal, setOpenAddMagnetModal] = useState(false);
+  const [openAddVarnishModal, setOpenAddApplicationsModal] = useState(false);
+  const [openUpdateVarnishModal, setOpenAddVarnishModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [allMagnets, setAllMagnets] = useState([]);
+  const [allVarnish, setAllVarnish] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
-  const [selectedMagnet, setSelectedMagnet] = useState({});
+  const [selectedVarnish, setSelectedVarnish] = useState({});
   const [items, setItems] = useState([
     {
       name: "",
@@ -45,7 +45,7 @@ const useDoubleSidedTapeRoll = () => {
 
   const [updateState, setUpdateState] = useState({});
 
-  const onChangeUpdateStateMagnet = useCallback(
+  const onChangeUpdateStateVarnish = useCallback(
     (filedName: string, value: any) => {
       setUpdateState((prev) => {
         return {
@@ -61,8 +61,8 @@ const useDoubleSidedTapeRoll = () => {
     setUpdateState(item);
   };
 
-  const getMagnets = useCallback(async () => {
-    await getAndSetGetAllVarnish(callApi, setAllMagnets);
+  const getVarnish = useCallback(async () => {
+    await getAndSetGetAllVarnish(callApi, setAllVarnish);
   }, []);
   const onCloseModalAdded = () => {
     setOpenAddApplicationsModal(false);
@@ -83,23 +83,23 @@ const useDoubleSidedTapeRoll = () => {
     setOpenAddApplicationsModal(true);
   };
   const onCloseUpdateModal = async () => {
-    getMagnets();
-    setOpenAddMagnetModal(false);
+    getVarnish();
+    setOpenAddVarnishModal(false);
   };
   const onOpnUpdateModal = (item) => {
     initialStateApplicationThickness(item);
     setSelectedEditItem(item);
-    setOpenAddMagnetModal(true);
+    setOpenAddVarnishModal(true);
   };
   const onCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
   const onOpenDeleteModal = (item) => {
     setOpenDeleteModal(true);
-    setSelectedMagnet(item);
+    setSelectedVarnish(item);
   };
 
-  const addMagnet = useCallback(async () => {
+  const addVarnish = useCallback(async () => {
     const res = await callApi("POST", `/v1/administrator/varnish/add-varnish`, {
       ...items[0],
     });
@@ -109,7 +109,7 @@ const useDoubleSidedTapeRoll = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      await getMagnets();
+      await getVarnish();
       onCloseModalAdded();
     } else {
       setSnackbarStateValue({
@@ -120,7 +120,7 @@ const useDoubleSidedTapeRoll = () => {
     }
   }, [categoryName, items]);
 
-  const updateMagnet = useCallback(
+  const updateVarnish = useCallback(
     async (code: string) => {
       const res = await callApi(
         "POST",
@@ -135,7 +135,7 @@ const useDoubleSidedTapeRoll = () => {
           message: t("modal.updatedSusuccessfully"),
           type: "sucess",
         });
-        // getMagnets();
+        // getVarnish();
         // onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -149,34 +149,34 @@ const useDoubleSidedTapeRoll = () => {
   );
 
   useEffect(() => {
-    getMagnets();
+    getVarnish();
   }, []);
   return {
     headerTable,
-    allMagnets,
-    openAddMagnetModal,
+    allVarnish,
+    openAddVarnishModal,
     items,
     categoryName,
-    openUpdateMagnetModal,
+    openUpdateVarnishModal,
     selectedEditItem,
     openDeleteModal,
-    selectedMagnet,
+    selectedVarnish,
     updateState,
-    onChangeUpdateStateMagnet,
+    onChangeUpdateStateVarnish,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addMagnet,
-    setOpenAddMagnetModal,
+    addVarnish,
+    setOpenAddVarnishModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updateMagnet,
+    updateVarnish,
   };
 };
 
-export { useDoubleSidedTapeRoll };
+export { useVarnish };

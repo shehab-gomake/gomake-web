@@ -6,99 +6,99 @@ import { Table } from "@/widgets/table/table";
 import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 
-import { materialMagnetState } from "./store/varnish";
+import { materialVarnishState } from "./store/varnish";
 import { HeaderFilter } from "./header-filter";
-import { useDoubleSidedTapeRoll } from "./use-varnish";
+import { useVarnish } from "./use-varnish";
 
 export default function Additions() {
   const { t } = useTranslation();
   const setMaterialHardboardsState =
-    useSetRecoilState<any>(materialMagnetState);
+    useSetRecoilState<any>(materialVarnishState);
   const {
     headerTable,
-    allMagnets,
-    openAddMagnetModal,
+    allVarnish,
+    openAddVarnishModal,
     items,
     categoryName,
-    openUpdateMagnetModal,
+    openUpdateVarnishModal,
     selectedEditItem,
     openDeleteModal,
-    selectedMagnet,
+    selectedVarnish,
     updateState,
-    onChangeUpdateStateMagnet,
+    onChangeUpdateStateVarnish,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addMagnet,
-    setOpenAddMagnetModal,
+    addVarnish,
+    setOpenAddVarnishModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updateMagnet,
-  } = useDoubleSidedTapeRoll();
+    updateVarnish,
+  } = useVarnish();
 
   useEffect(() => {
     setMaterialHardboardsState({
       headerTable,
-      allMagnets,
-      openAddMagnetModal,
+      allVarnish,
+      openAddVarnishModal,
       items,
       categoryName,
-      openUpdateMagnetModal,
+      openUpdateVarnishModal,
       selectedEditItem,
       openDeleteModal,
-      selectedMagnet,
+      selectedVarnish,
       updateState,
-      onChangeUpdateStateMagnet,
+      onChangeUpdateStateVarnish,
       onCloseModalAdded,
       onOpnModalAdded,
       changeItems,
       setItems,
       setCategoryName,
-      addMagnet,
-      setOpenAddMagnetModal,
+      addVarnish,
+      setOpenAddVarnishModal,
       onCloseUpdateModal,
       onOpnUpdateModal,
       setOpenDeleteModal,
       onCloseDeleteModal,
       onOpenDeleteModal,
-      updateMagnet,
+      updateVarnish,
     });
   }, [
     headerTable,
-    allMagnets,
-    openAddMagnetModal,
+    allVarnish,
+    openAddVarnishModal,
     items,
     categoryName,
-    openUpdateMagnetModal,
+    openUpdateVarnishModal,
     selectedEditItem,
     openDeleteModal,
-    selectedMagnet,
+    selectedVarnish,
     updateState,
-    onChangeUpdateStateMagnet,
+    onChangeUpdateStateVarnish,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
-    addMagnet,
-    setOpenAddMagnetModal,
+    addVarnish,
+    setOpenAddVarnishModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updateMagnet,
+    updateVarnish,
   ]);
   return (
     <AdminAuthLayout>
       <HeaderTitle title={t("materials.varnishs.title")} />
       <HeaderFilter />
-      <Table tableHeaders={headerTable} tableRows={allMagnets} />
+      <Table tableHeaders={headerTable} tableRows={allVarnish} />
     </AdminAuthLayout>
   );
 }

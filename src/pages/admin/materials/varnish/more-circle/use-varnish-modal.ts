@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const useMagnetModal = ({ item }: any) => {
+const useVarnishModal = ({ item }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const { setSnackbarStateValue } = useSnackBar();
@@ -16,7 +16,7 @@ const useMagnetModal = ({ item }: any) => {
     setOpenDeleteModal(true);
   };
 
-  const deleteMagnet = useCallback(async () => {
+  const deleteVarnish = useCallback(async () => {
     const res = await callApi(
       "POST",
       `/v1/administrator/varnish/delete-varnish`,
@@ -43,9 +43,9 @@ const useMagnetModal = ({ item }: any) => {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deleteMagnet,
+    deleteVarnish,
     t,
   };
 };
 
-export { useMagnetModal };
+export { useVarnishModal };

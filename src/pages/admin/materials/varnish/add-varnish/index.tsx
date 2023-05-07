@@ -3,22 +3,22 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeModal, GomakePrimaryButton } from "@/components";
 
-import { MagnetMapping } from "./varnish-mapping";
+import { VarnishMapping } from "./varnish-mapping";
 
 import { useStyle } from "./style";
-import { materialMagnetState } from "../store/varnish";
+import { materialVarnishState } from "../store/varnish";
 
-const AddMagnet = () => {
+const AddVarnish = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialMagnetStateValue = useRecoilValue<any>(materialMagnetState);
+  const materialVarnishStateValue = useRecoilValue<any>(materialVarnishState);
 
   return (
     <>
       <GoMakeModal
-        openModal={materialMagnetStateValue?.openAddMagnetModal}
+        openModal={materialVarnishStateValue?.openAddVarnishModal}
         modalTitle={t("materials.varnishs.admin.addNewVarnishs")}
-        onClose={materialMagnetStateValue?.onCloseModalAdded}
+        onClose={materialVarnishStateValue?.onCloseModalAdded}
         insideStyle={clasess.insideStyle}
       >
         <div
@@ -29,16 +29,18 @@ const AddMagnet = () => {
           }}
         >
           <div style={clasess.secondSectionContainer}>
-            {materialMagnetStateValue?.items?.map(
+            {materialVarnishStateValue?.items?.map(
               (item: any, index: number) => {
                 return (
-                  <MagnetMapping key={`magnetMapping${index}`} index={index} />
+                  <VarnishMapping key={`magnetMapping${index}`} index={index} />
                 );
               }
             )}
           </div>
           <div style={clasess.addSheetBtnContainer}>
-            <GomakePrimaryButton onClick={materialMagnetStateValue?.addMagnet}>
+            <GomakePrimaryButton
+              onClick={materialVarnishStateValue?.addVarnish}
+            >
               {t("materials.varnishs.admin.addNewVarnishs")}
             </GomakePrimaryButton>
           </div>
@@ -47,4 +49,4 @@ const AddMagnet = () => {
     </>
   );
 };
-export { AddMagnet };
+export { AddVarnish };

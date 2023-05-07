@@ -2,46 +2,46 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeDeleteModal } from "@/components";
 import { IconWidget } from "./icon-widget";
-import { useMagnetModal } from "./use-varnish-modal";
+import { useVarnishModal } from "./use-varnish-modal";
 
-import { materialMagnetState } from "../store/varnish";
-import { UpdateMagnetModal } from "../update-varnish-modal";
+import { materialVarnishState } from "../store/varnish";
+import { UpdateVarnishModal } from "../update-varnish-modal";
 
 const VarnishSettingsWidget = ({ item }: any) => {
   const {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deleteMagnet,
+    deleteVarnish,
     t,
-  } = useMagnetModal({
+  } = useVarnishModal({
     item,
   });
-  const materialMagnetStateValue = useRecoilValue<any>(materialMagnetState);
+  const materialVarnishStateValue = useRecoilValue<any>(materialVarnishState);
 
   return (
     <>
       <IconWidget
         t={t}
         onOpnUpdateModal={() => {
-          materialMagnetStateValue?.onOpnUpdateModal(item);
+          materialVarnishStateValue?.onOpnUpdateModal(item);
         }}
         onOpenDeleteModal={onOpenDeleteModal}
       />
       <GoMakeDeleteModal
         hideIcon={true}
-        title={t("materials.magnets.admin.deleteMagnet")}
+        title={t("materials.varnishs.admin.deleteVarnishs")}
         yesBtn={t("materials.magnets.admin.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.magnets.admin.subTitleDeleteModal", {
-          name: `${item?.name}`,
+        subTitle={`${t("materials.varnishs.admin.subTitleDeleteModal", {
+          name: `${item?.typeName}`,
         })}?`}
-        onClickDelete={deleteMagnet}
+        onClickDelete={deleteVarnish}
       />
-      {item === materialMagnetStateValue.selectedEditItem && (
-        <UpdateMagnetModal />
+      {item === materialVarnishStateValue.selectedEditItem && (
+        <UpdateVarnishModal />
       )}
     </>
   );

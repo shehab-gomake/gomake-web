@@ -1,8 +1,8 @@
 import { atom } from "recoil";
 
-export const materialMagnetState = atom({
-  key: "materialMagnetState",
+export const materialVarnishState = atom({
+  key: "materialVarnishState",
   default: {
-    openMagnetsModal: false,
+    openVarnishsModal: false,
   },
 });
