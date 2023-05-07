@@ -987,6 +987,21 @@
       "selectCurrency": "Select currency"
     },
     "varnishs": {
+      "admin": {
+        "addNewVarnishs": "Add new varnish",
+        "typeName": "Type Name",
+        "enterTypeName": "Enter type Name",
+        "volumeInLiters": "Volume in liters",
+        "enterVolumeInLiters": "Enter volume in liters",
+        "weightPerLiter": "Weight per liter",
+        "enterWeightPerLiter": "Enter weight per liter",
+        "literInSquareMeter": "Liter in square meter",
+        "enterLiterInSquareMeter": "Enter liter in square meter",
+        "defaultPricePerLiter": "Default price per liter",
+        "enterDefaultPricePerLiter": "Enter default price per liter",
+        "defaultPricePerContainer": "Default price per container",
+        "enterDefaultPricePerContainer": "Enter default price per container"
+      },
       "title": "Varnish",
       "code": "Code",
       "typeName": "Type name",
