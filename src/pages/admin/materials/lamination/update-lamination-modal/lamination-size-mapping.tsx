@@ -1,35 +1,28 @@
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
+import { IconButton, Tooltip } from "@mui/material";
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import AddIcon from "@mui/icons-material/Add";
 
 import { ControlIconsWidget } from "./control-icons-widget";
-import { LaminationThicknessesMapping } from "./lamination-thicknesses-mapping";
-import { materialLaminationsState } from "../store/lamination";
+import { LaminationSizeMapping } from "./lamination-thickness-mapping";
+import { materialLaminationState } from "../store/lamination";
 import { useStyle } from "./style";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { AddLaminationThicknessMapping } from "./add-lamination-thicknesses-mapping";
+import { AddLaminationWeightSizeMapping } from "./add-lamination-size-thickness-mapping";
+import { useMemo } from "react";
 
-const LaminationSizesMapping = ({ index, item, selectedItem }) => {
+const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialLaminationsStateValue = useRecoilValue<any>(
-    materialLaminationsState
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
   );
-
-  // useEffect(() => {
-  //   const mappedFit = fit.map((item) => item?.lable);
-  //   materialLaminationsStateValue?.changeItems(
-  //     index,
-  //     "fitToPrintType",
-  //     mappedFit
-  //   );
-  // }, [fit]);
   const muliSelectOptions = useMemo(() => {
     return [
-      { lable: "String1", id: 1 },
-      { lable: "String2", id: 2 },
-      { lable: "String3", id: 3 },
+      { label: "String1", id: "String1" },
+      { label: "String2", id: "String2" },
+      { label: "String3", id: "String3" },
     ];
   }, []);
   return (
@@ -42,71 +35,51 @@ const LaminationSizesMapping = ({ index, item, selectedItem }) => {
           t={t}
           item={item}
           onClickDelete={() =>
-            materialLaminationsStateValue.deleteLaminationSize(
+            materialLaminationStateValue.deleteLaminationweight(
               item?.id,
               selectedItem?.categoryName
             )
           }
           onClickUpdate={() =>
-            materialLaminationsStateValue.updateLaminationSize(
+            materialLaminationStateValue.updateLaminationweight(
               item?.id,
               selectedItem?.categoryName
             )
           }
-          title={t("materials.lamination.admin.deleteLaminationSizeTitle")}
+          title={t("materials.lamination.admin.deleteLaminationthicknesses")}
           subTitle={t(
-            "materials.lamination.admin.deleteLaminationSizeSubTitle"
+            "materials.lamination.admin.subTitleDeleteThicknessesModal"
           )}
         />
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.lamination.admin.height")}
+              {t("materials.sheetPaper.admin.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.lamination.admin.enterHeight")}
+              placeholder={t("materials.sheetPaper.admin.enterCode")}
               style={clasess.textInputStyle}
-              value={
-                materialLaminationsStateValue?.updateState[item?.id]?.height
-              }
+              value={materialLaminationStateValue?.updateState[item?.id]?.code}
               onChange={(e: any) => {
-                materialLaminationsStateValue?.onChangeUpdateStateSheetWeights(
+                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
                   item?.id,
-                  "height",
+                  "code",
                   e.target.value
                 );
               }}
             />
           </div>
+
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.lamination.admin.name")}
+              {t("materials.sheetPaper.admin.width")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.lamination.admin.enterName")}
+              placeholder={t("materials.sheetPaper.admin.enterWidth")}
               style={clasess.textInputStyle}
-              value={materialLaminationsStateValue?.updateState[item?.id]?.name}
+              value={materialLaminationStateValue?.updateState[item?.id]?.width}
               onChange={(e: any) => {
-                materialLaminationsStateValue?.onChangeUpdateStateSheetWeights(
-                  item?.id,
-                  "name",
-                  e.target.value
-                );
-              }}
-            />
-          </div>
-          <div>
-            <div style={clasess.lableTextStyle}>
-              {t("materials.lamination.admin.width")}
-            </div>
-            <GomakeTextInput
-              placeholder={t("materials.lamination.admin.enterWidth")}
-              style={clasess.textInputStyle}
-              value={
-                materialLaminationsStateValue?.updateState[item?.id]?.width
-              }
-              onChange={(e: any) => {
-                materialLaminationsStateValue?.onChangeUpdateStateSheetWeights(
+                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
                   item?.id,
                   "width",
                   e.target.value
@@ -116,16 +89,18 @@ const LaminationSizesMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.lamination.admin.code")}
+              {t("materials.sheetPaper.admin.height")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.lamination.admin.enterCode")}
+              placeholder={t("materials.sheetPaper.admin.enterIndex")}
               style={clasess.textInputStyle}
-              value={materialLaminationsStateValue?.updateState[item?.id]?.code}
+              value={
+                materialLaminationStateValue?.updateState[item?.id]?.height
+              }
               onChange={(e: any) => {
-                materialLaminationsStateValue?.onChangeUpdateStateSheetWeights(
+                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
                   item?.id,
-                  "code",
+                  "height",
                   e.target.value
                 );
               }}
@@ -133,40 +108,87 @@ const LaminationSizesMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.lamination.admin.fitToPrintType")}
+              {t("materials.sheetPaper.admin.name")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.sheetPaper.admin.enterName")}
+              style={clasess.textInputStyle}
+              value={materialLaminationStateValue?.updateState[item?.id]?.name}
+              onChange={(e: any) => {
+                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
+                  item?.id,
+                  "name",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.sheetPaper.admin.name")}
             </div>
             <GoMakeAutoComplate
               options={muliSelectOptions}
               style={clasess.multiSelectStyle}
               placeholder={t("materials.lamination.admin.fitToPrintType")}
-              multiple
-              getOptionLabel={(option: any) => option}
+              multiple={true}
               onChange={(e: any, value: any) => {
-                materialLaminationsStateValue?.onChangeUpdateStateSheetWeights(
+                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
                   item?.id,
                   "fitToPrintType",
-                  value.map((item: any) => item?.lable)
+                  value?.map((item: any) => item?.label)
                 );
               }}
-              value={
-                materialLaminationsStateValue?.updateState[item?.id]
-                  ?.fitToPrintType
-              }
+              {...(materialLaminationStateValue?.updateState[item?.id]
+                ?.fitToPrintType
+                ? {
+                    value: materialLaminationStateValue?.updateState[
+                      item?.id
+                    ]?.fitToPrintType.map((item: any) => {
+                      return {
+                        label: item,
+                        id: item,
+                      };
+                    }),
+                  }
+                : null)}
             />
           </div>
         </div>
         <div style={clasess.titlePlusContainer}>
           <div style={clasess.sizeSectionTitleStyle}>
-            {t("materials.lamination.admin.laminationThicknessesSection")}
+            {t("materials.lamination.admin.laminationThicknessSection")}
           </div>
+
+          <Tooltip title={t("materials.lamination.admin.addNewLaminationSize")}>
+            <IconButton
+              onClick={() =>
+                materialLaminationStateValue.onClickOpenLaminationWeightSizeWidget(
+                  item
+                )
+              }
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
         </div>
+        {materialLaminationStateValue?.isAddNewLaminationWightSize &&
+          materialLaminationStateValue?.selectedLaminationWeightSize.id ===
+            item?.id && (
+            <AddLaminationWeightSizeMapping
+              key={`LaminationSizeMapping_${item?.id}`}
+              index={0}
+              sheetSize={item}
+              selectedItem={selectedItem}
+            />
+          )}
         {item?.laminationThicknesses?.map((item2: any, index2: number) => {
           return (
-            <LaminationThicknessesMapping
-              key={`LaminationThicknessesMapping_${index2}`}
+            <LaminationSizeMapping
+              key={`LaminationSizeMapping_${index2}`}
               index={index2}
-              laminationSize={item}
-              laminationThicknes={item2}
+              sheetWeight={item}
+              sheetSize={item2}
               selectedItem={selectedItem}
             />
           );
@@ -175,4 +197,4 @@ const LaminationSizesMapping = ({ index, item, selectedItem }) => {
     </>
   );
 };
-export { LaminationSizesMapping };
+export { LaminationWeightsMapping };

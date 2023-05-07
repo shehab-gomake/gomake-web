@@ -108,7 +108,7 @@ const useStyle = () => {
         paddingBottom: 20,
         borderRadius: 4,
       },
-      addSheetBtnContainer: {
+      addLaminationBtnContainer: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -122,14 +122,6 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-      },
-      multiSelectStyle: {
-        backgroundColor: "#FFFFFF",
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignitems: "center",
-        justifyContent: "center",
       },
     };
   }, []);

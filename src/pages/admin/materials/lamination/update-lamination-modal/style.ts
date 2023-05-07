@@ -102,12 +102,22 @@ const useStyle = () => {
         color: neutralColor(800),
         marginBottom: 10,
       },
+      multiSelectStyle: {
+        backgroundColor: "#FFFFFF",
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignitems: "center",
+        justifyContent: "center",
+      },
       inputSizesContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
+        flexWrap: "wrap" as "wrap",
+        gap: 20,
         marginBottom: 15,
       },
       addSizesInputsSecondSelection: {
@@ -122,7 +132,7 @@ const useStyle = () => {
         paddingBottom: 20,
         borderRadius: 4,
       },
-      addSheetBtnContainer: {
+      addLaminationBtnContainer: {
         display: "flex",
         justifyContent: "flex-end",
         alignItems: "flex-end",
@@ -130,7 +140,7 @@ const useStyle = () => {
         alignContent: "flex-end",
         marginTop: 25,
       },
-      btnsWightSheetContainer: {
+      btnsWightLaminationContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "center",
@@ -151,9 +161,11 @@ const useStyle = () => {
       mainWaightsContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
+        flexWrap: "wrap" as "wrap",
+        gap: 20,
       },
       controlsIconContainer: {
         display: "flex",
@@ -161,14 +173,6 @@ const useStyle = () => {
         justifyContent: "center",
         alignItems: "center",
         alignSelf: "end",
-      },
-      multiSelectStyle: {
-        backgroundColor: "#FFFFFF",
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignitems: "center",
-        justifyContent: "center",
       },
     };
   }, []);

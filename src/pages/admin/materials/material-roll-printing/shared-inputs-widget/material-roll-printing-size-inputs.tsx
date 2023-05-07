@@ -116,21 +116,29 @@ const RollPrintingSizeInputs = ({ index }) => {
             {t("materials.envelops.admin.isWithWindow")}
           </div>
           <GoMakeAutoComplate
-            options={[true, false]}
+            options={[
+              { label: "Yes", value: true },
+              { label: "No", value: false },
+            ]}
             style={clasess.textInputStyle}
             placeholder={t(
               "materials.printingMaterials.admin.selectWithPremier"
             )}
             value={
               materialMaterialRollPrintingStateValue?.items[index][
-                "withPremier"
+                "withPremierLabel"
               ]
             }
             onChange={(e: any, value: any) => {
               materialMaterialRollPrintingStateValue?.changeItems(
                 index,
+                "withPremierLabel",
+                value?.label
+              );
+              materialMaterialRollPrintingStateValue?.changeItems(
+                index,
                 "withPremier",
-                value
+                value?.value
               );
             }}
           />

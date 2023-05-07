@@ -5,36 +5,35 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AddLaminationSizeMapping } from "./add-lamination-size-mapping";
-import { LaminationSizesMapping } from "./lamination-size-mapping";
-import { materialLaminationsState } from "../store/lamination";
+import { AddLaminationWeightsMapping } from "./add-lamination-size-mapping";
+import { LaminationWeightsMapping } from "./lamination-size-mapping";
+import { materialLaminationState } from "../store/lamination";
 import { useStyle } from "./style";
 
-const UpdateSheetModal = () => {
+const UpdateLaminationModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialLaminationsStateValue = useRecoilValue<any>(
-    materialLaminationsState
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
   );
-  const selectedItem = materialLaminationsStateValue?.selectedEditItem;
+  const selectedItem = materialLaminationStateValue?.selectedEditItem;
+
   return (
     <>
       <GoMakeModal
-        openModal={materialLaminationsStateValue?.openUpdateLaminationModal}
-        modalTitle={`${t("materials.lamination.admin.edit")} ${
-          selectedItem?.categoryName
-        } ${t("materials.lamination.admin.lamination")}`}
-        onClose={materialLaminationsStateValue?.onCloseUpdateModal}
+        openModal={materialLaminationStateValue?.openUpdateLaminationModal}
+        modalTitle={`Edit ${selectedItem?.categoryName} Lamination`}
+        onClose={materialLaminationStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={clasess.firstSectionContainer}>
             <div>
               <div style={clasess.lableTextStyle}>
-                {t("materials.lamination.admin.categoryName")}
+                {t("materials.sheetPaper.admin.categoryName")}
               </div>
               <GomakeTextInput
-                placeholder={t("materials.lamination.admin.categoryName")}
+                placeholder={t("materials.sheetPaper.admin.categoryName")}
                 style={clasess.textInputStyle}
                 value={selectedItem?.categoryName}
                 disabled={true}
@@ -46,13 +45,30 @@ const UpdateSheetModal = () => {
               <div style={clasess.firstSectionTitleStyle}>
                 {t("materials.lamination.admin.laminationSizesSection")}
               </div>
-              {!materialLaminationsStateValue?.isAddNewLaminationSizes && (
+              {!materialLaminationStateValue?.isAddNewLaminationWights && (
                 <Tooltip
                   title={t("materials.lamination.admin.addNewLaminationSize")}
                 >
                   <IconButton
                     onClick={() => {
-                      materialLaminationsStateValue?.setIsAddNewLaminationSizes(
+                      materialLaminationStateValue.setItems([
+                        {
+                          code: "",
+                          width: "",
+                          height: "",
+                          name: "",
+                          laminationThicknesses: [
+                            {
+                              code: "",
+                              thickness: "",
+                              defaultPrice: "",
+                              coldOrHot: "",
+                            },
+                          ],
+                          fitToPrintType: [],
+                        },
+                      ]);
+                      materialLaminationStateValue?.setIsAddNewLaminationWights(
                         true
                       );
                     }}
@@ -62,13 +78,16 @@ const UpdateSheetModal = () => {
                 </Tooltip>
               )}
             </div>
-            {materialLaminationsStateValue?.isAddNewLaminationSizes && (
-              <AddLaminationSizeMapping index={0} selectedItem={selectedItem} />
+            {materialLaminationStateValue?.isAddNewLaminationWights && (
+              <AddLaminationWeightsMapping
+                index={0}
+                selectedItem={selectedItem}
+              />
             )}
             {selectedItem?.laminationSizes?.map((item: any, index: number) => {
               return (
-                <LaminationSizesMapping
-                  key={`LaminationSizesMapping_${index}`}
+                <LaminationWeightsMapping
+                  key={`LaminationWeightsMapping_${index}`}
                   index={index}
                   item={item}
                   selectedItem={selectedItem}
@@ -81,4 +100,4 @@ const UpdateSheetModal = () => {
     </>
   );
 };
-export { UpdateSheetModal };
+export { UpdateLaminationModal };

@@ -148,17 +148,27 @@ const EnvelopeWeightsMapping = ({ index, item, selectedItem }) => {
               {t("materials.envelops.admin.isWithWindow")}
             </div>
             <GoMakeAutoComplate
-              options={[true, false]}
+              options={[
+                { label: "Yes", value: true },
+                { label: "No", value: false },
+              ]}
               style={clasess.textInputStyle}
               placeholder={t("materials.envelops.admin.enterisWithWindow")}
               value={
                 materialEnvelopesStateValue?.updateState[item?.id]?.isWithWindow
+                  ? "Yes"
+                  : "No"
               }
               onChange={(e: any, value: any) => {
+                materialEnvelopesStateValue?.changeItems(
+                  index,
+                  "isWithWindowLabel",
+                  value?.label
+                );
                 materialEnvelopesStateValue?.onChangeUpdateStateEnvelopeSize(
                   item?.id,
                   "isWithWindow",
-                  value
+                  value?.value
                 );
               }}
             />
