@@ -31,7 +31,7 @@ const VarnishSettingsWidget = ({ item }: any) => {
       <GoMakeDeleteModal
         hideIcon={true}
         title={t("materials.varnishs.admin.deleteVarnishs")}
-        yesBtn={t("materials.magnets.admin.delete")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}

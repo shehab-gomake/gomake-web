@@ -21,7 +21,7 @@ const UpdatalApplicationModal = () => {
     <>
       <GoMakeModal
         openModal={materialApplicationsStateValue?.openUpdatalApplicationModal}
-        modalTitle={`${t("materials.applications.admin.edit")} ${
+        modalTitle={`${t("materials.buttons.edit")} ${
           selectedItem?.categoryName
         } ${t("materials.applications.admin.application")}`}
         onClose={materialApplicationsStateValue?.onCloseUpdateModal}

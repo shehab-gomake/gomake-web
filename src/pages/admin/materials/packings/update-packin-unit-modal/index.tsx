@@ -20,7 +20,7 @@ const UpdatePacking = () => {
     <>
       <GoMakeModal
         openModal={materialPackingsStateValue?.openUpdatePlatModal}
-        modalTitle={`${t("materials.packings.admin.edit")} ${
+        modalTitle={`${t("materials.buttons.edit")} ${
           selectedItem?.categoryName
         } ${t("materials.packings.admin.packing")}`}
         onClose={materialPackingsStateValue?.onCloseUpdateModal}

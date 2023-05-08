@@ -7,12 +7,12 @@ import moreCircle from "@/icons/more-circle.png";
 const IconWidget = ({ t, onOpnUpdateModal, onOpenDeleteModal }) => {
   return (
     <>
-      <Tooltip title={t("materials.canvasFrames.admin.edit")}>
+      <Tooltip title={t("materials.buttons.edit")}>
         <IconButton onClick={onOpnUpdateModal}>
           <Image src={moreCircle} width={24} height={24} alt="More" />
         </IconButton>
       </Tooltip>
-      <Tooltip title={t("materials.canvasFrames.admin.delete")}>
+      <Tooltip title={t("materials.buttons.delete")}>
         <IconButton onClick={onOpenDeleteModal}>
           <DeleteIcon style={{ color: "#a1a2cd" }} />
         </IconButton>

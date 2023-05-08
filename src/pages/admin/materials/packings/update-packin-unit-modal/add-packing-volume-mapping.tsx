@@ -24,7 +24,7 @@ const AddPackingVolumeMapping = ({ index, selectedItem }) => {
               }
               style={clasess.cancelBtnStyle}
             >
-              {t("materials.packings.admin.cancel")}
+              {t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           </div>
           <div style={clasess.addSheetBtnContainer}>
@@ -37,7 +37,7 @@ const AddPackingVolumeMapping = ({ index, selectedItem }) => {
               style={clasess.addBtnStyle}
             >
               ``
-              {t("materials.packings.admin.save")}
+              {t("materials.buttons.save")}
             </GomakePrimaryButton>
           </div>
         </div>

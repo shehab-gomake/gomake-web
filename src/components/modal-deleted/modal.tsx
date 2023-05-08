@@ -48,7 +48,7 @@ const GoMakeDeleteModal = ({
               {yesBtn}
             </GomakePrimaryButton>{" "}
             <GomakePrimaryButton style={clasess.cancelBtn} onClick={onClose}>
-              {t("materials.sheetPaper.admin.cancel")}
+              {t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           </div>
         </div>

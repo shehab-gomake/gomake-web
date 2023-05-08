@@ -22,7 +22,7 @@ const UpdatePackinUnit = () => {
     <>
       <GoMakeModal
         openModal={materialPackinUnitsStateValue?.openUpdatePlatModal}
-        modalTitle={`${t("materials.packinUnits.admin.edit")} ${
+        modalTitle={`${t("materials.buttons.edit")} ${
           selectedItem?.categoryName
         } ${t("materials.packinUnits.admin.packinUnit")}`}
         onClose={materialPackinUnitsStateValue?.onCloseUpdateModal}

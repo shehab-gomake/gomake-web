@@ -33,7 +33,7 @@ const PackinUnitSettingsWidget = ({ item }: any) => {
       <GoMakeDeleteModal
         hideIcon={true}
         title={t("materials.packinUnits.admin.deletePackinUnit")}
-        yesBtn={t("materials.packinUnits.admin.delete")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}

@@ -21,7 +21,7 @@ const UpdatalHardboardModal = () => {
     <>
       <GoMakeModal
         openModal={materialHardboardsStateValue?.openUpdateHardboardModal}
-        modalTitle={`${t("materials.hardboards.admin.edit")} ${
+        modalTitle={`${t("materials.buttons.edit")} ${
           selectedItem?.categoryName
         } ${t("materials.hardboards.admin.hardboard")}`}
         onClose={materialHardboardsStateValue?.onCloseUpdateModal}

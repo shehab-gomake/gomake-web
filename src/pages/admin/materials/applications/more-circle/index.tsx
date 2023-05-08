@@ -32,7 +32,7 @@ const ApplicationSettingsWidget = ({ item }: any) => {
       <GoMakeDeleteModal
         hideIcon={true}
         title={t("materials.applications.admin.deleteApplication")}
-        yesBtn={t("materials.applications.admin.delete")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}

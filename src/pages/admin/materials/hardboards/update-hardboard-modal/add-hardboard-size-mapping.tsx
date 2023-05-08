@@ -153,7 +153,7 @@ const AddHardboardSizeMapping = ({ index, selectedItem }) => {
               }
               style={clasess.cancelBtnStyle}
             >
-              {t("materials.hardboards.admin.cancel")}
+              {t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           </div>
           <div style={clasess.addSheetBtnContainer}>
@@ -165,7 +165,7 @@ const AddHardboardSizeMapping = ({ index, selectedItem }) => {
               }
               style={clasess.addBtnStyle}
             >
-              {t("materials.hardboards.admin.save")}
+              {t("materials.buttons.save")}
             </GomakePrimaryButton>
           </div>
         </div>

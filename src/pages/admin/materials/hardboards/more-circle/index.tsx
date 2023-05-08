@@ -32,7 +32,7 @@ const HardboardSettingsWidget = ({ item }: any) => {
       <GoMakeDeleteModal
         hideIcon={true}
         title={t("materials.hardboards.admin.deleteHardboard")}
-        yesBtn={t("materials.hardboards.admin.delete")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}

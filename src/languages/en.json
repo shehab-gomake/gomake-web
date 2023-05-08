@@ -151,6 +151,13 @@
       "coldOrHot": "Cold or hot",
       "enterColdOrHot": "Enter cold or hot"
     },
+    "buttons": {
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "save": "Save",
+      "saveModifications": "Save modifications"
+    },
     "sheetPaper": {
       "admin": {
         "title": "Sheets",
@@ -161,13 +168,8 @@
         "addSheetSize": "Add new sheet size",
         "removeSheetSize": "Remove last sheet size",
         "sheetSizeSection": "Sheet Size Section",
-        "cancel": "Cancel",
-        "edit": "Edit",
-        "delete": "Delete",
         "deleteSheet": "Delete Sheet",
-        "subTitleDeleteModal": "Are you sure you delete sheet by categoryName",
-        "saveModifications": "Save modifications",
-        "save": "Save"
+        "subTitleDeleteModal": "Are you sure you delete sheet by categoryName"
       },
       "title": "Sheet paper",
       "category": "Category",
@@ -197,8 +199,6 @@
         "title": "Lamination",
         "subTitle": "Laminations",
         "settings": "Settings",
-        "edit": "Edit",
-        "delete": "Delete",
         "deleteLamination": "Delete lamination",
         "deleteLaminationthicknesses": "Delete lamination thicknesse",
         "subTitleDeleteModal": "Are you sure to delete the lamination by category name",
@@ -209,7 +209,6 @@
         "addNewLaminationThickness": "Add new lamination thickness",
         "removeLaminationSize": "Remove lamination size",
         "removeLaminationSizeThickness": "Remove lamination thickness",
-        "lamination": "Lamination",
         "laminationThicknessesSection": "Lamination thicknesses section",
         "addNewLaminationThicknes": "add new lamination thicknes",
         "removeLaminationThicknes": "remove lamination thicknes",
@@ -219,8 +218,6 @@
         "deleteLaminationSizetTicknessTitle": "Delete lamination size tickness",
         "deleteLaminationSizethicknessSubTitle": "Are you sure you want to delete lamination size Tickness?"
       },
-      "title": "Lamination",
-      "category": "Category",
       "selectSupplier": "Select supplier",
       "height": "Height",
       "width": "Width",
@@ -356,16 +353,12 @@
         "removeHardboardThicknes": "remove lamination hardboard",
         "hardness": "Hardness",
         "deleteHardboard": "Delete hardboard",
-        "delete": "Delete",
         "subTitleDeleteModal": "Are you sure to delete hardboard by categoryName",
-        "edit": "Edit",
         "hardboard": "Hardboard",
         "deleteHardboardSizeTitle": "Delete hardboard size",
         "deleteLHardboardSizeSubTitle": "Are you sure you want to delete hardboard size?",
         "deleteHardboardSizetTicknessTitle": "Delete hardboard size tickness",
         "deleteHardboardSizethicknessSubTitle": "Are you sure you want to delete hardboard size tickness?",
-        "cancel": "Cancel",
-        "save": "Save",
         "addHardboardThickness": "Add new hardboard thicknes"
       },
       "code": "Code",
@@ -462,13 +455,9 @@
         "applicationSizesSection": "Application sizes section",
         "addNewApplicationSize": "Add new application size",
         "removeApplicationSize": "Remove last application size",
-        "delete": "Delete",
         "deleteApplication": "Delete application",
         "subTitleDeleteModal": "Are you sure to delete the application by category name",
-        "edit": "Edit",
         "application": "application",
-        "cancel": "Cancel",
-        "save": "Save",
         "deleteApplicationThicknessTitle": "Delete application thickness",
         "deleteApplicationThicknessSubTitle": "Are you sure you want to delete application thickness?",
         "deleteApplicationThicknessSizeTitle": "Delete application tickness size ",
@@ -571,15 +560,11 @@
         "canvasFrameSizeSection": "Canvas frame size section",
         "addCanvasFrameSize": "Add new canvas frame size",
         "removeCanvasFrameSize": "Remove last canvas frame size ",
-        "edit": "Edit",
-        "delete": "Delete",
         "deleteCanvasFrame": "Delete canvas frame",
         "subTitleDeleteModal": "Are you sure you delete canvas frame by categoryName",
         "deleteCanvasFrameSize": "Delete canvas frame Size",
         "canvasFrame": "Canvas frame",
-        "subTitleDeleteSizeModal": "Are you sure you want to delete canvas frame size?",
-        "cancel": "Cancel",
-        "save": "Save"
+        "subTitleDeleteSizeModal": "Are you sure you want to delete canvas frame size?"
       }
     },
 
@@ -683,11 +668,7 @@
         "removeLastPackinUnit": "Remove last packin unit size",
         "deletePackinUnit": "Delete packin unit",
         "subTitleDeleteModal": "Are you sure you delete packin unit by categoryName",
-        "delete": "Delete",
-        "edit": "Edit",
         "packinUnit": "Packin Unit",
-        "cancel": "Cancel",
-        "save": "Save",
         "deletePackinUnitSize": "Delete packin unit size",
         "subTitleDeleteSizeModal": "Are you sure you want to delete packin unit size?"
       },
@@ -831,11 +812,7 @@
         "removeLastPackingVolumn": "Remove last packing volume",
         "deletePacking": "Delete packing",
         "subTitleDeleteModal": "Are you sure to delete ",
-        "delete": "Delete",
-        "edit": "Edit",
         "packing": "Packing",
-        "cancel": "Cancel",
-        "save": "Save",
         "deletePackingVolume": "Delete packing volume",
         "subTitleDeleteVolumeModal": "Are you sure you want to delete packin volume?"
       },

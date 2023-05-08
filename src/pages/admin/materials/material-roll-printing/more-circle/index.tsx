@@ -33,7 +33,7 @@ const MaterialRollPrintingSettingsWidget = ({ item }: any) => {
       <GoMakeDeleteModal
         hideIcon={true}
         title={t("materials.printingMaterials.admin.deletePrintingMaterials")}
-        yesBtn={t("materials.sheetPaper.admin.delete")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}

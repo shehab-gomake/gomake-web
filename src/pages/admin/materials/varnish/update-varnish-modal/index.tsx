@@ -16,7 +16,7 @@ const UpdateVarnishModal = () => {
     <>
       <GoMakeModal
         openModal={materialVarnishStateValue?.openUpdateVarnishModal}
-        modalTitle={`${t("materials.varnishs.admin.edit")} ${
+        modalTitle={`${t("materials.buttons.edit")} ${
           selectedItem?.typeName
         } ${t("materials.varnishs.admin.varnishs")}`}
         onClose={materialVarnishStateValue?.onCloseUpdateModal}

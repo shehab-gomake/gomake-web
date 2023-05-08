@@ -33,7 +33,7 @@ const RollEncapsulationSettingsWidget = ({ item }: any) => {
       <GoMakeDeleteModal
         hideIcon={true}
         title={t("materials.sheetPaper.admin.deleteRollEncapsulation")}
-        yesBtn={t("materials.sheetPaper.admin.delete")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}

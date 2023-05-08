@@ -173,7 +173,7 @@ const AddApplicationThicknessMapping = ({ index, selectedItem }) => {
               }
               style={clasess.cancelBtnStyle}
             >
-              {t("materials.applications.admin.cancel")}
+              {t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           </div>
           <div style={clasess.addSheetBtnContainer}>
@@ -185,7 +185,7 @@ const AddApplicationThicknessMapping = ({ index, selectedItem }) => {
               }
               style={clasess.addBtnStyle}
             >
-              {t("materials.applications.admin.save")}
+              {t("materials.buttons.save")}
             </GomakePrimaryButton>
           </div>
         </div>
