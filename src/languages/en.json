@@ -158,6 +158,9 @@
       "save": "Save",
       "saveModifications": "Save modifications"
     },
+    "modals": {
+      "subTitleDeleteModal": "Are you sure to delete {{name}}"
+    },
     "sheetPaper": {
       "admin": {
         "title": "Sheets",
@@ -168,8 +171,7 @@
         "addSheetSize": "Add new sheet size",
         "removeSheetSize": "Remove last sheet size",
         "sheetSizeSection": "Sheet Size Section",
-        "deleteSheet": "Delete Sheet",
-        "subTitleDeleteModal": "Are you sure you delete sheet by categoryName"
+        "deleteSheet": "Delete Sheet"
       },
       "title": "Sheet paper",
       "category": "Category",
@@ -438,6 +440,7 @@
         "removeWideFormatMaterialSize": "Remove last wide format material size",
         "WideFormatMaterialSizeSection": "Wide Format Material Size Section",
         "deleteWideFormatMaterialSize": "Delete Wide Format Material Size",
+        "deleteWideFormatMaterial": "Delete Wide Format Material",
         "subTitleDeleteSizeModal": "Are you sure you want to delete wide format material size?",
         "deleteWideFormatMaterialType": "Delete Wide Format Material Type",
         "subTitleDeleteTypeModal": "Are you sure you want to delete wide format material type?"

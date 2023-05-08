@@ -35,9 +35,9 @@ const FrameSettingsWidget = ({ item }: any) => {
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.frames.admin.subTitleDeleteModal")} ${
-          item?.categoryName
-        } ?`}
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
+          name: `${item?.categoryName}`,
+        })}?`}
         onClickDelete={deleteFrameByCategoryName}
       />
       {item === materialFrameStateValue.selectedEditItem && (

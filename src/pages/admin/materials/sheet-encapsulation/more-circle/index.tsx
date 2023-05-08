@@ -37,9 +37,9 @@ const SheetEncapsulationSettingsWidget = ({ item }: any) => {
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t(
-          "materials.sheetEncapsulation.admin.subTitleDeleteModal"
-        )} ${item?.categoryName} ?`}
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
+          name: `${item?.categoryName}`,
+        })}?`}
         onClickDelete={deleteSheetEncapsulationByCategoryName}
       />
       {item === materialSheetEncapsulationStateValue.selectedEditItem && (

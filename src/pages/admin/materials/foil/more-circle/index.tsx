@@ -35,9 +35,9 @@ const FoilSettingsWidget = ({ item }: any) => {
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.foils.admin.subTitleDeleteModal")} ${
-          item?.categoryName
-        } ?`}
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
+          name: `${item?.categoryName}`,
+        })}?`}
         onClickDelete={deleteFoilByCategoryName}
       />
       {item === materialFoilStateValue.selectedEditItem && <UpdateFoilModal />}

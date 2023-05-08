@@ -39,12 +39,9 @@ const DoubleSidedTapeRollSettingsWidget = ({ item }: any) => {
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t(
-          "materials.doubleSidedTapeRolls.admin.subTitleDeleteModal",
-          {
-            name: `${item?.name}`,
-          }
-        )}?`}
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
+          name: `${item?.name}`,
+        })}?`}
         onClickDelete={deleteDoubleSidedTapeRoll}
       />
       {item === materialDoublesidedTapeRollStateValue.selectedEditItem && (

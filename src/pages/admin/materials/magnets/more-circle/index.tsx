@@ -35,7 +35,7 @@ const MagnetSettingsWidget = ({ item }: any) => {
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.magnets.admin.subTitleDeleteModal", {
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
           name: `${item?.name}`,
         })}?`}
         onClickDelete={deleteMagnet}

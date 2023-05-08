@@ -35,7 +35,7 @@ const VarnishSettingsWidget = ({ item }: any) => {
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.varnishs.admin.subTitleDeleteModal", {
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
           name: `${item?.typeName}`,
         })}?`}
         onClickDelete={deleteVarnish}
