@@ -319,8 +319,6 @@
         "materialRollPrintingSizeSection": "Material Roll Printing Size Section",
         "addNewMaterialRollPrintingSize": "Add new material roll printing size",
         "removeMaterialRollPrintingSize": "Remove last material roll printing size",
-        "weightPerSquareMeter": "Weight per square meter",
-        "enterWeightPerSquareMeter": "Enter Weight Per Square Meter",
         "deletePrintingMaterials": "Delete Roll Printing",
         "deleteMaterialRollPrintingSize": "Delete Material Roll Printing Size",
         "subTitleDeleteSizeModal": "Are you sure you want to delete Material Roll Printing Size?"
