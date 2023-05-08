@@ -17,11 +17,9 @@ const LaminationSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
     <>
       <div style={clasess.inputSizesContainer}>
         <div>
-          <div style={clasess.lableTextStyle}>
-            {t("materials.sheetPaper.admin.code")}
-          </div>
+          <div style={clasess.lableTextStyle}>{t("materials.inputs.code")}</div>
           <GomakeTextInput
-            placeholder={t("materials.sheetPaper.admin.enterCode")}
+            placeholder={t("materials.inputs.enterCode")}
             style={clasess.textInputStyle}
             value={sheetSize[index]["code"]}
             onChange={(e: any) => {
@@ -36,10 +34,10 @@ const LaminationSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.sheetPaper.admin.thickness")}
+            {t("materials.inputs.thickness")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.sheetPaper.admin.enterThickness")}
+            placeholder={t("materials.inputs.enterThickness")}
             style={clasess.textInputStyle}
             value={sheetSize[index]["thickness"]}
             onChange={(e: any) => {
@@ -54,10 +52,10 @@ const LaminationSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.plat.admin.defaultPrice")}
+            {t("materials.inputs.defaultPrice")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.plat.admin.enterDefaultPrice")}
+            placeholder={t("materials.inputs.enterDefaultPrice")}
             style={clasess.textInputStyle}
             value={sheetSize[index]["defaultPrice"]}
             onChange={(e: any) => {
@@ -72,7 +70,7 @@ const LaminationSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.lamination.admin.coldOrHot")}
+            {t("materials.inputs.coldOrHot")}
           </div>
           <GomakeTextInput
             placeholder={t("materials.lamination.admin.enterColdOrHot")}

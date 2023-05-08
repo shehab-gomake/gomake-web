@@ -44,10 +44,10 @@ const SheetEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.code")}
+              {t("materials.inputs.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterCode")}
+              placeholder={t("materials.inputs.enterCode")}
               style={clasess.textInputStyle}
               value={
                 materialSheetEncapsulationStateValue?.updateState[item?.id]
@@ -106,10 +106,10 @@ const SheetEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.width")}
+              {t("materials.inputs.width")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterWidth")}
+              placeholder={t("materials.inputs.enterWidth")}
               style={clasess.textInputStyle}
               value={
                 materialSheetEncapsulationStateValue?.updateState[item?.id]
@@ -126,10 +126,10 @@ const SheetEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.height")}
+              {t("materials.inputs.height")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterHeight")}
+              placeholder={t("materials.inputs.enterHeight")}
               style={clasess.textInputStyle}
               value={
                 materialSheetEncapsulationStateValue?.updateState[item?.id]
@@ -146,10 +146,10 @@ const SheetEncapsulationWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterName")}
+              placeholder={t("materials.inputs.enterName")}
               style={clasess.textInputStyle}
               value={
                 materialSheetEncapsulationStateValue?.updateState[item?.id]

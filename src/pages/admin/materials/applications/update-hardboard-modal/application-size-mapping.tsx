@@ -48,10 +48,10 @@ const ApplicationSizeesMapping = ({
         <div style={clasess.inputSizesContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.applications.admin.code")}
+              {t("materials.inputs.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.applications.admin.enterCode")}
+              placeholder={t("materials.inputs.enterCode")}
               style={clasess.textInputStyle}
               value={
                 materialApplicationsStateValue?.updateState[applicationSize?.id]
@@ -68,11 +68,11 @@ const ApplicationSizeesMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.applications.admin.defaultPricePerSquareMeter")}
+              {t("materials.inputs.defaultPricePerSquareMeter")}
             </div>
             <GomakeTextInput
               placeholder={t(
-                "materials.applications.admin.enterDefaultPricePerSquareMeter"
+                "materials.inputs.enterDefaultPricePerSquareMeter"
               )}
               style={clasess.textInputStyle}
               value={
@@ -90,10 +90,10 @@ const ApplicationSizeesMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.applications.admin.height")}
+              {t("materials.inputs.height")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.applications.admin.enterHeight")}
+              placeholder={t("materials.inputs.enterHeight")}
               style={clasess.textInputStyle}
               value={
                 materialApplicationsStateValue?.updateState[applicationSize?.id]
@@ -110,10 +110,10 @@ const ApplicationSizeesMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.applications.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.applications.admin.enterName")}
+              placeholder={t("materials.inputs.enterName")}
               style={clasess.textInputStyle}
               value={
                 materialApplicationsStateValue?.updateState[applicationSize?.id]
@@ -130,10 +130,10 @@ const ApplicationSizeesMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.applications.admin.width")}
+              {t("materials.inputs.width")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.applications.admin.enterWidth")}
+              placeholder={t("materials.inputs.enterWidth")}
               style={clasess.textInputStyle}
               value={
                 materialApplicationsStateValue?.updateState[applicationSize?.id]

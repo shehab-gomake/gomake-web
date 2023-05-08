@@ -17,11 +17,9 @@ const PackinDrumSizeInputs = ({ index }) => {
     <>
       <div style={clasess.mainWaightsContainer}>
         <div>
-          <div style={clasess.lableTextStyle}>
-            {t("materials.plat.admin.code")}
-          </div>
+          <div style={clasess.lableTextStyle}>{t("materials.inputs.code")}</div>
           <GomakeTextInput
-            placeholder={t("materials.plat.admin.enterCode")}
+            placeholder={t("materials.inputs.enterCode")}
             style={clasess.textInputStyle}
             value={materialPackinDrumStateValue?.items[index]["code"]}
             onChange={(e: any) => {

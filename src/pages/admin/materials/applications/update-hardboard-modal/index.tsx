@@ -31,10 +31,10 @@ const UpdatalApplicationModal = () => {
           <div style={clasess.firstSectionContainer}>
             <div>
               <div style={clasess.lableTextStyle}>
-                {t("materials.applications.admin.categoryName")}
+                {t("materials.inputs.categoryName")}
               </div>
               <GomakeTextInput
-                placeholder={t("materials.hardboards.admin.categoryName")}
+                placeholder={t("materials.inputs.categoryName")}
                 style={clasess.textInputStyle}
                 value={selectedItem?.categoryName}
                 disabled={true}

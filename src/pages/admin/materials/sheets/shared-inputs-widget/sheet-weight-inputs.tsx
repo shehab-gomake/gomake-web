@@ -16,10 +16,10 @@ const SheetWeightsInputs = ({ index }) => {
       <div style={clasess.mainWaightsContainer}>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.sheetPaper.admin.weight")}
+            {t("materials.inputs.weight")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.sheetPaper.admin.enterWeight")}
+            placeholder={t("materials.inputs.enterWeight")}
             style={clasess.textInputStyle}
             value={materialSheetsStateValue?.items[index]["weight"]}
             onChange={(e: any) => {
@@ -32,11 +32,9 @@ const SheetWeightsInputs = ({ index }) => {
           />
         </div>
         <div>
-          <div style={clasess.lableTextStyle}>
-            {t("materials.sheetPaper.admin.name")}
-          </div>
+          <div style={clasess.lableTextStyle}>{t("materials.inputs.name")}</div>
           <GomakeTextInput
-            placeholder={t("materials.sheetPaper.admin.enterName")}
+            placeholder={t("materials.inputs.enterName")}
             style={clasess.textInputStyle}
             value={materialSheetsStateValue?.items[index]["name"]}
             onChange={(e: any) => {
@@ -50,10 +48,10 @@ const SheetWeightsInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.sheetPaper.admin.thickness")}
+            {t("materials.inputs.thickness")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.sheetPaper.admin.enterThickness")}
+            placeholder={t("materials.inputs.enterThickness")}
             style={clasess.textInputStyle}
             value={materialSheetsStateValue?.items[index]["thickness"]}
             onChange={(e: any) => {
@@ -67,10 +65,10 @@ const SheetWeightsInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.sheetPaper.admin.index")}
+            {t("materials.inputs.index")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.sheetPaper.admin.enterIndex")}
+            placeholder={t("materials.inputs.enterIndex")}
             style={clasess.textInputStyle}
             value={materialSheetsStateValue?.items[index]["index"]}
             onChange={(e: any) => {

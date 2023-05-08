@@ -37,10 +37,10 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
         <div style={clasess.inputSizesContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.code")}
+              {t("materials.inputs.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterCode")}
+              placeholder={t("materials.inputs.enterCode")}
               style={clasess.textInputStyle}
               value={materialSheetsStateValue?.updateState[sheetSize?.id]?.code}
               onChange={(e: any) => {
@@ -54,10 +54,10 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterName")}
+              placeholder={t("materials.inputs.enterName")}
               style={clasess.textInputStyle}
               value={materialSheetsStateValue?.updateState[sheetSize?.id]?.name}
               onChange={(e: any) => {
@@ -71,10 +71,10 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.width")}
+              {t("materials.inputs.width")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterWidth")}
+              placeholder={t("materials.inputs.enterWidth")}
               style={clasess.textInputStyle}
               value={
                 materialSheetsStateValue?.updateState[sheetSize?.id]?.width
@@ -90,10 +90,10 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.height")}
+              {t("materials.inputs.height")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterHeight")}
+              placeholder={t("materials.inputs.enterHeight")}
               style={clasess.textInputStyle}
               value={
                 materialSheetsStateValue?.updateState[sheetSize?.id]?.height
@@ -109,12 +109,10 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.defaultPricePerTon")}
+              {t("materials.inputs.defaultPricePerTon")}
             </div>
             <GomakeTextInput
-              placeholder={t(
-                "materials.sheetPaper.admin.enterDefaultPricePerTon"
-              )}
+              placeholder={t("materials.inputs.enterDefaultPricePerTon")}
               style={clasess.textInputStyle}
               value={
                 materialSheetsStateValue?.updateState[sheetSize?.id]
@@ -131,12 +129,10 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.defaultPricePerUnit")}
+              {t("materials.inputs.defaultPricePerUnit")}
             </div>
             <GomakeTextInput
-              placeholder={t(
-                "materials.sheetPaper.admin.enterDefaultPricePerUnit"
-              )}
+              placeholder={t("materials.inputs.enterDefaultPricePerUnit")}
               style={clasess.textInputStyle}
               value={
                 materialSheetsStateValue?.updateState[sheetSize?.id]
@@ -153,10 +149,10 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.direction")}
+              {t("materials.inputs.direction")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterDirection")}
+              placeholder={t("materials.inputs.enterDirection")}
               style={clasess.textInputStyle}
               value={
                 materialSheetsStateValue?.updateState[sheetSize?.id]?.direction
@@ -172,10 +168,10 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.index")}
+              {t("materials.inputs.index")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterIndex")}
+              placeholder={t("materials.inputs.enterIndex")}
               style={clasess.textInputStyle}
               value={
                 materialSheetsStateValue?.updateState[sheetSize?.id]?.index

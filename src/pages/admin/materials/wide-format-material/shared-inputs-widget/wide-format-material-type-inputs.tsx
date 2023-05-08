@@ -17,11 +17,9 @@ const WideFormatMatrtialTypeInputs = ({ index }) => {
     <>
       <div style={clasess.mainWaightsContainer}>
         <div>
-          <div style={clasess.lableTextStyle}>
-            {t("materials.sheetPaper.admin.name")}
-          </div>
+          <div style={clasess.lableTextStyle}>{t("materials.inputs.name")}</div>
           <GomakeTextInput
-            placeholder={t("materials.sheetPaper.admin.enterName")}
+            placeholder={t("materials.inputs.enterName")}
             style={clasess.textInputStyle}
             value={materialWideFormatMaterialStateValue?.items[index]["name"]}
             onChange={(e: any) => {
@@ -35,12 +33,10 @@ const WideFormatMatrtialTypeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.wideFormatMaterial.admin.weightPerMeterSquare")}
+            {t("materials.inputs.weightPerMeterSquare")}
           </div>
           <GomakeTextInput
-            placeholder={t(
-              "materials.wideFormatMaterial.admin.enterWeightPerMeterSquare"
-            )}
+            placeholder={t("materials.inputs.enterWeightPerMeterSquare")}
             style={clasess.textInputStyle}
             value={
               materialWideFormatMaterialStateValue?.items[index][
@@ -58,10 +54,10 @@ const WideFormatMatrtialTypeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.sheetPaper.admin.thickness")}
+            {t("materials.inputs.thickness")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.sheetPaper.admin.enterThickness")}
+            placeholder={t("materials.inputs.enterThickness")}
             style={clasess.textInputStyle}
             value={
               materialWideFormatMaterialStateValue?.items[index]["thickness"]
@@ -77,10 +73,10 @@ const WideFormatMatrtialTypeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.wideFormatMaterial.admin.hardness")}
+            {t("materials.inputs.hardness")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.wideFormatMaterial.admin.enterHardness")}
+            placeholder={t("materials.inputs.enterHardness")}
             style={clasess.textInputStyle}
             value={
               materialWideFormatMaterialStateValue?.items[index]["hardness"]
@@ -96,10 +92,10 @@ const WideFormatMatrtialTypeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.sheetPaper.admin.index")}
+            {t("materials.inputs.index")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.sheetPaper.admin.enterIndex")}
+            placeholder={t("materials.inputs.enterIndex")}
             style={clasess.textInputStyle}
             value={materialWideFormatMaterialStateValue?.items[index]["index"]}
             onChange={(e: any) => {
