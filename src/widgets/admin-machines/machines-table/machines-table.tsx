@@ -1,7 +1,5 @@
 import {useEffect, useState} from "react";
-import {use} from "i18next";
 import {useGomakeAxios} from "@/hooks";
-import {IMachine} from "@/widgets/admin-machines/add-machine/interface/machine-attributes";
 import {styled} from "@mui/material/styles";
 import {Modal, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow} from "@mui/material";
 import {FONT_FAMILY} from "@/utils/font-family";
@@ -43,7 +41,7 @@ const MachinesTable = () => {
     const router = useRouter();
     const {categoryId} = router.query
     useEffect(() => {
-        callApi('Get', `/v1/administrator/machines/category/${categoryId}`).then((res) => setState(res?.data.data?.data))
+        callApi('Get', `/v1/administrator/machines/category/${categoryId}`).then((res) => setState(res?.data?.data?.data))
     }, [categoryId]);
     const deleteMachine = () => {
         callApi('post', '/v1/administrator/machines/delete', {id: selectedMachineId}).then(() => {
@@ -55,8 +53,6 @@ const MachinesTable = () => {
                 })
         })
     };
-    useEffect(() => console.log(state), [state])
-
     const onClickDeleteMachineButton = (machineId: string) => {
         setSelectedMachineId(machineId);
         setDeleteMachineModal(true);
@@ -77,7 +73,7 @@ const MachinesTable = () => {
                     </TableHead>
                     <TableBody>
                         {
-                            state.length > 0 && state?.map((machine) => {
+                            state?.length > 0 && state?.map((machine) => {
                                 return <StyledTableRow>
                                     <StyledTableCell>{machine.code}</StyledTableCell>
                                     <StyledTableCell align={'center'}>{machine.nickName}</StyledTableCell>

@@ -52,7 +52,9 @@
     "glues": "Glues",
     "magnets": "Magnets",
     "packings": "Packings",
-    "varnishs": "Varnishs"
+    "varnishs": "Varnishs",
+    "machines": "Machines",
+    "addMachine": "Add machine"
   },
   "modal": {
     "close": "Close",

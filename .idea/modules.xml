@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../gomake-ui-backend/.idea/gomake-ui-backend.iml" filepath="$PROJECT_DIR$/../gomake-ui-backend/.idea/gomake-ui-backend.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/gomake-web.iml" filepath="$PROJECT_DIR$/.idea/gomake-web.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../machines-service/.idea/machines-service.iml" filepath="$PROJECT_DIR$/../machines-service/.idea/machines-service.iml" />
     </modules>
   </component>
 </project>
