@@ -33,10 +33,10 @@ const AddNewCanvasFramesModal = () => {
           <div style={clasess.firstSectionContainer}>
             <div>
               <div style={clasess.lableTextStyle}>
-                {t("materials.canvasFrames.admin.categoryName")}
+                {t("materials.inputs.categoryName")}
               </div>
               <GomakeTextInput
-                placeholder={t("materials.canvasFrames.admin.categoryName")}
+                placeholder={t("materials.inputs.categoryName")}
                 style={clasess.textInputStyle}
                 value={materialCanvasFramesStateValue?.categoryName}
                 onChange={(e: any) => {

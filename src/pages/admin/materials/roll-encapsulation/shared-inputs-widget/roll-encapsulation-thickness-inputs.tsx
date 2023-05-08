@@ -70,7 +70,7 @@ const RollEncapsulationThicknesssInputs = ({ index }) => {
             {t("materials.inputs.weightPerSquareMeter")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.inputs.enterThicknessPerSquareMeter")}
+            placeholder={t("materials.inputs.enterWeightPerSquareMeter")}
             style={clasess.textInputStyle}
             value={
               materialRollEncapsulationStateValue?.items[index][

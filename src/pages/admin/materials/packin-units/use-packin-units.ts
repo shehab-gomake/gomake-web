@@ -10,7 +10,7 @@ const useCanvasFrames = () => {
   const { t } = useTranslation();
   const headerTable = useMemo(
     () => [
-      t("materials.canvasFrames.admin.categoryName"),
+      t("materials.inputs.categoryName"),
       t("materials.canvasFrames.settings"),
     ],
     []

@@ -33,10 +33,10 @@ const PackinDrumSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.packinDrums.admin.material")}
+            {t("materials.inputs.material")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.packinDrums.admin.enterMaterial")}
+            placeholder={t("materials.inputs.enterMaterial")}
             style={clasess.textInputStyle}
             value={materialPackinDrumStateValue?.items[index]["material"]}
             onChange={(e: any) => {
@@ -49,11 +49,9 @@ const PackinDrumSizeInputs = ({ index }) => {
           />
         </div>
         <div>
-          <div style={clasess.lableTextStyle}>
-            {t("materials.packinDrums.admin.size")}
-          </div>
+          <div style={clasess.lableTextStyle}>{t("materials.inputs.size")}</div>
           <GomakeTextInput
-            placeholder={t("materials.packinDrums.admin.enterSize")}
+            placeholder={t("materials.inputs.enterSize")}
             style={clasess.textInputStyle}
             value={materialPackinDrumStateValue?.items[index]["size"]}
             onChange={(e: any) => {
@@ -67,10 +65,10 @@ const PackinDrumSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.packinDrums.admin.sizeName")}
+            {t("materials.inputs.sizeName")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.packinDrums.admin.enterSizeName")}
+            placeholder={t("materials.inputs.enterSizeName")}
             style={clasess.textInputStyle}
             value={materialPackinDrumStateValue?.items[index]["sizeName"]}
             onChange={(e: any) => {
@@ -84,10 +82,10 @@ const PackinDrumSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.packinDrums.admin.drumRingNumber")}
+            {t("materials.inputs.drumRingNumber")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.packinDrums.admin.enterDrumRingNumber")}
+            placeholder={t("materials.inputs.enterDrumRingNumber")}
             style={clasess.textInputStyle}
             value={materialPackinDrumStateValue?.items[index]["drumRingNumber"]}
             onChange={(e: any) => {
@@ -101,10 +99,10 @@ const PackinDrumSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.packinDrums.admin.weight")}
+            {t("materials.inputs.weight")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.packinDrums.admin.enterWeight")}
+            placeholder={t("materials.inputs.enterWeight")}
             style={clasess.textInputStyle}
             value={materialPackinDrumStateValue?.items[index]["weight"]}
             onChange={(e: any) => {
@@ -118,12 +116,10 @@ const PackinDrumSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.packinDrums.admin.defaultPricePerDrum")}
+            {t("materials.inputs.defaultPricePerDrum")}
           </div>
           <GomakeTextInput
-            placeholder={t(
-              "materials.packinDrums.admin.enterDefaultPricePerDrum"
-            )}
+            placeholder={t("materials.inputs.enterDefaultPricePerDrum")}
             style={clasess.textInputStyle}
             value={
               materialPackinDrumStateValue?.items[index]["defaultPricePerDrum"]

@@ -33,10 +33,10 @@ const AddNewPackinUnitsModal = () => {
           <div style={clasess.firstSectionContainer}>
             <div>
               <div style={clasess.lableTextStyle}>
-                {t("materials.packinUnits.admin.categoryName")}
+                {t("materials.inputs.categoryName")}
               </div>
               <GomakeTextInput
-                placeholder={t("materials.packinUnits.admin.categoryName")}
+                placeholder={t("materials.inputs.categoryName")}
                 style={clasess.textInputStyle}
                 value={materialPackinUnitsStateValue?.categoryName}
                 onChange={(e: any) => {

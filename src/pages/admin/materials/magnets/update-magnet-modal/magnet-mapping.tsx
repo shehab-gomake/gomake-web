@@ -33,10 +33,10 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.magnets.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.magnets.admin.enterName")}
+              placeholder={t("materials.inputs.enterName")}
               style={clasess.textInputStyle}
               value={materialMagnetStateValue?.updateState?.name}
               onChange={(e: any) => {
@@ -49,10 +49,10 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.magnets.admin.weight")}
+              {t("materials.inputs.weight")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.magnets.admin.enterWeight")}
+              placeholder={t("materials.inputs.enterWeight")}
               style={clasess.textInputStyle}
               value={materialMagnetStateValue?.updateState?.weight}
               onChange={(e: any) => {
@@ -65,7 +65,7 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.magnets.admin.withGlue")}
+              {t("materials.inputs.withGlue")}
             </div>
             <GoMakeAutoComplate
               options={[
@@ -73,7 +73,7 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
                 { label: "No", value: false },
               ]}
               style={clasess.textInputStyle}
-              placeholder={t("materials.magnets.admin.enterWithGlue")}
+              placeholder={t("materials.inputs.enterWithGlue")}
               value={
                 materialMagnetStateValue?.updateState.withGlue ? "Yes" : "No"
               }
@@ -88,7 +88,7 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.magnets.admin.directPrinting")}
+              {t("materials.inputs.directPrinting")}
             </div>
             <GoMakeAutoComplate
               options={[
@@ -96,7 +96,7 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
                 { label: "No", value: false },
               ]}
               style={clasess.textInputStyle}
-              placeholder={t("materials.magnets.admin.enterDirectPrinting")}
+              placeholder={t("materials.inputs.enterDirectPrinting")}
               value={
                 materialMagnetStateValue?.updateState?.directPrinting
                   ? "Yes"
@@ -116,7 +116,7 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.magnets.admin.linkage")}
+              {t("materials.inputs.linkage")}
             </div>
             <GoMakeAutoComplate
               options={[
@@ -124,7 +124,7 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
                 { label: "No", value: false },
               ]}
               style={clasess.textInputStyle}
-              placeholder={t("materials.magnets.admin.enterLinkage")}
+              placeholder={t("materials.inputs.enterLinkage")}
               value={
                 materialMagnetStateValue?.updateState?.linkage ? "Yes" : "No"
               }
@@ -142,10 +142,10 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.magnets.admin.width")}
+              {t("materials.inputs.width")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.magnets.admin.enterWidth")}
+              placeholder={t("materials.inputs.enterWidth")}
               style={clasess.textInputStyle}
               value={materialMagnetStateValue?.updateState?.width}
               onChange={(e: any) => {
@@ -158,10 +158,10 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.magnets.admin.height")}
+              {t("materials.inputs.height")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.magnets.admin.enterHeight")}
+              placeholder={t("materials.inputs.enterHeight")}
               style={clasess.textInputStyle}
               value={materialMagnetStateValue?.updateState?.height}
               onChange={(e: any) => {
@@ -174,10 +174,10 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.magnets.admin.defaultPrice")}
+              {t("materials.inputs.defaultPrice")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.magnets.admin.enterDefaultPrice")}
+              placeholder={t("materials.inputs.enterDefaultPrice")}
               style={clasess.textInputStyle}
               value={materialMagnetStateValue?.updateState?.defaultPrice}
               onChange={(e: any) => {

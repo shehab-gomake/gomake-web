@@ -9,10 +9,7 @@ const useApplications = () => {
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
   const headerTable = useMemo(
-    () => [
-      t("materials.additions.admin.name"),
-      t("materials.additions.admin.settings"),
-    ],
+    () => [t("materials.inputs.name"), t("materials.additions.admin.settings")],
     []
   );
   const [openAddApplicationsModal, setOpenAddApplicationsModal] =

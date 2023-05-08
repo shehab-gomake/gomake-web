@@ -10,7 +10,7 @@ const useDoubleSidedTapeRoll = () => {
   const { t } = useTranslation();
   const headerTable = useMemo(
     () => [
-      t("materials.doubleSidedTapeRolls.admin.name"),
+      t("materials.inputs.name"),
       t("materials.doubleSidedTapeRolls.admin.settings"),
     ],
     []

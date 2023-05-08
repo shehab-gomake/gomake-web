@@ -40,10 +40,10 @@ const CanvasFrameWeightsMapping = ({ index, item, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.canvasFrames.admin.code")}
+              {t("materials.inputs.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.canvasFrames.admin.enterCode")}
+              placeholder={t("materials.inputs.enterCode")}
               style={clasess.textInputStyle}
               value={
                 materialCanvasFramesStateValue?.updateState[item?.id]?.code
@@ -59,10 +59,10 @@ const CanvasFrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.canvasFrames.admin.defaultPrice")}
+              {t("materials.inputs.defaultPrice")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.canvasFrames.admin.enterDefaultPrice")}
+              placeholder={t("materials.inputs.enterDefaultPrice")}
               style={clasess.textInputStyle}
               value={
                 materialCanvasFramesStateValue?.updateState[item?.id]
@@ -79,10 +79,10 @@ const CanvasFrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.canvasFrames.admin.height")}
+              {t("materials.inputs.height")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.canvasFrames.admin.enterHeight")}
+              placeholder={t("materials.inputs.enterHeight")}
               style={clasess.textInputStyle}
               value={
                 materialCanvasFramesStateValue?.updateState[item?.id]?.height
@@ -98,10 +98,10 @@ const CanvasFrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.canvasFrames.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.canvasFrames.admin.entername")}
+              placeholder={t("materials.inputs.entername")}
               style={clasess.textInputStyle}
               value={
                 materialCanvasFramesStateValue?.updateState[item?.id]?.name
@@ -117,10 +117,10 @@ const CanvasFrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.canvasFrames.admin.stock")}
+              {t("materials.inputs.stock")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.canvasFrames.admin.enterStock")}
+              placeholder={t("materials.inputs.enterStock")}
               style={clasess.textInputStyle}
               value={
                 materialCanvasFramesStateValue?.updateState[item?.id]?.stock
@@ -136,10 +136,10 @@ const CanvasFrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.canvasFrames.admin.thickness")}
+              {t("materials.inputs.thickness")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.canvasFrames.admin.enterthickness")}
+              placeholder={t("materials.inputs.enterthickness")}
               style={clasess.textInputStyle}
               value={
                 materialCanvasFramesStateValue?.updateState[item?.id]?.thickness
@@ -155,10 +155,10 @@ const CanvasFrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.canvasFrames.admin.thickness")}
+              {t("materials.inputs.thickness")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.canvasFrames.admin.enterthickness")}
+              placeholder={t("materials.inputs.enterthickness")}
               style={clasess.textInputStyle}
               value={
                 materialCanvasFramesStateValue?.updateState[item?.id]?.thickness
@@ -174,10 +174,10 @@ const CanvasFrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.canvasFrames.admin.width")}
+              {t("materials.inputs.width")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.canvasFrames.admin.enterWidth")}
+              placeholder={t("materials.inputs.enterWidth")}
               style={clasess.textInputStyle}
               value={
                 materialCanvasFramesStateValue?.updateState[item?.id]?.width

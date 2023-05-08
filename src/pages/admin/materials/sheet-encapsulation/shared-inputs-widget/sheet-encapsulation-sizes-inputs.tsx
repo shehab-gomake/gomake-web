@@ -33,10 +33,10 @@ const SheetEncapsulationSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.sheetEncapsulation.admin.thickness")}
+            {t("materials.inputs.thickness")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.sheetEncapsulation.admin.enterThickness")}
+            placeholder={t("materials.inputs.enterThickness")}
             style={clasess.textInputStyle}
             value={
               materialSheetEncapsulationStateValue?.items[index]["thickness"]
@@ -52,10 +52,10 @@ const SheetEncapsulationSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.sheetEncapsulation.admin.weight")}
+            {t("materials.inputs.weight")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.sheetEncapsulation.admin.enterWeight")}
+            placeholder={t("materials.inputs.enterWeight")}
             style={clasess.textInputStyle}
             value={materialSheetEncapsulationStateValue?.items[index]["weight"]}
             onChange={(e: any) => {
@@ -118,12 +118,10 @@ const SheetEncapsulationSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.sheetEncapsulation.admin.quantityInPackage")}
+            {t("materials.inputs.quantityInPackage")}
           </div>
           <GomakeTextInput
-            placeholder={t(
-              "materials.sheetEncapsulation.admin.enterQuantityInPackage"
-            )}
+            placeholder={t("materials.inputs.enterQuantityInPackage")}
             style={clasess.textInputStyle}
             value={
               materialSheetEncapsulationStateValue?.items[index][
@@ -141,12 +139,10 @@ const SheetEncapsulationSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.sheetEncapsulation.admin.defaultPricePerUnit")}
+            {t("materials.inputs.defaultPricePerUnit")}
           </div>
           <GomakeTextInput
-            placeholder={t(
-              "materials.sheetEncapsulation.admin.enterDefaultPricePerUnit"
-            )}
+            placeholder={t("materials.inputs.enterDefaultPricePerUnit")}
             style={clasess.textInputStyle}
             value={
               materialSheetEncapsulationStateValue?.items[index][

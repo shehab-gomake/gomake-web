@@ -34,10 +34,10 @@ const AdditionMapping = ({ index, item }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.additions.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.additions.admin.enterName")}
+              placeholder={t("materials.inputs.enterName")}
               style={clasess.textInputStyle}
               value={materialAdditionsStateValue?.updateState?.name}
               onChange={(e: any) => {
@@ -50,10 +50,10 @@ const AdditionMapping = ({ index, item }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.additions.admin.adaptationField")}
+              {t("materials.inputs.adaptationField")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.additions.admin.enterAdaptationField")}
+              placeholder={t("materials.inputs.enterAdaptationField")}
               style={clasess.textInputStyle}
               value={materialAdditionsStateValue?.updateState?.adaptationField}
               onChange={(e: any) => {
@@ -66,10 +66,10 @@ const AdditionMapping = ({ index, item }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.additions.admin.defaultPrice")}
+              {t("materials.inputs.defaultPrice")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.additions.admin.enterDefaultPrice")}
+              placeholder={t("materials.inputs.enterDefaultPrice")}
               style={clasess.textInputStyle}
               value={materialAdditionsStateValue?.updateState?.defaultPrice}
               onChange={(e: any) => {
@@ -82,10 +82,10 @@ const AdditionMapping = ({ index, item }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.additions.admin.weight")}
+              {t("materials.inputs.weight")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.additions.admin.enterWeight")}
+              placeholder={t("materials.inputs.enterWeight")}
               style={clasess.textInputStyle}
               value={materialAdditionsStateValue?.updateState?.weight}
               onChange={(e: any) => {
