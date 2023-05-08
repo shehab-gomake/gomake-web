@@ -203,7 +203,6 @@
         "settings": "Settings",
         "deleteLamination": "Delete lamination",
         "deleteLaminationthicknesses": "Delete lamination thicknesse",
-        "subTitleDeleteModal": "Are you sure to delete the lamination by category name",
         "subTitleDeleteThicknessesModal": "Are you sure to delete the lamination thicknesse",
         "laminationSizesSection": "Lamination size section",
         "addNewLaminationSize": "Add new lamination size",
@@ -244,7 +243,6 @@
         "addPlatSize": "Add new plat size",
         "removePlatSize": "Remove last plat size",
         "deletePlat": "Delete Plat",
-        "subTitleDeleteModal": "Are you sure you delete plat by categoryName",
         "deletePlatSize": "Delete Plat Size",
         "subTitleDeleteSizeModal": "Are you sure you want to delete plat size?"
       },
@@ -266,7 +264,6 @@
         "addEnvelopSize": "Add new envelop size",
         "removeEnvelopSize": "Remove last envelop size",
         "deleteEnvelope": "Delete Envelop",
-        "subTitleDeleteModal": "Are you sure you delete envelop by categoryName",
         "deleteEnvelopeSize": "Delete Envelope Size",
         "subTitleDeleteModalSize": "Are you sure you want to delete envelope size?"
       },
@@ -301,7 +298,6 @@
         "addTubesSize": "Add new tube size",
         "removeTubesSize": "Remove last tube size",
         "deleteTube": "Delete tube",
-        "subTitleDeleteModal": "Are you sure you delete tube by categoryName",
         "deleteTubeSize": "Delete Tube Size",
         "subTitleDeleteModalSize": "Are you sure you want to delete tube size?"
       },
@@ -326,7 +322,6 @@
         "weightPerSquareMeter": "Weight per square meter",
         "enterWeightPerSquareMeter": "Enter Weight Per Square Meter",
         "deletePrintingMaterials": "Delete Roll Printing",
-        "subTitleDeleteModal": "Are you sure to delete roll printing by categoryName",
         "deleteMaterialRollPrintingSize": "Delete Material Roll Printing Size",
         "subTitleDeleteSizeModal": "Are you sure you want to delete Material Roll Printing Size?"
       },
@@ -355,7 +350,6 @@
         "removeHardboardThicknes": "remove lamination hardboard",
         "hardness": "Hardness",
         "deleteHardboard": "Delete hardboard",
-        "subTitleDeleteModal": "Are you sure to delete hardboard by categoryName",
         "hardboard": "Hardboard",
         "deleteHardboardSizeTitle": "Delete hardboard size",
         "deleteLHardboardSizeSubTitle": "Are you sure you want to delete hardboard size?",
@@ -459,7 +453,6 @@
         "addNewApplicationSize": "Add new application size",
         "removeApplicationSize": "Remove last application size",
         "deleteApplication": "Delete application",
-        "subTitleDeleteModal": "Are you sure to delete the application by category name",
         "application": "application",
         "deleteApplicationThicknessTitle": "Delete application thickness",
         "deleteApplicationThicknessSubTitle": "Are you sure you want to delete application thickness?",
@@ -522,7 +515,6 @@
         "subTitle": "Additions",
         "deleteAddition": "Delete addition",
         "delete": "Delete",
-        "subTitleDeleteModal": "Are you sure to delete the addition by code?",
         "settings": "Settings",
         "addNewAddition": "Add new addition",
         "additionSection": "Addition section",
@@ -564,7 +556,6 @@
         "addCanvasFrameSize": "Add new canvas frame size",
         "removeCanvasFrameSize": "Remove last canvas frame size ",
         "deleteCanvasFrame": "Delete canvas frame",
-        "subTitleDeleteModal": "Are you sure you delete canvas frame by categoryName",
         "deleteCanvasFrameSize": "Delete canvas frame Size",
         "canvasFrame": "Canvas frame",
         "subTitleDeleteSizeModal": "Are you sure you want to delete canvas frame size?"
@@ -580,8 +571,7 @@
         "removeFrameSize": "Remove last frame size ",
         "deleteFrameSize": "Delete Frame Size",
         "subTitleDeleteSizeModal": "Are you sure you want to delete frame size?",
-        "deleteFrame": "Delete Frame ",
-        "subTitleDeleteModal": "Are you sure you want to delete frame?"
+        "deleteFrame": "Delete Frame "
       },
       "title": "Frames",
       "categoryName": "Category name",
@@ -611,8 +601,7 @@
         "removeFoilSize": "Remove last foil size ",
         "deleteFoilSize": "Delete Foil Size",
         "subTitleDeleteSizeModal": "Are you sure you want to delete foil size?",
-        "deleteFoil": "Delete Foil ",
-        "subTitleDeleteModal": "Are you sure you want to delete foil?"
+        "deleteFoil": "Delete Foil "
       },
       "title": "Foils",
       "code": "Code",
@@ -641,8 +630,7 @@
         "removePackinDrumSize": "Remove last packin drum size ",
         "deletePackinDrumSize": "Delete Packin Drum Size",
         "subTitleDeleteSizeModal": "Are you sure you want to delete packin drum size?",
-        "deletePackinDrum": "Delete Packin Drum ",
-        "subTitleDeleteModal": "Are you sure you want to delete packin drum?"
+        "deletePackinDrum": "Delete Packin Drum "
       },
       "title": "Pack in drums",
       "code": "Code",
@@ -670,7 +658,6 @@
         "addNewPackinUnitSize": "Add new packin unit size",
         "removeLastPackinUnit": "Remove last packin unit size",
         "deletePackinUnit": "Delete packin unit",
-        "subTitleDeleteModal": "Are you sure you delete packin unit by categoryName",
         "packinUnit": "Packin Unit",
         "deletePackinUnitSize": "Delete packin unit size",
         "subTitleDeleteSizeModal": "Are you sure you want to delete packin unit size?"
@@ -700,8 +687,7 @@
         "removeSheetEncapsulationSize": "Remove last sheet encapsulation size ",
         "deleteSheetEncapsulationSize": "Delete Sheet encapsulation Size",
         "subTitleDeleteSizeModal": "Are you sure you want to delete sheet encapsulation size?",
-        "deleteSheetEncapsulation": "Delete Sheet encapsulation ",
-        "subTitleDeleteModal": "Are you sure you want to delete sheet encapsulation?"
+        "deleteSheetEncapsulation": "Delete Sheet encapsulation "
       },
       "title": "Sheet encapsulation",
       "code": "Code",
@@ -744,7 +730,6 @@
         "addNewDoubleSidedTapeRoll": "Add new double sided tape roll",
         "deleteDoubleSidedTapeRoll": "Delete double sided tape roll",
         "delete": "Delete",
-        "subTitleDeleteModal": "Are you sure to delete {{name}}",
         "edit": "Edit",
         "doubleSidedTapeRoll": "Double sided tape roll",
         "deletedoubleSidedTapeRollSubTitle": "Are you sure to delete the double sided tape roll?"
@@ -786,8 +771,7 @@
         "title": "Magnets",
         "addNewMagnet": "Add new magnet",
         "deleteMagnet": "Delete magnet",
-        "delete": "Delete",
-        "subTitleDeleteModal": "Are you sure to delete "
+        "delete": "Delete"
       },
       "title": "Magnets",
       "code": "Code",
@@ -814,7 +798,6 @@
         "addNewPackingVolumn": "Add new packing volume",
         "removeLastPackingVolumn": "Remove last packing volume",
         "deletePacking": "Delete packing",
-        "subTitleDeleteModal": "Are you sure to delete ",
         "packing": "Packing",
         "deletePackingVolume": "Delete packing volume",
         "subTitleDeleteVolumeModal": "Are you sure you want to delete packin volume?"
@@ -838,7 +821,6 @@
       "admin": {
         "addNewVarnishs": "Add new varnish",
         "deleteVarnishs": "Delete Varnish",
-        "subTitleDeleteModal": "Are you sure to delete {{name}}",
         "edit": "Edit",
         "varnishs": "varnish"
       },
