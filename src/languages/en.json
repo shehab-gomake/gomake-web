@@ -841,6 +841,13 @@
       "selectCurrency": "Select currency"
     }
   },
+  "products": {
+    "profits": {
+      "admin": {
+        "title": "Profits"
+      }
+    }
+  },
   "skeleton": {
     "noData": "No data"
   },
