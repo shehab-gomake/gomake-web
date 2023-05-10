@@ -23,7 +23,7 @@ const ControlIconsWidget = ({
   return (
     <>
       <div style={clasess.controlsIconContainer}>
-        <Tooltip title={t("materials.sheetPaper.admin.delete")}>
+        <Tooltip title={t("materials.buttons.delete")}>
           <IconButton
             onClick={() =>
               materialProfileFrameStateValue.onOpenDeleteModal(item)
@@ -32,7 +32,7 @@ const ControlIconsWidget = ({
             <DeleteIcon style={{ color: "#a1a2cd" }} />
           </IconButton>
         </Tooltip>
-        <Tooltip title={t("materials.sheetPaper.admin.saveModifications")}>
+        <Tooltip title={t("materials.buttons.saveModifications")}>
           <IconButton onClick={onClickUpdate}>
             <SaveIcon style={{ color: "#a1a2cd" }} />
           </IconButton>
@@ -42,7 +42,7 @@ const ControlIconsWidget = ({
       {item === materialProfileFrameStateValue.selectedProfileFrameWeight && (
         <GoMakeDeleteModal
           title={title}
-          yesBtn={t("materials.sheetPaper.admin.delete")}
+          yesBtn={t("materials.buttons.delete")}
           openModal={materialProfileFrameStateValue.openDeleteModal}
           onClose={materialProfileFrameStateValue.onCloseDeleteModal}
           subTitle={subTitle}

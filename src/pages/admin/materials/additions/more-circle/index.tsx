@@ -32,13 +32,13 @@ const AdditionSettingsWidget = ({ item }: any) => {
       <GoMakeDeleteModal
         hideIcon={true}
         title={t("materials.additions.admin.deleteAddition")}
-        yesBtn={t("materials.additions.admin.delete")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.additions.admin.subTitleDeleteModal")} ${
-          item?.name
-        } ?`}
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
+          name: `${item?.name}`,
+        })}?`}
         onClickDelete={deleteAdditionByCode}
       />
       {item === materialAdditionsStateValue.selectedEditItem && (

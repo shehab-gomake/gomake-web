@@ -26,7 +26,7 @@ const AddPackinUnitSizeMapping = ({ index, selectedItem }) => {
               }
               style={clasess.cancelBtnStyle}
             >
-              {t("materials.packinUnits.admin.cancel")}
+              {t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           </div>
           <div style={clasess.addSheetBtnContainer}>
@@ -39,7 +39,7 @@ const AddPackinUnitSizeMapping = ({ index, selectedItem }) => {
               style={clasess.addBtnStyle}
             >
               ``
-              {t("materials.canvasFrames.admin.save")}
+              {t("materials.buttons.save")}
             </GomakePrimaryButton>
           </div>
         </div>

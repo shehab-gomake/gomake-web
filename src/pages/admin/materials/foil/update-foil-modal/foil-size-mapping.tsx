@@ -38,10 +38,10 @@ const FoilWeightsMapping = ({ index, item, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.code")}
+              {t("materials.inputs.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterCode")}
+              placeholder={t("materials.inputs.enterCode")}
               style={clasess.textInputStyle}
               value={materialFoilStateValue?.updateState[item?.id]?.code}
               onChange={(e: any) => {
@@ -55,10 +55,10 @@ const FoilWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterName")}
+              placeholder={t("materials.inputs.enterName")}
               style={clasess.textInputStyle}
               value={materialFoilStateValue?.updateState[item?.id]?.name}
               onChange={(e: any) => {
@@ -72,10 +72,10 @@ const FoilWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.frames.admin.thickness")}
+              {t("materials.inputs.thickness")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.frames.admin.enterThickness")}
+              placeholder={t("materials.inputs.enterThickness")}
               style={clasess.textInputStyle}
               value={materialFoilStateValue?.updateState[item?.id]?.thickness}
               onChange={(e: any) => {
@@ -89,10 +89,10 @@ const FoilWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.width")}
+              {t("materials.inputs.width")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterWidth")}
+              placeholder={t("materials.inputs.enterWidth")}
               style={clasess.textInputStyle}
               value={materialFoilStateValue?.updateState[item?.id]?.width}
               onChange={(e: any) => {
@@ -106,10 +106,10 @@ const FoilWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.height")}
+              {t("materials.inputs.height")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterHeight")}
+              placeholder={t("materials.inputs.enterHeight")}
               style={clasess.textInputStyle}
               value={materialFoilStateValue?.updateState[item?.id]?.height}
               onChange={(e: any) => {
@@ -123,10 +123,10 @@ const FoilWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.foils.admin.weightPerSquareMeter")}
+              {t("materials.inputs.weightPerSquareMeter")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.foils.admin.enterWeightPerSquareMeter")}
+              placeholder={t("materials.inputs.enterWeightPerSquareMeter")}
               style={clasess.textInputStyle}
               value={
                 materialFoilStateValue?.updateState[item?.id]
@@ -143,11 +143,11 @@ const FoilWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.foils.admin.defaultPricePerSquareMeter")}
+              {t("materials.inputs.defaultPricePerSquareMeter")}
             </div>
             <GomakeTextInput
               placeholder={t(
-                "materials.foils.admin.enterDefaultPricePerSquareMeter"
+                "materials.inputs.enterDefaultPricePerSquareMeter"
               )}
               style={clasess.textInputStyle}
               value={
@@ -165,10 +165,10 @@ const FoilWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.foils.admin.defaultPricePerRoll")}
+              {t("materials.inputs.defaultPricePerRoll")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.foils.admin.enterDefaultPricePerRoll")}
+              placeholder={t("materials.inputs.enterDefaultPricePerRoll")}
               style={clasess.textInputStyle}
               value={
                 materialFoilStateValue?.updateState[item?.id]

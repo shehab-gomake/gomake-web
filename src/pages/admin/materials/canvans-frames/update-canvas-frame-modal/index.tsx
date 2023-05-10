@@ -30,10 +30,10 @@ const UpdatePlatModal = () => {
           <div style={clasess.firstSectionContainer}>
             <div>
               <div style={clasess.lableTextStyle}>
-                {t("materials.canvasFrames.admin.categoryName")}
+                {t("materials.inputs.categoryName")}
               </div>
               <GomakeTextInput
-                placeholder={t("materials.canvasFrames.admin.categoryName")}
+                placeholder={t("materials.inputs.categoryName")}
                 style={clasess.textInputStyle}
                 value={selectedItem?.categoryName}
                 disabled={true}

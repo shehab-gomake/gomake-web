@@ -44,10 +44,10 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.code")}
+              {t("materials.inputs.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterCode")}
+              placeholder={t("materials.inputs.enterCode")}
               style={clasess.textInputStyle}
               value={
                 materialMaterialRollPrintingStateValue?.updateState[item?.id]
@@ -64,10 +64,10 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterName")}
+              placeholder={t("materials.inputs.enterName")}
               style={clasess.textInputStyle}
               value={
                 materialMaterialRollPrintingStateValue?.updateState[item?.id]
@@ -84,10 +84,10 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.envelops.admin.width")}
+              {t("materials.inputs.width")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.envelops.admin.enterWidth")}
+              placeholder={t("materials.inputs.enterWidth")}
               style={clasess.textInputStyle}
               value={
                 materialMaterialRollPrintingStateValue?.updateState[item?.id]
@@ -104,10 +104,10 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.envelops.admin.height")}
+              {t("materials.inputs.height")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.envelops.admin.enterHeight")}
+              placeholder={t("materials.inputs.enterHeight")}
               style={clasess.textInputStyle}
               value={
                 materialMaterialRollPrintingStateValue?.updateState[item?.id]
@@ -124,12 +124,10 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.printingMaterials.admin.weightPerSquareMeter")}
+              {t("materials.inputs.weightPerSquareMeter")}
             </div>
             <GomakeTextInput
-              placeholder={t(
-                "materials.printingMaterials.admin.enterWeightPerSquareMeter"
-              )}
+              placeholder={t("materials.inputs.enterWeightPerSquareMeter")}
               style={clasess.textInputStyle}
               value={
                 materialMaterialRollPrintingStateValue?.updateState[item?.id]
@@ -146,7 +144,7 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div style={{ width: 193.6 }}>
             <div style={clasess.lableTextStyle}>
-              {t("materials.printingMaterials.admin.withPremier")}
+              {t("materials.inputs.withPremier")}
             </div>
             <GoMakeAutoComplate
               options={[
@@ -154,9 +152,7 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
                 { label: "No", value: false },
               ]}
               style={clasess.textInputStyle}
-              placeholder={t(
-                "materials.printingMaterials.admin.selectWithPremier"
-              )}
+              placeholder={t("materials.inputs.selectWithPremier")}
               value={
                 materialMaterialRollPrintingStateValue?.updateState[item?.id]
                   ?.withPremier
@@ -179,10 +175,10 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.printingMaterials.admin.stock")}
+              {t("materials.inputs.stock")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.printingMaterials.admin.enterStock")}
+              placeholder={t("materials.inputs.enterStock")}
               style={clasess.textInputStyle}
               value={
                 materialMaterialRollPrintingStateValue?.updateState[item?.id]
@@ -199,13 +195,11 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t(
-                "materials.printingMaterials.admin.defaultPricePerSquareMeter"
-              )}
+              {t("materials.inputs.defaultPricePerSquareMeter")}
             </div>
             <GomakeTextInput
               placeholder={t(
-                "materials.printingMaterials.admin.enterDefaultPricePerSquareMeter"
+                "materials.inputs.enterDefaultPricePerSquareMeter"
               )}
               style={clasess.textInputStyle}
               value={

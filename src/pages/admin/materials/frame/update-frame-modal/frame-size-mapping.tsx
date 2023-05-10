@@ -38,10 +38,10 @@ const FrameWeightsMapping = ({ index, item, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.code")}
+              {t("materials.inputs.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterCode")}
+              placeholder={t("materials.inputs.enterCode")}
               style={clasess.textInputStyle}
               value={materialFrameStateValue?.updateState[item?.id]?.code}
               onChange={(e: any) => {
@@ -55,10 +55,10 @@ const FrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterName")}
+              placeholder={t("materials.inputs.enterName")}
               style={clasess.textInputStyle}
               value={materialFrameStateValue?.updateState[item?.id]?.name}
               onChange={(e: any) => {
@@ -72,10 +72,10 @@ const FrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.frames.admin.color")}
+              {t("materials.inputs.color")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.frames.admin.enterColor")}
+              placeholder={t("materials.inputs.enterColor")}
               style={clasess.textInputStyle}
               value={materialFrameStateValue?.updateState[item?.id]?.color}
               onChange={(e: any) => {
@@ -89,10 +89,10 @@ const FrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.width")}
+              {t("materials.inputs.width")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterWidth")}
+              placeholder={t("materials.inputs.enterWidth")}
               style={clasess.textInputStyle}
               value={materialFrameStateValue?.updateState[item?.id]?.width}
               onChange={(e: any) => {
@@ -106,10 +106,10 @@ const FrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.height")}
+              {t("materials.inputs.height")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterHeight")}
+              placeholder={t("materials.inputs.enterHeight")}
               style={clasess.textInputStyle}
               value={materialFrameStateValue?.updateState[item?.id]?.height}
               onChange={(e: any) => {
@@ -123,10 +123,10 @@ const FrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.frames.admin.thickness")}
+              {t("materials.inputs.thickness")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.frames.admin.enterThickness")}
+              placeholder={t("materials.inputs.enterThickness")}
               style={clasess.textInputStyle}
               value={materialFrameStateValue?.updateState[item?.id]?.thickness}
               onChange={(e: any) => {
@@ -140,10 +140,10 @@ const FrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.frames.admin.weight")}
+              {t("materials.inputs.weight")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.frames.admin.enterWeight")}
+              placeholder={t("materials.inputs.enterWeight")}
               style={clasess.textInputStyle}
               value={materialFrameStateValue?.updateState[item?.id]?.weight}
               onChange={(e: any) => {
@@ -157,10 +157,10 @@ const FrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.frames.admin.stock")}
+              {t("materials.inputs.stock")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.frames.admin.enterStock")}
+              placeholder={t("materials.inputs.enterStock")}
               style={clasess.textInputStyle}
               value={materialFrameStateValue?.updateState[item?.id]?.stock}
               onChange={(e: any) => {
@@ -174,10 +174,10 @@ const FrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.defaultPrice")}
+              {t("materials.inputs.defaultPrice")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterDefaultPrice")}
+              placeholder={t("materials.inputs.enterDefaultPrice")}
               style={clasess.textInputStyle}
               value={
                 materialFrameStateValue?.updateState[item?.id]?.defaultPrice

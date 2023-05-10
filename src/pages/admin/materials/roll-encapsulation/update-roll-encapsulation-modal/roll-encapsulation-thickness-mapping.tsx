@@ -44,10 +44,10 @@ const RollEncapsulationThicknesssMapping = ({ index, item, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.code")}
+              {t("materials.inputs.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterCode")}
+              placeholder={t("materials.inputs.enterCode")}
               style={clasess.textInputStyle}
               value={
                 materialRollEncapsulationStateValue?.updateState[item?.id]?.code
@@ -63,10 +63,10 @@ const RollEncapsulationThicknesssMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterName")}
+              placeholder={t("materials.inputs.enterName")}
               style={clasess.textInputStyle}
               value={
                 materialRollEncapsulationStateValue?.updateState[item?.id]?.name
@@ -82,10 +82,10 @@ const RollEncapsulationThicknesssMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.thickness")}
+              {t("materials.inputs.thickness")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterThickness")}
+              placeholder={t("materials.inputs.enterThickness")}
               style={clasess.textInputStyle}
               value={
                 materialRollEncapsulationStateValue?.updateState[item?.id]
@@ -102,12 +102,10 @@ const RollEncapsulationThicknesssMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.printingMaterials.admin.weightPerSquareMeter")}
+              {t("materials.inputs.weightPerSquareMeter")}
             </div>
             <GomakeTextInput
-              placeholder={t(
-                "materials.printingMaterials.admin.enterThicknessPerSquareMeter"
-              )}
+              placeholder={t("materials.inputs.enterThicknessPerSquareMeter")}
               style={clasess.textInputStyle}
               value={
                 materialRollEncapsulationStateValue?.updateState[item?.id]

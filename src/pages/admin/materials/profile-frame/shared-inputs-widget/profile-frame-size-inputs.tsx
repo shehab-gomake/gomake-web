@@ -17,11 +17,9 @@ const ProfileFormSizeInputs = ({ index }) => {
     <>
       <div style={clasess.mainWaightsContainer}>
         <div>
-          <div style={clasess.lableTextStyle}>
-            {t("materials.plat.admin.code")}
-          </div>
+          <div style={clasess.lableTextStyle}>{t("materials.inputs.code")}</div>
           <GomakeTextInput
-            placeholder={t("materials.plat.admin.enterCode")}
+            placeholder={t("materials.inputs.enterCode")}
             style={clasess.textInputStyle}
             value={materialProfileFrameStateValue?.items[index]["code"]}
             onChange={(e: any) => {
@@ -34,11 +32,9 @@ const ProfileFormSizeInputs = ({ index }) => {
           />
         </div>
         <div>
-          <div style={clasess.lableTextStyle}>
-            {t("materials.plat.admin.name")}
-          </div>
+          <div style={clasess.lableTextStyle}>{t("materials.inputs.name")}</div>
           <GomakeTextInput
-            placeholder={t("materials.plat.admin.enterName")}
+            placeholder={t("materials.inputs.enterName")}
             style={clasess.textInputStyle}
             value={materialProfileFrameStateValue?.items[index]["name"]}
             onChange={(e: any) => {
@@ -52,10 +48,10 @@ const ProfileFormSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.plat.admin.width")}
+            {t("materials.inputs.width")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.plat.admin.enterWidth")}
+            placeholder={t("materials.inputs.enterWidth")}
             style={clasess.textInputStyle}
             value={materialProfileFrameStateValue?.items[index]["width"]}
             onChange={(e: any) => {
@@ -69,10 +65,10 @@ const ProfileFormSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.plat.admin.height")}
+            {t("materials.inputs.height")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.plat.admin.enterHeight")}
+            placeholder={t("materials.inputs.enterHeight")}
             style={clasess.textInputStyle}
             value={materialProfileFrameStateValue?.items[index]["height"]}
             onChange={(e: any) => {
@@ -86,10 +82,10 @@ const ProfileFormSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.profileFrames.admin.lenght")}
+            {t("materials.inputs.length")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.profileFrames.admin.enterLenght")}
+            placeholder={t("materials.inputs.enterLength")}
             style={clasess.textInputStyle}
             value={materialProfileFrameStateValue?.items[index]["length"]}
             onChange={(e: any) => {
@@ -103,10 +99,10 @@ const ProfileFormSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.profileFrames.admin.stock")}
+            {t("materials.inputs.stock")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.profileFrames.admin.enterStock")}
+            placeholder={t("materials.inputs.enterStock")}
             style={clasess.textInputStyle}
             value={materialProfileFrameStateValue?.items[index]["stock"]}
             onChange={(e: any) => {
@@ -120,12 +116,10 @@ const ProfileFormSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.profileFrames.admin.defaultPricePerMeter")}
+            {t("materials.inputs.defaultPricePerMeter")}
           </div>
           <GomakeTextInput
-            placeholder={t(
-              "materials.profileFrames.admin.enterDefaultPricePerMeter"
-            )}
+            placeholder={t("materials.inputs.enterDefaultPricePerMeter")}
             style={clasess.textInputStyle}
             value={
               materialProfileFrameStateValue?.items[index][
@@ -143,12 +137,10 @@ const ProfileFormSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.profileFrames.admin.defaultPricePerUnit")}
+            {t("materials.inputs.defaultPricePerUnit")}
           </div>
           <GomakeTextInput
-            placeholder={t(
-              "materials.profileFrames.admin.enterDefaultPricePerUnit"
-            )}
+            placeholder={t("materials.inputs.enterDefaultPricePerUnit")}
             style={clasess.textInputStyle}
             value={
               materialProfileFrameStateValue?.items[index][

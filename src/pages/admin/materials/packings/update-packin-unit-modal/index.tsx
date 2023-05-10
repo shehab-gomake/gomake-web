@@ -20,7 +20,7 @@ const UpdatePacking = () => {
     <>
       <GoMakeModal
         openModal={materialPackingsStateValue?.openUpdatePlatModal}
-        modalTitle={`${t("materials.packings.admin.edit")} ${
+        modalTitle={`${t("materials.buttons.edit")} ${
           selectedItem?.categoryName
         } ${t("materials.packings.admin.packing")}`}
         onClose={materialPackingsStateValue?.onCloseUpdateModal}
@@ -30,10 +30,10 @@ const UpdatePacking = () => {
           <div style={clasess.firstSectionContainer}>
             <div>
               <div style={clasess.lableTextStyle}>
-                {t("materials.packings.admin.categoryName")}
+                {t("materials.inputs.categoryName")}
               </div>
               <GomakeTextInput
-                placeholder={t("materials.packings.admin.categoryName")}
+                placeholder={t("materials.inputs.categoryName")}
                 style={clasess.textInputStyle}
                 value={selectedItem?.categoryName}
                 disabled={true}

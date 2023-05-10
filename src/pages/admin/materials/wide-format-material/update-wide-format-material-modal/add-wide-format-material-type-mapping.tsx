@@ -108,7 +108,7 @@ const AddWideFormatMaterialWeightsMapping = ({ index, selectedItem }) => {
               }
               style={clasess.cancelBtnStyle}
             >
-              {t("materials.sheetPaper.admin.cancel")}
+              {t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           </div>
           <div style={clasess.addWideFormatMaterialBtnContainer}>
@@ -120,7 +120,7 @@ const AddWideFormatMaterialWeightsMapping = ({ index, selectedItem }) => {
               }
               style={clasess.addBtnStyle}
             >
-              {t("materials.sheetPaper.admin.save")}
+              {t("materials.buttons.save")}
             </GomakePrimaryButton>
           </div>
         </div>

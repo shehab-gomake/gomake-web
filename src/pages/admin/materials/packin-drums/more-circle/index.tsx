@@ -33,13 +33,13 @@ const PackinDrumSettingsWidget = ({ item }: any) => {
       <GoMakeDeleteModal
         hideIcon={true}
         title={t("materials.packinDrums.admin.deletePackinDrum")}
-        yesBtn={t("materials.sheetPaper.admin.delete")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.packinDrums.admin.subTitleDeleteModal")} ${
-          item?.categoryName
-        } ?`}
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
+          name: `${item?.categoryName}`,
+        })}?`}
         onClickDelete={deletePackinDrumByCategoryName}
       />
       {item === materialPackinDrumStateValue.selectedEditItem && (

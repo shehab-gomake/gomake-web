@@ -32,14 +32,16 @@ const RollEncapsulationSettingsWidget = ({ item }: any) => {
       />
       <GoMakeDeleteModal
         hideIcon={true}
-        title={t("materials.sheetPaper.admin.deleteRollEncapsulation")}
-        yesBtn={t("materials.sheetPaper.admin.delete")}
+        title={t(
+          "materials.encapsulationRoll.admin.deleteRollEncapsulationTitle"
+        )}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.sheetPaper.admin.subTitleDeleteModal")} ${
-          item?.categoryName
-        } ?`}
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
+          name: `${item?.categoryName}`,
+        })}?`}
         onClickDelete={deleteRollEncapsulationByCategoryName}
       />
       {item === materialRollEncapsulationStateValue.selectedEditItem && (

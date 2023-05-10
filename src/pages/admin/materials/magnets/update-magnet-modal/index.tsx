@@ -16,9 +16,9 @@ const UpdateMagnetModal = () => {
     <>
       <GoMakeModal
         openModal={materialMagnetStateValue?.openUpdateMagnetModal}
-        modalTitle={`${t("materials.doubleSidedTapeRolls.admin.edit")} ${
-          selectedItem?.name
-        } ${t("materials.doubleSidedTapeRolls.admin.doubleSidedTapeRoll")}`}
+        modalTitle={`${t("materials.buttons.edit")} ${selectedItem?.name} ${t(
+          "materials.doubleSidedTapeRolls.admin.doubleSidedTapeRoll"
+        )}`}
         onClose={materialMagnetStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >

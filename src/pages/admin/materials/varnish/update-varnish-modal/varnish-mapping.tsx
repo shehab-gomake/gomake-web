@@ -33,10 +33,10 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.varnishs.admin.typeName")}
+              {t("materials.inputs.typeName")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.varnishs.admin.enterTypeName")}
+              placeholder={t("materials.inputs.enterTypeName")}
               style={clasess.textInputStyle}
               value={materialVarnishStateValue?.updateState?.typeName}
               onChange={(e: any) => {
@@ -49,10 +49,10 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.varnishs.admin.volumeInLiters")}
+              {t("materials.inputs.volumeInLiters")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.varnishs.admin.enterVolumeInLiters")}
+              placeholder={t("materials.inputs.enterVolumeInLiters")}
               style={clasess.textInputStyle}
               value={materialVarnishStateValue?.updateState?.volumeInLiters}
               onChange={(e: any) => {
@@ -65,10 +65,10 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.varnishs.admin.weightPerLiter")}
+              {t("materials.inputs.weightPerLiter")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.varnishs.admin.enterWeightPerLiter")}
+              placeholder={t("materials.inputs.enterWeightPerLiter")}
               style={clasess.textInputStyle}
               value={materialVarnishStateValue?.updateState?.weightPerLiter}
               onChange={(e: any) => {
@@ -81,12 +81,10 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.varnishs.admin.literInSquareMeter")}
+              {t("materials.inputs.literInSquareMeter")}
             </div>
             <GomakeTextInput
-              placeholder={t(
-                "materials.varnishs.admin.enterLiterInSquareMeter"
-              )}
+              placeholder={t("materials.inputs.enterLiterInSquareMeter")}
               style={clasess.textInputStyle}
               value={materialVarnishStateValue?.updateState?.literInSquareMeter}
               onChange={(e: any) => {
@@ -99,12 +97,10 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.varnishs.admin.defaultPricePerLiter")}
+              {t("materials.inputs.defaultPricePerLiter")}
             </div>
             <GomakeTextInput
-              placeholder={t(
-                "materials.varnishs.admin.enterDefaultPricePerLiter"
-              )}
+              placeholder={t("materials.inputs.enterDefaultPricePerLiter")}
               style={clasess.textInputStyle}
               value={
                 materialVarnishStateValue?.updateState?.defaultPricePerLiter
@@ -119,12 +115,10 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.varnishs.admin.defaultPricePerContainer")}
+              {t("materials.inputs.defaultPricePerContainer")}
             </div>
             <GomakeTextInput
-              placeholder={t(
-                "materials.varnishs.admin.enterDefaultPricePerContainer"
-              )}
+              placeholder={t("materials.inputs.enterDefaultPricePerContainer")}
               style={clasess.textInputStyle}
               value={
                 materialVarnishStateValue?.updateState?.defaultPricePerContainer

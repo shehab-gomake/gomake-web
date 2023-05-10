@@ -54,10 +54,10 @@ const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.code")}
+              {t("materials.inputs.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterCode")}
+              placeholder={t("materials.inputs.enterCode")}
               style={clasess.textInputStyle}
               value={materialLaminationStateValue?.updateState[item?.id]?.code}
               onChange={(e: any) => {
@@ -72,10 +72,10 @@ const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
 
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.width")}
+              {t("materials.inputs.width")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterWidth")}
+              placeholder={t("materials.inputs.enterWidth")}
               style={clasess.textInputStyle}
               value={materialLaminationStateValue?.updateState[item?.id]?.width}
               onChange={(e: any) => {
@@ -89,10 +89,10 @@ const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.height")}
+              {t("materials.inputs.height")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterIndex")}
+              placeholder={t("materials.inputs.enterIndex")}
               style={clasess.textInputStyle}
               value={
                 materialLaminationStateValue?.updateState[item?.id]?.height
@@ -108,10 +108,10 @@ const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterName")}
+              placeholder={t("materials.inputs.enterName")}
               style={clasess.textInputStyle}
               value={materialLaminationStateValue?.updateState[item?.id]?.name}
               onChange={(e: any) => {
@@ -125,12 +125,12 @@ const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GoMakeAutoComplate
               options={muliSelectOptions}
               style={clasess.multiSelectStyle}
-              placeholder={t("materials.lamination.admin.fitToPrintType")}
+              placeholder={t("materials.inputs.fitToPrintType")}
               multiple={true}
               onChange={(e: any, value: any) => {
                 materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(

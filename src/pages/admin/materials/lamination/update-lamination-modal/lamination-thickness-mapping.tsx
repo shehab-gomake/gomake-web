@@ -44,10 +44,10 @@ const LaminationSizeMapping = ({
         <div style={clasess.inputSizesContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.code")}
+              {t("materials.inputs.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterCode")}
+              placeholder={t("materials.inputs.enterCode")}
               style={clasess.textInputStyle}
               value={
                 materialLaminationStateValue?.updateState[sheetSize?.id]?.code
@@ -63,10 +63,10 @@ const LaminationSizeMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.thickness")}
+              {t("materials.inputs.thickness")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterThickness")}
+              placeholder={t("materials.inputs.enterThickness")}
               style={clasess.textInputStyle}
               value={
                 materialLaminationStateValue?.updateState[sheetSize?.id]
@@ -83,10 +83,10 @@ const LaminationSizeMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.defaultPrice")}
+              {t("materials.inputs.defaultPrice")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterDefaultPrice")}
+              placeholder={t("materials.inputs.enterDefaultPrice")}
               style={clasess.textInputStyle}
               value={
                 materialLaminationStateValue?.updateState[sheetSize?.id]
@@ -103,7 +103,7 @@ const LaminationSizeMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.lamination.admin.coldOrHot")}
+              {t("materials.inputs.coldOrHot")}
             </div>
             <GomakeTextInput
               placeholder={t("materials.lamination.admin.enterColdOrHot")}

@@ -33,13 +33,13 @@ const EnvelopsSettingsWidget = ({ item }: any) => {
       <GoMakeDeleteModal
         hideIcon={true}
         title={t("materials.envelops.admin.deleteEnvelope")}
-        yesBtn={t("materials.sheetPaper.admin.delete")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.envelops.admin.subTitleDeleteModal")} ${
-          item?.categoryName
-        } ?`}
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
+          name: `${item?.categoryName}`,
+        })}?`}
         onClickDelete={deleteEnvelopeByCategoryName}
       />
       {item === materialEnvelopesStateValue.selectedEditItem && (

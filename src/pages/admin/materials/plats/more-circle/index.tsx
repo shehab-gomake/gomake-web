@@ -31,13 +31,13 @@ const PlatSettingsWidget = ({ item }: any) => {
       <GoMakeDeleteModal
         hideIcon={true}
         title={t("materials.plat.admin.deletePlat")}
-        yesBtn={t("materials.sheetPaper.admin.delete")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.plat.admin.subTitleDeleteModal")} ${
-          item?.categoryName
-        } ?`}
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
+          name: `${item?.categoryName}`,
+        })}?`}
         onClickDelete={deletePlatByCategoryName}
       />
       {item === materialPlatsStateValue.selectedEditItem && <UpdatePlatModal />}

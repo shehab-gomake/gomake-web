@@ -31,13 +31,13 @@ const FrameSettingsWidget = ({ item }: any) => {
       <GoMakeDeleteModal
         hideIcon={true}
         title={t("materials.frames.admin.deleteFrame")}
-        yesBtn={t("materials.sheetPaper.admin.delete")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.frames.admin.subTitleDeleteModal")} ${
-          item?.categoryName
-        } ?`}
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
+          name: `${item?.categoryName}`,
+        })}?`}
         onClickDelete={deleteFrameByCategoryName}
       />
       {item === materialFrameStateValue.selectedEditItem && (

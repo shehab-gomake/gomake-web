@@ -28,7 +28,7 @@ const AddCanvasFrameSizeMapping = ({ index, selectedItem }) => {
               }
               style={clasess.cancelBtnStyle}
             >
-              {t("materials.canvasFrames.admin.cancel")}
+              {t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           </div>
           <div style={clasess.addSheetBtnContainer}>
@@ -41,7 +41,7 @@ const AddCanvasFrameSizeMapping = ({ index, selectedItem }) => {
               style={clasess.addBtnStyle}
             >
               ``
-              {t("materials.canvasFrames.admin.save")}
+              {t("materials.buttons.save")}
             </GomakePrimaryButton>
           </div>
         </div>

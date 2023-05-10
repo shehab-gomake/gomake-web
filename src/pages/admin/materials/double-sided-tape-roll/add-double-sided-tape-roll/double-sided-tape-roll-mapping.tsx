@@ -21,10 +21,10 @@ const DoubleSidedTapeRollMapping = ({ index }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.doubleSidedTapeRolls.admin.code")}
+              {t("materials.inputs.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.doubleSidedTapeRolls.admin.enterCode")}
+              placeholder={t("materials.inputs.enterCode")}
               style={clasess.textInputStyle}
               value={
                 materialDoublesidedTapeRollStateValue?.items[index]["code"]
@@ -40,10 +40,10 @@ const DoubleSidedTapeRollMapping = ({ index }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.doubleSidedTapeRolls.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.doubleSidedTapeRolls.admin.enterName")}
+              placeholder={t("materials.inputs.enterName")}
               style={clasess.textInputStyle}
               value={
                 materialDoublesidedTapeRollStateValue?.items[index]["name"]
@@ -59,10 +59,10 @@ const DoubleSidedTapeRollMapping = ({ index }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.doubleSidedTapeRolls.admin.width")}
+              {t("materials.inputs.width")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.doubleSidedTapeRolls.admin.enterWidth")}
+              placeholder={t("materials.inputs.enterWidth")}
               style={clasess.textInputStyle}
               value={
                 materialDoublesidedTapeRollStateValue?.items[index]["width"]
@@ -78,12 +78,10 @@ const DoubleSidedTapeRollMapping = ({ index }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.doubleSidedTapeRolls.admin.height")}
+              {t("materials.inputs.height")}
             </div>
             <GomakeTextInput
-              placeholder={t(
-                "materials.doubleSidedTapeRolls.admin.enterHeight"
-              )}
+              placeholder={t("materials.inputs.enterHeight")}
               style={clasess.textInputStyle}
               value={
                 materialDoublesidedTapeRollStateValue?.items[index]["height"]
@@ -99,12 +97,10 @@ const DoubleSidedTapeRollMapping = ({ index }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.doubleSidedTapeRolls.admin.weightPerSquareMeter")}
+              {t("materials.inputs.weightPerSquareMeter")}
             </div>
             <GomakeTextInput
-              placeholder={t(
-                "materials.doubleSidedTapeRolls.admin.enterWeightPerSquareMeter"
-              )}
+              placeholder={t("materials.inputs.enterWeightPerSquareMeter")}
               style={clasess.textInputStyle}
               value={
                 materialDoublesidedTapeRollStateValue?.items[index][
@@ -122,12 +118,10 @@ const DoubleSidedTapeRollMapping = ({ index }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.doubleSidedTapeRolls.admin.defaultPricePerUnit")}
+              {t("materials.inputs.defaultPricePerUnit")}
             </div>
             <GomakeTextInput
-              placeholder={t(
-                "materials.doubleSidedTapeRolls.admin.enterDefaultPricePerUnit"
-              )}
+              placeholder={t("materials.inputs.enterDefaultPricePerUnit")}
               style={clasess.textInputStyle}
               value={
                 materialDoublesidedTapeRollStateValue?.items[index][

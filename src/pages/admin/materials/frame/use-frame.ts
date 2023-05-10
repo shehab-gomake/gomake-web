@@ -10,7 +10,7 @@ const useFrame = () => {
   const { t } = useTranslation();
   const headerTable = useMemo(
     () => [
-      t("materials.sheetPaper.admin.categoryName"),
+      t("materials.inputs.categoryName"),
       t("materials.sheetPaper.settings"),
     ],
     []

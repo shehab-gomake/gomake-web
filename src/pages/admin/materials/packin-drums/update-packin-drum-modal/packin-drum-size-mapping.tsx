@@ -40,10 +40,10 @@ const PackinDrumWeightsMapping = ({ index, item, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.plat.admin.code")}
+              {t("materials.inputs.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.plat.admin.enterCode")}
+              placeholder={t("materials.inputs.enterCode")}
               style={clasess.textInputStyle}
               value={materialPackinDrumStateValue?.updateState[item?.id]?.code}
               onChange={(e: any) => {
@@ -57,10 +57,10 @@ const PackinDrumWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.packinDrums.admin.material")}
+              {t("materials.inputs.material")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.packinDrums.admin.enterMaterial")}
+              placeholder={t("materials.inputs.enterMaterial")}
               style={clasess.textInputStyle}
               value={
                 materialPackinDrumStateValue?.updateState[item?.id]?.material
@@ -76,10 +76,10 @@ const PackinDrumWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.packinDrums.admin.size")}
+              {t("materials.inputs.size")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.packinDrums.admin.enterSize")}
+              placeholder={t("materials.inputs.enterSize")}
               style={clasess.textInputStyle}
               value={materialPackinDrumStateValue?.updateState[item?.id]?.size}
               onChange={(e: any) => {
@@ -93,10 +93,10 @@ const PackinDrumWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.packinDrums.admin.sizeName")}
+              {t("materials.inputs.sizeName")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.packinDrums.admin.enterSizeName")}
+              placeholder={t("materials.inputs.enterSizeName")}
               style={clasess.textInputStyle}
               value={
                 materialPackinDrumStateValue?.updateState[item?.id]?.sizeName
@@ -112,10 +112,10 @@ const PackinDrumWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.packinDrums.admin.drumRingNumber")}
+              {t("materials.inputs.drumRingNumber")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.packinDrums.admin.enterDrumRingNumber")}
+              placeholder={t("materials.inputs.enterDrumRingNumber")}
               style={clasess.textInputStyle}
               value={
                 materialPackinDrumStateValue?.updateState[item?.id]
@@ -132,10 +132,10 @@ const PackinDrumWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.packinDrums.admin.weight")}
+              {t("materials.inputs.weight")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.packinDrums.admin.enterWeight")}
+              placeholder={t("materials.inputs.enterWeight")}
               style={clasess.textInputStyle}
               value={
                 materialPackinDrumStateValue?.updateState[item?.id]?.weight
@@ -151,12 +151,10 @@ const PackinDrumWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.packinDrums.admin.defaultPricePerDrum")}
+              {t("materials.inputs.defaultPricePerDrum")}
             </div>
             <GomakeTextInput
-              placeholder={t(
-                "materials.packinDrums.admin.enterDefaultPricePerDrum"
-              )}
+              placeholder={t("materials.inputs.enterDefaultPricePerDrum")}
               style={clasess.textInputStyle}
               value={
                 materialPackinDrumStateValue?.updateState[item?.id]

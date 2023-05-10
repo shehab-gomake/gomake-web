@@ -33,13 +33,13 @@ const GanvasFramesSettingsWidget = ({ item }: any) => {
       <GoMakeDeleteModal
         hideIcon={true}
         title={t("materials.canvasFrames.admin.deleteCanvasFrame")}
-        yesBtn={t("materials.canvasFrames.admin.delete")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.canvasFrames.admin.subTitleDeleteModal")} ${
-          item?.categoryName
-        } ?`}
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
+          name: `${item?.categoryName}`,
+        })}?`}
         onClickDelete={deleteCanvasFrameByCategoryName}
       />
       {item === materialCanvasFramesStateValue.selectedEditItem && (

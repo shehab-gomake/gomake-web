@@ -171,6 +171,13 @@ const useAuthLayoutHook = () => {
         title: t("tabs.products"),
         path: "/product-floor",
         isList: true,
+        list: [
+          {
+            key: "profits",
+            title: t("products.profits.admin.title"),
+            path: "/admin/products/profits",
+          },
+        ],
         icon: () => {
           return <ProductsIcon />;
         },

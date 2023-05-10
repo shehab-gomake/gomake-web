@@ -23,7 +23,7 @@ const ControlIconsWidget = ({
   return (
     <>
       <div style={clasess.controlsIconContainer}>
-        <Tooltip title={t("materials.canvasFrames.admin.delete")}>
+        <Tooltip title={t("materials.buttons.delete")}>
           <IconButton
             onClick={() =>
               materialPackinUnitsStateValue.onOpenDeleteModal(item)
@@ -32,7 +32,7 @@ const ControlIconsWidget = ({
             <DeleteIcon style={{ color: "#a1a2cd" }} />
           </IconButton>
         </Tooltip>
-        <Tooltip title={t("materials.sheetPaper.admin.saveModifications")}>
+        <Tooltip title={t("materials.buttons.saveModifications")}>
           <IconButton onClick={onClickUpdate}>
             <SaveIcon style={{ color: "#a1a2cd" }} />
           </IconButton>
@@ -42,7 +42,7 @@ const ControlIconsWidget = ({
       {item === materialPackinUnitsStateValue.selectedPlatWeight && (
         <GoMakeDeleteModal
           title={title}
-          yesBtn={t("materials.canvasFrames.admin.delete")}
+          yesBtn={t("materials.buttons.delete")}
           openModal={materialPackinUnitsStateValue.openDeleteModal}
           onClose={materialPackinUnitsStateValue.onCloseDeleteModal}
           subTitle={subTitle}

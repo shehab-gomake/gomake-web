@@ -23,10 +23,10 @@ const AddApplicationThicknessMapping = ({ index, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.applications.admin.code")}
+              {t("materials.inputs.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.applications.admin.enterCode")}
+              placeholder={t("materials.inputs.enterCode")}
               style={clasess.textInputStyle}
               value={materialApplicationsStateValue?.items[index]["code"]}
               onChange={(e: any) => {
@@ -40,10 +40,10 @@ const AddApplicationThicknessMapping = ({ index, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.applications.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.applications.admin.enterName")}
+              placeholder={t("materials.inputs.enterName")}
               style={clasess.textInputStyle}
               value={materialApplicationsStateValue?.items[index]["name"]}
               onChange={(e: any) => {
@@ -57,10 +57,10 @@ const AddApplicationThicknessMapping = ({ index, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.applications.admin.thickness")}
+              {t("materials.inputs.thickness")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.applications.admin.enterThickness")}
+              placeholder={t("materials.inputs.enterThickness")}
               style={clasess.textInputStyle}
               value={materialApplicationsStateValue?.items[index]["thickness"]}
               onChange={(e: any) => {
@@ -74,12 +74,10 @@ const AddApplicationThicknessMapping = ({ index, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.applications.admin.weightPerSquareMeter")}
+              {t("materials.inputs.weightPerSquareMeter")}
             </div>
             <GomakeTextInput
-              placeholder={t(
-                "materials.applications.admin.enterWeightPerSquareMeter"
-              )}
+              placeholder={t("materials.inputs.enterWeightPerSquareMeter")}
               style={clasess.textInputStyle}
               value={
                 materialApplicationsStateValue?.items[index][
@@ -175,7 +173,7 @@ const AddApplicationThicknessMapping = ({ index, selectedItem }) => {
               }
               style={clasess.cancelBtnStyle}
             >
-              {t("materials.applications.admin.cancel")}
+              {t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           </div>
           <div style={clasess.addSheetBtnContainer}>
@@ -187,7 +185,7 @@ const AddApplicationThicknessMapping = ({ index, selectedItem }) => {
               }
               style={clasess.addBtnStyle}
             >
-              {t("materials.applications.admin.save")}
+              {t("materials.buttons.save")}
             </GomakePrimaryButton>
           </div>
         </div>

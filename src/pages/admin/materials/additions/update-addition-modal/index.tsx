@@ -18,9 +18,9 @@ const UpdatalAdditionModal = () => {
     <>
       <GoMakeModal
         openModal={materialAdditionsStateValue?.openUpdatalApplicationModal}
-        modalTitle={`${t("materials.additions.admin.edit")} ${
-          selectedItem?.name
-        } ${t("materials.additions.admin.addition")}`}
+        modalTitle={`${t("materials.buttons.edit")} ${selectedItem?.name} ${t(
+          "materials.additions.admin.addition"
+        )}`}
         onClose={materialAdditionsStateValue?.onCloseUpdateModal}
         insideStyle={clasess.insideStyle}
       >
