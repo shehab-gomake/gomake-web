@@ -5,6 +5,7 @@ import { profitsState } from "./store/profits";
 import { useProfits } from "./use-profits";
 import { useEffect } from "react";
 import { HeaderFilter } from "./widgets/header-filter";
+import { ProductTable } from "./widgets/products-table";
 export default function Profits() {
   const setProfitsState = useSetRecoilState<any>(profitsState);
   const { allActions, selectedAction, onChangeSelectedAction, t } =
@@ -21,6 +22,7 @@ export default function Profits() {
     <AdminAuthLayout>
       <HeaderTitle title={t("products.profits.admin.title")} />
       <HeaderFilter />
+      <ProductTable />
     </AdminAuthLayout>
   );
 }
