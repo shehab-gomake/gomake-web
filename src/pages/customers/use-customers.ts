@@ -1,147 +1,142 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
-import { getAndSetCustomersCategores,getAndSetAgentsCategores,getAndSetAllCustomers} from "@/services/hooks/get-set-customers";
+import { getAndSetCustomers, getAndSetAllCustomers } from "@/services/hooks/get-set-customers";
+import { getAndSetAgents } from "@/services/hooks/get-set-agents";
 
 
-const useCustomers = () => {
-    const { callApi } = useGomakeAxios();
-    const { t } = useTranslation();
-    const [categoryName, setCategoryName] = useState(undefined);
-    const [customersCategores, setCustomersCategores] = useState([]);
-    const [agentsCategores, setAgentsCategores] = useState([]);
-    const [supplierId, setSupplierId] = useState("");
-    const [openModal, setOpenModal] = useState(false);
+const useCustomers = (clientType) => {
+  const { callApi } = useGomakeAxios();
+  const { t } = useTranslation();
+  const [categoryName, setCategoryName] = useState(undefined);
+  const [agentsCategores, setAgentsCategores] = useState([]);
 
-    // test
-    const [allCustomers, setAllCustomers] = useState([]);
+  const [customersCategores, setCustomersCategores] = useState([]);
+  const [supplierId, setSupplierId] = useState("");
+  const [pageNumber, setPageNumber] = useState(0);
+  const [isAgent, setIsAgent] = useState(true);
 
-    //////////////////////for later use/////////////////////////////
-    const [customerId, setCustomerId] = useState("");
-    const [agentId, setAgentId] = useState("");
-    const [customerType, setCustomerType] = useState("");
-    const [status, setStatus] = useState("");
 
-    const onChangeCustomer = useCallback(async (e: any, value: any) => {
-      setCustomerId(value?.value);
-    }, []);
+  // test
+  const [allCustomers, setAllCustomers] = useState([]);
 
-    const onChangeAgent = useCallback(async (e: any, value: any) => {
-      setAgentId(value?.value);
-    }, []);
+  //////////////////////for later use/////////////////////////////
+  const [customerId, setCustomerId] = useState("");
+  const [agentId, setAgentId] = useState("");
+  const [customerType, setCustomerType] = useState("");
+  const [status, setStatus] = useState("");
 
-    const onChangeCustomerType = useCallback(async (e: any, value: any) => {
-      setCustomerType(value?.value);
-    }, []);
+  const onChangeCustomer = useCallback(async (e: any, value: any) => {
+    setCustomerId(value?.value);
+  }, []);
 
-    const onChangeStatus = useCallback(async (e: any, value: any) => {
-      setStatus(value?.value);
-    }, []);
+  const onChangeAgent = useCallback(async (e: any, value: any) => {
+    setAgentId(value?.value);
+  }, []);
 
-    //////////////////////for later use/////////////////////////////
+  const onChangeCustomerType = useCallback(async (e: any, value: any) => {
+    setCustomerType(value?.value);
+  }, []);
 
-    const tabelHeaders = useMemo(
-      () => [
-        t("Customer Code"),
-        t("Name"),
-        t("Customer Type"),
-        t("Agent"),
-        t("Email"),
-        t("Fax"),
-        t("Mobile"),
-        t("Phone1"),
-        t("Phone1"),
-        t("Status"),
-        t("#"),
-      ],
-      []
+  const onChangeStatus = useCallback(async (e: any, value: any) => {
+    setStatus(value?.value);
+  }, []);
+
+  //////////////////////for later use/////////////////////////////
+
+  // Fixed data
+  const tabelHeaders = useMemo(
+    () => [
+      t("Customer Code"),
+      t("Name"),
+      t("Email"),
+      t("Phone"),
+      t("Status"),
+      t("#"),
+    ],
+    []
+  );
+  const customerTypes = useMemo(
+    () => [
+      t("client"),
+      t("supplier"),
+      t("producer"),
+    ],
+    []
+  );
+  const statuses = useMemo(
+    () => [
+      t("active"),
+      t("inactive"),
+    ],
+    []
+  );
+
+  ///////////////////////// select 1  //////////////////////////////
+
+  const getAgentCategores = useCallback(async () => {
+    const data = await getAndSetAgents(
+      callApi,
+      setAgentsCategores,
+      isAgent,
     );
-    const customerTypes = useMemo(
-      () => [
-        t("client"),
-        t("supplier"),
-        t("producer"),
-      ],
-      []
-    );
-    const statuses = useMemo(
-      () => [
-        t("active"),
-        t("inactive"),
-      ],
-      []
-    );
+    const agentNames = data.map(agent => `${agent.firstname} ${agent.lastname}`);
+    setAgentsCategores(agentNames);
+  }, []);
 
-    ///////////////////////// select 1 data //////////////////////////////
+  useEffect(() => {
+    getAgentCategores();
+  }, []);
 
-    const getAgentsCategores = useCallback(async () => {
-      const data = await getAndSetAgentsCategores(
-        callApi,
-        setAgentsCategores
-      );
-      if (!categoryName) {
-        setCategoryName(data[0]);
-      }
-    }, [categoryName]);
+  ///////////////////////// select 2  //////////////////////////////
 
-    useEffect(() => {
-      getAgentsCategores();
-    }, []);
+  const getCustomersCategores = useCallback(async () => {
+    const data = await getAndSetAllCustomers(callApi, setCustomersCategores, {
+      clientType,
+      pageNumber,
+      pageSize: 10,
+    });
+    const customersNames = data.map(customer => customer.name);
+    setCustomersCategores(customersNames);
+  }, []);
 
-    ///////////////////////// select 2 data //////////////////////////////
-
-    const getCustomersCategores = useCallback(async () => {
-      const data = await getAndSetCustomersCategores(
-        callApi,
-        setCustomersCategores
-      );
-      if (!categoryName) {
-        setCategoryName(data[0]);
-      }
-    }, [categoryName]);
-
-    useEffect(() => {
-      getCustomersCategores();
-    }, []);
-
-
-   // test table data 
-   useEffect(() => {
-    getAllCustomers();
-  }, [supplierId]);
-
+  useEffect(() => {
+    getCustomersCategores();
+  }, []);
   
+  /////////////////////////  table data  //////////////////////////////
+
   const getAllCustomers = useCallback(async () => {
     const data = await getAndSetAllCustomers(callApi, setAllCustomers, {
-      supplierId,
+      clientType,
+      pageNumber,
+      pageSize: 10,
     });
     return data;
-  }, [supplierId]);
+  }, [pageNumber]);
+
+  useEffect(() => {
+    getAllCustomers();
+  }, [pageNumber]);
 
   const onChangeSupplier = useCallback(async (e: any, value: any) => {
     setSupplierId(value?.value);
   }, []);
 
-
-    return {
-        tabelHeaders,
-        customersCategores,
-        agentsCategores,
-        categoryName,
-        customerTypes,
-        statuses,  
-
-        onChangeAgent,
-        onChangeCustomer,
-        onChangeCustomerType,
-        onChangeStatus,
-
-        setAllCustomers,
-        allCustomers,
-        onChangeSupplier,
-
-
-      };
-    };
-    export { useCustomers };
-    
+  return {
+    tabelHeaders,
+    customersCategores,
+    agentsCategores,
+    customerTypes,
+    statuses,
+    categoryName,
+    allCustomers,
+    onChangeAgent,
+    onChangeCustomer,
+    onChangeCustomerType,
+    onChangeStatus,
+    setAllCustomers,
+    onChangeSupplier,
+  };
+};
+export { useCustomers };

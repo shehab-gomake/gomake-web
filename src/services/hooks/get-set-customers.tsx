@@ -1,10 +1,11 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "./call-api.interface";
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 
 
 // need to change the endpoints of all the http request
 
-const getAndSetAgentsCategores = async (
+const getAndSetCustomers = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
@@ -18,42 +19,24 @@ const getAndSetAgentsCategores = async (
 };
 
 
-const getAndSetCustomersCategores = async (
-  callApi: ICallApi,
-  setState?: ISetState,
-  data?: any
-) => {
-  const result: any = await callApi(
-    "GET",
-    "/v1/suppliers/get-suppliers",
-    data
-  );
-  return returnResult(result, setState);
-};
-
-
-// test data table
+// not final
 const getAndSetAllCustomers = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
 ) => {
-  const result: any = await callApi("GET", "/v1/colors/get-all", data);
+  const result: any = await callApi("GET", "/v1/customers/get-all-customers", data);
   const _data = returnResult(result, undefined);
-  const mapData = _data.map((size: any) => {
+  const mapData = _data.map((customer: any) => {
     return {
-      customerCode: size.code,
-      name: size.colorName,
-      volumeInLiters: size.colorName,
-      customerType: size.colorName,
-      agent: size.colorName,
-      email: size.colorName,
-      fax: size.colorName,
-      mobile: size.colorName,
-      phone1: size.colorName,
-      phone2: size.colorName,
-      status: size.colorName,
-      hashTag:size.colorName,
+      customerCode: customer.code,
+      name: customer.name,
+      email: customer.mail,
+      phone: customer.phone,
+      status: customer.isActive,
+      hashTag: (
+        <BusinessCenterIcon />
+      ),
     };
   });
   if (setState) {
@@ -63,7 +46,6 @@ const getAndSetAllCustomers = async (
 };
 
 export {
-  getAndSetCustomersCategores,
-  getAndSetAgentsCategores,
+  getAndSetCustomers,
   getAndSetAllCustomers,
 };

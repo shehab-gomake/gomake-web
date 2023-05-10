@@ -1,16 +1,22 @@
 import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components";
-import { useEffect, useMemo } from "react";
 import { Skeleton } from "@mui/material";
 import { useStyle } from "./style";
-import { useSupplier } from "@/hooks";
+import { useEffect } from "react";
+import { useAgent } from "@/hooks/use-agent";
 
-const HeaderFilter = ({ customersCategores , agentsCategores, customerType , status , categoryName , onChangeAgent , onChangeCustomer , onChangeCustomerType, onChangeSupplier , onChangeStatus
-  }: any) => {
+const HeaderFilter = ({ agentsCategores,customersCategores, customerType, status, categoryName, onChangeAgent, onChangeCustomerType, onChangeSupplier, onChangeStatus , setAllCustomers , onChangeCustomer, allCustomers
+}: any) => {
     const { t } = useTranslation();
     const { clasess } = useStyle();
+    const { getAgent,  agents } = useAgent();
+    useEffect(() => {
+        getAgent();
+    }, []);
 
-   
+    useEffect(() => {
+        setAllCustomers(allCustomers);
+    }, [allCustomers]);
 
     return (
         <div >
@@ -19,7 +25,7 @@ const HeaderFilter = ({ customersCategores , agentsCategores, customerType , sta
                     options={agentsCategores}
                     style={clasess.autoComplateStyle}
                     placeholder={t("Select agent")}
-                    onChange={onChangeSupplier}
+                    onChange={onChangeAgent}
                 />
             ) : (
                 <Skeleton variant="rectangular" width={200} height={40} />
@@ -30,7 +36,8 @@ const HeaderFilter = ({ customersCategores , agentsCategores, customerType , sta
                         options={customersCategores}
                         style={clasess.autoComplateStyle}
                         placeholder={t("Select customer")}
-                        onChange={onChangeCustomer}
+                        onChange={onChangeCustomer} 
+                        value={categoryName}  
                     />
                 ) : (<Skeleton variant="rectangular" width={200} height={40} />)}
 
@@ -40,6 +47,7 @@ const HeaderFilter = ({ customersCategores , agentsCategores, customerType , sta
                         style={clasess.autoComplateStyle}
                         placeholder={t("Select customer type")}
                         onChange={onChangeCustomerType}
+                        value={customerType[0]} 
                     />
                 ) : (<Skeleton variant="rectangular" width={200} height={40} />)}
                 {status?.length > 0 ? (
