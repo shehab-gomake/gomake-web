@@ -15,7 +15,10 @@
     "password": "Password"
   },
   "dashboard-page": {
-    "welcome": "לוח בקרה לייצור"
+    "welcome": "לוח בקרה לייצור",
+    "insertCode": "הכנס קוד",
+    "submit": "התחבר"
+
   },
   "machines-list-widget": {
     "machinesList": "רשימת מכונות"
@@ -32,7 +35,7 @@
     "board_cover": "כריכה",
     "board_vorsats": "פורזאץ",
     "progress": "מצב ייצור",
-    "done":"בוצע",
+    "done": "בוצע",
     "new": "חדש",
     "inProcess": "בתהליך",
     "fault": "תקוע",
@@ -44,7 +47,6 @@
     "shortWaiting": "באישורים",
     "lateMissions": "באיחור",
     "client": "לקוח"
-
   },
   "datepicker-component": {
     "chooseDate": "בחר תאריך",

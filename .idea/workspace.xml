@@ -5,9 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="563b2355-7e4d-460f-89bc-962e225666cb" name="Changes" comment="wip">
+      <change afterPath="$PROJECT_DIR$/src/components/modal/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/modal/modal.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/modal/style.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hooks/use-printhouse-id.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_30_04_2023_07_58_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_30_04_2023_07_58__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/dashboard-widget.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/dashboard-widget.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/use-gomake-axios.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/use-gomake-axios.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/languages/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/languages/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/languages/he.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/languages/he.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/dashboard/index.page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/dashboard/index.page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/api-request.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/api-request.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/storage-data.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/storage-data.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,8 +28,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="TypeScript File" />
         <option value="TypeScript JSX File" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -47,7 +58,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Thinkpad1/WebstormProjects/gomake-production-service&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Thinkpad1/WebstormProjects/gomake-web/src/components/modal&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
@@ -56,6 +67,11 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Thinkpad1\WebstormProjects\gomake-web\src\components\modal" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -67,6 +83,8 @@
       <workItem from="1680685267638" duration="153000" />
       <workItem from="1680685428641" duration="2503000" />
       <workItem from="1682403700256" duration="21543000" />
+      <workItem from="1683546972258" duration="3332000" />
+      <workItem from="1683739354194" duration="7937000" />
     </task>
     <task id="LOCAL‎-00001" summary="board missions show missionType name">
       <created>1680688310600</created>

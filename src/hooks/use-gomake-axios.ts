@@ -1,4 +1,4 @@
-import apiRequest from "@/services/api-request";
+import {apiRequest} from "@/services/api-request";
 import { loadgingState } from "@/store/loading";
 import { useSetRecoilState } from "recoil";
 // import { useRecoilState } from "recoil";

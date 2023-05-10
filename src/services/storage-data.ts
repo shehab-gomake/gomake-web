@@ -27,3 +27,7 @@ export const updateTokenStorage = (token: string) => {
 export const clearStorage = () => {
   localStorage.clear();
 };
+
+export const getPrintHouseId = () => {
+  return getItem("printhouseid");
+};

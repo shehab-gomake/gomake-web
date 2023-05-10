@@ -15,7 +15,10 @@
     "password": "Password"
   },
   "dashboard-page": {
-    "welcome": "Production dashboard"
+    "welcome": "Production dashboard",
+    "insertCode": "Insert code",
+    "submit": "submit"
+
   },
   "machines-list-widget": {
     "machinesList": "machines list"
