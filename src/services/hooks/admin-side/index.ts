@@ -20,4 +20,4 @@ export * from "./get-set-sheet-encapsulation";
 export * from "./get-set-magnets";
 export * from "./get-set-packins";
 export * from "./get-set-varnish";
-
+export * from "./products";

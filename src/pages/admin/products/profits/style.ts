@@ -21,7 +21,7 @@ const useStyle = () => {
         gap: convertWidthToVW(50),
       },
       autoComplateStyle: {
-        width: convertWidthToVW(200),
+        width: convertWidthToVW(300),
       },
       tableContainer: {
         width: "100%",
