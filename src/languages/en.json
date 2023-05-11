@@ -844,7 +844,8 @@
   "products": {
     "profits": {
       "admin": {
-        "title": "Profits"
+        "title": "Profits",
+        "chooseAction": "Choose action"
       },
       "pricingListWidget": {
         "pricingListTitle": "Pricing list (product name)",
