@@ -7,7 +7,7 @@ import { useStyle } from "../style";
 import { Skeleton } from "@mui/material";
 import { profitsState } from "../store/profits";
 
-const HeaderFilter = () => {
+const SelectAction = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
@@ -28,4 +28,4 @@ const HeaderFilter = () => {
     </div>
   );
 };
-export { HeaderFilter };
+export { SelectAction };

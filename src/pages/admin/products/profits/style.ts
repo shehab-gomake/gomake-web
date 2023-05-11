@@ -37,6 +37,7 @@ const useStyle = () => {
         borderRadius: 4,
         marginTop: convertWidthToVW(20),
         padding: convertWidthToVW(10),
+        marginBottom: convertWidthToVW(30),
       },
       titleHeadersTale: {
         display: "flex",

@@ -5,7 +5,7 @@ import { profitsState } from "../store/profits";
 import { AddIcon, MoreCircleIcon } from "@/icons";
 import { IconButton } from "@mui/material";
 
-const ProductTable = () => {
+const ProductList = () => {
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
   const array = [
@@ -61,4 +61,4 @@ const ProductTable = () => {
     </div>
   );
 };
-export { ProductTable };
+export { ProductList };

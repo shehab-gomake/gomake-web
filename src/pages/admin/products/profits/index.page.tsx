@@ -4,8 +4,8 @@ import { useSetRecoilState } from "recoil";
 import { profitsState } from "./store/profits";
 import { useProfits } from "./use-profits";
 import { useEffect } from "react";
-import { HeaderFilter } from "./widgets/header-filter";
-import { ProductTable } from "./widgets/products-table";
+import { SelectAction } from "./widgets/select-action";
+import { ProductList } from "./widgets/products-list";
 import PriceListWidget from "./widgets/pricing-list-widget";
 
 ("./widgets/price-list-widget");
@@ -24,8 +24,8 @@ export default function Profits() {
   return (
     <AdminAuthLayout>
       <HeaderTitle title={t("products.profits.admin.title")} />
-      <HeaderFilter />
-      <ProductTable />
+      <SelectAction />
+      <ProductList />
       <PriceListWidget />
     </AdminAuthLayout>
   );
