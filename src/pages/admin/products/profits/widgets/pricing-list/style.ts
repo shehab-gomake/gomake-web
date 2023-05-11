@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const { neutralColor, secondColor } = useGomakeTheme();
+  const { neutralColor, secondColor, primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       container: {
@@ -44,6 +44,47 @@ const useStyle = () => {
       },
       line: {
         borderBottom: `0.4px solid ${neutralColor(600)}`,
+      },
+      filterContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContainer: "flex-start",
+        alignItems: "center",
+        justifyContent: "space-around",
+      },
+      autoComplateStyle: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 160,
+        border: "1px solid #FFFFFF",
+        backgroundColor: "#FFFFFF",
+        paddingTop: 4,
+        paddingBottom: 4,
+        paddingRight: 0,
+        paddingLeft: 0,
+        color: secondColor(400),
+        boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.08)",
+      },
+      headerMainCointaner: {
+        width: "100%",
+        display: "flex",
+        justifyContent: "space-between",
+      },
+      listTitle: {
+        width: 275,
+        height: 25,
+        ...FONT_FAMILY.Lexend(700, 20),
+        fontStyle: "normal",
+        lineHeight: "25px",
+        display: "flex",
+        alignItems: "center",
+        textalign: "center",
+        color: primaryColor(500),
+      },
+      filtersCointaner: {
+        display: "flex",
+        gap: 20,
       },
     };
   }, []);
