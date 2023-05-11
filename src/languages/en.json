@@ -853,5 +853,10 @@
   },
   "deleteModal": {
     "deleteSupplier": "Are you sure to delete the supplier?"
+  },
+  "pricingList": {
+    "pricingListTitle": "Pricing list (product name)",
+    "meterPerPrice": "Meter/price",
+    "transition": "Transition"
   }
 }
