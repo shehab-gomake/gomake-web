@@ -32,7 +32,7 @@ const useStyle = () => {
         color: secondColor(400),
         boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.08)",
       },
-      mainCointaner: {
+      headerMainCointaner: {
         width: "100%",
         display: "flex",
         justifyContent: "space-between",
@@ -42,7 +42,7 @@ const useStyle = () => {
         height: 25,
         ...FONT_FAMILY.Lexend(700, 20),
         fontStyle: "normal",
-        lineHeight: 25,
+        lineHeight: "25px",
         display: "flex",
         alignItems: "center",
         textalign: "center",

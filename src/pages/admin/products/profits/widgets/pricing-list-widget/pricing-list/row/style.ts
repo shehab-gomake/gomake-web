@@ -27,6 +27,20 @@ const useStyle = ({ width }: any) => {
         paddingRight: 22,
         width: `${width}`,
       },
+      editItem: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        ...FONT_FAMILY.Lexend(400, 14),
+        lineHeight: "18px",
+        color: primaryColor(300),
+        textalign: "center",
+        paddingTop: 18,
+        paddingBottom: 18,
+        paddingLeft: 22,
+        paddingRight: 22,
+        width: `${width}`,
+      },
     };
   }, []);
   return {

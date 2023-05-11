@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 
-import { Header } from "./components";
 import { IProps } from "./interfaces";
-import { Row } from "./components";
 import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { Header } from "./header";
+import { Row } from "./row";
 
-const AdminProductTable = ({ tableHeaders, tableRows }: IProps) => {
+const PricingList = ({ tableHeaders, tableRows }: IProps) => {
   const [_tableRows, setTableRows] = useState(tableRows);
   const { clasess } = useStyle();
   const [istimeOut, setIsTimeOut] = useState(false);
@@ -29,7 +29,6 @@ const AdminProductTable = ({ tableHeaders, tableRows }: IProps) => {
             <Header
               key={`header_item${index}`}
               header={header}
-              index={index}
               width={`${100 / tableHeaders.length}%`}
             />
           );
@@ -43,7 +42,6 @@ const AdminProductTable = ({ tableHeaders, tableRows }: IProps) => {
                 <>
                   <Row
                     key={`body_row${index}`}
-                    index={index}
                     row={row}
                     width={`${100 / Object.entries(row).length}%`}
                   />
@@ -84,4 +82,4 @@ const AdminProductTable = ({ tableHeaders, tableRows }: IProps) => {
     </div>
   );
 };
-export { AdminProductTable };
+export { PricingList };

@@ -43,7 +43,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 22),
       },
       line: {
-        border: `1px solid ${neutralColor(600)}`,
+        borderBottom: `0.4px solid ${neutralColor(600)}`,
       },
     };
   }, []);
