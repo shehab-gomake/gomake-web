@@ -32,7 +32,6 @@ const useStyle = () => {
         justifyContainer: "flex-start",
         alignItems: "flex-start",
         width: "96.5%",
-        // height: 235,
         border: " 1px solid #FFFFFF",
         boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.25)",
         borderRadius: 4,
