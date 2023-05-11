@@ -6,6 +6,9 @@ import { useProfits } from "./use-profits";
 import { useEffect } from "react";
 import { HeaderFilter } from "./widgets/header-filter";
 import { ProductTable } from "./widgets/products-table";
+import PriceListWidget from "./widgets/pricing-list-widget";
+
+("./widgets/price-list-widget");
 export default function Profits() {
   const setProfitsState = useSetRecoilState<any>(profitsState);
   const { allActions, selectedAction, onChangeSelectedAction, t } =
@@ -23,6 +26,7 @@ export default function Profits() {
       <HeaderTitle title={t("products.profits.admin.title")} />
       <HeaderFilter />
       <ProductTable />
+      <PriceListWidget />
     </AdminAuthLayout>
   );
 }

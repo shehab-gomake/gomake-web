@@ -846,6 +846,19 @@
       "admin": {
         "title": "Profits",
         "chooseAction": "Choose action"
+      },
+      "pricingListWidget": {
+        "pricingListTitle": "Pricing list (product name)",
+        "meterPerPrice": "Meter/price",
+        "transition": "Transition",
+        "quantity": "Quantity",
+        "cost": "Cost",
+        "profit": "Profit",
+        "meterPrice": "Meter Price",
+        "expMeter": "Exp.meter",
+        "price": "Price",
+        "totalPrice": "Total price",
+        "more": "More"
       }
     }
   },
