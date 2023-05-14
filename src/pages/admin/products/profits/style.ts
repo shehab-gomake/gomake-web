@@ -105,6 +105,17 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(500),
       },
+      pricingAndExceptionsCointaner: {
+        display: "flex",
+        width: "100%",
+        gap: 21,
+      },
+      pricingCointaner: {
+        width: "60%",
+      },
+      exceptionsCointaner: {
+        width: "45%",
+      },
     };
   }, [i18next.language, t]);
   return {

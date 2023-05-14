@@ -4,12 +4,15 @@ import { useRecoilState } from "recoil";
 import { actionLists } from "@/store";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAndSetActions } from "@/services/hooks";
+import { GoMakeAutoComplate } from "@/components";
+import { useStyle } from "./style";
 
 const useProfits = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [allActions, setAllActions] = useRecoilState(actionLists);
   const [selectedAction, setSelectedAction] = useState({});
+  const { clasess } = useStyle();
   const getActions = useCallback(async () => {
     await getAndSetActions(callApi, setAllActions);
   }, []);
@@ -19,7 +22,7 @@ const useProfits = () => {
   useEffect(() => {
     getActions();
   }, []);
-  const tabelHeaders = useMemo(
+  const tabelPricingHeaders = useMemo(
     () => [
       t("products.profits.pricingListWidget.quantity"),
       t("products.profits.pricingListWidget.cost"),
@@ -32,27 +35,67 @@ const useProfits = () => {
     ],
     []
   );
-  const tabelRows = useMemo(
+  const tabelPricingRows = useMemo(
     () => [
       {
-        Quantity: 134,
+        quantity: 134,
         Cost: 443,
-        Profit: 21,
-        MeterPrice: 468,
-        Exp: 55,
+        profit: 21,
+        meterPrice: 468,
+        exp: 55,
         total: 445,
         price: 52,
         more: "Edit",
       },
       {
-        Quantity: 134,
-        Cost: 443,
-        Profit: 21,
-        MeterPrice: 468,
-        Exp: 55,
+        quantity: 134,
+        cost: 443,
+        profit: 21,
+        meterPrice: 468,
+        exp: 55,
         total: 445,
         price: 52,
         more: "Edit",
+      },
+    ],
+    []
+  );
+  const tabelExceptionsHeaders = useMemo(
+    () => [
+      t("products.profits.exceptions.type"),
+      t("products.profits.exceptions.parameter"),
+      t("products.profits.exceptions.value"),
+      t("products.profits.exceptions.scopeOfChange"),
+    ],
+    []
+  );
+  const tabelExceptionsRows = useMemo(
+    () => [
+      {
+        type: "machine",
+        parameter: "Color =",
+        value: "black",
+        scopeOfChange: (
+          <GoMakeAutoComplate
+            options={["prices1", "prices2", "prices3"]}
+            style={clasess.autoComplateStyle}
+            placeholder={t("products.profits.exceptions.chooseScope")}
+            onChange={""}
+          />
+        ),
+      },
+      {
+        type: "machine",
+        property: "Color =",
+        value: "black",
+        scopeOfChange: (
+          <GoMakeAutoComplate
+            options={["prices1", "prices2", "prices3"]}
+            style={clasess.autoComplateStyle}
+            placeholder={t("products.profits.exceptions.chooseScope")}
+            onChange={""}
+          />
+        ),
       },
     ],
     []
@@ -61,8 +104,10 @@ const useProfits = () => {
   return {
     allActions,
     selectedAction,
-    tabelHeaders,
-    tabelRows,
+    tabelPricingHeaders,
+    tabelPricingRows,
+    tabelExceptionsHeaders,
+    tabelExceptionsRows,
     onChangeSelectedAction,
     t,
   };

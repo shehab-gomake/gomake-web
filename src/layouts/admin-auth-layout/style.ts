@@ -12,6 +12,7 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         height: "100vh",
         display: "flex",
         flexDirection: "row" as "row",
+        marginBottom: 20,
       },
       logoContainer: {
         display: "flex",

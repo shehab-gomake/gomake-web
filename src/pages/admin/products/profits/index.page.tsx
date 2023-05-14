@@ -7,15 +7,18 @@ import { useEffect } from "react";
 import { SelectAction } from "./widgets/select-action";
 import { ProductList } from "./widgets/products-list";
 import { PricingList } from "./widgets/pricing-list/pricing-list";
+import { useStyle } from "./style";
+import { Exceptions } from "./widgets/exceptions/exceptions";
 
-("./widgets/price-list-widget");
 export default function Profits() {
   const setProfitsState = useSetRecoilState<any>(profitsState);
   const {
     allActions,
     selectedAction,
-    tabelHeaders,
-    tabelRows,
+    tabelPricingHeaders,
+    tabelPricingRows,
+    tabelExceptionsHeaders,
+    tabelExceptionsRows,
     onChangeSelectedAction,
     t,
   } = useProfits();
@@ -27,12 +30,26 @@ export default function Profits() {
       t,
     });
   }, [allActions, selectedAction, onChangeSelectedAction, t]);
+  const { clasess } = useStyle();
   return (
     <AdminAuthLayout>
       <HeaderTitle title={t("products.profits.admin.title")} />
       <SelectAction />
       <ProductList />
-      <PricingList tableHeaders={tabelHeaders} tableRows={tabelRows} />
+      <div style={clasess.pricingAndExceptionsCointaner}>
+        <div style={clasess.pricingCointaner}>
+          <PricingList
+            tableHeaders={tabelPricingHeaders}
+            tableRows={tabelPricingRows}
+          />
+        </div>
+        <div style={clasess.exceptionsCointaner}>
+          <Exceptions
+            tableHeaders={tabelExceptionsHeaders}
+            tableRows={tabelExceptionsRows}
+          />
+        </div>
+      </div>
     </AdminAuthLayout>
   );
 }
