@@ -49,41 +49,92 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                     {
                         boardsMissions && boardsMissions.map((board: IBoardMissions, index: number) => {
                             return (
-                                <tr key={index}>
-                                    <td style={{...classes.tableCell, position: 'sticky', right: 0,}}>
-                                        <div style={classes.firstColCell}>
-                                            <div style={{width: '5%'}}>{index + 1}</div>
-                                            <div style={{width: '5%'}}>{board.isUrgent ?
-                                                <ElectricBoltSharpIcon color={"error"}/> : ''}
-                                            </div>
-                                            <div style={{width: '30%'}}><span>{board?.clientName && board?.clientName?.length > 10 ? board.clientName?.slice(0, 7) + '...' : board?.clientName}</span></div>
-                                            <div style={{width: '25%', height: '100%'}}>
-                                                <div style={classes.tdRows}>
-                                                    <div><Link href={boardLink(board)} target="_blank"
-                                                               rel="noopener">{board.code}</Link></div>
-                                                    {board.missionType !== null &&
-                                                        <div>{t(TYPE_MISSION_NAME_KEY[board.missionType])}</div>}
+                                board.splittedBoards.length > 0 ?
+                                    board.splittedBoards.map((splitBoard, k) => {
+                                        return (
+                                            <tr>
+                                                {k === 0 &&
+                                                    <td rowSpan={board.splittedBoards.length}
+                                                        style={{...classes.tableCell, position: 'sticky', right: 0,}}>
+                                                        <div style={classes.firstColCellSplitBoards}>
+                                                            <div style={{width: '5%'}}>{index + 1}</div>
+                                                            <div style={{width: '5%'}}>{board.isUrgent ?
+                                                                <ElectricBoltSharpIcon color={"error"}/> : ''}
+                                                            </div>
+                                                            <div style={{width: '30%'}}>
+                                                                <span>{board?.clientName && board?.clientName?.length > 10 ? board.clientName?.slice(0, 9) + '..' : board?.clientName}</span>
+                                                            </div>
+                                                            <div style={{width: '25%', height: '100%'}}>
+                                                                <div style={classes.tdRows}>
+                                                                    <div><Link href={boardLink(board)} target="_blank"
+                                                                               rel="noopener">{board.code}</Link></div>
+                                                                </div>
+                                                            </div>
+                                                            <div style={classes.splitBoardsStatuses}>
+                                                                {
+                                                                    board.splittedBoards.map((sBoard, cellNumber) => <div style={
+                                                                        cellNumber + 1 === board.splittedBoards.length ?
+                                                                        {...classes.splitBoardsStatusesRow, borderBottom: 0} :
+                                                                        classes.splitBoardsStatusesRow
+                                                                    }>
+                                                                        <span>{t(TYPE_MISSION_NAME_KEY[sBoard.missionType])}</span>
+                                                                        <StatusView status={sBoard.status}
+                                                                                    label={sBoard.currentStation.rowName}/>
+                                                                    </div>)
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                }
+                                                {
+                                                    usedMachines.map((machine: IMachine, i: number) => {
+                                                        return (
+                                                            <td key={machine.id + i}
+                                                                style={classes.tableCell}>
+                                                                <StatusView style={{margin: 'auto'}}
+                                                                            status={splitBoard.machinesStatuses[machine.id]}/>
+                                                            </td>
+                                                        );
+                                                    })
+                                                }
+                                            </tr>
+                                        )
+                                    }) :
+                                    <tr key={index}>
+                                        <td style={{...classes.tableCell, position: 'sticky', right: 0,}}>
+                                            <div style={classes.firstColCell}>
+                                                <div style={{width: '5%'}}>{index + 1}</div>
+                                                <div style={{width: '5%'}}>{board.isUrgent ?
+                                                    <ElectricBoltSharpIcon color={"error"}/> : ''}
+                                                </div>
+                                                <div style={{width: '30%'}}>
+                                                    <span>{board?.clientName && board?.clientName?.length > 10 ? board.clientName?.slice(0, 9) + '..' : board?.clientName}</span>
+                                                </div>
+                                                <div style={{width: '25%', height: '100%'}}>
+                                                    <div style={classes.tdRows}>
+                                                        <div><Link href={boardLink(board)} target="_blank"
+                                                                   rel="noopener">{board.code}</Link></div>
+                                                    </div>
+                                                </div>
+                                                <div style={{width: '35%'}}>
+                                                    <StatusView status={board.status}
+                                                                label={board.currentStation.rowName}/>
                                                 </div>
                                             </div>
-                                            <div style={{width: '35%'}}>
-                                                <StatusView status={board.status}
-                                                            label={board.currentStation.rowName}/>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    {
-                                        usedMachines.map((machine: IMachine, i: number) => {
-                                            return (
-                                                <td key={machine.id + i}
-                                                    style={classes.tableCell}>
-                                                    <StatusView style={{margin: 'auto'}}
-                                                                status={board.machinesStatuses[machine.id]}/>
-                                                </td>
-                                            );
-                                        })
-                                    }
+                                        </td>
+                                        {
+                                            usedMachines.map((machine: IMachine, i: number) => {
+                                                return (
+                                                    <td key={machine.id + i}
+                                                        style={classes.tableCell}>
+                                                        <StatusView style={{margin: 'auto'}}
+                                                                    status={board.machinesStatuses[machine.id]}/>
+                                                    </td>
+                                                );
+                                            })
+                                        }
 
-                                </tr>
+                                    </tr>
                             );
                         })
                     }
@@ -94,4 +145,6 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
     );
 }
 
-export {BoardMissionsTable}
+export {
+    BoardMissionsTable
+}

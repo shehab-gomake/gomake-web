@@ -13,6 +13,7 @@ export interface IBoardMissions {
     orderNumber: string;
     clientId: string;
     clientName?: string;
+    splittedBoards: IBoardMissions[];
 }
 
 

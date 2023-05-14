@@ -31,7 +31,7 @@ const useStyle = () => {
                 maxHeight: '80px',
                 color: 'white',
                 textAlign: 'center' as 'center',
-                ...FONT_FAMILY.Lexend(500, 16),
+                ...FONT_FAMILY.Lexend(400, 16),
                 padding: '10px',
                 position: 'sticky' as 'sticky',
                 top: '0px',
@@ -55,8 +55,8 @@ const useStyle = () => {
                 width: '100%',
                 height: '100%',
                 maxHeight: '80px',
-                gap: '14px',
-                ...FONT_FAMILY.Lexend(500, 16)
+                // gap: '10px',
+                ...FONT_FAMILY.Lexend(400, 16)
             },
 
             firstColHead: {
@@ -80,6 +80,29 @@ const useStyle = () => {
                 backgroundColor: '#ffffff',
                 padding: ' 5px',
             },
+            splitBoardsStatuses: {
+                display: 'flex',
+                flexDirection: 'column' as 'column',
+                alignItems: 'center' as 'center',
+            },
+            splitBoardsStatusesRow: {
+                height: 40,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 10,
+                width: 200,
+                borderBottom: BORDER,
+                paddingLeft: 5
+            },
+            firstColCellSplitBoards: {
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                minWidth: '405px',
+                backgroundColor: '#ffffff',
+                padding: '0 5px 0 0',
+            }
 
         };
     }, [theme]);

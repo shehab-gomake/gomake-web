@@ -77,6 +77,7 @@ export const putApiRequest = async (url: string, data: any) => {
 export const patchApiRequest = async (url: string, data: any) => {
     return await apiRequest("PATCH", url, data);
 };
+
 export const deleteApiRequest = async (url: string, data: any = {}) => {
     return await apiRequest("DELETE", url, data);
 };
@@ -84,7 +85,7 @@ export const deleteApiRequest = async (url: string, data: any = {}) => {
 export const goMakeClientPrintHouseId = async (method = "GET", code: string, data: any = {}) => {
     try {
         const qaHost = 'https://qa.gomake.co.il';
-        const reqUrl = "/account/DashBoardLogin?code=" + code;
+        const reqUrl = qaHost + "/account/DashBoardLogin?code=" + code;
         const options: any = {
             method,
             url: reqUrl,

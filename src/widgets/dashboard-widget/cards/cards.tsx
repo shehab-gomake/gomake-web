@@ -12,7 +12,7 @@ import {useGomakeDateRange} from "@/hooks";
 
 const Cards = ({data}: ICards) => {
     const {classes} = useStyle();
-    const {successColor, warningColor, errorColor} = useGomakeTheme();
+    const {successColor, warningColor, errorColor, secondColor} = useGomakeTheme();
     const {selectedDateText} = useGomakeDateRange();
     return (
         <div style={classes.container}>
@@ -50,7 +50,7 @@ const Cards = ({data}: ICards) => {
 
                 <DashboardCard label={data?.waiting?.labelTranslationKey || ''}
                                value={data?.waiting?.value || 0}
-                               bgColor={'#D98E2C'}>
+                               bgColor={secondColor(300)}>
                     <HourglassTopIcon/>
                 </DashboardCard>
 

@@ -59,7 +59,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
             }
         }, INTERVAL_TIMEOUT);
         return () => clearInterval(interval);
-    }, []);
+    }, [date]);
 
     const handelSearchValueChange = (event: ChangeEvent<HTMLInputElement>) => {
         const {value} = event.target;

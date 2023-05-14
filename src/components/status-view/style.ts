@@ -4,7 +4,7 @@ import {EStatus} from "@/shared";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-    const {theme, successColor, errorColor, warningColor} = useGomakeTheme();
+    const {theme, successColor, errorColor, warningColor, secondColor} = useGomakeTheme();
     const classes = useMemo(() => {
         return {
             circle: {
@@ -31,13 +31,13 @@ const useStyle = () => {
                 color: warningColor(700)
             },
             [EStatus.WAITING]: {
-                backgroundColor: '#D98E2C',
-                color: '#83561A'
+                backgroundColor: secondColor(300),
+                color: secondColor(700)
             },
             label: {
                width: '99px',
                height: '25px',
-               ...FONT_FAMILY.Heebo(500, 14),
+               ...FONT_FAMILY.Heebo(400, 14),
                 display: 'flex',
                 justifyContent: 'center' as 'center',
                 alignItems: 'center' as 'center',
