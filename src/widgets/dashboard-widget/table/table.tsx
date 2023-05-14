@@ -118,6 +118,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                 </div>
                                                 <div style={{width: '35%'}}>
                                                     <StatusView status={board.status}
+                                                                style={{margin: 'auto'}}
                                                                 label={board.currentStation.rowName}/>
                                                 </div>
                                             </div>

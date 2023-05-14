@@ -4,17 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="563b2355-7e4d-460f-89bc-962e225666cb" name="Changes" comment="wip">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/status-view/style.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/status-view/style.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/languages/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/languages/en.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/languages/he.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/languages/he.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/services/api-request.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/api-request.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/cards/cards.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/cards/cards.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/dashboard-widget.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/dashboard-widget.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/interfaces/board-missions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/interfaces/board-missions.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/style.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/style.ts" afterDir="false" />
+    <list default="true" id="563b2355-7e4d-460f-89bc-962e225666cb" name="Changes" comment="split order item new design">
       <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/table.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -83,7 +73,7 @@
       <workItem from="1683546972258" duration="3332000" />
       <workItem from="1683739354194" duration="7937000" />
       <workItem from="1683791448912" duration="6679000" />
-      <workItem from="1684067608135" duration="11369000" />
+      <workItem from="1684067608135" duration="11770000" />
     </task>
     <task id="LOCAL‎-00001" summary="board missions show missionType name">
       <created>1680688310600</created>
@@ -155,7 +145,14 @@
       <option name="project" value="LOCAL‎" />
       <updated>1682512974856</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL‎-00011" summary="split order item new design">
+      <created>1684084560714</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL‎-00011" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1684084560714</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -183,6 +180,7 @@
     <MESSAGE value="bug fix" />
     <MESSAGE value="add icons to search inputs" />
     <MESSAGE value="fix dashboard card value center" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix dashboard card value center" />
+    <MESSAGE value="split order item new design" />
+    <option name="LAST_COMMIT_MESSAGE" value="split order item new design" />
   </component>
 </project>
