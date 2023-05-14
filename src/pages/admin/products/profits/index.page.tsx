@@ -16,7 +16,7 @@ export default function Profits() {
     allActions,
     selectedAction,
     tabelPricingHeaders,
-    tabelPricingRows,
+    actionProfits: tabelPricingRows,
     tabelExceptionsHeaders,
     tabelExceptionsRows,
     onChangeSelectedAction,
