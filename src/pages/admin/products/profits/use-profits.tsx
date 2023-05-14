@@ -1,30 +1,56 @@
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks";
 import { useRecoilState } from "recoil";
-import { actionLists } from "@/store";
+import { actionLists, actionProfitLists } from "@/store";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { getAndSetActions } from "@/services/hooks";
 import { GoMakeAutoComplate } from "@/components";
 import { useStyle } from "./style";
+import {
+  getAndSetActionProfitRowByActionId,
+  getAndSetActions,
+} from "@/services/hooks";
 
 const useProfits = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [allActions, setAllActions] = useRecoilState(actionLists);
-  const [selectedAction, setSelectedAction] = useState({});
+  const [selectedAction, setSelectedAction] = useState<any>({});
   const { clasess } = useStyle();
+  const [actionProfits, setActionProfits] =
+    useRecoilState<any>(actionProfitLists);
+  console.log("actionProfits", actionProfits);
   const getActions = useCallback(async () => {
     await getAndSetActions(callApi, setAllActions);
   }, []);
+  const getActionProfits = useCallback(async () => {
+    await getAndSetActionProfitRowByActionId(callApi, setActionProfits, {
+      actionId: selectedAction?.id,
+    });
+  }, [selectedAction]);
   const onChangeSelectedAction = useCallback(async (e: any, value: any) => {
     setSelectedAction(value);
   }, []);
   useEffect(() => {
     getActions();
   }, []);
-  const tabelPricingHeaders = useMemo(
-    () => [
-      t("products.profits.pricingListWidget.quantity"),
+  useEffect(() => {
+    getActionProfits();
+  }, [selectedAction]);
+  const tabelPricingHeaders = useMemo(() => {
+    let isQuantity = false;
+    actionProfits?.forEach((element) => {
+      if (element.hasOwnProperty("quantity")) {
+        isQuantity = true;
+        return;
+      }
+    });
+    return [
+      ...(isQuantity
+        ? [t("products.profits.pricingListWidget.quantity")]
+        : [
+            t("products.profits.pricingListWidget.width"),
+            t("products.profits.pricingListWidget.height"),
+          ]),
       t("products.profits.pricingListWidget.cost"),
       t("products.profits.pricingListWidget.profit"),
       t("products.profits.pricingListWidget.meterPrice"),
@@ -32,34 +58,8 @@ const useProfits = () => {
       t("products.profits.pricingListWidget.price"),
       t("products.profits.pricingListWidget.totalPrice"),
       t("products.profits.pricingListWidget.more"),
-    ],
-    []
-  );
-  const tabelPricingRows = useMemo(
-    () => [
-      {
-        quantity: 134,
-        Cost: 443,
-        profit: 21,
-        meterPrice: 468,
-        exp: 55,
-        total: 445,
-        price: 52,
-        more: "Edit",
-      },
-      {
-        quantity: 134,
-        cost: 443,
-        profit: 21,
-        meterPrice: 468,
-        exp: 55,
-        total: 445,
-        price: 52,
-        more: "Edit",
-      },
-    ],
-    []
-  );
+    ];
+  }, [actionProfits]);
   const tabelExceptionsHeaders = useMemo(
     () => [
       t("products.profits.exceptions.type"),
@@ -100,14 +100,13 @@ const useProfits = () => {
     ],
     []
   );
-
   return {
     allActions,
     selectedAction,
     tabelPricingHeaders,
-    tabelPricingRows,
     tabelExceptionsHeaders,
     tabelExceptionsRows,
+    actionProfits,
     onChangeSelectedAction,
     t,
   };
