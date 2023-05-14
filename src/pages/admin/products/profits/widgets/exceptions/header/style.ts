@@ -3,28 +3,19 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = ({ width, header }: any) => {
-  const { primaryColor } = useGomakeTheme();
+  const { primaryColor, neutralColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       headerItem: {
         display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        color:
-          header == "Exp.meter"
-            ? primaryColor(500)
-            : header == "Total price"
-            ? primaryColor(500)
-            : "#B5B7C0",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        color: neutralColor(400),
         width: `${width}`,
         textalign: "center",
-
-        ...FONT_FAMILY.Lexend(
-          header == "Exp.meter" ? 600 : header == "Total price" ? 600 : 500,
-          14
-        ),
+        ...FONT_FAMILY.Lexend(400, 16),
         fontStyle: "normal",
-        lineHeight: "18px",
+        lineHeight: "20px",
       },
     };
   }, []);

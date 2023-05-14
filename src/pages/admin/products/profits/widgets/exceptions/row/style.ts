@@ -3,38 +3,35 @@ import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = ({ width }: any) => {
-  const { primaryColor } = useGomakeTheme();
+  const { primaryColor, secondColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       bodyRow: {
         display: "flex",
         width: "100%",
-        justifyContent: "flex-start",
+        justifyContent: "space-around",
         alignItems: "center",
+        height: 60,
       },
       rowItem: {
         display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
         ...FONT_FAMILY.Lexend(400, 14),
         lineHeight: "18px",
         color: primaryColor(900),
         textalign: "center",
         width: `${width}`,
-        marginBottom: 18.5,
-        marginTop: 18.5,
       },
-      editItem: {
+      autoComplateStyle: {
         display: "flex",
+        alignItems: "center",
         justifyContent: "center",
-        alignItems: "flex-start",
-        ...FONT_FAMILY.Lexend(400, 14),
-        lineHeight: "18px",
-        color: primaryColor(300),
-        textalign: "center",
         width: `${width}`,
-        marginBottom: 18.5,
-        marginTop: 18.5,
+        border: "1px solid #FFFFFF",
+        backgroundColor: "#FFFFFF",
+        color: secondColor(400),
+        boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.08)",
       },
     };
   }, []);

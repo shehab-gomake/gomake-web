@@ -8,9 +8,8 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
       container: {
-        width: "100%",
-        paddingTop: 20,
-        boxShadow: "0px 2px 2px rgba(0,0,0,0.25)",
+        // paddingLeft: 32,
+        // paddingRight: 10,
       },
       header: {
         display: "flex",
@@ -18,14 +17,12 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: "#ffffff",
-        marginBottom: 29.5,
       },
       tableBody: {
         display: "flex",
         width: "100%",
         flexDirection: "column" as "column",
-        justifyContent: "space-between",
-        alignItems: "center",
+        alignitems: "flex-start",
       },
       skeletonRowStyle: {
         marginTop: convertHeightToVH(10),
@@ -42,7 +39,6 @@ const useStyle = () => {
       },
       line: {
         borderBottom: `0.4px solid ${neutralColor(600)}`,
-        width: "100%",
       },
       filterContainer: {
         display: "flex",
@@ -69,22 +65,53 @@ const useStyle = () => {
         width: "100%",
         display: "flex",
         justifyContent: "space-between",
-        marginBottom: 16,
+        flexDirection: "column" as "column",
       },
       listTitle: {
         width: 275,
         height: 25,
         ...FONT_FAMILY.Lexend(700, 20),
         fontStyle: "normal",
-        lineHeight: "25px",
+        // lineHeight: "25px",
         display: "flex",
         alignItems: "center",
         textalign: "center",
         color: primaryColor(500),
+        marginBottom: 26,
       },
       filtersCointaner: {
         display: "flex",
         gap: 20,
+      },
+      minCointaner: {
+        width: "25%",
+        ...FONT_FAMILY.Lexend(400, 14),
+        fontStyle: "normal",
+        lineHeight: "18px",
+        color: secondColor(500),
+        marginBottom: 24,
+        testalign: "center",
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "center",
+      },
+      addNewException: {
+        width: "100%",
+        ...FONT_FAMILY.Lexend(500, 14),
+        fontStyle: "normal",
+        lineHeight: "18px",
+        letterSpacing: "-0.01em",
+        color: primaryColor(500),
+        testalign: "start",
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "center",
+      },
+      withoutTitle: {
+        paddingTop: 12,
+        paddingBottom: 16,
+        paddingLeft: 16,
+        paddingRight: 16,
       },
     };
   }, []);

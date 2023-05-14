@@ -858,6 +858,17 @@
         "expMeter": "Exp.meter",
         "price": "Price",
         "totalPrice": "Total price",
+        "more": "More"
+      },
+      "exceptions": {
+        "title": "Exceptions",
+        "type": "Type",
+        "parameter": "Parameter",
+        "value": "Value",
+        "scopeOfChange": "scope of change",
+        "min": "Minimum =",
+        "addNewException": "Add new exception",
+        "chooseScope": "choose scope",
         "more": "More",
         "width": "width",
         "height": "height"
