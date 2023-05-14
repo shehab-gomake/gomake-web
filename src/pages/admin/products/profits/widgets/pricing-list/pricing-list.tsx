@@ -51,7 +51,7 @@ const PricingList = ({ tableHeaders, tableRows }: IProps) => {
       </div>
       <div style={clasess.container}>
         <div style={clasess.header}>
-          {tableHeaders.map((header: string, index: number) => {
+          {tableHeaders.map((header: any, index: number) => {
             return (
               <Header
                 key={`header_item${index}`}

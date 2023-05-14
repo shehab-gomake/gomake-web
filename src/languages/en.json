@@ -858,7 +858,9 @@
         "expMeter": "Exp.meter",
         "price": "Price",
         "totalPrice": "Total price",
-        "more": "More"
+        "more": "More",
+        "width": "width",
+        "height": "height"
       }
     }
   },
