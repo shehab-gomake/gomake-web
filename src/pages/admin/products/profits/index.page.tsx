@@ -15,7 +15,7 @@ export default function Profits() {
     allActions,
     selectedAction,
     tabelHeaders,
-    tabelRows,
+    actionProfits,
     onChangeSelectedAction,
     t,
   } = useProfits();
@@ -32,7 +32,7 @@ export default function Profits() {
       <HeaderTitle title={t("products.profits.admin.title")} />
       <SelectAction />
       <ProductList />
-      <PricingList tableHeaders={tabelHeaders} tableRows={tabelRows} />
+      <PricingList tableHeaders={tabelHeaders} tableRows={actionProfits} />
     </AdminAuthLayout>
   );
 }
