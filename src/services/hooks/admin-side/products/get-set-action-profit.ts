@@ -13,7 +13,6 @@ const getAndSetActionProfitRowByActionId = async (
   );
   // return returnResult(result, setState);
   const _data: any = returnResult(result, undefined);
-  console.log("_data", _data);
   const mapData = _data?.actionProfitRows?.map((item: any) => {
     return {
       ...(_data?.pricingBy === 1
@@ -32,8 +31,9 @@ const getAndSetActionProfitRowByActionId = async (
       more: "More",
     };
   });
+  _data.actionProfitRowsMapped = mapData;
   if (setState) {
-    setState(mapData);
+    setState(_data);
   }
 
   return _data;
