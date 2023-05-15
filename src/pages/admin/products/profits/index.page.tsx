@@ -33,21 +33,23 @@ export default function Profits() {
   const { clasess } = useStyle();
   return (
     <AdminAuthLayout>
-      <HeaderTitle title={t("products.profits.admin.title")} />
-      <SelectAction />
-      <ProductList />
-      <div style={clasess.pricingAndExceptionsCointaner}>
-        <div style={clasess.pricingCointaner}>
-          <PricingList
-            tableHeaders={tabelPricingHeaders}
-            tableRows={tabelPricingRows}
-          />
-        </div>
-        <div style={clasess.exceptionsCointaner}>
-          <Exceptions
-            tableHeaders={tabelExceptionsHeaders}
-            tableRows={tabelExceptionsRows}
-          />
+      <div style={clasess.mainContainer}>
+        <HeaderTitle title={t("products.profits.admin.title")} />
+        <SelectAction />
+        <ProductList />
+        <div style={clasess.pricingAndExceptionsCointaner}>
+          <div style={clasess.pricingCointaner}>
+            <PricingList
+              tableHeaders={tabelPricingHeaders}
+              tableRows={tabelPricingRows}
+            />
+          </div>
+          <div style={clasess.exceptionsCointaner}>
+            <Exceptions
+              tableHeaders={tabelExceptionsHeaders}
+              tableRows={tabelExceptionsRows}
+            />
+          </div>
         </div>
       </div>
     </AdminAuthLayout>

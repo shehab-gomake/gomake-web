@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate } from "@/components";
 import { Header } from "./header";
 import { Row } from "./row";
+import { Plus } from "./icons/plus";
 
 const PricingList = ({ tableHeaders, tableRows }: IProps) => {
   const [_tableRows, setTableRows] = useState(tableRows);
@@ -108,6 +109,10 @@ const PricingList = ({ tableHeaders, tableRows }: IProps) => {
               )}
             </>
           )}
+        </div>
+        <div style={clasess.addNewStep}>
+          <Plus />
+          {t("products.profits.pricingListWidget.addNewStep")}
         </div>
       </div>
     </>

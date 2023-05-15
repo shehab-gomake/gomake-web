@@ -860,7 +860,8 @@
         "totalPrice": "Total price",
         "width": "width",
         "more": "More",
-        "height": "height"
+        "height": "height",
+        "addNewStep": "add new step"
       },
       "exceptions": {
         "title": "Exceptions",
