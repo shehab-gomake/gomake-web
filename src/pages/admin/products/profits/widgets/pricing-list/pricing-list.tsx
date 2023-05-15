@@ -13,7 +13,6 @@ import { Plus } from "./icons/plus";
 
 const PricingList = ({ tableHeaders, tableRows }: IProps) => {
   const actionProfits = useRecoilValue<any>(actionProfitLists);
-  console.log("actionProfits", actionProfits);
   const [_tableRows, setTableRows] = useState(tableRows);
   const { clasess } = useStyle();
   const [istimeOut, setIsTimeOut] = useState(false);

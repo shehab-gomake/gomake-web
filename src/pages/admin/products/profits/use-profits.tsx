@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { actionLists, actionProfitLists } from "@/store";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { GoMakeAutoComplate } from "@/components";
@@ -8,7 +8,11 @@ import { useStyle } from "./style";
 import {
   getAndSetActionProfitRowByActionId,
   getAndSetActions,
+  getAndSetProducts,
+  getAndSetMachinces,
 } from "@/services/hooks";
+import { machincesState } from "./store/machinces";
+import { productsState } from "./store/products";
 
 const useProfits = () => {
   const { callApi } = useGomakeAxios();
@@ -16,6 +20,10 @@ const useProfits = () => {
   const [allActions, setAllActions] = useRecoilState(actionLists);
   const [selectedAction, setSelectedAction] = useState<any>({});
   const { clasess } = useStyle();
+  const [machincesStateValue, setMachincesState] =
+    useRecoilState<any>(machincesState);
+  const [productsStateValue, setProductsState] =
+    useRecoilState<any>(productsState);
   const [actionProfits, setActionProfits] =
     useRecoilState<any>(actionProfitLists);
   const getActions = useCallback(async () => {
@@ -26,11 +34,20 @@ const useProfits = () => {
       actionId: selectedAction?.id,
     });
   }, [selectedAction]);
+  const getMachincesProfits = useCallback(async () => {
+    await getAndSetMachinces(callApi, setMachincesState);
+  }, []);
+  const getProducts = useCallback(async () => {
+    await getAndSetProducts(callApi, setProductsState);
+  }, []);
   const onChangeSelectedAction = useCallback(async (e: any, value: any) => {
     setSelectedAction(value);
   }, []);
+
   useEffect(() => {
     getActions();
+    getMachincesProfits();
+    getProducts();
   }, []);
   useEffect(() => {
     getActionProfits();
