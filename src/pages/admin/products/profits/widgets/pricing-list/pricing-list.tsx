@@ -7,9 +7,13 @@ import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate } from "@/components";
 import { Header } from "./header";
 import { Row } from "./row";
+import { useRecoilValue } from "recoil";
+import { actionProfitLists } from "@/store";
 import { Plus } from "./icons/plus";
 
 const PricingList = ({ tableHeaders, tableRows }: IProps) => {
+  const actionProfits = useRecoilValue<any>(actionProfitLists);
+  console.log("actionProfits", actionProfits);
   const [_tableRows, setTableRows] = useState(tableRows);
   const { clasess } = useStyle();
   const [istimeOut, setIsTimeOut] = useState(false);
@@ -32,19 +36,22 @@ const PricingList = ({ tableHeaders, tableRows }: IProps) => {
         <div style={clasess.filtersCointaner}>
           <div style={clasess.filterContainer}>
             <GoMakeAutoComplate
-              options={["prices1", "prices2", "prices3"]}
+              options={["Quantity", "Size"]}
               style={clasess.autoComplateStyle}
               placeholder={t(
                 "products.profits.pricingListWidget.meterPerPrice"
               )}
-              onChange={""}
+              value={actionProfits?.pricingBy === 0 ? "Quantity" : "Size"}
+              disabled={true}
+              // onChange={""}
             />
           </div>
           <div style={clasess.filterContainer}>
             <GoMakeAutoComplate
-              options={["prices1", "prices2", "prices3"]}
+              options={["Linear", "Steps"]}
               style={clasess.autoComplateStyle}
               placeholder={t("products.profits.pricingListWidget.transition")}
+              value={actionProfits?.transitionType === 0 ? "Linear" : "Steps"}
               onChange={""}
             />
           </div>

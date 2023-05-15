@@ -16,7 +16,7 @@ export default function Profits() {
     allActions,
     selectedAction,
     tabelPricingHeaders,
-    actionProfits: tabelPricingRows,
+    actionProfits,
     tabelExceptionsHeaders,
     tabelExceptionsRows,
     onChangeSelectedAction,
@@ -41,7 +41,7 @@ export default function Profits() {
           <div style={clasess.pricingCointaner}>
             <PricingList
               tableHeaders={tabelPricingHeaders}
-              tableRows={tabelPricingRows}
+              tableRows={actionProfits?.actionProfitRowsMapped}
             />
           </div>
           <div style={clasess.exceptionsCointaner}>

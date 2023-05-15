@@ -18,7 +18,6 @@ const useProfits = () => {
   const { clasess } = useStyle();
   const [actionProfits, setActionProfits] =
     useRecoilState<any>(actionProfitLists);
-  console.log("actionProfits", actionProfits);
   const getActions = useCallback(async () => {
     await getAndSetActions(callApi, setAllActions);
   }, []);
@@ -38,7 +37,7 @@ const useProfits = () => {
   }, [selectedAction]);
   const tabelPricingHeaders = useMemo(() => {
     let isQuantity = false;
-    actionProfits?.forEach((element) => {
+    actionProfits?.actionProfitRowsMapped?.forEach((element) => {
       if (element.hasOwnProperty("quantity")) {
         isQuantity = true;
         return;
