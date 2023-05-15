@@ -22,3 +22,4 @@ export * from "./get-set-packins";
 export * from "./get-set-varnish";
 export * from "./products";
 export * from "./profits";
+export * from "./clients";

@@ -1,7 +1,14 @@
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { actionLists, actionProfitLists } from "@/store";
+import {
+  actionLists,
+  actionProfitLists,
+  clientTypesState,
+  machincesState,
+  parametersState,
+  productsState,
+} from "@/store";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { GoMakeAutoComplate } from "@/components";
 import { useStyle } from "./style";
@@ -10,25 +17,35 @@ import {
   getAndSetActions,
   getAndSetProducts,
   getAndSetMachinces,
+  getAndSetParameters,
+  getAndSetClientTypes,
 } from "@/services/hooks";
-import { machincesState } from "./store/machinces";
-import { productsState } from "./store/products";
 
 const useProfits = () => {
+  const setMachincesState = useSetRecoilState<any>(machincesState);
+  const setProductsState = useSetRecoilState<any>(productsState);
+  const setParametersState = useSetRecoilState<any>(parametersState);
+  const setClientTypesState = useSetRecoilState<any>(clientTypesState);
+
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [allActions, setAllActions] = useRecoilState(actionLists);
   const [selectedAction, setSelectedAction] = useState<any>({});
   const { clasess } = useStyle();
-  const [machincesStateValue, setMachincesState] =
-    useRecoilState<any>(machincesState);
-  const [productsStateValue, setProductsState] =
-    useRecoilState<any>(productsState);
   const [actionProfits, setActionProfits] =
     useRecoilState<any>(actionProfitLists);
   const getActions = useCallback(async () => {
     await getAndSetActions(callApi, setAllActions);
   }, []);
+
+  const getParameters = useCallback(async () => {
+    await getAndSetParameters(callApi, setParametersState);
+  }, []);
+
+  const getClientTypes = useCallback(async () => {
+    await getAndSetClientTypes(callApi, setClientTypesState);
+  }, []);
+
   const getActionProfits = useCallback(async () => {
     await getAndSetActionProfitRowByActionId(callApi, setActionProfits, {
       actionId: selectedAction?.id,
@@ -48,6 +65,8 @@ const useProfits = () => {
     getActions();
     getMachincesProfits();
     getProducts();
+    getParameters();
+    getClientTypes();
   }, []);
   useEffect(() => {
     getActionProfits();

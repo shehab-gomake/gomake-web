@@ -10,3 +10,7 @@ export * from "./supplier-lists";
 export * from "./supplier-currencies";
 export * from "./action-lists";
 export * from "./action-profits";
+export * from "./products";
+export * from "./machinces";
+export * from "./parameters";
+export * from "./client-types";
