@@ -13,6 +13,14 @@ const useStyle = () => {
 
   const clasess = useMemo(() => {
     return {
+      mainContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        width: "100%",
+        paddingRight: 34,
+      },
       //Header Filter Style
       filterContainer: {
         display: "flex",
@@ -23,7 +31,8 @@ const useStyle = () => {
         gap: convertWidthToVW(50),
       },
       autoComplateStyle: {
-        width: convertWidthToVW(300),
+        width: convertWidthToVW(301),
+        border: "1px solid #FFFFFF",
       },
       //Product Table Style
       mainContainerForProductTable: {
@@ -31,7 +40,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContainer: "flex-start",
         alignItems: "flex-start",
-        width: "96.5%",
+        width: "100%",
         border: " 1px solid #FFFFFF",
         boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.25)",
         borderRadius: 4,
@@ -111,10 +120,10 @@ const useStyle = () => {
         gap: 21,
       },
       pricingCointaner: {
-        width: "60%",
+        width: "59%",
       },
       exceptionsCointaner: {
-        width: "45%",
+        width: "41%",
       },
     };
   }, [i18next.language, t]);

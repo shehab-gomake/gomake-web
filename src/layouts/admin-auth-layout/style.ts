@@ -12,7 +12,6 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         height: "100vh",
         display: "flex",
         flexDirection: "row" as "row",
-        marginBottom: 20,
       },
       logoContainer: {
         display: "flex",
@@ -40,6 +39,7 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         flexDirection: "column" as "column",
         padding: convertWidthToVW(20),
         overflowY: "scroll" as "scroll",
+        marginBottom: 20,
       },
       headerContainer: {
         height: convertHeightToVH(101),

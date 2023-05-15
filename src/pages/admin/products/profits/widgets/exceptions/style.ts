@@ -10,6 +10,7 @@ const useStyle = () => {
       container: {
         // paddingLeft: 32,
         // paddingRight: 10,
+        //marginLeft: 52,
       },
       header: {
         display: "flex",
@@ -77,7 +78,7 @@ const useStyle = () => {
         alignItems: "center",
         textalign: "center",
         color: primaryColor(500),
-        marginBottom: 26,
+        marginBottom: 38,
       },
       filtersCointaner: {
         display: "flex",
@@ -106,6 +107,7 @@ const useStyle = () => {
         display: "flex",
         justifyContent: "flex-start",
         alignItems: "center",
+        gap: 7,
       },
       withoutTitle: {
         paddingTop: 12,

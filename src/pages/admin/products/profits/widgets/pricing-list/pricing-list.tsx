@@ -9,6 +9,7 @@ import { Header } from "./header";
 import { Row } from "./row";
 import { useRecoilValue } from "recoil";
 import { actionProfitLists } from "@/store";
+import { Plus } from "./icons/plus";
 
 const PricingList = ({ tableHeaders, tableRows }: IProps) => {
   const actionProfits = useRecoilValue<any>(actionProfitLists);
@@ -115,6 +116,10 @@ const PricingList = ({ tableHeaders, tableRows }: IProps) => {
               )}
             </>
           )}
+        </div>
+        <div style={clasess.addNewStep}>
+          <Plus />
+          {t("products.profits.pricingListWidget.addNewStep")}
         </div>
       </div>
     </>

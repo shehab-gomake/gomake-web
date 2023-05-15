@@ -41,7 +41,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 22),
       },
       line: {
-        borderBottom: `0.4px solid ${neutralColor(600)}`,
+        borderBottom: `0.4px solid ${neutralColor(400)}`,
         width: "100%",
       },
       filterContainer: {
@@ -85,6 +85,21 @@ const useStyle = () => {
       filtersCointaner: {
         display: "flex",
         gap: 20,
+      },
+      addNewStep: {
+        width: "100%",
+        ...FONT_FAMILY.Lexend(500, 14),
+        fontStyle: "normal",
+        lineHeight: "18px",
+        letterSpacing: "-0.01em",
+        color: primaryColor(500),
+        testalign: "start",
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 7,
+        marginLeft: 13.33,
+        marginTop: 20.83,
       },
     };
   }, []);
