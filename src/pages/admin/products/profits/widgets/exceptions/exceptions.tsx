@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate } from "@/components";
 import { Header } from "./header";
 import { Row } from "./row";
+import { Plus } from "./icons/plus";
 
 const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
   const [_tableRows, setTableRows] = useState(tableRows);
@@ -93,6 +94,7 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
             {20}$
           </div>
           <div style={clasess.addNewException}>
+            <Plus />
             {t("products.profits.exceptions.addNewException")}
           </div>
         </div>
