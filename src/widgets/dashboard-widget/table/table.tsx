@@ -131,7 +131,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                     usedMachines.map((machine: IMachine, i: number) => {
                                                         return (
                                                             <td key={machine.id + i}
-                                                                style={classes.tableCell}>
+                                                                style={k + 1 === board.splittedBoards.length ? classes.tableCell : {...classes.tableCell, borderBottom: 0}  }>
                                                                 <StatusView style={{margin: 'auto'}}
                                                                             status={splitBoard.machinesStatuses[machine.id]}/>
                                                             </td>
@@ -159,7 +159,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                 </div>
                                                 <div style={{width: '35%'}}>
                                                     <StatusView status={board.status}
-                                                                style={{margin: 'auto'}}
+                                                                style={{margin: 'auto', marginLeft: 0}}
                                                                 label={board.currentStation.rowName}/>
                                                 </div>
                                             </div>
