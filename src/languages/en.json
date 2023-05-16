@@ -872,7 +872,14 @@
         "min": "Minimum =",
         "addNewException": "Add new exception",
         "chooseScope": "choose scope",
-        "selectTypeOfException": "Select type of exception"
+        "selectTypeOfException": "Select type of exception",
+        "selectMachine": "Select machine",
+        "selectProduct": "Select product",
+        "selectClient": "Select client",
+        "selectParameter": "Select parameter",
+        "SelectValueNameOfParameter": "Select value name of parameter",
+        "selectScopeOfChange": "Select scope of change",
+        "additionalProfit": "Additional Profit"
       }
     }
   },

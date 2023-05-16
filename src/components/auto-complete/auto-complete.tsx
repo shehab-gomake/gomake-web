@@ -68,7 +68,7 @@ const GoMakeAutoComplate = ({
 }) => {
   return (
     <StyledAutocomplete
-      value={value}
+      {...(value && { value })}
       onChange={onChange}
       style={style}
       options={options}
