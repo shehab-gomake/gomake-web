@@ -16,20 +16,54 @@ export default function Profits() {
     allActions,
     selectedAction,
     tabelPricingHeaders,
-    actionProfits,
     tabelExceptionsHeaders,
     tabelExceptionsRows,
+    actionProfits,
+    machincesStateValue,
+    productsStateValue,
+    parametersStateValue,
+    clientTypesStateValue,
+    openAddExceptionModal,
     onChangeSelectedAction,
+    onCloseAddExceptionModal,
+    onOpenAddExceptionModal,
     t,
   } = useProfits();
   useEffect(() => {
     setProfitsState({
       allActions,
       selectedAction,
+      tabelPricingHeaders,
+      tabelExceptionsHeaders,
+      tabelExceptionsRows,
+      actionProfits,
+      machincesStateValue,
+      productsStateValue,
+      parametersStateValue,
+      clientTypesStateValue,
+      openAddExceptionModal,
       onChangeSelectedAction,
+      onCloseAddExceptionModal,
+      onOpenAddExceptionModal,
       t,
     });
-  }, [allActions, selectedAction, onChangeSelectedAction, t]);
+  }, [
+    allActions,
+    selectedAction,
+    tabelPricingHeaders,
+    tabelExceptionsHeaders,
+    tabelExceptionsRows,
+    actionProfits,
+    machincesStateValue,
+    productsStateValue,
+    parametersStateValue,
+    clientTypesStateValue,
+    openAddExceptionModal,
+    onChangeSelectedAction,
+    onCloseAddExceptionModal,
+    onOpenAddExceptionModal,
+    t,
+  ]);
   const { clasess } = useStyle();
   return (
     <AdminAuthLayout>

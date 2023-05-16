@@ -35,6 +35,13 @@ const useProfits = () => {
   const { t } = useTranslation();
   const [allActions, setAllActions] = useRecoilState(actionLists);
   const [selectedAction, setSelectedAction] = useState<any>({});
+  const [openAddExceptionModal, setOpenAddExceptionModal] = useState(false);
+  const onCloseAddExceptionModal = () => {
+    setOpenAddExceptionModal(false);
+  };
+  const onOpenAddExceptionModal = () => {
+    setOpenAddExceptionModal(true);
+  };
   const { clasess } = useStyle();
   const [actionProfits, setActionProfits] =
     useRecoilState<any>(actionProfitLists);
@@ -150,7 +157,10 @@ const useProfits = () => {
     productsStateValue,
     parametersStateValue,
     clientTypesStateValue,
+    openAddExceptionModal,
     onChangeSelectedAction,
+    onCloseAddExceptionModal,
+    onOpenAddExceptionModal,
     t,
   };
 };
