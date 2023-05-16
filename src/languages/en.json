@@ -871,7 +871,8 @@
         "scopeOfChange": "scope of change",
         "min": "Minimum =",
         "addNewException": "Add new exception",
-        "chooseScope": "choose scope"
+        "chooseScope": "choose scope",
+        "selectTypeOfException": "Select type of exception"
       }
     }
   },

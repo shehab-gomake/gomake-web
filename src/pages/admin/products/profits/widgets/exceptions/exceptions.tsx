@@ -4,12 +4,15 @@ import { IProps } from "./interfaces";
 import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { GoMakeAutoComplate } from "@/components";
 import { Header } from "./header";
 import { Row } from "./row";
 import { Plus } from "./icons/plus";
+import { AddExceptionModal } from "../add-exception-modal";
+import { useRecoilValue } from "recoil";
+import { profitsState } from "../../store/profits";
 
 const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
+  const profitsStateValue = useRecoilValue<any>(profitsState);
   const [_tableRows, setTableRows] = useState(tableRows);
   const { clasess } = useStyle();
   const [istimeOut, setIsTimeOut] = useState(false);
@@ -93,12 +96,16 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
             {t("products.profits.exceptions.min")}
             {20}$
           </div>
-          <div style={clasess.addNewException}>
+          <div
+            style={clasess.addNewException}
+            onClick={profitsStateValue.onOpenAddExceptionModal}
+          >
             <Plus />
             {t("products.profits.exceptions.addNewException")}
           </div>
         </div>
       </div>
+      <AddExceptionModal />
     </>
   );
 };

@@ -108,6 +108,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 7,
+        cursor: "pointer",
       },
       withoutTitle: {
         paddingTop: 12,
