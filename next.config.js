@@ -16,6 +16,7 @@ const nextConfig = {
   },
   images: {
     domains: [process.env.BASE_HOST || "localhost","i.ibb.co"],
+    unoptimized: true,
   },
   productionBrowserSourceMaps: true,  
     pageExtensions: ['page.tsx', 'page.ts', 'page.jsx', 'page.js']
