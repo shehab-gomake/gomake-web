@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   actionLists,
   actionProfitLists,
@@ -22,10 +22,14 @@ import {
 } from "@/services/hooks";
 
 const useProfits = () => {
-  const setMachincesState = useSetRecoilState<any>(machincesState);
-  const setProductsState = useSetRecoilState<any>(productsState);
-  const setParametersState = useSetRecoilState<any>(parametersState);
-  const setClientTypesState = useSetRecoilState<any>(clientTypesState);
+  const [machincesStateValue, setMachincesState] =
+    useRecoilState<any>(machincesState);
+  const [productsStateValue, setProductsState] =
+    useRecoilState<any>(productsState);
+  const [parametersStateValue, setParametersState] =
+    useRecoilState<any>(parametersState);
+  const [clientTypesStateValue, setClientTypesState] =
+    useRecoilState<any>(clientTypesState);
 
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -142,6 +146,10 @@ const useProfits = () => {
     tabelExceptionsHeaders,
     tabelExceptionsRows,
     actionProfits,
+    machincesStateValue,
+    productsStateValue,
+    parametersStateValue,
+    clientTypesStateValue,
     onChangeSelectedAction,
     t,
   };
