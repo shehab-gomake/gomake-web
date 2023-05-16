@@ -100,6 +100,7 @@ const useStyle = () => {
         gap: 7,
         marginLeft: 13.33,
         marginTop: 20.83,
+        cursor: "pointer",
       },
     };
   }, []);
