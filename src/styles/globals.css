@@ -17,7 +17,11 @@ html *
 
 #dashboard-table::-webkit-scrollbar {
     width: 4px;
-}
+
+
+}#dashboard-table::-webkit-scrollbar:horizontal {
+    height: 3px;
+ }
 #dashboard-table::-webkit-scrollbar-track {
     margin: 16px 0;
 }
