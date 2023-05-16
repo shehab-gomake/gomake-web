@@ -36,6 +36,9 @@ const useProfits = () => {
   const [allActions, setAllActions] = useRecoilState(actionLists);
   const [selectedAction, setSelectedAction] = useState<any>({});
   const [openAddExceptionModal, setOpenAddExceptionModal] = useState(false);
+  const [openAddNewPricingStepRow, setOpenAddNewPricingStepRow] =
+    useState(false);
+
   const onCloseAddExceptionModal = () => {
     setOpenAddExceptionModal(false);
   };
@@ -175,6 +178,8 @@ const useProfits = () => {
     parametersStateValue,
     clientTypesStateValue,
     openAddExceptionModal,
+    openAddNewPricingStepRow,
+    setOpenAddNewPricingStepRow,
     updateActionProfit,
     onChangeSelectedAction,
     onCloseAddExceptionModal,
