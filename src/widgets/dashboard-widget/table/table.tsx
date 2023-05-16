@@ -9,13 +9,15 @@ import {TYPE_MISSION_NAME_KEY} from "@/shared/constant";
 import {Link} from "@mui/material";
 import {useCallback, useState} from "react";
 import {EStatus} from "@/shared";
+import {getPrintHouseHost} from "@/services/storage-data";
 
 const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
     const [orderByMachine, setOrderByMachine] = useState<string>('');
     const boardLink = (boardMissions: IBoardMissions): string => {
-        return `/Kanban/Board/${boardMissions.boardId}?missionId=${boardMissions.id}`;
+        const host = getPrintHouseHost();
+        return `https://${host}/Kanban/Board/${boardMissions.boardId}?missionId=${boardMissions.id}`;
     }
     const hasMachine = (board: IBoardMissions) => {
             switch (board.machinesStatuses[orderByMachine]) {

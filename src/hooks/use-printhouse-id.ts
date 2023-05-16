@@ -1,11 +1,12 @@
 import {goMakeClientPrintHouseId} from "@/services/api-request";
-import {setItem} from "@/services/storage-data";
+import { updatePrintHouseIdHost} from "@/services/storage-data";
 
 const usePrintHouseId = () => {
     const getPrintHouseId = async (code: string): Promise<boolean> => {
-        const printHouseId = await goMakeClientPrintHouseId("GET", code);
-        if (printHouseId?.data) {
-            setItem("printhouseid", printHouseId.data);
+        const res = await goMakeClientPrintHouseId("GET", code);
+        const {printHouseId, host} = res?.data
+        if (printHouseId && host) {
+           updatePrintHouseIdHost(printHouseId, host);
             return true;
         }
         return false;

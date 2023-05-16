@@ -46,7 +46,8 @@
     "waiting": "ממתין לאישור",
     "shortWaiting": "באישורים",
     "lateMissions": "באיחור",
-    "client": "לקוח"
+    "client": "לקוח",
+    "logout": "התנתק"
   },
   "datepicker-component": {
     "chooseDate": "בחר תאריך",

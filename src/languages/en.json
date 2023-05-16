@@ -31,7 +31,7 @@
     "task": "Task",
     "status": "Status",
     "board_col_1": "In.page1",
-    "board_col_2": "In.page2",
+    "board_col_2": "In. page2",
     "board_cover": "Cover",
     "board_vorsats": "Vorsats",
     "progress": "Production status",
@@ -46,7 +46,8 @@
     "waiting": "Waiting",
     "shortWaiting": "Waiting",
     "lateMissions": "Late",
-    "client": "Client"
+    "client": "Client",
+    "logout": "Logout"
   },
   "datepicker-component": {
     "chooseDate": "Choose Date",

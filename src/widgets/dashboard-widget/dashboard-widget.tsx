@@ -17,8 +17,11 @@ import {useRecoilValue} from "recoil";
 import {selectedClientIdState} from "@/widgets/clients/state/selected-client-id";
 import {SearchInput} from "@/widgets/dashboard-widget/components/search-input";
 import {clientsState} from "@/store/clients-state";
-import {Box} from "@mui/material";
+import {Box, Link} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
+import Button from "@mui/material/Button";
+import {useDashboardLogout} from "@/hooks/use-dashboard-logout";
+import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 const DashboardWidget = ({}: IDashboardWidget) => {
     const INTERVAL_TIMEOUT = 2 * 60 * 1000;
     const {machines, addMachineProgress} = useGomakeMachines();
@@ -28,6 +31,8 @@ const DashboardWidget = ({}: IDashboardWidget) => {
     const {classes} = useStyle();
     const {date} = useGomakeDateRange();
     const {t} = useTranslation();
+    const {secondColor} = useGomakeTheme();
+    const {logout} = useDashboardLogout();
     const {
         getBoardsMissionsByDateRange,
         statistics,
@@ -117,6 +122,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
                                         usedMachines={usedMachines()}
                     />}
             </div>
+            <div><Link component={Button} color={secondColor(500)}  onClick={logout} >{t('dashboard-widget.logout')}</Link> </div>
         </div>
     );
 }
