@@ -146,6 +146,23 @@ const useProfits = () => {
     ],
     []
   );
+
+  const updateActionProfit = useCallback(
+    async (value: number) => {
+      const res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/profits/update-action-profit`,
+        {
+          transitionType: value,
+          printingActionId: actionProfits?.printingActionId,
+          recordID: actionProfits?.recordID,
+          id: actionProfits?.id,
+        }
+      );
+      getActionProfits();
+    },
+    [actionProfits]
+  );
   return {
     allActions,
     selectedAction,
@@ -158,6 +175,7 @@ const useProfits = () => {
     parametersStateValue,
     clientTypesStateValue,
     openAddExceptionModal,
+    updateActionProfit,
     onChangeSelectedAction,
     onCloseAddExceptionModal,
     onOpenAddExceptionModal,

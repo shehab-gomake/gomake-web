@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { IProps } from "./interfaces";
 import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -10,10 +9,15 @@ import { Row } from "./row";
 import { useRecoilValue } from "recoil";
 import { actionProfitLists } from "@/store";
 import { Plus } from "./icons/plus";
+import { profitsState } from "../../store/profits";
 
-const PricingList = ({ tableHeaders, tableRows }: IProps) => {
+interface IProps {
+  tableHeaders: any[];
+}
+
+const PricingList = ({ tableHeaders }: IProps) => {
   const actionProfits = useRecoilValue<any>(actionProfitLists);
-  const [_tableRows, setTableRows] = useState(tableRows);
+  const profitsStateValue = useRecoilValue<any>(profitsState);
   const { clasess } = useStyle();
   const [istimeOut, setIsTimeOut] = useState(false);
   const { t } = useTranslation();
@@ -23,9 +27,6 @@ const PricingList = ({ tableHeaders, tableRows }: IProps) => {
     }, 15000);
     return () => clearTimeout(timer);
   }, []);
-  useEffect(() => {
-    setTableRows(tableRows);
-  }, [tableRows]);
   return (
     <>
       <div style={clasess.headerMainCointaner}>
@@ -47,11 +48,19 @@ const PricingList = ({ tableHeaders, tableRows }: IProps) => {
           </div>
           <div style={clasess.filterContainer}>
             <GoMakeAutoComplate
-              options={["Linear", "Steps"]}
+              options={[
+                { label: "Linear", value: 0 },
+                { label: "Steps", value: 1 },
+              ]}
               style={clasess.autoComplateStyle}
               placeholder={t("products.profits.pricingListWidget.transition")}
               value={actionProfits?.transitionType === 0 ? "Linear" : "Steps"}
-              onChange={""}
+              // placeholder={
+              //   actionProfits?.transitionType === 0 ? "Linear" : "Steps"
+              // }
+              onChange={(e, item) => {
+                profitsStateValue?.updateActionProfit(item?.value);
+              }}
             />
           </div>
         </div>
@@ -69,20 +78,22 @@ const PricingList = ({ tableHeaders, tableRows }: IProps) => {
           })}
         </div>
         <div style={clasess.tableBody}>
-          {_tableRows?.length > 0 ? (
+          {actionProfits?.actionProfitRowsMapped?.length > 0 ? (
             <>
-              {_tableRows?.map((row: any, index: number) => {
-                return (
-                  <>
-                    <Row
-                      key={`body_row${index}`}
-                      row={row}
-                      width={`${100 / Object.entries(row).length}%`}
-                    />
-                    <div style={clasess.line}></div>
-                  </>
-                );
-              })}
+              {actionProfits?.actionProfitRowsMapped?.map(
+                (row: any, index: number) => {
+                  return (
+                    <>
+                      <Row
+                        key={`body_row${index}`}
+                        row={row}
+                        width={`${100 / Object.entries(row).length}%`}
+                      />
+                      <div style={clasess.line}></div>
+                    </>
+                  );
+                }
+              )}
             </>
           ) : (
             <>

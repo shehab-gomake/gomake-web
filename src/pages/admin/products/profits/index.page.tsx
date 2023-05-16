@@ -18,7 +18,6 @@ export default function Profits() {
     tabelPricingHeaders,
     tabelExceptionsHeaders,
     tabelExceptionsRows,
-    actionProfits,
     machincesStateValue,
     productsStateValue,
     parametersStateValue,
@@ -27,6 +26,7 @@ export default function Profits() {
     onChangeSelectedAction,
     onCloseAddExceptionModal,
     onOpenAddExceptionModal,
+    updateActionProfit,
     t,
   } = useProfits();
   useEffect(() => {
@@ -36,7 +36,6 @@ export default function Profits() {
       tabelPricingHeaders,
       tabelExceptionsHeaders,
       tabelExceptionsRows,
-      actionProfits,
       machincesStateValue,
       productsStateValue,
       parametersStateValue,
@@ -45,6 +44,7 @@ export default function Profits() {
       onChangeSelectedAction,
       onCloseAddExceptionModal,
       onOpenAddExceptionModal,
+      updateActionProfit,
       t,
     });
   }, [
@@ -53,7 +53,6 @@ export default function Profits() {
     tabelPricingHeaders,
     tabelExceptionsHeaders,
     tabelExceptionsRows,
-    actionProfits,
     machincesStateValue,
     productsStateValue,
     parametersStateValue,
@@ -62,6 +61,7 @@ export default function Profits() {
     onChangeSelectedAction,
     onCloseAddExceptionModal,
     onOpenAddExceptionModal,
+    updateActionProfit,
     t,
   ]);
   const { clasess } = useStyle();
@@ -73,10 +73,7 @@ export default function Profits() {
         <ProductList />
         <div style={clasess.pricingAndExceptionsCointaner}>
           <div style={clasess.pricingCointaner}>
-            <PricingList
-              tableHeaders={tabelPricingHeaders}
-              tableRows={actionProfits?.actionProfitRowsMapped}
-            />
+            <PricingList tableHeaders={tabelPricingHeaders} />
           </div>
           <div style={clasess.exceptionsCointaner}>
             <Exceptions
