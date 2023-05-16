@@ -1,31 +1,20 @@
-import { useEffect, useState } from "react";
-
 import { IProps } from "./interfaces";
 import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
-import { useTranslation } from "react-i18next";
 import { Header } from "./header";
 import { Row } from "./row";
 import { Plus } from "./icons/plus";
 import { AddExceptionModal } from "../add-exception-modal";
 import { useRecoilValue } from "recoil";
 import { profitsState } from "../../store/profits";
+import { useExceptions } from "./use-exception";
 
 const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
-  const profitsStateValue = useRecoilValue<any>(profitsState);
-  const [_tableRows, setTableRows] = useState(tableRows);
   const { clasess } = useStyle();
-  const [istimeOut, setIsTimeOut] = useState(false);
-  const { t } = useTranslation();
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsTimeOut(true);
-    }, 15000);
-    return () => clearTimeout(timer);
-  }, []);
-  useEffect(() => {
-    setTableRows(tableRows);
-  }, [tableRows]);
+  const profitsStateValue = useRecoilValue<any>(profitsState);
+  const { istimeOut, _tableRows, t } = useExceptions({
+    tableRows,
+  });
   return (
     <>
       <div style={clasess.container}>
