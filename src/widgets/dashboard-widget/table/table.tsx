@@ -7,13 +7,46 @@ import {StatusView} from "@/components/status-view";
 import ElectricBoltSharpIcon from '@mui/icons-material/ElectricBoltSharp';
 import {TYPE_MISSION_NAME_KEY} from "@/shared/constant";
 import {Link} from "@mui/material";
+import {useCallback, useState} from "react";
+import {EStatus} from "@/shared";
 
 const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
+    const [orderByMachine, setOrderByMachine] = useState<string>('');
     const boardLink = (boardMissions: IBoardMissions): string => {
         return `/Kanban/Board/${boardMissions.boardId}?missionId=${boardMissions.id}`;
     }
+    const hasMachine = (board: IBoardMissions) => {
+            switch (board.machinesStatuses[orderByMachine]) {
+                case EStatus.IN_PROCESS:
+                    return 0;
+                case EStatus.WAITING:
+                    return 1;
+                case EStatus.FAULT:
+                    return 2;
+                case EStatus.NOT_YET:
+                    return 3;
+                case EStatus.DONE:
+                    return 4;
+                default:
+                    return 5;
+            }
+    }
+    const boards = useCallback(() => {
+        let boards = [...boardsMissions];
+        if (orderByMachine) {
+            boards = boards.sort((board1: IBoardMissions, board2: IBoardMissions) => {
+                return hasMachine(board1) - hasMachine(board2)
+            });
+            return boards
+        }
+        return boardsMissions;
+    }, [orderByMachine, boardsMissions]);
+
+    const handleMachineClicked = (machineId: string) => {
+        setOrderByMachine(machineId === orderByMachine ? '' : machineId);
+    };
 
     return (
         boardsMissions.length > 0 ?
@@ -34,7 +67,9 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                         {
                             usedMachines.map((machine: IMachine) => {
                                 return (
-                                    <th key={machine.id} style={classes.tableHead}>
+                                    <th key={machine.id}
+                                        style={orderByMachine === machine.id ? {...classes.tableHead, ...classes.selectedMachine} : classes.tableHead}
+                                        onClick={() => handleMachineClicked(machine.id)}>
                                         <div style={classes.tdRows}>
                                             <div>{machine.name}</div>
                                             <div>{machine.progress?.done}/{machine.progress?.total}</div>
@@ -47,7 +82,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                     </thead>
                     <tbody>
                     {
-                        boardsMissions && boardsMissions.map((board: IBoardMissions, index: number) => {
+                        boards() && boards().map((board: IBoardMissions, index: number) => {
                             return (
                                 board.splittedBoards.length > 0 ?
                                     board.splittedBoards.map((splitBoard, k) => {
@@ -72,11 +107,15 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                             </div>
                                                             <div style={classes.splitBoardsStatuses}>
                                                                 {
-                                                                    board.splittedBoards.map((sBoard, cellNumber) => <div style={
-                                                                        cellNumber + 1 === board.splittedBoards.length ?
-                                                                        {...classes.splitBoardsStatusesRow, borderBottom: 0} :
-                                                                        classes.splitBoardsStatusesRow
-                                                                    }>
+                                                                    board.splittedBoards.map((sBoard, cellNumber) => <div
+                                                                        style={
+                                                                            cellNumber + 1 === board.splittedBoards.length ?
+                                                                                {
+                                                                                    ...classes.splitBoardsStatusesRow,
+                                                                                    borderBottom: 0
+                                                                                } :
+                                                                                classes.splitBoardsStatusesRow
+                                                                        }>
                                                                         <span>{t(TYPE_MISSION_NAME_KEY[sBoard.missionType])}</span>
                                                                         <StatusView status={sBoard.status}
                                                                                     label={sBoard.currentStation.rowName}/>

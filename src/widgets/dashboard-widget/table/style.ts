@@ -35,6 +35,11 @@ const useStyle = () => {
                 padding: '10px',
                 position: 'sticky' as 'sticky',
                 top: '0px',
+                cursor: 'pointer' as 'pointer'
+            },
+
+            selectedMachine: {
+                backgroundColor: primaryColor(300),
             },
 
             tableCell: {
