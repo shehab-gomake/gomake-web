@@ -40,6 +40,8 @@ const useProfits = () => {
   const [openAddNewPricingStepRow, setOpenAddNewPricingStepRow] =
     useState(false);
   const [pricingListRowState, setPricingListRowState] = useState<any>({});
+  const [openAddTestProductModal, setOpenAddTestProductModal] = useState(false);
+  const [testProductState, setTestProductState] = useState<any>({});
 
   const onCloseAddExceptionModal = () => {
     setOpenAddExceptionModal(false);
@@ -206,6 +208,19 @@ const useProfits = () => {
       });
     }
   }, [pricingListRowState, selectedAction]);
+
+  const onChangeAddNewTestProduct = useCallback(
+    (key: string, value: any) => {
+      let temp: any = {
+        [key]: value,
+      };
+      setTestProductState(temp);
+    },
+    [testProductState]
+  );
+  const onClickSendNewProduct = useCallback(async () => {
+    console.log("testProductState", testProductState);
+  }, [testProductState]);
   return {
     allActions,
     selectedAction,
@@ -220,6 +235,10 @@ const useProfits = () => {
     openAddExceptionModal,
     openAddNewPricingStepRow,
     pricingListRowState,
+    openAddTestProductModal,
+    onClickSendNewProduct,
+    onChangeAddNewTestProduct,
+    setOpenAddTestProductModal,
     onClickSaveNewPricingListRow,
     onChangeAddPricingListRow,
     setOpenAddNewPricingStepRow,

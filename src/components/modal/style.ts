@@ -23,7 +23,7 @@ const useStyle = ({ insideStyle }: any) => {
         height: "80%",
         overFlow: "auto" as "auto",
         paddingTop: convertWidthToVW(25),
-        paddingLeft: convertWidthToVW(32),
+        paddingLeft: convertWidthToVW(20),
         paddingRight: convertWidthToVW(20),
         paddingBottom: convertWidthToVW(20),
         ...insideStyle,

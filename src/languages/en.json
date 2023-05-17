@@ -843,6 +843,10 @@
   },
   "products": {
     "profits": {
+      "addTestProduct": "Add test product",
+      "addNewTestProduct": "Add new test product",
+      "selectProduct": "Select product",
+      "send": "Send",
       "admin": {
         "title": "Profits",
         "chooseAction": "Choose action"
