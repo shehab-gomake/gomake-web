@@ -10,7 +10,6 @@ import { useRecoilValue } from "recoil";
 import { actionProfitLists } from "@/store";
 import { Plus } from "./icons/plus";
 import { profitsState } from "../../store/profits";
-import { returnResult } from "@/utils/helpers";
 import { AddPricingListRowWidget } from "./add-pricing-row-widget";
 
 interface IProps {
@@ -24,8 +23,7 @@ const PricingList = ({ tableHeaders }: IProps) => {
   const [istimeOut, setIsTimeOut] = useState(false);
   const profitsValue = useRecoilValue<any>(profitsState);
   const { t } = useTranslation();
-  //const _data: any = returnResult(result, undefined);
-  //console.log("actionProfits", actionProfits?.pricingBy);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsTimeOut(true);
@@ -134,17 +132,16 @@ const PricingList = ({ tableHeaders }: IProps) => {
         </div>
         {profitsValue?.openAddNewPricingStepRow && (
           <>
-            <AddPricingListRowWidget pricingBy={actionProfits?.pricingBy} />
+            <AddPricingListRowWidget
+              pricingBy={actionProfits?.pricingBy}
+              profitsStateValue={profitsStateValue}
+            />
           </>
         )}
         <div
           style={clasess.addNewStep}
           onClick={() => {
-            profitsValue?.setOpenAddNewPricingStepRow(true),
-              console.log(
-                "ll",
-                actionProfits?.actionProfitRowsMapped?.pricingBy
-              );
+            profitsValue?.setOpenAddNewPricingStepRow(true);
           }}
         >
           <Plus />
