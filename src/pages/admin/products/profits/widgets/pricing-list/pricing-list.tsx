@@ -24,8 +24,6 @@ const PricingList = ({ tableHeaders }: IProps) => {
   const [istimeOut, setIsTimeOut] = useState(false);
   const profitsValue = useRecoilValue<any>(profitsState);
   const { t } = useTranslation();
-  //const _data: any = returnResult(result, undefined);
-  //console.log("actionProfits", actionProfits?.pricingBy);
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsTimeOut(true);
@@ -140,11 +138,7 @@ const PricingList = ({ tableHeaders }: IProps) => {
         <div
           style={clasess.addNewStep}
           onClick={() => {
-            profitsValue?.setOpenAddNewPricingStepRow(true),
-              console.log(
-                "ll",
-                actionProfits?.actionProfitRowsMapped?.pricingBy
-              );
+            profitsValue?.setOpenAddNewPricingStepRow(true);
           }}
         >
           <Plus />
