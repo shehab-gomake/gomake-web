@@ -4,8 +4,11 @@ import { useStyle } from "../style";
 import { profitsState } from "../store/profits";
 import { AddIcon, MoreCircleIcon } from "@/icons";
 import { IconButton } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import { AddTestProductModal } from "./add-test-product-modal";
 
 const ProductList = () => {
+  const { t } = useTranslation();
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
   const array = [
@@ -54,10 +57,16 @@ const ProductList = () => {
           );
         })}
       </div>
-      <div style={clasess.addNewProductContainer}>
+      <div
+        style={clasess.addNewProductContainer}
+        onClick={() => profitsStateValue.setOpenAddTestProductModal(true)}
+      >
         <AddIcon />
-        <div style={clasess.addProductStyle}>Add test product</div>
+        <div style={clasess.addProductStyle}>
+          {t("products.profits.addTestProduct")}
+        </div>
       </div>
+      <AddTestProductModal />
     </div>
   );
 };
