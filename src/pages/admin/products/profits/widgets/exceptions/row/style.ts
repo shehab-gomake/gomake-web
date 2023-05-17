@@ -1,16 +1,15 @@
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { convertWidthToVW } from "@/utils/adapter";
 
-const useStyle = ({ width }: any) => {
+const useStyle = () => {
   const { primaryColor, secondColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       bodyRow: {
         display: "flex",
         width: "100%",
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         alignItems: "center",
         height: 60,
       },
@@ -22,7 +21,7 @@ const useStyle = ({ width }: any) => {
         lineHeight: "18px",
         color: primaryColor(900),
         textalign: "center",
-        width: `${width}`,
+        // width: `${width}`,
       },
       scopeRowItem: {
         display: "flex",
@@ -38,7 +37,7 @@ const useStyle = ({ width }: any) => {
         display: "flex",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: `${width}`,
+        // width: `${width}`,
         border: "1px solid red",
         backgroundColor: "#FFFFFF",
         color: secondColor(400),

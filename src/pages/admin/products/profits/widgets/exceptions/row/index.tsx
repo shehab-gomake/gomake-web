@@ -1,7 +1,7 @@
 import { useStyle } from "./style";
 
 const Row = ({ key, row, width }: any) => {
-  const { clasess } = useStyle({ width });
+  const { clasess } = useStyle();
   return (
     <>
       <div key={key} style={clasess.bodyRow}>

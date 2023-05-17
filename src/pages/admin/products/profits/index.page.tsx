@@ -109,7 +109,7 @@ export default function Profits() {
               <div style={clasess.exceptionsCointaner}>
                 <Exceptions
                   tableHeaders={tabelExceptionsHeaders}
-                  tableRows={tabelExceptionsRows}
+                  tableRows={profitsStateValue?.actionExpectionRowsMapped}
                 />
               </div>
             </div>

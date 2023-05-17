@@ -64,9 +64,17 @@ const useProfits = () => {
   }, []);
 
   const getActionProfits = useCallback(async () => {
-    await getAndSetActionProfitRowByActionId(callApi, setActionProfits, {
-      actionId: selectedAction?.id,
-    });
+    await getAndSetActionProfitRowByActionId(
+      callApi,
+      setActionProfits,
+      machincesStateValue,
+      productsStateValue,
+      clientTypesStateValue,
+      parametersStateValue,
+      {
+        actionId: selectedAction?.id,
+      }
+    );
   }, [selectedAction]);
   const getMachincesProfits = useCallback(async () => {
     await getAndSetMachinces(callApi, setMachincesState);
@@ -115,8 +123,8 @@ const useProfits = () => {
   const tabelExceptionsHeaders = useMemo(
     () => [
       t("products.profits.exceptions.type"),
-      t("products.profits.exceptions.parameter"),
-      t("products.profits.exceptions.value"),
+      // t("products.profits.exceptions.parameter"),
+      // t("products.profits.exceptions.value"),
       t("products.profits.exceptions.scopeOfChange"),
     ],
     []
