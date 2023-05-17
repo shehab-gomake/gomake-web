@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRecoilState } from "recoil";
 import {
   actionLists,
@@ -30,6 +30,7 @@ const useProfits = () => {
     useRecoilState<any>(parametersState);
   const [clientTypesStateValue, setClientTypesState] =
     useRecoilState<any>(clientTypesState);
+  const { setSnackbarStateValue } = useSnackBar();
 
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -38,6 +39,7 @@ const useProfits = () => {
   const [openAddExceptionModal, setOpenAddExceptionModal] = useState(false);
   const [openAddNewPricingStepRow, setOpenAddNewPricingStepRow] =
     useState(false);
+  const [pricingListRowState, setPricingListRowState] = useState<any>({});
 
   const onCloseAddExceptionModal = () => {
     setOpenAddExceptionModal(false);
@@ -51,7 +53,6 @@ const useProfits = () => {
   const getActions = useCallback(async () => {
     await getAndSetActions(callApi, setAllActions);
   }, []);
-
   const getParameters = useCallback(async () => {
     await getAndSetParameters(callApi, setParametersState);
   }, []);
@@ -166,6 +167,45 @@ const useProfits = () => {
     },
     [actionProfits]
   );
+
+  const onChangeAddPricingListRow = useCallback(
+    (key: string, value: any) => {
+      let temp: any;
+      temp = {
+        ...pricingListRowState,
+        [key]: value,
+      };
+      setPricingListRowState(temp);
+    },
+    [pricingListRowState]
+  );
+
+  const onClickSaveNewPricingListRow = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/printhouse-config/profits/add-action-profit-row`,
+      {
+        actionId: selectedAction?.id,
+        size: pricingListRowState?.height * pricingListRowState?.width,
+        ...pricingListRowState,
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+      await getActionProfits();
+      setPricingListRowState({}), setOpenAddNewPricingStepRow(false);
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedfailed"),
+        type: "error",
+      });
+    }
+  }, [pricingListRowState, selectedAction]);
   return {
     allActions,
     selectedAction,
@@ -179,6 +219,9 @@ const useProfits = () => {
     clientTypesStateValue,
     openAddExceptionModal,
     openAddNewPricingStepRow,
+    pricingListRowState,
+    onClickSaveNewPricingListRow,
+    onChangeAddPricingListRow,
     setOpenAddNewPricingStepRow,
     updateActionProfit,
     onChangeSelectedAction,
