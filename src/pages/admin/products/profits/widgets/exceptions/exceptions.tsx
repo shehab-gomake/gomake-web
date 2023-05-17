@@ -42,7 +42,7 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
                       <Row
                         key={`body_row${index}`}
                         row={row}
-                        width={`${100 / Object.entries(row).length}%`}
+                        // width={`${100 / Object.entries(row).length}%`}
                       />
                     </>
                   );
