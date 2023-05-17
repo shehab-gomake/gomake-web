@@ -97,7 +97,7 @@ const useStyle = () => {
                 alignItems: 'center',
                 gap: 10,
                 width: 200,
-                borderBottom: BORDER,
+                border: 0,
                 paddingLeft: 5
             },
             firstColCellSplitBoards: {

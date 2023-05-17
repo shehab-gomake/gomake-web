@@ -1,3 +1,7 @@
+const STORAGE_KEYS = {
+  printHouseId: 'printhouseid',
+  printHouseHost: 'printHouseId'
+};
 export const hasToken = () => {
   if (getUserToken()) return true;
   return false;
@@ -29,5 +33,14 @@ export const clearStorage = () => {
 };
 
 export const getPrintHouseId = () => {
-  return getItem("printhouseid");
+  return getItem(STORAGE_KEYS.printHouseId);
 };
+
+export const getPrintHouseHost = () => {
+  return getItem(STORAGE_KEYS.printHouseHost);
+};
+
+export const updatePrintHouseIdHost = (id: string, host: string) => {
+  setItem(STORAGE_KEYS.printHouseId, id);
+  setItem(STORAGE_KEYS.printHouseHost, host);
+}

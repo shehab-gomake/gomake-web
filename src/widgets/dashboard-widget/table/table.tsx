@@ -9,13 +9,15 @@ import {TYPE_MISSION_NAME_KEY} from "@/shared/constant";
 import {Link} from "@mui/material";
 import {useCallback, useState} from "react";
 import {EStatus} from "@/shared";
+import {getPrintHouseHost} from "@/services/storage-data";
 
 const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
     const [orderByMachine, setOrderByMachine] = useState<string>('');
     const boardLink = (boardMissions: IBoardMissions): string => {
-        return `/Kanban/Board/${boardMissions.boardId}?missionId=${boardMissions.id}`;
+        const host = getPrintHouseHost();
+        return `https://${host}/Kanban/Board/${boardMissions.boardId}?missionId=${boardMissions.id}`;
     }
     const hasMachine = (board: IBoardMissions) => {
             switch (board.machinesStatuses[orderByMachine]) {
@@ -129,7 +131,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                     usedMachines.map((machine: IMachine, i: number) => {
                                                         return (
                                                             <td key={machine.id + i}
-                                                                style={classes.tableCell}>
+                                                                style={k + 1 === board.splittedBoards.length ? classes.tableCell : {...classes.tableCell, borderBottom: 0}  }>
                                                                 <StatusView style={{margin: 'auto'}}
                                                                             status={splitBoard.machinesStatuses[machine.id]}/>
                                                             </td>
@@ -157,7 +159,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                 </div>
                                                 <div style={{width: '35%'}}>
                                                     <StatusView status={board.status}
-                                                                style={{margin: 'auto'}}
+                                                                style={{margin: 'auto', marginLeft: 0}}
                                                                 label={board.currentStation.rowName}/>
                                                 </div>
                                             </div>
