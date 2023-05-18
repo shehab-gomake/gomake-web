@@ -84,7 +84,7 @@ export const deleteApiRequest = async (url: string, data: any = {}) => {
 
 export const goMakeClientPrintHouseId = async (method = "GET", code: string, data: any = {}) => {
     try {
-        const reqUrl = 'http://gomakecentralapi-dev.eu-central-1.elasticbeanstalk.com/api/printhouses/DashBoardLogin?code=' + code;
+        const reqUrl = 'https://api-central-prd.gomake.co.il/api/printhouses/DashBoardLogin?code=' + code;
         const options: any = {
             method,
             url: reqUrl,
