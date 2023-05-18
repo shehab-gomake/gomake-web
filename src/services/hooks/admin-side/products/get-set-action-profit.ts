@@ -63,7 +63,11 @@ const getAndSetActionProfitRowByActionId = async (
   const mapActionExpections = _data?.actionExpections?.map((item: any) => {
     return {
       ...renderType(item),
-      exceptionType: item?.exceptionType === 0 ? "Additional" : "NewBase",
+      exceptionType:
+        item?.exceptionType === 0
+          ? `Additional (${item?.additionalProfit})`
+          : "NewBase",
+      id: item?.id,
     };
   });
   _data.actionProfitRowsMapped = mapData;

@@ -11,7 +11,7 @@ const useStyle = ({ width, header }: any) => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         color: neutralColor(400),
-        width: header == "scope of change" ? "30.2%" : `${width}`,
+        // width: header == "scope of change" ? "30.2%" : `${width}`,
         textalign: "center",
         ...FONT_FAMILY.Lexend(400, 16),
         fontStyle: "normal",

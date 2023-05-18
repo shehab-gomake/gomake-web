@@ -42,6 +42,17 @@ const useProfits = () => {
   const [pricingListRowState, setPricingListRowState] = useState<any>({});
   const [openAddTestProductModal, setOpenAddTestProductModal] = useState(false);
   const [testProductState, setTestProductState] = useState<any>({});
+  const [openDeleteExceptionProfitModal, setOpenDeleteExceptionProfitModal] =
+    useState(false);
+  const [selectedExceptionProfit, setSelectedExceptionProfit] = useState();
+  const onCloseDeleteExceptionProfitModal = () => {
+    setOpenDeleteExceptionProfitModal(false);
+  };
+
+  const onOpenDeleteExceptionProfitModal = (item: any) => {
+    setSelectedExceptionProfit(item);
+    setOpenDeleteExceptionProfitModal(true);
+  };
 
   const onCloseAddExceptionModal = () => {
     setOpenAddExceptionModal(false);
@@ -125,6 +136,7 @@ const useProfits = () => {
       t("products.profits.exceptions.type"),
       // t("products.profits.exceptions.parameter"),
       // t("products.profits.exceptions.value"),
+      "",
       t("products.profits.exceptions.scopeOfChange"),
     ],
     []
@@ -229,6 +241,70 @@ const useProfits = () => {
   const onClickSendNewProduct = useCallback(async () => {
     console.log("testProductState", testProductState);
   }, [testProductState]);
+
+  const [state, setState] = useState<any>({});
+  const onChangeState = (key: any, value: any) => {
+    setState((prevState: any) => {
+      return {
+        ...prevState,
+        [key]: value,
+      };
+    });
+  };
+  const addedNewException = useCallback(async () => {
+    let newState = { ...state };
+    delete newState?.priceListParameter;
+    delete newState?.typeOfException;
+    delete newState?.machine;
+    delete newState?.subProduct;
+    delete newState?.clientType;
+
+    const res = await callApi(
+      "POST",
+      `/v1/printhouse-config/profits/add-exception-profit`,
+      {
+        actionProfitId: actionProfits?.id,
+        ...newState,
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+      getActionProfits();
+      onCloseAddExceptionModal();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedfailed"),
+        type: "error",
+      });
+    }
+  }, [state]);
+  const deleteExceptionProfit = useCallback(async (id: string) => {
+    console.log("id: " + id);
+    const res = await callApi(
+      "DELETE",
+      `/v1/printhouse-config/profits/delete-exception-profit?actionExceptionId=${id}`
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.deleteSusuccessfully"),
+        type: "sucess",
+      });
+      getActionProfits();
+      onCloseDeleteExceptionProfitModal();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.deletefailed"),
+        type: "error",
+      });
+    }
+  }, []);
   return {
     allActions,
     selectedAction,
@@ -244,6 +320,15 @@ const useProfits = () => {
     openAddNewPricingStepRow,
     pricingListRowState,
     openAddTestProductModal,
+    state,
+    selectedExceptionProfit,
+    openDeleteExceptionProfitModal,
+    onCloseDeleteExceptionProfitModal,
+    onOpenDeleteExceptionProfitModal,
+    deleteExceptionProfit,
+    setState,
+    onChangeState,
+    addedNewException,
     onClickSendNewProduct,
     onChangeAddNewTestProduct,
     setOpenAddTestProductModal,

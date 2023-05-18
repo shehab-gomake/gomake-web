@@ -884,7 +884,8 @@
         "selectParameter": "Select parameter",
         "SelectValueNameOfParameter": "Select value name of parameter",
         "selectScopeOfChange": "Select scope of change",
-        "additionalProfit": "Additional Profit"
+        "additionalProfit": "Additional Profit",
+        "deleteExceptionProfit": "Delete Exception Profit ?"
       }
     }
   },

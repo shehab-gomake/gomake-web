@@ -46,7 +46,6 @@ const PricingList = ({ tableHeaders }: IProps) => {
               )}
               value={actionProfits?.pricingBy === 0 ? "Quantity" : "Size"}
               disabled={true}
-              // onChange={""}
             />
           </div>
           <div style={clasess.filterContainer}>
@@ -58,9 +57,6 @@ const PricingList = ({ tableHeaders }: IProps) => {
               style={clasess.autoComplateStyle}
               placeholder={t("products.profits.pricingListWidget.transition")}
               value={actionProfits?.transitionType === 0 ? "Linear" : "Steps"}
-              // placeholder={
-              //   actionProfits?.transitionType === 0 ? "Linear" : "Steps"
-              // }
               onChange={(e, item) => {
                 profitsStateValue?.updateActionProfit(item?.value);
               }}
