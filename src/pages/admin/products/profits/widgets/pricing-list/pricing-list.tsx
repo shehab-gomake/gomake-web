@@ -82,14 +82,13 @@ const PricingList = ({ tableHeaders }: IProps) => {
               {actionProfits?.actionProfitRowsMapped?.map(
                 (row: any, index: number) => {
                   return (
-                    <>
+                    <div key={`body_row${index}`} style={{ width: "100%" }}>
                       <Row
-                        key={`body_row${index}`}
                         row={row}
-                        width={`${100 / Object.entries(row).length}%`}
+                        width={`${100 / (Object.entries(row).length - 1)}%`}
                       />
                       <div style={clasess.line}></div>
-                    </>
+                    </div>
                   );
                 }
               )}

@@ -13,7 +13,6 @@ const Row = ({ key, row }: any) => {
     <>
       <div key={key} style={clasess.bodyRow}>
         {Object.entries(row).map((entry: [string, any], index: number) => {
-          console.log("entry", entry[0]);
           if (entry[0] !== "id") {
             return (
               <div key={`row_table_${index}`} style={clasess.rowItem}>

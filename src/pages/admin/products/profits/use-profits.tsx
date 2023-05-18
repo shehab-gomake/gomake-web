@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   actionLists,
   actionProfitLists,
@@ -20,6 +20,7 @@ import {
   getAndSetParameters,
   getAndSetClientTypes,
 } from "@/services/hooks";
+import { editPriceListState } from "./store/edit-price-list";
 
 const useProfits = () => {
   const [machincesStateValue, setMachincesState] =
@@ -31,7 +32,8 @@ const useProfits = () => {
   const [clientTypesStateValue, setClientTypesState] =
     useRecoilState<any>(clientTypesState);
   const { setSnackbarStateValue } = useSnackBar();
-
+  const [editPriceListStateValue, setEditPriceListState] =
+    useRecoilState<any>(editPriceListState);
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [allActions, setAllActions] = useRecoilState(actionLists);
@@ -75,6 +77,7 @@ const useProfits = () => {
   }, []);
 
   const getActionProfits = useCallback(async () => {
+    console.log("selectedAction", selectedAction);
     await getAndSetActionProfitRowByActionId(
       callApi,
       setActionProfits,
@@ -283,28 +286,78 @@ const useProfits = () => {
       });
     }
   }, [state]);
-  const deleteExceptionProfit = useCallback(async (id: string) => {
-    console.log("id: " + id);
+  const deleteExceptionProfit = useCallback(
+    async (id: string) => {
+      const res = await callApi(
+        "DELETE",
+        `/v1/printhouse-config/profits/delete-exception-profit?actionExceptionId=${id}`
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.deleteSusuccessfully"),
+          type: "sucess",
+        });
+        getActionProfits();
+        onCloseDeleteExceptionProfitModal();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.deletefailed"),
+          type: "error",
+        });
+      }
+    },
+    [selectedAction]
+  );
+
+  const deleteActionProfitRow = useCallback(
+    async (id: string) => {
+      const res = await callApi(
+        "DELETE",
+        `/v1/printhouse-config/profits/delete-action-profit-row?Id=${id}`
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.deleteSusuccessfully"),
+          type: "sucess",
+        });
+        getActionProfits();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.deletefailed"),
+          type: "error",
+        });
+      }
+    },
+    [selectedAction]
+  );
+  const updateActionProfitRow = useCallback(async () => {
     const res = await callApi(
-      "DELETE",
-      `/v1/printhouse-config/profits/delete-exception-profit?actionExceptionId=${id}`
+      "PUT",
+      `/v1/printhouse-config/profits/update-action-profit-row`,
+      {
+        ...editPriceListStateValue?.state,
+      }
     );
     if (res?.success) {
       setSnackbarStateValue({
         state: true,
-        message: t("modal.deleteSusuccessfully"),
+        message: t("modal.updatedSusuccessfully"),
         type: "sucess",
       });
+      setEditPriceListState({ isEdit: false });
       getActionProfits();
-      onCloseDeleteExceptionProfitModal();
     } else {
       setSnackbarStateValue({
         state: true,
-        message: t("modal.deletefailed"),
+        message: t("modal.updatedfailed"),
         type: "error",
       });
     }
-  }, []);
+  }, [selectedAction, editPriceListStateValue]);
   return {
     allActions,
     selectedAction,
@@ -323,6 +376,8 @@ const useProfits = () => {
     state,
     selectedExceptionProfit,
     openDeleteExceptionProfitModal,
+    updateActionProfitRow,
+    deleteActionProfitRow,
     onCloseDeleteExceptionProfitModal,
     onOpenDeleteExceptionProfitModal,
     deleteExceptionProfit,

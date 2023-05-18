@@ -36,6 +36,19 @@ const useStyle = ({ width }: any) => {
         marginBottom: 18.5,
         marginTop: 18.5,
       },
+      controlsContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      textInputsContainer: {
+        marginLeft: 40,
+      },
+      textInputStyle: {
+        height: 42,
+        width: 100,
+      },
     };
   }, []);
   return {

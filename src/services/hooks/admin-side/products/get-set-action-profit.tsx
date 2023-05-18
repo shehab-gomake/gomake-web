@@ -1,5 +1,8 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../../call-api.interface";
+import { IconButton } from "@mui/material";
+import { MoreCircleIcon } from "@/icons";
+import { PricingListMenuWidget } from "@/pages/admin/products/profits/widgets/pricing-list/more-circle";
 
 const getAndSetActionProfitRowByActionId = async (
   callApi: ICallApi,
@@ -57,7 +60,8 @@ const getAndSetActionProfitRowByActionId = async (
       expMeter: item?.expMeter,
       price: item?.price,
       totalPrice: item?.totalPrice,
-      more: "More",
+      more: <PricingListMenuWidget item={item} />,
+      id: item?.id,
     };
   });
   const mapActionExpections = _data?.actionExpections?.map((item: any) => {
