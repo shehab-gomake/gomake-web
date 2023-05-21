@@ -53,7 +53,112 @@ const useAuthLayoutHook = () => {
           {
             key: "sheet",
             title: t("materials.sheetPaper.admin.title"),
-            path: "admin/materials/sheets",
+            path: "/admin/materials/sheets",
+          },
+          {
+            key: "lamination",
+            title: t("materials.lamination.admin.title"),
+            path: "/admin/materials/lamination",
+          },
+          {
+            key: "plats",
+            title: t("materials.plat.admin.title"),
+            path: "/admin/materials/plats",
+          },
+          {
+            key: "envelopes",
+            title: t("materials.envelops.admin.title"),
+            path: "/admin/materials/envelope",
+          },
+          {
+            key: "tubes",
+            title: t("materials.tubes.admin.title"),
+            path: "/admin/materials/tube",
+          },
+          {
+            key: "materialRollPrinting",
+            title: t("materials.printingMaterials.admin.title"),
+            path: "/admin/materials/material-roll-printing",
+          },
+          {
+            key: "wideFormatMaterial",
+            title: t("materials.wideFormatMaterial.admin.title"),
+            path: "/admin/materials/wide-format-material",
+          },
+          {
+            key: "hardboards",
+            title: t("materials.hardboards.admin.title"),
+            path: "/admin/materials/hardboards",
+          },
+          {
+            key: "profileFrame",
+            title: t("materials.profileFrames.admin.title"),
+            path: "/admin/materials/profile-frame",
+          },
+          {
+            key: "applications",
+            title: t("materials.applications.admin.title"),
+            path: "/admin/materials/applications",
+          },
+          {
+            key: "rollEncapsulation",
+            title: t("materials.encapsulationRoll.admin.title"),
+            path: "/admin/materials/roll-encapsulation",
+          },
+          {
+            key: "additions",
+            title: t("materials.additions.admin.title"),
+            path: "/admin/materials/additions",
+          },
+          {
+            key: "canvasFrames",
+            title: t("materials.canvasFrames.admin.title"),
+            path: "/admin/materials/canvans-frames",
+          },
+          {
+            key: "packinUnits",
+            title: t("materials.packinUnits.admin.title"),
+            path: "/admin/materials/packin-units",
+          },
+          {
+            key: "frames",
+            title: t("materials.frames.admin.title"),
+            path: "/admin/materials/frame",
+          },
+          {
+            key: "foils",
+            title: t("materials.foils.admin.title"),
+            path: "/admin/materials/foil",
+          },
+          {
+            key: "packinDrums",
+            title: t("materials.packinDrums.admin.title"),
+            path: "/admin/materials/packin-drums",
+          },
+          {
+            key: "doubleSidedTapeRoll",
+            title: t("materials.doubleSidedTapeRolls.admin.title"),
+            path: "/admin/materials/double-sided-tape-roll",
+          },
+          {
+            key: "sheetEncapsulation",
+            title: t("materials.sheetEncapsulation.admin.title"),
+            path: "/admin/materials/sheet-encapsulation",
+          },
+          {
+            key: "magnet",
+            title: t("materials.magnets.admin.title"),
+            path: "/admin/materials/magnets",
+          },
+          {
+            key: "packings",
+            title: t("materials.packings.title"),
+            path: "/admin/materials/packings",
+          },
+          {
+            key: "varnish",
+            title: t("materials.varnishs.title"),
+            path: "/admin/materials/varnish",
           },
         ],
         icon: () => {
@@ -66,6 +171,13 @@ const useAuthLayoutHook = () => {
         title: t("tabs.products"),
         path: "/product-floor",
         isList: true,
+        list: [
+          {
+            key: "profits",
+            title: t("products.profits.admin.title"),
+            path: "/admin/products/profits",
+          },
+        ],
         icon: () => {
           return <ProductsIcon />;
         },

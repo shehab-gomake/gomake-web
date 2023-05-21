@@ -9,7 +9,7 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
     return {
       container: {
         width: "100vw",
-        // height: "100vh",
+        height: "100vh",
         display: "flex",
         flexDirection: "row" as "row",
       },
@@ -21,7 +21,7 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
       leftContainer: {
         backgroundColor: primaryColor(500),
         width: convertWidthToVW(281),
-        height: "100vh",
+        height: "100%",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "space-between" as "space-between",
@@ -30,14 +30,16 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         paddingLeft: convertWidthToVW(26),
         paddingTop: convertHeightToVH(40),
         paddingBottom: convertHeightToVH(40),
+        overflowY: "scroll" as "scroll",
       },
       rightContainer: {
         backgroundColor: "#FDFDFD",
         width: convertWidthToVW(1468 - 281),
-        height: "100vh",
         display: "flex",
         flexDirection: "column" as "column",
         padding: convertWidthToVW(20),
+        overflowY: "scroll" as "scroll",
+        marginBottom: 20,
       },
       headerContainer: {
         height: convertHeightToVH(101),
@@ -71,7 +73,7 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
       ///Tab
       tabsContainer: {
         alignSelf: "flex-start",
-        height: "100%",
+        // height: "100%",
         marginTop: convertHeightToVH(46),
       },
       tabContainer: {
@@ -87,6 +89,7 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
       tabTitle: {
         ...FONT_FAMILY.Inter(400, 16),
         color: "#FFF",
+        cursor: "pointer",
       },
       line: {
         border: "1px solid #FFFFFF",
@@ -96,7 +99,7 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         marginBottom: convertHeightToVH(32),
       },
       tabList: {
-        paddingTop: convertWidthToVW(10),
+        paddingTop: convertWidthToVW(15),
         paddingLeft: convertWidthToVW(40),
         paddingRight: convertWidthToVW(40),
       },

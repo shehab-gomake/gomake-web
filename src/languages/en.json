@@ -29,7 +29,7 @@
     "reports": "Reports",
     "addSales": "Add sales",
     "listSales": "List sales",
-    "sheetPaper": "Sheet paper",
+    "sheetPaper": "Sheets",
     "lamination": "Lamination",
     "plats": "Plats",
     "envelopes": "Envelopes",
@@ -64,44 +64,114 @@
     "deletefailed": "Deleted failed"
   },
   "materials": {
+    "inputs": {
+      "categoryName": "Category name",
+      "weight": "Weight",
+      "enterWeight": "Enter Weight",
+      "name": "Name",
+      "enterName": "Enter Name",
+      "thickness": "Thickness",
+      "enterThickness": "Enter Thickness",
+      "index": "Index",
+      "enterIndex": "Enter Index",
+      "code": "Code",
+      "enterCode": "Enter Code",
+      "width": "Width",
+      "enterWidth": "Enter Width",
+      "height": "Height",
+      "enterHeight": "Enter Height",
+      "defaultPricePerTon": "Default Price Per Ton",
+      "enterDefaultPricePerTon": "Enter Default Price Per Ton",
+      "defaultPricePerUnit": "Default Price Per Unit",
+      "enterDefaultPricePerUnit": "Enter Default Price Per Unit",
+      "direction": "Direction",
+      "enterDirection": "Enter Direction",
+      "fitToPrintType": "Fit to print type",
+      "enterFitToPrintType": "Enter fit to print type",
+      "stock": "stock",
+      "enterStock": "Enter Stock",
+      "quantityInPackage": "Quantity in package",
+      "enterQuantityInPackage": "Enter Quantity in package",
+      "isWithWindow": "is with window",
+      "enterisWithWindow": "Choose true or false",
+      "length": "Length",
+      "enterLength": "Enter length",
+      "diameter": "Diameter",
+      "enterDiameter": "Enter Diameter",
+      "withPremier": "With premier",
+      "selectWithPremier": "Select With Premier",
+      "defaultPricePerMeter": "Default Price Per Meter",
+      "enterDefaultPricePerMeter": "Enter Default Price Per Meter",
+      "weightPerMeterSquare": "Weight Per Meter Square",
+      "enterWeightPerMeterSquare": "Enter Weight Per Meter Square",
+      "hardness": "Hardness",
+      "enterHardness": "Enter Hardness",
+      "defaultPricePerMeterSquare": "Default Price Per Meter Square",
+      "enterDefaultPricePerMeterSquare": "Enter Default Price Per Meter Square",
+      "weightPerSquareMeter": "Weight per square meter",
+      "enterWeightPerSquareMeter": "Enter weight per square meter",
+      "defaultPricePerSquareMeter": "Default price per square meter",
+      "enterDefaultPricePerSquareMeter": "Enter default price per square meter",
+      "adaptationField": "Adaptation field",
+      "enterAdaptationField": "Enter adaptation field",
+      "color": "Color",
+      "enterColor": "Enter color",
+      "defaultPricePerRoll": "Default Price Per Roll",
+      "enterDefaultPricePerRoll": "Edit Default Price Per Roll",
+      "material": "Material",
+      "enterMaterial": "Enter Material",
+      "size": "Size",
+      "enterSize": "Enter Size",
+      "sizeName": "Size Name",
+      "enterSizeName": "Enter Size Name",
+      "drumRingNumber": "Drum Ring Number",
+      "enterDrumRingNumber": "Enter Drum Ring Number",
+      "defaultPricePerDrum": "Default Price Per Drum",
+      "enterDefaultPricePerDrum": "Enter Default Price Per Drum",
+      "withGlue": "With glue",
+      "directPrinting": "Direct printing",
+      "linkage": "Linkage",
+      "defaultPrice": "Default price",
+      "enterDefaultPrice": "Enter default price",
+      "enterWithGlue": "Enter with glue",
+      "enterDirectPrinting": "Enter direct printing",
+      "enterLinkage": "Enter linkage",
+      "typeName": "Type Name",
+      "enterTypeName": "Enter type Name",
+      "volumeInLiters": "Volume in liters",
+      "enterVolumeInLiters": "Enter volume in liters",
+      "weightPerLiter": "Weight per liter",
+      "enterWeightPerLiter": "Enter weight per liter",
+      "literInSquareMeter": "Liter in square meter",
+      "enterLiterInSquareMeter": "Enter liter in square meter",
+      "defaultPricePerLiter": "Default price per liter",
+      "enterDefaultPricePerLiter": "Enter default price per liter",
+      "defaultPricePerContainer": "Default price per container",
+      "enterDefaultPricePerContainer": "Enter default price per container",
+      "coldOrHot": "Cold or hot",
+      "enterColdOrHot": "Enter cold or hot"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "save": "Save",
+      "saveModifications": "Save modifications"
+    },
+    "modals": {
+      "subTitleDeleteModal": "Are you sure to delete {{name}}"
+    },
     "sheetPaper": {
       "admin": {
         "title": "Sheets",
-        "categoryName": "Category name",
         "addNewSheet": "Add New Sheet",
         "sheetWeightsSection": "Sheet Weights Section",
-        "weight": "Weight",
-        "enterWeight": "Enter Weight",
-        "name": "Name",
-        "enterName": "Enter Name",
-        "thickness": "Thickness",
-        "enterThickness": "Enter Thickness",
-        "index": "Index",
-        "enterIndex": "Enter Index",
         "addSheetWeight": "Add new sheet weight",
         "removeSheetWeight": "Remove last sheet weight",
         "addSheetSize": "Add new sheet size",
         "removeSheetSize": "Remove last sheet size",
         "sheetSizeSection": "Sheet Size Section",
-        "code": "Code",
-        "enterCode": "Enter Code",
-        "width": "Width",
-        "enterWidth": "Enter Width",
-        "height": "Height",
-        "enterHeight": "Enter Height",
-        "defaultPricePerTon": "Default Price Per Ton",
-        "enterDefaultPricePerTon": "Enter Default Price Per Ton",
-        "defaultPricePerUnit": "Default Price Per Unit",
-        "enterDefaultPricePerUnit": "Enter Default Price Per Unit",
-        "direction": "Direction",
-        "enterDirection": "Enter Direction",
-        "cancel": "Cancel",
-        "edit": "Edit",
-        "delete": "Delete",
-        "deleteSheet": "Delete Sheet",
-        "subTitleDeleteModal": "Are you sure you delete sheet by categoryName",
-        "saveModifications": "Save modifications",
-        "save": "Save"
+        "deleteSheet": "Delete Sheet"
       },
       "title": "Sheet paper",
       "category": "Category",
@@ -127,8 +197,28 @@
       "sizesAndPrices": "Sizes and Prices"
     },
     "lamination": {
-      "title": "Lamination",
-      "category": "Category",
+      "admin": {
+        "title": "Lamination",
+        "subTitle": "Laminations",
+        "settings": "Settings",
+        "deleteLamination": "Delete lamination",
+        "deleteLaminationthicknesses": "Delete lamination thicknesse",
+        "subTitleDeleteThicknessesModal": "Are you sure to delete the lamination thicknesse",
+        "laminationSizesSection": "Lamination size section",
+        "addNewLaminationSize": "Add new lamination size",
+        "laminationThicknessSection": "Lamination thicknesses section",
+        "addNewLaminationThickness": "Add new lamination thickness",
+        "removeLaminationSize": "Remove lamination size",
+        "removeLaminationSizeThickness": "Remove lamination thickness",
+        "laminationThicknessesSection": "Lamination thicknesses section",
+        "addNewLaminationThicknes": "add new lamination thicknes",
+        "removeLaminationThicknes": "remove lamination thicknes",
+        "addNewLamination": "Add new Lamination",
+        "deleteLaminationSizeTitle": "Delete lamination size",
+        "deleteLaminationSizeSubTitle": "Are you sure you want to delete lamination size?",
+        "deleteLaminationSizetTicknessTitle": "Delete lamination size tickness",
+        "deleteLaminationSizethicknessSubTitle": "Are you sure you want to delete lamination size Tickness?"
+      },
       "selectSupplier": "Select supplier",
       "height": "Height",
       "width": "Width",
@@ -146,6 +236,16 @@
       }
     },
     "plat": {
+      "admin": {
+        "title": "Plats",
+        "addNewPlat": "Add New Plat",
+        "platSizeSection": "Plat Size Section",
+        "addPlatSize": "Add new plat size",
+        "removePlatSize": "Remove last plat size",
+        "deletePlat": "Delete Plat",
+        "deletePlatSize": "Delete Plat Size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete plat size?"
+      },
       "title": "Plats",
       "category": "Category",
       "code": "Code",
@@ -157,6 +257,16 @@
       "settings": "Settings"
     },
     "envelops": {
+      "admin": {
+        "title": "Envelops",
+        "addNewEnvelops": "Add New Envelop",
+        "envelopSizeSection": "Envelop Size Section",
+        "addEnvelopSize": "Add new envelop size",
+        "removeEnvelopSize": "Remove last envelop size",
+        "deleteEnvelope": "Delete Envelop",
+        "deleteEnvelopeSize": "Delete Envelope Size",
+        "subTitleDeleteModalSize": "Are you sure you want to delete envelope size?"
+      },
       "title": "Envelopes",
       "category": "Category",
       "supplier": "Supplier",
@@ -181,6 +291,16 @@
       "code": "Code"
     },
     "tubes": {
+      "admin": {
+        "title": "Tubes",
+        "addNewTubes": "Add New Tube",
+        "tubesSizeSection": "Tube Size Section",
+        "addTubesSize": "Add new tube size",
+        "removeTubesSize": "Remove last tube size",
+        "deleteTube": "Delete tube",
+        "deleteTubeSize": "Delete Tube Size",
+        "subTitleDeleteModalSize": "Are you sure you want to delete tube size?"
+      },
       "title": "Tubes",
       "category": "Category",
       "code": "Code",
@@ -193,6 +313,16 @@
       "settings": "Settings"
     },
     "printingMaterials": {
+      "admin": {
+        "title": "Material Roll Printing",
+        "addNewMaterialRollPrinting": "Add New Material Roll Printing",
+        "materialRollPrintingSizeSection": "Material Roll Printing Size Section",
+        "addNewMaterialRollPrintingSize": "Add new material roll printing size",
+        "removeMaterialRollPrintingSize": "Remove last material roll printing size",
+        "deletePrintingMaterials": "Delete Roll Printing",
+        "deleteMaterialRollPrintingSize": "Delete Material Roll Printing Size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete Material Roll Printing Size?"
+      },
       "title": "Printing material for rolls",
       "category": "Category",
       "supplier": "Supplier",
@@ -206,6 +336,25 @@
       "settings": "Settings"
     },
     "hardboards": {
+      "admin": {
+        "title": "Hardboards",
+        "subTitle": "Hardboards",
+        "addNewHardboard": "Add new hardboard",
+        "hardboardSizesSection": "Hardboard sizes section",
+        "addNewHardboardSize": "Add new hardboard size",
+        "removeHardboardSize": "Remove hardboard size",
+        "hardboardThicknessesSection": "Hardboard thicknesses section",
+        "addNewHardboardThicknes": "Add new hardboard thicknes",
+        "removeHardboardThicknes": "remove lamination hardboard",
+        "hardness": "Hardness",
+        "deleteHardboard": "Delete hardboard",
+        "hardboard": "Hardboard",
+        "deleteHardboardSizeTitle": "Delete hardboard size",
+        "deleteLHardboardSizeSubTitle": "Are you sure you want to delete hardboard size?",
+        "deleteHardboardSizetTicknessTitle": "Delete hardboard size tickness",
+        "deleteHardboardSizethicknessSubTitle": "Are you sure you want to delete hardboard size tickness?",
+        "addHardboardThickness": "Add new hardboard thicknes"
+      },
       "code": "Code",
       "title": "Hardboards",
       "category": "Category",
@@ -240,6 +389,17 @@
       }
     },
     "profileFrames": {
+      "admin": {
+        "title": "Profile Frame",
+        "addNewProfileFrame": "Add New Profile Frame",
+        "profileFrameSizeSection": "Profile Frame Size Section",
+        "addProfileFrameize": "Add new profile frame size",
+        "removeProfileFrameSize": "Remove last profile frame size",
+        "deleteProfileFrameTitle": "Delete profile frame",
+        "deleteLProfileFrameSubTitle": "Are you sure you want to delete profile frame?",
+        "deleteProfileFrameSizeTitle": "Delete profile frame size",
+        "deleteLProfileFrameSizeSubTitle": "Are you sure you want to delete profile frame size?"
+      },
       "title": "Profile frames",
       "category": "Category",
       "supplier": "Supplier",
@@ -261,7 +421,42 @@
         "controls": "Controls"
       }
     },
+    "wideFormatMaterial": {
+      "admin": {
+        "title": "Wide Format Material",
+        "addNewWideFormatMaterial": "Add New Wide Format Material",
+        "WideFormatMaterialTypeSection": "Wide Format Material Type Section",
+        "addWideFormatMaterialType": "Add new wide format material type",
+        "removeWideFormatMaterialType": "Remove last wide format material type",
+        "addWideFormatMaterialSize": "Add new wide format material size",
+        "removeWideFormatMaterialSize": "Remove last wide format material size",
+        "WideFormatMaterialSizeSection": "Wide Format Material Size Section",
+        "deleteWideFormatMaterialSize": "Delete Wide Format Material Size",
+        "deleteWideFormatMaterial": "Delete Wide Format Material",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete wide format material size?",
+        "deleteWideFormatMaterialType": "Delete Wide Format Material Type",
+        "subTitleDeleteTypeModal": "Are you sure you want to delete wide format material type?"
+      }
+    },
+
     "applications": {
+      "admin": {
+        "title": "Applications",
+        "subTitle": "Applications",
+        "addNewApplication": "Add new application",
+        "applicationThicknessesSection": "Application thicknesses section",
+        "addNewApplicationThicknesses": "Add new application thickness",
+        "removeApplicationThickness": "Remove last application thickness",
+        "applicationSizesSection": "Application sizes section",
+        "addNewApplicationSize": "Add new application size",
+        "removeApplicationSize": "Remove last application size",
+        "deleteApplication": "Delete application",
+        "application": "application",
+        "deleteApplicationThicknessTitle": "Delete application thickness",
+        "deleteApplicationThicknessSubTitle": "Are you sure you want to delete application thickness?",
+        "deleteApplicationThicknessSizeTitle": "Delete application tickness size ",
+        "deleteHApplicationThicknessSizeSubTitle": "Are you sure you want to delete application tickness size ?"
+      },
       "title": "Applications",
       "category": "Category",
       "categoryName": "Category name",
@@ -282,6 +477,20 @@
       "sizeName": "Size name"
     },
     "encapsulationRoll": {
+      "admin": {
+        "title": "Roll Encapsulation",
+        "addNewRollEncapsulation": "Add New Roll Encapsulation",
+        "rollEncapsulationThicknessSection": "Roll Encapsulation Thickness Section",
+        "rollEncapsulationSizeSection": "Roll Encapsulation Thickness Size Section",
+        "addRollEncapsulationThickness": "Add new roll encapsulation thickness",
+        "removeRollEncapsulationThickness": "Remove last roll encapsulation thickness",
+        "addRollEncapsulationize": "Add new roll encapsulation size",
+        "removeRollEncapsulationSize": "Remove last roll encapsulation size",
+        "deleteRollEncapsulationTitle": "Delete roll encapsulation",
+        "deleteLRollEncapsulationSubTitle": "Are you sure you want to delete roll encapsulation?",
+        "deleteRollEncapsulationSizeTitle": "Delete roll encapsulation size",
+        "deleteLRollEncapsulationSizeSubTitle": "Are you sure you want to delete roll encapsulation size?"
+      },
       "title": "Encapsulation roll",
       "category": "Category",
       "supplier": "supplier",
@@ -299,6 +508,19 @@
       "selectSupplier": "Select supplier"
     },
     "additions": {
+      "admin": {
+        "title": "Additions",
+        "subTitle": "Additions",
+        "deleteAddition": "Delete addition",
+        "delete": "Delete",
+        "settings": "Settings",
+        "addNewAddition": "Add new addition",
+        "additionSection": "Addition section",
+        "removeLastAddition": "Remove last addition",
+        "edit": "Edit",
+        "addition": "addition",
+        "deleteAdditionsSubTitle": "Are you sure to delete the addition?"
+      },
       "title": "Additions",
       "supplier": "Supplier",
       "code": "Code",
@@ -322,10 +544,33 @@
       "width": "Width",
       "stock": "Stock",
       "price": "Price",
-      "settings": "Settings"
+      "settings": "Settings",
+      "admin": {
+        "title": "Canvas Frames",
+        "subTitle": "Canvas frames",
+        "settings": "Settings",
+        "addNewCanvasFrame": "Add new Canvas Frame",
+        "canvasFrameSizeSection": "Canvas frame size section",
+        "addCanvasFrameSize": "Add new canvas frame size",
+        "removeCanvasFrameSize": "Remove last canvas frame size ",
+        "deleteCanvasFrame": "Delete canvas frame",
+        "deleteCanvasFrameSize": "Delete canvas frame Size",
+        "canvasFrame": "Canvas frame",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete canvas frame size?"
+      }
     },
 
     "frames": {
+      "admin": {
+        "title": "Frame",
+        "addNewFrame": "Add new  Frame",
+        "frameSizeSection": " frame size section",
+        "addFrameSize": "Add new frame size",
+        "removeFrameSize": "Remove last frame size ",
+        "deleteFrameSize": "Delete Frame Size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete frame size?",
+        "deleteFrame": "Delete Frame "
+      },
       "title": "Frames",
       "categoryName": "Category name",
       "height": "Height",
@@ -346,6 +591,16 @@
       "code": "Code"
     },
     "foils": {
+      "admin": {
+        "title": "Foil",
+        "addNewFoil": "Add new  Foil",
+        "foilSizeSection": " foil size section",
+        "addFoilSize": "Add new foil size",
+        "removeFoilSize": "Remove last foil size ",
+        "deleteFoilSize": "Delete Foil Size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete foil size?",
+        "deleteFoil": "Delete Foil "
+      },
       "title": "Foils",
       "code": "Code",
       "categoryName": "Category name",
@@ -365,6 +620,16 @@
       "supplier": "Supplier"
     },
     "packinDrums": {
+      "admin": {
+        "title": "Packin Drum",
+        "addNewPackinDrum": "Add new  Packin Drum",
+        "packinDrumSizeSection": " packin drum size section",
+        "addPackinDrumSize": "Add new packin drum size",
+        "removePackinDrumSize": "Remove last packin drum size ",
+        "deletePackinDrumSize": "Delete Packin Drum Size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete packin drum size?",
+        "deletePackinDrum": "Delete Packin Drum "
+      },
       "title": "Pack in drums",
       "code": "Code",
       "material": "Material",
@@ -383,6 +648,18 @@
       "supplier": "Supplier"
     },
     "packinUnits": {
+      "admin": {
+        "title": "Packin units",
+        "subTitle": "Packin Units",
+        "addNewPackinUnit": "Add new packin unit",
+        "packinUnitSizeSection": "Packin unit size",
+        "addNewPackinUnitSize": "Add new packin unit size",
+        "removeLastPackinUnit": "Remove last packin unit size",
+        "deletePackinUnit": "Delete packin unit",
+        "packinUnit": "Packin Unit",
+        "deletePackinUnitSize": "Delete packin unit size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete packin unit size?"
+      },
       "title": "Packin units",
       "code": "Code",
       "material": "Material",
@@ -400,6 +677,16 @@
       "supplier": "Supplier"
     },
     "sheetEncapsulation": {
+      "admin": {
+        "title": "Sheet encapsulation",
+        "addNewSheetEncapsulation": "Add new  Sheet encapsulation",
+        "sheetEncapsulationSizeSection": " sheet encapsulation size section",
+        "addSheetEncapsulationSize": "Add new sheet encapsulation size",
+        "removeSheetEncapsulationSize": "Remove last sheet encapsulation size ",
+        "deleteSheetEncapsulationSize": "Delete Sheet encapsulation Size",
+        "subTitleDeleteSizeModal": "Are you sure you want to delete sheet encapsulation size?",
+        "deleteSheetEncapsulation": "Delete Sheet encapsulation "
+      },
       "title": "Sheet encapsulation",
       "code": "Code",
       "width": "Width",
@@ -435,6 +722,16 @@
       "controls": "Controls"
     },
     "doubleSidedTapeRolls": {
+      "admin": {
+        "title": "Double sided tape roll",
+        "settings": "Settings",
+        "addNewDoubleSidedTapeRoll": "Add new double sided tape roll",
+        "deleteDoubleSidedTapeRoll": "Delete double sided tape roll",
+        "delete": "Delete",
+        "edit": "Edit",
+        "doubleSidedTapeRoll": "Double sided tape roll",
+        "deletedoubleSidedTapeRollSubTitle": "Are you sure to delete the double sided tape roll?"
+      },
       "title": "Double sided tape rolls",
       "code": "Code",
       "name": "Name",
@@ -468,6 +765,12 @@
       "selectCurrency": "Select currency"
     },
     "magnets": {
+      "admin": {
+        "title": "Magnets",
+        "addNewMagnet": "Add new magnet",
+        "deleteMagnet": "Delete magnet",
+        "delete": "Delete"
+      },
       "title": "Magnets",
       "code": "Code",
       "name": "Name",
@@ -487,6 +790,16 @@
       "selectCurrency": "Select currency"
     },
     "packings": {
+      "admin": {
+        "addNewPacking": "Add new packing",
+        "packingsVolumnSection": "Packing volume section",
+        "addNewPackingVolumn": "Add new packing volume",
+        "removeLastPackingVolumn": "Remove last packing volume",
+        "deletePacking": "Delete packing",
+        "packing": "Packing",
+        "deletePackingVolume": "Delete packing volume",
+        "subTitleDeleteVolumeModal": "Are you sure you want to delete packin volume?"
+      },
       "title": "Packings",
       "code": "Code",
       "height": "Height",
@@ -503,6 +816,12 @@
       "selectCurrency": "Select currency"
     },
     "varnishs": {
+      "admin": {
+        "addNewVarnishs": "Add new varnish",
+        "deleteVarnishs": "Delete Varnish",
+        "edit": "Edit",
+        "varnishs": "varnish"
+      },
       "title": "Varnish",
       "code": "Code",
       "typeName": "Type name",
@@ -520,6 +839,54 @@
       "category": "Category",
       "selectSupplier": "Select supplier",
       "selectCurrency": "Select currency"
+    }
+  },
+  "products": {
+    "profits": {
+      "addTestProduct": "Add test product",
+      "addNewTestProduct": "Add new test product",
+      "selectProduct": "Select product",
+      "send": "Send",
+      "admin": {
+        "title": "Profits",
+        "chooseAction": "Choose action"
+      },
+      "pricingListWidget": {
+        "pricingListTitle": "Pricing list (product name)",
+        "meterPerPrice": "Meter/price",
+        "transition": "Transition",
+        "quantity": "Quantity",
+        "cost": "Cost",
+        "profit": "Profit",
+        "meterPrice": "Meter Price",
+        "expMeter": "Exp.meter",
+        "price": "Price",
+        "totalPrice": "Total price",
+        "width": "width",
+        "more": "More",
+        "height": "height",
+        "addNewStep": "add new step",
+        "saveStep": "Save step"
+      },
+      "exceptions": {
+        "title": "Exceptions",
+        "type": "Type",
+        "parameter": "Parameter",
+        "value": "Value",
+        "scopeOfChange": "scope of change",
+        "min": "Minimum =",
+        "addNewException": "Add new exception",
+        "chooseScope": "choose scope",
+        "selectTypeOfException": "Select type of exception",
+        "selectMachine": "Select machine",
+        "selectProduct": "Select product",
+        "selectClient": "Select client",
+        "selectParameter": "Select parameter",
+        "SelectValueNameOfParameter": "Select value name of parameter",
+        "selectScopeOfChange": "Select scope of change",
+        "additionalProfit": "Additional Profit",
+        "deleteExceptionProfit": "Delete Exception Profit ?"
+      }
     }
   },
   "skeleton": {

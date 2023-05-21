@@ -12,7 +12,6 @@ const HeaderFilter = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialSheetsStateValue = useRecoilValue<any>(materialSheetsState);
-
   return (
     <>
       <div style={clasess.addBtnStyle}>

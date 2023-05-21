@@ -52,7 +52,7 @@ const GoMakeAutoComplate = ({
   disabled,
   multiple = false,
 }: {
-  value?: string;
+  value?: string | string[];
   onChange?: any;
   style?: any;
   error?: any;
@@ -68,7 +68,7 @@ const GoMakeAutoComplate = ({
 }) => {
   return (
     <StyledAutocomplete
-      value={value}
+      {...(value && { value })}
       onChange={onChange}
       style={style}
       options={options}
@@ -77,9 +77,10 @@ const GoMakeAutoComplate = ({
       renderInput={(params: any) => (
         <TextField
           {...params}
-          placeholder={!multiple && (defaultValue?.name || placeholder)}
+          placeholder={!multiple && (defaultValue?.label || placeholder)}
         />
       )}
+      defaultValue={defaultValue}
       autoHighlight={autoHighlight}
       getOptionLabel={getOptionLabel}
       renderOption={renderOption}
@@ -90,6 +91,9 @@ const GoMakeAutoComplate = ({
       isOptionEqualToValue={(option: any, value: any) =>
         option?.id === value?.id
       }
+      getOptionSelected={(option: any, value: any) => {
+        return option.id === value.id;
+      }}
     />
   );
 };

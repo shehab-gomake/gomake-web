@@ -9,6 +9,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { AddsheetSizeMapping } from "./add-sheet-size-mapping";
 import { materialSheetsState } from "../store/sheets";
 import { useStyle } from "./style";
+import { SheetWeightsInputs } from "../shared-inputs-widget/sheet-weight-inputs";
 
 const AddSheetWeightsMapping = ({ index, selectedItem }) => {
   const { t } = useTranslation();
@@ -18,76 +19,7 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
   return (
     <>
       <div key={index} style={clasess.tableSecondSections}>
-        <div style={clasess.mainWaightsContainer}>
-          <div>
-            <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.weight")}
-            </div>
-            <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterWeight")}
-              style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.items[index]["weight"]}
-              onChange={(e: any) => {
-                materialSheetsStateValue?.changeItems(
-                  index,
-                  "weight",
-                  e.target.value
-                );
-              }}
-            />
-          </div>
-          <div>
-            <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.name")}
-            </div>
-            <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterName")}
-              style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.items[index]["name"]}
-              onChange={(e: any) => {
-                materialSheetsStateValue?.changeItems(
-                  index,
-                  "name",
-                  e.target.value
-                );
-              }}
-            />
-          </div>
-          <div>
-            <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.thickness")}
-            </div>
-            <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterThickness")}
-              style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.items[index]["thickness"]}
-              onChange={(e: any) => {
-                materialSheetsStateValue?.changeItems(
-                  index,
-                  "thickness",
-                  e.target.value
-                );
-              }}
-            />
-          </div>
-          <div>
-            <div style={clasess.lableTextStyle}>
-              {t("materials.sheetPaper.admin.index")}
-            </div>
-            <GomakeTextInput
-              placeholder={t("materials.sheetPaper.admin.enterIndex")}
-              style={clasess.textInputStyle}
-              value={materialSheetsStateValue?.items[index]["index"]}
-              onChange={(e: any) => {
-                materialSheetsStateValue?.changeItems(
-                  index,
-                  "index",
-                  e.target.value
-                );
-              }}
-            />
-          </div>
-        </div>
+        <SheetWeightsInputs index={index} />
         <div style={clasess.titlePlusContainer}>
           <div style={clasess.sizeSectionTitleStyle}>
             {t("materials.sheetPaper.admin.sheetSizeSection")}
@@ -156,7 +88,7 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
               }
               style={clasess.cancelBtnStyle}
             >
-              {t("materials.sheetPaper.admin.cancel")}
+              {t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           </div>
           <div style={clasess.addSheetBtnContainer}>
@@ -168,7 +100,7 @@ const AddSheetWeightsMapping = ({ index, selectedItem }) => {
               }
               style={clasess.addBtnStyle}
             >
-              {t("materials.sheetPaper.admin.save")}
+              {t("materials.buttons.save")}
             </GomakePrimaryButton>
           </div>
         </div>
