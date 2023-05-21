@@ -15,8 +15,6 @@ import { PriceListForm } from "./components/priceList-tab/form";
 import { CustomerForm } from "./components/gomakeUser-tab/CustomerForm";
 import AddIcon from '@mui/icons-material/Add';
 import { IPaddressForm } from "./components/gomakeUser-tab/IPAddressForm";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
-
 
 const ButtonsWidget = () => {
 
@@ -37,7 +35,7 @@ const ButtonsWidget = () => {
   );
   const StatusOptions = useMemo(
     () => [t("Active"),
-    t("Not active"),
+    t("inactive"),
     ],
     []
   );
@@ -66,50 +64,49 @@ const ButtonsWidget = () => {
     []
   );
 
-  const renderTabPanelInput = (index, label) => {
+  const tabPanelInput = (label) => {
     return (
-      <Box hidden={selectedTab !== index} sx={{ p: 3 }} >
+      <Box sx={{ p: 3 }} >
         <h3 style={clasess.headersStyle} >{label}</h3>
         <input style={clasess.inputStyle} type="text" />
       </Box>
     );
   };
 
-  const renderTabPanelSwich = (index, label) => {
+  const tabPanelSwich = (label) => {
     return (
-      <Box hidden={selectedTab !== index} sx={{ p: 3 }} >
+      <Box sx={{ p: 3 }} >
         <h3 style={clasess.headersStyle} >{label}</h3>
         <Switch style={clasess.switchStyle} />
       </Box>
     );
   };
 
-  const renderTabPanelSelect = (index, label, options, placeHold) => {
+  const tabPanelSelect = (label, options, placeHold) => {
     return (
-      <Box hidden={selectedTab !== index} sx={{ p: 3 }} >
+      <Box sx={{ p: 3 }} >
         <h3 style={clasess.headersStyle} >{label}</h3>
         <HeaderFilter style={clasess.autoComplateStyle} setPlaceholder={placeHold} setAllOptions={options} ></HeaderFilter>
       </Box>
     );
   };
 
-  const renderTabPanelTextArea = (index, label) => {
+  const tabPanelTextArea = (label) => {
     return (
-      <Box hidden={selectedTab !== index} sx={{ p: 3 }} >
+      <Box sx={{ p: 3 }} >
         <h3 style={clasess.headersStyle} >{label}</h3>
-        <TextareaAutosize style={clasess.textAreaStyle }></TextareaAutosize>
+        <TextareaAutosize style={clasess.textAreaStyle}></TextareaAutosize>
       </Box>
     );
   };
 
-
-  const { clasess } = useStyle();
   const [openModal, setOpenModal] = useState(false);
   const onCloseModal = () => {
     setOpenModal(false);
   };
 
-  const [open, setOpen] = useState(false);
+  const { clasess } = useStyle();
+  const [selectedTab, setSelectedTab] = useState(0);
   const [contacts, setContacts] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [budgets, setBudgets] = useState([]);
@@ -117,14 +114,13 @@ const ButtonsWidget = () => {
   const [IPaddresses, setIPaddresses] = useState([]);
 
 
+  const [open, setOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
-
-  const [selectedTab, setSelectedTab] = useState(0);
 
   const addEmptyContact = () => {
     var temp = [...contacts];
@@ -266,36 +262,36 @@ const ButtonsWidget = () => {
                   selectedTab == 0 &&
                   <div>
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      {renderTabPanelInput(0, "Phone1:")}
-                      {renderTabPanelInput(0, "Phone2:")}
-                      {renderTabPanelInput(0, "Site:")}
+                      {tabPanelInput("Phone1:")}
+                      {tabPanelInput("Phone2:")}
+                      {tabPanelInput("Site:")}
                     </div>
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      {renderTabPanelInput(0, "Main contact name:")}
-                      {renderTabPanelInput(0, "Mobile:")}
-                      {renderTabPanelInput(0, "Email:")}
-                      {renderTabPanelInput(0, "Fax:")}
+                      {tabPanelInput("Main contact name:")}
+                      {tabPanelInput("Mobile:")}
+                      {tabPanelInput("Email:")}
+                      {tabPanelInput("Fax:")}
                     </div>
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      {renderTabPanelSwich(0, "An occasional customer")}
-                      {renderTabPanelSwich(0, "Sending a ready email")}
-                      {renderTabPanelSelect(0, "Active:", StatusOptions, null)}
-                      {renderTabPanelSelect(0, "Shipment Type:", ShipmentTypeOptions, "select shipment type")}
-                      {renderTabPanelSelect(0, "Agent:", AgentsOptions, "select agent")}
+                      {tabPanelSwich("An occasional customer")}
+                      {tabPanelSwich("Sending a ready email")}
+                      {tabPanelSelect("Active:", StatusOptions, null)}
+                      {tabPanelSelect("Shipment Type:", ShipmentTypeOptions, "select shipment type")}
+                      {tabPanelSelect("Agent:", AgentsOptions, "select agent")}
                     </div>
                     <Box hidden={selectedTab !== 0} sx={{ p: 3 }} >
                       <h3 style={clasess.headers3Style} >Last order details</h3>
                     </Box>
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      {renderTabPanelInput(0, "Name:")}
-                      {renderTabPanelInput(0, "Phone:")}
-                      {renderTabPanelInput(0, "E-mail:")}
-                      {renderTabPanelInput(0, "Address:")}
+                      {tabPanelInput("Name:")}
+                      {tabPanelInput("Phone:")}
+                      {tabPanelInput("E-mail:")}
+                      {tabPanelInput("Address:")}
                     </div>
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      {renderTabPanelTextArea(0, "General notes")}
-                      {renderTabPanelTextArea(0, "Open Orders notes")}
-                      {renderTabPanelTextArea(0, "Close Orders notes")}
+                      {tabPanelTextArea("General notes")}
+                      {tabPanelTextArea("Open Orders notes")}
+                      {tabPanelTextArea("Close Orders notes")}
                     </div>
                   </div>
                 }
@@ -353,31 +349,31 @@ const ButtonsWidget = () => {
                   //GOMAKEUSER info
                   selectedTab == 5 &&
                   <div >
-                  <div>
-                    <a style={ { display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyClient} >
-                      <AddIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddIcon>
-                      <Button style={{ color: "#8283BE" }}>new client</Button>
-                    </a>
-                    {
-                      useres.map(x =>
-                        <div key={x.index}>
-                          <CustomerForm user={x} onDelete={deleteClientForm}></CustomerForm>
-                        </div>)
-                    }
+                    <div>
+                      <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyClient} >
+                        <AddIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddIcon>
+                        <Button style={{ color: "#8283BE" }}>new client</Button>
+                      </a>
+                      {
+                        useres.map(x =>
+                          <div key={x.index}>
+                            <CustomerForm user={x} onDelete={deleteClientForm}></CustomerForm>
+                          </div>)
+                      }
+                    </div>
+                    <div>
+                      <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyIPAddress} >
+                        <AddIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddIcon>
+                        <Button style={{ color: "#8283BE" }}>new address</Button>
+                      </a>
+                      {
+                        IPaddresses.map(x =>
+                          <div key={x.index}>
+                            <IPaddressForm IPaddress={x} onDelete={deleteIPAddressForm}></IPaddressForm>
+                          </div>)
+                      }
+                    </div>
                   </div>
-                  <div>
-                  <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyIPAddress} >
-                    <AddIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddIcon>
-                    <Button style={{ color: "#8283BE" }}>new address</Button>
-                  </a>
-                  {
-                    IPaddresses.map(x =>
-                      <div key={x.index}>
-                        <IPaddressForm IPaddress={x} onDelete={deleteIPAddressForm}></IPaddressForm>
-                      </div>)
-                  }
-                </div>
-                </div>
                 }
                 <div style={{ display: "flex", justifyContent: "center", marginTop: "70px", marginBottom: "10px" }} >
                   <GomakePrimaryButton style={clasess.autoButtonStyle} >add</GomakePrimaryButton>

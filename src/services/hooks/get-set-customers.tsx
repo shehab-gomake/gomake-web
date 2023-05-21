@@ -31,9 +31,9 @@ const getAndSetAllCustomers = async (
     return {
       customerCode: customer.code,
       name: customer.name,
-      email: customer.mail,
+      email: customer.mail ? customer.mail : "----",
       phone: customer.phone,
-      status: customer.isActive,
+      status: customer.isActive ?  "Active" : "Inactive",
       hashTag: (
         <BusinessCenterIcon />
       ),

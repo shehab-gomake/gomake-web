@@ -11,26 +11,28 @@ import { ButtonsWidget } from "@/widgets/add-customer-modal";
 export default function Home() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const { tabelHeaders, setAllCustomers, allCustomers,agentsCategores,customersCategores, customerTypes, statuses, categoryName, onChangeAgent, onChangeCustomer, onChangeSupplier } = useCustomers("C");
+  const { tabelHeaders, setAllCustomers, allCustomers,agentsCategores, customerTypes, statuses, categoryName, onChangeAgent, onChangeCustomer , onChangeStatus , handleClean , valAgent , valName ,valStatus} = useCustomers("C");
 
   return (
     <CustomerAuthLayout>
       <div style={clasess.sameRow}>
         <HeaderTitle title={t("customers.title")} />
-        <ButtonsWidget ></ButtonsWidget>
+        <ButtonsWidget></ButtonsWidget>
       </div>
       <HeaderFilter
         agentsCategores={agentsCategores}
-        customersCategores={customersCategores}
         customerType={customerTypes}
         status={statuses}
         categoryName={categoryName}
         onChangeAgent={onChangeAgent}
         onChangeCustomer={onChangeCustomer}
+        onChangeStatus={onChangeStatus}
         setAllCustomers={setAllCustomers}
-        onChangeSupplier={onChangeSupplier}
         allCustomers={allCustomers}
-
+        handleClean={handleClean}
+        valAgent={valAgent}
+        valName={valName}
+        valStatus={valStatus}
       />
       <div style={clasess.tableContainer}>
         <Table tableHeaders={tabelHeaders} tableRows={allCustomers}></Table>

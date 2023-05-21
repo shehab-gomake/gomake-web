@@ -1,13 +1,14 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "./call-api.interface";
 
-const getAndSetAgents = async (
+const getAndSetEmployees = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
 ) => {
-  const result: any = await callApi("GET", "/v1/employee/get-agents", data);
+  const result: any = await callApi("GET", "/v1/employee/get-employee", data);
+  console.log(data);
   return returnResult(result, setState);
 };
 
-export { getAndSetAgents };
+export { getAndSetEmployees };
