@@ -2,10 +2,11 @@ import { useRecoilValue } from "recoil";
 
 import { useStyle } from "../style";
 import { profitsState } from "../store/profits";
-import { AddIcon, MoreCircleIcon } from "@/icons";
+import { AddIcon } from "@/icons";
 import { IconButton } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { AddTestProductModal } from "./add-test-product-modal";
+import { ProductTestListMoreCircleWidget } from "./pricing-list/product-list-more-circle";
 
 const ProductList = () => {
   const { t } = useTranslation();
@@ -18,7 +19,7 @@ const ProductList = () => {
         "this is text for product new of this current available details  this is text for product new of this current available details ",
       more: (
         <IconButton>
-          <MoreCircleIcon />
+          <ProductTestListMoreCircleWidget />
         </IconButton>
       ),
     },
@@ -28,7 +29,7 @@ const ProductList = () => {
         "this is text for product new of this current available details  this is text for product new of this current available details ",
       more: (
         <IconButton>
-          <MoreCircleIcon />
+          <ProductTestListMoreCircleWidget />
         </IconButton>
       ),
     },

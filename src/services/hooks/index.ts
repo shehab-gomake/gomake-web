@@ -24,3 +24,4 @@ export * from "./get-set-magnets";
 export * from "./get-set-packings";
 export * from "./get-set-varnishs";
 export * from "./admin-side";
+export * from "./generate-calaculation-test-link";

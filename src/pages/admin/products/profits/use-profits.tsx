@@ -22,6 +22,8 @@ import {
   getAndSetParameters,
   getAndSetClientTypes,
   getAndSetActionExceptionProfitRowByActionExceptionId,
+  generateCalaculationTestLink,
+  getAndSetGetAllTestProductsByActionId,
 } from "@/services/hooks";
 import { editPriceListState } from "./store/edit-price-list";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
@@ -43,6 +45,7 @@ const useProfits = () => {
   const [actionExceptionProfitIdValue, setactionExceptionProfitId] =
     useRecoilState<any>(actionExceptionProfitId);
 
+  const [testProductsState, setTestProductsState] = useState();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [allActions, setAllActions] = useRecoilState(actionLists);
@@ -59,6 +62,7 @@ const useProfits = () => {
   const onCloseDeleteExceptionProfitModal = () => {
     setOpenDeleteExceptionProfitModal(false);
   };
+  const [calculationTestLink, setCalculationTestLink] = useState("");
 
   const onOpenDeleteExceptionProfitModal = (item: any) => {
     setSelectedExceptionProfit(item);
@@ -127,6 +131,16 @@ const useProfits = () => {
   const onChangeSelectedAction = useCallback(async (e: any, value: any) => {
     setSelectedAction(value);
   }, []);
+  const getTestProducts = useCallback(async () => {
+    await getAndSetGetAllTestProductsByActionId(
+      callApi,
+      setTestProductsState,
+      productsStateValue,
+      {
+        actionId: selectedAction?.id,
+      }
+    );
+  }, [selectedAction]);
 
   useEffect(() => {
     getActions();
@@ -137,6 +151,7 @@ const useProfits = () => {
   }, []);
   useEffect(() => {
     getActionProfits();
+    getTestProducts();
   }, [selectedAction]);
 
   const tabelPricingHeaders = useMemo(() => {
@@ -291,15 +306,24 @@ const useProfits = () => {
 
   const onChangeAddNewTestProduct = useCallback(
     (key: string, value: any) => {
-      let temp: any = {
-        [key]: value,
-      };
-      setTestProductState(temp);
+      setTestProductState(value);
     },
     [testProductState]
   );
   const onClickSendNewProduct = useCallback(async () => {
     console.log("testProductState", testProductState);
+    const data = await generateCalaculationTestLink(
+      callApi,
+      setCalculationTestLink,
+      {
+        productId: testProductState || "",
+        actionId: selectedAction?.id || "",
+      }
+    );
+    if (data?.url) {
+      const fullUrl: any = `https://qa.gomake.co.il${data?.url}`;
+      window.location = fullUrl;
+    }
   }, [testProductState]);
 
   const [state, setState] = useState<any>({});
@@ -516,6 +540,7 @@ const useProfits = () => {
     onClickSaveNewActionExceptionProfitRow,
     updateActionExceptionProfitRow,
     deleteActionExceptionProfitRow,
+    testProductsState,
     updateActionProfitRow,
     deleteActionProfitRow,
     onCloseDeleteExceptionProfitModal,

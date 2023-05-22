@@ -846,7 +846,11 @@
       "addTestProduct": "Add test product",
       "addNewTestProduct": "Add new test product",
       "selectProduct": "Select product",
-      "send": "Send",
+      "startTest": "Start test",
+      "delete": "Delete",
+      "deleteProduct": "Delete product",
+      "subTitleDeleteProduct": "Are you sure to delete product",
+      "testAgain": "Test again",
       "admin": {
         "title": "Profits",
         "chooseAction": "Choose action"
