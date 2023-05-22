@@ -5,11 +5,10 @@ import { useStyle } from "./style";
 import { useEffect } from "react";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 
-const HeaderFilter = ({ agentsCategores, customerType, status, onChangeAgent, onChangeCustomerType, onChangeSupplier, onChangeStatus, setAllCustomers, onChangeCustomer, allCustomers ,handleClean , valName,valAgent,valStatus
+const HeaderFilter = ({ agentsCategores, customerType, status, onChangeAgent, onChangeCustomerType, onChangeStatus, setAllCustomers, onChangeCustomer, allCustomers ,handleClean , valName,valAgent,valStatus
 }: any) => {
     const { t } = useTranslation();
     const { clasess } = useStyle();
-
 
     useEffect(() => {
         setAllCustomers(allCustomers);

@@ -19,6 +19,12 @@ const useStyle = () => {
       autoComplateStyle: {
         width: convertWidthToVW(200),
       },
+      buttonStyle: {
+        width: convertWidthToVW(100),
+        height: convertHeightToVH(50),
+        marginRight: convertWidthToVW(10),
+        backgroundColor: "#F135A3",
+      },
       tableContainer: {
         width: "100%",
       },

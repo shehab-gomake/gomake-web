@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
-import { getAndSetCustomers, getAndSetAllCustomers } from "@/services/hooks/get-set-customers";
+import { getAndSetCustomer, getAndSetAllCustomers } from "@/services/hooks/get-set-customers";
 import { getAndSetEmployees } from "@/services/hooks/get-set-employee";
 
 
@@ -12,6 +12,7 @@ const useCustomers = (clientType) => {
   const [agentsCategores, setAgentsCategores] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [allCustomers, setAllCustomers] = useState([]);
+
   const [agentId, setAgentId] = useState("");
   const onChangeAgent = useCallback(async (e: any, value: any) => {
     setAgentId(value?.value);
@@ -85,13 +86,13 @@ const useCustomers = (clientType) => {
     []
   );
 
-  ///////////////////////// select 1  //////////////////////////////
+  ///////////////////////// select agent //////////////////////////////
 
   const getAgentCategores = useCallback(async () => {
     const data = await getAndSetEmployees(
       callApi,
-      setAgentsCategores,{
-      isAgent: true,}
+      setAgentsCategores,
+      {isAgent: true,}
     );
     const agentNames = data.map(agent => `${agent.firstname} ${agent.lastname}`);
     setAgentsCategores(agentNames);
@@ -124,7 +125,6 @@ const useCustomers = (clientType) => {
     agentsCategores,
     customerTypes,
     statuses,
-    categoryName,
     allCustomers,
     onChangeAgent,
     onChangeCustomer,

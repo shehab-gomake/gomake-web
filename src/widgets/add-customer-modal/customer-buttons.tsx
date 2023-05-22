@@ -1,5 +1,5 @@
 import { Box, Button, Dialog, Switch, Tab, Tabs, ThemeProvider, createMuiTheme, styled } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { t } from "i18next";
 import { useStyle } from "./style";
 import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton } from "@/components";
@@ -16,7 +16,9 @@ import { CustomerForm } from "./components/gomakeUser-tab/CustomerForm";
 import AddIcon from '@mui/icons-material/Add';
 import { IPaddressForm } from "./components/gomakeUser-tab/IPAddressForm";
 
-const ButtonsWidget = () => {
+const ButtonsWidget = ({ openModal, onClose , customer , showUpdateButton , showAddButton
+
+}: any) => {
 
   const theme = createMuiTheme({
     palette: {
@@ -64,11 +66,11 @@ const ButtonsWidget = () => {
     []
   );
 
-  const tabPanelInput = (label) => {
+  const tabPanelInput = (label , val = null) => {
     return (
       <Box sx={{ p: 3 }} >
         <h3 style={clasess.headersStyle} >{label}</h3>
-        <input style={clasess.inputStyle} type="text" />
+        <input style={clasess.inputStyle} type="text" value={val} />
       </Box>
     );
   };
@@ -99,12 +101,6 @@ const ButtonsWidget = () => {
       </Box>
     );
   };
-
-  const [openModal, setOpenModal] = useState(false);
-  const onCloseModal = () => {
-    setOpenModal(false);
-  };
-
   const { clasess } = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
   const [contacts, setContacts] = useState([]);
@@ -115,11 +111,16 @@ const ButtonsWidget = () => {
 
 
   const [open, setOpen] = useState(false);
+  useEffect(() => {
+    setOpen(openModal)
+  }, [openModal])
   const handleOpen = () => {
     setOpen(true);
   };
+
   const handleClose = () => {
     setOpen(false);
+    onClose();
   };
 
   const addEmptyContact = () => {
@@ -198,191 +199,179 @@ const ButtonsWidget = () => {
 
   return (
     <div>
-      <div>
-        <GomakePrimaryButton variant="contained" onClick={handleOpen} style={clasess.buttonStyle}>
-          Add Customer
-        </GomakePrimaryButton>
-        <GomakePrimaryButton variant="contained" style={clasess.buttonStyle}>
-          Update Customer
-        </GomakePrimaryButton>
-      </div>
-      <Dialog open={open} onClose={onCloseModal}>
-        <GoMakeModal
-          openModal={handleOpen}
-          modalTitle={t("Add Customer")}
-          onClose={handleClose}
-          insideStyle={clasess.insideStyle}
-        >
-          <div style={{ marginBottom: '20px' }} >
-            <div style={clasess.filterStyle}>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <h3 style={clasess.headersStyle} >Code:</h3>
-                <input readOnly={true} style={clasess.inputStyle} type="text" />
-              </div>
-              <div style={{ display: "flex", alignItems: "center", marginRight: "495px" }}>
-                <h3 style={clasess.headersStyle} >Name1:</h3>
-                <input style={clasess.inputStyle} type="text" />
-              </div>
+      <GoMakeModal
+        openModal={open}
+        modalTitle={t("Add Customer")}
+        onClose={handleClose}
+        insideStyle={clasess.insideStyle}
+      >
+        <div style={{ marginBottom: '20px' }} >
+          <div style={clasess.filterStyle}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <h3 style={clasess.headersStyle} >Code:</h3>
+              <input readOnly={true} style={clasess.inputStyle} type="text" value={customer?.code} />
             </div>
-            <div style={clasess.filterStyle}>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <h3 style={clasess.headersStyle} >Name2:</h3>
-                <input style={clasess.inputStyle} type="text" />
-              </div>
-              <div style={{ display: "flex", alignItems: "center", marginRight: "457px" }}>
-                <h3 style={clasess.headersStyle} >Open Orders:</h3>
-                <input readOnly={true} style={clasess.inputStyle} type="text" />
-              </div>
-            </div>
-            <div style={clasess.filterStyle}>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <h3 style={clasess.headersStyle} >Vat number:</h3>
-                <input style={clasess.inputStyle} type="text" />
-              </div>
-              <div style={{ display: "flex", alignItems: "center", marginRight: "416px", }}>
-                <h3 style={clasess.headersStyle} >Currency</h3>
-                <GoMakeAutoComplate style={clasess.selectStyle} placeholder={null} options={CurrencyOptions}
-                />
-              </div>
+            <div style={{ display: "flex", alignItems: "center", marginRight: "495px" }}>
+              <h3 style={clasess.headersStyle} >Name1:</h3>
+              <input style={clasess.inputStyle} type="text" value={customer?.name} />
             </div>
           </div>
-          <div>
-            <ThemeProvider theme={theme}>
-              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={selectedTab} onChange={handleTabChange} textColor="secondary" indicatorColor="secondary" >
-                  <Tab label="General" />
-                  <Tab label="Contacts" />
-                  <Tab label="Addresses" />
-                  <Tab label="Budget managment" />
-                  <Tab label="Price lists" />
-                  <Tab label="GOMAKE USERS" />
-                </Tabs>
-                {
-                  //general info
-                  selectedTab == 0 &&
-                  <div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      {tabPanelInput("Phone1:")}
-                      {tabPanelInput("Phone2:")}
-                      {tabPanelInput("Site:")}
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      {tabPanelInput("Main contact name:")}
-                      {tabPanelInput("Mobile:")}
-                      {tabPanelInput("Email:")}
-                      {tabPanelInput("Fax:")}
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      {tabPanelSwich("An occasional customer")}
-                      {tabPanelSwich("Sending a ready email")}
-                      {tabPanelSelect("Active:", StatusOptions, null)}
-                      {tabPanelSelect("Shipment Type:", ShipmentTypeOptions, "select shipment type")}
-                      {tabPanelSelect("Agent:", AgentsOptions, "select agent")}
-                    </div>
-                    <Box hidden={selectedTab !== 0} sx={{ p: 3 }} >
-                      <h3 style={clasess.headers3Style} >Last order details</h3>
-                    </Box>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      {tabPanelInput("Name:")}
-                      {tabPanelInput("Phone:")}
-                      {tabPanelInput("E-mail:")}
-                      {tabPanelInput("Address:")}
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      {tabPanelTextArea("General notes")}
-                      {tabPanelTextArea("Open Orders notes")}
-                      {tabPanelTextArea("Close Orders notes")}
-                    </div>
+          <div style={clasess.filterStyle}>
+            <div style={{ display: "flex", alignItems: "center", marginRight: "457px" }}>
+              <h3 style={clasess.headersStyle} >Open Orders:</h3>
+              <input readOnly={true} style={clasess.inputStyle} type="text" />
+            </div>
+          </div>
+          <div style={clasess.filterStyle}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <h3 style={clasess.headersStyle} >Vat number:</h3>
+              <input style={clasess.inputStyle} type="text" />
+            </div>
+            <div style={{ display: "flex", alignItems: "center", marginRight: "416px", }}>
+              <h3 style={clasess.headersStyle} >Currency</h3>
+              <GoMakeAutoComplate style={clasess.selectStyle} placeholder={null} options={CurrencyOptions}
+              />
+            </div>
+          </div>
+        </div>
+        <div>
+          <ThemeProvider theme={theme}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs value={selectedTab} onChange={handleTabChange} textColor="secondary" indicatorColor="secondary" >
+                <Tab label="General" />
+                <Tab label="Contacts" />
+                <Tab label="Addresses" />
+                <Tab label="Budget managment" />
+                <Tab label="Price lists" />
+                <Tab label="GOMAKE USERS" />
+              </Tabs>
+              {
+                //general info
+                selectedTab == 0 &&
+                <div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    {tabPanelInput("Phone1:" , customer?.tel1)}
+                    {tabPanelInput("Phone2:" , customer?.tel2)}
+                    {tabPanelInput("Site:" , customer?.name)}
                   </div>
-                }
-                {
-                  //contacts info
-                  selectedTab == 1 &&
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    {tabPanelInput("Main contact name:")}
+                    {tabPanelInput("Mobile:")}
+                    {tabPanelInput("Email:")}
+                    {tabPanelInput("Fax:")}
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    {tabPanelSwich("An occasional customer")}
+                    {tabPanelSwich("Sending a ready email")}
+                    {tabPanelSelect("Active:", StatusOptions, null)}
+                    {tabPanelSelect("Shipment Type:", ShipmentTypeOptions, "select shipment type")}
+                    {tabPanelSelect("Agent:", AgentsOptions, "select agent")}
+                  </div>
+                  <Box hidden={selectedTab !== 0} sx={{ p: 3 }} >
+                    <h3 style={clasess.headers3Style} >Last order details</h3>
+                  </Box>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    {tabPanelInput("Name:")}
+                    {tabPanelInput("Phone:")}
+                    {tabPanelInput("E-mail:")}
+                    {tabPanelInput("Address:")}
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    {tabPanelTextArea("General notes")}
+                    {tabPanelTextArea("Open Orders notes")}
+                    {tabPanelTextArea("Close Orders notes")}
+                  </div>
+                </div>
+              }
+              {
+                //contacts info
+                selectedTab == 1 &&
+                <div>
+                  <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyContact} >
+                    <PersonAddAltRoundedIcon style={{ fontSize: "1.1em", color: "#8283BE" }} > </PersonAddAltRoundedIcon>
+                    <Button style={{ color: "#8283BE" }} >add contact</Button>
+                  </a>
+                  {
+                    contacts.map(x =>
+                      <div key={x.index}>
+                        <ContactForm contact={x} onDelete={deleteContactForm}></ContactForm>
+                      </div>)
+                  }
+                </div>
+              }
+              {
+                //address info
+                selectedTab == 2 &&
+                <div>
+                  <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyAdress} >
+                    <AddHomeRoundedIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddHomeRoundedIcon>
+                    <Button style={{ color: "#8283BE" }}>new address</Button>
+                  </a>
+                  {
+                    addresses.map(x =>
+                      <div key={x.index}>
+                        <AddressForm address={x} onDelete={deleteAddressForm}></AddressForm>
+                      </div>)
+                  }
+                </div>
+              }
+              {
+                //budget info
+                selectedTab == 3 &&
+                <div>
+                  <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyBudget}  >
+                    <AddBoxIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddBoxIcon>
+                    <Button style={{ color: "#8283BE" }}>new budget</Button>
+                  </a>
+                  <div style={clasess.tableContainer}>
+                    <Table tableHeaders={tabelHeaders} tableRows={null} ></Table>
+                  </div>
+                </div>
+              }
+              {
+                //price list info
+                selectedTab == 4 &&
+                <PriceListForm></PriceListForm>
+              }
+              {
+                //GOMAKEUSER info
+                selectedTab == 5 &&
+                <div >
                   <div>
-                    <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyContact} >
-                      <PersonAddAltRoundedIcon style={{ fontSize: "1.1em", color: "#8283BE" }} > </PersonAddAltRoundedIcon>
-                      <Button style={{ color: "#8283BE" }} >add contact</Button>
+                    <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyClient} >
+                      <AddIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddIcon>
+                      <Button style={{ color: "#8283BE" }}>new client</Button>
                     </a>
                     {
-                      contacts.map(x =>
+                      useres.map(x =>
                         <div key={x.index}>
-                          <ContactForm contact={x} onDelete={deleteContactForm}></ContactForm>
+                          <CustomerForm user={x} onDelete={deleteClientForm}></CustomerForm>
                         </div>)
                     }
                   </div>
-                }
-                {
-                  //address info
-                  selectedTab == 2 &&
                   <div>
-                    <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyAdress} >
-                      <AddHomeRoundedIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddHomeRoundedIcon>
+                    <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyIPAddress} >
+                      <AddIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddIcon>
                       <Button style={{ color: "#8283BE" }}>new address</Button>
                     </a>
                     {
-                      addresses.map(x =>
+                      IPaddresses.map(x =>
                         <div key={x.index}>
-                          <AddressForm address={x} onDelete={deleteAddressForm}></AddressForm>
+                          <IPaddressForm IPaddress={x} onDelete={deleteIPAddressForm}></IPaddressForm>
                         </div>)
                     }
                   </div>
-                }
-                {
-                  //budget info
-                  selectedTab == 3 &&
-                  <div>
-                    <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyBudget}  >
-                      <AddBoxIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddBoxIcon>
-                      <Button style={{ color: "#8283BE" }}>new budget</Button>
-                    </a>
-                    <div style={clasess.tableContainer}>
-                      <Table tableHeaders={tabelHeaders} tableRows={null} ></Table>
-                    </div>
-                  </div>
-                }
-                {
-                  //price list info
-                  selectedTab == 4 &&
-                  <PriceListForm></PriceListForm>
-                }
-                {
-                  //GOMAKEUSER info
-                  selectedTab == 5 &&
-                  <div >
-                    <div>
-                      <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyClient} >
-                        <AddIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddIcon>
-                        <Button style={{ color: "#8283BE" }}>new client</Button>
-                      </a>
-                      {
-                        useres.map(x =>
-                          <div key={x.index}>
-                            <CustomerForm user={x} onDelete={deleteClientForm}></CustomerForm>
-                          </div>)
-                      }
-                    </div>
-                    <div>
-                      <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyIPAddress} >
-                        <AddIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddIcon>
-                        <Button style={{ color: "#8283BE" }}>new address</Button>
-                      </a>
-                      {
-                        IPaddresses.map(x =>
-                          <div key={x.index}>
-                            <IPaddressForm IPaddress={x} onDelete={deleteIPAddressForm}></IPaddressForm>
-                          </div>)
-                      }
-                    </div>
-                  </div>
-                }
-                <div style={{ display: "flex", justifyContent: "center", marginTop: "70px", marginBottom: "10px" }} >
-                  <GomakePrimaryButton style={clasess.autoButtonStyle} >add</GomakePrimaryButton>
                 </div>
-              </Box>
-            </ThemeProvider>
-          </div>
-        </GoMakeModal>
-      </Dialog>
+              }
+              <div style={{ display: "flex", justifyContent: "center", marginTop: "70px", marginBottom: "10px" }} >
+                {showAddButton && <GomakePrimaryButton style={clasess.autoButtonStyle} >add</GomakePrimaryButton>}
+                {showUpdateButton && <GomakePrimaryButton style={clasess.autoButtonStyle} >update</GomakePrimaryButton>}
+
+              </div>
+            </Box>
+          </ThemeProvider>
+        </div>
+      </GoMakeModal>
     </div>
 
   );

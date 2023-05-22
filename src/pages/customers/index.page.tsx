@@ -6,24 +6,30 @@ import { useStyle } from "./style";
 import { HeaderFilter } from "./header-filter";
 import { useCustomers } from "./use-customers";
 import { ButtonsWidget } from "@/widgets/add-customer-modal";
+import { GomakePrimaryButton } from "@/components";
+import { useState } from "react";
 
 
 export default function Home() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const { tabelHeaders, setAllCustomers, allCustomers,agentsCategores, customerTypes, statuses, categoryName, onChangeAgent, onChangeCustomer , onChangeStatus , handleClean , valAgent , valName ,valStatus} = useCustomers("C");
+  const { tabelHeaders, setAllCustomers, allCustomers, agentsCategores, customerTypes, statuses, onChangeAgent, onChangeCustomer, onChangeStatus, handleClean, valAgent, valName, valStatus } = useCustomers("C");
+  const [open, setOpen] = useState(false);
+
 
   return (
     <CustomerAuthLayout>
       <div style={clasess.sameRow}>
         <HeaderTitle title={t("customers.title")} />
-        <ButtonsWidget></ButtonsWidget>
+        <GomakePrimaryButton variant="contained" onClick={()=>setOpen(!open)} style={clasess.buttonStyle}>
+          Add Customer
+        </GomakePrimaryButton>
       </div>
+      <ButtonsWidget openModal={open} onClose={()=>setOpen(false)} showAddButton={true} ></ButtonsWidget>
       <HeaderFilter
         agentsCategores={agentsCategores}
         customerType={customerTypes}
         status={statuses}
-        categoryName={categoryName}
         onChangeAgent={onChangeAgent}
         onChangeCustomer={onChangeCustomer}
         onChangeStatus={onChangeStatus}

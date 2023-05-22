@@ -1,25 +1,22 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "./call-api.interface";
-import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
+import { ShowCustomerCard } from "@/pages/customers/show-customer-card";
 
 
-// need to change the endpoints of all the http request
-
-const getAndSetCustomers = async (
+const getAndSetCustomer = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
 ) => {
   const result: any = await callApi(
     "GET",
-    "/v1/suppliers/get-suppliers",
+    "/v1/customers/get-customer",
     data
   );
   return returnResult(result, setState);
 };
+    
 
-
-// not final
 const getAndSetAllCustomers = async (
   callApi: ICallApi,
   setState?: ISetState,
@@ -33,9 +30,13 @@ const getAndSetAllCustomers = async (
       name: customer.name,
       email: customer.mail ? customer.mail : "----",
       phone: customer.phone,
-      status: customer.isActive ?  "Active" : "Inactive",
+      status: customer.isActive ? "Active" : "Inactive",
       hashTag: (
-        <BusinessCenterIcon />
+        <div style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} >
+          <a>
+            <ShowCustomerCard item={customer} />
+          </a>
+        </div>
       ),
     };
   });
@@ -46,6 +47,6 @@ const getAndSetAllCustomers = async (
 };
 
 export {
-  getAndSetCustomers,
+  getAndSetCustomer,
   getAndSetAllCustomers,
 };
