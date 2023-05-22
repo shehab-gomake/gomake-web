@@ -8,7 +8,6 @@ import {
 import { useStyle } from "./style";
 import { profitsState } from "../../store/profits";
 import { useRecoilValue } from "recoil";
-import { AddIcon } from "@/icons";
 
 const AddTestProductModal = () => {
   const { t } = useTranslation();
@@ -43,7 +42,7 @@ const AddTestProductModal = () => {
               <div style={clasess.addBtnStyle}>
                 <GomakePrimaryButton
                   style={clasess.btnStyle}
-                  onClick={profitsStateValue?.onClickSendNewProduct}
+                  onClick={profitsStateValue?.onClickTestProduct}
                 >
                   {t("products.profits.startTest")}
                 </GomakePrimaryButton>

@@ -849,8 +849,12 @@
       "startTest": "Start test",
       "delete": "Delete",
       "deleteProduct": "Delete product",
-      "subTitleDeleteProduct": "Are you sure to delete product",
+      "subTitleDeleteProduct": "Are you sure to delete test product {{name}}",
       "testAgain": "Test again",
+      "testFailed": "Test failed",
+      "more": "More",
+      "details": "Details",
+      "itemName": "Item name",
       "admin": {
         "title": "Profits",
         "chooseAction": "Choose action"

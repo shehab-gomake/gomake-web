@@ -29,6 +29,16 @@ import { editPriceListState } from "./store/edit-price-list";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
 
 const useProfits = () => {
+  const [istimeOutForProductsTest, setIsTimeOutForProductsTest] =
+    useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsTimeOutForProductsTest(true);
+    }, 15000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const [machincesStateValue, setMachincesState] =
     useRecoilState<any>(machincesState);
   const [productsStateValue, setProductsState] =
@@ -310,8 +320,8 @@ const useProfits = () => {
     },
     [testProductState]
   );
-  const onClickSendNewProduct = useCallback(async () => {
-    console.log("testProductState", testProductState);
+
+  const onClickTestProduct = useCallback(async () => {
     const data = await generateCalaculationTestLink(
       callApi,
       setCalculationTestLink,
@@ -323,8 +333,36 @@ const useProfits = () => {
     if (data?.url) {
       const fullUrl: any = `https://qa.gomake.co.il${data?.url}`;
       window.location = fullUrl;
+    } else if (!data?.url) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("products.profits.testFailed"),
+        type: "error",
+      });
     }
-  }, [testProductState]);
+  }, [testProductState, selectedAction]);
+
+  const deleteTestProductResult = useCallback(async () => {
+    const res = await callApi(
+      "DELETE",
+      `/v1/printhouse-config/products/delete-product-price-test-result?actionId=${selectedAction?.id}&productId=${testProductState}`
+    );
+    if (res?.success) {
+      getTestProducts();
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.deleteSusuccessfully"),
+        type: "sucess",
+      });
+      getActionExceptionProfitRowByActionExceptionId();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.deletefailed"),
+        type: "error",
+      });
+    }
+  }, [testProductState, selectedAction]);
 
   const [state, setState] = useState<any>({});
   const onChangeState = (key: any, value: any) => {
@@ -537,6 +575,9 @@ const useProfits = () => {
     state,
     selectedExceptionProfit,
     openDeleteExceptionProfitModal,
+    istimeOutForProductsTest,
+    deleteTestProductResult,
+    setTestProductState,
     onClickSaveNewActionExceptionProfitRow,
     updateActionExceptionProfitRow,
     deleteActionExceptionProfitRow,
@@ -549,7 +590,7 @@ const useProfits = () => {
     setState,
     onChangeState,
     addedNewException,
-    onClickSendNewProduct,
+    onClickTestProduct,
     onChangeAddNewTestProduct,
     setOpenAddTestProductModal,
     onClickSaveNewActionProfitRow,

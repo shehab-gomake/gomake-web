@@ -12,7 +12,7 @@ const getAndSetGetAllTestProductsByActionId = async (
     const myArry = productsStateValue.find(
       (product: any) => product?.id == testProductItemId
     );
-    return myArry?.name;
+    return { name: myArry?.name, id: myArry.id };
   };
   const result: any = await callApi(
     "GET",
@@ -22,8 +22,8 @@ const getAndSetGetAllTestProductsByActionId = async (
   const _data = returnResult(result, undefined);
   const mapData = _data.map((item: any) => {
     return {
-      name: renderProduct(item),
-      more: <ProductTestListMoreCircleWidget item={item} />,
+      ...renderProduct(item),
+      more: <ProductTestListMoreCircleWidget item={renderProduct(item)} />,
     };
   });
   if (setState) {
