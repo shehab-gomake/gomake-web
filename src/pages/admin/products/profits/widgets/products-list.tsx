@@ -17,9 +17,9 @@ const ProductList = () => {
         <div style={clasess.titleHederTextStyle}>
           {t("products.profits.itemName")}
         </div>
-        <div style={clasess.titleHederTextStyle}>
+        {/* <div style={clasess.titleHederTextStyle}>
           {t("products.profits.details")}
-        </div>
+        </div> */}
         <div style={clasess.titleHederTextStyle}>
           {t("products.profits.more")}
         </div>

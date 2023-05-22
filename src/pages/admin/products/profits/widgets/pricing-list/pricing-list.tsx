@@ -24,8 +24,6 @@ const PricingList = ({ tableHeaders }: IProps) => {
   const profitsValue = useRecoilValue<any>(profitsState);
 
   const actionProfitRowsVal = useRecoilValue<any>(actionProfitRows);
-  console.log("actionProfitRowsVal", actionProfitRowsVal);
-
   const { t } = useTranslation();
 
   useEffect(() => {

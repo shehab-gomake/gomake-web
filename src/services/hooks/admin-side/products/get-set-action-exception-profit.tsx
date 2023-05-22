@@ -8,7 +8,6 @@ const getAndSetActionExceptionProfitRowByActionExceptionId = async (
   actionProfits?: any,
   data?: any
 ) => {
-  console.log("actionProfits", actionProfits);
   const result: any = await callApi(
     "GET",
     `/v1/printhouse-config/profits/get-action-exeption-profit-row-by-exeption-id`,
