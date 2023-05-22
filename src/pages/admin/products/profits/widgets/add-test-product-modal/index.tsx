@@ -45,7 +45,7 @@ const AddTestProductModal = () => {
                   style={clasess.btnStyle}
                   onClick={profitsStateValue?.onClickSendNewProduct}
                 >
-                  {t("products.profits.send")}
+                  {t("products.profits.startTest")}
                 </GomakePrimaryButton>
               </div>
             </div>
