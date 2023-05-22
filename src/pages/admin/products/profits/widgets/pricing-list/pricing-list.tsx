@@ -7,7 +7,7 @@ import { GoMakeAutoComplate } from "@/components";
 import { Header } from "./header";
 import { Row } from "./row";
 import { useRecoilValue } from "recoil";
-import { actionProfitLists } from "@/store";
+import { actionProfitLists, actionProfitRows } from "@/store";
 import { Plus } from "./icons/plus";
 import { profitsState } from "../../store/profits";
 import { AddPricingListRowWidget } from "./add-pricing-row-widget";
@@ -22,6 +22,10 @@ const PricingList = ({ tableHeaders }: IProps) => {
   const { clasess } = useStyle();
   const [istimeOut, setIsTimeOut] = useState(false);
   const profitsValue = useRecoilValue<any>(profitsState);
+
+  const actionProfitRowsVal = useRecoilValue<any>(actionProfitRows);
+  console.log("actionProfitRowsVal", actionProfitRowsVal);
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -77,21 +81,19 @@ const PricingList = ({ tableHeaders }: IProps) => {
           })}
         </div>
         <div style={clasess.tableBody}>
-          {actionProfits?.actionProfitRowsMapped?.length > 0 ? (
+          {actionProfitRowsVal?.length > 0 ? (
             <>
-              {actionProfits?.actionProfitRowsMapped?.map(
-                (row: any, index: number) => {
-                  return (
-                    <div key={`body_row${index}`} style={{ width: "100%" }}>
-                      <Row
-                        row={row}
-                        width={`${100 / (Object.entries(row).length - 1)}%`}
-                      />
-                      <div style={clasess.line}></div>
-                    </div>
-                  );
-                }
-              )}
+              {actionProfitRowsVal?.map((row: any, index: number) => {
+                return (
+                  <div key={`body_row${index}`} style={{ width: "100%" }}>
+                    <Row
+                      row={row}
+                      width={`${100 / (Object.entries(row).length - 1)}%`}
+                    />
+                    <div style={clasess.line}></div>
+                  </div>
+                );
+              })}
             </>
           ) : (
             <>

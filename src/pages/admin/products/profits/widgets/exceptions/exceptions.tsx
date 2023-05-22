@@ -39,11 +39,7 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
                 {_tableRows?.map((row: any, index: number) => {
                   return (
                     <>
-                      <Row
-                        key={`body_row${index}`}
-                        row={row}
-                        // width={`${100 / Object.entries(row).length}%`}
-                      />
+                      <Row key={`body_row${index}`} row={row} />
                     </>
                   );
                 })}

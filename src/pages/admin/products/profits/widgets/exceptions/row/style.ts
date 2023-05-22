@@ -2,7 +2,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const useStyle = () => {
+const useStyle = ({ row }: any) => {
   const { primaryColor, secondColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
@@ -13,6 +13,10 @@ const useStyle = () => {
         alignItems: "center",
         height: 60,
         position: "relative" as "relative",
+        cursor:
+          row?.exceptionType === "EditBase" || row?.exceptionType === "NewBase"
+            ? "pointer"
+            : "",
       },
       rowItem: {
         display: "flex",

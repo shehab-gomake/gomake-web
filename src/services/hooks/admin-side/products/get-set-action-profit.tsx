@@ -1,12 +1,11 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../../call-api.interface";
-import { IconButton } from "@mui/material";
-import { MoreCircleIcon } from "@/icons";
 import { PricingListMenuWidget } from "@/pages/admin/products/profits/widgets/pricing-list/more-circle";
 
 const getAndSetActionProfitRowByActionId = async (
   callApi: ICallApi,
   setState?: ISetState,
+  setActionProfitRows?: any,
   machincesStateValue?: any,
   productsStateValue?: any,
   clientTypesStateValue?: any,
@@ -53,7 +52,6 @@ const getAndSetActionProfitRowByActionId = async (
             height: item?.height,
           }
         : { quantity: item?.quantity }),
-
       cost: item?.cost,
       profit: item?.profit,
       meterPrice: item?.meterPrice,
@@ -70,10 +68,13 @@ const getAndSetActionProfitRowByActionId = async (
       exceptionType:
         item?.exceptionType === 0
           ? `Additional (${item?.additionalProfit})`
-          : "NewBase",
+          : item?.exceptionType === 1
+          ? "NewBase"
+          : "EditBase",
       id: item?.id,
     };
   });
+  setActionProfitRows(mapData);
   _data.actionProfitRowsMapped = mapData;
   _data.actionExpectionRowsMapped = mapActionExpections;
   if (setState) {
