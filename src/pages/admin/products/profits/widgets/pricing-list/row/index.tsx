@@ -7,12 +7,16 @@ import SaveIcon from "@mui/icons-material/Save";
 import { useTranslation } from "react-i18next";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { profitsState } from "../../../store/profits";
+import { actionExceptionProfitId } from "@/store";
 
 const Row = ({ row, width }: any) => {
   const { clasess } = useStyle({ width });
   const [editPriceListStateValue, setEditPriceListState] =
     useRecoilState<any>(editPriceListState);
   const profitsStateValue = useRecoilValue<any>(profitsState);
+  const actionExceptionProfitIdValue = useRecoilValue<any>(
+    actionExceptionProfitId
+  );
   const { t } = useTranslation();
   return (
     <div style={clasess.bodyRow}>
@@ -59,7 +63,11 @@ const Row = ({ row, width }: any) => {
           <div style={clasess.controlsContainer}>
             <Tooltip title={t("materials.buttons.saveModifications")}>
               <IconButton
-                onClick={() => profitsStateValue?.updateActionProfitRow()}
+                onClick={
+                  actionExceptionProfitIdValue
+                    ? () => profitsStateValue?.updateActionExceptionProfitRow()
+                    : () => profitsStateValue?.updateActionProfitRow()
+                }
               >
                 <SaveIcon style={{ color: "#a1a2cd" }} />
               </IconButton>

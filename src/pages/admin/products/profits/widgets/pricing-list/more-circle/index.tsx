@@ -6,12 +6,15 @@ import { GoMakeMenu } from "@/components";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { profitsState } from "../../../store/profits";
 import { editPriceListState } from "../../../store/edit-price-list";
+import { actionExceptionProfitId } from "@/store";
 
 const PricingListMenuWidget = ({ item }: any) => {
   const { open, handleClose, handleClick, anchorEl } = usePricingListMenu();
   const profitsStateValue = useRecoilValue<any>(profitsState);
-  const [editPriceListStateValue, setEditPriceListState] =
-    useRecoilState<any>(editPriceListState);
+  const [, setEditPriceListState] = useRecoilState<any>(editPriceListState);
+  const actionExceptionProfitIdValue = useRecoilValue<any>(
+    actionExceptionProfitId
+  );
 
   return (
     <>
@@ -32,7 +35,12 @@ const PricingListMenuWidget = ({ item }: any) => {
           Edit
         </MenuItem>
         <MenuItem
-          onClick={() => profitsStateValue?.deleteActionProfitRow(item?.id)}
+          onClick={
+            actionExceptionProfitIdValue
+              ? () =>
+                  profitsStateValue?.deleteActionExceptionProfitRow(item?.id)
+              : () => profitsStateValue?.deleteActionProfitRow(item?.id)
+          }
         >
           Delete
         </MenuItem>

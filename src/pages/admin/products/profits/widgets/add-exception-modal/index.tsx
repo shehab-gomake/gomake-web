@@ -149,6 +149,7 @@ const AddExceptionModal = () => {
                   options={[
                     { label: "Additional", value: 0 },
                     { label: "NewBase", value: 1 },
+                    { label: "EditBase", value: 2 },
                   ]}
                   placeholder={t(
                     "products.profits.exceptions.selectScopeOfChange"
