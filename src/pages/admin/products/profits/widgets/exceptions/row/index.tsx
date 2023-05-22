@@ -7,7 +7,7 @@ import { useRecoilValue } from "recoil";
 import { profitsState } from "../../../store/profits";
 
 const Row = ({ key, row }: any) => {
-  const { clasess } = useStyle();
+  const { clasess } = useStyle({ row });
   const profitsStateValue = useRecoilValue<any>(profitsState);
   return (
     <>
@@ -15,7 +15,16 @@ const Row = ({ key, row }: any) => {
         {Object.entries(row).map((entry: [string, any], index: number) => {
           if (entry[0] !== "id") {
             return (
-              <div key={`row_table_${index}`} style={clasess.rowItem}>
+              <div
+                key={`row_table_${index}`}
+                style={clasess.rowItem}
+                onClick={
+                  row?.exceptionType === "NewBase" ||
+                  row?.exceptionType === "EditBase"
+                    ? () => console.log("entry", row)
+                    : null
+                }
+              >
                 {entry[1]}
               </div>
             );
