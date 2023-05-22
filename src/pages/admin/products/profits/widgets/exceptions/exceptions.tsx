@@ -8,10 +8,14 @@ import { AddExceptionModal } from "../add-exception-modal";
 import { useRecoilValue } from "recoil";
 import { profitsState } from "../../store/profits";
 import { useExceptions } from "./use-exception";
+import { actionExceptionProfitId } from "@/store";
 
 const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
+  const actionExceptionProfitIdValue = useRecoilValue<any>(
+    actionExceptionProfitId
+  );
   const { istimeOut, _tableRows, t } = useExceptions({
     tableRows,
   });
@@ -37,10 +41,26 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
             {_tableRows?.length > 0 ? (
               <>
                 {_tableRows?.map((row: any, index: number) => {
+                  console.log("row", row);
+                  console.log(
+                    "actionExceptionProfitIdValue",
+                    actionExceptionProfitIdValue
+                  );
                   return (
-                    <>
+                    <div
+                      key={`body_row${index}`}
+                      style={
+                        row?.id === actionExceptionProfitIdValue
+                          ? {
+                              backgroundColor: "#EBECFF",
+                              width: "100%",
+                              marginTop: 5,
+                            }
+                          : { width: "100%", marginTop: 5 }
+                      }
+                    >
                       <Row key={`body_row${index}`} row={row} />
-                    </>
+                    </div>
                   );
                 })}
               </>
