@@ -21,7 +21,10 @@ const Row = ({ key, row }: any) => {
                 onClick={
                   row?.exceptionType === "NewBase" ||
                   row?.exceptionType === "EditBase"
-                    ? () => console.log("entry", row)
+                    ? () =>
+                        profitsStateValue?.onCklickActionExceptionProfitRow(
+                          row?.id
+                        )
                     : null
                 }
               >

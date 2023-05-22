@@ -132,6 +132,21 @@ const useProfits = () => {
         }
       );
     }, [actionExceptionProfitIdValue]);
+
+  const onCklickActionExceptionProfitRow = useCallback(
+    async (id: string) => {
+      await getAndSetActionExceptionProfitRowByActionExceptionId(
+        callApi,
+        setActionExceptionProfitRows,
+        actionProfits,
+        {
+          ActionExceptionId: id,
+        }
+      );
+      setactionExceptionProfitId(id);
+    },
+    [actionExceptionProfitIdValue]
+  );
   const getMachincesProfits = useCallback(async () => {
     await getAndSetMachinces(callApi, setMachincesState);
   }, []);
@@ -390,7 +405,6 @@ const useProfits = () => {
       }
     );
     if (res?.success) {
-      console.log("res?.data?.data?.result", res?.data?.data?.result);
       if (res?.data?.data?.result?.exceptionType === 1) {
         setActionExceptionProfitRows(
           res?.data?.data?.result?.expectionProfitRows
@@ -575,6 +589,7 @@ const useProfits = () => {
     state,
     selectedExceptionProfit,
     openDeleteExceptionProfitModal,
+    onCklickActionExceptionProfitRow,
     istimeOutForProductsTest,
     deleteTestProductResult,
     setTestProductState,

@@ -4,6 +4,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = ({ row }: any) => {
   const { primaryColor, secondColor } = useGomakeTheme();
+
   const clasess = useMemo(() => {
     return {
       bodyRow: {
@@ -17,6 +18,7 @@ const useStyle = ({ row }: any) => {
           row?.exceptionType === "EditBase" || row?.exceptionType === "NewBase"
             ? "pointer"
             : "",
+        gap: 5,
       },
       rowItem: {
         display: "flex",
