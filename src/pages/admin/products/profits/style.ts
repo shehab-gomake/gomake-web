@@ -3,13 +3,12 @@ import i18next from "i18next";
 
 import { useTranslation } from "react-i18next";
 
-import { convertWidthToVW } from "@/utils/adapter";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-
+import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor } = useGomakeTheme();
+  const { primaryColor, secondColor } = useGomakeTheme();
 
   const clasess = useMemo(() => {
     return {
@@ -20,6 +19,19 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         paddingRight: 34,
+      },
+      skeletonRowStyle: {
+        marginTop: convertHeightToVH(10),
+      },
+      noDataContainer: {
+        display: "flex",
+        width: "100%",
+        justifyContent: "space-around",
+        alignItems: "center",
+        color: secondColor(500),
+        height: 200,
+        lineHeight: "17.5px",
+        ...FONT_FAMILY.Lexend(500, 22),
       },
       //Header Filter Style
       filterContainer: {

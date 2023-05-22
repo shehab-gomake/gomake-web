@@ -3,9 +3,8 @@ import { useProductListMoreCircle } from "./use-product-list-more-circle";
 import { IconButton, MenuItem } from "@mui/material";
 import { MoreCircleIcon } from "@/icons";
 import { GoMakeDeleteModal, GoMakeMenu } from "@/components";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { profitsState } from "../../../store/profits";
-import { editPriceListState } from "../../../store/edit-price-list";
 
 const ProductTestListMoreCircleWidget = ({ item }: any) => {
   const {
@@ -19,10 +18,6 @@ const ProductTestListMoreCircleWidget = ({ item }: any) => {
     onCloseDeleteModal,
   } = useProductListMoreCircle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
-  console.log(
-    "profitsStateValue.testProductsState",
-    profitsStateValue.testProductsState
-  );
 
   return (
     <>
@@ -31,9 +26,10 @@ const ProductTestListMoreCircleWidget = ({ item }: any) => {
       </IconButton>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
         <MenuItem
-          onClick={() => {
-            console.log("resend");
-          }}
+          onClick={
+            (profitsStateValue?.setTestProductState(item?.id),
+            profitsStateValue?.onClickTestProduct)
+          }
         >
           {t("products.profits.testAgain")}
         </MenuItem>
@@ -46,11 +42,13 @@ const ProductTestListMoreCircleWidget = ({ item }: any) => {
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t(
-          "products.profits.subTitleDeleteProduct"
-          //{ name: `${item?.name}`,}
-        )}?`}
-        onClickDelete={""}
+        subTitle={`${t("products.profits.subTitleDeleteProduct", {
+          name: `${item?.name}`,
+        })}?`}
+        onClickDelete={
+          (profitsStateValue?.setTestProductState(item?.id),
+          profitsStateValue?.deleteTestProductResult)
+        }
       />
     </>
   );
