@@ -17,19 +17,19 @@ interface IProps {
 }
 
 const PricingList = ({ tableHeaders }: IProps) => {
+  const { t } = useTranslation();
   const actionProfits = useRecoilValue<any>(actionProfitLists);
   const profitsStateValue = useRecoilValue<any>(profitsState);
-  const { clasess } = useStyle();
-  const [istimeOut, setIsTimeOut] = useState(false);
   const profitsValue = useRecoilValue<any>(profitsState);
-
   const actionProfitRowsVal = useRecoilValue<any>(actionProfitRows);
-  const { t } = useTranslation();
 
+  const [istimeOut, setIsTimeOut] = useState(false);
+  const { clasess } = useStyle();
+  console.log("typeof actionProfitRowsVal", typeof actionProfitRowsVal);
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsTimeOut(true);
-    }, 15000);
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
   return (
@@ -79,7 +79,28 @@ const PricingList = ({ tableHeaders }: IProps) => {
           })}
         </div>
         <div style={clasess.tableBody}>
-          {actionProfitRowsVal?.length > 0 ? (
+          {typeof actionProfitRowsVal === "string" ? (
+            <>
+              <Skeleton
+                variant="rectangular"
+                width={"100%"}
+                height={68}
+                style={clasess.skeletonRowStyle}
+              />
+              <Skeleton
+                variant="rectangular"
+                width={"100%"}
+                height={68}
+                style={clasess.skeletonRowStyle}
+              />
+              <Skeleton
+                variant="rectangular"
+                width={"100%"}
+                height={68}
+                style={clasess.skeletonRowStyle}
+              />
+            </>
+          ) : actionProfitRowsVal?.length > 0 ? (
             <>
               {actionProfitRowsVal?.map((row: any, index: number) => {
                 return (
@@ -94,35 +115,7 @@ const PricingList = ({ tableHeaders }: IProps) => {
               })}
             </>
           ) : (
-            <>
-              {!istimeOut ? (
-                <>
-                  <Skeleton
-                    variant="rectangular"
-                    width={"100%"}
-                    height={68}
-                    style={clasess.skeletonRowStyle}
-                  />
-                  <Skeleton
-                    variant="rectangular"
-                    width={"100%"}
-                    height={68}
-                    style={clasess.skeletonRowStyle}
-                  />
-                  <Skeleton
-                    variant="rectangular"
-                    width={"100%"}
-                    height={68}
-                    style={clasess.skeletonRowStyle}
-                  />
-                </>
-              ) : (
-                <div style={clasess.noDataContainer}>
-                  {" "}
-                  {t("skeleton.noData")}
-                </div>
-              )}
-            </>
+            <div style={clasess.noDataContainer}> {t("skeleton.noData")}</div>
           )}
         </div>
         {profitsValue?.openAddNewPricingStepRow && (

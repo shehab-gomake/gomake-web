@@ -10,6 +10,7 @@ import {
   machincesState,
   parametersState,
   productsState,
+  chartDataByActionProfitRow,
 } from "@/store";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { GoMakeAutoComplate } from "@/components";
@@ -25,6 +26,7 @@ import {
   generateCalaculationTestLink,
   getAndSetGetAllTestProductsByActionId,
   getAndSetGetActionProfitTestResultsByActionId,
+  getAndSetActionProfitRowChartData,
 } from "@/services/hooks";
 import { editPriceListState } from "./store/edit-price-list";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
@@ -39,6 +41,7 @@ const useProfits = () => {
     }, 15000);
     return () => clearTimeout(timer);
   }, []);
+  const setChartDataValue = useSetRecoilState<any>(chartDataByActionProfitRow);
 
   const [machincesStateValue, setMachincesState] =
     useRecoilState<any>(machincesState);
@@ -123,6 +126,8 @@ const useProfits = () => {
 
   const getActionExceptionProfitRowByActionExceptionId =
     useCallback(async () => {
+      console.log("getActionExceptionProfitRowByActionExceptionId");
+      setActionExceptionProfitRows("");
       await getAndSetActionExceptionProfitRowByActionExceptionId(
         callApi,
         setActionExceptionProfitRows,
@@ -133,8 +138,25 @@ const useProfits = () => {
       );
     }, [actionExceptionProfitIdValue]);
 
+  const getActionProfitRowChartData = useCallback(async () => {
+    await getAndSetActionProfitRowChartData(
+      callApi,
+      setChartDataValue,
+      {
+        actionProfitId: actionProfits?.id,
+      },
+      actionProfits?.pricingBy
+    );
+  }, [actionProfits]);
+
+  useEffect(() => {
+    getActionProfitRowChartData();
+  }, [actionProfits]);
+
   const onCklickActionExceptionProfitRow = useCallback(
     async (id: string) => {
+      console.log("onCklickActionExceptionProfitRow");
+      setActionExceptionProfitRows("");
       await getAndSetActionExceptionProfitRowByActionExceptionId(
         callApi,
         setActionExceptionProfitRows,
@@ -150,6 +172,8 @@ const useProfits = () => {
 
   const onCklickActionProfitTestResultsByActionId = useCallback(
     async (productId: string) => {
+      console.log("onCklickActionProfitTestResultsByActionId");
+      setActionExceptionProfitRows("");
       await getAndSetGetActionProfitTestResultsByActionId(
         callApi,
         setActionExceptionProfitRows,
@@ -422,7 +446,6 @@ const useProfits = () => {
       });
     }
   }, [testProductState, selectedAction]);
-
   const [state, setState] = useState<any>({});
   const onChangeState = (key: any, value: any) => {
     setState((prevState: any) => {
@@ -519,7 +542,6 @@ const useProfits = () => {
     },
     [selectedAction]
   );
-
   const deleteActionProfitRow = useCallback(
     async (id: string) => {
       const res = await callApi(

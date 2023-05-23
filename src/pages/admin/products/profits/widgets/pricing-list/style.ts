@@ -37,7 +37,7 @@ const useStyle = () => {
         justifyContent: "space-around",
         alignItems: "center",
         color: secondColor(500),
-        height: 200,
+        height: 100,
         lineHeight: "17.5px",
         ...FONT_FAMILY.Lexend(500, 22),
       },

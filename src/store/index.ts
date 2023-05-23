@@ -16,3 +16,4 @@ export * from "./parameters";
 export * from "./client-types";
 export * from "./action-profit-rows";
 export * from "./action-exception-profit-id";
+export * from "./action-profit-row-chart-data";
