@@ -10,6 +10,7 @@ import { PricingList } from "./widgets/pricing-list/pricing-list";
 import { useStyle } from "./style";
 import { Exceptions } from "./widgets/exceptions/exceptions";
 import { actionProfitLists } from "@/store";
+import { ChartVidget } from "./widgets/chart";
 
 export default function Profits() {
   const setProfitsState = useSetRecoilState<any>(profitsState);
@@ -171,6 +172,7 @@ export default function Profits() {
             <div style={clasess.pricingAndExceptionsCointaner}>
               <div style={clasess.pricingCointaner}>
                 <PricingList tableHeaders={tabelPricingHeaders} />
+                <ChartVidget />
               </div>
               <div style={clasess.exceptionsCointaner}>
                 <Exceptions
