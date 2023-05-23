@@ -85,7 +85,7 @@ const useStyle = () => {
         gap: 20,
       },
       minCointaner: {
-        width: "25%",
+        width: "100%",
         ...FONT_FAMILY.Lexend(400, 14),
         fontStyle: "normal",
         lineHeight: "18px",
@@ -95,6 +95,12 @@ const useStyle = () => {
         display: "flex",
         justifyContent: "flex-start",
         alignItems: "center",
+        marginTop: 15,
+        gap: 15,
+      },
+      textInputStyle: {
+        width: 120,
+        height: 40,
       },
       addNewException: {
         width: "100%",

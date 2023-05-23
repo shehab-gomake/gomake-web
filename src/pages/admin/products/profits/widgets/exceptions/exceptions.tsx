@@ -8,11 +8,15 @@ import { AddExceptionModal } from "../add-exception-modal";
 import { useRecoilValue } from "recoil";
 import { profitsState } from "../../store/profits";
 import { useExceptions } from "./use-exception";
-import { actionExceptionProfitId } from "@/store";
+import { actionExceptionProfitId, actionProfitLists } from "@/store";
+import { UpdateMinPrice } from "./update-min-price";
+import { useEffect } from "react";
 
 const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
+  const actionProfits = useRecoilValue<any>(actionProfitLists);
+
   const actionExceptionProfitIdValue = useRecoilValue<any>(
     actionExceptionProfitId
   );
@@ -41,11 +45,6 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
             {_tableRows?.length > 0 ? (
               <>
                 {_tableRows?.map((row: any, index: number) => {
-                  console.log("row", row);
-                  console.log(
-                    "actionExceptionProfitIdValue",
-                    actionExceptionProfitIdValue
-                  );
                   return (
                     <div
                       key={`body_row${index}`}
@@ -99,7 +98,10 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
 
           <div style={clasess.minCointaner}>
             {t("products.profits.exceptions.min")}
-            {20}$
+            <UpdateMinPrice
+              minValue={actionProfits?.minPrice}
+              profitsStateValue={profitsStateValue}
+            />
           </div>
           <div
             style={clasess.addNewException}

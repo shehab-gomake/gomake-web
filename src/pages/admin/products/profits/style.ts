@@ -82,6 +82,7 @@ const useStyle = () => {
         paddingTop: convertWidthToVW(16),
         paddingBottom: convertWidthToVW(16),
         paddingLeft: convertWidthToVW(12),
+        cursor: "pointer",
       },
       bodyTableEvenContainer: {
         display: "flex",
@@ -93,6 +94,7 @@ const useStyle = () => {
         paddingTop: convertWidthToVW(16),
         paddingBottom: convertWidthToVW(16),
         paddingLeft: convertWidthToVW(12),
+        cursor: "pointer",
       },
       nameStyle: {
         width: "20%",

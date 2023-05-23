@@ -24,6 +24,7 @@ import {
   getAndSetActionExceptionProfitRowByActionExceptionId,
   generateCalaculationTestLink,
   getAndSetGetAllTestProductsByActionId,
+  getAndSetGetActionProfitTestResultsByActionId,
 } from "@/services/hooks";
 import { editPriceListState } from "./store/edit-price-list";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
@@ -73,7 +74,6 @@ const useProfits = () => {
     setOpenDeleteExceptionProfitModal(false);
   };
   const [calculationTestLink, setCalculationTestLink] = useState("");
-
   const onOpenDeleteExceptionProfitModal = (item: any) => {
     setSelectedExceptionProfit(item);
     setOpenDeleteExceptionProfitModal(true);
@@ -146,6 +146,22 @@ const useProfits = () => {
       setactionExceptionProfitId(id);
     },
     [actionExceptionProfitIdValue]
+  );
+
+  const onCklickActionProfitTestResultsByActionId = useCallback(
+    async (productId: string) => {
+      await getAndSetGetActionProfitTestResultsByActionId(
+        callApi,
+        setActionExceptionProfitRows,
+        actionProfits,
+        {
+          actionId: selectedAction?.id,
+          productId: productId,
+        }
+      );
+      setactionExceptionProfitId(productId);
+    },
+    [selectedAction]
   );
   const getMachincesProfits = useCallback(async () => {
     await getAndSetMachinces(callApi, setMachincesState);
@@ -258,6 +274,34 @@ const useProfits = () => {
         }
       );
       getActionProfits();
+    },
+    [actionProfits]
+  );
+  const updateActionProfitMinPrice = useCallback(
+    async (value) => {
+      const res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/profits/update-action-profit`,
+        {
+          printingActionId: actionProfits?.printingActionId,
+          id: actionProfits?.id,
+          recordID: actionProfits?.recordID,
+          minPrice: value,
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedSusuccessfully"),
+          type: "sucess",
+        });
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedfailed"),
+          type: "error",
+        });
+      }
     },
     [actionProfits]
   );
@@ -589,14 +633,16 @@ const useProfits = () => {
     state,
     selectedExceptionProfit,
     openDeleteExceptionProfitModal,
-    onCklickActionExceptionProfitRow,
     istimeOutForProductsTest,
+    testProductsState,
+    updateActionProfitMinPrice,
+    onCklickActionExceptionProfitRow,
+    onCklickActionProfitTestResultsByActionId,
     deleteTestProductResult,
     setTestProductState,
     onClickSaveNewActionExceptionProfitRow,
     updateActionExceptionProfitRow,
     deleteActionExceptionProfitRow,
-    testProductsState,
     updateActionProfitRow,
     deleteActionProfitRow,
     onCloseDeleteExceptionProfitModal,

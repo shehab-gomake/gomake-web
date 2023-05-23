@@ -1,11 +1,13 @@
+import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
-import { useStyle } from "../style";
-import { profitsState } from "../store/profits";
-import { AddIcon } from "@/icons";
 import { Skeleton } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { AddIcon } from "@/icons";
+
 import { AddTestProductModal } from "./add-test-product-modal";
+import { profitsState } from "../store/profits";
+
+import { useStyle } from "../style";
 
 const ProductList = () => {
   const { t } = useTranslation();
@@ -17,15 +19,12 @@ const ProductList = () => {
         <div style={clasess.titleHederTextStyle}>
           {t("products.profits.itemName")}
         </div>
-        {/* <div style={clasess.titleHederTextStyle}>
-          {t("products.profits.details")}
-        </div> */}
         <div style={clasess.titleHederTextStyle}>
           {t("products.profits.more")}
         </div>
       </div>
       <div style={{ width: "100%" }}>
-        {profitsStateValue?.testProductsState.length > 0 ? (
+        {profitsStateValue?.testProductsState?.length > 0 ? (
           <>
             {profitsStateValue?.testProductsState?.map(
               (item: any, index: any) => {
@@ -36,9 +35,13 @@ const ProductList = () => {
                         ? clasess.bodyTableEvenContainer
                         : clasess.bodyTableOddContainer
                     }
+                    onClick={() =>
+                      profitsStateValue?.onCklickActionProfitTestResultsByActionId(
+                        item?.id
+                      )
+                    }
                   >
                     <div style={clasess.nameStyle}>{item?.name}</div>
-                    <div style={clasess.detailsStyle}>{item?.details}</div>
                     <div style={clasess.moreStyle}>{item?.more}</div>
                   </div>
                 );
