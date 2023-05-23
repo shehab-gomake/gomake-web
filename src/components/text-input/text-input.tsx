@@ -62,6 +62,7 @@ const GomakeTextInput = ({
   onKeyDown,
   multiline,
   InputProps,
+  key,
 }: {
   labelText?: string;
   value?: string;
@@ -74,6 +75,7 @@ const GomakeTextInput = ({
   onKeyDown?: any;
   multiline?: any;
   InputProps?: any;
+  key?: any;
 }) => {
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
   return (
@@ -92,6 +94,7 @@ const GomakeTextInput = ({
       secondColor={secondColor}
       primaryColor={primaryColor}
       errorColor={errorColor}
+      key={key}
     />
   );
 };

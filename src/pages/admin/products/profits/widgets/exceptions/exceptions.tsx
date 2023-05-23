@@ -10,7 +10,6 @@ import { profitsState } from "../../store/profits";
 import { useExceptions } from "./use-exception";
 import { actionExceptionProfitId, actionProfitLists } from "@/store";
 import { UpdateMinPrice } from "./update-min-price";
-import { useEffect } from "react";
 
 const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
   const { clasess } = useStyle();
@@ -98,10 +97,7 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
 
           <div style={clasess.minCointaner}>
             {t("products.profits.exceptions.min")}
-            <UpdateMinPrice
-              minValue={actionProfits?.minPrice}
-              profitsStateValue={profitsStateValue}
-            />
+            <UpdateMinPrice />
           </div>
           <div
             style={clasess.addNewException}
