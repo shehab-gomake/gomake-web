@@ -1,6 +1,6 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "./call-api.interface";
-import { ShowCustomerCard } from "@/pages/customers/show-customer-card";
+import { ShowCustomerCard } from "@/pages/customers/edit-customer";
 
 
 const getAndSetCustomer = async (

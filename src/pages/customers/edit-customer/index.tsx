@@ -2,7 +2,7 @@ import { getAndSetCustomer } from "@/services/hooks/get-set-customers";
 import { IconButton } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import { useCallback, useEffect, useState } from "react";
-import { ButtonsWidget } from "@/widgets/add-customer-modal";
+import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { useGomakeAxios } from "@/hooks";
 
 const ShowCustomerCard = ({ item }: any) => {
@@ -27,7 +27,7 @@ const ShowCustomerCard = ({ item }: any) => {
       <IconButton>
         <EditIcon onClick={()=>setOpen(!open)} />
       </IconButton>
-      {customer && <ButtonsWidget openModal={open} onClose={() => setOpen(false)} customer={customer} showUpdateButton={true}></ButtonsWidget>}
+      {customer && <CustomerCardWidget openModal={open} modalTitle="Edit Customer" onClose={() => setOpen(false)} customer={customer} showUpdateButton={true}></CustomerCardWidget>}
     </>
   );
 };

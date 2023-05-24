@@ -11,7 +11,6 @@ const useStyle = () => {
         border: "none",
         borderBottom: "1px solid black",
         borderBottomColor: "#2E3092",
-        padding: "0.5rem",
         display: "inline-block",
         boxShadow: "none",
         outline: '1px solid white',
@@ -32,7 +31,7 @@ const useStyle = () => {
         width: convertWidthToVW(50),
         height: convertHeightToVH(30),
         marginRight: convertWidthToVW(1),
-        marginTop: "23px",
+        marginTop: "18px",
         background: "#F135A3",
       },
 
@@ -48,4 +47,3 @@ const useStyle = () => {
   };
 };
 export { useStyle };
-

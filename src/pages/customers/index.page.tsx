@@ -5,40 +5,37 @@ import { CustomerAuthLayout } from "@/layouts";
 import { useStyle } from "./style";
 import { HeaderFilter } from "./header-filter";
 import { useCustomers } from "./use-customers";
-import { ButtonsWidget } from "@/widgets/add-customer-modal";
-import { GomakePrimaryButton } from "@/components";
-import { useState } from "react";
+import { AddCustomerButton } from "./add-customer";
 
 
 export default function Home() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const { tabelHeaders, setAllCustomers, allCustomers, agentsCategores, customerTypes, statuses, onChangeAgent, onChangeCustomer, onChangeStatus, handleClean, valAgent, valName, valStatus } = useCustomers("C");
-  const [open, setOpen] = useState(false);
+  const { tabelHeaders, setAllCustomers, allCustomers, agentsCategores, customerTypes, statuses, onChangeAgent, onChangeCustomer, onChangeStatus, handleClean, valAgent, valName,customerType,onChangeCustomerType } = useCustomers("C");
 
 
   return (
     <CustomerAuthLayout>
       <div style={clasess.sameRow}>
-        <HeaderTitle title={t("customers.title")} />
-        <GomakePrimaryButton variant="contained" onClick={()=>setOpen(!open)} style={clasess.buttonStyle}>
-          Add Customer
-        </GomakePrimaryButton>
+        <HeaderTitle title={t("Customers")} />
+        <AddCustomerButton></AddCustomerButton>
       </div>
-      <ButtonsWidget openModal={open} onClose={()=>setOpen(false)} showAddButton={true} ></ButtonsWidget>
       <HeaderFilter
         agentsCategores={agentsCategores}
-        customerType={customerTypes}
+        customerTypes={customerTypes}
         status={statuses}
         onChangeAgent={onChangeAgent}
         onChangeCustomer={onChangeCustomer}
+        onChangeCustomerType={onChangeCustomerType}
         onChangeStatus={onChangeStatus}
+        
         setAllCustomers={setAllCustomers}
         allCustomers={allCustomers}
         handleClean={handleClean}
         valAgent={valAgent}
         valName={valName}
-        valStatus={valStatus}
+        customerType={customerType}
+
       />
       <div style={clasess.tableContainer}>
         <Table tableHeaders={tabelHeaders} tableRows={allCustomers}></Table>

@@ -15,8 +15,11 @@ import { PriceListForm } from "./components/priceList-tab/form";
 import { CustomerForm } from "./components/gomakeUser-tab/CustomerForm";
 import AddIcon from '@mui/icons-material/Add';
 import { IPaddressForm } from "./components/gomakeUser-tab/IPAddressForm";
+import { Col, Container, Row } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 
-const ButtonsWidget = ({ openModal, onClose , customer , showUpdateButton , showAddButton
+const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpdateButton, showAddButton
 
 }: any) => {
 
@@ -66,7 +69,7 @@ const ButtonsWidget = ({ openModal, onClose , customer , showUpdateButton , show
     []
   );
 
-  const tabPanelInput = (label , val = null) => {
+  const tabPanelInput = (label, val = null) => {
     return (
       <Box sx={{ p: 3 }} >
         <h3 style={clasess.headersStyle} >{label}</h3>
@@ -108,15 +111,17 @@ const ButtonsWidget = ({ openModal, onClose , customer , showUpdateButton , show
   const [budgets, setBudgets] = useState([]);
   const [useres, setUsers] = useState([]);
   const [IPaddresses, setIPaddresses] = useState([]);
-
-
   const [open, setOpen] = useState(false);
+
   useEffect(() => {
     setOpen(openModal)
   }, [openModal])
-  const handleOpen = () => {
-    setOpen(true);
-  };
+
+
+  useEffect(() => {
+    setSelectedTab(0)
+  }, [openModal])
+
 
   const handleClose = () => {
     setOpen(false);
@@ -201,38 +206,33 @@ const ButtonsWidget = ({ openModal, onClose , customer , showUpdateButton , show
     <div>
       <GoMakeModal
         openModal={open}
-        modalTitle={t("Add Customer")}
+        modalTitle={t(modalTitle)}
         onClose={handleClose}
-        insideStyle={clasess.insideStyle}
-      >
-        <div style={{ marginBottom: '20px' }} >
-          <div style={clasess.filterStyle}>
-            <div style={{ display: "flex", alignItems: "center" }}>
+        insideStyle={clasess.insideStyle}>
+        <div style={{ width: "25%", marginBottom: '15px' }} >
+          <Row style={{ marginBottom: '8px' }} >
+            <Col style={{ display: "flex", alignItems: "center" }} >
               <h3 style={clasess.headersStyle} >Code:</h3>
               <input readOnly={true} style={clasess.inputStyle} type="text" value={customer?.code} />
-            </div>
-            <div style={{ display: "flex", alignItems: "center", marginRight: "495px" }}>
-              <h3 style={clasess.headersStyle} >Name1:</h3>
-              <input style={clasess.inputStyle} type="text" value={customer?.name} />
-            </div>
-          </div>
-          <div style={clasess.filterStyle}>
-            <div style={{ display: "flex", alignItems: "center", marginRight: "457px" }}>
-              <h3 style={clasess.headersStyle} >Open Orders:</h3>
-              <input readOnly={true} style={clasess.inputStyle} type="text" />
-            </div>
-          </div>
-          <div style={clasess.filterStyle}>
-            <div style={{ display: "flex", alignItems: "center" }}>
+            </Col>
+            <Col style={{ display: "flex", alignItems: "center" }} >
+              <h3 style={clasess.headersStyle} >Name:</h3>
+              <input style={clasess.inputStyle} type="text" value={customer?.name} /></Col>
+          </Row>
+          <Row style={{ marginBottom: '8px' }}>
+            <Col style={{ display: "flex", alignItems: "center" }} >
               <h3 style={clasess.headersStyle} >Vat number:</h3>
-              <input style={clasess.inputStyle} type="text" />
-            </div>
-            <div style={{ display: "flex", alignItems: "center", marginRight: "416px", }}>
-              <h3 style={clasess.headersStyle} >Currency</h3>
-              <GoMakeAutoComplate style={clasess.selectStyle} placeholder={null} options={CurrencyOptions}
-              />
-            </div>
-          </div>
+              <input style={clasess.inputStyle} type="text" /></Col>
+            <Col style={{ display: "flex", alignItems: "center" }} >
+              <h3 style={clasess.headersStyle} >Open Orders:</h3>
+              <input readOnly={true} style={clasess.inputStyle} type="text" /></Col>
+          </Row>
+          <Row>
+            <Col>
+              <h3 style={clasess.headersStyle} >Currency:</h3>
+              <GoMakeAutoComplate style={{ width: convertWidthToVW(100), height: convertHeightToVH(30), }} placeholder={null} options={CurrencyOptions} />
+            </Col>
+          </Row>
         </div>
         <div>
           <ThemeProvider theme={theme}>
@@ -250,9 +250,9 @@ const ButtonsWidget = ({ openModal, onClose , customer , showUpdateButton , show
                 selectedTab == 0 &&
                 <div>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    {tabPanelInput("Phone1:" , customer?.tel1)}
-                    {tabPanelInput("Phone2:" , customer?.tel2)}
-                    {tabPanelInput("Site:" , customer?.name)}
+                    {tabPanelInput("Phone1:", customer?.tel1)}
+                    {tabPanelInput("Phone2:", customer?.tel2)}
+                    {tabPanelInput("Site:", customer?.name)}
                   </div>
                   <div style={{ display: "flex", alignItems: "center" }}>
                     {tabPanelInput("Main contact name:")}
@@ -266,15 +266,6 @@ const ButtonsWidget = ({ openModal, onClose , customer , showUpdateButton , show
                     {tabPanelSelect("Active:", StatusOptions, null)}
                     {tabPanelSelect("Shipment Type:", ShipmentTypeOptions, "select shipment type")}
                     {tabPanelSelect("Agent:", AgentsOptions, "select agent")}
-                  </div>
-                  <Box hidden={selectedTab !== 0} sx={{ p: 3 }} >
-                    <h3 style={clasess.headers3Style} >Last order details</h3>
-                  </Box>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    {tabPanelInput("Name:")}
-                    {tabPanelInput("Phone:")}
-                    {tabPanelInput("E-mail:")}
-                    {tabPanelInput("Address:")}
                   </div>
                   <div style={{ display: "flex", alignItems: "center" }}>
                     {tabPanelTextArea("General notes")}
@@ -366,7 +357,6 @@ const ButtonsWidget = ({ openModal, onClose , customer , showUpdateButton , show
               <div style={{ display: "flex", justifyContent: "center", marginTop: "70px", marginBottom: "10px" }} >
                 {showAddButton && <GomakePrimaryButton style={clasess.autoButtonStyle} >add</GomakePrimaryButton>}
                 {showUpdateButton && <GomakePrimaryButton style={clasess.autoButtonStyle} >update</GomakePrimaryButton>}
-
               </div>
             </Box>
           </ThemeProvider>
@@ -377,4 +367,4 @@ const ButtonsWidget = ({ openModal, onClose , customer , showUpdateButton , show
   );
 
 };
-export { ButtonsWidget };
+export { CustomerCardWidget };

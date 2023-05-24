@@ -4,32 +4,37 @@ import { GomakePrimaryButton } from "@/components";
 import { t } from "i18next";
 import { Switch } from "@mui/material";
 
+import { Col, Row } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 
 const CustomerForm = ({user,onDelete}: any) => {
 
     const { clasess } = useStyle();
     return (
-        <div style={{ marginBottom: '20px' }} >
-            <div style={{ display: "flex", alignItems: "center", width: "62%", justifyContent: "space-between" }} >
-                <div>
+        <div style={{ marginBottom: '30px', width: "65%" }} >
+            <Row  style={{  marginBottom: '8px'}} >
+                <Col >
                     <h3 style={clasess.headersStyle} >Username:</h3>
                     <input style={clasess.inputStyle} type="text" />
-                </div>
-                <div>
+                </Col >
+                <Col >
                     <h3 style={clasess.headersStyle} >Password:</h3>
                     <input style={clasess.inputStyle} type="text" />
-                </div>
-                <div>
+                </Col>
+                <Col >
                     <h3 style={clasess.headersStyle} >Email:</h3>
                     <input style={clasess.inputStyle} type="text" />
-                </div>
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                    <Switch style={clasess.switchStyle} />
+                </Col>
+                <Col  style={{ display: "flex", alignItems: "center" }} >
+                    <Switch />
                     <h3 style={clasess.headersStyle} >Log in using an email code</h3>
-                </div>
+                </Col>
+                <Col >
                 <GomakePrimaryButton style={clasess.autoButtonStyle} onClick={() => onDelete(user.index)}>Delete</GomakePrimaryButton>
-            </div>
+                </Col >
+            </Row>
         </div>
     );
 };

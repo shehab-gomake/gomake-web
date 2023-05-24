@@ -8,7 +8,6 @@ import { getAndSetEmployees } from "@/services/hooks/get-set-employee";
 const useCustomers = (clientType) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const [categoryName, setCategoryName] = useState(undefined);
   const [agentsCategores, setAgentsCategores] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [allCustomers, setAllCustomers] = useState([]);
@@ -34,27 +33,30 @@ const useCustomers = (clientType) => {
 
   /////////////////////////////////////////
 
-  const [valAgent, setValAgent] = useState(false);
-  const [valStatus, setValStatus] = useState("");
-  const [valName, setValName] = useState(undefined);
-  const [valCustomerType, setValCustomerType] = useState(undefined);
+  const [valAgent, setValAgent] = useState("");
+  const [valName, setValName] = useState("");
 
+  const [customerType, setCustomerType] = useState(null);
 
   const handleClean = useCallback(async () => {
     setStatus(null);
     setCustomerName(null);
     setAgentId(null);
     setCustomerType(null);
+    
+    setValName("");
+    console.log(customerType);
 
-  }, []);
+  }, [customerType]);
 
   /////////////////////////////////////////
 
   //////////////////////for later use/////////////////////////////
-  const [customerType, setCustomerType] = useState("");
 
   const onChangeCustomerType = useCallback(async (e: any, value: any) => {
     setCustomerType(value?.value);
+    console.log(value);
+
   }, []);
 
 
@@ -72,9 +74,9 @@ const useCustomers = (clientType) => {
   );
   const customerTypes = useMemo(
     () => [
-      t("client"),
-      t("supplier"),
-      t("producer"),
+      {label:t("client") , value: "client"},
+      {label:t("supplier") , value: "supplier"},
+      {label:t("producer") , value: "producer"},
     ],
     []
   );
@@ -134,7 +136,7 @@ const useCustomers = (clientType) => {
     handleClean,
     valAgent,
     valName,
-    valStatus,
+    customerType,
   };
 };
 export { useCustomers };
