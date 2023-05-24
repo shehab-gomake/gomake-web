@@ -161,27 +161,25 @@ export default function Profits() {
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(actionProfitLists);
   return (
-    <AdminAuthLayout>
       <div style={clasess.mainContainer}>
         <HeaderTitle title={t("products.profits.admin.title")} />
         <SelectAction />
         {profitsStateValue.id ? (
-          <>
-            <ProductList />
-            <div style={clasess.pricingAndExceptionsCointaner}>
-              <div style={clasess.pricingCointaner}>
-                <PricingList tableHeaders={tabelPricingHeaders} />
+            <>
+              <ProductList />
+              <div style={clasess.pricingAndExceptionsCointaner}>
+                <div style={clasess.pricingCointaner}>
+                  <PricingList tableHeaders={tabelPricingHeaders} />
+                </div>
+                <div style={clasess.exceptionsCointaner}>
+                  <Exceptions
+                      tableHeaders={tabelExceptionsHeaders}
+                      tableRows={profitsStateValue?.actionExpectionRowsMapped}
+                  />
+                </div>
               </div>
-              <div style={clasess.exceptionsCointaner}>
-                <Exceptions
-                  tableHeaders={tabelExceptionsHeaders}
-                  tableRows={profitsStateValue?.actionExpectionRowsMapped}
-                />
-              </div>
-            </div>
-          </>
+            </>
         ) : null}
       </div>
-    </AdminAuthLayout>
   );
 }

@@ -19,6 +19,7 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         paddingRight: 34,
+        padding:50,
       },
       skeletonRowStyle: {
         marginTop: convertHeightToVH(10),
