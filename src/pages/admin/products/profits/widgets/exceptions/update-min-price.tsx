@@ -38,7 +38,7 @@ const UpdateMinPrice = ({ minValue, profitsStateValue }: any) => {
       type={"number"}
       onChange={onChange}
       style={{
-        height: 40,
+        height: 30,
         width: 100,
       }}
     />

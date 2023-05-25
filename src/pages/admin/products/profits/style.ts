@@ -34,6 +34,7 @@ const useStyle = () => {
         borderRadius: 4,
         marginTop: convertWidthToVW(25),
         padding: convertWidthToVW(10),
+        marginBottom: convertWidthToVW(35),
       },
       //Header Filter Style
       filterContainer: {
@@ -60,7 +61,6 @@ const useStyle = () => {
         border: " 1px solid #FFFFFF",
         boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.25)",
         borderRadius: 4,
-        padding: convertWidthToVW(10),
         marginTop: convertWidthToVW(16),
         marginBottom: convertWidthToVW(30),
       },
@@ -70,7 +70,11 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        marginBottom: convertWidthToVW(18),
+        paddingRight: 11.5,
+        paddingLeft: 11.5,
+        paddingTop: 7,
+        paddingBottom: 8,
+        marginBottom: convertWidthToVW(10),
       },
       titleHederTextStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -130,6 +134,18 @@ const useStyle = () => {
         gap: 7,
         cursor: "pointer",
       },
+
+      addNewProductContainer2: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 7,
+        cursor: "pointer",
+        paddingLeft: 12,
+        paddingRight: 12,
+        paddingBottom: 17,
+      },
       addProductStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(500),
@@ -137,10 +153,11 @@ const useStyle = () => {
       pricingAndExceptionsCointaner: {
         display: "flex",
         width: "100%",
-        gap: 21,
+        gap: 24,
       },
       pricingCointaner: {
         width: "59%",
+        dropShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
       },
       exceptionsCointaner: {
         width: "41%",

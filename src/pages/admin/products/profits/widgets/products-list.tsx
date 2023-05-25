@@ -54,7 +54,7 @@ const ProductList = () => {
             </>
           </div>
           <div
-            style={clasess.addNewProductContainer}
+            style={clasess.addNewProductContainer2}
             onClick={() => profitsStateValue.setOpenAddTestProductModal(true)}
           >
             <AddIcon />

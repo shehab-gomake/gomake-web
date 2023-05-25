@@ -73,7 +73,7 @@ const PricingList = ({ tableHeaders }: IProps) => {
               <Header
                 key={`header_item${index}`}
                 header={header}
-                width={`${100 / tableHeaders.length}%`}
+                // width={`${100 / tableHeaders.length}%`}
               />
             );
           })}
@@ -84,19 +84,19 @@ const PricingList = ({ tableHeaders }: IProps) => {
               <Skeleton
                 variant="rectangular"
                 width={"100%"}
-                height={68}
+                height={50}
                 style={clasess.skeletonRowStyle}
               />
               <Skeleton
                 variant="rectangular"
                 width={"100%"}
-                height={68}
+                height={50}
                 style={clasess.skeletonRowStyle}
               />
               <Skeleton
                 variant="rectangular"
                 width={"100%"}
-                height={68}
+                height={50}
                 style={clasess.skeletonRowStyle}
               />
             </>

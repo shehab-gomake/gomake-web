@@ -20,7 +20,7 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
       },
       leftContainer: {
         backgroundColor: primaryColor(500),
-        width: convertWidthToVW(281),
+        width: 281,
         height: "100%",
         display: "flex",
         flexDirection: "column" as "column",

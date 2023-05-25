@@ -232,27 +232,29 @@ const useProfits = () => {
       }
     });
     return [
-      ...(isQuantity
-        ? [t("products.profits.pricingListWidget.quantity")]
-        : [
-            t("products.profits.pricingListWidget.width"),
-            t("products.profits.pricingListWidget.height"),
-          ]),
+      // ...(isQuantity
+      //   ? [t("products.profits.pricingListWidget.quantity")]
+      //   : [
+      //       t("products.profits.pricingListWidget.width"),
+      //       t("products.profits.pricingListWidget.height"),
+      //     ]),
       t("products.profits.pricingListWidget.cost"),
       t("products.profits.pricingListWidget.profit"),
-      t("products.profits.pricingListWidget.meterPrice"),
-      t("products.profits.pricingListWidget.expMeter"),
-      t("products.profits.pricingListWidget.price"),
+      t("products.profits.pricingListWidget.testQuantity"),
+      t("products.profits.pricingListWidget.testUnitPrice"),
       t("products.profits.pricingListWidget.totalPrice"),
+      t("products.profits.pricingListWidget.testFinalPrice"),
+      // t("products.profits.pricingListWidget.meterPrice"),
+      // t("products.profits.pricingListWidget.expMeter"),
+      // t("products.profits.pricingListWidget.price"),
       t("products.profits.pricingListWidget.more"),
     ];
   }, [actionProfits]);
   const tabelExceptionsHeaders = useMemo(
     () => [
       t("products.profits.exceptions.type"),
-      // t("products.profits.exceptions.parameter"),
-      // t("products.profits.exceptions.value"),
-      "",
+      t("products.profits.exceptions.parameter"),
+      t("products.profits.exceptions.value"),
       t("products.profits.exceptions.scopeOfChange"),
     ],
     []

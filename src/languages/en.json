@@ -874,7 +874,10 @@
         "more": "More",
         "height": "height",
         "addNewStep": "add new step",
-        "saveStep": "Save step"
+        "saveStep": "Save step",
+        "testQuantity": "test quantity",
+        "testUnitPrice": "test unit price",
+        "testFinalPrice": "test final price"
       },
       "exceptions": {
         "title": "Exceptions",

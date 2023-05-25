@@ -7,17 +7,16 @@ const useStyle = () => {
   const { neutralColor, secondColor, primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
-      container: {
-        // paddingLeft: 32,
-        // paddingRight: 10,
-        //marginLeft: 52,
-      },
+      container: {},
       header: {
         display: "flex",
         width: "100%",
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: "#ffffff",
+        marginBottom: 36,
+        paddingLeft: 32,
+        paddingRight: 32,
       },
       tableBody: {
         display: "flex",
@@ -34,8 +33,8 @@ const useStyle = () => {
         justifyContent: "space-around",
         alignItems: "center",
         color: secondColor(500),
-        height: 200,
-        lineHeight: "17.5px",
+        // height: 200,
+        // lineHeight: "17.5px",
         ...FONT_FAMILY.Lexend(500, 22),
       },
       line: {
@@ -70,15 +69,14 @@ const useStyle = () => {
       },
       listTitle: {
         width: 275,
-        height: 25,
         ...FONT_FAMILY.Lexend(700, 20),
         fontStyle: "normal",
-        // lineHeight: "25px",
         display: "flex",
         alignItems: "center",
         textalign: "center",
         color: primaryColor(500),
-        marginBottom: 38,
+        marginBottom: 16,
+        height: 40,
       },
       filtersCointaner: {
         display: "flex",
@@ -88,7 +86,6 @@ const useStyle = () => {
         width: "100%",
         ...FONT_FAMILY.Lexend(400, 14),
         fontStyle: "normal",
-        lineHeight: "18px",
         color: secondColor(500),
         marginBottom: 24,
         testalign: "center",
@@ -97,6 +94,7 @@ const useStyle = () => {
         alignItems: "center",
         marginTop: 15,
         gap: 15,
+        paddingLeft: 22,
       },
       textInputStyle: {
         width: 120,
@@ -106,7 +104,6 @@ const useStyle = () => {
         width: "100%",
         ...FONT_FAMILY.Lexend(500, 14),
         fontStyle: "normal",
-        lineHeight: "18px",
         letterSpacing: "-0.01em",
         color: primaryColor(500),
         testalign: "start",
@@ -115,12 +112,12 @@ const useStyle = () => {
         alignItems: "center",
         gap: 7,
         cursor: "pointer",
+        paddingLeft: 22,
       },
       withoutTitle: {
-        paddingTop: 12,
-        paddingBottom: 16,
-        paddingLeft: 16,
-        paddingRight: 16,
+        paddingTop: 20,
+        paddingBottom: 20,
+        boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.08)",
       },
     };
   }, []);
