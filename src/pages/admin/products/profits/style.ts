@@ -39,8 +39,10 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContainer: "flex-start",
         alignItems: "center",
-        width: "100%",
+        // width: "100%",
         gap: convertWidthToVW(50),
+        backgroundColor: "#FFFFFF",
+        filter: "drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25))",
       },
       autoComplateStyle: {
         width: convertWidthToVW(301),
