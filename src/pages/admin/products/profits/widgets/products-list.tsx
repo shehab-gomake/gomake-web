@@ -14,74 +14,79 @@ const ProductList = () => {
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
   return (
-    <div style={clasess.mainContainerForProductTable}>
-      <div style={clasess.titleHeadersTale}>
-        <div style={clasess.titleHederTextStyle}>
-          {t("products.profits.itemName")}
+    <>
+      <div style={clasess.mainContainerForProductTable}>
+        <div style={clasess.titleHeadersTale}>
+          <div style={clasess.titleHederTextStyle}>
+            {t("products.profits.itemName")}
+          </div>
+          <div style={clasess.titleHederTextStyle}>
+            {t("products.profits.more")}
+          </div>
         </div>
-        <div style={clasess.titleHederTextStyle}>
-          {t("products.profits.more")}
+        <div style={{ width: "100%" }}>
+          {profitsStateValue?.testProductsState?.length > 0 ? (
+            <>
+              {profitsStateValue?.testProductsState?.map(
+                (item: any, index: any) => {
+                  return (
+                    <div
+                      style={
+                        index & 1
+                          ? clasess.bodyTableEvenContainer
+                          : clasess.bodyTableOddContainer
+                      }
+                      onClick={() =>
+                        profitsStateValue?.onCklickActionProfitTestResultsByActionId(
+                          item?.id
+                        )
+                      }
+                    >
+                      <div style={clasess.nameStyle}>{item?.name}</div>
+                      <div style={clasess.moreStyle}>{item?.more}</div>
+                    </div>
+                  );
+                }
+              )}
+            </>
+          ) : (
+            <>
+              {!profitsStateValue?.istimeOutForProductsTest ? (
+                <>
+                  <Skeleton
+                    variant="rectangular"
+                    width={"100%"}
+                    height={68}
+                    style={clasess.skeletonRowStyle}
+                  />
+                  <Skeleton
+                    variant="rectangular"
+                    width={"100%"}
+                    height={68}
+                    style={clasess.skeletonRowStyle}
+                  />
+                </>
+              ) : (
+                <div style={clasess.noDataContainer}>
+                  {" "}
+                  {t("skeleton.noData")}
+                </div>
+              )}
+            </>
+          )}
         </div>
-      </div>
-      <div style={{ width: "100%" }}>
-        {profitsStateValue?.testProductsState?.length > 0 ? (
-          <>
-            {profitsStateValue?.testProductsState?.map(
-              (item: any, index: any) => {
-                return (
-                  <div
-                    style={
-                      index & 1
-                        ? clasess.bodyTableEvenContainer
-                        : clasess.bodyTableOddContainer
-                    }
-                    onClick={() =>
-                      profitsStateValue?.onCklickActionProfitTestResultsByActionId(
-                        item?.id
-                      )
-                    }
-                  >
-                    <div style={clasess.nameStyle}>{item?.name}</div>
-                    <div style={clasess.moreStyle}>{item?.more}</div>
-                  </div>
-                );
-              }
-            )}
-          </>
-        ) : (
-          <>
-            {!profitsStateValue?.istimeOutForProductsTest ? (
-              <>
-                <Skeleton
-                  variant="rectangular"
-                  width={"100%"}
-                  height={68}
-                  style={clasess.skeletonRowStyle}
-                />
-                <Skeleton
-                  variant="rectangular"
-                  width={"100%"}
-                  height={68}
-                  style={clasess.skeletonRowStyle}
-                />
-              </>
-            ) : (
-              <div style={clasess.noDataContainer}> {t("skeleton.noData")}</div>
-            )}
-          </>
-        )}
-      </div>
-      <div
-        style={clasess.addNewProductContainer}
-        onClick={() => profitsStateValue.setOpenAddTestProductModal(true)}
-      >
-        <AddIcon />
-        <div style={clasess.addProductStyle}>
-          {t("products.profits.addTestProduct")}
+        <div
+          style={clasess.addNewProductContainer}
+          onClick={() => profitsStateValue.setOpenAddTestProductModal(true)}
+        >
+          <AddIcon />
+          <div style={clasess.addProductStyle}>
+            {t("products.profits.addTestProduct")}
+          </div>
         </div>
+        <AddTestProductModal />
       </div>
-      <AddTestProductModal />
-    </div>
+    </>
   );
 };
 export { ProductList };
