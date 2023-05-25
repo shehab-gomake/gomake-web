@@ -1,5 +1,5 @@
 import {atom} from "recoil";
-import {ECategoryId} from "@/widgets/admin-machines/enums/category-id";
+import {ECategoryId} from "@/widgets/machines/enums/category-id";
 
 export const machineCategoriesState = atom({
     key: "machinesCategoryState",

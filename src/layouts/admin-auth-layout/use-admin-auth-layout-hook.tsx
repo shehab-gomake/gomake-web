@@ -11,12 +11,15 @@ import {
 import { SuppliersIcon } from "@/icons/suppliers";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import {useRecoilValue} from "recoil";
+import {machineCategoriesState} from "@/store/machine-categories";
 
 const useAuthLayoutHook = () => {
   const { t } = useTranslation();
   const { isAuth } = useGomakeAdminAuth();
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
+  const categories = useRecoilValue(machineCategoriesState)
   const tabs = useMemo(() => {
     return [
       {
@@ -123,8 +126,9 @@ const useAuthLayoutHook = () => {
           {
             key: "add",
             title: t("tabs.addMachine"),
-            path: "/admin/machine/category/1",
+            path: "/admin/machine",
           },
+            ...categories.map(category => ({key: category.id + category.name, title: category.name, path: `/admin/machine/category/${category.id}`}))
         ]
       },
       {
@@ -147,7 +151,7 @@ const useAuthLayoutHook = () => {
           {
             key: "add",
             title: t("tabs.addSales"),
-            path: "/sales/add",
+            path: "/sales/add-machine",
           },
           {
             key: "list",

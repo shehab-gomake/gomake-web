@@ -5,7 +5,7 @@ import { GomakePrimaryButton } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
 
 import { materialLaminationsState } from "./store/lamination";
-//import { AddSheetModal } from "./add-sheet-modal";
+//import { AddSheetModal } from "./add-machine-sheet-modal";
 import { useStyle } from "./style";
 import { AddLaminationModal } from "./add-lamination-modal";
 
