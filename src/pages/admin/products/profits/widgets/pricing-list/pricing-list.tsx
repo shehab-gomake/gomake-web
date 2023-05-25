@@ -25,7 +25,6 @@ const PricingList = ({ tableHeaders }: IProps) => {
 
   const [istimeOut, setIsTimeOut] = useState(false);
   const { clasess } = useStyle();
-  console.log("typeof actionProfitRowsVal", typeof actionProfitRowsVal);
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsTimeOut(true);

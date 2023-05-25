@@ -127,7 +127,6 @@ const useProfits = () => {
 
   const getActionExceptionProfitRowByActionExceptionId =
     useCallback(async () => {
-      console.log("getActionExceptionProfitRowByActionExceptionId");
       setActionExceptionProfitRows("");
       await getAndSetActionExceptionProfitRowByActionExceptionId(
         callApi,
@@ -156,7 +155,6 @@ const useProfits = () => {
 
   const onCklickActionExceptionProfitRow = useCallback(
     async (id: string) => {
-      console.log("onCklickActionExceptionProfitRow");
       setActionExceptionProfitRows("");
       await getAndSetActionExceptionProfitRowByActionExceptionId(
         callApi,
@@ -174,7 +172,6 @@ const useProfits = () => {
 
   const onCklickActionProfitTestResultsByActionId = useCallback(
     async (productId: string) => {
-      console.log("onCklickActionProfitTestResultsByActionId");
       setActionExceptionProfitRows("");
       await getAndSetGetActionProfitTestResultsByActionId(
         callApi,

@@ -16,7 +16,6 @@ const getAndSetActionProfitRowChartData = async (
   const xAxis = [];
   const yAxis = [];
   const mapData = _data.map((item: any) => {
-    console.log(item);
     if (pricingBy === 1) {
       yAxis.push(item.size);
     } else {

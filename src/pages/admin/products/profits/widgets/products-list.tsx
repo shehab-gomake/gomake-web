@@ -31,7 +31,6 @@ const ProductList = () => {
             <>
               {profitsStateValue?.testProductsState?.map(
                 (item: any, index: any) => {
-                  console.log("item", item);
                   return (
                     <div
                       style={
