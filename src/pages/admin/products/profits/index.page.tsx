@@ -162,7 +162,7 @@ export default function Profits() {
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(actionProfitLists);
   const productTest = useRecoilValue<any>(productTestState);
-
+  console.log("productTest", productTest);
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
