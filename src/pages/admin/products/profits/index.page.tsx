@@ -10,6 +10,7 @@ import { PricingList } from "./widgets/pricing-list/pricing-list";
 import { useStyle } from "./style";
 import { Exceptions } from "./widgets/exceptions/exceptions";
 import { actionProfitLists } from "@/store";
+import { productTestState } from "@/store/product-test";
 
 export default function Profits() {
   const setProfitsState = useSetRecoilState<any>(profitsState);
@@ -160,6 +161,8 @@ export default function Profits() {
   ]);
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(actionProfitLists);
+  const productTest = useRecoilValue<any>(productTestState);
+
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
@@ -168,17 +171,19 @@ export default function Profits() {
         {profitsStateValue.id ? (
           <>
             <ProductList />
-            <div style={clasess.pricingAndExceptionsCointaner}>
-              <div style={clasess.pricingCointaner}>
-                <PricingList tableHeaders={tabelPricingHeaders} />
+            {productTest?.id && (
+              <div style={clasess.pricingAndExceptionsCointaner}>
+                <div style={clasess.pricingCointaner}>
+                  <PricingList tableHeaders={tabelPricingHeaders} />
+                </div>
+                <div style={clasess.exceptionsCointaner}>
+                  <Exceptions
+                    tableHeaders={tabelExceptionsHeaders}
+                    tableRows={profitsStateValue?.actionExpectionRowsMapped}
+                  />
+                </div>
               </div>
-              <div style={clasess.exceptionsCointaner}>
-                <Exceptions
-                  tableHeaders={tabelExceptionsHeaders}
-                  tableRows={profitsStateValue?.actionExpectionRowsMapped}
-                />
-              </div>
-            </div>
+            )}
           </>
         ) : null}
       </div>
