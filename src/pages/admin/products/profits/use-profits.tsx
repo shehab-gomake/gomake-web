@@ -30,6 +30,7 @@ import {
 } from "@/services/hooks";
 import { editPriceListState } from "./store/edit-price-list";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
+import { productTestState } from "@/store/product-test";
 
 const useProfits = () => {
   const [istimeOutForProductsTest, setIsTimeOutForProductsTest] =
@@ -169,6 +170,7 @@ const useProfits = () => {
     },
     [actionExceptionProfitIdValue]
   );
+  const setProductTest = useSetRecoilState(productTestState);
 
   const onCklickActionProfitTestResultsByActionId = useCallback(
     async (productId: string) => {
@@ -184,6 +186,7 @@ const useProfits = () => {
         }
       );
       setactionExceptionProfitId(productId);
+      setProductTest({ id: productId });
     },
     [selectedAction]
   );
@@ -195,6 +198,7 @@ const useProfits = () => {
   }, []);
   const onChangeSelectedAction = useCallback(async (e: any, value: any) => {
     setSelectedAction(value);
+    setProductTest({});
   }, []);
   const getTestProducts = useCallback(async () => {
     await getAndSetGetAllTestProductsByActionId(
