@@ -59,7 +59,7 @@ const ProductList = () => {
           >
             <AddIcon />
             <div style={clasess.addProductStyle}>
-              {t("products.profits.addTestProduct")}
+              {t("products.profits.addNewProduct")}
             </div>
           </div>
         </div>
@@ -71,7 +71,7 @@ const ProductList = () => {
           >
             <AddIcon />
             <div style={clasess.addProductStyle}>
-              {t("products.profits.addTestProduct")}
+              {t("products.profits.addNewProduct")}
             </div>
           </div>
         </div>
