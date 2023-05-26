@@ -33,7 +33,7 @@ const Row = ({ key, row }: any) => {
             );
           }
         })}
-        <div style={clasess.deleteContainer}>
+        {/* <div style={clasess.deleteContainer}>
           <Tooltip title={t("materials.buttons.delete")}>
             <IconButton
               onClick={() =>
@@ -43,7 +43,7 @@ const Row = ({ key, row }: any) => {
               <DeleteIcon style={{ color: "#a1a2cd" }} />
             </IconButton>
           </Tooltip>
-        </div>
+        </div> */}
       </div>
       {row === profitsStateValue.selectedExceptionProfit && (
         <GoMakeDeleteModal

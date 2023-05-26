@@ -14,15 +14,15 @@ import { AddPricingListRowWidget } from "./add-pricing-row-widget";
 
 interface IProps {
   tableHeaders: any[];
+  tablePercent: any[];
 }
 
-const PricingList = ({ tableHeaders }: IProps) => {
+const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
   const { t } = useTranslation();
   const actionProfits = useRecoilValue<any>(actionProfitLists);
   const profitsStateValue = useRecoilValue<any>(profitsState);
   const profitsValue = useRecoilValue<any>(profitsState);
   const actionProfitRowsVal = useRecoilValue<any>(actionProfitRows);
-
   const [istimeOut, setIsTimeOut] = useState(false);
   const { clasess } = useStyle();
   useEffect(() => {
@@ -102,11 +102,17 @@ const PricingList = ({ tableHeaders }: IProps) => {
           ) : actionProfitRowsVal?.length > 0 ? (
             <>
               {actionProfitRowsVal?.map((row: any, index: number) => {
+                console.log("ROW", row);
                 return (
                   <div key={`body_row${index}`} style={{ width: "100%" }}>
                     <Row
                       row={row}
-                      width={`${100 / (Object.entries(row).length - 1)}%`}
+                      // width={
+                      //   tablePercent
+                      //     ? `${tablePercent[index]}`
+                      //     : `${100 / tableHeaders.length}%`
+                      // }
+                      // width={`${100 / (Object.entries(row).length - 1)}%`}
                     />
                     <div style={clasess.line}></div>
                   </div>

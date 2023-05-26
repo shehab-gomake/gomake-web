@@ -16,18 +16,19 @@ const getAndSetGetActionProfitTestResultsByActionId = async (
   const _data: any = returnResult(result, undefined);
   const mapData = _data?.map((item: any) => {
     return {
-      ...(actionProfits?.pricingBy === 1
-        ? {
-            width: item?.width,
-            height: item?.height,
-          }
-        : { quantity: item?.quantity }),
+      // ...(actionProfits?.pricingBy === 1
+      //   ? {
+      //       width: item?.width,
+      //       height: item?.height,
+      //     }
+      //   : { quantity: item?.quantity }),
+
       cost: item?.cost,
       profit: item?.profit,
-      meterPrice: item?.meterPrice,
-      expMeter: item?.expMeter,
-      price: item?.unitPrice,
+      testQuantity: item?.testQuantity,
+      testUnitPrice: item?.testUnitPrice,
       totalPrice: item?.totalPrice,
+      testFinalPrice: item?.testFinalPrice,
       more: <PricingListMenuWidget item={item} />,
       id: item?.id,
     };

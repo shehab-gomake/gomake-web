@@ -34,7 +34,8 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
       },
       rightContainer: {
         backgroundColor: "#FDFDFD",
-        width: convertWidthToVW(1468 - 281),
+        // width: convertWidthToVW(1468 - 281),
+        width: "100%",
         display: "flex",
         flexDirection: "column" as "column",
         padding: convertWidthToVW(20),

@@ -486,19 +486,26 @@ const useProfits = () => {
         const mapData = res?.data?.data?.result?.expectionProfitRows?.map(
           (item: any) => {
             return {
-              ...(res?.data?.data?.result?.expectionProfitRows?.pricingBy === 1
-                ? {
-                    width: item?.width,
-                    height: item?.height,
-                  }
-                : { quantity: item?.quantity }),
+              // ...(res?.data?.data?.result?.expectionProfitRows?.pricingBy === 1
+              //   ? {
+              //       width: item?.width,
+              //       height: item?.height,
+              //     }
+              //   : { quantity: item?.quantity }),
+
+              //New Display Data
 
               cost: item?.cost,
               profit: item?.profit,
-              meterPrice: item?.meterPrice,
-              expMeter: item?.expMeter,
-              price: item?.price,
+              testQuantity: item?.testQuantity,
+              testUnitPrice: item?.testUnitPrice,
               totalPrice: item?.totalPrice,
+              testFinalPrice: item?.testFinalPrice,
+
+              // meterPrice: item?.meterPrice,
+              // expMeter: item?.expMeter,
+              // price: item?.price,
+              // totalPrice: item?.totalPrice,
               more: <PricingListMenuWidget item={item} />,
               id: item?.id,
             };

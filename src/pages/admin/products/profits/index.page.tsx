@@ -167,13 +167,24 @@ export default function Profits() {
       <div style={clasess.mainContainer}>
         <HeaderTitle title={t("products.profits.admin.title")} />
         <SelectAction />
-        {profitsStateValue.id ? (
+        {profitsStateValue?.id ? (
           <>
             <ProductList />
             {productTest?.id && (
               <div style={clasess.pricingAndExceptionsCointaner}>
                 <div style={clasess.pricingCointaner}>
-                  <PricingList tableHeaders={tabelPricingHeaders} />
+                  <PricingList
+                    tableHeaders={tabelPricingHeaders}
+                    tablePercent={[
+                      "10%",
+                      "10%",
+                      "15%",
+                      "15%",
+                      "15%",
+                      "15%",
+                      "20%",
+                    ]}
+                  />
                 </div>
                 <div style={clasess.exceptionsCointaner}>
                   <Exceptions

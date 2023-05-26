@@ -17,7 +17,7 @@ const getAndSetActionProfitRowByActionId = async (
       const myArry = machincesStateValue.find(
         (ele: any) => ele?.id == item.machineId
       );
-      return { type: "machine", name: myArry?.name };
+      return { type: "machine", parameter: "machine", name: myArry?.name };
     } else if (item?.subProductId != null) {
       const myArry = productsStateValue.find(
         (ele: any) => ele?.id == item.subProductId
@@ -46,18 +46,18 @@ const getAndSetActionProfitRowByActionId = async (
   const _data: any = returnResult(result, undefined);
   const mapData = _data?.actionProfitRows?.map((item: any) => {
     return {
-      ...(_data?.pricingBy === 1
-        ? {
-            width: item?.width,
-            height: item?.height,
-          }
-        : { quantity: item?.quantity }),
+      // ...(_data?.pricingBy === 1
+      //   ? {
+      //       width: item?.width,
+      //       height: item?.height,
+      //     }
+      //   : { quantity: item?.quantity }),
       cost: item?.cost,
       profit: item?.profit,
-      meterPrice: item?.meterPrice,
-      expMeter: item?.expMeter,
-      price: item?.price,
+      testQuantity: item?.testQuantity,
+      testUnitPrice: item?.testUnitPrice,
       totalPrice: item?.totalPrice,
+      testFinalPrice: item?.testFinalPrice,
       more: <PricingListMenuWidget item={item} />,
       id: item?.id,
     };
