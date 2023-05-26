@@ -6,11 +6,12 @@ import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate } from "@/components";
 import { Header } from "./header";
 import { Row } from "./row";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { actionProfitLists, actionProfitRows } from "@/store";
 import { Plus } from "./icons/plus";
 import { profitsState } from "../../store/profits";
 import { AddPricingListRowWidget } from "./add-pricing-row-widget";
+import { productTestState } from "@/store/product-test";
 
 interface IProps {
   tableHeaders: any[];
@@ -31,14 +32,16 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
+  const productTest = useRecoilValue<any>(productTestState);
   return (
     <>
       <div style={clasess.headerMainCointaner}>
         <div style={clasess.listTitle}>
-          {t("products.profits.pricingListWidget.pricingListTitle")}
+          {t("products.profits.pricingListWidget.pricingListTitle")} (
+          {productTest?.name})
         </div>
         <div style={clasess.filtersCointaner}>
-          <div style={clasess.filterContainer}>
+          {/* <div style={clasess.filterContainer}>
             <GoMakeAutoComplate
               options={["Quantity", "Size"]}
               style={clasess.autoComplateStyle}
@@ -48,7 +51,7 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
               value={actionProfits?.pricingBy === 0 ? "Quantity" : "Size"}
               disabled={true}
             />
-          </div>
+          </div> */}
           <div style={clasess.filterContainer}>
             <GoMakeAutoComplate
               options={[

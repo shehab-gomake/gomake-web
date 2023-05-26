@@ -171,7 +171,7 @@ const useProfits = () => {
   const setProductTest = useSetRecoilState(productTestState);
 
   const onCklickActionProfitTestResultsByActionId = useCallback(
-    async (productId: string) => {
+    async (productId: string, productName: string) => {
       setActionExceptionProfitRows("");
       await getAndSetGetActionProfitTestResultsByActionId(
         callApi,
@@ -183,7 +183,7 @@ const useProfits = () => {
         }
       );
       setactionExceptionProfitId(productId);
-      setProductTest({ id: productId });
+      setProductTest({ id: productId, name: productName });
     },
     [selectedAction]
   );

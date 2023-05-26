@@ -41,7 +41,8 @@ const ProductList = () => {
                       }
                       onClick={() =>
                         profitsStateValue?.onCklickActionProfitTestResultsByActionId(
-                          item?.id
+                          item?.id,
+                          item?.name
                         )
                       }
                     >
