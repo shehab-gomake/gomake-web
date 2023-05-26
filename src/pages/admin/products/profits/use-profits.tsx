@@ -66,6 +66,14 @@ const useProfits = () => {
   const [allActions, setAllActions] = useRecoilState(actionLists);
   const [selectedAction, setSelectedAction] = useState<any>({});
   const [openAddExceptionModal, setOpenAddExceptionModal] = useState(false);
+  const [openAddQuantityModal, setOpenAddQuantityModal] = useState(false);
+  const onCloseAddQuantityModal = () => {
+    setOpenAddQuantityModal(false);
+  };
+  const onOpenAddQuantityModal = () => {
+    setOpenAddQuantityModal(true);
+  };
+
   const [openAddNewPricingStepRow, setOpenAddNewPricingStepRow] =
     useState(false);
   const [pricingListRowState, setPricingListRowState] = useState<any>({});
@@ -667,6 +675,9 @@ const useProfits = () => {
     openDeleteExceptionProfitModal,
     istimeOutForProductsTest,
     testProductsState,
+    openAddQuantityModal,
+    onCloseAddQuantityModal,
+    onOpenAddQuantityModal,
     updateActionProfitMinPrice,
     onCklickActionExceptionProfitRow,
     onCklickActionProfitTestResultsByActionId,

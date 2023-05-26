@@ -34,6 +34,9 @@ export default function Profits() {
     openDeleteExceptionProfitModal,
     istimeOutForProductsTest,
     testProductsState,
+    openAddQuantityModal,
+    onCloseAddQuantityModal,
+    onOpenAddQuantityModal,
     updateActionProfitMinPrice,
     onCklickActionExceptionProfitRow,
     onCklickActionProfitTestResultsByActionId,
@@ -83,6 +86,9 @@ export default function Profits() {
       openDeleteExceptionProfitModal,
       istimeOutForProductsTest,
       testProductsState,
+      openAddQuantityModal,
+      onCloseAddQuantityModal,
+      onOpenAddQuantityModal,
       updateActionProfitMinPrice,
       onCklickActionExceptionProfitRow,
       onCklickActionProfitTestResultsByActionId,
@@ -131,6 +137,9 @@ export default function Profits() {
     openDeleteExceptionProfitModal,
     istimeOutForProductsTest,
     testProductsState,
+    openAddQuantityModal,
+    onCloseAddQuantityModal,
+    onOpenAddQuantityModal,
     updateActionProfitMinPrice,
     onCklickActionExceptionProfitRow,
     onCklickActionProfitTestResultsByActionId,
@@ -170,7 +179,7 @@ export default function Profits() {
         {profitsStateValue?.id ? (
           <>
             <ProductList />
-            {productTest?.id && (
+            {!productTest?.id && (
               <div style={clasess.pricingAndExceptionsCointaner}>
                 <div style={clasess.pricingCointaner}>
                   <PricingList

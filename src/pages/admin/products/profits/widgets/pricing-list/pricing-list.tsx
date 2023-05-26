@@ -12,6 +12,7 @@ import { Plus } from "./icons/plus";
 import { profitsState } from "../../store/profits";
 import { AddPricingListRowWidget } from "./add-pricing-row-widget";
 import { productTestState } from "@/store/product-test";
+import { AddQuantityModal } from "./add-quantity-modal";
 
 interface IProps {
   tableHeaders: any[];
@@ -136,14 +137,19 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
         )}
         <div
           style={clasess.addNewStep}
-          onClick={() => {
-            profitsValue?.setOpenAddNewPricingStepRow(true);
-          }}
+          // onClick={() => {
+          //   profitsValue?.setOpenAddNewPricingStepRow(true);
+          // }}
+          onClick={profitsStateValue?.onOpenAddQuantityModal}
         >
           <Plus />
           {t("products.profits.pricingListWidget.addNewStep")}
         </div>
       </div>
+      <AddQuantityModal
+        openModal={profitsStateValue?.openAddQuantityModal}
+        onCloseModal={profitsStateValue?.onCloseAddQuantityModal}
+      />
     </>
   );
 };
