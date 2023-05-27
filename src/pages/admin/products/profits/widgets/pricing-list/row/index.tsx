@@ -75,11 +75,12 @@ const Row = ({ row, width, tablePercent }: any) => {
           <div style={clasess.controlsContainer}>
             <Tooltip title={t("materials.buttons.saveModifications")}>
               <IconButton
-                onClick={
-                  actionExceptionProfitIdValue
-                    ? () => profitsStateValue?.updateActionExceptionProfitRow()
-                    : () => profitsStateValue?.updateActionProfitRow()
-                }
+                // onClick={
+                //   actionExceptionProfitIdValue
+                //     ? () => profitsStateValue?.updateActionExceptionProfitRow()
+                //     : () => profitsStateValue?.updateActionProfitRow()
+                // }
+                onClick={() => profitsStateValue?.updateActionProfitRow()}
               >
                 <SaveIcon style={{ color: "#a1a2cd" }} />
               </IconButton>
