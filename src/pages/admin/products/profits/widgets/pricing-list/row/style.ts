@@ -21,9 +21,6 @@ const useStyle = ({ width }: any) => {
         lineHeight: "18px",
         color: primaryColor(900),
         textalign: "center",
-        // width: `${width}`,
-        // maxWidth: `${width}`,
-        // minWidth: `${width}`,
         marginBottom: 18.5,
         marginTop: 18.5,
       },
@@ -46,11 +43,11 @@ const useStyle = ({ width }: any) => {
         alignItems: "center",
       },
       textInputsContainer: {
-        marginLeft: 40,
+        marginRight: 20,
       },
       textInputStyle: {
         height: 42,
-        width: 100,
+        width: 70,
       },
     };
   }, []);

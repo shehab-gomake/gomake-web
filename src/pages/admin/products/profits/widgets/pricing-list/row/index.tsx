@@ -33,9 +33,17 @@ const Row = ({ row, width, tablePercent }: any) => {
             >
               {editPriceListStateValue?.isEdit &&
               editPriceListStateValue?.id === row.id ? (
-                <>
-                  {(entry[0] === "width" ||
-                    entry[0] === "height" ||
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    width: "100%",
+                    // gap: 100,
+                  }}
+                >
+                  {(entry[0] === "cost" ||
                     entry[0] === "profit" ||
                     entry[0] === "quantity") && (
                     <div style={clasess.textInputsContainer}>
@@ -54,7 +62,7 @@ const Row = ({ row, width, tablePercent }: any) => {
                       />
                     </div>
                   )}
-                </>
+                </div>
               ) : (
                 entry[1]
               )}
