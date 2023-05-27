@@ -62,6 +62,7 @@ const GomakeTextInput = ({
   onKeyDown,
   multiline,
   InputProps,
+  autoFocus,
 }: {
   labelText?: string;
   value?: string;
@@ -74,10 +75,12 @@ const GomakeTextInput = ({
   onKeyDown?: any;
   multiline?: any;
   InputProps?: any;
+  autoFocus?: any;
 }) => {
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
   return (
     <StyledTextField
+      autoFocus={autoFocus}
       value={value}
       onChange={onChange}
       style={style}

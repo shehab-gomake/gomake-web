@@ -4,6 +4,7 @@ import { useDebounce } from "@/utils/use-debounce";
 import { GomakeTextInput } from "@/components";
 
 const UpdateMinPrice = ({ minValue, profitsStateValue }: any) => {
+  const [isUdate, setIsUpdate] = useState(false);
   const [minPrice, setMinPrice] = useState(minValue || 0);
   const [isChanged, setIsChanged] = useState(false);
 
@@ -21,7 +22,8 @@ const UpdateMinPrice = ({ minValue, profitsStateValue }: any) => {
     [setIsChanged]
   );
   const updateMinPrice = useCallback(async () => {
-    profitsStateValue?.updateActionProfitMinPrice(finalMinPrice);
+    setIsUpdate(false);
+    await profitsStateValue?.updateActionProfitMinPrice(finalMinPrice);
   }, [finalMinPrice]);
   useEffect(() => {
     if (finalMinPrice && isChanged) {
@@ -32,7 +34,7 @@ const UpdateMinPrice = ({ minValue, profitsStateValue }: any) => {
     setMinPrice(minValue);
   }, [minValue]);
 
-  return (
+  return isUdate ? (
     <GomakeTextInput
       value={minPrice}
       type={"number"}
@@ -41,7 +43,10 @@ const UpdateMinPrice = ({ minValue, profitsStateValue }: any) => {
         height: 30,
         width: 100,
       }}
+      autoFocus={true}
     />
+  ) : (
+    <div onClick={() => setIsUpdate(true)}>{`${minPrice || 0}`}$</div>
   );
 };
 export { UpdateMinPrice };
