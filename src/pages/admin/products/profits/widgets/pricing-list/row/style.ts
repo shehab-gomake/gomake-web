@@ -9,7 +9,7 @@ const useStyle = ({ width }: any) => {
       bodyRow: {
         display: "flex",
         width: "100%",
-        justifyContent: "flex-start",
+        justifyContent: "space-between",
         alignItems: "center",
       },
       rowItem: {
@@ -20,7 +20,9 @@ const useStyle = ({ width }: any) => {
         lineHeight: "18px",
         color: primaryColor(900),
         textalign: "center",
-        width: `${width}`,
+        // width: `${width}`,
+        // maxWidth: `${width}`,
+        // minWidth: `${width}`,
         marginBottom: 18.5,
         marginTop: 18.5,
       },

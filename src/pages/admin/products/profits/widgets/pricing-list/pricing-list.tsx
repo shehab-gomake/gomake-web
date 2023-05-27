@@ -16,7 +16,7 @@ import { AddQuantityModal } from "./add-quantity-modal";
 
 interface IProps {
   tableHeaders: any[];
-  tablePercent: any[];
+  tablePercent?: any[];
 }
 
 const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
@@ -76,6 +76,11 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
               <Header
                 key={`header_item${index}`}
                 header={header}
+                width={
+                  tablePercent
+                    ? `${tablePercent[index]}`
+                    : `${100 / (tableHeaders.length - 1)}%`
+                }
                 // width={`${100 / tableHeaders.length}%`}
               />
             );
@@ -104,25 +109,21 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
               />
             </>
           ) : actionProfitRowsVal?.length > 0 ? (
-            <>
+            <div style={clasess.header}>
               {actionProfitRowsVal?.map((row: any, index: number) => {
                 console.log("ROW", row);
                 return (
                   <div key={`body_row${index}`} style={{ width: "100%" }}>
                     <Row
                       row={row}
-                      // width={
-                      //   tablePercent
-                      //     ? `${tablePercent[index]}`
-                      //     : `${100 / tableHeaders.length}%`
-                      // }
+                      tablePercent={tablePercent}
                       // width={`${100 / (Object.entries(row).length - 1)}%`}
                     />
                     <div style={clasess.line}></div>
                   </div>
                 );
               })}
-            </>
+            </div>
           ) : (
             <div style={clasess.noDataContainer}> {t("skeleton.noData")}</div>
           )}

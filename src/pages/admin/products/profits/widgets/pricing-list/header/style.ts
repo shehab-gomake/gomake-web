@@ -17,6 +17,8 @@ const useStyle = ({ width, header }: any) => {
             ? primaryColor(500)
             : "#B5B7C0",
         width: `${width}`,
+        maxWidth: `${width}`,
+        textAlign: "center",
         textalign: "center",
 
         ...FONT_FAMILY.Lexend(

@@ -179,19 +179,19 @@ export default function Profits() {
         {profitsStateValue?.id ? (
           <>
             <ProductList />
-            {!productTest?.id && (
+            {productTest?.id && (
               <div style={clasess.pricingAndExceptionsCointaner}>
                 <div style={clasess.pricingCointaner}>
                   <PricingList
                     tableHeaders={tabelPricingHeaders}
                     tablePercent={[
-                      "10%",
-                      "10%",
-                      "15%",
-                      "15%",
-                      "15%",
-                      "15%",
-                      "20%",
+                      "30px",
+                      "38px",
+                      "74px",
+                      "74px",
+                      "74px",
+                      "74px",
+                      "35px",
                     ]}
                   />
                 </div>

@@ -20,7 +20,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         marginBottom: 36,
-        paddingLeft: 19,
+        paddingLeft: 10,
         paddingRight: 10,
       },
       tableBody: {

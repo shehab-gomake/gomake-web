@@ -9,7 +9,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { profitsState } from "../../../store/profits";
 import { actionExceptionProfitId } from "@/store";
 
-const Row = ({ row, width }: any) => {
+const Row = ({ row, width, tablePercent }: any) => {
   const { clasess } = useStyle({ width });
   const [editPriceListStateValue, setEditPriceListState] =
     useRecoilState<any>(editPriceListState);
@@ -25,7 +25,11 @@ const Row = ({ row, width }: any) => {
           return (
             <div
               key={`row_table_${index}`}
-              style={entry[0] == "more" ? clasess.editItem : clasess.rowItem}
+              style={
+                entry[0] == "more"
+                  ? clasess.editItem
+                  : { ...clasess.rowItem, width: `${tablePercent[index]}` }
+              }
             >
               {editPriceListStateValue?.isEdit &&
               editPriceListStateValue?.id === row.id ? (

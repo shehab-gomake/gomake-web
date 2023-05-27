@@ -246,7 +246,7 @@ const useProfits = () => {
       t("products.profits.pricingListWidget.cost"),
       t("products.profits.pricingListWidget.profit"),
       t("products.profits.pricingListWidget.testQuantity"),
-      t("products.profits.pricingListWidget.testUnitPrice"),
+      t("products.profits.pricingListWidget.unitPrice"),
       t("products.profits.pricingListWidget.totalPrice"),
       t("products.profits.pricingListWidget.testFinalPrice"),
       // t("products.profits.pricingListWidget.meterPrice"),
@@ -504,11 +504,11 @@ const useProfits = () => {
               //New Display Data
 
               cost: item?.cost,
-              profit: item?.profit,
-              testQuantity: item?.testQuantity,
-              testUnitPrice: item?.testUnitPrice,
-              totalPrice: item?.totalPrice,
-              testFinalPrice: item?.testFinalPrice,
+              profit: item?.profit || "0",
+              testQuantity: item?.quantity || "0",
+              unitPrice: item?.unitPrice || "0",
+              totalPrice: item?.totalPrice || "0",
+              testFinalPrice: item?.testFinalPrice || "0",
 
               // meterPrice: item?.meterPrice,
               // expMeter: item?.expMeter,

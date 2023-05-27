@@ -876,7 +876,7 @@
         "addNewStep": "add new step",
         "saveStep": "Save step",
         "testQuantity": "test quantity",
-        "testUnitPrice": "test unit price",
+        "unitPrice": "unit price",
         "testFinalPrice": "test final price"
       },
       "exceptions": {
