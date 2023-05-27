@@ -100,7 +100,7 @@ const useStyle = () => {
         display: "flex",
         gap: 20,
       },
-      addNewStep: {
+      addNewQuantity: {
         width: "100%",
         ...FONT_FAMILY.Lexend(500, 14),
         fontStyle: "normal",

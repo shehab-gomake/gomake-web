@@ -13,6 +13,9 @@ import { actionProfitLists } from "@/store";
 import { productTestState } from "@/store/product-test";
 
 export default function Profits() {
+  const { clasess } = useStyle();
+  const profitsStateValue = useRecoilValue<any>(actionProfitLists);
+  const productTest = useRecoilValue<any>(productTestState);
   const setProfitsState = useSetRecoilState<any>(profitsState);
   const {
     allActions,
@@ -35,6 +38,7 @@ export default function Profits() {
     istimeOutForProductsTest,
     testProductsState,
     openAddQuantityModal,
+    selectTestDataVal,
     onCloseAddQuantityModal,
     onOpenAddQuantityModal,
     updateActionProfitMinPrice,
@@ -66,6 +70,7 @@ export default function Profits() {
     t,
   } = useProfits();
   useEffect(() => {
+    console.log("selectTestDataVal useEffect", selectTestDataVal);
     setProfitsState({
       allActions,
       selectedAction,
@@ -138,6 +143,9 @@ export default function Profits() {
     istimeOutForProductsTest,
     testProductsState,
     openAddQuantityModal,
+    selectTestDataVal,
+    profitsStateValue,
+    productTest,
     onCloseAddQuantityModal,
     onOpenAddQuantityModal,
     updateActionProfitMinPrice,
@@ -168,9 +176,6 @@ export default function Profits() {
     onOpenAddExceptionModal,
     t,
   ]);
-  const { clasess } = useStyle();
-  const profitsStateValue = useRecoilValue<any>(actionProfitLists);
-  const productTest = useRecoilValue<any>(productTestState);
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>

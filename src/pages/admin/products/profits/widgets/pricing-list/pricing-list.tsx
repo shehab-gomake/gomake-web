@@ -7,7 +7,11 @@ import { GoMakeAutoComplate } from "@/components";
 import { Header } from "./header";
 import { Row } from "./row";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { actionProfitLists, actionProfitRows } from "@/store";
+import {
+  actionProfitLists,
+  actionProfitRows,
+  actionProfitRowsState,
+} from "@/store";
 import { Plus } from "./icons/plus";
 import { profitsState } from "../../store/profits";
 import { AddPricingListRowWidget } from "./add-pricing-row-widget";
@@ -25,6 +29,9 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
   const profitsStateValue = useRecoilValue<any>(profitsState);
   const profitsValue = useRecoilValue<any>(profitsState);
   const actionProfitRowsVal = useRecoilValue<any>(actionProfitRows);
+
+  const actionProfitRowsNew = useRecoilValue<any>(actionProfitRowsState);
+
   const [istimeOut, setIsTimeOut] = useState(false);
   const { clasess } = useStyle();
   useEffect(() => {
@@ -87,7 +94,7 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
           })}
         </div>
         <div style={clasess.tableBody}>
-          {typeof actionProfitRowsVal === "string" ? (
+          {typeof actionProfitRowsNew === "string" ? (
             <>
               <Skeleton
                 variant="rectangular"
@@ -108,9 +115,9 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
                 style={clasess.skeletonRowStyle}
               />
             </>
-          ) : actionProfitRowsVal?.length > 0 ? (
+          ) : actionProfitRowsNew?.length > 0 ? (
             <div style={clasess.row}>
-              {actionProfitRowsVal?.map((row: any, index: number) => {
+              {actionProfitRowsNew?.map((row: any, index: number) => {
                 console.log("ROW", row);
                 return (
                   <div key={`body_row${index}`} style={{ width: "100%" }}>
@@ -137,19 +144,20 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
           </>
         )}
         <div
-          style={clasess.addNewStep}
+          style={clasess.addNewQuantity}
           // onClick={() => {
           //   profitsValue?.setOpenAddNewPricingStepRow(true);
           // }}
           onClick={profitsStateValue?.onOpenAddQuantityModal}
         >
           <Plus />
-          {t("products.profits.pricingListWidget.addNewStep")}
+          {t("products.profits.pricingListWidget.addNewQuantity")}
         </div>
       </div>
       <AddQuantityModal
         openModal={profitsStateValue?.openAddQuantityModal}
         onCloseModal={profitsStateValue?.onCloseAddQuantityModal}
+        profitsStateValue={profitsStateValue}
       />
     </>
   );

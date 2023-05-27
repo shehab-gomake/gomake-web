@@ -46,6 +46,9 @@ const getAndSetActionProfitRowByActionId = async (
   );
   const _data: any = returnResult(result, undefined);
   const mapData = _data?.actionProfitRows?.map((item: any) => {
+    console.log("data?.selectTestDataVal", data?.selectTestDataVal);
+    const unitPrice = data?.selectTestDataVal?.unitPrice;
+    const testFinalPrice = item?.quantity * data?.selectTestDataVal?.unitPrice;
     return {
       // ...(_data?.pricingBy === 1
       //   ? {
@@ -56,22 +59,26 @@ const getAndSetActionProfitRowByActionId = async (
       cost: item?.cost || "0",
       profit: item?.profit || "0",
       testQuantity: item?.quantity || "0",
-      unitPrice: item?.unitPrice || "0",
-      totalPrice: item?.totalPrice || "0",
-      testFinalPrice: item?.testFinalPrice || "0",
+      unitPrice,
+      totalPrice: item?.cost * (item?.profit / 100),
+      testFinalPrice,
       more: <PricingListMenuWidget item={item} />,
       id: item?.id,
     };
   });
   const actionProfitRowsMapping = _data?.actionProfitRows?.map((item: any) => {
+    console.log("data?.selectTestDataVal", data?.selectTestDataVal);
+    const unitPrice = data?.selectTestDataVal?.unitPrice;
+    const testFinalPrice = item?.quantity * data?.selectTestDataVal?.unitPrice;
     return {
       cost: item?.cost,
       profit: item?.profit,
-      quantity: item?.quantity || 100,
-      unitPrice: 0,
+      quantity: item?.quantity,
+      unitPrice,
       totalPrice: item?.cost * (item?.profit / 100),
-      testFinalPrice: 0,
-      // id: item?.id,
+      testFinalPrice,
+      more: <PricingListMenuWidget item={item} />,
+      id: item?.id,
     };
   });
   const mapActionExpections = _data?.actionExpections?.map((item: any) => {

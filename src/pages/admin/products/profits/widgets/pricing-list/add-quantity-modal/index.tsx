@@ -5,11 +5,41 @@ import {
 } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  actionExceptionProfitId,
+  actionProfitLists,
+  actionProfitRowsState,
+} from "@/store";
+import { useEffect } from "react";
 
-const AddQuantityModal = ({ openModal, onCloseModal }: any) => {
+const AddQuantityModal = ({
+  openModal,
+  onCloseModal,
+  profitsStateValue,
+}: any) => {
   const { t } = useTranslation();
-
+  const actionExceptionProfitIdValue = useRecoilValue<any>(
+    actionExceptionProfitId
+  );
+  const [actionProfitRowsNew, setActionProfitRowsNew] = useRecoilState<any>(
+    actionProfitRowsState
+  );
+  console.log("actionProfitRowsNew", actionProfitRowsNew);
   const { clasess } = useStyle();
+
+  useEffect(() => {
+    profitsStateValue?.onChangeAddPricingListRow(
+      "cost",
+      actionProfitRowsNew[actionProfitRowsNew.length - 1].cost
+    );
+    setTimeout(() => {
+      profitsStateValue?.onChangeAddPricingListRow(
+        "profit",
+        actionProfitRowsNew[actionProfitRowsNew.length - 1].profit
+      );
+    }, 500);
+  }, [actionProfitRowsNew]);
   return (
     <>
       <GoMakeModal
@@ -22,17 +52,27 @@ const AddQuantityModal = ({ openModal, onCloseModal }: any) => {
           <GomakeTextInput
             placeholder="Quantity"
             style={clasess.textInputStyle}
-            // value={materialAdditionsStateValue?.items[index]["name"]}
-            // onChange={(e: any) => {
-            //   materialAdditionsStateValue?.changeItems(
-            //     index,
-            //     "name",
-            //     e.target.value
-            //   );
-            // }}
+            value={profitsStateValue?.pricingListRowState?.quantity}
+            onChange={(e: any) => {
+              profitsStateValue?.onChangeAddPricingListRow(
+                "quantity",
+                e.target.value
+              );
+            }}
           />
           <div style={clasess.btnContainer}>
-            <GomakePrimaryButton style={clasess.btnStyle}>
+            <GomakePrimaryButton
+              style={clasess.btnStyle}
+              onClick={async () => {
+                await profitsStateValue?.onClickSaveNewActionProfitRow();
+                onCloseModal();
+              }}
+              // onClick={
+              //   actionExceptionProfitIdValue
+              //     ? profitsStateValue?.onClickSaveNewActionExceptionProfitRow
+              //     : profitsStateValue?.onClickSaveNewActionProfitRow
+              // }
+            >
               Add
             </GomakePrimaryButton>
           </div>
