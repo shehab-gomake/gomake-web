@@ -11,6 +11,8 @@ import {
   parametersState,
   productsState,
   chartDataByActionProfitRow,
+  actionProfitRowsState,
+  selectTestDataState,
 } from "@/store";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { GoMakeAutoComplate } from "@/components";
@@ -43,6 +45,14 @@ const useProfits = () => {
     return () => clearTimeout(timer);
   }, []);
   const setChartDataValue = useSetRecoilState<any>(chartDataByActionProfitRow);
+
+  const [actionProfitRowsNew, setActionProfitRowsNew] = useRecoilState<any>(
+    actionProfitRowsState
+  );
+  console.log("actionProfitRowsNew", actionProfitRowsNew);
+  const [selectTestDataVal, setSelectTestData] =
+    useRecoilState<any>(selectTestDataState);
+  console.log("selectTestDataVal", selectTestDataVal?.unitPrice);
 
   const [machincesStateValue, setMachincesState] =
     useRecoilState<any>(machincesState);
@@ -121,6 +131,7 @@ const useProfits = () => {
           : (data) => {
               console.log(data);
             },
+        setActionProfitRowsNew,
         machincesStateValue,
         productsStateValue,
         clientTypesStateValue,
@@ -184,16 +195,32 @@ const useProfits = () => {
       await getAndSetGetActionProfitTestResultsByActionId(
         callApi,
         setActionExceptionProfitRows,
+        setSelectTestData,
         actionProfits,
         {
           actionId: selectedAction?.id,
           productId: productId,
         }
       );
+      const mapData = actionProfitRowsNew?.map((item: any) => {
+        console.log("item", item);
+        return {
+          cost: item?.cost,
+          profit: item?.profit,
+          quantity: item?.quantity,
+          unitPrice: selectTestDataVal?.unitPrice,
+          totalPrice: item?.cost * (item?.profit / 100),
+          testFinalPrice: item?.quantity * selectTestDataVal?.unitPrice,
+          more: <PricingListMenuWidget item={item} />,
+          id: item?.id,
+        };
+      });
+      console.log("mapData", mapData);
       setactionExceptionProfitId(productId);
       setProductTest({ id: productId, name: productName });
+      setActionExceptionProfitRows(mapData);
     },
-    [selectedAction]
+    [selectedAction, actionProfitRowsNew, selectTestDataVal]
   );
   const getMachincesProfits = useCallback(async () => {
     await getAndSetMachinces(callApi, setMachincesState);

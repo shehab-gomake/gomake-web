@@ -8,6 +8,7 @@ const useStyle = ({ width }: any) => {
     return {
       bodyRow: {
         display: "flex",
+        flexDirection: "row" as "row",
         width: "100%",
         justifyContent: "space-between",
         alignItems: "center",

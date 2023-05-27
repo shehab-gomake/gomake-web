@@ -109,7 +109,7 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
               />
             </>
           ) : actionProfitRowsVal?.length > 0 ? (
-            <div style={clasess.header}>
+            <div style={clasess.row}>
               {actionProfitRowsVal?.map((row: any, index: number) => {
                 console.log("ROW", row);
                 return (

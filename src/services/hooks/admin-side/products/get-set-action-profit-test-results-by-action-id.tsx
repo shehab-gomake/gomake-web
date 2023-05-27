@@ -5,6 +5,7 @@ import { PricingListMenuWidget } from "@/pages/admin/products/profits/widgets/pr
 const getAndSetGetActionProfitTestResultsByActionId = async (
   callApi: ICallApi,
   setState?: ISetState,
+  setSelectTestData?: any,
   actionProfits?: any,
   data?: any
 ) => {
@@ -33,7 +34,7 @@ const getAndSetGetActionProfitTestResultsByActionId = async (
       id: item?.id,
     };
   });
-
+  setSelectTestData({ unitPrice: mapData[0]?.unitPrice });
   if (setState) {
     setState(mapData);
   }

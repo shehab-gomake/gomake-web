@@ -6,6 +6,7 @@ const getAndSetActionProfitRowByActionId = async (
   callApi: ICallApi,
   setState?: ISetState,
   setActionProfitRows?: any,
+  setActionProfitRowsNew?: any,
   machincesStateValue?: any,
   productsStateValue?: any,
   clientTypesStateValue?: any,
@@ -62,6 +63,17 @@ const getAndSetActionProfitRowByActionId = async (
       id: item?.id,
     };
   });
+  const actionProfitRowsMapping = _data?.actionProfitRows?.map((item: any) => {
+    return {
+      cost: item?.cost,
+      profit: item?.profit,
+      quantity: item?.quantity || 100,
+      unitPrice: 0,
+      totalPrice: item?.cost * (item?.profit / 100),
+      testFinalPrice: 0,
+      // id: item?.id,
+    };
+  });
   const mapActionExpections = _data?.actionExpections?.map((item: any) => {
     return {
       ...renderType(item),
@@ -75,6 +87,7 @@ const getAndSetActionProfitRowByActionId = async (
     };
   });
   setActionProfitRows(mapData);
+  setActionProfitRowsNew(actionProfitRowsMapping);
   _data.actionProfitRowsMapped = mapData;
   _data.actionExpectionRowsMapped = mapActionExpections;
   if (setState) {

@@ -23,6 +23,15 @@ const useStyle = () => {
         paddingLeft: 10,
         paddingRight: 10,
       },
+      row: {
+        display: "flex",
+        width: "100%",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingLeft: 10,
+        paddingRight: 10,
+      },
       tableBody: {
         display: "flex",
         width: "100%",
