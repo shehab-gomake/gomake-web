@@ -19,7 +19,7 @@ const useStyle = () => {
         width: "100%",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 36,
+        // marginBottom: 36,
         paddingLeft: 10,
         paddingRight: 10,
       },

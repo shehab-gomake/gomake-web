@@ -14,9 +14,9 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: "#ffffff",
-        marginBottom: 36,
-        paddingLeft: 32,
-        paddingRight: 32,
+        // marginBottom: 36,
+        paddingLeft: 22,
+        paddingRight: 22,
       },
       tableBody: {
         display: "flex",
@@ -95,6 +95,7 @@ const useStyle = () => {
         marginTop: 15,
         gap: 15,
         paddingLeft: 22,
+        paddingRight: 22,
       },
       textInputStyle: {
         width: 120,
@@ -113,6 +114,7 @@ const useStyle = () => {
         gap: 7,
         cursor: "pointer",
         paddingLeft: 22,
+        paddingRight: 22,
       },
       withoutTitle: {
         paddingTop: 20,

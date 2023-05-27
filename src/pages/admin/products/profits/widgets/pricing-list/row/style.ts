@@ -24,6 +24,18 @@ const useStyle = ({ width }: any) => {
         marginBottom: 18.5,
         marginTop: 18.5,
       },
+      rowItemExpPofit: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        ...FONT_FAMILY.Lexend(400, 14),
+        lineHeight: "18px",
+        // color: primaryColor(900),
+        textalign: "center",
+        marginBottom: 18.5,
+        marginTop: 18.5,
+        color: " #F135A3",
+      },
       editItem: {
         display: "flex",
         justifyContent: "center",

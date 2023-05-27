@@ -54,8 +54,15 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
                               backgroundColor: "#EBECFF",
                               width: "100%",
                               marginTop: 5,
+                              paddingLeft: 22,
+                              paddingRight: 22,
                             }
-                          : { width: "100%", marginTop: 5 }
+                          : {
+                              width: "100%",
+                              marginTop: 5,
+                              paddingLeft: 22,
+                              paddingRight: 22,
+                            }
                       }
                     >
                       <Row key={`body_row${index}`} row={row} />

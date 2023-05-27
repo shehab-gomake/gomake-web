@@ -15,8 +15,12 @@ const useStyle = ({ width, header }: any) => {
         color:
           header == "Exp.meter"
             ? primaryColor(500)
-            : header == t("products.profits.pricingListWidget.totalPrice")
+            : header == t("products.profits.pricingListWidget.totalPrice") ||
+              header == t("products.profits.pricingListWidget.Expprofit") ||
+              header == "Exp Profit"
             ? primaryColor(500)
+            : header == t("products.profits.pricingListWidget.Expprofit")
+            ? "#F135A3"
             : "#B5B7C0",
         width: `${width}`,
         maxWidth: `${width}`,
@@ -26,16 +30,22 @@ const useStyle = ({ width, header }: any) => {
         ...FONT_FAMILY.Lexend(
           header == "Exp.meter"
             ? 600
-            : header == t("products.profits.pricingListWidget.totalPrice")
+            : header == t("products.profits.pricingListWidget.totalPrice") ||
+              header == t("products.profits.pricingListWidget.Expprofit")
             ? 600
             : 500,
           14
         ),
         fontStyle: "normal",
         lineHeight: "18px",
+
+        // padding:
+        //   header == t("products.profits.pricingListWidget.Expprofit") ? 20 : "",
+        // // borderBottom: 0,
+        // // paddingBottom: 0,
       },
     };
-  }, []);
+  }, [t]);
   return {
     clasess,
   };

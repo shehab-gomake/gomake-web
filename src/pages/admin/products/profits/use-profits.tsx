@@ -171,7 +171,11 @@ const useProfits = () => {
   }, [actionProfits]);
 
   const onCklickActionExceptionProfitRow = useCallback(
-    async (id: string) => {
+    async (
+      id: string,
+      selectedAdditional: number,
+      exceptionTypeValue: string
+    ) => {
       setActionExceptionProfitRows("");
       await getAndSetActionExceptionProfitRowByActionExceptionId(
         callApi,
@@ -182,8 +186,103 @@ const useProfits = () => {
         }
       );
       setactionExceptionProfitId(id);
+      console.log("exceptionTypeValue", exceptionTypeValue);
+
+      if (exceptionTypeValue === "Additional") {
+        let isQuantity = false;
+        actionProfits?.actionProfitRowsMapped?.forEach((element) => {
+          if (element.hasOwnProperty("quantity")) {
+            isQuantity = true;
+            return;
+          }
+        });
+        setTabelPricingHeaders([
+          // ...(isQuantity
+          //   ? [t("products.profits.pricingListWidget.quantity")]
+          //   : [
+          //       t("products.profits.pricingListWidget.width"),
+          //       t("products.profits.pricingListWidget.height"),
+          //     ]),
+          t("products.profits.pricingListWidget.cost"),
+          t("products.profits.pricingListWidget.profit"),
+          t("products.profits.pricingListWidget.Expprofit"),
+          t("products.profits.pricingListWidget.testQuantity"),
+          t("products.profits.pricingListWidget.unitPrice"),
+          t("products.profits.pricingListWidget.totalPrice"),
+          t("products.profits.pricingListWidget.testFinalPrice"),
+          // t("products.profits.pricingListWidget.meterPrice"),
+          // t("products.profits.pricingListWidget.expMeter"),
+          // t("products.profits.pricingListWidget.price"),
+          t("products.profits.pricingListWidget.more"),
+        ]);
+        const mapData = actionProfitRowsNew?.map((item: any) => {
+          return {
+            cost: item?.cost || "0",
+            profit: item?.profit,
+            ExpProfit: (
+              parseFloat(item?.profit) +
+              selectedAdditional / 100
+            )?.toFixed(2),
+            quantity: item?.quantity,
+            unitPrice: selectTestDataVal?.unitPrice,
+            totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
+            testFinalPrice: (
+              item?.quantity * selectTestDataVal?.unitPrice
+            )?.toFixed(2),
+            more: <PricingListMenuWidget item={item} />,
+            id: item?.id,
+          };
+        });
+        setActionProfitRowsNew(mapData);
+      } else {
+        let isQuantity = false;
+        actionProfits?.actionProfitRowsMapped?.forEach((element) => {
+          if (element.hasOwnProperty("quantity")) {
+            isQuantity = true;
+            return;
+          }
+        });
+        setTabelPricingHeaders([
+          // ...(isQuantity
+          //   ? [t("products.profits.pricingListWidget.quantity")]
+          //   : [
+          //       t("products.profits.pricingListWidget.width"),
+          //       t("products.profits.pricingListWidget.height"),
+          //     ]),
+          t("products.profits.pricingListWidget.cost"),
+          t("products.profits.pricingListWidget.profit"),
+          t("products.profits.pricingListWidget.testQuantity"),
+          t("products.profits.pricingListWidget.unitPrice"),
+          t("products.profits.pricingListWidget.totalPrice"),
+          t("products.profits.pricingListWidget.testFinalPrice"),
+          // t("products.profits.pricingListWidget.meterPrice"),
+          // t("products.profits.pricingListWidget.expMeter"),
+          // t("products.profits.pricingListWidget.price"),
+          t("products.profits.pricingListWidget.more"),
+        ]);
+        const mapData = actionProfitRowsNew?.map((item: any) => {
+          return {
+            cost: item?.cost || "0",
+            profit: item?.profit,
+            quantity: item?.quantity,
+            unitPrice: selectTestDataVal?.unitPrice,
+            totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
+            testFinalPrice: (
+              item?.quantity * selectTestDataVal?.unitPrice
+            )?.toFixed(2),
+            more: <PricingListMenuWidget item={item} />,
+            id: item?.id,
+          };
+        });
+        setActionProfitRowsNew(mapData);
+      }
     },
-    [actionExceptionProfitIdValue]
+    [
+      actionExceptionProfitIdValue,
+      actionProfitRowsNew,
+      selectTestDataVal,
+      actionProfits,
+    ]
   );
   const setProductTest = useSetRecoilState(productTestState);
 
@@ -206,9 +305,11 @@ const useProfits = () => {
           cost: item?.cost || "0",
           profit: item?.profit,
           quantity: item?.quantity,
-          unitPrice: selectTestDataVal[0].unitPrice,
-          totalPrice: item?.cost * (item?.profit / 100),
-          testFinalPrice: item?.quantity * selectTestDataVal[0].unitPrice,
+          unitPrice: selectTestDataVal[0]?.unitPrice,
+          totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
+          testFinalPrice: (
+            item?.quantity * selectTestDataVal[0].unitPrice
+          )?.toFixed(2),
           more: <PricingListMenuWidget item={item} />,
           id: item?.id,
         };
@@ -253,7 +354,8 @@ const useProfits = () => {
     getTestProducts();
   }, [selectedAction]);
 
-  const tabelPricingHeaders = useMemo(() => {
+  const [tabelPricingHeaders, setTabelPricingHeaders] = useState([]);
+  useEffect(() => {
     let isQuantity = false;
     actionProfits?.actionProfitRowsMapped?.forEach((element) => {
       if (element.hasOwnProperty("quantity")) {
@@ -261,7 +363,7 @@ const useProfits = () => {
         return;
       }
     });
-    return [
+    setTabelPricingHeaders([
       // ...(isQuantity
       //   ? [t("products.profits.pricingListWidget.quantity")]
       //   : [
@@ -278,7 +380,7 @@ const useProfits = () => {
       // t("products.profits.pricingListWidget.expMeter"),
       // t("products.profits.pricingListWidget.price"),
       t("products.profits.pricingListWidget.more"),
-    ];
+    ]);
   }, [actionProfits]);
   const tabelExceptionsHeaders = useMemo(
     () => [
@@ -532,9 +634,9 @@ const useProfits = () => {
               cost: item?.cost || "0",
               profit: item?.profit || "0",
               testQuantity: item?.quantity || "0",
-              unitPrice: item?.unitPrice || "0",
-              totalPrice: item?.totalPrice || "0",
-              testFinalPrice: item?.testFinalPrice || "0",
+              unitPrice: item?.unitPrice?.toFixed(2) || "0",
+              totalPrice: item?.totalPrice?.toFixed(2) || "0",
+              testFinalPrice: item?.testFinalPrice?.toFixed(2) || "0",
 
               // meterPrice: item?.meterPrice,
               // expMeter: item?.expMeter,

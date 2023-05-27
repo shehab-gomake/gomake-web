@@ -13,19 +13,21 @@ const Row = ({ key, row }: any) => {
     <>
       <div key={key} style={clasess.bodyRow}>
         {Object.entries(row).map((entry: [string, any], index: number) => {
-          if (entry[0] !== "id") {
+          if (
+            entry[0] !== "id" &&
+            entry[0] !== "selectedAdditional" &&
+            entry[0] !== "exceptionTypeValue"
+          ) {
             return (
               <div
                 key={`row_table_${index}`}
                 style={clasess.rowItem}
-                onClick={
-                  row?.exceptionType === "NewBase" ||
-                  row?.exceptionType === "EditBase"
-                    ? () =>
-                        profitsStateValue?.onCklickActionExceptionProfitRow(
-                          row?.id
-                        )
-                    : null
+                onClick={() =>
+                  profitsStateValue?.onCklickActionExceptionProfitRow(
+                    row?.id,
+                    row?.selectedAdditional,
+                    row?.exceptionTypeValue
+                  )
                 }
               >
                 {entry[1]}

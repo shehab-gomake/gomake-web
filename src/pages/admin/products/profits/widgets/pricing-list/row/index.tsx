@@ -29,6 +29,8 @@ const Row = ({ row, width, tablePercent }: any) => {
               style={
                 entry[0] == "more"
                   ? clasess.editItem
+                  : entry[0] === "ExpProfit"
+                  ? clasess.rowItemExpPofit
                   : { ...clasess.rowItem, width: `${tablePercent[index]}` }
               }
             >

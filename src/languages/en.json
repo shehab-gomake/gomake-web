@@ -866,6 +866,7 @@
         "quantity": "Quantity",
         "cost": "Cost",
         "profit": "Profit",
+        "Expprofit": "Exp Profit",
         "meterPrice": "Meter Price",
         "expMeter": "Exp.meter",
         "price": "Price",
