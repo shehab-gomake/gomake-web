@@ -33,6 +33,7 @@ const getAndSetActionExceptionProfitRowByActionExceptionId = async (
       testFinalPrice: item?.testFinalPrice || "0",
       more: <PricingListMenuWidget item={item} />,
       id: item?.id,
+      recordID: item?.recordID,
     };
   });
 

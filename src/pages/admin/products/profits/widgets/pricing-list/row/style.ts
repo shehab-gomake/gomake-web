@@ -47,7 +47,7 @@ const useStyle = ({ width }: any) => {
       },
       textInputStyle: {
         height: 42,
-        width: 70,
+        width: 50,
       },
     };
   }, []);

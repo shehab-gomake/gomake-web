@@ -190,9 +190,9 @@ export default function Profits() {
                   <PricingList
                     tableHeaders={tabelPricingHeaders}
                     tablePercent={[
-                      "30px",
-                      "38px",
-                      "38px",
+                      "50px",
+                      "50px",
+                      "50px",
                       "120px",
                       "100px",
                       "120px",

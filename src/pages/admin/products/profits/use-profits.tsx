@@ -542,6 +542,7 @@ const useProfits = () => {
               // totalPrice: item?.totalPrice,
               more: <PricingListMenuWidget item={item} />,
               id: item?.id,
+              recordID: item?.recordID,
             };
           }
         );
@@ -633,11 +634,23 @@ const useProfits = () => {
     [actionExceptionProfitIdValue]
   );
   const updateActionProfitRow = useCallback(async () => {
+    console.log(
+      "editPriceListStateValue?.state",
+      editPriceListStateValue?.state
+    );
     const res = await callApi(
       "PUT",
       `/v1/printhouse-config/profits/update-action-profit-row`,
       {
-        ...editPriceListStateValue?.state,
+        id: editPriceListStateValue?.state?.id,
+        actionId: editPriceListStateValue?.state?.actionId,
+        quantity: editPriceListStateValue?.state?.quantity,
+        cost: editPriceListStateValue?.state?.cost,
+        profit: editPriceListStateValue?.state?.profit,
+        actionProfitId: actionProfits?.id,
+        recordId:
+          editPriceListStateValue?.state?.recordID ||
+          editPriceListStateValue?.state?.more?.props?.item?.recordID,
       }
     );
     if (res?.success) {
@@ -655,7 +668,7 @@ const useProfits = () => {
         type: "error",
       });
     }
-  }, [selectedAction, editPriceListStateValue]);
+  }, [selectedAction, editPriceListStateValue, actionProfits]);
 
   const updateActionExceptionProfitRow = useCallback(async () => {
     const res = await callApi(

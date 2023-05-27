@@ -64,6 +64,7 @@ const getAndSetActionProfitRowByActionId = async (
       testFinalPrice,
       more: <PricingListMenuWidget item={item} />,
       id: item?.id,
+      recordID: item?.recordID,
     };
   });
   const actionProfitRowsMapping = _data?.actionProfitRows?.map((item: any) => {
@@ -79,6 +80,7 @@ const getAndSetActionProfitRowByActionId = async (
       testFinalPrice,
       more: <PricingListMenuWidget item={item} />,
       id: item?.id,
+      recordID: item?.recordID,
     };
   });
   const mapActionExpections = _data?.actionExpections?.map((item: any) => {

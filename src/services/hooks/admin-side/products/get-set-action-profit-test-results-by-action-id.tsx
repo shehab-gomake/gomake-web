@@ -32,6 +32,7 @@ const getAndSetGetActionProfitTestResultsByActionId = async (
       testFinalPrice: item?.testFinalPrice || "0",
       more: <PricingListMenuWidget item={item} />,
       id: item?.id,
+      recordID: item?.recordID,
     };
   });
   setSelectTestData({ unitPrice: mapData[0]?.unitPrice });

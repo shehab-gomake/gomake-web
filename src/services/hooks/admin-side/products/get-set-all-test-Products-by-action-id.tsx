@@ -12,7 +12,7 @@ const getAndSetGetAllTestProductsByActionId = async (
     const myArry = productsStateValue.find(
       (product: any) => product?.id == testProductItemId
     );
-    return { name: myArry?.name, id: myArry.id };
+    return { name: myArry?.name, id: myArry?.id };
   };
   const result: any = await callApi(
     "GET",
