@@ -203,7 +203,7 @@ const useProfits = () => {
         );
       const mapData = actionProfitRowsNew?.map((item: any) => {
         return {
-          cost: item?.cost,
+          cost: item?.cost || "0",
           profit: item?.profit,
           quantity: item?.quantity,
           unitPrice: selectTestDataVal[0].unitPrice,
@@ -529,7 +529,7 @@ const useProfits = () => {
 
               //New Display Data
 
-              cost: item?.cost,
+              cost: item?.cost || "0",
               profit: item?.profit || "0",
               testQuantity: item?.quantity || "0",
               unitPrice: item?.unitPrice || "0",

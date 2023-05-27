@@ -71,9 +71,9 @@ const getAndSetActionProfitRowByActionId = async (
     const unitPrice = data?.selectTestDataVal?.unitPrice;
     const testFinalPrice = item?.quantity * data?.selectTestDataVal?.unitPrice;
     return {
-      cost: item?.cost,
-      profit: item?.profit,
-      quantity: item?.quantity,
+      cost: item?.cost || "0",
+      profit: item?.profit || "0",
+      quantity: item?.quantity || "0",
       unitPrice,
       totalPrice: item?.cost * (item?.profit / 100),
       testFinalPrice,

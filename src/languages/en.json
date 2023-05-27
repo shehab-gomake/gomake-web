@@ -869,15 +869,15 @@
         "meterPrice": "Meter Price",
         "expMeter": "Exp.meter",
         "price": "Price",
-        "totalPrice": "Total price",
+        "totalPrice": "Total Price",
         "width": "width",
         "more": "More",
         "height": "height",
         "addNewQuantity": "add new quantity",
         "saveStep": "Save step",
-        "testQuantity": "test quantity",
-        "unitPrice": "unit price",
-        "testFinalPrice": "test final price"
+        "testQuantity": "quantity",
+        "unitPrice": "Test Unit Price",
+        "testFinalPrice": "Test Final Price"
       },
       "exceptions": {
         "title": "Exceptions",

@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useTranslation } from "react-i18next";
 
 const useStyle = ({ width, header }: any) => {
   const { primaryColor } = useGomakeTheme();
+  const { t } = useTranslation();
   const clasess = useMemo(() => {
     return {
       headerItem: {
@@ -13,7 +15,7 @@ const useStyle = ({ width, header }: any) => {
         color:
           header == "Exp.meter"
             ? primaryColor(500)
-            : header == "Total price"
+            : header == t("products.profits.pricingListWidget.totalPrice")
             ? primaryColor(500)
             : "#B5B7C0",
         width: `${width}`,
@@ -22,7 +24,11 @@ const useStyle = ({ width, header }: any) => {
         textalign: "center",
 
         ...FONT_FAMILY.Lexend(
-          header == "Exp.meter" ? 600 : header == "Total price" ? 600 : 500,
+          header == "Exp.meter"
+            ? 600
+            : header == t("products.profits.pricingListWidget.totalPrice")
+            ? 600
+            : 500,
           14
         ),
         fontStyle: "normal",

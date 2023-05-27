@@ -31,12 +31,12 @@ const AddQuantityModal = ({
   useEffect(() => {
     profitsStateValue?.onChangeAddPricingListRow(
       "cost",
-      actionProfitRowsNew[actionProfitRowsNew.length - 1].cost
+      actionProfitRowsNew[actionProfitRowsNew.length - 1]?.cost
     );
     setTimeout(() => {
       profitsStateValue?.onChangeAddPricingListRow(
         "profit",
-        actionProfitRowsNew[actionProfitRowsNew.length - 1].profit
+        actionProfitRowsNew[actionProfitRowsNew.length - 1]?.profit
       );
     }, 500);
   }, [actionProfitRowsNew]);
