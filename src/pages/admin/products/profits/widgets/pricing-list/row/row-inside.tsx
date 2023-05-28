@@ -63,7 +63,7 @@ const RowInside = ({
                       totalPrice: e.target.value,
                       profit:
                         editPriceListStateValue.state.totalPrice /
-                        (1 + editPriceListStateValue.state.profit / 100),
+                        (editPriceListStateValue.state.profit / 100),
                     },
                   });
                 }
