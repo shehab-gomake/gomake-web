@@ -15,7 +15,6 @@ const AddTestProductModal = () => {
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
   const [selectedItem, setSelectedItem] = useState("");
-  console.log("selectedItem", selectedItem);
   return (
     <>
       <GoMakeModal

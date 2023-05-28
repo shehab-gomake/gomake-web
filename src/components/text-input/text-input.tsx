@@ -63,6 +63,7 @@ const GomakeTextInput = ({
   multiline,
   InputProps,
   autoFocus,
+  onMouseLeave,
 }: {
   labelText?: string;
   value?: string;
@@ -76,6 +77,7 @@ const GomakeTextInput = ({
   multiline?: any;
   InputProps?: any;
   autoFocus?: any;
+  onMouseLeave?: any;
 }) => {
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
   return (
@@ -95,6 +97,7 @@ const GomakeTextInput = ({
       secondColor={secondColor}
       primaryColor={primaryColor}
       errorColor={errorColor}
+      onMouseLeave={onMouseLeave}
     />
   );
 };

@@ -1,6 +1,7 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../../call-api.interface";
 import { PricingListMenuWidget } from "@/pages/admin/products/profits/widgets/pricing-list/more-circle";
+import { renderProfits } from "@/pages/admin/products/profits/use-profit-action.";
 
 const getAndSetGetActionProfitTestResultsByActionId = async (
   callApi: ICallApi,
@@ -24,13 +25,9 @@ const getAndSetGetActionProfitTestResultsByActionId = async (
       //     }
       //   : { quantity: item?.quantity }),
 
-      cost: item?.cost || "0",
-      profit: item?.profit || "0",
-      testQuantity: item?.quantity || "0",
-      unitPrice: item?.unitPrice?.toFixed(2) || "0",
-      totalPrice: item?.totalPrice?.toFixed(2) || "0",
-      testFinalPrice: item?.testFinalPrice?.toFixed(2) || "0",
-      more: <PricingListMenuWidget item={item} />,
+      ...renderProfits(item),
+      // testFinalPrice: item?.testFinalPrice?.toFixed(2) || "0",
+      // more: <PricingListMenuWidget item={item} />,
       id: item?.id,
       recordID: item?.recordID,
     };
