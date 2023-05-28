@@ -5,7 +5,6 @@ import { PricingListMenuWidget } from "@/pages/admin/products/profits/widgets/pr
 const getAndSetActionExceptionProfitRowByActionExceptionId = async (
   callApi: ICallApi,
   setState?: ISetState,
-  actionProfits?: any,
   data?: any
 ) => {
   const result: any = await callApi(
@@ -14,31 +13,23 @@ const getAndSetActionExceptionProfitRowByActionExceptionId = async (
     data
   );
   const _data: any = returnResult(result, undefined);
-  const mapData = _data?.map((item: any) => {
-    return {
-      // ...(actionProfits?.pricingBy === 1
-      //   ? {
-      //       width: item?.width,
-      //       height: item?.height,
-      //     }
-      //   : { quantity: item?.quantity }),
-
-      //New Display Data
-
-      cost: item?.cost || "0",
-      profit: item?.profit || "0",
-      testQuantity: item?.quantity || "0",
-      unitPrice: item?.unitPrice?.toFixed(2) || "0",
-      totalPrice: item?.totalPrice?.toFixed(2) || "0",
-      testFinalPrice: item?.testFinalPrice || "0",
-      more: <PricingListMenuWidget item={item} />,
-      id: item?.id,
-      recordID: item?.recordID,
-    };
-  });
+  console.log(_data);
+  // const mapData = _data?.map((item: any) => {
+  //   return {
+  //     cost: item?.cost || "0",
+  //     profit: item?.profit || "0",
+  //     testQuantity: item?.quantity || "0",
+  //     unitPrice: item?.unitPrice?.toFixed(2) || "0",
+  //     totalPrice: item?.totalPrice?.toFixed(2) || "0",
+  //     testFinalPrice: item?.testFinalPrice || "0",
+  //     more: <PricingListMenuWidget item={item} />,
+  //     id: item?.id,
+  //     recordID: item?.recordID,
+  //   };
+  // });
 
   if (setState) {
-    setState(mapData);
+    setState(_data);
   }
 
   return _data;

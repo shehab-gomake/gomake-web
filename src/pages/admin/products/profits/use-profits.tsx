@@ -49,7 +49,6 @@ const useProfits = () => {
   const [actionProfitRowsNew, setActionProfitRowsNew] = useRecoilState<any>(
     actionProfitRowsState
   );
-  console.log("actionProfitRowsNew", actionProfitRowsNew);
   const [selectTestDataVal, setSelectTestData] =
     useRecoilState<any>(selectTestDataState);
 
@@ -65,7 +64,8 @@ const useProfits = () => {
   const [editPriceListStateValue, setEditPriceListState] =
     useRecoilState<any>(editPriceListState);
 
-  const setActionExceptionProfitRows = useSetRecoilState<any>(actionProfitRows);
+  const [actionExceptionProfitRowsVal, setActionExceptionProfitRows] =
+    useRecoilState<any>(actionProfitRows);
   const [actionExceptionProfitIdValue, setactionExceptionProfitId] =
     useRecoilState<any>(actionExceptionProfitId);
 
@@ -121,7 +121,6 @@ const useProfits = () => {
   }, []);
 
   const getActionProfits = async (withUpdateAction = true) => {
-    console.log("selectTestDataVal", selectTestDataVal);
     await getAndSetActionProfitRowByActionId(
       callApi,
       setActionProfits,
@@ -148,7 +147,6 @@ const useProfits = () => {
       await getAndSetActionExceptionProfitRowByActionExceptionId(
         callApi,
         setActionExceptionProfitRows,
-        actionProfits,
         {
           ActionExceptionId: actionExceptionProfitIdValue,
         }
@@ -180,13 +178,11 @@ const useProfits = () => {
       await getAndSetActionExceptionProfitRowByActionExceptionId(
         callApi,
         setActionExceptionProfitRows,
-        actionProfits,
         {
           ActionExceptionId: id,
         }
       );
       setactionExceptionProfitId(id);
-      console.log("exceptionTypeValue", exceptionTypeValue);
 
       if (exceptionTypeValue === "Additional") {
         let isQuantity = false;
@@ -197,12 +193,6 @@ const useProfits = () => {
           }
         });
         setTabelPricingHeaders([
-          // ...(isQuantity
-          //   ? [t("products.profits.pricingListWidget.quantity")]
-          //   : [
-          //       t("products.profits.pricingListWidget.width"),
-          //       t("products.profits.pricingListWidget.height"),
-          //     ]),
           t("products.profits.pricingListWidget.cost"),
           t("products.profits.pricingListWidget.profit"),
           t("products.profits.pricingListWidget.Expprofit"),
@@ -210,14 +200,10 @@ const useProfits = () => {
           t("products.profits.pricingListWidget.unitPrice"),
           t("products.profits.pricingListWidget.totalPrice"),
           t("products.profits.pricingListWidget.testFinalPrice"),
-          // t("products.profits.pricingListWidget.meterPrice"),
-          // t("products.profits.pricingListWidget.expMeter"),
-          // t("products.profits.pricingListWidget.price"),
           t("products.profits.pricingListWidget.more"),
         ]);
         const mapData = actionProfitRowsNew?.map((item: any) => {
           const percent = item?.profit * (selectedAdditional / 100);
-          console.log("percent", percent);
           return {
             cost: item?.cost || "0",
             profit: item?.profit,
@@ -232,6 +218,48 @@ const useProfits = () => {
             id: item?.id,
           };
         });
+        setActionProfitRowsNew(mapData);
+      } else if (exceptionTypeValue === "NewBase") {
+        console.log(
+          "actionExceptionProfitRowsVal",
+          actionExceptionProfitRowsVal
+        );
+        const mapData = actionExceptionProfitRowsVal?.map((item: any) => {
+          return {
+            cost: item?.cost || "0",
+            profit: item?.profit,
+            quantity: item?.quantity || "0",
+            unitPrice: selectTestDataVal?.unitPrice,
+            totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
+            testFinalPrice: (
+              item?.quantity * selectTestDataVal?.unitPrice
+            )?.toFixed(2),
+            more: <PricingListMenuWidget item={item} />,
+            id: item?.id,
+          };
+        });
+        console.log("mapData", mapData);
+        setActionProfitRowsNew(mapData);
+      } else if (exceptionTypeValue === "EditBase") {
+        console.log(
+          "actionExceptionProfitRowsVal",
+          actionExceptionProfitRowsVal
+        );
+        const mapData = actionExceptionProfitRowsVal?.map((item: any) => {
+          return {
+            cost: item?.cost || "0",
+            profit: item?.profit,
+            quantity: item?.quantity || "0",
+            unitPrice: selectTestDataVal?.unitPrice,
+            totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
+            testFinalPrice: (
+              item?.quantity * selectTestDataVal?.unitPrice
+            )?.toFixed(2),
+            more: <PricingListMenuWidget item={item} />,
+            id: item?.id,
+          };
+        });
+        console.log("mapData", mapData);
         setActionProfitRowsNew(mapData);
       } else {
         let isQuantity = false;
@@ -278,6 +306,7 @@ const useProfits = () => {
     },
     [
       actionExceptionProfitIdValue,
+      actionExceptionProfitRowsVal,
       actionProfitRowsNew,
       selectTestDataVal,
       actionProfits,
@@ -735,10 +764,6 @@ const useProfits = () => {
     [actionExceptionProfitIdValue]
   );
   const updateActionProfitRow = useCallback(async () => {
-    console.log(
-      "editPriceListStateValue?.state",
-      editPriceListStateValue?.state
-    );
     const res = await callApi(
       "PUT",
       `/v1/printhouse-config/profits/update-action-profit-row`,

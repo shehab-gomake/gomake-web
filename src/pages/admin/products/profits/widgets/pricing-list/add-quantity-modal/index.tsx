@@ -25,7 +25,6 @@ const AddQuantityModal = ({
   const [actionProfitRowsNew, setActionProfitRowsNew] = useRecoilState<any>(
     actionProfitRowsState
   );
-  console.log("actionProfitRowsNew", actionProfitRowsNew);
   const { clasess } = useStyle();
 
   useEffect(() => {
@@ -63,15 +62,15 @@ const AddQuantityModal = ({
           <div style={clasess.btnContainer}>
             <GomakePrimaryButton
               style={clasess.btnStyle}
-              onClick={async () => {
-                await profitsStateValue?.onClickSaveNewActionProfitRow();
-                onCloseModal();
-              }}
-              // onClick={
-              //   actionExceptionProfitIdValue
-              //     ? profitsStateValue?.onClickSaveNewActionExceptionProfitRow
-              //     : profitsStateValue?.onClickSaveNewActionProfitRow
-              // }
+              // onClick={async () => {
+              //   await profitsStateValue?.onClickSaveNewActionProfitRow();
+              //   onCloseModal();
+              // }}
+              onClick={
+                actionExceptionProfitIdValue
+                  ? profitsStateValue?.onClickSaveNewActionExceptionProfitRow
+                  : profitsStateValue?.onClickSaveNewActionProfitRow
+              }
             >
               Add
             </GomakePrimaryButton>

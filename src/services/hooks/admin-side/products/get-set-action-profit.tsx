@@ -48,7 +48,6 @@ const getAndSetActionProfitRowByActionId = async (
   );
   const _data: any = returnResult(result, undefined);
   const mapData = _data?.actionProfitRows?.map((item: any) => {
-    console.log("data?.selectTestDataVal", data?.selectTestDataVal);
     const unitPrice = data?.selectTestDataVal?.unitPrice;
     const testFinalPrice = item?.quantity * data?.selectTestDataVal?.unitPrice;
     return {
@@ -70,7 +69,6 @@ const getAndSetActionProfitRowByActionId = async (
     };
   });
   const actionProfitRowsMapping = _data?.actionProfitRows?.map((item: any) => {
-    console.log("data?.selectTestDataVal", data?.selectTestDataVal);
     const unitPrice = data?.selectTestDataVal?.unitPrice;
     const testFinalPrice = item?.quantity * data?.selectTestDataVal?.unitPrice;
     return {

@@ -118,7 +118,6 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
           ) : actionProfitRowsNew?.length > 0 ? (
             <div style={clasess.row}>
               {actionProfitRowsNew?.map((row: any, index: number) => {
-                console.log("ROW", row);
                 return (
                   <div key={`body_row${index}`} style={{ width: "100%" }}>
                     <Row

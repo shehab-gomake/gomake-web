@@ -35,14 +35,14 @@ const PricingListMenuWidget = ({ item }: any) => {
           Edit
         </MenuItem>
         <MenuItem
-          // onClick={
-          //   actionExceptionProfitIdValue
-          //     ? () =>
-          //         profitsStateValue?.deleteActionExceptionProfitRow(item?.id)
-          //     : () => profitsStateValue?.deleteActionProfitRow(item?.id)
-          // }
+          onClick={
+            actionExceptionProfitIdValue
+              ? () =>
+                  profitsStateValue?.deleteActionExceptionProfitRow(item?.id)
+              : () => profitsStateValue?.deleteActionProfitRow(item?.id)
+          }
 
-          onClick={() => profitsStateValue?.deleteActionProfitRow(item?.id)}
+          // onClick={() => profitsStateValue?.deleteActionProfitRow(item?.id)}
         >
           Delete
         </MenuItem>

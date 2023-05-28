@@ -70,7 +70,6 @@ export default function Profits() {
     t,
   } = useProfits();
   useEffect(() => {
-    console.log("selectTestDataVal useEffect", selectTestDataVal);
     setProfitsState({
       allActions,
       selectedAction,

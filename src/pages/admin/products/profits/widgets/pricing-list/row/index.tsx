@@ -21,7 +21,6 @@ const Row = ({ row, width, tablePercent }: any) => {
   return (
     <div style={clasess.bodyRow}>
       {Object.entries(row).map((entry: [string, any], index: number) => {
-        console.log("entry", entry);
         if (entry[0] !== "id" && entry[0] !== "recordID") {
           return (
             <div
@@ -78,12 +77,12 @@ const Row = ({ row, width, tablePercent }: any) => {
           <div style={clasess.controlsContainer}>
             <Tooltip title={t("materials.buttons.saveModifications")}>
               <IconButton
-                // onClick={
-                //   actionExceptionProfitIdValue
-                //     ? () => profitsStateValue?.updateActionExceptionProfitRow()
-                //     : () => profitsStateValue?.updateActionProfitRow()
-                // }
-                onClick={() => profitsStateValue?.updateActionProfitRow()}
+                onClick={
+                  actionExceptionProfitIdValue
+                    ? () => profitsStateValue?.updateActionExceptionProfitRow()
+                    : () => profitsStateValue?.updateActionProfitRow()
+                }
+                // onClick={() => profitsStateValue?.updateActionProfitRow()}
               >
                 <SaveIcon style={{ color: "#a1a2cd" }} />
               </IconButton>
