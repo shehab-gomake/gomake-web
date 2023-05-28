@@ -49,8 +49,10 @@ const getAndSetActionProfitRowByActionId = async (
   );
   const _data: any = returnResult(result, undefined);
   const mapData = _data?.actionProfitRows?.map((item: any) => {
-    const unitPrice = data?.selectTestDataVal?.unitPrice;
-    const testFinalPrice = item?.quantity * data?.selectTestDataVal?.unitPrice;
+    const unitPrice = data?.selectTestDataVal?.unitPrice?.toFixed(2);
+    const testFinalPrice = (
+      item?.quantity * data?.selectTestDataVal?.unitPrice
+    )?.toFixed(2);
     return {
       // ...(_data?.pricingBy === 1
       //   ? {
@@ -70,8 +72,10 @@ const getAndSetActionProfitRowByActionId = async (
     };
   });
   const actionProfitRowsMapping = _data?.actionProfitRows?.map((item: any) => {
-    const unitPrice = data?.selectTestDataVal?.unitPrice;
-    const testFinalPrice = item?.quantity * data?.selectTestDataVal?.unitPrice;
+    const unitPrice = data?.selectTestDataVal?.unitPrice?.toFixed(2);
+    const testFinalPrice = (
+      item?.quantity * data?.selectTestDataVal?.unitPrice
+    )?.toFixed(2);
     return {
       cost: item?.cost || "0",
       profit: item?.profit || "0",
