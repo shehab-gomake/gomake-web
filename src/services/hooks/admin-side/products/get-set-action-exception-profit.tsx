@@ -13,23 +13,22 @@ const getAndSetActionExceptionProfitRowByActionExceptionId = async (
     data
   );
   const _data: any = returnResult(result, undefined);
-  console.log(_data);
-  // const mapData = _data?.map((item: any) => {
-  //   return {
-  //     cost: item?.cost || "0",
-  //     profit: item?.profit || "0",
-  //     testQuantity: item?.quantity || "0",
-  //     unitPrice: item?.unitPrice?.toFixed(2) || "0",
-  //     totalPrice: item?.totalPrice?.toFixed(2) || "0",
-  //     testFinalPrice: item?.testFinalPrice || "0",
-  //     more: <PricingListMenuWidget item={item} />,
-  //     id: item?.id,
-  //     recordID: item?.recordID,
-  //   };
-  // });
+  const mapData = _data?.map((item: any) => {
+    return {
+      cost: item?.cost || "0",
+      profit: item?.profit || "0",
+      testQuantity: item?.quantity || "0",
+      unitPrice: item?.unitPrice?.toFixed(2) || "0",
+      totalPrice: item?.totalPrice?.toFixed(2) || "0",
+      testFinalPrice: item?.testFinalPrice || "0",
+      more: <PricingListMenuWidget item={item} />,
+      id: item?.id,
+      recordID: item?.recordID,
+    };
+  });
 
   if (setState) {
-    setState(_data);
+    setState(mapData);
   }
 
   return _data;

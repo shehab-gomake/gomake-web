@@ -175,9 +175,9 @@ const useProfits = () => {
       exceptionTypeValue: string
     ) => {
       setActionExceptionProfitRows("");
-      await getAndSetActionExceptionProfitRowByActionExceptionId(
+      const data = await getAndSetActionExceptionProfitRowByActionExceptionId(
         callApi,
-        setActionExceptionProfitRows,
+        () => {},
         {
           ActionExceptionId: id,
         }
@@ -218,48 +218,6 @@ const useProfits = () => {
             id: item?.id,
           };
         });
-        setActionProfitRowsNew(mapData);
-      } else if (exceptionTypeValue === "NewBase") {
-        console.log(
-          "actionExceptionProfitRowsVal",
-          actionExceptionProfitRowsVal
-        );
-        const mapData = actionExceptionProfitRowsVal?.map((item: any) => {
-          return {
-            cost: item?.cost || "0",
-            profit: item?.profit,
-            quantity: item?.quantity || "0",
-            unitPrice: selectTestDataVal?.unitPrice,
-            totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
-            testFinalPrice: (
-              item?.quantity * selectTestDataVal?.unitPrice
-            )?.toFixed(2),
-            more: <PricingListMenuWidget item={item} />,
-            id: item?.id,
-          };
-        });
-        console.log("mapData", mapData);
-        setActionProfitRowsNew(mapData);
-      } else if (exceptionTypeValue === "EditBase") {
-        console.log(
-          "actionExceptionProfitRowsVal",
-          actionExceptionProfitRowsVal
-        );
-        const mapData = actionExceptionProfitRowsVal?.map((item: any) => {
-          return {
-            cost: item?.cost || "0",
-            profit: item?.profit,
-            quantity: item?.quantity || "0",
-            unitPrice: selectTestDataVal?.unitPrice,
-            totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
-            testFinalPrice: (
-              item?.quantity * selectTestDataVal?.unitPrice
-            )?.toFixed(2),
-            more: <PricingListMenuWidget item={item} />,
-            id: item?.id,
-          };
-        });
-        console.log("mapData", mapData);
         setActionProfitRowsNew(mapData);
       } else {
         let isQuantity = false;
