@@ -20,8 +20,8 @@ const getAndSetActionExceptionProfitRowByActionExceptionId = async (
       testQuantity: item?.quantity || "0",
       unitPrice: item?.unitPrice?.toFixed(2) || "0",
       totalPrice: item?.totalPrice?.toFixed(2) || "0",
-      testFinalPrice: item?.testFinalPrice?.toFixed(2) || "0",
-      more: <PricingListMenuWidget item={item} />,
+      // testFinalPrice: item?.testFinalPrice?.toFixed(2) || "0",
+      // more: <PricingListMenuWidget item={item} />,
       id: item?.id,
       recordID: item?.recordID,
     };

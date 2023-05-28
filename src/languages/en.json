@@ -876,8 +876,8 @@
         "height": "height",
         "addNewQuantity": "add new quantity",
         "saveStep": "Save step",
-        "testQuantity": "quantity",
-        "unitPrice": "Test Unit Price",
+        "testQuantity": "Quantity",
+        "unitPrice": "Unit Price",
         "testFinalPrice": "Test Final Price"
       },
       "exceptions": {

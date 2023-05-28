@@ -188,15 +188,7 @@ export default function Profits() {
                 <div style={clasess.pricingCointaner}>
                   <PricingList
                     tableHeaders={tabelPricingHeaders}
-                    tablePercent={[
-                      "50px",
-                      "50px",
-                      "50px",
-                      "120px",
-                      "100px",
-                      "120px",
-                      "35px",
-                    ]}
+                    tablePercent={["50px", "50px", "50px", "100px", "120px"]}
                   />
                 </div>
                 <div style={clasess.exceptionsCointaner}>

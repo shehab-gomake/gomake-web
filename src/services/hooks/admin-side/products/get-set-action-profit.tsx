@@ -49,10 +49,12 @@ const getAndSetActionProfitRowByActionId = async (
   );
   const _data: any = returnResult(result, undefined);
   const mapData = _data?.actionProfitRows?.map((item: any) => {
-    const unitPrice = data?.selectTestDataVal?.unitPrice?.toFixed(2);
-    const testFinalPrice = (
+    const unitPrice = Number(data?.selectTestDataVal?.unitPrice || "0").toFixed(
+      2
+    );
+    const testFinalPrice = Number(
       item?.quantity * data?.selectTestDataVal?.unitPrice
-    )?.toFixed(2);
+    ).toFixed(2);
     return {
       // ...(_data?.pricingBy === 1
       //   ? {
@@ -65,15 +67,15 @@ const getAndSetActionProfitRowByActionId = async (
       testQuantity: item?.quantity || "0",
       unitPrice,
       totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
-      testFinalPrice,
-      more: <PricingListMenuWidget item={item} />,
+      // testFinalPrice,
+      // more: <PricingListMenuWidget item={item} />,
       id: item?.id,
       recordID: item?.recordID,
     };
   });
   const actionProfitRowsMapping = _data?.actionProfitRows?.map((item: any) => {
-    const unitPrice = data?.selectTestDataVal?.unitPrice?.toFixed(2);
-    const testFinalPrice = (
+    const unitPrice = Number(data?.selectTestDataVal?.unitPrice)?.toFixed(2);
+    const testFinalPrice = Number(
       item?.quantity * data?.selectTestDataVal?.unitPrice
     )?.toFixed(2);
     return {
@@ -82,8 +84,8 @@ const getAndSetActionProfitRowByActionId = async (
       quantity: item?.quantity || "0",
       unitPrice,
       totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
-      testFinalPrice,
-      more: <PricingListMenuWidget item={item} />,
+      // testFinalPrice,
+      // more: <PricingListMenuWidget item={item} />,
       id: item?.id,
       recordID: item?.recordID,
     };
