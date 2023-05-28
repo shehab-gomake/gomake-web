@@ -11,13 +11,20 @@ const SelectAction = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
+  console.log(
+    "profitsStateValue?.selectedAction?.name",
+    profitsStateValue?.selectedAction?.name
+  );
   return (
     <div style={clasess.filterContainer}>
       {profitsStateValue?.allActions?.length > 0 ? (
         <GoMakeAutoComplate
           options={profitsStateValue?.allActions}
           style={clasess.autoComplateStyle}
-          placeholder={t("products.profits.admin.chooseAction")}
+          placeholder={
+            profitsStateValue?.selectedAction?.name ||
+            t("products.profits.admin.chooseAction")
+          }
           getOptionLabel={(value: any) => value?.name}
           onChange={profitsStateValue?.onChangeSelectedAction}
           value={profitsStateValue?.selectedAction?.name}

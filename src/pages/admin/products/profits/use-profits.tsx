@@ -33,8 +33,64 @@ import {
 import { editPriceListState } from "./store/edit-price-list";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
 import { productTestState } from "@/store/product-test";
+import { useRouter } from "next/router";
 
 const useProfits = () => {
+  const [actionProfits, setActionProfits] =
+    useRecoilState<any>(actionProfitLists);
+  const [allActions, setAllActions] = useRecoilState(actionLists);
+  const [testProductsState, setTestProductsState] = useState([]);
+  const [productsStateValue, setProductsState] =
+    useRecoilState<any>(productsState);
+  const [selectedAction, setSelectedAction] = useState<any>({});
+  const [actionProfitRowsNew, setActionProfitRowsNew] = useRecoilState<any>(
+    actionProfitRowsState
+  );
+  ///ROUTER
+
+  const router: any = useRouter();
+  useEffect(() => {
+    console.log("router.query.actionId", router?.query?.actionId);
+    console.log("router.query.actionId allActions", allActions);
+    if (
+      router?.query?.actionId &&
+      allActions?.length > 0 &&
+      productsStateValue?.length > 0
+    ) {
+      const actionName = allActions.find(
+        (item) => item.id === router?.query?.actionId
+      );
+      onChangeSelectedAction(
+        {},
+        {
+          id: router?.query?.actionId,
+          isHaveProfits: true,
+          name: actionName?.name,
+        }
+      );
+
+      // setProductTest({});
+    }
+  }, [router, allActions, productsStateValue]);
+  const [isUpdated, setIsUpdated] = useState(false);
+  useEffect(() => {
+    if (
+      router?.query?.actionId &&
+      selectedAction?.id &&
+      actionProfitRowsNew.length > 0 &&
+      !isUpdated
+    ) {
+      const testName = productsStateValue.find(
+        (item) => item.id === router?.query?.productId
+      );
+      onCklickActionProfitTestResultsByActionId(
+        router?.query?.productId || "",
+        testName?.name
+      );
+      setIsUpdated(true);
+    }
+  }, [router, selectedAction, actionProfitRowsNew]);
+
   const [istimeOutForProductsTest, setIsTimeOutForProductsTest] =
     useState(false);
 
@@ -46,16 +102,11 @@ const useProfits = () => {
   }, []);
   const setChartDataValue = useSetRecoilState<any>(chartDataByActionProfitRow);
 
-  const [actionProfitRowsNew, setActionProfitRowsNew] = useRecoilState<any>(
-    actionProfitRowsState
-  );
   const [selectTestDataVal, setSelectTestData] =
     useRecoilState<any>(selectTestDataState);
 
   const [machincesStateValue, setMachincesState] =
     useRecoilState<any>(machincesState);
-  const [productsStateValue, setProductsState] =
-    useRecoilState<any>(productsState);
   const [parametersStateValue, setParametersState] =
     useRecoilState<any>(parametersState);
   const [clientTypesStateValue, setClientTypesState] =
@@ -69,11 +120,8 @@ const useProfits = () => {
   const [actionExceptionProfitIdValue, setactionExceptionProfitId] =
     useRecoilState<any>(actionExceptionProfitId);
 
-  const [testProductsState, setTestProductsState] = useState();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const [allActions, setAllActions] = useRecoilState(actionLists);
-  const [selectedAction, setSelectedAction] = useState<any>({});
   const [openAddExceptionModal, setOpenAddExceptionModal] = useState(false);
   const [openAddQuantityModal, setOpenAddQuantityModal] = useState(false);
   const onCloseAddQuantityModal = () => {
@@ -88,13 +136,14 @@ const useProfits = () => {
   const [pricingListRowState, setPricingListRowState] = useState<any>({});
   const [openAddTestProductModal, setOpenAddTestProductModal] = useState(false);
   const [testProductState, setTestProductState] = useState<any>({});
+  console.log("testProductState", testProductState);
   const [openDeleteExceptionProfitModal, setOpenDeleteExceptionProfitModal] =
     useState(false);
   const [selectedExceptionProfit, setSelectedExceptionProfit] = useState();
   const onCloseDeleteExceptionProfitModal = () => {
     setOpenDeleteExceptionProfitModal(false);
   };
-  const [calculationTestLink, setCalculationTestLink] = useState("");
+  const [, setCalculationTestLink] = useState("");
   const onOpenDeleteExceptionProfitModal = (item: any) => {
     setSelectedExceptionProfit(item);
     setOpenDeleteExceptionProfitModal(true);
@@ -107,8 +156,6 @@ const useProfits = () => {
     setOpenAddExceptionModal(true);
   };
   const { clasess } = useStyle();
-  const [actionProfits, setActionProfits] =
-    useRecoilState<any>(actionProfitLists);
   const getActions = useCallback(async () => {
     await getAndSetActions(callApi, setAllActions);
   }, []);
@@ -143,14 +190,29 @@ const useProfits = () => {
 
   const getActionExceptionProfitRowByActionExceptionId =
     useCallback(async () => {
-      setActionExceptionProfitRows("");
-      await getAndSetActionExceptionProfitRowByActionExceptionId(
+      // setActionProfitRowsNew("");
+      let data = await getAndSetActionExceptionProfitRowByActionExceptionId(
         callApi,
-        setActionExceptionProfitRows,
+        () => {},
         {
           ActionExceptionId: actionExceptionProfitIdValue,
         }
       );
+      const mapData = data?.map((item: any) => {
+        return {
+          cost: item?.cost || "0",
+          profit: item?.profit,
+          quantity: item?.quantity || "0",
+          unitPrice: selectTestDataVal?.unitPrice,
+          totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
+          testFinalPrice: (
+            item?.quantity * selectTestDataVal?.unitPrice
+          )?.toFixed(2),
+          more: <PricingListMenuWidget item={item} />,
+          id: item?.id,
+        };
+      });
+      setActionProfitRowsNew(mapData);
     }, [actionExceptionProfitIdValue]);
 
   const getActionProfitRowChartData = useCallback(async () => {
@@ -245,11 +307,12 @@ const useProfits = () => {
           // t("products.profits.pricingListWidget.price"),
           t("products.profits.pricingListWidget.more"),
         ]);
-        const mapData = actionProfitRowsNew?.map((item: any) => {
+        console.log("DATA", data);
+        const mapData = data?.map((item: any) => {
           return {
             cost: item?.cost || "0",
             profit: item?.profit,
-            quantity: item?.quantity,
+            quantity: item?.quantity || "0",
             unitPrice: selectTestDataVal?.unitPrice,
             totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
             testFinalPrice: (
@@ -274,6 +337,10 @@ const useProfits = () => {
 
   const onCklickActionProfitTestResultsByActionId = useCallback(
     async (productId: string, productName: string) => {
+      console.log(
+        "actionProfitRowsNewactionProfitRowsNewactionProfitRowsNewactionProfitRowsNew",
+        actionProfitRowsNew
+      );
       setActionExceptionProfitRows("");
       const selectTestDataVal =
         await getAndSetGetActionProfitTestResultsByActionId(
@@ -294,13 +361,13 @@ const useProfits = () => {
           unitPrice: selectTestDataVal[0]?.unitPrice,
           totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
           testFinalPrice: (
-            item?.quantity * selectTestDataVal[0].unitPrice
+            item?.quantity * selectTestDataVal[0]?.unitPrice
           )?.toFixed(2),
           more: <PricingListMenuWidget item={item} />,
           id: item?.id,
         };
       });
-      setactionExceptionProfitId(productId);
+      // setactionExceptionProfitId(productId);
       setProductTest({ id: productId, name: productName });
       setActionExceptionProfitRows(mapData);
       setActionProfitRowsNew(mapData);
@@ -314,6 +381,7 @@ const useProfits = () => {
     await getAndSetProducts(callApi, setProductsState);
   }, []);
   const onChangeSelectedAction = useCallback(async (e: any, value: any) => {
+    console.log("valuevaluevaluevaluevalue", value);
     setSelectedAction(value);
     setProductTest({});
   }, []);
@@ -326,7 +394,7 @@ const useProfits = () => {
         actionId: selectedAction?.id,
       }
     );
-  }, [selectedAction]);
+  }, [selectedAction, productsStateValue, router]);
 
   useEffect(() => {
     getActions();
@@ -336,9 +404,13 @@ const useProfits = () => {
     getClientTypes();
   }, []);
   useEffect(() => {
-    getActionProfits();
-    getTestProducts();
-  }, [selectedAction]);
+    console.log("selectedAction", selectedAction);
+    if (selectedAction?.id && productsStateValue?.length) {
+      console.log("HEEEEEEREEE");
+      getActionProfits();
+      getTestProducts();
+    }
+  }, [selectedAction, router, productsStateValue]);
 
   const [tabelPricingHeaders, setTabelPricingHeaders] = useState([]);
   useEffect(() => {
@@ -485,6 +557,7 @@ const useProfits = () => {
       await getActionProfits();
       setPricingListRowState({});
       setOpenAddNewPricingStepRow(false);
+      onCloseAddQuantityModal();
     } else {
       setSnackbarStateValue({
         state: true,
@@ -511,6 +584,7 @@ const useProfits = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
+      onCloseAddQuantityModal();
       await getActionExceptionProfitRowByActionExceptionId();
       setPricingListRowState({}), setOpenAddNewPricingStepRow(false);
     } else {
@@ -522,33 +596,34 @@ const useProfits = () => {
     }
   }, [pricingListRowState, actionExceptionProfitIdValue]);
 
-  const onChangeAddNewTestProduct = useCallback(
-    (key: string, value: any) => {
-      setTestProductState(value);
-    },
-    [testProductState]
-  );
+  const onChangeAddNewTestProduct = useCallback((key: string, value: any) => {
+    console.log("value", value);
+    setTestProductState(value);
+  }, []);
 
-  const onClickTestProduct = useCallback(async () => {
-    const data = await generateCalaculationTestLink(
-      callApi,
-      setCalculationTestLink,
-      {
-        productId: testProductState || "",
-        actionId: selectedAction?.id || "",
+  const onClickTestProduct = useCallback(
+    async (id) => {
+      const data = await generateCalaculationTestLink(
+        callApi,
+        setCalculationTestLink,
+        {
+          productId: id || "",
+          actionId: selectedAction?.id || "",
+        }
+      );
+      if (data?.url) {
+        const fullUrl: any = `${data?.url}`;
+        window.location = fullUrl;
+      } else if (!data?.url) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("products.profits.testFailed"),
+          type: "error",
+        });
       }
-    );
-    if (data?.url) {
-      const fullUrl: any = `${data?.url}`;
-      window.location = fullUrl;
-    } else if (!data?.url) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("products.profits.testFailed"),
-        type: "error",
-      });
-    }
-  }, [testProductState, selectedAction]);
+    },
+    [selectedAction]
+  );
 
   const deleteTestProductResult = useCallback(async () => {
     const res = await callApi(
@@ -570,7 +645,7 @@ const useProfits = () => {
         type: "error",
       });
     }
-  }, [testProductState, selectedAction]);
+  }, [testProductState, selectedAction, router]);
   const [state, setState] = useState<any>({});
   const onChangeState = (key: any, value: any) => {
     setState((prevState: any) => {

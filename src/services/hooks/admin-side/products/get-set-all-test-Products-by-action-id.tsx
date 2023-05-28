@@ -8,6 +8,7 @@ const getAndSetGetAllTestProductsByActionId = async (
   productsStateValue?: any,
   data?: any
 ) => {
+  console.log("productsStateValue", productsStateValue);
   const renderProduct = (testProductItemId: any) => {
     const myArry = productsStateValue.find(
       (product: any) => product?.id == testProductItemId
@@ -20,6 +21,7 @@ const getAndSetGetAllTestProductsByActionId = async (
     data
   );
   const _data = returnResult(result, undefined);
+  console.log("_data_data_data_data", _data);
   const mapData = _data.map((item: any) => {
     return {
       ...renderProduct(item),

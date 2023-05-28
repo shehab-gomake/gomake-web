@@ -26,10 +26,10 @@ const ProductTestListMoreCircleWidget = ({ item }: any) => {
       </IconButton>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
         <MenuItem
-          onClick={
-            (profitsStateValue?.setTestProductState(item?.id),
-            profitsStateValue?.onClickTestProduct)
-          }
+          onClick={() => {
+            profitsStateValue?.setTestProductState(item?.id);
+            profitsStateValue?.onClickTestProduct;
+          }}
         >
           {t("products.profits.testAgain")}
         </MenuItem>
