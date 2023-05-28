@@ -2,6 +2,7 @@ import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../../call-api.interface";
 import { PricingListMenuWidget } from "@/pages/admin/products/profits/widgets/pricing-list/more-circle";
 import { GoMakeAutoComplate } from "@/components";
+import { renderProfits } from "@/pages/admin/products/profits/use-profit-action.";
 
 const getAndSetActionProfitRowByActionId = async (
   callApi: ICallApi,
@@ -49,12 +50,6 @@ const getAndSetActionProfitRowByActionId = async (
   );
   const _data: any = returnResult(result, undefined);
   const mapData = _data?.actionProfitRows?.map((item: any) => {
-    const unitPrice = Number(data?.selectTestDataVal?.unitPrice || "0").toFixed(
-      2
-    );
-    const testFinalPrice = Number(
-      item?.quantity * data?.selectTestDataVal?.unitPrice
-    ).toFixed(2);
     return {
       // ...(_data?.pricingBy === 1
       //   ? {
@@ -62,11 +57,7 @@ const getAndSetActionProfitRowByActionId = async (
       //       height: item?.height,
       //     }
       //   : { quantity: item?.quantity }),
-      cost: item?.cost || "0",
-      profit: item?.profit || "0",
-      testQuantity: item?.quantity || "0",
-      unitPrice,
-      totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
+      ...renderProfits(item),
       // testFinalPrice,
       // more: <PricingListMenuWidget item={item} />,
       id: item?.id,
@@ -74,16 +65,8 @@ const getAndSetActionProfitRowByActionId = async (
     };
   });
   const actionProfitRowsMapping = _data?.actionProfitRows?.map((item: any) => {
-    const unitPrice = Number(data?.selectTestDataVal?.unitPrice)?.toFixed(2);
-    const testFinalPrice = Number(
-      item?.quantity * data?.selectTestDataVal?.unitPrice
-    )?.toFixed(2);
     return {
-      cost: item?.cost || "0",
-      profit: item?.profit || "0",
-      quantity: item?.quantity || "0",
-      unitPrice,
-      totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
+      ...renderProfits(item),
       // testFinalPrice,
       // more: <PricingListMenuWidget item={item} />,
       id: item?.id,
