@@ -176,6 +176,7 @@ export default function Profits() {
     t,
   ]);
   return (
+    <AdminAuthLayout>
       <div style={clasess.mainContainer}>
         <HeaderTitle title={t("products.profits.admin.title")} />
         <SelectAction />
@@ -209,5 +210,6 @@ export default function Profits() {
           </>
         ) : null}
       </div>
+    </AdminAuthLayout>
   );
 }
