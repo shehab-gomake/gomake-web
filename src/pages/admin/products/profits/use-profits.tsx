@@ -216,13 +216,12 @@ const useProfits = () => {
           t("products.profits.pricingListWidget.more"),
         ]);
         const mapData = actionProfitRowsNew?.map((item: any) => {
+          const percent = item?.profit * (selectedAdditional / 100);
+          console.log("percent", percent);
           return {
             cost: item?.cost || "0",
             profit: item?.profit,
-            ExpProfit: (
-              parseFloat(item?.profit) +
-              selectedAdditional / 100
-            )?.toFixed(2),
+            ExpProfit: (parseFloat(item?.profit) + percent)?.toFixed(2),
             quantity: item?.quantity,
             unitPrice: selectTestDataVal?.unitPrice,
             totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
