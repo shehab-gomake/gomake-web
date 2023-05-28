@@ -240,6 +240,13 @@ const useAuthLayoutHook = () => {
         title: t("tabs.suppliers"),
         path: "/product-floor",
         isList: true,
+        list: [
+          {
+            key: "suppliers",
+            title: t("tabs.suppliers"),
+            path: "/suppliers",
+          },
+        ],
         icon: () => {
           return <SuppliersIcon />;
         },

@@ -1,6 +1,8 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "./call-api.interface";
 import { ShowCustomerCard } from "@/pages/customers/edit-customer";
+import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
+import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 
 
 const getAndSetCustomer = async (
@@ -28,8 +30,8 @@ const getAndSetAllCustomers = async (
     return {
       customerCode: customer.code,
       name: customer.name,
-      email: customer.mail ? customer.mail : "----",
-      phone: customer.phone,
+      email: customer.mail ? customer.mail : <HorizontalRuleIcon/>,
+      phone: customer.phone ? customer.phone : <HorizontalRuleIcon/>,
       status: customer.isActive ? "Active" : "Inactive",
       hashTag: (
         <div style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} >

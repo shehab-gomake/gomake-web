@@ -3,64 +3,15 @@ import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
 import { getAndSetCustomer, getAndSetAllCustomers } from "@/services/hooks/get-set-customers";
 import { getAndSetEmployees } from "@/services/hooks/get-set-employee";
+import { getAndSetClientTypes } from "@/services/hooks/get-set-clientTypes";
 
 
 const useCustomers = (clientType) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const [agentsCategores, setAgentsCategores] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [allCustomers, setAllCustomers] = useState([]);
 
-  const [agentId, setAgentId] = useState("");
-  const onChangeAgent = useCallback(async (e: any, value: any) => {
-    setAgentId(value?.value);
-  }, []);
-
-  const [name, setCustomerName] = useState("");
-  const onChangeCustomer = useCallback(async (e: any, value: any) => {
-    setCustomerName(e.target.value);
-    setValName(e.target.value);
-  }, []);
-
-  const [isActive, setStatus] = useState(true);
-  const onChangeStatus = useCallback(async (e: any, value: any) => {
-    if (value === "inactive") {
-      setStatus(false);
-    }
-    else { setStatus(true) }
-  }, []);
-
-  /////////////////////////////////////////
-
-  const [valAgent, setValAgent] = useState("");
-  const [valName, setValName] = useState("");
-
-  const [customerType, setCustomerType] = useState(null);
-
-  const handleClean = useCallback(async () => {
-    setStatus(null);
-    setCustomerName(null);
-    setAgentId(null);
-    setCustomerType(null);
-    
-    setValName("");
-    console.log(customerType);
-
-  }, [customerType]);
-
-  /////////////////////////////////////////
-
-  //////////////////////for later use/////////////////////////////
-
-  const onChangeCustomerType = useCallback(async (e: any, value: any) => {
-    setCustomerType(value?.value);
-    console.log(value);
-
-  }, []);
-
-
-  // Fixed data
   const tabelHeaders = useMemo(
     () => [
       t("Customer Code"),
@@ -72,21 +23,89 @@ const useCustomers = (clientType) => {
     ],
     []
   );
-  const customerTypes = useMemo(
-    () => [
-      {label:t("client") , value: "client"},
-      {label:t("supplier") , value: "supplier"},
-      {label:t("producer") , value: "producer"},
-    ],
-    []
-  );
+
+  //select agent options
+  const [agentsCategores, setAgentsCategores] = useState([]);
+
+  // select status options
   const statuses = useMemo(
     () => [
-      t("active"),
-      t("inactive"),
+      { label: t("active"), value: "true" },
+      { label: t("inactive"), value: "false" },
     ],
     []
   );
+
+  //select customer type options
+  const customerTypes = useMemo(
+    () => [
+      // לקוח
+      { label: t("client"), id: "aa0f240c-a370-41f9-9874-378f78bc46bc" },
+      // מפיק
+      { label: t("producer"), id: "7c561edb-1572-42ac-8c04-980441a4d3fe" },
+      // סתאם לקוח
+      { label: t("supp"), id: "c53226ad-e75f-49ee-a4b3-261ceb540b48" },
+    ],
+    []
+  );
+
+  const [name, setCustomerName] = useState("");
+  const onChangeCustomer = useCallback(async (e: any, value: any) => {
+    setCustomerName(e.target.value);
+  }, []);
+
+  const [agentId, setAgentId] = useState([]);
+  const [agentName, setAgentName] = useState([]);
+  const onChangeAgent = useCallback(async (e: any, value: any) => {
+    setAgentId(value?.id);
+    setAgentName(value?.label);
+  }, []);
+
+  const [isActive, setStatus] = useState([]);
+  const [valStatus, setValStatus] = useState([]);
+  const onChangeStatus = useCallback(async (e: any, value: any) => {
+    setStatus(value?.value);
+    setValStatus(value?.label);
+  }, []);
+
+
+  const [ClientTypeId, setClientTypeId] = useState([]);
+  const [valClientType, setValClientType] = useState([]);
+  const onChangeClientType = useCallback(async (e: any, value: any) => {
+    setClientTypeId(value?.id);
+    setValClientType(value?.label);
+  }, []);
+
+  const handleClean = useCallback(async () => {
+    setCustomerName("");
+    setAgentId(null);
+    setAgentName(null);
+    setStatus(null);
+    setValStatus(null);
+    setClientTypeId(null);
+    setValClientType(null);
+  }, []);
+
+
+  ///////////////////////// select clientType //////////////////////////////
+
+  const [clientTypesCategores, setClientTypesCategores] = useState([]);
+
+  const getClientTypesCategores = useCallback(async () => {
+    const data = await getAndSetClientTypes(
+      callApi,
+      setClientTypesCategores,
+    );
+    const clientTypes = data.map(types => ({
+      label: `${types.name}`,
+      id: types.id
+    }));
+    setClientTypesCategores(clientTypes);
+  }, []);
+
+  useEffect(() => {
+    getClientTypesCategores();
+  }, []);
 
   ///////////////////////// select agent //////////////////////////////
 
@@ -94,15 +113,19 @@ const useCustomers = (clientType) => {
     const data = await getAndSetEmployees(
       callApi,
       setAgentsCategores,
-      {isAgent: true,}
+      { isAgent: true, }
     );
-    const agentNames = data.map(agent => `${agent.firstname} ${agent.lastname}`);
+    const agentNames = data.map(agent => ({
+      label: `${agent.firstname} ${agent.lastname}`,
+      id: agent.id
+    }));
     setAgentsCategores(agentNames);
   }, []);
 
   useEffect(() => {
     getAgentCategores();
   }, []);
+
 
   /////////////////////////  table data //////////////////////////////
 
@@ -112,31 +135,39 @@ const useCustomers = (clientType) => {
       pageNumber,
       pageSize: 10,
       name,
+      ClientTypeId,
       agentId,
       isActive,
     });
+    console.log(data);
+
     return data;
-  }, [pageNumber, name, agentId, isActive]);
+  }, [pageNumber, name, ClientTypeId, agentId, isActive]);
 
   useEffect(() => {
     getAllCustomers();
-  }, [pageNumber, name, agentId, isActive]);
+  }, [pageNumber, name, ClientTypeId, agentId, isActive]);
 
   return {
     tabelHeaders,
-    agentsCategores,
-    customerTypes,
-    statuses,
     allCustomers,
-    onChangeAgent,
+
+    agentsCategores,
+    clientTypesCategores,
+    statuses,
+
     onChangeCustomer,
-    onChangeCustomerType,
+    onChangeAgent,
+    onChangeClientType,
     onChangeStatus,
+
     setAllCustomers,
     handleClean,
-    valAgent,
-    valName,
-    customerType,
+
+    name,
+    agentName,
+    valStatus,
+    valClientType,
   };
 };
 export { useCustomers };

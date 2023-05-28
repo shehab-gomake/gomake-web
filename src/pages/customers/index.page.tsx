@@ -11,7 +11,8 @@ import { AddCustomerButton } from "./add-customer";
 export default function Home() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const { tabelHeaders, setAllCustomers, allCustomers, agentsCategores, customerTypes, statuses, onChangeAgent, onChangeCustomer, onChangeStatus, handleClean, valAgent, valName,customerType,onChangeCustomerType } = useCustomers("C");
+  const { tabelHeaders, setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType,
+    valStatus } = useCustomers("C");
 
 
   return (
@@ -21,21 +22,24 @@ export default function Home() {
         <AddCustomerButton></AddCustomerButton>
       </div>
       <HeaderFilter
-        agentsCategores={agentsCategores}
-        customerTypes={customerTypes}
-        status={statuses}
-        onChangeAgent={onChangeAgent}
-        onChangeCustomer={onChangeCustomer}
-        onChangeCustomerType={onChangeCustomerType}
-        onChangeStatus={onChangeStatus}
-        
         setAllCustomers={setAllCustomers}
         allCustomers={allCustomers}
-        handleClean={handleClean}
-        valAgent={valAgent}
-        valName={valName}
-        customerType={customerType}
 
+        agentsCategores={agentsCategores}
+        clientTypesCategores={clientTypesCategores}
+        statuses={statuses}
+
+        onChangeAgent={onChangeAgent}
+        onChangeCustomer={onChangeCustomer}
+        onChangeClientType={onChangeClientType}
+        onChangeStatus={onChangeStatus}
+
+        handleClean={handleClean}
+
+        cutomerName={name}
+        agentName={agentName}
+        valClientType={valClientType}
+        valStatus={valStatus}
       />
       <div style={clasess.tableContainer}>
         <Table tableHeaders={tabelHeaders} tableRows={allCustomers}></Table>
