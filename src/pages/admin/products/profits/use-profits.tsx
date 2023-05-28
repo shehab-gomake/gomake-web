@@ -42,6 +42,10 @@ const useProfits = () => {
   const [testProductsState, setTestProductsState] = useState([]);
   const [productsStateValue, setProductsState] =
     useRecoilState<any>(productsState);
+  const [selectedAction, setSelectedAction] = useState<any>({});
+  const [actionProfitRowsNew, setActionProfitRowsNew] = useRecoilState<any>(
+    actionProfitRowsState
+  );
   ///ROUTER
 
   const router: any = useRouter();
@@ -64,6 +68,18 @@ const useProfits = () => {
           name: actionName?.name,
         }
       );
+
+      // setProductTest({});
+    }
+  }, [router, allActions, productsStateValue]);
+  const [isUpdated, setIsUpdated] = useState(false);
+  useEffect(() => {
+    if (
+      router?.query?.actionId &&
+      selectedAction?.id &&
+      actionProfitRowsNew.length > 0 &&
+      !isUpdated
+    ) {
       const testName = productsStateValue.find(
         (item) => item.id === router?.query?.productId
       );
@@ -71,9 +87,9 @@ const useProfits = () => {
         router?.query?.productId || "",
         testName?.name
       );
-      setProductTest({});
+      setIsUpdated(true);
     }
-  }, [router, allActions, productsStateValue]);
+  }, [router, selectedAction, actionProfitRowsNew]);
 
   const [istimeOutForProductsTest, setIsTimeOutForProductsTest] =
     useState(false);
@@ -86,9 +102,6 @@ const useProfits = () => {
   }, []);
   const setChartDataValue = useSetRecoilState<any>(chartDataByActionProfitRow);
 
-  const [actionProfitRowsNew, setActionProfitRowsNew] = useRecoilState<any>(
-    actionProfitRowsState
-  );
   const [selectTestDataVal, setSelectTestData] =
     useRecoilState<any>(selectTestDataState);
 
@@ -109,7 +122,6 @@ const useProfits = () => {
 
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const [selectedAction, setSelectedAction] = useState<any>({});
   const [openAddExceptionModal, setOpenAddExceptionModal] = useState(false);
   const [openAddQuantityModal, setOpenAddQuantityModal] = useState(false);
   const onCloseAddQuantityModal = () => {
@@ -325,6 +337,10 @@ const useProfits = () => {
 
   const onCklickActionProfitTestResultsByActionId = useCallback(
     async (productId: string, productName: string) => {
+      console.log(
+        "actionProfitRowsNewactionProfitRowsNewactionProfitRowsNewactionProfitRowsNew",
+        actionProfitRowsNew
+      );
       setActionExceptionProfitRows("");
       const selectTestDataVal =
         await getAndSetGetActionProfitTestResultsByActionId(
