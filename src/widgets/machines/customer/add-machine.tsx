@@ -43,7 +43,7 @@ const CustomerAddMachine = () => {
         setActiveStep(0);
     }
 
-    const Side = () => <SideList list={getMachinesList()} selectedItem={selectedMachine.id} onSelect={onSelectMachine}
+    const Side = () => <SideList list={getMachinesList} selectedItem={selectedMachine.id} onSelect={onSelectMachine}
                                  title={'Choose machines'}>
         <GomakePrimaryButton disabled={!selectedMachine.id} style={{height: 40}} onClick={addPrintHouseMachine}>Add Machine</GomakePrimaryButton>
     </SideList>
