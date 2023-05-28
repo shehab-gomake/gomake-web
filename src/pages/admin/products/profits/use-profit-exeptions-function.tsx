@@ -4,6 +4,7 @@ import { editPriceListState } from "./store/edit-price-list";
 import { useRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
 import { getAndSetActionExceptionProfitRowByActionExceptionId } from "@/services/hooks";
+import { renderProfits } from "./use-profit-action.";
 
 const useProfitsExeptionsFunction = ({
   getActionExceptionProfitRowByActionExceptionId,
@@ -163,22 +164,18 @@ const useProfitsExeptionsFunction = ({
         setTabelPricingHeaders([
           t("products.profits.pricingListWidget.cost"),
           t("products.profits.pricingListWidget.profit"),
-          t("products.profits.pricingListWidget.Expprofit"),
           t("products.profits.pricingListWidget.testQuantity"),
           t("products.profits.pricingListWidget.unitPrice"),
           t("products.profits.pricingListWidget.totalPrice"),
+          t("products.profits.pricingListWidget.Expprofit"),
           // t("products.profits.pricingListWidget.testFinalPrice"),
           // t("products.profits.pricingListWidget.more"),
         ]);
         const mapData = actionProfitRowsNew?.map((item: any) => {
           const percent = item?.profit * (selectedAdditional / 100);
           return {
-            cost: item?.cost || "0",
-            profit: item?.profit,
+            ...renderProfits(item),
             ExpProfit: (parseFloat(item?.profit) + percent)?.toFixed(2),
-            quantity: item?.quantity,
-            unitPrice: selectTestDataVal?.unitPrice,
-            totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
             // testFinalPrice: (
             //   item?.quantity * selectTestDataVal?.unitPrice
             // )?.toFixed(2),
@@ -216,11 +213,7 @@ const useProfitsExeptionsFunction = ({
         console.log("DATA", data);
         const mapData = data?.map((item: any) => {
           return {
-            cost: item?.cost || "0",
-            profit: item?.profit,
-            quantity: item?.quantity || "0",
-            unitPrice: selectTestDataVal?.unitPrice,
-            totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
+            ...renderProfits(item),
             // testFinalPrice: (
             //   item?.quantity * selectTestDataVal?.unitPrice
             // )?.toFixed(2),
@@ -316,11 +309,7 @@ const useProfitsExeptionsFunction = ({
 
               //New Display Data
 
-              cost: item?.cost || "0",
-              profit: item?.profit || "0",
-              testQuantity: item?.quantity || "0",
-              unitPrice: item?.unitPrice?.toFixed(2) || "0",
-              totalPrice: item?.totalPrice?.toFixed(2) || "0",
+              ...renderProfits(item),
               // testFinalPrice: item?.testFinalPrice?.toFixed(2) || "0",
 
               // meterPrice: item?.meterPrice,

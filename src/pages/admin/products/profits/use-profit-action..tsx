@@ -8,6 +8,21 @@ import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSetRecoilState } from "recoil";
 
+export const renderProfits = (item: any) => {
+  const cost = item?.cost || 0;
+  const profit = item?.profit || 0;
+  const quantity = item?.quantity || 0;
+  const total = cost * (1 + profit / 100);
+
+  return {
+    cost: Number(cost).toFixed(2),
+    profit: Number(profit).toFixed(2),
+    quantity: Number(quantity).toFixed(2),
+    unitPrice: (total / quantity).toFixed(2),
+    totalPrice: Number(total)?.toFixed(2),
+  };
+};
+
 const useProfitsAction = ({
   setSelectedAction,
   actionProfitRowsNew,
@@ -48,11 +63,8 @@ const useProfitsAction = ({
         );
       const mapData = actionProfitRowsNew?.map((item: any) => {
         return {
-          cost: item?.cost || "0",
-          profit: item?.profit,
-          quantity: item?.quantity,
-          unitPrice: selectTestDataVal[0]?.unitPrice,
-          totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
+          ...renderProfits(item),
+
           // testFinalPrice: (
           //   item?.quantity * selectTestDataVal[0]?.unitPrice
           // )?.toFixed(2),

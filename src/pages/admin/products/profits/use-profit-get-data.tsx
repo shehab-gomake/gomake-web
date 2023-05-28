@@ -26,6 +26,7 @@ import {
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import { renderProfits } from "./use-profit-action.";
 
 const useProfitsGetData = () => {
   const router: any = useRouter();
@@ -99,11 +100,7 @@ const useProfitsGetData = () => {
       );
       const mapData = data?.map((item: any) => {
         return {
-          cost: item?.cost || "0",
-          profit: item?.profit,
-          quantity: item?.quantity || "0",
-          unitPrice: selectTestDataVal?.unitPrice,
-          totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
+          ...renderProfits(item),
           // testFinalPrice: (
           //   item?.quantity * selectTestDataVal?.unitPrice
           // )?.toFixed(2),
