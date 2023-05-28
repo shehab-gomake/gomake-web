@@ -1,14 +1,15 @@
 import {useRouter} from "next/router";
-import {useCallback, useEffect, useState} from "react";
+import {useEffect, useMemo} from "react";
 import {useGomakeAxios} from "@/hooks";
-import {useSetRecoilState} from "recoil";
-import {machineState} from "@/widgets/machines/utils/state/machine-state";
+import {useRecoilState, useSetRecoilState} from "recoil";
+import {machineState} from "@/widgets/machines/state/machine-state";
+import {machinesListState} from "@/widgets/machines/state/machines";
 
 const useAdminMachines = () => {
     const router = useRouter();
     const {categoryId} = router.query
     const {callApi} = useGomakeAxios();
-    const [machines, setMachines] = useState<any[]>([]);
+    const [machines, setMachines] = useRecoilState(machinesListState);
     const setMachineState = useSetRecoilState(machineState);
     useEffect(() => {
         const call = async () => {
@@ -20,7 +21,7 @@ const useAdminMachines = () => {
         call().then();
     }, [categoryId]);
 
-    const getMachinesList = useCallback(() => {
+    const getMachinesList = useMemo(() => {
         return machines.map((machine: { nickName: string, manufacturer: string, id: string }) => ({
             text: `${machine.manufacturer} - ${machine.nickName}`,
             value: machine.id
@@ -34,9 +35,15 @@ const useAdminMachines = () => {
         }
     }
 
+    const setUpdatedMachine = (updatedMachine: Record<string, any>) => {
+        setMachines(machines.map(machine => updatedMachine.id === machine.id ? updatedMachine : machine));
+        setMachineState(updatedMachine);
+    }
+
     return {
         getMachinesList,
-        setMachine
+        setMachine,
+        setUpdatedMachine
     };
 }
 

@@ -3,9 +3,9 @@ import {
     BasicInputsComponent, ColorsInputsComponent, FeedersStackersComponent,
     MediaSettingComponent,
     SpeedSettingsComponent
-} from "@/widgets/machines/utils/forms";
-import {MachineDimensionsComponent} from "@/widgets/machines/utils/forms/machine-dimensions";
-import {BeatsInputsComponent} from "@/widgets/machines/utils/forms/beats-inputs";
+} from "@/widgets/machines/components/forms";
+import {MachineDimensionsComponent} from "@/widgets/machines/components/forms/machine-dimensions";
+import {BeatsInputsComponent} from "@/widgets/machines/components/forms/beats-inputs";
 
 const printingMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},

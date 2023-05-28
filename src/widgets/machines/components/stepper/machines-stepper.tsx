@@ -11,7 +11,7 @@ import {useStyle} from "@/widgets/machines/components/stepper/style";
 import {useTranslation} from "react-i18next";
 
 const StyledStepLabel = styled(StepLabel)((props: StepLabelProps) => {
-    const {primaryColor, secondColor, neutralColor} = useGomakeTheme();
+    const {secondColor, neutralColor} = useGomakeTheme();
     return {
         '& .Mui-disabled': {
             span: {
@@ -29,22 +29,30 @@ const StyledStepLabel = styled(StepLabel)((props: StepLabelProps) => {
                 ...FONT_FAMILY.Lexend(600, 16),
                 color: neutralColor(800),
             },
-            color: secondColor(500),
+            color: neutralColor(800),
             '& .MuiStepIcon-root': {
                 color: neutralColor(800),
             },
         },
-        '& .Mui-completed': {
+        '& .Mui-completed > *': {
+
             span: {
                 ...FONT_FAMILY.Lexend(500, 16),
-                color: primaryColor(500)
+                color: secondColor(500)
             },
-            color: primaryColor(500),
+            color: secondColor(500),
         },
     }
 });
 
-const MachineStepper = ({steps, activeStep, previousStep, nextStep, actionButtonClicked, isAddForm}: IMachineStepperProps) => {
+const MachineStepper = ({
+                            steps,
+                            activeStep,
+                            previousStep,
+                            nextStep,
+                            actionButtonClicked,
+                            isAddForm
+                        }: IMachineStepperProps) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
     return (

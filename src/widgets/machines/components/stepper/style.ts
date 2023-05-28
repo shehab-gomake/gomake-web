@@ -11,11 +11,11 @@ const useStyle = () => {
         alignItems: 'center' as 'center',
         gap: '5px',
         ...FONT_FAMILY.Lexend(500, 16),
-        color: 'blue'
       },
       stepLabel: {
         display: 'flex',
-        justifyContent: 'space-between' as 'space-between'
+        justifyContent: 'space-between' as 'space-between',
+
       },
       activeStepLabel: {
         backgroundColor: primaryColor(50),

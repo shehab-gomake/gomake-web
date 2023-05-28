@@ -6,12 +6,12 @@ import {useRecoilValue} from "recoil";
 import {machineCategoriesState} from "@/store/machine-categories";
 import {IStep} from "@/widgets/machines/utils/interface/step";
 import {getSteps} from "@/widgets/machines/utils/steps";
-import {NextButton} from "@/widgets/machines/utils/forms/navigationButtons";
 import {MachineLayout} from "@/widgets/machines/components/layout/machine-layout";
-import {usePrintHouseUpdateMachine} from "@/widgets/machines/hooks/use-print-house-update-machine";
 import {useRouter} from "next/router";
 import {usePrintHouseMachines} from "@/widgets/machines/hooks/use-print-house-machines";
-import {machineState} from "@/widgets/machines/utils/state/machine-state";
+import {machineState} from "@/widgets/machines/state/machine-state";
+import {SecondaryButton} from "@/widgets/machines/components/buttons/secondary-button";
+import {usePrintHouseAddMachine} from "@/widgets/machines/hooks/use-print-house-add-machine";
 
 const CustomerEditMachines = () => {
     const router = useRouter();
@@ -20,12 +20,12 @@ const CustomerEditMachines = () => {
     const categories = useRecoilValue(machineCategoriesState);
     const [categoryName, setCategoryName] = useState<string>();
     const [machineSteps, setMachineSteps] = useState<IStep[]>([]);
-    const {updateMachine} = usePrintHouseUpdateMachine();
     const selectedMachine = useRecoilValue(machineState);
-    const {getPrintHouseMachinesList, setMachine} = usePrintHouseMachines()
+    const {getPrintHouseMachinesList, setMachine} = usePrintHouseMachines();
+    const {updateMachine} = usePrintHouseAddMachine()
     const {t} = useTranslation();
+
     useEffect(() => {
-        getPrintHouseMachinesList();
         if (categoryId) {
             const category = categories.find(category => category.id === categoryId)
             setCategoryName(category?.name ? category?.name : '');
@@ -43,10 +43,10 @@ const CustomerEditMachines = () => {
         setActiveStep(0);
     }
     const Side = () => {
-        return <SideList list={getPrintHouseMachinesList()} selectedItem={selectedMachine.id} onSelect={onSelectMachine}
+        return <SideList list={getPrintHouseMachinesList} selectedItem={selectedMachine.id} onSelect={onSelectMachine}
                          title={'Machines'} quickActions={true}>
-            <NextButton style={{width: '100%'}} href={`/machines/add-machine/category/${categoryId}`}> add
-                Machine</NextButton>
+            <SecondaryButton variant={'contained'} style={{width: '100%'}} href={`/machines/add-machine/category/${categoryId}`}> add
+                Machine</SecondaryButton>
         </SideList>
     }
     return (

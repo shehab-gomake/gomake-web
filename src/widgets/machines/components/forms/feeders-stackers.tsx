@@ -1,14 +1,14 @@
-import {useStyle} from "@/widgets/machines/utils/forms/style";
-import {NavigationButtons} from "@/widgets/machines/utils/forms/navigationButtons";
-import {IStepFormProps} from "@/widgets/machines/utils/forms/interface";
+import {useStyle} from "@/widgets/machines/components/forms/style";
+import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
+import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
 import {InputContainer} from "@/widgets/machines/components/inputs/input-container";
 import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attributes";
 
-const MachinePlateComponent = ({navigateNext, navigateBack, hasNext, hasBack, canAddMachine, canUpdate, onClickAdd, onClickUpdate}: IStepFormProps) => {
+const FeedersStackersComponent = ({navigateNext, navigateBack, hasNext, hasBack, canUpdate, canAddMachine, onClickAdd, onClickUpdate}: IStepFormProps) => {
     const {classes} = useStyle();
-    const {machinePlateAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
+    const {machineFeedersStackersAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
     const onClickNext = () => {
-        const validStep = isValidStep(machinePlateAttributes());
+        const validStep = isValidStep(machineFeedersStackersAttributes());
         if (validStep) {
             navigateNext();
         }
@@ -16,15 +16,14 @@ const MachinePlateComponent = ({navigateNext, navigateBack, hasNext, hasBack, ca
     const onClickBack = () => {
         navigateBack();
     };
-
     const handleUpdate = () => {
-        const validStep = isValidStep(machinePlateAttributes());
+        const validStep = isValidStep(machineFeedersStackersAttributes());
         if (validStep) {
             onClickUpdate();
         }
     };
     const handleAddMachine = () => {
-        const validStep = isValidStep(machinePlateAttributes());
+        const validStep = isValidStep(machineFeedersStackersAttributes());
         if (validStep) {
             onClickAdd();
         }
@@ -33,7 +32,7 @@ const MachinePlateComponent = ({navigateNext, navigateBack, hasNext, hasBack, ca
         <div style={classes.container}>
             <div style={classes.inputsContainer}>
                 {
-                    machinePlateAttributes().map((property: any) => (
+                   machineFeedersStackersAttributes().map((property: any) => (
                         <InputContainer key={property.parameterKey} attribute={property} updateState={changeMachineAttributes} error={errors[property.parameterKey]}/>
                     ))
                 }
@@ -44,4 +43,4 @@ const MachinePlateComponent = ({navigateNext, navigateBack, hasNext, hasBack, ca
     );
 }
 
-export {MachinePlateComponent};
+export {FeedersStackersComponent};

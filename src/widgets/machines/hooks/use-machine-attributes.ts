@@ -1,5 +1,5 @@
 import {useRecoilValue, useSetRecoilState} from "recoil";
-import {machineState as STATE} from "@/widgets/machines/utils/state/machine-state";
+import {machineState as STATE} from "@/widgets/machines/state/machine-state";
 import {useState} from "react";
 import {machineInputs} from "@/widgets/machines/utils/attributes/machine-inputs/machine-inputs";
 import {getCategoryBasicInputs} from "@/widgets/machines/utils/attributes/basic-inputs";

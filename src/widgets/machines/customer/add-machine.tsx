@@ -10,7 +10,7 @@ import {usePrintHouseAddMachine} from "@/widgets/machines/hooks/use-print-house-
 import {MachineLayout} from "@/widgets/machines/components/layout/machine-layout";
 import {useAdminMachines} from "@/widgets/machines/hooks/use-admin-machines";
 import {useRouter} from "next/router";
-import {machineState} from "@/widgets/machines/utils/state/machine-state";
+import {machineState} from "@/widgets/machines/state/machine-state";
 import {GomakePrimaryButton} from "@/components";
 
 const CustomerAddMachine = () => {

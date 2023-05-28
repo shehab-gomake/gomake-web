@@ -1,4 +1,4 @@
-import {IStepFormProps} from "@/widgets/machines/utils/forms/interface";
+import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
 
 export interface IStep {
     label: string;

@@ -1,28 +1,28 @@
 import {useGomakeAxios} from "@/hooks";
-import {useCallback, useEffect, useState} from "react";
-import {useSetRecoilState} from "recoil";
-import {machineState} from "@/widgets/machines/utils/state/machine-state";
+import {useEffect, useMemo} from "react";
+import {useRecoilState, useSetRecoilState} from "recoil";
+import {machineState} from "@/widgets/machines/state/machine-state";
 import {useRouter} from "next/router";
+import {machinesListState} from "@/widgets/machines/state/machines";
 
 const usePrintHouseMachines = () => {
     const router = useRouter();
     const {categoryId} = router.query
     const {callApi} = useGomakeAxios();
-    const [machines, setMachines] = useState<any[]>([]);
+    const [machines, setMachines] = useRecoilState(machinesListState);
     const setMachineState = useSetRecoilState(machineState);
 
     useEffect(() => {
-        const call = async () => {
-            if (categoryId) {
-                const res = await callApi('Get', `/v1/machines/category/${categoryId}`);
-                setMachines(res?.data?.data?.data ? res?.data?.data?.data : []);
-            }
-        }
-        call().then();
+        getMachinesAPI().then();
     }, [categoryId]);
 
+    const getMachinesAPI = async () => {
+        const res = await callApi('Get', `/v1/machines/category/${categoryId}`);
+        setMachines(res?.data?.data?.data ? res?.data?.data?.data : []);
+    };
 
-    const getPrintHouseMachinesList = useCallback(() => {
+
+    const getPrintHouseMachinesList = useMemo(() => {
         return machines.map((machine: { nickName: string, manufacturer: string, id: string }) => ({
             text: `${machine.manufacturer} - ${machine.nickName}`,
             value: machine.id
@@ -35,9 +35,31 @@ const usePrintHouseMachines = () => {
             setMachineState(selectedMachine);
         }
     }
+
+    const setUpdatedMachine = (updatedMachine: Record<string, any>) => {
+        setMachines(machines.map(machine => updatedMachine.id === machine.id ? updatedMachine : machine));
+        setMachineState(updatedMachine);
+    }
+
+    const deleteMachineFromArray = (machineId: string) => {
+        setMachines(machines.filter(machine => machineId !== machine.id))
+    }
+
+    const addMachineToList = (machine) => {
+        console.log(machine);
+        const newArray = [...machines, machine];
+        setMachines(newArray);
+        setMachineState(machine)
+    }
+
     return {
         getPrintHouseMachinesList,
-        setMachine
+        setMachine,
+        getMachinesAPI,
+        setUpdatedMachine,
+        deleteMachineFromArray,
+        setMachines,
+        addMachineToList
     }
 }
 

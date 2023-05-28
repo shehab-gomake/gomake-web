@@ -1,6 +1,6 @@
-import {useStyle} from "@/widgets/machines/utils/forms/style";
-import {NavigationButtons} from "@/widgets/machines/utils/forms/navigationButtons";
-import {IStepFormProps} from "@/widgets/machines/utils/forms/interface";
+import {useStyle} from "@/widgets/machines/components/forms/style";
+import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
+import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
 import {InputContainer} from "@/widgets/machines/components/inputs/input-container";
 import {ChangeEvent, useState} from "react";
 import {ESpeedInputMethods} from "@/widgets/machines/utils/attributes/speed-inputs/digital-printing";

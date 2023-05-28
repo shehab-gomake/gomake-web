@@ -9,8 +9,8 @@ import {getSteps} from "@/widgets/machines/utils/steps";
 import {MachineLayout} from "@/widgets/machines/components/layout/machine-layout";
 import {useAdminMachines} from "@/widgets/machines/hooks/use-admin-machines";
 import {useRouter} from "next/router";
-import {machineState} from "@/widgets/machines/utils/state/machine-state";
-import {useAdminUpdateMachine} from "@/widgets/machines/hooks/use-admin-update-machine";
+import {machineState} from "@/widgets/machines/state/machine-state";
+import {useAdminAddMachine} from "@/widgets/machines/hooks/use-admin-add-machine";
 
 const AdminUpdateMachine = () => {
     const router = useRouter();
@@ -20,7 +20,7 @@ const AdminUpdateMachine = () => {
     const [categoryName, setCategoryName] = useState<string>();
     const [machineSteps, setMachineSteps] = useState<IStep[]>([]);
     const {getMachinesList, setMachine} = useAdminMachines();
-    const {updateMachine} = useAdminUpdateMachine();
+    const {updateMachine} = useAdminAddMachine();
     const selectedMachine = useRecoilValue(machineState);
     const {t} = useTranslation();
 
@@ -42,7 +42,7 @@ const AdminUpdateMachine = () => {
         setActiveStep(0);
     }
 
-    const Side = () => <SideList list={getMachinesList()} selectedItem={selectedMachine.id} onSelect={onSelectMachine}
+    const Side = () => <SideList list={getMachinesList} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
                                  title={'Machines'}/>
     return (
         <MachineLayout side={Side()} header={categoryName} subHeader={selectedMachine.manufacturer + ' - ' + selectedMachine.nickName}>
