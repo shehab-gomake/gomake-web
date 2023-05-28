@@ -210,7 +210,6 @@ const useProfitsExeptionsFunction = ({
           // t("products.profits.pricingListWidget.price"),
           // t("products.profits.pricingListWidget.more"),
         ]);
-        console.log("DATA", data);
         const mapData = data?.map((item: any) => {
           return {
             ...renderProfits(item),

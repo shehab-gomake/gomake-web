@@ -1,5 +1,5 @@
 import { GomakeTextInput } from "@/components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { editPriceListState } from "../../../store/edit-price-list";
 
@@ -10,9 +10,18 @@ const RowInside = ({
   entry,
   editPriceListStateValue,
   setEditPriceListState,
+  row,
+  onUpdate,
 }: any) => {
   const [isUpdate, setIsUpdate] = useState(false);
-
+  const [updateTrigger, setUpdateTrigger] = useState(false);
+  useEffect(() => {
+    console.log("updateTrigger", updateTrigger);
+    if (updateTrigger) {
+      onUpdate();
+    }
+    setUpdateTrigger(false);
+  }, [updateTrigger]);
   return (
     <div
       key={`row_table_${index}`}
@@ -43,7 +52,23 @@ const RowInside = ({
                   ? editPriceListStateValue?.state[entry[0]]
                   : entry[1]
               }
-              onMouseLeave={() => setIsUpdate(false)}
+              onMouseLeave={(e) => {
+                setIsUpdate(false);
+                if (entry[0] === "totalPrice") {
+                  console.log("e.target.value", e.target.value);
+                  setEditPriceListState({
+                    ...editPriceListStateValue,
+                    state: {
+                      ...editPriceListStateValue.state,
+                      totalPrice: e.target.value,
+                      profit:
+                        editPriceListStateValue.state.totalPrice /
+                        (1 + editPriceListStateValue.state.profit / 100),
+                    },
+                  });
+                }
+                setUpdateTrigger(true);
+              }}
               onChange={(e) => {
                 setEditPriceListState({
                   ...editPriceListStateValue,
@@ -63,14 +88,13 @@ const RowInside = ({
             setEditPriceListState({
               ...editPriceListStateValue,
               state: {
-                ...editPriceListStateValue.state,
-                [entry[0]]: entry[1],
+                ...row,
               },
             });
             setIsUpdate(true);
           }}
         >
-          {entry[1]}
+          {Number(entry[1]).toFixed(2)}
         </div>
       )}
     </div>

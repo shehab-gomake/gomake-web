@@ -15,11 +15,12 @@ export const renderProfits = (item: any) => {
   const total = cost * (1 + profit / 100);
 
   return {
-    cost: Number(cost).toFixed(2),
-    profit: Number(profit).toFixed(2),
-    quantity: Number(quantity).toFixed(2),
-    unitPrice: (total / quantity).toFixed(2),
-    totalPrice: Number(total)?.toFixed(2),
+    cost: Number(cost),
+    profit: Number(profit),
+    quantity: Number(quantity),
+    unitPrice: Number(total / quantity).toFixed(2),
+    totalPrice: Number(total).toFixed(2),
+    recordID: item?.recordID,
   };
 };
 
@@ -45,10 +46,6 @@ const useProfitsAction = ({
   const setProductTest = useSetRecoilState(productTestState);
   const onCklickActionProfitTestResultsByActionId = useCallback(
     async (productId: string, productName: string) => {
-      console.log(
-        "actionProfitRowsNewactionProfitRowsNewactionProfitRowsNewactionProfitRowsNew",
-        actionProfitRowsNew
-      );
       setActionExceptionProfitRows("");
       const selectTestDataVal =
         await getAndSetGetActionProfitTestResultsByActionId(

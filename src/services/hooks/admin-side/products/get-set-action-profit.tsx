@@ -15,7 +15,6 @@ const getAndSetActionProfitRowByActionId = async (
   parametersStateValue?: any,
   data?: any
 ) => {
-  console.log("datadatadatadatadata", data);
   const renderType = (item: any) => {
     if (item?.machineId != null) {
       const myArry = machincesStateValue.find(

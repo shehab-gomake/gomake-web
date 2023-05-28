@@ -33,6 +33,12 @@ const Row = ({ row, width, tablePercent }: any) => {
               entry={entry}
               editPriceListStateValue={editPriceListStateValue}
               setEditPriceListState={setEditPriceListState}
+              row={row}
+              onUpdate={
+                actionExceptionProfitIdValue
+                  ? () => profitsStateValue?.updateActionExceptionProfitRow()
+                  : () => profitsStateValue?.updateActionProfitRow()
+              }
             />
           );
         }
