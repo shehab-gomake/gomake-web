@@ -25,6 +25,7 @@ const useProfitsAction = ({
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
 
+  const [openAddTestProductModal, setOpenAddTestProductModal] = useState(false);
   const [testProductState, setTestProductState] = useState<any>({});
   const setProductTest = useSetRecoilState(productTestState);
   const onCklickActionProfitTestResultsByActionId = useCallback(
@@ -120,6 +121,7 @@ const useProfitsAction = ({
 
   return {
     testProductState,
+    openAddTestProductModal,
     setProductTest,
     onCklickActionProfitTestResultsByActionId,
     onChangeSelectedAction,
@@ -127,6 +129,7 @@ const useProfitsAction = ({
     setTestProductState,
     deleteTestProductResult,
     onClickTestProduct,
+    setOpenAddTestProductModal,
   };
 };
 
