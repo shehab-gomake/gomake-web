@@ -8,8 +8,11 @@ import { useTranslation } from "react-i18next";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { profitsState } from "../../../store/profits";
 import { actionExceptionProfitId } from "@/store";
+import { useState } from "react";
+import { RowInside } from "./row-inside";
 
 const Row = ({ row, width, tablePercent }: any) => {
+  const [isUpdate, setIsUpdate] = useState(false);
   const { clasess } = useStyle({ width });
   const [editPriceListStateValue, setEditPriceListState] =
     useRecoilState<any>(editPriceListState);
@@ -23,52 +26,14 @@ const Row = ({ row, width, tablePercent }: any) => {
       {Object.entries(row).map((entry: [string, any], index: number) => {
         if (entry[0] !== "id" && entry[0] !== "recordID") {
           return (
-            <div
-              key={`row_table_${index}`}
-              style={
-                entry[0] == "more"
-                  ? clasess.editItem
-                  : entry[0] === "ExpProfit"
-                  ? clasess.rowItemExpPofit
-                  : { ...clasess.rowItem, width: `${tablePercent[index]}` }
-              }
-            >
-              {editPriceListStateValue?.isEdit &&
-              editPriceListStateValue?.id === row.id ? (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                    width: "100%",
-                    // gap: 100,
-                  }}
-                >
-                  {(entry[0] === "cost" ||
-                    entry[0] === "profit" ||
-                    entry[0] === "quantity") && (
-                    <div style={clasess.textInputsContainer}>
-                      <GomakeTextInput
-                        style={clasess.textInputStyle}
-                        value={editPriceListStateValue?.state[entry[0]]}
-                        onChange={(e) => {
-                          setEditPriceListState({
-                            ...editPriceListStateValue,
-                            state: {
-                              ...editPriceListStateValue.state,
-                              [entry[0]]: e.target.value,
-                            },
-                          });
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
-              ) : (
-                entry[1]
-              )}
-            </div>
+            <RowInside
+              index={index}
+              tablePercent={tablePercent}
+              clasess={clasess}
+              entry={entry}
+              editPriceListStateValue={editPriceListStateValue}
+              setEditPriceListState={setEditPriceListState}
+            />
           );
         }
       })}
