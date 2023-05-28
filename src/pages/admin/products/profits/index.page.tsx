@@ -176,40 +176,38 @@ export default function Profits() {
     t,
   ]);
   return (
-    <AdminAuthLayout>
       <div style={clasess.mainContainer}>
         <HeaderTitle title={t("products.profits.admin.title")} />
         <SelectAction />
         {profitsStateValue?.id ? (
-          <>
-            <ProductList />
-            {productTest?.id && (
-              <div style={clasess.pricingAndExceptionsCointaner}>
-                <div style={clasess.pricingCointaner}>
-                  <PricingList
-                    tableHeaders={tabelPricingHeaders}
-                    tablePercent={[
-                      "50px",
-                      "50px",
-                      "50px",
-                      "120px",
-                      "100px",
-                      "120px",
-                      "35px",
-                    ]}
-                  />
-                </div>
-                <div style={clasess.exceptionsCointaner}>
-                  <Exceptions
-                    tableHeaders={tabelExceptionsHeaders}
-                    tableRows={profitsStateValue?.actionExpectionRowsMapped}
-                  />
-                </div>
-              </div>
-            )}
-          </>
+            <>
+              <ProductList />
+              {productTest?.id && (
+                  <div style={clasess.pricingAndExceptionsCointaner}>
+                    <div style={clasess.pricingCointaner}>
+                      <PricingList
+                          tableHeaders={tabelPricingHeaders}
+                          tablePercent={[
+                            "50px",
+                            "50px",
+                            "50px",
+                            "120px",
+                            "100px",
+                            "120px",
+                            "35px",
+                          ]}
+                      />
+                    </div>
+                    <div style={clasess.exceptionsCointaner}>
+                      <Exceptions
+                          tableHeaders={tabelExceptionsHeaders}
+                          tableRows={profitsStateValue?.actionExpectionRowsMapped}
+                      />
+                    </div>
+                  </div>
+              )}
+            </>
         ) : null}
       </div>
-    </AdminAuthLayout>
   );
 }
