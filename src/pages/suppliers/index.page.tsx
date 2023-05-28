@@ -16,6 +16,7 @@ export default function Home() {
   const { tabelHeaders, allSuppliers,
     statuses, valStatus, handleClean, onChangeStatus,
   } = useSuppliers("S");
+  
 
   return (
     <CustomerAuthLayout>
