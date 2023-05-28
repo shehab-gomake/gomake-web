@@ -93,7 +93,7 @@ const useProfitsAction = ({
         actionId: selectedAction?.id || "",
       });
       if (data?.url) {
-        const fullUrl: any = `https://tests.gomake.co.il${data?.url}`;
+        const fullUrl: any = `${data?.url}`;
         window.location = fullUrl;
       } else if (!data?.url) {
         setSnackbarStateValue({
