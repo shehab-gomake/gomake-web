@@ -88,13 +88,14 @@ const useProfits = () => {
   const [pricingListRowState, setPricingListRowState] = useState<any>({});
   const [openAddTestProductModal, setOpenAddTestProductModal] = useState(false);
   const [testProductState, setTestProductState] = useState<any>({});
+  console.log("testProductState", testProductState);
   const [openDeleteExceptionProfitModal, setOpenDeleteExceptionProfitModal] =
     useState(false);
   const [selectedExceptionProfit, setSelectedExceptionProfit] = useState();
   const onCloseDeleteExceptionProfitModal = () => {
     setOpenDeleteExceptionProfitModal(false);
   };
-  const [calculationTestLink, setCalculationTestLink] = useState("");
+  const [, setCalculationTestLink] = useState("");
   const onOpenDeleteExceptionProfitModal = (item: any) => {
     setSelectedExceptionProfit(item);
     setOpenDeleteExceptionProfitModal(true);
@@ -540,33 +541,34 @@ const useProfits = () => {
     }
   }, [pricingListRowState, actionExceptionProfitIdValue]);
 
-  const onChangeAddNewTestProduct = useCallback(
-    (key: string, value: any) => {
-      setTestProductState(value);
-    },
-    [testProductState]
-  );
+  const onChangeAddNewTestProduct = useCallback((key: string, value: any) => {
+    console.log("value", value);
+    setTestProductState(value);
+  }, []);
 
-  const onClickTestProduct = useCallback(async () => {
-    const data = await generateCalaculationTestLink(
-      callApi,
-      setCalculationTestLink,
-      {
-        productId: testProductState || "",
-        actionId: selectedAction?.id || "",
+  const onClickTestProduct = useCallback(
+    async (id) => {
+      const data = await generateCalaculationTestLink(
+        callApi,
+        setCalculationTestLink,
+        {
+          productId: id || "",
+          actionId: selectedAction?.id || "",
+        }
+      );
+      if (data?.url) {
+        const fullUrl: any = `https://qa.gomake.co.il${data?.url}`;
+        window.location = fullUrl;
+      } else if (!data?.url) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("products.profits.testFailed"),
+          type: "error",
+        });
       }
-    );
-    if (data?.url) {
-      const fullUrl: any = `https://qa.gomake.co.il${data?.url}`;
-      window.location = fullUrl;
-    } else if (!data?.url) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("products.profits.testFailed"),
-        type: "error",
-      });
-    }
-  }, [testProductState, selectedAction]);
+    },
+    [selectedAction]
+  );
 
   const deleteTestProductResult = useCallback(async () => {
     const res = await callApi(

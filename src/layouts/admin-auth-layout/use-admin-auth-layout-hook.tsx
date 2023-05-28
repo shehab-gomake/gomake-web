@@ -173,6 +173,11 @@ const useAuthLayoutHook = () => {
         isList: true,
         list: [
           {
+            key: "actions",
+            title: t("products.actions.admin.title"),
+            path: "/admin/products/actions",
+          },
+          {
             key: "profits",
             title: t("products.profits.admin.title"),
             path: "/admin/products/profits",

@@ -899,6 +899,11 @@
         "additionalProfit": "Additional Profit",
         "deleteExceptionProfit": "Delete Exception Profit ?"
       }
+    },
+    "actions": {
+      "admin": {
+        "title": "Action"
+      }
     }
   },
   "skeleton": {

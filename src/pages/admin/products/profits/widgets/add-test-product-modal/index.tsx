@@ -8,12 +8,14 @@ import {
 import { useStyle } from "./style";
 import { profitsState } from "../../store/profits";
 import { useRecoilValue } from "recoil";
+import { useState } from "react";
 
 const AddTestProductModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
-
+  const [selectedItem, setSelectedItem] = useState("");
+  console.log("selectedItem", selectedItem);
   return (
     <>
       <GoMakeModal
@@ -32,17 +34,16 @@ const AddTestProductModal = () => {
               placeholder={t("products.profits.selectProduct")}
               getOptionLabel={(value: any) => value.name}
               onChange={(e: any, item: any) => {
-                profitsStateValue?.onChangeAddNewTestProduct(
-                  item?.name,
-                  item?.id
-                );
+                setSelectedItem(item?.id);
               }}
             />
             <div style={clasess.btnCointainer}>
               <div style={clasess.addBtnStyle}>
                 <GomakePrimaryButton
                   style={clasess.btnStyle}
-                  onClick={profitsStateValue?.onClickTestProduct}
+                  onClick={() => {
+                    profitsStateValue?.onClickTestProduct(selectedItem);
+                  }}
                 >
                   {t("products.profits.startTest")}
                 </GomakePrimaryButton>
