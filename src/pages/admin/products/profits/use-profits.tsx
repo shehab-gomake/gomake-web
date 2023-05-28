@@ -539,7 +539,7 @@ const useProfits = () => {
       }
     );
     if (data?.url) {
-      const fullUrl: any = `https://qa.gomake.co.il${data?.url}`;
+      const fullUrl: any = `${data?.url}`;
       window.location = fullUrl;
     } else if (!data?.url) {
       setSnackbarStateValue({

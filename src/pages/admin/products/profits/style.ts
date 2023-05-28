@@ -18,7 +18,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        paddingRight: convertWidthToVW(54),
+        padding: convertWidthToVW(54),
       },
       skeletonRowStyle: {
         marginTop: convertHeightToVH(10),
