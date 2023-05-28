@@ -143,14 +143,29 @@ const useProfits = () => {
 
   const getActionExceptionProfitRowByActionExceptionId =
     useCallback(async () => {
-      setActionExceptionProfitRows("");
-      await getAndSetActionExceptionProfitRowByActionExceptionId(
+      // setActionProfitRowsNew("");
+      let data = await getAndSetActionExceptionProfitRowByActionExceptionId(
         callApi,
-        setActionExceptionProfitRows,
+        () => {},
         {
           ActionExceptionId: actionExceptionProfitIdValue,
         }
       );
+      const mapData = data?.map((item: any) => {
+        return {
+          cost: item?.cost || "0",
+          profit: item?.profit,
+          quantity: item?.quantity || "0",
+          unitPrice: selectTestDataVal?.unitPrice,
+          totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
+          testFinalPrice: (
+            item?.quantity * selectTestDataVal?.unitPrice
+          )?.toFixed(2),
+          more: <PricingListMenuWidget item={item} />,
+          id: item?.id,
+        };
+      });
+      setActionProfitRowsNew(mapData);
     }, [actionExceptionProfitIdValue]);
 
   const getActionProfitRowChartData = useCallback(async () => {
@@ -245,11 +260,12 @@ const useProfits = () => {
           // t("products.profits.pricingListWidget.price"),
           t("products.profits.pricingListWidget.more"),
         ]);
-        const mapData = actionProfitRowsNew?.map((item: any) => {
+        console.log("DATA", data);
+        const mapData = data?.map((item: any) => {
           return {
             cost: item?.cost || "0",
             profit: item?.profit,
-            quantity: item?.quantity,
+            quantity: item?.quantity || "0",
             unitPrice: selectTestDataVal?.unitPrice,
             totalPrice: (item?.cost * (item?.profit / 100))?.toFixed(2),
             testFinalPrice: (
@@ -300,7 +316,7 @@ const useProfits = () => {
           id: item?.id,
         };
       });
-      setactionExceptionProfitId(productId);
+      // setactionExceptionProfitId(productId);
       setProductTest({ id: productId, name: productName });
       setActionExceptionProfitRows(mapData);
       setActionProfitRowsNew(mapData);
@@ -485,6 +501,7 @@ const useProfits = () => {
       await getActionProfits();
       setPricingListRowState({});
       setOpenAddNewPricingStepRow(false);
+      onCloseAddQuantityModal();
     } else {
       setSnackbarStateValue({
         state: true,
@@ -511,6 +528,7 @@ const useProfits = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
+      onCloseAddQuantityModal();
       await getActionExceptionProfitRowByActionExceptionId();
       setPricingListRowState({}), setOpenAddNewPricingStepRow(false);
     } else {
