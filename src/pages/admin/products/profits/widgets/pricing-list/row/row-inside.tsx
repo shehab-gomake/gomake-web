@@ -56,14 +56,18 @@ const RowInside = ({
                 setIsUpdate(false);
                 if (entry[0] === "totalPrice") {
                   console.log("e.target.value", e.target.value);
+                  console.log(
+                    "editPriceListStateValue.state.profit",
+                    editPriceListStateValue.state.profit
+                  );
                   setEditPriceListState({
                     ...editPriceListStateValue,
                     state: {
                       ...editPriceListStateValue.state,
                       totalPrice: e.target.value,
                       profit:
-                        editPriceListStateValue.state.totalPrice /
-                        (1 + editPriceListStateValue.state.profit / 100),
+                        e.target.value /
+                        (editPriceListStateValue.state.profit / 100),
                     },
                   });
                 }
