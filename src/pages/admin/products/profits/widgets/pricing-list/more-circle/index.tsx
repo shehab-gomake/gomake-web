@@ -7,6 +7,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { profitsState } from "../../../store/profits";
 import { editPriceListState } from "../../../store/edit-price-list";
 import { actionExceptionProfitId } from "@/store";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const PricingListMenuWidget = ({ item }: any) => {
   const { open, handleClose, handleClick, anchorEl } = usePricingListMenu();
@@ -18,11 +19,19 @@ const PricingListMenuWidget = ({ item }: any) => {
 
   return (
     <>
-      <IconButton onClick={handleClick}>
-        <MoreCircleIcon />
+      <IconButton
+        onClick={
+          actionExceptionProfitIdValue
+            ? () => profitsStateValue?.deleteActionExceptionProfitRow(item?.id)
+            : () => profitsStateValue?.deleteActionProfitRow(item?.id)
+        }
+      >
+        {/* <MoreCircleIcon /> */}
+
+        <DeleteIcon style={{ color: "#a1a2cd" }} />
       </IconButton>
-      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        {/* <MenuItem
+      {/* <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
+        <MenuItem
           onClick={() => {
             setEditPriceListState({
               isEdit: true,
@@ -33,7 +42,7 @@ const PricingListMenuWidget = ({ item }: any) => {
           }}
         >
           Edit
-        </MenuItem> */}
+        </MenuItem>
         <MenuItem
           onClick={
             actionExceptionProfitIdValue
@@ -46,7 +55,7 @@ const PricingListMenuWidget = ({ item }: any) => {
         >
           Delete
         </MenuItem>
-      </GoMakeMenu>
+      </GoMakeMenu> */}
     </>
   );
 };
