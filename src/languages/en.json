@@ -903,7 +903,12 @@
     "actions": {
       "admin": {
         "title": "Action"
-      }
+      },
+      "actionName": "Action Name",
+      "internalSource": "internal/Out source",
+      "active": "Active",
+      "profit": "Profit",
+      "properties": "Properties"
     }
   },
   "skeleton": {
