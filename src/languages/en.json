@@ -916,5 +916,10 @@
   },
   "deleteModal": {
     "deleteSupplier": "Are you sure to delete the supplier?"
+  },
+  "sales": {
+    "quote": {
+      "title": "Quote"
+    }
   }
 }
