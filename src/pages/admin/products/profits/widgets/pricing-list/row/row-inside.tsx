@@ -72,14 +72,33 @@ const RowInside = ({
                   },
                 });
                 if (entry[0] === "totalPrice") {
+                  const profit = editPriceListStateValue.state.profit / 100;
                   setEditPriceListState({
                     ...editPriceListStateValue,
                     state: {
                       ...editPriceListStateValue.state,
                       totalPrice: e.target.value,
                       profit:
-                        e.target.value /
-                        (editPriceListStateValue.state.profit / 100),
+                        (e.target.value / editPriceListStateValue.state.cost -
+                          1) *
+                        100,
+                    },
+                  });
+                }
+
+                if (entry[0] === "unitPrice") {
+                  let unitPrice = e.target.value;
+                  const totalPrice =
+                    unitPrice * editPriceListStateValue.state.quantity;
+                  setEditPriceListState({
+                    ...editPriceListStateValue,
+                    state: {
+                      ...editPriceListStateValue.state,
+                      unitPrice,
+                      totalPrice,
+                      profit:
+                        (totalPrice / editPriceListStateValue.state.cost - 1) *
+                        100,
                     },
                   });
                 }

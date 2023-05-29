@@ -13,7 +13,8 @@ export const renderProfits = (item: any) => {
   const cost = item?.cost || 0;
   const profit = item?.profit || 0;
   const quantity = item?.quantity || 0;
-  const total = cost * (profit / 100);
+  const percentProfit = profit / 100;
+  const total = cost * (1 + percentProfit);
 
   return {
     cost: Number(cost),

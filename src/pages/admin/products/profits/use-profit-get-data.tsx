@@ -27,7 +27,7 @@ import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { renderProfits } from "./use-profit-action.";
-import {PricingListMenuWidget} from "@/pages/admin/products/profits/widgets/pricing-list/more-circle";
+import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
 
 const useProfitsGetData = () => {
   const router: any = useRouter();
