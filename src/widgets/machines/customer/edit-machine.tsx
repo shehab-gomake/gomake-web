@@ -21,7 +21,7 @@ const CustomerEditMachines = () => {
     const [categoryName, setCategoryName] = useState<string>();
     const [machineSteps, setMachineSteps] = useState<IStep[]>([]);
     const selectedMachine = useRecoilValue(machineState);
-    const {getPrintHouseMachinesList, setMachine} = usePrintHouseMachines();
+    const {getPrintHouseMachinesList, setMachine} = usePrintHouseMachines(true);
     const {updateMachine} = usePrintHouseAddMachine()
     const {t} = useTranslation();
 

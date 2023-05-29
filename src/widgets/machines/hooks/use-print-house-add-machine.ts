@@ -84,7 +84,7 @@ const usePrintHouseAddMachine = () => {
     const updateMachine = async () => {
         const result = await callApi('POST', '/v1/update-machine', {...machineState});
         if (result?.success) {
-            setUpdatedMachine(result.data.data.data);
+            setUpdatedMachine(result.data.data);
             setSnackbarStateValue({
                 state: true,
                 message: t("modal.addedSusuccessfully"),

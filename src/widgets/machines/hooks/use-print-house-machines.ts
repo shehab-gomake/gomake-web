@@ -5,7 +5,7 @@ import {machineState} from "@/widgets/machines/state/machine-state";
 import {useRouter} from "next/router";
 import {machinesListState} from "@/widgets/machines/state/machines";
 
-const usePrintHouseMachines = () => {
+const usePrintHouseMachines = (loop?: boolean) => {
     const router = useRouter();
     const {categoryId} = router.query
     const {callApi} = useGomakeAxios();
@@ -13,7 +13,9 @@ const usePrintHouseMachines = () => {
     const setMachineState = useSetRecoilState(machineState);
 
     useEffect(() => {
-        getMachinesAPI().then();
+        if (loop) {
+            getMachinesAPI().then();
+        }
     }, [categoryId]);
 
     const getMachinesAPI = async () => {
@@ -37,7 +39,7 @@ const usePrintHouseMachines = () => {
     }
 
     const setUpdatedMachine = (updatedMachine: Record<string, any>) => {
-        setMachines(machines.map(machine => updatedMachine.id === machine.id ? updatedMachine : machine));
+        setMachines(machines.map(machine => updatedMachine?.id === machine.id ? updatedMachine : machine));
         setMachineState(updatedMachine);
     }
 
