@@ -7,6 +7,7 @@ import { productTestState } from "@/store/product-test";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSetRecoilState } from "recoil";
+import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
 
 export const renderProfits = (item: any) => {
   const cost = item?.cost || 0;
@@ -65,7 +66,7 @@ const useProfitsAction = ({
           // testFinalPrice: (
           //   item?.quantity * selectTestDataVal[0]?.unitPrice
           // )?.toFixed(2),
-          // more: <PricingListMenuWidget item={item} />,
+          more: <PricingListMenuWidget item={item} />,
           id: item?.id,
         };
       });

@@ -22,7 +22,7 @@ const PricingListMenuWidget = ({ item }: any) => {
         <MoreCircleIcon />
       </IconButton>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             setEditPriceListState({
               isEdit: true,
@@ -33,7 +33,7 @@ const PricingListMenuWidget = ({ item }: any) => {
           }}
         >
           Edit
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem
           onClick={
             actionExceptionProfitIdValue
