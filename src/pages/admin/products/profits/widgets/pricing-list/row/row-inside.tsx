@@ -55,24 +55,7 @@ const RowInside = ({
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   setIsUpdate(false);
-                  if (entry[0] === "totalPrice") {
-                    console.log("e.target.value", e.target.value);
-                    console.log(
-                      "editPriceListStateValue.state.profit",
-                      editPriceListStateValue.state.profit
-                    );
-                    setEditPriceListState({
-                      ...editPriceListStateValue,
-                      state: {
-                        ...editPriceListStateValue.state,
-                        totalPrice: e.target.value,
-                        profit:
-                          e.target.value /
-                          (editPriceListStateValue.state.profit / 100),
-                      },
-                      isEdit: false,
-                    });
-                  }
+
                   setEditPriceListState({
                     ...editPriceListStateValue,
                     isEdit: false,
@@ -88,6 +71,18 @@ const RowInside = ({
                     [entry[0]]: e.target.value,
                   },
                 });
+                if (entry[0] === "totalPrice") {
+                  setEditPriceListState({
+                    ...editPriceListStateValue,
+                    state: {
+                      ...editPriceListStateValue.state,
+                      totalPrice: e.target.value,
+                      profit:
+                        e.target.value /
+                        (editPriceListStateValue.state.profit / 100),
+                    },
+                  });
+                }
               }}
               autoFocus={true}
             />

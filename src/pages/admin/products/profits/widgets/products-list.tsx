@@ -25,6 +25,9 @@ const ProductList = () => {
               {t("products.profits.itemName")}
             </div>
             <div style={clasess.titleHederTextStyle}>
+              {t("products.profits.details")}
+            </div>
+            <div style={clasess.titleHederTextStyle}>
               {t("products.profits.more")}
             </div>
           </div>
@@ -47,6 +50,7 @@ const ProductList = () => {
                       }
                     >
                       <div style={clasess.nameStyle}>{item?.name}</div>
+                      <div style={clasess.nameStyle}>{item?.details}</div>
                       <div style={clasess.moreStyle}>{item?.more}</div>
                     </div>
                   );

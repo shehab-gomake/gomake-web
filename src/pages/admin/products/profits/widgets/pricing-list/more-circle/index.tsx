@@ -19,19 +19,13 @@ const PricingListMenuWidget = ({ item }: any) => {
 
   return (
     <>
-      <IconButton
-        onClick={
-          actionExceptionProfitIdValue
-            ? () => profitsStateValue?.deleteActionExceptionProfitRow(item?.id)
-            : () => profitsStateValue?.deleteActionProfitRow(item?.id)
-        }
-      >
-        {/* <MoreCircleIcon /> */}
+      <IconButton onClick={handleClick}>
+        <MoreCircleIcon />
 
-        <DeleteIcon style={{ color: "#a1a2cd" }} />
+        {/* <DeleteIcon style={{ color: "#a1a2cd" }} /> */}
       </IconButton>
-      {/* <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        <MenuItem
+      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
+        {/* <MenuItem
           onClick={() => {
             setEditPriceListState({
               isEdit: true,
@@ -42,7 +36,7 @@ const PricingListMenuWidget = ({ item }: any) => {
           }}
         >
           Edit
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem
           onClick={
             actionExceptionProfitIdValue
@@ -55,7 +49,7 @@ const PricingListMenuWidget = ({ item }: any) => {
         >
           Delete
         </MenuItem>
-      </GoMakeMenu> */}
+      </GoMakeMenu>
     </>
   );
 };
