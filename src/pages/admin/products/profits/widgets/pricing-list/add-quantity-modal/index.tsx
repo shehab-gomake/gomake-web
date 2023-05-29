@@ -28,10 +28,7 @@ const AddQuantityModal = ({
   const { clasess } = useStyle();
 
   useEffect(() => {
-    profitsStateValue?.onChangeAddPricingListRow(
-      "profit",
-      actionProfitRowsNew[actionProfitRowsNew?.length - 1]?.profit || 100
-    );
+    profitsStateValue?.onChangeAddPricingListRow("profit", 100);
   }, [actionProfitRowsNew]);
   return (
     <>

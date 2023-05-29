@@ -116,7 +116,7 @@ const useProfitsEffects = ({
       // t("products.profits.pricingListWidget.meterPrice"),
       // t("products.profits.pricingListWidget.expMeter"),
       // t("products.profits.pricingListWidget.price"),
-      // t("products.profits.pricingListWidget.more"),
+      t("products.profits.pricingListWidget.more"),
     ]);
   }, [actionProfits]);
 

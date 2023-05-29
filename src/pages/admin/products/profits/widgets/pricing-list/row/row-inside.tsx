@@ -52,14 +52,26 @@ const RowInside = ({
                   ? editPriceListStateValue?.state[entry[0]]
                   : entry[1]
               }
-              onMouseLeave={(e) => {
-                setIsUpdate(false);
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setIsUpdate(false);
+
+                  setEditPriceListState({
+                    ...editPriceListStateValue,
+                    isEdit: false,
+                  });
+                  setUpdateTrigger(true);
+                }
+              }}
+              onChange={(e) => {
+                setEditPriceListState({
+                  ...editPriceListStateValue,
+                  state: {
+                    ...editPriceListStateValue.state,
+                    [entry[0]]: e.target.value,
+                  },
+                });
                 if (entry[0] === "totalPrice") {
-                  console.log("e.target.value", e.target.value);
-                  console.log(
-                    "editPriceListStateValue.state.profit",
-                    editPriceListStateValue.state.profit
-                  );
                   setEditPriceListState({
                     ...editPriceListStateValue,
                     state: {
@@ -71,35 +83,34 @@ const RowInside = ({
                     },
                   });
                 }
-                setUpdateTrigger(true);
-              }}
-              onChange={(e) => {
-                setEditPriceListState({
-                  ...editPriceListStateValue,
-                  state: {
-                    ...editPriceListStateValue.state,
-                    [entry[0]]: e.target.value,
-                  },
-                });
               }}
               autoFocus={true}
             />
           </div>
         </div>
-      ) : (
+      ) : entry[0] !== "more" ? (
         <div
           onClick={() => {
-            setEditPriceListState({
-              ...editPriceListStateValue,
-              state: {
-                ...row,
-              },
-            });
-            setIsUpdate(true);
+            if (
+              entry[0] !== "cost" &&
+              entry[0] !== "quantity" &&
+              editPriceListStateValue.isEdit !== true
+            ) {
+              setEditPriceListState({
+                ...editPriceListStateValue,
+                state: {
+                  ...row,
+                },
+                isEdit: true,
+              });
+              setIsUpdate(true);
+            }
           }}
         >
           {Number(entry[1]).toFixed(2)}
         </div>
+      ) : (
+        entry[1]
       )}
     </div>
   );

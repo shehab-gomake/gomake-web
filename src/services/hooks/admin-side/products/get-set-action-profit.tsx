@@ -58,7 +58,7 @@ const getAndSetActionProfitRowByActionId = async (
       //   : { quantity: item?.quantity }),
       ...renderProfits(item),
       // testFinalPrice,
-      // more: <PricingListMenuWidget item={item} />,
+      more: <PricingListMenuWidget item={item} />,
       id: item?.id,
       recordID: item?.recordID,
     };
@@ -67,7 +67,7 @@ const getAndSetActionProfitRowByActionId = async (
     return {
       ...renderProfits(item),
       // testFinalPrice,
-      // more: <PricingListMenuWidget item={item} />,
+      more: <PricingListMenuWidget item={item} />,
       id: item?.id,
       recordID: item?.recordID,
     };

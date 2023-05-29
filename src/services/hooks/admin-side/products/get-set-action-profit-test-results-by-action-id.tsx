@@ -27,7 +27,7 @@ const getAndSetGetActionProfitTestResultsByActionId = async (
 
       ...renderProfits(item),
       // testFinalPrice: item?.testFinalPrice?.toFixed(2) || "0",
-      // more: <PricingListMenuWidget item={item} />,
+      more: <PricingListMenuWidget item={item} />,
       id: item?.id,
       recordID: item?.recordID,
     };

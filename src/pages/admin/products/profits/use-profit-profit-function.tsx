@@ -13,6 +13,7 @@ const useProfitsProfitsFunction = ({
   setPricingListRowState,
   setOpenAddNewPricingStepRow,
   onCloseAddQuantityModal,
+  actionProfitRowsNew,
 }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -73,33 +74,47 @@ const useProfitsProfitsFunction = ({
   );
 
   const onClickSaveNewActionProfitRow = useCallback(async () => {
-    const res = await callApi(
-      "POST",
-      `/v1/printhouse-config/profits/add-action-profit-row`,
-      {
-        actionId: selectedAction?.id,
-        // size: pricingListRowState?.height * pricingListRowState?.width,
-        ...pricingListRowState,
-      }
+    console.log("actionProfitRowsNew", actionProfitRowsNew);
+    console.log("pricingListRowState.quantity", pricingListRowState.quantity);
+
+    const findQuantity = actionProfitRowsNew.find(
+      (item) => item.quantity == pricingListRowState.quantity
     );
-    if (res?.success) {
+    if (findQuantity) {
       setSnackbarStateValue({
         state: true,
-        message: t("modal.addedSusuccessfully"),
-        type: "sucess",
-      });
-      await getActionProfits();
-      setPricingListRowState({});
-      setOpenAddNewPricingStepRow(false);
-      onCloseAddQuantityModal();
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedfailed"),
+        message: "This quantity already exists", //TODO:
         type: "error",
       });
+    } else {
+      const res = await callApi(
+        "POST",
+        `/v1/printhouse-config/profits/add-action-profit-row`,
+        {
+          actionId: selectedAction?.id,
+          // size: pricingListRowState?.height * pricingListRowState?.width,
+          ...pricingListRowState,
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        await getActionProfits();
+        setPricingListRowState({});
+        setOpenAddNewPricingStepRow(false);
+        onCloseAddQuantityModal();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
     }
-  }, [pricingListRowState, selectedAction]);
+  }, [pricingListRowState, selectedAction, actionProfitRowsNew]);
 
   const onChangeAddPricingListRow = useCallback(
     (key: string, value: any) => {

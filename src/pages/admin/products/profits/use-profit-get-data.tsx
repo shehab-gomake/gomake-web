@@ -104,7 +104,7 @@ const useProfitsGetData = () => {
           // testFinalPrice: (
           //   item?.quantity * selectTestDataVal?.unitPrice
           // )?.toFixed(2),
-          // more: <PricingListMenuWidget item={item} />,
+          more: <PricingListMenuWidget item={item} />,
           id: item?.id,
         };
       });

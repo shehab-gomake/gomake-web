@@ -5,6 +5,7 @@ import { useRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
 import { getAndSetActionExceptionProfitRowByActionExceptionId } from "@/services/hooks";
 import { renderProfits } from "./use-profit-action.";
+import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
 
 const useProfitsExeptionsFunction = ({
   getActionExceptionProfitRowByActionExceptionId,
@@ -169,7 +170,7 @@ const useProfitsExeptionsFunction = ({
           t("products.profits.pricingListWidget.totalPrice"),
           t("products.profits.pricingListWidget.Expprofit"),
           // t("products.profits.pricingListWidget.testFinalPrice"),
-          // t("products.profits.pricingListWidget.more"),
+          t("products.profits.pricingListWidget.more"),
         ]);
         const mapData = actionProfitRowsNew?.map((item: any) => {
           const percent = item?.profit * (selectedAdditional / 100);
@@ -179,7 +180,7 @@ const useProfitsExeptionsFunction = ({
             // testFinalPrice: (
             //   item?.quantity * selectTestDataVal?.unitPrice
             // )?.toFixed(2),
-            // more: <PricingListMenuWidget item={item} />,
+            more: <PricingListMenuWidget item={item} />,
             id: item?.id,
           };
         });
@@ -208,7 +209,7 @@ const useProfitsExeptionsFunction = ({
           // t("products.profits.pricingListWidget.meterPrice"),
           // t("products.profits.pricingListWidget.expMeter"),
           // t("products.profits.pricingListWidget.price"),
-          // t("products.profits.pricingListWidget.more"),
+          t("products.profits.pricingListWidget.more"),
         ]);
         const mapData = data?.map((item: any) => {
           return {
@@ -216,7 +217,7 @@ const useProfitsExeptionsFunction = ({
             // testFinalPrice: (
             //   item?.quantity * selectTestDataVal?.unitPrice
             // )?.toFixed(2),
-            // more: <PricingListMenuWidget item={item} />,
+            more: <PricingListMenuWidget item={item} />,
             id: item?.id,
           };
         });
@@ -315,7 +316,7 @@ const useProfitsExeptionsFunction = ({
               // expMeter: item?.expMeter,
               // price: item?.price,
               // totalPrice: item?.totalPrice,
-              // more: <PricingListMenuWidget item={item} />,
+              more: <PricingListMenuWidget item={item} />,
               id: item?.id,
               recordID: item?.recordID,
             };
