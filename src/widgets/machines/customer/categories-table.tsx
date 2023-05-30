@@ -6,6 +6,7 @@ import Link from "next/link";
 import {useRecoilValue} from "recoil";
 import {machineCategoriesState} from "@/store/machine-categories";
 import Button from "@mui/material/Button";
+import {EditIcon} from "@/components/icons/edit-icon";
 
 
 const StyledTableCell = styled(TableCell)(() => ({
@@ -52,7 +53,8 @@ const CategoriesTable = () => {
                                     <StyledTableCell align={'center'}></StyledTableCell>
                                     <StyledTableCell align={'center'}></StyledTableCell>
                                     <StyledTableCell align={'center'}>
-                                        <Button component={Link} href={`/machines/category/${category.id}`} variant={'text'}>Edit</Button>
+                                        <Button component={Link} href={`/machines/category/${category.id}`} variant={'text'}>
+                                            <EditIcon/>Edit</Button>
                                     </StyledTableCell>
                                 </StyledTableRow>
                             })

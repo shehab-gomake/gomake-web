@@ -8,7 +8,8 @@ import {useCallback, useState} from "react";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {usePrintHouseAddMachine} from "@/widgets/machines/hooks/use-print-house-add-machine";
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import DeleteIcon from '@mui/icons-material/Delete';
+import {DeleteIcon} from "@/components/icons/delete-icon";
+import {DuplicateIcon} from "@/components/icons/duplicate-icon";
 const ListButton = styled(ListItemButton)(() => {
     const {primaryColor} = useGomakeTheme();
     return {
@@ -91,7 +92,7 @@ const SideList = ({list, selectedItem, onSelect, title, quickActions = false, ch
                 anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
             >
                 <MenuItem onClick={onClickDuplicate}>
-                    <div style={classes.menuItem}><ContentCopyOutlinedIcon/> <span>Duplicate</span></div>
+                    <div style={classes.menuItem}><DuplicateIcon/> <span>Duplicate</span></div>
                 </MenuItem>
                 <Divider/>
                 <MenuItem onClick={onClickDelete}>
