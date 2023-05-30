@@ -16,3 +16,4 @@ export * from "./notifications";
 export * from "./more-circle";
 export * from "./wastebasket";
 export * from "./add-icon";
+export * from "./edit-icon";
