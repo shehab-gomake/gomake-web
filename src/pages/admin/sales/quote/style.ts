@@ -26,6 +26,8 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
+        marginTop: 24,
+        marginBottom: 7,
       },
       rightSideHeaderContainer: {
         display: "flex",

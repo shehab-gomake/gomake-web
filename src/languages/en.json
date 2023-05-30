@@ -919,7 +919,9 @@
   },
   "sales": {
     "quote": {
-      "title": "Quote"
+      "title": "Quote",
+      "deliverOn": "Deliver on",
+      "upload": "upload"
     }
   }
 }

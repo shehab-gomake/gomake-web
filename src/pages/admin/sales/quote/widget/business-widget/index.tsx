@@ -1,6 +1,7 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { PlusIcon } from "@/icons";
 interface IProps {
   isBusinessCode?: boolean;
   isBusinessName?: boolean;
@@ -28,7 +29,10 @@ const BusinessWidget = ({
       )}
       {isBusinessName && (
         <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>Business name</div>
+          <div style={clasess.labelContainer}>
+            <div style={clasess.labelStyle}> Business name</div>
+            <PlusIcon />
+          </div>
           <GoMakeAutoComplate
             options={["A", "B", "C", "D", "E", "F"]}
             style={clasess.autoComplateStyle}

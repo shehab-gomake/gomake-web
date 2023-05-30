@@ -7,6 +7,7 @@ import { useStyle } from "./style";
 import { UploadIcon } from "@/icons";
 import { BusinessWidget } from "./widget/business-widget";
 import { ContactWidget } from "./widget/contact-widget";
+import { AddressWidget } from "./widget/address-widget";
 
 export default function Quote() {
   const { clasess } = useStyle();
@@ -16,17 +17,26 @@ export default function Quote() {
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
         <div style={clasess.headerContainer}>
-          <HeaderTitle title={t("sales.quote.title")} />
+          <HeaderTitle
+            title={t("sales.quote.title")}
+            marginBottom={1}
+            marginTop={1}
+          />
           <div style={clasess.rightSideHeaderContainer}>
-            <div style={clasess.deleverdDate}>Deliver on 3/5/2023</div>
+            <div style={clasess.deleverdDate}>
+              {t("sales.quote.deliverOn")} 3/5/2023
+            </div>
             <div style={clasess.uploadContainer}>
               <UploadIcon />
-              <div style={clasess.uploadTextStyle}>upload</div>
+              <div style={clasess.uploadTextStyle}>
+                {t("sales.quote.upload")}
+              </div>
             </div>
           </div>
         </div>
         <BusinessWidget />
         <ContactWidget />
+        <AddressWidget />
       </div>
     </AdminAuthLayout>
   );

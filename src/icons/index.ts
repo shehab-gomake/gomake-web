@@ -18,3 +18,4 @@ export * from "./wastebasket";
 export * from "./add-icon";
 export * from "./edit-icon";
 export * from "./upload";
+export * from "./plus";
