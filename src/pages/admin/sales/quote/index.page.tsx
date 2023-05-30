@@ -5,6 +5,8 @@ import { useQuote } from "./use-quote";
 
 import { useStyle } from "./style";
 import { UploadIcon } from "@/icons";
+import { BusinessWidget } from "./widget/business-widget";
+import { ContactWidget } from "./widget/contact-widget";
 
 export default function Quote() {
   const { clasess } = useStyle();
@@ -23,6 +25,8 @@ export default function Quote() {
             </div>
           </div>
         </div>
+        <BusinessWidget />
+        <ContactWidget />
       </div>
     </AdminAuthLayout>
   );
