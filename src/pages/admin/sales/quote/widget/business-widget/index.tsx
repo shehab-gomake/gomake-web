@@ -20,9 +20,9 @@ const BusinessWidget = ({
     <div style={clasess.mainContainer}>
       {isBusinessCode && (
         <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>Business code</div>
+          <div style={clasess.labelStyle}>{t("sales.quote.businessCode")}</div>
           <GomakeTextInput
-            placeholder="Business code"
+            placeholder={t("sales.quote.businessCode")}
             style={clasess.textInputStyle}
           />
         </div>
@@ -30,21 +30,25 @@ const BusinessWidget = ({
       {isBusinessName && (
         <div style={clasess.fieldContainer}>
           <div style={clasess.labelContainer}>
-            <div style={clasess.labelStyle}> Business name</div>
+            <div style={clasess.labelStyle}>
+              {t("sales.quote.businessName")}
+            </div>
             <PlusIcon />
           </div>
           <GoMakeAutoComplate
             options={["A", "B", "C", "D", "E", "F"]}
             style={clasess.autoComplateStyle}
-            placeholder="Business name"
+            placeholder={t("sales.quote.businessName")}
           />
         </div>
       )}
       {isPurchaseNumber && (
         <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>Purchase number</div>
+          <div style={clasess.labelStyle}>
+            {t("sales.quote.purchaseNumber")}
+          </div>
           <GomakeTextInput
-            placeholder="Purchase number"
+            placeholder={t("sales.quote.purchaseNumber")}
             style={clasess.textInputStyle}
           />
         </div>
@@ -52,11 +56,11 @@ const BusinessWidget = ({
 
       {isAgent && (
         <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>Agent</div>
+          <div style={clasess.labelStyle}>{t("sales.quote.agent")}</div>
           <GoMakeAutoComplate
             options={["A", "B", "C", "D", "E", "F"]}
             style={clasess.autoComplateStyle}
-            placeholder="Agent"
+            placeholder={t("sales.quote.agent")}
           />
         </div>
       )}

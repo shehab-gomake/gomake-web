@@ -12,7 +12,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        gap: 16,
+        gap: 24,
         marginTop: 16,
       },
       fieldContainer: {
@@ -26,11 +26,17 @@ const useStyle = () => {
       labelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
+        height: 20,
+      },
+      addBtnStyle: {
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: primaryColor(900),
+        cursor: "pointer",
       },
 
       textInputStyle: {
         background: "#FFFFFF",
-        filter: "box-shadow: 0px 4px 60px rgba(0, 0, 0, 0.08)",
+        filter: "drop-shadow(0px 4px 60px rgba(0, 0, 0, 0.08))",
         // boxShadow: "0px 4px 60px rgba(0, 0, 0, 0.08)",
         borderRadius: 4,
         border: "1px solid #FFFFFF",
@@ -39,8 +45,8 @@ const useStyle = () => {
       },
       autoComplateStyle: {
         background: "#FFFFFF",
-        // filter: "box-shadow: 0px 4px 60px rgba(0, 0, 0, 0.08)",
-        boxShadow: "0px 4px 60px rgba(0, 0, 0, 0.08)",
+        filter: "drop-shadow(0px 4px 60px rgba(0, 0, 0, 0.08))",
+        // boxShadow: "0px 4px 60px rgba(0, 0, 0, 0.08)",
         borderRadius: 4,
         border: "1px solid #FFFFFF",
         height: 40,

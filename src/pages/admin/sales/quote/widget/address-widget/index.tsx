@@ -7,6 +7,7 @@ interface IProps {
   isStreet?: boolean;
   isEntrance?: boolean;
   isApartment?: boolean;
+  isAddNewAddress?: boolean;
 }
 const AddressWidget = ({
   isAddressID = true,
@@ -14,6 +15,7 @@ const AddressWidget = ({
   isStreet = true,
   isEntrance = true,
   isApartment = true,
+  isAddNewAddress = true,
 }: IProps) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -21,55 +23,63 @@ const AddressWidget = ({
     <div style={clasess.mainContainer}>
       {isAddressID && (
         <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>Address ID</div>
+          <div style={clasess.labelStyle}>{t("sales.quote.addressID")}</div>
           <GoMakeAutoComplate
             options={["A", "B", "C", "D", "E", "F"]}
             style={clasess.autoComplateStyle}
-            placeholder="Address ID"
+            placeholder={t("sales.quote.addressID")}
           />
         </div>
       )}
 
       {isCity && (
         <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>City</div>
+          <div style={clasess.labelStyle}>{t("sales.quote.city")}</div>
           <GoMakeAutoComplate
             options={["A", "B", "C", "D", "E", "F"]}
             style={clasess.autoComplateStyle}
-            placeholder="City"
+            placeholder={t("sales.quote.city")}
           />
         </div>
       )}
 
       {isStreet && (
         <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>Street</div>
+          <div style={clasess.labelStyle}>{t("sales.quote.street")}</div>
           <GoMakeAutoComplate
             options={["A", "B", "C", "D", "E", "F"]}
             style={clasess.autoComplateStyle}
-            placeholder="Street"
+            placeholder={t("sales.quote.street")}
           />
         </div>
       )}
 
       {isEntrance && (
         <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>Entrance</div>
+          <div style={clasess.labelStyle}>{t("sales.quote.entrance")}</div>
           <GoMakeAutoComplate
             options={["A", "B", "C", "D", "E", "F"]}
             style={clasess.autoComplateStyle}
-            placeholder="Entrance"
+            placeholder={t("sales.quote.entrance")}
           />
         </div>
       )}
 
       {isApartment && (
         <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>Apartment</div>
+          <div style={clasess.labelStyle}>{t("sales.quote.apartment")}</div>
           <GomakeTextInput
-            placeholder="Apartment"
+            placeholder={t("sales.quote.apartment")}
             style={clasess.textInputStyle}
           />
+        </div>
+      )}
+      {isAddNewAddress && (
+        <div style={clasess.fieldContainer}>
+          <div style={clasess.labelStyle} />
+          <div style={clasess.addBtnStyle}>
+            {t("sales.quote.addNewAddress")}
+          </div>
         </div>
       )}
     </div>

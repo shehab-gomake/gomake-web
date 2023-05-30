@@ -921,7 +921,24 @@
     "quote": {
       "title": "Quote",
       "deliverOn": "Deliver on",
-      "upload": "upload"
+      "upload": "upload",
+      "businessCode": "Business code",
+      "businessName": "Business name",
+      "purchaseNumber": "Purchase number",
+      "agent": "Agent",
+      "contactID": "Contact ID",
+      "contactName": "Contact name",
+      "portable": "Portable",
+      "email": "Email",
+      "addressID": "Address ID",
+      "city": "City",
+      "street": "Street",
+      "entrance": "Entrance",
+      "apartment": "Apartment",
+      "addNewContact": "Add new contact",
+      "addNewAddress": "Add new Address",
+      "sortBy": "sort by",
+      "discountBy": "discount by"
     }
   }
 }

@@ -8,6 +8,7 @@ import { UploadIcon } from "@/icons";
 import { BusinessWidget } from "./widget/business-widget";
 import { ContactWidget } from "./widget/contact-widget";
 import { AddressWidget } from "./widget/address-widget";
+import { CustomTableWidget } from "./widget/custom-table-widget";
 
 export default function Quote() {
   const { clasess } = useStyle();
@@ -37,6 +38,21 @@ export default function Quote() {
         <BusinessWidget />
         <ContactWidget />
         <AddressWidget />
+        <div style={clasess.tableContainer}>
+          <CustomTableWidget
+            headerTitle={"Order review"}
+            tableHeaders={[
+              "ID",
+              "Item name",
+              "Details",
+              "Amount",
+              "Unit price",
+              "Discount",
+              "Final price",
+              "More",
+            ]}
+          />
+        </div>
       </div>
     </AdminAuthLayout>
   );

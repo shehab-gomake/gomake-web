@@ -17,8 +17,8 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        paddingLeft: 16,
-        paddingRight: 16,
+        // paddingLeft: 16,
+        // paddingRight: 16,
       },
       headerContainer: {
         display: "flex",
@@ -28,6 +28,7 @@ const useStyle = () => {
         width: "100%",
         marginTop: 24,
         marginBottom: 7,
+        paddingLeft: 16,
       },
       rightSideHeaderContainer: {
         display: "flex",
@@ -57,6 +58,14 @@ const useStyle = () => {
       deleverdDate: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: secondColor(500),
+      },
+      tableContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        width: "100%",
+        marginTop: 26,
       },
     };
   }, [i18next.language, t]);
