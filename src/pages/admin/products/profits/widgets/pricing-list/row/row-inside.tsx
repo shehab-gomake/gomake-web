@@ -127,6 +127,7 @@ const RowInside = ({
           }}
         >
           {Number(entry[1]).toFixed(2)}
+          {entry[0] === "profit" && "%"}
         </div>
       ) : (
         entry[1]
