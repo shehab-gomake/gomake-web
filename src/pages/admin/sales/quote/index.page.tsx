@@ -51,6 +51,17 @@ export default function Quote() {
               "Final price",
               "More",
             ]}
+            headerWidth={[
+              "35px",
+              "80px",
+              "315px",
+              "55px",
+              "70px",
+              "65px",
+              "75px",
+              "40px",
+            ]}
+            index={1}
           />
         </div>
       </div>

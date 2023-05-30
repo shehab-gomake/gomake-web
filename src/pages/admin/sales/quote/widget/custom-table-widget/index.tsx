@@ -1,12 +1,20 @@
 import { GoMakeAutoComplate } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { HeaderTable } from "./sub-widget/header";
 interface IProps {
   headerTitle?: string;
   tableHeaders?: any;
+  headerWidth?: any;
+  index?: number;
 }
-const CustomTableWidget = ({ headerTitle, tableHeaders }: IProps) => {
-  const { clasess } = useStyle();
+const CustomTableWidget = ({
+  headerTitle,
+  tableHeaders,
+  headerWidth,
+  index,
+}: IProps) => {
+  const { clasess } = useStyle({ headerWidth, index });
   const { t } = useTranslation();
   return (
     <div style={clasess.mainContainer}>
@@ -26,8 +34,14 @@ const CustomTableWidget = ({ headerTitle, tableHeaders }: IProps) => {
         </div>
       </div>
       <div style={clasess.tableHeadersStyle}>
-        {tableHeaders?.map((item: string) => {
-          return <div style={clasess.headerNameStyle}>{item}</div>;
+        {tableHeaders?.map((item: string, index: number) => {
+          return (
+            <HeaderTable
+              header={item}
+              headerWidth={headerWidth}
+              index={index}
+            />
+          );
         })}
       </div>
     </div>
