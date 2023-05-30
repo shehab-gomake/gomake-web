@@ -3,7 +3,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = ({ headerWidth, index }: any) => {
-  const { primaryColor } = useGomakeTheme();
+  const { primaryColor, neutralColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       mainContainer: {
@@ -62,6 +62,19 @@ const useStyle = ({ headerWidth, index }: any) => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#B5B7C0",
         width: headerWidth[index],
+      },
+      row: {
+        display: "flex",
+        width: "100%",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingLeft: 22,
+        paddingRight: 22,
+      },
+      line: {
+        borderBottom: `0.4px solid ${neutralColor(400)}`,
+        width: "100%",
       },
     };
   }, []);

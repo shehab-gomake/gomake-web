@@ -12,7 +12,7 @@ import { CustomTableWidget } from "./widget/custom-table-widget";
 
 export default function Quote() {
   const { clasess } = useStyle();
-  const { t } = useQuote();
+  const { data, t } = useQuote();
 
   return (
     <AdminAuthLayout>
@@ -62,6 +62,17 @@ export default function Quote() {
               "40px",
             ]}
             index={1}
+            tableRowPercent={[
+              "35px",
+              "80px",
+              "315px",
+              "55px",
+              "70px",
+              "65px",
+              "75px",
+              "40px",
+            ]}
+            data={data}
           />
         </div>
       </div>
