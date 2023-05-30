@@ -860,7 +860,7 @@
         "chooseAction": "Choose action"
       },
       "pricingListWidget": {
-        "pricingListTitle": "Pricing list",
+        "pricingListTitle": "Pricing table",
         "meterPerPrice": "Meter/price",
         "transition": "Transition",
         "quantity": "Quantity",

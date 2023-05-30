@@ -1,4 +1,4 @@
-import { AdminAuthLayout } from "@/layouts";
+import { DeploymentLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { profitsState } from "./store/profits";
@@ -173,12 +173,15 @@ export default function Profits() {
     t,
   ]);
   return (
-    <AdminAuthLayout>
+    <DeploymentLayout>
       <div style={clasess.mainContainer}>
         <HeaderTitle title={t("products.profits.admin.title")} />
         <SelectAction />
         {profitsStateValue?.id ? (
           <>
+            <div style={clasess.titleActionName}>
+              {selectedAction.name} pricing settings
+            </div>
             <ProductList />
             {productTest?.id && (
               <div style={clasess.pricingAndExceptionsCointaner}>
@@ -195,17 +198,17 @@ export default function Profits() {
                     ]}
                   />
                 </div>
-                <div style={clasess.exceptionsCointaner}>
+                {/* <div style={clasess.exceptionsCointaner}>
                   <Exceptions
                     tableHeaders={tabelExceptionsHeaders}
                     tableRows={profitsStateValue?.actionExpectionRowsMapped}
                   />
-                </div>
+                </div> */}
               </div>
             )}
           </>
         ) : null}
       </div>
-    </AdminAuthLayout>
+    </DeploymentLayout>
   );
 }

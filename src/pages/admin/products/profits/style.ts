@@ -156,11 +156,17 @@ const useStyle = () => {
         gap: 24,
       },
       pricingCointaner: {
-        width: "59%",
+        width: "100%",
         dropShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
       },
       exceptionsCointaner: {
         width: "41%",
+      },
+      titleActionName: {
+        ...FONT_FAMILY.Lexend(600, 20),
+        color: primaryColor(500),
+        marginTop: 24,
+        marginBottom: 24,
       },
     };
   }, [i18next.language, t]);

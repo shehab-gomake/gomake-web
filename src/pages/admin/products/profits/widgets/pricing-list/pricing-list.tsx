@@ -45,8 +45,7 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
     <>
       <div style={clasess.headerMainCointaner}>
         <div style={clasess.listTitle}>
-          {t("products.profits.pricingListWidget.pricingListTitle")} (
-          {productTest?.name})
+          {t("products.profits.pricingListWidget.pricingListTitle")}
         </div>
         <div style={clasess.filtersCointaner}>
           {/* <div style={clasess.filterContainer}>
@@ -60,7 +59,7 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
               disabled={true}
             />
           </div> */}
-          <div style={clasess.filterContainer}>
+          {/* <div style={clasess.filterContainer}>
             <GoMakeAutoComplate
               options={[
                 { label: "Linear", value: 0 },
@@ -73,7 +72,7 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
                 profitsStateValue?.updateActionProfit(item?.value);
               }}
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <div style={clasess.container}>
