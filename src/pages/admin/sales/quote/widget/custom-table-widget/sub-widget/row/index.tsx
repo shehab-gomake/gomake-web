@@ -2,7 +2,7 @@ import { RowInside } from "./row-inside";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 
-const RowCustomTable = ({ row, tablePercent }: any) => {
+const RowCustomTable = ({ row, tablePercent, isCheckbox }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   return (
@@ -15,6 +15,7 @@ const RowCustomTable = ({ row, tablePercent }: any) => {
               tablePercent={tablePercent}
               clasess={clasess}
               entry={entry}
+              isCheckbox={isCheckbox}
             />
           );
         }

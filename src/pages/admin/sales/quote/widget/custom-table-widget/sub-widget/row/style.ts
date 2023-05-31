@@ -23,7 +23,12 @@ const useStyle = () => {
         marginBottom: 14,
         marginTop: 14,
       },
-
+      detailsLine: {
+        width: 4,
+        height: 28,
+        background: primaryColor(500),
+        borderRadius: 24,
+      },
       controlsContainer: {
         display: "flex",
         flexDirection: "row" as "row",

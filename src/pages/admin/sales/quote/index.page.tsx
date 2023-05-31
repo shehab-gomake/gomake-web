@@ -9,10 +9,11 @@ import { BusinessWidget } from "./widget/business-widget";
 import { ContactWidget } from "./widget/contact-widget";
 import { AddressWidget } from "./widget/address-widget";
 import { CustomTableWidget } from "./widget/custom-table-widget";
+import { TotalPriceAndVatWidit } from "./widget/total-price-and-vat";
 
 export default function Quote() {
   const { clasess } = useStyle();
-  const { data, t } = useQuote();
+  const { data, tableHeaders, tableRowPercent, t } = useQuote();
 
   return (
     <AdminAuthLayout>
@@ -41,40 +42,13 @@ export default function Quote() {
         <div style={clasess.tableContainer}>
           <CustomTableWidget
             headerTitle={"Order review"}
-            tableHeaders={[
-              "ID",
-              "Item name",
-              "Details",
-              "Amount",
-              "Unit price",
-              "Discount",
-              "Final price",
-              "More",
-            ]}
-            headerWidth={[
-              "35px",
-              "80px",
-              "315px",
-              "55px",
-              "70px",
-              "65px",
-              "75px",
-              "40px",
-            ]}
-            index={1}
-            tableRowPercent={[
-              "35px",
-              "80px",
-              "315px",
-              "55px",
-              "70px",
-              "65px",
-              "75px",
-              "40px",
-            ]}
+            tableHeaders={tableHeaders}
+            headerWidth={tableRowPercent}
+            tableRowPercent={tableRowPercent}
             data={data}
           />
         </div>
+        <TotalPriceAndVatWidit />
       </div>
     </AdminAuthLayout>
   );

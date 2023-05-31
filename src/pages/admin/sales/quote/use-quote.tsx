@@ -1,5 +1,6 @@
 import { useGomakeAxios } from "@/hooks";
 import { useTranslation } from "react-i18next";
+import { MoreMenuWidget } from "./widget/more-circle";
 
 const useQuote = () => {
   const { callApi } = useGomakeAxios();
@@ -8,71 +9,91 @@ const useQuote = () => {
     {
       id: 1,
       itemName: "Flyer",
-      Details:
+      details:
         "this is text for product new of this current available details ",
       amount: "322",
       unitPrice: "6.00",
       discount: "0.000",
       finalPrice: "148.000",
-      more: "FF",
+      more: <MoreMenuWidget />,
     },
     {
       id: 1,
       itemName: "Flyer",
-      Details:
+      details:
         "this is text for product new of this current available details ",
       amount: "322",
       unitPrice: "6.00",
       discount: "0.000",
       finalPrice: "148.000",
-      more: "FF",
+      more: <MoreMenuWidget />,
     },
     {
       id: 1,
       itemName: "Flyer",
-      Details:
+      details:
         "this is text for product new of this current available details ",
       amount: "322",
       unitPrice: "6.00",
       discount: "0.000",
       finalPrice: "148.000",
-      more: "FF",
+      more: <MoreMenuWidget />,
     },
     {
       id: 1,
       itemName: "Flyer",
-      Details:
+      details:
         "this is text for product new of this current available details ",
       amount: "322",
       unitPrice: "6.00",
       discount: "0.000",
       finalPrice: "148.000",
-      more: "FF",
+      more: <MoreMenuWidget />,
     },
     {
       id: 1,
       itemName: "Flyer",
-      Details:
+      details:
         "this is text for product new of this current available details ",
       amount: "322",
       unitPrice: "6.00",
       discount: "0.000",
       finalPrice: "148.000",
-      more: "FF",
+      more: <MoreMenuWidget />,
     },
     {
       id: 1,
       itemName: "Flyer",
-      Details:
+      details:
         "this is text for product new of this current available details ",
       amount: "322",
       unitPrice: "6.00",
       discount: "0.000",
       finalPrice: "148.000",
-      more: "FF",
+      more: <MoreMenuWidget />,
     },
   ];
-  return { t, data };
+  const tableHeaders = [
+    "ID",
+    "Item name",
+    "Details",
+    "Amount",
+    "Unit price",
+    "Discount",
+    "Final price",
+    "More",
+  ];
+  const tableRowPercent = [
+    "35px",
+    "80px",
+    "315px",
+    "55px",
+    "70px",
+    "65px",
+    "75px",
+    "40px",
+  ];
+  return { t, data, tableHeaders, tableRowPercent };
 };
 
 export { useQuote };

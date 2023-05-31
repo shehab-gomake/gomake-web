@@ -3,13 +3,14 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { HeaderTable } from "./sub-widget/header";
 import { RowCustomTable } from "./sub-widget/row";
+import { AddIcon, AddPlusIcon, PlusIcon } from "@/icons";
 interface IProps {
   headerTitle?: string;
   tableHeaders?: any;
   headerWidth?: any;
   tableRowPercent?: any;
   data?: any;
-  index?: number;
+  isCheckbox?: boolean;
 }
 const CustomTableWidget = ({
   headerTitle,
@@ -17,9 +18,9 @@ const CustomTableWidget = ({
   headerWidth,
   tableRowPercent,
   data,
-  index,
+  isCheckbox,
 }: IProps) => {
-  const { clasess } = useStyle({ headerWidth, index });
+  const { clasess } = useStyle({ headerWidth });
   const { t } = useTranslation();
   return (
     <div style={clasess.mainContainer}>
@@ -51,13 +52,33 @@ const CustomTableWidget = ({
       </div>
       <div style={clasess.row}>
         {data?.map((row: any, index: number) => {
+          console.log("index", index);
+          console.log("data", data?.length);
           return (
             <div key={`body_row${index}`} style={{ width: "100%" }}>
-              <RowCustomTable row={row} tablePercent={tableRowPercent} />
-              <div style={clasess.line}></div>
+              <RowCustomTable
+                row={row}
+                tablePercent={tableRowPercent}
+                isCheckbox={isCheckbox}
+              />
+              {index != data?.length - 1 ? <div style={clasess.line} /> : null}
             </div>
           );
         })}
+      </div>
+      <div style={clasess.btnsContainer}>
+        <div style={clasess.btnContainer}>
+          <AddPlusIcon />
+          <div style={clasess.btnTitle}>add new item</div>
+        </div>
+        <div style={clasess.btnContainer}>
+          <AddPlusIcon />
+          <div style={clasess.btnTitle}>add exist item</div>
+        </div>
+        <div style={clasess.btnContainer}>
+          <AddPlusIcon />
+          <div style={clasess.btnTitle}>add delivery</div>
+        </div>
       </div>
     </div>
   );

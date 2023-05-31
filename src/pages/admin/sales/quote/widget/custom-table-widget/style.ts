@@ -11,7 +11,9 @@ const useStyle = ({ headerWidth, index }: any) => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
+        // overflow: "scroll",
         width: "100%",
+        // height: "50%",
       },
       tableHeaderContainer: {
         display: "flex",
@@ -75,6 +77,28 @@ const useStyle = ({ headerWidth, index }: any) => {
       line: {
         borderBottom: `0.4px solid ${neutralColor(400)}`,
         width: "100%",
+      },
+      btnsContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        paddingLeft: 22,
+        gap: 32,
+        marginTop: 10,
+        marginBottom: 10,
+      },
+      btnContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 7,
+        cursor: "pointer",
+      },
+      btnTitle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: primaryColor(500),
       },
     };
   }, []);
