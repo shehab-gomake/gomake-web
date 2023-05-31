@@ -24,6 +24,14 @@ const PrimaryButton = styled(Button)((props: ButtonProps) => {
             backgroundColor: primaryColor(500),
             borderColor: primaryColor(500),
         },
+        '&.MuiButton-text': {
+            backgroundColor: 'inherit',
+            color: primaryColor(500),
+            width: 'fit-content',
+            '&:hover': {
+                letterSpacing: 0
+            }
+        },
         '&.Mui-disabled': {
             backgroundColor: primaryColor(200),
             color: '#FFFFFF'

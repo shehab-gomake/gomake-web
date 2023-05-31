@@ -57,7 +57,8 @@ const useStyle = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 color: primaryColor(300)
-            }
+            },
+            iconColor: primaryColor(300)
         };
     }, []);
     return {

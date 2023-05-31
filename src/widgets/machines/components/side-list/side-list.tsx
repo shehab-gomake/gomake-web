@@ -7,7 +7,6 @@ import {SearchInput} from "@/widgets/machines/components/side-list/search-input"
 import {useCallback, useState} from "react";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {usePrintHouseAddMachine} from "@/widgets/machines/hooks/use-print-house-add-machine";
-import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import {DeleteIcon} from "@/components/icons/delete-icon";
 import {DuplicateIcon} from "@/components/icons/duplicate-icon";
 const ListButton = styled(ListItemButton)(() => {
@@ -92,11 +91,11 @@ const SideList = ({list, selectedItem, onSelect, title, quickActions = false, ch
                 anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
             >
                 <MenuItem onClick={onClickDuplicate}>
-                    <div style={classes.menuItem}><DuplicateIcon/> <span>Duplicate</span></div>
+                    <div style={classes.menuItem}><DuplicateIcon height={20} width={20} color={classes.iconColor}/> <span>Duplicate</span></div>
                 </MenuItem>
                 <Divider/>
                 <MenuItem onClick={onClickDelete}>
-                    <div style={classes.menuItem}><DeleteIcon/> <span>Delete</span></div>
+                    <div style={classes.menuItem}><DeleteIcon color={classes.iconColor} width={20} height={20}/> <span>Delete</span></div>
                 </MenuItem>
             </Menu>
         </>

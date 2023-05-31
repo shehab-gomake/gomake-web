@@ -55,6 +55,7 @@ const useStyle = () => {
         gap: 16,
         width: '100%'
       },
+      iconColor: secondColor(500)
     };
   }, [theme]);
   return {

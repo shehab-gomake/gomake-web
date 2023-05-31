@@ -1,10 +1,10 @@
 import {ChangeEvent, useState} from "react";
 import {useStyle} from "@/widgets/machines/components/inputs/style";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {IMachineMultiArrayInput, IInput} from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
 import {MachineInput} from "@/widgets/machines/components/inputs/machine-inputs";
 import {useTranslation} from "react-i18next";
 import {SecondaryButton} from "@/widgets/machines/components/buttons/secondary-button";
+import {DeleteIcon} from "@/components/icons/delete-icon";
 
 const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value, isValid}: IMachineMultiArrayInput) => {
     const [state, setState] = useState<Record<string, any>>({});
@@ -81,7 +81,7 @@ const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value,
                             />)
                         }
                         <SecondaryButton variant={'text'}  onClick={() => handleRemoveRow(index)}  style={classes.deleteIcon}
-                                startIcon={<DeleteIcon/>}>
+                                startIcon={<DeleteIcon height={20} width={20} color={classes.iconColor}/>}>
                             Remove
                         </SecondaryButton>
 

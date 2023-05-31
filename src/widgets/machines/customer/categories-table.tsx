@@ -1,12 +1,11 @@
 import {styled} from "@mui/material/styles";
 import {Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow} from "@mui/material";
 import {FONT_FAMILY} from "@/utils/font-family";
-
-import Link from "next/link";
 import {useRecoilValue} from "recoil";
 import {machineCategoriesState} from "@/store/machine-categories";
-import Button from "@mui/material/Button";
 import {EditIcon} from "@/components/icons/edit-icon";
+import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import {PrimaryButton} from "@/widgets/machines/components/buttons/primary-button";
 
 
 const StyledTableCell = styled(TableCell)(() => ({
@@ -32,6 +31,7 @@ const StyledTableRow = styled(TableRow)(() => ({
     },
 }));
 const CategoriesTable = () => {
+    const {primaryColor} = useGomakeTheme()
     const categoriesList = useRecoilValue(machineCategoriesState);
     return (
         <>
@@ -53,8 +53,10 @@ const CategoriesTable = () => {
                                     <StyledTableCell align={'center'}></StyledTableCell>
                                     <StyledTableCell align={'center'}></StyledTableCell>
                                     <StyledTableCell align={'center'}>
-                                        <Button component={Link} href={`/machines/category/${category.id}`} variant={'text'}>
-                                            <EditIcon/>Edit</Button>
+                                        <PrimaryButton  startIcon={<EditIcon color={primaryColor(500)} width={20} height={20}/>}
+                                                 href={`/machines/category/${category.id}`}
+                                                variant={'text'}>
+                                            Edit</PrimaryButton>
                                     </StyledTableCell>
                                 </StyledTableRow>
                             })
@@ -65,4 +67,4 @@ const CategoriesTable = () => {
         </>
     );
 }
-export {CategoriesTable};
+    export {CategoriesTable};
