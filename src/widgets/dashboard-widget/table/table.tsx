@@ -20,20 +20,20 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
         return `https://${host}/Kanban/Board/${boardMissions.boardId}?missionId=${boardMissions.id}`;
     }
     const hasMachine = (board: IBoardMissions) => {
-            switch (board.machinesStatuses[orderByMachine]) {
-                case EStatus.IN_PROCESS:
-                    return 0;
-                case EStatus.WAITING:
-                    return 1;
-                case EStatus.FAULT:
-                    return 2;
-                case EStatus.NOT_YET:
-                    return 3;
-                case EStatus.DONE:
-                    return 4;
-                default:
-                    return 5;
-            }
+        switch (board.machinesStatuses[orderByMachine]) {
+            case EStatus.IN_PROCESS:
+                return 0;
+            case EStatus.WAITING:
+                return 1;
+            case EStatus.FAULT:
+                return 2;
+            case EStatus.NOT_YET:
+                return 3;
+            case EStatus.DONE:
+                return 4;
+            default:
+                return 5;
+        }
     }
     const boards = useCallback(() => {
         let boards = [...boardsMissions];
@@ -103,8 +103,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                             </div>
                                                             <div style={{width: '25%', height: '100%'}}>
                                                                 <div style={classes.tdRows}>
-                                                                    <div><Link href={boardLink(board)} target="_blank"
-                                                                               rel="noopener">{board.code}</Link></div>
+                                                                    <div><span>{board.code}</span></div>
                                                                 </div>
                                                             </div>
                                                             <div style={classes.splitBoardsStatuses}>
@@ -118,7 +117,8 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                                                 } :
                                                                                 classes.splitBoardsStatusesRow
                                                                         }>
-                                                                        <span>{t(TYPE_MISSION_NAME_KEY[sBoard.missionType])}</span>
+                                                                        <Link href={boardLink(sBoard)} target="_blank"
+                                                                              rel="noopener">{t(TYPE_MISSION_NAME_KEY[sBoard.missionType])}</Link>
                                                                         <StatusView status={sBoard.status}
                                                                                     label={sBoard.currentStation.rowName}/>
                                                                     </div>)
@@ -131,7 +131,10 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                     usedMachines.map((machine: IMachine, i: number) => {
                                                         return (
                                                             <td key={machine.id + i}
-                                                                style={k + 1 === board.splittedBoards.length ? classes.tableCell : {...classes.tableCell, borderBottom: 0}  }>
+                                                                style={k + 1 === board.splittedBoards.length ? classes.tableCell : {
+                                                                    ...classes.tableCell,
+                                                                    borderBottom: 0
+                                                                }}>
                                                                 <StatusView style={{margin: 'auto'}}
                                                                             status={splitBoard.machinesStatuses[machine.id]}/>
                                                             </td>
