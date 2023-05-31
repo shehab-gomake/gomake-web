@@ -50,7 +50,7 @@ const ProductList = () => {
                       }
                     >
                       <div style={clasess.nameStyle}>{item?.name}</div>
-                      <div style={clasess.nameStyle}>{item?.details}</div>
+                      <div style={clasess.detailsStyle}>{item?.details}</div>
                       <div style={clasess.moreStyle}>{item?.more}</div>
                     </div>
                   );

@@ -1,4 +1,4 @@
-import { DeploymentLayout } from "@/layouts";
+import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { profitsState } from "./store/profits";
@@ -173,7 +173,7 @@ export default function Profits() {
     t,
   ]);
   return (
-    <DeploymentLayout>
+    <AdminAuthLayout>
       <div style={clasess.mainContainer}>
         <HeaderTitle title={t("products.profits.admin.title")} />
         <SelectAction />
@@ -209,6 +209,6 @@ export default function Profits() {
           </>
         ) : null}
       </div>
-    </DeploymentLayout>
+    </AdminAuthLayout>
   );
 }
