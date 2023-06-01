@@ -19,7 +19,42 @@ const TotalPriceAndVatWidit = () => {
           })}
         </div>
       </div>
-      <div style={clasess.rightSideContainer}>3</div>
+      <div style={clasess.rightSideContainer}>
+        <div style={clasess.totalBeforeVAT}>
+          <div style={clasess.totalBefore}>
+            <div style={clasess.lableStyle}>Total before VAT</div>
+            <div style={clasess.numbersStyle}>146.00 </div>
+          </div>
+          <div style={clasess.discountBefore}>
+            <div style={clasess.lableStyle}>Discount</div>
+            <div style={clasess.priceContainer}>
+              <div style={clasess.numbersStyle}>10%</div>
+              <div style={clasess.numbersStyle}>146 $</div>
+            </div>
+          </div>
+        </div>
+        <div style={clasess.totalBeforeVAT}>
+          <div style={clasess.totalBefore}>
+            <div style={clasess.lableStyle}>Total after discount</div>
+            <div style={clasess.numbersStyle}>146.00 </div>
+          </div>
+          <div style={clasess.discountBefore}>
+            <div style={clasess.lableStyle}>VAT</div>
+            <div style={clasess.priceContainer}>
+              <div style={clasess.numbersStyle}>17%</div>
+              <div style={clasess.numbersStyle}>146.00</div>
+            </div>
+          </div>
+        </div>
+        <div style={clasess.totlaPriceContainer}>
+          <div>Total</div>
+          <div>350.00 USD</div>
+        </div>
+        <div style={clasess.rightSideBtnsContainer}>
+          <div style={clasess.orderNowBtn}>order now</div>
+          <div style={clasess.sendMessageBtn}>Send to sales manager</div>
+        </div>
+      </div>
     </div>
   );
 };
