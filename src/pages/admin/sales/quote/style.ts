@@ -17,6 +17,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
+        // paddingBottom: 168,
         // paddingLeft: 16,
         // paddingRight: 16,
       },

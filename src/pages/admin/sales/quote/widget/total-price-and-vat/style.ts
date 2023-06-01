@@ -17,6 +17,8 @@ const useStyle = () => {
         paddingRight: 33,
         gap: 65,
         marginTop: 25,
+        // position: "fixed" as "fixed",
+        // bottom: 0,
       },
       leftSideContainer: {
         display: "flex",

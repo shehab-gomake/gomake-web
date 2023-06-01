@@ -36,17 +36,19 @@ export default function Quote() {
             </div>
           </div>
         </div>
-        <BusinessWidget />
-        <ContactWidget />
-        <AddressWidget />
-        <div style={clasess.tableContainer}>
-          <CustomTableWidget
-            headerTitle={"Order review"}
-            tableHeaders={tableHeaders}
-            headerWidth={tableRowPercent}
-            tableRowPercent={tableRowPercent}
-            data={data}
-          />
+        <div style={{ width: "100%", height: 530, overflow: "scroll" }}>
+          <BusinessWidget />
+          <ContactWidget />
+          <AddressWidget />
+          <div style={clasess.tableContainer}>
+            <CustomTableWidget
+              headerTitle={"Order review"}
+              tableHeaders={tableHeaders}
+              headerWidth={tableRowPercent}
+              tableRowPercent={tableRowPercent}
+              data={data}
+            />
+          </div>
         </div>
         <TotalPriceAndVatWidit />
       </div>
