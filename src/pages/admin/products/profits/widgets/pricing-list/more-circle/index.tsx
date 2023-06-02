@@ -40,9 +40,8 @@ const PricingListMenuWidget = ({ item }: any) => {
         <MenuItem
           onClick={() => {
             actionExceptionProfitIdValue
-              ? () =>
-                  profitsStateValue?.deleteActionExceptionProfitRow(item?.id)
-              : () => profitsStateValue?.deleteActionProfitRow(item?.id);
+              ? profitsStateValue?.deleteActionExceptionProfitRow(item?.id)
+              : profitsStateValue?.deleteActionProfitRow(item?.id);
             handleClose();
           }}
 
