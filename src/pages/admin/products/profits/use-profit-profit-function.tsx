@@ -26,51 +26,40 @@ const useProfitsProfitsFunction = ({
   const productTest = useRecoilValue<any>(productTestState);
 
   const updateActionProfitRow = useCallback(async () => {
-    const findQuantity = actionProfitPricingTableRows.find(
-      (item) => item.quantity == editPriceListStateValue?.state?.quantity
+    const res = await callApi(
+      "PUT",
+      `/v1/printhouse-config/profits/update-action-profit-row`,
+      {
+        id: editPriceListStateValue?.state?.id,
+        actionId: editPriceListStateValue?.state?.actionId,
+        quantity: editPriceListStateValue?.state?.quantity,
+        cost: editPriceListStateValue?.state?.cost,
+        profit: editPriceListStateValue?.state?.profit,
+        actionProfitId: actionProfits?.id,
+        recordId:
+          editPriceListStateValue?.state?.recordID ||
+          editPriceListStateValue?.state?.more?.props?.item?.recordID,
+      }
     );
-    if (findQuantity) {
+    if (res?.success) {
       setSnackbarStateValue({
         state: true,
-        message: "This quantity already exists", //TODO:
+        message: t("modal.updatedSusuccessfully"),
+        type: "sucess",
+      });
+      setEditPriceListState({ isEdit: false });
+      // getActionProfits();
+      await getAndSetPricingListTableRows(
+        callApi,
+        setActionProfitPricingTableRows,
+        { actionId: selectedAction.id, productId: productTest.id }
+      );
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedfailed"),
         type: "error",
       });
-    } else {
-      const res = await callApi(
-        "PUT",
-        `/v1/printhouse-config/profits/update-action-profit-row`,
-        {
-          id: editPriceListStateValue?.state?.id,
-          actionId: editPriceListStateValue?.state?.actionId,
-          quantity: editPriceListStateValue?.state?.quantity,
-          cost: editPriceListStateValue?.state?.cost,
-          profit: editPriceListStateValue?.state?.profit,
-          actionProfitId: actionProfits?.id,
-          recordId:
-            editPriceListStateValue?.state?.recordID ||
-            editPriceListStateValue?.state?.more?.props?.item?.recordID,
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.updatedSusuccessfully"),
-          type: "sucess",
-        });
-        setEditPriceListState({ isEdit: false });
-        // getActionProfits();
-        await getAndSetPricingListTableRows(
-          callApi,
-          setActionProfitPricingTableRows,
-          { actionId: selectedAction.id, productId: productTest.id }
-        );
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.updatedfailed"),
-          type: "error",
-        });
-      }
     }
   }, [
     selectedAction,
