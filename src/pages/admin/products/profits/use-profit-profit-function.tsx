@@ -1,6 +1,10 @@
 import { useGomakeAxios } from "@/hooks";
+import { getAndSetPricingListTableRows } from "@/services/hooks";
+import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
+import { productTestState } from "@/store/product-test";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 const useProfitsProfitsFunction = ({
   setSnackbarStateValue,
@@ -17,38 +21,64 @@ const useProfitsProfitsFunction = ({
 }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const [actionProfitPricingTableRows, setActionProfitPricingTableRows] =
+    useRecoilState<any>(actionProfitPricingTableRowsState);
+  const productTest = useRecoilValue<any>(productTestState);
+
   const updateActionProfitRow = useCallback(async () => {
-    const res = await callApi(
-      "PUT",
-      `/v1/printhouse-config/profits/update-action-profit-row`,
-      {
-        id: editPriceListStateValue?.state?.id,
-        actionId: editPriceListStateValue?.state?.actionId,
-        quantity: editPriceListStateValue?.state?.quantity,
-        cost: editPriceListStateValue?.state?.cost,
-        profit: editPriceListStateValue?.state?.profit,
-        actionProfitId: actionProfits?.id,
-        recordId:
-          editPriceListStateValue?.state?.recordID ||
-          editPriceListStateValue?.state?.more?.props?.item?.recordID,
-      }
+    const findQuantity = actionProfitPricingTableRows.find(
+      (item) => item.quantity == editPriceListStateValue?.state?.quantity
     );
-    if (res?.success) {
+    if (findQuantity) {
       setSnackbarStateValue({
         state: true,
-        message: t("modal.updatedSusuccessfully"),
-        type: "sucess",
-      });
-      setEditPriceListState({ isEdit: false });
-      getActionProfits();
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.updatedfailed"),
+        message: "This quantity already exists", //TODO:
         type: "error",
       });
+    } else {
+      const res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/profits/update-action-profit-row`,
+        {
+          id: editPriceListStateValue?.state?.id,
+          actionId: editPriceListStateValue?.state?.actionId,
+          quantity: editPriceListStateValue?.state?.quantity,
+          cost: editPriceListStateValue?.state?.cost,
+          profit: editPriceListStateValue?.state?.profit,
+          actionProfitId: actionProfits?.id,
+          recordId:
+            editPriceListStateValue?.state?.recordID ||
+            editPriceListStateValue?.state?.more?.props?.item?.recordID,
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedSusuccessfully"),
+          type: "sucess",
+        });
+        setEditPriceListState({ isEdit: false });
+        // getActionProfits();
+        await getAndSetPricingListTableRows(
+          callApi,
+          setActionProfitPricingTableRows,
+          { actionId: selectedAction.id, productId: productTest.id }
+        );
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedfailed"),
+          type: "error",
+        });
+      }
     }
-  }, [selectedAction, editPriceListStateValue, actionProfits]);
+  }, [
+    selectedAction,
+    editPriceListStateValue,
+    actionProfits,
+    productTest,
+    actionProfitPricingTableRows,
+  ]);
   const deleteActionProfitRow = useCallback(
     async (id: string) => {
       const res = await callApi(
@@ -61,7 +91,12 @@ const useProfitsProfitsFunction = ({
           message: t("modal.deleteSusuccessfully"),
           type: "sucess",
         });
-        getActionProfits();
+        // getActionProfits();
+        await getAndSetPricingListTableRows(
+          callApi,
+          setActionProfitPricingTableRows,
+          { actionId: selectedAction.id, productId: productTest.id }
+        );
       } else {
         setSnackbarStateValue({
           state: true,
@@ -70,14 +105,11 @@ const useProfitsProfitsFunction = ({
         });
       }
     },
-    [selectedAction]
+    [selectedAction, productTest]
   );
 
   const onClickSaveNewActionProfitRow = useCallback(async () => {
-    console.log("actionProfitRowsNew", actionProfitRowsNew);
-    console.log("pricingListRowState.quantity", pricingListRowState.quantity);
-
-    const findQuantity = actionProfitRowsNew.find(
+    const findQuantity = actionProfitPricingTableRows.find(
       (item) => item.quantity == pricingListRowState.quantity
     );
     if (findQuantity) {
@@ -103,6 +135,12 @@ const useProfitsProfitsFunction = ({
           type: "sucess",
         });
         await getActionProfits();
+        console.log("selectedAction", selectedAction);
+        await getAndSetPricingListTableRows(
+          callApi,
+          setActionProfitPricingTableRows,
+          { actionId: selectedAction.id, productId: productTest.id }
+        );
         setPricingListRowState({});
         setOpenAddNewPricingStepRow(false);
         onCloseAddQuantityModal();
@@ -114,7 +152,13 @@ const useProfitsProfitsFunction = ({
         });
       }
     }
-  }, [pricingListRowState, selectedAction, actionProfitRowsNew]);
+  }, [
+    pricingListRowState,
+    selectedAction,
+    actionProfitRowsNew,
+    productTest,
+    actionProfitPricingTableRows,
+  ]);
 
   const onChangeAddPricingListRow = useCallback(
     (key: string, value: any) => {

@@ -58,7 +58,7 @@ const ProductList = () => {
               )}
             </>
           </div>
-          {/* <div
+          <div
             style={clasess.addNewProductContainer2}
             onClick={() => profitsStateValue.setOpenAddTestProductModal(true)}
           >
@@ -66,7 +66,7 @@ const ProductList = () => {
             <div style={clasess.addProductStyle}>
               {t("products.profits.addNewProduct")}
             </div>
-          </div> */}
+          </div>
         </div>
       ) : (
         <div style={clasess.noDataContainer}>

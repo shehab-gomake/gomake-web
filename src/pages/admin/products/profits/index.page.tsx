@@ -180,7 +180,7 @@ export default function Profits() {
         {profitsStateValue?.id ? (
           <>
             <div style={clasess.titleActionName}>
-              {selectedAction.name} pricing settings
+              {selectedAction?.name} pricing settings
             </div>
             <ProductList />
             {productTest?.id && (

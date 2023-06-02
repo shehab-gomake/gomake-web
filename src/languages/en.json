@@ -843,10 +843,10 @@
   },
   "products": {
     "profits": {
-      "addNewProduct": "Add new product",
-      "addNewTestProduct": "Add new test product",
+      "addNewProduct": "Add new case",
+      "addNewTestProduct": "Add new case",
       "selectProduct": "Select product",
-      "startTest": "Start test",
+      "startTest": "Add case",
       "delete": "Delete",
       "deleteProduct": "Delete product",
       "subTitleDeleteProduct": "Are you sure to delete test product {{name}}",
