@@ -843,10 +843,10 @@
   },
   "products": {
     "profits": {
-      "addNewProduct": "Add new product",
-      "addNewTestProduct": "Add new test product",
+      "addNewProduct": "Add new case",
+      "addNewTestProduct": "Add new case",
       "selectProduct": "Select product",
-      "startTest": "Start test",
+      "startTest": "Add case",
       "delete": "Delete",
       "deleteProduct": "Delete product",
       "subTitleDeleteProduct": "Are you sure to delete test product {{name}}",
@@ -860,7 +860,7 @@
         "chooseAction": "Choose action"
       },
       "pricingListWidget": {
-        "pricingListTitle": "Pricing list",
+        "pricingListTitle": "Pricing table",
         "meterPerPrice": "Meter/price",
         "transition": "Transition",
         "quantity": "Quantity",
@@ -903,7 +903,12 @@
     "actions": {
       "admin": {
         "title": "Action"
-      }
+      },
+      "actionName": "Action Name",
+      "internalSource": "internal/Out source",
+      "active": "Active",
+      "profit": "Profit",
+      "properties": "Properties"
     }
   },
   "skeleton": {

@@ -16,22 +16,7 @@ const getAndSetGetActionProfitTestResultsByActionId = async (
     data
   );
   const _data: any = returnResult(result, undefined);
-  const mapData = _data?.map((item: any) => {
-    return {
-      // ...(actionProfits?.pricingBy === 1
-      //   ? {
-      //       width: item?.width,
-      //       height: item?.height,
-      //     }
-      //   : { quantity: item?.quantity }),
-
-      ...renderProfits(item),
-      // testFinalPrice: item?.testFinalPrice?.toFixed(2) || "0",
-      more: <PricingListMenuWidget item={item} />,
-      id: item?.id,
-      recordID: item?.recordID,
-    };
-  });
+  const mapData = await getAndSetPricingListTableRows(callApi, setState, data);
   setSelectTestData({ unitPrice: mapData[0]?.unitPrice });
   if (setState) {
     setState(mapData);
@@ -40,4 +25,34 @@ const getAndSetGetActionProfitTestResultsByActionId = async (
   return _data;
 };
 
-export { getAndSetGetActionProfitTestResultsByActionId };
+const getAndSetPricingListTableRows = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    `/v1/printhouse-config/profits/get-pricing-table-rows`,
+    data
+  );
+  const _data: any = returnResult(result, undefined);
+
+  const mapData = _data?.map((item: any) => {
+    return {
+      ...renderProfits(item),
+      more: <PricingListMenuWidget item={item} />,
+      id: item?.id,
+      recordID: item?.recordID,
+    };
+  });
+  if (setState) {
+    setState(mapData);
+  }
+
+  return mapData;
+};
+
+export {
+  getAndSetGetActionProfitTestResultsByActionId,
+  getAndSetPricingListTableRows,
+};

@@ -17,6 +17,7 @@ import { profitsState } from "../../store/profits";
 import { AddPricingListRowWidget } from "./add-pricing-row-widget";
 import { productTestState } from "@/store/product-test";
 import { AddQuantityModal } from "./add-quantity-modal";
+import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
 
 interface IProps {
   tableHeaders: any[];
@@ -28,9 +29,13 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
   const actionProfits = useRecoilValue<any>(actionProfitLists);
   const profitsStateValue = useRecoilValue<any>(profitsState);
   const profitsValue = useRecoilValue<any>(profitsState);
-  const actionProfitRowsVal = useRecoilValue<any>(actionProfitRows);
+  // const actionProfitRowsVal = useRecoilValue<any>(actionProfitRows);
 
-  const actionProfitRowsNew = useRecoilValue<any>(actionProfitRowsState);
+  // const actionProfitRowsNew = useRecoilValue<any>(actionProfitRowsState);
+
+  const actionProfitPricingTableRows = useRecoilValue<any>(
+    actionProfitPricingTableRowsState
+  );
 
   const [istimeOut, setIsTimeOut] = useState(false);
   const { clasess } = useStyle();
@@ -45,8 +50,7 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
     <>
       <div style={clasess.headerMainCointaner}>
         <div style={clasess.listTitle}>
-          {t("products.profits.pricingListWidget.pricingListTitle")} (
-          {productTest?.name})
+          {t("products.profits.pricingListWidget.pricingListTitle")}
         </div>
         <div style={clasess.filtersCointaner}>
           {/* <div style={clasess.filterContainer}>
@@ -60,7 +64,7 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
               disabled={true}
             />
           </div> */}
-          <div style={clasess.filterContainer}>
+          {/* <div style={clasess.filterContainer}>
             <GoMakeAutoComplate
               options={[
                 { label: "Linear", value: 0 },
@@ -73,7 +77,7 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
                 profitsStateValue?.updateActionProfit(item?.value);
               }}
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <div style={clasess.container}>
@@ -94,7 +98,7 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
           })}
         </div>
         <div style={clasess.tableBody}>
-          {typeof actionProfitRowsNew === "string" ? (
+          {typeof actionProfitPricingTableRows === "string" ? (
             <>
               <Skeleton
                 variant="rectangular"
@@ -115,9 +119,9 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
                 style={clasess.skeletonRowStyle}
               />
             </>
-          ) : actionProfitRowsNew?.length > 0 ? (
+          ) : actionProfitPricingTableRows?.length > 0 ? (
             <div style={clasess.row}>
-              {actionProfitRowsNew?.map((row: any, index: number) => {
+              {actionProfitPricingTableRows?.map((row: any, index: number) => {
                 return (
                   <div key={`body_row${index}`} style={{ width: "100%" }}>
                     <Row

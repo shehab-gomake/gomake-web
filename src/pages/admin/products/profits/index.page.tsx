@@ -178,6 +178,9 @@ export default function Profits() {
         <SelectAction />
         {profitsStateValue?.id ? (
           <>
+            <div style={clasess.titleActionName}>
+              {selectedAction?.name} pricing settings
+            </div>
             <ProductList />
             {productTest?.id && (
               <div style={clasess.pricingAndExceptionsCointaner}>
@@ -194,12 +197,12 @@ export default function Profits() {
                     ]}
                   />
                 </div>
-                <div style={clasess.exceptionsCointaner}>
+                {/* <div style={clasess.exceptionsCointaner}>
                   <Exceptions
                     tableHeaders={tabelExceptionsHeaders}
                     tableRows={profitsStateValue?.actionExpectionRowsMapped}
                   />
-                </div>
+                </div> */}
               </div>
             )}
           </>

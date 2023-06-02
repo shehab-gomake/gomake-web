@@ -71,37 +71,37 @@ const RowInside = ({
                     [entry[0]]: e.target.value,
                   },
                 });
-                if (entry[0] === "totalPrice") {
-                  const profit = editPriceListStateValue.state.profit / 100;
-                  setEditPriceListState({
-                    ...editPriceListStateValue,
-                    state: {
-                      ...editPriceListStateValue.state,
-                      totalPrice: e.target.value,
-                      profit:
-                        (e.target.value / editPriceListStateValue.state.cost -
-                          1) *
-                        100,
-                    },
-                  });
-                }
+                // if (entry[0] === "totalPrice") {
+                //   const profit = editPriceListStateValue.state.profit / 100;
+                //   setEditPriceListState({
+                //     ...editPriceListStateValue,
+                //     state: {
+                //       ...editPriceListStateValue.state,
+                //       totalPrice: e.target.value,
+                //       profit:
+                //         (e.target.value / editPriceListStateValue.state.cost -
+                //           1) *
+                //         100,
+                //     },
+                //   });
+                // }
 
-                if (entry[0] === "unitPrice") {
-                  let unitPrice = e.target.value;
-                  const totalPrice =
-                    unitPrice * editPriceListStateValue.state.quantity;
-                  setEditPriceListState({
-                    ...editPriceListStateValue,
-                    state: {
-                      ...editPriceListStateValue.state,
-                      unitPrice,
-                      totalPrice,
-                      profit:
-                        (totalPrice / editPriceListStateValue.state.cost - 1) *
-                        100,
-                    },
-                  });
-                }
+                // if (entry[0] === "unitPrice") {
+                //   let unitPrice = e.target.value;
+                //   const totalPrice =
+                //     unitPrice * editPriceListStateValue.state.quantity;
+                //   setEditPriceListState({
+                //     ...editPriceListStateValue,
+                //     state: {
+                //       ...editPriceListStateValue.state,
+                //       unitPrice,
+                //       totalPrice,
+                //       profit:
+                //         (totalPrice / editPriceListStateValue.state.cost - 1) *
+                //         100,
+                //     },
+                //   });
+                // }
               }}
               autoFocus={true}
             />
@@ -111,8 +111,9 @@ const RowInside = ({
         <div
           onClick={() => {
             if (
+              entry[0] !== "unitPrice" &&
+              entry[0] !== "totalPrice" &&
               entry[0] !== "cost" &&
-              entry[0] !== "quantity" &&
               editPriceListStateValue.isEdit !== true
             ) {
               setEditPriceListState({
@@ -127,6 +128,7 @@ const RowInside = ({
           }}
         >
           {Number(entry[1]).toFixed(2)}
+          {entry[0] === "profit" && "%"}
         </div>
       ) : (
         entry[1]

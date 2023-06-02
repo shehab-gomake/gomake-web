@@ -12,7 +12,7 @@ const useStyle = () => {
       },
       textInputStyle: {
         height: 48,
-        width: "50%",
+        width: "70%",
       },
       mainContainer: {
         position: "relative" as "relative",

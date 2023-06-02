@@ -6,8 +6,9 @@ import {
 import { productTestState } from "@/store/product-test";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
+import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
 
 export const renderProfits = (item: any) => {
   const cost = item?.cost || 0;
@@ -46,13 +47,16 @@ const useProfitsAction = ({
   const [openAddTestProductModal, setOpenAddTestProductModal] = useState(false);
   const [testProductState, setTestProductState] = useState<any>({});
   const setProductTest = useSetRecoilState(productTestState);
+  const setActionProfitPricingTableRows = useSetRecoilState<any>(
+    actionProfitPricingTableRowsState
+  );
   const onCklickActionProfitTestResultsByActionId = useCallback(
     async (productId: string, productName: string) => {
-      setActionExceptionProfitRows("");
+      setActionProfitPricingTableRows("");
       const selectTestDataVal =
         await getAndSetGetActionProfitTestResultsByActionId(
           callApi,
-          setActionExceptionProfitRows,
+          setActionProfitPricingTableRows,
           setSelectTestData,
           actionProfits,
           {
@@ -60,21 +64,21 @@ const useProfitsAction = ({
             productId: productId,
           }
         );
-      const mapData = actionProfitRowsNew?.map((item: any) => {
-        return {
-          ...renderProfits(item),
+      // const mapData = actionProfitRowsNew?.map((item: any) => {
+      //   return {
+      //     ...renderProfits(item),
 
-          // testFinalPrice: (
-          //   item?.quantity * selectTestDataVal[0]?.unitPrice
-          // )?.toFixed(2),
-          more: <PricingListMenuWidget item={item} />,
-          id: item?.id,
-        };
-      });
+      //     // testFinalPrice: (
+      //     //   item?.quantity * selectTestDataVal[0]?.unitPrice
+      //     // )?.toFixed(2),
+      //     more: <PricingListMenuWidget item={item} />,
+      //     id: item?.id,
+      //   };
+      // });
       // setactionExceptionProfitId(productId);
       setProductTest({ id: productId, name: productName });
-      setActionExceptionProfitRows(mapData);
-      setActionProfitRowsNew(mapData);
+      // setActionExceptionProfitRows(mapData);
+      // setActionProfitRowsNew(mapData);
     },
     [selectedAction, actionProfitRowsNew, selectTestDataVal]
   );
