@@ -27,13 +27,13 @@ const ProductTestListMoreCircleWidget = ({ item }: any) => {
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
         <MenuItem
           onClick={() => {
+            onOpenDeleteModal();
+            handleClose();
             profitsStateValue?.setTestProductState(item?.id);
-            profitsStateValue?.onClickTestProduct;
           }}
         >
-          {t("products.profits.testAgain")}
+          Delete
         </MenuItem>
-        <MenuItem onClick={() => onOpenDeleteModal()}>Delete</MenuItem>
       </GoMakeMenu>
       <GoMakeDeleteModal
         hideIcon={true}
@@ -45,10 +45,7 @@ const ProductTestListMoreCircleWidget = ({ item }: any) => {
         subTitle={`${t("products.profits.subTitleDeleteProduct", {
           name: `${item?.name}`,
         })}?`}
-        onClickDelete={
-          (profitsStateValue?.setTestProductState(item?.id),
-          profitsStateValue?.deleteTestProductResult)
-        }
+        onClickDelete={profitsStateValue?.deleteTestProductResult}
       />
     </>
   );
