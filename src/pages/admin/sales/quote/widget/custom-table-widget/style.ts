@@ -11,9 +11,7 @@ const useStyle = ({ headerWidth, index }: any) => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        // overflow: "scroll",
         width: "100%",
-        // height: "50%",
       },
       tableHeaderContainer: {
         display: "flex",
@@ -21,7 +19,6 @@ const useStyle = ({ headerWidth, index }: any) => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        paddingLeft: 16,
       },
       headerStyle: {
         ...FONT_FAMILY.Lexend(700, 16),
@@ -83,7 +80,6 @@ const useStyle = ({ headerWidth, index }: any) => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        paddingLeft: 22,
         gap: 32,
         marginTop: 10,
         marginBottom: 10,

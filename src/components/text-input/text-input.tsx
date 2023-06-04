@@ -22,7 +22,7 @@ const StyledTextField = styled(TextField, {
     lineHeight: "21px",
     display: "flex",
     alignItems: "center",
-    boxShadow: "0px 4px 60px rgba(0, 0, 0, 0.08)",
+    boxShadow: "0px 1px 60px rgba(0, 0, 0, 0.08)",
     width: "100%",
     color: props.error
       ? `${props.errorColor(300)}`

@@ -66,20 +66,6 @@ const CustomTableWidget = ({
           );
         })}
       </div>
-      <div style={clasess.btnsContainer}>
-        <div style={clasess.btnContainer}>
-          <AddPlusIcon />
-          <div style={clasess.btnTitle}>add new item</div>
-        </div>
-        <div style={clasess.btnContainer}>
-          <AddPlusIcon />
-          <div style={clasess.btnTitle}>add exist item</div>
-        </div>
-        <div style={clasess.btnContainer}>
-          <AddPlusIcon />
-          <div style={clasess.btnTitle}>add delivery</div>
-        </div>
-      </div>
     </div>
   );
 };

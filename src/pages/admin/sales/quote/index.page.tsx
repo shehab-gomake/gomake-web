@@ -4,7 +4,7 @@ import { HeaderTitle } from "@/widgets";
 import { useQuote } from "./use-quote";
 
 import { useStyle } from "./style";
-import { UploadIcon } from "@/icons";
+import { AddPlusIcon, UploadIcon } from "@/icons";
 import { BusinessWidget } from "./widget/business-widget";
 import { ContactWidget } from "./widget/contact-widget";
 import { AddressWidget } from "./widget/address-widget";
@@ -36,8 +36,16 @@ export default function Quote() {
             </div>
           </div>
         </div>
-        <div style={{ width: "100%", height: 530, overflow: "scroll" }}>
-          <BusinessWidget />
+        <BusinessWidget />
+        <div
+          style={{
+            width: "100%",
+            height: 390,
+            overflow: "scroll",
+            boxShadow: "0px 4px 20px rgba(103, 103, 103, 0.08)",
+            marginTop: 20,
+          }}
+        >
           <ContactWidget />
           <AddressWidget />
           <div style={clasess.tableContainer}>
@@ -48,6 +56,20 @@ export default function Quote() {
               tableRowPercent={tableRowPercent}
               data={data}
             />
+          </div>
+        </div>
+        <div style={clasess.btnsContainer}>
+          <div style={clasess.btnContainer}>
+            <AddPlusIcon />
+            <div style={clasess.btnTitle}>add new item</div>
+          </div>
+          <div style={clasess.btnContainer}>
+            <AddPlusIcon />
+            <div style={clasess.btnTitle}>add exist item</div>
+          </div>
+          <div style={clasess.btnContainer}>
+            <AddPlusIcon />
+            <div style={clasess.btnTitle}>add delivery</div>
           </div>
         </div>
         <TotalPriceAndVatWidit />

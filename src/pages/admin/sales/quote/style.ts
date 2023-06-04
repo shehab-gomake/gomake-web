@@ -17,9 +17,6 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        // paddingBottom: 168,
-        // paddingLeft: 16,
-        // paddingRight: 16,
       },
       headerContainer: {
         display: "flex",
@@ -29,7 +26,7 @@ const useStyle = () => {
         width: "100%",
         marginTop: 24,
         marginBottom: 7,
-        paddingLeft: 16,
+        // paddingLeft: 16,
       },
       rightSideHeaderContainer: {
         display: "flex",
@@ -67,6 +64,27 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         marginTop: 26,
+      },
+      btnsContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 32,
+        marginTop: 20,
+        // marginBottom: 10,
+      },
+      btnContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 7,
+        cursor: "pointer",
+      },
+      btnTitle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: primaryColor(500),
       },
     };
   }, [i18next.language, t]);
