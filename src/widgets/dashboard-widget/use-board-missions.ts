@@ -33,15 +33,6 @@ const useBoardMissions = () => {
         setBoardsMissions(boards);
     }, [])
 
-    const getBoardsMissions = useCallback(() => {
-        let boards = boardsMissions;
-        if (machinesProgress && boardsMissions) {
-            boards = addCurrentMachineName(boards);
-            boards = sortBoardMissionsByUrgent(boards);
-            boards = sortBoardMissionsByReady(boards);
-        }
-        return boards
-    }, [boardsMissions, machinesProgress])
 
     const getFilteredBoardsMissions = useCallback(() => {
         let boards = boardsMissions;
@@ -71,6 +62,9 @@ const useBoardMissions = () => {
                     board.currentStation.rowName = machine.name;
                 }
             }
+            if (board.splittedBoards?.length > 0) {
+                board.splittedBoards = addCurrentMachineName(board.splittedBoards);
+            }
         });
         return boards;
     }
@@ -92,7 +86,6 @@ const useBoardMissions = () => {
         getBoardsMissionsByDateRange,
         getLateBoardsMissions,
         filterMachinesOfBoards,
-        getBoardsMissions,
         updateBoardMissions,
         machinesProgress,
         getFilteredBoardsMissions,
