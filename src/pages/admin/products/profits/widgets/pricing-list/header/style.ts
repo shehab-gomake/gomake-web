@@ -24,8 +24,6 @@ const useStyle = ({ width, header }: any) => {
             : "#B5B7C0",
         width: `${width}`,
         maxWidth: `${width}`,
-        textAlign: "center",
-        textalign: "center",
 
         ...FONT_FAMILY.Lexend(
           header == "Exp.meter"
