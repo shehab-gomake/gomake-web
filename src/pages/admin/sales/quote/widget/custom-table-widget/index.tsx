@@ -52,8 +52,6 @@ const CustomTableWidget = ({
       </div>
       <div style={clasess.row}>
         {data?.map((row: any, index: number) => {
-          console.log("index", index);
-          console.log("data", data?.length);
           return (
             <div key={`body_row${index}`} style={{ width: "100%" }}>
               <RowCustomTable

@@ -37,15 +37,7 @@ export default function Quote() {
           </div>
         </div>
         <BusinessWidget />
-        <div
-          style={{
-            width: "100%",
-            height: 390,
-            overflow: "scroll",
-            boxShadow: "0px 4px 20px rgba(103, 103, 103, 0.08)",
-            marginTop: 20,
-          }}
-        >
+        <div style={clasess.scrollContainer}>
           <ContactWidget />
           <AddressWidget />
           <div style={clasess.tableContainer}>

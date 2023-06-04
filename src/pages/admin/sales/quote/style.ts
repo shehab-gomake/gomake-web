@@ -26,7 +26,6 @@ const useStyle = () => {
         width: "100%",
         marginTop: 24,
         marginBottom: 7,
-        // paddingLeft: 16,
       },
       rightSideHeaderContainer: {
         display: "flex",
@@ -53,6 +52,13 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         color: "#101020",
       },
+      scrollContainer: {
+        width: "100%",
+        height: 380,
+        overflow: "scroll" as "scroll",
+        boxShadow: "0px 4px 20px rgba(103, 103, 103, 0.08)",
+        marginTop: 20,
+      },
       deleverdDate: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: secondColor(500),
@@ -72,7 +78,6 @@ const useStyle = () => {
         alignItems: "center",
         gap: 32,
         marginTop: 20,
-        // marginBottom: 10,
       },
       btnContainer: {
         display: "flex",

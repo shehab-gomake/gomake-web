@@ -936,6 +936,9 @@
       "entrance": "Entrance",
       "apartment": "Apartment",
       "addNewContact": "Add new contact",
+      "removeContact": "Remove contact",
+      "saveContact": "Save contact",
+      "closeContact": "Close",
       "addNewAddress": "Add new Address",
       "sortBy": "sort by",
       "discountBy": "discount by"

@@ -30,7 +30,7 @@ const useStyle = ({ headerWidth, index }: any) => {
         justifyContent: "flex-end",
         alignItems: "center",
         gap: 15,
-        width: "30%",
+        width: "20%",
       },
       autoComplateStyle: {
         background: "transparent",

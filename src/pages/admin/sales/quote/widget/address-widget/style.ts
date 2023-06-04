@@ -52,6 +52,13 @@ const useStyle = () => {
         height: 40,
         width: "100%",
       },
+      addDeleteContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 5,
+      },
     };
   }, []);
   return {
