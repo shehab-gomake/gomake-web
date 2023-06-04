@@ -22,6 +22,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import Button from "@mui/material/Button";
 import {useDashboardLogout} from "@/hooks/use-dashboard-logout";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+
 const DashboardWidget = ({}: IDashboardWidget) => {
     const INTERVAL_TIMEOUT = 2 * 60 * 1000;
     const {machines, addMachineProgress} = useGomakeMachines();
@@ -29,7 +30,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
     const selectedClient = useRecoilValue(selectedClientIdState);
     const clients = useRecoilValue(clientsState);
     const {classes} = useStyle();
-    const {date} = useGomakeDateRange();
+    const {date, isNullDate, isLateToday} = useGomakeDateRange();
     const {t} = useTranslation();
     const {secondColor} = useGomakeTheme();
     const {logout} = useDashboardLogout();
@@ -39,15 +40,17 @@ const DashboardWidget = ({}: IDashboardWidget) => {
         machinesProgress,
         boardsMissions,
         getFilteredBoardsMissions,
-        getLateBoardsMissions
+        getLateBoardsMissions,
+        getLateTodayBoardsMissions
     } = useBoardMissions();
 
     useEffect(() => {
-        if (!!date.startDate && !!date.endDate) {
-            getBoardsMissionsByDateRange(date).then();
-        }
-        else {
+        if (isNullDate()) {
             getLateBoardsMissions().then();
+        } else if (isLateToday()) {
+            getLateTodayBoardsMissions().then();
+        } else if (!!date.startDate && !!date.endDate) {
+            getBoardsMissionsByDateRange(date).then();
         }
     }, [date])
 
@@ -59,7 +62,9 @@ const DashboardWidget = ({}: IDashboardWidget) => {
         const interval = setInterval(async () => {
             if (date.startDate && date.endDate) {
                 await getBoardsMissionsByDateRange(date);
-            }else {
+            } else if (isLateToday()) {
+                await getLateTodayBoardsMissions();
+            } else if (isNullDate()) {
                 await getLateBoardsMissions();
             }
         }, INTERVAL_TIMEOUT);
@@ -107,10 +112,10 @@ const DashboardWidget = ({}: IDashboardWidget) => {
             <Cards data={statistics ? statistics : {} as IDashboardStatistic}/>
             <DashboardDates>
                 <div style={{display: 'flex', gap: '16px', width: 'fit-content', alignItems: 'center',}}>
-                    <Box sx={{ position: 'relative' }}>
+                    <Box sx={{position: 'relative'}}>
                         <SearchInput placeholder={t('dashboard-widget.search') as string}
                                      onChange={handelSearchValueChange}/>
-                        <SearchIcon sx={{ position: 'absolute', left: '5px', top: '8px', color: 'action.active'}} />
+                        <SearchIcon sx={{position: 'absolute', left: '5px', top: '8px', color: 'action.active'}}/>
                     </Box>
 
                     <ClientsList/>
@@ -122,7 +127,8 @@ const DashboardWidget = ({}: IDashboardWidget) => {
                                         usedMachines={usedMachines()}
                     />}
             </div>
-            <div><Link component={Button} color={secondColor(500)}  onClick={logout} >{t('dashboard-widget.logout')}</Link> </div>
+            <div><Link component={Button} color={secondColor(500)}
+                       onClick={logout}>{t('dashboard-widget.logout')}</Link></div>
         </div>
     );
 }

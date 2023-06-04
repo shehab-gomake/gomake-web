@@ -17,7 +17,8 @@ const useStyle = () => {
                 gap: '16px'
             },
             button: {
-                width: '134px',
+                width: 'fit-content',
+                minWidth: '134px',
                 height: '40px',
                 borderRadius: '10px',
                 color: primaryColor(500),

@@ -12,10 +12,24 @@ import {LateMissionsButton} from "@/widgets/dashboard-widget/components/late-mis
 const DashboardDates = ({children}: IDashboardDates) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
-    const {setTodayDateRange, setTomorrowDateRange, isTomorrow, isToday, setNullDate, isNullDate } = useGomakeDateRange();
+    const {
+        setTodayDateRange,
+        setTomorrowDateRange,
+        isTomorrow,
+        isToday,
+        setNullDate,
+        isNullDate,
+        isLateToday,
+        setLateToday
+    } = useGomakeDateRange();
     return (
         <div style={classes.container}>
             <div style={classes.datesContainer}>
+                {
+                    isLateToday() ? <GomakePrimaryButton
+                            style={classes.activeButton}>{t('dashboard-widget.today') + ' & ' + t('dashboard-widget.lateMissions') }</GomakePrimaryButton> :
+                <Button variant={'outlined'} onClick={setLateToday} style={classes.button}>{t('dashboard-widget.today') + ' & ' + t('dashboard-widget.lateMissions') }</Button>
+                }
                 {
                     isToday() ? <GomakePrimaryButton
                             style={classes.activeButton}>{t('dashboard-widget.today')}</GomakePrimaryButton> :
@@ -30,9 +44,11 @@ const DashboardDates = ({children}: IDashboardDates) => {
                                 style={classes.button}>{t('dashboard-widget.tomorrow')}</Button>
                 }
                 {
-                        <LateMissionsButton onClick={setNullDate} selected={ isNullDate()}>{t('dashboard-widget.lateMissions')}</LateMissionsButton>
+                    <LateMissionsButton onClick={setNullDate}
+                                        selected={isNullDate()}>{t('dashboard-widget.lateMissions')}</LateMissionsButton>
                 }
                 <GoMakeDatepicker/>
+
             </div>
             {children}
             <div style={classes.machinesWrapper}>

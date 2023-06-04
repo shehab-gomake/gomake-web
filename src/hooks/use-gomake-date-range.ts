@@ -29,6 +29,10 @@ const useGomakeDateRange = () => {
         setDate({startDate: undefined, endDate: undefined})
     }, [])
 
+    const setLateToday = () => {
+        setDate({startDate: undefined, endDate: TODAY_DATE_RANGE.startDate});
+    }
+
     const isNullDate = useCallback(() => {
         return date.endDate === undefined && date.startDate === undefined
     }, [date]);
@@ -41,6 +45,9 @@ const useGomakeDateRange = () => {
         return TOMORROW_DATE_RANGE?.startDate?.getTime() === date?.startDate?.getTime() && TOMORROW_DATE_RANGE.endDate?.getTime() === date.endDate?.getTime()
     }, [date]);
 
+    const isLateToday = useCallback(() => {
+        return date.endDate === TODAY_DATE_RANGE.startDate && date.startDate === undefined
+    }, [date]);
 
     const selectedDateText = useCallback(() => {
         if (isToday()) {
@@ -65,7 +72,9 @@ const useGomakeDateRange = () => {
         isTomorrow,
         isNullDate,
         selectedDateText,
-        setNullDate
+        setNullDate,
+        setLateToday,
+        isLateToday
     };
 }
 

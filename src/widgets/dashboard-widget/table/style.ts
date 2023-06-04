@@ -3,7 +3,7 @@ import {FONT_FAMILY} from "@/utils/font-family";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-    const {theme, primaryColor} = useGomakeTheme();
+    const {theme, primaryColor, errorColor} = useGomakeTheme();
     const BORDER = '0.1px solid #CECECE';
     const BORDER_RADIUS = '16px';
     const classes = useMemo(() => {
@@ -82,7 +82,6 @@ const useStyle = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 minWidth: '350px',
-                backgroundColor: '#ffffff',
                 padding: ' 5px',
             },
             splitBoardsStatuses: {
@@ -105,8 +104,10 @@ const useStyle = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 minWidth: '405px',
-                backgroundColor: '#ffffff',
                 padding: '0 5px 0 0',
+            },
+            lateMission: {
+                backgroundColor: errorColor(100)
             }
 
         };

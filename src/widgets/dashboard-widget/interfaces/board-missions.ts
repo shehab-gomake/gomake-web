@@ -14,6 +14,7 @@ export interface IBoardMissions {
     clientId: string;
     clientName?: string;
     splittedBoards: IBoardMissions[];
+    isLate: boolean;
 }
 
 
