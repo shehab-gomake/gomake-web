@@ -937,7 +937,14 @@
     "coatingPlate": "Coating plate",
     "maxCoatingArea": "Max coating area",
     "coatingDistance": "Coating distance",
-    "coatingCost": "Coating cost"
+    "coatingCost": "Coating cost",
+    "minRollDiameter": "Min roll diameter",
+    "maxRollDiameter": "Max roll diameter",
+    "imageSize": "Max image size",
+    "imageWidth": "Image width",
+    "imageLength": "Image length",
+    "mediaLoaded": "Media loading loss (meter)",
+    "minWidthMarginWithoutPrinting": "Min width margin without printing"
   },
   "currency": {
     "dollar": "Dollar",
