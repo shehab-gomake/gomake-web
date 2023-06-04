@@ -4,19 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="52c8dd8c-6583-4e54-a94c-c3c9efd912f6" name="Changes" comment="split order current station">
+    <list default="true" id="4e704d5e-98f6-4056-a2db-43f56f0ddccf" name="Changes" comment="split order current station">
       <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hooks/use-gomake-date-range.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/use-gomake-date-range.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/shared/constant/date.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/constant/date.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/store/dashboard-date.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/dashboard-date.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/dashboard-widget.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/dashboard-widget.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/dates/dates.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/dates/dates.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/dates/style.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/dates/style.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/interfaces/board-missions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/interfaces/board-missions.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/style.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/style.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/table.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/use-board-missions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/use-board-missions.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
