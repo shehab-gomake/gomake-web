@@ -89,10 +89,15 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                 board.splittedBoards.length > 0 ?
                                     board.splittedBoards.map((splitBoard, k) => {
                                         return (
-                                            <tr>
+                                            <tr style={board.isLate ? classes.lateMission : {}}>
                                                 {k === 0 &&
                                                     <td rowSpan={board.splittedBoards.length}
-                                                        style={{...classes.tableCell, position: 'sticky', right: 0,}}>
+                                                        style={{
+                                                            ...classes.tableCell,
+                                                            position: 'sticky',
+                                                            right: 0,
+                                                            backgroundColor: board.isLate ? classes.lateMission.backgroundColor : '#FFFFFF',
+                                                        }}>
                                                         <div style={classes.firstColCellSplitBoards}>
                                                             <div style={{width: '5%'}}>{index + 1}</div>
                                                             <div style={{width: '5%'}}>{board.isUrgent ?
@@ -144,8 +149,11 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                             </tr>
                                         )
                                     }) :
-                                    <tr key={index}>
-                                        <td style={{...classes.tableCell, position: 'sticky', right: 0,}}>
+                                    <tr key={index} style={board.isLate ? classes.lateMission : {}}>
+                                        <td style={{
+                                            ...classes.tableCell, position: 'sticky', right: 0,
+                                            backgroundColor: board.isLate ? classes.lateMission.backgroundColor : '#FFFFFF',
+                                        }}>
                                             <div style={classes.firstColCell}>
                                                 <div style={{width: '5%'}}>{index + 1}</div>
                                                 <div style={{width: '5%'}}>{board.isUrgent ?

@@ -4,10 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="563b2355-7e4d-460f-89bc-962e225666cb" name="Changes" comment="split order item new design">
+    <list default="true" id="52c8dd8c-6583-4e54-a94c-c3c9efd912f6" name="Changes" comment="split order current station">
       <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/use-gomake-date-range.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/use-gomake-date-range.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shared/constant/date.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/constant/date.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/dashboard-date.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/dashboard-date.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/dashboard-widget.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/dashboard-widget.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/dates/dates.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/dates/dates.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/dates/style.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/dates/style.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/interfaces/board-missions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/interfaces/board-missions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/style.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/style.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/use-board-missions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/use-board-missions.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,20 +51,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/Thinkpad1/WebstormProjects/gomake-web",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "C:\\Users\\Thinkpad1\\WebstormProjects\\gomake-web\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Thinkpad1/WebstormProjects/gomake-web&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\Thinkpad1\\WebstormProjects\\gomake-web\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Thinkpad1\WebstormProjects\gomake-web\src\components\modal" />
@@ -64,7 +73,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="563b2355-7e4d-460f-89bc-962e225666cb" name="Changes" comment="Bug fixes - first load - table size&#10;move logics to hook file" />
+      <changelist id="52c8dd8c-6583-4e54-a94c-c3c9efd912f6" name="Changes" comment="split order item new design" />
       <created>1680685266496</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -77,6 +86,7 @@
       <workItem from="1683791448912" duration="6679000" />
       <workItem from="1684067608135" duration="11770000" />
       <workItem from="1685345646884" duration="1295000" />
+      <workItem from="1685614278345" duration="8352000" />
     </task>
     <task id="LOCAL‎-00001" summary="board missions show missionType name">
       <created>1680688310600</created>
@@ -155,7 +165,14 @@
       <option name="project" value="LOCAL‎" />
       <updated>1684084560714</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL‎-00012" summary="split order current station">
+      <created>1685616194625</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL‎-00012" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1685616194625</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -184,6 +201,7 @@
     <MESSAGE value="add icons to search inputs" />
     <MESSAGE value="fix dashboard card value center" />
     <MESSAGE value="split order item new design" />
-    <option name="LAST_COMMIT_MESSAGE" value="split order item new design" />
+    <MESSAGE value="split order current station" />
+    <option name="LAST_COMMIT_MESSAGE" value="split order current station" />
   </component>
 </project>

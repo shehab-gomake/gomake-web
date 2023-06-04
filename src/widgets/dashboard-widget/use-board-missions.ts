@@ -2,6 +2,7 @@ import {useCallback, useState} from "react";
 import {IBoardMissions, IDashboardStatistic} from "@/widgets/dashboard-widget/interfaces";
 import {IDateRange, IMachine, IMachineProgress} from "@/shared";
 import {useGomakeAxios, useGomakeMachines} from "@/hooks";
+import {TODAY_DATE_RANGE} from "@/shared/constant";
 
 const useBoardMissions = () => {
     const {machines, getCheckedMachines} = useGomakeMachines();
@@ -29,6 +30,17 @@ const useBoardMissions = () => {
     };
 
 
+    const getLateTodayBoardsMissions = async () => {
+        const res = await callApi("GET", '/today-late-boardMissions', {
+            startDate: TODAY_DATE_RANGE.startDate?.toISOString(),
+            endDate: TODAY_DATE_RANGE.endDate?.toISOString()
+        }, true, true);
+        setBoardsMissions(res?.data?.boardsMissions);
+        setMachinesProgress(res?.data?.machinesProgress);
+        setStatistics(res?.data?.statistics);
+
+    }
+
     const updateBoardMissions = useCallback((boards: IBoardMissions[]) => {
         setBoardsMissions(boards);
     }, [])
@@ -40,6 +52,7 @@ const useBoardMissions = () => {
             boards = addCurrentMachineName(boards);
             boards = sortBoardMissionsByUrgent(boards);
             boards = sortBoardMissionsByReady(boards);
+            boards = sortBoardMissionsByIsLate(boards);
         }
         return boards?.filter((boardMissions: IBoardMissions) => {
             return getCheckedMachines().some((m) => Object.keys(boardMissions.machinesStatuses).includes(m.id))
@@ -52,7 +65,9 @@ const useBoardMissions = () => {
     const sortBoardMissionsByReady = (boards: IBoardMissions[]): IBoardMissions[] => {
         return boards.sort((board1: IBoardMissions, board2: IBoardMissions) => Number(board1.isReady) - Number(board2.isReady))
     };
-
+    const sortBoardMissionsByIsLate = (boards: IBoardMissions[]): IBoardMissions[] => {
+        return boards.sort((board1: IBoardMissions, board2: IBoardMissions) => Number(board2.isLate) - Number(board1.isLate))
+    };
 
     const addCurrentMachineName = (boards: IBoardMissions[]): IBoardMissions[] => {
         boards.forEach((board: IBoardMissions) => {
@@ -89,7 +104,8 @@ const useBoardMissions = () => {
         updateBoardMissions,
         machinesProgress,
         getFilteredBoardsMissions,
-        boardsMissions
+        boardsMissions,
+        getLateTodayBoardsMissions
     }
 }
 
