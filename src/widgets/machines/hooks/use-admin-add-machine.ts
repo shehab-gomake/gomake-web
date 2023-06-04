@@ -50,14 +50,14 @@ const useAdminAddMachine = () => {
             setState(result.data.data);
             setSnackbarStateValue({
                 state: true,
-                message: t("modal.addedSusuccessfully"),
+                message: t("modal.updatedSusuccessfully"),
                 type: "sucess",
             });
 
         } else {
             setSnackbarStateValue({
                 state: true,
-                message: t("modal.addedfailed"),
+                message: t("modal.updatedfailed"),
                 type: "error",
             });
         }

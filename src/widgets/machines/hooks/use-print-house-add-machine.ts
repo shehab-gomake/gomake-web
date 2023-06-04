@@ -67,13 +67,13 @@ const usePrintHouseAddMachine = () => {
                 setMachineState({});
                 setSnackbarStateValue({
                     state: true,
-                    message: 'deleted Successfully',
+                    message: t('modal.deleteSusuccessfully'),
                     type: "success",
                 });
             } else {
                 setSnackbarStateValue({
                     state: true,
-                    message: 'Can not DeleteMachine',
+                    message: t('modal.deletefailed'),
                     type: "error",
                 });
             }
@@ -87,13 +87,13 @@ const usePrintHouseAddMachine = () => {
             setUpdatedMachine(result.data.data);
             setSnackbarStateValue({
                 state: true,
-                message: t("modal.addedSusuccessfully"),
+                message: t("modal.updatedSusuccessfully"),
                 type: "sucess",
             });
         } else {
             setSnackbarStateValue({
                 state: true,
-                message: t("modal.addedfailed"),
+                message: t("modal.updatedfailed"),
                 type: "error",
             });
         }
