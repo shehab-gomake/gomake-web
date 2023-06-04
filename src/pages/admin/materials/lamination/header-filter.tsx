@@ -3,7 +3,6 @@ import { useRecoilValue } from "recoil";
 
 import { GomakePrimaryButton } from "@/components";
 import AddIcon from "@mui/icons-material/Add";
-
 import { materialLaminationState } from "./store/lamination";
 import { AddLaminationModal } from "./add-lamination-modal";
 import { useStyle } from "./style";
