@@ -12,7 +12,7 @@ const machineInputs = (state: Record<string, any>)  => {
             options: [],
             value: state?.manufacturer ? state?.manufacturer : '',
             machineInputType: 'input',
-            isValid: !!state.manufacturer,
+            isValid: !!state?.manufacturer,
         },
         {
             name: "model",
@@ -24,7 +24,7 @@ const machineInputs = (state: Record<string, any>)  => {
             options: [],
             value: state?.model ? state?.model : '',
             machineInputType: 'input',
-            isValid: !!state.model,
+            isValid: !!state?.model,
         },
         {
             name: "code",
@@ -36,7 +36,7 @@ const machineInputs = (state: Record<string, any>)  => {
             options: [],
             value: state?.code ? state?.code : '',
             machineInputType: 'input',
-            isValid: !!state.code,
+            isValid: !!state?.code,
         },
         {
             name: "nickName",
@@ -48,7 +48,7 @@ const machineInputs = (state: Record<string, any>)  => {
             options: [],
             value: state?.nickName ? state?.nickName : '',
             machineInputType: 'input',
-            isValid: !!state.nickName,
+            isValid: !!state?.nickName,
         },
         {
             machineInputType: 'multiInput',

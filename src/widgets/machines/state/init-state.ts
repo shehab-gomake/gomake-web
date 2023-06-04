@@ -23,6 +23,18 @@ const initState: Record<string, Record<string, any>> = {
             basicsColors: 1,
             varnish: false
         }
-    }
+    },
+    [ECategoryId.ROLL_DIGITAL_PRINTING]: {
+        category:ECategoryId.ROLL_DIGITAL_PRINTING,
+        price: {price: 0, currency: 0},
+        attributes: {
+            resolution: 0,
+            doubleHead: false,
+            coatingUnit: false,
+            basicsColors: 1,
+            varnish: false
+        }
+    },
+
 }
 export {initState};
