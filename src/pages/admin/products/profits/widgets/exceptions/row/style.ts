@@ -2,8 +2,9 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const useStyle = () => {
+const useStyle = ({ row }: any) => {
   const { primaryColor, secondColor } = useGomakeTheme();
+
   const clasess = useMemo(() => {
     return {
       bodyRow: {
@@ -12,16 +13,30 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         height: 60,
+        position: "relative" as "relative",
+        cursor:
+          row?.exceptionType === "EditBase" || row?.exceptionType === "NewBase"
+            ? "pointer"
+            : "",
+        gap: 5,
       },
       rowItem: {
         display: "flex",
         justifyContent: "flex-start",
         alignItems: "flex-start",
         ...FONT_FAMILY.Lexend(400, 14),
-        lineHeight: "18px",
         color: primaryColor(900),
         textalign: "center",
-        // width: `${width}`,
+        width: "25%",
+      },
+      rowItemExpPofit: {
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: primaryColor(900),
+        textalign: "center",
+        width: "25%",
       },
       scopeRowItem: {
         display: "flex",
@@ -31,17 +46,21 @@ const useStyle = () => {
         lineHeight: "18px",
         color: primaryColor(900),
         textalign: "center",
-        width: "25.8%",
       },
       autoComplateStyle: {
         display: "flex",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        // width: `${width}`,
+
         border: "1px solid red",
         backgroundColor: "#FFFFFF",
         color: secondColor(400),
         boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.08)",
+      },
+      deleteContainer: {
+        display: "flex",
+        position: "absolute" as "absolute",
+        right: -50,
       },
     };
   }, []);

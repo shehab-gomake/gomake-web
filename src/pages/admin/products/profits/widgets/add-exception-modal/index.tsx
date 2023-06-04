@@ -16,10 +16,6 @@ const AddExceptionModal = () => {
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
   const {
-    state,
-    onChangeState,
-    setState,
-    addedNewException,
     machincesStateValue,
     productsStateValue,
     parametersStateValue,
@@ -44,14 +40,14 @@ const AddExceptionModal = () => {
             { label: "Parameters", value: "parameter" },
           ]}
           placeholder={t("products.profits.exceptions.selectTypeOfException")}
-          value={state.typeOfException || ""}
+          value={profitsStateValue?.state.typeOfException || ""}
           onChange={(e: any, item: any) => {
-            setState({});
-            onChangeState("typeOfException", item?.value);
+            profitsStateValue?.setState({});
+            profitsStateValue?.onChangeState("typeOfException", item?.value);
           }}
         />
         <div style={{ marginTop: 20 }}>
-          {state.typeOfException === "machine" ? (
+          {profitsStateValue?.state.typeOfException === "machine" ? (
             <div key="machine">
               <div style={clasess.selectTypeStyle}>
                 {t("products.profits.exceptions.selectMachine")}
@@ -61,12 +57,12 @@ const AddExceptionModal = () => {
                 placeholder={t("products.profits.exceptions.selectMachine")}
                 getOptionLabel={(value: any) => value?.name}
                 onChange={(e: any, item: any) => {
-                  onChangeState("machine", item);
-                  onChangeState("machineId", item?.id);
+                  profitsStateValue?.onChangeState("machine", item);
+                  profitsStateValue?.onChangeState("machineId", item?.id);
                 }}
               />
             </div>
-          ) : state.typeOfException === "product" ? (
+          ) : profitsStateValue?.state.typeOfException === "product" ? (
             <div key="product">
               <div style={clasess.selectTypeStyle}>
                 {t("products.profits.exceptions.selectProduct")}
@@ -76,12 +72,12 @@ const AddExceptionModal = () => {
                 placeholder={t("products.profits.exceptions.selectProduct")}
                 getOptionLabel={(value: any) => value?.name}
                 onChange={(e: any, item: any) => {
-                  onChangeState("subProduct", item);
-                  onChangeState("subProductId", item?.id);
+                  profitsStateValue?.onChangeState("subProduct", item);
+                  profitsStateValue?.onChangeState("subProductId", item?.id);
                 }}
               />
             </div>
-          ) : state.typeOfException === "client" ? (
+          ) : profitsStateValue?.state.typeOfException === "client" ? (
             <div key="client">
               <div style={clasess.selectTypeStyle}>
                 {t("products.profits.exceptions.selectClient")}
@@ -91,12 +87,12 @@ const AddExceptionModal = () => {
                 placeholder={t("products.profits.exceptions.selectClient")}
                 getOptionLabel={(value: any) => value?.name}
                 onChange={(e: any, item: any) => {
-                  onChangeState("clientType", item);
-                  onChangeState("clientTypeId", item?.id);
+                  profitsStateValue?.onChangeState("clientType", item);
+                  profitsStateValue?.onChangeState("clientTypeId", item?.id);
                 }}
               />
             </div>
-          ) : state.typeOfException === "parameter" ? (
+          ) : profitsStateValue?.state.typeOfException === "parameter" ? (
             <div key="parameter">
               <div style={clasess.selectTypeStyle}>
                 {t("products.profits.exceptions.selectParameter")}
@@ -106,13 +102,16 @@ const AddExceptionModal = () => {
                 placeholder={t("products.profits.exceptions.selectParameter")}
                 getOptionLabel={(value: any) => value?.name}
                 onChange={(e: any, item: any) => {
-                  onChangeState("priceListParameter", item);
-                  onChangeState("priceListParameterId", item?.id);
+                  profitsStateValue?.onChangeState("priceListParameter", item);
+                  profitsStateValue?.onChangeState(
+                    "priceListParameterId",
+                    item?.id
+                  );
                 }}
               />
-              {state?.priceListParameterId && (
+              {profitsStateValue?.state?.priceListParameterId && (
                 <div
-                  key={`priceListParameterId-${state?.priceListParameterId}`}
+                  key={`priceListParameterId-${profitsStateValue?.state?.priceListParameterId}`}
                   style={{ marginTop: 20 }}
                 >
                   <div style={clasess.selectTypeStyle}>
@@ -121,13 +120,19 @@ const AddExceptionModal = () => {
                     )}
                   </div>
                   <GoMakeAutoComplate
-                    options={state?.priceListParameter?.parameterValues}
+                    options={
+                      profitsStateValue?.state?.priceListParameter
+                        ?.parameterValues
+                    }
                     placeholder={t(
                       "products.profits.exceptions.SelectValueNameOfParameter"
                     )}
                     getOptionLabel={(value: any) => value?.value}
                     onChange={(e: any, item: any) => {
-                      onChangeState("paramValueName", item?.value);
+                      profitsStateValue?.onChangeState(
+                        "paramValueName",
+                        item?.value
+                      );
                     }}
                   />
                 </div>
@@ -135,7 +140,7 @@ const AddExceptionModal = () => {
             </div>
           ) : null}
           <div>
-            {state?.typeOfException && (
+            {profitsStateValue?.state?.typeOfException && (
               <div key="exceptionType" style={{ marginTop: 20 }}>
                 <div style={clasess.selectTypeStyle}>
                   {t("products.profits.exceptions.selectScopeOfChange")}
@@ -144,16 +149,20 @@ const AddExceptionModal = () => {
                   options={[
                     { label: "Additional", value: 0 },
                     { label: "NewBase", value: 1 },
+                    { label: "EditBase", value: 2 },
                   ]}
                   placeholder={t(
                     "products.profits.exceptions.selectScopeOfChange"
                   )}
                   onChange={(e: any, item: any) => {
-                    onChangeState("additionalProfit", null);
-                    onChangeState("exceptionType", item?.value);
+                    profitsStateValue?.onChangeState("additionalProfit", null);
+                    profitsStateValue?.onChangeState(
+                      "exceptionType",
+                      item?.value
+                    );
                   }}
                 />
-                {state?.exceptionType === 0 ? (
+                {profitsStateValue?.state?.exceptionType === 0 ? (
                   <div>
                     <div style={{ marginTop: 20 }}>
                       <div style={clasess.selectTypeStyle}>
@@ -167,7 +176,10 @@ const AddExceptionModal = () => {
                         "products.profits.exceptions.additionalProfit"
                       )}
                       onChange={(e: any) => {
-                        onChangeState("additionalProfit", e.target.value);
+                        profitsStateValue?.onChangeState(
+                          "additionalProfit",
+                          e.target.value
+                        );
                       }}
                     />
                   </div>
@@ -175,7 +187,7 @@ const AddExceptionModal = () => {
                 <div style={clasess.btnContainer}>
                   <GomakePrimaryButton
                     style={{ height: 40 }}
-                    onClick={addedNewException}
+                    onClick={profitsStateValue?.addedNewException}
                   >
                     {t("products.profits.exceptions.addNewException")}
                   </GomakePrimaryButton>

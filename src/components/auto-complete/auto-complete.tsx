@@ -23,6 +23,7 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
     fontFamily: "Lexend",
     fontStyle: "normal",
     fontWeight: 300,
+    ...props?.style,
     "& fieldset": {
       border: "transparent",
       boxSizing: "border-box",
@@ -35,6 +36,7 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
   "& .MuiAutocomplete-endAdornment": {
     top: "calc(50% - 12px)",
   },
+  ...props?.style,
 }));
 
 const GoMakeAutoComplate = ({

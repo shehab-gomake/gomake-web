@@ -8,10 +8,18 @@ import { AddExceptionModal } from "../add-exception-modal";
 import { useRecoilValue } from "recoil";
 import { profitsState } from "../../store/profits";
 import { useExceptions } from "./use-exception";
+import { actionExceptionProfitId, actionProfitLists } from "@/store";
+import { UpdateMinPrice } from "./update-min-price";
+import { useEffect } from "react";
 
 const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
+  const actionProfits = useRecoilValue<any>(actionProfitLists);
+
+  const actionExceptionProfitIdValue = useRecoilValue<any>(
+    actionExceptionProfitId
+  );
   const { istimeOut, _tableRows, t } = useExceptions({
     tableRows,
   });
@@ -28,7 +36,7 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
                 <Header
                   key={`header_item${index}`}
                   header={header}
-                  width={`${100 / tableHeaders.length}%`}
+                  // width={`${100 / tableHeaders.length}%`}
                 />
               );
             })}
@@ -38,13 +46,27 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
               <>
                 {_tableRows?.map((row: any, index: number) => {
                   return (
-                    <>
-                      <Row
-                        key={`body_row${index}`}
-                        row={row}
-                        // width={`${100 / Object.entries(row).length}%`}
-                      />
-                    </>
+                    <div
+                      key={`body_row${index}`}
+                      style={
+                        row?.id === actionExceptionProfitIdValue
+                          ? {
+                              backgroundColor: "#EBECFF",
+                              width: "100%",
+                              marginTop: 5,
+                              paddingLeft: 22,
+                              paddingRight: 22,
+                            }
+                          : {
+                              width: "100%",
+                              marginTop: 5,
+                              paddingLeft: 22,
+                              paddingRight: 22,
+                            }
+                      }
+                    >
+                      <Row key={`body_row${index}`} row={row} />
+                    </div>
                   );
                 })}
               </>
@@ -55,19 +77,19 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
                     <Skeleton
                       variant="rectangular"
                       width={"100%"}
-                      height={68}
+                      height={50}
                       style={clasess.skeletonRowStyle}
                     />
                     <Skeleton
                       variant="rectangular"
                       width={"100%"}
-                      height={68}
+                      height={50}
                       style={clasess.skeletonRowStyle}
                     />
                     <Skeleton
                       variant="rectangular"
                       width={"100%"}
-                      height={68}
+                      height={50}
                       style={clasess.skeletonRowStyle}
                     />
                   </>
@@ -83,7 +105,10 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
 
           <div style={clasess.minCointaner}>
             {t("products.profits.exceptions.min")}
-            {20}$
+            <UpdateMinPrice
+              minValue={actionProfits?.minPrice}
+              profitsStateValue={profitsStateValue}
+            />
           </div>
           <div
             style={clasess.addNewException}

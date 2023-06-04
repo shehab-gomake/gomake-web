@@ -16,6 +16,7 @@ const GoMakeDeleteModal = ({
   hideIcon = false,
   title = "Confirm Delete",
   yesBtn = "Delete",
+
   ...props
 }: any) => {
   const { clasess } = useStyle();

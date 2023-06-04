@@ -843,30 +843,42 @@
   },
   "products": {
     "profits": {
-      "addTestProduct": "Add test product",
-      "addNewTestProduct": "Add new test product",
+      "addNewProduct": "Add new case",
+      "addNewTestProduct": "Add new case",
       "selectProduct": "Select product",
-      "send": "Send",
+      "startTest": "Add case",
+      "delete": "Delete",
+      "deleteProduct": "Delete product",
+      "subTitleDeleteProduct": "Are you sure to delete test product {{name}}",
+      "testAgain": "Test again",
+      "testFailed": "Test failed",
+      "more": "More",
+      "details": "Details",
+      "itemName": "Item name",
       "admin": {
         "title": "Profits",
         "chooseAction": "Choose action"
       },
       "pricingListWidget": {
-        "pricingListTitle": "Pricing list (product name)",
+        "pricingListTitle": "Pricing table",
         "meterPerPrice": "Meter/price",
         "transition": "Transition",
         "quantity": "Quantity",
         "cost": "Cost",
         "profit": "Profit",
+        "Expprofit": "Exp Profit",
         "meterPrice": "Meter Price",
         "expMeter": "Exp.meter",
         "price": "Price",
-        "totalPrice": "Total price",
+        "totalPrice": "Total Price",
         "width": "width",
         "more": "More",
         "height": "height",
-        "addNewStep": "add new step",
-        "saveStep": "Save step"
+        "addNewQuantity": "add new quantity",
+        "saveStep": "Save step",
+        "testQuantity": "Quantity",
+        "unitPrice": "Unit Price",
+        "testFinalPrice": "Test Final Price"
       },
       "exceptions": {
         "title": "Exceptions",
@@ -884,8 +896,19 @@
         "selectParameter": "Select parameter",
         "SelectValueNameOfParameter": "Select value name of parameter",
         "selectScopeOfChange": "Select scope of change",
-        "additionalProfit": "Additional Profit"
+        "additionalProfit": "Additional Profit",
+        "deleteExceptionProfit": "Delete Exception Profit ?"
       }
+    },
+    "actions": {
+      "admin": {
+        "title": "Action"
+      },
+      "actionName": "Action Name",
+      "internalSource": "internal/Out source",
+      "active": "Active",
+      "profit": "Profit",
+      "properties": "Properties"
     }
   },
   "skeleton": {
@@ -893,5 +916,29 @@
   },
   "deleteModal": {
     "deleteSupplier": "Are you sure to delete the supplier?"
+  },
+  "sales": {
+    "quote": {
+      "title": "Quote",
+      "deliverOn": "Deliver on",
+      "upload": "upload",
+      "businessCode": "Business code",
+      "businessName": "Business name",
+      "purchaseNumber": "Purchase number",
+      "agent": "Agent",
+      "contactID": "Contact ID",
+      "contactName": "Contact name",
+      "portable": "Portable",
+      "email": "Email",
+      "addressID": "Address ID",
+      "city": "City",
+      "street": "Street",
+      "entrance": "Entrance",
+      "apartment": "Apartment",
+      "addNewContact": "Add new contact",
+      "addNewAddress": "Add new Address",
+      "sortBy": "sort by",
+      "discountBy": "discount by"
+    }
   }
 }

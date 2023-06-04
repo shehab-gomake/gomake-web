@@ -10,15 +10,19 @@ import { PricingList } from "./widgets/pricing-list/pricing-list";
 import { useStyle } from "./style";
 import { Exceptions } from "./widgets/exceptions/exceptions";
 import { actionProfitLists } from "@/store";
+import { productTestState } from "@/store/product-test";
 
 export default function Profits() {
+  const { clasess } = useStyle();
+  const profitsStateValue = useRecoilValue<any>(actionProfitLists);
+  const productTest = useRecoilValue<any>(productTestState);
   const setProfitsState = useSetRecoilState<any>(profitsState);
   const {
     allActions,
     selectedAction,
     tabelPricingHeaders,
     tabelExceptionsHeaders,
-    tabelExceptionsRows,
+    actionProfits,
     machincesStateValue,
     productsStateValue,
     parametersStateValue,
@@ -27,16 +31,41 @@ export default function Profits() {
     openAddNewPricingStepRow,
     pricingListRowState,
     openAddTestProductModal,
-    onClickSendNewProduct,
+    state,
+    selectedExceptionProfit,
+    openDeleteExceptionProfitModal,
+    istimeOutForProductsTest,
+    testProductsState,
+    openAddQuantityModal,
+    selectTestDataVal,
+    onCloseAddQuantityModal,
+    onOpenAddQuantityModal,
+    updateActionProfitMinPrice,
+    onCklickActionExceptionProfitRow,
+    onCklickActionProfitTestResultsByActionId,
+    deleteTestProductResult,
+    setTestProductState,
+    onClickSaveNewActionExceptionProfitRow,
+    updateActionExceptionProfitRow,
+    deleteActionExceptionProfitRow,
+    updateActionProfitRow,
+    deleteActionProfitRow,
+    onCloseDeleteExceptionProfitModal,
+    onOpenDeleteExceptionProfitModal,
+    deleteExceptionProfit,
+    setState,
+    onChangeState,
+    addedNewException,
+    onClickTestProduct,
     onChangeAddNewTestProduct,
     setOpenAddTestProductModal,
-    onClickSaveNewPricingListRow,
+    onClickSaveNewActionProfitRow,
     onChangeAddPricingListRow,
     setOpenAddNewPricingStepRow,
+    updateActionProfit,
     onChangeSelectedAction,
     onCloseAddExceptionModal,
     onOpenAddExceptionModal,
-    updateActionProfit,
     t,
   } = useProfits();
   useEffect(() => {
@@ -45,7 +74,7 @@ export default function Profits() {
       selectedAction,
       tabelPricingHeaders,
       tabelExceptionsHeaders,
-      tabelExceptionsRows,
+      actionProfits,
       machincesStateValue,
       productsStateValue,
       parametersStateValue,
@@ -54,16 +83,40 @@ export default function Profits() {
       openAddNewPricingStepRow,
       pricingListRowState,
       openAddTestProductModal,
-      onClickSendNewProduct,
+      state,
+      selectedExceptionProfit,
+      openDeleteExceptionProfitModal,
+      istimeOutForProductsTest,
+      testProductsState,
+      openAddQuantityModal,
+      onCloseAddQuantityModal,
+      onOpenAddQuantityModal,
+      updateActionProfitMinPrice,
+      onCklickActionExceptionProfitRow,
+      onCklickActionProfitTestResultsByActionId,
+      deleteTestProductResult,
+      setTestProductState,
+      onClickSaveNewActionExceptionProfitRow,
+      updateActionExceptionProfitRow,
+      deleteActionExceptionProfitRow,
+      updateActionProfitRow,
+      deleteActionProfitRow,
+      onCloseDeleteExceptionProfitModal,
+      onOpenDeleteExceptionProfitModal,
+      deleteExceptionProfit,
+      setState,
+      onChangeState,
+      addedNewException,
+      onClickTestProduct,
       onChangeAddNewTestProduct,
       setOpenAddTestProductModal,
-      onClickSaveNewPricingListRow,
+      onClickSaveNewActionProfitRow,
       onChangeAddPricingListRow,
       setOpenAddNewPricingStepRow,
+      updateActionProfit,
       onChangeSelectedAction,
       onCloseAddExceptionModal,
       onOpenAddExceptionModal,
-      updateActionProfit,
       t,
     });
   }, [
@@ -71,7 +124,7 @@ export default function Profits() {
     selectedAction,
     tabelPricingHeaders,
     tabelExceptionsHeaders,
-    tabelExceptionsRows,
+    actionProfits,
     machincesStateValue,
     productsStateValue,
     parametersStateValue,
@@ -80,39 +133,79 @@ export default function Profits() {
     openAddNewPricingStepRow,
     pricingListRowState,
     openAddTestProductModal,
-    onClickSendNewProduct,
+    state,
+    selectedExceptionProfit,
+    openDeleteExceptionProfitModal,
+    istimeOutForProductsTest,
+    testProductsState,
+    openAddQuantityModal,
+    selectTestDataVal,
+    profitsStateValue,
+    productTest,
+    onCloseAddQuantityModal,
+    onOpenAddQuantityModal,
+    updateActionProfitMinPrice,
+    onCklickActionExceptionProfitRow,
+    onCklickActionProfitTestResultsByActionId,
+    deleteTestProductResult,
+    setTestProductState,
+    onClickSaveNewActionExceptionProfitRow,
+    updateActionExceptionProfitRow,
+    deleteActionExceptionProfitRow,
+    updateActionProfitRow,
+    deleteActionProfitRow,
+    onCloseDeleteExceptionProfitModal,
+    onOpenDeleteExceptionProfitModal,
+    deleteExceptionProfit,
+    setState,
+    onChangeState,
+    addedNewException,
+    onClickTestProduct,
     onChangeAddNewTestProduct,
     setOpenAddTestProductModal,
-    onClickSaveNewPricingListRow,
+    onClickSaveNewActionProfitRow,
     onChangeAddPricingListRow,
     setOpenAddNewPricingStepRow,
+    updateActionProfit,
     onChangeSelectedAction,
     onCloseAddExceptionModal,
     onOpenAddExceptionModal,
-    updateActionProfit,
     t,
   ]);
-  const { clasess } = useStyle();
-  const profitsStateValue = useRecoilValue<any>(actionProfitLists);
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
         <HeaderTitle title={t("products.profits.admin.title")} />
         <SelectAction />
-        {profitsStateValue.id ? (
+        {profitsStateValue?.id ? (
           <>
-            <ProductList />
-            <div style={clasess.pricingAndExceptionsCointaner}>
-              <div style={clasess.pricingCointaner}>
-                <PricingList tableHeaders={tabelPricingHeaders} />
-              </div>
-              <div style={clasess.exceptionsCointaner}>
-                <Exceptions
-                  tableHeaders={tabelExceptionsHeaders}
-                  tableRows={profitsStateValue?.actionExpectionRowsMapped}
-                />
-              </div>
+            <div style={clasess.titleActionName}>
+              {selectedAction?.name} pricing settings
             </div>
+            <ProductList />
+            {productTest?.id && (
+              <div style={clasess.pricingAndExceptionsCointaner}>
+                <div style={clasess.pricingCointaner}>
+                  <PricingList
+                    tableHeaders={tabelPricingHeaders}
+                    tablePercent={[
+                      "80px",
+                      "80px",
+                      "80px",
+                      "100px",
+                      "100px",
+                      "50px",
+                    ]}
+                  />
+                </div>
+                {/* <div style={clasess.exceptionsCointaner}>
+                  <Exceptions
+                    tableHeaders={tabelExceptionsHeaders}
+                    tableRows={profitsStateValue?.actionExpectionRowsMapped}
+                  />
+                </div> */}
+              </div>
+            )}
           </>
         ) : null}
       </div>

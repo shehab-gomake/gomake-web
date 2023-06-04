@@ -8,8 +8,9 @@ const useStyle = ({ width }: any) => {
     return {
       bodyRow: {
         display: "flex",
+        flexDirection: "row" as "row",
         width: "100%",
-        justifyContent: "flex-start",
+        justifyContent: "space-between",
         alignItems: "center",
       },
       rowItem: {
@@ -20,9 +21,20 @@ const useStyle = ({ width }: any) => {
         lineHeight: "18px",
         color: primaryColor(900),
         textalign: "center",
-        width: `${width}`,
         marginBottom: 18.5,
         marginTop: 18.5,
+      },
+      rowItemExpPofit: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        ...FONT_FAMILY.Lexend(400, 14),
+        lineHeight: "18px",
+        // color: primaryColor(900),
+        textalign: "center",
+        marginBottom: 18.5,
+        marginTop: 18.5,
+        color: " #F135A3",
       },
       editItem: {
         display: "flex",
@@ -35,6 +47,19 @@ const useStyle = ({ width }: any) => {
         width: `${width}`,
         marginBottom: 18.5,
         marginTop: 18.5,
+      },
+      controlsContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      textInputsContainer: {
+        marginRight: 20,
+      },
+      textInputStyle: {
+        height: 42,
+        width: 80,
       },
     };
   }, []);
