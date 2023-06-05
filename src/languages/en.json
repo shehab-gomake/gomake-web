@@ -27,6 +27,8 @@
     "customers": "Customers",
     "suppliers": "Suppliers",
     "reports": "Reports",
+    "settings": "Settings",
+    "employees": "Employees",
     "addSales": "Add sales",
     "listSales": "List sales",
     "sheetPaper": "Sheets",
@@ -219,6 +221,7 @@
         "deleteLaminationSizetTicknessTitle": "Delete lamination size tickness",
         "deleteLaminationSizethicknessSubTitle": "Are you sure you want to delete lamination size Tickness?"
       },
+      "title": "Lamination",
       "selectSupplier": "Select supplier",
       "height": "Height",
       "width": "Width",
@@ -438,7 +441,6 @@
         "subTitleDeleteTypeModal": "Are you sure you want to delete wide format material type?"
       }
     },
-
     "applications": {
       "admin": {
         "title": "Applications",
@@ -559,7 +561,6 @@
         "subTitleDeleteSizeModal": "Are you sure you want to delete canvas frame size?"
       }
     },
-
     "frames": {
       "admin": {
         "title": "Frame",
@@ -896,6 +897,146 @@
     "deleteSupplier": "Are you sure to delete the supplier?"
   },
   "customers": {
-    "title": "customers"
+    "buttons": {
+      "addCustomer": "Add Customer",
+      "add": "add",
+      "clean": "Clean",
+      "delete": "Delete",
+      "addContact": "ADD CONTACT",
+      "newAddress": "NEW ADDRESS",
+      "newBudget": "NEW BUDGET",
+      "newClient": "NEW CLIENT"
+    },
+    "modal": {
+      "addTitle": "Add Customer",
+      "editTitle": "Edit Customer",
+      "code": "Code:",
+      "name": "Name:",
+      "vatNumber": "Vat number:",
+      "openOrders": "Open Orders:",
+      "currency": "Currency",
+      "phone1": "Phone1:",
+      "phone2": "Phone2:",
+      "site": "Site:",
+      "mainContactName": "Main contact name:",
+      "mobile": "Mobile:",
+      "email": "Email:",
+      "fax": "Fax:",
+      "anOccasionalCustomer": "An occasional customer",
+      "sendingReadyEmail": "Sending a ready email",
+      "status": "Status:",
+      "selectStatus": "Select status",
+      "shipmentType": "Shipment Type:",
+      "selectShipmentType": "Select shipment type",
+      "agent": "Agent:",
+      "selectAgent": "Select agent",
+      "generalNotes": "General notes",
+      "openOrdersNotes": "Open orders notes",
+      "closeOrdersNotes": "Close orders notes",
+      "firstName": "First Name:",
+      "lastName": "Last Name",
+      "title": "Title:",
+      "role": "Role:",
+      "address": "Address:",
+      "defaultInDocument": "Default in document:",
+      "quote": "quote",
+      "order": "order",
+      "invoice": "invoice",
+      "receipt": "receipt",
+      "deliveryNote": "delivery note",
+      "addressId": "Address ID:",
+      "city": "City:",
+      "street": "Street:",
+      "home": "Home:",
+      "entrance": "Entrance:",
+      "apartment": "Apartment:",
+      "postalCode": "Postal Code:",
+      "country": "Country:",
+      "budget": "Budget",
+      "sum": "Sum",
+      "balance": "Balance",
+      "invoiceNumber": "Invoice Number",
+      "hashtag": "#",
+      "scodexPriceList": "Scodex price list",
+      "digitalPriceList": "Digital price list",
+      "cupsPriceList": "Cups price list",
+      "cuttingPriceList": "Cutting price list",
+      "notebooksPriceList": "Notebooks price list",
+      "booksPriceList": "Books price list",
+      "silkAndPrintingOnProductPriceList": "Silk and printing on products price list",
+      "shelfPriceList": "shelf products",
+      "bidPriceList": "Bid price list",
+      "userName": "Username:",
+      "password": "Password:",
+      "loginUsingEmailCode": "Log in using an email code",
+      "description": "Description:",
+      "created": "Created",
+      "updated": "Updated",
+      "add": "Add",
+      "update": "Update"
+    },
+    "title": "Customers",
+    "selectCustomer": "Select customer",
+    "selectAgent": "Select agent",
+    "selectCustomerType": "Select customer type",
+    "selectStatus": "Select status",
+    "active": "active",
+    "inactive": "inactive",
+    "customerCode": "Customer Code",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "status": "Status",
+    "hashtag": "#"
+  },
+  "suppliers": {
+    "buttons": {
+      "addSupplier": "Add Supplier",
+      "clean": "Clean"
+    },
+    "title": "Suppliers",
+    "selectStatus": "Select status",
+    "active": "active",
+    "inactive": "inactive",
+    "supplierCode": "Supplier Code",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "status": "Status",
+    "hashtag": "#",
+    "addModalTitle": "Add Supplier",
+    "editModalTitle": "Edit Supplier"
+  },
+  "employees": {
+    "buttons": {
+      "addEmployeee": "Add Employee"
+    },
+    "modal": {
+      "addTitle": "Add Employee",
+      "editTitle": "Edit Employee",
+      "firstName": "First Name:",
+      "lastName": "Last Name:",
+      "email": "Email:",
+      "phone": "Phone",
+      "role": "Role:",
+      "isWorkingOnCommonBoard": "Is Working On Common Board",
+      "isAgent": "Is Agent",
+      "isGraphicArtist": "Is Graphic Artist",
+      "isHaveFullKanbanPermission": "Is Have Full Kanban Permission",
+      "add": "Add",
+      "update": "Update"
+    },
+    "title": "Employees",
+    "onlyInactiveEmployee": "Only inactive employee",
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "creationDate": "Creation date",
+    "role": "Role",
+    "hashtag": "#",
+    "successfullyActivated": "Successfully activated",
+    "successfullyDeactivated": "Successfully deactivated",
+    "updatedfailed": "Updated failed",
+    "successfullyUpdated": "Successfully updated"
   }
 }

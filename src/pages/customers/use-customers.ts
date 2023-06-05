@@ -14,12 +14,12 @@ const useCustomers = (clientType) => {
 
   const tabelHeaders = useMemo(
     () => [
-      t("Customer Code"),
-      t("Name"),
-      t("Email"),
-      t("Phone"),
-      t("Status"),
-      t("#"),
+      t("customers.customerCode"),
+      t("customers.name"),
+      t("customers.email"),
+      t("customers.phone"),
+      t("customers.status"),
+      t("customers.hashtag"),
     ],
     []
   );
@@ -30,24 +30,12 @@ const useCustomers = (clientType) => {
   // select status options
   const statuses = useMemo(
     () => [
-      { label: t("active"), value: "true" },
-      { label: t("inactive"), value: "false" },
+      { label: t("customers.active"), value: "true" },
+      { label: t("customers.inactive"), value: "false" },
     ],
     []
   );
-
-  //select customer type options
-  const customerTypes = useMemo(
-    () => [
-      // לקוח
-      { label: t("client"), id: "aa0f240c-a370-41f9-9874-378f78bc46bc" },
-      // מפיק
-      { label: t("producer"), id: "7c561edb-1572-42ac-8c04-980441a4d3fe" },
-      // סתאם לקוח
-      { label: t("supp"), id: "c53226ad-e75f-49ee-a4b3-261ceb540b48" },
-    ],
-    []
-  );
+ 
 
   const [name, setCustomerName] = useState("");
   const onChangeCustomer = useCallback(async (e: any, value: any) => {

@@ -21,12 +21,11 @@ export default function Home() {
   return (
     <CustomerAuthLayout>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <HeaderTitle title={t("Suppliers")} />
+        <HeaderTitle title={t("suppliers.title")} />
         <GomakePrimaryButton variant="contained" onClick={() => setOpen(!open)} style={clasess.buttonStyle}>
-          Add Supplier
-        </GomakePrimaryButton>
+        {t("suppliers.buttons.addSupplier")}</GomakePrimaryButton>
       </div>
-      <CustomerCardWidget openModal={open} modalTitle="Add Supplier" onClose={() => setOpen(false)} showAddButton={true} >
+      <CustomerCardWidget openModal={open} modalTitle={t("suppliers.addModalTitle")} onClose={() => setOpen(false)} showAddButton={true} >
       </CustomerCardWidget>
       <HeaderFilter
         onChangeStatus={onChangeStatus}

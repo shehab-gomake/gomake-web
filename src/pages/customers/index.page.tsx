@@ -18,24 +18,20 @@ export default function Home() {
   return (
     <CustomerAuthLayout>
       <div style={clasess.sameRow}>
-        <HeaderTitle title={t("Customers")} />
+        <HeaderTitle title={t("customers.title")} />
         <AddCustomerButton></AddCustomerButton>
       </div>
       <HeaderFilter
         setAllCustomers={setAllCustomers}
         allCustomers={allCustomers}
-
         agentsCategores={agentsCategores}
         clientTypesCategores={clientTypesCategores}
         statuses={statuses}
-
         onChangeAgent={onChangeAgent}
         onChangeCustomer={onChangeCustomer}
         onChangeClientType={onChangeClientType}
         onChangeStatus={onChangeStatus}
-
         handleClean={handleClean}
-
         cutomerName={name}
         agentName={agentName}
         valClientType={valClientType}

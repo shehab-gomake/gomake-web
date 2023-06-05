@@ -11,12 +11,12 @@ const useSuppliers = (clientType) => {
 
   const tabelHeaders = useMemo(
     () => [
-      t("Supplier Code"),
-      t("Name"),
-      t("Email"),
-      t("Phone"),
-      t("Status"),
-      t("#"),
+      t("suppliers.supplierCode"),
+      t("suppliers.name"),
+      t("suppliers.email"),
+      t("suppliers.phone"),
+      t("suppliers.status"),
+      t("suppliers.hashtag"),
     ],
     []
   );
@@ -24,8 +24,8 @@ const useSuppliers = (clientType) => {
   // select status options
   const statuses = useMemo(
     () => [
-      { label: t("active"), value: "true" },
-      { label: t("inactive"), value: "false" },
+      { label: t("suppliers.active"), value: "true" },
+      { label: t("suppliers.inactive"), value: "false" },
     ],
     []
   );

@@ -3,11 +3,14 @@ import { useStyle } from "./style";
 import { GomakePrimaryButton } from "@/components";
 import { Col, Row } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useTranslation } from "react-i18next";
 
 const IPaddressForm = ({ IPaddress, onDelete }: any) => {
 
     const { clasess } = useStyle();
     const [selectedDate, setSelectedDate] = React.useState(getCurrentDate());
+    const { t } = useTranslation();
+
 
     function getCurrentDate() {
         const today = new Date();
@@ -33,23 +36,23 @@ const IPaddressForm = ({ IPaddress, onDelete }: any) => {
         <div style={{ marginBottom: '30px', width: "65%" }} >
             <Row style={{ marginBottom: '8px' }} >
                 <Col >
-                    <h3 style={clasess.headersStyle} >Address:</h3>
+                    <h3 style={clasess.headersStyle} >{t("customers.modal.address")}</h3>
                     <input style={clasess.inputStyle} type="text" />
                 </Col >
                 <Col >
-                    <h3 style={clasess.headersStyle} >Description:</h3>
+                    <h3 style={clasess.headersStyle} >{t("customers.modal.description")}</h3>
                     <input style={clasess.inputStyle} type="text" />
                 </Col>
                 <Col >
-                    <h3 style={clasess.headersStyle} >Created:</h3>
+                    <h3 style={clasess.headersStyle} >{t("customers.modal.created")}:</h3>
                     <input style={clasess.inputStyle} type="date" value={selectedDate} onChange={handleDateChange} />
                 </Col>
                 <Col   >
-                    <h3 style={clasess.headersStyle} >Updated:</h3>
+                    <h3 style={clasess.headersStyle} >{t("customers.modal.updated")}:</h3>
                     <input style={clasess.inputStyle} type="date" value={selectedDate} onChange={handleDateChange} />
                 </Col>
                 <Col >
-                    <GomakePrimaryButton style={clasess.autoButtonStyle} onClick={() => onDelete(IPaddress.index)}>Delete</GomakePrimaryButton>
+                    <GomakePrimaryButton style={clasess.autoButtonStyle} onClick={() => onDelete(IPaddress.index)}>{t("customers.buttons.delete")}</GomakePrimaryButton>
                 </Col >
             </Row>
         </div>

@@ -18,14 +18,14 @@ const HeaderFilter = ({ status, onChangeStatus , valStatus , handleClean
                     <GoMakeAutoComplate
                         options={status}
                         style={clasess.autoComplateStyle}
-                        placeholder={t("Select status")}
+                        placeholder={t("suppliers.selectStatus")}
                         onChange={onChangeStatus}
                         value={valStatus}
                     />
                 ) : (
                     <Skeleton variant="rectangular" width={200} height={40} />
                 )}
-                <GomakePrimaryButton style={clasess.autoButtonStyle} onClick={handleClean} >Clean</GomakePrimaryButton>
+                <GomakePrimaryButton style={clasess.autoButtonStyle} onClick={handleClean} >{t("suppliers.buttons.clean")}</GomakePrimaryButton>
             </div>
         </div>
     );

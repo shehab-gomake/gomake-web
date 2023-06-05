@@ -4,10 +4,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useCallback, useEffect, useState } from "react";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { useGomakeAxios } from "@/hooks";
+import { useTranslation } from "react-i18next";
 
-const ShowCustomerCard = ({ item }: any) => {
+const ShowCustomerCard = ({ item , clientType }: any) => {
   const { callApi } = useGomakeAxios();
-
+  const { t } = useTranslation();
   const [customer, setCustomer] = useState(null);
   const [open, setOpen] = useState(false);
 
@@ -16,18 +17,18 @@ const ShowCustomerCard = ({ item }: any) => {
       customerId: item.id ,
     });
     return data;
-  }, []);
+  }, [item]);
 
   useEffect(() => {
     getCustomers();
-  }, []);
+  }, [item]);
   
   return (
     <>
       <IconButton>
         <EditIcon onClick={()=>setOpen(!open)} />
       </IconButton>
-      {customer && <CustomerCardWidget openModal={open} modalTitle="Edit Customer" onClose={() => setOpen(false)} customer={customer} showUpdateButton={true}></CustomerCardWidget>}
+      {customer && <CustomerCardWidget openModal={open} modalTitle={clientType === "S" ? t("suppliers.editModalTitle") : t("customers.modal.editTitle")} onClose={() => setOpen(false)} customer={customer} showUpdateButton={true}></CustomerCardWidget>}
     </>
   );
 };

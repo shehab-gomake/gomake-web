@@ -261,6 +261,23 @@ const useAuthLayoutHook = () => {
           return <ReportsIcon />;
         },
       },
+      {
+        isLine: false,
+        key: "settings",
+        title: t("tabs.settings"),
+        path: "/product-floor",
+        isList: true,
+        list: [
+          {
+            key: "employees",
+            title: t("tabs.employees"),
+            path: "/settings/employees",
+          },
+        ],
+        icon: () => {
+          return <ProductsIcon />;
+        },
+      },
     ];
   }, []);
 

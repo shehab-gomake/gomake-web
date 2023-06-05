@@ -1,6 +1,5 @@
 import { Box, Button, Dialog, Switch, Tab, Tabs, ThemeProvider, createMuiTheme, styled } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { t } from "i18next";
 import { useStyle } from "./style";
 import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton } from "@/components";
 import { HeaderFilter } from "./header-filter";
@@ -18,6 +17,7 @@ import { IPaddressForm } from "./components/gomakeUser-tab/IPAddressForm";
 import { Col, Container, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
+import { useTranslation } from "react-i18next";
 
 const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpdateButton, showAddButton
 
@@ -31,21 +31,12 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
     },
   });
 
-  // not final 
-  const AgentsOptions = useMemo(
-    () => [t("agent1"),
-    t("agent2222"),
-    t("agent34r5"),],
-    []
-  );
-  const StatusOptions = useMemo(
-    () => [t("Active"),
-    t("inactive"),
-    ],
-    []
-  );
-  const ShipmentTypeOptions = useMemo(
-    () => [t("Pickup"),
+  const { t } = useTranslation();
+
+  const statuses = useMemo(
+    () => [
+      { label: t("customers.active"), value: "true" },
+      { label: t("customers.inactive"), value: "false" },
     ],
     []
   );
@@ -59,12 +50,12 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
 
   const tabelHeaders = useMemo(
     () => [
-      t("Budget"),
-      t("Sum"),
-      t("Balance"),
-      t("Invoice number"),
-      t("Status"),
-      t("#"),
+      t("customers.modal.budget"),
+      t("customers.modal.sum"),
+      t("customers.modal.balance"),
+      t("customers.modal.invoiceNumber"),
+      t("customers.modal.status"),
+      t("customers.modal.hashtag"),
     ],
     []
   );
@@ -87,7 +78,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
     );
   };
 
-  const tabPanelSelect = (label, options, placeHold) => {
+  const tabPanelSelect = (label, options=null, placeHold=null) => {
     return (
       <Box sx={{ p: 3 }} >
         <h3 style={clasess.headersStyle} >{label}</h3>
@@ -212,24 +203,24 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
         <div style={{ width: "25%", marginBottom: '15px' }} >
           <Row style={{ marginBottom: '8px' }} >
             <Col style={{ display: "flex", alignItems: "center" }} >
-              <h3 style={clasess.headersStyle} >Code:</h3>
+              <h3 style={clasess.headersStyle} >{t("customers.modal.code")}</h3>
               <input readOnly={true} style={clasess.inputStyle} type="text" value={customer?.code} />
             </Col>
             <Col style={{ display: "flex", alignItems: "center" }} >
-              <h3 style={clasess.headersStyle} >Name:</h3>
+              <h3 style={clasess.headersStyle} >{t("customers.modal.name")}</h3>
               <input style={clasess.inputStyle} type="text" value={customer?.name} /></Col>
           </Row>
           <Row style={{ marginBottom: '8px' }}>
             <Col style={{ display: "flex", alignItems: "center" }} >
-              <h3 style={clasess.headersStyle} >Vat number:</h3>
+              <h3 style={clasess.headersStyle} >{t("customers.modal.vatNumber")}</h3>
               <input style={clasess.inputStyle} type="text" /></Col>
             <Col style={{ display: "flex", alignItems: "center" }} >
-              <h3 style={clasess.headersStyle} >Open Orders:</h3>
+              <h3 style={clasess.headersStyle} >{t("customers.modal.openOrders")}</h3>
               <input readOnly={true} style={clasess.inputStyle} type="text" /></Col>
           </Row>
           <Row>
             <Col>
-              <h3 style={clasess.headersStyle} >Currency:</h3>
+              <h3 style={clasess.headersStyle} >{t("customers.modal.currency")}</h3>
               <GoMakeAutoComplate style={{ width: convertWidthToVW(100), height: convertHeightToVH(30), }} placeholder={null} options={CurrencyOptions} />
             </Col>
           </Row>
@@ -250,27 +241,27 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
                 selectedTab == 0 &&
                 <div>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    {tabPanelInput("Phone1:", customer?.tel1)}
-                    {tabPanelInput("Phone2:", customer?.tel2)}
-                    {tabPanelInput("Site:", customer?.name)}
+                    {tabPanelInput(t("customers.modal.phone1"), customer?.tel1)}
+                    {tabPanelInput(t("customers.modal.phone2"), customer?.tel2)}
+                    {tabPanelInput(t("customers.modal.site"), customer?.name)}
                   </div>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    {tabPanelInput("Main contact name:")}
-                    {tabPanelInput("Mobile:")}
-                    {tabPanelInput("Email:")}
-                    {tabPanelInput("Fax:")}
+                    {tabPanelInput(t("customers.modal.mainContactName"))}
+                    {tabPanelInput(t("customers.modal.mobile"))}
+                    {tabPanelInput(t("customers.modal.email"))}
+                    {tabPanelInput(t("customers.modal.fax"))}
                   </div>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    {tabPanelSwich("An occasional customer")}
-                    {tabPanelSwich("Sending a ready email")}
-                    {tabPanelSelect("Active:", StatusOptions, null)}
-                    {tabPanelSelect("Shipment Type:", ShipmentTypeOptions, "select shipment type")}
-                    {tabPanelSelect("Agent:", AgentsOptions, "select agent")}
+                    {tabPanelSwich(t("customers.modal.anOccasionalCustomer"))}
+                    {tabPanelSwich(t("customers.modal.sendingReadyEmail"))}
+                    {tabPanelSelect(t("customers.modal.status"), statuses, null)}
+                    {tabPanelSelect(t("customers.modal.shipmentType"),)}
+                    {tabPanelSelect(t("customers.modal.agent"), null , "select agent")}
                   </div>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    {tabPanelTextArea("General notes")}
-                    {tabPanelTextArea("Open Orders notes")}
-                    {tabPanelTextArea("Close Orders notes")}
+                    {tabPanelTextArea(t("customers.modal.generalNotes"))}
+                    {tabPanelTextArea(t("customers.modal.openOrdersNotes"))}
+                    {tabPanelTextArea(t("customers.modal.closeOrdersNotes"))}
                   </div>
                 </div>
               }
@@ -280,7 +271,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
                 <div>
                   <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyContact} >
                     <PersonAddAltRoundedIcon style={{ fontSize: "1.1em", color: "#8283BE" }} > </PersonAddAltRoundedIcon>
-                    <Button style={{ color: "#8283BE" }} >add contact</Button>
+                    <Button style={{ color: "#8283BE" }} >{t("customers.buttons.addContact")}</Button>
                   </a>
                   {
                     contacts.map(x =>
@@ -296,7 +287,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
                 <div>
                   <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyAdress} >
                     <AddHomeRoundedIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddHomeRoundedIcon>
-                    <Button style={{ color: "#8283BE" }}>new address</Button>
+                    <Button style={{ color: "#8283BE" }}>{t("customers.buttons.newAddress")}</Button>
                   </a>
                   {
                     addresses.map(x =>
@@ -312,7 +303,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
                 <div>
                   <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyBudget}  >
                     <AddBoxIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddBoxIcon>
-                    <Button style={{ color: "#8283BE" }}>new budget</Button>
+                    <Button style={{ color: "#8283BE" }}>{t("customers.buttons.newBudget")}</Button>
                   </a>
                   <div style={clasess.tableContainer}>
                     <Table tableHeaders={tabelHeaders} tableRows={null} ></Table>
@@ -331,7 +322,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
                   <div>
                     <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyClient} >
                       <AddIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddIcon>
-                      <Button style={{ color: "#8283BE" }}>new client</Button>
+                      <Button style={{ color: "#8283BE" }}>{t("customers.buttons.newClient")}</Button>
                     </a>
                     {
                       useres.map(x =>
@@ -343,7 +334,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
                   <div>
                     <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyIPAddress} >
                       <AddIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddIcon>
-                      <Button style={{ color: "#8283BE" }}>new address</Button>
+                      <Button style={{ color: "#8283BE" }}>{t("customers.buttons.newAddress")}</Button>
                     </a>
                     {
                       IPaddresses.map(x =>
@@ -355,8 +346,8 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
                 </div>
               }
               <div style={{ display: "flex", justifyContent: "center", marginTop: "70px", marginBottom: "10px" }} >
-                {showAddButton && <GomakePrimaryButton style={clasess.autoButtonStyle} >add</GomakePrimaryButton>}
-                {showUpdateButton && <GomakePrimaryButton style={clasess.autoButtonStyle} >update</GomakePrimaryButton>}
+                {showAddButton && <GomakePrimaryButton style={clasess.autoButtonStyle} >{t("customers.modal.add")}</GomakePrimaryButton>}
+                {showUpdateButton && <GomakePrimaryButton style={clasess.autoButtonStyle} >{t("customers.modal.update")}</GomakePrimaryButton>}
               </div>
             </Box>
           </ThemeProvider>

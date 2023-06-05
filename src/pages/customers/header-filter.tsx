@@ -20,7 +20,7 @@ const HeaderFilter = ({ setAllCustomers,
             <GomakeTextInput
                 type={"text"}
                 onChange={onChangeCustomer}
-                placeholder={t("Select customer")}
+                placeholder={t("customers.selectCustomer")}
                 style={{
                     height: convertHeightToVH(42),
                     width: convertWidthToVW(200),
@@ -32,7 +32,7 @@ const HeaderFilter = ({ setAllCustomers,
                     <GoMakeAutoComplate
                         options={agentsCategores}
                         style={clasess.autoComplateStyle}
-                        placeholder={t("Select agent")}
+                        placeholder={t("customers.selectAgent")}
                         onChange={onChangeAgent}
                         value={agentName}
                     />
@@ -43,7 +43,7 @@ const HeaderFilter = ({ setAllCustomers,
                     <GoMakeAutoComplate
                         options={clientTypesCategores}
                         style={clasess.autoComplateStyle}
-                        placeholder={t("Select customer type")}
+                        placeholder={t("customers.selectCustomerType")}
                         onChange={onChangeClientType}
                         value={valClientType}
                     />
@@ -53,14 +53,14 @@ const HeaderFilter = ({ setAllCustomers,
                     <GoMakeAutoComplate
                         options={statuses}
                         style={clasess.autoComplateStyle}
-                        placeholder={t("Select status")}
+                        placeholder={t("customers.selectStatus")}
                         onChange={onChangeStatus}
                         value={valStatus}
                     />
                 ) : (
                     <Skeleton variant="rectangular" width={200} height={40} />
                 )}
-                <GomakePrimaryButton style={clasess.autoButtonStyle} onClick={handleClean} >Clean</GomakePrimaryButton>
+                <GomakePrimaryButton style={clasess.autoButtonStyle} onClick={handleClean} >{t("customers.buttons.clean")}</GomakePrimaryButton>
             </div>
         </div>
     );

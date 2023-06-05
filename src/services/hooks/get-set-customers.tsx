@@ -36,7 +36,7 @@ const getAndSetAllCustomers = async (
       hashTag: (
         <div style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} >
           <a>
-            <ShowCustomerCard item={customer} />
+            <ShowCustomerCard item={customer} clientType={data.clientType} />
           </a>
         </div>
       ),
