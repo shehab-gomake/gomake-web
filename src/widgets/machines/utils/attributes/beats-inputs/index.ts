@@ -5,6 +5,8 @@ const getCategoryBeatsInputs = (categoryId: string, state: Record<string, any>) 
     switch (categoryId) {
         case ECategoryId.DIGITAL_PRINTING:
             return digitalPrinting(state);
+        case ECategoryId.ROLL_DIGITAL_PRINTING:
+            return digitalPrinting(state);
         default:
             return [];
     }

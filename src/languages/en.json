@@ -891,7 +891,13 @@
     "imageWidth": "Image width",
     "imageLength": "Image length",
     "mediaLoaded": "Media loading loss (meter)",
-    "minWidthMarginWithoutPrinting": "Min width margin without printing"
+    "minWidthMarginWithoutPrinting": "Min width margin without printing",
+    "maxRewinderOutput": "Rewinder Output roll max. diameter",
+    "maxUnwinderInput": "Unwinder Max. roll weight",
+    "maxUnwinderRollWeight": "Unwinder Max. roll weight",
+    "coreDiameter": "Core diameter",
+    "standard": "Standard",
+    "option": "Option"
   },
   "currency": {
     "dollar": "Dollar",
@@ -907,7 +913,8 @@
     "beats": "Beats Settings",
     "BlanketCylinder": "Blanket cylinder settings",
     "plate": "Plate settings",
-    "coating": "Coating settings"
+    "coating": "Coating settings",
+    "unWinder": "Unwinder and Rewinder"
   },
   "skeleton": {
     "noData": "No data"

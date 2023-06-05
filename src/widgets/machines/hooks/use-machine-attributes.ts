@@ -12,6 +12,7 @@ import {getCategoryMachineDimensionsInputs} from "@/widgets/machines/utils/attri
 import {getCategoryCoatingInputs} from "@/widgets/machines/utils/attributes/coating-inputs";
 import {getCategoryPlateInputs} from "@/widgets/machines/utils/attributes/plate-inputs";
 import {getCategoryBlanketCylinderInputs} from "@/widgets/machines/utils/attributes/blanket-cylinder-inputs";
+import {getCategoryUnWinderInputs} from "@/widgets/machines/utils/attributes/unwinder-rewinder";
 
 
 const useMachineAttributes = () => {
@@ -61,6 +62,7 @@ const useMachineAttributes = () => {
     const machineCoatingAttributes = () => !!machineState.category ? getCategoryCoatingInputs(machineState.category, machineState) : [];
     const machinePlateAttributes = () => !!machineState.category ? getCategoryPlateInputs(machineState.category, machineState) : [];
     const machineBlanketCylinderAttributes = () => !!machineState.category ? getCategoryBlanketCylinderInputs(machineState.category, machineState) : [];
+    const machineUnWinderAttributes = () => !!machineState.category ? getCategoryUnWinderInputs(machineState.category, machineState) : [];
 
     return {
         machineGeneralAttributes,
@@ -74,6 +76,7 @@ const useMachineAttributes = () => {
         machineCoatingAttributes,
         machinePlateAttributes,
         machineBlanketCylinderAttributes,
+        machineUnWinderAttributes,
         changeMachineAttributes,
         changeMachineGeneralAttributes,
         errors,

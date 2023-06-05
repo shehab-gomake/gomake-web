@@ -2,7 +2,7 @@ import {IStep} from "@/widgets/machines/utils/interface/step";
 import {
     BasicInputsComponent, ColorsInputsComponent, FeedersStackersComponent,
     MediaSettingComponent,
-    SpeedSettingsComponent
+    SpeedOptionsSettingsComponent
 } from "@/widgets/machines/components/forms";
 import {MachineDimensionsComponent} from "@/widgets/machines/components/forms/machine-dimensions";
 import {MachinePlateComponent} from "@/widgets/machines/components/forms/plate-inputs";
@@ -15,7 +15,7 @@ const ofssetPrintingSteps: IStep[] = [
     {label: 'media',  component: MediaSettingComponent},
     {label: 'plate',  component: MachinePlateComponent},
     {label: 'BlanketCylinder',  component: MachineBlanketCylinderComponent},
-    {label: 'speed',  component: SpeedSettingsComponent},
+    {label: 'speed',  component: SpeedOptionsSettingsComponent},
     {label: 'feedersStackers',  component: FeedersStackersComponent},
     {label: 'colors',  component: ColorsInputsComponent},
     {label: 'coating',  component: MachineCoatingComponent},

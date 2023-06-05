@@ -4,36 +4,39 @@ import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
 import {InputContainer} from "@/widgets/machines/components/inputs/input-container";
 import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attributes";
 
-const FeedersStackersComponent = ({navigateNext, navigateBack, hasNext, hasBack, canUpdate, canAddMachine, onClickAdd, onClickUpdate}: IStepFormProps) => {
+const UnwiderRewinderComponent = ({navigateBack, navigateNext, hasBack, hasNext, canAddMachine, canUpdate, onClickAdd, onClickUpdate}: IStepFormProps) => {
     const {classes} = useStyle();
-    const {machineFeedersStackersAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
+    const {machineUnWinderAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
+    const onClickBack = () => {
+       navigateBack();
+    }
     const onClickNext = () => {
-        const validStep = isValidStep(machineFeedersStackersAttributes());
+        const validStep = isValidStep(machineUnWinderAttributes());
         if (validStep) {
             navigateNext();
         }
     }
-    const onClickBack = () => {
-        navigateBack();
-    };
+
     const handleUpdate = () => {
-        const validStep = isValidStep(machineFeedersStackersAttributes());
+        const validStep = isValidStep(machineUnWinderAttributes());
         if (validStep) {
             onClickUpdate();
         }
     };
     const handleAddMachine = () => {
-        const validStep = isValidStep(machineFeedersStackersAttributes());
+        const validStep = isValidStep(machineUnWinderAttributes());
         if (validStep) {
             onClickAdd();
         }
     };
+
     return (
         <div style={classes.container}>
             <div style={classes.inputsContainer}>
                 {
-                   machineFeedersStackersAttributes().map((property: any) => (
-                        <InputContainer key={property.parameterKey} attribute={property} updateState={changeMachineAttributes} error={errors[property.parameterKey]}/>
+                    machineUnWinderAttributes().map((property: any) => (
+                        <InputContainer key={property.parameterKey} attribute={property}
+                                        updateState={changeMachineAttributes} error={errors[property.parameterKey]}/>
                     ))
                 }
             </div>
@@ -43,4 +46,4 @@ const FeedersStackersComponent = ({navigateNext, navigateBack, hasNext, hasBack,
     );
 }
 
-export {FeedersStackersComponent};
+export {UnwiderRewinderComponent};

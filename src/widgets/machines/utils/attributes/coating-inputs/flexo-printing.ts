@@ -1,5 +1,5 @@
 
-const rollDigitalPrinting = (state: Record<string, any>) => {
+const flexoPrinting = (state: Record<string, any>) => {
     return [
         {
             name: "coatingUnit",
@@ -30,4 +30,4 @@ const rollDigitalPrinting = (state: Record<string, any>) => {
 };
 
 
-export {rollDigitalPrinting}
+export {flexoPrinting}

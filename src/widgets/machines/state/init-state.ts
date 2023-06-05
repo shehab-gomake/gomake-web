@@ -33,8 +33,18 @@ const initState: Record<string, Record<string, any>> = {
             coatingUnit: false,
             basicsColors: 1,
             varnish: false
-        }
+        },
     },
-
+    [ECategoryId.FLEXO_PRINTING]: {
+        category: ECategoryId.FLEXO_PRINTING,
+        price: {price: 0, currency: 0},
+        attributes: {
+            resolution: 0,
+            doubleHead: false,
+            coatingUnit: false,
+            basicsColors: 1,
+            varnish: false
+        }
+    }
 }
 export {initState};
