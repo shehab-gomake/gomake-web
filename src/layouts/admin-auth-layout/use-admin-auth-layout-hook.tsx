@@ -195,15 +195,20 @@ const useAuthLayoutHook = () => {
         isList: true,
         list: [
           {
-            key: "add",
-            title: t("tabs.addSales"),
-            path: "/sales/add",
+            key: "quote",
+            title: t("sales.quote.title"),
+            path: "/admin/sales/quote",
           },
-          {
-            key: "list",
-            title: t("tabs.listSales"),
-            path: "/sales/list",
-          },
+          // {
+          //   key: "add",
+          //   title: t("tabs.addSales"),
+          //   path: "/sales/add",
+          // },
+          // {
+          //   key: "list",
+          //   title: t("tabs.listSales"),
+          //   path: "/sales/list",
+          // },
         ],
         icon: () => {
           return <SalesIcon />;

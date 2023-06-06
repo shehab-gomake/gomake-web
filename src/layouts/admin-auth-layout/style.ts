@@ -34,12 +34,11 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
       },
       rightContainer: {
         backgroundColor: "#FDFDFD",
-        // width: convertWidthToVW(1468 - 281),
         width: "100%",
         display: "flex",
         flexDirection: "column" as "column",
         padding: convertWidthToVW(20),
-        overflowY: "scroll" as "scroll",
+
         marginBottom: 20,
       },
       headerContainer: {
@@ -51,9 +50,10 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         width: "100%",
       },
       bodyContainer: {
-        height: convertHeightToVH(1024 - 101),
+        // height: convertHeightToVH(1024 - 101),
         display: "flex",
         flexDirection: "column" as "column",
+        overflowY: "scroll" as "scroll",
       },
       poweredContainer: {
         display: "flex",
