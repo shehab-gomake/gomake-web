@@ -24,7 +24,7 @@ const AddressWidget = ({
 }: IProps) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
-  const mockData = [1, 2, 3];
+  const mockData = [1];
   const [isAddNewContactWidget, setIsAddNewContactWidget] = useState(false);
 
   return (

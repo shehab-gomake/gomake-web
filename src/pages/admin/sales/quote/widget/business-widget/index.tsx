@@ -2,6 +2,8 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { PlusIcon } from "@/icons";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { quoteState } from "../../store/quote";
 interface IProps {
   isBusinessCode?: boolean;
   isBusinessName?: boolean;
@@ -14,6 +16,7 @@ const BusinessWidget = ({
   isPurchaseNumber = true,
   isAgent = true,
 }: IProps) => {
+  const quoteStateVal = useRecoilValue<any>(quoteState);
   const { clasess } = useStyle();
   const { t } = useTranslation();
   return (
@@ -36,9 +39,10 @@ const BusinessWidget = ({
             <PlusIcon />
           </div>
           <GoMakeAutoComplate
-            options={["A", "B", "C", "D", "E", "F"]}
+            options={quoteStateVal?.customersListValue}
             style={clasess.autoComplateStyle}
             placeholder={t("sales.quote.businessName")}
+            getOptionLabel={(item) => item?.name}
           />
         </div>
       )}

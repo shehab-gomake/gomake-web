@@ -10,11 +10,31 @@ import { ContactWidget } from "./widget/contact-widget";
 import { AddressWidget } from "./widget/address-widget";
 import { CustomTableWidget } from "./widget/custom-table-widget";
 import { TotalPriceAndVatWidit } from "./widget/total-price-and-vat";
+import { quoteState } from "./store/quote";
+import { useSetRecoilState } from "recoil";
+import { useEffect, useRef, useState } from "react";
+import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 
 export default function Quote() {
   const { clasess } = useStyle();
-  const { data, tableHeaders, tableRowPercent, t } = useQuote();
-
+  const setQuoteState = useSetRecoilState<any>(quoteState);
+  const [selectDate, setSelectDate] = useState("");
+  console.log("selectDate", selectDate);
+  const dateRef = useRef(null);
+  const handleClickSelectDate = () => {
+    dateRef.current.showPicker();
+  };
+  const { data, tableHeaders, tableRowPercent, customersListValue, t } =
+    useQuote();
+  useEffect(() => {
+    setQuoteState({
+      data,
+      tableHeaders,
+      tableRowPercent,
+      customersListValue,
+      t,
+    });
+  }, [data, tableHeaders, tableRowPercent, customersListValue, t]);
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
@@ -25,9 +45,26 @@ export default function Quote() {
             marginTop={1}
           />
           <div style={clasess.rightSideHeaderContainer}>
-            <div style={clasess.deleverdDate}>
-              {t("sales.quote.deliverOn")} 3/5/2023
+            <div style={clasess.deleverdDate} onClick={handleClickSelectDate}>
+              {t("sales.quote.deliverOn")}{" "}
+              {selectDate ? DateFormatterDDMMYYYY(selectDate) : "select dae"}
+              <div style={clasess.datePickerContainer}>
+                <input
+                  type="datetime-local"
+                  onChange={(e) => setSelectDate(e.target.value)}
+                  ref={dateRef}
+                  hidden
+                  // style={{
+                  //   display: "flex",
+                  //   position: "absolute",
+                  //   top: 0,
+                  //   right: 20,
+                  // }}
+                  // style={clasess.datePickerContainer}
+                />
+              </div>
             </div>
+
             <div style={clasess.uploadContainer}>
               <UploadIcon />
               <div style={clasess.uploadTextStyle}>

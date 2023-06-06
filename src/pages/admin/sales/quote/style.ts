@@ -17,6 +17,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
+        position: "relative" as "relative",
       },
       headerContainer: {
         display: "flex",
@@ -60,8 +61,17 @@ const useStyle = () => {
         marginTop: 20,
       },
       deleverdDate: {
+        // display: "flex",
+        position: "relative" as "relative",
         ...FONT_FAMILY.Lexend(500, 14),
         color: secondColor(500),
+        cursor: "pointer",
+      },
+      datePickerContainer: {
+        // display: "flex",
+        position: "absolute" as "absolute",
+        top: 0,
+        right: 20,
       },
       tableContainer: {
         display: "flex",
