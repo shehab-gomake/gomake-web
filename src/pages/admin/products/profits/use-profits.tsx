@@ -109,6 +109,7 @@ const useProfits = () => {
     setPricingListRowState,
     setOpenAddNewPricingStepRow,
     onCloseAddQuantityModal,
+    selectTestDataVal,
   });
 
   const {

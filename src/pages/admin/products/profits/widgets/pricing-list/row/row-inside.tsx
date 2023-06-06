@@ -2,6 +2,7 @@ import { GomakeTextInput } from "@/components";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { editPriceListState } from "../../../store/edit-price-list";
+import { useClickAway } from "@uidotdev/usehooks";
 
 const RowInside = ({
   index,
@@ -22,6 +23,16 @@ const RowInside = ({
     }
     setUpdateTrigger(false);
   }, [updateTrigger]);
+
+  const ref = useClickAway(() => {
+    setIsUpdate(false);
+    setEditPriceListState({
+      ...editPriceListStateValue,
+      isEdit: false,
+    });
+    setUpdateTrigger(true);
+  });
+
   return (
     <div
       key={`row_table_${index}`}
@@ -35,12 +46,14 @@ const RowInside = ({
     >
       {isUpdate ? (
         <div
+          ref={ref}
           style={{
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-start",
             alignItems: "center",
             width: "100%",
+
             // gap: 100,
           }}
         >
@@ -55,7 +68,6 @@ const RowInside = ({
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   setIsUpdate(false);
-
                   setEditPriceListState({
                     ...editPriceListStateValue,
                     isEdit: false,
@@ -71,37 +83,6 @@ const RowInside = ({
                     [entry[0]]: e.target.value,
                   },
                 });
-                // if (entry[0] === "totalPrice") {
-                //   const profit = editPriceListStateValue.state.profit / 100;
-                //   setEditPriceListState({
-                //     ...editPriceListStateValue,
-                //     state: {
-                //       ...editPriceListStateValue.state,
-                //       totalPrice: e.target.value,
-                //       profit:
-                //         (e.target.value / editPriceListStateValue.state.cost -
-                //           1) *
-                //         100,
-                //     },
-                //   });
-                // }
-
-                // if (entry[0] === "unitPrice") {
-                //   let unitPrice = e.target.value;
-                //   const totalPrice =
-                //     unitPrice * editPriceListStateValue.state.quantity;
-                //   setEditPriceListState({
-                //     ...editPriceListStateValue,
-                //     state: {
-                //       ...editPriceListStateValue.state,
-                //       unitPrice,
-                //       totalPrice,
-                //       profit:
-                //         (totalPrice / editPriceListStateValue.state.cost - 1) *
-                //         100,
-                //     },
-                //   });
-                // }
               }}
               autoFocus={true}
             />
@@ -114,6 +95,7 @@ const RowInside = ({
               entry[0] !== "unitPrice" &&
               entry[0] !== "totalPrice" &&
               entry[0] !== "cost" &&
+              entry[0] !== "quantity" &&
               editPriceListStateValue.isEdit !== true
             ) {
               setEditPriceListState({

@@ -18,6 +18,7 @@ const useProfitsProfitsFunction = ({
   setOpenAddNewPricingStepRow,
   onCloseAddQuantityModal,
   actionProfitRowsNew,
+  selectTestDataVal,
 }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -113,6 +114,7 @@ const useProfitsProfitsFunction = ({
         `/v1/printhouse-config/profits/add-action-profit-row`,
         {
           actionId: selectedAction?.id,
+          productId: productTest.id,
           // size: pricingListRowState?.height * pricingListRowState?.width,
           ...pricingListRowState,
         }
@@ -147,6 +149,7 @@ const useProfitsProfitsFunction = ({
     actionProfitRowsNew,
     productTest,
     actionProfitPricingTableRows,
+    selectTestDataVal,
   ]);
 
   const onChangeAddPricingListRow = useCallback(
