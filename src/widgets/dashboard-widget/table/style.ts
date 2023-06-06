@@ -3,7 +3,7 @@ import {FONT_FAMILY} from "@/utils/font-family";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-    const {theme, primaryColor, errorColor} = useGomakeTheme();
+    const {theme, primaryColor, warningColor} = useGomakeTheme();
     const BORDER = '0.1px solid #CECECE';
     const BORDER_RADIUS = '16px';
     const classes = useMemo(() => {
@@ -107,7 +107,7 @@ const useStyle = () => {
                 padding: '0 5px 0 0',
             },
             lateMission: {
-                backgroundColor: errorColor(100)
+                backgroundColor: warningColor(100)
             }
 
         };
