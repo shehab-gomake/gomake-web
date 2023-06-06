@@ -28,6 +28,17 @@ const useStyle = () => {
         marginTop: 24,
         marginBottom: 7,
       },
+      titleQuateContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 15,
+      },
+      quoteNumberStyle: {
+        ...FONT_FAMILY.Lexend(600, 20),
+        color: primaryColor(500),
+      },
       rightSideHeaderContainer: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -61,17 +72,18 @@ const useStyle = () => {
         marginTop: 20,
       },
       deleverdDate: {
-        // display: "flex",
+        display: "flex",
         position: "relative" as "relative",
         ...FONT_FAMILY.Lexend(500, 14),
         color: secondColor(500),
         cursor: "pointer",
       },
       datePickerContainer: {
-        // display: "flex",
+        display: "flex",
         position: "absolute" as "absolute",
         top: 0,
-        right: 20,
+        right: 100,
+        visibility: "hidden" as "hidden",
       },
       tableContainer: {
         display: "flex",

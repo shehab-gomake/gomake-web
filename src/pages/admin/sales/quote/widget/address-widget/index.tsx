@@ -6,6 +6,8 @@ import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { AddAddressWidget } from "./add-address-widget";
+import { useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store";
 interface IProps {
   isAddressID?: boolean;
   isCity?: boolean;
@@ -24,12 +26,12 @@ const AddressWidget = ({
 }: IProps) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
-  const mockData = [1];
+  const quoteItemValue: any = useRecoilValue(quoteItemState);
   const [isAddNewContactWidget, setIsAddNewContactWidget] = useState(false);
 
   return (
     <>
-      {mockData?.map((item, index) => {
+      {quoteItemValue?.quoteAddresses?.map((item, index) => {
         return (
           <div style={clasess.mainContainer}>
             {isAddressID && (
@@ -95,7 +97,7 @@ const AddressWidget = ({
               <div style={clasess.fieldContainer}>
                 <div style={clasess.labelStyle} />
                 <div style={clasess.addDeleteContainer}>
-                  {index === mockData?.length - 1 ? (
+                  {index === quoteItemValue?.quoteAddresses?.length - 1 ? (
                     <div>
                       {!isAddNewContactWidget && (
                         <Tooltip title={t("sales.quote.addNewAddress")}>
@@ -109,7 +111,7 @@ const AddressWidget = ({
                     </div>
                   ) : null}
                   <div>
-                    {mockData?.length > 1 ? (
+                    {quoteItemValue?.quoteAddresses?.length > 1 ? (
                       <Tooltip title={t("sales.quote.removeContact")}>
                         <IconButton>
                           <RemoveIcon style={{ color: "#2E3092" }} />

@@ -2,8 +2,9 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { PlusIcon } from "@/icons";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { quoteState } from "../../store/quote";
+import { useRecoilValue } from "recoil";
+import { businessListsState, quoteItemState } from "@/store";
+import { useState } from "react";
 interface IProps {
   isBusinessCode?: boolean;
   isBusinessName?: boolean;
@@ -16,59 +17,76 @@ const BusinessWidget = ({
   isPurchaseNumber = true,
   isAgent = true,
 }: IProps) => {
-  const quoteStateVal = useRecoilValue<any>(quoteState);
+  const quoteItemValue: any = useRecoilValue(quoteItemState);
+  const customersListValue = useRecoilValue<any>(businessListsState);
+  const [selectBusiness, setSelectBusiness] = useState<any>({});
   const { clasess } = useStyle();
   const { t } = useTranslation();
   return (
-    <div style={clasess.mainContainer}>
-      {isBusinessCode && (
-        <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>{t("sales.quote.businessCode")}</div>
-          <GomakeTextInput
-            placeholder={t("sales.quote.businessCode")}
-            style={clasess.textInputStyle}
-          />
-        </div>
-      )}
-      {isBusinessName && (
-        <div style={clasess.fieldContainer}>
-          <div style={clasess.labelContainer}>
-            <div style={clasess.labelStyle}>
-              {t("sales.quote.businessName")}
+    <>
+      {quoteItemValue && (
+        <div style={clasess.mainContainer}>
+          {isBusinessCode && (
+            <div style={clasess.fieldContainer}>
+              <div style={clasess.labelStyle}>
+                {t("sales.quote.businessCode")}
+              </div>
+              <GomakeTextInput
+                placeholder={t("sales.quote.businessCode")}
+                style={clasess.textInputStyle}
+                // onChange={(e: any) => {
+                //   e.target.value;
+                // }}
+                //  defaultValue={selectBusiness?.code}
+                value={selectBusiness?.code}
+              />
             </div>
-            <PlusIcon />
-          </div>
-          <GoMakeAutoComplate
-            options={quoteStateVal?.customersListValue}
-            style={clasess.autoComplateStyle}
-            placeholder={t("sales.quote.businessName")}
-            getOptionLabel={(item) => item?.name}
-          />
-        </div>
-      )}
-      {isPurchaseNumber && (
-        <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>
-            {t("sales.quote.purchaseNumber")}
-          </div>
-          <GomakeTextInput
-            placeholder={t("sales.quote.purchaseNumber")}
-            style={clasess.textInputStyle}
-          />
-        </div>
-      )}
+          )}
+          {isBusinessName && (
+            <div style={clasess.fieldContainer}>
+              <div style={clasess.labelContainer}>
+                <div style={clasess.labelStyle}>
+                  {t("sales.quote.businessName")}
+                </div>
+                <PlusIcon />
+              </div>
+              <GoMakeAutoComplate
+                options={customersListValue}
+                style={clasess.autoComplateStyle}
+                placeholder={t("sales.quote.businessName")}
+                getOptionLabel={(item) => item?.name}
+                onChange={(e: any, item: any) => {
+                  setSelectBusiness(item);
+                }}
+              />
+            </div>
+          )}
+          {isPurchaseNumber && (
+            <div style={clasess.fieldContainer}>
+              <div style={clasess.labelStyle}>
+                {t("sales.quote.purchaseNumber")}
+              </div>
+              <GomakeTextInput
+                placeholder={t("sales.quote.purchaseNumber")}
+                style={clasess.textInputStyle}
+                value={quoteItemValue?.purchaseNumber}
+              />
+            </div>
+          )}
 
-      {isAgent && (
-        <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>{t("sales.quote.agent")}</div>
-          <GoMakeAutoComplate
-            options={["A", "B", "C", "D", "E", "F"]}
-            style={clasess.autoComplateStyle}
-            placeholder={t("sales.quote.agent")}
-          />
+          {isAgent && (
+            <div style={clasess.fieldContainer}>
+              <div style={clasess.labelStyle}>{t("sales.quote.agent")}</div>
+              <GoMakeAutoComplate
+                options={["A", "B", "C", "D", "E", "F"]}
+                style={clasess.autoComplateStyle}
+                placeholder={t("sales.quote.agent")}
+              />
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

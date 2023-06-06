@@ -6,6 +6,9 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useState } from "react";
 import { AddContactWidget } from "./add-contact-widget";
+import { useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store";
+
 interface IProps {
   isContactID?: boolean;
   isContactName?: boolean;
@@ -22,11 +25,12 @@ const ContactWidget = ({
 }: IProps) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
-  const mockData = [1];
+  const quoteItemValue: any = useRecoilValue(quoteItemState);
   const [isAddNewContactWidget, setIsAddNewContactWidget] = useState(false);
   return (
     <>
-      {mockData?.map((item, index) => {
+      {quoteItemValue?.quoteContacts?.map((item, index) => {
+        console.log("item", item);
         return (
           <div style={clasess.mainContainer}>
             {isContactID && (
@@ -49,6 +53,7 @@ const ContactWidget = ({
                 <GomakeTextInput
                   placeholder={t("sales.quote.contactName")}
                   style={clasess.textInputStyle}
+                  value={item?.contactName}
                 />
               </div>
             )}
@@ -60,6 +65,7 @@ const ContactWidget = ({
                 <GomakeTextInput
                   placeholder={t("sales.quote.portable")}
                   style={clasess.textInputStyle}
+                  value={item?.contactPhone}
                 />
               </div>
             )}
@@ -70,6 +76,7 @@ const ContactWidget = ({
                 <GomakeTextInput
                   placeholder={t("sales.quote.email")}
                   style={clasess.textInputStyle}
+                  value={item?.contactMail}
                 />
               </div>
             )}
@@ -77,7 +84,7 @@ const ContactWidget = ({
               <div style={clasess.fieldContainer}>
                 <div style={clasess.labelStyle}></div>
                 <div style={clasess.addDeleteContainer}>
-                  {index === mockData?.length - 1 ? (
+                  {index === quoteItemValue?.quoteContacts?.length - 1 ? (
                     <div>
                       {!isAddNewContactWidget && (
                         <Tooltip title={t("sales.quote.addNewContact")}>
@@ -91,7 +98,7 @@ const ContactWidget = ({
                     </div>
                   ) : null}
                   <div>
-                    {mockData?.length > 1 ? (
+                    {quoteItemValue?.quoteContacts?.length > 1 ? (
                       <Tooltip title={t("sales.quote.removeContact")}>
                         <IconButton>
                           <RemoveIcon style={{ color: "#2E3092" }} />

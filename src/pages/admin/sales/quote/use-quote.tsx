@@ -1,12 +1,11 @@
-import { useGomakeAxios } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { MoreMenuWidget } from "./widget/more-circle";
 import { useQuoteGetData } from "./use-quote-get-data";
 
 const useQuote = () => {
-  const { callApi } = useGomakeAxios();
-  const { customersListValue } = useQuoteGetData();
   const { t } = useTranslation();
+  const {} = useQuoteGetData();
+
   const data = [
     {
       id: 1,
@@ -95,7 +94,12 @@ const useQuote = () => {
     "75px",
     "40px",
   ];
-  return { t, data, tableHeaders, tableRowPercent, customersListValue };
+  return {
+    t,
+    data,
+    tableHeaders,
+    tableRowPercent,
+  };
 };
 
 export { useQuote };

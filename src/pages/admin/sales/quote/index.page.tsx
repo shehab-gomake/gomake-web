@@ -11,59 +11,56 @@ import { AddressWidget } from "./widget/address-widget";
 import { CustomTableWidget } from "./widget/custom-table-widget";
 import { TotalPriceAndVatWidit } from "./widget/total-price-and-vat";
 import { quoteState } from "./store/quote";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useEffect, useRef, useState } from "react";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
+import { quoteItemState } from "@/store";
 
 export default function Quote() {
   const { clasess } = useStyle();
   const setQuoteState = useSetRecoilState<any>(quoteState);
-  const [selectDate, setSelectDate] = useState("");
-  console.log("selectDate", selectDate);
+  const quoteItemValue: any = useRecoilValue(quoteItemState);
+
+  const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
   const dateRef = useRef(null);
   const handleClickSelectDate = () => {
-    dateRef.current.showPicker();
+    dateRef?.current?.showPicker();
   };
-  const { data, tableHeaders, tableRowPercent, customersListValue, t } =
-    useQuote();
+  const { t, data, tableHeaders, tableRowPercent } = useQuote();
   useEffect(() => {
     setQuoteState({
+      t,
       data,
       tableHeaders,
       tableRowPercent,
-      customersListValue,
-      t,
     });
-  }, [data, tableHeaders, tableRowPercent, customersListValue, t]);
+  }, [t, data, tableHeaders, tableRowPercent]);
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
         <div style={clasess.headerContainer}>
-          <HeaderTitle
-            title={t("sales.quote.title")}
-            marginBottom={1}
-            marginTop={1}
-          />
+          <div style={clasess.titleQuateContainer}>
+            <HeaderTitle
+              title={t("sales.quote.title")}
+              marginBottom={1}
+              marginTop={1}
+            />
+            <div style={clasess.quoteNumberStyle}>{quoteItemValue?.number}</div>
+          </div>
           <div style={clasess.rightSideHeaderContainer}>
-            <div style={clasess.deleverdDate} onClick={handleClickSelectDate}>
-              {t("sales.quote.deliverOn")}{" "}
-              {selectDate ? DateFormatterDDMMYYYY(selectDate) : "select dae"}
-              <div style={clasess.datePickerContainer}>
-                <input
-                  type="datetime-local"
-                  onChange={(e) => setSelectDate(e.target.value)}
-                  ref={dateRef}
-                  hidden
-                  // style={{
-                  //   display: "flex",
-                  //   position: "absolute",
-                  //   top: 0,
-                  //   right: 20,
-                  // }}
-                  // style={clasess.datePickerContainer}
-                />
+            {quoteItemValue && (
+              <div style={clasess.deleverdDate} onClick={handleClickSelectDate}>
+                {t("sales.quote.deliverOn")}{" "}
+                {selectDate ? DateFormatterDDMMYYYY(selectDate) : "select dae"}
+                <div style={clasess.datePickerContainer}>
+                  <input
+                    type="datetime-local"
+                    onChange={(e) => setSelectDate(e.target.value)}
+                    ref={dateRef}
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             <div style={clasess.uploadContainer}>
               <UploadIcon />

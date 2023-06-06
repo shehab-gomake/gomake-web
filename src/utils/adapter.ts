@@ -11,10 +11,11 @@ export const leftRightAdapter = (dir: string, size: number) => {
 export const DateFormatterDDMMYYYY = (date: string) => {
   if (date) {
     let myDate = date?.split("T")[0];
-    let myTime = date?.split("T")[1];
+    let hours = date?.split("T")[1]?.split(":")[0];
+    let minutes = date?.split("T")[1]?.split(":")[1];
     let day = myDate?.split("-")[2];
     let month = myDate?.split("-")[1];
     let year = myDate?.split("-")[0];
-    return `${day}/${month}/${year} :${myTime}`;
+    return `${day}/${month}/${year} : ${hours}:${minutes}`;
   }
 };
