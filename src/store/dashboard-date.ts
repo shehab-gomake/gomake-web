@@ -18,7 +18,7 @@ const dashboardDateState = atom<{dates: IDateRange; action: DashboardActions}>({
             startDate: undefined,
             endDate: TODAY_DATE_RANGE.startDate
         },
-        action: DashboardActions.ALL_BOARDS_MISSIONS
+        action: DashboardActions.LATE_TODAY_BOARDS_MISSIONS
     }, // default value (aka initial value)
 });
 

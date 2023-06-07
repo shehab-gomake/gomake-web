@@ -25,11 +25,6 @@ const DashboardDates = ({children}: IDashboardDates) => {
         <div style={classes.container}>
             <div style={classes.datesContainer}>
                 {
-                    action === DashboardActions.ALL_BOARDS_MISSIONS ? <GomakePrimaryButton
-                            style={classes.activeButton}>{t('dashboard-widget.all')}</GomakePrimaryButton> :
-                        <Button variant={'outlined'} onClick={setAllBoardsMissions} style={classes.button}>{t('dashboard-widget.all')}</Button>
-                }
-                {
                     action === DashboardActions.LATE_TODAY_BOARDS_MISSIONS ? <GomakePrimaryButton
                             style={classes.activeButton}>{t('dashboard-widget.today') + ' & ' + t('dashboard-widget.lateMissions') }</GomakePrimaryButton> :
                 <Button variant={'outlined'} onClick={setLateToday} style={classes.button}>{t('dashboard-widget.today') + ' & ' + t('dashboard-widget.lateMissions') }</Button>
@@ -50,6 +45,11 @@ const DashboardDates = ({children}: IDashboardDates) => {
                 {
                     <LateMissionsButton onClick={setLateBoardsMissions}
                                         selected={action === DashboardActions.LATE_BOARDS_MISSIONS}>{t('dashboard-widget.lateMissions')}</LateMissionsButton>
+                }
+                {
+                    action === DashboardActions.ALL_BOARDS_MISSIONS ? <GomakePrimaryButton
+                            style={classes.activeButton}>{t('dashboard-widget.all')}</GomakePrimaryButton> :
+                        <Button variant={'outlined'} onClick={setAllBoardsMissions} style={classes.button}>{t('dashboard-widget.all')}</Button>
                 }
                 <GoMakeDatepicker/>
 
