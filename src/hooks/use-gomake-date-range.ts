@@ -1,5 +1,5 @@
 import {useRecoilValue, useSetRecoilState} from "recoil";
-import {dashboardDateState} from "@/store";
+import {DashboardActions, dashboardDateState} from "@/store";
 import {useCallback} from "react";
 import {IDateRange} from "@/shared";
 import {dateStringFormat, TODAY_DATE_RANGE, TOMORROW_DATE_RANGE} from "@/shared/constant";
@@ -8,73 +8,85 @@ import {useTranslation} from "react-i18next";
 
 const useGomakeDateRange = () => {
     const {t} = useTranslation();
-    const date = useRecoilValue(dashboardDateState);
+    const {dates, action} = useRecoilValue(dashboardDateState);
     const setDate = useSetRecoilState(dashboardDateState);
 
-    const newDateSelected = useCallback((dateRange: IDateRange) => {
+    const newDateSelected = (dateRange: IDateRange) => {
         if (dateRange.endDate) {
-            setDate({...dateRange, endDate: endOfDay(dateRange.endDate)});
+            dateRange.endDate = endOfDay(dateRange.endDate)
+            if (dateRange === TODAY_DATE_RANGE) {
+                setTodayDateRange();
+                return;
+            }
+            if (dateRange === TOMORROW_DATE_RANGE) {
+                setTomorrowDateRange();
+                return;
+            }
+            setDate({
+                dates: {...dateRange, endDate: endOfDay(dateRange.endDate)},
+                action: DashboardActions.DATE_RANGE_BOARDS
+            });
         }
-    }, []);
-
-    const setTodayDateRange = useCallback(() => {
-        newDateSelected(TODAY_DATE_RANGE);
-    }, []);
-
-    const setTomorrowDateRange = useCallback(() => {
-        newDateSelected(TOMORROW_DATE_RANGE);
-    }, []);
-
-    const setNullDate = useCallback(() => {
-        setDate({startDate: undefined, endDate: undefined})
-    }, [])
-
-    const setLateToday = () => {
-        setDate({startDate: undefined, endDate: TODAY_DATE_RANGE.startDate});
     }
 
-    const isNullDate = useCallback(() => {
-        return date.endDate === undefined && date.startDate === undefined
-    }, [date]);
+    const setTodayDateRange = () => {
+        setDate({dates: TODAY_DATE_RANGE, action: DashboardActions.TODAY_BOARDS_MISSIONS});
+    }
 
-    const isToday = useCallback(() => {
-        return TODAY_DATE_RANGE?.startDate?.getTime() === date?.startDate?.getTime() && TODAY_DATE_RANGE.endDate?.getTime() === date?.endDate?.getTime()
-    }, [date]);
+    const setTomorrowDateRange = () => {
+        setDate({dates: TOMORROW_DATE_RANGE, action: DashboardActions.TOMORROW_BOARDS_MISSIONS});
+    }
 
-    const isTomorrow = useCallback(() => {
-        return TOMORROW_DATE_RANGE?.startDate?.getTime() === date?.startDate?.getTime() && TOMORROW_DATE_RANGE.endDate?.getTime() === date.endDate?.getTime()
-    }, [date]);
+    const setLateBoardsMissions = () => {
+        setDate({
+            dates: {startDate: undefined, endDate: undefined},
+            action: DashboardActions.LATE_BOARDS_MISSIONS
+        })
+    }
 
-    const isLateToday = useCallback(() => {
-        return date.endDate === TODAY_DATE_RANGE.startDate && date.startDate === undefined
-    }, [date]);
+    const setAllBoardsMissions = () => {
+        setDate({
+            dates: {startDate: undefined, endDate: undefined},
+            action: DashboardActions.ALL_BOARDS_MISSIONS
+        })
+    }
+
+    const setLateToday = () => {
+        setDate({
+            dates: {startDate: undefined, endDate: undefined},
+            action: DashboardActions.LATE_TODAY_BOARDS_MISSIONS
+        });
+    }
 
     const selectedDateText = useCallback(() => {
-        if (isToday()) {
-            return t('dashboard-widget.today') + ' ' + t('dashboard-widget.tasks');
+        switch (action) {
+            case DashboardActions.TODAY_BOARDS_MISSIONS:
+                return t('dashboard-widget.today') + ' ' + t('dashboard-widget.tasks');
+            case DashboardActions.TOMORROW_BOARDS_MISSIONS:
+                return t('dashboard-widget.tomorrow') + ' ' + t('dashboard-widget.tasks');
+            case DashboardActions.LATE_BOARDS_MISSIONS:
+                return t('dashboard-widget.tasks') + ' ' + t('dashboard-widget.lateMissions')
+            case DashboardActions.LATE_TODAY_BOARDS_MISSIONS:
+                return t('dashboard-widget.tasks') + ' ' + t('dashboard-widget.today') + ' & ' + t('dashboard-widget.lateMissions')
+            case DashboardActions.ALL_BOARDS_MISSIONS:
+                return t('dashboard-widget.allTasks');
+            case DashboardActions.DATE_RANGE_BOARDS:
+                return dates.endDate && dates.startDate && dateStringFormat(dates.startDate) + ' - ' + dateStringFormat(dates.endDate) + ' ' + t('dashboard-widget.tasks');
+            default:
+                return ''
         }
-        if (isTomorrow()) {
-            return t('dashboard-widget.tomorrow') + ' ' + t('dashboard-widget.tasks');
-        }
+    }, [dates, action])
 
-        if (date.startDate === undefined && date.endDate === undefined) {
-            return t('dashboard-widget.tasks') + ' ' + t('dashboard-widget.lateMissions')
-        }
-
-        return date.endDate && date.startDate && dateStringFormat(date.startDate) + ' - ' + dateStringFormat(date.endDate) + ' ' + t('dashboard-widget.tasks');
-    }, [date])
     return {
         newDateSelected,
-        date,
+        dates,
         setTodayDateRange,
         setTomorrowDateRange,
-        isToday,
-        isTomorrow,
-        isNullDate,
         selectedDateText,
-        setNullDate,
+        setLateBoardsMissions,
         setLateToday,
-        isLateToday
+        action,
+        setAllBoardsMissions
     };
 }
 

@@ -1,12 +1,8 @@
-import {
-    IBoardMissions,
-    IDashboardStatistic,
-    IDashboardWidget,
-} from "@/widgets/dashboard-widget/interfaces";
+import {IBoardMissions, IDashboardStatistic, IDashboardWidget,} from "@/widgets/dashboard-widget/interfaces";
 import {useStyle} from "@/widgets/dashboard-widget/style";
 import {ChangeEvent, useCallback, useEffect, useState} from "react";
 import {Cards} from "@/widgets/dashboard-widget/cards/cards";
-import {IMachine} from "@/shared/interfaces";
+import {IDateRange, IMachine} from "@/shared/interfaces";
 import {BoardMissionsTable} from "@/widgets/dashboard-widget/table";
 import {DashboardDates} from "@/widgets/dashboard-widget/dates/dates";
 import {useGomakeDateRange, useGomakeMachines} from "@/hooks";
@@ -22,6 +18,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import Button from "@mui/material/Button";
 import {useDashboardLogout} from "@/hooks/use-dashboard-logout";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import {DashboardActions} from "@/store";
 
 const DashboardWidget = ({}: IDashboardWidget) => {
     const INTERVAL_TIMEOUT = 2 * 60 * 1000;
@@ -30,7 +27,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
     const selectedClient = useRecoilValue(selectedClientIdState);
     const clients = useRecoilValue(clientsState);
     const {classes} = useStyle();
-    const {date, isNullDate, isLateToday} = useGomakeDateRange();
+    const {dates, action} = useGomakeDateRange();
     const {t} = useTranslation();
     const {secondColor} = useGomakeTheme();
     const {logout} = useDashboardLogout();
@@ -41,18 +38,29 @@ const DashboardWidget = ({}: IDashboardWidget) => {
         boardsMissions,
         getFilteredBoardsMissions,
         getLateBoardsMissions,
-        getLateTodayBoardsMissions
+        getLateTodayBoardsMissions,
+        getAllBoardsMissions
     } = useBoardMissions();
 
-    useEffect(() => {
-        if (isNullDate()) {
-            getLateBoardsMissions().then();
-        } else if (isLateToday()) {
-            getLateTodayBoardsMissions().then();
-        } else if (!!date.startDate && !!date.endDate) {
-            getBoardsMissionsByDateRange(date).then();
+    const actions = (action: DashboardActions, dateRange: IDateRange) => {
+        switch (action) {
+            case DashboardActions.LATE_TODAY_BOARDS_MISSIONS:
+                getLateTodayBoardsMissions().then();
+                break;
+            case DashboardActions.LATE_BOARDS_MISSIONS:
+                getLateBoardsMissions().then();
+                break;
+            case DashboardActions.ALL_BOARDS_MISSIONS:
+                getAllBoardsMissions().then();
+                break;
+            default:
+                getBoardsMissionsByDateRange(dateRange).then();
         }
-    }, [date])
+    }
+
+    useEffect(() => {
+        actions(action, dates);
+    }, [action, dates])
 
     useEffect(() => {
         addMachineProgress(machinesProgress);
@@ -60,16 +68,10 @@ const DashboardWidget = ({}: IDashboardWidget) => {
 
     useEffect(() => {
         const interval = setInterval(async () => {
-            if (date.startDate && date.endDate) {
-                await getBoardsMissionsByDateRange(date);
-            } else if (isLateToday()) {
-                await getLateTodayBoardsMissions();
-            } else if (isNullDate()) {
-                await getLateBoardsMissions();
-            }
+            actions(action, dates);
         }, INTERVAL_TIMEOUT);
         return () => clearInterval(interval);
-    }, [date]);
+    }, [dates, action]);
 
     const handelSearchValueChange = (event: ChangeEvent<HTMLInputElement>) => {
         const {value} = event.target;

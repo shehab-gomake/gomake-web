@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import {useGomakeDateRange} from "@/hooks";
 import {useTranslation} from "react-i18next";
 import {LateMissionsButton} from "@/widgets/dashboard-widget/components/late-missions-button";
+import {DashboardActions} from "@/store";
 
 
 const DashboardDates = ({children}: IDashboardDates) => {
@@ -15,37 +16,40 @@ const DashboardDates = ({children}: IDashboardDates) => {
     const {
         setTodayDateRange,
         setTomorrowDateRange,
-        isTomorrow,
-        isToday,
-        setNullDate,
-        isNullDate,
-        isLateToday,
-        setLateToday
+        setLateToday,
+        action,
+        setLateBoardsMissions,
+        setAllBoardsMissions
     } = useGomakeDateRange();
     return (
         <div style={classes.container}>
             <div style={classes.datesContainer}>
                 {
-                    isLateToday() ? <GomakePrimaryButton
+                    action === DashboardActions.ALL_BOARDS_MISSIONS ? <GomakePrimaryButton
+                            style={classes.activeButton}>{t('dashboard-widget.all')}</GomakePrimaryButton> :
+                        <Button variant={'outlined'} onClick={setAllBoardsMissions} style={classes.button}>{t('dashboard-widget.all')}</Button>
+                }
+                {
+                    action === DashboardActions.LATE_TODAY_BOARDS_MISSIONS ? <GomakePrimaryButton
                             style={classes.activeButton}>{t('dashboard-widget.today') + ' & ' + t('dashboard-widget.lateMissions') }</GomakePrimaryButton> :
                 <Button variant={'outlined'} onClick={setLateToday} style={classes.button}>{t('dashboard-widget.today') + ' & ' + t('dashboard-widget.lateMissions') }</Button>
                 }
                 {
-                    isToday() ? <GomakePrimaryButton
+                    action === DashboardActions.TODAY_BOARDS_MISSIONS ? <GomakePrimaryButton
                             style={classes.activeButton}>{t('dashboard-widget.today')}</GomakePrimaryButton> :
                         <Button variant={'outlined'} onClick={() => setTodayDateRange()}
                                 style={classes.button}>{t('dashboard-widget.today')}</Button>
                 }
                 {
-                    isTomorrow() ?
+                    action === DashboardActions.TOMORROW_BOARDS_MISSIONS ?
                         <GomakePrimaryButton
                             style={classes.activeButton}>{t('dashboard-widget.tomorrow')}</GomakePrimaryButton> :
                         <Button variant={'outlined'} onClick={() => setTomorrowDateRange()}
                                 style={classes.button}>{t('dashboard-widget.tomorrow')}</Button>
                 }
                 {
-                    <LateMissionsButton onClick={setNullDate}
-                                        selected={isNullDate()}>{t('dashboard-widget.lateMissions')}</LateMissionsButton>
+                    <LateMissionsButton onClick={setLateBoardsMissions}
+                                        selected={action === DashboardActions.LATE_BOARDS_MISSIONS}>{t('dashboard-widget.lateMissions')}</LateMissionsButton>
                 }
                 <GoMakeDatepicker/>
 
