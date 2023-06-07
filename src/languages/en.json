@@ -47,7 +47,8 @@
     "shortWaiting": "Waiting",
     "lateMissions": "Late",
     "client": "Client",
-    "logout": "Logout"
+    "logout": "Logout",
+    "allTasks": "All tasks"
   },
   "datepicker-component": {
     "chooseDate": "Choose Date",

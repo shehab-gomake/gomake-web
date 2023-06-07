@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4e704d5e-98f6-4056-a2db-43f56f0ddccf" name="Changes" comment="split order current station">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" afterDir="false" />
+    <list default="true" id="4e704d5e-98f6-4056-a2db-43f56f0ddccf" name="Changes" comment="fix get all boards missions - button place">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/style.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/style.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,7 +161,21 @@
       <option name="project" value="LOCAL‎" />
       <updated>1685616194625</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL‎-00013" summary="get all boards missions">
+      <created>1686142254591</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL‎-00013" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1686142254591</updated>
+    </task>
+    <task id="LOCAL‎-00014" summary="fix get all boards missions - button place">
+      <created>1686149071073</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL‎-00014" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1686149071073</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -193,6 +205,8 @@
     <MESSAGE value="fix dashboard card value center" />
     <MESSAGE value="split order item new design" />
     <MESSAGE value="split order current station" />
-    <option name="LAST_COMMIT_MESSAGE" value="split order current station" />
+    <MESSAGE value="get all boards missions" />
+    <MESSAGE value="fix get all boards missions - button place" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix get all boards missions - button place" />
   </component>
 </project>

@@ -3,6 +3,7 @@ import {IBoardMissions, IDashboardStatistic} from "@/widgets/dashboard-widget/in
 import {IDateRange, IMachine, IMachineProgress} from "@/shared";
 import {useGomakeAxios, useGomakeMachines} from "@/hooks";
 import {TODAY_DATE_RANGE} from "@/shared/constant";
+import {endOfDay} from "date-fns";
 
 const useBoardMissions = () => {
     const {machines, getCheckedMachines} = useGomakeMachines();
@@ -40,6 +41,22 @@ const useBoardMissions = () => {
         setStatistics(res?.data?.statistics);
 
     }
+    const getAllBoardsMissions = async () => {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const day = date.getDate();
+        const nextYearDate = new Date(year + 1, month, day);
+        const res = await callApi("GET", '/today-late-boardMissions', {
+            startDate: TODAY_DATE_RANGE.startDate?.toISOString(),
+            endDate: endOfDay(nextYearDate).toISOString()
+        }, true, true);
+        setBoardsMissions(res?.data?.boardsMissions);
+        setMachinesProgress(res?.data?.machinesProgress);
+        setStatistics(res?.data?.statistics);
+
+    }
+
 
     const updateBoardMissions = useCallback((boards: IBoardMissions[]) => {
         setBoardsMissions(boards);
@@ -105,7 +122,8 @@ const useBoardMissions = () => {
         machinesProgress,
         getFilteredBoardsMissions,
         boardsMissions,
-        getLateTodayBoardsMissions
+        getLateTodayBoardsMissions,
+        getAllBoardsMissions
     }
 }
 
