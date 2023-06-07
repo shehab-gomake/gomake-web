@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { IconButton, Tooltip } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
-import RemoveIcon from "@mui/icons-material/Remove";
 interface IProps {
   isContactID?: boolean;
   isContactName?: boolean;

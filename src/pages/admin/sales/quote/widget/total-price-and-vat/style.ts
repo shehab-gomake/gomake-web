@@ -56,6 +56,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         color: "#ED028C",
         cursor: "pointer",
+        width: "25%",
       },
       rightSideContainer: {
         display: "flex",

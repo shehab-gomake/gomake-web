@@ -20,21 +20,20 @@ export default function Quote() {
   const { clasess } = useStyle();
   const setQuoteState = useSetRecoilState<any>(quoteState);
   const quoteItemValue: any = useRecoilValue(quoteItemState);
-
   const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
   const dateRef = useRef(null);
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
-  const { t, data, tableHeaders, tableRowPercent } = useQuote();
+  const { t, tableHeaders, tableRowPercent } = useQuote();
   useEffect(() => {
     setQuoteState({
       t,
-      data,
+
       tableHeaders,
       tableRowPercent,
     });
-  }, [t, data, tableHeaders, tableRowPercent]);
+  }, [t, tableHeaders, tableRowPercent]);
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
@@ -80,7 +79,7 @@ export default function Quote() {
               tableHeaders={tableHeaders}
               headerWidth={tableRowPercent}
               tableRowPercent={tableRowPercent}
-              data={data}
+              data={quoteItemValue?.priceListItemsMapping}
             />
           </div>
         </div>

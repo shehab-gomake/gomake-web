@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { AddAddressWidget } from "./add-address-widget";
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
@@ -111,18 +111,13 @@ const AddressWidget = ({
                     </div>
                   ) : null}
                   <div>
-                    {quoteItemValue?.quoteAddresses?.length > 1 ? (
-                      <Tooltip title={t("sales.quote.removeContact")}>
-                        <IconButton>
-                          <RemoveIcon style={{ color: "#2E3092" }} />
-                        </IconButton>
-                      </Tooltip>
-                    ) : null}
+                    <Tooltip title={t("sales.quote.removeContact")}>
+                      <IconButton>
+                        <DeleteIcon style={{ color: "#2E3092" }} />
+                      </IconButton>
+                    </Tooltip>
                   </div>
                 </div>
-                {/* <div style={clasess.addBtnStyle}>
-                  {t("sales.quote.addNewAddress")}
-                </div> */}
               </div>
             )}
           </div>

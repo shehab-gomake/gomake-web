@@ -3,7 +3,8 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 import { useState } from "react";
 import { AddContactWidget } from "./add-contact-widget";
 import { useRecoilValue } from "recoil";
@@ -29,8 +30,7 @@ const ContactWidget = ({
   const [isAddNewContactWidget, setIsAddNewContactWidget] = useState(false);
   return (
     <>
-      {quoteItemValue?.quoteContacts?.map((item, index) => {
-        console.log("item", item);
+      {quoteItemValue?.quoteContacts?.map((item: any, index: number) => {
         return (
           <div style={clasess.mainContainer}>
             {isContactID && (
@@ -98,13 +98,11 @@ const ContactWidget = ({
                     </div>
                   ) : null}
                   <div>
-                    {quoteItemValue?.quoteContacts?.length > 1 ? (
-                      <Tooltip title={t("sales.quote.removeContact")}>
-                        <IconButton>
-                          <RemoveIcon style={{ color: "#2E3092" }} />
-                        </IconButton>
-                      </Tooltip>
-                    ) : null}
+                    <Tooltip title={t("sales.quote.removeContact")}>
+                      <IconButton>
+                        <DeleteIcon style={{ color: "#2E3092" }} />
+                      </IconButton>
+                    </Tooltip>
                   </div>
                 </div>
               </div>
