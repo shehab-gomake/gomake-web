@@ -3,13 +3,13 @@ import { convertHeightToVH } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = () => {
+const useStyle = ({ marginTop, marginBottom }) => {
   const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       container: {
-        marginTop: convertHeightToVH(40),
-        marginBottom: convertHeightToVH(50),
+        marginTop: marginTop ? marginTop : convertHeightToVH(40),
+        marginBottom: marginBottom ? marginBottom : convertHeightToVH(50),
       },
       titleStyle: {
         display: "flex",
@@ -17,7 +17,7 @@ const useStyle = () => {
         color: primaryColor(500),
       },
     };
-  }, []);
+  }, [marginTop, marginBottom]);
   return {
     clasess,
   };

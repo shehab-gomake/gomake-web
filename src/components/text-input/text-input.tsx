@@ -22,6 +22,7 @@ const StyledTextField = styled(TextField, {
     lineHeight: "21px",
     display: "flex",
     alignItems: "center",
+    boxShadow: "0px 1px 60px rgba(0, 0, 0, 0.08)",
     width: "100%",
     color: props.error
       ? `${props.errorColor(300)}`
@@ -33,18 +34,18 @@ const StyledTextField = styled(TextField, {
     "&:hover fieldset": {
       border: props.error
         ? `2px solid ${props.errorColor(300)}`
-        : `2px solid #B9B9D9`,
+        : `2px solid #FFFFFF`,
     },
     "& fieldset": {
       border: props.error
         ? `1px solid ${props.errorColor(300)}`
-        : `1px solid #B9B9D9`,
+        : `1px solid #FFFFFF`,
       boxSizing: "border-box",
       borderRadius: props?.style?.borderRadius || 4,
       width: "100%",
     },
     "&.Mui-focused fieldset": {
-      borderColor: props.error ? `${props.errorColor(300)}` : "#B9B9D9",
+      borderColor: props.error ? `${props.errorColor(300)}` : "#FFFFFF",
       borderRadius: props?.style?.borderRadius || 4,
       width: "100%",
     },

@@ -916,5 +916,32 @@
   },
   "deleteModal": {
     "deleteSupplier": "Are you sure to delete the supplier?"
+  },
+  "sales": {
+    "quote": {
+      "title": "Quote",
+      "deliverOn": "Deliver on",
+      "upload": "upload",
+      "businessCode": "Business code",
+      "businessName": "Business name",
+      "purchaseNumber": "Purchase number",
+      "agent": "Agent",
+      "contactID": "Contact ID",
+      "contactName": "Contact name",
+      "portable": "Portable",
+      "email": "Email",
+      "addressID": "Address ID",
+      "city": "City",
+      "street": "Street",
+      "entrance": "Entrance",
+      "apartment": "Apartment",
+      "addNewContact": "Add new contact",
+      "removeContact": "Remove contact",
+      "saveContact": "Save contact",
+      "closeContact": "Close",
+      "addNewAddress": "Add new Address",
+      "sortBy": "sort by",
+      "discountBy": "discount by"
+    }
   }
 }
