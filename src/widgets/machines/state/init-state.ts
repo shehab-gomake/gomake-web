@@ -45,6 +45,61 @@ const initState: Record<string, Record<string, any>> = {
             basicsColors: 1,
             varnish: false
         }
-    }
+    },
+    [ECategoryId.ROLL_WIDE_PRINTING]: {
+        category: ECategoryId.ROLL_WIDE_PRINTING,
+        price: {price: 0, currency: 0},
+        attributes: {
+            resolution: 0,
+            doubleHead: false,
+            coatingUnit: false,
+            basicsColors: 1,
+            varnish: false
+        }
+    },
+    [ECategoryId.FLATBED_WIDE_PRINTING]: {
+        category: ECategoryId.FLATBED_WIDE_PRINTING,
+        price: {price: 0, currency: 0},
+        attributes: {
+            resolution: 0,
+            doubleHead: false,
+            coatingUnit: false,
+            basicsColors: 1,
+            varnish: false
+        }
+    },
+    [ECategoryId.LAMINATION_MACHINE]: {
+        category: ECategoryId.LAMINATION_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {
+            resolution: 0,
+            doubleHead: false,
+            coatingUnit: false,
+            basicsColors: 1,
+            varnish: false
+        }
+    },
+    [ECategoryId.PUNCHING_MACHINE]: {
+        category: ECategoryId.PUNCHING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {
+            resolution: 0,
+            doubleHead: false,
+            coatingUnit: false,
+            basicsColors: 1,
+            varnish: false
+        }
+    },
+    [ECategoryId.ROUNDING_CORNERS_MACHINE]: {
+        category: ECategoryId.ROUNDING_CORNERS_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {
+            resolution: 0,
+            doubleHead: false,
+            coatingUnit: false,
+            basicsColors: 1,
+            varnish: false
+        }
+    },
 }
 export {initState};
