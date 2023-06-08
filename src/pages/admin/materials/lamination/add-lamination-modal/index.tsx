@@ -10,40 +10,37 @@ import {
   GomakeTextInput,
 } from "@/components";
 
-import { LaminationSizesMapping } from "./lamination-size-mapping";
-
+import { LaminationWeightsMapping } from "./lamination-size-mapping";
+import { materialLaminationState } from "../store/lamination";
 import { useStyle } from "./style";
-import { materialLaminationsState } from "../store/lamination";
 
 const AddLaminationModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialLaminationsStateValue = useRecoilValue<any>(
-    materialLaminationsState
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
   );
 
   return (
     <>
       <GoMakeModal
-        openModal={materialLaminationsStateValue?.openAddLaminationModal}
+        openModal={materialLaminationStateValue?.openAddLaminationModal}
         modalTitle={t("materials.lamination.admin.addNewLamination")}
-        onClose={materialLaminationsStateValue?.onCloseModalAdded}
+        onClose={materialLaminationStateValue?.onCloseModalAdded}
         insideStyle={clasess.insideStyle}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={clasess.firstSectionContainer}>
             <div>
               <div style={clasess.lableTextStyle}>
-                {t("materials.lamination.admin.categoryName")}
+                {t("materials.inputs.categoryName")}
               </div>
               <GomakeTextInput
-                placeholder={t("materials.lamination.admin.categoryName")}
+                placeholder={t("materials.inputs.categoryName")}
                 style={clasess.textInputStyle}
-                value={materialLaminationsStateValue?.categoryName}
+                value={materialLaminationStateValue?.categoryName}
                 onChange={(e: any) => {
-                  materialLaminationsStateValue?.setCategoryName(
-                    e.target.value
-                  );
+                  materialLaminationStateValue?.setCategoryName(e.target.value);
                 }}
               />
             </div>
@@ -58,16 +55,23 @@ const AddLaminationModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialLaminationsStateValue?.items];
+                    const temp = [...materialLaminationStateValue?.items];
                     temp.push({
                       code: "",
-                      fitToPrintType: "",
+                      width: "",
                       height: "",
                       name: "",
-                      width: "",
-                      laminationThicknesses: [],
+                      laminationThicknesses: [
+                        {
+                          code: "",
+                          thickness: "",
+                          defaultPrice: "",
+                          coldOrHot: "",
+                        },
+                      ],
+                      fitToPrintType: [],
                     });
-                    materialLaminationsStateValue?.setItems(temp);
+                    materialLaminationStateValue?.setItems(temp);
                   }}
                 >
                   <AddIcon />
@@ -78,29 +82,29 @@ const AddLaminationModal = () => {
               >
                 <IconButton
                   onClick={() => {
-                    const temp = [...materialLaminationsStateValue?.items];
+                    const temp = [...materialLaminationStateValue?.items];
                     temp.pop();
-                    materialLaminationsStateValue?.setItems(temp);
+                    materialLaminationStateValue?.setItems(temp);
                   }}
                 >
                   <RemoveIcon />
                 </IconButton>
               </Tooltip>
             </div>
-            {materialLaminationsStateValue?.items?.map(
+            {materialLaminationStateValue?.items?.map(
               (item: any, index: number) => {
                 return (
-                  <LaminationSizesMapping
-                    key={`LaminationSizesMapping_${index}`}
+                  <LaminationWeightsMapping
+                    key={`LaminationWeightsMapping_${index}`}
                     index={index}
                   />
                 );
               }
             )}
           </div>
-          <div style={clasess.addSheetBtnContainer}>
+          <div style={clasess.addLaminationBtnContainer}>
             <GomakePrimaryButton
-              onClick={materialLaminationsStateValue?.addNewSupplierLamination}
+              onClick={materialLaminationStateValue?.addNewSupplierLamination}
             >
               {t("materials.lamination.admin.addNewLamination")}
             </GomakePrimaryButton>

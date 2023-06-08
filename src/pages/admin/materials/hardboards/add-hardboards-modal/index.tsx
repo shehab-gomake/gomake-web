@@ -35,10 +35,10 @@ const AddLaminationModal = () => {
             <div style={{ display: "flex", gap: 25 }}>
               <div>
                 <div style={clasess.lableTextStyle}>
-                  {t("materials.hardboards.admin.categoryName")}
+                  {t("materials.inputs.categoryName")}
                 </div>
                 <GomakeTextInput
-                  placeholder={t("materials.hardboards.admin.categoryName")}
+                  placeholder={t("materials.inputs.categoryName")}
                   style={clasess.textInputStyle}
                   value={materialHardboardsStateValue?.categoryName}
                   onChange={(e: any) => {

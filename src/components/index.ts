@@ -7,3 +7,4 @@ export * from "./text-input-icon";
 export * from "./snackbar";
 export * from "./colored-cycle";
 export * from "./modal-deleted";
+export * from "./menu";

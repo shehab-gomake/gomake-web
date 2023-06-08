@@ -6,121 +6,136 @@ import { Table } from "@/widgets/table/table";
 import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 
-import { materialLaminationsState } from "./store/lamination";
+import { materialLaminationState } from "./store/lamination";
 import { HeaderFilter } from "./header-filter";
-import { useLaminations } from "./use-lamination";
+import { useLamination } from "./use-lamination";
 
-export default function Sheets() {
+export default function Lamination() {
   const { t } = useTranslation();
-  const setMaterialSheetsState = useSetRecoilState<any>(
-    materialLaminationsState
+  const setMaterialLaminationState = useSetRecoilState<any>(
+    materialLaminationState
   );
   const {
     headerTable,
-    allLaminations,
+    allLamination,
     openAddLaminationModal,
     items,
     categoryName,
     openUpdateLaminationModal,
     selectedEditItem,
-    isAddNewLaminationSizes,
+    isAddNewLaminationWights,
     openDeleteModal,
-    selectedLaminationSize,
+    selectedLaminationWeight,
     updateState,
-    onChangeUpdateStateSheetWeights,
+    isAddNewLaminationWightSize,
+    selectedLaminationWeightSize,
+    onChangeUpdateStateLaminationWeights,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
     addNewSupplierLamination,
-    changeItemsSheetSize,
+    changeItemsLaminationSize,
     setOpenUpdateLaminationModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewLaminationSizes,
+    setIsAddNewLaminationWights,
     addNewSheeWeightByCategoryName,
-    deleteLaminationSize,
-    deletelLaminationSizeThickness,
+    deleteLaminationweight,
+    deleteLaminationweightSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updateLaminationSize,
-    updateLaminationSizeThickness,
-  } = useLaminations();
+    updateLaminationweight,
+    updateLaminationWeightSizes,
+    setIsAddNewLaminationWightSize,
+    onClickOpenLaminationWeightSizeWidget,
+    addNewSheeWeightSizeByCategoryName,
+  } = useLamination();
 
   useEffect(() => {
-    setMaterialSheetsState({
+    setMaterialLaminationState({
       headerTable,
-      allLaminations,
+      allLamination,
       openAddLaminationModal,
       items,
       categoryName,
       openUpdateLaminationModal,
       selectedEditItem,
-      isAddNewLaminationSizes,
+      isAddNewLaminationWights,
       openDeleteModal,
-      selectedLaminationSize,
+      selectedLaminationWeight,
       updateState,
-      onChangeUpdateStateSheetWeights,
+      isAddNewLaminationWightSize,
+      selectedLaminationWeightSize,
+      onChangeUpdateStateLaminationWeights,
       onCloseModalAdded,
       onOpnModalAdded,
       changeItems,
       setItems,
       setCategoryName,
       addNewSupplierLamination,
-      changeItemsSheetSize,
+      changeItemsLaminationSize,
       setOpenUpdateLaminationModal,
       onCloseUpdateModal,
       onOpnUpdateModal,
-      setIsAddNewLaminationSizes,
+      setIsAddNewLaminationWights,
       addNewSheeWeightByCategoryName,
-      deleteLaminationSize,
-      deletelLaminationSizeThickness,
+      deleteLaminationweight,
+      deleteLaminationweightSize,
       setOpenDeleteModal,
       onCloseDeleteModal,
       onOpenDeleteModal,
-      updateLaminationSize,
-      updateLaminationSizeThickness,
+      updateLaminationweight,
+      updateLaminationWeightSizes,
+      setIsAddNewLaminationWightSize,
+      onClickOpenLaminationWeightSizeWidget,
+      addNewSheeWeightSizeByCategoryName,
     });
   }, [
     headerTable,
-    allLaminations,
+    allLamination,
     openAddLaminationModal,
     items,
     categoryName,
     openUpdateLaminationModal,
     selectedEditItem,
-    isAddNewLaminationSizes,
+    isAddNewLaminationWights,
     openDeleteModal,
-    selectedLaminationSize,
+    selectedLaminationWeight,
     updateState,
-    onChangeUpdateStateSheetWeights,
+    isAddNewLaminationWightSize,
+    selectedLaminationWeightSize,
+    onChangeUpdateStateLaminationWeights,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
     addNewSupplierLamination,
-    changeItemsSheetSize,
+    changeItemsLaminationSize,
     setOpenUpdateLaminationModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewLaminationSizes,
+    setIsAddNewLaminationWights,
     addNewSheeWeightByCategoryName,
-    deleteLaminationSize,
-    deletelLaminationSizeThickness,
+    deleteLaminationweight,
+    deleteLaminationweightSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updateLaminationSize,
-    updateLaminationSizeThickness,
+    updateLaminationweight,
+    updateLaminationWeightSizes,
+    setIsAddNewLaminationWightSize,
+    onClickOpenLaminationWeightSizeWidget,
+    addNewSheeWeightSizeByCategoryName,
   ]);
   return (
     <AdminAuthLayout>
-      <HeaderTitle title={t("materials.lamination.admin.subTitle")} />
+      <HeaderTitle title={t("materials.lamination.admin.title")} />
       <HeaderFilter />
-      <Table tableHeaders={headerTable} tableRows={allLaminations} />
+      <Table tableHeaders={headerTable} tableRows={allLamination} />
     </AdminAuthLayout>
   );
 }

@@ -10,7 +10,7 @@ const useHardboards = () => {
   const { t } = useTranslation();
   const headerTable = useMemo(
     () => [
-      t("materials.lamination.admin.categoryName"),
+      t("materials.inputs.categoryName"),
       t("materials.lamination.admin.settings"),
     ],
     []

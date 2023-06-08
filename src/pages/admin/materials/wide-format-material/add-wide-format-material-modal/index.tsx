@@ -37,10 +37,10 @@ const AddWideFormatMaterialModal = () => {
           <div style={clasess.firstSectionContainer}>
             <div>
               <div style={clasess.lableTextStyle}>
-                {t("materials.sheetPaper.admin.categoryName")}
+                {t("materials.inputs.categoryName")}
               </div>
               <GomakeTextInput
-                placeholder={t("materials.sheetPaper.admin.categoryName")}
+                placeholder={t("materials.inputs.categoryName")}
                 style={clasess.textInputStyle}
                 value={materialWideFormatMaterialStateValue?.categoryName}
                 onChange={(e: any) => {

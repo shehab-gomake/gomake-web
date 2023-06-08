@@ -15,11 +15,9 @@ const TubeSizeInputs = ({ index }) => {
     <>
       <div style={clasess.mainWaightsContainer}>
         <div>
-          <div style={clasess.lableTextStyle}>
-            {t("materials.plat.admin.code")}
-          </div>
+          <div style={clasess.lableTextStyle}>{t("materials.inputs.code")}</div>
           <GomakeTextInput
-            placeholder={t("materials.plat.admin.enterCode")}
+            placeholder={t("materials.inputs.enterCode")}
             style={clasess.textInputStyle}
             value={materialTubeStateValue?.items[index]["code"]}
             onChange={(e: any) => {
@@ -32,11 +30,9 @@ const TubeSizeInputs = ({ index }) => {
           />
         </div>
         <div>
-          <div style={clasess.lableTextStyle}>
-            {t("materials.plat.admin.name")}
-          </div>
+          <div style={clasess.lableTextStyle}>{t("materials.inputs.name")}</div>
           <GomakeTextInput
-            placeholder={t("materials.plat.admin.enterName")}
+            placeholder={t("materials.inputs.enterName")}
             style={clasess.textInputStyle}
             value={materialTubeStateValue?.items[index]["name"]}
             onChange={(e: any) => {
@@ -50,10 +46,10 @@ const TubeSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.tubes.admin.lenght")}
+            {t("materials.inputs.length")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.tubes.admin.enterLenght")}
+            placeholder={t("materials.inputs.enterLength")}
             style={clasess.textInputStyle}
             value={materialTubeStateValue?.items[index]["lenght"]}
             onChange={(e: any) => {
@@ -67,10 +63,10 @@ const TubeSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.tubes.admin.diameter")}
+            {t("materials.inputs.diameter")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.tubes.admin.enterDiameter")}
+            placeholder={t("materials.inputs.enterDiameter")}
             style={clasess.textInputStyle}
             value={materialTubeStateValue?.items[index]["diameter"]}
             onChange={(e: any) => {
@@ -84,10 +80,10 @@ const TubeSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.tubes.admin.weight")}
+            {t("materials.inputs.weight")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.tubes.admin.enterWeight")}
+            placeholder={t("materials.inputs.enterWeight")}
             style={clasess.textInputStyle}
             value={materialTubeStateValue?.items[index]["weight"]}
             onChange={(e: any) => {
@@ -101,10 +97,10 @@ const TubeSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.plat.admin.defaultPrice")}
+            {t("materials.inputs.defaultPrice")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.plat.admin.enterDefaultPrice")}
+            placeholder={t("materials.inputs.enterDefaultPrice")}
             style={clasess.textInputStyle}
             value={materialTubeStateValue?.items[index]["defaultPrice"]}
             onChange={(e: any) => {

@@ -21,7 +21,7 @@ const UpdatalHardboardModal = () => {
     <>
       <GoMakeModal
         openModal={materialHardboardsStateValue?.openUpdateHardboardModal}
-        modalTitle={`${t("materials.hardboards.admin.edit")} ${
+        modalTitle={`${t("materials.buttons.edit")} ${
           selectedItem?.categoryName
         } ${t("materials.hardboards.admin.hardboard")}`}
         onClose={materialHardboardsStateValue?.onCloseUpdateModal}
@@ -32,10 +32,10 @@ const UpdatalHardboardModal = () => {
             <div style={{ display: "flex", gap: 25 }}>
               <div>
                 <div style={clasess.lableTextStyle}>
-                  {t("materials.hardboards.admin.categoryName")}
+                  {t("materials.inputs.categoryName")}
                 </div>
                 <GomakeTextInput
-                  placeholder={t("materials.hardboards.admin.categoryName")}
+                  placeholder={t("materials.inputs.categoryName")}
                   style={clasess.textInputStyle}
                   value={selectedItem?.categoryName}
                   disabled={true}

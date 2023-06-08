@@ -1,5 +1,4 @@
 import { ShowSubTableForTubes } from "@/pages/materials/tubes/show-sizes-list";
-import { ShowSupplierListForKernels } from "@/pages/materials/tubes/show-supplier-list";
 import { UpdateStockTubes } from "@/pages/materials/tubes/update-stock-kernels/update-kernels";
 import { returnResult } from "@/utils/helpers";
 

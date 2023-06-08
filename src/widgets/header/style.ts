@@ -16,7 +16,7 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         paddingLeft: convertWidthToVW(30),
-        paddingRight: convertWidthToVW(50),
+        paddingRight: convertWidthToVW(54),
       },
       searchInputContainer: {
         width: convertWidthToVW(375),

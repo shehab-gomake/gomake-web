@@ -23,6 +23,7 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
     fontFamily: "Lexend",
     fontStyle: "normal",
     fontWeight: 300,
+    ...props?.style,
     "& fieldset": {
       border: "transparent",
       boxSizing: "border-box",
@@ -35,6 +36,7 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
   "& .MuiAutocomplete-endAdornment": {
     top: "calc(50% - 12px)",
   },
+  ...props?.style,
 }));
 
 const GoMakeAutoComplate = ({
@@ -68,7 +70,7 @@ const GoMakeAutoComplate = ({
 }) => {
   return (
     <StyledAutocomplete
-      value={value}
+      {...(value && { value })}
       onChange={onChange}
       style={style}
       options={options}
@@ -77,9 +79,10 @@ const GoMakeAutoComplate = ({
       renderInput={(params: any) => (
         <TextField
           {...params}
-          placeholder={!multiple && (defaultValue?.name || placeholder)}
+          placeholder={!multiple && (defaultValue?.label || placeholder)}
         />
       )}
+      defaultValue={defaultValue}
       autoHighlight={autoHighlight}
       getOptionLabel={getOptionLabel}
       renderOption={renderOption}
@@ -91,7 +94,7 @@ const GoMakeAutoComplate = ({
         option?.id === value?.id
       }
       getOptionSelected={(option: any, value: any) => {
-        return option.value === value.value;
+        return option.id === value.id;
       }}
     />
   );
