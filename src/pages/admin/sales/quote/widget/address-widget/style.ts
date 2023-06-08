@@ -52,12 +52,31 @@ const useStyle = () => {
         height: 40,
         width: "100%",
       },
+      addContactContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 10,
+        cursor: "pointer",
+      },
       addDeleteContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "center",
         alignItems: "center",
-        gap: 5,
+        gap: 10,
+      },
+      addContactStyle: {
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: primaryColor(900),
+      },
+      removeContactStyle: {
+        ...FONT_FAMILY.Lexend(500, 10),
+        color: "#D92C2C",
+      },
+      noAddressContaner: {
+        marginTop: 16,
       },
     };
   }, []);

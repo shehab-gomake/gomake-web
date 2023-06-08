@@ -3,7 +3,7 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { PlusIcon } from "@/icons";
 import { useRecoilValue } from "recoil";
-import { businessListsState, quoteItemState } from "@/store";
+import { agentListsState, businessListsState, quoteItemState } from "@/store";
 import { useState } from "react";
 interface IProps {
   isBusinessCode?: boolean;
@@ -19,6 +19,8 @@ const BusinessWidget = ({
 }: IProps) => {
   const quoteItemValue: any = useRecoilValue(quoteItemState);
   const customersListValue = useRecoilValue<any>(businessListsState);
+  const agentListValue = useRecoilValue<any>(agentListsState);
+
   const [selectBusiness, setSelectBusiness] = useState<any>({});
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -78,8 +80,9 @@ const BusinessWidget = ({
             <div style={clasess.fieldContainer}>
               <div style={clasess.labelStyle}>{t("sales.quote.agent")}</div>
               <GoMakeAutoComplate
-                options={["A", "B", "C", "D", "E", "F"]}
+                options={agentListValue}
                 style={clasess.autoComplateStyle}
+                getOptionLabel={(item) => item?.firstname}
                 placeholder={t("sales.quote.agent")}
               />
             </div>

@@ -1,13 +1,20 @@
 import { useGomakeAxios } from "@/hooks";
-import { getAndSetAllCustomers, getAndSetQuotes } from "@/services/hooks";
-import { businessListsState, quoteItemState } from "@/store";
-import { useCallback, useEffect } from "react";
+import {
+  getAndSetAllCustomers,
+  getAndSetAllEmployees,
+  getAndSetQuotes,
+} from "@/services/hooks";
+import { agentListsState, businessListsState, quoteItemState } from "@/store";
+import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
 const useQuoteGetData = () => {
   const { callApi } = useGomakeAxios();
   const [customersListValue, setCustomersListValue] =
     useRecoilState<any>(businessListsState);
+
+  const [agentListValue, setAgentListValue] =
+    useRecoilState<any>(agentListsState);
 
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
@@ -18,6 +25,12 @@ const useQuoteGetData = () => {
       onlyCreateOrderClients: false,
     });
   }, []);
+  const getAllEmployees = useCallback(async () => {
+    await getAndSetAllEmployees(callApi, setAgentListValue, {
+      IsAgent: true,
+      Name: "",
+    });
+  }, []);
 
   const getQuote = useCallback(async () => {
     await getAndSetQuotes(callApi, setQuoteItemValue);
@@ -26,9 +39,10 @@ const useQuoteGetData = () => {
   useEffect(() => {
     getAllCustomers();
     getQuote();
+    getAllEmployees();
   }, []);
 
-  return { customersListValue, quoteItemValue };
+  return { customersListValue, quoteItemValue, agentListValue };
 };
 
 export { useQuoteGetData };
