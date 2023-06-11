@@ -32,8 +32,11 @@ const Tab = ({ tab }: IProps) => {
   }, []);
 
   const onClickTab = useCallback(() => {
+    console.log("tab", tab);
     if (tab.isList) {
       setIsListOpen(!isListOpen);
+    } else {
+      navigate(tab.path);
     }
   }, [tab, isListOpen, setIsListOpen]);
   const changeRoute = useCallback((route: string) => {
@@ -59,7 +62,9 @@ const Tab = ({ tab }: IProps) => {
           </div>
         )}
         <div>{tab.icon()}</div>
-        <div style={clasess.tabTitle}>{tab.title}</div>
+        <div style={clasess.tabTitle} onClick={onClickTab}>
+          {tab.title}
+        </div>
       </div>
       <Collapse in={isListOpen}>
         {tab.list?.map((list: any) => {
