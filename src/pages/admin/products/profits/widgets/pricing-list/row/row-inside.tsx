@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { editPriceListState } from "../../../store/edit-price-list";
 import { useClickAway } from "@uidotdev/usehooks";
+import Lottie from "react-lottie";
+import * as animationData from "./loading.json";
 
 const RowInside = ({
   index,
@@ -17,7 +19,6 @@ const RowInside = ({
   const [isUpdate, setIsUpdate] = useState(false);
   const [updateTrigger, setUpdateTrigger] = useState(false);
   useEffect(() => {
-    console.log("updateTrigger", updateTrigger);
     if (updateTrigger) {
       onUpdate();
     }
@@ -32,6 +33,12 @@ const RowInside = ({
     });
     setUpdateTrigger(true);
   });
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+  };
 
   return (
     <div
@@ -89,29 +96,36 @@ const RowInside = ({
           </div>
         </div>
       ) : entry[0] !== "more" ? (
-        <div
-          onClick={() => {
-            if (
-              entry[0] !== "unitPrice" &&
-              entry[0] !== "totalPrice" &&
-              entry[0] !== "cost" &&
-              entry[0] !== "quantity" &&
-              editPriceListStateValue.isEdit !== true
-            ) {
-              setEditPriceListState({
-                ...editPriceListStateValue,
-                state: {
-                  ...row,
-                },
-                isEdit: true,
-              });
-              setIsUpdate(true);
-            }
-          }}
-        >
-          {Number(entry[1]).toFixed(2)}
-          {entry[0] === "profit" && "%"}
-        </div>
+        row.status === "pending" && (entry[1] == 0 || entry[1] == "NaN") ? (
+          <Lottie options={defaultOptions} height={"50px"} width={"50px"} />
+        ) : (
+          <div
+            onClick={() => {
+              if (
+                entry[0] !== "unitPrice" &&
+                entry[0] !== "totalPrice" &&
+                entry[0] !== "cost" &&
+                entry[0] !== "quantity" &&
+                entry[0] !== "status" &&
+                editPriceListStateValue.isEdit !== true
+              ) {
+                setEditPriceListState({
+                  ...editPriceListStateValue,
+                  state: {
+                    ...row,
+                  },
+                  isEdit: true,
+                });
+                setIsUpdate(true);
+              }
+            }}
+          >
+            {Number(entry[1]).toFixed(2)}
+            {entry[0] === "profit" && "%"}
+          </div>
+        )
+      ) : row.status === "pending" ? (
+        <Lottie options={defaultOptions} height={"50px"} width={"50px"} />
       ) : (
         entry[1]
       )}
