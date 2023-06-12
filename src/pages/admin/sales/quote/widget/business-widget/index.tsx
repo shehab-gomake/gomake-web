@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { PlusIcon } from "@/icons";
 import { useRecoilValue } from "recoil";
 import { agentListsState, businessListsState, quoteItemState } from "@/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 interface IProps {
   isBusinessCode?: boolean;
   isBusinessName?: boolean;
@@ -20,8 +20,15 @@ const BusinessWidget = ({
   const quoteItemValue: any = useRecoilValue(quoteItemState);
   const customersListValue = useRecoilValue<any>(businessListsState);
   const agentListValue = useRecoilValue<any>(agentListsState);
-
   const [selectBusiness, setSelectBusiness] = useState<any>({});
+
+  useEffect(() => {
+    const foundItem = customersListValue.find(
+      (item) => item.id === quoteItemValue?.customerID
+    );
+    setSelectBusiness(foundItem);
+  }, [quoteItemValue, customersListValue]);
+
   const { clasess } = useStyle();
   const { t } = useTranslation();
   return (
@@ -36,10 +43,6 @@ const BusinessWidget = ({
               <GomakeTextInput
                 placeholder={t("sales.quote.businessCode")}
                 style={clasess.textInputStyle}
-                // onChange={(e: any) => {
-                //   e.target.value;
-                // }}
-                //  defaultValue={selectBusiness?.code}
                 value={selectBusiness?.code}
               />
             </div>
@@ -55,7 +58,11 @@ const BusinessWidget = ({
               <GoMakeAutoComplate
                 options={customersListValue}
                 style={clasess.autoComplateStyle}
-                placeholder={t("sales.quote.businessName")}
+                placeholder={
+                  selectBusiness
+                    ? selectBusiness?.name
+                    : t("sales.quote.businessName")
+                }
                 getOptionLabel={(item) => item?.name}
                 onChange={(e: any, item: any) => {
                   setSelectBusiness(item);

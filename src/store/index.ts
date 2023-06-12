@@ -22,3 +22,4 @@ export * from "./select-test-data";
 export * from "./business-list";
 export * from "./quote-item";
 export * from "./agent-list";
+export * from "./client-contacts";

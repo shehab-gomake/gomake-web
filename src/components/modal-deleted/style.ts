@@ -26,6 +26,7 @@ const useStyle = () => {
         justifyContent: "center",
         alignItems: "center",
         padding: 30,
+        width: "80%",
       },
       icon: {
         display: "flex",

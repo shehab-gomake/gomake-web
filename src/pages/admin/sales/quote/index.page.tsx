@@ -71,7 +71,7 @@ export default function Quote() {
         </div>
         <BusinessWidget />
         <div style={clasess.scrollContainer}>
-          <ContactWidget />
+          <ContactWidget isContactID={false} />
           <AddressWidget />
           <div style={clasess.tableContainer}>
             <CustomTableWidget

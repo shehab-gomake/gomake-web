@@ -1,14 +1,17 @@
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
-import { IconButton, Tooltip } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-
 import { useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+
+import {
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+  GomakeTextInput,
+} from "@/components";
+import { AddPlusIcon, RemoveIcon } from "@/icons";
+import { clientContactsState, quoteItemState } from "@/store";
+
 import { AddContactWidget } from "./add-contact-widget";
-import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
-import { AddIcon, AddPlusIcon, RemoveIcon } from "@/icons";
+import { useStyle } from "./style";
 
 interface IProps {
   isContactID?: boolean;
@@ -28,6 +31,20 @@ const ContactWidget = ({
   const { t } = useTranslation();
   const quoteItemValue: any = useRecoilValue(quoteItemState);
   const [isAddNewContactWidget, setIsAddNewContactWidget] = useState(false);
+  const [clientContactsValue] = useRecoilState<any>(clientContactsState);
+  const [selectedContact, setSelectedContact] = useState();
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+  const onCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+  };
+  const onOpenDeleteModal = (item) => {
+    setSelectedContact(item);
+    setOpenDeleteModal(true);
+  };
+  const onClickDeleteContact = (item) => {
+    console.log("item", item);
+  };
   return (
     <>
       {quoteItemValue?.quoteContacts?.length > 0 ? (
@@ -41,9 +58,14 @@ const ContactWidget = ({
                       {t("sales.quote.contactID")}
                     </div>
                     <GoMakeAutoComplate
-                      options={["A", "B", "C", "D", "E", "F"]}
+                      options={clientContactsValue}
                       style={clasess.autoComplateStyle}
                       placeholder={t("sales.quote.contactID")}
+                      getOptionLabel={(item) => item?.name}
+                      defaultValue={item?.contactName}
+                      // onChange={(e: any, item: any) => {
+                      //   setSelectedContactId(item);
+                      // }}
                     />
                   </div>
                 )}
@@ -103,7 +125,10 @@ const ContactWidget = ({
                           )}
                         </div>
                       ) : null}
-                      <div style={clasess.addContactContainer}>
+                      <div
+                        style={clasess.addContactContainer}
+                        onClick={() => onOpenDeleteModal(item)}
+                      >
                         <RemoveIcon />
                         <div style={clasess.removeContactStyle}>Remove</div>
                       </div>
@@ -134,6 +159,14 @@ const ContactWidget = ({
           setIsAddNewContactWidget={setIsAddNewContactWidget}
         />
       )}
+      <GoMakeDeleteModal
+        title={"Delete Contact row"}
+        yesBtn={t("materials.buttons.delete")}
+        openModal={openDeleteModal}
+        onClose={onCloseDeleteModal}
+        subTitle={"Are you sure to delete this row?"}
+        onClickDelete={() => onClickDeleteContact(selectedContact)}
+      />
     </>
   );
 };
