@@ -46,7 +46,7 @@ const CategoriesTable = () => {
       {
         key: "sheetPaper",
         title: t("tabs.sheetPaper"),
-        path: "/materials/sheet-paper",
+        path: "/materials-new/sheet-paper",
       },
       {
         key: "lamination",
@@ -171,7 +171,7 @@ const CategoriesTable = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <StyledTableCell align={"center"}>Category</StyledTableCell>
+              <StyledTableCell align={"left"}>Category</StyledTableCell>
               <StyledTableCell align={"center"}>View Material</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -179,7 +179,7 @@ const CategoriesTable = () => {
             {categoriesList.map((category) => {
               return (
                 <StyledTableRow key={category.key}>
-                  <StyledTableCell align={"center"}>
+                  <StyledTableCell align={"left"}>
                     {category.title}
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>

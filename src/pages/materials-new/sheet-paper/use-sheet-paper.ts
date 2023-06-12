@@ -33,12 +33,15 @@ const useSheetPaper = () => {
     });
   }, [categoryName, supplierId]);
 
-  const getSheetAllWeights = useCallback(async () => {
-    await getAndSetAllSheetWeights(callApi, setAllWeightsGrouped, {
-      categoryName,
-      supplierId: supplierId || "",
-    });
-  }, [categoryName, supplierId]);
+  const getSheetAllWeights = useCallback(
+    async (categoryName: string) => {
+      await getAndSetAllSheetWeights(callApi, setAllWeightsGrouped, {
+        categoryName,
+        supplierId: supplierId || "",
+      });
+    },
+    [categoryName, supplierId]
+  );
 
   const getCategory = useCallback(async () => {
     const data = await getAndSetSheetCategory(callApi, setSheetCategories);
@@ -65,6 +68,7 @@ const useSheetPaper = () => {
     onChangeCategory,
     onChangeSupplier,
     setAllWeights,
+    getSheetAllWeights,
     sheetCategories,
     categoryName,
     allWeights,
