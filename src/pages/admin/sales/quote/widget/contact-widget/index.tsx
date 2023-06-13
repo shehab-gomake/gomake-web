@@ -12,6 +12,7 @@ import { clientContactsState, quoteItemState } from "@/store";
 
 import { AddContactWidget } from "./add-contact-widget";
 import { useStyle } from "./style";
+import { quoteState } from "../../store/quote";
 
 interface IProps {
   isContactID?: boolean;
@@ -29,22 +30,10 @@ const ContactWidget = ({
 }: IProps) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
+  const quoteStateValue = useRecoilValue<any>(quoteState);
   const quoteItemValue: any = useRecoilValue(quoteItemState);
-  const [isAddNewContactWidget, setIsAddNewContactWidget] = useState(false);
   const [clientContactsValue] = useRecoilState<any>(clientContactsState);
-  const [selectedContact, setSelectedContact] = useState();
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
-  const onCloseDeleteModal = () => {
-    setOpenDeleteModal(false);
-  };
-  const onOpenDeleteModal = (item) => {
-    setSelectedContact(item);
-    setOpenDeleteModal(true);
-  };
-  const onClickDeleteContact = (item) => {
-    console.log("item", item);
-  };
   return (
     <>
       {quoteItemValue?.quoteContacts?.length > 0 ? (
@@ -60,9 +49,14 @@ const ContactWidget = ({
                     <GoMakeAutoComplate
                       options={clientContactsValue}
                       style={clasess.autoComplateStyle}
-                      placeholder={t("sales.quote.contactID")}
+                      placeholder={
+                        clientContactsValue[index]?.name
+                          ? clientContactsValue[index]?.name
+                          : t("sales.quote.contactID")
+                      }
                       getOptionLabel={(item) => item?.name}
-                      defaultValue={item?.contactName}
+                      // defaultValue={item?.contactName}
+                      // value={item?.contactName}
                       // onChange={(e: any, item: any) => {
                       //   setSelectedContactId(item);
                       // }}
@@ -112,10 +106,12 @@ const ContactWidget = ({
                     <div style={clasess.addDeleteContainer}>
                       {index === quoteItemValue?.quoteContacts?.length - 1 ? (
                         <div>
-                          {!isAddNewContactWidget && (
+                          {!quoteStateValue.isAddNewContactWidget && (
                             <div
                               style={clasess.addContactContainer}
-                              onClick={() => setIsAddNewContactWidget(true)}
+                              onClick={() =>
+                                quoteStateValue.setIsAddNewContactWidget(true)
+                              }
                             >
                               <AddPlusIcon stroke={"#090A1D"} />
                               <div style={clasess.addContactStyle}>
@@ -127,7 +123,9 @@ const ContactWidget = ({
                       ) : null}
                       <div
                         style={clasess.addContactContainer}
-                        onClick={() => onOpenDeleteModal(item)}
+                        onClick={() =>
+                          quoteStateValue?.onOpenDeleteModalContact(item)
+                        }
                       >
                         <RemoveIcon />
                         <div style={clasess.removeContactStyle}>Remove</div>
@@ -141,10 +139,10 @@ const ContactWidget = ({
         </>
       ) : (
         <>
-          {!isAddNewContactWidget && (
+          {!quoteStateValue.isAddNewContactWidget && (
             <div
               style={clasess.addContactContainer}
-              onClick={() => setIsAddNewContactWidget(true)}
+              onClick={() => quoteStateValue.setIsAddNewContactWidget(true)}
             >
               <AddPlusIcon stroke={"#090A1D"} />
               <div style={clasess.addContactStyle}>Add new contact</div>
@@ -153,19 +151,18 @@ const ContactWidget = ({
         </>
       )}
 
-      {isAddNewContactWidget && (
-        <AddContactWidget
-          isAddNewContactWidget={isAddNewContactWidget}
-          setIsAddNewContactWidget={setIsAddNewContactWidget}
-        />
-      )}
+      {quoteStateValue.isAddNewContactWidget && <AddContactWidget />}
       <GoMakeDeleteModal
         title={"Delete Contact row"}
         yesBtn={t("materials.buttons.delete")}
-        openModal={openDeleteModal}
-        onClose={onCloseDeleteModal}
+        openModal={quoteStateValue?.openDeleteModalContact}
+        onClose={quoteStateValue?.onCloseDeleteModalContact}
         subTitle={"Are you sure to delete this row?"}
-        onClickDelete={() => onClickDeleteContact(selectedContact)}
+        onClickDelete={() =>
+          quoteStateValue?.onClickDeleteContact(
+            quoteStateValue?.selectedContact
+          )
+        }
       />
     </>
   );

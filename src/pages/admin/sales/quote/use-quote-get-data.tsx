@@ -2,12 +2,14 @@ import { useGomakeAxios } from "@/hooks";
 import {
   getAndSetAllCustomers,
   getAndSetAllEmployees,
+  getAndSetClientAddress,
   getAndSetClientContacts,
   getAndSetQuotes,
 } from "@/services/hooks";
 import {
   agentListsState,
   businessListsState,
+  clientAddressState,
   clientContactsState,
   quoteItemState,
 } from "@/store";
@@ -27,7 +29,9 @@ const useQuoteGetData = () => {
 
   const [clientContactsValue, setClientContactsValue] =
     useRecoilState<any>(clientContactsState);
-  console.log("clientContactsValueQQQ", clientContactsValue);
+
+  const [clientAddressValue, setClientAddressValue] =
+    useRecoilState<any>(clientAddressState);
 
   const getAllCustomers = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListValue, {
@@ -51,6 +55,12 @@ const useQuoteGetData = () => {
       ClientId: quoteItemValue?.customerID,
     });
   }, [quoteItemValue]);
+
+  const getAllClientAddress = useCallback(async () => {
+    await getAndSetClientAddress(callApi, setClientAddressValue, {
+      ClientId: quoteItemValue?.customerID,
+    });
+  }, [quoteItemValue]);
   useEffect(() => {
     getAllCustomers();
     getQuote();
@@ -58,6 +68,7 @@ const useQuoteGetData = () => {
   }, []);
   useEffect(() => {
     getAllClientContacts();
+    getAllClientAddress();
   }, [quoteItemValue]);
 
   return {
@@ -65,6 +76,8 @@ const useQuoteGetData = () => {
     quoteItemValue,
     agentListValue,
     clientContactsValue,
+    clientAddressValue,
+    getQuote,
   };
 };
 

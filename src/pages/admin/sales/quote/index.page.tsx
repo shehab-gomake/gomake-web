@@ -25,15 +25,58 @@ export default function Quote() {
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
-  const { t, tableHeaders, tableRowPercent } = useQuote();
+  const {
+    tableHeaders,
+    tableRowPercent,
+    selectedContact,
+    openDeleteModalContact,
+    selectedContactById,
+    isAddNewContactWidget,
+    setIsAddNewContactWidget,
+    onCloseIsAddNewContactWidget,
+    setSelectedContactById,
+    onCloseDeleteModalContact,
+    onOpenDeleteModalContact,
+    onClickDeleteContact,
+    onChangeUpdateClientContact,
+    onClickAddNewContact,
+    t,
+  } = useQuote();
   useEffect(() => {
     setQuoteState({
-      t,
-
       tableHeaders,
       tableRowPercent,
+      selectedContact,
+      openDeleteModalContact,
+      selectedContactById,
+      isAddNewContactWidget,
+      setIsAddNewContactWidget,
+      onCloseIsAddNewContactWidget,
+      setSelectedContactById,
+      onCloseDeleteModalContact,
+      onOpenDeleteModalContact,
+      onClickDeleteContact,
+      onChangeUpdateClientContact,
+      onClickAddNewContact,
+      t,
     });
-  }, [t, tableHeaders, tableRowPercent]);
+  }, [
+    tableHeaders,
+    tableRowPercent,
+    selectedContact,
+    openDeleteModalContact,
+    selectedContactById,
+    isAddNewContactWidget,
+    setIsAddNewContactWidget,
+    onCloseIsAddNewContactWidget,
+    setSelectedContactById,
+    onCloseDeleteModalContact,
+    onOpenDeleteModalContact,
+    onClickDeleteContact,
+    onChangeUpdateClientContact,
+    onClickAddNewContact,
+    t,
+  ]);
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
@@ -71,7 +114,7 @@ export default function Quote() {
         </div>
         <BusinessWidget />
         <div style={clasess.scrollContainer}>
-          <ContactWidget isContactID={false} />
+          <ContactWidget />
           <AddressWidget />
           <div style={clasess.tableContainer}>
             <CustomTableWidget

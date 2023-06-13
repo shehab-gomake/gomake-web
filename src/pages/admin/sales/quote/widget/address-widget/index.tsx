@@ -6,8 +6,12 @@ import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { AddAddressWidget } from "./add-address-widget";
-import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  clientAddressState,
+  clientContactsState,
+  quoteItemState,
+} from "@/store";
 import { AddPlusIcon, RemoveIcon } from "@/icons";
 interface IProps {
   isAddressID?: boolean;
@@ -29,7 +33,7 @@ const AddressWidget = ({
   const { t } = useTranslation();
   const quoteItemValue: any = useRecoilValue(quoteItemState);
   const [isAddNewContactWidget, setIsAddNewContactWidget] = useState(false);
-
+  const [clientAddressValue] = useRecoilState<any>(clientAddressState);
   return (
     <>
       {quoteItemValue?.quoteAddresses?.length > 0 ? (
@@ -43,9 +47,14 @@ const AddressWidget = ({
                       {t("sales.quote.addressID")}
                     </div>
                     <GoMakeAutoComplate
-                      options={["A", "B", "C", "D", "E", "F"]}
+                      options={clientAddressValue}
+                      getOptionLabel={(item) => item?.street}
                       style={clasess.autoComplateStyle}
-                      placeholder={t("sales.quote.addressID")}
+                      placeholder={
+                        clientAddressValue[index]?.street
+                          ? clientAddressValue[index]?.street
+                          : t("sales.quote.addressID")
+                      }
                     />
                   </div>
                 )}
@@ -55,10 +64,15 @@ const AddressWidget = ({
                     <div style={clasess.labelStyle}>
                       {t("sales.quote.city")}
                     </div>
-                    <GoMakeAutoComplate
+                    {/* <GoMakeAutoComplate
                       options={["A", "B", "C", "D", "E", "F"]}
                       style={clasess.autoComplateStyle}
                       placeholder={t("sales.quote.city")}
+                    /> */}
+                    <GomakeTextInput
+                      placeholder={t("sales.quote.city")}
+                      style={clasess.textInputStyle}
+                      value={item?.city}
                     />
                   </div>
                 )}
@@ -68,10 +82,15 @@ const AddressWidget = ({
                     <div style={clasess.labelStyle}>
                       {t("sales.quote.street")}
                     </div>
-                    <GoMakeAutoComplate
+                    {/* <GoMakeAutoComplate
                       options={["A", "B", "C", "D", "E", "F"]}
                       style={clasess.autoComplateStyle}
                       placeholder={t("sales.quote.street")}
+                    /> */}
+                    <GomakeTextInput
+                      placeholder={t("sales.quote.street")}
+                      style={clasess.textInputStyle}
+                      value={item?.street}
                     />
                   </div>
                 )}
@@ -81,10 +100,15 @@ const AddressWidget = ({
                     <div style={clasess.labelStyle}>
                       {t("sales.quote.entrance")}
                     </div>
-                    <GoMakeAutoComplate
+                    {/* <GoMakeAutoComplate
                       options={["A", "B", "C", "D", "E", "F"]}
                       style={clasess.autoComplateStyle}
                       placeholder={t("sales.quote.entrance")}
+                    /> */}
+                    <GomakeTextInput
+                      placeholder={t("sales.quote.entrance")}
+                      style={clasess.textInputStyle}
+                      value={item?.entry}
                     />
                   </div>
                 )}
@@ -97,6 +121,7 @@ const AddressWidget = ({
                     <GomakeTextInput
                       placeholder={t("sales.quote.apartment")}
                       style={clasess.textInputStyle}
+                      value={item?.apartment}
                     />
                   </div>
                 )}

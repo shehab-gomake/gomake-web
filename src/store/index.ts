@@ -23,3 +23,4 @@ export * from "./business-list";
 export * from "./quote-item";
 export * from "./agent-list";
 export * from "./client-contacts";
+export * from "./client-address";
