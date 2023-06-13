@@ -24,7 +24,11 @@ const Row = ({ row, width, tablePercent }: any) => {
   return (
     <div style={clasess.bodyRow}>
       {Object.entries(row).map((entry: [string, any], index: number) => {
-        if (entry[0] !== "id" && entry[0] !== "recordID") {
+        if (
+          entry[0] !== "id" &&
+          entry[0] !== "recordID" &&
+          entry[0] !== "status"
+        ) {
           return (
             <RowInside
               index={index}

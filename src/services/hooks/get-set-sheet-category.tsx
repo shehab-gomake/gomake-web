@@ -46,6 +46,33 @@ const getAndSetSheetWeights = async (
     return _data;
   }
 };
+const getAndSetAllSheetWeights = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  if (data?.categoryName) {
+    const result: any = await callApi(
+      "GET",
+      "/v1/sheets/get-all-weights",
+      data
+    );
+    const _data = returnResult(result, undefined);
+    const mapData = _data.map((item: any) => {
+      return {
+        weight: item?.weight,
+        isActive: item?.isActive,
+        sheetSizes: item?.sheetSizes,
+      };
+    });
+    if (setState) {
+      setState(mapData);
+    }
+
+    return _data;
+  }
+};
+
 const getAndSetSheetSizes = async (
   callApi: ICallApi,
   setState?: ISetState,
@@ -92,4 +119,5 @@ export {
   getAndSetSheetWeights,
   getAndSetSheetSizes,
   getAndSetSheetDirection,
+  getAndSetAllSheetWeights,
 };

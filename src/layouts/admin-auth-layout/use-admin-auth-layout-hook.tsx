@@ -11,12 +11,15 @@ import {
 import { SuppliersIcon } from "@/icons/suppliers";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
+import { machineCategoriesState } from "@/store/machine-categories";
 
 const useAuthLayoutHook = () => {
   const { t } = useTranslation();
   const { isAuth } = useGomakeAdminAuth();
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
+  const categories = useRecoilValue(machineCategoriesState);
   const tabs = useMemo(() => {
     return [
       {
@@ -167,6 +170,28 @@ const useAuthLayoutHook = () => {
       },
       {
         isLine: false,
+        key: "machines",
+        title: t("tabs.machines"),
+        path: "/admin/machine",
+        isList: true,
+        icon: () => {
+          return <ProductsIcon />;
+        },
+        list: [
+          {
+            key: "add",
+            title: t("tabs.addMachine"),
+            path: "/admin/machine",
+          },
+          ...categories.map((category) => ({
+            key: category.id + category.name,
+            title: category.name,
+            path: `/admin/machine/category/${category.id}`,
+          })),
+        ],
+      },
+      {
+        isLine: false,
         key: "products",
         title: t("tabs.products"),
         path: "/product-floor",
@@ -194,6 +219,16 @@ const useAuthLayoutHook = () => {
         path: "/product-floor",
         isList: true,
         list: [
+          {
+            key: "add",
+            title: t("tabs.addSales"),
+            path: "/sales/add-machine",
+          },
+          {
+            key: "list",
+            title: t("tabs.listSales"),
+            path: "/sales/list",
+          },
           {
             key: "quote",
             title: t("sales.quote.title"),

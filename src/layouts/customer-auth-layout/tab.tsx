@@ -34,6 +34,8 @@ const Tab = ({ tab }: IProps) => {
   const onClickTab = useCallback(() => {
     if (tab.isList) {
       setIsListOpen(!isListOpen);
+    } else {
+      changeRoute(tab.path);
     }
     setSelectedTabValue(tab.key || "");
   }, [tab, isListOpen, setIsListOpen]);

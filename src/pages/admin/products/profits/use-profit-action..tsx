@@ -24,6 +24,7 @@ export const renderProfits = (item: any) => {
     unitPrice: Number(total / quantity).toFixed(2),
     totalPrice: Number(total).toFixed(2),
     recordID: item?.recordID,
+    status: item?.status,
   };
 };
 
