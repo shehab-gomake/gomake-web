@@ -89,6 +89,7 @@ const useProfitsProfitsFunction = ({
           setActionProfitPricingTableRows,
           { actionId: selectedAction.id, productId: productTest.id }
         );
+        getActionProfitRowChartData();
       } else {
         setSnackbarStateValue({
           state: true,
