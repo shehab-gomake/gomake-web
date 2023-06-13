@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 import {
@@ -7,12 +6,12 @@ import {
   GoMakeDeleteModal,
   GomakeTextInput,
 } from "@/components";
-import { AddPlusIcon, RemoveIcon } from "@/icons";
 import { clientContactsState, quoteItemState } from "@/store";
+import { AddPlusIcon, RemoveIcon } from "@/icons";
 
 import { AddContactWidget } from "./add-contact-widget";
-import { useStyle } from "./style";
 import { quoteState } from "../../store/quote";
+import { useStyle } from "./style";
 
 interface IProps {
   isContactID?: boolean;
@@ -55,11 +54,6 @@ const ContactWidget = ({
                           : t("sales.quote.contactID")
                       }
                       getOptionLabel={(item) => item?.name}
-                      // defaultValue={item?.contactName}
-                      // value={item?.contactName}
-                      // onChange={(e: any, item: any) => {
-                      //   setSelectedContactId(item);
-                      // }}
                     />
                   </div>
                 )}
@@ -115,7 +109,7 @@ const ContactWidget = ({
                             >
                               <AddPlusIcon stroke={"#090A1D"} />
                               <div style={clasess.addContactStyle}>
-                                Add new contact
+                                {t("sales.quote.addNewContact")}
                               </div>
                             </div>
                           )}
@@ -128,7 +122,9 @@ const ContactWidget = ({
                         }
                       >
                         <RemoveIcon />
-                        <div style={clasess.removeContactStyle}>Remove</div>
+                        <div style={clasess.removeContactStyle}>
+                          {t("sales.quote.remove")}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -145,7 +141,9 @@ const ContactWidget = ({
               onClick={() => quoteStateValue.setIsAddNewContactWidget(true)}
             >
               <AddPlusIcon stroke={"#090A1D"} />
-              <div style={clasess.addContactStyle}>Add new contact</div>
+              <div style={clasess.addContactStyle}>
+                {t("sales.quote.addNewContact")}
+              </div>
             </div>
           )}
         </>
@@ -153,11 +151,11 @@ const ContactWidget = ({
 
       {quoteStateValue.isAddNewContactWidget && <AddContactWidget />}
       <GoMakeDeleteModal
-        title={"Delete Contact row"}
+        title={t("sales.quote.deleteContactRow")}
         yesBtn={t("materials.buttons.delete")}
         openModal={quoteStateValue?.openDeleteModalContact}
         onClose={quoteStateValue?.onCloseDeleteModalContact}
-        subTitle={"Are you sure to delete this row?"}
+        subTitle={t("sales.quote.subTitleDeleteContactRow")}
         onClickDelete={() =>
           quoteStateValue?.onClickDeleteContact(
             quoteStateValue?.selectedContact

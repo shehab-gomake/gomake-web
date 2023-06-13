@@ -941,7 +941,12 @@
       "closeContact": "Close",
       "addNewAddress": "Add new Address",
       "sortBy": "sort by",
-      "discountBy": "discount by"
+      "discountBy": "discount by",
+      "remove": "Remove",
+      "deleteContactRow": "Delete Contact row",
+      "deleteAddressRow": "Delete Address row",
+      "subTitleDeleteContactRow": "Are you sure to delete this row?",
+      "subTitleDeleteAddressRow": "Are you sure to delete this row?"
     }
   }
 }

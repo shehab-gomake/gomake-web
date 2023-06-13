@@ -30,12 +30,20 @@ const useQuote = () => {
   ];
   const [selectedContact, setSelectedContact] = useState();
   const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState();
+  const [openDeleteModalAddress, setOpenDeleteModalAddress] = useState(false);
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [isAddNewContactWidget, setIsAddNewContactWidget] = useState(false);
+  const [selectedAddressById, setSelectedAddressById] = useState<any>();
+  const [isAddNewAddressWidget, setIsAddNewAddressWidget] = useState(false);
 
   const onCloseIsAddNewContactWidget = () => {
     setSelectedContactById({});
     setIsAddNewContactWidget(false);
+  };
+  const onCloseIsAddNewAddressWidget = () => {
+    setSelectedAddressById({});
+    setIsAddNewAddressWidget(false);
   };
   const onChangeUpdateClientContact = useCallback(
     (filedName: string, value: any) => {
@@ -48,6 +56,17 @@ const useQuote = () => {
     },
     [selectedContactById]
   );
+  const onChangeUpdateClientAddress = useCallback(
+    (filedName: string, value: any) => {
+      setSelectedAddressById((prev) => {
+        return {
+          ...prev,
+          [filedName]: value,
+        };
+      });
+    },
+    [selectedAddressById]
+  );
   const onCloseDeleteModalContact = () => {
     setOpenDeleteModalContact(false);
   };
@@ -56,6 +75,13 @@ const useQuote = () => {
     setOpenDeleteModalContact(true);
   };
 
+  const onCloseDeleteModalAddress = () => {
+    setOpenDeleteModalAddress(false);
+  };
+  const onOpenDeleteModalAddress = (item) => {
+    setSelectedAddress(item);
+    setOpenDeleteModalAddress(true);
+  };
   const onClickDeleteContact = useCallback(async (item: any) => {
     const res = await callApi(
       "DELETE",
@@ -105,7 +131,57 @@ const useQuote = () => {
       });
     }
   }, [selectedContactById, quoteItemValue]);
-
+  const onClickDeleteAddress = useCallback(async (item: any) => {
+    const res = await callApi(
+      "DELETE",
+      `/v1/erp-service/quote/delete-quote-address?quoteAddressId=${item?.id}`
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.deleteSusuccessfully"),
+        type: "sucess",
+      });
+      onCloseDeleteModalAddress();
+      getQuote();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.deletefailed"),
+        type: "error",
+      });
+    }
+  }, []);
+  const onClickAddNewAddress = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/erp-service/quote/add-quote-address`,
+      {
+        addressID: selectedAddressById?.id,
+        street: selectedAddressById?.street,
+        city: selectedAddressById?.city,
+        entry: selectedAddressById?.entry,
+        apartment: selectedAddressById?.apartment,
+        notes: selectedAddressById?.notes,
+        quoteID: quoteItemValue?.id,
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.deleteSusuccessfully"),
+        type: "sucess",
+      });
+      onCloseIsAddNewAddressWidget();
+      getQuote();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.deletefailed"),
+        type: "error",
+      });
+    }
+  }, [selectedAddressById, quoteItemValue]);
   return {
     tableHeaders,
     tableRowPercent,
@@ -113,6 +189,18 @@ const useQuote = () => {
     openDeleteModalContact,
     selectedContactById,
     isAddNewContactWidget,
+    isAddNewAddressWidget,
+    selectedAddressById,
+    selectedAddress,
+    openDeleteModalAddress,
+    onClickAddNewAddress,
+    onClickDeleteAddress,
+    setSelectedAddress,
+    setOpenDeleteModalAddress,
+    onCloseDeleteModalAddress,
+    onOpenDeleteModalAddress,
+    setIsAddNewAddressWidget,
+    onCloseIsAddNewAddressWidget,
     setIsAddNewContactWidget,
     onCloseIsAddNewContactWidget,
     setSelectedContactById,
@@ -121,6 +209,8 @@ const useQuote = () => {
     onClickDeleteContact,
     onChangeUpdateClientContact,
     onClickAddNewContact,
+    onChangeUpdateClientAddress,
+    setSelectedAddressById,
     t,
   };
 };

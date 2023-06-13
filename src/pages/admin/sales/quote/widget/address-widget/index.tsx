@@ -1,18 +1,18 @@
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
-import { IconButton, Tooltip } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { AddAddressWidget } from "./add-address-widget";
 import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  clientAddressState,
-  clientContactsState,
-  quoteItemState,
-} from "@/store";
+
+import { clientAddressState, quoteItemState } from "@/store";
 import { AddPlusIcon, RemoveIcon } from "@/icons";
+import {
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+  GomakeTextInput,
+} from "@/components";
+
+import { AddAddressWidget } from "./add-address-widget";
+import { quoteState } from "../../store/quote";
+import { useStyle } from "./style";
+
 interface IProps {
   isAddressID?: boolean;
   isCity?: boolean;
@@ -32,7 +32,7 @@ const AddressWidget = ({
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const quoteItemValue: any = useRecoilValue(quoteItemState);
-  const [isAddNewContactWidget, setIsAddNewContactWidget] = useState(false);
+  const quoteStateValue = useRecoilValue<any>(quoteState);
   const [clientAddressValue] = useRecoilState<any>(clientAddressState);
   return (
     <>
@@ -64,11 +64,7 @@ const AddressWidget = ({
                     <div style={clasess.labelStyle}>
                       {t("sales.quote.city")}
                     </div>
-                    {/* <GoMakeAutoComplate
-                      options={["A", "B", "C", "D", "E", "F"]}
-                      style={clasess.autoComplateStyle}
-                      placeholder={t("sales.quote.city")}
-                    /> */}
+
                     <GomakeTextInput
                       placeholder={t("sales.quote.city")}
                       style={clasess.textInputStyle}
@@ -82,11 +78,7 @@ const AddressWidget = ({
                     <div style={clasess.labelStyle}>
                       {t("sales.quote.street")}
                     </div>
-                    {/* <GoMakeAutoComplate
-                      options={["A", "B", "C", "D", "E", "F"]}
-                      style={clasess.autoComplateStyle}
-                      placeholder={t("sales.quote.street")}
-                    /> */}
+
                     <GomakeTextInput
                       placeholder={t("sales.quote.street")}
                       style={clasess.textInputStyle}
@@ -100,11 +92,7 @@ const AddressWidget = ({
                     <div style={clasess.labelStyle}>
                       {t("sales.quote.entrance")}
                     </div>
-                    {/* <GoMakeAutoComplate
-                      options={["A", "B", "C", "D", "E", "F"]}
-                      style={clasess.autoComplateStyle}
-                      placeholder={t("sales.quote.entrance")}
-                    /> */}
+
                     <GomakeTextInput
                       placeholder={t("sales.quote.entrance")}
                       style={clasess.textInputStyle}
@@ -131,23 +119,30 @@ const AddressWidget = ({
                     <div style={clasess.addDeleteContainer}>
                       {index === quoteItemValue?.quoteAddresses?.length - 1 ? (
                         <div>
-                          {!isAddNewContactWidget && (
+                          {!quoteStateValue.isAddNewAddressWidget && (
                             <div
                               style={clasess.addContactContainer}
-                              onClick={() => setIsAddNewContactWidget(true)}
+                              onClick={() =>
+                                quoteStateValue.setIsAddNewAddressWidget(true)
+                              }
                             >
                               <AddPlusIcon stroke={"#090A1D"} />
                               <div style={clasess.addContactStyle}>
-                                Add new Address
+                                {t("sales.quote.addNewAddress")}
                               </div>
                             </div>
                           )}
                         </div>
                       ) : null}
-                      <div>
-                        <div style={clasess.addContactContainer}>
-                          <RemoveIcon />
-                          <div style={clasess.removeContactStyle}>Remove</div>
+                      <div
+                        style={clasess.addContactContainer}
+                        onClick={() =>
+                          quoteStateValue?.onOpenDeleteModalAddress(item)
+                        }
+                      >
+                        <RemoveIcon />
+                        <div style={clasess.removeContactStyle}>
+                          {t("sales.quote.remove")}
                         </div>
                       </div>
                     </div>
@@ -159,24 +154,33 @@ const AddressWidget = ({
         </>
       ) : (
         <div style={clasess.noAddressContaner}>
-          {!isAddNewContactWidget && (
+          {!quoteStateValue.isAddNewAddressWidget && (
             <div
               style={clasess.addContactContainer}
-              onClick={() => setIsAddNewContactWidget(true)}
+              onClick={() => quoteStateValue.setIsAddNewAddressWidget(true)}
             >
               <AddPlusIcon stroke={"#090A1D"} />
-              <div style={clasess.addContactStyle}>Add new Address</div>
+              <div style={clasess.addContactStyle}>
+                {t("sales.quote.addNewAddress")}
+              </div>
             </div>
           )}
         </div>
       )}
 
-      {isAddNewContactWidget && (
-        <AddAddressWidget
-          isAddNewContactWidget={isAddNewContactWidget}
-          setIsAddNewContactWidget={setIsAddNewContactWidget}
-        />
-      )}
+      {quoteStateValue.isAddNewAddressWidget && <AddAddressWidget />}
+      <GoMakeDeleteModal
+        title={t("sales.quote.deleteAddressRow")}
+        yesBtn={t("materials.buttons.delete")}
+        openModal={quoteStateValue?.openDeleteModalAddress}
+        onClose={quoteStateValue?.onCloseDeleteModalAddress}
+        subTitle={t("sales.quote.subTitleDeleteAddressRow")}
+        onClickDelete={() =>
+          quoteStateValue?.onClickDeleteAddress(
+            quoteStateValue?.selectedAddress
+          )
+        }
+      />
     </>
   );
 };
