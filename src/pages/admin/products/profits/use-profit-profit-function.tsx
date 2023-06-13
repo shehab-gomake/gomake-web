@@ -19,6 +19,7 @@ const useProfitsProfitsFunction = ({
   onCloseAddQuantityModal,
   actionProfitRowsNew,
   selectTestDataVal,
+  getActionProfitRowChartData,
 }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -55,6 +56,7 @@ const useProfitsProfitsFunction = ({
         setActionProfitPricingTableRows,
         { actionId: selectedAction.id, productId: productTest.id }
       );
+      getActionProfitRowChartData();
     } else {
       setSnackbarStateValue({
         state: true,
