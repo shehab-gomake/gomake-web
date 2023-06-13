@@ -11,6 +11,7 @@ import { useStyle } from "./style";
 import { Exceptions } from "./widgets/exceptions/exceptions";
 import { actionProfitLists } from "@/store";
 import { productTestState } from "@/store/product-test";
+import { LineChart } from "./widgets/line-chart";
 
 export default function Profits() {
   const { clasess } = useStyle();
@@ -198,6 +199,7 @@ export default function Profits() {
                     ]}
                   />
                 </div>
+
                 {/* <div style={clasess.exceptionsCointaner}>
                   <Exceptions
                     tableHeaders={tabelExceptionsHeaders}
@@ -205,7 +207,10 @@ export default function Profits() {
                   />
                 </div> */}
               </div>
-            )}
+            )}{" "}
+            <div style={clasess.pricingCointaner}>
+              <LineChart />
+            </div>
           </>
         ) : null}
       </div>

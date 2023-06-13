@@ -13,20 +13,25 @@ const getAndSetActionProfitRowChartData = async (
     data
   );
   const _data = returnResult(result, undefined);
-  const xAxis = [];
-  const yAxis = [];
+  console.log("_data", _data);
+  const costAxis = [];
+  const quantityAxis = [];
+  const profitAxis = [];
   const mapData = _data.map((item: any) => {
-    if (pricingBy === 1) {
-      yAxis.push(item.size);
-    } else {
-      yAxis.push(item.quantity);
-    }
-    xAxis.push(item.profit);
+    costAxis.push(item.cost);
+    quantityAxis.push(item.quantity || 0);
+    profitAxis.push(item.profit);
+  });
+  console.log("_data", {
+    profitAxis,
+    costAxis,
+    quantityAxis,
   });
   if (setState) {
     setState({
-      xAxis,
-      yAxis,
+      costAxis,
+      quantityAxis,
+      profitAxis,
     });
   }
 
