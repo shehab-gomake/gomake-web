@@ -16,6 +16,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { PrimaryButton } from "@/widgets/machines/components/buttons/primary-button";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useGomakeRouter } from "@/hooks";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -165,6 +166,8 @@ const CategoriesTable = () => {
       },
     ];
   }, []);
+
+  const { navigate } = useGomakeRouter();
   return (
     <>
       <TableContainer>
@@ -191,7 +194,9 @@ const CategoriesTable = () => {
                           height={20}
                         />
                       }
-                      href={category.path}
+                      onClick={() => {
+                        navigate(category.path);
+                      }}
                       variant={"text"}
                     >
                       View

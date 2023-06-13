@@ -3,7 +3,13 @@ import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
+const useStyle = ({
+  isHover = false,
+  navStatus,
+}: {
+  isHover?: boolean;
+  navStatus: any;
+}) => {
   const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
@@ -20,16 +26,25 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
       },
       leftContainer: {
         backgroundColor: primaryColor(500),
-        width: 281,
+        width: navStatus?.isClosed ? 50 : 280,
+        minWidth: navStatus?.isClosed ? 50 : 280,
         height: "100%",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "space-between" as "space-between",
         alignItems: "center",
-        paddingRight: convertWidthToVW(26),
-        paddingLeft: convertWidthToVW(26),
-        paddingTop: convertHeightToVH(40),
-        paddingBottom: convertHeightToVH(40),
+        paddingRight: navStatus?.isClosed
+          ? convertWidthToVW(5)
+          : convertWidthToVW(26),
+        paddingLeft: navStatus?.isClosed
+          ? convertWidthToVW(5)
+          : convertWidthToVW(26),
+        paddingTop: navStatus?.isClosed
+          ? convertHeightToVH(8)
+          : convertWidthToVW(40),
+        paddingBottom: navStatus?.isClosed
+          ? convertHeightToVH(8)
+          : convertWidthToVW(40),
         overflowY: "scroll" as "scroll",
       },
       rightContainer: {
@@ -38,7 +53,6 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         display: "flex",
         flexDirection: "column" as "column",
         padding: convertWidthToVW(20),
-
         marginBottom: 20,
       },
       headerContainer: {
@@ -110,7 +124,7 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         animation: "rotate90 0.5s forwards ",
       },
     };
-  }, [isHover]);
+  }, [isHover, navStatus]);
   return {
     clasess,
   };
