@@ -4,7 +4,7 @@ import { useRecoilState } from "recoil";
 import { editPriceListState } from "../../../store/edit-price-list";
 import { useClickAway } from "@uidotdev/usehooks";
 import Lottie from "react-lottie";
-import * as animationData from "./loading.json";
+import * as animationData from "./loading-cal.json";
 
 const RowInside = ({
   index,
