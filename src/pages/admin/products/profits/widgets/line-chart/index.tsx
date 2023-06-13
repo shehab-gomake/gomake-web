@@ -35,26 +35,35 @@ export const options = {
   },
 };
 
-const labels = ["January", "February", "March", "April", "May", "June", "July"];
-
 export function LineChart() {
   const chartDataValue = useRecoilValue<any>(chartDataByActionProfitRow);
   const data = {
     labels: chartDataValue?.profitAxis,
     datasets: [
       {
-        label: "Cost",
+        label: "Cost / Profit",
         data: chartDataValue?.costAxis,
         borderColor: "#FF4DCA",
         backgroundColor: "#FF4DCA",
       },
-      {
-        label: "Quantity",
-        data: chartDataValue?.quantityAxis,
-        borderColor: "#62A0FF",
-        backgroundColor: "#62A0FF",
-      },
+      // {
+      //   label: "Quantity",
+      //   data: chartDataValue?.quantityAxis,
+      //   borderColor: "#62A0FF",
+      //   backgroundColor: "#62A0FF",
+      // },
     ],
   };
-  return chartDataValue?.costAxis && <Line options={options} data={data} />;
+  return (
+    chartDataValue?.costAxis?.length > 0 && (
+      <Line
+        options={options}
+        data={data}
+        style={{
+          width: 600,
+          height: 300,
+        }}
+      />
+    )
+  );
 }

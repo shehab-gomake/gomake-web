@@ -208,7 +208,7 @@ export default function Profits() {
                 </div> */}
               </div>
             )}{" "}
-            <div style={clasess.pricingCointaner}>
+            <div style={{ maxWidth: 600, maxHeight: 300 }}>
               <LineChart />
             </div>
           </>
