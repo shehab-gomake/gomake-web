@@ -98,6 +98,7 @@ const useProfits = () => {
     onChangeAddPricingListRow,
     updateActionProfit,
   } = useProfitsProfitsFunction({
+    getActionProfitRowChartData,
     editPriceListStateValue,
     actionProfits,
     selectedAction,
