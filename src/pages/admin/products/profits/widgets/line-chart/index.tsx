@@ -31,7 +31,6 @@ export const options = {
     },
     title: {
       display: true,
-      text: "Chart.js Line Chart",
     },
   },
 };
@@ -45,15 +44,13 @@ export function LineChart() {
     datasets: [
       {
         label: "Cost",
-        data: chartDataValue?.profitAxis.map(() => chartDataValue?.costAxis),
+        data: chartDataValue?.costAxis,
         borderColor: "#FF4DCA",
         backgroundColor: "#FF4DCA",
       },
       {
         label: "Quantity",
-        data: chartDataValue?.profitAxis.map(
-          () => chartDataValue?.quantityAxis
-        ),
+        data: chartDataValue?.quantityAxis,
         borderColor: "#62A0FF",
         backgroundColor: "#62A0FF",
       },
