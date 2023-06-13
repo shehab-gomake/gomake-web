@@ -96,7 +96,8 @@ const RowInside = ({
           </div>
         </div>
       ) : entry[0] !== "more" ? (
-        row.status === "pending" && (entry[1] == 0 || entry[1] == "NaN") ? (
+        row.status === "pending" &&
+        (entry[1] == 0 || entry[1] == "NaN" || entry[1] == "Infinity") ? (
           <Lottie options={defaultOptions} height={"50px"} width={"50px"} />
         ) : (
           <div

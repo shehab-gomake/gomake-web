@@ -53,6 +53,7 @@ const useStyle = () => {
         paddingTop: 20,
         textAlign: "center" as "center",
       },
+      iconColor: secondColor(500),
     };
   }, [i18next.language, t]);
   return {

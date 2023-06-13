@@ -12,6 +12,10 @@ import { useEffect, useState } from "react";
 import { GomakePrimaryButton } from "@/components";
 import { useStyle } from "./style";
 import { Header, Row } from "@/widgets/table/components";
+import { Checkbox, Switch } from "@mui/material";
+import { DeleteIcon } from "@/components/icons/delete-icon";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 export default function SheetPaper() {
   const [selectedMaterials, setSelectedMaterials] = useState<any>("");
@@ -62,7 +66,7 @@ export default function SheetPaper() {
     "Active",
     "Currency",
     "Stock",
-    "D",
+    "Delete",
   ];
   const tableWidth = [
     "5%",
@@ -76,12 +80,15 @@ export default function SheetPaper() {
     "10%",
     "5%",
   ];
+  const { primaryColor } = useGomakeTheme();
   return (
     <CustomerAuthLayout>
       <MaterialsLayout header={t("materials.sheetPaper.title")} side={Side()}>
         <div style={clasess.header}>
           {tableHeaders.map((header: string, index: number) => {
-            return (
+            return index === 0 ? (
+              <Checkbox />
+            ) : (
               <Header
                 key={`header_item${index}`}
                 header={header}
@@ -91,10 +98,10 @@ export default function SheetPaper() {
             );
           })}
         </div>
-        <div style={{ paddingLeft: 5 }}>
+        <div style={{ paddingLeft: 0 }}>
           {allWeightsGrouped?.map((row: any, index: number) => {
             return (
-              <div style={clasess.bodyRow}>
+              <div style={{ ...clasess.bodyRow, borderBottom: "1px solid" }}>
                 <div
                   style={{
                     width: "5%",
@@ -103,7 +110,7 @@ export default function SheetPaper() {
                     alignItems: "center",
                   }}
                 >
-                  c
+                  <Checkbox />
                 </div>
                 <div
                   style={{
@@ -111,6 +118,8 @@ export default function SheetPaper() {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
+                    marginLeft: -5,
+                    ...FONT_FAMILY.Lexend(500, 14),
                   }}
                 >
                   {row.weight}
@@ -120,6 +129,10 @@ export default function SheetPaper() {
                     width: "100%",
                     display: "flex",
                     flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    ...FONT_FAMILY.Lexend(500, 14),
+                    color: primaryColor(500),
                   }}
                 >
                   {row?.sheetSizes.length &&
@@ -132,18 +145,101 @@ export default function SheetPaper() {
                               : clasess.secondRow
                           }
                         >
-                          <div style={{ width: "13%" }}>{size?.name}</div>
-                          <div style={{ width: "13%" }}>{size?.thickness}</div>
-                          <div style={{ width: "20%" }}>
+                          <div
+                            style={{
+                              width: "13%",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              paddingLeft: 20,
+                            }}
+                          >
+                            {size?.name}
+                          </div>
+                          <div
+                            style={{
+                              width: "13%",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            {size?.thickness}
+                          </div>
+                          <div
+                            style={{
+                              width: "20%",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
                             {size?.pricePerUnit}/{size?.pricePerTon}
                           </div>
-                          <div style={{ width: "13%" }}>{size?.direction}</div>
-                          <div style={{ width: "13%" }}>
-                            {row?.isActive ? "YES" : "NO"}
+                          <div
+                            style={{
+                              width: "13%",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              paddingLeft: 40,
+                            }}
+                          >
+                            {size?.direction}
                           </div>
-                          <div style={{ width: "13%" }}>{size?.currency}</div>
-                          <div style={{ width: "13%" }}>{size?.stock}</div>
-                          <div style={{ width: "5%" }}>a</div>
+                          <div
+                            style={{
+                              width: "13%",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              paddingLeft: 30,
+                            }}
+                          >
+                            <Switch checked={row?.isActive} />
+                          </div>
+                          <div
+                            style={{
+                              width: "13%",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            {size?.currency}
+                          </div>
+                          <div
+                            style={{
+                              width: "13%",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            {size?.stock}
+                          </div>
+                          <div
+                            style={{
+                              width: "5%",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <DeleteIcon
+                              height={20}
+                              width={20}
+                              color={clasess.iconColor}
+                            />
+                          </div>
                         </div>
                       );
                     })}
