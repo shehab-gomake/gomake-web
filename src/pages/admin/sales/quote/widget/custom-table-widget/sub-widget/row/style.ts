@@ -24,8 +24,8 @@ const useStyle = () => {
         marginTop: 14,
       },
       detailsLine: {
-        width: 4,
-        height: 28,
+        width: 15,
+        height: 33,
         background: primaryColor(500),
         borderRadius: 24,
       },

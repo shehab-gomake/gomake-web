@@ -10,24 +10,151 @@ import { ContactWidget } from "./widget/contact-widget";
 import { AddressWidget } from "./widget/address-widget";
 import { CustomTableWidget } from "./widget/custom-table-widget";
 import { TotalPriceAndVatWidit } from "./widget/total-price-and-vat";
+import { quoteState } from "./store/quote";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useEffect, useRef, useState } from "react";
+import { DateFormatterDDMMYYYY } from "@/utils/adapter";
+import { quoteItemState } from "@/store";
 
 export default function Quote() {
   const { clasess } = useStyle();
-  const { data, tableHeaders, tableRowPercent, t } = useQuote();
-
+  const setQuoteState = useSetRecoilState<any>(quoteState);
+  const quoteItemValue: any = useRecoilValue(quoteItemState);
+  const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
+  const dateRef = useRef(null);
+  const handleClickSelectDate = () => {
+    dateRef?.current?.showPicker();
+  };
+  const {
+    tableHeaders,
+    tableRowPercent,
+    selectedContact,
+    openDeleteModalContact,
+    selectedContactById,
+    isAddNewContactWidget,
+    isAddNewAddressWidget,
+    selectedAddressById,
+    selectedAddress,
+    openDeleteModalAddress,
+    selectBusiness,
+    onChangeSelectBusiness,
+    setSelectBusiness,
+    onClickAddNewAddress,
+    onClickDeleteAddress,
+    setSelectedAddress,
+    setOpenDeleteModalAddress,
+    onCloseDeleteModalAddress,
+    onOpenDeleteModalAddress,
+    setIsAddNewAddressWidget,
+    onCloseIsAddNewAddressWidget,
+    setIsAddNewContactWidget,
+    onCloseIsAddNewContactWidget,
+    setSelectedContactById,
+    onCloseDeleteModalContact,
+    onOpenDeleteModalContact,
+    onClickDeleteContact,
+    onChangeUpdateClientContact,
+    onClickAddNewContact,
+    onChangeUpdateClientAddress,
+    setSelectedAddressById,
+    t,
+  } = useQuote();
+  useEffect(() => {
+    setQuoteState({
+      tableHeaders,
+      tableRowPercent,
+      selectedContact,
+      openDeleteModalContact,
+      selectedContactById,
+      isAddNewContactWidget,
+      isAddNewAddressWidget,
+      selectedAddressById,
+      selectedAddress,
+      openDeleteModalAddress,
+      selectBusiness,
+      onChangeSelectBusiness,
+      setSelectBusiness,
+      onClickAddNewAddress,
+      onClickDeleteAddress,
+      setSelectedAddress,
+      setOpenDeleteModalAddress,
+      onCloseDeleteModalAddress,
+      onOpenDeleteModalAddress,
+      setIsAddNewAddressWidget,
+      onCloseIsAddNewAddressWidget,
+      setIsAddNewContactWidget,
+      onCloseIsAddNewContactWidget,
+      setSelectedContactById,
+      onCloseDeleteModalContact,
+      onOpenDeleteModalContact,
+      onClickDeleteContact,
+      onChangeUpdateClientContact,
+      onClickAddNewContact,
+      onChangeUpdateClientAddress,
+      setSelectedAddressById,
+      t,
+    });
+  }, [
+    tableHeaders,
+    tableRowPercent,
+    selectedContact,
+    openDeleteModalContact,
+    selectedContactById,
+    isAddNewContactWidget,
+    isAddNewAddressWidget,
+    selectedAddressById,
+    selectedAddress,
+    openDeleteModalAddress,
+    selectBusiness,
+    onChangeSelectBusiness,
+    setSelectBusiness,
+    onClickAddNewAddress,
+    onClickDeleteAddress,
+    setSelectedAddress,
+    setOpenDeleteModalAddress,
+    onCloseDeleteModalAddress,
+    onOpenDeleteModalAddress,
+    setIsAddNewAddressWidget,
+    onCloseIsAddNewAddressWidget,
+    setIsAddNewContactWidget,
+    onCloseIsAddNewContactWidget,
+    setSelectedContactById,
+    onCloseDeleteModalContact,
+    onOpenDeleteModalContact,
+    onClickDeleteContact,
+    onChangeUpdateClientContact,
+    onClickAddNewContact,
+    onChangeUpdateClientAddress,
+    setSelectedAddressById,
+    t,
+  ]);
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
         <div style={clasess.headerContainer}>
-          <HeaderTitle
-            title={t("sales.quote.title")}
-            marginBottom={1}
-            marginTop={1}
-          />
+          <div style={clasess.titleQuateContainer}>
+            <HeaderTitle
+              title={t("sales.quote.title")}
+              marginBottom={1}
+              marginTop={1}
+            />
+            <div style={clasess.quoteNumberStyle}>{quoteItemValue?.number}</div>
+          </div>
           <div style={clasess.rightSideHeaderContainer}>
-            <div style={clasess.deleverdDate}>
-              {t("sales.quote.deliverOn")} 3/5/2023
-            </div>
+            {quoteItemValue && (
+              <div style={clasess.deleverdDate} onClick={handleClickSelectDate}>
+                {t("sales.quote.deliverOn")}{" "}
+                {selectDate ? DateFormatterDDMMYYYY(selectDate) : "select date"}
+                <div style={clasess.datePickerContainer}>
+                  <input
+                    type="datetime-local"
+                    onChange={(e) => setSelectDate(e.target.value)}
+                    ref={dateRef}
+                  />
+                </div>
+              </div>
+            )}
+
             <div style={clasess.uploadContainer}>
               <UploadIcon />
               <div style={clasess.uploadTextStyle}>
@@ -46,7 +173,7 @@ export default function Quote() {
               tableHeaders={tableHeaders}
               headerWidth={tableRowPercent}
               tableRowPercent={tableRowPercent}
-              data={data}
+              data={quoteItemValue?.priceListItemsMapping}
             />
           </div>
         </div>
