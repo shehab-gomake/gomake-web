@@ -53,6 +53,28 @@ const useStyle = () => {
         paddingTop: 20,
         textAlign: "center" as "center",
       },
+      noData: {
+        width: "100%",
+        alignItems: "center",
+        backgroundColor: primaryColor(10),
+        textAlign: "center" as "center",
+        marginTop: 20,
+        height: 42,
+        lineHeight: "17.5px",
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
+      noDataSpan: {
+        width: "100%",
+        alignItems: "center",
+        backgroundColor: primaryColor(10),
+        textAlign: "center" as "center",
+        marginTop: 20,
+        height: 42,
+        color: secondColor(500),
+        lineHeight: "17.5px",
+        ...FONT_FAMILY.Lexend(500, 14),
+        cursor: "pointer",
+      },
       iconColor: secondColor(500),
     };
   }, [i18next.language, t]);

@@ -66,7 +66,7 @@ export default function SheetPaper() {
     "Active",
     "Currency",
     "Stock",
-    "Delete",
+    // "Delete",
   ];
   const tableWidth = [
     "5%",
@@ -74,11 +74,11 @@ export default function SheetPaper() {
     "10%",
     "10%",
     "20%",
+    "15%",
     "10%",
     "10%",
     "10%",
-    "10%",
-    "5%",
+    // "5%",
   ];
   const { primaryColor } = useGomakeTheme();
   return (
@@ -99,6 +99,12 @@ export default function SheetPaper() {
           })}
         </div>
         <div style={{ paddingLeft: 0 }}>
+          {allWeightsGrouped.length === 0 && (
+            <div style={clasess.noData}>
+              There is supplier added to this sheet yet,
+              <span style={clasess.noDataSpan}> Please add new one now.</span>
+            </div>
+          )}
           {allWeightsGrouped?.map((row: any, index: number) => {
             return (
               <div style={{ ...clasess.bodyRow, borderBottom: "1px solid" }}>
