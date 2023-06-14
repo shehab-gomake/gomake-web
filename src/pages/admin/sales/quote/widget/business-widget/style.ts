@@ -21,7 +21,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        width: 180,
+        width: "15%",
       },
       labelContainer: {
         display: "flex",

@@ -22,3 +22,4 @@ export * from "./plus";
 export * from "./checkbox-icon";
 export * from "./checked-icon";
 export * from "./add-plus-icon";
+export * from "./remove-icon";

@@ -1,11 +1,15 @@
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-import { useStyle } from "./style";
-import { useTranslation } from "react-i18next";
-import { IconButton, Tooltip } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import { useState } from "react";
+import {
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+  GomakeTextInput,
+} from "@/components";
+import { AddPlusIcon, RemoveIcon } from "@/icons";
+
 import { AddContactWidget } from "./add-contact-widget";
+import { useStyle } from "./style";
+
+import { useContactWidget } from "./use-contact-widget";
+
 interface IProps {
   isContactID?: boolean;
   isContactName?: boolean;
@@ -21,97 +25,159 @@ const ContactWidget = ({
   isAddNewContact = true,
 }: IProps) => {
   const { clasess } = useStyle();
-  const { t } = useTranslation();
-  const mockData = [1];
-  const [isAddNewContactWidget, setIsAddNewContactWidget] = useState(false);
-  return (
-    <>
-      {mockData?.map((item, index) => {
-        return (
-          <div style={clasess.mainContainer}>
-            {isContactID && (
-              <div style={clasess.fieldContainer}>
-                <div style={clasess.labelStyle}>
-                  {t("sales.quote.contactID")}
-                </div>
-                <GoMakeAutoComplate
-                  options={["A", "B", "C", "D", "E", "F"]}
-                  style={clasess.autoComplateStyle}
-                  placeholder={t("sales.quote.contactID")}
-                />
-              </div>
-            )}
-            {isContactName && (
-              <div style={clasess.fieldContainer}>
-                <div style={clasess.labelStyle}>
-                  {t("sales.quote.contactName")}
-                </div>
-                <GomakeTextInput
-                  placeholder={t("sales.quote.contactName")}
-                  style={clasess.textInputStyle}
-                />
-              </div>
-            )}
-            {isPortable && (
-              <div style={clasess.fieldContainer}>
-                <div style={clasess.labelStyle}>
-                  {t("sales.quote.portable")}
-                </div>
-                <GomakeTextInput
-                  placeholder={t("sales.quote.portable")}
-                  style={clasess.textInputStyle}
-                />
-              </div>
-            )}
+  const {
+    quoteStateValue,
+    quoteItemValue,
+    clientContactsValue,
+    items,
+    changeItems,
+    updateClientContact,
+    t,
+  } = useContactWidget();
 
-            {isEmail && (
-              <div style={clasess.fieldContainer}>
-                <div style={clasess.labelStyle}>{t("sales.quote.email")}</div>
-                <GomakeTextInput
-                  placeholder={t("sales.quote.email")}
-                  style={clasess.textInputStyle}
-                />
-              </div>
-            )}
-            {isAddNewContact && (
-              <div style={clasess.fieldContainer}>
-                <div style={clasess.labelStyle}></div>
-                <div style={clasess.addDeleteContainer}>
-                  {index === mockData?.length - 1 ? (
-                    <div>
-                      {!isAddNewContactWidget && (
-                        <Tooltip title={t("sales.quote.addNewContact")}>
-                          <IconButton
-                            onClick={() => setIsAddNewContactWidget(true)}
-                          >
-                            <AddIcon style={{ color: "#ED028C" }} />
-                          </IconButton>
-                        </Tooltip>
-                      )}
+  return (
+    <div>
+      {items?.length > 0 ? (
+        <>
+          {items?.map((item: any, index: number) => {
+            return (
+              <div style={clasess.mainContainer}>
+                {isContactID && (
+                  <div style={clasess.fieldContainer}>
+                    <div style={clasess.labelStyle}>
+                      {t("sales.quote.contactID")}
                     </div>
-                  ) : null}
-                  <div>
-                    {mockData?.length > 1 ? (
-                      <Tooltip title={t("sales.quote.removeContact")}>
-                        <IconButton>
-                          <RemoveIcon style={{ color: "#2E3092" }} />
-                        </IconButton>
-                      </Tooltip>
-                    ) : null}
+                    <GoMakeAutoComplate
+                      options={clientContactsValue}
+                      style={clasess.autoComplateStyle}
+                      placeholder={
+                        clientContactsValue[index]?.name
+                          ? clientContactsValue[index]?.name
+                          : t("sales.quote.contactID")
+                      }
+                      getOptionLabel={(item) => item?.name}
+                    />
                   </div>
-                </div>
+                )}
+
+                {isContactName && (
+                  <div style={clasess.fieldContainer}>
+                    <div style={clasess.labelStyle}>
+                      {t("sales.quote.contactName")}
+                    </div>
+                    <GomakeTextInput
+                      placeholder={t("sales.quote.contactName")}
+                      style={clasess.textInputStyle}
+                      value={item?.contactName || ""}
+                      onChange={(e: any) => {
+                        changeItems(index, "contactName", e.target.value);
+                      }}
+                      onBlur={() => updateClientContact(item)}
+                    />
+                  </div>
+                )}
+                {isPortable && (
+                  <div style={clasess.fieldContainer}>
+                    <div style={clasess.labelStyle}>
+                      {t("sales.quote.portable")}
+                    </div>
+                    <GomakeTextInput
+                      placeholder={t("sales.quote.portable")}
+                      style={clasess.textInputStyle}
+                      value={item?.contactPhone}
+                      onChange={(e: any) => {
+                        changeItems(index, "contactPhone", e.target.value);
+                      }}
+                      onBlur={() => updateClientContact(item)}
+                    />
+                  </div>
+                )}
+
+                {isEmail && (
+                  <div style={clasess.fieldContainer}>
+                    <div style={clasess.labelStyle}>
+                      {t("sales.quote.email")}
+                    </div>
+                    <GomakeTextInput
+                      placeholder={t("sales.quote.email")}
+                      style={clasess.textInputStyle}
+                      value={item?.contactMail}
+                      onChange={(e: any) => {
+                        changeItems(index, "contactMail", e.target.value);
+                      }}
+                      onBlur={() => updateClientContact(item)}
+                    />
+                  </div>
+                )}
+                {isAddNewContact && (
+                  <div style={clasess.fieldContainer}>
+                    <div style={clasess.labelStyle}></div>
+                    <div style={clasess.addDeleteContainer}>
+                      {index === quoteItemValue?.quoteContacts?.length - 1 ? (
+                        <div>
+                          {!quoteStateValue.isAddNewContactWidget && (
+                            <div
+                              style={clasess.addContactContainer}
+                              onClick={() =>
+                                quoteStateValue.setIsAddNewContactWidget(true)
+                              }
+                            >
+                              <AddPlusIcon stroke={"#090A1D"} />
+                              <div style={clasess.addContactStyle}>
+                                {t("sales.quote.addNewContact")}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ) : null}
+                      <div
+                        style={clasess.addContactContainer}
+                        onClick={() =>
+                          quoteStateValue?.onOpenDeleteModalContact(item)
+                        }
+                      >
+                        <RemoveIcon />
+                        <div style={clasess.removeContactStyle}>
+                          {t("sales.quote.remove")}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        );
-      })}
-      {isAddNewContactWidget && (
-        <AddContactWidget
-          isAddNewContactWidget={isAddNewContactWidget}
-          setIsAddNewContactWidget={setIsAddNewContactWidget}
-        />
+            );
+          })}
+        </>
+      ) : (
+        <>
+          {!quoteStateValue.isAddNewContactWidget && (
+            <div
+              style={clasess.addContactContainer}
+              onClick={() => quoteStateValue.setIsAddNewContactWidget(true)}
+            >
+              <AddPlusIcon stroke={"#090A1D"} />
+              <div style={clasess.addContactStyle}>
+                {t("sales.quote.addNewContact")}
+              </div>
+            </div>
+          )}
+        </>
       )}
-    </>
+
+      {quoteStateValue.isAddNewContactWidget && <AddContactWidget />}
+      <GoMakeDeleteModal
+        title={t("sales.quote.deleteContactRow")}
+        yesBtn={t("materials.buttons.delete")}
+        openModal={quoteStateValue?.openDeleteModalContact}
+        onClose={quoteStateValue?.onCloseDeleteModalContact}
+        subTitle={t("sales.quote.subTitleDeleteContactRow")}
+        onClickDelete={() =>
+          quoteStateValue?.onClickDeleteContact(
+            quoteStateValue?.selectedContact
+          )
+        }
+      />
+    </div>
   );
 };
 
