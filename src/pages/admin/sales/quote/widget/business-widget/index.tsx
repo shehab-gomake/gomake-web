@@ -5,6 +5,7 @@ import { PlusIcon } from "@/icons";
 import { useRecoilValue } from "recoil";
 import { agentListsState, businessListsState, quoteItemState } from "@/store";
 import { useEffect, useState } from "react";
+import { quoteState } from "../../store/quote";
 interface IProps {
   isBusinessCode?: boolean;
   isBusinessName?: boolean;
@@ -17,17 +18,10 @@ const BusinessWidget = ({
   isPurchaseNumber = true,
   isAgent = true,
 }: IProps) => {
+  const quoteStateValue = useRecoilValue<any>(quoteState);
   const quoteItemValue: any = useRecoilValue(quoteItemState);
   const customersListValue = useRecoilValue<any>(businessListsState);
   const agentListValue = useRecoilValue<any>(agentListsState);
-  const [selectBusiness, setSelectBusiness] = useState<any>({});
-
-  useEffect(() => {
-    const foundItem = customersListValue.find(
-      (item) => item.id === quoteItemValue?.customerID
-    );
-    setSelectBusiness(foundItem);
-  }, [quoteItemValue, customersListValue]);
 
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -43,7 +37,7 @@ const BusinessWidget = ({
               <GomakeTextInput
                 placeholder={t("sales.quote.businessCode")}
                 style={clasess.textInputStyle}
-                value={selectBusiness?.code}
+                value={quoteStateValue.selectBusiness?.code}
               />
             </div>
           )}
@@ -59,13 +53,13 @@ const BusinessWidget = ({
                 options={customersListValue}
                 style={clasess.autoComplateStyle}
                 placeholder={
-                  selectBusiness
-                    ? selectBusiness?.name
+                  quoteStateValue.selectBusiness
+                    ? quoteStateValue.selectBusiness?.name
                     : t("sales.quote.businessName")
                 }
                 getOptionLabel={(item) => item?.name}
                 onChange={(e: any, item: any) => {
-                  setSelectBusiness(item);
+                  quoteStateValue.onChangeSelectBusiness(item);
                 }}
               />
             </div>

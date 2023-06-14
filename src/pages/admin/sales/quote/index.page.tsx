@@ -36,6 +36,9 @@ export default function Quote() {
     selectedAddressById,
     selectedAddress,
     openDeleteModalAddress,
+    selectBusiness,
+    onChangeSelectBusiness,
+    setSelectBusiness,
     onClickAddNewAddress,
     onClickDeleteAddress,
     setSelectedAddress,
@@ -68,6 +71,9 @@ export default function Quote() {
       selectedAddressById,
       selectedAddress,
       openDeleteModalAddress,
+      selectBusiness,
+      onChangeSelectBusiness,
+      setSelectBusiness,
       onClickAddNewAddress,
       onClickDeleteAddress,
       setSelectedAddress,
@@ -99,6 +105,9 @@ export default function Quote() {
     selectedAddressById,
     selectedAddress,
     openDeleteModalAddress,
+    selectBusiness,
+    onChangeSelectBusiness,
+    setSelectBusiness,
     onClickAddNewAddress,
     onClickDeleteAddress,
     setSelectedAddress,
@@ -135,7 +144,7 @@ export default function Quote() {
             {quoteItemValue && (
               <div style={clasess.deleverdDate} onClick={handleClickSelectDate}>
                 {t("sales.quote.deliverOn")}{" "}
-                {selectDate ? DateFormatterDDMMYYYY(selectDate) : "select dae"}
+                {selectDate ? DateFormatterDDMMYYYY(selectDate) : "select date"}
                 <div style={clasess.datePickerContainer}>
                   <input
                     type="datetime-local"

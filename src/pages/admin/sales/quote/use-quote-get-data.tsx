@@ -13,7 +13,7 @@ import {
   clientContactsState,
   quoteItemState,
 } from "@/store";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 
 const useQuoteGetData = () => {
@@ -26,6 +26,7 @@ const useQuoteGetData = () => {
 
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
+  console.log("quoteItemValue", quoteItemValue);
 
   const [clientContactsValue, setClientContactsValue] =
     useRecoilState<any>(clientContactsState);

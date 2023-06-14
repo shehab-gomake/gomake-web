@@ -1,11 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { useQuoteGetData } from "./use-quote-get-data";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 const useQuote = () => {
   const { t } = useTranslation();
-  const { quoteItemValue, getQuote } = useQuoteGetData();
+  const { quoteItemValue, customersListValue, getQuote } = useQuoteGetData();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const tableHeaders = [
@@ -36,7 +36,13 @@ const useQuote = () => {
   const [isAddNewContactWidget, setIsAddNewContactWidget] = useState(false);
   const [selectedAddressById, setSelectedAddressById] = useState<any>();
   const [isAddNewAddressWidget, setIsAddNewAddressWidget] = useState(false);
-
+  const [selectBusiness, setSelectBusiness] = useState<any>({});
+  useEffect(() => {
+    const foundItem = customersListValue.find(
+      (item: any) => item.id === quoteItemValue?.customerID
+    );
+    setSelectBusiness(foundItem);
+  }, [quoteItemValue, customersListValue]);
   const onCloseIsAddNewContactWidget = () => {
     setSelectedContactById({});
     setIsAddNewContactWidget(false);
@@ -182,6 +188,31 @@ const useQuote = () => {
       });
     }
   }, [selectedAddressById, quoteItemValue]);
+
+  const onChangeSelectBusiness = useCallback(
+    async (item: any) => {
+      const res = await callApi("PUT", `/v1/erp-service/quote/change-client`, {
+        quoteID: quoteItemValue?.id,
+        clientId: item?.id,
+        userId: quoteItemValue?.userID,
+      });
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedSusuccessfully"),
+          type: "sucess",
+        });
+        getQuote();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [selectBusiness, quoteItemValue]
+  );
   return {
     tableHeaders,
     tableRowPercent,
@@ -193,6 +224,9 @@ const useQuote = () => {
     selectedAddressById,
     selectedAddress,
     openDeleteModalAddress,
+    selectBusiness,
+    onChangeSelectBusiness,
+    setSelectBusiness,
     onClickAddNewAddress,
     onClickDeleteAddress,
     setSelectedAddress,
