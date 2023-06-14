@@ -12,6 +12,7 @@ import {
 import { AddAddressWidget } from "./add-address-widget";
 import { quoteState } from "../../store/quote";
 import { useStyle } from "./style";
+import { useAddressWidget } from "./use-address-widget";
 
 interface IProps {
   isAddressID?: boolean;
@@ -30,15 +31,20 @@ const AddressWidget = ({
   isAddNewAddress = true,
 }: IProps) => {
   const { clasess } = useStyle();
-  const { t } = useTranslation();
-  const quoteItemValue: any = useRecoilValue(quoteItemState);
-  const quoteStateValue = useRecoilValue<any>(quoteState);
-  const [clientAddressValue] = useRecoilState<any>(clientAddressState);
+  const {
+    quoteStateValue,
+    quoteItemValue,
+    clientAddressValue,
+    items,
+    changeItems,
+    updateClientAddress,
+    t,
+  } = useAddressWidget();
   return (
     <>
-      {quoteItemValue?.quoteAddresses?.length > 0 ? (
+      {items?.length > 0 ? (
         <>
-          {quoteItemValue?.quoteAddresses?.map((item, index) => {
+          {items?.map((item, index) => {
             return (
               <div style={clasess.mainContainer}>
                 {isAddressID && (
@@ -69,6 +75,10 @@ const AddressWidget = ({
                       placeholder={t("sales.quote.city")}
                       style={clasess.textInputStyle}
                       value={item?.city}
+                      onChange={(e: any) => {
+                        changeItems(index, "city", e.target.value);
+                      }}
+                      onBlur={() => updateClientAddress(item)}
                     />
                   </div>
                 )}
@@ -83,6 +93,10 @@ const AddressWidget = ({
                       placeholder={t("sales.quote.street")}
                       style={clasess.textInputStyle}
                       value={item?.street}
+                      onChange={(e: any) => {
+                        changeItems(index, "street", e.target.value);
+                      }}
+                      onBlur={() => updateClientAddress(item)}
                     />
                   </div>
                 )}
@@ -97,6 +111,10 @@ const AddressWidget = ({
                       placeholder={t("sales.quote.entrance")}
                       style={clasess.textInputStyle}
                       value={item?.entry}
+                      onChange={(e: any) => {
+                        changeItems(index, "entry", e.target.value);
+                      }}
+                      onBlur={() => updateClientAddress(item)}
                     />
                   </div>
                 )}
@@ -110,6 +128,10 @@ const AddressWidget = ({
                       placeholder={t("sales.quote.apartment")}
                       style={clasess.textInputStyle}
                       value={item?.apartment}
+                      onChange={(e: any) => {
+                        changeItems(index, "apartment", e.target.value);
+                      }}
+                      onBlur={() => updateClientAddress(item)}
                     />
                   </div>
                 )}

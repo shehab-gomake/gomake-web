@@ -2,18 +2,23 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { quoteState } from "../../store/quote";
-import { clientContactsState, quoteItemState } from "@/store";
+import {
+  clientAddressState,
+  clientContactsState,
+  quoteItemState,
+} from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const useContactWidget = () => {
+const useAddressWidget = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
 
-  const quoteStateValue = useRecoilValue<any>(quoteState);
   const quoteItemValue: any = useRecoilValue(quoteItemState);
-  const [clientContactsValue] = useRecoilState<any>(clientContactsState);
+  const quoteStateValue = useRecoilValue<any>(quoteState);
+  const [clientAddressValue] = useRecoilState<any>(clientAddressState);
   const [items, setItems] = useState([]);
+  console.log("itemsBBBBBB", items);
   const changeItems = (index: number, filedName: string, value: any) => {
     let temp = [...items];
     temp[index] = {
@@ -24,19 +29,21 @@ const useContactWidget = () => {
   };
 
   useEffect(() => {
-    setItems(quoteItemValue?.quoteContacts);
+    setItems(quoteItemValue?.quoteAddresses);
   }, [quoteItemValue]);
 
-  const updateClientContact = useCallback(async (item: any) => {
+  const updateClientAddress = useCallback(async (item: any) => {
     const res = await callApi(
       "PUT",
-      `/v1/erp-service/quote/update-quote-contact`,
+      `/v1/erp-service/quote/update-quote-address`,
       {
         id: item?.id,
-        contactID: item?.contactID,
-        contactName: item?.contactName,
-        contactMail: item?.contactMail,
-        contactPhone: item?.contactPhone,
+        addressID: item?.addressID,
+        street: item?.street,
+        city: item?.city,
+        entry: item?.entry,
+        apartment: item?.apartment,
+        notes: item?.notes,
         quoteID: item?.quoteID,
       }
     );
@@ -57,13 +64,13 @@ const useContactWidget = () => {
   return {
     quoteStateValue,
     quoteItemValue,
-    clientContactsValue,
+    clientAddressValue,
     items,
     setItems,
     changeItems,
-    updateClientContact,
+    updateClientAddress,
     t,
   };
 };
 
-export { useContactWidget };
+export { useAddressWidget };

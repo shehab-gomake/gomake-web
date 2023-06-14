@@ -1,18 +1,13 @@
-import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue } from "recoil";
-
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
   GomakeTextInput,
 } from "@/components";
-import { clientContactsState, quoteItemState } from "@/store";
 import { AddPlusIcon, RemoveIcon } from "@/icons";
 
 import { AddContactWidget } from "./add-contact-widget";
-import { quoteState } from "../../store/quote";
 import { useStyle } from "./style";
-import { useEffect, useState } from "react";
+
 import { useContactWidget } from "./use-contact-widget";
 
 interface IProps {
@@ -35,13 +30,13 @@ const ContactWidget = ({
     quoteItemValue,
     clientContactsValue,
     items,
-    setItems,
     changeItems,
+    updateClientContact,
     t,
   } = useContactWidget();
 
   return (
-    <>
+    <div>
       {items?.length > 0 ? (
         <>
           {items?.map((item: any, index: number) => {
@@ -64,6 +59,7 @@ const ContactWidget = ({
                     />
                   </div>
                 )}
+
                 {isContactName && (
                   <div style={clasess.fieldContainer}>
                     <div style={clasess.labelStyle}>
@@ -76,6 +72,7 @@ const ContactWidget = ({
                       onChange={(e: any) => {
                         changeItems(index, "contactName", e.target.value);
                       }}
+                      onBlur={() => updateClientContact(item)}
                     />
                   </div>
                 )}
@@ -91,6 +88,7 @@ const ContactWidget = ({
                       onChange={(e: any) => {
                         changeItems(index, "contactPhone", e.target.value);
                       }}
+                      onBlur={() => updateClientContact(item)}
                     />
                   </div>
                 )}
@@ -107,6 +105,7 @@ const ContactWidget = ({
                       onChange={(e: any) => {
                         changeItems(index, "contactMail", e.target.value);
                       }}
+                      onBlur={() => updateClientContact(item)}
                     />
                   </div>
                 )}
@@ -178,7 +177,7 @@ const ContactWidget = ({
           )
         }
       />
-    </>
+    </div>
   );
 };
 
