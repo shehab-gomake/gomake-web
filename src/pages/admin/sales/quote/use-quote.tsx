@@ -213,6 +213,7 @@ const useQuote = () => {
     },
     [selectBusiness, quoteItemValue]
   );
+
   return {
     tableHeaders,
     tableRowPercent,

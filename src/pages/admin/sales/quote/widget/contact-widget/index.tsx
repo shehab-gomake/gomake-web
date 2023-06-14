@@ -12,6 +12,8 @@ import { AddPlusIcon, RemoveIcon } from "@/icons";
 import { AddContactWidget } from "./add-contact-widget";
 import { quoteState } from "../../store/quote";
 import { useStyle } from "./style";
+import { useEffect, useState } from "react";
+import { useContactWidget } from "./use-contact-widget";
 
 interface IProps {
   isContactID?: boolean;
@@ -28,16 +30,21 @@ const ContactWidget = ({
   isAddNewContact = true,
 }: IProps) => {
   const { clasess } = useStyle();
-  const { t } = useTranslation();
-  const quoteStateValue = useRecoilValue<any>(quoteState);
-  const quoteItemValue: any = useRecoilValue(quoteItemState);
-  const [clientContactsValue] = useRecoilState<any>(clientContactsState);
+  const {
+    quoteStateValue,
+    quoteItemValue,
+    clientContactsValue,
+    items,
+    setItems,
+    changeItems,
+    t,
+  } = useContactWidget();
 
   return (
     <>
-      {quoteItemValue?.quoteContacts?.length > 0 ? (
+      {items?.length > 0 ? (
         <>
-          {quoteItemValue?.quoteContacts?.map((item: any, index: number) => {
+          {items?.map((item: any, index: number) => {
             return (
               <div style={clasess.mainContainer}>
                 {isContactID && (
@@ -65,7 +72,10 @@ const ContactWidget = ({
                     <GomakeTextInput
                       placeholder={t("sales.quote.contactName")}
                       style={clasess.textInputStyle}
-                      value={item?.contactName}
+                      value={item?.contactName || ""}
+                      onChange={(e: any) => {
+                        changeItems(index, "contactName", e.target.value);
+                      }}
                     />
                   </div>
                 )}
@@ -78,6 +88,9 @@ const ContactWidget = ({
                       placeholder={t("sales.quote.portable")}
                       style={clasess.textInputStyle}
                       value={item?.contactPhone}
+                      onChange={(e: any) => {
+                        changeItems(index, "contactPhone", e.target.value);
+                      }}
                     />
                   </div>
                 )}
@@ -91,6 +104,9 @@ const ContactWidget = ({
                       placeholder={t("sales.quote.email")}
                       style={clasess.textInputStyle}
                       value={item?.contactMail}
+                      onChange={(e: any) => {
+                        changeItems(index, "contactMail", e.target.value);
+                      }}
                     />
                   </div>
                 )}
