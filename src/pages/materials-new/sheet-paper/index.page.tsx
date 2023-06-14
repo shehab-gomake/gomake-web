@@ -9,7 +9,7 @@ import { HeaderFilter } from "./header-filter";
 import { MaterialsLayout } from "@/widgets/machines/components/layout/materials-layout";
 import { SideList } from "@/widgets/materials/side-list/side-list";
 import { useEffect, useState } from "react";
-import { GomakePrimaryButton } from "@/components";
+import { GoMakeModal, GomakePrimaryButton } from "@/components";
 import { useStyle } from "./style";
 import { Header, Row } from "@/widgets/table/components";
 import { Checkbox, Switch } from "@mui/material";
@@ -81,6 +81,11 @@ export default function SheetPaper() {
     // "5%",
   ];
   const { primaryColor } = useGomakeTheme();
+
+  const [showSupplierModal, setShowSupplierModal] = useState(false);
+  const onClickAddNewSupplier = () => {
+    setShowSupplierModal(true);
+  };
   return (
     <CustomerAuthLayout>
       <MaterialsLayout header={t("materials.sheetPaper.title")} side={Side()}>
@@ -102,7 +107,10 @@ export default function SheetPaper() {
           {allWeightsGrouped.length === 0 && (
             <div style={clasess.noData}>
               There is supplier added to this sheet yet,
-              <span style={clasess.noDataSpan}> Please add new one now.</span>
+              <span style={clasess.noDataSpan} onClick={onClickAddNewSupplier}>
+                {" "}
+                Please add new one now.
+              </span>
             </div>
           )}
           {allWeightsGrouped?.map((row: any, index: number) => {
@@ -263,6 +271,24 @@ export default function SheetPaper() {
           onChangeSupplier={onChangeSupplier}
         /> */}
         {/* <Table tableHeaders={headerTable} tableRows={allWeightsGrouped} /> */}
+
+        <GoMakeModal
+          openModal={showSupplierModal}
+          modalTitle={`Add Supplier`}
+          onClose={() => setShowSupplierModal(false)}
+          insideStyle={clasess.insideStyle}
+        >
+          <div
+            style={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            Hey
+          </div>
+        </GoMakeModal>
       </MaterialsLayout>
     </CustomerAuthLayout>
   );

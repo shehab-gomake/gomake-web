@@ -75,6 +75,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         cursor: "pointer",
       },
+      insideStyle: { width: "35%", height: "20%" },
       iconColor: secondColor(500),
     };
   }, [i18next.language, t]);
