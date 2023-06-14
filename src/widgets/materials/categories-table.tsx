@@ -25,7 +25,7 @@ const StyledTableCell = styled(TableCell)(() => ({
     ...FONT_FAMILY.Lexend(500, 14),
   },
   [`&.${tableCellClasses.body}`]: {
-    ...FONT_FAMILY.Lexend(400, 12),
+    ...FONT_FAMILY.Lexend(500, 14),
     color: "#2E3092",
   },
 }));
@@ -174,7 +174,7 @@ const CategoriesTable = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <StyledTableCell align={"left"}>Category</StyledTableCell>
+              <StyledTableCell align={"center"}>Category</StyledTableCell>
               <StyledTableCell align={"center"}>View Material</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -182,7 +182,7 @@ const CategoriesTable = () => {
             {categoriesList.map((category) => {
               return (
                 <StyledTableRow key={category.key}>
-                  <StyledTableCell align={"left"}>
+                  <StyledTableCell align={"center"}>
                     {category.title}
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>

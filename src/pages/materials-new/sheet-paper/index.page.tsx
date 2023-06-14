@@ -60,7 +60,7 @@ export default function SheetPaper() {
     "c",
     "Weight",
     "Size",
-    "Thiknes",
+    "Thickness",
     "cost ($) per unit/ton",
     "Directions",
     "Active",
