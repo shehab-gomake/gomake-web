@@ -7,11 +7,16 @@ import { useEmployees } from "./use-employees";
 import { Switch } from "@mui/material";
 import { useStyle } from "./style";
 import { AddEmployeeButton } from "./add-employee";
+import Pagination from '@mui/material/Pagination';
+import { useState } from "react";
+
+
 
 export default function Home() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const { tabelHeaders , onChangeName , onChangStatus , allEmployees , isActive } = useEmployees();
+  const [pageNumber, setPageNumber] = useState(1);
+  const { tabelHeaders , onChangeName , onChangStatus , allEmployees , isActive } = useEmployees(pageNumber);
 
 
   return (
@@ -28,6 +33,8 @@ export default function Home() {
       <div style={clasess.tableContainer}>
         <Table tableHeaders={tabelHeaders} tableRows={allEmployees} ></Table>
       </div>
+      <Pagination style={{ position: "absolute", bottom: 10}} count={5} variant="outlined" color="primary"  page={pageNumber}
+        onChange={(event, value) => setPageNumber(value)} />
     </CustomerAuthLayout>
   );
 }

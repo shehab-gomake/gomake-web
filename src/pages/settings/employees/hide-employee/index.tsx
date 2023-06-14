@@ -1,16 +1,16 @@
 import { IconButton } from "@mui/material";
 import HideSourceIcon from '@mui/icons-material/HideSource';
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
+import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 
 
 const DeactivateEmployee = ({ item }: any) => {
     const { callApi } = useGomakeAxios();
     const { t } = useTranslation();
     const { setSnackbarStateValue } = useSnackBar();
-
 
     const onClickDeactivateEmployee = useCallback(async () => {
         const res = await callApi(
@@ -35,14 +35,15 @@ const DeactivateEmployee = ({ item }: any) => {
         }
     }, [item]);
 
+    
 
     return (
         <>
             <IconButton>
-                {item.isActive! ? (
+                {item.isActive ? (
                     <ToggleOnIcon onClick={() => onClickDeactivateEmployee()}/>
                 ) : (
-                    <HideSourceIcon onClick={() => onClickDeactivateEmployee()}/>
+                    <ToggleOffIcon onClick={() => onClickDeactivateEmployee()}/>
                 )}
             </IconButton>
         </>

@@ -3,10 +3,9 @@ import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
 import { getAndSetAllCustomers } from "@/services/hooks/get-set-customers";
 
-const useSuppliers = (clientType) => {
+const useSuppliers = (clientType , pageNumber) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const [pageNumber, setPageNumber] = useState(0);
   const [allSuppliers, setAllSuppliers] = useState([]);
 
   const tabelHeaders = useMemo(

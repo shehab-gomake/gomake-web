@@ -12,24 +12,22 @@ const ShowEmployeeCard = ({ item }: any) => {
   const [employee, setEmployee] = useState(null);
   const [open, setOpen] = useState(false);
 
-  const getEmployee = useCallback(async () => {
-    const data = await getAndSetEmployee(callApi, setEmployee, {
-      employeeId: item.id ,
-    });
-    return data;
-  }, [item]);
 
-  useEffect(() => {
-    getEmployee();
-  }, [item]);
-  
+  const onClickEditEmployee = useCallback(async () => {
+    setOpen(!open);
+    await getAndSetEmployee(callApi, setEmployee, {
+      employeeId: item.id,
+    });
+  }, [callApi, item.id, open]);
+
+ 
   
   return (
     <>
       <IconButton>
-        <EditIcon onClick={()=>setOpen(!open)}  ></EditIcon>
+        <EditIcon onClick={onClickEditEmployee}  ></EditIcon>
       </IconButton>
-      {employee && <EmployeeCardWidget  openModal={open} modalTitle={ t("employees.modal.editTitle")} onClose={() => setOpen(false)} employee={employee} showUpdateButton={true}></EmployeeCardWidget>}
+      {employee && <EmployeeCardWidget  openModal={open} modalTitle={ t("employees.modal.editTitle")} onClose={() => setOpen(false)} employee={employee} ></EmployeeCardWidget>}
     </>
   );
 };

@@ -6,13 +6,16 @@ import { useStyle } from "./style";
 import { HeaderFilter } from "./header-filter";
 import { useCustomers } from "./use-customers";
 import { AddCustomerButton } from "./add-customer";
-
+import Pagination from '@mui/material/Pagination';
+import { useState } from "react";
+import Stack from '@mui/material/Stack';
 
 export default function Home() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
+  const [pageNumber, setPageNumber] = useState(1);
   const { tabelHeaders, setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType,
-    valStatus } = useCustomers("C");
+    valStatus } = useCustomers("C",pageNumber);
 
 
   return (
@@ -37,9 +40,13 @@ export default function Home() {
         valClientType={valClientType}
         valStatus={valStatus}
       />
+      <Stack spacing={3}>
       <div style={clasess.tableContainer}>
         <Table tableHeaders={tabelHeaders} tableRows={allCustomers}></Table>
       </div>
+      <Pagination  count={5} variant="outlined" color="primary"  page={pageNumber}
+        onChange={(event, value) => setPageNumber(value)} />
+        </Stack>
     </CustomerAuthLayout>
   );
 }

@@ -229,12 +229,12 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
           <ThemeProvider theme={theme}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <Tabs value={selectedTab} onChange={handleTabChange} textColor="secondary" indicatorColor="secondary" >
-                <Tab label="General" />
-                <Tab label="Contacts" />
-                <Tab label="Addresses" />
-                <Tab label="Budget managment" />
-                <Tab label="Price lists" />
-                <Tab label="GOMAKE USERS" />
+                <Tab label={t("customers.modal.general")} />
+                <Tab label={t("customers.modal.contacts")} />
+                <Tab label={t("customers.modal.addresses")}/>
+                <Tab label={t("customers.modal.budgetManagment")} />
+                <Tab label={t("customers.modal.priceLists")}/>
+                <Tab label={t("customers.modal.gomakeUsers")}/>
               </Tabs>
               {
                 //general info

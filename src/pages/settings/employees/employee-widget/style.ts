@@ -16,13 +16,12 @@ const useStyle = () => {
         backgroundColor: "#F135A3",
       },
 
-      insideStyle: { width: "50%" , hight: "50%" },
+      insideStyle: { width: "50%", hight: "50%" },
 
       inputStyle: {
         border: "none",
         borderBottom: "1px solid black",
         borderBottomColor: "#2E3092",
-        padding: "0.5rem",
         display: "inline-block",
         boxShadow: "none",
         outline: '1px solid white',
@@ -65,6 +64,13 @@ const useStyle = () => {
         height: convertHeightToVH(30),
       },
 
+      deleteButtonStyle: {
+        width: convertWidthToVW(90),
+        height: convertHeightToVH(40),
+        color: "#8283BE",
+        borderColor: "#2e3092"
+      },
+
       autoComplateStyle: {
         width: convertWidthToVW(200),
       },
@@ -74,7 +80,7 @@ const useStyle = () => {
         height: convertHeightToVH(30),
       },
 
-      textAreaStyle:{
+      textAreaStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#8283BE",
       },

@@ -915,6 +915,12 @@
       "vatNumber": "Vat number:",
       "openOrders": "Open Orders:",
       "currency": "Currency",
+      "general": "General",
+      "contacts": "Contacts",
+      "addresses": "Addresses",
+      "budgetManagment": "Budget managment",
+      "priceLists": "Price lists",
+      "gomakeUsers": "GOMAKE USERS",
       "phone1": "Phone1:",
       "phone2": "Phone2:",
       "site": "Site:",
@@ -1009,7 +1015,9 @@
   },
   "employees": {
     "buttons": {
-      "addEmployeee": "Add Employee"
+      "addEmployeee": "Add Employee",
+      "delete": "DELETE",
+      "saveChanges" : "Save"
     },
     "modal": {
       "addTitle": "Add Employee",
@@ -1024,7 +1032,13 @@
       "isGraphicArtist": "Is Graphic Artist",
       "isHaveFullKanbanPermission": "Is Have Full Kanban Permission",
       "add": "Add",
-      "update": "Update"
+      "update": "Update",
+      "ipAddresses": "IP addresses",
+      "newAddress": "NEW ADDRESS",
+      "address": "Address",
+      "description": "Description",
+      "created": "Created",
+      "updated": "Updated"
     },
     "title": "Employees",
     "onlyInactiveEmployee": "Only inactive employee",
@@ -1036,7 +1050,7 @@
     "hashtag": "#",
     "successfullyActivated": "Successfully activated",
     "successfullyDeactivated": "Successfully deactivated",
-    "updatedfailed": "Updated failed",
-    "successfullyUpdated": "Successfully updated"
+    "successfullyUpdated": "Successfully updated",
+    "updatedfailed": "Updated failed"
   }
 }

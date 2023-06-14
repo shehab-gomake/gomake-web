@@ -4,12 +4,12 @@ import { useTranslation } from "react-i18next";
 import { getAndSetAllEmployees } from "@/services/hooks";
 
 
-const useEmployees = () => {
+const useEmployees = (pageNumber) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [allEmployees, setAllEmployees] = useState([]);
-  const [pageNumber, setPageNumber] = useState(0);
   const [isAgent, setIsAgent] = useState(null);
+ 
 
   const [name, setName] = useState("");
   const onChangeName = useCallback(async (e: any, value: any) => {
@@ -59,6 +59,7 @@ const useEmployees = () => {
     onChangStatus,
     isActive,
     allEmployees,
+    getAllEmployees,
 };
 };
 export { useEmployees };

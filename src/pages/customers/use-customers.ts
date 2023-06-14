@@ -6,10 +6,9 @@ import { getAndSetEmployees } from "@/services/hooks/get-set-employee";
 import { getAndSetClientTypes } from "@/services/hooks/get-set-clientTypes";
 
 
-const useCustomers = (clientType) => {
+const useCustomers = (clientType , pageNumber) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const [pageNumber, setPageNumber] = useState(0);
   const [allCustomers, setAllCustomers] = useState([]);
 
   const tabelHeaders = useMemo(

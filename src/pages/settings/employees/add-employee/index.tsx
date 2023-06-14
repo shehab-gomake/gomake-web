@@ -11,7 +11,7 @@ const AddEmployeeButton = ({ item }: any) => {
 
   return (
     <>
-   <EmployeeCardWidget openModal={open} modalTitle={t("employees.modal.addTitle")} onClose={()=>setOpen(false)} showAddButton={true} >
+   <EmployeeCardWidget openModal={open} modalTitle={t("employees.modal.addTitle")} onClose={()=>setOpen(false)}>
        </EmployeeCardWidget>
        <GomakePrimaryButton variant="contained" onClick={()=>setOpen(!open)} style={{width: convertWidthToVW(100),height: convertHeightToVH(50),marginRight: convertWidthToVW(10),backgroundColor: "#F135A3",}}>{t("employees.buttons.addEmployeee")}</GomakePrimaryButton>
        </>

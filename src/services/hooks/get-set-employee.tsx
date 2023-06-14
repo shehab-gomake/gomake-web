@@ -3,7 +3,6 @@ import { ICallApi, ISetState } from "./call-api.interface";
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 import { ShowEmployeeCard } from "@/pages/settings/employees/edit-employee";
 import { DeactivateEmployee } from "@/pages/settings/employees/hide-employee";
-import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 
 
 // for select options
@@ -16,6 +15,8 @@ const getAndSetEmployees = async (
   return returnResult(result, setState);
 };
 
+
+// for employee card
 const getAndSetEmployee = async (
   callApi: ICallApi,
   setState?: ISetState,
@@ -24,6 +25,7 @@ const getAndSetEmployee = async (
   const result: any = await callApi("GET", "/v1/employee/get-employee", data);
   return returnResult(result, setState);
 };
+
 
 // for data table
 const getAndSetAllEmployees = async (
@@ -37,15 +39,15 @@ const getAndSetAllEmployees = async (
     const formattedCreationDate = new Date(employee.creationDate).toLocaleDateString();
     return {
       name: employee.firstname + ' ' + employee.lastname,
-      phone: employee.phone ,
+      phone: employee.phone,
       email: employee.email,
-      creationDate: formattedCreationDate ,
+      creationDate: formattedCreationDate,
       role: <HorizontalRuleIcon/> ,
       hashTag: (
         <div style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} >
           <a>
-            <ShowEmployeeCard item={employee}/>
-            <DeactivateEmployee item={employee}/>
+          <ShowEmployeeCard item={employee}/>
+          <DeactivateEmployee item={employee}/>
           </a>
         </div>
       ), };
@@ -55,6 +57,5 @@ const getAndSetAllEmployees = async (
   }
   return _data;
 };
-
 
 export { getAndSetEmployees , getAndSetAllEmployees , getAndSetEmployee };
