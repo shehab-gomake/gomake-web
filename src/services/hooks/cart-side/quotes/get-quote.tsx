@@ -26,6 +26,7 @@ const getAndSetQuotes = async (
       discount: item?.discount,
       finalPrice: item?.finalPrice,
       more: <MoreMenuWidget />,
+      quoteItemId: item?.id,
     };
   });
   _data.priceListItemsMapping = mapData;

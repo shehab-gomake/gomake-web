@@ -58,6 +58,7 @@ export default function Quote() {
     onChangeUpdateClientAddress,
     setSelectedAddressById,
     getCalculateQuote,
+    getCalculateQuoteItem,
     t,
   } = useQuote();
   useEffect(() => {
@@ -94,6 +95,7 @@ export default function Quote() {
       onChangeUpdateClientAddress,
       setSelectedAddressById,
       getCalculateQuote,
+      getCalculateQuoteItem,
       t,
     });
   }, [
@@ -129,6 +131,7 @@ export default function Quote() {
     onChangeUpdateClientAddress,
     setSelectedAddressById,
     getCalculateQuote,
+    getCalculateQuoteItem,
     t,
   ]);
   return (
