@@ -57,6 +57,7 @@ export default function Quote() {
     onClickAddNewContact,
     onChangeUpdateClientAddress,
     setSelectedAddressById,
+    getCalculateQuote,
     t,
   } = useQuote();
   useEffect(() => {
@@ -92,6 +93,7 @@ export default function Quote() {
       onClickAddNewContact,
       onChangeUpdateClientAddress,
       setSelectedAddressById,
+      getCalculateQuote,
       t,
     });
   }, [
@@ -126,73 +128,83 @@ export default function Quote() {
     onClickAddNewContact,
     onChangeUpdateClientAddress,
     setSelectedAddressById,
+    getCalculateQuote,
     t,
   ]);
   return (
     <AdminAuthLayout>
-      <div style={clasess.mainContainer}>
-        <div style={clasess.headerContainer}>
-          <div style={clasess.titleQuateContainer}>
-            <HeaderTitle
-              title={t("sales.quote.title")}
-              marginBottom={1}
-              marginTop={1}
-            />
-            <div style={clasess.quoteNumberStyle}>{quoteItemValue?.number}</div>
-          </div>
-          <div style={clasess.rightSideHeaderContainer}>
-            {quoteItemValue && (
-              <div style={clasess.deleverdDate} onClick={handleClickSelectDate}>
-                {t("sales.quote.deliverOn")}{" "}
-                {selectDate ? DateFormatterDDMMYYYY(selectDate) : "select date"}
-                <div style={clasess.datePickerContainer}>
-                  <input
-                    type="datetime-local"
-                    onChange={(e) => setSelectDate(e.target.value)}
-                    ref={dateRef}
-                  />
-                </div>
+      {quoteItemValue && (
+        <div style={clasess.mainContainer}>
+          <div style={clasess.headerContainer}>
+            <div style={clasess.titleQuateContainer}>
+              <HeaderTitle
+                title={t("sales.quote.title")}
+                marginBottom={1}
+                marginTop={1}
+              />
+              <div style={clasess.quoteNumberStyle}>
+                {quoteItemValue?.number}
               </div>
-            )}
+            </div>
+            <div style={clasess.rightSideHeaderContainer}>
+              {quoteItemValue && (
+                <div
+                  style={clasess.deleverdDate}
+                  onClick={handleClickSelectDate}
+                >
+                  {t("sales.quote.deliverOn")}{" "}
+                  {selectDate
+                    ? DateFormatterDDMMYYYY(selectDate)
+                    : "select date"}
+                  <div style={clasess.datePickerContainer}>
+                    <input
+                      type="datetime-local"
+                      onChange={(e) => setSelectDate(e.target.value)}
+                      ref={dateRef}
+                    />
+                  </div>
+                </div>
+              )}
 
-            <div style={clasess.uploadContainer}>
-              <UploadIcon />
-              <div style={clasess.uploadTextStyle}>
-                {t("sales.quote.upload")}
+              <div style={clasess.uploadContainer}>
+                <UploadIcon />
+                <div style={clasess.uploadTextStyle}>
+                  {t("sales.quote.upload")}
+                </div>
               </div>
             </div>
           </div>
+          <BusinessWidget />
+          <div style={clasess.scrollContainer}>
+            <ContactWidget />
+            <AddressWidget />
+            <div style={clasess.tableContainer}>
+              <CustomTableWidget
+                headerTitle={"Order review"}
+                tableHeaders={tableHeaders}
+                headerWidth={tableRowPercent}
+                tableRowPercent={tableRowPercent}
+                data={quoteItemValue?.priceListItemsMapping}
+              />
+            </div>
+          </div>
+          <div style={clasess.btnsContainer}>
+            <div style={clasess.btnContainer}>
+              <AddPlusIcon />
+              <div style={clasess.btnTitle}>add new item</div>
+            </div>
+            <div style={clasess.btnContainer}>
+              <AddPlusIcon />
+              <div style={clasess.btnTitle}>add exist item</div>
+            </div>
+            <div style={clasess.btnContainer}>
+              <AddPlusIcon />
+              <div style={clasess.btnTitle}>add delivery</div>
+            </div>
+          </div>
+          <TotalPriceAndVatWidit />
         </div>
-        <BusinessWidget />
-        <div style={clasess.scrollContainer}>
-          <ContactWidget />
-          <AddressWidget />
-          <div style={clasess.tableContainer}>
-            <CustomTableWidget
-              headerTitle={"Order review"}
-              tableHeaders={tableHeaders}
-              headerWidth={tableRowPercent}
-              tableRowPercent={tableRowPercent}
-              data={quoteItemValue?.priceListItemsMapping}
-            />
-          </div>
-        </div>
-        <div style={clasess.btnsContainer}>
-          <div style={clasess.btnContainer}>
-            <AddPlusIcon />
-            <div style={clasess.btnTitle}>add new item</div>
-          </div>
-          <div style={clasess.btnContainer}>
-            <AddPlusIcon />
-            <div style={clasess.btnTitle}>add exist item</div>
-          </div>
-          <div style={clasess.btnContainer}>
-            <AddPlusIcon />
-            <div style={clasess.btnTitle}>add delivery</div>
-          </div>
-        </div>
-        <TotalPriceAndVatWidit />
-      </div>
+      )}
     </AdminAuthLayout>
   );
 }

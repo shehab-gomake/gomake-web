@@ -2,11 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { quoteState } from "../../store/quote";
-import {
-  clientAddressState,
-  clientContactsState,
-  quoteItemState,
-} from "@/store";
+import { clientAddressState, quoteItemState } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 const useAddressWidget = () => {
@@ -18,7 +14,6 @@ const useAddressWidget = () => {
   const quoteStateValue = useRecoilValue<any>(quoteState);
   const [clientAddressValue] = useRecoilState<any>(clientAddressState);
   const [items, setItems] = useState([]);
-  console.log("itemsBBBBBB", items);
   const changeItems = (index: number, filedName: string, value: any) => {
     let temp = [...items];
     temp[index] = {

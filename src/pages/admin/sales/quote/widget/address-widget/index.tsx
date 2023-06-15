@@ -1,7 +1,3 @@
-import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue } from "recoil";
-
-import { clientAddressState, quoteItemState } from "@/store";
 import { AddPlusIcon, RemoveIcon } from "@/icons";
 import {
   GoMakeAutoComplate,
@@ -10,7 +6,6 @@ import {
 } from "@/components";
 
 import { AddAddressWidget } from "./add-address-widget";
-import { quoteState } from "../../store/quote";
 import { useStyle } from "./style";
 import { useAddressWidget } from "./use-address-widget";
 

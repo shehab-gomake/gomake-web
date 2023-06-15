@@ -214,6 +214,35 @@ const useQuote = () => {
     [selectBusiness, quoteItemValue]
   );
 
+  const getCalculateQuote = useCallback(
+    async (calculationType: number, data: number) => {
+      const res = await callApi(
+        "GET",
+        `/v1/erp-service/quote/get-calculate-quote`,
+        {
+          QuoteId: quoteItemValue?.id,
+          data,
+          calculationType,
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedSusuccessfully"),
+          type: "sucess",
+        });
+        getQuote();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [quoteItemValue]
+  );
+
   return {
     tableHeaders,
     tableRowPercent,
@@ -246,6 +275,7 @@ const useQuote = () => {
     onClickAddNewContact,
     onChangeUpdateClientAddress,
     setSelectedAddressById,
+    getCalculateQuote,
     t,
   };
 };

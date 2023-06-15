@@ -4,7 +4,9 @@ import { useTotalPriceAndVat } from "./use-total-price-and-vat";
 
 const TotalPriceAndVatWidit = () => {
   const { clasess } = useStyle();
-  const { btnTabs } = useTotalPriceAndVat();
+  const { btnTabs, quoteItems, changeItems, quoteStateValue } =
+    useTotalPriceAndVat();
+  console.log("quoteItems", quoteItems);
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.leftSideContainer}>
@@ -23,32 +25,75 @@ const TotalPriceAndVatWidit = () => {
         <div style={clasess.totalBeforeVAT}>
           <div style={clasess.totalBefore}>
             <div style={clasess.lableStyle}>Total before VAT</div>
-            <div style={clasess.numbersStyle}>146.00 </div>
+            <div style={clasess.numbersStyle}>{quoteItems?.totalPrice}</div>
           </div>
           <div style={clasess.discountBefore}>
             <div style={clasess.lableStyle}>Discount</div>
-            <div style={clasess.priceContainer}>
-              <div style={clasess.numbersStyle}>10%</div>
-              <div style={clasess.numbersStyle}>146 $</div>
+            <div style={clasess.numbersStyle}>
+              <GomakeTextInput
+                style={clasess.textInputWithoutStyle}
+                value={quoteItems?.discount}
+                onChange={(e: any) => {
+                  changeItems("discount", e.target.value);
+                }}
+                onBlur={() =>
+                  quoteStateValue?.getCalculateQuote(0, quoteItems?.discount)
+                }
+              />
+            </div>
+            <div style={clasess.numbersStyle}>
+              <GomakeTextInput
+                style={clasess.textInputWithoutStyle}
+                value={quoteItems?.discountAmount}
+                onChange={(e: any) => {
+                  changeItems("discountAmount", e.target.value);
+                }}
+                onBlur={() =>
+                  quoteStateValue?.getCalculateQuote(
+                    1,
+                    quoteItems?.discountAmount
+                  )
+                }
+              />
             </div>
           </div>
         </div>
         <div style={clasess.totalBeforeVAT}>
           <div style={clasess.totalBefore}>
             <div style={clasess.lableStyle}>Total after discount</div>
-            <div style={clasess.numbersStyle}>146.00 </div>
+            <div style={clasess.numbersStyle}>
+              {quoteItems?.totalPriceAfterDiscount}
+            </div>
           </div>
           <div style={clasess.discountBefore}>
             <div style={clasess.lableStyle}>VAT</div>
             <div style={clasess.priceContainer}>
-              <div style={clasess.numbersStyle}>17%</div>
-              <div style={clasess.numbersStyle}>146.00</div>
+              <div style={clasess.numbersStyle}>{quoteItems?.vat}%</div>
+            </div>
+            <div style={clasess.priceContainer}>
+              <div style={clasess.numbersStyle}>
+                {Math.ceil(quoteItems?.totalVAT)}
+              </div>
             </div>
           </div>
         </div>
         <div style={clasess.totlaPriceContainer}>
           <div>Total</div>
-          <div>350.00 USD</div>
+
+          <div style={clasess.totalContainer}>
+            <GomakeTextInput
+              style={clasess.textInputTotalWithoutStyle}
+              //@ts-ignore
+              value={Math.ceil(quoteItems?.totalPayment)}
+              onChange={(e: any) => {
+                changeItems("totalPayment", e.target.value);
+              }}
+              onBlur={() =>
+                quoteStateValue?.getCalculateQuote(2, quoteItems?.totalPayment)
+              }
+            />
+            <div style={clasess.lableTotal}>USD</div>
+          </div>
         </div>
         <div style={clasess.rightSideBtnsContainer}>
           <div style={clasess.orderNowBtn}>order now</div>
