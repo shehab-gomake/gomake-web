@@ -15,7 +15,6 @@ const RowInside = ({
   indexTable,
 }: any) => {
   const quoteStateValue = useRecoilValue<any>(quoteState);
-  console.log("rowrow", row);
   return (
     <div
       key={`row_table_${index}`}

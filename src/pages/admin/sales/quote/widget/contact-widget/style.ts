@@ -23,6 +23,16 @@ const useStyle = () => {
         gap: 10,
         width: "15%",
       },
+      labelContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 16,
+      },
+      plusIconContainer: {
+        cursor: "pointer",
+      },
       labelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),

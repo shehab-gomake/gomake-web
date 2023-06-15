@@ -6,7 +6,6 @@ const TotalPriceAndVatWidit = () => {
   const { clasess } = useStyle();
   const { btnTabs, quoteItems, changeItems, quoteStateValue } =
     useTotalPriceAndVat();
-  console.log("quoteItems", quoteItems);
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.leftSideContainer}>

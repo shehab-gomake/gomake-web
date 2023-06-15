@@ -13,7 +13,6 @@ const useCustomTable = ({ data }) => {
   useEffect(() => {
     setItems(data);
   }, [data]);
-  console.log("itemsitems", items);
   return {
     items,
     changeItems,

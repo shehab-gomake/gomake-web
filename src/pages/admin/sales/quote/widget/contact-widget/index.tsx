@@ -3,7 +3,7 @@ import {
   GoMakeDeleteModal,
   GomakeTextInput,
 } from "@/components";
-import { AddPlusIcon, RemoveIcon } from "@/icons";
+import { AddPlusIcon, PlusIcon, RemoveIcon } from "@/icons";
 
 import { AddContactWidget } from "./add-contact-widget";
 import { useStyle } from "./style";
@@ -44,8 +44,16 @@ const ContactWidget = ({
               <div style={clasess.mainContainer}>
                 {isContactID && (
                   <div style={clasess.fieldContainer}>
-                    <div style={clasess.labelStyle}>
-                      {t("sales.quote.contactID")}
+                    <div style={clasess.labelContainer}>
+                      <div style={clasess.labelStyle}>
+                        {t("sales.quote.contactID")}
+                      </div>
+                      <div
+                        // onClick={() => console.log("ggg")}
+                        style={clasess.plusIconContainer}
+                      >
+                        <PlusIcon />
+                      </div>
                     </div>
                     <GoMakeAutoComplate
                       options={clientContactsValue}

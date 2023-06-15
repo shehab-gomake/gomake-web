@@ -47,7 +47,9 @@ const BusinessWidget = ({
                 <div style={clasess.labelStyle}>
                   {t("sales.quote.businessName")}
                 </div>
-                <PlusIcon />
+                <div style={clasess.plusIconContainer}>
+                  <PlusIcon />
+                </div>
               </div>
               <GoMakeAutoComplate
                 options={customersListValue}

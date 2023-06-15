@@ -9,7 +9,6 @@ const useTotalPriceAndVat = () => {
   const quoteItemValue: any = useRecoilValue(quoteItemState);
   const quoteStateValue = useRecoilValue<any>(quoteState);
   const [quoteItems, setquoteItems] = useState<any>([]);
-  console.log("quoteItems", quoteItems);
 
   const changeItems = useCallback(
     (filedName: string, value: any) => {
