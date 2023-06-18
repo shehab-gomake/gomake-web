@@ -111,20 +111,6 @@ const flatbedWidePrinting = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: !!state?.attributes?.printingSides,
         },
-        {
-            name: "doubleHead",
-            label: "machineAttributes.doubleHead",
-            type: "select",
-            placeholder: "machineAttributes.doubleHead",
-            required: true,
-            parameterKey: "doubleHead",
-            value: state.attributes?.doubleHead,
-            options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
-            machineInputType: 'input',
-            isValid: true,
-        },
-
-
     ];
 }
 

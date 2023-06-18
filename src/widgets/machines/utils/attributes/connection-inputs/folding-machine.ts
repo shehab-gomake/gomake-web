@@ -1,35 +1,73 @@
-import {CURRENCY} from "@/widgets/machines/utils/const/currency";
 
 const foldingMachine = (state: Record<string, any>) => {
     return [
         {
             machineInputType: 'multiInput',
-            name: 'machineAttributes.price',
-            parameterKey: 'price',
-            isValid: !!state?.price?.price,
-            value: state?.price,
+            name: 'machineAttributes.foldingConnect',
+            parameterKey: 'foldingConnect',
+            isValid: true,
+            value: state?.foldingConnect,
             inputs: [
                 {
-                    name: "price",
-                    label: "machineAttributes.price",
-                    type: "text",
-                    placeholder: "machineAttributes.price",
+                    name: "foldingConnect",
+                    label: "machineAttributes.canConnect",
+                    type: "select",
+                    placeholder: "machineAttributes.foldingConnect",
                     required: true,
-                    parameterKey: "price",
-                    options: [],
-                    value: state?.price?.price ? state.price.price : '',
-                    isValid: !!state?.price?.price,
+                    parameterKey: "canConnect",
+                    value: state.attributes?.foldingConnect?.canConnect,
+                    options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
+                    machineInputType: 'input',
+                    isValid: true,
                 },
                 {
-                    name: "currency",
-                    label: "machineAttributes.currency",
+                    name: "machineList",
+                    label: "machineAttributes.machineList",
                     type: "select",
-                    placeholder: "machineAttributes.currency",
+                    placeholder: "machineAttributes.machineList",
                     required: true,
-                    parameterKey: "currency",
-                    value: state?.price?.currency ? state?.price?.currency : 0,
-                    options: CURRENCY,
+                    parameterKey: "machine",
+                    value: state.attributes?.foldingConnect?.machineList,
+                    options: [{value: 1, text: 'machine 1'}, {value: 2, text: 'machine 2'}],
+                    machineInputType: 'input',
                     isValid: true,
+                    disabled: !state.attributes?.foldingConnect?.canConnect
+
+                },
+            ]
+        },
+        {
+            machineInputType: 'multiInput',
+            name: 'machineAttributes.scoringConnect',
+            parameterKey: 'scoringConnect',
+            isValid: true,
+            value: state?.scoringConnect,
+            inputs: [
+                {
+                    name: "scoringConnect",
+                    label: "machineAttributes.canConnect",
+                    type: "select",
+                    placeholder: "machineAttributes.scoringConnect",
+                    required: true,
+                    parameterKey: "canConnect",
+                    value: state.attributes?.scoringConnect?.canConnect,
+                    options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
+                    machineInputType: 'input',
+                    isValid: true,
+                },
+                {
+                    name: "",
+                    label: "machineAttributes.machineList",
+                    type: "select",
+                    placeholder: "machineAttributes.machineList",
+                    required: true,
+                    parameterKey: "machine",
+                    value: state.attributes?.scoringConnect?.machine,
+                    options: [{value: 1, text: 'machine 1'}, {value: 2, text: 'machine 2'}],
+                    machineInputType: 'input',
+                    isValid: true,
+                    disabled: !state.attributes?.scoringConnect?.canConnect
+
                 },
             ]
         }

@@ -87,44 +87,6 @@ const roundingCornersMachine = (state: Record<string, any>) => {
             isValid: !!state?.attributes?.minManpowerOperation,
 
         },
-        {
-            name: "resolution",
-            label: "machineAttributes.resolution",
-            type: "select",
-            placeholder: "",
-            required: true,
-            parameterKey: "resolution",
-            value: state.attributes?.resolution,
-            options: [{value: 0, text: '2438 X 2438 dpi'}, {value: 1, text: '2400 X 2400 dpi'}],
-            machineInputType: 'input',
-            isValid: true,
-        },
-        {
-            name: "printingSides",
-            label: "machineAttributes.printingSides",
-            type: "text",
-            placeholder: "machineAttributes.printingSides",
-            required: true,
-            parameterKey: "printingSides",
-            options: [],
-            value: state.attributes?.printingSides ? state.attributes?.printingSides : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.printingSides,
-        },
-        {
-            name: "doubleHead",
-            label: "machineAttributes.doubleHead",
-            type: "select",
-            placeholder: "machineAttributes.doubleHead",
-            required: true,
-            parameterKey: "doubleHead",
-            value: state.attributes?.doubleHead,
-            options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
-            machineInputType: 'input',
-            isValid: true,
-        },
-
-
     ];
 }
 

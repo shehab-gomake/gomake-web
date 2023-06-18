@@ -4,11 +4,11 @@ import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
 import {InputContainer} from "@/widgets/machines/components/inputs/input-container";
 import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attributes";
 
-const FeedersStackersComponent = ({navigateNext, navigateBack, hasNext, hasBack, canUpdate, canAddMachine, onClickAdd, onClickUpdate}: IStepFormProps) => {
+const SpeedComponent = ({navigateNext, navigateBack, hasNext, hasBack, canUpdate, canAddMachine, onClickAdd, onClickUpdate}: IStepFormProps) => {
     const {classes} = useStyle();
-    const {machineFeedersStackersAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
+    const {machineSpeedAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
     const onClickNext = () => {
-        const validStep = isValidStep(machineFeedersStackersAttributes());
+        const validStep = isValidStep(machineSpeedAttributes());
         if (validStep) {
             navigateNext();
         }
@@ -17,13 +17,13 @@ const FeedersStackersComponent = ({navigateNext, navigateBack, hasNext, hasBack,
         navigateBack();
     };
     const handleUpdate = () => {
-        const validStep = isValidStep(machineFeedersStackersAttributes());
+        const validStep = isValidStep(machineSpeedAttributes());
         if (validStep) {
             onClickUpdate();
         }
     };
     const handleAddMachine = () => {
-        const validStep = isValidStep(machineFeedersStackersAttributes());
+        const validStep = isValidStep(machineSpeedAttributes());
         if (validStep) {
             onClickAdd();
         }
@@ -32,7 +32,7 @@ const FeedersStackersComponent = ({navigateNext, navigateBack, hasNext, hasBack,
         <div style={classes.container}>
             <div style={classes.inputsContainer}>
                 {
-                   machineFeedersStackersAttributes().map((property: any) => (
+                    machineSpeedAttributes().map((property: any) => (
                         <InputContainer key={property.parameterKey} attribute={property} updateState={changeMachineAttributes} error={errors[property.parameterKey]}/>
                     ))
                 }
@@ -43,4 +43,5 @@ const FeedersStackersComponent = ({navigateNext, navigateBack, hasNext, hasBack,
     );
 }
 
-export {FeedersStackersComponent};
+export {SpeedComponent
+};

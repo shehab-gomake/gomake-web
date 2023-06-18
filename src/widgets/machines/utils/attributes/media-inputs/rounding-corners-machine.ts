@@ -13,37 +13,25 @@ const roundingCornersMachine = (state: Record<string, any>) => {
             isValid: !!state?.attributes?.setupTimeMin,
         },
         {
-            name: "mediaLoaded",
-            label: "machineAttributes.mediaLoaded",
+            name: "mediaSheetsLoss",
+            label: "machineAttributes.mediaSheetsLoss",
             type: "text",
-            placeholder: "machineAttributes.mediaLoaded",
+            placeholder: "machineAttributes.mediaSheetsLoss",
             required: true,
-            parameterKey: "mediaLoaded",
+            parameterKey: "mediaSheetsLoss",
             options: [],
-            value: state?.attributes?.mediaLoaded ? state?.attributes?.mediaLoaded : '',
+            value: state?.attributes?.mediaSheetsLoss ? state?.attributes?.mediaSheetsLoss : '',
             machineInputType: 'input',
-            isValid: !!state?.attributes?.mediaLoaded,
-        },
-        {
-            name: "minWidthMarginWithoutPrinting",
-            label: "machineAttributes.minWidthMarginWithoutPrinting",
-            type: "text",
-            placeholder: "machineAttributes.minWidthMarginWithoutPrinting",
-            required: true,
-            parameterKey: "minWidthMarginWithoutPrinting",
-            options: [],
-            value: state?.attributes?.minWidthMarginWithoutPrinting ? state?.attributes?.minWidthMarginWithoutPrinting : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.minWidthMarginWithoutPrinting,
+            isValid: !!state?.attributes?.mediaSheetsLoss,
         },
         {
             name: 'machineAttributes.mediaDimensions',
             parameterKey: 'mediaDimensions',
             machineInputType: 'multiInput',
             isValid: !!state?.attributes?.mediaDimensions?.minWidth &&
-                !!state?.attributes?.mediaDimensions?.minRollDiameter &&
+                !!state?.attributes?.mediaDimensions?.minLength &&
                 !!state?.attributes?.mediaDimensions?.maxWidth &&
-                !!state?.attributes?.mediaDimensions?.maxRollDiameter ,
+                !!state?.attributes?.mediaDimensions?.maxLength ,
             inputs: [
                 {
                     name: "",
@@ -57,13 +45,13 @@ const roundingCornersMachine = (state: Record<string, any>) => {
                 },
                 {
                     name: "",
-                    label: "machineAttributes.minRollDiameter",
+                    label: "machineAttributes.minLength",
                     type: "text",
-                    placeholder: "machineAttributes.minRollDiameter",
+                    placeholder: "machineAttributes.minLength",
                     required: true,
-                    parameterKey: "minRollDiameter",
+                    parameterKey: "minLength",
                     options: [],
-                    value: state.attributes?.mediaDimensions?.minRollDiameter ? state.attributes?.mediaDimensions?.minRollDiameter : ''
+                    value: state.attributes?.mediaDimensions?.minLength ? state.attributes?.mediaDimensions?.minLength : ''
 
                 },
                 {
@@ -79,49 +67,17 @@ const roundingCornersMachine = (state: Record<string, any>) => {
                 },
                 {
                     name: "",
-                    label: "machineAttributes.maxRollDiameter",
+                    label: "machineAttributes.maxLength",
                     type: "text",
-                    placeholder: "machineAttributes.maxRollDiameter",
+                    placeholder: "machineAttributes.maxLength",
                     required: true,
-                    parameterKey: "maxRollDiameter",
+                    parameterKey: "maxLength",
                     options: [],
-                    value: state.attributes?.mediaDimensions?.maxRollDiameter ? state.attributes?.mediaDimensions?.maxRollDiameter : ''
+                    value: state.attributes?.mediaDimensions?.maxLength ? state.attributes?.mediaDimensions?.maxLength : ''
 
                 },
             ]
         },
-        {
-            name: 'machineAttributes.imageSize',
-            parameterKey: 'imageSize',
-            machineInputType: 'multiInput',
-            isValid: !!state?.attributes?.imageSize?.imageWidth &&
-                !!state?.attributes?.imageSize?.imageLength  ,
-            inputs: [
-                {
-                    name: "imageWidth",
-                    label: "machineAttributes.imageWidth",
-                    type: "text",
-                    placeholder: "machineAttributes.imageWidth",
-                    required: true,
-                    parameterKey: "imageWidth",
-                    options: [],
-                    value: state.attributes?.imageSize?.imageWidth ? state.attributes?.imageSize?.imageWidth : ''
-
-                },
-                {
-                    name: "imageLength",
-                    label: "machineAttributes.imageLength",
-                    type: "text",
-                    placeholder: "machineAttributes.imageLength",
-                    required: true,
-                    parameterKey: "imageLength",
-                    options: [],
-                    value: state.attributes?.imageSize?.imageLength ? state.attributes?.imageSize?.imageLength  : ''
-
-                },
-            ]
-        },
-
     ]
 }
 

@@ -23,7 +23,7 @@ const SpeedOptionsSettingsComponent = ({
     const [state, setState] = useState<ESpeedInputMethods>(ESpeedInputMethods.COLOR_SPEED);
     const {classes} = useStyle();
     const {t} = useTranslation();
-    const {machineSpeedAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
+    const {machineMultiOptionsSpeedAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
     const onClickNext = () => {
         const validStep = isValidStep(inputs(state));
         if (validStep) {
@@ -50,7 +50,7 @@ const SpeedOptionsSettingsComponent = ({
         setState(event.target.checked ? ESpeedInputMethods.COLOR_SIZE_SPEED : ESpeedInputMethods.COLOR_SPEED);
     };
 
-    const inputs: (method: ESpeedInputMethods) => any[] = machineSpeedAttributes();
+    const inputs: (method: ESpeedInputMethods) => any[] = machineMultiOptionsSpeedAttributes();
     return (
 
         <div style={classes.container}>

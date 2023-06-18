@@ -6,9 +6,9 @@ import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attribu
 
 const ConnectionComponent = ({navigateNext, navigateBack, hasNext, hasBack, canUpdate, canAddMachine, onClickAdd, onClickUpdate}: IStepFormProps) => {
     const {classes} = useStyle();
-    const {machineFeedersStackersAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
+    const {machineConnectionAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
     const onClickNext = () => {
-        const validStep = isValidStep(machineFeedersStackersAttributes());
+        const validStep = isValidStep(machineConnectionAttributes());
         if (validStep) {
             navigateNext();
         }
@@ -17,13 +17,13 @@ const ConnectionComponent = ({navigateNext, navigateBack, hasNext, hasBack, canU
         navigateBack();
     };
     const handleUpdate = () => {
-        const validStep = isValidStep(machineFeedersStackersAttributes());
+        const validStep = isValidStep(machineConnectionAttributes());
         if (validStep) {
             onClickUpdate();
         }
     };
     const handleAddMachine = () => {
-        const validStep = isValidStep(machineFeedersStackersAttributes());
+        const validStep = isValidStep(machineConnectionAttributes());
         if (validStep) {
             onClickAdd();
         }
@@ -32,7 +32,7 @@ const ConnectionComponent = ({navigateNext, navigateBack, hasNext, hasBack, canU
         <div style={classes.container}>
             <div style={classes.inputsContainer}>
                 {
-                   machineFeedersStackersAttributes().map((property: any) => (
+                    machineConnectionAttributes().map((property: any) => (
                         <InputContainer key={property.parameterKey} attribute={property} updateState={changeMachineAttributes} error={errors[property.parameterKey]}/>
                     ))
                 }

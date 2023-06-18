@@ -41,9 +41,13 @@ const flatbedWidePrinting = (state: Record<string, any>) => {
             parameterKey: 'mediaDimensions',
             machineInputType: 'multiInput',
             isValid: !!state?.attributes?.mediaDimensions?.minWidth &&
-                !!state?.attributes?.mediaDimensions?.minRollDiameter &&
+                !!state?.attributes?.mediaDimensions?.minThickness &&
+                !!state?.attributes?.mediaDimensions?.minWeight &&
+                !!state?.attributes?.mediaDimensions?.minLength &&
                 !!state?.attributes?.mediaDimensions?.maxWidth &&
-                !!state?.attributes?.mediaDimensions?.maxRollDiameter ,
+                !!state?.attributes?.mediaDimensions?.maxThickness &&
+                !!state?.attributes?.mediaDimensions?.maxWeight &&
+                !!state?.attributes?.mediaDimensions?.maxLength ,
             inputs: [
                 {
                     name: "",
@@ -57,13 +61,35 @@ const flatbedWidePrinting = (state: Record<string, any>) => {
                 },
                 {
                     name: "",
-                    label: "machineAttributes.minRollDiameter",
+                    label: "machineAttributes.minLength",
                     type: "text",
-                    placeholder: "machineAttributes.minRollDiameter",
+                    placeholder: "machineAttributes.minLength",
                     required: true,
-                    parameterKey: "minRollDiameter",
+                    parameterKey: "minLength",
                     options: [],
-                    value: state.attributes?.mediaDimensions?.minRollDiameter ? state.attributes?.mediaDimensions?.minRollDiameter : ''
+                    value: state.attributes?.mediaDimensions?.minLength ? state.attributes?.mediaDimensions?.minLength : ''
+
+                },
+                {
+                    name: "",
+                    label: "machineAttributes.minWeight",
+                    type: "text",
+                    placeholder: "machineAttributes.minWeight",
+                    required: true,
+                    parameterKey: "minWeight",
+                    options: [],
+                    value: state.attributes?.mediaDimensions?.minWeight ? state.attributes?.mediaDimensions?.minWeight : ''
+
+                },
+                {
+                    name: "",
+                    label: "machineAttributes.minThickness",
+                    type: "text",
+                    placeholder: "machineAttributes.minThickness",
+                    required: true,
+                    parameterKey: "minThickness",
+                    options: [],
+                    value: state.attributes?.mediaDimensions?.minThickness ? state.attributes?.mediaDimensions?.minThickness : ''
 
                 },
                 {
@@ -79,13 +105,35 @@ const flatbedWidePrinting = (state: Record<string, any>) => {
                 },
                 {
                     name: "",
-                    label: "machineAttributes.maxRollDiameter",
+                    label: "machineAttributes.maxLength",
                     type: "text",
-                    placeholder: "machineAttributes.maxRollDiameter",
+                    placeholder: "machineAttributes.maxLength",
                     required: true,
-                    parameterKey: "maxRollDiameter",
+                    parameterKey: "maxLength",
                     options: [],
-                    value: state.attributes?.mediaDimensions?.maxRollDiameter ? state.attributes?.mediaDimensions?.maxRollDiameter : ''
+                    value: state.attributes?.mediaDimensions?.maxLength ? state.attributes?.mediaDimensions?.maxLength : ''
+
+                },
+                {
+                    name: "",
+                    label: "machineAttributes.maxWeight",
+                    type: "text",
+                    placeholder: "machineAttributes.maxWeight",
+                    required: true,
+                    parameterKey: "maxWeight",
+                    options: [],
+                    value: state.attributes?.mediaDimensions?.maxWeight ? state.attributes?.mediaDimensions?.maxWeight : ''
+
+                },
+                {
+                    name: "",
+                    label: "machineAttributes.maxThickness",
+                    type: "text",
+                    placeholder: "machineAttributes.maxThickness",
+                    required: true,
+                    parameterKey: "maxThickness",
+                    options: [],
+                    value: state.attributes?.mediaDimensions?.maxThickness ? state.attributes?.mediaDimensions?.maxThickness : ''
 
                 },
             ]

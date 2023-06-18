@@ -1,6 +1,18 @@
 const laminationMachine = (state: Record<string, any>) => {
     return [
         {
+            name: "warmUpTime",
+            label: "machineAttributes.warmUpTime",
+            type: "text",
+            placeholder: "machineAttributes.warmUpTime",
+            required: true,
+            parameterKey: "warmUpTime",
+            options: [],
+            value: state?.attributes?.warmUpTime ? state?.attributes?.warmUpTime : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.warmUpTime,
+        },
+        {
             name: "setupTimeMin",
             label: "machineAttributes.setupTimeMin",
             type: "text",
@@ -13,37 +25,52 @@ const laminationMachine = (state: Record<string, any>) => {
             isValid: !!state?.attributes?.setupTimeMin,
         },
         {
-            name: "coatingUnit",
-            label: "machineAttributes.coatingUnit",
-            type: "select",
-            placeholder: "machineAttributes.coatingUnit",
+            name: "mediaSheetsLoss",
+            label: "machineAttributes.mediaSheetsLoss",
+            type: "text",
+            placeholder: "machineAttributes.mediaSheetsLoss",
             required: true,
-            parameterKey: "coatingUnit",
-            value: state?.attributes?.coatingUnit,
-            options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
+            parameterKey: "mediaSheetsLoss",
+            value: state?.attributes?.mediaSheetsLoss,
+            options: [],
             machineInputType: 'input',
-            isValid: true,
+            isValid: !!state?.attributes?.mediaSheetsLoss,
         },
         {
-            name: "coatingUnitCost",
-            label: "machineAttributes.coatingUnitCost",
+            name: "mediaLoadingLoss",
+            label: "machineAttributes.mediaLoadingLoss",
             type: "text",
-            placeholder: "machineAttributes.coatingUnitCost",
-            required: state?.coatingUnitCost,
-            parameterKey: "coatingUnitCost",
+            placeholder: "machineAttributes.mediaLoadingLoss",
+            required: true,
+            parameterKey: "mediaLoadingLoss",
+            value: state?.attributes?.mediaLoadingLoss,
             options: [],
-            disabled: !state?.attributes?.coatingUnit,
-            value: state?.attributes?.coatingUnit && state?.attributes?.coatingUnitCost ? state?.attributes?.coatingUnitCost : '',
             machineInputType: 'input',
-            isValid: true,
+            isValid: !!state?.attributes?.mediaLoadingLoss,
+        },
+        {
+            name: "minWidthMarginWithoutPrinting",
+            label: "machineAttributes.minWidthMarginWithoutPrinting",
+            type: "text",
+            placeholder: "machineAttributes.minWidthMarginWithoutPrinting",
+            required: true,
+            parameterKey: "minWidthMarginWithoutPrinting",
+            options: [],
+            value: state?.attributes?.minWidthMarginWithoutPrinting ? state?.attributes?.minWidthMarginWithoutPrinting : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.minWidthMarginWithoutPrinting,
         },
         {
             name: 'machineAttributes.mediaDimensions',
             parameterKey: 'mediaDimensions',
             machineInputType: 'multiInput',
             isValid: !!state?.attributes?.mediaDimensions?.minWidth &&
+                !!state?.attributes?.mediaDimensions?.minThickness &&
+                !!state?.attributes?.mediaDimensions?.minWeight &&
                 !!state?.attributes?.mediaDimensions?.minLength &&
                 !!state?.attributes?.mediaDimensions?.maxWidth &&
+                !!state?.attributes?.mediaDimensions?.maxThickness &&
+                !!state?.attributes?.mediaDimensions?.maxWeight &&
                 !!state?.attributes?.mediaDimensions?.maxLength ,
             inputs: [
                 {
@@ -69,6 +96,28 @@ const laminationMachine = (state: Record<string, any>) => {
                 },
                 {
                     name: "",
+                    label: "machineAttributes.minWeight",
+                    type: "text",
+                    placeholder: "machineAttributes.minWeight",
+                    required: true,
+                    parameterKey: "minWeight",
+                    options: [],
+                    value: state.attributes?.mediaDimensions?.minWeight ? state.attributes?.mediaDimensions?.minWeight : ''
+
+                },
+                {
+                    name: "",
+                    label: "machineAttributes.minThickness",
+                    type: "text",
+                    placeholder: "machineAttributes.minThickness",
+                    required: true,
+                    parameterKey: "minThickness",
+                    options: [],
+                    value: state.attributes?.mediaDimensions?.minThickness ? state.attributes?.mediaDimensions?.minThickness : ''
+
+                },
+                {
+                    name: "",
                     label: "machineAttributes.maxWidth",
                     type: "text",
                     placeholder: "machineAttributes.maxWidth",
@@ -89,97 +138,27 @@ const laminationMachine = (state: Record<string, any>) => {
                     value: state.attributes?.mediaDimensions?.maxLength ? state.attributes?.mediaDimensions?.maxLength : ''
 
                 },
-            ]
-        },
-        {
-            name: 'machineAttributes.minMarginWithoutPrinting',
-            parameterKey: 'minMarginWithoutPrinting',
-            machineInputType: 'multiInput',
-            isValid: !!state?.attributes?.minMarginWithoutPrinting?.width &&
-                !!state?.attributes?.minMarginWithoutPrinting?.length  ,
-            inputs: [
-                {
-                    name: "minMarginWithoutPrinting",
-                    label: "machineAttributes.width",
-                    type: "text",
-                    placeholder: "machineAttributes.width",
-                    required: true,
-                    parameterKey: "width",
-                    options: [],
-                    value: state.attributes?.minMarginWithoutPrinting?.width ? state.attributes?.minMarginWithoutPrinting?.width : ''
-
-                },
-                {
-                    name: "maxMediaDimensions",
-                    label: "machineAttributes.length",
-                    type: "text",
-                    placeholder: "machineAttributes.length",
-                    required: true,
-                    parameterKey: "length",
-                    options: [],
-                    value: state.attributes?.minMarginWithoutPrinting?.length ? state.attributes?.minMarginWithoutPrinting?.length  : ''
-
-                },
-            ]
-        },
-        {
-            name: 'machineAttributes.mediaWeight',
-            parameterKey: 'mediaWeight',
-            machineInputType: 'multiInput',
-            isValid: !!state?.attributes?.mediaWeight?.min &&
-                !!state?.attributes?.mediaWeight?.max  ,
-            inputs: [
                 {
                     name: "",
-                    label: "machineAttributes.min",
+                    label: "machineAttributes.maxWeight",
                     type: "text",
-                    placeholder: "machineAttributes.min",
+                    placeholder: "machineAttributes.maxWeight",
                     required: true,
-                    parameterKey: "min",
+                    parameterKey: "maxWeight",
                     options: [],
-                    value: state.attributes?.mediaWeight?.min ? state.attributes?.mediaWeight?.min : ''
-                },
-                {
-                    name: "",
-                    label: "machineAttributes.max",
-                    type: "text",
-                    placeholder: "machineAttributes.max",
-                    required: true,
-                    parameterKey: "max",
-                    options: [],
-                    value: state.attributes?.mediaWeight?.max ? state.attributes?.mediaWeight?.max : ''
-
-                },
-            ]
-        },
-
-        {
-            name: 'machineAttributes.mediaThickness',
-            parameterKey: 'mediaThickness',
-            machineInputType: 'multiInput',
-            isValid: !!state?.attributes?.mediaThickness?.min &&
-                !!state?.attributes?.mediaThickness?.max  ,
-            inputs: [
-                {
-                    name: "",
-                    label: "machineAttributes.min",
-                    type: "text",
-                    placeholder: "machineAttributes.min",
-                    required: true,
-                    parameterKey: "min",
-                    options: [],
-                    value: state.attributes?.mediaThickness?.min ? state.attributes?.mediaThickness?.min : ''
+                    value: state.attributes?.mediaDimensions?.maxWeight ? state.attributes?.mediaDimensions?.maxWeight : ''
 
                 },
                 {
                     name: "",
-                    label: "machineAttributes.max",
+                    label: "machineAttributes.maxThickness",
                     type: "text",
-                    placeholder: "machineAttributes.max",
+                    placeholder: "machineAttributes.maxThickness",
                     required: true,
-                    parameterKey: "max",
+                    parameterKey: "maxThickness",
                     options: [],
-                    value: state.attributes?.mediaThickness?.max ? state.attributes?.mediaThickness?.max : ''
+                    value: state.attributes?.mediaDimensions?.maxThickness ? state.attributes?.mediaDimensions?.maxThickness : ''
+
                 },
             ]
         },
