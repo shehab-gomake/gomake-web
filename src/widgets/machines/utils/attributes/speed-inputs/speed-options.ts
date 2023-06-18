@@ -21,28 +21,8 @@ const getCategorySpeedOptionsInputs = (categoryId: string, state: Record<string,
             return digitalPrinting(state);
         case ECategoryId.OFSSET_PRINTING:
             return ofssetPrinting(state);
-        case ECategoryId.FLATBED_WIDE_PRINTING:
-            return flatbedWidePrinting(state);
-        case ECategoryId.LAMINATION_MACHINE:
-            return laminationMachine(state);
-        case ECategoryId.PUNCHING_MACHINE:
-            return punchingMachine(state);
-        case ECategoryId.ROUNDING_CORNERS_MACHINE:
-            return roundingCornersMachine(state);
-        case ECategoryId.FOLDING_MACHINE:
-            return foldingMachine(state);
-        case ECategoryId.PASTING_BLOCKS_MACHINE:
-            return pastingBlocksMachine(state);
-        case ECategoryId.SCORING_MACHINE:
-            return scoringMachine(state);
-        case ECategoryId.PERFORATION_MACHINE:
-            return perforationMachine(state);
-        case ECategoryId.FOLDING_GLUING_MACHINE:
-            return foldingGluingMachine(state);
-        case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
-            return analogEnhancementMachine(state);
         default:
-            return (method: ESpeedInputMethods): any[] => { return []};
+            return (method: ESpeedInputMethods): any => { return []};
     }
 }
 
