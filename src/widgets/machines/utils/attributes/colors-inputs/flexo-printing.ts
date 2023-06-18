@@ -3,6 +3,18 @@ import {COLORS} from "@/widgets/machines/utils/const";
 const flexoPrinting = (state: Record<string, any>) => {
     return [
         {
+            name: "numberOfPrintingUnits",
+            label: "machineAttributes.numberOfPrintingUnits",
+            type: "text",
+            placeholder: "machineAttributes.numberOfPrintingUnits",
+            required: true,
+            parameterKey: "numberOfPrintingUnits",
+            options: [],
+            machineInputType: 'input',
+            value: state?.attributes?.numberOfPrintingUnits ? state?.attributes?.numberOfPrintingUnits : '',
+            isValid: !!state?.attributes?.numberOfPrintingUnits
+        },
+        {
             name: "basicsColors",
             label: "machineAttributes.basicsColors",
             type: "select",
@@ -16,62 +28,36 @@ const flexoPrinting = (state: Record<string, any>) => {
         },
 
         {
-            name: "additionalColorsAmount",
-            label: "machineAttributes.additionalColorsAmount",
+            name: "amountColorStations",
+            label: "machineAttributes.amountColorStations",
             type: "text",
-            placeholder: "machineAttributes.additionalColorsAmount",
+            placeholder: "machineAttributes.amountColorStations",
             required: true,
-            parameterKey: "additionalColorsAmount",
+            parameterKey: "amountColorStations",
             options: [],
             machineInputType: 'input',
-            value: state?.attributes?.additionalColorsAmount ? state?.attributes?.additionalColorsAmount : '',
+            value: state?.attributes?.amountColorStations ? state?.attributes?.amountColorStations : '',
             isValid: true
         },
         {
-            name: "printLayers",
-            label: "machineAttributes.printLayers",
-            type: "select",
-            placeholder: "",
-            required: true,
-            parameterKey: "printLayers",
-            value: state?.attributes?.printLayers,
-            options:  [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
-            machineInputType: 'input',
-            isValid: true
-        },
-        {
-            name: "printLayersSameRun",
-            label: "machineAttributes.printLayersSameRun",
-            type: "select",
-            placeholder: "",
-            required: true,
-            parameterKey: "printLayersSameRun",
-            value: state?.attributes?.printLayers ? state?.attributes?.printLayersSameRun : false ,
-            options:  [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
-            disabled: !state?.attributes?.printLayers,
-            machineInputType: 'input',
-            isValid: true
-        },
-        {
-            name: "printLayersMax",
-            label: "machineAttributes.printLayersMax",
+            name: "fIfthStation",
+            label: "machineAttributes.fIfthStation",
             type: "text",
-            placeholder: "machineAttributes.printLayersMax",
+            placeholder: "machineAttributes.fIfthStation",
             required: true,
-            parameterKey: "printLayersMax",
+            parameterKey: "fIfthStation",
             options: [],
-            disabled: !state?.attributes?.printLayers,
             machineInputType: 'input',
-            value: state?.attributes?.printLayersMax,
-            isValid: true
+            value: state?.attributes?.fIfthStation,
+            isValid: !!state?.attributes?.fIfthStation
 
         },
         {
-            name: 'machineAttributes.additionalColorsCoast',
-            parameterKey: 'additionalColorsCoast',
-            value: state?.attributes?.additionalColorsCoast ? state?.attributes?.additionalColorsCoast : [],
+            name: 'varnish',
+            parameterKey: 'varnish',
+            value: state?.attributes?.varnish ? state?.attributes?.varnish : [],
             machineInputType: 'multiArrayInput',
-            isValid: state?.attributes?.additionalColorsCoast?.length > 0,
+            isValid: true,
             inputs: [
                 {
                     name: "color",
@@ -95,6 +81,20 @@ const flexoPrinting = (state: Record<string, any>) => {
 
             ]
         },
+        {
+            name: "pantoon",
+            label: "machineAttributes.pantoon",
+            type: "text",
+            placeholder: "machineAttributes.pantoon",
+            required: true,
+            parameterKey: "pantoon",
+            options: [],
+            machineInputType: 'input',
+            value: state?.attributes?.pantoon,
+            isValid: !!state?.attributes?.pantoon
+
+        },
+
     ]
 };
 
