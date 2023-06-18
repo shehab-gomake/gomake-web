@@ -7,15 +7,16 @@ import AddIcon from "@mui/icons-material/Add";
 import { materialLaminationsState } from "./store/lamination";
 //import { AddSheetModal } from "./add-machine-sheet-modal";
 import { useStyle } from "./style";
+import { materialLaminationState } from "./store/lamination";
 import { AddLaminationModal } from "./add-lamination-modal";
+import { useStyle } from "./style";
 
 const HeaderFilter = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const materialLaminationsStateValue = useRecoilValue<any>(
-    materialLaminationsState
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
   );
-
   return (
     <>
       <div style={clasess.addBtnStyle}>
@@ -23,7 +24,7 @@ const HeaderFilter = () => {
           style={clasess.btnStyle}
           leftIcon={<AddIcon />}
           onClick={() => {
-            materialLaminationsStateValue?.onOpnModalAdded();
+            materialLaminationStateValue?.onOpnModalAdded();
           }}
         >
           {t("materials.lamination.admin.addNewLamination")}

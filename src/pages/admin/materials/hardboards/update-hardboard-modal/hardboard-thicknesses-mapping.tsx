@@ -48,10 +48,10 @@ const HardboardThicknessesMapping = ({
         <div style={clasess.inputSizesContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.hardboards.admin.code")}
+              {t("materials.inputs.code")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.hardboards.admin.enterCode")}
+              placeholder={t("materials.inputs.enterCode")}
               style={clasess.textInputStyle}
               value={
                 materialHardboardsStateValue?.updateState[hardboardThicknes?.id]
@@ -68,11 +68,11 @@ const HardboardThicknessesMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.hardboards.admin.defaultPricePerSquareMeter")}
+              {t("materials.inputs.defaultPricePerSquareMeter")}
             </div>
             <GomakeTextInput
               placeholder={t(
-                "materials.hardboards.admin.enterDefaultPricePerSquareMeter"
+                "materials.inputs.enterDefaultPricePerSquareMeter"
               )}
               style={clasess.textInputStyle}
               value={
@@ -90,10 +90,10 @@ const HardboardThicknessesMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.hardboards.admin.index")}
+              {t("materials.inputs.index")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.hardboards.admin.enterIndex")}
+              placeholder={t("materials.inputs.enterIndex")}
               style={clasess.textInputStyle}
               value={
                 materialHardboardsStateValue?.updateState[hardboardThicknes?.id]
@@ -110,10 +110,10 @@ const HardboardThicknessesMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.hardboards.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.hardboards.admin.enterName")}
+              placeholder={t("materials.inputs.enterName")}
               style={clasess.textInputStyle}
               value={
                 materialHardboardsStateValue?.updateState[hardboardThicknes?.id]
@@ -130,10 +130,10 @@ const HardboardThicknessesMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.hardboards.admin.thickness")}
+              {t("materials.inputs.thickness")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.hardboards.admin.enterThickness")}
+              placeholder={t("materials.inputs.enterThickness")}
               style={clasess.textInputStyle}
               value={
                 materialHardboardsStateValue?.updateState[hardboardThicknes?.id]

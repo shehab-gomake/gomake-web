@@ -17,11 +17,9 @@ const RollPrintingSizeInputs = ({ index }) => {
     <>
       <div style={clasess.mainWaightsContainer}>
         <div>
-          <div style={clasess.lableTextStyle}>
-            {t("materials.plat.admin.code")}
-          </div>
+          <div style={clasess.lableTextStyle}>{t("materials.inputs.code")}</div>
           <GomakeTextInput
-            placeholder={t("materials.plat.admin.enterCode")}
+            placeholder={t("materials.inputs.enterCode")}
             style={clasess.textInputStyle}
             value={materialMaterialRollPrintingStateValue?.items[index]["code"]}
             onChange={(e: any) => {
@@ -34,11 +32,9 @@ const RollPrintingSizeInputs = ({ index }) => {
           />
         </div>
         <div>
-          <div style={clasess.lableTextStyle}>
-            {t("materials.plat.admin.name")}
-          </div>
+          <div style={clasess.lableTextStyle}>{t("materials.inputs.name")}</div>
           <GomakeTextInput
-            placeholder={t("materials.plat.admin.enterName")}
+            placeholder={t("materials.inputs.enterName")}
             style={clasess.textInputStyle}
             value={materialMaterialRollPrintingStateValue?.items[index]["name"]}
             onChange={(e: any) => {
@@ -52,10 +48,10 @@ const RollPrintingSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.envelops.admin.width")}
+            {t("materials.inputs.width")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.envelops.admin.enterWidth")}
+            placeholder={t("materials.inputs.enterWidth")}
             style={clasess.textInputStyle}
             value={
               materialMaterialRollPrintingStateValue?.items[index]["width"]
@@ -71,10 +67,10 @@ const RollPrintingSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.envelops.admin.height")}
+            {t("materials.inputs.height")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.envelops.admin.enterHeight")}
+            placeholder={t("materials.inputs.enterHeight")}
             style={clasess.textInputStyle}
             value={
               materialMaterialRollPrintingStateValue?.items[index]["height"]
@@ -90,12 +86,10 @@ const RollPrintingSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.printingMaterials.admin.weightPerSquareMeter")}
+            {t("materials.inputs.weightPerSquareMeter")}
           </div>
           <GomakeTextInput
-            placeholder={t(
-              "materials.printingMaterials.admin.enterWeightPerSquareMeter"
-            )}
+            placeholder={t("materials.inputs.enterWeightPerSquareMeter")}
             style={clasess.textInputStyle}
             value={
               materialMaterialRollPrintingStateValue?.items[index][
@@ -113,34 +107,40 @@ const RollPrintingSizeInputs = ({ index }) => {
         </div>
         <div style={{ width: 193.6 }}>
           <div style={clasess.lableTextStyle}>
-            {t("materials.envelops.admin.isWithWindow")}
+            {t("materials.inputs.isWithWindow")}
           </div>
           <GoMakeAutoComplate
-            options={[true, false]}
+            options={[
+              { label: "Yes", value: true },
+              { label: "No", value: false },
+            ]}
             style={clasess.textInputStyle}
-            placeholder={t(
-              "materials.printingMaterials.admin.selectWithPremier"
-            )}
+            placeholder={t("materials.inputs.selectWithPremier")}
             value={
               materialMaterialRollPrintingStateValue?.items[index][
-                "withPremier"
+                "withPremierLabel"
               ]
             }
             onChange={(e: any, value: any) => {
               materialMaterialRollPrintingStateValue?.changeItems(
                 index,
+                "withPremierLabel",
+                value?.label
+              );
+              materialMaterialRollPrintingStateValue?.changeItems(
+                index,
                 "withPremier",
-                value
+                value?.value
               );
             }}
           />
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.printingMaterials.admin.stock")}
+            {t("materials.inputs.stock")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.printingMaterials.admin.enterStock")}
+            placeholder={t("materials.inputs.enterStock")}
             style={clasess.textInputStyle}
             value={
               materialMaterialRollPrintingStateValue?.items[index]["stock"]
@@ -156,12 +156,10 @@ const RollPrintingSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.printingMaterials.admin.defaultPricePerSquareMeter")}
+            {t("materials.inputs.defaultPricePerSquareMeter")}
           </div>
           <GomakeTextInput
-            placeholder={t(
-              "materials.printingMaterials.admin.enterDefaultPricePerSquareMeter"
-            )}
+            placeholder={t("materials.inputs.enterDefaultPricePerSquareMeter")}
             style={clasess.textInputStyle}
             value={
               materialMaterialRollPrintingStateValue?.items[index][

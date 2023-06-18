@@ -2,25 +2,22 @@ import { useRecoilValue } from "recoil";
 
 import { GoMakeDeleteModal } from "@/components";
 import { IconWidget } from "./icon-widget";
-import moreCircle from "@/icons/more-circle.png";
-import { IconButton, Tooltip } from "@mui/material";
-import { useSheetModal } from "./use-lamination-modal";
-import { UpdateSheetModal } from "../update-lamination-modal";
-import { materialLaminationsState } from "../store/lamination";
-import { GoMakeDeleteMaterialModal } from "@/widgets";
+import { useLaminationModal } from "./use-lamination-modal";
+import { UpdateLaminationModal } from "../update-lamination-modal";
+import { materialLaminationState } from "../store/lamination";
 
 const LaminationSettingsWidget = ({ item }: any) => {
   const {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    deleteSheetByCategoryName,
+    deleteLaminationByCategoryName,
     t,
-  } = useSheetModal({
+  } = useLaminationModal({
     item,
   });
-  const materialLaminationsStateValue = useRecoilValue<any>(
-    materialLaminationsState
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
   );
 
   return (
@@ -28,24 +25,24 @@ const LaminationSettingsWidget = ({ item }: any) => {
       <IconWidget
         t={t}
         onOpnUpdateModal={() => {
-          materialLaminationsStateValue?.onOpnUpdateModal(item);
+          materialLaminationStateValue?.onOpnUpdateModal(item);
         }}
         onOpenDeleteModal={onOpenDeleteModal}
       />
       <GoMakeDeleteModal
         hideIcon={true}
         title={t("materials.lamination.admin.deleteLamination")}
-        yesBtn={t("materials.lamination.admin.delete")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.lamination.admin.subTitleDeleteModal")} ${
-          item?.categoryName
-        } ?`}
-        onClickDelete={deleteSheetByCategoryName}
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
+          name: `${item?.categoryName}`,
+        })}?`}
+        onClickDelete={deleteLaminationByCategoryName}
       />
-      {item === materialLaminationsStateValue.selectedEditItem && (
-        <UpdateSheetModal />
+      {item === materialLaminationStateValue.selectedEditItem && (
+        <UpdateLaminationModal />
       )}
     </>
   );

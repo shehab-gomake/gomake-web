@@ -33,13 +33,13 @@ const ProfileFrameSettingsWidget = ({ item }: any) => {
       <GoMakeDeleteModal
         hideIcon={true}
         title={t("materials.profileFrames.admin.deleteProfileFrameTitle")}
-        yesBtn={t("materials.sheetPaper.admin.delete")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t(
-          "materials.profileFrames.admin.deleteLProfileFrameSubTitle"
-        )} ${item?.categoryName} ?`}
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
+          name: `${item?.categoryName}`,
+        })}?`}
         onClickDelete={deleteProfileFrameByCategoryName}
       />
       {item === materialProfileFrameStateValue.selectedEditItem && (

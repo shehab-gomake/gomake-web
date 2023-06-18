@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { Tab } from "./tab";
@@ -10,9 +9,7 @@ const LeftSideLayout = () => {
   const { tabs } = useAuthLayoutHook();
   return (
     <div style={clasess.leftContainer}>
-      <div style={clasess.logoContainer}>
-        Admin panel
-      </div>
+      <div style={clasess.logoContainer}>Admin panel</div>
       <div style={clasess.tabsContainer}>
         {tabs.map((tab) => {
           if (tab.isLine) {

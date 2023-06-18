@@ -31,14 +31,14 @@ const WideFormatMaterialSettingsWidget = ({ item }: any) => {
       />
       <GoMakeDeleteModal
         hideIcon={true}
-        title={t("materials.sheetPaper.admin.deleteWideFormatMaterial")}
-        yesBtn={t("materials.sheetPaper.admin.delete")}
+        title={t("materials.wideFormatMaterial.admin.deleteWideFormatMaterial")}
+        yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("materials.sheetPaper.admin.subTitleDeleteModal")} ${
-          item?.categoryName
-        } ?`}
+        subTitle={`${t("materials.modals.subTitleDeleteModal", {
+          name: `${item?.categoryName}`,
+        })}?`}
         onClickDelete={deleteWideFormatMaterialByCategoryName}
       />
       {item === materialWideFormatMaterialStateValue.selectedEditItem && (

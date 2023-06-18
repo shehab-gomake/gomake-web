@@ -21,11 +21,9 @@ const WideFormatMaterialsSizeInputs = ({
     <>
       <div style={clasess.inputSizesContainer}>
         <div>
-          <div style={clasess.lableTextStyle}>
-            {t("materials.sheetPaper.admin.code")}
-          </div>
+          <div style={clasess.lableTextStyle}>{t("materials.inputs.code")}</div>
           <GomakeTextInput
-            placeholder={t("materials.sheetPaper.admin.enterCode")}
+            placeholder={t("materials.inputs.enterCode")}
             style={clasess.textInputStyle}
             value={sheetSize[index]["code"]}
             onChange={(e: any) => {
@@ -39,11 +37,9 @@ const WideFormatMaterialsSizeInputs = ({
           />
         </div>
         <div>
-          <div style={clasess.lableTextStyle}>
-            {t("materials.sheetPaper.admin.name")}
-          </div>
+          <div style={clasess.lableTextStyle}>{t("materials.inputs.name")}</div>
           <GomakeTextInput
-            placeholder={t("materials.sheetPaper.admin.enterName")}
+            placeholder={t("materials.inputs.enterName")}
             style={clasess.textInputStyle}
             value={sheetSize[index]["name"]}
             onChange={(e: any) => {
@@ -58,10 +54,10 @@ const WideFormatMaterialsSizeInputs = ({
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.sheetPaper.admin.width")}
+            {t("materials.inputs.width")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.sheetPaper.admin.enterWidth")}
+            placeholder={t("materials.inputs.enterWidth")}
             style={clasess.textInputStyle}
             value={sheetSize[index]["width"]}
             onChange={(e: any) => {
@@ -76,10 +72,10 @@ const WideFormatMaterialsSizeInputs = ({
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.sheetPaper.admin.height")}
+            {t("materials.inputs.height")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.sheetPaper.admin.enterHeight")}
+            placeholder={t("materials.inputs.enterHeight")}
             style={clasess.textInputStyle}
             value={sheetSize[index]["height"]}
             onChange={(e: any) => {
@@ -94,12 +90,10 @@ const WideFormatMaterialsSizeInputs = ({
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.wideFormatMaterial.admin.defaultPricePerMeterSquare")}
+            {t("materials.inputs.defaultPricePerMeterSquare")}
           </div>
           <GomakeTextInput
-            placeholder={t(
-              "materials.wideFormatMaterial.admin.enterDefaultPricePerMeterSquare"
-            )}
+            placeholder={t("materials.inputs.enterDefaultPricePerMeterSquare")}
             style={clasess.textInputStyle}
             value={sheetSize[index]["defaultPricePerMeterSquare"]}
             onChange={(e: any) => {
@@ -114,10 +108,10 @@ const WideFormatMaterialsSizeInputs = ({
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.sheetPaper.admin.index")}
+            {t("materials.inputs.index")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.sheetPaper.admin.enterIndex")}
+            placeholder={t("materials.inputs.enterIndex")}
             style={clasess.textInputStyle}
             value={sheetSize[index]["index"]}
             onChange={(e: any) => {

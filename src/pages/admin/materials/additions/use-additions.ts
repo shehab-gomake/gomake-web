@@ -9,10 +9,7 @@ const useApplications = () => {
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
   const headerTable = useMemo(
-    () => [
-      t("materials.additions.admin.name"),
-      t("materials.additions.admin.settings"),
-    ],
+    () => [t("materials.inputs.name"), t("materials.additions.admin.settings")],
     []
   );
   const [openAddApplicationsModal, setOpenAddApplicationsModal] =
@@ -42,19 +39,6 @@ const useApplications = () => {
     setItems(temp);
   };
 
-  const changeItemsApplicationThickness = (
-    sheetWeightIndex: number,
-    sheetSizeIndex: number,
-    filedName: string,
-    value: any
-  ) => {
-    let temp = [...items[sheetWeightIndex]["applicationSizes"]];
-    temp[sheetSizeIndex] = {
-      ...temp[sheetSizeIndex],
-      [filedName]: value,
-    };
-    changeItems(sheetWeightIndex, "applicationSizes", temp);
-  };
   const [updateState, setUpdateState] = useState({});
 
   const onChangeUpdateStateAddition = useCallback(
@@ -83,7 +67,7 @@ const useApplications = () => {
     setUpdateState(item);
   };
 
-  const getSheets = useCallback(async () => {
+  const getAdditions = useCallback(async () => {
     await getAndSetGetAllAdditions(callApi, setAllAdditions);
   }, []);
   const onCloseModalAdded = () => {
@@ -102,7 +86,7 @@ const useApplications = () => {
     setOpenAddApplicationsModal(true);
   };
   const onCloseUpdateModal = async () => {
-    getSheets();
+    getAdditions();
     setOpenUpdatalApplicationModal(false);
   };
   const onOpnUpdateModal = (item) => {
@@ -128,7 +112,7 @@ const useApplications = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      await getSheets();
+      await getAdditions();
       onCloseModalAdded();
     } else {
       setSnackbarStateValue({
@@ -138,33 +122,7 @@ const useApplications = () => {
       });
     }
   }, [categoryName, items]);
-  const addNewApplicationThicknessByCategoryName = useCallback(
-    async (selectedItem) => {
-      const res = await callApi(
-        "POST",
-        `/v1/administrator/application/add-application-thickness?categoryName=${selectedItem?.categoryName}`,
-        {
-          ...items[0],
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        getSheets();
-        onCloseUpdateModal();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
-    },
-    [items]
-  );
+
   const deleteAddition = useCallback(async (code: string) => {
     const res = await callApi("POST", `/v1/administrator/delete-addition`, {
       code,
@@ -175,7 +133,7 @@ const useApplications = () => {
         message: t("modal.deleteSusuccessfully"),
         type: "sucess",
       });
-      getSheets();
+      getAdditions();
       onCloseDeleteModal();
     } else {
       setSnackbarStateValue({
@@ -186,30 +144,6 @@ const useApplications = () => {
     }
   }, []);
 
-  const deleteApplicationThicknessSize = useCallback(
-    async (categoryName: string, sizeId: string, thicknessId: string) => {
-      const res = await callApi(
-        "POST",
-        `/v1/administrator/delete-application-thickness-size?categoryName=${categoryName}&thicknessId=${thicknessId}&sizeId=${sizeId}`
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        getSheets();
-        onCloseDeleteModal();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
-    },
-    []
-  );
   const updateAddition = useCallback(
     async (code: string) => {
       const res = await callApi(
@@ -225,7 +159,7 @@ const useApplications = () => {
           message: t("modal.updatedSusuccessfully"),
           type: "sucess",
         });
-        // getSheets();
+        // getAdditions();
         // onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -237,61 +171,9 @@ const useApplications = () => {
     },
     [updateState]
   );
-  const updateApplicationThicknessSize = useCallback(
-    async (categoryName: string, sizeId: string, thicknessId: string) => {
-      const res = await callApi(
-        "POST",
-        `/v1/administrator/update-application-thickness-size?categoryName=${categoryName}&thicknessId=${thicknessId}&sizeId=${sizeId}`,
-        {
-          ...updateState[sizeId],
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.updatedSusuccessfully"),
-          type: "sucess",
-        });
-        // getSheets();
-        // onCloseUpdateModal();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.updatedfailed"),
-          type: "error",
-        });
-      }
-    },
-    [updateState]
-  );
-  const addNewApplicationThicknesSizeByCategoryName = useCallback(
-    async (categoryName: string, thicknessId: string) => {
-      const res = await callApi(
-        "POST",
-        `/v1/administrator/application/add-application-thickness-size?categoryName=${categoryName}&thicknessId=${thicknessId}`,
-        {
-          //...items[0]?.applicationSizes[0],
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        getSheets();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
-    },
-    [items]
-  );
+
   useEffect(() => {
-    getSheets();
+    getAdditions();
   }, []);
   return {
     headerTable,
@@ -304,7 +186,6 @@ const useApplications = () => {
     openDeleteModal,
     selectedAddition,
     updateState,
-    addNewApplicationThicknesSizeByCategoryName,
     onClickOpenHardboardSizeThicknessWidget,
     onChangeUpdateStateAddition,
     onCloseModalAdded,
@@ -313,18 +194,14 @@ const useApplications = () => {
     setItems,
     setCategoryName,
     addNewAddition,
-    changeItemsApplicationThickness,
     setOpenUpdatalApplicationModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    addNewApplicationThicknessByCategoryName,
     deleteAddition,
-    deleteApplicationThicknessSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
     updateAddition,
-    updateApplicationThicknessSize,
   };
 };
 

@@ -4,14 +4,14 @@ import { useTranslation } from "react-i18next";
 import { getAndSetGetAllLaminations } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const useLaminations = () => {
+const useLamination = () => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
   const headerTable = useMemo(
     () => [
-      t("materials.lamination.admin.categoryName"),
-      t("materials.lamination.admin.settings"),
+      t("materials.inputs.categoryName"),
+      t("materials.sheetPaper.settings"),
     ],
     []
   );
@@ -19,26 +19,31 @@ const useLaminations = () => {
   const [openUpdateLaminationModal, setOpenUpdateLaminationModal] =
     useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [allLaminations, setAllLaminations] = useState([]);
+  const [allLamination, setAllLamination] = useState([]);
   const [selectedEditItem, setSelectedEditItem] = useState();
   const [categoryName, setCategoryName] = useState("");
-  const [isAddNewLaminationSizes, setIsAddNewLaminationSizes] = useState(false);
-  const [selectedLaminationSize, setSelectedLaminationSize] = useState({});
+  const [isAddNewLaminationWights, setIsAddNewLaminationWights] =
+    useState(false);
+  const [isAddNewLaminationWightSize, setIsAddNewLaminationWightSize] =
+    useState(false);
+  const [selectedLaminationWeight, setSelectedLaminationWeight] = useState({});
+  const [selectedLaminationWeightSize, setSelectedLaminationWeightSize] =
+    useState({});
   const [items, setItems] = useState([
     {
       code: "",
-      fitToPrintType: "",
+      width: "",
       height: "",
       name: "",
-      width: "",
       laminationThicknesses: [
         {
           code: "",
-          coldOrHot: "",
-          defaultPrice: "",
           thickness: "",
+          defaultPrice: "",
+          coldOrHot: "",
         },
       ],
+      fitToPrintType: [],
     },
   ]);
   const changeItems = (index: number, filedName: string, value: any) => {
@@ -50,7 +55,7 @@ const useLaminations = () => {
     setItems(temp);
   };
 
-  const changeItemsSheetSize = (
+  const changeItemsLaminationSize = (
     sheetWeightIndex: number,
     sheetSizeIndex: number,
     filedName: string,
@@ -64,7 +69,28 @@ const useLaminations = () => {
     changeItems(sheetWeightIndex, "laminationThicknesses", temp);
   };
   const [updateState, setUpdateState] = useState([]);
-  const onChangeUpdateStateSheetWeights = useCallback(
+  const onClickOpenLaminationWeightSizeWidget = (item) => {
+    setSelectedLaminationWeightSize(item);
+    setIsAddNewLaminationWightSize(true);
+    setItems([
+      {
+        code: "",
+        width: "",
+        height: "",
+        name: "",
+        laminationThicknesses: [
+          {
+            code: "",
+            thickness: "",
+            defaultPrice: "",
+            coldOrHot: "",
+          },
+        ],
+        fitToPrintType: [],
+      },
+    ]);
+  };
+  const onChangeUpdateStateLaminationWeights = useCallback(
     (index: string, filedName: string, value: any) => {
       let temp: any = { ...updateState };
       temp[`${index}`] = {
@@ -75,56 +101,41 @@ const useLaminations = () => {
     },
     [updateState]
   );
-  const initialStateLaminationSizes = (item: any) => {
+  const initialStateLaminationWeights = (item: any) => {
     let temp = [...item?.laminationSizes];
     let final: any = [];
     temp.map((laminationSize) => {
       final[laminationSize?.id] = {
         ...laminationSize,
       };
-      laminationSize?.laminationThicknesses?.map((laminationThicknes: any) => {
-        final[laminationThicknes?.id] = {
-          ...laminationThicknes,
-        };
-      });
+      laminationSize?.laminationThicknesses?.map(
+        (laminationThicknesse: any) => {
+          final[laminationThicknesse?.id] = {
+            ...laminationThicknesse,
+          };
+        }
+      );
     });
 
     setUpdateState(final);
   };
 
-  const getSheets = useCallback(async () => {
-    await getAndSetGetAllLaminations(callApi, setAllLaminations);
+  const getLamination = useCallback(async () => {
+    await getAndSetGetAllLaminations(callApi, setAllLamination);
   }, []);
   const onCloseModalAdded = () => {
     setOpenAddLaminationModal(false);
   };
   const onOpnModalAdded = () => {
-    setItems([
-      {
-        code: "",
-        fitToPrintType: "",
-        height: "",
-        name: "",
-        width: "",
-        laminationThicknesses: [
-          {
-            code: "",
-            coldOrHot: "",
-            defaultPrice: "",
-            thickness: "",
-          },
-        ],
-      },
-    ]);
     setOpenAddLaminationModal(true);
   };
   const onCloseUpdateModal = async () => {
-    getSheets();
+    getLamination();
     setOpenUpdateLaminationModal(false);
-    setIsAddNewLaminationSizes(false);
+    setIsAddNewLaminationWights(false);
   };
   const onOpnUpdateModal = (item) => {
-    initialStateLaminationSizes(item);
+    initialStateLaminationWeights(item);
     setSelectedEditItem(item);
     setOpenUpdateLaminationModal(true);
   };
@@ -133,21 +144,25 @@ const useLaminations = () => {
   };
   const onOpenDeleteModal = (item) => {
     setOpenDeleteModal(true);
-    setSelectedLaminationSize(item);
+    setSelectedLaminationWeight(item);
   };
 
   const addNewSupplierLamination = useCallback(async () => {
-    const res = await callApi("POST", `/v1/administrator/add-lamination`, {
-      categoryName,
-      laminationSizes: items,
-    });
+    const res = await callApi(
+      "POST",
+      `/v1/administrator/lamination/add-lamination`,
+      {
+        categoryName,
+        laminationSizes: items,
+      }
+    );
     if (res?.success) {
       setSnackbarStateValue({
         state: true,
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      await getSheets();
+      await getLamination();
       onCloseModalAdded();
     } else {
       setSnackbarStateValue({
@@ -172,7 +187,7 @@ const useLaminations = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        getLamination();
         onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -184,11 +199,11 @@ const useLaminations = () => {
     },
     [items]
   );
-  const deleteLaminationSize = useCallback(
+  const deleteLaminationweight = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
-        `/v1/administrator/delete-lamination-size?categoryName=${categoryName}&sizeId=${sizeId}`
+        `/v1/administrator/lamination/delete-lamination-size?categoryName=${categoryName}&sizeId=${sizeId}`
       );
       if (res?.success) {
         setSnackbarStateValue({
@@ -196,7 +211,7 @@ const useLaminations = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        getLamination();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -208,11 +223,11 @@ const useLaminations = () => {
     },
     []
   );
-  const deletelLaminationSizeThickness = useCallback(
-    async (categoryName: string, thicknessId: string, sizeId: string) => {
+  const deleteLaminationweightSize = useCallback(
+    async (categoryName: string, sizeId: string, thicknessId: string) => {
       const res = await callApi(
         "POST",
-        `/v1/administrator/delete-lamination-size-thickness?categoryName=${categoryName}&thicknessId=${thicknessId}&sizeId=${sizeId}`
+        `/v1/administrator/lamination/delete-lamination-size-thickness?categoryName=${categoryName}&sizeId=${sizeId}&thicknessId=${thicknessId}`
       );
       if (res?.success) {
         setSnackbarStateValue({
@@ -220,7 +235,7 @@ const useLaminations = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        getLamination();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -232,11 +247,11 @@ const useLaminations = () => {
     },
     []
   );
-  const updateLaminationSize = useCallback(
+  const updateLaminationweight = useCallback(
     async (sizeId: string, categoryName: string) => {
       const res = await callApi(
         "POST",
-        `/v1/administrator/update-lamination-size?categoryName=${categoryName}&sizeId=${sizeId}`,
+        `/v1/administrator/lamination/update-lamination-size?categoryName=${categoryName}&sizeId=${sizeId}`,
         {
           ...updateState[sizeId],
         }
@@ -247,7 +262,7 @@ const useLaminations = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        // getSheets();
+        // getLamination();
         // onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -259,13 +274,13 @@ const useLaminations = () => {
     },
     [updateState]
   );
-  const updateLaminationSizeThickness = useCallback(
-    async (categoryName: string, thicknessId: string, sizeId: string) => {
+  const updateLaminationWeightSizes = useCallback(
+    async (categoryName: string, sizeId: string, thicknessId: string) => {
       const res = await callApi(
         "POST",
-        ` /v1/administrator/update-lamination-size-thickness?categoryName=${categoryName}&thicknessId=${thicknessId}&sizeId=${sizeId}`,
+        `/v1/administrator/lamination/update-lamination-size-thickness?categoryName=${categoryName}&sizeId=${sizeId}&thicknessId=${thicknessId}`,
         {
-          ...updateState[sizeId],
+          ...updateState[thicknessId],
         }
       );
       if (res?.success) {
@@ -274,7 +289,7 @@ const useLaminations = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        // getSheets();
+        // getLamination();
         // onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -285,43 +300,75 @@ const useLaminations = () => {
       }
     },
     [updateState]
+  );
+  const addNewSheeWeightSizeByCategoryName = useCallback(
+    async (categoryName: string, sizeId: string) => {
+      const res = await callApi(
+        "POST",
+        `/v1/administrator/lamination/add-lamination-size-thickness?categoryName=${categoryName}&sizeId=${sizeId}`,
+        {
+          ...items[0]?.laminationThicknesses[0],
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getLamination();
+        setIsAddNewLaminationWightSize(false);
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [items]
   );
   useEffect(() => {
-    getSheets();
+    getLamination();
   }, []);
   return {
     headerTable,
-    allLaminations,
+    allLamination,
     openAddLaminationModal,
     items,
     categoryName,
     openUpdateLaminationModal,
     selectedEditItem,
-    isAddNewLaminationSizes,
+    isAddNewLaminationWights,
     openDeleteModal,
-    selectedLaminationSize,
+    selectedLaminationWeight,
     updateState,
-    onChangeUpdateStateSheetWeights,
+    isAddNewLaminationWightSize,
+    selectedLaminationWeightSize,
+    onChangeUpdateStateLaminationWeights,
     onCloseModalAdded,
     onOpnModalAdded,
     changeItems,
     setItems,
     setCategoryName,
     addNewSupplierLamination,
-    changeItemsSheetSize,
+    changeItemsLaminationSize,
     setOpenUpdateLaminationModal,
     onCloseUpdateModal,
     onOpnUpdateModal,
-    setIsAddNewLaminationSizes,
+    setIsAddNewLaminationWights,
     addNewSheeWeightByCategoryName,
-    deleteLaminationSize,
-    deletelLaminationSizeThickness,
+    deleteLaminationweight,
+    deleteLaminationweightSize,
     setOpenDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    updateLaminationSize,
-    updateLaminationSizeThickness,
+    updateLaminationweight,
+    updateLaminationWeightSizes,
+    setIsAddNewLaminationWightSize,
+    onClickOpenLaminationWeightSizeWidget,
+    addNewSheeWeightSizeByCategoryName,
   };
 };
 
-export { useLaminations };
+export { useLamination };

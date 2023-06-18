@@ -9,7 +9,7 @@ const getAndSetGetAllLaminations = async (
 ) => {
   const result: any = await callApi(
     "GET",
-    "/v1/administrator/lamination/get-all-laminations",
+    "/v1/administrator/lamination/get-all",
     data
   );
   const _data = returnResult(result, undefined);

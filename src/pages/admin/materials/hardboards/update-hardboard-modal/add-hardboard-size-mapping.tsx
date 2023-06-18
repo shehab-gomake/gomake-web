@@ -28,10 +28,10 @@ const AddHardboardSizeMapping = ({ index, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.hardboards.admin.height")}
+              {t("materials.inputs.height")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.hardboards.admin.enterHeight")}
+              placeholder={t("materials.inputs.enterHeight")}
               style={clasess.textInputStyle}
               value={materialHardboardsStateValue?.items[index]["height"]}
               onChange={(e: any) => {
@@ -45,10 +45,10 @@ const AddHardboardSizeMapping = ({ index, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.hardboards.admin.name")}
+              {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.hardboards.admin.enterName")}
+              placeholder={t("materials.inputs.enterName")}
               style={clasess.textInputStyle}
               value={materialHardboardsStateValue?.items[index]["name"]}
               onChange={(e: any) => {
@@ -62,10 +62,10 @@ const AddHardboardSizeMapping = ({ index, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.hardboards.admin.width")}
+              {t("materials.inputs.width")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.hardboards.admin.enterWidth")}
+              placeholder={t("materials.inputs.enterWidth")}
               style={clasess.textInputStyle}
               value={materialHardboardsStateValue?.items[index]["width"]}
               onChange={(e: any) => {
@@ -153,7 +153,7 @@ const AddHardboardSizeMapping = ({ index, selectedItem }) => {
               }
               style={clasess.cancelBtnStyle}
             >
-              {t("materials.hardboards.admin.cancel")}
+              {t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           </div>
           <div style={clasess.addSheetBtnContainer}>
@@ -165,7 +165,7 @@ const AddHardboardSizeMapping = ({ index, selectedItem }) => {
               }
               style={clasess.addBtnStyle}
             >
-              {t("materials.hardboards.admin.save")}
+              {t("materials.buttons.save")}
             </GomakePrimaryButton>
           </div>
         </div>

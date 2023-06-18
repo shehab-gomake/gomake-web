@@ -104,9 +104,64 @@ const useAuthLayoutHook = () => {
             path: "/admin/materials/applications",
           },
           {
+            key: "rollEncapsulation",
+            title: t("materials.encapsulationRoll.admin.title"),
+            path: "/admin/materials/roll-encapsulation",
+          },
+          {
             key: "additions",
             title: t("materials.additions.admin.title"),
             path: "/admin/materials/additions",
+          },
+          {
+            key: "canvasFrames",
+            title: t("materials.canvasFrames.admin.title"),
+            path: "/admin/materials/canvans-frames",
+          },
+          {
+            key: "packinUnits",
+            title: t("materials.packinUnits.admin.title"),
+            path: "/admin/materials/packin-units",
+          },
+          {
+            key: "frames",
+            title: t("materials.frames.admin.title"),
+            path: "/admin/materials/frame",
+          },
+          {
+            key: "foils",
+            title: t("materials.foils.admin.title"),
+            path: "/admin/materials/foil",
+          },
+          {
+            key: "packinDrums",
+            title: t("materials.packinDrums.admin.title"),
+            path: "/admin/materials/packin-drums",
+          },
+          {
+            key: "doubleSidedTapeRoll",
+            title: t("materials.doubleSidedTapeRolls.admin.title"),
+            path: "/admin/materials/double-sided-tape-roll",
+          },
+          {
+            key: "sheetEncapsulation",
+            title: t("materials.sheetEncapsulation.admin.title"),
+            path: "/admin/materials/sheet-encapsulation",
+          },
+          {
+            key: "magnet",
+            title: t("materials.magnets.admin.title"),
+            path: "/admin/materials/magnets",
+          },
+          {
+            key: "packings",
+            title: t("materials.packings.title"),
+            path: "/admin/materials/packings",
+          },
+          {
+            key: "varnish",
+            title: t("materials.varnishs.title"),
+            path: "/admin/materials/varnish",
           },
         ],
         icon: () => {
@@ -137,6 +192,18 @@ const useAuthLayoutHook = () => {
         title: t("tabs.products"),
         path: "/product-floor",
         isList: true,
+        list: [
+          {
+            key: "actions",
+            title: t("products.actions.admin.title"),
+            path: "/admin/products/actions",
+          },
+          {
+            key: "profits",
+            title: t("products.profits.admin.title"),
+            path: "/admin/products/profits",
+          },
+        ],
         icon: () => {
           return <ProductsIcon />;
         },
@@ -157,7 +224,21 @@ const useAuthLayoutHook = () => {
             key: "list",
             title: t("tabs.listSales"),
             path: "/sales/list",
+              },
+            key: "quote",
+            title: t("sales.quote.title"),
+            path: "/admin/sales/quote",
           },
+          // {
+          //   key: "add",
+          //   title: t("tabs.addSales"),
+          //   path: "/sales/add",
+          // },
+          // {
+          //   key: "list",
+          //   title: t("tabs.listSales"),
+          //   path: "/sales/list",
+          // },
         ],
         icon: () => {
           return <SalesIcon />;

@@ -4,7 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton, Tooltip } from "@mui/material";
 import { GoMakeDeleteModal } from "@/components";
 import SaveIcon from "@mui/icons-material/Save";
-import { materialLaminationsState } from "../store/lamination";
+import { materialLaminationState } from "../store/lamination";
 
 import { useStyle } from "./style";
 
@@ -17,32 +17,32 @@ const ControlIconsWidget = ({
   item,
 }) => {
   const { clasess } = useStyle();
-  const materialSheetsStateValue = useRecoilValue<any>(
-    materialLaminationsState
+  const materialLaminationStateValue = useRecoilValue<any>(
+    materialLaminationState
   );
   return (
     <>
       <div style={clasess.controlsIconContainer}>
-        <Tooltip title={t("materials.sheetPaper.admin.delete")}>
+        <Tooltip title={t("materials.buttons.delete")}>
           <IconButton
-            onClick={() => materialSheetsStateValue.onOpenDeleteModal(item)}
+            onClick={() => materialLaminationStateValue.onOpenDeleteModal(item)}
           >
             <DeleteIcon style={{ color: "#a1a2cd" }} />
           </IconButton>
         </Tooltip>
-        <Tooltip title={t("materials.sheetPaper.admin.saveModifications")}>
+        <Tooltip title={t("materials.buttons.saveModifications")}>
           <IconButton onClick={onClickUpdate}>
             <SaveIcon style={{ color: "#a1a2cd" }} />
           </IconButton>
         </Tooltip>
       </div>
 
-      {item === materialSheetsStateValue.selectedLaminationSize && (
+      {item === materialLaminationStateValue.selectedLaminationWeight && (
         <GoMakeDeleteModal
           title={title}
-          yesBtn={t("materials.sheetPaper.admin.delete")}
-          openModal={materialSheetsStateValue.openDeleteModal}
-          onClose={materialSheetsStateValue.onCloseDeleteModal}
+          yesBtn={t("materials.buttons.delete")}
+          openModal={materialLaminationStateValue.openDeleteModal}
+          onClose={materialLaminationStateValue.onCloseDeleteModal}
           subTitle={subTitle}
           onClickDelete={onClickDelete}
         />
