@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useQuoteGetData } from "./use-quote-get-data";
 import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useQuoteModals } from "./use-quote-modals";
 
 const useQuote = () => {
   const { t } = useTranslation();
@@ -28,14 +29,37 @@ const useQuote = () => {
     "10%",
     "10%",
   ];
-  const [selectedContact, setSelectedContact] = useState();
-  const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState();
-  const [openDeleteModalAddress, setOpenDeleteModalAddress] = useState(false);
-  const [selectedContactById, setSelectedContactById] = useState<any>();
-  const [isAddNewContactWidget, setIsAddNewContactWidget] = useState(false);
-  const [selectedAddressById, setSelectedAddressById] = useState<any>();
-  const [isAddNewAddressWidget, setIsAddNewAddressWidget] = useState(false);
+  const {
+    selectedContact,
+    openDeleteModalContact,
+    selectedAddress,
+    openDeleteModalAddress,
+    selectedContactById,
+    isAddNewContactWidget,
+    selectedAddressById,
+    isAddNewAddressWidget,
+    openAddNewModalContact,
+    openAddNewModalAddress,
+    openNegotiateRequestModal,
+    onCloseNegotiateRequest,
+    onOpenNegotiateRequest,
+    onCloseIsAddNewContactWidget,
+    onCloseAddNewContactClient,
+    onCloseAddNewAddressClient,
+    onOpenAddNewContactClient,
+    onOpenAddNewAddressClient,
+    onCloseIsAddNewAddressWidget,
+    onOpenDeleteModalContact,
+    onCloseDeleteModalAddress,
+    onOpenDeleteModalAddress,
+    onCloseDeleteModalContact,
+    setSelectedContactById,
+    setSelectedAddress,
+    setOpenDeleteModalAddress,
+    setIsAddNewAddressWidget,
+    setIsAddNewContactWidget,
+    setSelectedAddressById,
+  } = useQuoteModals();
   const [selectBusiness, setSelectBusiness] = useState<any>({});
   useEffect(() => {
     const foundItem = customersListValue.find(
@@ -43,14 +67,7 @@ const useQuote = () => {
     );
     setSelectBusiness(foundItem);
   }, [quoteItemValue, customersListValue]);
-  const onCloseIsAddNewContactWidget = () => {
-    setSelectedContactById({});
-    setIsAddNewContactWidget(false);
-  };
-  const onCloseIsAddNewAddressWidget = () => {
-    setSelectedAddressById({});
-    setIsAddNewAddressWidget(false);
-  };
+
   const onChangeUpdateClientContact = useCallback(
     (filedName: string, value: any) => {
       setSelectedContactById((prev) => {
@@ -73,21 +90,7 @@ const useQuote = () => {
     },
     [selectedAddressById]
   );
-  const onCloseDeleteModalContact = () => {
-    setOpenDeleteModalContact(false);
-  };
-  const onOpenDeleteModalContact = (item) => {
-    setSelectedContact(item);
-    setOpenDeleteModalContact(true);
-  };
 
-  const onCloseDeleteModalAddress = () => {
-    setOpenDeleteModalAddress(false);
-  };
-  const onOpenDeleteModalAddress = (item) => {
-    setSelectedAddress(item);
-    setOpenDeleteModalAddress(true);
-  };
   const onClickDeleteContact = useCallback(async (item: any) => {
     const res = await callApi(
       "DELETE",
@@ -284,17 +287,27 @@ const useQuote = () => {
     selectedAddress,
     openDeleteModalAddress,
     selectBusiness,
+    openAddNewModalContact,
+    openAddNewModalAddress,
+    openNegotiateRequestModal,
+    onCloseNegotiateRequest,
+    onOpenNegotiateRequest,
+    onCloseAddNewContactClient,
+    onCloseAddNewAddressClient,
+    onOpenAddNewContactClient,
+    onOpenAddNewAddressClient,
     onChangeSelectBusiness,
     setSelectBusiness,
     onClickAddNewAddress,
     onClickDeleteAddress,
     setSelectedAddress,
     setOpenDeleteModalAddress,
+    setIsAddNewAddressWidget,
+    setIsAddNewContactWidget,
+    setSelectedAddressById,
     onCloseDeleteModalAddress,
     onOpenDeleteModalAddress,
-    setIsAddNewAddressWidget,
     onCloseIsAddNewAddressWidget,
-    setIsAddNewContactWidget,
     onCloseIsAddNewContactWidget,
     setSelectedContactById,
     onCloseDeleteModalContact,
@@ -303,7 +316,6 @@ const useQuote = () => {
     onChangeUpdateClientContact,
     onClickAddNewContact,
     onChangeUpdateClientAddress,
-    setSelectedAddressById,
     getCalculateQuoteItem,
     getCalculateQuote,
     t,

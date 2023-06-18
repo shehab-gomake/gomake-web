@@ -9,6 +9,8 @@ import { AddContactWidget } from "./add-contact-widget";
 import { useStyle } from "./style";
 
 import { useContactWidget } from "./use-contact-widget";
+import { AddNewContactModal } from "../modals-widgets/add-contact-modal";
+import { AddNewItemModal } from "../modals-widgets/add-new-item-modal";
 
 interface IProps {
   isContactID?: boolean;
@@ -48,12 +50,16 @@ const ContactWidget = ({
                       <div style={clasess.labelStyle}>
                         {t("sales.quote.contactID")}
                       </div>
-                      <div
-                        // onClick={() => console.log("ggg")}
-                        style={clasess.plusIconContainer}
-                      >
-                        <PlusIcon />
-                      </div>
+                      {index === 0 ? (
+                        <div
+                          onClick={() =>
+                            quoteStateValue?.onOpenAddNewContactClient()
+                          }
+                          style={clasess.plusIconContainer}
+                        >
+                          <PlusIcon />
+                        </div>
+                      ) : null}
                     </div>
                     <GoMakeAutoComplate
                       options={clientContactsValue}
@@ -185,6 +191,7 @@ const ContactWidget = ({
           )
         }
       />
+      <AddNewContactModal />
     </div>
   );
 };

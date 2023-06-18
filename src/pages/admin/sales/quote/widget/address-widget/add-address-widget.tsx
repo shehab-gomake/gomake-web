@@ -7,6 +7,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { quoteState } from "../../store/quote";
 import { clientAddressState } from "@/store";
+import { PlusIcon } from "@/icons";
 interface IProps {
   isAddressID?: boolean;
   isCity?: boolean;
@@ -32,7 +33,16 @@ const AddAddressWidget = ({
     <div style={clasess.mainContainer}>
       {isAddressID && (
         <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>{t("sales.quote.addressID")}</div>
+          <div style={clasess.labelContainer}>
+            <div style={clasess.labelStyle}>{t("sales.quote.addressID")}</div>
+
+            <div
+              onClick={() => quoteStateValue?.onOpenAddNewAddressClient()}
+              style={clasess.plusIconContainer}
+            >
+              <PlusIcon />
+            </div>
+          </div>
           <GoMakeAutoComplate
             options={clientAddressValue}
             style={clasess.autoComplateStyle}

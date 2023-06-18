@@ -8,6 +8,7 @@ import {
 import { AddAddressWidget } from "./add-address-widget";
 import { useStyle } from "./style";
 import { useAddressWidget } from "./use-address-widget";
+import { AddNewAddressModal } from "../modals-widgets/add-address-modal";
 
 interface IProps {
   isAddressID?: boolean;
@@ -48,12 +49,16 @@ const AddressWidget = ({
                       <div style={clasess.labelStyle}>
                         {t("sales.quote.addressID")}
                       </div>
-                      <div
-                        // onClick={() => console.log("ggg")}
-                        style={clasess.plusIconContainer}
-                      >
-                        <PlusIcon />
-                      </div>
+                      {index === 0 ? (
+                        <div
+                          onClick={() =>
+                            quoteStateValue?.onOpenAddNewAddressClient()
+                          }
+                          style={clasess.plusIconContainer}
+                        >
+                          <PlusIcon />
+                        </div>
+                      ) : null}
                     </div>
                     <GoMakeAutoComplate
                       options={clientAddressValue}
@@ -206,6 +211,7 @@ const AddressWidget = ({
           )
         }
       />
+      <AddNewAddressModal />
     </>
   );
 };
