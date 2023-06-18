@@ -26,7 +26,6 @@ const useQuoteGetData = () => {
 
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
-  console.log("quoteItemValue", quoteItemValue);
 
   const [clientContactsValue, setClientContactsValue] =
     useRecoilState<any>(clientContactsState);
@@ -79,6 +78,8 @@ const useQuoteGetData = () => {
     clientContactsValue,
     clientAddressValue,
     getQuote,
+    getAllClientContacts,
+    getAllClientAddress,
   };
 };
 

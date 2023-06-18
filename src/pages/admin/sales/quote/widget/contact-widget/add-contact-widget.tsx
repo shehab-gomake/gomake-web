@@ -7,6 +7,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { clientContactsState } from "@/store";
 import { quoteState } from "../../store/quote";
+import { PlusIcon } from "@/icons";
 interface IProps {
   isContactID?: boolean;
   isContactName?: boolean;
@@ -30,7 +31,16 @@ const AddContactWidget = ({
     <div style={clasess.mainContainer}>
       {isContactID && (
         <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>{t("sales.quote.contactID")}</div>
+          <div style={clasess.labelContainer}>
+            <div style={clasess.labelStyle}>{t("sales.quote.contactID")}</div>
+
+            <div
+              onClick={() => quoteStateValue?.onOpenAddNewContactClient()}
+              style={clasess.plusIconContainer}
+            >
+              <PlusIcon />
+            </div>
+          </div>
           <GoMakeAutoComplate
             options={clientContactsValue}
             style={clasess.autoComplateStyle}

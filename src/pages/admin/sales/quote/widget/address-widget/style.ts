@@ -33,7 +33,16 @@ const useStyle = () => {
         color: primaryColor(900),
         cursor: "pointer",
       },
-
+      labelContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 16,
+      },
+      plusIconContainer: {
+        cursor: "pointer",
+      },
       textInputStyle: {
         background: "#FFFFFF",
         filter: "drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.08))",

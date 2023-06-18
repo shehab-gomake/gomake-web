@@ -3,12 +3,14 @@ import {
   GoMakeDeleteModal,
   GomakeTextInput,
 } from "@/components";
-import { AddPlusIcon, RemoveIcon } from "@/icons";
+import { AddPlusIcon, PlusIcon, RemoveIcon } from "@/icons";
 
 import { AddContactWidget } from "./add-contact-widget";
 import { useStyle } from "./style";
 
 import { useContactWidget } from "./use-contact-widget";
+import { AddNewContactModal } from "../modals-widgets/add-contact-modal";
+import { AddNewItemModal } from "../modals-widgets/add-new-item-modal";
 
 interface IProps {
   isContactID?: boolean;
@@ -40,22 +42,36 @@ const ContactWidget = ({
       {items?.length > 0 ? (
         <>
           {items?.map((item: any, index: number) => {
+            console.log("item", item);
             return (
               <div style={clasess.mainContainer}>
                 {isContactID && (
                   <div style={clasess.fieldContainer}>
-                    <div style={clasess.labelStyle}>
-                      {t("sales.quote.contactID")}
+                    <div style={clasess.labelContainer}>
+                      <div style={clasess.labelStyle}>
+                        {t("sales.quote.contactID")}
+                      </div>
+                      {index === 0 ? (
+                        <div
+                          onClick={() =>
+                            quoteStateValue?.onOpenAddNewContactClient()
+                          }
+                          style={clasess.plusIconContainer}
+                        >
+                          <PlusIcon />
+                        </div>
+                      ) : null}
                     </div>
                     <GoMakeAutoComplate
                       options={clientContactsValue}
                       style={clasess.autoComplateStyle}
                       placeholder={
-                        clientContactsValue[index]?.name
-                          ? clientContactsValue[index]?.name
+                        item?.contactID
+                          ? item?.contactName
                           : t("sales.quote.contactID")
                       }
                       getOptionLabel={(item) => item?.name}
+                      disabled={true}
                     />
                   </div>
                 )}
@@ -177,6 +193,7 @@ const ContactWidget = ({
           )
         }
       />
+      <AddNewContactModal />
     </div>
   );
 };

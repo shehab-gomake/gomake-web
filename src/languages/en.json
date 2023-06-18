@@ -1074,7 +1074,17 @@
       "deleteContactRow": "Delete Contact row",
       "deleteAddressRow": "Delete Address row",
       "subTitleDeleteContactRow": "Are you sure to delete this row?",
-      "subTitleDeleteAddressRow": "Are you sure to delete this row?"
+      "subTitleDeleteAddressRow": "Are you sure to delete this row?",
+      "negotiateRequest": "Negotiate request",
+      "sendNegotiateRequest": "Write what you want here...",
+      "addNewItem": "Add new item",
+      "duplicate": "Duplicate",
+      "item": "item",
+      "addNewContacts": "Add new contact",
+      "name": "Name",
+      "phone": "Phone",
+      "duplicateItemWithDifferentQTY": "Duplicate item with new quantity",
+      "addressName": "Address Name"
     }
   }
 }
