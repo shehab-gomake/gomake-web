@@ -225,6 +225,7 @@ const useAuthLayoutHook = () => {
             title: t("tabs.listSales"),
             path: "/sales/list",
               },
+          {
             key: "quote",
             title: t("sales.quote.title"),
             path: "/admin/sales/quote",
