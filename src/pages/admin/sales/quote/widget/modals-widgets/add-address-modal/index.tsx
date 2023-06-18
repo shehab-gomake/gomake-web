@@ -13,6 +13,9 @@ const AddNewAddressModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const quoteStateValue = useRecoilValue<any>(quoteState);
+  // addClientAddressState,
+  // onChangeAddClientAddressState,
+  // addNewClientAddress,
   return (
     <>
       <GoMakeModal
@@ -24,25 +27,74 @@ const AddNewAddressModal = () => {
         <div>
           <div>
             <div style={clasess.mainInputsContainer}>
-              <GomakeTextInput
-                style={clasess.textInputStyle}
-                placeholder={t("sales.quote.city")}
-              />
-              <GomakeTextInput
-                style={clasess.textInputStyle}
-                placeholder={t("sales.quote.street")}
-              />
-              <GomakeTextInput
-                style={clasess.textInputStyle}
-                placeholder={t("sales.quote.entrance")}
-              />
-              <GomakeTextInput
-                style={clasess.textInputStyle}
-                placeholder={t("sales.quote.apartment")}
-              />
+              <div style={{ width: "30%" }}>
+                <GomakeTextInput
+                  style={clasess.textInputStyle}
+                  placeholder={t("sales.quote.addressName")}
+                  onChange={(e: any) => {
+                    quoteStateValue?.onChangeAddClientAddressState(
+                      "addressName",
+                      e.target.value
+                    );
+                  }}
+                />
+              </div>
+              <div style={{ width: "30%" }}>
+                <GomakeTextInput
+                  style={clasess.textInputStyle}
+                  placeholder={t("sales.quote.city")}
+                  onChange={(e: any) => {
+                    quoteStateValue?.onChangeAddClientAddressState(
+                      "city",
+                      e.target.value
+                    );
+                  }}
+                />
+              </div>
+              <div style={{ width: "30%" }}>
+                <GomakeTextInput
+                  style={clasess.textInputStyle}
+                  placeholder={t("sales.quote.street")}
+                  onChange={(e: any) => {
+                    quoteStateValue?.onChangeAddClientAddressState(
+                      "street",
+                      e.target.value
+                    );
+                  }}
+                />
+              </div>
+            </div>
+            <div style={clasess.mainInputsContainer}>
+              <div style={{ width: "30%" }}>
+                <GomakeTextInput
+                  style={clasess.textInputStyle}
+                  placeholder={t("sales.quote.entrance")}
+                  onChange={(e: any) => {
+                    quoteStateValue?.onChangeAddClientAddressState(
+                      "entry",
+                      e.target.value
+                    );
+                  }}
+                />
+              </div>
+              <div style={{ width: "30%" }}>
+                <GomakeTextInput
+                  style={clasess.textInputStyle}
+                  placeholder={t("sales.quote.apartment")}
+                  onChange={(e: any) => {
+                    quoteStateValue?.onChangeAddClientAddressState(
+                      "apartment",
+                      e.target.value
+                    );
+                  }}
+                />
+              </div>
             </div>
             <div style={clasess.btnContainer}>
-              <GomakePrimaryButton style={clasess.addBtnStyle}>
+              <GomakePrimaryButton
+                style={clasess.addBtnStyle}
+                onClick={() => quoteStateValue?.addNewClientAddress()}
+              >
                 {t("sales.quote.addNewAddress")}
               </GomakePrimaryButton>
             </div>

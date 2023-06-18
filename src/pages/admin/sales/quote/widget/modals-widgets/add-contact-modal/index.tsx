@@ -27,18 +27,39 @@ const AddNewContactModal = () => {
               <GomakeTextInput
                 style={clasess.textInputStyle}
                 placeholder={t("sales.quote.name")}
+                onChange={(e: any) => {
+                  quoteStateValue?.onChangeAddClientContactState(
+                    "contactName",
+                    e.target.value
+                  );
+                }}
               />
               <GomakeTextInput
                 style={clasess.textInputStyle}
                 placeholder={t("sales.quote.email")}
+                onChange={(e: any) => {
+                  quoteStateValue?.onChangeAddClientContactState(
+                    "contactMail",
+                    e.target.value
+                  );
+                }}
               />
               <GomakeTextInput
                 style={clasess.textInputStyle}
                 placeholder={t("sales.quote.phone")}
+                onChange={(e: any) => {
+                  quoteStateValue?.onChangeAddClientContactState(
+                    "contactPhone",
+                    e.target.value
+                  );
+                }}
               />
             </div>
             <div style={clasess.btnContainer}>
-              <GomakePrimaryButton style={clasess.addBtnStyle}>
+              <GomakePrimaryButton
+                style={clasess.addBtnStyle}
+                onClick={() => quoteStateValue?.addNewClientContact()}
+              >
                 {t("sales.quote.addNewContacts")}
               </GomakePrimaryButton>
             </div>

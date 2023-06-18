@@ -13,7 +13,23 @@ const useQuoteModals = () => {
   const [openAddNewModalAddress, setOpenAddNewModalAddress] = useState(false);
   const [openNegotiateRequestModal, setOpenNegotiateRequestModal] =
     useState(false);
-
+  const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
+  const [
+    openDuplicateWithDifferentQTYModal,
+    setOpenDuplicateWithDifferentQTYModal,
+  ] = useState(false);
+  const onCloseDuplicateWithDifferentQTY = () => {
+    setOpenDuplicateWithDifferentQTYModal(false);
+  };
+  const onOpenDuplicateWithDifferentQTY = () => {
+    setOpenDuplicateWithDifferentQTYModal(true);
+  };
+  const onCloseNewItem = () => {
+    setOpenAddNewItemModal(false);
+  };
+  const onOpenNewItem = () => {
+    setOpenAddNewItemModal(true);
+  };
   const onCloseNegotiateRequest = () => {
     setOpenNegotiateRequestModal(false);
   };
@@ -70,6 +86,12 @@ const useQuoteModals = () => {
     openAddNewModalContact,
     openAddNewModalAddress,
     openNegotiateRequestModal,
+    openAddNewItemModal,
+    openDuplicateWithDifferentQTYModal,
+    onCloseDuplicateWithDifferentQTY,
+    onOpenDuplicateWithDifferentQTY,
+    onCloseNewItem,
+    onOpenNewItem,
     onCloseNegotiateRequest,
     onOpenNegotiateRequest,
     onCloseIsAddNewContactWidget,

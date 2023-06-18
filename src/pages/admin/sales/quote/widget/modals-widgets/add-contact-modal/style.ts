@@ -8,7 +8,7 @@ const useStyle = () => {
       insideStyle: {
         width: "40%",
         borderRadius: 5,
-        height: "35%",
+        height: "29.5%",
       },
       textInputStyle: {
         width: "100%",

@@ -78,6 +78,8 @@ const useQuoteGetData = () => {
     clientContactsValue,
     clientAddressValue,
     getQuote,
+    getAllClientContacts,
+    getAllClientAddress,
   };
 };
 

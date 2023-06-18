@@ -33,7 +33,7 @@ const useMoreCircle = () => {
     {
       name: "Duplicate with different QTY",
       icon: <DuplicateWithDifferentMenuIcon />,
-      onclick: () => null,
+      onclick: () => quoteStateValue.onOpenDuplicateWithDifferentQTY(),
     },
     {
       name: "Negotiate request",

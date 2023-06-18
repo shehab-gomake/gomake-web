@@ -42,6 +42,7 @@ const ContactWidget = ({
       {items?.length > 0 ? (
         <>
           {items?.map((item: any, index: number) => {
+            console.log("item", item);
             return (
               <div style={clasess.mainContainer}>
                 {isContactID && (
@@ -65,11 +66,12 @@ const ContactWidget = ({
                       options={clientContactsValue}
                       style={clasess.autoComplateStyle}
                       placeholder={
-                        clientContactsValue[index]?.name
-                          ? clientContactsValue[index]?.name
+                        item?.contactID
+                          ? item?.contactName
                           : t("sales.quote.contactID")
                       }
                       getOptionLabel={(item) => item?.name}
+                      disabled={true}
                     />
                   </div>
                 )}

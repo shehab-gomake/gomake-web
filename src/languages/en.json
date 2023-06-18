@@ -1082,7 +1082,9 @@
       "item": "item",
       "addNewContacts": "Add new contact",
       "name": "Name",
-      "phone": "Phone"
+      "phone": "Phone",
+      "duplicateItemWithDifferentQTY": "Duplicate item with new quantity",
+      "addressName": "Address Name"
     }
   }
 }

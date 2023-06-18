@@ -9,16 +9,16 @@ import { useStyle } from "./style";
 import { useRecoilValue } from "recoil";
 import { quoteState } from "../../../store/quote";
 
-const AddNewItemModal = () => {
+const DuplicateItemModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const quoteStateValue = useRecoilValue<any>(quoteState);
   return (
     <>
       <GoMakeModal
-        openModal={quoteStateValue?.openAddNewItemModal}
-        modalTitle={t("sales.quote.addNewItem")}
-        onClose={() => quoteStateValue?.onCloseNewItem()}
+        openModal={quoteStateValue?.openDuplicateWithDifferentQTYModal}
+        modalTitle={t("sales.quote.duplicateItemWithDifferentQTY")}
+        onClose={() => quoteStateValue?.onCloseDuplicateWithDifferentQTY()}
         insideStyle={clasess.insideStyle}
       >
         <div>
@@ -38,4 +38,4 @@ const AddNewItemModal = () => {
     </>
   );
 };
-export { AddNewItemModal };
+export { DuplicateItemModal };

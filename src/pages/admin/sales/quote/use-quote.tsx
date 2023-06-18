@@ -6,7 +6,13 @@ import { useQuoteModals } from "./use-quote-modals";
 
 const useQuote = () => {
   const { t } = useTranslation();
-  const { quoteItemValue, customersListValue, getQuote } = useQuoteGetData();
+  const {
+    quoteItemValue,
+    customersListValue,
+    getQuote,
+    getAllClientContacts,
+    getAllClientAddress,
+  } = useQuoteGetData();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const tableHeaders = [
@@ -41,6 +47,12 @@ const useQuote = () => {
     openAddNewModalContact,
     openAddNewModalAddress,
     openNegotiateRequestModal,
+    openAddNewItemModal,
+    openDuplicateWithDifferentQTYModal,
+    onCloseDuplicateWithDifferentQTY,
+    onOpenDuplicateWithDifferentQTY,
+    onCloseNewItem,
+    onOpenNewItem,
     onCloseNegotiateRequest,
     onOpenNegotiateRequest,
     onCloseIsAddNewContactWidget,
@@ -275,6 +287,89 @@ const useQuote = () => {
     [quoteItemValue]
   );
 
+  const [addClientContactState, setClientContactState] = useState<any>({});
+
+  const onChangeAddClientContactState = useCallback(
+    (filedName: string, value: any) => {
+      setClientContactState((prev) => {
+        return {
+          ...prev,
+          [filedName]: value,
+        };
+      });
+    },
+    [addClientContactState]
+  );
+  const addNewClientContact = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/crm-service/customer/create-contact`,
+      {
+        contactName: addClientContactState?.contactName,
+        contactMail: addClientContactState?.contactMail,
+        contactPhone: addClientContactState?.contactPhone,
+        clientId: quoteItemValue?.customerID,
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+      getAllClientContacts();
+      onCloseAddNewContactClient();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedfailed"),
+        type: "error",
+      });
+    }
+  }, [quoteItemValue, addClientContactState]);
+
+  const [addClientAddressState, setClientAddressState] = useState<any>({});
+  const onChangeAddClientAddressState = useCallback(
+    (filedName: string, value: any) => {
+      setClientAddressState((prev) => {
+        return {
+          ...prev,
+          [filedName]: value,
+        };
+      });
+    },
+    [addClientAddressState]
+  );
+
+  const addNewClientAddress = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/crm-service/customer/create-address`,
+      {
+        address1: addClientAddressState?.addressName,
+        street: addClientAddressState?.street,
+        city: addClientAddressState?.city,
+        entry: addClientAddressState?.entry,
+        apartment: addClientAddressState?.apartment,
+        clientId: quoteItemValue?.customerID,
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedSusuccessfully"),
+        type: "sucess",
+      });
+      getAllClientAddress();
+      onCloseAddNewAddressClient();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedfailed"),
+        type: "error",
+      });
+    }
+  }, [quoteItemValue, addClientAddressState]);
   return {
     tableHeaders,
     tableRowPercent,
@@ -290,6 +385,18 @@ const useQuote = () => {
     openAddNewModalContact,
     openAddNewModalAddress,
     openNegotiateRequestModal,
+    addClientContactState,
+    addClientAddressState,
+    openAddNewItemModal,
+    openDuplicateWithDifferentQTYModal,
+    onCloseDuplicateWithDifferentQTY,
+    onOpenDuplicateWithDifferentQTY,
+    onCloseNewItem,
+    onOpenNewItem,
+    onChangeAddClientAddressState,
+    addNewClientAddress,
+    onChangeAddClientContactState,
+    addNewClientContact,
     onCloseNegotiateRequest,
     onOpenNegotiateRequest,
     onCloseAddNewContactClient,

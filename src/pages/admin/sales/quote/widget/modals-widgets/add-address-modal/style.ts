@@ -1,5 +1,4 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
@@ -9,7 +8,7 @@ const useStyle = () => {
       insideStyle: {
         width: "40%",
         borderRadius: 5,
-        height: "35%",
+        height: "36.5%",
       },
       textInputStyle: {
         width: "100%",
@@ -21,10 +20,10 @@ const useStyle = () => {
       mainInputsContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
         alignItems: "center",
         gap: 25,
-        marginBottom: 50,
+        marginBottom: 30,
       },
       btnContainer: {
         display: "flex",

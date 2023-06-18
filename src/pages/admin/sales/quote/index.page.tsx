@@ -15,6 +15,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useEffect, useRef, useState } from "react";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import { quoteItemState } from "@/store";
+import { AddNewItemModal } from "./widget/modals-widgets/add-new-item-modal";
 
 export default function Quote() {
   const { clasess } = useStyle();
@@ -43,6 +44,18 @@ export default function Quote() {
     openAddNewModalContact,
     openAddNewModalAddress,
     openNegotiateRequestModal,
+    addClientContactState,
+    addClientAddressState,
+    openAddNewItemModal,
+    openDuplicateWithDifferentQTYModal,
+    onCloseDuplicateWithDifferentQTY,
+    onOpenDuplicateWithDifferentQTY,
+    onCloseNewItem,
+    onOpenNewItem,
+    onChangeAddClientAddressState,
+    addNewClientAddress,
+    onChangeAddClientContactState,
+    addNewClientContact,
     onCloseNegotiateRequest,
     onOpenNegotiateRequest,
     onCloseAddNewContactClient,
@@ -89,6 +102,18 @@ export default function Quote() {
       openAddNewModalContact,
       openAddNewModalAddress,
       openNegotiateRequestModal,
+      addClientContactState,
+      addClientAddressState,
+      openAddNewItemModal,
+      openDuplicateWithDifferentQTYModal,
+      onCloseDuplicateWithDifferentQTY,
+      onOpenDuplicateWithDifferentQTY,
+      onCloseNewItem,
+      onOpenNewItem,
+      onChangeAddClientAddressState,
+      addNewClientAddress,
+      onChangeAddClientContactState,
+      addNewClientContact,
       onCloseNegotiateRequest,
       onOpenNegotiateRequest,
       onCloseAddNewContactClient,
@@ -134,6 +159,18 @@ export default function Quote() {
     openAddNewModalContact,
     openAddNewModalAddress,
     openNegotiateRequestModal,
+    addClientContactState,
+    addClientAddressState,
+    openAddNewItemModal,
+    openDuplicateWithDifferentQTYModal,
+    onCloseDuplicateWithDifferentQTY,
+    onOpenDuplicateWithDifferentQTY,
+    onCloseNewItem,
+    onOpenNewItem,
+    onChangeAddClientAddressState,
+    addNewClientAddress,
+    onChangeAddClientContactState,
+    addNewClientContact,
     onCloseNegotiateRequest,
     onOpenNegotiateRequest,
     onCloseAddNewContactClient,
@@ -224,7 +261,9 @@ export default function Quote() {
           <div style={clasess.btnsContainer}>
             <div style={clasess.btnContainer}>
               <AddPlusIcon />
-              <div style={clasess.btnTitle}>add new item</div>
+              <div style={clasess.btnTitle} onClick={() => onOpenNewItem()}>
+                add new item
+              </div>
             </div>
             <div style={clasess.btnContainer}>
               <AddPlusIcon />
@@ -238,6 +277,7 @@ export default function Quote() {
           <TotalPriceAndVatWidit />
         </div>
       )}
+      <AddNewItemModal />
     </AdminAuthLayout>
   );
 }
