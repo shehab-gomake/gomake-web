@@ -75,7 +75,19 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         cursor: "pointer",
       },
-      insideStyle: { width: "35%", height: "20%" },
+      addSupplierAutoComplate: {
+        width: "100%",
+        alignItems: "center",
+        backgroundColor: primaryColor(10),
+        textAlign: "center" as "center",
+        color: secondColor(500),
+        ...FONT_FAMILY.Lexend(500, 16),
+        cursor: "pointer",
+      },
+      title: {
+        ...FONT_FAMILY.Lexend(500, 20),
+      },
+      insideStyle: { width: "35%", height: "40%" },
       iconColor: secondColor(500),
     };
   }, [i18next.language, t]);
