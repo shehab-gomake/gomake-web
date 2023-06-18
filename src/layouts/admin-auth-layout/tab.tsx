@@ -20,7 +20,7 @@ interface IProps {
 const Tab = ({ tab }: IProps) => {
   const [isListOpen, setIsListOpen] = useState(false);
   const [isHover, setIsHover] = useState(false);
-  const { clasess } = useStyle({ isHover });
+  const { clasess } = useStyle({ isHover,navStatus: null });
   const { t } = useTranslation();
   const { navigate } = useGomakeRouter();
   const handleMouseEnter = useCallback(() => {

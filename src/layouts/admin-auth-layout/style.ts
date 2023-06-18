@@ -5,10 +5,10 @@ import { useMemo } from "react";
 
 const useStyle = ({
   isHover = false,
-  navStatus,
+  navStatus = false,
 }: {
-  isHover?: boolean;
-  navStatus: any;
+  isHover?: boolean | undefined;
+  navStatus?: any; 
 }) => {
   const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
