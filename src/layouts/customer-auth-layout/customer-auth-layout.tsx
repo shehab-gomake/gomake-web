@@ -9,7 +9,7 @@ import { HeaderWidget } from "@/widgets/header";
 
 const CustomerAuthLayout = ({ children }: IAuthLayout) => {
   const {} = useAuthLayoutHook();
-  const { clasess } = useStyle({});
+  const { clasess } = useStyle({isHover:false,navStatus:null});
   return (
     <div style={clasess.container}>
       <LeftSideLayout />

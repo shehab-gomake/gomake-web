@@ -11,6 +11,7 @@ import { useExceptions } from "./use-exception";
 import { actionExceptionProfitId, actionProfitLists } from "@/store";
 import { UpdateMinPrice } from "./update-min-price";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
   const { clasess } = useStyle();
@@ -20,9 +21,8 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
   const actionExceptionProfitIdValue = useRecoilValue<any>(
     actionExceptionProfitId
   );
-  const { istimeOut, _tableRows, t } = useExceptions({
-    tableRows,
-  });
+  const { t } = useTranslation();
+
   return (
     <>
       <div style={clasess.container}>
@@ -30,26 +30,42 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
           {t("products.profits.exceptions.title")}
         </div>
         <div style={clasess.withoutTitle}>
-          <div style={clasess.header}>
-            {tableHeaders.map((header: string, index: number) => {
-              return (
-                <Header
-                  key={`header_item${index}`}
-                  header={header}
-                  // width={`${100 / tableHeaders.length}%`}
-                />
-              );
-            })}
-          </div>
           <div style={clasess.tableBody}>
-            {_tableRows?.length > 0 ? (
+            {tableRows?.length > 0 ? (
               <>
-                {_tableRows?.map((row: any, index: number) => {
+                {["header", ...tableRows]?.map((row: any, index: number) => {
+                  if (row === "header") {
+                    return (
+                      <div
+                        key={`header_exp_${index}`}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          paddingLeft: 22,
+                          paddingRight: 22,
+                        }}
+                      >
+                        <div style={{ width: "25%" }}>
+                          {t("products.profits.exceptions.type")}
+                        </div>
+                        <div style={{ width: "25%" }}>
+                          {" "}
+                          {t("products.profits.exceptions.parameter")}
+                        </div>
+                        <div style={{ width: "25%" }}>
+                          {t("products.profits.exceptions.value")}
+                        </div>
+                        <div style={{ width: "25%" }}>
+                          {t("products.profits.exceptions.scopeOfChange")}
+                        </div>
+                      </div>
+                    );
+                  }
                   return (
                     <div
                       key={`body_row${index}`}
                       style={
-                        row?.id === actionExceptionProfitIdValue
+                        row?.id === actionExceptionProfitIdValue?.id
                           ? {
                               backgroundColor: "#EBECFF",
                               width: "100%",
@@ -72,50 +88,28 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
               </>
             ) : (
               <>
-                {!istimeOut ? (
-                  <>
-                    <Skeleton
-                      variant="rectangular"
-                      width={"100%"}
-                      height={50}
-                      style={clasess.skeletonRowStyle}
-                    />
-                    <Skeleton
-                      variant="rectangular"
-                      width={"100%"}
-                      height={50}
-                      style={clasess.skeletonRowStyle}
-                    />
-                    <Skeleton
-                      variant="rectangular"
-                      width={"100%"}
-                      height={50}
-                      style={clasess.skeletonRowStyle}
-                    />
-                  </>
-                ) : (
-                  <div style={clasess.noDataContainer}>
-                    {" "}
-                    {t("skeleton.noData")}
-                  </div>
-                )}
+                <div style={clasess.noDataContainer}>
+                  {t("skeleton.noData")}
+                </div>
               </>
             )}
           </div>
 
-          <div style={clasess.minCointaner}>
-            {t("products.profits.exceptions.min")}
-            <UpdateMinPrice
-              minValue={actionProfits?.minPrice}
-              profitsStateValue={profitsStateValue}
-            />
-          </div>
-          <div
-            style={clasess.addNewException}
-            onClick={profitsStateValue.onOpenAddExceptionModal}
-          >
-            <Plus />
-            {t("products.profits.exceptions.addNewException")}
+          <div>
+            <div style={clasess.minCointaner}>
+              {t("products.profits.exceptions.min")}
+              <UpdateMinPrice
+                minValue={actionProfits?.minPrice}
+                profitsStateValue={profitsStateValue}
+              />
+            </div>
+            <div
+              style={clasess.addNewException}
+              onClick={profitsStateValue.onOpenAddExceptionModal}
+            >
+              <Plus />
+              {t("products.profits.exceptions.addNewException")}
+            </div>
           </div>
         </div>
       </div>

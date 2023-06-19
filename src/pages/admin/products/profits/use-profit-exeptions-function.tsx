@@ -1,11 +1,18 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useCallback, useMemo, useState } from "react";
 import { editPriceListState } from "./store/edit-price-list";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
-import { getAndSetActionExceptionProfitRowByActionExceptionId } from "@/services/hooks";
+import {
+  getAndSetActionExceptionProfitRowByActionExceptionId,
+  getAndSetActionProfitRowChartData,
+  getAndSetPricingListTableRows,
+} from "@/services/hooks";
 import { renderProfits } from "./use-profit-action.";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
+import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
+import { productTestState } from "@/store/product-test";
+import { chartDataByActionProfitRow } from "@/store";
 
 const useProfitsExeptionsFunction = ({
   getActionExceptionProfitRowByActionExceptionId,
@@ -21,6 +28,9 @@ const useProfitsExeptionsFunction = ({
   actionExceptionProfitRowsVal,
 }: any) => {
   const [state, setState] = useState<any>({});
+
+  const productTest = useRecoilValue<any>(productTestState);
+  const setChartDataValue = useSetRecoilState<any>(chartDataByActionProfitRow);
   const [openAddQuantityModal, setOpenAddQuantityModal] = useState(false);
   const onCloseAddQuantityModal = () => {
     setOpenAddQuantityModal(false);
@@ -138,90 +148,111 @@ const useProfitsExeptionsFunction = ({
     setOpenAddExceptionModal(true);
   };
 
+  const [actionProfitPricingTableRows, setActionProfitPricingTableRows] =
+    useRecoilState<any>(actionProfitPricingTableRowsState);
+
   const onCklickActionExceptionProfitRow = useCallback(
     async (
       id: string,
       selectedAdditional: number,
       exceptionTypeValue: string
     ) => {
-      setActionExceptionProfitRows("");
-      const data = await getAndSetActionExceptionProfitRowByActionExceptionId(
-        callApi,
-        () => {},
-        {
-          ActionExceptionId: id,
-        }
-      );
-      setactionExceptionProfitId(id);
+      console.log("exceptionTypeValue", {
+        id,
+        selectedAdditional,
+        exceptionTypeValue,
+        actionExceptionProfitIdValue,
+      });
 
-      if (exceptionTypeValue === "Additional") {
-        let isQuantity = false;
-        actionProfits?.actionProfitRowsMapped?.forEach((element) => {
-          if (element.hasOwnProperty("quantity")) {
-            isQuantity = true;
-            return;
-          }
-        });
+      if (actionExceptionProfitIdValue?.id == id) {
+        setActionExceptionProfitRows("");
+        setactionExceptionProfitId({});
         setTabelPricingHeaders([
           t("products.profits.pricingListWidget.cost"),
           t("products.profits.pricingListWidget.profit"),
           t("products.profits.pricingListWidget.testQuantity"),
           t("products.profits.pricingListWidget.unitPrice"),
           t("products.profits.pricingListWidget.totalPrice"),
-          t("products.profits.pricingListWidget.Expprofit"),
-          // t("products.profits.pricingListWidget.testFinalPrice"),
           t("products.profits.pricingListWidget.more"),
         ]);
-        const mapData = actionProfitRowsNew?.map((item: any) => {
-          const percent = item?.profit * (selectedAdditional / 100);
-          return {
-            ...renderProfits(item),
-            ExpProfit: (parseFloat(item?.profit) + percent)?.toFixed(2),
-            // testFinalPrice: (
-            //   item?.quantity * selectTestDataVal?.unitPrice
-            // )?.toFixed(2),
-            more: <PricingListMenuWidget item={item} />,
-            id: item?.id,
-          };
-        });
-        setActionProfitRowsNew(mapData);
+        await getAndSetPricingListTableRows(
+          callApi,
+          setActionProfitPricingTableRows,
+          {
+            actionId: selectedAction.id,
+            productId: productTest.id,
+          }
+        );
+        await getAndSetActionProfitRowChartData(
+          callApi,
+          setChartDataValue,
+          {
+            actionProfitId: actionProfits?.id,
+          },
+          actionProfits?.pricingBy
+        );
       } else {
-        let isQuantity = false;
-        actionProfits?.actionProfitRowsMapped?.forEach((element) => {
-          if (element.hasOwnProperty("quantity")) {
-            isQuantity = true;
-            return;
-          }
-        });
-        setTabelPricingHeaders([
-          // ...(isQuantity
-          //   ? [t("products.profits.pricingListWidget.quantity")]
-          //   : [
-          //       t("products.profits.pricingListWidget.width"),
-          //       t("products.profits.pricingListWidget.height"),
-          //     ]),
-          t("products.profits.pricingListWidget.cost"),
-          t("products.profits.pricingListWidget.profit"),
-          t("products.profits.pricingListWidget.testQuantity"),
-          t("products.profits.pricingListWidget.unitPrice"),
-          t("products.profits.pricingListWidget.totalPrice"),
-          // t("products.profits.pricingListWidget.testFinalPrice"),
-          // t("products.profits.pricingListWidget.meterPrice"),
-          // t("products.profits.pricingListWidget.expMeter"),
-          // t("products.profits.pricingListWidget.price"),
-          t("products.profits.pricingListWidget.more"),
-        ]);
-        const mapData = data?.map((item: any) => {
-          return {
-            ...renderProfits(item),
-            // testFinalPrice: (
-            //   item?.quantity * selectTestDataVal?.unitPrice
-            // )?.toFixed(2),
-            more: <PricingListMenuWidget item={item} />,
-            id: item?.id,
-          };
-        });
-        setActionProfitRowsNew(mapData);
+        setActionExceptionProfitRows("");
+        if (exceptionTypeValue === "Additional") {
+          setTabelPricingHeaders([
+            t("products.profits.pricingListWidget.cost"),
+            t("products.profits.pricingListWidget.profit"),
+            t("products.profits.pricingListWidget.Expprofit"),
+            t("products.profits.pricingListWidget.testQuantity"),
+            t("products.profits.pricingListWidget.unitPrice"),
+            t("products.profits.pricingListWidget.totalPrice"),
+            t("products.profits.pricingListWidget.more"),
+          ]);
+          const mapData = actionProfitPricingTableRows?.map((item: any) => {
+            const percent = item?.profit * (selectedAdditional / 100);
+            const expProfit = (parseFloat(item?.profit) + percent)?.toFixed(2);
+            return {
+              ...renderProfits(item, {
+                expProfit,
+              }),
+              // testFinalPrice: (
+              //   item?.quantity * selectTestDataVal?.unitPrice
+              // )?.toFixed(2),
+              more: <PricingListMenuWidget item={item} />,
+              id: item?.id,
+            };
+          });
+          setActionProfitPricingTableRows(mapData);
+          setactionExceptionProfitId({ id, type: "Additional" });
+          return 0;
+        }
+
+        if (exceptionTypeValue === "EditBase") {
+          setactionExceptionProfitId({});
+          setTabelPricingHeaders([
+            t("products.profits.pricingListWidget.cost"),
+            t("products.profits.pricingListWidget.profit"),
+            t("products.profits.pricingListWidget.testQuantity"),
+            t("products.profits.pricingListWidget.unitPrice"),
+            t("products.profits.pricingListWidget.totalPrice"),
+            t("products.profits.pricingListWidget.more"),
+          ]);
+          await getAndSetPricingListTableRows(
+            callApi,
+            setActionProfitPricingTableRows,
+            {
+              actionId: selectedAction.id,
+              productId: productTest.id,
+              exceptionId: id,
+            }
+          );
+          await getAndSetActionProfitRowChartData(
+            callApi,
+            setChartDataValue,
+            {
+              actionProfitId: actionProfits?.id,
+              exceptionId: id,
+            },
+            actionProfits?.pricingBy
+          );
+          setactionExceptionProfitId({ id, type: "EditBase" });
+          return 0;
+        }
       }
     },
     [
@@ -230,6 +261,8 @@ const useProfitsExeptionsFunction = ({
       actionProfitRowsNew,
       selectTestDataVal,
       actionProfits,
+      actionProfitPricingTableRows,
+      productTest,
     ]
   );
 
@@ -251,7 +284,7 @@ const useProfitsExeptionsFunction = ({
       {
         actionExpectionId: actionExceptionProfitIdValue,
         size: pricingListRowState?.height * pricingListRowState?.width,
-        ...pricingListRowState,
+        quantity: pricingListRowState.quantity,
       }
     );
     if (res?.success) {
@@ -293,10 +326,10 @@ const useProfitsExeptionsFunction = ({
         setActionExceptionProfitRows(
           res?.data?.data?.result?.expectionProfitRows
         );
-        setactionExceptionProfitId(res?.data?.data?.result?.id);
+        // setactionExceptionProfitId(res?.data?.data?.result?.id);
       }
       if (res?.data?.data?.result?.exceptionType === 2) {
-        setactionExceptionProfitId(res?.data?.data?.result?.id);
+        // setactionExceptionProfitId(res?.data?.data?.result?.id);
         const mapData = res?.data?.data?.result?.expectionProfitRows?.map(
           (item: any) => {
             return {

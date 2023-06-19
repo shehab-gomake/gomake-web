@@ -21,7 +21,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        width: 180,
+        width: "15%",
       },
       labelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -33,7 +33,16 @@ const useStyle = () => {
         color: primaryColor(900),
         cursor: "pointer",
       },
-
+      labelContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 16,
+      },
+      plusIconContainer: {
+        cursor: "pointer",
+      },
       textInputStyle: {
         background: "#FFFFFF",
         filter: "drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.08))",
@@ -52,12 +61,31 @@ const useStyle = () => {
         height: 40,
         width: "100%",
       },
+      addContactContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 10,
+        cursor: "pointer",
+      },
       addDeleteContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "center",
         alignItems: "center",
-        gap: 5,
+        gap: 10,
+      },
+      addContactStyle: {
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: primaryColor(900),
+      },
+      removeContactStyle: {
+        ...FONT_FAMILY.Lexend(500, 10),
+        color: "#D92C2C",
+      },
+      noAddressContaner: {
+        marginTop: 16,
       },
     };
   }, []);

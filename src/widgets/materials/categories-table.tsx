@@ -16,6 +16,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { PrimaryButton } from "@/widgets/machines/components/buttons/primary-button";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useGomakeRouter } from "@/hooks";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -24,7 +25,7 @@ const StyledTableCell = styled(TableCell)(() => ({
     ...FONT_FAMILY.Lexend(500, 14),
   },
   [`&.${tableCellClasses.body}`]: {
-    ...FONT_FAMILY.Lexend(400, 12),
+    ...FONT_FAMILY.Lexend(500, 14),
     color: "#2E3092",
   },
 }));
@@ -165,13 +166,15 @@ const CategoriesTable = () => {
       },
     ];
   }, []);
+
+  const { navigate } = useGomakeRouter();
   return (
     <>
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
-              <StyledTableCell align={"left"}>Category</StyledTableCell>
+              <StyledTableCell align={"center"}>Category</StyledTableCell>
               <StyledTableCell align={"center"}>View Material</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -179,7 +182,7 @@ const CategoriesTable = () => {
             {categoriesList.map((category) => {
               return (
                 <StyledTableRow key={category.key}>
-                  <StyledTableCell align={"left"}>
+                  <StyledTableCell align={"center"}>
                     {category.title}
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>
@@ -191,7 +194,9 @@ const CategoriesTable = () => {
                           height={20}
                         />
                       }
-                      href={category.path}
+                      onClick={() => {
+                        navigate(category.path);
+                      }}
                       variant={"text"}
                     >
                       View

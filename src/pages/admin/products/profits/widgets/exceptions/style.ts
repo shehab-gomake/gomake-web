@@ -7,7 +7,9 @@ const useStyle = () => {
   const { neutralColor, secondColor, primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
-      container: {},
+      container: {
+        height: "100%",
+      },
       header: {
         display: "flex",
         width: "100%",
@@ -120,6 +122,10 @@ const useStyle = () => {
         paddingTop: 20,
         paddingBottom: 20,
         boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.08)",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between",
       },
     };
   }, []);

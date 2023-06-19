@@ -22,7 +22,7 @@ const Tab = ({ tab }: IProps) => {
   const { navigate } = useGomakeRouter();
   const [isListOpen, setIsListOpen] = useState(tab?.key === selectedTabValue);
   const [isHover, setIsHover] = useState(false);
-  const { clasess } = useStyle({ isHover });
+  const { clasess } = useStyle({ isHover,navStatus:null });
   const handleMouseEnter = useCallback(() => {
     setIsHover(true);
   }, []);

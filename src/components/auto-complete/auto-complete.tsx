@@ -53,6 +53,7 @@ const GoMakeAutoComplate = ({
   defaultValue,
   disabled,
   multiple = false,
+  arrowColor,
 }: {
   value?: string | string[];
   onChange?: any;
@@ -67,6 +68,7 @@ const GoMakeAutoComplate = ({
   defaultValue?: any;
   multiple?: any;
   disabled?: any;
+  arrowColor?: any;
 }) => {
   return (
     <StyledAutocomplete
@@ -75,7 +77,7 @@ const GoMakeAutoComplate = ({
       style={style}
       options={options}
       disabled={disabled}
-      popupIcon={<ArrowDownIcon />}
+      popupIcon={<ArrowDownIcon fill={arrowColor} />}
       renderInput={(params: any) => (
         <TextField
           {...params}

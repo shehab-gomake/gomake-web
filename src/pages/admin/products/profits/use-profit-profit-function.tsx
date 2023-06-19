@@ -1,5 +1,13 @@
 import { useGomakeAxios } from "@/hooks";
-import { getAndSetPricingListTableRows } from "@/services/hooks";
+import {
+  getAndSetActionProfitRowChartData,
+  getAndSetPricingListTableRows,
+} from "@/services/hooks";
+import {
+  actionExceptionProfitId,
+  actionProfitRows,
+  chartDataByActionProfitRow,
+} from "@/store";
 import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
 import { productTestState } from "@/store/product-test";
 import { useCallback, useState } from "react";
@@ -22,12 +30,17 @@ const useProfitsProfitsFunction = ({
   getActionProfitRowChartData,
 }: any) => {
   const { callApi } = useGomakeAxios();
+
+  const [actionExceptionProfitIdValue, setactionExceptionProfitId] =
+    useRecoilState<any>(actionExceptionProfitId);
   const { t } = useTranslation();
   const [actionProfitPricingTableRows, setActionProfitPricingTableRows] =
     useRecoilState<any>(actionProfitPricingTableRowsState);
   const productTest = useRecoilValue<any>(productTestState);
+  const setChartDataValue = useSetRecoilState<any>(chartDataByActionProfitRow);
 
   const updateActionProfitRow = useCallback(async () => {
+    console.log("actionExceptionProfitIdValue", actionExceptionProfitIdValue);
     const res = await callApi(
       "PUT",
       `/v1/printhouse-config/profits/update-action-profit-row`,
@@ -41,6 +54,9 @@ const useProfitsProfitsFunction = ({
         recordId:
           editPriceListStateValue?.state?.recordID ||
           editPriceListStateValue?.state?.more?.props?.item?.recordID,
+        ...(actionExceptionProfitIdValue?.id?.length && {
+          exceptionId: actionExceptionProfitIdValue.id,
+        }),
       }
     );
     if (res?.success) {
@@ -54,9 +70,25 @@ const useProfitsProfitsFunction = ({
       await getAndSetPricingListTableRows(
         callApi,
         setActionProfitPricingTableRows,
-        { actionId: selectedAction.id, productId: productTest.id }
+        {
+          actionId: selectedAction.id,
+          productId: productTest.id,
+          ...(actionExceptionProfitIdValue?.id?.length && {
+            exceptionId: actionExceptionProfitIdValue.id,
+          }),
+        }
       );
-      getActionProfitRowChartData();
+      await getAndSetActionProfitRowChartData(
+        callApi,
+        setChartDataValue,
+        {
+          actionProfitId: actionProfits?.id,
+          ...(actionExceptionProfitIdValue?.id?.length && {
+            exceptionId: actionExceptionProfitIdValue.id,
+          }),
+        },
+        actionProfits?.pricingBy
+      );
     } else {
       setSnackbarStateValue({
         state: true,
@@ -70,6 +102,7 @@ const useProfitsProfitsFunction = ({
     actionProfits,
     productTest,
     actionProfitPricingTableRows,
+    actionExceptionProfitIdValue,
   ]);
   const deleteActionProfitRow = useCallback(
     async (id: string) => {
@@ -87,8 +120,15 @@ const useProfitsProfitsFunction = ({
         await getAndSetPricingListTableRows(
           callApi,
           setActionProfitPricingTableRows,
-          { actionId: selectedAction.id, productId: productTest.id }
+          {
+            actionId: selectedAction.id,
+            productId: productTest.id,
+            ...(actionExceptionProfitIdValue?.id?.length && {
+              exceptionId: actionExceptionProfitIdValue.id,
+            }),
+          }
         );
+        getActionProfitRowChartData();
       } else {
         setSnackbarStateValue({
           state: true,
@@ -97,7 +137,7 @@ const useProfitsProfitsFunction = ({
         });
       }
     },
-    [selectedAction, productTest]
+    [selectedAction, productTest, actionExceptionProfitIdValue]
   );
 
   const onClickSaveNewActionProfitRow = useCallback(async () => {
@@ -117,8 +157,7 @@ const useProfitsProfitsFunction = ({
         {
           actionId: selectedAction?.id,
           productId: productTest.id,
-          // size: pricingListRowState?.height * pricingListRowState?.width,
-          ...pricingListRowState,
+          quantity: pricingListRowState.quantity,
         }
       );
       if (res?.success) {
@@ -132,7 +171,13 @@ const useProfitsProfitsFunction = ({
         await getAndSetPricingListTableRows(
           callApi,
           setActionProfitPricingTableRows,
-          { actionId: selectedAction.id, productId: productTest.id }
+          {
+            actionId: selectedAction.id,
+            productId: productTest.id,
+            ...(actionExceptionProfitIdValue?.id?.length && {
+              exceptionId: actionExceptionProfitIdValue.id,
+            }),
+          }
         );
         setPricingListRowState({});
         setOpenAddNewPricingStepRow(false);
@@ -152,6 +197,7 @@ const useProfitsProfitsFunction = ({
     productTest,
     actionProfitPricingTableRows,
     selectTestDataVal,
+    actionExceptionProfitIdValue,
   ]);
 
   const onChangeAddPricingListRow = useCallback(

@@ -80,32 +80,38 @@ const getAndSetActionProfitRowByActionId = async (
   const mapActionExpections = _data?.actionExpections?.map((item: any) => {
     return {
       ...renderType(item),
-      exceptionType: (
-        <GoMakeAutoComplate
-          key={"item-" + item.id}
-          options={[
-            `Additional(${item?.additionalProfit})`,
-            "NewBase",
-            "EditBase",
-          ]}
-          // style={clasess.autoComplateStyle}
-          onChange={""}
-          defaultValue={
-            item?.exceptionType === 0
-              ? `Additional(${item?.additionalProfit})`
-              : item?.exceptionType === 1
-              ? "NewBase"
-              : "EditBase"
-          }
-          disableClearable={true}
-          style={{
-            width: 160,
-            border: 0,
-            color: "#F135A3",
-            marginLeft: -20,
-          }}
-        />
-      ),
+      exceptionType:
+        item?.exceptionType === 0
+          ? `Additional(${item?.additionalProfit})`
+          : item?.exceptionType === 1
+          ? "NewBase"
+          : "EditBase",
+      // exceptionType: (
+      //   <GoMakeAutoComplate
+      //     key={"item-" + item.id}
+      //     options={[
+      //       `Additional(${item?.additionalProfit})`,
+      //       "NewBase",
+      //       "EditBase",
+      //     ]}
+      //     // style={clasess.autoComplateStyle}
+      //     onChange={""}
+      //     defaultValue={
+      //       item?.exceptionType === 0
+      //         ? `Additional(${item?.additionalProfit})`
+      //         : item?.exceptionType === 1
+      //         ? "NewBase"
+      //         : "EditBase"
+      //     }
+      //     disableClearable={true}
+      //     style={{
+      //       width: 160,
+      //       border: 0,
+      //       color: "#F135A3",
+      //       marginLeft: -20,
+      //     }}
+      //   />
+      // ),
       id: item?.id,
       selectedAdditional: item?.additionalProfit,
       exceptionTypeValue:

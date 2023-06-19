@@ -21,7 +21,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        width: 180,
+        width: "15%",
       },
       labelContainer: {
         display: "flex",
@@ -34,7 +34,9 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
       },
-
+      plusIconContainer: {
+        cursor: "pointer",
+      },
       textInputStyle: {
         background: "#FFFFFF",
         filter: "drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.08))",

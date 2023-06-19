@@ -1,15 +1,20 @@
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
+import { useRecoilValue } from "recoil";
+import { quoteState } from "../../../../store/quote";
 
 const RowInside = ({
   index,
   tablePercent,
   clasess,
   entry,
+  row,
   isCheckbox = true,
+  changeItems,
+  indexTable,
 }: any) => {
-  const { secondColor, primaryColor } = useGomakeTheme();
+  const quoteStateValue = useRecoilValue<any>(quoteState);
   return (
     <div
       key={`row_table_${index}`}
@@ -30,6 +35,26 @@ const RowInside = ({
           </div>
           <div style={clasess.detailsLine} />
         </>
+      ) : entry[0] === "amount" ||
+        entry[0] === "unitPrice" ||
+        entry[0] === "discount" ||
+        entry[0] === "finalPrice" ? (
+        <div key={`row_table_${index}`} style={clasess.rowItem}>
+          <GomakeTextInput
+            style={clasess.textInputWithoutStyle}
+            value={entry[1]}
+            onChange={(e: any) => {
+              changeItems(indexTable, entry[0], e.target.value);
+            }}
+            onBlur={() =>
+              quoteStateValue?.getCalculateQuoteItem(
+                row?.quoteItemId,
+                index - 3,
+                entry[1]
+              )
+            }
+          />
+        </div>
       ) : (
         <div key={`row_table_${index}`} style={clasess.rowItem}>
           {entry[1]}
