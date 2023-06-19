@@ -148,7 +148,7 @@ const AddExceptionModal = () => {
                 <GoMakeAutoComplate
                   options={[
                     { label: "Additional", value: 0 },
-                    { label: "NewBase", value: 1 },
+                    // { label: "NewBase", value: 1 },
                     { label: "EditBase", value: 2 },
                   ]}
                   placeholder={t(

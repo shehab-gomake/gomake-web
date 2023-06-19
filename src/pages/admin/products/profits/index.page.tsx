@@ -1,6 +1,6 @@
 import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { profitsState } from "./store/profits";
 import { useProfits } from "./use-profits";
 import { useEffect } from "react";
@@ -9,7 +9,7 @@ import { ProductList } from "./widgets/products-list";
 import { PricingList } from "./widgets/pricing-list/pricing-list";
 import { useStyle } from "./style";
 import { Exceptions } from "./widgets/exceptions/exceptions";
-import { actionProfitLists } from "@/store";
+import { actionExceptionProfitId, actionProfitLists } from "@/store";
 import { productTestState } from "@/store/product-test";
 import { LineChart } from "./widgets/line-chart";
 
@@ -173,13 +173,24 @@ export default function Profits() {
     onOpenAddExceptionModal,
     t,
   ]);
+
+  const [actionExceptionProfitIdValue, setactionExceptionProfitId] =
+    useRecoilState<any>(actionExceptionProfitId);
+
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
         <HeaderTitle title={t("products.profits.admin.title")} />
         <SelectAction />
         {profitsStateValue?.id ? (
-          <>
+          <div
+            style={{
+              display: "flex",
+              gap: 50,
+              flexDirection: "column",
+              width: "100%",
+            }}
+          >
             <div style={clasess.titleActionName}>
               {selectedAction?.name} pricing settings
             </div>
@@ -189,29 +200,34 @@ export default function Profits() {
                 <div style={clasess.pricingCointaner}>
                   <PricingList
                     tableHeaders={tabelPricingHeaders}
-                    tablePercent={[
-                      "80px",
-                      "80px",
-                      "80px",
-                      "100px",
-                      "100px",
-                      "50px",
-                    ]}
+                    tablePercent={
+                      actionExceptionProfitIdValue?.id?.length > 0
+                        ? [
+                            "80px",
+                            "80px",
+                            "80px",
+                            "80px",
+                            "100px",
+                            "100px",
+                            "50px",
+                          ]
+                        : ["80px", "80px", "80px", "100px", "100px", "50px"]
+                    }
                   />
                 </div>
 
-                {/* <div style={clasess.exceptionsCointaner}>
+                <div style={clasess.exceptionsCointaner}>
                   <Exceptions
                     tableHeaders={tabelExceptionsHeaders}
                     tableRows={profitsStateValue?.actionExpectionRowsMapped}
                   />
-                </div> */}
+                </div>
               </div>
-            )}{" "}
+            )}
             <div style={{ maxWidth: 600, maxHeight: 300 }}>
               <LineChart />
             </div>
-          </>
+          </div>
         ) : null}
       </div>
     </AdminAuthLayout>

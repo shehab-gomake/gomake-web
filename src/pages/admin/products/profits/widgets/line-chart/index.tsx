@@ -41,7 +41,7 @@ export function LineChart() {
     labels: chartDataValue?.profitAxis,
     datasets: [
       {
-        label: "Cost / Profit",
+        label: "Cost",
         data: chartDataValue?.costAxis,
         borderColor: "#FF4DCA",
         backgroundColor: "#FF4DCA",

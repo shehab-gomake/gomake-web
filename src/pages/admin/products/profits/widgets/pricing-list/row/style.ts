@@ -30,11 +30,10 @@ const useStyle = ({ width }: any) => {
         alignItems: "center",
         ...FONT_FAMILY.Lexend(400, 14),
         lineHeight: "18px",
-        // color: primaryColor(900),
         textalign: "center",
         marginBottom: 18.5,
         marginTop: 18.5,
-        color: " #F135A3",
+        color: primaryColor(600),
       },
       editItem: {
         display: "flex",

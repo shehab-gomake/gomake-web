@@ -35,17 +35,6 @@ const Row = ({ key, row }: any) => {
             );
           }
         })}
-        {/* <div style={clasess.deleteContainer}>
-          <Tooltip title={t("materials.buttons.delete")}>
-            <IconButton
-              onClick={() =>
-                profitsStateValue?.onOpenDeleteExceptionProfitModal(row)
-              }
-            >
-              <DeleteIcon style={{ color: "#a1a2cd" }} />
-            </IconButton>
-          </Tooltip>
-        </div> */}
       </div>
       {row === profitsStateValue.selectedExceptionProfit && (
         <GoMakeDeleteModal

@@ -46,7 +46,7 @@ const RowInside = ({
       style={
         entry[0] == "more"
           ? clasess.editItem
-          : entry[0] === "ExpProfit"
+          : entry[0] === "expProfit"
           ? clasess.rowItemExpPofit
           : { ...clasess.rowItem, width: `${tablePercent[index]}` }
       }
@@ -123,6 +123,7 @@ const RowInside = ({
           >
             {Number(entry[1]).toFixed(2)}
             {entry[0] === "profit" && "%"}
+            {entry[0] === "expProfit" && "%"}
           </div>
         )
       ) : row.status === "pending" ? (
