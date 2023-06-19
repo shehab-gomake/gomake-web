@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { editPriceListState } from "../../../store/edit-price-list";
 import { useClickAway } from "@uidotdev/usehooks";
-import Lottie from "react-lottie";
+import Lottie from "lottie-react";
 import * as animationData from "./loading-cal.json";
 
 const RowInside = ({
@@ -36,7 +36,6 @@ const RowInside = ({
 
   const defaultOptions = {
     loop: true,
-    autoplay: true,
     animationData: animationData,
   };
 
@@ -98,7 +97,7 @@ const RowInside = ({
       ) : entry[0] !== "more" ? (
         row.status === "pending" &&
         (entry[1] == 0 || entry[1] == "NaN" || entry[1] == "Infinity") ? (
-          <Lottie options={defaultOptions} height={"50px"} width={"50px"} />
+          <Lottie animationData={defaultOptions.animationData} loop={defaultOptions.loop} height={"50px"} width={"50px"} />
         ) : (
           <div
             onClick={() => {
@@ -127,7 +126,7 @@ const RowInside = ({
           </div>
         )
       ) : row.status === "pending" ? (
-        <Lottie options={defaultOptions} height={"50px"} width={"50px"} />
+        <Lottie animationData={defaultOptions.animationData} loop={defaultOptions.loop} height={"50px"} width={"50px"} />
       ) : (
         entry[1]
       )}

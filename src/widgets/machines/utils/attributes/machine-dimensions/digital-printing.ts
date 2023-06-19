@@ -7,8 +7,10 @@ const digitalPrinting = (state: Record<string, any>) => {
             value: state.attributes?.machineDimensions ? state.attributes?.machineDimensions : {},
             isValid: !!state?.attributes?.machineDimensions?.height &&
                 !!state?.attributes?.machineDimensions?.length &&
-                !!state?.attributes?.machineDimensions?.width,
-            inputs: [
+                !!state?.attributes?.machineDimensions?.width &&
+        !!state?.attributes?.machineDimensions?.weight,
+
+        inputs: [
                 {
                     name: "",
                     label: "machineAttributes.height",
@@ -41,6 +43,16 @@ const digitalPrinting = (state: Record<string, any>) => {
                     options: [],
                     value: state.attributes?.machineDimensions?.width ? state.attributes?.machineDimensions?.width : ''
 
+                },
+                {
+                    name: "",
+                    label: "machineAttributes.weight",
+                    type: "text",
+                    placeholder: "machineAttributes.weight",
+                    required: true,
+                    parameterKey: "weight",
+                    options: [],
+                    value: state.attributes?.machineDimensions?.weight ? state.attributes?.machineDimensions?.weight : ''
                 },
             ]
         },

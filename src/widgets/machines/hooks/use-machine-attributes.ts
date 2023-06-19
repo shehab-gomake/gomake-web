@@ -4,7 +4,7 @@ import {useState} from "react";
 import {machineInputs} from "@/widgets/machines/utils/attributes/machine-inputs/machine-inputs";
 import {getCategoryBasicInputs} from "@/widgets/machines/utils/attributes/basic-inputs";
 import {getCategoryMediaInputs} from "@/widgets/machines/utils/attributes/media-inputs";
-import {getCategorySpeedInputs} from "@/widgets/machines/utils/attributes/speed-inputs";
+import {getCategorySpeedOptionsInputs} from "@/widgets/machines/utils/attributes/speed-inputs/speed-options";
 import {getCategoryFeedersStackersInputs} from "@/widgets/machines/utils/attributes/feeders-stackers-inputs";
 import {getCategoryColorsInputs} from "@/widgets/machines/utils/attributes/colors-inputs";
 import {getCategoryBeatsInputs} from "@/widgets/machines/utils/attributes/beats-inputs";
@@ -13,6 +13,9 @@ import {getCategoryCoatingInputs} from "@/widgets/machines/utils/attributes/coat
 import {getCategoryPlateInputs} from "@/widgets/machines/utils/attributes/plate-inputs";
 import {getCategoryBlanketCylinderInputs} from "@/widgets/machines/utils/attributes/blanket-cylinder-inputs";
 import {getCategoryUnWinderInputs} from "@/widgets/machines/utils/attributes/unwinder-rewinder";
+import {getCategoryFoldingInputs} from "@/widgets/machines/utils/attributes/run-inputs";
+import {getCategoryConnectionInputs} from "@/widgets/machines/utils/attributes/connection-inputs";
+import {getCategorySpeedInputs} from "@/widgets/machines/utils/attributes/speed-inputs";
 
 
 const useMachineAttributes = () => {
@@ -55,6 +58,7 @@ const useMachineAttributes = () => {
     const machineBasicAttributes = () => !!machineState.category ? getCategoryBasicInputs(machineState.category, machineState) : [];
     const machineMediaAttributes = () => !!machineState.category ? getCategoryMediaInputs(machineState.category, machineState) : [];
     const machineSpeedAttributes = () => getCategorySpeedInputs(machineState.category, machineState);
+    const machineMultiOptionsSpeedAttributes = () => getCategorySpeedOptionsInputs(machineState.category, machineState);
     const machineFeedersStackersAttributes = () => !!machineState.category ? getCategoryFeedersStackersInputs(machineState.category, machineState) : [];
     const machineColorsAttributes = () => !!machineState.category ? getCategoryColorsInputs(machineState.category, machineState) : [];
     const machineBeatsAttributes = () => !!machineState.category ? getCategoryBeatsInputs(machineState.category, machineState) : [];
@@ -63,12 +67,14 @@ const useMachineAttributes = () => {
     const machinePlateAttributes = () => !!machineState.category ? getCategoryPlateInputs(machineState.category, machineState) : [];
     const machineBlanketCylinderAttributes = () => !!machineState.category ? getCategoryBlanketCylinderInputs(machineState.category, machineState) : [];
     const machineUnWinderAttributes = () => !!machineState.category ? getCategoryUnWinderInputs(machineState.category, machineState) : [];
+    const machineFoldingAttributes = () => !!machineState.category ? getCategoryFoldingInputs(machineState.category, machineState) : [];
+    const machineConnectionAttributes = () => !!machineState.category ? getCategoryConnectionInputs(machineState.category, machineState) : [];
 
     return {
         machineGeneralAttributes,
         machineBasicAttributes,
         machineMediaAttributes,
-        machineSpeedAttributes,
+        machineMultiOptionsSpeedAttributes,
         machineFeedersStackersAttributes,
         machineColorsAttributes,
         machineBeatsAttributes,
@@ -77,6 +83,9 @@ const useMachineAttributes = () => {
         machinePlateAttributes,
         machineBlanketCylinderAttributes,
         machineUnWinderAttributes,
+        machineFoldingAttributes,
+        machineConnectionAttributes,
+        machineSpeedAttributes,
         changeMachineAttributes,
         changeMachineGeneralAttributes,
         errors,

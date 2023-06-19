@@ -3,6 +3,8 @@ import { MoreCircleIcon } from "@/icons";
 import { GoMakeMenu } from "@/components";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
+import { AddNegotiateRequestModal } from "../modals-widgets/add-negotiate-request-modal";
+import { DuplicateItemModal } from "../modals-widgets/duplicate-item-modal";
 
 const MoreMenuWidget = () => {
   const { clasess } = useStyle();
@@ -17,7 +19,11 @@ const MoreMenuWidget = () => {
         {menuList?.map((item, index) => {
           return (
             <>
-              <MenuItem style={clasess.menuItemContainer} key={index}>
+              <MenuItem
+                style={clasess.menuItemContainer}
+                key={index}
+                onClick={item?.onclick}
+              >
                 {item?.icon}
                 <div style={clasess.menuTitleStyle}>{item?.name}</div>
               </MenuItem>
@@ -28,6 +34,8 @@ const MoreMenuWidget = () => {
           );
         })}
       </GoMakeMenu>
+      <AddNegotiateRequestModal />
+      <DuplicateItemModal />
     </>
   );
 };

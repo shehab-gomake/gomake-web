@@ -15,6 +15,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useEffect, useRef, useState } from "react";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import { quoteItemState } from "@/store";
+import { AddNewItemModal } from "./widget/modals-widgets/add-new-item-modal";
 
 export default function Quote() {
   const { clasess } = useStyle();
@@ -25,6 +26,9 @@ export default function Quote() {
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
+  useEffect(() => {
+    setSelectDate(quoteItemValue?.dueDate);
+  }, [quoteItemValue]);
   const {
     tableHeaders,
     tableRowPercent,
@@ -37,17 +41,39 @@ export default function Quote() {
     selectedAddress,
     openDeleteModalAddress,
     selectBusiness,
+    openAddNewModalContact,
+    openAddNewModalAddress,
+    openNegotiateRequestModal,
+    addClientContactState,
+    addClientAddressState,
+    openAddNewItemModal,
+    openDuplicateWithDifferentQTYModal,
+    onCloseDuplicateWithDifferentQTY,
+    onOpenDuplicateWithDifferentQTY,
+    onCloseNewItem,
+    onOpenNewItem,
+    onChangeAddClientAddressState,
+    addNewClientAddress,
+    onChangeAddClientContactState,
+    addNewClientContact,
+    onCloseNegotiateRequest,
+    onOpenNegotiateRequest,
+    onCloseAddNewContactClient,
+    onCloseAddNewAddressClient,
+    onOpenAddNewContactClient,
+    onOpenAddNewAddressClient,
     onChangeSelectBusiness,
     setSelectBusiness,
     onClickAddNewAddress,
     onClickDeleteAddress,
     setSelectedAddress,
     setOpenDeleteModalAddress,
+    setIsAddNewAddressWidget,
+    setIsAddNewContactWidget,
+    setSelectedAddressById,
     onCloseDeleteModalAddress,
     onOpenDeleteModalAddress,
-    setIsAddNewAddressWidget,
     onCloseIsAddNewAddressWidget,
-    setIsAddNewContactWidget,
     onCloseIsAddNewContactWidget,
     setSelectedContactById,
     onCloseDeleteModalContact,
@@ -56,7 +82,8 @@ export default function Quote() {
     onChangeUpdateClientContact,
     onClickAddNewContact,
     onChangeUpdateClientAddress,
-    setSelectedAddressById,
+    getCalculateQuoteItem,
+    getCalculateQuote,
     t,
   } = useQuote();
   useEffect(() => {
@@ -72,17 +99,39 @@ export default function Quote() {
       selectedAddress,
       openDeleteModalAddress,
       selectBusiness,
+      openAddNewModalContact,
+      openAddNewModalAddress,
+      openNegotiateRequestModal,
+      addClientContactState,
+      addClientAddressState,
+      openAddNewItemModal,
+      openDuplicateWithDifferentQTYModal,
+      onCloseDuplicateWithDifferentQTY,
+      onOpenDuplicateWithDifferentQTY,
+      onCloseNewItem,
+      onOpenNewItem,
+      onChangeAddClientAddressState,
+      addNewClientAddress,
+      onChangeAddClientContactState,
+      addNewClientContact,
+      onCloseNegotiateRequest,
+      onOpenNegotiateRequest,
+      onCloseAddNewContactClient,
+      onCloseAddNewAddressClient,
+      onOpenAddNewContactClient,
+      onOpenAddNewAddressClient,
       onChangeSelectBusiness,
       setSelectBusiness,
       onClickAddNewAddress,
       onClickDeleteAddress,
       setSelectedAddress,
       setOpenDeleteModalAddress,
+      setIsAddNewAddressWidget,
+      setIsAddNewContactWidget,
+      setSelectedAddressById,
       onCloseDeleteModalAddress,
       onOpenDeleteModalAddress,
-      setIsAddNewAddressWidget,
       onCloseIsAddNewAddressWidget,
-      setIsAddNewContactWidget,
       onCloseIsAddNewContactWidget,
       setSelectedContactById,
       onCloseDeleteModalContact,
@@ -91,7 +140,8 @@ export default function Quote() {
       onChangeUpdateClientContact,
       onClickAddNewContact,
       onChangeUpdateClientAddress,
-      setSelectedAddressById,
+      getCalculateQuoteItem,
+      getCalculateQuote,
       t,
     });
   }, [
@@ -106,17 +156,39 @@ export default function Quote() {
     selectedAddress,
     openDeleteModalAddress,
     selectBusiness,
+    openAddNewModalContact,
+    openAddNewModalAddress,
+    openNegotiateRequestModal,
+    addClientContactState,
+    addClientAddressState,
+    openAddNewItemModal,
+    openDuplicateWithDifferentQTYModal,
+    onCloseDuplicateWithDifferentQTY,
+    onOpenDuplicateWithDifferentQTY,
+    onCloseNewItem,
+    onOpenNewItem,
+    onChangeAddClientAddressState,
+    addNewClientAddress,
+    onChangeAddClientContactState,
+    addNewClientContact,
+    onCloseNegotiateRequest,
+    onOpenNegotiateRequest,
+    onCloseAddNewContactClient,
+    onCloseAddNewAddressClient,
+    onOpenAddNewContactClient,
+    onOpenAddNewAddressClient,
     onChangeSelectBusiness,
     setSelectBusiness,
     onClickAddNewAddress,
     onClickDeleteAddress,
     setSelectedAddress,
     setOpenDeleteModalAddress,
+    setIsAddNewAddressWidget,
+    setIsAddNewContactWidget,
+    setSelectedAddressById,
     onCloseDeleteModalAddress,
     onOpenDeleteModalAddress,
-    setIsAddNewAddressWidget,
     onCloseIsAddNewAddressWidget,
-    setIsAddNewContactWidget,
     onCloseIsAddNewContactWidget,
     setSelectedContactById,
     onCloseDeleteModalContact,
@@ -125,74 +197,87 @@ export default function Quote() {
     onChangeUpdateClientContact,
     onClickAddNewContact,
     onChangeUpdateClientAddress,
-    setSelectedAddressById,
+    getCalculateQuoteItem,
+    getCalculateQuote,
     t,
   ]);
   return (
     <AdminAuthLayout>
-      <div style={clasess.mainContainer}>
-        <div style={clasess.headerContainer}>
-          <div style={clasess.titleQuateContainer}>
-            <HeaderTitle
-              title={t("sales.quote.title")}
-              marginBottom={1}
-              marginTop={1}
-            />
-            <div style={clasess.quoteNumberStyle}>{quoteItemValue?.number}</div>
-          </div>
-          <div style={clasess.rightSideHeaderContainer}>
-            {quoteItemValue && (
-              <div style={clasess.deleverdDate} onClick={handleClickSelectDate}>
-                {t("sales.quote.deliverOn")}{" "}
-                {selectDate ? DateFormatterDDMMYYYY(selectDate) : "select date"}
-                <div style={clasess.datePickerContainer}>
-                  <input
-                    type="datetime-local"
-                    onChange={(e) => setSelectDate(e.target.value)}
-                    ref={dateRef}
-                  />
-                </div>
+      {quoteItemValue && (
+        <div style={clasess.mainContainer}>
+          <div style={clasess.headerContainer}>
+            <div style={clasess.titleQuateContainer}>
+              <HeaderTitle
+                title={t("sales.quote.title")}
+                marginBottom={1}
+                marginTop={1}
+              />
+              <div style={clasess.quoteNumberStyle}>
+                {quoteItemValue?.number}
               </div>
-            )}
+            </div>
+            <div style={clasess.rightSideHeaderContainer}>
+              {quoteItemValue && (
+                <div
+                  style={clasess.deleverdDate}
+                  onClick={handleClickSelectDate}
+                >
+                  {t("sales.quote.deliverOn")}{" "}
+                  {selectDate
+                    ? DateFormatterDDMMYYYY(selectDate)
+                    : "select date"}
+                  <div style={clasess.datePickerContainer}>
+                    <input
+                      type="datetime-local"
+                      onChange={(e) => setSelectDate(e.target.value)}
+                      ref={dateRef}
+                    />
+                  </div>
+                </div>
+              )}
 
-            <div style={clasess.uploadContainer}>
-              <UploadIcon />
-              <div style={clasess.uploadTextStyle}>
-                {t("sales.quote.upload")}
+              <div style={clasess.uploadContainer}>
+                <UploadIcon />
+                <div style={clasess.uploadTextStyle}>
+                  {t("sales.quote.upload")}
+                </div>
               </div>
             </div>
           </div>
+          <BusinessWidget />
+          <div style={clasess.scrollContainer}>
+            <ContactWidget />
+            <AddressWidget />
+            <div style={clasess.tableContainer}>
+              <CustomTableWidget
+                headerTitle={"Order review"}
+                tableHeaders={tableHeaders}
+                headerWidth={tableRowPercent}
+                tableRowPercent={tableRowPercent}
+                data={quoteItemValue?.priceListItemsMapping}
+              />
+            </div>
+          </div>
+          <div style={clasess.btnsContainer}>
+            <div style={clasess.btnContainer}>
+              <AddPlusIcon />
+              <div style={clasess.btnTitle} onClick={() => onOpenNewItem()}>
+                add new item
+              </div>
+            </div>
+            <div style={clasess.btnContainer}>
+              <AddPlusIcon />
+              <div style={clasess.btnTitle}>add exist item</div>
+            </div>
+            <div style={clasess.btnContainer}>
+              <AddPlusIcon />
+              <div style={clasess.btnTitle}>add delivery</div>
+            </div>
+          </div>
+          <TotalPriceAndVatWidit />
         </div>
-        <BusinessWidget />
-        <div style={clasess.scrollContainer}>
-          <ContactWidget />
-          <AddressWidget />
-          <div style={clasess.tableContainer}>
-            <CustomTableWidget
-              headerTitle={"Order review"}
-              tableHeaders={tableHeaders}
-              headerWidth={tableRowPercent}
-              tableRowPercent={tableRowPercent}
-              data={quoteItemValue?.priceListItemsMapping}
-            />
-          </div>
-        </div>
-        <div style={clasess.btnsContainer}>
-          <div style={clasess.btnContainer}>
-            <AddPlusIcon />
-            <div style={clasess.btnTitle}>add new item</div>
-          </div>
-          <div style={clasess.btnContainer}>
-            <AddPlusIcon />
-            <div style={clasess.btnTitle}>add exist item</div>
-          </div>
-          <div style={clasess.btnContainer}>
-            <AddPlusIcon />
-            <div style={clasess.btnTitle}>add delivery</div>
-          </div>
-        </div>
-        <TotalPriceAndVatWidit />
-      </div>
+      )}
+      <AddNewItemModal />
     </AdminAuthLayout>
   );
 }

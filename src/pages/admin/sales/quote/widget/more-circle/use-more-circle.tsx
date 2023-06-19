@@ -5,8 +5,12 @@ import { DuplicateWithDifferentMenuIcon } from "./icons/duplicate-with-different
 import { NegotiateRequestIcon } from "./icons/negotiate-request";
 import { AnalysisIcon } from "./icons/analysis";
 import { DeleteMenuIcon } from "./icons/delete-menu";
+import { useRecoilValue } from "recoil";
+import { quoteState } from "../../store/quote";
 
 const useMoreCircle = () => {
+  const quoteStateValue = useRecoilValue<any>(quoteState);
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -29,12 +33,12 @@ const useMoreCircle = () => {
     {
       name: "Duplicate with different QTY",
       icon: <DuplicateWithDifferentMenuIcon />,
-      onclick: () => null,
+      onclick: () => quoteStateValue.onOpenDuplicateWithDifferentQTY(),
     },
     {
       name: "Negotiate request",
       icon: <NegotiateRequestIcon />,
-      onclick: () => null,
+      onclick: () => quoteStateValue.onOpenNegotiateRequest(),
     },
     {
       name: "Analysis",

@@ -2,10 +2,17 @@ import { useTranslation } from "react-i18next";
 import { useQuoteGetData } from "./use-quote-get-data";
 import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useQuoteModals } from "./use-quote-modals";
 
 const useQuote = () => {
   const { t } = useTranslation();
-  const { quoteItemValue, customersListValue, getQuote } = useQuoteGetData();
+  const {
+    quoteItemValue,
+    customersListValue,
+    getQuote,
+    getAllClientContacts,
+    getAllClientAddress,
+  } = useQuoteGetData();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const tableHeaders = [
@@ -28,14 +35,43 @@ const useQuote = () => {
     "10%",
     "10%",
   ];
-  const [selectedContact, setSelectedContact] = useState();
-  const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState();
-  const [openDeleteModalAddress, setOpenDeleteModalAddress] = useState(false);
-  const [selectedContactById, setSelectedContactById] = useState<any>();
-  const [isAddNewContactWidget, setIsAddNewContactWidget] = useState(false);
-  const [selectedAddressById, setSelectedAddressById] = useState<any>();
-  const [isAddNewAddressWidget, setIsAddNewAddressWidget] = useState(false);
+  const {
+    selectedContact,
+    openDeleteModalContact,
+    selectedAddress,
+    openDeleteModalAddress,
+    selectedContactById,
+    isAddNewContactWidget,
+    selectedAddressById,
+    isAddNewAddressWidget,
+    openAddNewModalContact,
+    openAddNewModalAddress,
+    openNegotiateRequestModal,
+    openAddNewItemModal,
+    openDuplicateWithDifferentQTYModal,
+    onCloseDuplicateWithDifferentQTY,
+    onOpenDuplicateWithDifferentQTY,
+    onCloseNewItem,
+    onOpenNewItem,
+    onCloseNegotiateRequest,
+    onOpenNegotiateRequest,
+    onCloseIsAddNewContactWidget,
+    onCloseAddNewContactClient,
+    onCloseAddNewAddressClient,
+    onOpenAddNewContactClient,
+    onOpenAddNewAddressClient,
+    onCloseIsAddNewAddressWidget,
+    onOpenDeleteModalContact,
+    onCloseDeleteModalAddress,
+    onOpenDeleteModalAddress,
+    onCloseDeleteModalContact,
+    setSelectedContactById,
+    setSelectedAddress,
+    setOpenDeleteModalAddress,
+    setIsAddNewAddressWidget,
+    setIsAddNewContactWidget,
+    setSelectedAddressById,
+  } = useQuoteModals();
   const [selectBusiness, setSelectBusiness] = useState<any>({});
   useEffect(() => {
     const foundItem = customersListValue.find(
@@ -43,14 +79,7 @@ const useQuote = () => {
     );
     setSelectBusiness(foundItem);
   }, [quoteItemValue, customersListValue]);
-  const onCloseIsAddNewContactWidget = () => {
-    setSelectedContactById({});
-    setIsAddNewContactWidget(false);
-  };
-  const onCloseIsAddNewAddressWidget = () => {
-    setSelectedAddressById({});
-    setIsAddNewAddressWidget(false);
-  };
+
   const onChangeUpdateClientContact = useCallback(
     (filedName: string, value: any) => {
       setSelectedContactById((prev) => {
@@ -73,21 +102,7 @@ const useQuote = () => {
     },
     [selectedAddressById]
   );
-  const onCloseDeleteModalContact = () => {
-    setOpenDeleteModalContact(false);
-  };
-  const onOpenDeleteModalContact = (item) => {
-    setSelectedContact(item);
-    setOpenDeleteModalContact(true);
-  };
 
-  const onCloseDeleteModalAddress = () => {
-    setOpenDeleteModalAddress(false);
-  };
-  const onOpenDeleteModalAddress = (item) => {
-    setSelectedAddress(item);
-    setOpenDeleteModalAddress(true);
-  };
   const onClickDeleteContact = useCallback(async (item: any) => {
     const res = await callApi(
       "DELETE",
@@ -214,6 +229,147 @@ const useQuote = () => {
     [selectBusiness, quoteItemValue]
   );
 
+  const getCalculateQuote = useCallback(
+    async (calculationType: number, data: number) => {
+      const res = await callApi(
+        "GET",
+        `/v1/erp-service/quote/get-calculate-quote`,
+        {
+          QuoteId: quoteItemValue?.id,
+          data,
+          calculationType,
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedSusuccessfully"),
+          type: "sucess",
+        });
+        getQuote();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [quoteItemValue]
+  );
+
+  const getCalculateQuoteItem = useCallback(
+    async (quoteItemId: string, calculationType: number, data: number) => {
+      const res = await callApi(
+        "GET",
+        `/v1/erp-service/quote/get-calculate-quote-item`,
+        {
+          QuoteItemId: quoteItemId,
+          data,
+          calculationType,
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedSusuccessfully"),
+          type: "sucess",
+        });
+        getQuote();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [quoteItemValue]
+  );
+
+  const [addClientContactState, setClientContactState] = useState<any>({});
+
+  const onChangeAddClientContactState = useCallback(
+    (filedName: string, value: any) => {
+      setClientContactState((prev) => {
+        return {
+          ...prev,
+          [filedName]: value,
+        };
+      });
+    },
+    [addClientContactState]
+  );
+  const addNewClientContact = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/crm-service/customer/create-contact`,
+      {
+        contactName: addClientContactState?.contactName,
+        contactMail: addClientContactState?.contactMail,
+        contactPhone: addClientContactState?.contactPhone,
+        clientId: quoteItemValue?.customerID,
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+      getAllClientContacts();
+      onCloseAddNewContactClient();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedfailed"),
+        type: "error",
+      });
+    }
+  }, [quoteItemValue, addClientContactState]);
+
+  const [addClientAddressState, setClientAddressState] = useState<any>({});
+  const onChangeAddClientAddressState = useCallback(
+    (filedName: string, value: any) => {
+      setClientAddressState((prev) => {
+        return {
+          ...prev,
+          [filedName]: value,
+        };
+      });
+    },
+    [addClientAddressState]
+  );
+
+  const addNewClientAddress = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/crm-service/customer/create-address`,
+      {
+        address1: addClientAddressState?.addressName,
+        street: addClientAddressState?.street,
+        city: addClientAddressState?.city,
+        entry: addClientAddressState?.entry,
+        apartment: addClientAddressState?.apartment,
+        clientId: quoteItemValue?.customerID,
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedSusuccessfully"),
+        type: "sucess",
+      });
+      getAllClientAddress();
+      onCloseAddNewAddressClient();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedfailed"),
+        type: "error",
+      });
+    }
+  }, [quoteItemValue, addClientAddressState]);
   return {
     tableHeaders,
     tableRowPercent,
@@ -226,17 +382,39 @@ const useQuote = () => {
     selectedAddress,
     openDeleteModalAddress,
     selectBusiness,
+    openAddNewModalContact,
+    openAddNewModalAddress,
+    openNegotiateRequestModal,
+    addClientContactState,
+    addClientAddressState,
+    openAddNewItemModal,
+    openDuplicateWithDifferentQTYModal,
+    onCloseDuplicateWithDifferentQTY,
+    onOpenDuplicateWithDifferentQTY,
+    onCloseNewItem,
+    onOpenNewItem,
+    onChangeAddClientAddressState,
+    addNewClientAddress,
+    onChangeAddClientContactState,
+    addNewClientContact,
+    onCloseNegotiateRequest,
+    onOpenNegotiateRequest,
+    onCloseAddNewContactClient,
+    onCloseAddNewAddressClient,
+    onOpenAddNewContactClient,
+    onOpenAddNewAddressClient,
     onChangeSelectBusiness,
     setSelectBusiness,
     onClickAddNewAddress,
     onClickDeleteAddress,
     setSelectedAddress,
     setOpenDeleteModalAddress,
+    setIsAddNewAddressWidget,
+    setIsAddNewContactWidget,
+    setSelectedAddressById,
     onCloseDeleteModalAddress,
     onOpenDeleteModalAddress,
-    setIsAddNewAddressWidget,
     onCloseIsAddNewAddressWidget,
-    setIsAddNewContactWidget,
     onCloseIsAddNewContactWidget,
     setSelectedContactById,
     onCloseDeleteModalContact,
@@ -245,7 +423,8 @@ const useQuote = () => {
     onChangeUpdateClientContact,
     onClickAddNewContact,
     onChangeUpdateClientAddress,
-    setSelectedAddressById,
+    getCalculateQuoteItem,
+    getCalculateQuote,
     t,
   };
 };

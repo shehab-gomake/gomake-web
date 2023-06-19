@@ -1,8 +1,4 @@
-import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue } from "recoil";
-
-import { clientAddressState, quoteItemState } from "@/store";
-import { AddPlusIcon, RemoveIcon } from "@/icons";
+import { AddPlusIcon, PlusIcon, RemoveIcon } from "@/icons";
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
@@ -10,9 +6,9 @@ import {
 } from "@/components";
 
 import { AddAddressWidget } from "./add-address-widget";
-import { quoteState } from "../../store/quote";
 import { useStyle } from "./style";
 import { useAddressWidget } from "./use-address-widget";
+import { AddNewAddressModal } from "../modals-widgets/add-address-modal";
 
 interface IProps {
   isAddressID?: boolean;
@@ -49,8 +45,20 @@ const AddressWidget = ({
               <div style={clasess.mainContainer}>
                 {isAddressID && (
                   <div style={clasess.fieldContainer}>
-                    <div style={clasess.labelStyle}>
-                      {t("sales.quote.addressID")}
+                    <div style={clasess.labelContainer}>
+                      <div style={clasess.labelStyle}>
+                        {t("sales.quote.addressID")}
+                      </div>
+                      {index === 0 ? (
+                        <div
+                          onClick={() =>
+                            quoteStateValue?.onOpenAddNewAddressClient()
+                          }
+                          style={clasess.plusIconContainer}
+                        >
+                          <PlusIcon />
+                        </div>
+                      ) : null}
                     </div>
                     <GoMakeAutoComplate
                       options={clientAddressValue}
@@ -203,6 +211,7 @@ const AddressWidget = ({
           )
         }
       />
+      <AddNewAddressModal />
     </>
   );
 };
