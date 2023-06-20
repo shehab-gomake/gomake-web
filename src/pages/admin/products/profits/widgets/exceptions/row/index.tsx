@@ -18,7 +18,9 @@ const Row = ({ key, row }: any) => {
           if (
             entry[0] !== "id" &&
             entry[0] !== "selectedAdditional" &&
-            entry[0] !== "exceptionTypeValue"
+            entry[0] !== "exceptionTypeValue" &&
+            entry[0] !== "recordID" &&
+            entry[0] !== "item"
           ) {
             return (
               <div

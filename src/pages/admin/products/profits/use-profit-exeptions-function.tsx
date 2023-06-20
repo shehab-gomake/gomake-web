@@ -13,6 +13,7 @@ import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
 import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
 import { productTestState } from "@/store/product-test";
 import { chartDataByActionProfitRow } from "@/store";
+import { profitsState } from "./store/profits";
 
 const useProfitsExeptionsFunction = ({
   getActionExceptionProfitRowByActionExceptionId,
@@ -175,13 +176,6 @@ const useProfitsExeptionsFunction = ({
       selectedAdditional: number,
       exceptionTypeValue: string
     ) => {
-      console.log("exceptionTypeValue", {
-        id,
-        selectedAdditional,
-        exceptionTypeValue,
-        actionExceptionProfitIdValue,
-      });
-
       if (actionExceptionProfitIdValue?.id == id) {
         setActionExceptionProfitRows("");
         setactionExceptionProfitId({});
@@ -322,20 +316,29 @@ const useProfitsExeptionsFunction = ({
       });
     }
   }, [pricingListRowState, actionExceptionProfitIdValue]);
+  // const profitsStateValue = useRecoilValue<any>(profitsState);
   const updateException = async () => {
-    console.log("selectedProfitException", selectedProfitException);
     const res = await callApi(
       "PUT",
       `/v1/printhouse-config/profits/update-exception-profit`,
       {
-        actionProfitId: actionProfits?.id,
+        ...selectedProfitException.item,
         ...(state.additionalProfit && {
           additionalProfit: state.additionalProfit,
         }),
         exceptionType: state.exceptionType,
-        id: selectedProfitException.id,
       }
     );
+
+    if (res?.success) {
+      await getActionProfits(false);
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+      onCloseUpdateExceptionModal();
+    }
   };
   const addedNewException = useCallback(async () => {
     let newState = { ...state };
@@ -375,12 +378,6 @@ const useProfitsExeptionsFunction = ({
               //New Display Data
 
               ...renderProfits(item),
-              // testFinalPrice: item?.testFinalPrice?.toFixed(2) || "0",
-
-              // meterPrice: item?.meterPrice,
-              // expMeter: item?.expMeter,
-              // price: item?.price,
-              // totalPrice: item?.totalPrice,
               more: <PricingListMenuWidget item={item} />,
               id: item?.id,
               recordID: item?.recordID,

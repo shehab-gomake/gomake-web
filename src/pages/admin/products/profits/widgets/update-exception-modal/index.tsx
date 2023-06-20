@@ -22,10 +22,7 @@ const UpdateExceptionModal = () => {
     parametersStateValue,
     clientTypesStateValue,
   } = useExceptions({});
-  console.log(
-    "selectedProfitException,",
-    profitsStateValue.selectedProfitException
-  );
+
   return (
     <>
       <GoMakeModal
@@ -135,7 +132,8 @@ const UpdateExceptionModal = () => {
                     );
                   }}
                 />
-                {profitsStateValue?.state?.exceptionType === 0 ? (
+                {profitsStateValue?.selectedProfitException?.item
+                  ?.exceptionType === 0 ? (
                   <div>
                     <div style={{ marginTop: 20 }}>
                       <div style={clasess.selectTypeStyle}>
@@ -145,9 +143,11 @@ const UpdateExceptionModal = () => {
                     <GomakeTextInput
                       style={{ height: 40 }}
                       type="number"
-                      placeholder={t(
-                        "products.profits.exceptions.additionalProfit"
-                      )}
+                      placeholder={
+                        profitsStateValue?.selectedProfitException
+                          ?.selectedAdditional ||
+                        t("products.profits.exceptions.additionalProfit")
+                      }
                       onChange={(e: any) => {
                         profitsStateValue?.onChangeState(
                           "additionalProfit",
