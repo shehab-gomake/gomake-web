@@ -1,35 +1,44 @@
 import { useTranslation } from "react-i18next";
 import {
+  GoMakeAutoComplate,
   GoMakeModal,
   GomakePrimaryButton,
-  GomakeTextInput,
 } from "@/components";
 
 import { useStyle } from "./style";
+import { useSupplier } from "@/hooks";
+import { useEffect } from "react";
 
-const UpdatePricePerTonModal = ({
+const UpdateCurrencyModal = ({
   openModal,
   onClose,
-  modalTitle,
   onClickBtn,
   onChangeData,
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
+  const { getSupplierCurrencies, suppliersCurrencies } = useSupplier();
+  useEffect(() => {
+    getSupplierCurrencies();
+  }, []);
 
   return (
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={modalTitle}
+        modalTitle={t("materials.sheetPaper.updateCurrency")}
         onClose={onClose}
         insideStyle={clasess.insideStyle}
       >
         <div>
-          <GomakeTextInput
+          <GoMakeAutoComplate
+            options={suppliersCurrencies}
             style={clasess.textInputStyle}
-            placeholder={t("materials.sheetPaper.enterPrice")}
-            onChange={(e: any) => onChangeData(e.target.value)}
+            placeholder={t("materials.sheetPaper.selectCurrency")}
+            getOptionLabel={(option: any) => option.label}
+            onChange={(e: any, value: any) => {
+              onChangeData(value?.value);
+            }}
           />
           <div style={clasess.btnContainer}>
             <GomakePrimaryButton style={clasess.sendBtn} onClick={onClickBtn}>
@@ -41,4 +50,4 @@ const UpdatePricePerTonModal = ({
     </>
   );
 };
-export { UpdatePricePerTonModal };
+export { UpdateCurrencyModal };

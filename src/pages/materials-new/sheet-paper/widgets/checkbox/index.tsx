@@ -1,7 +1,7 @@
 import { Checkbox } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { sheetCheckAllState } from "../store/sheet-check-all";
+import { sheetCheckAllState } from "../../store/sheet-check-all";
 
 const SheetCheckBox = ({ selectedItems, handleCheckboxChange, size, row }) => {
   const [checked, setChecked] = useState(false);
@@ -23,8 +23,6 @@ const SheetCheckBox = ({ selectedItems, handleCheckboxChange, size, row }) => {
       checked={checked}
       onChange={(event) => {
         handleCheckboxChange(row.weightId, size?.id, event.target.checked);
-
-        // console.log("HERE");
       }}
     />
   );
