@@ -24,6 +24,7 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { SheetCheckBox } from "./checkbox";
 import { sheetCheckAllState } from "./store/sheet-check-all";
 import { useRecoilState } from "recoil";
+import { UpdateCurrencyModal } from "./modals/update-currency-modal";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
@@ -63,7 +64,7 @@ export default function SheetPaper() {
       </GomakePrimaryButton> */}
     </SideList>
   );
-
+  const [actionType, setActionType] = useState(0);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -73,16 +74,35 @@ export default function SheetPaper() {
     setAnchorEl(null);
   };
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
+  const [isUpdateCurrency, setIsUpdateCurrency] = useState(false);
+  const onCloseUpdateCurrency = () => {
+    setIsUpdateCurrency(false);
+  };
+  const onOpenUpdateCurrency = () => {
+    setIsUpdateCurrency(true);
+    setActionType(5);
+    handleClose();
+  };
   const onCloseUpdatePricePerTon = () => {
     setIsUpdatePricePerTon(false);
   };
   const onOpenUpdatePricePerTon = () => {
     setIsUpdatePricePerTon(true);
+    setActionType(0);
+    handleClose();
+  };
+  const onOpenUpdateUnitPrice = () => {
+    setIsUpdatePricePerTon(true);
+    setActionType(1);
+    handleClose();
+  };
+  const onOpenAddPercentToPrice = () => {
+    setIsUpdatePricePerTon(true);
+    setActionType(2);
     handleClose();
   };
 
   const [selectedItems, setSelectedItems] = useState([]);
-  console.log("selectedItems", selectedItems);
 
   const handleCheckboxChange = (weightId, sizeId, isChecked) => {
     if (isChecked) {
@@ -99,7 +119,6 @@ export default function SheetPaper() {
     }
   };
   const [data, setData] = useState();
-  console.log("data", data);
   useEffect(() => {
     const updatedData: any = selectedItems.map((item) => {
       return {
@@ -113,10 +132,9 @@ export default function SheetPaper() {
     const res = await callApi("POST", `/v1/sheets/size-id-settngs`, {
       categoryName: selectedMaterials,
       supplierId: selectedSupplier,
-      actionType: 0,
+      actionType: actionType,
       data: selectedItems,
     });
-    console.log("res", res);
     if (res?.success) {
       setSnackbarStateValue({
         state: true,
@@ -124,6 +142,7 @@ export default function SheetPaper() {
         type: "sucess",
       });
       onCloseUpdatePricePerTon();
+      onCloseUpdateCurrency();
     } else {
       setSnackbarStateValue({
         state: true,
@@ -131,10 +150,51 @@ export default function SheetPaper() {
         type: "error",
       });
     }
-  }, [data, selectedItems, setData]);
-  // const updatePricePetTon = async () => {
-
-  // };
+  }, [data, selectedItems, actionType, setData]);
+  const updateToActive = useCallback(async () => {
+    const res = await callApi("POST", `/v1/sheets/size-id-settngs`, {
+      categoryName: selectedMaterials,
+      supplierId: selectedSupplier,
+      actionType: 3,
+      data: selectedItems,
+    });
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedSusuccessfully"),
+        type: "sucess",
+      });
+      handleClose();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedfailed"),
+        type: "error",
+      });
+    }
+  }, [data, selectedItems, actionType, setData]);
+  const updateToInActive = useCallback(async () => {
+    const res = await callApi("POST", `/v1/sheets/size-id-settngs`, {
+      categoryName: selectedMaterials,
+      supplierId: selectedSupplier,
+      actionType: 4,
+      data: selectedItems,
+    });
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedSusuccessfully"),
+        type: "sucess",
+      });
+      handleClose();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedfailed"),
+        type: "error",
+      });
+    }
+  }, [data, selectedItems, actionType, setData]);
   const renderHeader = useCallback(() => {
     return (
       <div
@@ -215,11 +275,15 @@ export default function SheetPaper() {
             <MenuItem onClick={onOpenUpdatePricePerTon}>
               Update Price per ton
             </MenuItem>
-            <MenuItem onClick={handleClose}>Update unit price</MenuItem>
-            <MenuItem onClick={handleClose}>Add Precent to price</MenuItem>
-            <MenuItem onClick={handleClose}>Change to Active</MenuItem>
-            <MenuItem onClick={handleClose}>Change to InActive</MenuItem>
-            <MenuItem onClick={handleClose}>Update Currency</MenuItem>
+            <MenuItem onClick={onOpenUpdateUnitPrice}>
+              Update unit price
+            </MenuItem>
+            <MenuItem onClick={onOpenAddPercentToPrice}>
+              Add Precent to price
+            </MenuItem>
+            <MenuItem onClick={updateToActive}>Change to Active</MenuItem>
+            <MenuItem onClick={updateToInActive}>Change to InActive</MenuItem>
+            <MenuItem onClick={onOpenUpdateCurrency}>Update Currency</MenuItem>
           </Menu>
         </div>
       </div>
@@ -608,6 +672,12 @@ export default function SheetPaper() {
         <UpdatePricePerTonModal
           openModal={isUpdatePricePerTon}
           onClose={onCloseUpdatePricePerTon}
+          onClickBtn={updatePricePetTon}
+          onChangeData={setData}
+        />
+        <UpdateCurrencyModal
+          openModal={isUpdateCurrency}
+          onClose={onCloseUpdateCurrency}
           onClickBtn={updatePricePetTon}
           onChangeData={setData}
         />
