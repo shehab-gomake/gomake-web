@@ -21,7 +21,7 @@ const AddSupplierModal = ({
     <>
       <GoMakeModal
         openModal={showSupplierModal}
-        modalTitle={`Add Supplier`}
+        modalTitle={t("materials.sheetPaper.addSupplier")}
         onClose={() => setShowSupplierModal(false)}
         insideStyle={clasess.insideStyle}
       >
@@ -29,7 +29,7 @@ const AddSupplierModal = ({
           {suppliers?.length > 0 && (
             <>
               <GoMakeAutoComplate
-                placeholder={"Select a Supplier"}
+                placeholder={t("materials.sheetPaper.selectASupplier")}
                 options={suppliers}
                 onChange={(value: any, item: any) => {
                   setSelectedSupplier(item?.value);
@@ -39,7 +39,7 @@ const AddSupplierModal = ({
                 style={{ marginTop: 20 }}
                 onClick={onClickAddSupplier}
               >
-                Add Supplier
+                {t("materials.sheetPaper.addSupplier")}
               </GomakePrimaryButton>
             </>
           )}

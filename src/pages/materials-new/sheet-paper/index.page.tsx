@@ -1,22 +1,22 @@
-import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import React, { useCallback } from "react";
 
 import { MaterialsLayout } from "@/widgets/machines/components/layout/materials-layout";
 import { SideList } from "@/widgets/materials/side-list/side-list";
-import { IconButton } from "@mui/material";
 import { SecondSwitch } from "@/components/switch/second";
+import { GoMakeAutoComplate } from "@/components";
 import { SettingsIcon } from "@/icons/settings";
 import { CustomerAuthLayout } from "@/layouts";
-import { GoMakeAutoComplate } from "@/components";
+import { IconButton } from "@mui/material";
 
 import { UpdatePricePerTonModal } from "./modals/update-price-per-ton-modal";
 import { UpdateCurrencyModal } from "./modals/update-currency-modal";
-import { SettingsMenuModal } from "./modals/menu";
-import { useSheetPaper } from "./use-sheet-paper";
-import { SheetCheckBox } from "./widgets/checkbox";
+import { AddSupplierModal } from "./modals/add-supplier-modal";
 import { HeaderTableWidget } from "./widgets/header-table";
 import { SheetSizesWidget } from "./widgets/sheet-sizes";
-import { AddSupplierModal } from "./modals/add-supplier-modal";
+import { SheetCheckBox } from "./widgets/checkbox";
+import { SettingsMenuModal } from "./modals/menu";
+import { useSheetPaper } from "./use-sheet-paper";
 import { useStyle } from "./style";
 
 export default function SheetPaper() {
@@ -36,6 +36,7 @@ export default function SheetPaper() {
     open,
     anchorEl,
     sheetCheckStore,
+    modalTitle,
     setSheetCheckStore,
     setSelectedMaterials,
     setSelectedSupplier,
@@ -62,7 +63,7 @@ export default function SheetPaper() {
       list={sheetCategories}
       selectedItem={selectedMaterials}
       onSelect={setSelectedMaterials}
-      title={"Choose Category"}
+      title={t("materials.sheetPaper.chooseCategory")}
     />
   );
 
@@ -75,15 +76,15 @@ export default function SheetPaper() {
             <GoMakeAutoComplate
               style={clasess.dropDownStyle}
               options={sheetStore?.suppliers}
-              placeholder={"Select Supplier"}
+              placeholder={t("materials.sheetPaper.selectSupplier")}
               renderOption={(props: any, option: any) => {
-                if (option.label === "Add new") {
+                if (option.label === t("materials.sheetPaper.addNew")) {
                   return (
                     <div
                       onClick={onClickAddNewSupplier}
                       style={clasess.addSupplierAutoComplate}
                     >
-                      Add new Supplier
+                      {t("materials.sheetPaper.addNewSupplier")}
                     </div>
                   );
                 }
@@ -120,9 +121,9 @@ export default function SheetPaper() {
         <div style={{ paddingLeft: 0 }}>
           {allWeightsGrouped.length === 0 ? (
             <div style={clasess.noData}>
-              There is supplier added to this sheet yet,
+              {t("materials.sheetPaper.supplierAddedSheetYet")}
               <span style={clasess.noDataSpan} onClick={onClickAddNewSupplier}>
-                Please add new one now.
+                {t("materials.sheetPaper.pleaseAddNow")}
               </span>
             </div>
           ) : (
@@ -172,7 +173,6 @@ export default function SheetPaper() {
                                 key={index2}
                                 index2={index2}
                                 size={size}
-                                row={row}
                               />
                             );
                           })}
@@ -194,6 +194,7 @@ export default function SheetPaper() {
         <UpdatePricePerTonModal
           openModal={isUpdatePricePerTon}
           onClose={onCloseUpdatePricePerTon}
+          modalTitle={modalTitle}
           onClickBtn={updatePricePetTon}
           onChangeData={setData}
         />

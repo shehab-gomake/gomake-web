@@ -10,6 +10,7 @@ import { useStyle } from "./style";
 const UpdatePricePerTonModal = ({
   openModal,
   onClose,
+  modalTitle,
   onClickBtn,
   onChangeData,
 }) => {
@@ -20,19 +21,19 @@ const UpdatePricePerTonModal = ({
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={"Update Price Per Ton"}
+        modalTitle={modalTitle}
         onClose={onClose}
         insideStyle={clasess.insideStyle}
       >
         <div>
           <GomakeTextInput
             style={clasess.textInputStyle}
-            placeholder="Enter Price"
+            placeholder={t("materials.sheetPaper.enterPrice")}
             onChange={(e: any) => onChangeData(e.target.value)}
           />
           <div style={clasess.btnContainer}>
             <GomakePrimaryButton style={clasess.sendBtn} onClick={onClickBtn}>
-              Update
+              {t("materials.inputs.update")}
             </GomakePrimaryButton>
           </div>
         </div>

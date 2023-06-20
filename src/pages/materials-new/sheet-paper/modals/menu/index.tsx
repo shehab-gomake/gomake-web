@@ -28,15 +28,23 @@ const SettingsMenuModal = ({
         }}
       >
         <MenuItem onClick={onOpenUpdatePricePerTon}>
-          Update Price per ton
+          {t("materials.sheetPaper.updatePricePerTonMenu")}
         </MenuItem>
-        <MenuItem onClick={onOpenUpdateUnitPrice}>Update unit price</MenuItem>
+        <MenuItem onClick={onOpenUpdateUnitPrice}>
+          {t("materials.sheetPaper.updateUnitPriceMenu")}
+        </MenuItem>
         <MenuItem onClick={onOpenAddPercentToPrice}>
-          Add Precent to price
+          {t("materials.sheetPaper.addPrecentToPriceMenu")}
         </MenuItem>
-        <MenuItem onClick={updateToActive}>Change to Active</MenuItem>
-        <MenuItem onClick={updateToInActive}>Change to InActive</MenuItem>
-        <MenuItem onClick={onOpenUpdateCurrency}>Update Currency</MenuItem>
+        <MenuItem onClick={updateToActive}>
+          {t("materials.sheetPaper.changeToActiveMenu")}
+        </MenuItem>
+        <MenuItem onClick={updateToInActive}>
+          {t("materials.sheetPaper.changeToInActiveMenu")}
+        </MenuItem>
+        <MenuItem onClick={onOpenUpdateCurrency}>
+          {t("materials.sheetPaper.updateCurrency")}
+        </MenuItem>
       </Menu>
     </>
   );

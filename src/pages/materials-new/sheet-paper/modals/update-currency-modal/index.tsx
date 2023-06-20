@@ -3,7 +3,6 @@ import {
   GoMakeAutoComplate,
   GoMakeModal,
   GomakePrimaryButton,
-  GomakeTextInput,
 } from "@/components";
 
 import { useStyle } from "./style";
@@ -22,13 +21,12 @@ const UpdateCurrencyModal = ({
   useEffect(() => {
     getSupplierCurrencies();
   }, []);
-  console.log("suppliersCurrencies", suppliersCurrencies);
 
   return (
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={"Update Currency"}
+        modalTitle={t("materials.sheetPaper.updateCurrency")}
         onClose={onClose}
         insideStyle={clasess.insideStyle}
       >
@@ -36,20 +34,15 @@ const UpdateCurrencyModal = ({
           <GoMakeAutoComplate
             options={suppliersCurrencies}
             style={clasess.textInputStyle}
-            placeholder="Select Currency"
+            placeholder={t("materials.sheetPaper.selectCurrency")}
             getOptionLabel={(option: any) => option.label}
             onChange={(e: any, value: any) => {
               onChangeData(value?.value);
             }}
           />
-          {/* <GomakeTextInput
-            style={clasess.textInputStyle}
-            placeholder="Enter Price"
-            onChange={(e: any) => onChangeData(e.target.value)}
-          /> */}
           <div style={clasess.btnContainer}>
             <GomakePrimaryButton style={clasess.sendBtn} onClick={onClickBtn}>
-              Update
+              {t("materials.inputs.update")}
             </GomakePrimaryButton>
           </div>
         </div>

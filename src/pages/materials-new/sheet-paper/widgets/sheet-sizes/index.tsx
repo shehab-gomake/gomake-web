@@ -1,7 +1,7 @@
 import { useStyle } from "../../style";
 import { Switch } from "@mui/material";
 
-const SheetSizesWidget = ({ index2, size, row }) => {
+const SheetSizesWidget = ({ index2, size }) => {
   const { clasess } = useStyle();
 
   return (
@@ -13,7 +13,7 @@ const SheetSizesWidget = ({ index2, size, row }) => {
       </div>
       <div style={clasess.directionContainer}>{size?.direction}</div>
       <div style={clasess.activeContainer}>
-        <Switch checked={row?.isActive} />
+        <Switch checked={size?.isActive} />
       </div>
       <div style={clasess.currencyContainer}>{size?.currency}</div>
       <div style={clasess.stokContainer}>{size?.stock}</div>

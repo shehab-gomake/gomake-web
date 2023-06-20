@@ -31,7 +31,7 @@ const useSheetPaper = () => {
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
   const [isUpdateCurrency, setIsUpdateCurrency] = useState(false);
   const [data, setData] = useState();
-
+  const [modalTitle, setModalTitle] = useState("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -53,16 +53,19 @@ const useSheetPaper = () => {
     setIsUpdatePricePerTon(false);
   };
   const onOpenUpdatePricePerTon = () => {
+    setModalTitle(t("materials.sheetPaper.updatePricePerTon"));
     setIsUpdatePricePerTon(true);
     setActionType(0);
     handleClose();
   };
   const onOpenUpdateUnitPrice = () => {
+    setModalTitle(t("materials.sheetPaper.updateUnitPrice"));
     setIsUpdatePricePerTon(true);
     setActionType(1);
     handleClose();
   };
   const onOpenAddPercentToPrice = () => {
+    setModalTitle(t("materials.sheetPaper.addPercentToPrice"));
     setIsUpdatePricePerTon(true);
     setActionType(2);
     handleClose();
@@ -255,6 +258,13 @@ const useSheetPaper = () => {
     sheetStore,
     suppliers,
     showSupplierModal,
+    modalTitle,
+    selectedItems,
+    isUpdatePricePerTon,
+    isUpdateCurrency,
+    open,
+    anchorEl,
+    sheetCheckStore,
     setSelectedMaterials,
     setSelectedSupplier,
     getSheetAllWeights,
@@ -262,15 +272,9 @@ const useSheetPaper = () => {
     setShowSupplierModal,
     onClickAddSupplier,
     onChangeSupplierToDefault,
-
-    selectedItems,
-    isUpdatePricePerTon,
-    isUpdateCurrency,
     setData,
-    open,
     handleClick,
     onOpenUpdateCurrency,
-    anchorEl,
     handleClose,
     updateToInActive,
     updateToActive,
@@ -281,7 +285,6 @@ const useSheetPaper = () => {
     updatePricePetTon,
     onCloseUpdatePricePerTon,
     onCloseUpdateCurrency,
-    sheetCheckStore,
     setSheetCheckStore,
   };
 };

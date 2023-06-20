@@ -23,8 +23,6 @@ const SheetCheckBox = ({ selectedItems, handleCheckboxChange, size, row }) => {
       checked={checked}
       onChange={(event) => {
         handleCheckboxChange(row.weightId, size?.id, event.target.checked);
-
-        // console.log("HERE");
       }}
     />
   );
