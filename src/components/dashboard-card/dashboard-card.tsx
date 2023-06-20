@@ -3,6 +3,9 @@ import {IDashboardCard} from "@/components/dashboard-card/interface";
 import {useStyle} from "@/components/dashboard-card/style";
 import {CircularProgressWithLabel} from "@/components/progress-label-circle/progress";
 import {useTranslation} from "react-i18next";
+import {useRecoilState} from "recoil";
+import {boardsMissionsStatusFilterState} from "@/store/boards-missions-status-filter";
+import {useCallback} from "react";
 
 const DashboardCard = ({
                            label,
@@ -10,13 +13,25 @@ const DashboardCard = ({
                            bgColor,
                            children,
                            progressValue = 0,
-                           withProgressBar = false
+                           withProgressBar = false,
+                           status
                        }: IDashboardCard) => {
-    const {classes} = useStyle(bgColor);
+    const [selectedStatus, setStatus] = useRecoilState(boardsMissionsStatusFilterState);
+    const isSelected = useCallback(() => {return status === selectedStatus}, [selectedStatus])
+    const {classes} = useStyle(bgColor, isSelected());
     const {t} = useTranslation();
+    const handleOnClick = () => {
+        if (status) {
+            if (selectedStatus === status) {
+                setStatus(null);
+            } else {
+                setStatus(status ? status : null);
+            }
+        }
+    }
     return (
 
-        <Card style={classes.container} variant={'outlined'}>
+        <Card onClick={handleOnClick} style={classes.container} variant={'outlined'}>
             <div style={{
                 display: 'flex',
             }}>

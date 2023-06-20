@@ -9,6 +9,7 @@ import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurned
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {useGomakeDateRange} from "@/hooks";
+import {EStatus} from "@/shared";
 
 const Cards = ({data}: ICards) => {
     const {classes} = useStyle();
@@ -37,6 +38,7 @@ const Cards = ({data}: ICards) => {
 
                 <DashboardCard label={data?.done?.labelTranslationKey || ''}
                                value={data?.done?.value || 0}
+                               status={EStatus.DONE}
                                bgColor={successColor(500)}>
                     <AssignmentTurnedInOutlinedIcon/>
                 </DashboardCard>
@@ -44,18 +46,21 @@ const Cards = ({data}: ICards) => {
 
                 <DashboardCard label={data?.inProcess?.labelTranslationKey || ''}
                                value={data?.inProcess?.value || 0}
+                               status={EStatus.IN_PROCESS}
                                bgColor={warningColor(500)}>
                     <LocalPrintshopOutlinedIcon/>
                 </DashboardCard>
 
                 <DashboardCard label={data?.waiting?.labelTranslationKey || ''}
                                value={data?.waiting?.value || 0}
+                               status={EStatus.WAITING}
                                bgColor={secondColor(300)}>
                     <HourglassTopIcon/>
                 </DashboardCard>
 
                 <DashboardCard label={data?.faults?.labelTranslationKey || ''}
                                value={data?.faults?.value || 0}
+                               status={EStatus.FAULT}
                                bgColor={errorColor(500)}>
                     <DoNotDisturbOnOutlinedIcon/>
                 </DashboardCard>
