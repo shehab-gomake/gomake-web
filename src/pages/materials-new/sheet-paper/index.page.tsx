@@ -11,18 +11,21 @@ import {
   GomakePrimaryButton,
 } from "@/components";
 import { useStyle } from "./style";
-import { Header, Row } from "@/widgets/table/components";
-import { Button, Checkbox, IconButton, Switch } from "@mui/material";
+import { Checkbox, IconButton, Switch } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { SettingsIcon } from "@/icons/settings";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SecondSwitch } from "@/components/switch/second";
+import { UpdatePricePerTonModal } from "./modals/update-price-per-ton-modal";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
+  const { callApi } = useGomakeAxios();
+  const { setSnackbarStateValue } = useSnackBar();
   const { clasess } = useStyle();
 
   const { primaryColor } = useGomakeTheme();
@@ -45,7 +48,9 @@ export default function SheetPaper() {
     onClickAddSupplier,
     onChangeSupplierToDefault,
   } = useSheetPaper();
-
+  console.log("selectedMaterials", selectedMaterials);
+  // console.log("categoryName", categoryName);
+  console.log("selectedSupplier", selectedSupplier);
   const Side = () => (
     <SideList
       list={sheetCategories}
@@ -67,7 +72,69 @@ export default function SheetPaper() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
+  const onCloseUpdatePricePerTon = () => {
+    setIsUpdatePricePerTon(false);
+  };
+  const onOpenUpdatePricePerTon = () => {
+    setIsUpdatePricePerTon(true);
+    handleClose();
+  };
 
+  const [selectedItems, setSelectedItems] = useState([]);
+  console.log("selectedItems", selectedItems);
+
+  const handleCheckboxChange = (weightId, sizeId, isChecked) => {
+    if (isChecked) {
+      setSelectedItems((prevSelectedItems) => [
+        ...prevSelectedItems,
+        { weightId, sizeId },
+      ]);
+    } else {
+      setSelectedItems((prevSelectedItems) =>
+        prevSelectedItems.filter(
+          (item) => !(item.weightId === weightId && item.sizeId === sizeId)
+        )
+      );
+    }
+  };
+  const [data, setData] = useState();
+  console.log("data", data);
+  useEffect(() => {
+    const updatedData: any = selectedItems.map((item) => {
+      return {
+        ...item,
+        data,
+      };
+    });
+    setSelectedItems(updatedData);
+  }, [data]);
+  const updatePricePetTon = useCallback(async () => {
+    const res = await callApi("POST", `/v1/sheets/size-id-settngs`, {
+      categoryName: selectedMaterials,
+      supplierId: selectedSupplier,
+      actionType: 0,
+      data: selectedItems,
+    });
+    console.log("res", res);
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedSusuccessfully"),
+        type: "sucess",
+      });
+      onCloseUpdatePricePerTon();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedfailed"),
+        type: "error",
+      });
+    }
+  }, [data, selectedItems, setData]);
+  // const updatePricePetTon = async () => {
+
+  // };
   const renderHeader = useCallback(() => {
     return (
       <div
@@ -145,17 +212,21 @@ export default function SheetPaper() {
               "aria-labelledby": "basic-button",
             }}
           >
-            <MenuItem onClick={handleClose}>Update Price per ton</MenuItem>
+            <MenuItem onClick={onOpenUpdatePricePerTon}>
+              Update Price per ton
+            </MenuItem>
             <MenuItem onClick={handleClose}>Update unit price</MenuItem>
             <MenuItem onClick={handleClose}>Add Precent to price</MenuItem>
-            <MenuItem onClick={handleClose}>Chane to Active</MenuItem>
-            <MenuItem onClick={handleClose}>Chane to InActive</MenuItem>
+            <MenuItem onClick={handleClose}>Change to Active</MenuItem>
+            <MenuItem onClick={handleClose}>Change to InActive</MenuItem>
             <MenuItem onClick={handleClose}>Update Currency</MenuItem>
           </Menu>
         </div>
       </div>
     );
   }, [selectedMaterials, open, anchorEl, sheetStore]);
+  console.log("allWeightsGrouped", allWeightsGrouped);
+
   return (
     <CustomerAuthLayout>
       <MaterialsLayout header={t("materials.sheetPaper.title")} side={Side()}>
@@ -311,13 +382,47 @@ export default function SheetPaper() {
                       <div
                         style={{
                           width: "5%",
-                          display: "flex",
+                          flexDirection: "column",
                           justifyContent: "center",
                           alignItems: "center",
+                          display: "flex",
+                          minHeight: 60,
+                          paddingTop: 20,
+                          paddingBottom: 20,
+                          gap: 35,
                         }}
                       >
-                        <Checkbox />
+                        {row?.sheetSizes.length &&
+                          row?.sheetSizes?.map((size: any, index2: number) => {
+                            return (
+                              <div
+                                style={{
+                                  width: "5%",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Checkbox
+                                  checked={selectedItems.some(
+                                    (item) =>
+                                      item.weightId === item.weightId &&
+                                      item.sizeId === size?.id
+                                  )}
+                                  onChange={(event) =>
+                                    handleCheckboxChange(
+                                      row.weightId,
+                                      size?.id,
+                                      event.target.checked
+                                    )
+                                  }
+                                />
+                              </div>
+                            );
+                          })}
                       </div>
+
                       <div
                         style={{
                           width: "10%",
@@ -501,6 +606,12 @@ export default function SheetPaper() {
             )}
           </div>
         </GoMakeModal>
+        <UpdatePricePerTonModal
+          openModal={isUpdatePricePerTon}
+          onClose={onCloseUpdatePricePerTon}
+          onClickBtn={updatePricePetTon}
+          onChangeData={setData}
+        />
       </MaterialsLayout>
     </CustomerAuthLayout>
   );

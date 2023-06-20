@@ -38,6 +38,7 @@ const useSheetPaper = () => {
   ];
   const { suppliers, getSupplier } = useSupplier();
   const [sheetStore, setSheetStore] = useRecoilState(sheetState);
+  console.log("sheetStoresheetStore", sheetStore);
   const [showSupplierModal, setShowSupplierModal] = useState(false);
 
   const getSheetSuppliers = useCallback(
@@ -70,6 +71,11 @@ const useSheetPaper = () => {
   const [categoryName, setCategoryName] = useState(undefined);
   const [supplierId, setSupplierId] = useState(undefined);
   const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
+
+  useEffect(() => {
+    const defaultItem = sheetStore?.suppliers?.find((item) => item.isDefault);
+    setSelectedSupplier(defaultItem?.value);
+  }, [sheetStore]);
 
   const getSheetAllWeights = useCallback(
     async (categoryName: string) => {
