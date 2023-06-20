@@ -13,6 +13,10 @@ const useStyle = () => {
         paddingBottom: 20,
         boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.08)",
         backgroundColor: "#FFFFFF",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between",
       },
       header: {
         display: "flex",

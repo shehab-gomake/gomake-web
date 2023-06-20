@@ -11,14 +11,12 @@ const useStyle = ({ row }: any) => {
         display: "flex",
         width: "100%",
         justifyContent: "space-between",
-        alignItems: "center",
+        alignItems: "center" as "center",
         height: 60,
         position: "relative" as "relative",
-        cursor:
-          row?.exceptionType === "EditBase" || row?.exceptionType === "NewBase"
-            ? "pointer"
-            : "",
+        cursor: "pointer",
         gap: 5,
+        textAlign: "center" as "center",
       },
       rowItem: {
         display: "flex",

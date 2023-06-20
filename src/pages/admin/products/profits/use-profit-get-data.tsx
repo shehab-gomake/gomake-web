@@ -85,6 +85,9 @@ const useProfitsGetData = () => {
       {
         actionId: selectedAction?.id,
         selectTestDataVal,
+        ...(actionExceptionProfitIdValue?.id?.length && {
+          exceptionId: actionExceptionProfitIdValue.id,
+        }),
       }
     );
   };
@@ -118,10 +121,13 @@ const useProfitsGetData = () => {
       setChartDataValue,
       {
         actionProfitId: actionProfits?.id,
+        ...(actionExceptionProfitIdValue?.id?.length && {
+          exceptionId: actionExceptionProfitIdValue.id,
+        }),
       },
       actionProfits?.pricingBy
     );
-  }, [actionProfits]);
+  }, [actionProfits, actionExceptionProfitIdValue]);
 
   const getMachincesProfits = useCallback(async () => {
     await getAndSetMachinces(callApi, setMachincesState);

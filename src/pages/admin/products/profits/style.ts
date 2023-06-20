@@ -18,7 +18,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        paddingRight: convertWidthToVW(54),
+        // paddingRight: convertWidthToVW(54),
       },
       skeletonRowStyle: {
         marginTop: convertHeightToVH(10),
@@ -156,7 +156,7 @@ const useStyle = () => {
         gap: 24,
       },
       pricingCointaner: {
-        width: "100%",
+        width: "70%",
         dropShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
       },
       exceptionsCointaner: {

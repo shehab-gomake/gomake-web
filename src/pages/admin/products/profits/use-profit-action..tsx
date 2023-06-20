@@ -10,16 +10,20 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
 import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
 
-export const renderProfits = (item: any) => {
+export const renderProfits = (item: any, data: any = {}) => {
   const cost = item?.cost || 0;
   const profit = item?.profit || 0;
   const quantity = item?.quantity || 0;
   const percentProfit = profit / 100;
-  const total = cost * (1 + percentProfit);
+  const percentExpProfit = data?.expProfit / 100;
+  const total = data?.expProfit
+    ? cost * (1 + percentExpProfit)
+    : cost * (1 + percentProfit);
 
   return {
     cost: Number(cost),
     profit: Number(profit),
+    ...(data?.expProfit && { expProfit: data?.expProfit }),
     quantity: Number(quantity),
     unitPrice: Number(total / quantity).toFixed(2),
     totalPrice: Number(total).toFixed(2),
