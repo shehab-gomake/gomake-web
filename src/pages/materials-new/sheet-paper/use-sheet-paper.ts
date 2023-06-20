@@ -38,7 +38,6 @@ const useSheetPaper = () => {
   ];
   const { suppliers, getSupplier } = useSupplier();
   const [sheetStore, setSheetStore] = useRecoilState(sheetState);
-  console.log("sheetStoresheetStore", sheetStore);
   const [showSupplierModal, setShowSupplierModal] = useState(false);
 
   const getSheetSuppliers = useCallback(

@@ -21,6 +21,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { SecondSwitch } from "@/components/switch/second";
 import { UpdatePricePerTonModal } from "./modals/update-price-per-ton-modal";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { SheetCheckBox } from "./checkbox";
+import { sheetCheckAllState } from "./store/sheet-check-all";
+import { useRecoilState } from "recoil";
 
 export default function SheetPaper() {
   const { t } = useTranslation();
@@ -48,9 +51,6 @@ export default function SheetPaper() {
     onClickAddSupplier,
     onChangeSupplierToDefault,
   } = useSheetPaper();
-  console.log("selectedMaterials", selectedMaterials);
-  // console.log("categoryName", categoryName);
-  console.log("selectedSupplier", selectedSupplier);
   const Side = () => (
     <SideList
       list={sheetCategories}
@@ -225,7 +225,9 @@ export default function SheetPaper() {
       </div>
     );
   }, [selectedMaterials, open, anchorEl, sheetStore]);
-  console.log("allWeightsGrouped", allWeightsGrouped);
+
+  const [sheetCheckStore, setSheetCheckStore] =
+    useRecoilState(sheetCheckAllState);
 
   return (
     <CustomerAuthLayout>
@@ -258,7 +260,12 @@ export default function SheetPaper() {
                             alignItems: "center",
                           }}
                         >
-                          <Checkbox />
+                          <Checkbox
+                            onChange={() => {
+                              setSheetCheckStore(!sheetCheckStore);
+                            }}
+                            checked={sheetCheckStore}
+                          />
                         </div>
                         <div
                           style={{
@@ -404,19 +411,11 @@ export default function SheetPaper() {
                                   alignItems: "center",
                                 }}
                               >
-                                <Checkbox
-                                  checked={selectedItems.some(
-                                    (item) =>
-                                      item.weightId === item.weightId &&
-                                      item.sizeId === size?.id
-                                  )}
-                                  onChange={(event) =>
-                                    handleCheckboxChange(
-                                      row.weightId,
-                                      size?.id,
-                                      event.target.checked
-                                    )
-                                  }
+                                <SheetCheckBox
+                                  selectedItems={selectedItems}
+                                  handleCheckboxChange={handleCheckboxChange}
+                                  size={size}
+                                  row={row}
                                 />
                               </div>
                             );
