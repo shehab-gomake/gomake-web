@@ -20,7 +20,7 @@ interface IProps {
 const Tab = ({ tab }: IProps) => {
   const [isListOpen, setIsListOpen] = useState(false);
   const [isHover, setIsHover] = useState(false);
-  const { clasess } = useStyle({ isHover,navStatus: null });
+  const { clasess } = useStyle({ isHover, navStatus: null });
   const { t } = useTranslation();
   const { navigate } = useGomakeRouter();
   const handleMouseEnter = useCallback(() => {
@@ -32,7 +32,6 @@ const Tab = ({ tab }: IProps) => {
   }, []);
 
   const onClickTab = useCallback(() => {
-    console.log("tab", tab);
     if (tab.isList) {
       setIsListOpen(!isListOpen);
     } else {

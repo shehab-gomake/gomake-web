@@ -3,7 +3,6 @@ import i18next from "i18next";
 
 import { useTranslation } from "react-i18next";
 
-import { convertWidthToVW } from "@/utils/adapter";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 
@@ -12,19 +11,22 @@ const useStyle = () => {
   const { primaryColor, secondColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
-      filterContainer: {
+      renderHeaderContainer: {
         display: "flex",
-        flexDirection: "row" as "row",
-        justifyContainer: "flex-start",
+        justifyContent: "space-between",
         alignItems: "center",
-        width: "100%",
-        gap: convertWidthToVW(50),
+        marginBottom: "10px",
       },
-      autoComplateStyle: {
-        width: convertWidthToVW(200),
+      subRenderHeaderContainer: {
+        width: "40%",
+        display: "flex",
+        alignItems: "center",
       },
-      tableContainer: {
-        width: "100%",
+      dropDownStyle: { width: "100%" },
+      optionsContainer: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
       },
       header: {
         display: "flex",
@@ -88,7 +90,122 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 20),
       },
       insideStyle: { width: "35%", height: "40%" },
-      iconColor: secondColor(500),
+      checkboxHeaderContainer: {
+        width: "5%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      weightContainer: {
+        width: "10%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        marginLeft: -5,
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
+      rowWeightContainer: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: primaryColor(500),
+      },
+      sizeContainer: {
+        width: "13%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingLeft: 20,
+      },
+      thiknessContainer: {
+        width: "13%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      costsContainer: {
+        width: "20%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      directionContainer: {
+        width: "13%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingLeft: 40,
+      },
+      activeContainer: {
+        width: "13%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingLeft: 30,
+      },
+      currencyContainer: {
+        width: "13%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      stokContainer: {
+        width: "13%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      sizeWaightsContainer: {
+        width: "5%",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+        display: "flex",
+        minHeight: 60,
+        paddingTop: 20,
+        paddingBottom: 20,
+        gap: 35,
+      },
+      checkboxSizeContainer: {
+        width: "5%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      weightSizeContainer: {
+        width: "10%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        marginLeft: -5,
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
+      sheetSizeContainer: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: primaryColor(500),
+      },
+      selectedSupplierContainer: {
+        height: "100%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between",
+      },
     };
   }, [i18next.language, t]);
   return {
