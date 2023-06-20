@@ -4,10 +4,11 @@ import {
     MediaSettingComponent,
 } from "@/widgets/machines/components/forms";
 import {MachineDimensionsComponent} from "@/widgets/machines/components/forms/machine-dimensions";
-import {ConnectionComponent} from "@/widgets/machines/components/forms/connection-inputs";
 import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
+import {ConnectionComponent} from "@/widgets/machines/components/forms/connection-inputs";
 
-const collectorMachineSteps: IStep[] = [
+
+const bookSewingMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
     {label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'media',  component: MediaSettingComponent},
@@ -15,4 +16,4 @@ const collectorMachineSteps: IStep[] = [
     {label: 'connection',  component: ConnectionComponent},
 ];
 
-export {collectorMachineSteps};
+export {bookSewingMachineSteps};

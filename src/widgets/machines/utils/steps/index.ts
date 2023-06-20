@@ -23,7 +23,6 @@ import {flatbedCuttingMachineSteps} from "@/widgets/machines/utils/steps/flatbed
 import {rollFedCuttingMachineSteps} from "@/widgets/machines/utils/steps/roll-fed-cutting-machine-steps";
 import {staplerMachineSteps} from "@/widgets/machines/utils/steps/stapler-machine-steps";
 import {manualPeelingStickersMachineSteps} from "@/widgets/machines/utils/steps/manual-peeling-stickers-machine-steps";
-import {booksSewingMachineSteps} from "@/widgets/machines/utils/steps/books-sewing-machine-steps";
 import {manualSewingMachineSteps} from "@/widgets/machines/utils/steps/manual-sewing-machine-steps";
 import {piercingMachineSteps} from "@/widgets/machines/utils/steps/piercing-machine-steps";
 import {framingInFixedFramesMachineSteps} from "@/widgets/machines/utils/steps/framing-in-fixed-frames-machine-steps";
@@ -31,6 +30,10 @@ import {customFramingMachineSteps} from "@/widgets/machines/utils/steps/custom-f
 import {linkageMachineSteps} from "@/widgets/machines/utils/steps/linkage-machine-steps";
 import {pvcBendingMachineSteps} from "@/widgets/machines/utils/steps/pvc-bending-machine-steps";
 import {collectorMachineSteps} from "@/widgets/machines/utils/steps/collector-machine-steps";
+import {bookletMachineSteps} from "@/widgets/machines/utils/steps/booklet-machine-steps";
+import {bookBinderMachineSteps} from "@/widgets/machines/utils/steps/book-binder-machine-steps";
+import {bookSewingMachineSteps} from "@/widgets/machines/utils/steps/book-sewing-machine-steps";
+import {spiralClosingMachineSteps} from "@/widgets/machines/utils/steps/spiral-closing-machine-steps";
 
 const getSteps = (categoryId: ECategoryId): IStep[] => {
     switch (categoryId) {
@@ -80,8 +83,6 @@ const getSteps = (categoryId: ECategoryId): IStep[] => {
             return staplerMachineSteps;
         case ECategoryId.MANUAL_PEELING_STICKERS:
             return manualPeelingStickersMachineSteps;
-        case ECategoryId.BOOKS_SEWING_MACHINE:
-            return booksSewingMachineSteps;
         case ECategoryId.MANUAL_SEWING_MACHINE:
             return manualSewingMachineSteps;
         case ECategoryId.PIERCING_MACHINE:
@@ -96,6 +97,14 @@ const getSteps = (categoryId: ECategoryId): IStep[] => {
             return pvcBendingMachineSteps;
         case ECategoryId.COLLECTOR:
             return collectorMachineSteps;
+        case ECategoryId.BOOKLET_MACHINE:
+            return bookletMachineSteps;
+        case ECategoryId.BOOKS_BINDER_MACHINE:
+            return bookBinderMachineSteps;
+        case ECategoryId.BOOKS_SEWING_MACHINE:
+            return bookSewingMachineSteps;
+        case ECategoryId.SPIRAL_CLOSING_MACHINE:
+            return spiralClosingMachineSteps;
         default:
             return []
     }

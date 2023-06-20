@@ -16,6 +16,9 @@ import {getCategoryUnWinderInputs} from "@/widgets/machines/utils/attributes/unw
 import {getCategoryFoldingInputs} from "@/widgets/machines/utils/attributes/run-inputs";
 import {getCategoryConnectionInputs} from "@/widgets/machines/utils/attributes/connection-inputs";
 import {getCategorySpeedInputs} from "@/widgets/machines/utils/attributes/speed-inputs";
+import {getCategoryCuttingOptionsInputs} from "@/widgets/machines/utils/attributes/cutting-options-inputs";
+import {getCategoryInputs} from "@/widgets/machines/utils/attributes/other-setting";
+import {getCategoryStapleInputs} from "@/widgets/machines/utils/attributes/staple";
 
 
 const useMachineAttributes = () => {
@@ -69,6 +72,9 @@ const useMachineAttributes = () => {
     const machineUnWinderAttributes = () => !!machineState.category ? getCategoryUnWinderInputs(machineState.category, machineState) : [];
     const machineFoldingAttributes = () => !!machineState.category ? getCategoryFoldingInputs(machineState.category, machineState) : [];
     const machineConnectionAttributes = () => !!machineState.category ? getCategoryConnectionInputs(machineState.category, machineState) : [];
+    const machineCuttingOptionsAttributes = () => !!machineState.category ? getCategoryCuttingOptionsInputs(machineState.category, machineState) : [];
+    const machineOtherSettingsAttributes = () => !!machineState.category ? getCategoryInputs(machineState.category, machineState) : [];
+    const machineStapleAttributes = () => !!machineState.category ? getCategoryStapleInputs(machineState.category, machineState) : [];
 
     return {
         machineGeneralAttributes,
@@ -86,6 +92,9 @@ const useMachineAttributes = () => {
         machineFoldingAttributes,
         machineConnectionAttributes,
         machineSpeedAttributes,
+        machineStapleAttributes,
+        machineAvenueAttributes: machineOtherSettingsAttributes,
+        machineCuttingOptionsAttributes,
         changeMachineAttributes,
         changeMachineGeneralAttributes,
         errors,

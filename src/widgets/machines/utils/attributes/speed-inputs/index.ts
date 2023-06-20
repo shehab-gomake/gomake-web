@@ -24,6 +24,11 @@ import {framingFixedFrameMachine} from "@/widgets/machines/utils/attributes/spee
 import {customFrameMachine} from "@/widgets/machines/utils/attributes/speed-inputs/custom-frame-machine";
 import {linkageMachine} from "@/widgets/machines/utils/attributes/speed-inputs/linkage-machine";
 import {PVCBendingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/PVC-bending-machine";
+import {collectorMachine} from "@/widgets/machines/utils/attributes/speed-inputs/collector-machine";
+import {bookletMachine} from "@/widgets/machines/utils/attributes/speed-inputs/booklet-machine";
+import {bookBinderMachine} from "@/widgets/machines/utils/attributes/speed-inputs/book-binder-machine";
+import {bookSewingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/book-sewing-machine";
+import {spiralClosingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/spiral-closing-machine";
 
 
 const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) => {
@@ -78,6 +83,16 @@ const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) 
             return linkageMachine(state);
         case ECategoryId.PVC_BENDING_MACHINE:
             return PVCBendingMachine(state);
+        case ECategoryId.COLLECTOR:
+            return collectorMachine(state);
+        case ECategoryId.BOOKLET_MACHINE:
+            return bookletMachine(state);
+        case ECategoryId.BOOKS_BINDER_MACHINE:
+            return bookBinderMachine(state);
+        case ECategoryId.BOOKS_SEWING_MACHINE:
+            return bookSewingMachine(state);
+        case ECategoryId.SPIRAL_CLOSING_MACHINE:
+            return spiralClosingMachine(state);
         default:
             return [];
     }
