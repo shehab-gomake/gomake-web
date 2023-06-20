@@ -137,6 +137,7 @@ const useProfits = () => {
     setSnackbarStateValue,
     getActionExceptionProfitRowByActionExceptionId,
     getTestProducts,
+    setTabelPricingHeaders,
   });
 
   const { istimeOutForProductsTest } = useProfitsEffects({

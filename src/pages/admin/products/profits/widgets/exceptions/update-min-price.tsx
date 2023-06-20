@@ -46,7 +46,7 @@ const UpdateMinPrice = ({ minValue, profitsStateValue }: any) => {
       autoFocus={true}
     />
   ) : (
-    <div onClick={() => setIsUpdate(true)}>{`${minPrice || 0}`}$</div>
+    <div onClick={() => setIsUpdate(true)}>{`${minPrice || 0}`}</div>
   );
 };
 export { UpdateMinPrice };

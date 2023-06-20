@@ -45,17 +45,20 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
                           paddingRight: 22,
                         }}
                       >
-                        <div style={{ width: "25%" }}>
+                        <div style={clasess.rowHeader}>
                           {t("products.profits.exceptions.type")}
                         </div>
-                        <div style={{ width: "25%" }}>
+
+                        <div style={clasess.rowHeader}>
                           {" "}
                           {t("products.profits.exceptions.parameter")}
                         </div>
-                        <div style={{ width: "25%" }}>
+
+                        <div style={clasess.rowHeader}>
                           {t("products.profits.exceptions.value")}
                         </div>
-                        <div style={{ width: "25%" }}>
+
+                        <div style={clasess.rowHeader}>
                           {t("products.profits.exceptions.scopeOfChange")}
                         </div>
                       </div>

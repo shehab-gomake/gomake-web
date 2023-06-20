@@ -177,6 +177,9 @@ export default function Profits() {
   const [actionExceptionProfitIdValue, setactionExceptionProfitId] =
     useRecoilState<any>(actionExceptionProfitId);
 
+  useEffect(() => {
+    console.log("A");
+  });
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
@@ -186,7 +189,7 @@ export default function Profits() {
           <div
             style={{
               display: "flex",
-              gap: 50,
+              // gap: 50,
               flexDirection: "column",
               width: "100%",
             }}
@@ -224,7 +227,7 @@ export default function Profits() {
                 </div>
               </div>
             )}
-            <div style={{ maxWidth: 600, maxHeight: 300 }}>
+            <div style={{ maxWidth: 600, maxHeight: 300, marginTop: 50 }}>
               <LineChart />
             </div>
           </div>
