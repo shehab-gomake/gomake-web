@@ -37,9 +37,10 @@ export default function SheetPaper() {
     anchorEl,
     sheetCheckStore,
     modalTitle,
+    selectedSupplier,
+    getSheetAllWeights,
     setSheetCheckStore,
     setSelectedMaterials,
-    setSelectedSupplier,
     onClickAddNewSupplier,
     setShowSupplierModal,
     onClickAddSupplier,
@@ -57,6 +58,7 @@ export default function SheetPaper() {
     handleClose,
     updateToInActive,
     updateToActive,
+    onChangeSelectedSupplier,
   } = useSheetPaper();
   const Side = () => (
     <SideList
@@ -77,6 +79,7 @@ export default function SheetPaper() {
               style={clasess.dropDownStyle}
               options={sheetStore?.suppliers}
               placeholder={t("materials.sheetPaper.selectSupplier")}
+              onChange={(e: any, value: any) => onChangeSelectedSupplier(value)}
               renderOption={(props: any, option: any) => {
                 if (option.label === t("materials.sheetPaper.addNew")) {
                   return (
@@ -173,6 +176,10 @@ export default function SheetPaper() {
                                 key={index2}
                                 index2={index2}
                                 size={size}
+                                row={row}
+                                selectedMaterials={selectedMaterials}
+                                selectedSupplier={selectedSupplier}
+                                getSheetAllWeights={getSheetAllWeights}
                               />
                             );
                           })}
@@ -188,7 +195,6 @@ export default function SheetPaper() {
           showSupplierModal={showSupplierModal}
           setShowSupplierModal={setShowSupplierModal}
           suppliers={suppliers}
-          setSelectedSupplier={setSelectedSupplier}
           onClickAddSupplier={onClickAddSupplier}
         />
         <UpdatePricePerTonModal
