@@ -42,7 +42,6 @@ const ContactWidget = ({
       {items?.length > 0 ? (
         <>
           {items?.map((item: any, index: number) => {
-            console.log("item", item);
             return (
               <div style={clasess.mainContainer}>
                 {isContactID && (
