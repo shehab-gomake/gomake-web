@@ -22,7 +22,7 @@ import {DashboardActions} from "@/store";
 
 const DashboardWidget = ({}: IDashboardWidget) => {
     const INTERVAL_TIMEOUT = 2 * 60 * 1000;
-    const {machines, addMachineProgress} = useGomakeMachines();
+    const {machines, addMachineProgress, getCheckedMachines} = useGomakeMachines();
     const [tasksFilter, setTasksFilter] = useState<string>('');
     const selectedClient = useRecoilValue(selectedClientIdState);
     const clients = useRecoilValue(clientsState);
@@ -78,7 +78,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
         setTasksFilter(value);
     }
     const usedMachines = useCallback(() => {
-        return machines.filter((machine: IMachine) => {
+        return getCheckedMachines().filter((machine: IMachine) => {
             for (const board of getFilteredBoardsMissions()) {
                 if (board.machinesStatuses[machine.id]) {
                     return true;
