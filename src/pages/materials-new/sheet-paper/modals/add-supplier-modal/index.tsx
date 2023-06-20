@@ -6,16 +6,18 @@ import {
 } from "@/components";
 
 import { useStyle } from "./style";
+import { useRecoilState } from "recoil";
+import { sheetState } from "../../store/sheet";
 
 const AddSupplierModal = ({
   showSupplierModal,
   setShowSupplierModal,
   suppliers,
-  setSelectedSupplier,
   onClickAddSupplier,
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
+  const [sheetStore, setSheetStore] = useRecoilState<any>(sheetState);
 
   return (
     <>
@@ -32,7 +34,10 @@ const AddSupplierModal = ({
                 placeholder={t("materials.sheetPaper.selectASupplier")}
                 options={suppliers}
                 onChange={(value: any, item: any) => {
-                  setSelectedSupplier(item?.value);
+                  setSheetStore({
+                    ...sheetStore,
+                    selectedSupplier: item?.value,
+                  });
                 }}
               />
               <GomakePrimaryButton
