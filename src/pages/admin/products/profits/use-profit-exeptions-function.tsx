@@ -46,7 +46,9 @@ const useProfitsExeptionsFunction = ({
 
   const { t } = useTranslation();
 
-  const [selectedExceptionProfit, setSelectedExceptionProfit] = useState();
+  const [selectedExceptionProfit, setSelectedExceptionProfit] = useState<any>(
+    {}
+  );
   const [editPriceListStateValue, setEditPriceListState] =
     useRecoilState<any>(editPriceListState);
 
@@ -128,6 +130,7 @@ const useProfitsExeptionsFunction = ({
         });
         getActionProfits();
         onCloseDeleteExceptionProfitModal();
+        onCloseUpdateExceptionModal();
       } else {
         setSnackbarStateValue({
           state: true,
@@ -140,12 +143,27 @@ const useProfitsExeptionsFunction = ({
   );
 
   const [openAddExceptionModal, setOpenAddExceptionModal] = useState(false);
+  const [selectedProfitException, setSelectedProfitException] = useState<any>(
+    {}
+  );
 
   const onCloseAddExceptionModal = () => {
     setOpenAddExceptionModal(false);
   };
   const onOpenAddExceptionModal = () => {
     setOpenAddExceptionModal(true);
+  };
+
+  const [openUpdateExceptionModal, setOpenUpdateExceptionModal] =
+    useState(false);
+
+  const onCloseUpdateExceptionModal = () => {
+    setOpenUpdateExceptionModal(false);
+    setSelectedProfitException({});
+  };
+  const onOpenUpdateExceptionModal = (item: any) => {
+    setOpenUpdateExceptionModal(true);
+    setSelectedProfitException(item);
   };
 
   const [actionProfitPricingTableRows, setActionProfitPricingTableRows] =
@@ -304,7 +322,21 @@ const useProfitsExeptionsFunction = ({
       });
     }
   }, [pricingListRowState, actionExceptionProfitIdValue]);
-
+  const updateException = async () => {
+    console.log("selectedProfitException", selectedProfitException);
+    const res = await callApi(
+      "PUT",
+      `/v1/printhouse-config/profits/update-exception-profit`,
+      {
+        actionProfitId: actionProfits?.id,
+        ...(state.additionalProfit && {
+          additionalProfit: state.additionalProfit,
+        }),
+        exceptionType: state.exceptionType,
+        id: selectedProfitException.id,
+      }
+    );
+  };
   const addedNewException = useCallback(async () => {
     let newState = { ...state };
     delete newState?.priceListParameter;
@@ -437,6 +469,7 @@ const useProfitsExeptionsFunction = ({
     onCloseDeleteExceptionProfitModal,
     onClickSaveNewActionExceptionProfitRow,
     addedNewException,
+    updateException,
     setPricingListRowState,
     setOpenAddQuantityModal,
     onCloseAddQuantityModal,
@@ -445,6 +478,11 @@ const useProfitsExeptionsFunction = ({
     setState,
     updateActionProfitMinPrice,
     onChangeState,
+    openUpdateExceptionModal,
+    selectedProfitException,
+    setOpenUpdateExceptionModal,
+    onCloseUpdateExceptionModal,
+    onOpenUpdateExceptionModal,
   };
 };
 

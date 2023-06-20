@@ -1134,7 +1134,9 @@
         "SelectValueNameOfParameter": "Select value name of parameter",
         "selectScopeOfChange": "Select scope of change",
         "additionalProfit": "Additional Profit",
-        "deleteExceptionProfit": "Delete Exception Profit ?"
+        "deleteExceptionProfit": "Delete Exception Profit ?",
+        "updateException": "Update exception",
+        "deleteException": "Delete exception"
       }
     },
     "actions": {

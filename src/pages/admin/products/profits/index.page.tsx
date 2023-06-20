@@ -57,6 +57,7 @@ export default function Profits() {
     setState,
     onChangeState,
     addedNewException,
+    updateException,
     onClickTestProduct,
     onChangeAddNewTestProduct,
     setOpenAddTestProductModal,
@@ -67,6 +68,11 @@ export default function Profits() {
     onChangeSelectedAction,
     onCloseAddExceptionModal,
     onOpenAddExceptionModal,
+    selectedProfitException,
+    openUpdateExceptionModal,
+    setOpenUpdateExceptionModal,
+    onCloseUpdateExceptionModal,
+    onOpenUpdateExceptionModal,
     t,
   } = useProfits();
   useEffect(() => {
@@ -108,6 +114,7 @@ export default function Profits() {
       setState,
       onChangeState,
       addedNewException,
+      updateException,
       onClickTestProduct,
       onChangeAddNewTestProduct,
       setOpenAddTestProductModal,
@@ -118,6 +125,11 @@ export default function Profits() {
       onChangeSelectedAction,
       onCloseAddExceptionModal,
       onOpenAddExceptionModal,
+      selectedProfitException,
+      openUpdateExceptionModal,
+      setOpenUpdateExceptionModal,
+      onCloseUpdateExceptionModal,
+      onOpenUpdateExceptionModal,
       t,
     });
   }, [
@@ -161,6 +173,7 @@ export default function Profits() {
     setState,
     onChangeState,
     addedNewException,
+    updateException,
     onClickTestProduct,
     onChangeAddNewTestProduct,
     setOpenAddTestProductModal,
@@ -171,6 +184,11 @@ export default function Profits() {
     onChangeSelectedAction,
     onCloseAddExceptionModal,
     onOpenAddExceptionModal,
+    selectedProfitException,
+    openUpdateExceptionModal,
+    setOpenUpdateExceptionModal,
+    onCloseUpdateExceptionModal,
+    onOpenUpdateExceptionModal,
     t,
   ]);
 

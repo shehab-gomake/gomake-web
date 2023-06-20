@@ -61,7 +61,7 @@ const useProfitsGetData = () => {
     await getAndSetActions(callApi, setAllActions);
   }, []);
   const getParameters = useCallback(async () => {
-    await getAndSetParameters(callApi, setParametersState);
+    return await getAndSetParameters(callApi, setParametersState);
   }, []);
 
   const getClientTypes = useCallback(async () => {
@@ -81,7 +81,7 @@ const useProfitsGetData = () => {
       machincesStateValue,
       productsStateValue,
       clientTypesStateValue,
-      parametersStateValue,
+      await getParameters(),
       {
         actionId: selectedAction?.id,
         selectTestDataVal,
