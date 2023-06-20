@@ -113,6 +113,8 @@ const getAndSetActionProfitRowByActionId = async (
       //   />
       // ),
       id: item?.id,
+      recordID: item?.recordID,
+      item,
       selectedAdditional: item?.additionalProfit,
       exceptionTypeValue:
         item?.exceptionType === 0

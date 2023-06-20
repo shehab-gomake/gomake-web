@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
 import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
+import { actionExceptionProfitId } from "@/store";
 
 export const renderProfits = (item: any, data: any = {}) => {
   const cost = item?.cost || 0;
@@ -45,6 +46,7 @@ const useProfitsAction = ({
   setSnackbarStateValue,
   getActionExceptionProfitRowByActionExceptionId,
   getTestProducts,
+  setTabelPricingHeaders,
 }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -55,8 +57,21 @@ const useProfitsAction = ({
   const setActionProfitPricingTableRows = useSetRecoilState<any>(
     actionProfitPricingTableRowsState
   );
+  const setActionExceptionProfitIdValue = useSetRecoilState<any>(
+    actionExceptionProfitId
+  );
+
   const onCklickActionProfitTestResultsByActionId = useCallback(
     async (productId: string, productName: string) => {
+      setActionExceptionProfitIdValue("");
+      setTabelPricingHeaders([
+        t("products.profits.pricingListWidget.cost"),
+        t("products.profits.pricingListWidget.profit"),
+        t("products.profits.pricingListWidget.testQuantity"),
+        t("products.profits.pricingListWidget.unitPrice"),
+        t("products.profits.pricingListWidget.totalPrice"),
+        t("products.profits.pricingListWidget.more"),
+      ]);
       setActionProfitPricingTableRows("");
       const selectTestDataVal =
         await getAndSetGetActionProfitTestResultsByActionId(

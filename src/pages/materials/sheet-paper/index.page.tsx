@@ -29,7 +29,7 @@ export default function SheetPaper() {
         onChangeCategory={onChangeCategory}
         onChangeSupplier={onChangeSupplier}
       />
-      <Table tableHeaders={headerTable} tableRows={allWeights} />
+      {/* <Table tableHeaders={headerTable} tableRows={allWeights} /> */}
     </CustomerAuthLayout>
   );
 }

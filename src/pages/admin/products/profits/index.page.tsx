@@ -57,6 +57,7 @@ export default function Profits() {
     setState,
     onChangeState,
     addedNewException,
+    updateException,
     onClickTestProduct,
     onChangeAddNewTestProduct,
     setOpenAddTestProductModal,
@@ -67,6 +68,11 @@ export default function Profits() {
     onChangeSelectedAction,
     onCloseAddExceptionModal,
     onOpenAddExceptionModal,
+    selectedProfitException,
+    openUpdateExceptionModal,
+    setOpenUpdateExceptionModal,
+    onCloseUpdateExceptionModal,
+    onOpenUpdateExceptionModal,
     t,
   } = useProfits();
   useEffect(() => {
@@ -108,6 +114,7 @@ export default function Profits() {
       setState,
       onChangeState,
       addedNewException,
+      updateException,
       onClickTestProduct,
       onChangeAddNewTestProduct,
       setOpenAddTestProductModal,
@@ -118,6 +125,11 @@ export default function Profits() {
       onChangeSelectedAction,
       onCloseAddExceptionModal,
       onOpenAddExceptionModal,
+      selectedProfitException,
+      openUpdateExceptionModal,
+      setOpenUpdateExceptionModal,
+      onCloseUpdateExceptionModal,
+      onOpenUpdateExceptionModal,
       t,
     });
   }, [
@@ -161,6 +173,7 @@ export default function Profits() {
     setState,
     onChangeState,
     addedNewException,
+    updateException,
     onClickTestProduct,
     onChangeAddNewTestProduct,
     setOpenAddTestProductModal,
@@ -171,12 +184,20 @@ export default function Profits() {
     onChangeSelectedAction,
     onCloseAddExceptionModal,
     onOpenAddExceptionModal,
+    selectedProfitException,
+    openUpdateExceptionModal,
+    setOpenUpdateExceptionModal,
+    onCloseUpdateExceptionModal,
+    onOpenUpdateExceptionModal,
     t,
   ]);
 
   const [actionExceptionProfitIdValue, setactionExceptionProfitId] =
     useRecoilState<any>(actionExceptionProfitId);
 
+  useEffect(() => {
+    console.log("A");
+  });
   return (
       <div style={clasess.mainContainer}>
         <HeaderTitle title={t("products.profits.admin.title")} />
@@ -185,7 +206,7 @@ export default function Profits() {
           <div
             style={{
               display: "flex",
-              gap: 50,
+              // gap: 50,
               flexDirection: "column",
               width: "100%",
             }}
@@ -223,7 +244,7 @@ export default function Profits() {
                 </div>
               </div>
             )}
-            <div style={{ maxWidth: 600, maxHeight: 300 }}>
+            <div style={{ maxWidth: 600, maxHeight: 300, marginTop: 50 }}>
               <LineChart />
             </div>
           </div>

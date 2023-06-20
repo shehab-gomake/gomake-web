@@ -2,7 +2,6 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 
 const Row = ({ row, width, tablePercent, index }: any) => {
-  console.log("index: " + index);
   const { clasess } = useStyle({ width, index, tablePercent });
   const { t } = useTranslation();
   return (

@@ -104,7 +104,7 @@ const useStyle = () => {
         height: 40,
       },
       addNewException: {
-        width: "100%",
+        width: "fit-content",
         ...FONT_FAMILY.Lexend(500, 14),
         fontStyle: "normal",
         letterSpacing: "-0.01em",
@@ -126,6 +126,11 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "space-between",
+      },
+      rowHeader: {
+        width: "25%",
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: primaryColor(900),
       },
     };
   }, []);

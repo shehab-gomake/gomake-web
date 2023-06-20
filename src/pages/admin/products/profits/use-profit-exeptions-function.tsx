@@ -13,6 +13,7 @@ import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
 import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
 import { productTestState } from "@/store/product-test";
 import { chartDataByActionProfitRow } from "@/store";
+import { profitsState } from "./store/profits";
 
 const useProfitsExeptionsFunction = ({
   getActionExceptionProfitRowByActionExceptionId,
@@ -46,7 +47,9 @@ const useProfitsExeptionsFunction = ({
 
   const { t } = useTranslation();
 
-  const [selectedExceptionProfit, setSelectedExceptionProfit] = useState();
+  const [selectedExceptionProfit, setSelectedExceptionProfit] = useState<any>(
+    {}
+  );
   const [editPriceListStateValue, setEditPriceListState] =
     useRecoilState<any>(editPriceListState);
 
@@ -128,6 +131,7 @@ const useProfitsExeptionsFunction = ({
         });
         getActionProfits();
         onCloseDeleteExceptionProfitModal();
+        onCloseUpdateExceptionModal();
       } else {
         setSnackbarStateValue({
           state: true,
@@ -140,12 +144,27 @@ const useProfitsExeptionsFunction = ({
   );
 
   const [openAddExceptionModal, setOpenAddExceptionModal] = useState(false);
+  const [selectedProfitException, setSelectedProfitException] = useState<any>(
+    {}
+  );
 
   const onCloseAddExceptionModal = () => {
     setOpenAddExceptionModal(false);
   };
   const onOpenAddExceptionModal = () => {
     setOpenAddExceptionModal(true);
+  };
+
+  const [openUpdateExceptionModal, setOpenUpdateExceptionModal] =
+    useState(false);
+
+  const onCloseUpdateExceptionModal = () => {
+    setOpenUpdateExceptionModal(false);
+    setSelectedProfitException({});
+  };
+  const onOpenUpdateExceptionModal = (item: any) => {
+    setOpenUpdateExceptionModal(true);
+    setSelectedProfitException(item);
   };
 
   const [actionProfitPricingTableRows, setActionProfitPricingTableRows] =
@@ -157,13 +176,6 @@ const useProfitsExeptionsFunction = ({
       selectedAdditional: number,
       exceptionTypeValue: string
     ) => {
-      console.log("exceptionTypeValue", {
-        id,
-        selectedAdditional,
-        exceptionTypeValue,
-        actionExceptionProfitIdValue,
-      });
-
       if (actionExceptionProfitIdValue?.id == id) {
         setActionExceptionProfitRows("");
         setactionExceptionProfitId({});
@@ -304,7 +316,30 @@ const useProfitsExeptionsFunction = ({
       });
     }
   }, [pricingListRowState, actionExceptionProfitIdValue]);
+  // const profitsStateValue = useRecoilValue<any>(profitsState);
+  const updateException = async () => {
+    const res = await callApi(
+      "PUT",
+      `/v1/printhouse-config/profits/update-exception-profit`,
+      {
+        ...selectedProfitException.item,
+        ...(state.additionalProfit && {
+          additionalProfit: state.additionalProfit,
+        }),
+        exceptionType: state.exceptionType,
+      }
+    );
 
+    if (res?.success) {
+      await getActionProfits(false);
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+      onCloseUpdateExceptionModal();
+    }
+  };
   const addedNewException = useCallback(async () => {
     let newState = { ...state };
     delete newState?.priceListParameter;
@@ -343,12 +378,6 @@ const useProfitsExeptionsFunction = ({
               //New Display Data
 
               ...renderProfits(item),
-              // testFinalPrice: item?.testFinalPrice?.toFixed(2) || "0",
-
-              // meterPrice: item?.meterPrice,
-              // expMeter: item?.expMeter,
-              // price: item?.price,
-              // totalPrice: item?.totalPrice,
               more: <PricingListMenuWidget item={item} />,
               id: item?.id,
               recordID: item?.recordID,
@@ -437,6 +466,7 @@ const useProfitsExeptionsFunction = ({
     onCloseDeleteExceptionProfitModal,
     onClickSaveNewActionExceptionProfitRow,
     addedNewException,
+    updateException,
     setPricingListRowState,
     setOpenAddQuantityModal,
     onCloseAddQuantityModal,
@@ -445,6 +475,11 @@ const useProfitsExeptionsFunction = ({
     setState,
     updateActionProfitMinPrice,
     onChangeState,
+    openUpdateExceptionModal,
+    selectedProfitException,
+    setOpenUpdateExceptionModal,
+    onCloseUpdateExceptionModal,
+    onOpenUpdateExceptionModal,
   };
 };
 

@@ -68,11 +68,14 @@
   "materials": {
     "inputs": {
       "categoryName": "Category name",
+      "update": "Update",
       "weight": "Weight",
       "enterWeight": "Enter Weight",
       "name": "Name",
       "enterName": "Enter Name",
       "thickness": "Thickness",
+      "unitTon": "cost ($) per unit/ton",
+      "directions": "Directions",
       "enterThickness": "Enter Thickness",
       "index": "Index",
       "enterIndex": "Enter Index",
@@ -151,7 +154,8 @@
       "defaultPricePerContainer": "Default price per container",
       "enterDefaultPricePerContainer": "Enter default price per container",
       "coldOrHot": "Cold or hot",
-      "enterColdOrHot": "Enter cold or hot"
+      "enterColdOrHot": "Enter cold or hot",
+      "currency": "Currency"
     },
     "buttons": {
       "cancel": "Cancel",
@@ -187,7 +191,7 @@
       "selectSupplier": "Select supplier",
       "unitPrice": "Unit Price",
       "pricePerUnit": "price per unit",
-      "selectCurrency": "Select currency",
+      "selectCurrency": "Select Currency",
       "selectDirection": "Select direction",
       "currency": "Currency",
       "direction": "Direction",
@@ -196,7 +200,24 @@
       "code": "Code",
       "growingUp": "Growing Up",
       "stock": "Stock",
-      "sizesAndPrices": "Sizes and Prices"
+      "sizesAndPrices": "Sizes and Prices",
+      "chooseCategory": "Choose Category",
+      "addNew": "Add new",
+      "addNewSupplier": "Add new Supplier",
+      "supplierAddedSheetYet": "There is supplier added to this sheet yet, ",
+      "pleaseAddNow": "Please add new one now.",
+      "selectASupplier": "Select a Supplier",
+      "addSupplier": "Add Supplier",
+      "updatePricePerTon": "Update Price Per Ton",
+      "updateUnitPrice": "Update Unit Price",
+      "addPercentToPrice": "Add Percent To Price",
+      "enterPrice": "Enter Price",
+      "updateCurrency": "Update Currency",
+      "updatePricePerTonMenu": "Update Price per ton",
+      "updateUnitPriceMenu": "Update unit price",
+      "addPrecentToPriceMenu": "Add Precent to price",
+      "changeToActiveMenu": "Change to Active",
+      "changeToInActiveMenu": "Change to InActive"
     },
     "lamination": {
       "admin": {
@@ -1014,7 +1035,6 @@
     "rolls": "Rolls",
     "flatbeds": "Flatbeds",
     "pvc": "PVC"
-
   },
   "currency": {
     "dollar": "Dollar",
@@ -1114,7 +1134,9 @@
         "SelectValueNameOfParameter": "Select value name of parameter",
         "selectScopeOfChange": "Select scope of change",
         "additionalProfit": "Additional Profit",
-        "deleteExceptionProfit": "Delete Exception Profit ?"
+        "deleteExceptionProfit": "Delete Exception Profit ?",
+        "updateException": "Update exception",
+        "deleteException": "Delete exception"
       }
     },
     "actions": {

@@ -1,6 +1,6 @@
 import { IProps } from "./interfaces";
 import { useStyle } from "./style";
-import { Skeleton } from "@mui/material";
+import { IconButton, Skeleton } from "@mui/material";
 import { Header } from "./header";
 import { Row } from "./row";
 import { Plus } from "./icons/plus";
@@ -12,6 +12,8 @@ import { actionExceptionProfitId, actionProfitLists } from "@/store";
 import { UpdateMinPrice } from "./update-min-price";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { EditIcon } from "@/icons";
+import { UpdateExceptionModal } from "../update-exception-modal";
 
 const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
   const { clasess } = useStyle();
@@ -22,6 +24,8 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
     actionExceptionProfitId
   );
   const { t } = useTranslation();
+
+  console.log("tableRows", tableRows);
 
   return (
     <>
@@ -45,17 +49,20 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
                           paddingRight: 22,
                         }}
                       >
-                        <div style={{ width: "25%" }}>
+                        <div style={clasess.rowHeader}>
                           {t("products.profits.exceptions.type")}
                         </div>
-                        <div style={{ width: "25%" }}>
+
+                        <div style={clasess.rowHeader}>
                           {" "}
                           {t("products.profits.exceptions.parameter")}
                         </div>
-                        <div style={{ width: "25%" }}>
+
+                        <div style={clasess.rowHeader}>
                           {t("products.profits.exceptions.value")}
                         </div>
-                        <div style={{ width: "25%" }}>
+
+                        <div style={clasess.rowHeader}>
                           {t("products.profits.exceptions.scopeOfChange")}
                         </div>
                       </div>
@@ -72,9 +79,11 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
                               marginTop: 5,
                               paddingLeft: 22,
                               paddingRight: 22,
+                              display: "flex",
                             }
                           : {
                               width: "100%",
+                              display: "flex",
                               marginTop: 5,
                               paddingLeft: 22,
                               paddingRight: 22,
@@ -113,6 +122,7 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
           </div>
         </div>
       </div>
+      <UpdateExceptionModal />
       <AddExceptionModal />
     </>
   );
