@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="18fd1f4d-b7c9-4bff-a841-9b7a912d55b2" name="Changes" comment="fix get all boards missions - button place">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_2023_11_19__Changes_.xml" afterDir="false" />
+    <list default="true" id="18fd1f4d-b7c9-4bff-a841-9b7a912d55b2" name="Changes" comment="hide unchecked machine from table">
+      <change afterPath="$PROJECT_DIR$/src/store/boards-missions-status-filter.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/dashboard-widget.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/dashboard-widget.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/dashboard-card/dashboard-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/dashboard-card/dashboard-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/dashboard-card/interface.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/dashboard-card/interface.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/dashboard-card/style.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/dashboard-card/style.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/cards/cards.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/cards/cards.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/widgets/dashboard-widget/table/table.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,22 +46,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Thinkpad1/WebstormProjects/gomake-web&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\Thinkpad1\\WebstormProjects\\gomake-web\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/Users/Thinkpad1/WebstormProjects/gomake-web/src/store",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "C:\\Users\\Thinkpad1\\WebstormProjects\\gomake-web\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Thinkpad1\WebstormProjects\gomake-web\src\store" />
       <recent name="C:\Users\Thinkpad1\WebstormProjects\gomake-web\src\components\modal" />
     </key>
   </component>
@@ -177,7 +182,14 @@
       <option name="project" value="LOCAL‎" />
       <updated>1686149071073</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL‎-00015" summary="hide unchecked machine from table">
+      <created>1687275335726</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL‎-00015" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1687275335726</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -209,6 +221,7 @@
     <MESSAGE value="split order current station" />
     <MESSAGE value="get all boards missions" />
     <MESSAGE value="fix get all boards missions - button place" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix get all boards missions - button place" />
+    <MESSAGE value="hide unchecked machine from table" />
+    <option name="LAST_COMMIT_MESSAGE" value="hide unchecked machine from table" />
   </component>
 </project>

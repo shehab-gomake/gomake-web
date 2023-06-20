@@ -10,11 +10,14 @@ import {Link} from "@mui/material";
 import {useCallback, useState} from "react";
 import {EStatus} from "@/shared";
 import {getPrintHouseHost} from "@/services/storage-data";
+import {useRecoilValue} from "recoil";
+import {boardsMissionsStatusFilterState} from "@/store/boards-missions-status-filter";
 
 const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
     const [orderByMachine, setOrderByMachine] = useState<string>('');
+    const selectedStatusFilter = useRecoilValue(boardsMissionsStatusFilterState);
     const boardLink = (boardMissions: IBoardMissions): string => {
         const host = getPrintHouseHost();
         return `https://${host}/Kanban/Board/${boardMissions.boardId}?missionId=${boardMissions.id}`;
@@ -36,15 +39,15 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
         }
     }
     const boards = useCallback(() => {
-        let boards = [...boardsMissions];
+        let boards = selectedStatusFilter ? [...boardsMissions.filter(board => board.status === selectedStatusFilter)] : [...boardsMissions];
         if (orderByMachine) {
             boards = boards.sort((board1: IBoardMissions, board2: IBoardMissions) => {
                 return hasMachine(board1) - hasMachine(board2)
             });
             return boards
         }
-        return boardsMissions;
-    }, [orderByMachine, boardsMissions]);
+        return boards;
+    }, [orderByMachine, boardsMissions, selectedStatusFilter]);
 
     const handleMachineClicked = (machineId: string) => {
         setOrderByMachine(machineId === orderByMachine ? '' : machineId);

@@ -1,5 +1,6 @@
 
 import React from "react";
+import {EStatus} from "@/shared";
 
 export interface IDashboardCard {
     label: string;
@@ -7,5 +8,6 @@ export interface IDashboardCard {
     bgColor: string;
     children?: React.ReactElement;
     progressValue?: number;
-    withProgressBar?: boolean
+    withProgressBar?: boolean;
+    status?: EStatus;
 }

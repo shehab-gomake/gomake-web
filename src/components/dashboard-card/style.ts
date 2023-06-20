@@ -1,7 +1,7 @@
 import {useMemo} from "react";
 import {FONT_FAMILY} from "@/utils/font-family";
 
-const useStyle = (bgColor: string) => {
+const useStyle = (bgColor: string, selected: boolean) => {
     const classes = useMemo(() => {
         return {
             container: {
@@ -10,6 +10,8 @@ const useStyle = (bgColor: string) => {
                 borderRadius: '16px',
                 padding: '20px 20px 5px 20px',
                 backgroundColor: bgColor,
+                cursor: 'pointer',
+                opacity: selected ? 0.5 : 1
             },
             label: {
                ...FONT_FAMILY.Poppins(500, 40),
@@ -43,7 +45,7 @@ const useStyle = (bgColor: string) => {
             }
 
         };
-    }, []);
+    }, [selected]);
     return {
         classes,
     };
