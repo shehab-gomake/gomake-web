@@ -105,7 +105,7 @@ const useStyle = () => {
         gap: 20,
       },
       addNewQuantity: {
-        width: "100%",
+        width: "fit-content",
         ...FONT_FAMILY.Lexend(500, 14),
         fontStyle: "normal",
         lineHeight: "18px",
