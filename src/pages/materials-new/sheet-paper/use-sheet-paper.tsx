@@ -15,15 +15,15 @@ const useSheetPaper = () => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const { suppliers, getSupplier } = useSupplier();
+
   const [sheetStore, setSheetStore] = useRecoilState<any>(sheetState);
   const [sheetCheckStore, setSheetCheckStore] =
     useRecoilState(sheetCheckAllState);
+
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [selectedMaterials, setSelectedMaterials] = useState<any>("");
-  // const [selectedSupplier, setSelectedSupplier] = useState<any>("");
   const [sheetCategories, setSheetCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
-  const [supplierId, setSupplierId] = useState(undefined);
   const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
 
   const [actionType, setActionType] = useState(0);
@@ -31,6 +31,7 @@ const useSheetPaper = () => {
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
   const [isUpdateCurrency, setIsUpdateCurrency] = useState(false);
   const [data, setData] = useState();
+
   const [modalTitle, setModalTitle] = useState("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -202,7 +203,7 @@ const useSheetPaper = () => {
     if (!categoryName) {
       setCategoryName(data[0]);
     }
-  }, [categoryName, supplierId]);
+  }, [categoryName]);
 
   const onClickAddNewSupplier = () => {
     setShowSupplierModal(true);
