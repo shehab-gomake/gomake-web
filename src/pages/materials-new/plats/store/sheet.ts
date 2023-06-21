@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
 export const sheetState = atom({
-  key: "sheetEncapsulationState",
+  key: "platsState",
   default: { suppliers: [], selectedSupplier: "" },
 });
