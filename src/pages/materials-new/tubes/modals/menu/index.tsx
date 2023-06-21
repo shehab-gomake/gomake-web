@@ -27,12 +27,7 @@ const SettingsMenuModal = ({
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem onClick={onOpenUpdatePricePerTon}>
-          {t("materials.sheetPaper.updatePricePerTonMenu")}
-        </MenuItem>
-        <MenuItem onClick={onOpenUpdateUnitPrice}>
-          {t("materials.sheetPaper.updateUnitPriceMenu")}
-        </MenuItem>
+        <MenuItem onClick={onOpenAddPercentToPrice}>Update Price</MenuItem>
         <MenuItem onClick={onOpenAddPercentToPrice}>
           {t("materials.sheetPaper.addPrecentToPriceMenu")}
         </MenuItem>
