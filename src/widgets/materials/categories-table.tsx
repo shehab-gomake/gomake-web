@@ -77,7 +77,7 @@ const CategoriesTable = () => {
       {
         key: "hardboards",
         title: t("tabs.hardboards"),
-        path: "/materials/hardboards",
+        path: "/materials-new/hardboards",
       },
       {
         key: "wildPrintingMaterials",
