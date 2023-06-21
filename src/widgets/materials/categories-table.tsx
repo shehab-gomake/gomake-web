@@ -92,7 +92,7 @@ const CategoriesTable = () => {
       {
         key: "applications",
         title: t("tabs.applications"),
-        path: "/materials/applications",
+        path: "/materials-new/applications",
       },
       {
         key: "encapsulationRoll",

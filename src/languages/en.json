@@ -160,7 +160,9 @@
       "pricePerSquareMeter": "Price/meter^2",
       "weightPerSquareMeter": "Weight/meter^2",
       "pricePerDrum": "Price/drum",
-      "pricePerRoll": "Price/roll"
+      "pricePerRoll": "Price per roll",
+      "updatePricePerRoll": "Update Price Per Roll",
+      "updatePricePerSquareMeter": "Update price Per Square Meter"
     },
     "buttons": {
       "cancel": "Cancel",

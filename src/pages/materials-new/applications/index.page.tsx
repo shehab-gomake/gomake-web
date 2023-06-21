@@ -15,10 +15,10 @@ import { AddSupplierModal } from "./modals/add-supplier-modal";
 import { HeaderTableWidget } from "./widgets/header-table";
 import { SheetSizesWidget } from "./widgets/sheet-sizes";
 import { SettingsMenuModal } from "./modals/menu";
-import { useEnvelopes } from "./use-envelopes";
+import { useApplications } from "./use-applications";
 import { useStyle } from "./style";
 
-export default function Envelopes() {
+export default function Applications() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
 
@@ -49,7 +49,8 @@ export default function Envelopes() {
     setData,
     handleClick,
     onOpenUpdateCurrency,
-    onOpenUpdatePrice,
+    onOpenUpdatePricePerSquareMeter,
+    onOpenUpdatePricePerRoll,
     onOpenAddPercentToPrice,
     handleCheckboxChange,
     updatePricePetTon,
@@ -57,7 +58,7 @@ export default function Envelopes() {
     updateToInActive,
     updateToActive,
     onChangeSelectedSupplier,
-  } = useEnvelopes();
+  } = useApplications();
   const Side = () => (
     <SideList
       list={sheetCategories}
@@ -117,7 +118,7 @@ export default function Envelopes() {
 
   return (
     <CustomerAuthLayout>
-      <MaterialsLayout header={t("materials.envelops.title")} side={Side()}>
+      <MaterialsLayout header={t("materials.applications.title")} side={Side()}>
         {renderHeader()}
         <div style={{ paddingLeft: 0 }}>
           {allWeightsGrouped.length === 0 ? (
@@ -183,7 +184,9 @@ export default function Envelopes() {
           anchorEl={anchorEl}
           open={open}
           handleClose={handleClose}
-          onOpenUpdatePrice={onOpenUpdatePrice}
+          // onOpenUpdatePrice={onOpenUpdatePrice}
+          onOpenUpdatePricePerRoll={onOpenUpdatePricePerRoll}
+          onOpenUpdatePricePerSquareMeter={onOpenUpdatePricePerSquareMeter}
           onOpenAddPercentToPrice={onOpenAddPercentToPrice}
           updateToActive={updateToActive}
           updateToInActive={updateToInActive}
