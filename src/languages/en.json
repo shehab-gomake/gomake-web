@@ -39,7 +39,7 @@
     "wildPrintingMaterials": "Wild Printing Materials",
     "profileFrames": "Profile frames",
     "applications": "Applications",
-    "encapsulationRoll": "Encapsulation roll",
+    "encapsulationRoll": "Roll Encapsulation",
     "additions": "Additions",
     "canvasFrames": "Canvas frames",
     "frames": "Frames",
@@ -531,7 +531,7 @@
         "deleteRollEncapsulationSizeTitle": "Delete roll encapsulation size",
         "deleteLRollEncapsulationSizeSubTitle": "Are you sure you want to delete roll encapsulation size?"
       },
-      "title": "Encapsulation roll",
+      "title": "Roll Encapsulation",
       "category": "Category",
       "supplier": "supplier",
       "categoryName": "Category name",

@@ -97,7 +97,7 @@ const CategoriesTable = () => {
       {
         key: "encapsulationRoll",
         title: t("tabs.encapsulationRoll"),
-        path: "/materials/encapsulation-roll",
+        path: "/materials-new/roll-encapsulations",
       },
       {
         key: "additions",
