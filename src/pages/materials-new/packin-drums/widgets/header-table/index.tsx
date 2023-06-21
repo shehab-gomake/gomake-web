@@ -18,7 +18,7 @@ const HeaderTableWidget = ({ setSheetCheckStore, sheetCheckStore, index }) => {
         />
       </div>
       <div style={clasess.weightContainer}>{t("materials.inputs.weight")}</div>
-      <div style={clasess.costsContainer}>
+      <div style={clasess.twintyContainer}>
         {t("materials.inputs.drumRingNumber")}
       </div>
       <div style={clasess.costsContainer}>{t("materials.inputs.material")}</div>

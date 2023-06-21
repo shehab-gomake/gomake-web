@@ -133,6 +133,13 @@ const useStyle = () => {
         justifyContent: "center",
         alignItems: "center",
       },
+      twintyContainer: {
+        width: "20%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+      },
       directionContainer: {
         width: "13%",
         display: "flex",

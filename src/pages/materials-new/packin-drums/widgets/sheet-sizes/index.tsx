@@ -90,7 +90,7 @@ const SheetSizesWidget = ({
         />
       </div>
       <div style={clasess.weightContainer}>{row?.weight}</div>
-      <div style={clasess.costsContainer}>{row?.drumRingNumber}</div>
+      <div style={clasess.twintyContainer}>{row?.drumRingNumber}</div>
       <div style={clasess.costsContainer}>{row?.material}</div>
       <div style={clasess.costsContainer}>{row?.pricePerDrum}</div>
       <div style={clasess.costsContainer}>{row?.size}</div>
