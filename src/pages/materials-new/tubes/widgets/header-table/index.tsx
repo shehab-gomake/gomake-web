@@ -37,30 +37,6 @@ const HeaderTableWidget = ({ setSheetCheckStore, sheetCheckStore, index }) => {
         {t("materials.sheetPaper.stock")}
       </div>
     </div>
-
-    //   <div style={index % 2 == 0 ? clasess.bodyRow : clasess.secondRow}>
-    //     <div style={clasess.sizeContainer}></div>
-    //     <div style={clasess.thiknessContainer}>
-    //
-    //     </div>
-    //     <div style={clasess.costsContainer}>
-    //
-    //     </div>
-    //     <div style={clasess.directionContainer}>
-    //
-    //     </div>
-
-    //     <div style={clasess.activeContainer}>
-    //
-    //     </div>
-    //     <div style={clasess.currencyContainer}>
-    //
-    //     </div>
-    //     <div style={clasess.stokContainer}>
-    //
-    //     </div>
-    //   </div>
-    // </div>
   );
 };
 export { HeaderTableWidget };
