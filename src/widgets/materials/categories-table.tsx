@@ -127,7 +127,7 @@ const CategoriesTable = () => {
       {
         key: "packinUnits",
         title: t("tabs.packinUnits"),
-        path: "/materials/packin-units",
+        path: "/materials-new/packin-units",
       },
       {
         key: "sheetEncapsulation",
