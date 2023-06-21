@@ -4,7 +4,7 @@ import { UpdateStockBrace } from "@/pages/materials/plats/update-stock-brace/upd
 import { ICallApi, ISetState } from "./call-api.interface";
 import { ShowSubTableForPlats } from "@/pages/materials/plats/show-sizes-list";
 
-const getAndSetBraceCategores = async (
+const getAndSetPlatsCategores = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
@@ -50,5 +50,42 @@ const getAndSetBraceSize = async (
 
   return _data;
 };
+const getAndSetPlatsSuppliers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/plats/get-supplier-by-category",
+    data
+  );
+  return returnResult(result, undefined);
+};
+const getAndSetAllPlatsSizes = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  if (data?.categoryName) {
+    const result: any = await callApi("GET", "/v1/plats/get-all-sizes", data);
+    const _data = returnResult(result, undefined);
+    const mapData = _data.map((item: any) => {
+      return {
+        ...item,
+      };
+    });
+    if (setState) {
+      setState(mapData);
+    }
 
-export { getAndSetBraceCategores, getAndSetBraceSuppliers, getAndSetBraceSize };
+    return _data;
+  }
+};
+export {
+  getAndSetPlatsCategores,
+  getAndSetBraceSuppliers,
+  getAndSetBraceSize,
+  getAndSetPlatsSuppliers,
+  getAndSetAllPlatsSizes,
+};

@@ -57,7 +57,7 @@ const CategoriesTable = () => {
       {
         key: "plats",
         title: t("tabs.plats"),
-        path: "/materials/plats",
+        path: "/materials-new/plats",
       },
       {
         key: "envelopes",
