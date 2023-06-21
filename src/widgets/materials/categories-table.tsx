@@ -132,7 +132,7 @@ const CategoriesTable = () => {
       {
         key: "sheetEncapsulation",
         title: t("tabs.sheetEncapsulation"),
-        path: "/materials/sheet-encapsulation",
+        path: "/materials-new/sheet-encapsulation",
       },
       {
         key: "colors",
