@@ -211,6 +211,7 @@
       "selectASupplier": "Select a Supplier",
       "addSupplier": "Add Supplier",
       "updatePricePerTon": "Update Price Per Ton",
+      "updatePricePerUnit": "Update Price Per Unit",
       "updatePrice": "Update Price",
       "updateUnitPrice": "Update Unit Price",
       "addPercentToPrice": "Add Percent To Price",
