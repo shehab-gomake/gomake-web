@@ -29,7 +29,12 @@ const AddExceptionModal = () => {
         onClose={profitsStateValue?.onCloseAddExceptionModal}
         insideStyle={clasess.insideStyle}
       >
-        <div style={clasess.selectTypeStyle}>
+        <div
+          style={{
+            ...clasess.selectTypeStyle,
+            boxShadow: "0px 4px 60px rgba(0, 0, 0, 0.08)",
+          }}
+        >
           {t("products.profits.exceptions.selectTypeOfException")}
         </div>
         <GoMakeAutoComplate
@@ -44,6 +49,11 @@ const AddExceptionModal = () => {
           onChange={(e: any, item: any) => {
             profitsStateValue?.setState({});
             profitsStateValue?.onChangeState("typeOfException", item?.value);
+          }}
+          style={{
+            border: "0px",
+            background: "#fff",
+            borderRadius: 4,
           }}
         />
         <div style={{ marginTop: 20 }}>
@@ -60,6 +70,11 @@ const AddExceptionModal = () => {
                   profitsStateValue?.onChangeState("machine", item);
                   profitsStateValue?.onChangeState("machineId", item?.id);
                 }}
+                style={{
+                  border: "0px",
+                  background: "#fff",
+                  borderRadius: 4,
+                }}
               />
             </div>
           ) : profitsStateValue?.state.typeOfException === "product" ? (
@@ -75,6 +90,12 @@ const AddExceptionModal = () => {
                   profitsStateValue?.onChangeState("subProduct", item);
                   profitsStateValue?.onChangeState("subProductId", item?.id);
                 }}
+                style={{
+                  border: "0px",
+                  background: "#fff",
+
+                  borderRadius: 4,
+                }}
               />
             </div>
           ) : profitsStateValue?.state.typeOfException === "client" ? (
@@ -89,6 +110,12 @@ const AddExceptionModal = () => {
                 onChange={(e: any, item: any) => {
                   profitsStateValue?.onChangeState("clientType", item);
                   profitsStateValue?.onChangeState("clientTypeId", item?.id);
+                }}
+                style={{
+                  border: "0px",
+                  background: "#fff",
+
+                  borderRadius: 4,
                 }}
               />
             </div>
@@ -107,6 +134,12 @@ const AddExceptionModal = () => {
                     "priceListParameterId",
                     item?.id
                   );
+                }}
+                style={{
+                  border: "0px",
+                  background: "#fff",
+
+                  borderRadius: 4,
                 }}
               />
               {profitsStateValue?.state?.priceListParameterId && (
@@ -133,6 +166,11 @@ const AddExceptionModal = () => {
                         "paramValueName",
                         item?.value
                       );
+                    }}
+                    style={{
+                      border: "0px",
+                      background: "#fff",
+                      borderRadius: 4,
                     }}
                   />
                 </div>
@@ -161,6 +199,11 @@ const AddExceptionModal = () => {
                       item?.value
                     );
                   }}
+                  style={{
+                    border: "0px",
+                    background: "#fff",
+                    borderRadius: 4,
+                  }}
                 />
                 {profitsStateValue?.state?.exceptionType === 0 ? (
                   <div>
@@ -170,7 +213,6 @@ const AddExceptionModal = () => {
                       </div>
                     </div>
                     <GomakeTextInput
-                      style={{ height: 40 }}
                       type="number"
                       placeholder={t(
                         "products.profits.exceptions.additionalProfit"
@@ -180,6 +222,12 @@ const AddExceptionModal = () => {
                           "additionalProfit",
                           e.target.value
                         );
+                      }}
+                      style={{
+                        border: "0px",
+                        background: "#fff",
+                        borderRadius: 4,
+                        height: 40,
                       }}
                     />
                   </div>
