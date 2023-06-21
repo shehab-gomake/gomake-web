@@ -179,32 +179,34 @@ const CategoriesTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {categoriesList.map((category) => {
-              return (
-                <StyledTableRow key={category.key}>
-                  <StyledTableCell align={"center"}>
-                    {category.title}
-                  </StyledTableCell>
-                  <StyledTableCell align={"center"}>
-                    <PrimaryButton
-                      startIcon={
-                        <EditIcon
-                          color={primaryColor(500)}
-                          width={20}
-                          height={20}
-                        />
-                      }
-                      onClick={() => {
-                        navigate(category.path);
-                      }}
-                      variant={"text"}
-                    >
-                      View
-                    </PrimaryButton>
-                  </StyledTableCell>
-                </StyledTableRow>
-              );
-            })}
+            {categoriesList
+              .filter((item: any) => item?.path?.includes("-new"))
+              .map((category) => {
+                return (
+                  <StyledTableRow key={category.key}>
+                    <StyledTableCell align={"center"}>
+                      {category.title}
+                    </StyledTableCell>
+                    <StyledTableCell align={"center"}>
+                      <PrimaryButton
+                        startIcon={
+                          <EditIcon
+                            color={primaryColor(500)}
+                            width={20}
+                            height={20}
+                          />
+                        }
+                        onClick={() => {
+                          navigate(category.path);
+                        }}
+                        variant={"text"}
+                      >
+                        View
+                      </PrimaryButton>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                );
+              })}
           </TableBody>
         </Table>
       </TableContainer>
