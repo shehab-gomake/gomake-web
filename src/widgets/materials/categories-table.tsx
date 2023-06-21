@@ -67,7 +67,7 @@ const CategoriesTable = () => {
       {
         key: "tubes",
         title: t("tabs.tubes"),
-        path: "/materials/tubes",
+        path: "/materials-new/tubes",
       },
       {
         key: "printingMaterialsForRolls",

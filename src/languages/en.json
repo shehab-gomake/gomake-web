@@ -155,7 +155,9 @@
       "enterDefaultPricePerContainer": "Enter default price per container",
       "coldOrHot": "Cold or hot",
       "enterColdOrHot": "Enter cold or hot",
-      "currency": "Currency"
+      "currency": "Currency",
+      "price": "Price",
+      "lenght": "Lenght"
     },
     "buttons": {
       "cancel": "Cancel",
