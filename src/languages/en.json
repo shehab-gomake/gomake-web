@@ -257,6 +257,7 @@
         "deleteLaminationSizetTicknessTitle": "Delete lamination size tickness",
         "deleteLaminationSizethicknessSubTitle": "Are you sure you want to delete lamination size Tickness?"
       },
+      "title": "Lamination",
       "selectSupplier": "Select supplier",
       "height": "Height",
       "width": "Width",

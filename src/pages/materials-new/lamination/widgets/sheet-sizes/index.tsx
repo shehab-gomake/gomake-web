@@ -20,7 +20,7 @@ const SheetSizesWidget = ({
   const { setSnackbarStateValue } = useSnackBar();
 
   const updateToActive = useCallback(async () => {
-    const res = await callApi("POST", `/v1/hardboards/size-id-settngs`, {
+    const res = await callApi("POST", `/v1/lamination/size-id-settngs`, {
       categoryName: selectedMaterials,
       supplierId: selectedSupplier,
       actionType: 3,
@@ -48,7 +48,7 @@ const SheetSizesWidget = ({
     }
   }, [row, selectedMaterials, selectedSupplier]);
   const updateToInActive = useCallback(async () => {
-    const res = await callApi("POST", `/v1/hardboards/size-id-settngs`, {
+    const res = await callApi("POST", `/v1/lamination/size-id-settngs`, {
       categoryName: selectedMaterials,
       supplierId: selectedSupplier,
       actionType: 4,
@@ -92,8 +92,8 @@ const SheetSizesWidget = ({
         />
       </div>
       <div style={clasess.thiknessContainer}>{row?.size}</div>
+      <div style={clasess.directionContainer}>{row?.price}</div>
       <div style={clasess.costsContainer}>{row?.pricePerRoll}</div>
-      <div style={clasess.directionContainer}>{row?.pricePerSquareMeter}</div>
       <div style={clasess.activeContainer}>{row?.thickness}</div>
       <div style={clasess.activeContainer}>
         <Switch

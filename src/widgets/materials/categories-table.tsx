@@ -52,7 +52,7 @@ const CategoriesTable = () => {
       {
         key: "lamination",
         title: t("tabs.lamination"),
-        path: "/materials/lamination",
+        path: "/materials-new/lamination",
       },
       {
         key: "plats",
