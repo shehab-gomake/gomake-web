@@ -6,8 +6,7 @@ const SettingsMenuModal = ({
   anchorEl,
   open,
   handleClose,
-  onOpenUpdatePricePerTon,
-  onOpenUpdateUnitPrice,
+  onOpenUpdatePrice,
   onOpenAddPercentToPrice,
   updateToActive,
   updateToInActive,
@@ -27,7 +26,9 @@ const SettingsMenuModal = ({
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem onClick={onOpenAddPercentToPrice}>Update Price</MenuItem>
+        <MenuItem onClick={onOpenUpdatePrice}>
+          {t("materials.sheetPaper.updatePrice")}
+        </MenuItem>
         <MenuItem onClick={onOpenAddPercentToPrice}>
           {t("materials.sheetPaper.addPrecentToPriceMenu")}
         </MenuItem>

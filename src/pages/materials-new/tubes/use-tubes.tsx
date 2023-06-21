@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  getAndSetAllSheetWeights,
   getAndSetAllSizes,
-  getAndSetSheetCategory,
-  getAndSetSheetSuppliers,
   getAndSetTubesSuppliers,
   getAndSetTubessCategores,
 } from "@/services/hooks";
@@ -13,7 +10,7 @@ import { sheetState } from "./store/sheet";
 import { useTranslation } from "react-i18next";
 import { sheetCheckAllState } from "./store/sheet-check-all";
 
-const useSheetPaper = () => {
+const useTubes = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
@@ -31,6 +28,7 @@ const useSheetPaper = () => {
 
   const [actionType, setActionType] = useState(0);
   const [selectedItems, setSelectedItems] = useState([]);
+  console.log("selectedItems", selectedItems);
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
   const [isUpdateCurrency, setIsUpdateCurrency] = useState(false);
   const [data, setData] = useState();
@@ -56,16 +54,10 @@ const useSheetPaper = () => {
   const onCloseUpdatePricePerTon = () => {
     setIsUpdatePricePerTon(false);
   };
-  const onOpenUpdatePricePerTon = () => {
-    setModalTitle(t("materials.sheetPaper.updatePricePerTon"));
+  const onOpenUpdatePrice = () => {
+    setModalTitle(t("materials.sheetPaper.updatePrice"));
     setIsUpdatePricePerTon(true);
-    setActionType(0);
-    handleClose();
-  };
-  const onOpenUpdateUnitPrice = () => {
-    setModalTitle(t("materials.sheetPaper.updateUnitPrice"));
-    setIsUpdatePricePerTon(true);
-    setActionType(1);
+    setActionType(6);
     handleClose();
   };
   const onOpenAddPercentToPrice = () => {
@@ -303,8 +295,7 @@ const useSheetPaper = () => {
     handleClose,
     updateToInActive,
     updateToActive,
-    onOpenUpdatePricePerTon,
-    onOpenUpdateUnitPrice,
+    onOpenUpdatePrice,
     onOpenAddPercentToPrice,
     handleCheckboxChange,
     updatePricePetTon,
@@ -315,4 +306,4 @@ const useSheetPaper = () => {
   };
 };
 
-export { useSheetPaper };
+export { useTubes };
