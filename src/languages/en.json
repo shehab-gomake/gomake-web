@@ -113,7 +113,6 @@
       "enterHardness": "Enter Hardness",
       "defaultPricePerMeterSquare": "Default Price Per Meter Square",
       "enterDefaultPricePerMeterSquare": "Enter Default Price Per Meter Square",
-      "weightPerSquareMeter": "Weight per square meter",
       "enterWeightPerSquareMeter": "Enter weight per square meter",
       "defaultPricePerSquareMeter": "Default price per square meter",
       "enterDefaultPricePerSquareMeter": "Enter default price per square meter",
@@ -157,7 +156,9 @@
       "enterColdOrHot": "Enter cold or hot",
       "currency": "Currency",
       "price": "Price",
-      "lenght": "Lenght"
+      "lenght": "Lenght",
+      "pricePerSquareMeter": "Price/meter^2",
+      "weightPerSquareMeter": "Weight/meter^2"
     },
     "buttons": {
       "cancel": "Cancel",
@@ -221,7 +222,8 @@
       "updateUnitPriceMenu": "Update unit price",
       "addPrecentToPriceMenu": "Add Precent to price",
       "changeToActiveMenu": "Change to Active",
-      "changeToInActiveMenu": "Change to InActive"
+      "changeToInActiveMenu": "Change to InActive",
+      "pricePerSquareMeter": "Update price per square meter"
     },
     "lamination": {
       "admin": {

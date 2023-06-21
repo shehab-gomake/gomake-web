@@ -72,7 +72,7 @@ const CategoriesTable = () => {
       {
         key: "printingMaterialsForRolls",
         title: t("tabs.printingMaterialsForRolls"),
-        path: "/materials/printing-materials-for-rolls",
+        path: "/materials-new/printing-materials-for-rolls",
       },
       {
         key: "hardboards",
