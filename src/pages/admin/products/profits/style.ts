@@ -20,7 +20,7 @@ const useStyle = () => {
         width: "100%",
         padding: convertWidthToVW(30),
         marginBottom: convertWidthToVW(30),
-        minHeight: "100vh",
+        minHeight: "120vh",
       },
       skeletonRowStyle: {
         marginTop: convertHeightToVH(10),

@@ -54,7 +54,7 @@ const useStyle = ({
         flexDirection: "column" as "column",
         padding: convertWidthToVW(20),
         paddingBottom: convertWidthToVW(0),
-        marginBottom: 20,
+        // marginBottom: 20,
       },
       headerContainer: {
         height: convertHeightToVH(101),
