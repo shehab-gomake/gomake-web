@@ -117,7 +117,7 @@ const CategoriesTable = () => {
       {
         key: "foils",
         title: t("tabs.foils"),
-        path: "/materials/foils",
+        path: "/materials-new/foils",
       },
       {
         key: "packinDrums",
