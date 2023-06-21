@@ -107,7 +107,7 @@ const CategoriesTable = () => {
       {
         key: "canvasFrames",
         title: t("tabs.canvasFrames"),
-        path: "/materials/canvas-frames",
+        path: "/materials-new/canvas-frames",
       },
       {
         key: "frames",
