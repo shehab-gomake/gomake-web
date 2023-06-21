@@ -98,9 +98,46 @@ const getAndSetWildPrintingMaterialSizes = async (
     return _data;
   }
 };
+const getAndSetWideFormatMaterialSuppliers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/wide-format-material/get-supplier-by-category",
+    data
+  );
+  return returnResult(result, undefined);
+};
+const getAndSetAllWideFormatMaterialSizes = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  if (data?.categoryName) {
+    const result: any = await callApi(
+      "GET",
+      "/v1/wide-format-material/get-all-sizes",
+      data
+    );
+    const _data = returnResult(result, undefined);
+    const mapData = _data.map((item: any) => {
+      return {
+        ...item,
+      };
+    });
+    if (setState) {
+      setState(mapData);
+    }
 
+    return _data;
+  }
+};
 export {
   getAndSetWildPrintingMaterialCategory,
   getAndSetWildPrintingMaterialTypes,
   getAndSetWildPrintingMaterialSizes,
+  getAndSetWideFormatMaterialSuppliers,
+  getAndSetAllWideFormatMaterialSizes,
 };

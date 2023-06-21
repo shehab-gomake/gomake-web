@@ -20,17 +20,21 @@ const SheetSizesWidget = ({
   const { setSnackbarStateValue } = useSnackBar();
 
   const updateToActive = useCallback(async () => {
-    const res = await callApi("POST", `/v1/applications/size-id-settngs`, {
-      categoryName: selectedMaterials,
-      supplierId: selectedSupplier,
-      actionType: 3,
-      data: [
-        {
-          sizeId: row?.sizeId,
-          thicknessId: row?.thicknessId,
-        },
-      ],
-    });
+    const res = await callApi(
+      "POST",
+      `/v1/wide-format-material/size-id-settngs`,
+      {
+        categoryName: selectedMaterials,
+        supplierId: selectedSupplier,
+        actionType: 3,
+        data: [
+          {
+            sizeId: row?.sizeId,
+            typeId: row?.typeId,
+          },
+        ],
+      }
+    );
 
     if (res?.success) {
       setSnackbarStateValue({
@@ -48,17 +52,21 @@ const SheetSizesWidget = ({
     }
   }, [row, selectedMaterials, selectedSupplier]);
   const updateToInActive = useCallback(async () => {
-    const res = await callApi("POST", `/v1/applications/size-id-settngs`, {
-      categoryName: selectedMaterials,
-      supplierId: selectedSupplier,
-      actionType: 4,
-      data: [
-        {
-          sizeId: row?.sizeId,
-          thicknessId: row?.thicknessId,
-        },
-      ],
-    });
+    const res = await callApi(
+      "POST",
+      `/v1/wide-format-material/size-id-settngs`,
+      {
+        categoryName: selectedMaterials,
+        supplierId: selectedSupplier,
+        actionType: 4,
+        data: [
+          {
+            sizeId: row?.sizeId,
+            typeId: row?.typeId,
+          },
+        ],
+      }
+    );
     if (res?.success) {
       setSnackbarStateValue({
         state: true,
@@ -91,9 +99,11 @@ const SheetSizesWidget = ({
           row={row}
         />
       </div>
-      <div style={clasess.thiknessContainer}>{row?.size}</div>
-      <div style={clasess.costsContainer}>{row?.pricePerRoll}</div>
-      <div style={clasess.directionContainer}>{row?.pricePerSquareMeter}</div>
+      <div style={clasess.thiknessContainer}>{row?.type}</div>
+      <div style={clasess.costsContainer}>{row?.size}</div>
+      <div style={clasess.directionContainer}>{row?.weightPerMeterSquare}</div>
+      <div style={clasess.directionContainer}>{row?.pricePerMeterSquare}</div>
+      <div style={clasess.directionContainer}>{row?.thickness}</div>
       <div style={clasess.activeContainer}>
         <Switch
           checked={row?.isActive}

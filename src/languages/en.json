@@ -54,7 +54,8 @@
     "packings": "Packings",
     "varnishs": "Varnishs",
     "machines": "Machines",
-    "addMachine": "Add machine"
+    "addMachine": "Add machine",
+    "wideFormatMaterial": "Wide Format Material"
   },
   "modal": {
     "close": "Close",
@@ -162,7 +163,9 @@
       "pricePerDrum": "Price/drum",
       "pricePerRoll": "Price per roll",
       "updatePricePerRoll": "Update Price Per Roll",
-      "updatePricePerSquareMeter": "Update price Per Square Meter"
+      "updatePricePerSquareMeter": "Update Price Per Square Meter",
+      "type": "Type",
+      "pricePerMeterSquare": "Price Per Meter Square"
     },
     "buttons": {
       "cancel": "Cancel",

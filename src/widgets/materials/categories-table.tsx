@@ -164,6 +164,11 @@ const CategoriesTable = () => {
         title: t("tabs.varnishs"),
         path: "/materials/varnishs",
       },
+      {
+        key: "wideFormatMaterial",
+        title: t("tabs.wideFormatMaterial"),
+        path: "/materials-new/wide-format-material",
+      },
     ];
   }, []);
 
