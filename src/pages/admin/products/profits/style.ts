@@ -19,6 +19,8 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         padding: convertWidthToVW(30),
+        marginBottom: convertWidthToVW(30),
+        minHeight: "100vh",
       },
       skeletonRowStyle: {
         marginTop: convertHeightToVH(10),
@@ -118,8 +120,9 @@ const useStyle = () => {
         textAlign: "center" as "center",
         ...FONT_FAMILY.Lexend(400, 14),
         color: "#090A1D",
-        borderRight: "4px solid #2E3092",
         paddingRight: 10,
+        overflow: "auto",
+        maxHeight: 30,
       },
       moreStyle: {
         display: "flex",

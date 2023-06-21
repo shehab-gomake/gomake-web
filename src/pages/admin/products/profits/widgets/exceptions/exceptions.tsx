@@ -44,25 +44,22 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
                         key={`header_exp_${index}`}
                         style={{
                           display: "flex",
+                          width: "100%",
                           justifyContent: "space-between",
                           paddingLeft: 22,
                           paddingRight: 22,
                         }}
                       >
-                        <div style={clasess.rowHeader}>
+                        <div style={{ ...clasess.rowHeader, width: "20%" }}>
                           {t("products.profits.exceptions.type")}
                         </div>
-
-                        <div style={clasess.rowHeader}>
-                          {" "}
+                        <div style={{ ...clasess.rowHeader, width: "20%" }}>
                           {t("products.profits.exceptions.parameter")}
                         </div>
-
-                        <div style={clasess.rowHeader}>
+                        <div style={{ ...clasess.rowHeader, width: "20%" }}>
                           {t("products.profits.exceptions.value")}
                         </div>
-
-                        <div style={clasess.rowHeader}>
+                        <div style={{ ...clasess.rowHeader, width: "40%" }}>
                           {t("products.profits.exceptions.scopeOfChange")}
                         </div>
                       </div>

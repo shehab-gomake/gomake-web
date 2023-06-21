@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
 import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
-import { actionExceptionProfitId } from "@/store";
+import { actionExceptionProfitId, actionProfitLists } from "@/store";
 
 export const renderProfits = (item: any, data: any = {}) => {
   const cost = item?.cost || 0;
@@ -103,9 +103,18 @@ const useProfitsAction = ({
     [selectedAction, actionProfitRowsNew, selectTestDataVal]
   );
 
+  const setProfitsStateValue = useSetRecoilState<any>(actionProfitLists);
   const onChangeSelectedAction = useCallback(async (e: any, value: any) => {
-    setSelectedAction(value);
-    setProductTest({});
+    if (!value) {
+      setProductTest(null);
+      setSelectedAction("");
+      setProfitsStateValue("");
+    } else {
+      console.log("value", value);
+      setSelectedAction(value);
+      setProductTest(null);
+      // onCklickActionProfitTestResultsByActionId(value.id, value.name);
+    }
   }, []);
 
   const onChangeAddNewTestProduct = useCallback((key: string, value: any) => {

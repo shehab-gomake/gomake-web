@@ -40,25 +40,84 @@ const useProfitsProfitsFunction = ({
   const setChartDataValue = useSetRecoilState<any>(chartDataByActionProfitRow);
 
   const updateActionProfitRow = useCallback(async () => {
-    console.log("actionExceptionProfitIdValue", actionExceptionProfitIdValue);
-    const res = await callApi(
-      "PUT",
-      `/v1/printhouse-config/profits/update-action-profit-row`,
-      {
-        id: editPriceListStateValue?.state?.id,
-        actionId: editPriceListStateValue?.state?.actionId,
-        quantity: editPriceListStateValue?.state?.quantity,
-        cost: editPriceListStateValue?.state?.cost,
-        profit: editPriceListStateValue?.state?.profit,
-        actionProfitId: actionProfits?.id,
-        recordId:
-          editPriceListStateValue?.state?.recordID ||
-          editPriceListStateValue?.state?.more?.props?.item?.recordID,
-        ...(actionExceptionProfitIdValue?.id?.length && {
-          exceptionId: actionExceptionProfitIdValue.id,
-        }),
-      }
-    );
+    console.log("editPriceListStateValue", editPriceListStateValue);
+    let res;
+    if (editPriceListStateValue?.state?.changeOn == "totalPrice") {
+      let totalPrice = editPriceListStateValue?.state?.totalPrice;
+      let unitPrice = editPriceListStateValue?.state?.unitPrice;
+      let profit = editPriceListStateValue?.state?.profit;
+      let cost = editPriceListStateValue?.state?.cost;
+      profit = (totalPrice / cost - 1) * 100;
+      console.log("datadatadata", { totalPrice, unitPrice, profit, cost });
+
+      res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/profits/update-action-profit-row`,
+        {
+          id: editPriceListStateValue?.state?.id,
+          actionId: editPriceListStateValue?.state?.actionId,
+          quantity: editPriceListStateValue?.state?.quantity,
+          cost: editPriceListStateValue?.state?.cost,
+          profit: profit,
+          actionProfitId: actionProfits?.id,
+          recordId:
+            editPriceListStateValue?.state?.recordID ||
+            editPriceListStateValue?.state?.more?.props?.item?.recordID,
+          ...(actionExceptionProfitIdValue?.id?.length && {
+            exceptionId: actionExceptionProfitIdValue.id,
+          }),
+        }
+      );
+    } else if (editPriceListStateValue?.state?.changeOn == "unitPrice") {
+      let totalPrice = editPriceListStateValue?.state?.totalPrice;
+      let unitPrice = editPriceListStateValue?.state?.unitPrice;
+      let quantity = editPriceListStateValue?.state?.quantity;
+      let profit = editPriceListStateValue?.state?.profit;
+      let cost = editPriceListStateValue?.state?.cost;
+
+      totalPrice = unitPrice * quantity;
+      profit = (totalPrice / cost - 1) * 100;
+      console.log("datadatadata", { totalPrice, unitPrice, profit, cost });
+
+      res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/profits/update-action-profit-row`,
+        {
+          id: editPriceListStateValue?.state?.id,
+          actionId: editPriceListStateValue?.state?.actionId,
+          quantity: editPriceListStateValue?.state?.quantity,
+          cost: editPriceListStateValue?.state?.cost,
+          profit: profit,
+          actionProfitId: actionProfits?.id,
+          recordId:
+            editPriceListStateValue?.state?.recordID ||
+            editPriceListStateValue?.state?.more?.props?.item?.recordID,
+          ...(actionExceptionProfitIdValue?.id?.length && {
+            exceptionId: actionExceptionProfitIdValue.id,
+          }),
+        }
+      );
+    } else {
+      res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/profits/update-action-profit-row`,
+        {
+          id: editPriceListStateValue?.state?.id,
+          actionId: editPriceListStateValue?.state?.actionId,
+          quantity: editPriceListStateValue?.state?.quantity,
+          cost: editPriceListStateValue?.state?.cost,
+          profit: editPriceListStateValue?.state?.profit,
+          actionProfitId: actionProfits?.id,
+          recordId:
+            editPriceListStateValue?.state?.recordID ||
+            editPriceListStateValue?.state?.more?.props?.item?.recordID,
+          ...(actionExceptionProfitIdValue?.id?.length && {
+            exceptionId: actionExceptionProfitIdValue.id,
+          }),
+        }
+      );
+    }
+
     if (res?.success) {
       setSnackbarStateValue({
         state: true,

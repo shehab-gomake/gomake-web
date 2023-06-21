@@ -25,6 +25,7 @@ ChartJS.register(
 
 export const options = {
   responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       position: "top" as const,
@@ -46,12 +47,6 @@ export function LineChart() {
         borderColor: "#FF4DCA",
         backgroundColor: "#FF4DCA",
       },
-      // {
-      //   label: "Quantity",
-      //   data: chartDataValue?.quantityAxis,
-      //   borderColor: "#62A0FF",
-      //   backgroundColor: "#62A0FF",
-      // },
     ],
   };
   return (

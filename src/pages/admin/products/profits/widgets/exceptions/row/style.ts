@@ -19,13 +19,9 @@ const useStyle = ({ row }: any) => {
         textAlign: "center" as "center",
       },
       rowItem: {
-        display: "flex",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
         ...FONT_FAMILY.Lexend(400, 14),
         color: primaryColor(900),
         textalign: "center",
-        width: "25%",
       },
       rowItemExpPofit: {
         display: "flex",
