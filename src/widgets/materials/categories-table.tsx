@@ -87,7 +87,7 @@ const CategoriesTable = () => {
       {
         key: "profileFrames",
         title: t("tabs.profileFrames"),
-        path: "/materials/profile-frames",
+        path: "/materials-new/profile-frames",
       },
       {
         key: "applications",

@@ -232,7 +232,8 @@
       "changeToInActiveMenu": "Change to InActive",
       "pricePerSquareMeter": "Update price per square meter",
       "pricePerDrum": "Update price per drum",
-      "pricePerRoll": "Update Price per roll"
+      "pricePerRoll": "Update Price per roll",
+      "updatePricePerMeter": "Update Price Per Meter"
     },
     "lamination": {
       "admin": {
