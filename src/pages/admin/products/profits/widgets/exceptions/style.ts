@@ -128,9 +128,9 @@ const useStyle = () => {
         justifyContent: "space-between",
       },
       rowHeader: {
-        width: "25%",
-        ...FONT_FAMILY.Lexend(400, 14),
-        color: primaryColor(900),
+        ...FONT_FAMILY.Lexend(400, 16),
+        color: neutralColor(400),
+        textAlign: "center" as "center",
       },
     };
   }, []);

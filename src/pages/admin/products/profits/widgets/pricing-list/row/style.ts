@@ -21,7 +21,7 @@ const useStyle = ({ width }: any) => {
         lineHeight: "18px",
         color: primaryColor(900),
         textalign: "center",
-        marginBottom: 18.5,
+        marginBottom: 16.5,
         marginTop: 18.5,
       },
       rowItemExpPofit: {

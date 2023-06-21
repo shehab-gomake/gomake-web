@@ -19,6 +19,7 @@ import { AddPricingListRowWidget } from "./add-pricing-row-widget";
 import { productTestState } from "@/store/product-test";
 import { AddQuantityModal } from "./add-quantity-modal";
 import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
+import { LineChart } from "../line-chart";
 
 interface IProps {
   tableHeaders: any[];
@@ -160,6 +161,18 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
         >
           <Plus />
           {t("products.profits.pricingListWidget.addNewQuantity")}
+        </div>
+
+        <div
+          style={{
+            maxHeight: 300,
+            minWidth: "100%",
+            width: "100%",
+            paddingLeft: 20,
+            paddingRight: 20,
+          }}
+        >
+          <LineChart />
         </div>
       </div>
       <AddQuantityModal

@@ -167,7 +167,7 @@ const UpdateExceptionModal = () => {
                 </div>
                 <div style={clasess.btnContainer}>
                   <GomakePrimaryButton
-                    style={{ height: 40, backgroundColor: "red" }}
+                    style={clasess.btnDelete}
                     onClick={profitsStateValue.onOpenDeleteExceptionProfitModal}
                   >
                     {t("products.profits.exceptions.deleteException")}

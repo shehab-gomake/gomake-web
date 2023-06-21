@@ -201,22 +201,17 @@ export default function Profits() {
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
-        <HeaderTitle title={t("products.profits.admin.title")} />
         <SelectAction />
-        {profitsStateValue?.id ? (
+        {profitsStateValue?.id?.length > 0 ? (
           <div
             style={{
               display: "flex",
-              // gap: 50,
               flexDirection: "column",
               width: "100%",
             }}
           >
-            <div style={clasess.titleActionName}>
-              {selectedAction?.name} pricing settings
-            </div>
             <ProductList />
-            {productTest?.id && (
+            {productTest?.id?.length > 0 && (
               <div style={clasess.pricingAndExceptionsCointaner}>
                 <div style={clasess.pricingCointaner}>
                   <PricingList
@@ -245,9 +240,6 @@ export default function Profits() {
                 </div>
               </div>
             )}
-            <div style={{ maxWidth: 600, maxHeight: 300, marginTop: 50 }}>
-              <LineChart />
-            </div>
           </div>
         ) : null}
       </div>
