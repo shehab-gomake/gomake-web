@@ -14,12 +14,11 @@ import { UpdateCurrencyModal } from "./modals/update-currency-modal";
 import { AddSupplierModal } from "./modals/add-supplier-modal";
 import { HeaderTableWidget } from "./widgets/header-table";
 import { SheetSizesWidget } from "./widgets/sheet-sizes";
-import { SheetCheckBox } from "./widgets/checkbox";
 import { SettingsMenuModal } from "./modals/menu";
-import { useSheetPaper } from "./use-sheet-paper";
+import { useTubes } from "./use-tubes";
 import { useStyle } from "./style";
 
-export default function SheetPaper() {
+export default function Tubes() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
 
@@ -50,8 +49,7 @@ export default function SheetPaper() {
     setData,
     handleClick,
     onOpenUpdateCurrency,
-    onOpenUpdatePricePerTon,
-    onOpenUpdateUnitPrice,
+    onOpenUpdatePrice,
     onOpenAddPercentToPrice,
     handleCheckboxChange,
     updatePricePetTon,
@@ -59,7 +57,7 @@ export default function SheetPaper() {
     updateToInActive,
     updateToActive,
     onChangeSelectedSupplier,
-  } = useSheetPaper();
+  } = useTubes();
   const Side = () => (
     <SideList
       list={sheetCategories}
@@ -185,8 +183,7 @@ export default function SheetPaper() {
           anchorEl={anchorEl}
           open={open}
           handleClose={handleClose}
-          onOpenUpdatePricePerTon={onOpenUpdatePricePerTon}
-          onOpenUpdateUnitPrice={onOpenUpdateUnitPrice}
+          onOpenUpdatePrice={onOpenUpdatePrice}
           onOpenAddPercentToPrice={onOpenAddPercentToPrice}
           updateToActive={updateToActive}
           updateToInActive={updateToInActive}
