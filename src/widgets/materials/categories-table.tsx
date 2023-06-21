@@ -122,7 +122,7 @@ const CategoriesTable = () => {
       {
         key: "packinDrums",
         title: t("tabs.packinDrums"),
-        path: "/materials/packin-drums",
+        path: "/materials-new/packin-drums",
       },
       {
         key: "packinUnits",

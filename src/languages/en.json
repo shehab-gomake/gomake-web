@@ -158,7 +158,8 @@
       "price": "Price",
       "lenght": "Lenght",
       "pricePerSquareMeter": "Price/meter^2",
-      "weightPerSquareMeter": "Weight/meter^2"
+      "weightPerSquareMeter": "Weight/meter^2",
+      "pricePerDrum": "Price/drum"
     },
     "buttons": {
       "cancel": "Cancel",
@@ -223,7 +224,8 @@
       "addPrecentToPriceMenu": "Add Precent to price",
       "changeToActiveMenu": "Change to Active",
       "changeToInActiveMenu": "Change to InActive",
-      "pricePerSquareMeter": "Update price per square meter"
+      "pricePerSquareMeter": "Update price per square meter",
+      "pricePerDrum": "Update price per drum"
     },
     "lamination": {
       "admin": {
