@@ -63,12 +63,11 @@ export default function Tubes() {
       list={sheetCategories}
       selectedItem={selectedMaterials}
       onSelect={setSelectedMaterials}
-      title={t("materials.sheetPaper.chooseCategory")}
+      title={t("materials.sheetPaper.chooseName")}
     />
   );
 
   const renderHeader = useCallback(() => {
-    console.log("selectedMaterials", selectedMaterials.name);
     return (
       <div style={clasess.renderHeaderContainer}>
         <div style={clasess.title}>{selectedMaterials.name}</div>
@@ -150,7 +149,6 @@ export default function Tubes() {
                           selectedSupplier={selectedSupplier}
                           getSheetAllWeights={getSheetAllWeights}
                           index2={index}
-                          selectedItems={selectedItems}
                         />
                       </div>
                     </div>

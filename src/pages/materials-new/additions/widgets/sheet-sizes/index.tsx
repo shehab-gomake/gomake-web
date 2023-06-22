@@ -11,8 +11,6 @@ const SheetSizesWidget = ({
   selectedSupplier,
   getSheetAllWeights,
   index2,
-  selectedItems,
-  handleCheckboxChange,
 }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
