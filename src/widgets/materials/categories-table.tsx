@@ -152,7 +152,7 @@ const CategoriesTable = () => {
       {
         key: "magnets",
         title: t("tabs.magnets"),
-        path: "/materials/magnets",
+        path: "/materials-new/magnet",
       },
       {
         key: "packings",
