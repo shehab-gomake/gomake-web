@@ -137,7 +137,7 @@ const CategoriesTable = () => {
       {
         key: "colors",
         title: t("tabs.colors"),
-        path: "/materials/colors",
+        path: "/materials-new/colors",
       },
       {
         key: "doubleSidedTapeRolls",
