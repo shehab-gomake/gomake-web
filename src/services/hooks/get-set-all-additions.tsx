@@ -9,17 +9,12 @@ const getAndSetAllAdditions = async (
   setState?: ISetState,
   data?: any
 ) => {
-  const result: any = await callApi("GET", "/v1/additions/get-all", data);
+  const result: any = await callApi("GET", "/v1/additions/get-all-codes", data);
   const _data = returnResult(result, undefined);
   const mapData = _data.map((size: any) => {
     return {
       code: size.code,
       name: size.name,
-      weight: size.weight,
-      adaptationField: size.adaptationField,
-      stock: <UpdateStockAdditions code={size.code} stockValue={size.stock} />,
-      price: size.price,
-      settings: <ShowSubTableForAdditions item={size} />,
     };
   });
   if (setState) {
@@ -28,5 +23,45 @@ const getAndSetAllAdditions = async (
 
   return _data;
 };
+const getAndSetAllAdditionsData = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  if (data?.categoryName) {
+    const result: any = await callApi(
+      "GET",
+      "/v1/additions/get-all-sizes",
+      data
+    );
+    const _data = returnResult(result, undefined);
+    const mapData = _data.map((item: any) => {
+      return {
+        ...item,
+      };
+    });
+    if (setState) {
+      setState(mapData);
+    }
 
-export { getAndSetAllAdditions };
+    return _data;
+  }
+};
+
+const getAndSetAdditionsSuppliers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/additions/get-supplier-by-category",
+    data
+  );
+  return returnResult(result, undefined);
+};
+export {
+  getAndSetAllAdditions,
+  getAndSetAllAdditionsData,
+  getAndSetAdditionsSuppliers,
+};

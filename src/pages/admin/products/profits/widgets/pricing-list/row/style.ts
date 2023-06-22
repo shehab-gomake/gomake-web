@@ -21,8 +21,8 @@ const useStyle = ({ width }: any) => {
         lineHeight: "18px",
         color: primaryColor(900),
         textalign: "center",
-        marginBottom: 18.5,
-        marginTop: 18.5,
+        marginBottom: 8.5,
+        marginTop: 8.5,
       },
       rowItemExpPofit: {
         display: "flex",
@@ -31,8 +31,8 @@ const useStyle = ({ width }: any) => {
         ...FONT_FAMILY.Lexend(400, 14),
         lineHeight: "18px",
         textalign: "center",
-        marginBottom: 18.5,
-        marginTop: 18.5,
+        marginBottom: 8.5,
+        marginTop: 8.5,
         color: primaryColor(600),
       },
       editItem: {
@@ -44,8 +44,8 @@ const useStyle = ({ width }: any) => {
         color: primaryColor(300),
         textalign: "center",
         width: `${width}`,
-        marginBottom: 18.5,
-        marginTop: 18.5,
+        marginBottom: 8.5,
+        marginTop: 8.5,
       },
       controlsContainer: {
         display: "flex",

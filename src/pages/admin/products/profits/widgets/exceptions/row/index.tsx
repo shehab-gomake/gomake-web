@@ -25,7 +25,10 @@ const Row = ({ key, row }: any) => {
             return (
               <div
                 key={`row_table_${index}`}
-                style={clasess.rowItem}
+                style={{
+                  ...clasess.rowItem,
+                  width: index === 3 ? "40%" : "20%",
+                }}
                 onClick={() =>
                   profitsStateValue?.onCklickActionExceptionProfitRow(
                     row?.id,
@@ -41,6 +44,10 @@ const Row = ({ key, row }: any) => {
         })}
 
         <IconButton
+          style={{
+            position: "absolute",
+            right: 0,
+          }}
           onClick={() => profitsStateValue?.onOpenUpdateExceptionModal(row)}
         >
           <EditIcon />

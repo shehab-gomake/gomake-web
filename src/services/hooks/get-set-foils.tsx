@@ -44,4 +44,41 @@ const getAndSetFoilsSizes = async (
 
   return _data;
 };
-export { getAndSetFoilsCategory, getAndSetFoilsSizes };
+const getAndSetAllFoilsSizes = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  if (data?.categoryName) {
+    const result: any = await callApi("GET", "/v1/foils/get-all-sizes", data);
+    const _data = returnResult(result, undefined);
+    const mapData = _data.map((item: any) => {
+      return {
+        ...item,
+      };
+    });
+    if (setState) {
+      setState(mapData);
+    }
+
+    return _data;
+  }
+};
+const getAndSetFoilsSuppliers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/foils/get-supplier-by-category",
+    data
+  );
+  return returnResult(result, undefined);
+};
+export {
+  getAndSetFoilsCategory,
+  getAndSetFoilsSizes,
+  getAndSetAllFoilsSizes,
+  getAndSetFoilsSuppliers,
+};

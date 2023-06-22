@@ -43,6 +43,11 @@ const UpdateExceptionModal = () => {
           ]}
           placeholder={profitsStateValue?.selectedProfitException.type}
           disabled={true}
+          style={{
+            border: "0px",
+            background: "#fff",
+            borderRadius: 4,
+          }}
         />
         <div style={{ marginTop: 20 }}>
           {profitsStateValue?.selectedProfitException.type === "machine" ? (
@@ -54,6 +59,11 @@ const UpdateExceptionModal = () => {
                 options={machincesStateValue}
                 placeholder={profitsStateValue?.selectedProfitException.name}
                 disabled={true}
+                style={{
+                  border: "0px",
+                  background: "#fff",
+                  borderRadius: 4,
+                }}
               />
             </div>
           ) : profitsStateValue?.selectedProfitException.type === "product" ? (
@@ -65,6 +75,11 @@ const UpdateExceptionModal = () => {
                 options={productsStateValue}
                 placeholder={profitsStateValue?.selectedProfitException.name}
                 disabled={true}
+                style={{
+                  border: "0px",
+                  background: "#fff",
+                  borderRadius: 4,
+                }}
               />
             </div>
           ) : profitsStateValue?.selectedProfitException.type === "client" ? (
@@ -76,6 +91,11 @@ const UpdateExceptionModal = () => {
                 options={clientTypesStateValue}
                 placeholder={profitsStateValue?.selectedProfitException.name}
                 disabled={true}
+                style={{
+                  border: "0px",
+                  background: "#fff",
+                  borderRadius: 4,
+                }}
               />
             </div>
           ) : profitsStateValue?.selectedProfitException.type ===
@@ -88,6 +108,11 @@ const UpdateExceptionModal = () => {
                 options={parametersStateValue}
                 placeholder={profitsStateValue?.selectedProfitException.name}
                 disabled={true}
+                style={{
+                  border: "0px",
+                  background: "#fff",
+                  borderRadius: 4,
+                }}
               />
               <div
                 key={`priceListParameterId-${profitsStateValue?.state?.priceListParameterId}`}
@@ -105,6 +130,11 @@ const UpdateExceptionModal = () => {
                     profitsStateValue?.selectedProfitException.parameter
                   }
                   disabled={true}
+                  style={{
+                    border: "0px",
+                    background: "#fff",
+                    borderRadius: 4,
+                  }}
                 />
               </div>
             </div>
@@ -131,6 +161,11 @@ const UpdateExceptionModal = () => {
                       item?.value
                     );
                   }}
+                  style={{
+                    border: "0px",
+                    background: "#fff",
+                    borderRadius: 4,
+                  }}
                 />
                 {profitsStateValue?.selectedProfitException?.item
                   ?.exceptionType === 0 ? (
@@ -141,7 +176,6 @@ const UpdateExceptionModal = () => {
                       </div>
                     </div>
                     <GomakeTextInput
-                      style={{ height: 40 }}
                       type="number"
                       placeholder={
                         profitsStateValue?.selectedProfitException
@@ -153,6 +187,12 @@ const UpdateExceptionModal = () => {
                           "additionalProfit",
                           e.target.value
                         );
+                      }}
+                      style={{
+                        border: "0px",
+                        background: "#fff",
+                        borderRadius: 4,
+                        height: 40,
                       }}
                     />
                   </div>
@@ -167,7 +207,7 @@ const UpdateExceptionModal = () => {
                 </div>
                 <div style={clasess.btnContainer}>
                   <GomakePrimaryButton
-                    style={{ height: 40, backgroundColor: "red" }}
+                    style={clasess.btnDelete}
                     onClick={profitsStateValue.onOpenDeleteExceptionProfitModal}
                   >
                     {t("products.profits.exceptions.deleteException")}

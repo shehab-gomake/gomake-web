@@ -52,32 +52,32 @@ const CategoriesTable = () => {
       {
         key: "lamination",
         title: t("tabs.lamination"),
-        path: "/materials/lamination",
+        path: "/materials-new/lamination",
       },
       {
         key: "plats",
         title: t("tabs.plats"),
-        path: "/materials/plats",
+        path: "/materials-new/plats",
       },
       {
         key: "envelopes",
         title: t("tabs.envelopes"),
-        path: "/materials/envelopes",
+        path: "/materials-new/envelopes",
       },
       {
         key: "tubes",
         title: t("tabs.tubes"),
-        path: "/materials/tubes",
+        path: "/materials-new/tubes",
       },
       {
         key: "printingMaterialsForRolls",
         title: t("tabs.printingMaterialsForRolls"),
-        path: "/materials/printing-materials-for-rolls",
+        path: "/materials-new/printing-materials-for-rolls",
       },
       {
         key: "hardboards",
         title: t("tabs.hardboards"),
-        path: "/materials/hardboards",
+        path: "/materials-new/hardboards",
       },
       {
         key: "wildPrintingMaterials",
@@ -87,52 +87,52 @@ const CategoriesTable = () => {
       {
         key: "profileFrames",
         title: t("tabs.profileFrames"),
-        path: "/materials/profile-frames",
+        path: "/materials-new/profile-frames",
       },
       {
         key: "applications",
         title: t("tabs.applications"),
-        path: "/materials/applications",
+        path: "/materials-new/applications",
       },
       {
         key: "encapsulationRoll",
         title: t("tabs.encapsulationRoll"),
-        path: "/materials/encapsulation-roll",
+        path: "/materials-new/roll-encapsulations",
       },
       {
         key: "additions",
         title: t("tabs.additions"),
-        path: "/materials/additions",
+        path: "/materials-new/additions",
       },
       {
         key: "canvasFrames",
         title: t("tabs.canvasFrames"),
-        path: "/materials/canvas-frames",
+        path: "/materials-new/canvas-frames",
       },
       {
         key: "frames",
         title: t("tabs.frames"),
-        path: "/materials/frames",
+        path: "/materials-new/frames",
       },
       {
         key: "foils",
         title: t("tabs.foils"),
-        path: "/materials/foils",
+        path: "/materials-new/foils",
       },
       {
         key: "packinDrums",
         title: t("tabs.packinDrums"),
-        path: "/materials/packin-drums",
+        path: "/materials-new/packin-drums",
       },
       {
         key: "packinUnits",
         title: t("tabs.packinUnits"),
-        path: "/materials/packin-units",
+        path: "/materials-new/packin-units",
       },
       {
         key: "sheetEncapsulation",
         title: t("tabs.sheetEncapsulation"),
-        path: "/materials/sheet-encapsulation",
+        path: "/materials-new/sheet-encapsulation",
       },
       {
         key: "colors",
@@ -157,12 +157,17 @@ const CategoriesTable = () => {
       {
         key: "packings",
         title: t("tabs.packings"),
-        path: "/materials/packings",
+        path: "/materials-new/packings",
       },
       {
         key: "varnishs",
         title: t("tabs.varnishs"),
         path: "/materials/varnishs",
+      },
+      {
+        key: "wideFormatMaterial",
+        title: t("tabs.wideFormatMaterial"),
+        path: "/materials-new/wide-format-material",
       },
     ];
   }, []);
@@ -179,32 +184,34 @@ const CategoriesTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {categoriesList.map((category) => {
-              return (
-                <StyledTableRow key={category.key}>
-                  <StyledTableCell align={"center"}>
-                    {category.title}
-                  </StyledTableCell>
-                  <StyledTableCell align={"center"}>
-                    <PrimaryButton
-                      startIcon={
-                        <EditIcon
-                          color={primaryColor(500)}
-                          width={20}
-                          height={20}
-                        />
-                      }
-                      onClick={() => {
-                        navigate(category.path);
-                      }}
-                      variant={"text"}
-                    >
-                      View
-                    </PrimaryButton>
-                  </StyledTableCell>
-                </StyledTableRow>
-              );
-            })}
+            {categoriesList
+              .filter((item: any) => item?.path?.includes("-new"))
+              .map((category) => {
+                return (
+                  <StyledTableRow key={category.key}>
+                    <StyledTableCell align={"center"}>
+                      {category.title}
+                    </StyledTableCell>
+                    <StyledTableCell align={"center"}>
+                      <PrimaryButton
+                        startIcon={
+                          <EditIcon
+                            color={primaryColor(500)}
+                            width={20}
+                            height={20}
+                          />
+                        }
+                        onClick={() => {
+                          navigate(category.path);
+                        }}
+                        variant={"text"}
+                      >
+                        View
+                      </PrimaryButton>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                );
+              })}
           </TableBody>
         </Table>
       </TableContainer>
