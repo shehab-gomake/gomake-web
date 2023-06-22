@@ -27,7 +27,7 @@ const SettingsMenuModal = ({
         }}
       >
         <MenuItem onClick={onOpenUpdatePrice}>
-          {t("materials.sheetPaper.updatePrice")}
+          {t("materials.sheetPaper.updatePricePerUnit")}
         </MenuItem>
         <MenuItem onClick={onOpenAddPercentToPrice}>
           {t("materials.sheetPaper.addPrecentToPriceMenu")}

@@ -8,17 +8,17 @@ const SheetCheckBox = ({ selectedItems, handleCheckboxChange, row }) => {
   const [sheetStore, setSheetStore] = useRecoilState(sheetCheckAllState);
 
   useEffect(() => {
-    setChecked(selectedItems.some((item) => item.volumeId === row?.volumeId));
+    setChecked(selectedItems.some((item) => item.volumeId === row?.id));
   }, [selectedItems]);
 
   useEffect(() => {
-    handleCheckboxChange(row.volumeId, sheetStore);
+    handleCheckboxChange(row.id, sheetStore);
   }, [sheetStore]);
   return (
     <Checkbox
       checked={checked}
       onChange={(event) => {
-        handleCheckboxChange(row.volumeId, event.target.checked);
+        handleCheckboxChange(row.id, event.target.checked);
       }}
     />
   );

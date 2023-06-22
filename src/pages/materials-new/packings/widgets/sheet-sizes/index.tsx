@@ -26,7 +26,7 @@ const SheetSizesWidget = ({
       actionType: 3,
       data: [
         {
-          volumeId: row?.volumeId,
+          volumeId: row?.id,
         },
       ],
     });
@@ -53,7 +53,7 @@ const SheetSizesWidget = ({
       actionType: 4,
       data: [
         {
-          volumeId: row?.volumeId,
+          volumeId: row?.id,
         },
       ],
     });
