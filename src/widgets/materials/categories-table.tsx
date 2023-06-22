@@ -162,7 +162,7 @@ const CategoriesTable = () => {
       {
         key: "varnishs",
         title: t("tabs.varnishs"),
-        path: "/materials/varnishs",
+        path: "/materials-new/varnishs",
       },
       {
         key: "wideFormatMaterial",
