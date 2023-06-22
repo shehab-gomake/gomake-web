@@ -168,7 +168,8 @@
       "pricePerMeterSquare": "Price/Meter^2",
       "pricePerContainer": "Price/container",
       "pricePerLiter": "Price/liter",
-      "glueSuppliers": "Glue supplier"
+      "glueSuppliers": "Glue supplier",
+      "pricePerUnit": "Price/unit"
     },
     "buttons": {
       "cancel": "Cancel",

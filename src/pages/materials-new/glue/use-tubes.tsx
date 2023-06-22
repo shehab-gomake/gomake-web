@@ -171,7 +171,6 @@ const useTubes = () => {
 
   const getSheetAllWeights = useCallback(
     async (categoryName: any, supplierId) => {
-      console.log("categoryName", categoryName);
       await getAndSetAllGluesData(callApi, setAllWeightsGrouped, {
         categoryName: categoryName.code,
         supplierId: supplierId || "",
@@ -191,7 +190,6 @@ const useTubes = () => {
   };
 
   const onClickAddSupplier = async () => {
-    console.log("selectedMaterials", selectedMaterials);
     await callApi("POST", `/v1/glues/add-supplier-catogry`, {
       categoryName: selectedMaterials.code,
       supplierId: sheetStore.selectedSupplier,

@@ -7,11 +7,14 @@ import {
   getAndSetAllGluesData,
   getAndSetAllMegantsData,
   getAndSetAllSizes,
+  getAndSetAlldstrCodes,
+  getAndSetAlldstrData,
   getAndSetAllmegantCodes,
   getAndSetGluesSuppliers,
   getAndSetMagnetsSuppliers,
   getAndSetTubesSuppliers,
   getAndSetTubessCategores,
+  getAndSetdstrSuppliers,
 } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar, useSupplier } from "@/hooks";
 import { useRecoilState } from "recoil";
@@ -79,12 +82,16 @@ const useTubes = () => {
     setSelectedItems({ data });
   }, [data]);
   const updatePricePetTon = useCallback(async () => {
-    const res = await callApi("POST", `/v1/magnets/size-id-settngs`, {
-      categoryName: selectedMaterials.code,
-      supplierId: sheetStore.selectedSupplier,
-      actionType: actionType,
-      data: selectedItems,
-    });
+    const res = await callApi(
+      "POST",
+      `/v1/double-sided-tape-roll/size-id-settngs`,
+      {
+        categoryName: selectedMaterials.code,
+        supplierId: sheetStore.selectedSupplier,
+        actionType: actionType,
+        data: selectedItems,
+      }
+    );
     if (res?.success) {
       setSnackbarStateValue({
         state: true,
@@ -104,12 +111,16 @@ const useTubes = () => {
   }, [data, selectedItems, actionType, sheetStore.selectedSupplier, setData]);
   useEffect(() => {}, [sheetStore]);
   const updateToActive = async () => {
-    const res = await callApi("POST", `/v1/magnets/size-id-settngs`, {
-      categoryName: selectedMaterials.code,
-      supplierId: sheetStore.selectedSupplier,
-      actionType: 3,
-      data: selectedItems,
-    });
+    const res = await callApi(
+      "POST",
+      `/v1/double-sided-tape-roll/size-id-settngs`,
+      {
+        categoryName: selectedMaterials.code,
+        supplierId: sheetStore.selectedSupplier,
+        actionType: 3,
+        data: selectedItems,
+      }
+    );
     if (res?.success) {
       setSnackbarStateValue({
         state: true,
@@ -127,12 +138,16 @@ const useTubes = () => {
     }
   };
   const updateToInActive = useCallback(async () => {
-    const res = await callApi("POST", `/v1/magnets/size-id-settngs`, {
-      categoryName: selectedMaterials.code,
-      supplierId: sheetStore.selectedSupplier,
-      actionType: 4,
-      data: selectedItems,
-    });
+    const res = await callApi(
+      "POST",
+      `/v1/double-sided-tape-roll/size-id-settngs`,
+      {
+        categoryName: selectedMaterials.code,
+        supplierId: sheetStore.selectedSupplier,
+        actionType: 4,
+        data: selectedItems,
+      }
+    );
     if (res?.success) {
       setSnackbarStateValue({
         state: true,
@@ -151,7 +166,7 @@ const useTubes = () => {
   }, [data, selectedItems, actionType, sheetStore.selectedSupplier, setData]);
   const getSheetSuppliers = useCallback(
     async (categoryName) => {
-      let _data = await getAndSetMagnetsSuppliers(callApi, () => {}, {
+      let _data = await getAndSetdstrSuppliers(callApi, () => {}, {
         categoryName: categoryName.code,
       });
       _data.push({
@@ -174,7 +189,7 @@ const useTubes = () => {
 
   const getSheetAllWeights = useCallback(
     async (categoryName: any, supplierId) => {
-      await getAndSetAllMegantsData(callApi, setAllWeightsGrouped, {
+      await getAndSetAlldstrData(callApi, setAllWeightsGrouped, {
         categoryName: categoryName.code,
         supplierId: supplierId || "",
       });
@@ -182,7 +197,7 @@ const useTubes = () => {
     [categoryName]
   );
   const getCategory = useCallback(async () => {
-    const data = await getAndSetAllmegantCodes(callApi, setSheetCategories);
+    const data = await getAndSetAlldstrCodes(callApi, setSheetCategories);
     if (!categoryName) {
       setCategoryName(data[0]);
     }
@@ -193,7 +208,7 @@ const useTubes = () => {
   };
 
   const onClickAddSupplier = async () => {
-    await callApi("POST", `/v1/magnets/add-supplier-catogry`, {
+    await callApi("POST", `/v1/double-sided-tape-roll/add-supplier-catogry`, {
       categoryName: selectedMaterials.code,
       supplierId: sheetStore.selectedSupplier,
     });
@@ -204,10 +219,14 @@ const useTubes = () => {
 
   const onChangeSupplierToDefault = async (option, value) => {
     if (value) {
-      await callApi("POST", `/v1/magnets/update-default-supplier`, {
-        categoryName: selectedMaterials.code,
-        supplierId: option.value,
-      });
+      await callApi(
+        "POST",
+        `/v1/double-sided-tape-roll/update-default-supplier`,
+        {
+          categoryName: selectedMaterials.code,
+          supplierId: option.value,
+        }
+      );
       getSheetSuppliers(selectedMaterials);
     }
   };

@@ -142,7 +142,7 @@ const CategoriesTable = () => {
       {
         key: "doubleSidedTapeRolls",
         title: t("tabs.doubleSidedTapeRolls"),
-        path: "/materials/double-sided-tape-rolls",
+        path: "/materials-new/double-sided-tape-rolls",
       },
       {
         key: "glues",
