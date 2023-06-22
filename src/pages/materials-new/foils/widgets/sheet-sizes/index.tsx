@@ -20,7 +20,7 @@ const SheetSizesWidget = ({
   const { setSnackbarStateValue } = useSnackBar();
 
   const updateToActive = useCallback(async () => {
-    const res = await callApi("POST", `/v1/tubes/size-id-settngs`, {
+    const res = await callApi("POST", `/v1/foils/size-id-settngs`, {
       categoryName: selectedMaterials,
       supplierId: selectedSupplier,
       actionType: 3,
@@ -47,7 +47,7 @@ const SheetSizesWidget = ({
     }
   }, [row, selectedMaterials, selectedSupplier]);
   const updateToInActive = useCallback(async () => {
-    const res = await callApi("POST", `/v1/tubes/size-id-settngs`, {
+    const res = await callApi("POST", `/v1/foils/size-id-settngs`, {
       categoryName: selectedMaterials,
       supplierId: selectedSupplier,
       actionType: 4,
