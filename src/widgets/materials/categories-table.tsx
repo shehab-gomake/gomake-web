@@ -147,7 +147,7 @@ const CategoriesTable = () => {
       {
         key: "glues",
         title: t("tabs.glues"),
-        path: "/materials/glues",
+        path: "/materials-new/glue",
       },
       {
         key: "magnets",
