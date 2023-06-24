@@ -101,7 +101,7 @@ const useCanvasFrames = () => {
       });
       onCloseUpdatePricePerTon();
       onCloseUpdateCurrency();
-      getSheetAllWeights(selectedMaterials.key, sheetStore.selectedSupplier);
+      getSheetAllWeights(selectedMaterials, sheetStore.selectedSupplier);
     } else {
       setSnackbarStateValue({
         state: true,
@@ -125,7 +125,7 @@ const useCanvasFrames = () => {
         type: "sucess",
       });
       handleClose();
-      getSheetAllWeights(selectedMaterials.key, sheetStore.selectedSupplier);
+      getSheetAllWeights(selectedMaterials, sheetStore.selectedSupplier);
     } else {
       setSnackbarStateValue({
         state: true,
@@ -148,7 +148,7 @@ const useCanvasFrames = () => {
         type: "sucess",
       });
       handleClose();
-      getSheetAllWeights(selectedMaterials.key, sheetStore.selectedSupplier);
+      getSheetAllWeights(selectedMaterials, sheetStore.selectedSupplier);
     } else {
       setSnackbarStateValue({
         state: true,
@@ -160,7 +160,7 @@ const useCanvasFrames = () => {
   const getSheetSuppliers = useCallback(
     async (categoryName) => {
       let _data = await getAndSetCanvasFramesSuppliers(callApi, () => {}, {
-        categoryName,
+        categoryName: categoryName?.key,
       });
       _data.push({
         name: "Add new",
@@ -182,17 +182,10 @@ const useCanvasFrames = () => {
 
   const getSheetAllWeights = useCallback(
     async (categoryName: any, supplierId) => {
-      if (typeof categoryName === "string") {
-        await getAndSetAllCanvasFramesSizes(callApi, setAllWeightsGrouped, {
-          categoryName,
-          supplierId: supplierId || "",
-        });
-      } else {
-        await getAndSetAllCanvasFramesSizes(callApi, setAllWeightsGrouped, {
-          categoryName: categoryName?.key,
-          supplierId: supplierId || "",
-        });
-      }
+      await getAndSetAllCanvasFramesSizes(callApi, setAllWeightsGrouped, {
+        categoryName: categoryName?.key,
+        supplierId: supplierId || "",
+      });
     },
     [categoryName]
   );
@@ -213,8 +206,8 @@ const useCanvasFrames = () => {
       supplierId: sheetStore.selectedSupplier,
     });
     setShowSupplierModal(false);
-    getSheetAllWeights(selectedMaterials.key, sheetStore.selectedSupplier);
-    getSheetSuppliers(selectedMaterials.key);
+    getSheetAllWeights(selectedMaterials, sheetStore.selectedSupplier);
+    getSheetSuppliers(selectedMaterials);
   };
 
   const onChangeSupplierToDefault = async (option, value) => {
@@ -223,7 +216,7 @@ const useCanvasFrames = () => {
         categoryName: selectedMaterials.key,
         supplierId: option.value,
       });
-      getSheetSuppliers(selectedMaterials.key);
+      getSheetSuppliers(selectedMaterials);
     }
   };
   const onChangeSelectedSupplier = async (value) => {
@@ -233,7 +226,7 @@ const useCanvasFrames = () => {
         selectedSupplier: value?.value,
       };
     });
-    getSheetAllWeights(selectedMaterials.key, value?.value);
+    getSheetAllWeights(selectedMaterials, value?.value);
   };
   const [isUpdated, setIsUpdated] = useState(false);
   useEffect(() => {
@@ -264,8 +257,8 @@ const useCanvasFrames = () => {
   }, [sheetCategories]);
 
   useEffect(() => {
-    getSheetAllWeights(selectedMaterials.key, sheetStore.selectedSupplier);
-    getSheetSuppliers(selectedMaterials.key);
+    getSheetAllWeights(selectedMaterials, sheetStore.selectedSupplier);
+    getSheetSuppliers(selectedMaterials);
   }, [selectedMaterials]);
 
   useEffect(() => {
