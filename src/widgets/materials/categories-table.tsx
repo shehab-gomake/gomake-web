@@ -137,7 +137,7 @@ const CategoriesTable = () => {
       {
         key: "colors",
         title: t("tabs.colors"),
-        path: "/materials/colors",
+        path: "/materials-new/colors",
       },
       {
         key: "doubleSidedTapeRolls",
@@ -162,7 +162,7 @@ const CategoriesTable = () => {
       {
         key: "varnishs",
         title: t("tabs.varnishs"),
-        path: "/materials/varnishs",
+        path: "/materials-new/varnishs",
       },
       {
         key: "wideFormatMaterial",

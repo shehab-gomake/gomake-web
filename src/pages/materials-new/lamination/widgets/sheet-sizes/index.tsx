@@ -93,7 +93,6 @@ const SheetSizesWidget = ({
       </div>
       <div style={clasess.thiknessContainer}>{row?.size}</div>
       <div style={clasess.directionContainer}>{row?.price}</div>
-      <div style={clasess.costsContainer}>{row?.pricePerRoll}</div>
       <div style={clasess.activeContainer}>{row?.thickness}</div>
       <div style={clasess.activeContainer}>
         <Switch

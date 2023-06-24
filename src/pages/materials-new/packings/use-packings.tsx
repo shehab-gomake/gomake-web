@@ -25,9 +25,9 @@ const usePackings = () => {
   const [sheetCategories, setSheetCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
   const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
-  console.log("allWeightsGrouped", allWeightsGrouped);
   const [actionType, setActionType] = useState(0);
   const [selectedItems, setSelectedItems] = useState([]);
+  console.log("selectedItems", selectedItems);
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
   const [isUpdateCurrency, setIsUpdateCurrency] = useState(false);
   const [data, setData] = useState();
@@ -54,9 +54,9 @@ const usePackings = () => {
     setIsUpdatePricePerTon(false);
   };
   const onOpenUpdatePrice = () => {
-    setModalTitle(t("materials.sheetPaper.updatePrice"));
+    setModalTitle(t("materials.sheetPaper.updatePricePerUnit"));
     setIsUpdatePricePerTon(true);
-    setActionType(6);
+    setActionType(1);
     handleClose();
   };
   const onOpenAddPercentToPrice = () => {

@@ -26,7 +26,66 @@ const getAndSetAllColors = async (
   if (setState) {
     setState(mapData);
   }
+  return _data;
+};
+
+const getAndSetAllColorsNew = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi("GET", "/v1/colors/get-all-codes", data);
+  const _data = returnResult(result, undefined);
+  const mapData = _data.map((size: any) => {
+    return {
+      code: size.code,
+      name: size.name,
+    };
+  });
+  if (setState) {
+    setState(mapData);
+  }
 
   return _data;
 };
-export { getAndSetAllColors };
+
+const getAndSetAllColorsData = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  if (data?.categoryName) {
+    const result: any = await callApi("GET", "/v1/colors/get-all-sizes", data);
+    const _data = returnResult(result, undefined);
+    const mapData = _data.map((item: any) => {
+      return {
+        ...item,
+      };
+    });
+    if (setState) {
+      setState(mapData);
+    }
+
+    return _data;
+  }
+};
+
+const getAndSetColorsSuppliers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/colors/get-supplier-by-category",
+    data
+  );
+  return returnResult(result, undefined);
+};
+
+export {
+  getAndSetAllColors,
+  getAndSetAllColorsNew,
+  getAndSetAllColorsData,
+  getAndSetColorsSuppliers,
+};
