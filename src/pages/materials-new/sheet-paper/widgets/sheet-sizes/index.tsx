@@ -19,7 +19,7 @@ const SheetSizesWidget = ({
 
   const updateToActive = useCallback(async () => {
     const res = await callApi("POST", `/v1/sheets/size-id-settngs`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: selectedSupplier,
       actionType: 3,
       data: [
@@ -47,7 +47,7 @@ const SheetSizesWidget = ({
   }, [row, size, selectedMaterials, selectedSupplier]);
   const updateToInActive = useCallback(async () => {
     const res = await callApi("POST", `/v1/sheets/size-id-settngs`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: selectedSupplier,
       actionType: 4,
       data: [
