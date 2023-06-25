@@ -424,7 +424,18 @@ const initState: Record<string, Record<string, any>> = {
     [ECategoryId.SPIRAL_PERFORATION_MACHINE]: {
         category: ECategoryId.SPIRAL_PERFORATION_MACHINE,
         price: {price: 0, currency: 0},
-        attributes: {}
+        attributes: {
+            autoActionFeederType: {
+                loadingWhileRunning: false
+            },
+            autoActionStackerType: {
+                loadingWhileRunning: false
+            },
+            collectionConnection: {
+                canConnect: false,
+                machine: ''
+            }
+        }
     },
     [ECategoryId.BOOK_CASING_IN_MACHINE]: {
         category: ECategoryId.BOOK_CASING_IN_MACHINE,
@@ -458,6 +469,51 @@ const initState: Record<string, Record<string, any>> = {
     },
     [ECategoryId.CARTOON_PACKAGING_MACHINE]: {
         category: ECategoryId.CARTOON_PACKAGING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.MANUAL_SEWING_MACHINE]: {
+        category: ECategoryId.MANUAL_SEWING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.ROLL_LASER_CUT_MACHINE]: {
+        category: ECategoryId.ROLL_LASER_CUT_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.ROLL_LAMINATION_MACHINE]: {
+        category: ECategoryId.ROLL_LAMINATION_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.ROLL_DIE_CUT_MACHINE]: {
+        category: ECategoryId.ROLL_DIE_CUT_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.ROLL_SHEET_MACHINE]: {
+        category: ECategoryId.ROLL_SHEET_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.ROLL_VARNISH_MACHINE]: {
+        category: ECategoryId.ROLL_VARNISH_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.ROLL_ANALOG_ENHANCEMENT_MACHINE]: {
+        category: ECategoryId.ROLL_ANALOG_ENHANCEMENT_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.AUTO_BOOK_CUTTING_MACHINE]: {
+        category: ECategoryId.AUTO_BOOK_CUTTING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE]: {
+        category: ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE,
         price: {price: 0, currency: 0},
         attributes: {}
     },

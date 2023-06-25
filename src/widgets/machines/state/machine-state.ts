@@ -1,6 +1,6 @@
 import {atom} from "recoil";
 
-export const machineState = atom({
+export const machineState = atom<Record<string, any>>({
     key: "machineState",
-    default: {} as Record<string, any>,
+    default: {} ,
 });

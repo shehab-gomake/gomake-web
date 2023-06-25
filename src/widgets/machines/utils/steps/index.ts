@@ -34,6 +34,24 @@ import {bookletMachineSteps} from "@/widgets/machines/utils/steps/booklet-machin
 import {bookBinderMachineSteps} from "@/widgets/machines/utils/steps/book-binder-machine-steps";
 import {bookSewingMachineSteps} from "@/widgets/machines/utils/steps/book-sewing-machine-steps";
 import {spiralClosingMachineSteps} from "@/widgets/machines/utils/steps/spiral-closing-machine-steps";
+import {spiralPerforationMachineSteps} from "@/widgets/machines/utils/steps/spiral-perforation-machine-steps";
+import {bookCasingInMachineSteps} from "@/widgets/machines/utils/steps/book-casing-in-machine-steps";
+import {hardCoverMakingMachineSteps} from "@/widgets/machines/utils/steps/hard-cover-making-machine-steps";
+import {gluingMachineSteps} from "@/widgets/machines/utils/steps/gluing-machine-steps";
+import {pressingMachineSteps} from "@/widgets/machines/utils/steps/pressing-machine-steps";
+import {shrinkPackingMachineSteps} from "@/widgets/machines/utils/steps/shrink-packing-machine-steps";
+import {packageTyingMachineSteps} from "@/widgets/machines/utils/steps/package-tying-machine-steps";
+import {cartoonPackagingMachineSteps} from "@/widgets/machines/utils/steps/cartoon-packaging-machine-steps";
+import {rollLaserCutMachineSteps} from "@/widgets/machines/utils/steps/roll-laser-cut-machine-steps";
+import {rollLaminationMachineSteps} from "@/widgets/machines/utils/steps/roll-lamination-machine-steps";
+import {rollSheeterMachineSteps} from "@/widgets/machines/utils/steps/roll-sheeter-machine-steps";
+import {rollVarnishMachineSteps} from "@/widgets/machines/utils/steps/roll-varnish-machine-steps";
+import {autoBookMachineSteps} from "@/widgets/machines/utils/steps/auto-book-machine-steps";
+import {rollDieCutMachineSteps} from "@/widgets/machines/utils/steps/roll-die-cut-machine-steps";
+import {rollAnalogEnhancementMachineSteps} from "@/widgets/machines/utils/steps/roll-analog-enhancement-machine-steps";
+import {
+    rollDigitalEnhancementMachineSteps
+} from "@/widgets/machines/utils/steps/roll-digital-enhancement-machine-steps";
 
 const getSteps = (categoryId: ECategoryId): IStep[] => {
     switch (categoryId) {
@@ -105,6 +123,38 @@ const getSteps = (categoryId: ECategoryId): IStep[] => {
             return bookSewingMachineSteps;
         case ECategoryId.SPIRAL_CLOSING_MACHINE:
             return spiralClosingMachineSteps;
+        case ECategoryId.SPIRAL_PERFORATION_MACHINE:
+            return spiralPerforationMachineSteps;
+        case ECategoryId.BOOK_CASING_IN_MACHINE:
+            return bookCasingInMachineSteps;
+        case ECategoryId.HARD_COVER_MAKING_MACHINE:
+            return hardCoverMakingMachineSteps;
+        case ECategoryId.GLUING_MACHINE:
+            return gluingMachineSteps;
+        case ECategoryId.PRESSING_MACHINE:
+            return pressingMachineSteps;
+        case ECategoryId.SHRINK_PACKING_MACHINE:
+            return shrinkPackingMachineSteps;
+        case ECategoryId.PACKAGE_TYING_MACHINE:
+            return packageTyingMachineSteps;
+        case ECategoryId.CARTOON_PACKAGING_MACHINE:
+            return cartoonPackagingMachineSteps;
+        case ECategoryId.ROLL_LASER_CUT_MACHINE:
+            return rollLaserCutMachineSteps;
+        case ECategoryId.ROLL_LAMINATION_MACHINE:
+            return rollLaminationMachineSteps;
+        case ECategoryId.ROLL_SHEET_MACHINE:
+            return rollSheeterMachineSteps;
+        case ECategoryId.ROLL_VARNISH_MACHINE:
+            return rollVarnishMachineSteps;
+        case ECategoryId.AUTO_BOOK_CUTTING_MACHINE:
+            return autoBookMachineSteps;
+        case ECategoryId.ROLL_DIE_CUT_MACHINE:
+            return rollDieCutMachineSteps;
+        case ECategoryId.ROLL_ANALOG_ENHANCEMENT_MACHINE:
+            return rollAnalogEnhancementMachineSteps;
+        case ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE:
+            return rollDigitalEnhancementMachineSteps;
         default:
             return []
     }

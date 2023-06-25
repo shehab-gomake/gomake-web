@@ -46,5 +46,13 @@ export const machineCategoriesState = atom({
         {id: ECategoryId.PACKAGE_TYING_MACHINE, name: 'package tying machine'},
         {id: ECategoryId.BOOK_CASING_IN_MACHINE, name: 'Book casing-in machine'},
         {id: ECategoryId.CARTOON_PACKAGING_MACHINE, name: 'Cartoon packaging machine'},
+        {id: ECategoryId.ROLL_LASER_CUT_MACHINE, name: 'Roll laser cut'},
+        {id: ECategoryId.ROLL_LAMINATION_MACHINE, name: 'Roll lamination machine'},
+        {id: ECategoryId.ROLL_DIE_CUT_MACHINE, name: 'Roll die cut machine'},
+        {id: ECategoryId.ROLL_SHEET_MACHINE, name: 'Roll sheeter  machine'},
+        {id: ECategoryId.ROLL_VARNISH_MACHINE, name: 'Roll varnish  machine'},
+        {id: ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE, name: 'Roll digital enhancement machine'},
+        {id: ECategoryId.AUTO_BOOK_CUTTING_MACHINE, name: 'Auto book cutting'},
+        {id: ECategoryId.ROLL_ANALOG_ENHANCEMENT_MACHINE, name: 'Roll analog enhancement machine'},
     ],
 });
