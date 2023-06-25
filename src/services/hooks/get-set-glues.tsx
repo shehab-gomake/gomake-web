@@ -38,10 +38,11 @@ const getAndSetAllGlue = async (
 ) => {
   const result: any = await callApi("GET", "/v1/glues/get-all-codes", data);
   const _data = returnResult(result, undefined);
+  console.log("_data", _data);
   const mapData = _data.map((size: any) => {
     return {
-      code: size.code,
-      name: size.name,
+      code: size.key,
+      name: size.value,
     };
   });
   if (setState) {
