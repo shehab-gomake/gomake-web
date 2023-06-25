@@ -51,8 +51,8 @@ const getAndSetAlldstrCodes = async (
   const _data = returnResult(result, undefined);
   const mapData = _data.map((size: any) => {
     return {
-      code: size.code,
-      name: size.name,
+      code: size.key,
+      name: size.value,
     };
   });
   if (setState) {
