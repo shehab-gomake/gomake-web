@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   getAndSetAllPMSizes,
-  getAndSetAllSizes,
   getAndSetPMSuppliers,
   getAndSetPrintingMaterialsCategores,
-  getAndSetTubesSuppliers,
-  getAndSetTubessCategores,
 } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar, useSupplier } from "@/hooks";
 import { useRecoilState } from "recoil";
@@ -13,7 +10,7 @@ import { sheetState } from "./store/sheet";
 import { useTranslation } from "react-i18next";
 import { sheetCheckAllState } from "./store/sheet-check-all";
 
-const useTubes = () => {
+const usePrintingMaterialsForRolls = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
@@ -101,7 +98,7 @@ const useTubes = () => {
       "POST",
       `/v1/material-roll-printings/size-id-settngs`,
       {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: sheetStore.selectedSupplier,
         actionType: actionType,
         data: selectedItems,
@@ -130,7 +127,7 @@ const useTubes = () => {
       "POST",
       `/v1/material-roll-printings/size-id-settngs`,
       {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: sheetStore.selectedSupplier,
         actionType: 3,
         data: selectedItems,
@@ -157,7 +154,7 @@ const useTubes = () => {
       "POST",
       `/v1/material-roll-printings/size-id-settngs`,
       {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: sheetStore.selectedSupplier,
         actionType: 4,
         data: selectedItems,
@@ -180,9 +177,9 @@ const useTubes = () => {
     }
   }, [data, selectedItems, actionType, sheetStore.selectedSupplier, setData]);
   const getSheetSuppliers = useCallback(
-    async (categoryName = false) => {
+    async (categoryName) => {
       let _data = await getAndSetPMSuppliers(callApi, () => {}, {
-        categoryName,
+        categoryName: categoryName?.key,
       });
       _data.push({
         name: "Add new",
@@ -203,9 +200,9 @@ const useTubes = () => {
   );
 
   const getSheetAllWeights = useCallback(
-    async (categoryName: string, supplierId) => {
+    async (categoryName: any, supplierId) => {
       await getAndSetAllPMSizes(callApi, setAllWeightsGrouped, {
-        categoryName,
+        categoryName: categoryName?.key,
         supplierId: supplierId || "",
       });
     },
@@ -227,7 +224,7 @@ const useTubes = () => {
 
   const onClickAddSupplier = async () => {
     await callApi("POST", `/v1/material-roll-printings/add-supplier-catogry`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
     });
     setShowSupplierModal(false);
@@ -241,7 +238,7 @@ const useTubes = () => {
         "POST",
         `/v1/material-roll-printings/update-default-supplier`,
         {
-          categoryName: selectedMaterials,
+          categoryName: selectedMaterials?.key,
           supplierId: option.value,
         }
       );
@@ -334,4 +331,4 @@ const useTubes = () => {
   };
 };
 
-export { useTubes };
+export { usePrintingMaterialsForRolls };

@@ -24,7 +24,7 @@ const SheetSizesWidget = ({
       "POST",
       `/v1/material-roll-printings/size-id-settngs`,
       {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: selectedSupplier,
         actionType: 3,
         data: [
@@ -55,7 +55,7 @@ const SheetSizesWidget = ({
       "POST",
       `/v1/material-roll-printings/size-id-settngs`,
       {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: selectedSupplier,
         actionType: 4,
         data: [
