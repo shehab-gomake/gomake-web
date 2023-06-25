@@ -7,6 +7,13 @@ import {bookletMachine} from "@/widgets/machines/utils/attributes/connection-inp
 import {bookBinderMachine} from "@/widgets/machines/utils/attributes/connection-inputs/book-binder-machine";
 import {bookSewingMachine} from "@/widgets/machines/utils/attributes/connection-inputs/book-sewing-machine";
 import {spiralClosingMachine} from "@/widgets/machines/utils/attributes/connection-inputs/spiral-closing-machine";
+import {spiralPerforationMachine} from "@/widgets/machines/utils/attributes/connection-inputs/spiral-perforation-machine";
+import {bookCasingInMachine} from "@/widgets/machines/utils/attributes/connection-inputs/book-casing-in-machine";
+import {hardCoverMakingMachine} from "@/widgets/machines/utils/attributes/connection-inputs/hard-cover-making-machine";
+import {gluingMachine} from "@/widgets/machines/utils/attributes/connection-inputs/gluing-machine";
+import {pressingMachine} from "@/widgets/machines/utils/attributes/connection-inputs/pressing-machine";
+import {manualSewingMachine} from "@/widgets/machines/utils/attributes/connection-inputs/manual=sewing-machine";
+import {laserCutMachine} from "@/widgets/machines/utils/attributes/connection-inputs/laser-cut-machine";
 
 
 const getCategoryConnectionInputs = (categoryId: string, state: Record<string, any>): any[] => {
@@ -27,8 +34,22 @@ const getCategoryConnectionInputs = (categoryId: string, state: Record<string, a
             return bookSewingMachine(state);
         case ECategoryId.SPIRAL_CLOSING_MACHINE:
             return spiralClosingMachine(state);
+        case ECategoryId.SPIRAL_PERFORATION_MACHINE:
+            return spiralPerforationMachine(state);
+        case ECategoryId.BOOK_CASING_IN_MACHINE:
+            return bookCasingInMachine(state);
+        case ECategoryId.HARD_COVER_MAKING_MACHINE:
+            return hardCoverMakingMachine(state);
+        case ECategoryId.GLUING_MACHINE:
+            return gluingMachine(state);
+        case ECategoryId.PRESSING_MACHINE:
+            return pressingMachine(state);
+        case ECategoryId.MANUAL_SEWING_MACHINE:
+            return manualSewingMachine(state);
+        case ECategoryId.ROLL_LASER_CUT_MACHINE:
+            return laserCutMachine(state);
         default:
-            return []
+            return laserCutMachine(state)
     }
 }
 

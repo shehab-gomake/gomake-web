@@ -17,7 +17,7 @@ import {getCategoryFoldingInputs} from "@/widgets/machines/utils/attributes/run-
 import {getCategoryConnectionInputs} from "@/widgets/machines/utils/attributes/connection-inputs";
 import {getCategorySpeedInputs} from "@/widgets/machines/utils/attributes/speed-inputs";
 import {getCategoryCuttingOptionsInputs} from "@/widgets/machines/utils/attributes/cutting-options-inputs";
-import {getCategoryInputs} from "@/widgets/machines/utils/attributes/other-setting";
+import {getCategoryInputs} from "@/widgets/machines/utils/attributes/other-settings";
 import {getCategoryStapleInputs} from "@/widgets/machines/utils/attributes/staple";
 
 

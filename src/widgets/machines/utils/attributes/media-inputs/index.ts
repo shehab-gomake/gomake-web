@@ -30,6 +30,17 @@ import {bookletMachine} from "@/widgets/machines/utils/attributes/media-inputs/b
 import {bookBinderMachine} from "@/widgets/machines/utils/attributes/media-inputs/book-binder-machine";
 import {bookSewingMachine} from "@/widgets/machines/utils/attributes/media-inputs/book-sewing-machine";
 import {spiralClosingMachine} from "@/widgets/machines/utils/attributes/media-inputs/spiral-closing-machine";
+import {spiralPerforationMachine} from "@/widgets/machines/utils/attributes/media-inputs/spiral-perforation-machine";
+import {bookCasingInMachine} from "@/widgets/machines/utils/attributes/media-inputs/book-casing-in-machine";
+import {hardCoverMakingMachine} from "@/widgets/machines/utils/attributes/media-inputs/hard-cover-making-machine";
+import {gluingMachine} from "@/widgets/machines/utils/attributes/media-inputs/gluing-machine";
+import {pressingMachine} from "@/widgets/machines/utils/attributes/media-inputs/pressing-machine";
+import {manualSewingMachine} from "@/widgets/machines/utils/attributes/media-inputs/manual-sewing-machine";
+import {shrinkPackingMachine} from "@/widgets/machines/utils/attributes/media-inputs/shrink-packing-machine";
+import {packageTyingMachine} from "@/widgets/machines/utils/attributes/media-inputs/package-tying-machine";
+import {cartoonPackagingMachine} from "@/widgets/machines/utils/attributes/media-inputs/cartoon-packaging-machine";
+import {rollLaserCutMachine} from "@/widgets/machines/utils/attributes/media-inputs/roll-laser-cut-machine";
+import {autoBookCuttingMachine} from "@/widgets/machines/utils/attributes/media-inputs/auto-book-cutting-machine";
 
 const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) => {
     switch (categoryId) {
@@ -95,6 +106,40 @@ const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) 
             return bookSewingMachine(state);
         case ECategoryId.SPIRAL_CLOSING_MACHINE:
             return spiralClosingMachine(state);
+        case ECategoryId.SPIRAL_PERFORATION_MACHINE:
+            return spiralPerforationMachine(state);
+        case ECategoryId.BOOK_CASING_IN_MACHINE:
+            return bookCasingInMachine(state);
+        case ECategoryId.HARD_COVER_MAKING_MACHINE:
+            return hardCoverMakingMachine(state);
+        case ECategoryId.GLUING_MACHINE:
+            return gluingMachine(state);
+        case ECategoryId.PRESSING_MACHINE:
+            return pressingMachine(state);
+        case ECategoryId.MANUAL_SEWING_MACHINE:
+            return manualSewingMachine(state);
+        case ECategoryId.SHRINK_PACKING_MACHINE:
+            return shrinkPackingMachine(state);
+        case ECategoryId.PACKAGE_TYING_MACHINE:
+            return packageTyingMachine(state);
+        case ECategoryId.CARTOON_PACKAGING_MACHINE:
+            return cartoonPackagingMachine(state);
+        case ECategoryId.ROLL_LASER_CUT_MACHINE:
+            return rollLaserCutMachine(state);
+        case ECategoryId.ROLL_LAMINATION_MACHINE:
+            return rollLaserCutMachine(state);
+        case ECategoryId.ROLL_SHEET_MACHINE:
+            return rollLaserCutMachine(state);
+        case ECategoryId.ROLL_VARNISH_MACHINE:
+            return rollLaserCutMachine(state);
+        case ECategoryId.AUTO_BOOK_CUTTING_MACHINE:
+            return autoBookCuttingMachine(state);
+        case ECategoryId.ROLL_DIE_CUT_MACHINE:
+            return rollLaserCutMachine(state);
+        case ECategoryId.ROLL_ANALOG_ENHANCEMENT_MACHINE:
+            return rollLaserCutMachine(state);
+        case ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE:
+            return rollLaserCutMachine(state);
         default:
             return []
     }

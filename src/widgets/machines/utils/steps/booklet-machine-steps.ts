@@ -17,7 +17,7 @@ const bookletMachineSteps: IStep[] = [
     {label: 'speed',  component: SpeedComponent},
     {label: 'connection',  component: ConnectionComponent},
     {label: 'cuttingOptions',  component: CuttingOptions},
-    {label: 'other-setting',  component: OtherSettingsInputsComponent},
+    {label: 'other-settings',  component: OtherSettingsInputsComponent},
     {label: 'staple',  component: StapleInputsComponent},
 ];
 

@@ -29,6 +29,24 @@ import {bookletMachine} from "@/widgets/machines/utils/attributes/speed-inputs/b
 import {bookBinderMachine} from "@/widgets/machines/utils/attributes/speed-inputs/book-binder-machine";
 import {bookSewingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/book-sewing-machine";
 import {spiralClosingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/spiral-closing-machine";
+import {spiralPerforationMachine} from "@/widgets/machines/utils/attributes/speed-inputs/spiral-perforation-machine";
+import {bookCasingInMachine} from "@/widgets/machines/utils/attributes/speed-inputs/book-casing-in-machine";
+import {hardCoverMakingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/hard-cover-making-machine";
+import {gluingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/gluing-machine";
+import {pressingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/pressing-machine";
+import {manualSewingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/manual-sewing-machine";
+import {shrinkPackingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/shrink-packing-machine";
+import {packageTyingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/package-tying-machine";
+import {cartoonPackagingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/cartoon-packaging-machine";
+import {rollLaserCutMachine} from "@/widgets/machines/utils/attributes/speed-inputs/roll-laser-cut-machine";
+import {rollLaminationMachine} from "@/widgets/machines/utils/attributes/speed-inputs/roll-lamination-machine";
+import {rollSheeterMachine} from "@/widgets/machines/utils/attributes/speed-inputs/roll-sheeter-machine";
+import {rollVarnishMachine} from "@/widgets/machines/utils/attributes/speed-inputs/roll-varnish-machine";
+import {autoBookCuttingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/auto-book-cutting-machine";
+import {rollDieCutMachine} from "@/widgets/machines/utils/attributes/speed-inputs/roll-die-cut-machine";
+import {
+    rollAnalogEnhancementMachine
+} from "@/widgets/machines/utils/attributes/speed-inputs/roll-analog-enhancement-machine";
 
 
 const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) => {
@@ -93,6 +111,40 @@ const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) 
             return bookSewingMachine(state);
         case ECategoryId.SPIRAL_CLOSING_MACHINE:
             return spiralClosingMachine(state);
+        case ECategoryId.SPIRAL_PERFORATION_MACHINE:
+            return spiralPerforationMachine(state);
+        case ECategoryId.BOOK_CASING_IN_MACHINE:
+            return bookCasingInMachine(state);
+        case ECategoryId.HARD_COVER_MAKING_MACHINE:
+            return hardCoverMakingMachine(state);
+        case ECategoryId.GLUING_MACHINE:
+            return gluingMachine(state);
+        case ECategoryId.PRESSING_MACHINE:
+            return pressingMachine(state);
+        case ECategoryId.MANUAL_SEWING_MACHINE:
+            return manualSewingMachine(state);
+        case ECategoryId.SHRINK_PACKING_MACHINE:
+            return shrinkPackingMachine(state);
+        case ECategoryId.PACKAGE_TYING_MACHINE:
+            return packageTyingMachine(state);
+        case ECategoryId.CARTOON_PACKAGING_MACHINE:
+            return cartoonPackagingMachine(state);
+        case ECategoryId.ROLL_LASER_CUT_MACHINE:
+            return rollLaserCutMachine(state);
+        case ECategoryId.ROLL_LAMINATION_MACHINE:
+            return rollLaminationMachine(state);
+        case ECategoryId.ROLL_SHEET_MACHINE:
+            return rollSheeterMachine(state);
+        case ECategoryId.ROLL_VARNISH_MACHINE:
+            return rollVarnishMachine(state);
+        case ECategoryId.AUTO_BOOK_CUTTING_MACHINE:
+            return autoBookCuttingMachine(state);
+        case ECategoryId.ROLL_DIE_CUT_MACHINE:
+            return rollDieCutMachine(state);
+        case ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE:
+            return rollAnalogEnhancementMachine(state);
+        case ECategoryId.ROLL_ANALOG_ENHANCEMENT_MACHINE:
+            return rollAnalogEnhancementMachine(state);
         default:
             return [];
     }
