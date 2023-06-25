@@ -91,7 +91,7 @@ const useSheetEncapsulation = () => {
       "POST",
       `/v1/sheet-encapsulation/size-id-settngs`,
       {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: sheetStore.selectedSupplier,
         actionType: actionType,
         data: selectedItems,
@@ -120,7 +120,7 @@ const useSheetEncapsulation = () => {
       "POST",
       `/v1/sheet-encapsulation/size-id-settngs`,
       {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: sheetStore.selectedSupplier,
         actionType: 3,
         data: selectedItems,
@@ -147,7 +147,7 @@ const useSheetEncapsulation = () => {
       "POST",
       `/v1/sheet-encapsulation/size-id-settngs`,
       {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: sheetStore.selectedSupplier,
         actionType: 4,
         data: selectedItems,
@@ -170,12 +170,12 @@ const useSheetEncapsulation = () => {
     }
   }, [data, selectedItems, actionType, sheetStore.selectedSupplier, setData]);
   const getSheetSuppliers = useCallback(
-    async (categoryName = false) => {
+    async (categoryName) => {
       let _data = await getAndSetSheetEncapsulationSuppliers(
         callApi,
         () => {},
         {
-          categoryName,
+          categoryName: categoryName?.key,
         }
       );
       _data.push({
@@ -197,9 +197,9 @@ const useSheetEncapsulation = () => {
   );
 
   const getSheetAllWeights = useCallback(
-    async (categoryName: string, supplierId) => {
+    async (categoryName: any, supplierId) => {
       await getAndSetAllSheetEncapsulationSizes(callApi, setAllWeightsGrouped, {
-        categoryName,
+        categoryName: categoryName?.key,
         supplierId: supplierId || "",
       });
     },
@@ -221,7 +221,7 @@ const useSheetEncapsulation = () => {
 
   const onClickAddSupplier = async () => {
     await callApi("POST", `/v1/sheet-encapsulation/add-supplier-catogry`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
     });
     setShowSupplierModal(false);
@@ -232,7 +232,7 @@ const useSheetEncapsulation = () => {
   const onChangeSupplierToDefault = async (option, value) => {
     if (value) {
       await callApi("POST", `/v1/sheet-encapsulation/update-default-supplier`, {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: option.value,
       });
       getSheetSuppliers(selectedMaterials);
