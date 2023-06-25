@@ -15,10 +15,10 @@ import { AddSupplierModal } from "./modals/add-supplier-modal";
 import { HeaderTableWidget } from "./widgets/header-table";
 import { SheetSizesWidget } from "./widgets/sheet-sizes";
 import { SettingsMenuModal } from "./modals/menu";
-import { useTubes } from "./use-tubes";
+import { usePrintingMaterialsForRolls } from "./use-printing-materials-for-rolls";
 import { useStyle } from "./style";
 
-export default function Tubes() {
+export default function PrintingMaterialsForRolls() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
 
@@ -58,20 +58,21 @@ export default function Tubes() {
     updateToActive,
     onChangeSelectedSupplier,
     onOpenUpdatepricePerSquareMeter,
-  } = useTubes();
+  } = usePrintingMaterialsForRolls();
   const Side = () => (
     <SideList
       list={sheetCategories}
       selectedItem={selectedMaterials}
       onSelect={setSelectedMaterials}
       title={t("materials.sheetPaper.chooseCategory")}
+      isTranslated={true}
     />
   );
 
   const renderHeader = useCallback(() => {
     return (
       <div style={clasess.renderHeaderContainer}>
-        <div style={clasess.title}>{selectedMaterials}</div>
+        <div style={clasess.title}>{selectedMaterials?.value}</div>
         <div style={clasess.subRenderHeaderContainer} key={selectedMaterials}>
           {sheetStore?.suppliers.length > 0 && (
             <GoMakeAutoComplate
