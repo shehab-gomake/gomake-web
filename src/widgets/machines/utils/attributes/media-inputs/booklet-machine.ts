@@ -1,23 +1,11 @@
 const bookletMachine = (state: Record<string, any>) => {
     return [
         {
-            name: "setupTimeMin",
-            label: "machineAttributes.setupTimeMin",
-            type: "text",
-            placeholder: "machineAttributes.setupTimeMin",
-            required: true,
-            parameterKey: "setupTimeMin",
-            options: [],
-            value: state?.attributes?.setupTimeMin ? state?.attributes?.setupTimeMin : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.setupTimeMin,
-        },
-        {
-            name: 'machineAttributes.thicknessBeforeFolding',
-            parameterKey: 'thicknessBeforeFolding',
+            name: 'machineAttributes.thickness',
+            parameterKey: 'thickness',
             machineInputType: 'multiInput',
-            isValid: !!state?.attributes?.thicknessBeforeFolding?.min &&
-                !!state?.attributes?.thicknessBeforeFolding?.max,
+            isValid: !!state?.attributes?.thickness?.min &&
+                !!state?.attributes?.thickness?.max,
             inputs: [
                 {
                     name: "",

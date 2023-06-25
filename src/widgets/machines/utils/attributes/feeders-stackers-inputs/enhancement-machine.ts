@@ -1,4 +1,4 @@
-const analogEnhancementMachine = (state: Record<string, any>) => {
+const enhancementMachine = (state: Record<string, any>) => {
     return [
         {
             name: "feederHeight",
@@ -27,4 +27,4 @@ const analogEnhancementMachine = (state: Record<string, any>) => {
     ]
 };
 
-export {analogEnhancementMachine};
+export {enhancementMachine};

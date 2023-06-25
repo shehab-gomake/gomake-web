@@ -1,29 +1,7 @@
+import {mediaThicknessSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-thickness-settings";
+
 const bookBinderMachine = (state: Record<string, any>) => {
     return [
-        {
-            name: "setupTimeMin",
-            label: "machineAttributes.setupTimeMin",
-            type: "text",
-            placeholder: "machineAttributes.setupTimeMin",
-            required: true,
-            parameterKey: "setupTimeMin",
-            options: [],
-            value: state?.attributes?.setupTimeMin ? state?.attributes?.setupTimeMin : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.setupTimeMin,
-        },
-        {
-            name: "warmUpTime",
-            label: "machineAttributes.warmUpTime",
-            type: "text",
-            placeholder: "machineAttributes.warmUpTime",
-            required: true,
-            parameterKey: "warmUpTime",
-            options: [],
-            value: state?.attributes?.warmUpTime ? state?.attributes?.warmUpTime : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.warmUpTime,
-        },
         {
             name: "paperCategoriesSuitable",
             label: "machineAttributes.paperCategoriesSuitable",
@@ -36,35 +14,7 @@ const bookBinderMachine = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: true,
         },
-        {
-            name: 'machineAttributes.thickness',
-            parameterKey: 'thickness',
-            machineInputType: 'multiInput',
-            isValid: !!state?.attributes?.thickness?.min &&
-                !!state?.attributes?.thickness?.max,
-            inputs: [
-                {
-                    name: "",
-                    label: "machineAttributes.min",
-                    type: "text",
-                    placeholder: "machineAttributes.min",
-                    required: true,
-                    parameterKey: "min",
-                    options: [],
-                    value: state.attributes?.thickness?.min ? state.attributes?.thickness?.min : ''
-                },
-                {
-                    name: "",
-                    label: "machineAttributes.max",
-                    type: "text",
-                    placeholder: "machineAttributes.max",
-                    required: true,
-                    parameterKey: "max",
-                    options: [],
-                    value: state.attributes?.thickness?.max ? state.attributes?.thickness?.max : ''
-                },
-            ]
-        },
+        ...mediaThicknessSettings(state),
         {
             name: 'machineAttributes.width',
             parameterKey: 'width',
