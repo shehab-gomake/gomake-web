@@ -28,7 +28,7 @@ const ShowCustomerCard = ({ item , clientType }: any) => {
       <IconButton>
         <EditIcon onClick={()=>setOpen(!open)} />
       </IconButton>
-      {customer && <CustomerCardWidget openModal={open} modalTitle={clientType === "S" ? t("suppliers.editModalTitle") : t("customers.modal.editTitle")} onClose={() => setOpen(false)} customer={customer} showUpdateButton={true}></CustomerCardWidget>}
+      {customer && <CustomerCardWidget openModal={open} modalTitle={clientType === "S" ? t("suppliers.editModalTitle") : t("customers.modal.editTitle")} onClose={() => setOpen(false)} customer={customer} setCustomer={setCustomer} showUpdateButton={true}></CustomerCardWidget>}
     </>
   );
 };

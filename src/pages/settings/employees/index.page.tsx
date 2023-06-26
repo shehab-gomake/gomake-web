@@ -16,7 +16,7 @@ export default function Home() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const [pageNumber, setPageNumber] = useState(1);
-  const { tabelHeaders , onChangeName , onChangStatus , allEmployees , isActive } = useEmployees(pageNumber);
+  const { tabelHeaders , onChangeName , onChangStatus , allEmployees , isActive , pagesCount } = useEmployees(pageNumber);
 
 
   return (
@@ -33,7 +33,7 @@ export default function Home() {
       <div style={clasess.tableContainer}>
         <Table tableHeaders={tabelHeaders} tableRows={allEmployees} ></Table>
       </div>
-      <Pagination style={{ position: "absolute", bottom: 10}} count={5} variant="outlined" color="primary"  page={pageNumber}
+      <Pagination style={{ position: "absolute", bottom: 10}} count={pagesCount} variant="outlined" color="primary"  page={pageNumber}
         onChange={(event, value) => setPageNumber(value)} />
     </CustomerAuthLayout>
   );

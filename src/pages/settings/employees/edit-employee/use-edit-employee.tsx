@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const useAddEmployee = () => {
+const useEditEmployee = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [state, setState] = useState<any>({});
@@ -10,22 +10,22 @@ const useAddEmployee = () => {
   const { setSnackbarStateValue } = useSnackBar();
 
 
-  const addNewEmployee = useCallback(
+  const editEmployee = useCallback(
     async (data: any, setData: any) => {
-      const res = await callApi("POST", `/v1/employee/add-employee`, {
+      const res = await callApi("PUT", `/v1/employee/update-employee`, {
         employee: data,
       });
       if (res?.success) {
 
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedSusuccessfully"),
+          message: t("employees.successfullyUpdated"),
           type: "sucess",
         });
       } else {
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedfailed"),
+          message: t("employees.updatedfailed"),
           type: "error",
         });
       }
@@ -46,8 +46,8 @@ const useAddEmployee = () => {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    addNewEmployee,
+    editEmployee,
   };
 };
 
-export { useAddEmployee };
+export { useEditEmployee };

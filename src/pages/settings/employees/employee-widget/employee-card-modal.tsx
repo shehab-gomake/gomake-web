@@ -7,14 +7,21 @@ import { Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { IPaddressForm } from "./address-component";
 import AddIcon from '@mui/icons-material/Add';
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import { useAddEmployee } from "../add-employee/use-add-employee";
+import { useEditEmployee } from "../edit-employee/use-edit-employee";
 
 
-const EmployeeCardWidget = ({ openModal, modalTitle, onClose, employee }: any) => {
+const EmployeeCardWidget = ({ openModal, modalTitle, onClose, employee, setEmployee, flagAddButton, flagEditButton }: any) => {
     const { t } = useTranslation();
     const { clasess } = useStyle();
     const [open, setOpen] = useState(false);
     const [IPaddresses, setIPaddresses] = useState([]);
+
+    // for onclick
+    //onClick={() => addNewEmployee(employee, setEmployee)}
+    //onClick={() => editEmployee(employee, editEmployee)}
+    const { addNewEmployee } = useAddEmployee();
+    const { editEmployee } = useEditEmployee();
 
 
     useEffect(() => {
@@ -50,35 +57,45 @@ const EmployeeCardWidget = ({ openModal, modalTitle, onClose, employee }: any) =
                 <Row style={{ marginBottom: '30px' }} >
                     <Col style={{ display: "flex", alignItems: "center" }} >
                         <h3 style={clasess.headersStyle} >{t("employees.modal.firstName")}</h3>
-                        <input style={clasess.inputStyle} type="text" value={employee?.firstname} onChange={(e: any) => {
-                            const updatedEmployee = { ...employee, firstname: e.target.value };
-                        }} /></Col>
+                        <input style={clasess.inputStyle} type="text" value={employee?.firstname} onChange={(e) => setEmployee({ ...employee, firstname: e.target.value })} /></Col>
                     <Col style={{ display: "flex", alignItems: "center" }} >
                         <h3 style={clasess.headersStyle} >{t("employees.modal.lastName")}</h3>
-                        <input style={clasess.inputStyle} type="text" value={employee?.lastname} /></Col>
+                        <input style={clasess.inputStyle} type="text" value={employee?.lastname} onChange={(e) => setEmployee({ ...employee, lastname: e.target.value })} /></Col>
                     <Col style={{ display: "flex", alignItems: "center" }} >
                         <h3 style={clasess.headersStyle} >{t("employees.modal.email")}</h3>
-                        <input style={clasess.inputStyle} type="text" value={employee?.email} /></Col>
+                        <input style={clasess.inputStyle} type="text" value={employee?.email} onChange={(e) => setEmployee({ ...employee, email: e.target.value })} /></Col>
                     <Col style={{ display: "flex", alignItems: "center" }} >
                         <h3 style={clasess.headersStyle} >{t("employees.modal.phone")}:</h3>
-                        <input style={clasess.inputStyle} type="text" value={employee?.phone} /></Col>
+                        <input style={clasess.inputStyle} type="text" value={employee?.phone} onChange={(e) => setEmployee({ ...employee, phone: e.target.value })} /></Col>
                 </Row>
                 <Row >
                     <Col style={{ display: "flex", alignItems: "center" }} >
                         <h3 style={clasess.headersStyle} >{t("employees.modal.isAgent")}</h3>
-                        <Switch style={clasess.switchStyle} checked={employee?.isAgent} />
+                        <Switch style={clasess.switchStyle} checked={employee?.isAgent} onChange={(e) => setEmployee({ ...employee, isAgent: e.target.checked })} />
+                    </Col>
+                </Row>
+                <Row >
+                    <Col style={{ display: "flex", alignItems: "center" }} >
+                        <h3 style={clasess.headersStyle} >{t("employees.modal.isCourier")}</h3>
+                        <Switch style={clasess.switchStyle} checked={employee?.isCourier} onChange={(e) => setEmployee({ ...employee, isCourier: e.target.checked })} />
                     </Col>
                 </Row>
                 <Row >
                     <Col style={{ display: "flex", alignItems: "center" }} >
                         <h3 style={clasess.headersStyle} >{t("employees.modal.isGraphicArtist")}</h3>
-                        <Switch style={clasess.switchStyle} checked={employee?.isGraphicArtist} />
+                        <Switch style={clasess.switchStyle} checked={employee?.isGraphicArtist} onChange={(e) => setEmployee({ ...employee, isGraphicArtist: e.target.checked })} />
+                    </Col>
+                </Row>
+                <Row >
+                    <Col style={{ display: "flex", alignItems: "center" }} >
+                        <h3 style={clasess.headersStyle} >{t("employees.modal.isWorkingOnCommonBoard")}</h3>
+                        <Switch style={clasess.switchStyle} checked={employee?.isWorkingOnCommonBoard} onChange={(e) => setEmployee({ ...employee, isWorkingOnCommonBoard: e.target.checked })} />
                     </Col>
                 </Row>
                 <Row style={{ marginBottom: '30px' }}>
                     <Col style={{ display: "flex", alignItems: "center" }} >
                         <h3 style={clasess.headersStyle} >{t("employees.modal.isHaveFullKanbanPermission")}</h3>
-                        <Switch style={clasess.switchStyle} checked={employee?.isHaveFullKanbanPermission} />
+                        <Switch style={clasess.switchStyle} checked={employee?.isHaveFullKanbanPermission} onChange={(e) => setEmployee({ ...employee, isHaveFullKanbanPermission: e.target.checked })} />
                     </Col>
                 </Row>
                 <Row >

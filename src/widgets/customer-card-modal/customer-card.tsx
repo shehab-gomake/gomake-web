@@ -19,7 +19,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { useTranslation } from "react-i18next";
 
-const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpdateButton, showAddButton
+const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCustomer ,showUpdateButton, showAddButton
 
 }: any) => {
 
@@ -33,13 +33,6 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
 
   const { t } = useTranslation();
 
-  const statuses = useMemo(
-    () => [
-      { label: t("customers.active"), value: "true" },
-      { label: t("customers.inactive"), value: "false" },
-    ],
-    []
-  );
 
   const CurrencyOptions = useMemo(
     () => [t("USD (US Dollar): $"),
@@ -60,20 +53,20 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
     []
   );
 
-  const tabPanelInput = (label, val = null) => {
+  const tabPanelInput = (label, val = null , onchange=null) => {
     return (
       <Box sx={{ p: 3 }} >
         <h3 style={clasess.headersStyle} >{label}</h3>
-        <input style={clasess.inputStyle} type="text" value={val} />
+        <input style={clasess.inputStyle} type="text" value={val} onChange={onchange} />
       </Box>
     );
   };
 
-  const tabPanelSwich = (label) => {
+  const tabPanelSwich = (label , value=null , onchange=null) => {
     return (
       <Box sx={{ p: 3 }} >
         <h3 style={clasess.headersStyle} >{label}</h3>
-        <Switch style={clasess.switchStyle} />
+        <Switch style={clasess.switchStyle}  checked={value} onChange={onchange} />
       </Box>
     );
   };
@@ -87,7 +80,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
     );
   };
 
-  const tabPanelTextArea = (label) => {
+  const tabPanelTextArea = (label , value=null , onchange=null) => {
     return (
       <Box sx={{ p: 3 }} >
         <h3 style={clasess.headersStyle} >{label}</h3>
@@ -208,12 +201,12 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
             </Col>
             <Col style={{ display: "flex", alignItems: "center" }} >
               <h3 style={clasess.headersStyle} >{t("customers.modal.name")}</h3>
-              <input style={clasess.inputStyle} type="text" value={customer?.name} /></Col>
+              <input style={clasess.inputStyle} type="text" value={customer?.name} onChange={(e: any) => setCustomer({ ...customer, name: e.target.value })} /></Col>
           </Row>
           <Row style={{ marginBottom: '8px' }}>
             <Col style={{ display: "flex", alignItems: "center" }} >
-              <h3 style={clasess.headersStyle} >{t("customers.modal.vatNumber")}</h3>
-              <input style={clasess.inputStyle} type="text" /></Col>
+              <h3 style={clasess.headersStyle} >{t("customers.modal.businessNumber")}</h3>
+              <input style={clasess.inputStyle} type="text" value={customer?.buisnessNumber} onChange={(e) => setCustomer({ ...customer, buisnessNumber: e.target.value })} /></Col>
             <Col style={{ display: "flex", alignItems: "center" }} >
               <h3 style={clasess.headersStyle} >{t("customers.modal.openOrders")}</h3>
               <input readOnly={true} style={clasess.inputStyle} type="text" /></Col>
@@ -243,18 +236,18 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, showUpda
                   <div style={{ display: "flex", alignItems: "center" }}>
                     {tabPanelInput(t("customers.modal.phone1"), customer?.tel1)}
                     {tabPanelInput(t("customers.modal.phone2"), customer?.tel2)}
-                    {tabPanelInput(t("customers.modal.site"), customer?.name)}
+                    {tabPanelInput(t("customers.modal.site"), customer?.site)}
                   </div>
                   <div style={{ display: "flex", alignItems: "center" }}>
                     {tabPanelInput(t("customers.modal.mainContactName"))}
-                    {tabPanelInput(t("customers.modal.mobile"))}
-                    {tabPanelInput(t("customers.modal.email"))}
-                    {tabPanelInput(t("customers.modal.fax"))}
+                    {tabPanelInput(t("customers.modal.mobile"), customer?.phone , (e) => setCustomer({ ...customer, phone: e.target.value }))}
+                    {tabPanelInput(t("customers.modal.email"),customer?.mail , (e) => setCustomer({ ...customer, mail: e.target.value }))}
+                    {tabPanelInput(t("customers.modal.fax"),customer?.fax , (e) => setCustomer({ ...customer, fax: e.target.value }))}
                   </div>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    {tabPanelSwich(t("customers.modal.anOccasionalCustomer"))}
-                    {tabPanelSwich(t("customers.modal.sendingReadyEmail"))}
-                    {tabPanelSelect(t("customers.modal.status"), statuses, null)}
+                    {tabPanelSwich(t("customers.modal.anOccasionalCustomer") ,customer?.isOccasional , (e) => setCustomer({ ...customer, isOccasional: e.target.checked }))}
+                    {tabPanelSwich(t("customers.modal.sendingReadyEmail"),customer?.sendAutomatedMails , (e) => setCustomer({ ...customer, sendAutomatedMails: e.target.checked }))}
+                    {tabPanelSwich(t("customers.modal.isActive"),customer?.isActive , (e) => setCustomer({ ...customer, isActive: e.target.checked }))}
                     {tabPanelSelect(t("customers.modal.shipmentType"),)}
                     {tabPanelSelect(t("customers.modal.agent"), null , "select agent")}
                   </div>

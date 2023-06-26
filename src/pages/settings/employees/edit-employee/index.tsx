@@ -1,7 +1,7 @@
 import { IconButton } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import { useCallback, useEffect, useState } from "react";
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios ,  useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { EmployeeCardWidget } from "../employee-widget";
 import { getAndSetEmployee } from "@/services/hooks";
@@ -11,7 +11,7 @@ const ShowEmployeeCard = ({ item }: any) => {
   const { t } = useTranslation();
   const [employee, setEmployee] = useState(null);
   const [open, setOpen] = useState(false);
-
+  const { setSnackbarStateValue } = useSnackBar();
 
   const onClickEditEmployee = useCallback(async () => {
     setOpen(!open);
@@ -19,15 +19,13 @@ const ShowEmployeeCard = ({ item }: any) => {
       employeeId: item.id,
     });
   }, [callApi, item.id, open]);
-
  
-  
   return (
     <>
       <IconButton>
         <EditIcon onClick={onClickEditEmployee}  ></EditIcon>
       </IconButton>
-      {employee && <EmployeeCardWidget  openModal={open} modalTitle={ t("employees.modal.editTitle")} onClose={() => setOpen(false)} employee={employee} ></EmployeeCardWidget>}
+      {employee && <EmployeeCardWidget  openModal={open} modalTitle={ t("employees.modal.editTitle")} onClose={() => setOpen(false)} employee={employee} setEmployee={setEmployee} flagEditButton={true}></EmployeeCardWidget>}
     </>
   );
 };

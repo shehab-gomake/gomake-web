@@ -2,8 +2,20 @@ import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "./call-api.interface";
 import { ShowCustomerCard } from "@/pages/customers/edit-customer";
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 
+
+const getAndSetCustomers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/customers/get-customers",
+    data
+  );
+  return returnResult(result, setState);
+};
 
 const getAndSetCustomer = async (
   callApi: ICallApi,
@@ -18,7 +30,6 @@ const getAndSetCustomer = async (
   return returnResult(result, setState);
 };
     
-
 const getAndSetAllCustomers = async (
   callApi: ICallApi,
   setState?: ISetState,
@@ -49,6 +60,7 @@ const getAndSetAllCustomers = async (
 };
 
 export {
+  getAndSetCustomers,
   getAndSetCustomer,
   getAndSetAllCustomers,
 };

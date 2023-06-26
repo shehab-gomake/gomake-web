@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
-import { getAndSetAllEmployees } from "@/services/hooks";
+import { getAndSetAllEmployees , getAndSetEmployees } from "@/services/hooks";
 
 
 const useEmployees = (pageNumber) => {
@@ -9,7 +9,9 @@ const useEmployees = (pageNumber) => {
   const { t } = useTranslation();
   const [allEmployees, setAllEmployees] = useState([]);
   const [isAgent, setIsAgent] = useState(null);
- 
+  const [pagesCount, setPagesCount] = useState(0);
+  const pageSize = 10;
+
 
   const [name, setName] = useState("");
   const onChangeName = useCallback(async (e: any, value: any) => {
@@ -35,12 +37,23 @@ const useEmployees = (pageNumber) => {
     []
   );
 
+  /////////////////////////  number of employees //////////////////////////////
+  const getEmployeeNumber = useCallback(async () => {
+    const data = await getAndSetEmployees( callApi  );
+    setPagesCount(data.length/pageSize);
+
+  }, []);
+
+  useEffect(() => {
+    getEmployeeNumber();
+  }, []);
+
   /////////////////////////  table data //////////////////////////////
 
   const getAllEmployees = useCallback(async () => {
     const data = await getAndSetAllEmployees(callApi, setAllEmployees, {
       pageNumber,
-      pageSize: 10,
+      pageSize,
       name,
       isActive: !isActive,
       isAgent
@@ -60,6 +73,7 @@ const useEmployees = (pageNumber) => {
     isActive,
     allEmployees,
     getAllEmployees,
+    pagesCount,
 };
 };
 export { useEmployees };
