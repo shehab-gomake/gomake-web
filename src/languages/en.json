@@ -1171,6 +1171,16 @@
       "active": "Active",
       "profit": "Profit",
       "properties": "Properties"
+    },
+    "parameters": {
+      "admin": {
+        "title": "Parameters",
+        "numbers": "Number",
+        "parameter": "Parameter",
+        "values": "Values",
+        "type": "Type",
+        "more": "More"
+      }
     }
   },
   "skeleton": {
