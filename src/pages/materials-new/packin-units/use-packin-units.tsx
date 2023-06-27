@@ -25,7 +25,6 @@ const usePackinUnits = () => {
   const [sheetCategories, setSheetCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
   const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
-  console.log("allWeightsGrouped", allWeightsGrouped);
   const [actionType, setActionType] = useState(0);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
@@ -89,7 +88,7 @@ const usePackinUnits = () => {
   }, [data]);
   const updatePricePetTon = useCallback(async () => {
     const res = await callApi("POST", `/v1/packin-units/size-id-settngs`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
       actionType: actionType,
       data: selectedItems,
@@ -114,7 +113,7 @@ const usePackinUnits = () => {
   useEffect(() => {}, [sheetStore]);
   const updateToActive = async () => {
     const res = await callApi("POST", `/v1/packin-units/size-id-settngs`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
       actionType: 3,
       data: selectedItems,
@@ -137,7 +136,7 @@ const usePackinUnits = () => {
   };
   const updateToInActive = useCallback(async () => {
     const res = await callApi("POST", `/v1/packin-units/size-id-settngs`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
       actionType: 4,
       data: selectedItems,
@@ -159,9 +158,9 @@ const usePackinUnits = () => {
     }
   }, [data, selectedItems, actionType, sheetStore.selectedSupplier, setData]);
   const getSheetSuppliers = useCallback(
-    async (categoryName = false) => {
+    async (categoryName) => {
       let _data = await getAndSetPackinUnitsSuppliers(callApi, () => {}, {
-        categoryName,
+        categoryName: categoryName?.key,
       });
       _data.push({
         name: "Add new",
@@ -182,9 +181,9 @@ const usePackinUnits = () => {
   );
 
   const getSheetAllWeights = useCallback(
-    async (categoryName: string, supplierId) => {
+    async (categoryName: any, supplierId) => {
       await getAndSetAllPackinUnitsSizes(callApi, setAllWeightsGrouped, {
-        categoryName,
+        categoryName: categoryName?.key,
         supplierId: supplierId || "",
       });
     },
@@ -206,7 +205,7 @@ const usePackinUnits = () => {
 
   const onClickAddSupplier = async () => {
     await callApi("POST", `/v1/packin-units/add-supplier-catogry`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
     });
     setShowSupplierModal(false);
@@ -217,7 +216,7 @@ const usePackinUnits = () => {
   const onChangeSupplierToDefault = async (option, value) => {
     if (value) {
       await callApi("POST", `/v1/packin-units/update-default-supplier`, {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: option.value,
       });
       getSheetSuppliers(selectedMaterials);

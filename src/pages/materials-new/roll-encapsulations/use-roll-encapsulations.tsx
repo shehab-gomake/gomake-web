@@ -25,10 +25,8 @@ const useRollEncapsulations = () => {
   const [sheetCategories, setSheetCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
   const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
-  console.log("allWeightsGrouped", allWeightsGrouped);
   const [actionType, setActionType] = useState(0);
   const [selectedItems, setSelectedItems] = useState([]);
-  console.log("selectedItems", selectedItems);
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
   const [isUpdateCurrency, setIsUpdateCurrency] = useState(false);
   const [data, setData] = useState();
@@ -96,7 +94,7 @@ const useRollEncapsulations = () => {
       "POST",
       `/v1/roll-encapsulations/size-id-settngs`,
       {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: sheetStore.selectedSupplier,
         actionType: actionType,
         data: selectedItems,
@@ -125,7 +123,7 @@ const useRollEncapsulations = () => {
       "POST",
       `/v1/roll-encapsulations/size-id-settngs`,
       {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: sheetStore.selectedSupplier,
         actionType: 3,
         data: selectedItems,
@@ -152,7 +150,7 @@ const useRollEncapsulations = () => {
       "POST",
       `/v1/roll-encapsulations/size-id-settngs`,
       {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: sheetStore.selectedSupplier,
         actionType: 4,
         data: selectedItems,
@@ -175,12 +173,12 @@ const useRollEncapsulations = () => {
     }
   }, [data, selectedItems, actionType, sheetStore.selectedSupplier, setData]);
   const getSheetSuppliers = useCallback(
-    async (categoryName = false) => {
+    async (categoryName) => {
       let _data = await getAndSetRollEncapsulationsSuppliers(
         callApi,
         () => {},
         {
-          categoryName,
+          categoryName: categoryName?.key,
         }
       );
       _data.push({
@@ -202,12 +200,12 @@ const useRollEncapsulations = () => {
   );
 
   const getSheetAllWeights = useCallback(
-    async (categoryName: string, supplierId) => {
+    async (categoryName: any, supplierId) => {
       await getAndSetAllRollEncapsulationsThikness(
         callApi,
         setAllWeightsGrouped,
         {
-          categoryName,
+          categoryName: categoryName?.key,
           supplierId: supplierId || "",
         }
       );
@@ -230,7 +228,7 @@ const useRollEncapsulations = () => {
 
   const onClickAddSupplier = async () => {
     await callApi("POST", `/v1/roll-encapsulations/add-supplier-catogry`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
     });
     setShowSupplierModal(false);
@@ -241,7 +239,7 @@ const useRollEncapsulations = () => {
   const onChangeSupplierToDefault = async (option, value) => {
     if (value) {
       await callApi("POST", `/v1/roll-encapsulations/update-default-supplier`, {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: option.value,
       });
       getSheetSuppliers(selectedMaterials);

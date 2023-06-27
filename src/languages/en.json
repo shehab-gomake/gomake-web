@@ -146,9 +146,10 @@
       "volumeInLiters": "Volume in liters",
       "enterVolumeInLiters": "Enter volume in liters",
       "weightPerLiter": "Weight per liter",
+      "weightOfLiter": "Weight Of Liter",
       "enterWeightPerLiter": "Enter weight per liter",
-      "literInSquareMeter": "Liter in square meter",
-      "enterLiterInSquareMeter": "Enter liter in square meter",
+      "literInSquareMeter": "Liter in meter^2",
+      "enterLiterInSquareMeter": "Enter liter in meter^2",
       "defaultPricePerLiter": "Default price per liter",
       "enterDefaultPricePerLiter": "Enter default price per liter",
       "defaultPricePerContainer": "Default price per container",
@@ -165,7 +166,11 @@
       "updatePricePerRoll": "Update Price Per Roll",
       "updatePricePerSquareMeter": "Update Price Per Square Meter",
       "type": "Type",
-      "pricePerMeterSquare": "Price/Meter^2"
+      "pricePerMeterSquare": "Price/Meter^2",
+      "pricePerContainer": "Price/container",
+      "pricePerLiter": "Price/liter",
+      "glueSuppliers": "Glue supplier",
+      "pricePerUnit": "Price/unit"
     },
     "buttons": {
       "cancel": "Cancel",
@@ -1166,6 +1171,16 @@
       "active": "Active",
       "profit": "Profit",
       "properties": "Properties"
+    },
+    "parameters": {
+      "admin": {
+        "title": "Parameters",
+        "numbers": "Number",
+        "parameter": "Parameter",
+        "values": "Values",
+        "type": "Type",
+        "more": "More"
+      }
     }
   },
   "skeleton": {

@@ -37,4 +37,69 @@ const getAndSetAllDoubleSidedTapeRolls = async (
 
   return _data;
 };
-export { getAndSetAllDoubleSidedTapeRolls };
+
+const getAndSetAlldstrCodes = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/double-sided-tape-roll/get-all-codes",
+    data
+  );
+  const _data = returnResult(result, undefined);
+  const mapData = _data.map((size: any) => {
+    return {
+      code: size.key,
+      name: size.value,
+    };
+  });
+  if (setState) {
+    setState(mapData);
+  }
+
+  return _data;
+};
+const getAndSetAlldstrData = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  if (data?.categoryName) {
+    const result: any = await callApi(
+      "GET",
+      "/v1/double-sided-tape-roll/get-all-sizes",
+      data
+    );
+    const _data = returnResult(result, undefined);
+    const mapData = _data.map((item: any) => {
+      return {
+        ...item,
+      };
+    });
+    if (setState) {
+      setState(mapData);
+    }
+
+    return _data;
+  }
+};
+const getAndSetdstrSuppliers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/double-sided-tape-roll/get-supplier-by-category",
+    data
+  );
+  return returnResult(result, undefined);
+};
+export {
+  getAndSetAllDoubleSidedTapeRolls,
+  getAndSetAlldstrCodes,
+  getAndSetAlldstrData,
+  getAndSetdstrSuppliers,
+};

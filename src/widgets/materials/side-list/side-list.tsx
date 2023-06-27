@@ -40,6 +40,7 @@ const SideList = ({
   quickActions = false,
   children,
   isCode = false,
+  isTranslated = false,
 }: any) => {
   const { primaryColor } = useGomakeTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -71,7 +72,7 @@ const SideList = ({
   const filteredList = useCallback(() => {
     if (filter) {
       return list.filter((item: any) =>
-        item.toLowerCase().includes(filter.toLowerCase())
+        item?.value.toLowerCase().includes(filter.toLowerCase())
       );
     } else {
       return list;
@@ -86,6 +87,17 @@ const SideList = ({
       return list;
     }
   }, [filter, list]);
+  const filteredListTranslate = useCallback(() => {
+    if (filter) {
+      return list.filter((item: any) =>
+        item?.value?.toLowerCase().includes(filter.toLowerCase())
+      );
+    } else {
+      return list;
+    }
+  }, [filter, list]);
+
+  console.log(list);
   return (
     <>
       {isCode ? (
@@ -109,6 +121,69 @@ const SideList = ({
                 >
                   <ListItemText primary={item.name} />
                   {selectedItem.code === item.code && quickActions && (
+                    <IconButton
+                      onClick={handleMoreOptionIconClick}
+                      sx={{ border: "1px solid", color: primaryColor(500) }}
+                      size={"small"}
+                    >
+                      <MoreVertIcon sx={{ width: 23, height: 23 }}>
+                        M
+                      </MoreVertIcon>
+                    </IconButton>
+                  )}
+                </ListButton>
+              ))}
+            </List>
+            {!!children && <div style={classes.buttonWrapper}>{children}</div>}
+          </Box>
+          <Menu
+            open={Boolean(anchorEl)}
+            anchorEl={anchorEl}
+            onClose={handleCloseMenu}
+            PaperProps={classes.menuStyle}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          >
+            <MenuItem onClick={onClickDuplicate}>
+              <div style={classes.menuItem}>
+                <DuplicateIcon
+                  height={20}
+                  width={20}
+                  color={classes.iconColor}
+                />{" "}
+                <span>Duplicate</span>
+              </div>
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={onClickDelete}>
+              <div style={classes.menuItem}>
+                <DeleteIcon color={classes.iconColor} width={20} height={20} />{" "}
+                <span>Delete</span>
+              </div>
+            </MenuItem>
+          </Menu>
+        </>
+      ) : isTranslated ? (
+        <>
+          <Box style={classes.container}>
+            <h1 style={classes.header}>{title}</h1>
+            <SearchInput
+              placeholder={"Search"}
+              onChange={handleFilterChange}
+              value={filter}
+            />
+            <List
+              style={classes.listContainer}
+              component="nav"
+              aria-label="main mailbox folders"
+            >
+              {filteredListTranslate().map((item) => (
+                <ListButton
+                  selected={item.key === selectedItem.key}
+                  onClick={() => onSelect(item)}
+                >
+                  <ListItemText primary={item.value} />
+                  {selectedItem.key === item.key && quickActions && (
                     <IconButton
                       onClick={handleMoreOptionIconClick}
                       sx={{ border: "1px solid", color: primaryColor(500) }}

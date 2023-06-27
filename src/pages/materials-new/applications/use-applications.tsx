@@ -25,7 +25,6 @@ const useApplications = () => {
   const [sheetCategories, setSheetCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
   const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
-  console.log("allWeightsGrouped", allWeightsGrouped);
   const [actionType, setActionType] = useState(0);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
@@ -99,7 +98,7 @@ const useApplications = () => {
   }, [data]);
   const updatePricePetTon = useCallback(async () => {
     const res = await callApi("POST", `/v1/applications/size-id-settngs`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
       actionType: actionType,
       data: selectedItems,
@@ -124,7 +123,7 @@ const useApplications = () => {
   useEffect(() => {}, [sheetStore]);
   const updateToActive = async () => {
     const res = await callApi("POST", `/v1/applications/size-id-settngs`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
       actionType: 3,
       data: selectedItems,
@@ -147,7 +146,7 @@ const useApplications = () => {
   };
   const updateToInActive = useCallback(async () => {
     const res = await callApi("POST", `/v1/applications/size-id-settngs`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
       actionType: 4,
       data: selectedItems,
@@ -169,9 +168,9 @@ const useApplications = () => {
     }
   }, [data, selectedItems, actionType, sheetStore.selectedSupplier, setData]);
   const getSheetSuppliers = useCallback(
-    async (categoryName = false) => {
+    async (categoryName) => {
       let _data = await getAndSetApplicationsSuppliers(callApi, () => {}, {
-        categoryName,
+        categoryName: categoryName?.key,
       });
       _data.push({
         name: "Add new",
@@ -192,9 +191,9 @@ const useApplications = () => {
   );
 
   const getSheetAllWeights = useCallback(
-    async (categoryName: string, supplierId) => {
+    async (categoryName: any, supplierId) => {
       await getAndSetAllApplicationsSizes(callApi, setAllWeightsGrouped, {
-        categoryName,
+        categoryName: categoryName?.key,
         supplierId: supplierId || "",
       });
     },
@@ -216,7 +215,7 @@ const useApplications = () => {
 
   const onClickAddSupplier = async () => {
     await callApi("POST", `/v1/applications/add-supplier-catogry`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
     });
     setShowSupplierModal(false);
@@ -227,7 +226,7 @@ const useApplications = () => {
   const onChangeSupplierToDefault = async (option, value) => {
     if (value) {
       await callApi("POST", `/v1/applications/update-default-supplier`, {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: option.value,
       });
       getSheetSuppliers(selectedMaterials);

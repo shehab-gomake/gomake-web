@@ -117,7 +117,7 @@ export default function Tubes() {
 
   return (
     <CustomerAuthLayout>
-      <MaterialsLayout header={t("materials.tubes.title")} side={Side()}>
+      <MaterialsLayout header={t("materials.additions.title")} side={Side()}>
         {renderHeader()}
         <div style={{ paddingLeft: 0 }}>
           {allWeightsGrouped.length === 0 ? (

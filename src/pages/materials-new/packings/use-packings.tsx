@@ -25,9 +25,9 @@ const usePackings = () => {
   const [sheetCategories, setSheetCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
   const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
-  console.log("allWeightsGrouped", allWeightsGrouped);
   const [actionType, setActionType] = useState(0);
   const [selectedItems, setSelectedItems] = useState([]);
+  console.log("selectedItems", selectedItems);
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
   const [isUpdateCurrency, setIsUpdateCurrency] = useState(false);
   const [data, setData] = useState();
@@ -54,9 +54,9 @@ const usePackings = () => {
     setIsUpdatePricePerTon(false);
   };
   const onOpenUpdatePrice = () => {
-    setModalTitle(t("materials.sheetPaper.updatePrice"));
+    setModalTitle(t("materials.sheetPaper.updatePricePerUnit"));
     setIsUpdatePricePerTon(true);
-    setActionType(6);
+    setActionType(1);
     handleClose();
   };
   const onOpenAddPercentToPrice = () => {
@@ -89,7 +89,7 @@ const usePackings = () => {
   }, [data]);
   const updatePricePetTon = useCallback(async () => {
     const res = await callApi("POST", `/v1/packings/size-id-settngs`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
       actionType: actionType,
       data: selectedItems,
@@ -114,7 +114,7 @@ const usePackings = () => {
   useEffect(() => {}, [sheetStore]);
   const updateToActive = async () => {
     const res = await callApi("POST", `/v1/packings/size-id-settngs`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
       actionType: 3,
       data: selectedItems,
@@ -137,7 +137,7 @@ const usePackings = () => {
   };
   const updateToInActive = useCallback(async () => {
     const res = await callApi("POST", `/v1/packings/size-id-settngs`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
       actionType: 4,
       data: selectedItems,
@@ -159,9 +159,9 @@ const usePackings = () => {
     }
   }, [data, selectedItems, actionType, sheetStore.selectedSupplier, setData]);
   const getSheetSuppliers = useCallback(
-    async (categoryName = false) => {
+    async (categoryName) => {
       let _data = await getAndSetPackingsSuppliers(callApi, () => {}, {
-        categoryName,
+        categoryName: categoryName?.key,
       });
       _data.push({
         name: "Add new",
@@ -182,9 +182,9 @@ const usePackings = () => {
   );
 
   const getSheetAllWeights = useCallback(
-    async (categoryName: string, supplierId) => {
+    async (categoryName: any, supplierId) => {
       await getAndSetAllPackingsSizes(callApi, setAllWeightsGrouped, {
-        categoryName,
+        categoryName: categoryName?.key,
         supplierId: supplierId || "",
       });
     },
@@ -203,7 +203,7 @@ const usePackings = () => {
 
   const onClickAddSupplier = async () => {
     await callApi("POST", `/v1/packings/add-supplier-catogry`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
     });
     setShowSupplierModal(false);
@@ -214,7 +214,7 @@ const usePackings = () => {
   const onChangeSupplierToDefault = async (option, value) => {
     if (value) {
       await callApi("POST", `/v1/packings/update-default-supplier`, {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: option.value,
       });
       getSheetSuppliers(selectedMaterials);

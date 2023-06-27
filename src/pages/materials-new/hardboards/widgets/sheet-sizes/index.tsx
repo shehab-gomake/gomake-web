@@ -21,7 +21,7 @@ const SheetSizesWidget = ({
 
   const updateToActive = useCallback(async () => {
     const res = await callApi("POST", `/v1/hardboards/size-id-settngs`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: selectedSupplier,
       actionType: 3,
       data: [
@@ -49,7 +49,7 @@ const SheetSizesWidget = ({
   }, [row, selectedMaterials, selectedSupplier]);
   const updateToInActive = useCallback(async () => {
     const res = await callApi("POST", `/v1/hardboards/size-id-settngs`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: selectedSupplier,
       actionType: 4,
       data: [
@@ -92,7 +92,6 @@ const SheetSizesWidget = ({
         />
       </div>
       <div style={clasess.thiknessContainer}>{row?.size}</div>
-      <div style={clasess.costsContainer}>{row?.pricePerRoll}</div>
       <div style={clasess.directionContainer}>{row?.pricePerSquareMeter}</div>
       <div style={clasess.activeContainer}>{row?.thickness}</div>
       <div style={clasess.activeContainer}>

@@ -30,10 +30,6 @@ const SettingsMenuModal = ({
         <MenuItem onClick={onOpenUpdatePrice}>
           {t("materials.sheetPaper.updatePrice")}
         </MenuItem>
-        <MenuItem onClick={onOpenUpdatePricePerRoll}>
-          {t("materials.inputs.updatePricePerRoll")}
-        </MenuItem>
-
         <MenuItem onClick={onOpenAddPercentToPrice}>
           {t("materials.sheetPaper.addPrecentToPriceMenu")}
         </MenuItem>

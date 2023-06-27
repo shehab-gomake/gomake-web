@@ -64,13 +64,14 @@ export default function Plats() {
       selectedItem={selectedMaterials}
       onSelect={setSelectedMaterials}
       title={t("materials.sheetPaper.chooseCategory")}
+      isTranslated={true}
     />
   );
 
   const renderHeader = useCallback(() => {
     return (
       <div style={clasess.renderHeaderContainer}>
-        <div style={clasess.title}>{selectedMaterials}</div>
+        <div style={clasess.title}>{selectedMaterials?.value}</div>
         <div style={clasess.subRenderHeaderContainer} key={selectedMaterials}>
           {sheetStore?.suppliers.length > 0 && (
             <GoMakeAutoComplate
