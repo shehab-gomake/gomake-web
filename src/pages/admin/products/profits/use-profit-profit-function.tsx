@@ -200,6 +200,7 @@ const useProfitsProfitsFunction = ({
   );
 
   const onClickSaveNewActionProfitRow = useCallback(async () => {
+    console.log("productTest", productTest);
     const findQuantity = actionProfitPricingTableRows.find(
       (item) => item.quantity == pricingListRowState.quantity
     );
@@ -217,6 +218,7 @@ const useProfitsProfitsFunction = ({
           actionId: selectedAction?.id,
           productId: productTest.id,
           quantity: pricingListRowState.quantity,
+          // actionProductId:
         }
       );
       if (res?.success) {

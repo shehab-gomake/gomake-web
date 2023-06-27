@@ -45,7 +45,7 @@ const ProductTestListMoreCircleWidget = ({ item }: any) => {
         subTitle={`${t("products.profits.subTitleDeleteProduct", {
           name: `${item?.name}`,
         })}?`}
-        onClickDelete={profitsStateValue?.deleteTestProductResult}
+        onClickDelete={() => profitsStateValue?.deleteTestProductResult(item)}
       />
     </>
   );
