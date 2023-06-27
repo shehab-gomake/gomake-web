@@ -60,6 +60,7 @@ const getAndSetAllSheetWeights = async (
     const _data = returnResult(result, undefined);
     const mapData = _data.map((item: any) => {
       return {
+        weightId: item?.weightId,
         weight: item?.weight,
         isActive: item?.isActive,
         sheetSizes: item?.sheetSizes,

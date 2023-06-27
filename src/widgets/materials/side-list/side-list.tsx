@@ -39,6 +39,8 @@ const SideList = ({
   title,
   quickActions = false,
   children,
+  isCode = false,
+  isTranslated = false,
 }: any) => {
   const { primaryColor } = useGomakeTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -70,68 +72,224 @@ const SideList = ({
   const filteredList = useCallback(() => {
     if (filter) {
       return list.filter((item: any) =>
-        item.toLowerCase().includes(filter.toLowerCase())
+        item?.value.toLowerCase().includes(filter.toLowerCase())
       );
     } else {
       return list;
     }
   }, [filter, list]);
+  const filteredListCode = useCallback(() => {
+    if (filter) {
+      return list.filter((item: any) =>
+        item?.name?.toLowerCase().includes(filter.toLowerCase())
+      );
+    } else {
+      return list;
+    }
+  }, [filter, list]);
+  const filteredListTranslate = useCallback(() => {
+    if (filter) {
+      return list.filter((item: any) =>
+        item?.value?.toLowerCase().includes(filter.toLowerCase())
+      );
+    } else {
+      return list;
+    }
+  }, [filter, list]);
+
+  console.log(list);
   return (
     <>
-      <Box style={classes.container}>
-        <h1 style={classes.header}>{title}</h1>
-        <SearchInput
-          placeholder={"Search"}
-          onChange={handleFilterChange}
-          value={filter}
-        />
-        <List
-          style={classes.listContainer}
-          component="nav"
-          aria-label="main mailbox folders"
-        >
-          {filteredList().map((item) => (
-            <ListButton
-              selected={item === selectedItem}
-              onClick={() => onSelect(item)}
+      {isCode ? (
+        <>
+          <Box style={classes.container}>
+            <h1 style={classes.header}>{title}</h1>
+            <SearchInput
+              placeholder={"Search"}
+              onChange={handleFilterChange}
+              value={filter}
+            />
+            <List
+              style={classes.listContainer}
+              component="nav"
+              aria-label="main mailbox folders"
             >
-              <ListItemText primary={item} />
-              {selectedItem === item && quickActions && (
-                <IconButton
-                  onClick={handleMoreOptionIconClick}
-                  sx={{ border: "1px solid", color: primaryColor(500) }}
-                  size={"small"}
+              {filteredListCode().map((item: any) => (
+                <ListButton
+                  selected={item.code === selectedItem.code}
+                  onClick={() => onSelect(item)}
                 >
-                  <MoreVertIcon sx={{ width: 23, height: 23 }}>M</MoreVertIcon>
-                </IconButton>
-              )}
-            </ListButton>
-          ))}
-        </List>
-        {!!children && <div style={classes.buttonWrapper}>{children}</div>}
-      </Box>
-      <Menu
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        onClose={handleCloseMenu}
-        PaperProps={classes.menuStyle}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      >
-        <MenuItem onClick={onClickDuplicate}>
-          <div style={classes.menuItem}>
-            <DuplicateIcon height={20} width={20} color={classes.iconColor} />{" "}
-            <span>Duplicate</span>
-          </div>
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={onClickDelete}>
-          <div style={classes.menuItem}>
-            <DeleteIcon color={classes.iconColor} width={20} height={20} />{" "}
-            <span>Delete</span>
-          </div>
-        </MenuItem>
-      </Menu>
+                  <ListItemText primary={item.name} />
+                  {selectedItem.code === item.code && quickActions && (
+                    <IconButton
+                      onClick={handleMoreOptionIconClick}
+                      sx={{ border: "1px solid", color: primaryColor(500) }}
+                      size={"small"}
+                    >
+                      <MoreVertIcon sx={{ width: 23, height: 23 }}>
+                        M
+                      </MoreVertIcon>
+                    </IconButton>
+                  )}
+                </ListButton>
+              ))}
+            </List>
+            {!!children && <div style={classes.buttonWrapper}>{children}</div>}
+          </Box>
+          <Menu
+            open={Boolean(anchorEl)}
+            anchorEl={anchorEl}
+            onClose={handleCloseMenu}
+            PaperProps={classes.menuStyle}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          >
+            <MenuItem onClick={onClickDuplicate}>
+              <div style={classes.menuItem}>
+                <DuplicateIcon
+                  height={20}
+                  width={20}
+                  color={classes.iconColor}
+                />{" "}
+                <span>Duplicate</span>
+              </div>
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={onClickDelete}>
+              <div style={classes.menuItem}>
+                <DeleteIcon color={classes.iconColor} width={20} height={20} />{" "}
+                <span>Delete</span>
+              </div>
+            </MenuItem>
+          </Menu>
+        </>
+      ) : isTranslated ? (
+        <>
+          <Box style={classes.container}>
+            <h1 style={classes.header}>{title}</h1>
+            <SearchInput
+              placeholder={"Search"}
+              onChange={handleFilterChange}
+              value={filter}
+            />
+            <List
+              style={classes.listContainer}
+              component="nav"
+              aria-label="main mailbox folders"
+            >
+              {filteredListTranslate().map((item) => (
+                <ListButton
+                  selected={item.key === selectedItem.key}
+                  onClick={() => onSelect(item)}
+                >
+                  <ListItemText primary={item.value} />
+                  {selectedItem.key === item.key && quickActions && (
+                    <IconButton
+                      onClick={handleMoreOptionIconClick}
+                      sx={{ border: "1px solid", color: primaryColor(500) }}
+                      size={"small"}
+                    >
+                      <MoreVertIcon sx={{ width: 23, height: 23 }}>
+                        M
+                      </MoreVertIcon>
+                    </IconButton>
+                  )}
+                </ListButton>
+              ))}
+            </List>
+            {!!children && <div style={classes.buttonWrapper}>{children}</div>}
+          </Box>
+          <Menu
+            open={Boolean(anchorEl)}
+            anchorEl={anchorEl}
+            onClose={handleCloseMenu}
+            PaperProps={classes.menuStyle}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          >
+            <MenuItem onClick={onClickDuplicate}>
+              <div style={classes.menuItem}>
+                <DuplicateIcon
+                  height={20}
+                  width={20}
+                  color={classes.iconColor}
+                />{" "}
+                <span>Duplicate</span>
+              </div>
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={onClickDelete}>
+              <div style={classes.menuItem}>
+                <DeleteIcon color={classes.iconColor} width={20} height={20} />{" "}
+                <span>Delete</span>
+              </div>
+            </MenuItem>
+          </Menu>
+        </>
+      ) : (
+        <>
+          <Box style={classes.container}>
+            <h1 style={classes.header}>{title}</h1>
+            <SearchInput
+              placeholder={"Search"}
+              onChange={handleFilterChange}
+              value={filter}
+            />
+            <List
+              style={classes.listContainer}
+              component="nav"
+              aria-label="main mailbox folders"
+            >
+              {filteredList().map((item) => (
+                <ListButton
+                  selected={item === selectedItem}
+                  onClick={() => onSelect(item)}
+                >
+                  <ListItemText primary={item} />
+                  {selectedItem === item && quickActions && (
+                    <IconButton
+                      onClick={handleMoreOptionIconClick}
+                      sx={{ border: "1px solid", color: primaryColor(500) }}
+                      size={"small"}
+                    >
+                      <MoreVertIcon sx={{ width: 23, height: 23 }}>
+                        M
+                      </MoreVertIcon>
+                    </IconButton>
+                  )}
+                </ListButton>
+              ))}
+            </List>
+            {!!children && <div style={classes.buttonWrapper}>{children}</div>}
+          </Box>
+          <Menu
+            open={Boolean(anchorEl)}
+            anchorEl={anchorEl}
+            onClose={handleCloseMenu}
+            PaperProps={classes.menuStyle}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          >
+            <MenuItem onClick={onClickDuplicate}>
+              <div style={classes.menuItem}>
+                <DuplicateIcon
+                  height={20}
+                  width={20}
+                  color={classes.iconColor}
+                />{" "}
+                <span>Duplicate</span>
+              </div>
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={onClickDelete}>
+              <div style={classes.menuItem}>
+                <DeleteIcon color={classes.iconColor} width={20} height={20} />{" "}
+                <span>Delete</span>
+              </div>
+            </MenuItem>
+          </Menu>
+        </>
+      )}
     </>
   );
 };

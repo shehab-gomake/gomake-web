@@ -61,7 +61,7 @@ const useProfitsGetData = () => {
     await getAndSetActions(callApi, setAllActions);
   }, []);
   const getParameters = useCallback(async () => {
-    await getAndSetParameters(callApi, setParametersState);
+    return await getAndSetParameters(callApi, setParametersState);
   }, []);
 
   const getClientTypes = useCallback(async () => {
@@ -81,10 +81,13 @@ const useProfitsGetData = () => {
       machincesStateValue,
       productsStateValue,
       clientTypesStateValue,
-      parametersStateValue,
+      await getParameters(),
       {
         actionId: selectedAction?.id,
         selectTestDataVal,
+        ...(actionExceptionProfitIdValue?.id?.length && {
+          exceptionId: actionExceptionProfitIdValue.id,
+        }),
       }
     );
   };
@@ -118,10 +121,13 @@ const useProfitsGetData = () => {
       setChartDataValue,
       {
         actionProfitId: actionProfits?.id,
+        ...(actionExceptionProfitIdValue?.id?.length && {
+          exceptionId: actionExceptionProfitIdValue.id,
+        }),
       },
       actionProfits?.pricingBy
     );
-  }, [actionProfits]);
+  }, [actionProfits, actionExceptionProfitIdValue]);
 
   const getMachincesProfits = useCallback(async () => {
     await getAndSetMachinces(callApi, setMachincesState);

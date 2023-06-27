@@ -9,17 +9,22 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
 import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
+import { actionExceptionProfitId, actionProfitLists } from "@/store";
 
-export const renderProfits = (item: any) => {
+export const renderProfits = (item: any, data: any = {}) => {
   const cost = item?.cost || 0;
   const profit = item?.profit || 0;
   const quantity = item?.quantity || 0;
   const percentProfit = profit / 100;
-  const total = cost * (1 + percentProfit);
+  const percentExpProfit = data?.expProfit / 100;
+  const total = data?.expProfit
+    ? cost * (1 + percentExpProfit)
+    : cost * (1 + percentProfit);
 
   return {
     cost: Number(cost),
     profit: Number(profit),
+    ...(data?.expProfit && { expProfit: data?.expProfit }),
     quantity: Number(quantity),
     unitPrice: Number(total / quantity).toFixed(2),
     totalPrice: Number(total).toFixed(2),
@@ -41,6 +46,7 @@ const useProfitsAction = ({
   setSnackbarStateValue,
   getActionExceptionProfitRowByActionExceptionId,
   getTestProducts,
+  setTabelPricingHeaders,
 }: any) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -51,8 +57,21 @@ const useProfitsAction = ({
   const setActionProfitPricingTableRows = useSetRecoilState<any>(
     actionProfitPricingTableRowsState
   );
+  const setActionExceptionProfitIdValue = useSetRecoilState<any>(
+    actionExceptionProfitId
+  );
+
   const onCklickActionProfitTestResultsByActionId = useCallback(
     async (productId: string, productName: string) => {
+      setActionExceptionProfitIdValue("");
+      setTabelPricingHeaders([
+        t("products.profits.pricingListWidget.cost"),
+        t("products.profits.pricingListWidget.profit"),
+        t("products.profits.pricingListWidget.testQuantity"),
+        t("products.profits.pricingListWidget.unitPrice"),
+        t("products.profits.pricingListWidget.totalPrice"),
+        t("products.profits.pricingListWidget.more"),
+      ]);
       setActionProfitPricingTableRows("");
       const selectTestDataVal =
         await getAndSetGetActionProfitTestResultsByActionId(
@@ -84,9 +103,18 @@ const useProfitsAction = ({
     [selectedAction, actionProfitRowsNew, selectTestDataVal]
   );
 
+  const setProfitsStateValue = useSetRecoilState<any>(actionProfitLists);
   const onChangeSelectedAction = useCallback(async (e: any, value: any) => {
-    setSelectedAction(value);
-    setProductTest({});
+    if (!value) {
+      setProductTest(null);
+      setSelectedAction("");
+      setProfitsStateValue("");
+    } else {
+      console.log("value", value);
+      setSelectedAction(value);
+      setProductTest(null);
+      // onCklickActionProfitTestResultsByActionId(value.id, value.name);
+    }
   }, []);
 
   const onChangeAddNewTestProduct = useCallback((key: string, value: any) => {

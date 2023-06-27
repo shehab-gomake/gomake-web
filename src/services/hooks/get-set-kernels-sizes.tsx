@@ -52,9 +52,43 @@ const getAndSetTubessSize = async (
 
   return _data;
 };
+const getAndSetAllSizes = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  if (data?.categoryName) {
+    const result: any = await callApi("GET", "/v1/tubes/get-all-sizes", data);
+    const _data = returnResult(result, undefined);
+    const mapData = _data.map((item: any) => {
+      return {
+        ...item,
+      };
+    });
+    if (setState) {
+      setState(mapData);
+    }
 
+    return _data;
+  }
+};
+
+const getAndSetTubesSuppliers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/tubes/get-supplier-by-category",
+    data
+  );
+  return returnResult(result, undefined);
+};
 export {
   getAndSetTubessCategores,
   getAndSetTubessSuppliers,
   getAndSetTubessSize,
+  getAndSetAllSizes,
+  getAndSetTubesSuppliers,
 };

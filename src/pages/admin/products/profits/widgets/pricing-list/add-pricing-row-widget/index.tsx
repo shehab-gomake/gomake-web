@@ -70,13 +70,7 @@ const AddPricingListRowWidget = ({ pricingBy, profitsStateValue }: any) => {
       />
 
       <Tooltip title={t("products.profits.pricingListWidget.saveStep")}>
-        <IconButton
-          onClick={
-            actionExceptionProfitIdValue
-              ? profitsStateValue?.onClickSaveNewActionExceptionProfitRow
-              : profitsStateValue?.onClickSaveNewActionProfitRow
-          }
-        >
+        <IconButton onClick={profitsStateValue?.onClickSaveNewActionProfitRow}>
           <SaveIcon style={clasess.saveBotton} />
         </IconButton>
       </Tooltip>

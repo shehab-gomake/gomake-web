@@ -21,8 +21,8 @@ const useStyle = ({ width, index, tablePercent }: any) => {
         lineHeight: "18px",
         color: primaryColor(900),
         textalign: "center",
-        marginBottom: 18.5,
-        marginTop: 18.5,
+        marginBottom: 8.5,
+        marginTop: 8.5,
         width: "150px",
       },
       rowItemExpPofit: {
@@ -33,8 +33,8 @@ const useStyle = ({ width, index, tablePercent }: any) => {
         lineHeight: "18px",
         // color: primaryColor(900),
         textalign: "center",
-        marginBottom: 18.5,
-        marginTop: 18.5,
+        marginBottom: 8.5,
+        marginTop: 8.5,
         color: " #F135A3",
       },
       editItem: {
@@ -46,8 +46,8 @@ const useStyle = ({ width, index, tablePercent }: any) => {
         color: primaryColor(300),
         textalign: "center",
         width: `${width}`,
-        marginBottom: 18.5,
-        marginTop: 18.5,
+        marginBottom: 8.5,
+        marginTop: 8.5,
       },
       controlsContainer: {
         display: "flex",
