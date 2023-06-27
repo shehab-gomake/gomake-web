@@ -93,7 +93,7 @@ const useWideFormatMaterial = () => {
       "POST",
       `/v1/wide-format-material/size-id-settngs`,
       {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: sheetStore.selectedSupplier,
         actionType: actionType,
         data: selectedItems,
@@ -122,7 +122,7 @@ const useWideFormatMaterial = () => {
       "POST",
       `/v1/wide-format-material/size-id-settngs`,
       {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: sheetStore.selectedSupplier,
         actionType: 3,
         data: selectedItems,
@@ -149,7 +149,7 @@ const useWideFormatMaterial = () => {
       "POST",
       `/v1/wide-format-material/size-id-settngs`,
       {
-        categoryName: selectedMaterials,
+        categoryName: selectedMaterials?.key,
         supplierId: sheetStore.selectedSupplier,
         actionType: 4,
         data: selectedItems,
@@ -172,12 +172,12 @@ const useWideFormatMaterial = () => {
     }
   }, [data, selectedItems, actionType, sheetStore.selectedSupplier, setData]);
   const getSheetSuppliers = useCallback(
-    async (categoryName = false) => {
+    async (categoryName) => {
       let _data = await getAndSetWideFormatMaterialSuppliers(
         callApi,
         () => {},
         {
-          categoryName,
+          categoryName: categoryName?.key,
         }
       );
       _data.push({
@@ -199,9 +199,9 @@ const useWideFormatMaterial = () => {
   );
 
   const getSheetAllWeights = useCallback(
-    async (categoryName: string, supplierId) => {
+    async (categoryName: any, supplierId) => {
       await getAndSetAllWideFormatMaterialSizes(callApi, setAllWeightsGrouped, {
-        categoryName,
+        categoryName: categoryName?.key,
         supplierId: supplierId || "",
       });
     },
@@ -223,7 +223,7 @@ const useWideFormatMaterial = () => {
 
   const onClickAddSupplier = async () => {
     await callApi("POST", `/v1/wide-format-material/add-supplier-catogry`, {
-      categoryName: selectedMaterials,
+      categoryName: selectedMaterials?.key,
       supplierId: sheetStore.selectedSupplier,
     });
     setShowSupplierModal(false);
@@ -237,7 +237,7 @@ const useWideFormatMaterial = () => {
         "POST",
         `/v1/wide-format-material/update-default-supplier`,
         {
-          categoryName: selectedMaterials,
+          categoryName: selectedMaterials?.key,
           supplierId: option.value,
         }
       );
