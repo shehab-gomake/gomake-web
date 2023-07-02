@@ -31,11 +31,18 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
               sheetSize?.id
             )
           }
+          onClickDuplicate={() =>
+            materialSheetsStateValue.duplicateWeightSize(
+              sheetWeight?.id,
+              sheetSize?.id,
+              selectedItem?.categoryName
+            )
+          }
           title={"Delete Sheet Weight Size"}
           subTitle={"Are you sure you want to delete sheet weight size?"}
         />
         <div style={clasess.inputSizesContainer}>
-          <div>
+          {/* <div>
             <div style={clasess.lableTextStyle}>
               {t("materials.inputs.code")}
             </div>
@@ -51,8 +58,8 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
                 );
               }}
             />
-          </div>
-          <div>
+          </div> */}
+          {/* <div>
             <div style={clasess.lableTextStyle}>
               {t("materials.inputs.name")}
             </div>
@@ -68,7 +75,7 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
                 );
               }}
             />
-          </div>
+          </div> */}
           <div>
             <div style={clasess.lableTextStyle}>
               {t("materials.inputs.width")}
@@ -166,7 +173,7 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
               }}
             />
           </div>
-          <div>
+          {/* <div>
             <div style={clasess.lableTextStyle}>
               {t("materials.inputs.index")}
             </div>
@@ -184,7 +191,7 @@ const SheetSizeMapping = ({ index, sheetSize, sheetWeight, selectedItem }) => {
                 );
               }}
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </>

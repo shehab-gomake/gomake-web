@@ -177,7 +177,8 @@
       "delete": "Delete",
       "edit": "Edit",
       "save": "Save",
-      "saveModifications": "Save modifications"
+      "saveModifications": "Save modifications",
+      "duplicate": "Duplicate"
     },
     "modals": {
       "subTitleDeleteModal": "Are you sure to delete {{name}}"
@@ -1180,6 +1181,12 @@
         "values": "Values",
         "type": "Type",
         "more": "More"
+      }
+    },
+    "offsetPrice": {
+      "admin": {
+        "title": "Offset price list",
+        "title2": "Digital and offset price list"
       }
     }
   },

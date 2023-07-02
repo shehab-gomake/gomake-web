@@ -37,15 +37,7 @@ const apiRequest = async (method = "GET", url: string, data: any = {}) => {
         options.params = {
           ...data,
         };
-        const offlineResponse = await axios(options);
-        localStorage.setItem(
-          data?.offline,
-          JSON.stringify(offlineResponse?.data)
-        );
-      } else {
-        localStorage.setItem(data?.offline, JSON.stringify(response?.data));
       }
-
       return {
         success: true,
         status: response?.status,

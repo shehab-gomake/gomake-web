@@ -135,6 +135,7 @@ const useProfitsProfitsFunction = ({
           ...(actionExceptionProfitIdValue?.id?.length && {
             exceptionId: actionExceptionProfitIdValue.id,
           }),
+          actionProductId: productTest.actionProductId,
         }
       );
       await getAndSetActionProfitRowChartData(
@@ -185,6 +186,7 @@ const useProfitsProfitsFunction = ({
             ...(actionExceptionProfitIdValue?.id?.length && {
               exceptionId: actionExceptionProfitIdValue.id,
             }),
+            actionProductId: productTest.actionProductId,
           }
         );
         getActionProfitRowChartData();
@@ -200,6 +202,7 @@ const useProfitsProfitsFunction = ({
   );
 
   const onClickSaveNewActionProfitRow = useCallback(async () => {
+    console.log("productTest", productTest);
     const findQuantity = actionProfitPricingTableRows.find(
       (item) => item.quantity == pricingListRowState.quantity
     );
@@ -217,6 +220,8 @@ const useProfitsProfitsFunction = ({
           actionId: selectedAction?.id,
           productId: productTest.id,
           quantity: pricingListRowState.quantity,
+          actionProductId: productTest.actionProductId,
+          // actionProductId:
         }
       );
       if (res?.success) {
@@ -236,6 +241,7 @@ const useProfitsProfitsFunction = ({
             ...(actionExceptionProfitIdValue?.id?.length && {
               exceptionId: actionExceptionProfitIdValue.id,
             }),
+            actionProductId: productTest.actionProductId,
           }
         );
         setPricingListRowState({});

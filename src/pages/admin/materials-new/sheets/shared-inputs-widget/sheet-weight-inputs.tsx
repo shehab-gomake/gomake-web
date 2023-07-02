@@ -31,7 +31,7 @@ const SheetWeightsInputs = ({ index }) => {
             }}
           />
         </div>
-        <div>
+        {/* <div>
           <div style={clasess.lableTextStyle}>{t("materials.inputs.name")}</div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterName")}
@@ -45,7 +45,7 @@ const SheetWeightsInputs = ({ index }) => {
               );
             }}
           />
-        </div>
+        </div> */}
         <div>
           <div style={clasess.lableTextStyle}>
             {t("materials.inputs.thickness")}
@@ -63,7 +63,7 @@ const SheetWeightsInputs = ({ index }) => {
             }}
           />
         </div>
-        <div>
+        {/* <div>
           <div style={clasess.lableTextStyle}>
             {t("materials.inputs.index")}
           </div>
@@ -79,7 +79,7 @@ const SheetWeightsInputs = ({ index }) => {
               );
             }}
           />
-        </div>
+        </div> */}
       </div>
     </>
   );

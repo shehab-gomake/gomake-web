@@ -3,11 +3,11 @@ import { useRecoilValue } from "recoil";
 import { GoMakeDeleteModal } from "@/components";
 import { IconWidget } from "./icon-widget";
 import moreCircle from "@/icons/more-circle.png";
-import { IconButton, Tooltip } from "@mui/material";
 import { useSheetModal } from "./use-sheet-modal";
 import { UpdateSheetModal } from "../update-sheet-modal";
 import { materialSheetsState } from "../store/sheets";
 import { GoMakeDeleteMaterialModal } from "@/widgets";
+import { DuplicateModal } from "../duplicate-modal";
 
 const SheetSettingsWidget = ({ item }: any) => {
   const {
@@ -28,6 +28,9 @@ const SheetSettingsWidget = ({ item }: any) => {
         onOpnUpdateModal={() => {
           materialSheetsStateValue?.onOpnUpdateModal(item);
         }}
+        onOpnDuplicateModal={() => {
+          materialSheetsStateValue?.onOpnDuplicateModal(item);
+        }}
         onOpenDeleteModal={onOpenDeleteModal}
       />
       <GoMakeDeleteModal
@@ -40,10 +43,17 @@ const SheetSettingsWidget = ({ item }: any) => {
         subTitle={`${t("materials.modals.subTitleDeleteModal", {
           name: `${item?.categoryName}`,
         })}?`}
-        onClickDelete={deleteSheetByCategoryName}
+        onClickDelete={async () => {
+          await deleteSheetByCategoryName();
+          await materialSheetsStateValue?.getSheets();
+        }}
       />
-      {item === materialSheetsStateValue.selectedEditItem && (
-        <UpdateSheetModal />
+      {item?.categoryName ===
+        materialSheetsStateValue?.selectedEditItem?.categoryName && (
+        <>
+          <UpdateSheetModal />
+          <DuplicateModal />
+        </>
       )}
     </>
   );

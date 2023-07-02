@@ -53,6 +53,7 @@ const useProfitsAction = ({
 
   const [openAddTestProductModal, setOpenAddTestProductModal] = useState(false);
   const [testProductState, setTestProductState] = useState<any>({});
+  const [actionProductId, setActionProductId] = useState<any>({});
   const setProductTest = useSetRecoilState(productTestState);
   const setActionProfitPricingTableRows = useSetRecoilState<any>(
     actionProfitPricingTableRowsState
@@ -62,7 +63,7 @@ const useProfitsAction = ({
   );
 
   const onCklickActionProfitTestResultsByActionId = useCallback(
-    async (productId: string, productName: string) => {
+    async (productId: string, productName: string, actionProductId: string) => {
       setActionExceptionProfitIdValue("");
       setTabelPricingHeaders([
         t("products.profits.pricingListWidget.cost"),
@@ -81,7 +82,8 @@ const useProfitsAction = ({
           actionProfits,
           {
             actionId: selectedAction?.id,
-            productId: productId,
+            productId,
+            actionProductId,
           }
         );
       // const mapData = actionProfitRowsNew?.map((item: any) => {
@@ -96,7 +98,7 @@ const useProfitsAction = ({
       //   };
       // });
       // setactionExceptionProfitId(productId);
-      setProductTest({ id: productId, name: productName });
+      setProductTest({ id: productId, name: productName, actionProductId });
       // setActionExceptionProfitRows(mapData);
       // setActionProfitRowsNew(mapData);
     },
@@ -141,27 +143,32 @@ const useProfitsAction = ({
     [selectedAction]
   );
 
-  const deleteTestProductResult = useCallback(async () => {
-    const res = await callApi(
-      "DELETE",
-      `/v1/printhouse-config/products/delete-product-price-test-result?actionId=${selectedAction?.id}&productId=${testProductState}`
-    );
-    if (res?.success) {
-      getTestProducts();
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.deleteSusuccessfully"),
-        type: "sucess",
-      });
-      getActionExceptionProfitRowByActionExceptionId();
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.deletefailed"),
-        type: "error",
-      });
-    }
-  }, [testProductState, selectedAction, router]);
+  const deleteTestProductResult = useCallback(
+    async (item: any) => {
+      console.log("item", item);
+
+      const res = await callApi(
+        "DELETE",
+        `/v1/printhouse-config/products/delete-product-price-test-result?actionId=${selectedAction?.id}&productId=${item?.item?.productId}&actionProductId=${item?.item?.id}`
+      );
+      if (res?.success) {
+        getTestProducts();
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.deleteSusuccessfully"),
+          type: "sucess",
+        });
+        getActionExceptionProfitRowByActionExceptionId();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.deletefailed"),
+          type: "error",
+        });
+      }
+    },
+    [actionProductId, testProductState, selectedAction, router]
+  );
 
   return {
     testProductState,
@@ -172,6 +179,7 @@ const useProfitsAction = ({
     onChangeAddNewTestProduct,
     setTestProductState,
     deleteTestProductResult,
+    setActionProductId,
     onClickTestProduct,
     setOpenAddTestProductModal,
   };

@@ -72,6 +72,7 @@ const useStyle = () => {
       },
       textInputStyle: {
         height: 42,
+        width: 150,
       },
       lineStyle: {
         display: "flex",

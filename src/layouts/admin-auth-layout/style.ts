@@ -65,7 +65,7 @@ const useStyle = ({
         width: "100%",
       },
       bodyContainer: {
-        // height: convertHeightToVH(1024 - 101),
+        height: "100%",
         display: "flex",
         flexDirection: "column" as "column",
         overflowY: "scroll" as "scroll",

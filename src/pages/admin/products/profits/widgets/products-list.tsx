@@ -19,9 +19,14 @@ const ProductList = () => {
 
   useEffect(() => {
     if (!productTest && profitsStateValue?.testProductsState) {
+      console.log(
+        " profitsStateValue?.testProductsState[0]",
+        profitsStateValue?.testProductsState[0]
+      );
       profitsStateValue?.onCklickActionProfitTestResultsByActionId(
-        profitsStateValue?.testProductsState[0]?.id,
-        profitsStateValue?.testProductsState[0]?.name
+        profitsStateValue?.testProductsState[0]?.item?.productId,
+        profitsStateValue?.testProductsState[0]?.name,
+        profitsStateValue?.testProductsState[0]?.item?.id
       );
     }
   }, [profitsStateValue?.testProductsState, productTest]);
@@ -44,19 +49,25 @@ const ProductList = () => {
             <>
               {profitsStateValue?.testProductsState?.map(
                 (item: any, index: any) => {
+                  console.log({
+                    item,
+                    productTest,
+                  });
                   return (
                     <div
                       style={
-                        item?.id === productTest?.id
+                        item?.id === productTest?.id &&
+                        item?.item?.id === productTest?.actionProductId
                           ? clasess.bodyTableOddContainer
                           : clasess.bodyTableEvenContainer
                       }
-                      onClick={() =>
+                      onClick={() => {
                         profitsStateValue?.onCklickActionProfitTestResultsByActionId(
-                          item?.id,
-                          item?.name
-                        )
-                      }
+                          item?.item?.productId,
+                          item?.name,
+                          item?.item?.id
+                        );
+                      }}
                     >
                       <div style={clasess.nameStyle}>{item?.name}</div>
                       <div style={clasess.detailsStyle} className="scrollBlue">
