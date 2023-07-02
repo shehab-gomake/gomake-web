@@ -51,12 +51,14 @@ const ProductList = () => {
                           ? clasess.bodyTableOddContainer
                           : clasess.bodyTableEvenContainer
                       }
-                      onClick={() =>
+                      onClick={() => {
+                        console.log("itemitem", item);
                         profitsStateValue?.onCklickActionProfitTestResultsByActionId(
-                          item?.id,
-                          item?.name
-                        )
-                      }
+                          item?.item?.productId,
+                          item?.name,
+                          item?.item?.id
+                        );
+                      }}
                     >
                       <div style={clasess.nameStyle}>{item?.name}</div>
                       <div style={clasess.detailsStyle} className="scrollBlue">

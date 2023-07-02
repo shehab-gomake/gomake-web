@@ -5,10 +5,12 @@ import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useGomakeAxios } from "./use-gomake-axios";
 import { useGomakeRouter } from "./use-gomake-router";
+import { userTypeState } from "@/store/user-type";
 
 const useCustomer = () => {
   const { callApi } = useGomakeAxios();
   const [user, setUser] = useRecoilState<any>(userState);
+  const [userType, setUserType] = useRecoilState<any>(userTypeState);
   const [adminsAutoComplate, setAdminsAutoComplate] = useState([]);
   const [permissions, setPermissions] = useRecoilState<any>(permissionsState);
   const { navigate } = useGomakeRouter();
@@ -21,7 +23,8 @@ const useCustomer = () => {
   const validate = useCallback(async () => {
     const validate: any = await callApi("GET", "/v1/auth/validate");
     if (validate?.success) {
-      setUser(validate?.data?.data?.customer);
+      setUser({ ...validate?.data?.data?.customer, type: "user" });
+      setUserType({ type: "user" });
 
       //   setPermissions(validate?.data?.data?.permissions); will  be implemented later
       return true;
