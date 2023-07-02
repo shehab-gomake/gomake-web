@@ -11,7 +11,7 @@ const hardCoverMakingMachine = (state: Record<string, any>) => {
                 {
                     name: "collectionConnection",
                     label: "machineAttributes.canConnect",
-                    type: "select",
+                    type: "switch",
                     placeholder: "",
                     required: true,
                     parameterKey: "canConnect",

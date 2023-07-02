@@ -17,7 +17,7 @@ const rollDieCutMachine = (state: Record<string, any>) => {
         {
             name: "straightKnife",
             label: "machineAttributes.straightKnife",
-            type: "select",
+            type: "switch",
             placeholder: "machineAttributes.straightKnife",
             required: true,
             parameterKey: "straightKnife",

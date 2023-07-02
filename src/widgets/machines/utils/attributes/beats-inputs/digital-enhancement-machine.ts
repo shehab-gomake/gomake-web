@@ -3,7 +3,7 @@ const digitalEnhancementMachine = (state: Record<string, any>) => {
         {
             name: "available",
             label: "machineAttributes.available",
-            type: "select",
+            type: "switch",
             placeholder: "machineAttributes.available",
             required: true,
             parameterKey: "embossingAvailable",

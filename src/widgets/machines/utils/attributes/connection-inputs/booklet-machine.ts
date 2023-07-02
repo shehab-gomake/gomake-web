@@ -11,7 +11,7 @@ const bookletMachine = (state: Record<string, any>) => {
                 {
                     name: "collectionConnection",
                     label: "machineAttributes.canConnect",
-                    type: "select",
+                    type: "switch",
                     placeholder: "",
                     required: true,
                     parameterKey: "canConnect",
@@ -46,7 +46,7 @@ const bookletMachine = (state: Record<string, any>) => {
                 {
                     name: "BoosbinderConnection",
                     label: "machineAttributes.canConnect",
-                    type: "select",
+                    type: "switch",
                     placeholder: "machineAttributes.printingMachineConnection",
                     required: true,
                     parameterKey: "canConnect",

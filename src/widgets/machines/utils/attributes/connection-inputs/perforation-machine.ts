@@ -11,7 +11,7 @@ const perforationMachine = (state: Record<string, any>) => {
                 {
                     name: "canConnect",
                     label: "machineAttributes.canConnect",
-                    type: "select",
+                    type: "switch",
                     placeholder: "machineAttributes.canConnect",
                     required: true,
                     parameterKey: "canConnect",
@@ -44,7 +44,7 @@ const perforationMachine = (state: Record<string, any>) => {
                 {
                     name: "canConnect",
                     label: "machineAttributes.canConnect",
-                    type: "select",
+                    type: "switch",
                     placeholder: "machineAttributes.canConnect",
                     required: true,
                     parameterKey: "canConnect",

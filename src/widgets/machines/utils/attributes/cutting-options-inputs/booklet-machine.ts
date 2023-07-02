@@ -3,7 +3,7 @@ const bookletMachine = (state: Record<string, any>) => {
         {
             name: "down",
             label: "machineAttributes.up&down",
-            type: "select",
+            type: "switch",
             placeholder: "machineAttributes.up&down",
             required: true,
             parameterKey: "cuttingUpDown",
@@ -15,7 +15,7 @@ const bookletMachine = (state: Record<string, any>) => {
         {
             name: "side",
             label: "machineAttributes.side",
-            type: "select",
+            type: "switch",
             placeholder: "machineAttributes.side",
             required: true,
             parameterKey: "cuttingSide",

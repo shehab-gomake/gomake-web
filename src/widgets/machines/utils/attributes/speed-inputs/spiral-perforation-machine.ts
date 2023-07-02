@@ -38,7 +38,7 @@ const spiralPerforationMachine = (state: Record<string, any>) => {
                 {
                     name: "loadingWhileRunning",
                     label: "machineAttributes.loadingWhileRunning",
-                    type: "select",
+                    type: "switch",
                     placeholder: "machineAttributes.loadingWhileRunning",
                     required: true,
                     parameterKey: "loadingWhileRunning",
@@ -83,7 +83,7 @@ const spiralPerforationMachine = (state: Record<string, any>) => {
                 {
                     name: "loadingWhileRunning",
                     label: "machineAttributes.loadingWhileRunning",
-                    type: "select",
+                    type: "switch",
                     placeholder: "machineAttributes.loadingWhileRunning",
                     required: true,
                     parameterKey: "loadingWhileRunning",

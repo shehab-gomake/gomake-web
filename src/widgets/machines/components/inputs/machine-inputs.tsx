@@ -6,6 +6,7 @@ import {useStyle} from "@/widgets/machines/components/inputs/style";
 import {MenuItem, SelectChangeEvent} from "@mui/material";
 import {IMachineInput} from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
 import {FormSelect} from "@/widgets/machines/components/inputs/form-select";
+import {StyledSwitch} from "@/widgets/machines/components/inputs/switch";
 
 const MachineInput = ({input, error, changeState}: IMachineInput) => {
     const [state, setState] = useState<string>(input.type === 'select' ? input.options[0]?.value : []);
@@ -18,6 +19,10 @@ const MachineInput = ({input, error, changeState}: IMachineInput) => {
         changeState(input.parameterKey, event.target.value)
         setState(event.target.value);
     }
+
+    const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
+        changeState(input.parameterKey, event.target.checked);
+    };
     return (
         <div style={classes.inputContainer} key={input.parameterKey}>
             <div style={classes.inputLbl}>{t(input.label)}</div>
@@ -38,6 +43,9 @@ const MachineInput = ({input, error, changeState}: IMachineInput) => {
                                 input.options.map(option => <MenuItem key={option.value} value={option.value}>{t(option.text)}</MenuItem>)
                             }
                         </FormSelect> :
+                        input.type === 'switch' ?
+                            <StyledSwitch checked={!!input.value} onChange={handleSwitchCheck}/>
+                            :
                         <GomakeTextInput
                             style={{height: '40px'}}
                             onChange={onChangeState}

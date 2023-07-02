@@ -6,7 +6,7 @@ const digitalPrinting = (state: Record<string, any>) => {
         {
             name: "doubleHead",
             label: "machineAttributes.doubleHead",
-            type: "select",
+            type: "switch",
             placeholder: "machineAttributes.doubleHead",
             required: true,
             parameterKey: "doubleHead",

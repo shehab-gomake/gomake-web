@@ -29,7 +29,7 @@ const connectionToMachine = (state: Record<string, any>, parameterKey: string, c
                 {
                     name: "",
                     label: "machineAttributes.isConnect",
-                    type: "select",
+                    type: "switch",
                     placeholder: "",
                     required: true,
                     parameterKey: "isConnect",

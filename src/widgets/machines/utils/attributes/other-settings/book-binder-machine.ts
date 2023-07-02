@@ -3,7 +3,7 @@ const bookBinderMachine = (state: Record<string, any>) => {
         {
             name: "down",
             label: "machineAttributes.addonsCapital",
-            type: "select",
+            type: "switch",
             placeholder: "machineAttributes.addonsCapital",
             required: true,
             parameterKey: "addonsCapital",
@@ -15,7 +15,7 @@ const bookBinderMachine = (state: Record<string, any>) => {
         {
             name: "addonsBookmark",
             label: "machineAttributes.addonsBookmark",
-            type: "select",
+            type: "switch",
             placeholder: "machineAttributes.addonsBookmark",
             required: true,
             parameterKey: "addonsBookmark",

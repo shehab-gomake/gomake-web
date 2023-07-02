@@ -17,7 +17,7 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
         {
             name: "feeder",
             label: "machineAttributes.feeder",
-            type: "select",
+            type: "switch",
             placeholder: "machineAttributes.feeder",
             required: true,
             parameterKey: "feeder",

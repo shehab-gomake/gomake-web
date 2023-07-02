@@ -3,7 +3,7 @@ const bookletMachine = (state: Record<string, any>) => {
         {
             name: "squareBackSpaneOption",
             label: "machineAttributes.squareBackSpaneOption",
-            type: "select",
+            type: "switch",
             placeholder: "machineAttributes.squareBackSpaneOption",
             required: true,
             parameterKey: "squareBackSpaneOption",

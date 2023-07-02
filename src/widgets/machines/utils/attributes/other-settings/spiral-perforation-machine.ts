@@ -28,7 +28,7 @@ const spiralPerforationMachine = (state: Record<string, any>) => {
                 {
                     name: "calendarHanger",
                     label: "machineAttributes.calendarHanger",
-                    type: "select",
+                    type: "switch",
                     placeholder: "machineAttributes.calendarHanger",
                     required: true,
                     parameterKey: "calendarHanger",

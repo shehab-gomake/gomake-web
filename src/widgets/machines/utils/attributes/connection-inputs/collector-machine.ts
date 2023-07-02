@@ -11,7 +11,7 @@ const collectorMachine = (state: Record<string, any>) => {
                 {
                     name: "foldingConnect",
                     label: "machineAttributes.canConnect",
-                    type: "select",
+                    type: "switch",
                     placeholder: "",
                     required: true,
                     parameterKey: "canConnect",
@@ -46,7 +46,7 @@ const collectorMachine = (state: Record<string, any>) => {
                 {
                     name: "BoosbinderConnection",
                     label: "machineAttributes.canConnect",
-                    type: "select",
+                    type: "switch",
                     placeholder: "machineAttributes.scoringConnect",
                     required: true,
                     parameterKey: "canConnect",
@@ -81,7 +81,7 @@ const collectorMachine = (state: Record<string, any>) => {
                 {
                     name: "sewingConnection",
                     label: "machineAttributes.canConnect",
-                    type: "select",
+                    type: "switch",
                     placeholder: "machineAttributes.sewingConnection",
                     required: true,
                     parameterKey: "canConnect",
