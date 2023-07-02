@@ -10,15 +10,27 @@ import {CuttingOptions} from "@/widgets/machines/components/forms/cutting-option
 import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/other-setting-inputs";
 import {StapleInputsComponent} from "@/widgets/machines/components/forms/staple-inputs";
 
-const bookletMachineSteps: IStep[] = [
-    {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'bookletSettings',  component: MediaSettingComponent},
-    {label: 'speed',  component: SpeedComponent},
-    {label: 'connection',  component: ConnectionComponent},
-    {label: 'cuttingOptions',  component: CuttingOptions},
-    {label: 'other-settings',  component: OtherSettingsInputsComponent},
-    {label: 'staple',  component: StapleInputsComponent},
-];
+const bookletMachineSteps = (isAdmin: boolean): IStep[] => {
+    return isAdmin ?
+        [
+            {label: 'basic', component: BasicInputsComponent},
+            {label: 'machineDimensions', component: MachineDimensionsComponent},
+            {label: 'bookletSettings', component: MediaSettingComponent},
+            {label: 'speed', component: SpeedComponent},
+            {label: 'cuttingOptions', component: CuttingOptions},
+            {label: 'other-settings', component: OtherSettingsInputsComponent},
+            {label: 'staple', component: StapleInputsComponent},
+        ] :
+        [
+            {label: 'basic', component: BasicInputsComponent},
+            {label: 'machineDimensions', component: MachineDimensionsComponent},
+            {label: 'bookletSettings', component: MediaSettingComponent},
+            {label: 'speed', component: SpeedComponent},
+            {label: 'connection', component: ConnectionComponent},
+            {label: 'cuttingOptions', component: CuttingOptions},
+            {label: 'other-settings', component: OtherSettingsInputsComponent},
+            {label: 'staple', component: StapleInputsComponent},
+        ];
+}
 
 export {bookletMachineSteps};

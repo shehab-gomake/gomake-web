@@ -9,13 +9,19 @@ import {ConnectionComponent} from "@/widgets/machines/components/forms/connectio
 import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/other-setting-inputs";
 
 
-const rollVarnishMachineSteps: IStep[] = [
-    {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'media',  component: MediaSettingComponent},
-    {label: 'varnishSettings',  component: OtherSettingsInputsComponent},
-    {label: 'basicSpeed',  component: SpeedComponent},
-    {label: 'connection',  component: ConnectionComponent},
+const rollVarnishMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
+    {label: 'basic', component: BasicInputsComponent},
+    {label: 'machineDimensions', component: MachineDimensionsComponent},
+    {label: 'media', component: MediaSettingComponent},
+    {label: 'varnishSettings', component: OtherSettingsInputsComponent},
+    {label: 'basicSpeed', component: SpeedComponent},
+] : [
+    {label: 'basic', component: BasicInputsComponent},
+    {label: 'machineDimensions', component: MachineDimensionsComponent},
+    {label: 'media', component: MediaSettingComponent},
+    {label: 'varnishSettings', component: OtherSettingsInputsComponent},
+    {label: 'basicSpeed', component: SpeedComponent},
+    {label: 'connection', component: ConnectionComponent},
 ];
 
 export {rollVarnishMachineSteps};

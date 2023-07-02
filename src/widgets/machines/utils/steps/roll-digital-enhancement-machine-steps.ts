@@ -8,13 +8,19 @@ import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 import {ConnectionComponent} from "@/widgets/machines/components/forms/connection-inputs";
 
 
-const rollDigitalEnhancementMachineSteps: IStep[] = [
-    {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'blockDimensions',  component: MediaSettingComponent},
-    {label: 'foil',  component: ColorsInputsComponent},
-    {label: 'basicSpeed',  component: SpeedComponent},
-    {label: 'connection',  component: ConnectionComponent},
+const rollDigitalEnhancementMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
+    {label: 'basic', component: BasicInputsComponent},
+    {label: 'machineDimensions', component: MachineDimensionsComponent},
+    {label: 'blockDimensions', component: MediaSettingComponent},
+    {label: 'foil', component: ColorsInputsComponent},
+    {label: 'basicSpeed', component: SpeedComponent},
+] : [
+    {label: 'basic', component: BasicInputsComponent},
+    {label: 'machineDimensions', component: MachineDimensionsComponent},
+    {label: 'blockDimensions', component: MediaSettingComponent},
+    {label: 'foil', component: ColorsInputsComponent},
+    {label: 'basicSpeed', component: SpeedComponent},
+    {label: 'connection', component: ConnectionComponent},
 ];
 
 export {rollDigitalEnhancementMachineSteps};

@@ -53,7 +53,7 @@ import {
     rollDigitalEnhancementMachineSteps
 } from "@/widgets/machines/utils/steps/roll-digital-enhancement-machine-steps";
 
-const getSteps = (categoryId: ECategoryId): IStep[] => {
+const getSteps = (categoryId: ECategoryId, isAdmin: boolean): IStep[] => {
     switch (categoryId) {
         case ECategoryId.DIGITAL_PRINTING:
             return printingMachineSteps;
@@ -74,13 +74,13 @@ const getSteps = (categoryId: ECategoryId): IStep[] => {
         case ECategoryId.ROUNDING_CORNERS_MACHINE:
             return roundingCornersMachineSteps;
         case ECategoryId.FOLDING_MACHINE:
-            return foldingMachineSteps;
+            return foldingMachineSteps(isAdmin);
         case ECategoryId.PASTING_BLOCKS_MACHINE:
             return pastingBlocksMachineSteps;
         case ECategoryId.SCORING_MACHINE:
-            return scoringMachineSteps;
+            return scoringMachineSteps(isAdmin);
         case ECategoryId.PERFORATION_MACHINE:
-            return perforationMachineSteps;
+            return perforationMachineSteps(isAdmin);
         case ECategoryId.FOLDING_GLUING_MACHINE:
             return foldingGluingMachineSteps;
         case ECategoryId.DIGITAL_ENHANCEMENT_MACHINE:
@@ -102,7 +102,7 @@ const getSteps = (categoryId: ECategoryId): IStep[] => {
         case ECategoryId.MANUAL_PEELING_STICKERS:
             return manualPeelingStickersMachineSteps;
         case ECategoryId.MANUAL_SEWING_MACHINE:
-            return manualSewingMachineSteps;
+            return manualSewingMachineSteps(isAdmin);
         case ECategoryId.PIERCING_MACHINE:
             return piercingMachineSteps;
         case ECategoryId.FRAMING_IN_FIXED_FRAMES:
@@ -114,25 +114,25 @@ const getSteps = (categoryId: ECategoryId): IStep[] => {
         case ECategoryId.PVC_BENDING_MACHINE:
             return pvcBendingMachineSteps;
         case ECategoryId.COLLECTOR:
-            return collectorMachineSteps;
+            return collectorMachineSteps(isAdmin);
         case ECategoryId.BOOKLET_MACHINE:
-            return bookletMachineSteps;
+            return bookletMachineSteps(isAdmin);
         case ECategoryId.BOOKS_BINDER_MACHINE:
-            return bookBinderMachineSteps;
+            return bookBinderMachineSteps(isAdmin);
         case ECategoryId.BOOKS_SEWING_MACHINE:
-            return bookSewingMachineSteps;
+            return bookSewingMachineSteps(isAdmin);
         case ECategoryId.SPIRAL_CLOSING_MACHINE:
-            return spiralClosingMachineSteps;
+            return spiralClosingMachineSteps(isAdmin);
         case ECategoryId.SPIRAL_PERFORATION_MACHINE:
-            return spiralPerforationMachineSteps;
+            return spiralPerforationMachineSteps(isAdmin);
         case ECategoryId.BOOK_CASING_IN_MACHINE:
-            return bookCasingInMachineSteps;
+            return bookCasingInMachineSteps(isAdmin);
         case ECategoryId.HARD_COVER_MAKING_MACHINE:
-            return hardCoverMakingMachineSteps;
+            return hardCoverMakingMachineSteps(isAdmin);
         case ECategoryId.GLUING_MACHINE:
-            return gluingMachineSteps;
+            return gluingMachineSteps(isAdmin);
         case ECategoryId.PRESSING_MACHINE:
-            return pressingMachineSteps;
+            return pressingMachineSteps(isAdmin);
         case ECategoryId.SHRINK_PACKING_MACHINE:
             return shrinkPackingMachineSteps;
         case ECategoryId.PACKAGE_TYING_MACHINE:
@@ -140,21 +140,21 @@ const getSteps = (categoryId: ECategoryId): IStep[] => {
         case ECategoryId.CARTOON_PACKAGING_MACHINE:
             return cartoonPackagingMachineSteps;
         case ECategoryId.ROLL_LASER_CUT_MACHINE:
-            return rollLaserCutMachineSteps;
+            return rollLaserCutMachineSteps(isAdmin);
         case ECategoryId.ROLL_LAMINATION_MACHINE:
-            return rollLaminationMachineSteps;
+            return rollLaminationMachineSteps(isAdmin);
         case ECategoryId.ROLL_SHEET_MACHINE:
-            return rollSheeterMachineSteps;
+            return rollSheeterMachineSteps(isAdmin);
         case ECategoryId.ROLL_VARNISH_MACHINE:
-            return rollVarnishMachineSteps;
+            return rollVarnishMachineSteps(isAdmin);
         case ECategoryId.AUTO_BOOK_CUTTING_MACHINE:
             return autoBookMachineSteps;
         case ECategoryId.ROLL_DIE_CUT_MACHINE:
-            return rollDieCutMachineSteps;
+            return rollDieCutMachineSteps(isAdmin);
         case ECategoryId.ROLL_ANALOG_ENHANCEMENT_MACHINE:
-            return rollAnalogEnhancementMachineSteps;
+            return rollAnalogEnhancementMachineSteps(isAdmin);
         case ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE:
-            return rollDigitalEnhancementMachineSteps;
+            return rollDigitalEnhancementMachineSteps(isAdmin);
         default:
             return []
     }

@@ -14,7 +14,7 @@ const AdminAddMachine = () => {
     const {adminAddMachine, initMachineStateCategory} = useAdminAddMachine()
 
     const getCategorySteps = useCallback(() => {
-        return getSteps(selectedCategory as ECategoryId);
+        return getSteps(selectedCategory as ECategoryId, true);
     }, [selectedCategory])
     const navigateBack = () => {
         setActiveStep(activeStep - 1);

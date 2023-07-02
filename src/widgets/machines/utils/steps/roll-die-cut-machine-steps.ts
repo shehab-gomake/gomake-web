@@ -10,14 +10,21 @@ import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/
 import {BeatsInputsComponent} from "@/widgets/machines/components/forms/beats-inputs";
 
 
-const rollDieCutMachineSteps: IStep[] = [
-    {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'media',  component: MediaSettingComponent},
-    {label: 'basicSpeed',  component: SpeedComponent},
-    {label: 'core',  component: OtherSettingsInputsComponent},
-    {label: 'connection',  component: ConnectionComponent},
-    {label: 'dieCut',  component: BeatsInputsComponent},
-];
+const rollDieCutMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
+    {label: 'basic', component: BasicInputsComponent},
+    {label: 'machineDimensions', component: MachineDimensionsComponent},
+    {label: 'media', component: MediaSettingComponent},
+    {label: 'basicSpeed', component: SpeedComponent},
+    {label: 'core', component: OtherSettingsInputsComponent},
+    {label: 'dieCut', component: BeatsInputsComponent},
+] :  [
+    {label: 'basic', component: BasicInputsComponent},
+        {label: 'machineDimensions', component: MachineDimensionsComponent},
+        {label: 'media', component: MediaSettingComponent},
+        {label: 'basicSpeed', component: SpeedComponent},
+        {label: 'core', component: OtherSettingsInputsComponent},
+        {label: 'connection', component: ConnectionComponent},
+        {label: 'dieCut', component: BeatsInputsComponent},
+    ];
 
 export {rollDieCutMachineSteps};

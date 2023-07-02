@@ -9,13 +9,20 @@ import {ConnectionComponent} from "@/widgets/machines/components/forms/connectio
 import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/other-setting-inputs";
 
 
-const rollLaserCutMachineSteps: IStep[] = [
-    {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'media',  component: MediaSettingComponent},
-    {label: 'basicSpeed',  component: SpeedComponent},
-    {label: 'core',  component: OtherSettingsInputsComponent},
-    {label: 'connection',  component: ConnectionComponent},
-];
+const rollLaserCutMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
+        {label: 'basic', component: BasicInputsComponent},
+        {label: 'machineDimensions', component: MachineDimensionsComponent},
+        {label: 'media', component: MediaSettingComponent},
+        {label: 'basicSpeed', component: SpeedComponent},
+        {label: 'core', component: OtherSettingsInputsComponent},
+    ] :
+    [
+        {label: 'basic', component: BasicInputsComponent},
+        {label: 'machineDimensions', component: MachineDimensionsComponent},
+        {label: 'media', component: MediaSettingComponent},
+        {label: 'basicSpeed', component: SpeedComponent},
+        {label: 'core', component: OtherSettingsInputsComponent},
+        {label: 'connection', component: ConnectionComponent},
+    ];
 
 export {rollLaserCutMachineSteps};

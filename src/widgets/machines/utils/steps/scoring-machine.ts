@@ -8,13 +8,25 @@ import {MachineRunComponent} from "@/widgets/machines/components/forms/run";
 import {ConnectionComponent} from "@/widgets/machines/components/forms/connection-inputs";
 import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 
-const scoringMachineSteps: IStep[] = [
-    {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'media',  component: MediaSettingComponent},
-    {label: 'scoring',  component: MachineRunComponent},
-    {label: 'connection',  component: ConnectionComponent},
-    {label: 'speed',  component: SpeedComponent},
-];
+const scoringMachineSteps = (isAdmin: boolean): IStep[] => {
+ return isAdmin ?
+     [
+         {label: 'basic',  component: BasicInputsComponent},
+         {label: 'machineDimensions',  component: MachineDimensionsComponent},
+         {label: 'media',  component: MediaSettingComponent},
+         {label: 'scoring',  component: MachineRunComponent},
+         {label: 'speed',  component: SpeedComponent},
+     ]
+     :
+    [
+        {label: 'basic',  component: BasicInputsComponent},
+        {label: 'machineDimensions',  component: MachineDimensionsComponent},
+        {label: 'media',  component: MediaSettingComponent},
+        {label: 'scoring',  component: MachineRunComponent},
+        {label: 'connection',  component: ConnectionComponent},
+        {label: 'speed',  component: SpeedComponent},
+    ];
+}
+
 
 export {scoringMachineSteps};

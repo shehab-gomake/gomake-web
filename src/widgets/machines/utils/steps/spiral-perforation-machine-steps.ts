@@ -9,13 +9,20 @@ import {ConnectionComponent} from "@/widgets/machines/components/forms/connectio
 import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/other-setting-inputs";
 
 
-const spiralPerforationMachineSteps: IStep[] = [
-    {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'media',  component: MediaSettingComponent},
-    {label: 'speed',  component: SpeedComponent},
-    {label: 'connection',  component: ConnectionComponent},
-    {label: 'spiralSettings',  component: OtherSettingsInputsComponent},
-];
+const spiralPerforationMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
+        {label: 'basic', component: BasicInputsComponent},
+        {label: 'machineDimensions', component: MachineDimensionsComponent},
+        {label: 'media', component: MediaSettingComponent},
+        {label: 'speed', component: SpeedComponent},
+        {label: 'spiralSettings', component: OtherSettingsInputsComponent},
+    ] :
+    [
+        {label: 'basic', component: BasicInputsComponent},
+        {label: 'machineDimensions', component: MachineDimensionsComponent},
+        {label: 'media', component: MediaSettingComponent},
+        {label: 'speed', component: SpeedComponent},
+        {label: 'connection', component: ConnectionComponent},
+        {label: 'spiralSettings', component: OtherSettingsInputsComponent},
+    ];
 
 export {spiralPerforationMachineSteps};

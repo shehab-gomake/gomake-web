@@ -1,7 +1,6 @@
 import { SideList } from "@/widgets/machines/components/side-list/side-list";
 import { MachineStepper } from "@/widgets/machines/components/stepper/machines-stepper";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { machineCategoriesState } from "@/store/machine-categories";
 import { IStep } from "@/widgets/machines/utils/interface/step";
@@ -11,7 +10,6 @@ import { MachineLayout } from "@/widgets/machines/components/layout/machine-layo
 import { useAdminMachines } from "@/widgets/machines/hooks/use-admin-machines";
 import { useRouter } from "next/router";
 import { machineState } from "@/widgets/machines/state/machine-state";
-import { GomakePrimaryButton } from "@/components";
 import { PrimaryButton } from "@/widgets/machines/components/buttons/primary-button";
 
 const CustomerAddMachine = () => {
@@ -24,7 +22,6 @@ const CustomerAddMachine = () => {
   const { getMachinesList, setMachine } = useAdminMachines();
   const { addPrintHouseMachine } = usePrintHouseAddMachine();
   const selectedMachine = useRecoilValue(machineState);
-  const { t } = useTranslation();
 
   useEffect(() => {
     if (categoryId) {
@@ -32,7 +29,7 @@ const CustomerAddMachine = () => {
         (category) => category.id === categoryId
       );
       setCategoryName(category?.name ? category?.name : "");
-      if (category) setMachineSteps(getSteps(category.id));
+      if (category) setMachineSteps(getSteps(category.id, false));
     }
   }, [categoryId]);
   const navigateBack = () => {

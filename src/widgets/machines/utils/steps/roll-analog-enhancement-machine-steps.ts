@@ -10,15 +10,23 @@ import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/
 import {BeatsInputsComponent} from "@/widgets/machines/components/forms/beats-inputs";
 
 
-const rollAnalogEnhancementMachineSteps: IStep[] = [
-    {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'media',  component: MediaSettingComponent},
+const rollAnalogEnhancementMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
+    {label: 'basic', component: BasicInputsComponent},
+    {label: 'machineDimensions', component: MachineDimensionsComponent},
+    {label: 'media', component: MediaSettingComponent},
     {label: 'foil', component: ColorsInputsComponent},
     {label: 'embossing', component: OtherSettingsInputsComponent},
     {label: 'paintCost', component: BeatsInputsComponent},
-    {label: 'basicSpeed',  component: SpeedComponent},
-    {label: 'connection',  component: ConnectionComponent},
+    {label: 'basicSpeed', component: SpeedComponent},
+] : [
+    {label: 'basic', component: BasicInputsComponent},
+    {label: 'machineDimensions', component: MachineDimensionsComponent},
+    {label: 'media', component: MediaSettingComponent},
+    {label: 'foil', component: ColorsInputsComponent},
+    {label: 'embossing', component: OtherSettingsInputsComponent},
+    {label: 'paintCost', component: BeatsInputsComponent},
+    {label: 'basicSpeed', component: SpeedComponent},
+    {label: 'connection', component: ConnectionComponent},
 ];
 
 export {rollAnalogEnhancementMachineSteps};

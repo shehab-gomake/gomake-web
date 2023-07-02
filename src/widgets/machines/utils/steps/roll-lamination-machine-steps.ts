@@ -9,13 +9,20 @@ import {ConnectionComponent} from "@/widgets/machines/components/forms/connectio
 import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/other-setting-inputs";
 
 
-const rollLaminationMachineSteps: IStep[] = [
-    {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'media',  component: MediaSettingComponent},
-    {label: 'basicSpeed',  component: SpeedComponent},
-    {label: 'laminationSettings',  component: OtherSettingsInputsComponent},
-    {label: 'connection',  component: ConnectionComponent},
-];
+const rollLaminationMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
+        {label: 'basic', component: BasicInputsComponent},
+        {label: 'machineDimensions', component: MachineDimensionsComponent},
+        {label: 'media', component: MediaSettingComponent},
+        {label: 'basicSpeed', component: SpeedComponent},
+        {label: 'laminationSettings', component: OtherSettingsInputsComponent},
+    ] :
+    [
+        {label: 'basic', component: BasicInputsComponent},
+        {label: 'machineDimensions', component: MachineDimensionsComponent},
+        {label: 'media', component: MediaSettingComponent},
+        {label: 'basicSpeed', component: SpeedComponent},
+        {label: 'laminationSettings', component: OtherSettingsInputsComponent},
+        {label: 'connection', component: ConnectionComponent},
+    ];
 
 export {rollLaminationMachineSteps};

@@ -7,12 +7,21 @@ import {MachineDimensionsComponent} from "@/widgets/machines/components/forms/ma
 import {ConnectionComponent} from "@/widgets/machines/components/forms/connection-inputs";
 import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 
-const collectorMachineSteps: IStep[] = [
-    {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'media',  component: MediaSettingComponent},
-    {label: 'speed',  component: SpeedComponent},
-    {label: 'connection',  component: ConnectionComponent},
-];
+const collectorMachineSteps = (isAdmin: boolean): IStep[] => {
+    return isAdmin ?
+        [
+            {label: 'basic', component: BasicInputsComponent},
+            {label: 'machineDimensions', component: MachineDimensionsComponent},
+            {label: 'media', component: MediaSettingComponent},
+            {label: 'speed', component: SpeedComponent},
+        ] :
+        [
+            {label: 'basic', component: BasicInputsComponent},
+            {label: 'machineDimensions', component: MachineDimensionsComponent},
+            {label: 'media', component: MediaSettingComponent},
+            {label: 'speed', component: SpeedComponent},
+            {label: 'connection', component: ConnectionComponent},
+        ];
+}
 
 export {collectorMachineSteps};

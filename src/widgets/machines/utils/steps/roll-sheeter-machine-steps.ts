@@ -8,12 +8,17 @@ import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 import {ConnectionComponent} from "@/widgets/machines/components/forms/connection-inputs";
 
 
-const rollSheeterMachineSteps: IStep[] = [
-    {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'media',  component: MediaSettingComponent},
-    {label: 'basicSpeed',  component: SpeedComponent},
-    {label: 'connection',  component: ConnectionComponent},
+const rollSheeterMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
+    {label: 'basic', component: BasicInputsComponent},
+    {label: 'machineDimensions', component: MachineDimensionsComponent},
+    {label: 'media', component: MediaSettingComponent},
+    {label: 'basicSpeed', component: SpeedComponent},
+] : [
+    {label: 'basic', component: BasicInputsComponent},
+    {label: 'machineDimensions', component: MachineDimensionsComponent},
+    {label: 'media', component: MediaSettingComponent},
+    {label: 'basicSpeed', component: SpeedComponent},
+    {label: 'connection', component: ConnectionComponent},
 ];
 
 export {rollSheeterMachineSteps};

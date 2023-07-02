@@ -8,12 +8,21 @@ import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 import {ConnectionComponent} from "@/widgets/machines/components/forms/connection-inputs";
 
 
-const bookSewingMachineSteps: IStep[] = [
-    {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'media',  component: MediaSettingComponent},
-    {label: 'speed',  component: SpeedComponent},
-    {label: 'connection',  component: ConnectionComponent},
-];
+const bookSewingMachineSteps = (isAdmin: boolean): IStep[] => {
+    return isAdmin ?
+        [
+            {label: 'basic',  component: BasicInputsComponent},
+            {label: 'machineDimensions',  component: MachineDimensionsComponent},
+            {label: 'media',  component: MediaSettingComponent},
+            {label: 'speed',  component: SpeedComponent},
+        ] :
+        [
+            {label: 'basic',  component: BasicInputsComponent},
+            {label: 'machineDimensions',  component: MachineDimensionsComponent},
+            {label: 'media',  component: MediaSettingComponent},
+            {label: 'speed',  component: SpeedComponent},
+            {label: 'connection',  component: ConnectionComponent},
+        ]
+}
 
 export {bookSewingMachineSteps};

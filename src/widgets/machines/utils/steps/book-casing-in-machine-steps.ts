@@ -8,7 +8,14 @@ import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 import {ConnectionComponent} from "@/widgets/machines/components/forms/connection-inputs";
 
 
-const bookCasingInMachineSteps: IStep[] = [
+const bookCasingInMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ?
+    [
+        {label: 'basic',  component: BasicInputsComponent},
+        {label: 'machineDimensions',  component: MachineDimensionsComponent},
+        {label: 'blockDimensions',  component: MediaSettingComponent},
+        {label: 'basicSpeed',  component: SpeedComponent},
+    ] :
+    [
     {label: 'basic',  component: BasicInputsComponent},
     {label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'blockDimensions',  component: MediaSettingComponent},
