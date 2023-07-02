@@ -85,6 +85,7 @@ const LaminationSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
               );
             }}
           />
+          <></>
         </div>
       </div>
     </>
