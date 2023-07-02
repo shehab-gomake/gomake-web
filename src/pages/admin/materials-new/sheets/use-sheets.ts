@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { getAndSetGetAllSheets } from "@/services/hooks";
+import { getAndSetCategory, getAndSetGetAllNewSheets } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 const useSheets = () => {
@@ -104,6 +104,7 @@ const useSheets = () => {
     [updateState]
   );
   const initialStateSheetWeights = (item: any) => {
+    console.log("itemitem", item);
     let temp = [...item?.sheetWeights];
     let final: any = [];
     temp.map((sheetWeight) => {
@@ -117,11 +118,23 @@ const useSheets = () => {
       });
     });
 
+    console.log("finalfinal", item);
     setUpdateState(final);
   };
 
   const getSheets = useCallback(async () => {
-    await getAndSetGetAllSheets(callApi, setAllSheets);
+    await getAndSetGetAllNewSheets(callApi, setAllSheets);
+  }, []);
+
+  const [category, setCategory] = useState({});
+  const getCategory = useCallback(async (categoryName: string) => {
+    const data = await getAndSetCategory(callApi, setCategory, {
+      categoryName,
+    });
+    console.log("datadatadatadatadatadatadatadata", data);
+    initialStateSheetWeights(data);
+    setSelectedEditItem(data);
+    return data;
   }, []);
   const onCloseModalAdded = () => {
     setOpenAddSheetModal(false);
@@ -134,9 +147,10 @@ const useSheets = () => {
     setOpenUpdateSheetModal(false);
     setIsAddNewSheetWights(false);
   };
-  const onOpnUpdateModal = (item) => {
-    initialStateSheetWeights(item);
-    setSelectedEditItem(item);
+  const onOpnUpdateModal = async (item) => {
+    const data = await getCategory(item?.categoryName);
+    initialStateSheetWeights(data);
+    setSelectedEditItem(data);
     setOpenUpdateSheetModal(true);
   };
   const onCloseDeleteModal = () => {
@@ -148,9 +162,30 @@ const useSheets = () => {
   };
 
   const addNewSupplierSheet = useCallback(async () => {
+    console.log("items", items);
+    const temp: any = items.map((item: any) => {
+      const sheetSizes = item?.sheetSizes?.map((size: any) => {
+        let tempSize = { ...size };
+        delete tempSize.index;
+        delete tempSize.code;
+        return {
+          ...tempSize,
+          name: `${tempSize?.width}X${tempSize?.height}`,
+        };
+      });
+      let tempItem = { ...item };
+      delete tempItem.index;
+      return {
+        ...tempItem,
+        name: tempItem.weight,
+        sheetSizes,
+      };
+    });
+    console.log("temp", temp);
+
     const res = await callApi("POST", `/v1/administrator/sheet/add-sheet`, {
       categoryName,
-      sheetWeights: items,
+      sheetWeights: temp,
     });
     if (res?.success) {
       setSnackbarStateValue({
@@ -184,7 +219,7 @@ const useSheets = () => {
           type: "sucess",
         });
         getSheets();
-        onCloseUpdateModal();
+        await getCategory(selectedItem?.categoryName);
       } else {
         setSnackbarStateValue({
           state: true,
@@ -204,15 +239,15 @@ const useSheets = () => {
       if (res?.success) {
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedSusuccessfully"),
+          message: t("modal.deleteSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        await getCategory(categoryName);
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedfailed"),
+          message: t("modal.deletefailed"),
           type: "error",
         });
       }
@@ -226,17 +261,18 @@ const useSheets = () => {
         `/v1/administrator/sheet/delete-sheet-weight-size?categoryName=${categoryName}&weightId=${weightId}&sizeId=${sizeId}`
       );
       if (res?.success) {
+        await getCategory(categoryName);
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedSusuccessfully"),
+          message: t("modal.deleteSusuccessfully"),
           type: "sucess",
         });
-        getSheets();
+        // getSheets();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedfailed"),
+          message: t("modal.deletefailed"),
           type: "error",
         });
       }
@@ -250,6 +286,7 @@ const useSheets = () => {
         `/v1/administrator/sheet/update-sheet-weight?categoryName=${categoryName}&weightId=${weightId}`,
         {
           ...updateState[weightId],
+          name: `${updateState[weightId]?.weight}`,
         }
       );
       if (res?.success) {
@@ -277,6 +314,7 @@ const useSheets = () => {
         `/v1/administrator/sheet/update-sheet-weight-size?categoryName=${categoryName}&weightId=${weightId}&sizeId=${sizeId}`,
         {
           ...updateState[sizeId],
+          name: `${updateState[sizeId]?.height}X${updateState[sizeId]?.width}`,
         }
       );
       if (res?.success) {
@@ -312,6 +350,7 @@ const useSheets = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
+        await getCategory(categoryName);
         getSheets();
         setIsAddNewSheetWightSize(false);
       } else {
@@ -327,6 +366,67 @@ const useSheets = () => {
   useEffect(() => {
     getSheets();
   }, []);
+
+  const [openDuplicateSheetModal, setOpenDuplicateSheetModal] = useState(false);
+  const onOpnDuplicateModal = (item) => {
+    initialStateSheetWeights(item);
+    setSelectedEditItem(item);
+    setOpenDuplicateSheetModal(true);
+  };
+  const onCloseDuplicateModal = () => {
+    setOpenDuplicateSheetModal(false);
+  };
+  const duplicateWeight = useCallback(
+    async (weightId: string, categoryName: string) => {
+      const res = await callApi(
+        "POST",
+        `/v1/administrator/sheet/duplicate-weight?categoryName=${categoryName}&weightId=${weightId}`
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        await getCategory(categoryName);
+        // getSheets();
+        // onCloseUpdateModal();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [updateState]
+  );
+  const duplicateWeightSize = useCallback(
+    async (weightId: string, sizeId: string, categoryName: string) => {
+      const res = await callApi(
+        "POST",
+        `/v1/administrator/sheet/duplicate-weight-size?categoryName=${categoryName}&weightId=${weightId}&sizeId=${sizeId}`
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        await getCategory(categoryName);
+        // getSheets();
+        // onCloseUpdateModal();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [updateState]
+  );
+
   return {
     headerTable,
     allSheets,
@@ -364,6 +464,12 @@ const useSheets = () => {
     setIsAddNewSheetWightSize,
     onClickOpenSheetWeightSizeWidget,
     addNewSheeWeightSizeByCategoryName,
+    openDuplicateSheetModal,
+    onOpnDuplicateModal,
+    onCloseDuplicateModal,
+    getSheets,
+    duplicateWeight,
+    duplicateWeightSize,
   };
 };
 

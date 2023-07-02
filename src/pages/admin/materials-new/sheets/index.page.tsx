@@ -50,6 +50,12 @@ export default function Sheets() {
     setIsAddNewSheetWightSize,
     onClickOpenSheetWeightSizeWidget,
     addNewSheeWeightSizeByCategoryName,
+    openDuplicateSheetModal,
+    onOpnDuplicateModal,
+    onCloseDuplicateModal,
+    getSheets,
+    duplicateWeight,
+    duplicateWeightSize,
   } = useSheets();
 
   useEffect(() => {
@@ -90,6 +96,12 @@ export default function Sheets() {
       setIsAddNewSheetWightSize,
       onClickOpenSheetWeightSizeWidget,
       addNewSheeWeightSizeByCategoryName,
+      openDuplicateSheetModal,
+      onOpnDuplicateModal,
+      onCloseDuplicateModal,
+      getSheets,
+      duplicateWeight,
+      duplicateWeightSize,
     });
   }, [
     headerTable,
@@ -128,6 +140,12 @@ export default function Sheets() {
     setIsAddNewSheetWightSize,
     onClickOpenSheetWeightSizeWidget,
     addNewSheeWeightSizeByCategoryName,
+    openDuplicateSheetModal,
+    onOpnDuplicateModal,
+    onCloseDuplicateModal,
+    getSheets,
+    duplicateWeight,
+    duplicateWeightSize,
   ]);
   return (
     <AdminAuthLayout>

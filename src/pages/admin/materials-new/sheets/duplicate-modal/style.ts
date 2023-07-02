@@ -1,19 +1,19 @@
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { FONT_FAMILY } from "@/utils/font-family";
+
 const useStyle = () => {
-  const { secondColor, neutralColor } = useGomakeTheme();
+  const { secondColor, neutralColor, errorColor, primaryColor } =
+    useGomakeTheme();
   const clasess = useMemo(() => {
     return {
-      insideStyle: { width: "95%" },
+      insideStyle: { width: 500, height: 300 },
       firstSectionContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        marginTop: 10,
-        marginBottom: 50,
       },
       secondSectionContainer: {
         display: "flex",
@@ -53,7 +53,20 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         marginTop: 10,
-        backgroundColor: "rgba(0,0,0,0.1)",
+        backgroundColor: "#FFF",
+        padding: 20,
+        paddingBottom: 20,
+        borderRadius: 4,
+        borderBottom: "1px solid #000",
+      },
+      newAddWightsByCatagory: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        width: "100%",
+        marginTop: 10,
+        backgroundColor: "#f0f1f9",
         padding: 20,
         paddingBottom: 20,
         borderRadius: 4,
@@ -65,14 +78,14 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         marginTop: 10,
-        backgroundColor: "#ebecff",
+        backgroundColor: "#FFF",
         padding: 20,
         paddingBottom: 20,
         borderRadius: 4,
+        borderBottom: "1px solid #000",
       },
       textInputStyle: {
         height: 42,
-        width: 150,
       },
       lineStyle: {
         display: "flex",
@@ -85,7 +98,7 @@ const useStyle = () => {
         marginTop: 60,
       },
       lableTextStyle: {
-        ...FONT_FAMILY.Lexend(600, 12),
+        ...FONT_FAMILY.Lexend(500, 14),
         color: neutralColor(800),
         marginBottom: 10,
       },
@@ -106,18 +119,37 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         marginTop: 10,
-        backgroundColor: "#ebddff",
+        backgroundColor: "#fff",
+        border: "1px solid #000",
         padding: 20,
         paddingBottom: 20,
         borderRadius: 4,
       },
       addSheetBtnContainer: {
         display: "flex",
+        justifyContent: "flex-end",
+        alignItems: "flex-end",
+        alignSelf: "flex-end",
+        alignContent: "flex-end",
+        marginTop: 25,
+      },
+      btnsWightSheetContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
         justifyContent: "center",
         alignItems: "center",
-        alignSelf: "center",
-        alignContent: "center",
-        width: "25%",
+        alignSelf: "end",
+        gap: 15,
+      },
+      addBtnStyle: {
+        height: 40,
+        backgroundColor: primaryColor(800),
+        ...FONT_FAMILY.Lexend(400, 14),
+      },
+      cancelBtnStyle: {
+        height: 40,
+        backgroundColor: errorColor(500),
+        ...FONT_FAMILY.Lexend(400, 14),
       },
       mainWaightsContainer: {
         display: "flex",
@@ -127,6 +159,13 @@ const useStyle = () => {
         width: "100%",
         flexWrap: "wrap" as "wrap",
         gap: 20,
+      },
+      controlsIconContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
+        alignSelf: "end",
       },
     };
   }, []);

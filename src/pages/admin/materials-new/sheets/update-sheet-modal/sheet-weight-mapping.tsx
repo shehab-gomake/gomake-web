@@ -36,6 +36,12 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               selectedItem?.categoryName
             )
           }
+          onClickDuplicate={() =>
+            materialSheetsStateValue.duplicateWeight(
+              item?.id,
+              selectedItem?.categoryName
+            )
+          }
           title={"Delete Sheet Weight"}
           subTitle={"Are you sure you want to delete sheet weight?"}
         />
@@ -57,7 +63,7 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               }}
             />
           </div>
-          <div>
+          {/* <div>
             <div style={clasess.lableTextStyle}>
               {t("materials.inputs.name")}
             </div>
@@ -73,7 +79,7 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
                 );
               }}
             />
-          </div>
+          </div> */}
           <div>
             <div style={clasess.lableTextStyle}>
               {t("materials.inputs.thickness")}
@@ -91,7 +97,7 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
               }}
             />
           </div>
-          <div>
+          {/* <div>
             <div style={clasess.lableTextStyle}>
               {t("materials.inputs.index")}
             </div>
@@ -107,7 +113,7 @@ const SheetWeightsMapping = ({ index, item, selectedItem }) => {
                 );
               }}
             />
-          </div>
+          </div> */}
         </div>
         <div style={clasess.titlePlusContainer}>
           <div style={clasess.sizeSectionTitleStyle}>

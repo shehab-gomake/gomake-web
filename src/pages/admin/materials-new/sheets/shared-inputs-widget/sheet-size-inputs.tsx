@@ -14,7 +14,7 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
   return (
     <>
       <div style={clasess.inputSizesContainer}>
-        <div>
+        {/* <div>
           <div style={clasess.lableTextStyle}>{t("materials.inputs.code")}</div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterCode")}
@@ -29,8 +29,8 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
               );
             }}
           />
-        </div>
-        <div>
+        </div> */}
+        {/* <div>
           <div style={clasess.lableTextStyle}>{t("materials.inputs.name")}</div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterName")}
@@ -45,7 +45,7 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
               );
             }}
           />
-        </div>
+        </div> */}
         <div>
           <div style={clasess.lableTextStyle}>
             {t("materials.inputs.width")}
@@ -136,7 +136,7 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
             }}
           />
         </div>
-        <div>
+        {/* <div>
           <div style={clasess.lableTextStyle}>
             {t("materials.inputs.index")}
           </div>
@@ -153,7 +153,7 @@ const SheetSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
               );
             }}
           />
-        </div>
+        </div> */}
       </div>
     </>
   );

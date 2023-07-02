@@ -5,7 +5,7 @@ import { IconButton, Tooltip } from "@mui/material";
 import { GoMakeDeleteModal } from "@/components";
 import SaveIcon from "@mui/icons-material/Save";
 import { materialSheetsState } from "../store/sheets";
-
+import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { useStyle } from "./style";
 
 const ControlIconsWidget = ({
@@ -14,6 +14,7 @@ const ControlIconsWidget = ({
   onClickDelete,
   title,
   subTitle,
+  onClickDuplicate,
   item,
 }) => {
   const { clasess } = useStyle();
@@ -21,6 +22,11 @@ const ControlIconsWidget = ({
   return (
     <>
       <div style={clasess.controlsIconContainer}>
+        <Tooltip title={t("materials.buttons.duplicate")}>
+          <IconButton onClick={onClickDuplicate}>
+            <FileCopyIcon style={{ color: "#a1a2cd" }} />
+          </IconButton>
+        </Tooltip>
         <Tooltip title={t("materials.buttons.delete")}>
           <IconButton
             onClick={() => materialSheetsStateValue.onOpenDeleteModal(item)}
@@ -28,6 +34,7 @@ const ControlIconsWidget = ({
             <DeleteIcon style={{ color: "#a1a2cd" }} />
           </IconButton>
         </Tooltip>
+
         <Tooltip title={t("materials.buttons.saveModifications")}>
           <IconButton onClick={onClickUpdate}>
             <SaveIcon style={{ color: "#a1a2cd" }} />

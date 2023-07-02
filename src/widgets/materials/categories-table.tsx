@@ -179,11 +179,11 @@ const CategoriesTable = ({ admin = false }) => {
         title: t("tabs.sheetPaper"),
         path: "/admin/materials-new/sheets",
       },
-      // {
-      //   key: "lamination",
-      //   title: t("tabs.lamination"),
-      //   path: "/materials-new/lamination",
-      // },
+      {
+        key: "lamination",
+        title: t("tabs.lamination"),
+        path: "/materials-new/lamination",
+      },
       // {
       //   key: "plats",
       //   title: t("tabs.plats"),

@@ -177,7 +177,8 @@
       "delete": "Delete",
       "edit": "Edit",
       "save": "Save",
-      "saveModifications": "Save modifications"
+      "saveModifications": "Save modifications",
+      "duplicate": "Duplicate"
     },
     "modals": {
       "subTitleDeleteModal": "Are you sure to delete {{name}}"
