@@ -3,32 +3,44 @@ import {useEffect, useMemo} from "react";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {machineState} from "@/widgets/machines/state/machine-state";
 import {useRouter} from "next/router";
-import {machinesListState} from "@/widgets/machines/state/machines";
+import {
+
+    machinesListState
+} from "@/widgets/machines/state/machines";
+import {ECategoryId} from "@/widgets/machines/enums/category-id";
 
 const usePrintHouseMachines = (loop?: boolean) => {
     const router = useRouter();
     const {categoryId} = router.query
     const {callApi} = useGomakeAxios();
     const [machines, setMachines] = useRecoilState(machinesListState);
+
     const setMachineState = useSetRecoilState(machineState);
 
     useEffect(() => {
         if (loop) {
-            getMachinesAPI().then();
+            getMachinesByCategoryId(categoryId as ECategoryId).then(
+                (res) => {
+                    setMachines(res?.data?.data?.data ? res?.data?.data?.data : []);
+                }
+            );
         }
     }, [categoryId]);
 
-    const getMachinesAPI = async () => {
-        const res = await callApi('Get', `/v1/machines/category/${categoryId}`);
-        setMachines(res?.data?.data?.data ? res?.data?.data?.data : []);
+
+    const getMachinesByCategoryId = async (category: ECategoryId) => {
+        return  await callApi('Get', `/v1/machines/category/${category}`);
     };
 
+    const machinesToList = (machinesList: { nickName: string, manufacturer: string, model: string, id: string }[]) => {
+        return machinesList.map(machine => ({
+            text: `${machine.manufacturer} ${machine.model} - ${machine.nickName}`,
+            value: machine.id
+        }));
+    };
 
     const getPrintHouseMachinesList = useMemo(() => {
-        return machines.map((machine: { nickName: string, manufacturer: string, id: string }) => ({
-            text: `${machine.manufacturer} - ${machine.nickName}`,
-            value: machine.id
-        }))
+        return machinesToList(machines);
     }, [machines]);
 
     const setMachine = (machineId: string) => {
@@ -57,11 +69,12 @@ const usePrintHouseMachines = (loop?: boolean) => {
     return {
         getPrintHouseMachinesList,
         setMachine,
-        getMachinesAPI,
+        getMachinesByCategoryId,
         setUpdatedMachine,
         deleteMachineFromArray,
         setMachines,
-        addMachineToList
+        addMachineToList,
+        machinesToList
     }
 }
 
