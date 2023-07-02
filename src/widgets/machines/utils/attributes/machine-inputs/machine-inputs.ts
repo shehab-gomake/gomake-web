@@ -27,18 +27,6 @@ const machineInputs = (state: Record<string, any>)  => {
             isValid: !!state?.model,
         },
         {
-            name: "code",
-            label: "machineAttributes.code",
-            type: "text",
-            placeholder: "machineAttributes.code",
-            required: true,
-            parameterKey: "code",
-            options: [],
-            value: state?.code ? state?.code : '',
-            machineInputType: 'input',
-            isValid: !!state?.code,
-        },
-        {
             name: "nickName",
             label: "machineAttributes.nickName",
             type: "text",
