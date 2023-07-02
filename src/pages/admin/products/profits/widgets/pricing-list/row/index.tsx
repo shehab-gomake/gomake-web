@@ -38,11 +38,7 @@ const Row = ({ row, width, tablePercent }: any) => {
               editPriceListStateValue={editPriceListStateValue}
               setEditPriceListState={setEditPriceListState}
               row={row}
-              onUpdate={
-                actionExceptionProfitIdValue
-                  ? () => profitsStateValue?.updateActionExceptionProfitRow()
-                  : () => profitsStateValue?.updateActionProfitRow()
-              }
+              onUpdate={profitsStateValue?.updateActionProfitRow}
             />
           );
         }
@@ -52,11 +48,7 @@ const Row = ({ row, width, tablePercent }: any) => {
           <div style={clasess.controlsContainer}>
             <Tooltip title={t("materials.buttons.saveModifications")}>
               <IconButton
-                onClick={
-                  actionExceptionProfitIdValue
-                    ? () => profitsStateValue?.updateActionExceptionProfitRow()
-                    : () => profitsStateValue?.updateActionProfitRow()
-                }
+                onClick={profitsStateValue?.updateActionProfitRow()}
                 // onClick={() => profitsStateValue?.updateActionProfitRow()}
               >
                 <SaveIcon style={{ color: "#a1a2cd" }} />

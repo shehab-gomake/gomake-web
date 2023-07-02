@@ -31,4 +31,67 @@ const getAndSetAllVarnishs = async (
 
   return _data;
 };
-export { getAndSetAllVarnishs };
+
+const getAndSetAllVarnishsNew = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi("GET", "/v1/varnishs/get-all-codes", data);
+  const _data = returnResult(result, undefined);
+  const mapData = _data.map((size: any) => {
+    return {
+      code: size.key,
+      name: size.value,
+    };
+  });
+  if (setState) {
+    setState(mapData);
+  }
+
+  return _data;
+};
+
+const getAndSetAllVarnishsData = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  if (data?.categoryName) {
+    const result: any = await callApi(
+      "GET",
+      "/v1/varnishs/get-all-sizes",
+      data
+    );
+    const _data = returnResult(result, undefined);
+    const mapData = _data.map((item: any) => {
+      return {
+        ...item,
+      };
+    });
+    if (setState) {
+      setState(mapData);
+    }
+
+    return _data;
+  }
+};
+
+const getAndSetVarnishsSuppliers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/varnishs/get-supplier-by-category",
+    data
+  );
+  return returnResult(result, undefined);
+};
+export {
+  getAndSetAllVarnishs,
+  getAndSetAllVarnishsNew,
+  getAndSetAllVarnishsData,
+  getAndSetVarnishsSuppliers,
+};

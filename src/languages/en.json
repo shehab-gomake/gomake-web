@@ -39,7 +39,7 @@
     "wildPrintingMaterials": "Wild Printing Materials",
     "profileFrames": "Profile frames",
     "applications": "Applications",
-    "encapsulationRoll": "Encapsulation roll",
+    "encapsulationRoll": "Roll Encapsulation",
     "additions": "Additions",
     "canvasFrames": "Canvas frames",
     "frames": "Frames",
@@ -54,7 +54,8 @@
     "packings": "Packings",
     "varnishs": "Varnishs",
     "machines": "Machines",
-    "addMachine": "Add machine"
+    "addMachine": "Add machine",
+    "wideFormatMaterial": "Wide Format Material"
   },
   "modal": {
     "close": "Close",
@@ -68,11 +69,14 @@
   "materials": {
     "inputs": {
       "categoryName": "Category name",
+      "update": "Update",
       "weight": "Weight",
       "enterWeight": "Enter Weight",
       "name": "Name",
       "enterName": "Enter Name",
       "thickness": "Thickness",
+      "unitTon": "cost ($) per unit/ton",
+      "directions": "Directions",
       "enterThickness": "Enter Thickness",
       "index": "Index",
       "enterIndex": "Enter Index",
@@ -110,7 +114,6 @@
       "enterHardness": "Enter Hardness",
       "defaultPricePerMeterSquare": "Default Price Per Meter Square",
       "enterDefaultPricePerMeterSquare": "Enter Default Price Per Meter Square",
-      "weightPerSquareMeter": "Weight per square meter",
       "enterWeightPerSquareMeter": "Enter weight per square meter",
       "defaultPricePerSquareMeter": "Default price per square meter",
       "enterDefaultPricePerSquareMeter": "Enter default price per square meter",
@@ -126,7 +129,7 @@
       "enterSize": "Enter Size",
       "sizeName": "Size Name",
       "enterSizeName": "Enter Size Name",
-      "drumRingNumber": "Drum Ring Number",
+      "drumRingNumber": "Drum Number",
       "enterDrumRingNumber": "Enter Drum Ring Number",
       "defaultPricePerDrum": "Default Price Per Drum",
       "enterDefaultPricePerDrum": "Enter Default Price Per Drum",
@@ -143,15 +146,31 @@
       "volumeInLiters": "Volume in liters",
       "enterVolumeInLiters": "Enter volume in liters",
       "weightPerLiter": "Weight per liter",
+      "weightOfLiter": "Weight Of Liter",
       "enterWeightPerLiter": "Enter weight per liter",
-      "literInSquareMeter": "Liter in square meter",
-      "enterLiterInSquareMeter": "Enter liter in square meter",
+      "literInSquareMeter": "Liter in meter^2",
+      "enterLiterInSquareMeter": "Enter liter in meter^2",
       "defaultPricePerLiter": "Default price per liter",
       "enterDefaultPricePerLiter": "Enter default price per liter",
       "defaultPricePerContainer": "Default price per container",
       "enterDefaultPricePerContainer": "Enter default price per container",
       "coldOrHot": "Cold or hot",
-      "enterColdOrHot": "Enter cold or hot"
+      "enterColdOrHot": "Enter cold or hot",
+      "currency": "Currency",
+      "price": "Price",
+      "lenght": "Lenght",
+      "pricePerSquareMeter": "Price/meter^2",
+      "weightPerSquareMeter": "Weight/meter^2",
+      "pricePerDrum": "Price/drum",
+      "pricePerRoll": "Price/roll",
+      "updatePricePerRoll": "Update Price Per Roll",
+      "updatePricePerSquareMeter": "Update Price Per Square Meter",
+      "type": "Type",
+      "pricePerMeterSquare": "Price/Meter^2",
+      "pricePerContainer": "Price/container",
+      "pricePerLiter": "Price/liter",
+      "glueSuppliers": "Glue supplier",
+      "pricePerUnit": "Price/unit"
     },
     "buttons": {
       "cancel": "Cancel",
@@ -187,7 +206,7 @@
       "selectSupplier": "Select supplier",
       "unitPrice": "Unit Price",
       "pricePerUnit": "price per unit",
-      "selectCurrency": "Select currency",
+      "selectCurrency": "Select Currency",
       "selectDirection": "Select direction",
       "currency": "Currency",
       "direction": "Direction",
@@ -196,7 +215,31 @@
       "code": "Code",
       "growingUp": "Growing Up",
       "stock": "Stock",
-      "sizesAndPrices": "Sizes and Prices"
+      "sizesAndPrices": "Sizes and Prices",
+      "chooseCategory": "Choose Category",
+      "chooseName": "Choose Name",
+      "addNew": "Add new",
+      "addNewSupplier": "Add new Supplier",
+      "supplierAddedSheetYet": "There is supplier added to this sheet yet, ",
+      "pleaseAddNow": "Please add new one now.",
+      "selectASupplier": "Select a Supplier",
+      "addSupplier": "Add Supplier",
+      "updatePricePerTon": "Update Price Per Ton",
+      "updatePricePerUnit": "Update Price Per Unit",
+      "updatePrice": "Update Price",
+      "updateUnitPrice": "Update Unit Price",
+      "addPercentToPrice": "Add Percent To Price",
+      "enterPrice": "Enter Price",
+      "updateCurrency": "Update Currency",
+      "updatePricePerTonMenu": "Update Price per ton",
+      "updateUnitPriceMenu": "Update unit price",
+      "addPrecentToPriceMenu": "Add Precent to price",
+      "changeToActiveMenu": "Change to Active",
+      "changeToInActiveMenu": "Change to InActive",
+      "pricePerSquareMeter": "Update price per square meter",
+      "pricePerDrum": "Update price per drum",
+      "pricePerRoll": "Update Price per roll",
+      "updatePricePerMeter": "Update Price Per Meter"
     },
     "lamination": {
       "admin": {
@@ -221,6 +264,7 @@
         "deleteLaminationSizetTicknessTitle": "Delete lamination size tickness",
         "deleteLaminationSizethicknessSubTitle": "Are you sure you want to delete lamination size Tickness?"
       },
+      "title": "Lamination",
       "selectSupplier": "Select supplier",
       "height": "Height",
       "width": "Width",
@@ -493,7 +537,7 @@
         "deleteRollEncapsulationSizeTitle": "Delete roll encapsulation size",
         "deleteLRollEncapsulationSizeSubTitle": "Are you sure you want to delete roll encapsulation size?"
       },
-      "title": "Encapsulation roll",
+      "title": "Roll Encapsulation",
       "category": "Category",
       "supplier": "supplier",
       "categoryName": "Category name",
@@ -1092,6 +1136,7 @@
     "cross": "Cross",
     "oneHorizontalTies": "One horizontal ties",
     "twoHorizontalTies": "Two horizontal ties"
+
   },
   "currency": {
     "dollar": "Dollar",
@@ -1215,7 +1260,9 @@
         "SelectValueNameOfParameter": "Select value name of parameter",
         "selectScopeOfChange": "Select scope of change",
         "additionalProfit": "Additional Profit",
-        "deleteExceptionProfit": "Delete Exception Profit ?"
+        "deleteExceptionProfit": "Delete Exception Profit ?",
+        "updateException": "Update exception",
+        "deleteException": "Delete exception"
       }
     },
     "actions": {
@@ -1227,6 +1274,16 @@
       "active": "Active",
       "profit": "Profit",
       "properties": "Properties"
+    },
+    "parameters": {
+      "admin": {
+        "title": "Parameters",
+        "numbers": "Number",
+        "parameter": "Parameter",
+        "values": "Values",
+        "type": "Type",
+        "more": "More"
+      }
     }
   },
   "skeleton": {

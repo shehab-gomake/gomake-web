@@ -13,6 +13,10 @@ const useStyle = () => {
         paddingBottom: 20,
         boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.08)",
         backgroundColor: "#FFFFFF",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between",
       },
       header: {
         display: "flex",
@@ -101,7 +105,7 @@ const useStyle = () => {
         gap: 20,
       },
       addNewQuantity: {
-        width: "100%",
+        width: "fit-content",
         ...FONT_FAMILY.Lexend(500, 14),
         fontStyle: "normal",
         lineHeight: "18px",

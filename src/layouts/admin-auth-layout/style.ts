@@ -8,7 +8,7 @@ const useStyle = ({
   navStatus = false,
 }: {
   isHover?: boolean | undefined;
-  navStatus?: any; 
+  navStatus?: any;
 }) => {
   const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
@@ -53,7 +53,8 @@ const useStyle = ({
         display: "flex",
         flexDirection: "column" as "column",
         padding: convertWidthToVW(20),
-        marginBottom: 20,
+        paddingBottom: convertWidthToVW(0),
+        // marginBottom: 20,
       },
       headerContainer: {
         height: convertHeightToVH(101),

@@ -81,8 +81,22 @@ const getAndSetEncapsulationRollsSizes = async (
     return _data;
   }
 };
+
+const getAndSetRollEncapsulationsSuppliers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/roll-encapsulations/get-supplier-by-category",
+    data
+  );
+  return returnResult(result, undefined);
+};
 export {
   getAndSetEncapsulationRollsCategory,
   getAndSetEncapsulationRollsThickness,
   getAndSetEncapsulationRollsSizes,
+  getAndSetRollEncapsulationsSuppliers,
 };

@@ -9,6 +9,7 @@ import { profitsState } from "../store/profits";
 
 import { useStyle } from "../style";
 import { productTestState } from "@/store/product-test";
+import { useEffect } from "react";
 
 const ProductList = () => {
   const { t } = useTranslation();
@@ -16,6 +17,14 @@ const ProductList = () => {
   const profitsStateValue = useRecoilValue<any>(profitsState);
   const productTest = useRecoilValue<any>(productTestState);
 
+  useEffect(() => {
+    if (!productTest && profitsStateValue?.testProductsState) {
+      profitsStateValue?.onCklickActionProfitTestResultsByActionId(
+        profitsStateValue?.testProductsState[0]?.id,
+        profitsStateValue?.testProductsState[0]?.name
+      );
+    }
+  }, [profitsStateValue?.testProductsState, productTest]);
   return (
     <>
       {profitsStateValue?.testProductsState?.length > 0 ? (
@@ -50,7 +59,9 @@ const ProductList = () => {
                       }
                     >
                       <div style={clasess.nameStyle}>{item?.name}</div>
-                      <div style={clasess.detailsStyle}>{item?.details}</div>
+                      <div style={clasess.detailsStyle} className="scrollBlue">
+                        {item?.details}
+                      </div>
                       <div style={clasess.moreStyle}>{item?.more}</div>
                     </div>
                   );

@@ -4,10 +4,15 @@ import { useMemo } from "react";
 const useStyle = () => {
   const clasess = useMemo(() => {
     return {
-      insideStyle: { width: "30%", borderRadius: 5, height: "80%" },
+      insideStyle: {
+        width: "30%",
+        borderRadius: 5,
+        height: "80%",
+        backgroundColor: "#f7f7f7",
+      },
       selectTypeStyle: {
         display: "flex",
-        ...FONT_FAMILY.Lexend(700, 14),
+        ...FONT_FAMILY.Lexend(500, 14),
         marginBottom: 8,
       },
       btnContainer: {

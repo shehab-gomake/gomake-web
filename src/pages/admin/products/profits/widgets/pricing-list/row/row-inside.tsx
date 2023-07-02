@@ -45,7 +45,7 @@ const RowInside = ({
       style={
         entry[0] == "more"
           ? clasess.editItem
-          : entry[0] === "ExpProfit"
+          : entry[0] === "expProfit"
           ? clasess.rowItemExpPofit
           : { ...clasess.rowItem, width: `${tablePercent[index]}` }
       }
@@ -86,6 +86,7 @@ const RowInside = ({
                   ...editPriceListStateValue,
                   state: {
                     ...editPriceListStateValue.state,
+                    changeOn: entry[0],
                     [entry[0]]: e.target.value,
                   },
                 });
@@ -97,13 +98,18 @@ const RowInside = ({
       ) : entry[0] !== "more" ? (
         row.status === "pending" &&
         (entry[1] == 0 || entry[1] == "NaN" || entry[1] == "Infinity") ? (
-          <Lottie animationData={defaultOptions.animationData} loop={defaultOptions.loop} height={"50px"} width={"50px"} />
+          <Lottie
+            animationData={defaultOptions.animationData}
+            loop={defaultOptions.loop}
+            style={{
+              width: 50,
+              height: 50,
+            }}
+          />
         ) : (
           <div
             onClick={() => {
               if (
-                entry[0] !== "unitPrice" &&
-                entry[0] !== "totalPrice" &&
                 entry[0] !== "cost" &&
                 entry[0] !== "quantity" &&
                 entry[0] !== "status" &&
@@ -122,10 +128,18 @@ const RowInside = ({
           >
             {Number(entry[1]).toFixed(2)}
             {entry[0] === "profit" && "%"}
+            {entry[0] === "expProfit" && "%"}
           </div>
         )
       ) : row.status === "pending" ? (
-        <Lottie animationData={defaultOptions.animationData} loop={defaultOptions.loop} height={"50px"} width={"50px"} />
+        <Lottie
+          animationData={defaultOptions.animationData}
+          loop={defaultOptions.loop}
+          style={{
+            width: 50,
+            height: 50,
+          }}
+        />
       ) : (
         entry[1]
       )}

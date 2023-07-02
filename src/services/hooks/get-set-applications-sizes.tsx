@@ -79,8 +79,46 @@ const getAndSetApplicationThickness = async (
     return _data;
   }
 };
+const getAndSetApplicationsSuppliers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/applications/get-supplier-by-category",
+    data
+  );
+  return returnResult(result, undefined);
+};
+const getAndSetAllApplicationsSizes = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  if (data?.categoryName) {
+    const result: any = await callApi(
+      "GET",
+      "/v1/applications/get-all-sizes",
+      data
+    );
+    const _data = returnResult(result, undefined);
+    const mapData = _data.map((item: any) => {
+      return {
+        ...item,
+      };
+    });
+    if (setState) {
+      setState(mapData);
+    }
+
+    return _data;
+  }
+};
 export {
   getAndSetApplicationsCategory,
   getAndSetApplicationSizes,
   getAndSetApplicationThickness,
+  getAndSetApplicationsSuppliers,
+  getAndSetAllApplicationsSizes,
 };

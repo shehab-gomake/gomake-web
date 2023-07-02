@@ -18,7 +18,9 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        paddingRight: convertWidthToVW(54),
+        padding: convertWidthToVW(30),
+        marginBottom: convertWidthToVW(30),
+        minHeight: "120vh",
       },
       skeletonRowStyle: {
         marginTop: convertHeightToVH(10),
@@ -118,8 +120,9 @@ const useStyle = () => {
         textAlign: "center" as "center",
         ...FONT_FAMILY.Lexend(400, 14),
         color: "#090A1D",
-        borderRight: "4px solid #2E3092",
         paddingRight: 10,
+        overflow: "auto",
+        maxHeight: 30,
       },
       moreStyle: {
         display: "flex",
@@ -156,7 +159,7 @@ const useStyle = () => {
         gap: 24,
       },
       pricingCointaner: {
-        width: "100%",
+        width: "70%",
         dropShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
       },
       exceptionsCointaner: {
