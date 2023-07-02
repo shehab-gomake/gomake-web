@@ -203,6 +203,11 @@ const useAuthLayoutHook = () => {
             path: "/admin/products/parameters",
           },
           {
+            key: "offsetPrice",
+            title: t("products.offsetPrice.admin.title"),
+            path: "/admin/products/digital-offset-price",
+          },
+          {
             key: "actions",
             title: t("products.actions.admin.title"),
             path: "/admin/products/actions",
