@@ -182,7 +182,7 @@ const CategoriesTable = ({ admin = false }) => {
       {
         key: "lamination",
         title: t("tabs.lamination"),
-        path: "/materials-new/lamination",
+        path: "/admin/materials-new/lamination",
       },
       // {
       //   key: "plats",
