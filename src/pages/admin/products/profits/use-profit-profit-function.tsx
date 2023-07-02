@@ -135,6 +135,7 @@ const useProfitsProfitsFunction = ({
           ...(actionExceptionProfitIdValue?.id?.length && {
             exceptionId: actionExceptionProfitIdValue.id,
           }),
+          actionProductId: productTest.actionProductId,
         }
       );
       await getAndSetActionProfitRowChartData(
@@ -185,6 +186,7 @@ const useProfitsProfitsFunction = ({
             ...(actionExceptionProfitIdValue?.id?.length && {
               exceptionId: actionExceptionProfitIdValue.id,
             }),
+            actionProductId: productTest.actionProductId,
           }
         );
         getActionProfitRowChartData();
@@ -218,6 +220,7 @@ const useProfitsProfitsFunction = ({
           actionId: selectedAction?.id,
           productId: productTest.id,
           quantity: pricingListRowState.quantity,
+          actionProductId: productTest.actionProductId,
           // actionProductId:
         }
       );
@@ -238,6 +241,7 @@ const useProfitsProfitsFunction = ({
             ...(actionExceptionProfitIdValue?.id?.length && {
               exceptionId: actionExceptionProfitIdValue.id,
             }),
+            actionProductId: productTest.actionProductId,
           }
         );
         setPricingListRowState({});

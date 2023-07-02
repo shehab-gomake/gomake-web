@@ -60,7 +60,8 @@ const useProfitsEffects = ({
       );
       onCklickActionProfitTestResultsByActionId(
         router?.query?.productId || "",
-        testName?.name
+        testName?.name,
+        testName.id
       );
       setIsUpdated(true);
     }

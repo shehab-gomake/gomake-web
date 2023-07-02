@@ -193,6 +193,7 @@ const useProfitsExeptionsFunction = ({
           {
             actionId: selectedAction.id,
             productId: productTest.id,
+            actionProductId: productTest.actionProductId,
           }
         );
         await getAndSetActionProfitRowChartData(
@@ -251,6 +252,7 @@ const useProfitsExeptionsFunction = ({
               actionId: selectedAction.id,
               productId: productTest.id,
               exceptionId: id,
+              actionProductId: productTest.actionProductId,
             }
           );
           await getAndSetActionProfitRowChartData(

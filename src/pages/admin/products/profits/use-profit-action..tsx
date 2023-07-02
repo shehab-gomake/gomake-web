@@ -98,7 +98,7 @@ const useProfitsAction = ({
       //   };
       // });
       // setactionExceptionProfitId(productId);
-      setProductTest({ id: productId, name: productName });
+      setProductTest({ id: productId, name: productName, actionProductId });
       // setActionExceptionProfitRows(mapData);
       // setActionProfitRowsNew(mapData);
     },

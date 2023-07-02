@@ -19,9 +19,14 @@ const ProductList = () => {
 
   useEffect(() => {
     if (!productTest && profitsStateValue?.testProductsState) {
+      console.log(
+        " profitsStateValue?.testProductsState[0]",
+        profitsStateValue?.testProductsState[0]
+      );
       profitsStateValue?.onCklickActionProfitTestResultsByActionId(
-        profitsStateValue?.testProductsState[0]?.id,
-        profitsStateValue?.testProductsState[0]?.name
+        profitsStateValue?.testProductsState[0]?.item?.productId,
+        profitsStateValue?.testProductsState[0]?.name,
+        profitsStateValue?.testProductsState[0]?.item?.id
       );
     }
   }, [profitsStateValue?.testProductsState, productTest]);
@@ -44,15 +49,19 @@ const ProductList = () => {
             <>
               {profitsStateValue?.testProductsState?.map(
                 (item: any, index: any) => {
+                  console.log({
+                    item,
+                    productTest,
+                  });
                   return (
                     <div
                       style={
-                        item?.id === productTest?.id
+                        item?.id === productTest?.id &&
+                        item?.item?.id === productTest?.actionProductId
                           ? clasess.bodyTableOddContainer
                           : clasess.bodyTableEvenContainer
                       }
                       onClick={() => {
-                        console.log("itemitem", item);
                         profitsStateValue?.onCklickActionProfitTestResultsByActionId(
                           item?.item?.productId,
                           item?.name,
