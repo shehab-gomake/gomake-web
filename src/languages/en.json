@@ -1181,6 +1181,12 @@
         "type": "Type",
         "more": "More"
       }
+    },
+    "offsetPrice": {
+      "admin": {
+        "title": "Offset price list",
+        "title2": "Digital and offset price list"
+      }
     }
   },
   "skeleton": {
