@@ -40,6 +40,9 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "22%",
+        backgroundColor: "white",
+        height: "100%",
+        padding: 16,
       },
       tabsContainer: {
         display: "flex",
@@ -130,6 +133,106 @@ const useStyle = () => {
         ".MuiSwitch-switchBase.Mui-checked": {
           color: "green", // Change this to your desired background color
         },
+      },
+      headerRightSide: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        marginBottom: 8,
+      },
+      flyerText: {
+        color: primaryColor(900),
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
+      imgProductContainer: {
+        width: "100%",
+      },
+      secondText: {
+        color: primaryColor(200),
+        ...FONT_FAMILY.Lexend(400, 12),
+      },
+      urgentContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+      },
+      urgentEstimateContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        marginBottom: 18,
+      },
+      orderContainer: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        alignSelf: "center",
+        textAlign: "center" as "center",
+        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(500, 14),
+        marginBottom: 16,
+      },
+      progress: {
+        marginBottom: 11,
+        width: "100%",
+      },
+      labelBrogressContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        marginBottom: 32,
+      },
+      labelStyle: {
+        color: primaryColor(800),
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
+      totalContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        marginBottom: 8,
+      },
+      totalStyle: {
+        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(700, 24),
+      },
+      priceRecoveryContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        marginLeft: -8,
+        marginBottom: 16,
+      },
+      switchAdditionsContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 8,
+        marginLeft: -8,
+        marginBottom: 40,
+      },
+      additionsText: {
+        color: primaryColor(900),
+        ...FONT_FAMILY.Lexend(400, 12),
+      },
+      addOrderBtn: {
+        backgroundColor: secondColor(500),
+      },
+      noVatStyle: {
+        marginTop: 6,
+        color: primaryColor(200),
+        ...FONT_FAMILY.Lexend(400, 10),
       },
     };
   }, [i18next.language, t]);
