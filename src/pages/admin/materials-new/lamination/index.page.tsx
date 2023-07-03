@@ -52,6 +52,12 @@ export default function Lamination() {
     setIsAddNewLaminationWightSize,
     onClickOpenLaminationWeightSizeWidget,
     addNewSheeWeightSizeByCategoryName,
+    getCategory,
+    openDuplicateSheetModal,
+    onOpnDuplicateModal,
+    onCloseDuplicateModal,
+    duplicateWeight,
+    duplicateWeightSize,
   } = useLamination();
 
   useEffect(() => {
@@ -92,6 +98,12 @@ export default function Lamination() {
       setIsAddNewLaminationWightSize,
       onClickOpenLaminationWeightSizeWidget,
       addNewSheeWeightSizeByCategoryName,
+      getCategory,
+      openDuplicateSheetModal,
+      onOpnDuplicateModal,
+      onCloseDuplicateModal,
+      duplicateWeight,
+      duplicateWeightSize,
     });
   }, [
     headerTable,
@@ -130,6 +142,12 @@ export default function Lamination() {
     setIsAddNewLaminationWightSize,
     onClickOpenLaminationWeightSizeWidget,
     addNewSheeWeightSizeByCategoryName,
+    getCategory,
+    openDuplicateSheetModal,
+    onOpnDuplicateModal,
+    onCloseDuplicateModal,
+    duplicateWeight,
+    duplicateWeightSize,
   ]);
   return (
     <AdminAuthLayout>

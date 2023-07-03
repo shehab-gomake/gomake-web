@@ -10,7 +10,7 @@ import { LaminationWeightsMapping } from "./lamination-size-mapping";
 import { materialLaminationState } from "../store/lamination";
 import { useStyle } from "./style";
 
-const UpdateLaminationModal = () => {
+const UpdateLaminationNewModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const materialLaminationStateValue = useRecoilValue<any>(
@@ -100,4 +100,4 @@ const UpdateLaminationModal = () => {
     </>
   );
 };
-export { UpdateLaminationModal };
+export { UpdateLaminationNewModal };
