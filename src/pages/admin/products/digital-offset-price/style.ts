@@ -31,7 +31,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "50%",
+        width: "70%",
         marginBottom: 31,
       },
       rightSideContainer: {
@@ -57,6 +57,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 8,
+        cursor: "pointer",
       },
       tabNameStyle: {
         ...FONT_FAMILY.Lexend(500, 16),

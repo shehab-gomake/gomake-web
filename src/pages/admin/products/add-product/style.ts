@@ -54,6 +54,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 8,
+        cursor: "pointer",
       },
       tabNameStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
