@@ -1172,6 +1172,11 @@
       "profit": "Profit",
       "properties": "Properties"
     },
+    "addProduct": {
+      "admin": {
+        "title": "Add Product"
+      }
+    },
     "parameters": {
       "admin": {
         "title": "Parameters",

@@ -382,6 +382,7 @@ const useDigitalOffsetPrice = () => {
       ],
     },
   ];
+
   return { t, handleTabClick, handleNextClick, activeIndex, template };
 };
 

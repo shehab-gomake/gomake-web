@@ -1,6 +1,6 @@
 import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
-import { useDigitalOffsetPrice } from "./use-digital-offset-price";
+import { useDigitalOffsetPrice } from "./use-add-product";
 
 import { useStyle } from "./style";
 import {
@@ -9,7 +9,7 @@ import {
   SecondSwitch,
 } from "@/components";
 
-export default function Profits() {
+export default function AddProduct() {
   const { clasess } = useStyle();
   const { t, handleTabClick, handleNextClick, activeIndex, template } =
     useDigitalOffsetPrice();
@@ -46,7 +46,7 @@ export default function Profits() {
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
-        <HeaderTitle title={t("products.offsetPrice.admin.title2")} />
+        <HeaderTitle title={t("products.addProduct.admin.title")} />
         <div style={clasess.mainRowContainer}>
           <div style={clasess.leftSideContainer}>
             <div style={clasess.tabsContainer}>
@@ -120,8 +120,8 @@ export default function Profits() {
                 }
               })}
             </div>
+            {/* <button onClick={handleNextClick}>Next</button> */}
           </div>
-          <div style={clasess.rightSideContainer}>f</div>
         </div>
       </div>
     </AdminAuthLayout>

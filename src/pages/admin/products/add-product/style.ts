@@ -20,8 +20,8 @@ const useStyle = () => {
       },
       mainRowContainer: {
         display: "flex",
-        flexDirection: "row" as "row",
-        justifyContent: "space-between",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
         height: "100%",
@@ -31,7 +31,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "50%",
+        width: "100%",
         marginBottom: 31,
       },
       rightSideContainer: {
