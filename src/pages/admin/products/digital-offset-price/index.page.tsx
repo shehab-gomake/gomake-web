@@ -17,8 +17,14 @@ import { CheckboxIcon } from "./icons/checkbox-icon";
 import { Progress } from "./icons/progress";
 export default function Profits() {
   const { clasess } = useStyle();
-  const { t, handleTabClick, handleNextClick, activeIndex, template } =
-    useDigitalOffsetPrice();
+  const {
+    t,
+    handleTabClick,
+    handleNextClick,
+    handlePreviousClick,
+    activeIndex,
+    template,
+  } = useDigitalOffsetPrice();
   const _renderParameterType = (parameter) => {
     if (parameter?.parameterType === "input") {
       return (
@@ -132,6 +138,22 @@ export default function Profits() {
                   });
                 }
               })}
+            </div>
+            <div style={clasess.addPreviousContainer}>
+              {activeIndex != 0 ? (
+                <GomakePrimaryButton
+                  style={clasess.previousBtnStyle}
+                  onClick={handlePreviousClick}
+                >
+                  Previous
+                </GomakePrimaryButton>
+              ) : null}
+              <GomakePrimaryButton
+                style={clasess.nextBtnStyle}
+                onClick={handleNextClick}
+              >
+                Next
+              </GomakePrimaryButton>
             </div>
           </div>
           <div style={clasess.rightSideContainer}>

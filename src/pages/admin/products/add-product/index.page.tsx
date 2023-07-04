@@ -5,6 +5,7 @@ import { useDigitalOffsetPrice } from "./use-add-product";
 import { useStyle } from "./style";
 import {
   GoMakeAutoComplate,
+  GomakePrimaryButton,
   GomakeTextInput,
   SecondSwitch,
 } from "@/components";
@@ -13,8 +14,14 @@ import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 
 export default function AddProduct() {
   const { clasess } = useStyle();
-  const { t, handleTabClick, handleNextClick, activeIndex, template } =
-    useDigitalOffsetPrice();
+  const {
+    t,
+    handleTabClick,
+    handleNextClick,
+    handlePreviousClick,
+    activeIndex,
+    template,
+  } = useDigitalOffsetPrice();
   const _renderParameterType = (parameter) => {
     if (parameter?.parameterType === "input") {
       return (
@@ -172,8 +179,24 @@ export default function AddProduct() {
                 }
               })}
             </div>
-            {/* <button onClick={handleNextClick}>Next</button> */}
           </div>
+        </div>
+        <div style={clasess.addPreviousContainer}>
+          {activeIndex != 0 ? (
+            <GomakePrimaryButton
+              style={clasess.previousBtnStyle}
+              onClick={handlePreviousClick}
+            >
+              Previous
+            </GomakePrimaryButton>
+          ) : null}
+
+          <GomakePrimaryButton
+            style={clasess.nextBtnStyle}
+            onClick={handleNextClick}
+          >
+            Next
+          </GomakePrimaryButton>
         </div>
       </div>
     </AdminAuthLayout>

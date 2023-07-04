@@ -42,7 +42,7 @@ const useStyle = () => {
         width: "22%",
         backgroundColor: "white",
         height: "100%",
-        padding: 16,
+        padding: 8,
       },
       tabsContainer: {
         display: "flex",
@@ -234,6 +234,27 @@ const useStyle = () => {
         marginTop: 6,
         color: primaryColor(200),
         ...FONT_FAMILY.Lexend(400, 10),
+      },
+      addPreviousContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        marginBottom: 50,
+        width: "100%",
+        gap: 16,
+      },
+      nextBtnStyle: {
+        width: 110,
+        height: 40,
+        backgroundColor: secondColor(500),
+      },
+      previousBtnStyle: {
+        width: 110,
+        height: 40,
+        backgroundColor: "white",
+        border: `1px solid ${secondColor(500)}`,
+        color: secondColor(500),
       },
     };
   }, [i18next.language, t]);

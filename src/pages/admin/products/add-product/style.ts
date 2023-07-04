@@ -160,6 +160,27 @@ const useStyle = () => {
         gap: 8,
         paddingRight: 5,
       },
+      addPreviousContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        marginBottom: 50,
+        width: "100%",
+        gap: 16,
+      },
+      nextBtnStyle: {
+        width: 110,
+        height: 40,
+        backgroundColor: secondColor(500),
+      },
+      previousBtnStyle: {
+        width: 110,
+        height: 40,
+        backgroundColor: "white",
+        border: `1px solid ${secondColor(500)}`,
+        color: secondColor(500),
+      },
     };
   }, [i18next.language, t]);
   return {

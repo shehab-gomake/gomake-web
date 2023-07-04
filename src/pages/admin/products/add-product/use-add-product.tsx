@@ -17,8 +17,13 @@ const useDigitalOffsetPrice = () => {
     }
   };
   const handleNextClick = () => {
-    if (activeIndex < template.length - 1) {
+    if (activeIndex < template[0]?.sections?.length - 1) {
       setActiveIndex(activeIndex + 1);
+    }
+  };
+  const handlePreviousClick = () => {
+    if (activeIndex != 0) {
+      setActiveIndex(activeIndex - 1);
     }
   };
   const template: any = [
@@ -384,7 +389,14 @@ const useDigitalOffsetPrice = () => {
     },
   ];
 
-  return { t, handleTabClick, handleNextClick, activeIndex, template };
+  return {
+    t,
+    handleTabClick,
+    handleNextClick,
+    handlePreviousClick,
+    activeIndex,
+    template,
+  };
 };
 
 export { useDigitalOffsetPrice };
