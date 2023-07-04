@@ -187,7 +187,7 @@ export default function AddProduct() {
               style={clasess.previousBtnStyle}
               onClick={handlePreviousClick}
             >
-              Previous
+              {t("products.offsetPrice.admin.previousBtn")}
             </GomakePrimaryButton>
           ) : null}
 
@@ -195,7 +195,7 @@ export default function AddProduct() {
             style={clasess.nextBtnStyle}
             onClick={handleNextClick}
           >
-            Next
+            {t("products.offsetPrice.admin.nextBtn")}
           </GomakePrimaryButton>
         </div>
       </div>

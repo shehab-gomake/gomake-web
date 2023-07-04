@@ -15,6 +15,8 @@ import { Checkbox } from "@mui/material";
 import { CheckboxCheckedIcon } from "@/icons";
 import { CheckboxIcon } from "./icons/checkbox-icon";
 import { Progress } from "./icons/progress";
+import { MakeShapeModal } from "./modals/make-shape-modal";
+import { ChooseShapeModal } from "./modals/choose-shape-modal";
 export default function Profits() {
   const { clasess } = useStyle();
   const {
@@ -22,6 +24,12 @@ export default function Profits() {
     handleTabClick,
     handleNextClick,
     handlePreviousClick,
+    onOpeneChooseShape,
+    onOpeneMakeShape,
+    onCloseChooseShape,
+    onCloseMakeShape,
+    makeShapeOpen,
+    chooseShapeOpen,
     activeIndex,
     template,
   } = useDigitalOffsetPrice();
@@ -52,6 +60,15 @@ export default function Profits() {
         //   onChangeSupplierToDefault(option, value);
         // }}
         />
+      );
+    } else if (parameter?.parameterType === "button") {
+      return (
+        <GomakePrimaryButton
+          style={clasess.dynamicBtn}
+          onClick={onOpeneChooseShape}
+        >
+          {parameter?.updatedName}
+        </GomakePrimaryButton>
       );
     }
   };
@@ -145,45 +162,60 @@ export default function Profits() {
                   style={clasess.previousBtnStyle}
                   onClick={handlePreviousClick}
                 >
-                  Previous
+                  {t("products.offsetPrice.admin.previousBtn")}
                 </GomakePrimaryButton>
               ) : null}
               <GomakePrimaryButton
                 style={clasess.nextBtnStyle}
                 onClick={handleNextClick}
               >
-                Next
+                {t("products.offsetPrice.admin.nextBtn")}
               </GomakePrimaryButton>
             </div>
           </div>
           <div style={clasess.rightSideContainer}>
             <div style={clasess.headerRightSide}>
-              <div style={clasess.flyerText}>Flyer poster</div>
+              <div style={clasess.flyerText}>
+                {t("products.offsetPrice.admin.flyerPoster")}
+              </div>
               <div style={clasess.flyerText}>2.00 USD</div>
             </div>
             <div style={clasess.imgProductContainer}>
               <Image src={ImgProduct} alt="gomake" style={{ width: "100%" }} />
             </div>
             <div style={clasess.urgentEstimateContainer}>
-              <div style={clasess.secondText}>take 5 days estimate</div>
+              <div style={clasess.secondText}>
+                {t("products.offsetPrice.admin.takeEstimate", {
+                  data: "5 days",
+                })}
+              </div>
               <div style={clasess.urgentContainer}>
                 <Checkbox
                   icon={<CheckboxIcon />}
                   checkedIcon={<CheckboxCheckedIcon />}
                 />
-                <div style={clasess.secondText}>Urgent order</div>
+                <div style={clasess.secondText}>
+                  {t("products.offsetPrice.admin.urgentOrder")}
+                </div>
               </div>
             </div>
-            <div style={clasess.orderContainer}>order: 15 piece * 2.00 USD</div>
+            <div style={clasess.orderContainer}>
+              {t("products.offsetPrice.admin.orderToral", {
+                pieceNum: "15",
+                price: "2.00",
+              })}
+            </div>
             <div style={clasess.progress}>
-              <Progress width={"100%"} data={renderData(50)} />
+              <Progress width={"100%"} data={renderData(80)} />
             </div>
             <div style={clasess.labelBrogressContainer}>
               <div style={clasess.labelStyle}>10.00</div>
               <div style={clasess.labelStyle}>100.00</div>
             </div>
             <div style={clasess.totalContainer}>
-              <div style={clasess.totalStyle}>Total</div>
+              <div style={clasess.totalStyle}>
+                {t("products.offsetPrice.admin.total")}
+              </div>
               <div style={clasess.totalStyle}>30.00 USD</div>
             </div>
             <div style={clasess.priceRecoveryContainer}>
@@ -191,18 +223,37 @@ export default function Profits() {
                 icon={<CheckboxIcon />}
                 checkedIcon={<CheckboxCheckedIcon />}
               />
-              <div style={clasess.secondText}>Price recovery</div>
+              <div style={clasess.secondText}>
+                {t("products.offsetPrice.admin.priceRecovery")}
+              </div>
             </div>
             <div style={clasess.switchAdditionsContainer}>
               <SecondSwitch size="small" />
-              <div style={clasess.additionsText}>Additions</div>
+              <div style={clasess.additionsText}>
+                {t("products.offsetPrice.admin.additions")}
+              </div>
             </div>
-            <GomakePrimaryButton style={clasess.addOrderBtn}>
-              Add order
+            <GomakePrimaryButton
+              style={clasess.addOrderBtn}
+              onClick={onOpeneMakeShape}
+            >
+              {t("products.offsetPrice.admin.addOrder")}
             </GomakePrimaryButton>
-            <div style={clasess.noVatStyle}>Doesn’t include VAT</div>
+            <div style={clasess.noVatStyle}>
+              {t("products.offsetPrice.admin.dontVAT")}
+            </div>
           </div>
         </div>
+        <MakeShapeModal
+          openModal={makeShapeOpen}
+          onClose={onCloseMakeShape}
+          modalTitle="Make your own shape"
+        />
+        <ChooseShapeModal
+          openModal={chooseShapeOpen}
+          onClose={onCloseChooseShape}
+          modalTitle="Make your own shape"
+        />
       </div>
     </AdminAuthLayout>
   );

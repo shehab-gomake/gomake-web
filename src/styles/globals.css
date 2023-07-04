@@ -39,3 +39,12 @@ body {
   width: 4px;
   border-radius: 24px;
 }
+.MuiSlider-rail{
+  height: 7px !important;
+}
+.MuiSlider-track{
+  height: 7px !important;
+}
+.MuiSlider-root{
+  color: #2E3092 !important;
+}

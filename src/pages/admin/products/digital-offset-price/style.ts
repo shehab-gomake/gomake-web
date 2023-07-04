@@ -114,7 +114,7 @@ const useStyle = () => {
         borderRadius: 4,
         height: 40,
         backgroundColor: "#FFF",
-        boxShadow: "0px 4px 15px 0px rgba(0, 0, 0, 0.08)",
+        // boxShadow: "0px 4px 15px 0px rgba(0, 0, 0, 0.08)",
       },
       renderParameterTypeContainer: {
         display: "flex",
@@ -128,12 +128,18 @@ const useStyle = () => {
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
-        boxShadow: "0px 4px 15px 0px rgba(0, 0, 0, 0.08)",
+        boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
       switchStyle: {
         ".MuiSwitch-switchBase.Mui-checked": {
-          color: "green", // Change this to your desired background color
+          color: "green",
         },
+      },
+      dynamicBtn: {
+        height: 40,
+        backgroundColor: "white",
+        border: `1px solid ${secondColor(500)}`,
+        color: secondColor(500),
       },
       headerRightSide: {
         display: "flex",

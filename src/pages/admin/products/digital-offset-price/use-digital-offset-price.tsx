@@ -9,6 +9,20 @@ import { PrintingDetails } from "./icons/printing-details";
 const useDigitalOffsetPrice = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const [makeShapeOpen, setMakeShapeOpen] = useState(false);
+  const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
+  const onCloseMakeShape = () => {
+    setMakeShapeOpen(false);
+  };
+  const onCloseChooseShape = () => {
+    setChooseShapeOpen(false);
+  };
+  const onOpeneMakeShape = () => {
+    setMakeShapeOpen(true);
+  };
+  const onOpeneChooseShape = () => {
+    setChooseShapeOpen(true);
+  };
   const [activeIndex, setActiveIndex] = useState(0);
   const handleTabClick = (index: number) => {
     if (index !== activeIndex) {
@@ -157,6 +171,13 @@ const useDigitalOffsetPrice = () => {
                       IsHidden: false,
                     },
                   ],
+                },
+                {
+                  ParamterId: "3",
+                  parameterType: "button",
+                  updatedName: "Choose shape",
+                  isHidden: false,
+                  isRequired: false,
                 },
               ],
             },
@@ -392,6 +413,12 @@ const useDigitalOffsetPrice = () => {
     handleTabClick,
     handleNextClick,
     handlePreviousClick,
+    onOpeneChooseShape,
+    onOpeneMakeShape,
+    onCloseChooseShape,
+    onCloseMakeShape,
+    makeShapeOpen,
+    chooseShapeOpen,
     activeIndex,
     template,
   };
