@@ -8,6 +8,8 @@ import {
   GomakeTextInput,
   SecondSwitch,
 } from "@/components";
+import { Checkbox, Tooltip } from "@mui/material";
+import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 
 export default function AddProduct() {
   const { clasess } = useStyle();
@@ -30,6 +32,42 @@ export default function AddProduct() {
           placeholder={parameter.updatedName}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
+          renderOption={(props: any, option: any) => {
+            if (option.label === t("materials.sheetPaper.addNew")) {
+              return (
+                <div
+                  // onClick={onClickAddNewSupplier}
+                  style={clasess.addSupplierAutoComplate}
+                >
+                  {t("materials.sheetPaper.addNewSupplier")}
+                </div>
+              );
+            }
+            return (
+              <div style={clasess.optionsContainer}>
+                <div {...props} style={{ width: "100%" }}>
+                  {option.updateName}
+                </div>
+                <div style={clasess.flagsInDropDownContainer}>
+                  <Tooltip title="is Hidden?">
+                    <Checkbox
+                      icon={<CheckboxIcon />}
+                      checkedIcon={<CheckboxCheckedIcon />}
+                      style={{ padding: 0, paddingTop: 8 }}
+                      onClick={() => console.log("X", option)}
+                    />
+                  </Tooltip>
+                  <Tooltip title="is Required?">
+                    <Checkbox
+                      icon={<CheckboxIcon />}
+                      checkedIcon={<CheckboxCheckedIcon />}
+                      style={{ padding: 0, paddingTop: 8 }}
+                    />
+                  </Tooltip>
+                </div>
+              </div>
+            );
+          }}
         />
       );
     } else if (parameter?.parameterType === "boolean") {
@@ -93,13 +131,27 @@ export default function AddProduct() {
                                 {!parameter?.isHidden ? (
                                   <div style={clasess.parameterContainer}>
                                     <div style={clasess.parameterLabelStyle}>
-                                      {parameter?.updatedName}
-                                      {parameter?.isRequired ? (
-                                        <span style={clasess.spanRequierd}>
-                                          {" "}
-                                          *
-                                        </span>
-                                      ) : null}
+                                      <div>
+                                        <GomakeTextInput
+                                          style={clasess.textInputWithoutStyle}
+                                          defaultValue={parameter?.updatedName}
+                                          placeholder={parameter?.updatedName}
+                                        />
+                                      </div>
+                                      <Tooltip title="is Hidden?">
+                                        <Checkbox
+                                          icon={<CheckboxIcon />}
+                                          checkedIcon={<CheckboxCheckedIcon />}
+                                          style={{ padding: 0, paddingTop: 8 }}
+                                        />
+                                      </Tooltip>
+                                      <Tooltip title="is Required?">
+                                        <Checkbox
+                                          icon={<CheckboxIcon />}
+                                          checkedIcon={<CheckboxCheckedIcon />}
+                                          style={{ padding: 0, paddingTop: 8 }}
+                                        />
+                                      </Tooltip>
                                     </div>
                                     <div
                                       style={

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { PricingIcon } from "./icons/pricing";
 import { FinishingIcon } from "./icons/finishing";
 import { PrintingDetails } from "./icons/printing-details";
+import { CustomerIcon } from "./icons/customer-details";
 
 const useDigitalOffsetPrice = () => {
   const { callApi } = useGomakeAxios();
@@ -28,8 +29,8 @@ const useDigitalOffsetPrice = () => {
         {
           key: "customer_details",
           name: "customer details",
-          icon: <FinishingIcon />,
-          activeIcon: <FinishingIcon stroke="#ED028C" />,
+          icon: <CustomerIcon />,
+          activeIcon: <CustomerIcon />,
           doneIcon: <DoneIcon />,
           subSections: [
             {

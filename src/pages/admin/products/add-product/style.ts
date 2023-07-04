@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
+
 const useStyle = () => {
   const { t } = useTranslation();
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
@@ -34,13 +35,6 @@ const useStyle = () => {
         width: "100%",
         marginBottom: 31,
       },
-      rightSideContainer: {
-        display: "flex",
-        flexDirection: "column" as "column",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
-        width: "22%",
-      },
       tabsContainer: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -53,7 +47,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: 8,
+        // gap: 8,
         cursor: "pointer",
       },
       tabNameStyle: {
@@ -92,8 +86,11 @@ const useStyle = () => {
         gap: 16,
       },
       parameterLabelStyle: {
-        ...FONT_FAMILY.Lexend(600, 16),
-        color: "#090A1D",
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 8,
       },
       spanRequierd: {
         color: errorColor(500),
@@ -104,7 +101,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        width: 180,
+        width: "100%",
       },
       textInputStyle: {
         width: "100%",
@@ -115,7 +112,7 @@ const useStyle = () => {
       },
       renderParameterTypeContainer: {
         display: "flex",
-        width: "95%",
+        width: "100%",
         backgroundColor: "#FFF",
         borderRadius: 4,
       },
@@ -127,10 +124,41 @@ const useStyle = () => {
         border: "0px",
         boxShadow: "0px 4px 15px 0px rgba(0, 0, 0, 0.08)",
       },
-      switchStyle: {
-        ".MuiSwitch-switchBase.Mui-checked": {
-          color: "green", // Change this to your desired background color
-        },
+
+      textInputWithoutStyle: {
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        textAlign: "flex-start",
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: primaryColor(900),
+        width: "100%",
+        height: 25,
+        backgroundColor: "transparent",
+        paddingLeft: 2,
+        boxShadow: "none",
+      },
+      addSupplierAutoComplate: {
+        width: "100%",
+        alignItems: "center",
+        backgroundColor: primaryColor(10),
+        textAlign: "center" as "center",
+        color: secondColor(500),
+        ...FONT_FAMILY.Lexend(500, 16),
+        cursor: "pointer",
+      },
+      optionsContainer: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      },
+      flagsInDropDownContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 8,
+        paddingRight: 5,
       },
     };
   }, [i18next.language, t]);
