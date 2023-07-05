@@ -252,7 +252,7 @@ export default function Profits() {
         <ChooseShapeModal
           openModal={chooseShapeOpen}
           onClose={onCloseChooseShape}
-          modalTitle="Make your own shape"
+          modalTitle="Choose shape"
         />
       </div>
     </AdminAuthLayout>
