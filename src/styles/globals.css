@@ -48,3 +48,6 @@ body {
 .MuiSlider-root{
   color: #2E3092 !important;
 }
+.MuiOutlinedInput-root fieldset{
+  border:none !important;
+}

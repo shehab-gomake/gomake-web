@@ -32,6 +32,8 @@ export default function Profits() {
     chooseShapeOpen,
     activeIndex,
     template,
+    activeTab,
+    tabs,
   } = useDigitalOffsetPrice();
   const _renderParameterType = (parameter) => {
     if (parameter?.parameterType === "input") {
@@ -174,6 +176,25 @@ export default function Profits() {
             </div>
           </div>
           <div style={clasess.rightSideContainer}>
+            <div style={clasess.headerClientRightSide}>
+              <div style={clasess.clientContainer}>
+                <div style={clasess.labelTextStyle}>Client</div>
+                <GoMakeAutoComplate
+                  options={["q", "w"]}
+                  placeholder={t("products.offsetPrice.admin.quote")}
+                  style={clasess.dropDownListStyle}
+                />
+              </div>
+              <div style={clasess.typeContainer}>
+                <div style={clasess.labelTextStyle}>Type</div>
+                <GoMakeAutoComplate
+                  options={["q", "w"]}
+                  placeholder={t("products.offsetPrice.admin.client")}
+                  style={clasess.dropDownListStyle}
+                />
+              </div>
+            </div>
+
             <div style={clasess.headerRightSide}>
               <div style={clasess.flyerText}>
                 {t("products.offsetPrice.admin.flyerPoster")}
@@ -227,12 +248,66 @@ export default function Profits() {
                 {t("products.offsetPrice.admin.priceRecovery")}
               </div>
             </div>
+
             <div style={clasess.switchAdditionsContainer}>
-              <SecondSwitch size="small" />
               <div style={clasess.additionsText}>
                 {t("products.offsetPrice.admin.additions")}
               </div>
+              <div style={clasess.tabsTypesContainer}>
+                {tabs?.map((tab) => {
+                  return (
+                    <div
+                      onClick={tab.onclick()}
+                      style={
+                        activeTab === tab.name
+                          ? clasess.activeTabStyle
+                          : clasess.unActiveTabStyle
+                      }
+                    >
+                      {tab.name}
+                    </div>
+                  );
+                })}
+              </div>
+              {activeTab === "Production" ? (
+                <div style={clasess.productionStatus}>
+                  <div style={clasess.sampleTypeStyle}>Sample type</div>
+                  <div style={clasess.autoCompleteContainer}>
+                    <GoMakeAutoComplate
+                      options={["q", "w"]}
+                      placeholder={t("products.offsetPrice.admin.quote")}
+                      style={clasess.dropDownListStyle}
+                    />
+                  </div>
+                  <div style={clasess.multiLineContainer}>
+                    <GomakeTextInput
+                      multiline={6}
+                      style={clasess.multiLineTextInputStyle}
+                      placeholder="Production comment"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div style={clasess.productionStatus}>
+                  <div style={clasess.sampleTypeStyle}>Sample type</div>
+                  <div style={clasess.autoCompleteContainer}>
+                    <GoMakeAutoComplate
+                      options={["q", "w"]}
+                      placeholder={t("products.offsetPrice.admin.quote")}
+                      style={clasess.dropDownListStyle}
+                    />
+                  </div>
+                  <div style={clasess.multiLineContainer}>
+                    <GomakeTextInput
+                      multiline={6}
+                      style={clasess.multiLineTextInputStyle}
+                      placeholder="Graphic design comment"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
+
             <GomakePrimaryButton
               style={clasess.addOrderBtn}
               onClick={onOpeneMakeShape}
@@ -247,12 +322,12 @@ export default function Profits() {
         <MakeShapeModal
           openModal={makeShapeOpen}
           onClose={onCloseMakeShape}
-          modalTitle="Make your own shape"
+          modalTitle={t("products.offsetPrice.admin.makeShape")}
         />
         <ChooseShapeModal
           openModal={chooseShapeOpen}
           onClose={onCloseChooseShape}
-          modalTitle="Choose shape"
+          modalTitle={t("products.offsetPrice.admin.chooseShape")}
         />
       </div>
     </AdminAuthLayout>

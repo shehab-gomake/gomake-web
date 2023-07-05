@@ -408,6 +408,23 @@ const useDigitalOffsetPrice = () => {
       ],
     },
   ];
+  const [activeTab, setActiveTab] = useState("Production");
+  const onClickProductionTab = () => {
+    setActiveTab("Production");
+  };
+  const onClickGraphicDesignTab = () => {
+    setActiveTab("Graphic design");
+  };
+  const tabs = [
+    {
+      name: "Production",
+      onclick: () => onClickProductionTab,
+    },
+    {
+      name: "Graphic design",
+      onclick: () => onClickGraphicDesignTab,
+    },
+  ];
   return {
     t,
     handleTabClick,
@@ -421,6 +438,8 @@ const useDigitalOffsetPrice = () => {
     chooseShapeOpen,
     activeIndex,
     template,
+    tabs,
+    activeTab,
   };
 };
 
