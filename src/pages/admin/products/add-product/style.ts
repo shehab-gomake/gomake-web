@@ -89,7 +89,7 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
-        alignItems: "center",
+        alignItems: "flex-end",
         gap: 8,
       },
       spanRequierd: {

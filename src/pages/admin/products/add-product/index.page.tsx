@@ -11,6 +11,10 @@ import {
 } from "@/components";
 import { Checkbox, Tooltip } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { HiddenIcon } from "./icons/hidden-icon";
+import { NotHiddenIcon } from "./icons/not-hidden-icon";
+import { NotRequierdIcon } from "./icons/not-requierd-icon";
+import { RequierdIcon } from "./icons/requierd-icon";
 
 export default function AddProduct() {
   const { clasess } = useStyle();
@@ -56,21 +60,7 @@ export default function AddProduct() {
                   {option.updateName}
                 </div>
                 <div style={clasess.flagsInDropDownContainer}>
-                  <Tooltip title="is Hidden?">
-                    <Checkbox
-                      icon={<CheckboxIcon />}
-                      checkedIcon={<CheckboxCheckedIcon />}
-                      style={{ padding: 0, paddingTop: 8 }}
-                      onClick={() => console.log("X", option)}
-                    />
-                  </Tooltip>
-                  <Tooltip title="is Required?">
-                    <Checkbox
-                      icon={<CheckboxIcon />}
-                      checkedIcon={<CheckboxCheckedIcon />}
-                      style={{ padding: 0, paddingTop: 8 }}
-                    />
-                  </Tooltip>
+                  {parameter?.isHidden ? <HiddenIcon /> : <NotHiddenIcon />}
                 </div>
               </div>
             );
@@ -133,42 +123,35 @@ export default function AddProduct() {
                         </div>
                         <div style={clasess.parametersContainer}>
                           {subSection?.parameters?.map((parameter, index) => {
+                            console.log("parameter", parameter);
                             return (
                               <div key={index}>
-                                {!parameter?.isHidden ? (
-                                  <div style={clasess.parameterContainer}>
-                                    <div style={clasess.parameterLabelStyle}>
-                                      <div>
-                                        <GomakeTextInput
-                                          style={clasess.textInputWithoutStyle}
-                                          defaultValue={parameter?.updatedName}
-                                          placeholder={parameter?.updatedName}
-                                        />
-                                      </div>
-                                      <Tooltip title="is Hidden?">
-                                        <Checkbox
-                                          icon={<CheckboxIcon />}
-                                          checkedIcon={<CheckboxCheckedIcon />}
-                                          style={{ padding: 0, paddingTop: 8 }}
-                                        />
-                                      </Tooltip>
-                                      <Tooltip title="is Required?">
-                                        <Checkbox
-                                          icon={<CheckboxIcon />}
-                                          checkedIcon={<CheckboxCheckedIcon />}
-                                          style={{ padding: 0, paddingTop: 8 }}
-                                        />
-                                      </Tooltip>
+                                <div style={clasess.parameterContainer}>
+                                  <div style={clasess.parameterLabelStyle}>
+                                    <div>
+                                      <GomakeTextInput
+                                        style={clasess.textInputWithoutStyle}
+                                        defaultValue={parameter?.updatedName}
+                                        placeholder={parameter?.updatedName}
+                                      />
                                     </div>
-                                    <div
-                                      style={
-                                        clasess.renderParameterTypeContainer
-                                      }
-                                    >
-                                      {_renderParameterType(parameter)}
-                                    </div>
+                                    {parameter?.isHidden ? (
+                                      <HiddenIcon />
+                                    ) : (
+                                      <NotHiddenIcon />
+                                    )}
+                                    {parameter?.isRequired ? (
+                                      <RequierdIcon />
+                                    ) : (
+                                      <NotRequierdIcon />
+                                    )}
                                   </div>
-                                ) : null}
+                                  <div
+                                    style={clasess.renderParameterTypeContainer}
+                                  >
+                                    {_renderParameterType(parameter)}
+                                  </div>
+                                </div>
                               </div>
                             );
                           })}

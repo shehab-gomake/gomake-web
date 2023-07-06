@@ -45,7 +45,7 @@ const useDigitalOffsetPrice = () => {
                   ParamterId: "1",
                   parameterType: "select",
                   updatedName: "Product Type",
-                  isHidden: false,
+                  isHidden: true,
                   isRequired: true,
                   valuesConfigs: [
                     {
