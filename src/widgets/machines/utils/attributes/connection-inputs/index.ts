@@ -13,7 +13,7 @@ import {hardCoverMakingMachine} from "@/widgets/machines/utils/attributes/connec
 import {gluingMachine} from "@/widgets/machines/utils/attributes/connection-inputs/gluing-machine";
 import {pressingMachine} from "@/widgets/machines/utils/attributes/connection-inputs/pressing-machine";
 import {manualSewingMachine} from "@/widgets/machines/utils/attributes/connection-inputs/manual=sewing-machine";
-import {laserCutMachine} from "@/widgets/machines/utils/attributes/connection-inputs/laser-cut-machine";
+import {rollMachinesConnection} from "@/widgets/machines/utils/attributes/connection-inputs/roll-machines-connection";
 
 
 const getCategoryConnectionInputs = (categoryId: string, state: Record<string, any>): any[] => {
@@ -47,9 +47,9 @@ const getCategoryConnectionInputs = (categoryId: string, state: Record<string, a
         case ECategoryId.MANUAL_SEWING_MACHINE:
             return manualSewingMachine(state);
         case ECategoryId.ROLL_LASER_CUT_MACHINE:
-            return laserCutMachine(state);
+            return rollMachinesConnection(state);
         default:
-            return laserCutMachine(state)
+            return rollMachinesConnection(state)
     }
 }
 

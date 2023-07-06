@@ -15,7 +15,7 @@ const bookletMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state.attributes?.thicknessBeforeFolding?.min ? state.attributes?.thicknessBeforeFolding?.min : ''
+                    value: state.attributes?.thickness?.min ? state.attributes?.thickness?.min : ''
                 },
                 {
                     name: "",
@@ -25,7 +25,7 @@ const bookletMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state.attributes?.thicknessBeforeFolding?.max ? state.attributes?.thicknessBeforeFolding?.max : ''
+                    value: state.attributes?.thickness?.max ? state.attributes?.thickness?.max : ''
                 },
             ]
         },

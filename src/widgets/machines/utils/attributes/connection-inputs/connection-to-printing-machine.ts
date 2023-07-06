@@ -1,6 +1,6 @@
-import {ECategoryId} from "@/widgets/machines/enums/category-id";
-
-const connectionToMachine = (state: Record<string, any>, parameterKey: string, category: ECategoryId, label: string) => {
+const connectionToPrintingMachine = (state: Record<string, any>) => {
+    const parameterKey = 'connectToPrinting';
+    const label = 'connectToPrinting'
     return [
         {
             machineInputType: 'multiInput',
@@ -29,16 +29,28 @@ const connectionToMachine = (state: Record<string, any>, parameterKey: string, c
                     required: true,
                     parameterKey: "machine",
                     value:  state.attributes[parameterKey]?.machine ? state.attributes[parameterKey]?.machine : '',
-                    optionsUrl: state.attributes[parameterKey]?.isConnect ? '/v1/machines-list/category/' + category : '',
+                    optionsUrl: state.attributes[parameterKey]?.isConnect ? '/v1/machines-list/printing/'  : '',
                     options: [],
                     machineInputType: 'input',
                     isValid: true,
                     disabled: !state.attributes[parameterKey]?.isConnect
 
                 },
+                {
+                    name: "",
+                    label: "machineAttributes.isCollectionCell",
+                    type: "switch",
+                    placeholder: "",
+                    required: true,
+                    parameterKey: "isCollectionCell",
+                    value: state.attributes[parameterKey] && state.attributes[parameterKey]['isCollectionCell'] ? !!state.attributes[parameterKey]['isCollectionCell'] : false,
+                    options: [],
+                    machineInputType: 'input',
+                    isValid: true,
+                },
             ]
         },
     ];
 }
 
-export {connectionToMachine};
+export {connectionToPrintingMachine};

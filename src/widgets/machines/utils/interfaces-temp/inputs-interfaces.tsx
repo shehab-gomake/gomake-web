@@ -6,6 +6,7 @@ export interface IInput {
   required: boolean;
   parameterKey: string;
   options: {value: any; text: string}[];
+  optionsUrl?: string;
   value?: string;
   disabled?: boolean;
   machineInputType?: string;
