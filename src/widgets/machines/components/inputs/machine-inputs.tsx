@@ -37,42 +37,47 @@ const MachineInput = ({input, error, changeState}: IMachineInput) => {
         }
     }, [input.optionsUrl])
     return (
-        <div style={classes.inputContainer} key={input.parameterKey}>
-            <div style={classes.inputLbl}>{t(input.label)}</div>
-            <div style={classes.input}>
-                {
-                    input.type === 'select' ?
-                        <FormSelect
-                            style={{height: '40px'}}
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            label={input.label}
-                            onChange={selectChange}
-                            value={input.value}
-                            error={false}
-                            disabled={!!input.disabled}>
+        <>
+            {
+                !input.disabled && <div style={classes.inputContainer} key={input.parameterKey}>
+                    <div style={classes.inputLbl}>{t(input.label)}</div>
+                    <div style={classes.input}>
+                        {
+                            input.type === 'select' ?
+                                <FormSelect
+                                    style={{height: '40px'}}
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    label={input.label}
+                                    onChange={selectChange}
+                                    value={input.value}
+                                    error={false}
+                                    disabled={!!input.disabled}>
+                                    {
+                                        input.optionsUrl ? options.map(option => <MenuItem key={option.value}
+                                                                                           value={option.value}>{option.text}</MenuItem>)
+                                            : input.options.map(option => <MenuItem key={option.value}
+                                                                                    value={option.value}>{t(option.text)}</MenuItem>)
+                                    }
+                                </FormSelect> :
+                                input.type === 'switch' ?
+                                    <StyledSwitch checked={!!input.value} onChange={handleSwitchCheck}/>
+                                    :
+                                    <GomakeTextInput
+                                        style={{height: '40px'}}
+                                        onChange={onChangeState}
+                                        type={input.type}
+                                        error={error}
+                                        placeholder={t(input.placeholder)}
+                                        disabled={!!input.disabled}
+                                        value={input.value}
+                                    />
+                        }
 
-                            {
-                                input.optionsUrl ? options.map(option => <MenuItem key={option.value} value={option.value}>{option.text}</MenuItem>)
-                                    :  input.options.map(option => <MenuItem key={option.value} value={option.value}>{t(option.text)}</MenuItem>)
-                            }
-                        </FormSelect> :
-                        input.type === 'switch' ?
-                            <StyledSwitch checked={!!input.value} onChange={handleSwitchCheck}/>
-                            :
-                        <GomakeTextInput
-                            style={{height: '40px'}}
-                            onChange={onChangeState}
-                            type={input.type}
-                            error={error}
-                            placeholder={t(input.placeholder)}
-                            disabled={!!input.disabled}
-                            value={input.value}
-                        />
-                }
-
-            </div>
-        </div>
+                    </div>
+                </div>
+            }
+        </>
     );
 };
 export {MachineInput};
