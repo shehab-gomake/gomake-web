@@ -19,6 +19,7 @@ export const renderProfits = (item: any, data: any = {}) => {
   const total = data?.expProfit
     ? cost * (1 + percentExpProfit)
     : cost * (1 + percentProfit);
+  const isBaseCaseQuantity = !!item?.isBaseCaseQuantity
 
   return {
     cost: Number(cost),
@@ -29,6 +30,7 @@ export const renderProfits = (item: any, data: any = {}) => {
     totalPrice: Number(total).toFixed(2),
     recordID: item?.recordID,
     status: item?.status,
+    isBaseCaseQuantity: isBaseCaseQuantity
   };
 };
 
