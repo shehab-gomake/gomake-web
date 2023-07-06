@@ -108,7 +108,7 @@ const useStyle = () => {
         borderRadius: 4,
         height: 40,
         backgroundColor: "#FFF",
-        boxShadow: "0px 4px 15px 0px rgba(0, 0, 0, 0.08)",
+        // boxShadow: "0px 4px 15px 0px rgba(0, 0, 0, 0.08)",
       },
       renderParameterTypeContainer: {
         display: "flex",
@@ -122,7 +122,7 @@ const useStyle = () => {
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
-        boxShadow: "0px 4px 15px 0px rgba(0, 0, 0, 0.08)",
+        boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
 
       textInputWithoutStyle: {

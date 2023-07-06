@@ -7,7 +7,8 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor, secondColor, errorColor } = useGomakeTheme();
+  const { primaryColor, secondColor, errorColor, neutralColor } =
+    useGomakeTheme();
 
   const clasess = useMemo(() => {
     return {
@@ -31,7 +32,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "70%",
+        width: "68%",
         marginBottom: 31,
       },
       rightSideContainer: {
@@ -42,7 +43,7 @@ const useStyle = () => {
         width: "30%",
         backgroundColor: "white",
         height: "100%",
-        padding: 8,
+        padding: 16,
       },
       tabsContainer: {
         display: "flex",
@@ -50,6 +51,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 50,
+        marginBottom: 24,
       },
       tabContainer: {
         display: "flex",
@@ -84,6 +86,26 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(600, 16),
         color: secondColor(500),
         marginBottom: 16,
+      },
+      subSectionAccordionActiveStyle: {
+        ...FONT_FAMILY.Lexend(600, 16),
+        color: neutralColor(800),
+      },
+      activeTabContainer: {
+        backgroundColor: "#EBECFF",
+        minHeight: 48,
+        marginTop: 20,
+      },
+      headerAccordionContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 10,
+      },
+      subSectionAccordionStyle: {
+        ...FONT_FAMILY.Lexend(600, 16),
+        color: primaryColor(500),
       },
       parametersContainer: {
         display: "flex",
@@ -305,6 +327,7 @@ const useStyle = () => {
         justifyContent: "flex-end",
         alignItems: "center",
         marginBottom: 50,
+        marginTop: 30,
         width: "100%",
         gap: 16,
       },

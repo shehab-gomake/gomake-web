@@ -11,12 +11,19 @@ import {
 } from "@/components";
 import Image from "next/image";
 import ImgProduct from "./icons/img.png";
-import { Checkbox } from "@mui/material";
-import { CheckboxCheckedIcon } from "@/icons";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Checkbox,
+  Typography,
+} from "@mui/material";
+import { CheckboxCheckedIcon, EditIcon } from "@/icons";
 import { CheckboxIcon } from "./icons/checkbox-icon";
 import { Progress } from "./icons/progress";
 import { MakeShapeModal } from "./modals/make-shape-modal";
 import { ChooseShapeModal } from "./modals/choose-shape-modal";
+import { useState } from "react";
 export default function Profits() {
   const { clasess } = useStyle();
   const {
@@ -35,6 +42,12 @@ export default function Profits() {
     activeTab,
     tabs,
   } = useDigitalOffsetPrice();
+  const [expanded, setExpanded] = useState<string | false>("panel_0");
+
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
   const _renderParameterType = (parameter) => {
     if (parameter?.parameterType === "input") {
       return (
@@ -118,43 +131,118 @@ export default function Profits() {
             <div style={clasess.sectionsContainer}>
               {template[0]?.sections?.map((section, index) => {
                 if (index === activeIndex) {
-                  return section?.subSections?.map((subSection, index) => {
-                    return (
-                      <div key={index} style={clasess.subSectionContainer}>
-                        <div style={clasess.subSectionTitleStyle}>
-                          {subSection.name}
-                        </div>
-                        <div style={clasess.parametersContainer}>
-                          {subSection?.parameters?.map((parameter, index) => {
-                            return (
-                              <div key={index}>
-                                {!parameter?.isHidden ? (
-                                  <div style={clasess.parameterContainer}>
-                                    <div style={clasess.parameterLabelStyle}>
-                                      {parameter?.updatedName}
-                                      {parameter?.isRequired ? (
-                                        <span style={clasess.spanRequierd}>
-                                          {" "}
-                                          *
-                                        </span>
+                  if (section.isAccordion) {
+                    return section?.subSections?.map((subSection, index) => {
+                      return (
+                        <Accordion
+                          expanded={expanded === `panel_${index}`}
+                          onChange={handleChange(`panel_${index}`)}
+                          key={index}
+                        >
+                          <AccordionSummary
+                            style={
+                              expanded === `panel_${index}`
+                                ? clasess.activeTabContainer
+                                : null
+                            }
+                          >
+                            <div style={clasess.headerAccordionContainer}>
+                              <EditIcon />
+                              <div
+                                style={
+                                  expanded === `panel_${index}`
+                                    ? clasess.subSectionAccordionActiveStyle
+                                    : clasess.subSectionAccordionStyle
+                                }
+                              >
+                                {subSection.name}
+                              </div>
+                            </div>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <div style={clasess.parametersContainer}>
+                              {subSection?.parameters?.map(
+                                (parameter, index) => {
+                                  return (
+                                    <div key={index}>
+                                      {!parameter?.isHidden ? (
+                                        <div style={clasess.parameterContainer}>
+                                          <div
+                                            style={clasess.parameterLabelStyle}
+                                          >
+                                            {parameter?.updatedName}
+                                            {parameter?.isRequired ? (
+                                              <span
+                                                style={clasess.spanRequierd}
+                                              >
+                                                {" "}
+                                                *
+                                              </span>
+                                            ) : null}
+                                          </div>
+                                          <div
+                                            style={
+                                              clasess.renderParameterTypeContainer
+                                            }
+                                          >
+                                            {_renderParameterType(parameter)}
+                                          </div>
+                                        </div>
                                       ) : null}
                                     </div>
-                                    <div
-                                      style={
-                                        clasess.renderParameterTypeContainer
-                                      }
-                                    >
-                                      {_renderParameterType(parameter)}
+                                  );
+                                }
+                              )}
+                            </div>
+                          </AccordionDetails>
+                        </Accordion>
+                        // <div key={index} style={clasess.subSectionContainer}>
+                        //   <div style={clasess.subSectionTitleStyle}>
+                        //     {subSection.name}
+                        //   </div>
+
+                        // </div>
+                      );
+                    });
+                  } else {
+                    return section?.subSections?.map((subSection, index) => {
+                      return (
+                        <div key={index} style={clasess.subSectionContainer}>
+                          <div style={clasess.subSectionTitleStyle}>
+                            {subSection.name}
+                          </div>
+                          <div style={clasess.parametersContainer}>
+                            {subSection?.parameters?.map((parameter, index) => {
+                              return (
+                                <div key={index}>
+                                  {!parameter?.isHidden ? (
+                                    <div style={clasess.parameterContainer}>
+                                      <div style={clasess.parameterLabelStyle}>
+                                        {parameter?.updatedName}
+                                        {parameter?.isRequired ? (
+                                          <span style={clasess.spanRequierd}>
+                                            {" "}
+                                            *
+                                          </span>
+                                        ) : null}
+                                      </div>
+                                      <div
+                                        style={
+                                          clasess.renderParameterTypeContainer
+                                        }
+                                      >
+                                        {_renderParameterType(parameter)}
+                                      </div>
                                     </div>
-                                  </div>
-                                ) : null}
-                              </div>
-                            );
-                          })}
+                                  ) : null}
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  });
+                      );
+                    });
+                  }
                 }
               })}
             </div>
