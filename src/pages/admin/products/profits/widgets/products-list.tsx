@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
-import { Skeleton } from "@mui/material";
 import { AddIcon } from "@/icons";
 
 import { AddTestProductModal } from "./add-test-product-modal";
@@ -48,7 +47,7 @@ const ProductList = () => {
           <div style={{ width: "100%" }}>
             <>
               {profitsStateValue?.testProductsState?.map(
-                (item: any, index: any) => {
+                (item: any) => {
                   console.log({
                     item,
                     productTest,
@@ -62,6 +61,8 @@ const ProductList = () => {
                           : clasess.bodyTableEvenContainer
                       }
                       onClick={() => {
+                        !(item?.id === productTest?.id &&
+                            item?.item?.id === productTest?.actionProductId) &&
                         profitsStateValue?.onCklickActionProfitTestResultsByActionId(
                           item?.item?.productId,
                           item?.name,
