@@ -37,12 +37,12 @@ const ProductTestListMoreCircleWidget = ({ item }: any) => {
       </GoMakeMenu>
       <GoMakeDeleteModal
         hideIcon={true}
-        title={t("products.profits.deleteProduct")}
+        title={item?.item?.isBaseCase ? t("products.profits.deleteBaseProduct") : t("products.profits.deleteProduct")}
         yesBtn={t("products.profits.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
         onClose={onCloseDeleteModal}
-        subTitle={`${t("products.profits.subTitleDeleteProduct", {
+        subTitle={item?.item?.isBaseCase ? t('products.profits.subTitleDeleteBaseProduct') : `${t("products.profits.subTitleDeleteProduct", {
           name: `${item?.name}`,
         })}?`}
         onClickDelete={() => profitsStateValue?.deleteTestProductResult(item)}

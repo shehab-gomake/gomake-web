@@ -8,14 +8,12 @@ const useStyle = () => {
     useGomakeTheme();
   const clasess = useMemo(() => {
     return {
-      insideStyle: { width: "95%" },
+      insideStyle: { width: 500, height: 300 },
       firstSectionContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        marginTop: 10,
-        marginBottom: 50,
       },
       secondSectionContainer: {
         display: "flex",
@@ -55,10 +53,11 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         marginTop: 10,
-        // backgroundColor: "rgba(0,0,0,0.1)",
+        backgroundColor: "#FFF",
         padding: 20,
         paddingBottom: 20,
         borderRadius: 4,
+        borderBottom: "1px solid #000",
       },
       newAddWightsByCatagory: {
         display: "flex",
@@ -79,11 +78,11 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         marginTop: 10,
-        // backgroundColor: "#ebecff",
+        backgroundColor: "#FFF",
         padding: 20,
         paddingBottom: 20,
         borderRadius: 4,
-        borderBottom: "1px solid black",
+        borderBottom: "1px solid #000",
       },
       textInputStyle: {
         height: 42,
@@ -99,17 +98,9 @@ const useStyle = () => {
         marginTop: 60,
       },
       lableTextStyle: {
-        ...FONT_FAMILY.Lexend(600, 12),
+        ...FONT_FAMILY.Lexend(500, 14),
         color: neutralColor(800),
         marginBottom: 10,
-      },
-      multiSelectStyle: {
-        backgroundColor: "#FFFFFF",
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignitems: "center",
-        justifyContent: "center",
       },
       inputSizesContainer: {
         display: "flex",
@@ -119,7 +110,7 @@ const useStyle = () => {
         width: "100%",
         flexWrap: "wrap" as "wrap",
         gap: 20,
-        marginTop: 10,
+        marginBottom: 15,
       },
       addSizesInputsSecondSelection: {
         display: "flex",
@@ -127,10 +118,14 @@ const useStyle = () => {
         justifyContent: "flex",
         alignItems: "flex-start",
         width: "100%",
-        // backgroundColor: "#ebddff",
+        marginTop: 10,
+        backgroundColor: "#fff",
+        border: "1px solid #000",
+        padding: 20,
+        paddingBottom: 20,
         borderRadius: 4,
       },
-      addLaminationBtnContainer: {
+      addSheetBtnContainer: {
         display: "flex",
         justifyContent: "flex-end",
         alignItems: "flex-end",
@@ -138,7 +133,7 @@ const useStyle = () => {
         alignContent: "flex-end",
         marginTop: 25,
       },
-      btnsWightLaminationContainer: {
+      btnsWightSheetContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "center",

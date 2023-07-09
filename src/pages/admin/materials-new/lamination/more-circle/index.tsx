@@ -3,10 +3,11 @@ import { useRecoilValue } from "recoil";
 import { GoMakeDeleteModal } from "@/components";
 import { IconWidget } from "./icon-widget";
 import { useLaminationModal } from "./use-lamination-modal";
-import { UpdateLaminationModal } from "../update-lamination-modal";
+import { UpdateLaminationNewModal } from "../update-lamination-modal";
 import { materialLaminationState } from "../store/lamination";
+import { DuplicateModal } from "../duplicate-modal";
 
-const LaminationSettingsWidget = ({ item }: any) => {
+const LaminationSettingsNewWidget = ({ item }: any) => {
   const {
     openDeleteModal,
     onCloseDeleteModal,
@@ -27,6 +28,9 @@ const LaminationSettingsWidget = ({ item }: any) => {
         onOpnUpdateModal={() => {
           materialLaminationStateValue?.onOpnUpdateModal(item);
         }}
+        onOpnDuplicateModal={() => {
+          materialLaminationStateValue?.onOpnDuplicateModal(item);
+        }}
         onOpenDeleteModal={onOpenDeleteModal}
       />
       <GoMakeDeleteModal
@@ -41,10 +45,14 @@ const LaminationSettingsWidget = ({ item }: any) => {
         })}?`}
         onClickDelete={deleteLaminationByCategoryName}
       />
-      {item === materialLaminationStateValue.selectedEditItem && (
-        <UpdateLaminationModal />
+      {item?.categoryName ===
+        materialLaminationStateValue?.selectedEditItem?.categoryName && (
+        <>
+          <UpdateLaminationNewModal />
+          <DuplicateModal />
+        </>
       )}
     </>
   );
 };
-export { LaminationSettingsWidget };
+export { LaminationSettingsNewWidget };
