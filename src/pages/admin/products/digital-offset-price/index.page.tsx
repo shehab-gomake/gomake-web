@@ -116,7 +116,6 @@ export default function Profits() {
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
                 {template?.sections?.map((item, index) => {
-                  console.log("itemitem", item);
                   return (
                     <div
                       style={clasess.tabContainer}
@@ -137,7 +136,7 @@ export default function Profits() {
                           style={{
                             width: 30,
                             height: 24,
-                            stroke: "red",
+                            // stroke: "red",
                           }}
                         />
                       </div>
