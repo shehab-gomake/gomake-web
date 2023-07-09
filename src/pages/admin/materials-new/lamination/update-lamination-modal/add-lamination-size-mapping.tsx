@@ -25,19 +25,16 @@ const AddLaminationWeightsMapping = ({ index, selectedItem }) => {
           <div style={clasess.sizeSectionTitleStyle}>
             {t("materials.sheetPaper.admin.sheetSizeSection")}
           </div>
-
           <Tooltip title={t("materials.lamination.admin.addNewLaminationSize")}>
             <IconButton
               onClick={() => {
-                console.log(
-                  "materialLaminationStateValuematerialLaminationStateValue"
-                );
                 const temp = [
                   ...materialLaminationStateValue?.items[index][
                     "laminationThicknesses"
                   ],
                 ];
                 temp.push({
+                  code: "",
                   thickness: "",
                   defaultPrice: "",
                   coldOrHot: "",

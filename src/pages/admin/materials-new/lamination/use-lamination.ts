@@ -1,12 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import {
-  getAndSetGetAllLaminations,
-  getAndSetGetAllNewLaminations,
-} from "@/services/hooks";
+import { getAndSetGetAllLaminations } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { getAndSetCategory } from "@/services/hooks/admin-side/get-set-lamination";
 
 const useLamination = () => {
   const { callApi } = useGomakeAxios();
@@ -51,14 +47,12 @@ const useLamination = () => {
     },
   ]);
   const changeItems = (index: number, filedName: string, value: any) => {
-    setItems((prev) => {
-      let temp = [...prev];
-      temp[index] = {
-        ...temp[index],
-        [filedName]: value,
-      };
-      return temp;
-    });
+    let temp = [...items];
+    temp[index] = {
+      ...temp[index],
+      [filedName]: value,
+    };
+    setItems(temp);
   };
 
   const changeItemsLaminationSize = (
@@ -98,14 +92,12 @@ const useLamination = () => {
   };
   const onChangeUpdateStateLaminationWeights = useCallback(
     (index: string, filedName: string, value: any) => {
-      setUpdateState((prev: any) => {
-        let temp: any = { ...prev };
-        temp[`${index}`] = {
-          ...temp[`${index}`],
-          [filedName]: value,
-        };
-        return temp;
-      });
+      let temp: any = { ...updateState };
+      temp[`${index}`] = {
+        ...temp[`${index}`],
+        [filedName]: value,
+      };
+      setUpdateState(temp);
     },
     [updateState]
   );
@@ -129,7 +121,7 @@ const useLamination = () => {
   };
 
   const getLamination = useCallback(async () => {
-    await getAndSetGetAllNewLaminations(callApi, setAllLamination);
+    await getAndSetGetAllLaminations(callApi, setAllLamination);
   }, []);
   const onCloseModalAdded = () => {
     setOpenAddLaminationModal(false);
@@ -142,10 +134,9 @@ const useLamination = () => {
     setOpenUpdateLaminationModal(false);
     setIsAddNewLaminationWights(false);
   };
-  const onOpnUpdateModal = async (item) => {
-    const data = await getCategory(item?.categoryName);
-    initialStateLaminationWeights(data);
-    setSelectedEditItem(data);
+  const onOpnUpdateModal = (item) => {
+    initialStateLaminationWeights(item);
+    setSelectedEditItem(item);
     setOpenUpdateLaminationModal(true);
   };
   const onCloseDeleteModal = () => {
@@ -172,7 +163,6 @@ const useLamination = () => {
         type: "sucess",
       });
       await getLamination();
-      await getCategory(categoryName);
       onCloseModalAdded();
     } else {
       setSnackbarStateValue({
@@ -197,9 +187,8 @@ const useLamination = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        // getLamination();
-        await getCategory(selectedItem?.categoryName);
-        // onCloseUpdateModal();
+        getLamination();
+        onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
           state: true,
@@ -223,7 +212,6 @@ const useLamination = () => {
           type: "sucess",
         });
         getLamination();
-        await getCategory(categoryName);
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -247,8 +235,7 @@ const useLamination = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        // getLamination();
-        await getCategory(categoryName);
+        getLamination();
         onCloseDeleteModal();
       } else {
         setSnackbarStateValue({
@@ -276,7 +263,6 @@ const useLamination = () => {
           type: "sucess",
         });
         // getLamination();
-        await getCategory(categoryName);
         // onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -304,7 +290,6 @@ const useLamination = () => {
           type: "sucess",
         });
         // getLamination();
-        await getCategory(categoryName);
         // onCloseUpdateModal();
       } else {
         setSnackbarStateValue({
@@ -331,8 +316,7 @@ const useLamination = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        // getLamination();
-        await getCategory(categoryName);
+        getLamination();
         setIsAddNewLaminationWightSize(false);
       } else {
         setSnackbarStateValue({
@@ -347,78 +331,6 @@ const useLamination = () => {
   useEffect(() => {
     getLamination();
   }, []);
-
-  const [category, setCategory] = useState({});
-  const getCategory = useCallback(async (categoryName: string) => {
-    const data = await getAndSetCategory(callApi, setCategory, {
-      categoryName,
-    });
-    console.log("datadatadatadatadatadatadatadata", data);
-    initialStateLaminationWeights(data);
-    setSelectedEditItem(data);
-    return data;
-  }, []);
-
-  const [openDuplicateSheetModal, setOpenDuplicateSheetModal] = useState(false);
-  const onOpnDuplicateModal = (item) => {
-    initialStateLaminationWeights(item);
-    setSelectedEditItem(item);
-    setOpenDuplicateSheetModal(true);
-  };
-  const onCloseDuplicateModal = () => {
-    setOpenDuplicateSheetModal(false);
-  };
-  const duplicateWeight = useCallback(
-    async (weightId: string, categoryName: string) => {
-      const res = await callApi(
-        "POST",
-        `/v1/administrator/sheet/duplicate-weight?categoryName=${categoryName}&weightId=${weightId}`
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        await getCategory(categoryName);
-        // getSheets();
-        // onCloseUpdateModal();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
-    },
-    [updateState]
-  );
-  const duplicateWeightSize = useCallback(
-    async (weightId: string, sizeId: string, categoryName: string) => {
-      const res = await callApi(
-        "POST",
-        `/v1/administrator/sheet/duplicate-weight-size?categoryName=${categoryName}&weightId=${weightId}&sizeId=${sizeId}`
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        await getCategory(categoryName);
-        // getSheets();
-        // onCloseUpdateModal();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
-    },
-    [updateState]
-  );
-
   return {
     headerTable,
     allLamination,
@@ -456,12 +368,6 @@ const useLamination = () => {
     setIsAddNewLaminationWightSize,
     onClickOpenLaminationWeightSizeWidget,
     addNewSheeWeightSizeByCategoryName,
-    getCategory,
-    openDuplicateSheetModal,
-    onOpnDuplicateModal,
-    onCloseDuplicateModal,
-    duplicateWeight,
-    duplicateWeightSize,
   };
 };
 

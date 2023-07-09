@@ -8,4 +8,3 @@ export * from "./snackbar";
 export * from "./colored-cycle";
 export * from "./modal-deleted";
 export * from "./menu";
-export * from "./switch";

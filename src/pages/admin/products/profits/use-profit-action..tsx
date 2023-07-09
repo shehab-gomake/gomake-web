@@ -6,7 +6,8 @@ import {
 import { productTestState } from "@/store/product-test";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {  useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
 import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
 import { actionExceptionProfitId, actionProfitLists } from "@/store";
 
@@ -19,7 +20,6 @@ export const renderProfits = (item: any, data: any = {}) => {
   const total = data?.expProfit
     ? cost * (1 + percentExpProfit)
     : cost * (1 + percentProfit);
-  const isBaseCaseQuantity = !!item?.isBaseCaseQuantity
 
   return {
     cost: Number(cost),
@@ -30,16 +30,17 @@ export const renderProfits = (item: any, data: any = {}) => {
     totalPrice: Number(total).toFixed(2),
     recordID: item?.recordID,
     status: item?.status,
-    isBaseCaseQuantity: isBaseCaseQuantity
   };
 };
 
 const useProfitsAction = ({
   setSelectedAction,
   actionProfitRowsNew,
+  setActionExceptionProfitRows,
   setSelectTestData,
   actionProfits,
   selectedAction,
+  setActionProfitRowsNew,
   selectTestDataVal,
   router,
   setSnackbarStateValue,
@@ -62,7 +63,7 @@ const useProfitsAction = ({
   );
 
   const onCklickActionProfitTestResultsByActionId = useCallback(
-    async (productId: string, productName: string, actionProductId: string, isBaseCase?: boolean) => {
+    async (productId: string, productName: string, actionProductId: string) => {
       setActionExceptionProfitIdValue("");
       setTabelPricingHeaders([
         t("products.profits.pricingListWidget.cost"),
@@ -97,7 +98,7 @@ const useProfitsAction = ({
       //   };
       // });
       // setactionExceptionProfitId(productId);
-      setProductTest({ id: productId, name: productName, actionProductId, isBaseCase: !!isBaseCase });
+      setProductTest({ id: productId, name: productName, actionProductId });
       // setActionExceptionProfitRows(mapData);
       // setActionProfitRowsNew(mapData);
     },

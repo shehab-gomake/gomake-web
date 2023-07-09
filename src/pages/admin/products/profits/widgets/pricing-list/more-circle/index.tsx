@@ -19,7 +19,7 @@ const PricingListMenuWidget = ({ item }: any) => {
 
   return (
     <>
-      <IconButton disabled={!!item?.isBaseCaseQuantity} onClick={handleClick}>
+      <IconButton onClick={handleClick}>
         <MoreCircleIcon />
 
         {/* <DeleteIcon style={{ color: "#a1a2cd" }} /> */}

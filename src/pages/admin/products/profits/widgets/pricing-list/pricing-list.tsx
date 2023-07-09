@@ -51,7 +51,6 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
     return () => clearTimeout(timer);
   }, []);
   const productTest = useRecoilValue<any>(productTestState);
-
   return (
     <>
       <div style={clasess.headerMainCointaner}>
@@ -153,18 +152,17 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
             />
           </>
         )}
-          {
-              !!productTest?.isBaseCase && <div
-              style={clasess.addNewQuantity}
-              // onClick={() => {
-              //   profitsValue?.setOpenAddNewPricingStepRow(true);
-              // }}
-              onClick={profitsStateValue?.onOpenAddQuantityModal}
-          >
-              <Plus/>
-              {t("products.profits.pricingListWidget.addNewQuantity")}
-          </div>
-          }
+        <div
+          style={clasess.addNewQuantity}
+          // onClick={() => {
+          //   profitsValue?.setOpenAddNewPricingStepRow(true);
+          // }}
+          onClick={profitsStateValue?.onOpenAddQuantityModal}
+        >
+          <Plus />
+          {t("products.profits.pricingListWidget.addNewQuantity")}
+        </div>
+
         <div
           style={{
             maxHeight: 300,

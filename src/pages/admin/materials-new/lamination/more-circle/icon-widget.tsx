@@ -1,57 +1,13 @@
-import { IconButton } from "@mui/material";
-import { useState } from "react";
-import { GoMakeMenu } from "@/components";
-import { MenuItem } from "@mui/material";
-import { MoreCircleIcon } from "@/icons";
+import Image from "next/image";
 
-const IconWidget = ({
-  t,
-  onOpnUpdateModal,
-  onOpenDeleteModal,
-  onOpnDuplicateModal,
-}) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+import DeleteIcon from "@mui/icons-material/Delete";
+import { IconButton, Tooltip } from "@mui/material";
+import moreCircle from "@/icons/more-circle.png";
+
+const IconWidget = ({ t, onOpnUpdateModal, onOpenDeleteModal }) => {
   return (
     <>
-      <IconButton onClick={handleClick}>
-        <MoreCircleIcon />
-
-        {/* <DeleteIcon style={{ color: "#a1a2cd" }} /> */}
-      </IconButton>
-      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        <MenuItem
-          onClick={() => {
-            handleClose();
-            onOpnUpdateModal();
-          }}
-        >
-          Edit
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleClose();
-            onOpnDuplicateModal();
-          }}
-        >
-          Duplicate
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleClose();
-            onOpenDeleteModal();
-          }}
-        >
-          Delete
-        </MenuItem>
-      </GoMakeMenu>
-      {/* <Tooltip title={t("materials.buttons.edit")}>
+      <Tooltip title={t("materials.buttons.edit")}>
         <IconButton onClick={onOpnUpdateModal}>
           <Image src={moreCircle} width={24} height={24} alt="More" />
         </IconButton>
@@ -60,7 +16,7 @@ const IconWidget = ({
         <IconButton onClick={onOpenDeleteModal}>
           <DeleteIcon style={{ color: "#a1a2cd" }} />
         </IconButton>
-      </Tooltip> */}
+      </Tooltip>
     </>
   );
 };

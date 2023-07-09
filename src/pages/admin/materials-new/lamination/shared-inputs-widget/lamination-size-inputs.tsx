@@ -23,7 +23,7 @@ const LaminationWeightsInputs = ({ index }) => {
   return (
     <>
       <div style={clasess.mainWaightsContainer}>
-        {/* <div>
+        <div>
           <div style={clasess.lableTextStyle}>{t("materials.inputs.code")}</div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterCode")}
@@ -37,7 +37,7 @@ const LaminationWeightsInputs = ({ index }) => {
               );
             }}
           />
-        </div> */}
+        </div>
         <div>
           <div style={clasess.lableTextStyle}>
             {t("materials.inputs.width")}
@@ -51,11 +51,6 @@ const LaminationWeightsInputs = ({ index }) => {
                 index,
                 "width",
                 e.target.value
-              );
-              materialLaminationStateValue?.changeItems(
-                index,
-                "name",
-                `${e.target.value}X${materialLaminationStateValue?.items[index]["height"]}`
               );
             }}
           />
@@ -74,16 +69,10 @@ const LaminationWeightsInputs = ({ index }) => {
                 "height",
                 e.target.value
               );
-
-              materialLaminationStateValue?.changeItems(
-                index,
-                "name",
-                `${materialLaminationStateValue?.items[index]["width"]}X${e.target.value}`
-              );
             }}
           />
         </div>
-        {/* <div>
+        <div>
           <div style={clasess.lableTextStyle}>{t("materials.inputs.name")}</div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterName")}
@@ -97,7 +86,7 @@ const LaminationWeightsInputs = ({ index }) => {
               );
             }}
           />
-        </div> */}
+        </div>
         <div>
           <div style={clasess.lableTextStyle}>
             {t("materials.inputs.fitToPrintType")}
