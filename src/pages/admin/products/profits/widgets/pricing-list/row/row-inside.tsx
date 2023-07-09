@@ -113,7 +113,8 @@ const RowInside = ({
                 entry[0] !== "cost" &&
                 entry[0] !== "quantity" &&
                 entry[0] !== "status" &&
-                editPriceListStateValue.isEdit !== true
+                editPriceListStateValue.isEdit !== true &&
+                  !row?.isBaseCaseQuantity
               ) {
                 setEditPriceListState({
                   ...editPriceListStateValue,

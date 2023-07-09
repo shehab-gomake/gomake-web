@@ -21,28 +21,8 @@ const LaminationSizeMapping = ({
   return (
     <>
       <div key={index} style={clasess.addSizesInputsSecondSelection}>
-        <ControlIconsWidget
-          t={t}
-          onClickDelete={() =>
-            materialLaminationStateValue.deleteLaminationweightSize(
-              selectedItem?.categoryName,
-              sheetWeight?.id,
-              sheetSize?.id
-            )
-          }
-          item={sheetSize}
-          onClickUpdate={() =>
-            materialLaminationStateValue.updateLaminationWeightSizes(
-              selectedItem?.categoryName,
-              sheetWeight?.id,
-              sheetSize?.id
-            )
-          }
-          title={"Delete Lamination Weight Size"}
-          subTitle={"Are you sure you want to delete sheet weight size?"}
-        />
         <div style={clasess.inputSizesContainer}>
-          <div>
+          {/* <div>
             <div style={clasess.lableTextStyle}>
               {t("materials.inputs.code")}
             </div>
@@ -60,11 +40,13 @@ const LaminationSizeMapping = ({
                 );
               }}
             />
-          </div>
+          </div> */}
           <div>
-            <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.thickness")}
-            </div>
+            {index === 0 && (
+              <div style={clasess.lableTextStyle}>
+                {t("materials.inputs.thickness")}
+              </div>
+            )}
             <GomakeTextInput
               placeholder={t("materials.inputs.enterThickness")}
               style={clasess.textInputStyle}
@@ -82,9 +64,11 @@ const LaminationSizeMapping = ({
             />
           </div>
           <div>
-            <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.defaultPrice")}
-            </div>
+            {index === 0 && (
+              <div style={clasess.lableTextStyle}>
+                {t("materials.inputs.defaultPrice")}
+              </div>
+            )}
             <GomakeTextInput
               placeholder={t("materials.inputs.enterDefaultPrice")}
               style={clasess.textInputStyle}
@@ -102,9 +86,11 @@ const LaminationSizeMapping = ({
             />
           </div>
           <div>
-            <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.coldOrHot")}
-            </div>
+            {index === 0 && (
+              <div style={clasess.lableTextStyle}>
+                {t("materials.inputs.coldOrHot")}
+              </div>
+            )}
             <GomakeTextInput
               placeholder={t("materials.lamination.admin.enterColdOrHot")}
               style={clasess.textInputStyle}
@@ -121,6 +107,26 @@ const LaminationSizeMapping = ({
               }}
             />
           </div>
+          <ControlIconsWidget
+            t={t}
+            onClickDelete={() =>
+              materialLaminationStateValue.deleteLaminationweightSize(
+                selectedItem?.categoryName,
+                sheetWeight?.id,
+                sheetSize?.id
+              )
+            }
+            item={sheetSize}
+            onClickUpdate={() =>
+              materialLaminationStateValue.updateLaminationWeightSizes(
+                selectedItem?.categoryName,
+                sheetWeight?.id,
+                sheetSize?.id
+              )
+            }
+            title={"Delete Lamination Weight Size"}
+            subTitle={"Are you sure you want to delete sheet weight size?"}
+          />
         </div>
       </div>
     </>

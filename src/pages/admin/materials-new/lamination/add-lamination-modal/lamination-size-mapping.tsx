@@ -21,7 +21,9 @@ const LaminationWeightsMapping = ({ index }) => {
     <>
       <div
         key={index}
-        style={index & 1 ? clasess.tableSecondSections : clasess.tableSections}
+        style={
+          index % 2 == 0 ? clasess.tableSecondSections : clasess.tableSections
+        }
       >
         <LaminationWeightsInputs index={index} />
         <div style={clasess.titlePlusContainer}>

@@ -1110,7 +1110,9 @@
       "startTest": "Add case",
       "delete": "Delete",
       "deleteProduct": "Delete product",
+      "deleteBaseProduct": "Delete base product",
       "subTitleDeleteProduct": "Are you sure to delete test product {{name}}",
+      "subTitleDeleteBaseProduct": "Are you sure to delete all test products ?",
       "testAgain": "Test again",
       "testFailed": "Test failed",
       "more": "More",
@@ -1173,6 +1175,11 @@
       "profit": "Profit",
       "properties": "Properties"
     },
+    "addProduct": {
+      "admin": {
+        "title": "Add Product"
+      }
+    },
     "parameters": {
       "admin": {
         "title": "Parameters",
@@ -1186,7 +1193,22 @@
     "offsetPrice": {
       "admin": {
         "title": "Offset price list",
-        "title2": "Digital and offset price list"
+        "title2": "Digital and offset price list",
+        "nextBtn": "Next",
+        "previousBtn": "Previous",
+        "flyerPoster": "Flyer poster",
+        "takeEstimate": "take {{data}} estimate",
+        "urgentOrder": "Urgent order",
+        "orderToral": "order: {{pieceNum}} piece * {{price}} USD",
+        "total": "Total",
+        "priceRecovery": "Price recovery",
+        "additions": "Additions",
+        "dontVAT": "Doesn’t include VAT",
+        "addOrder": "Add order",
+        "makeShape": "Make your own shape",
+        "chooseShape": "Choose shape",
+        "client": "Client",
+        "quote": "Quote"
       }
     }
   },

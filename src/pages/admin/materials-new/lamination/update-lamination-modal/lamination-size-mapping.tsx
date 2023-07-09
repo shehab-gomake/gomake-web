@@ -29,30 +29,19 @@ const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
     <>
       <div
         key={index}
-        style={index & 1 ? clasess.tableSecondSections : clasess.tableSections}
+        style={
+          index % 2 === 0 ? clasess.tableSecondSections : clasess.tableSections
+        }
       >
-        <ControlIconsWidget
-          t={t}
-          item={item}
-          onClickDelete={() =>
-            materialLaminationStateValue.deleteLaminationweight(
-              item?.id,
-              selectedItem?.categoryName
-            )
-          }
-          onClickUpdate={() =>
-            materialLaminationStateValue.updateLaminationweight(
-              item?.id,
-              selectedItem?.categoryName
-            )
-          }
-          title={t("materials.lamination.admin.deleteLaminationthicknesses")}
-          subTitle={t(
-            "materials.lamination.admin.subTitleDeleteThicknessesModal"
-          )}
-        />
-        <div style={clasess.mainWaightsContainer}>
-          <div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <div style={clasess.mainWaightsContainer}>
+            {/* <div>
             <div style={clasess.lableTextStyle}>
               {t("materials.inputs.code")}
             </div>
@@ -68,45 +57,62 @@ const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
                 );
               }}
             />
-          </div>
+          </div> */}
 
-          <div>
-            <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.width")}
+            <div>
+              <div style={clasess.lableTextStyle}>
+                {t("materials.inputs.width")}
+              </div>
+              <GomakeTextInput
+                placeholder={t("materials.inputs.enterWidth")}
+                style={clasess.textInputStyle}
+                value={
+                  materialLaminationStateValue?.updateState[item?.id]?.width
+                }
+                onChange={(e: any) => {
+                  materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
+                    item?.id,
+                    "width",
+                    e.target.value
+                  );
+                  materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
+                    item?.id,
+                    "name",
+                    `${e.target.value}X${
+                      materialLaminationStateValue?.updateState[item?.id]
+                        ?.height
+                    }`
+                  );
+                }}
+              />
             </div>
-            <GomakeTextInput
-              placeholder={t("materials.inputs.enterWidth")}
-              style={clasess.textInputStyle}
-              value={materialLaminationStateValue?.updateState[item?.id]?.width}
-              onChange={(e: any) => {
-                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
-                  item?.id,
-                  "width",
-                  e.target.value
-                );
-              }}
-            />
-          </div>
-          <div>
-            <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.height")}
+            <div>
+              <div style={clasess.lableTextStyle}>
+                {t("materials.inputs.height")}
+              </div>
+              <GomakeTextInput
+                placeholder={t("materials.inputs.enterIndex")}
+                style={clasess.textInputStyle}
+                value={
+                  materialLaminationStateValue?.updateState[item?.id]?.height
+                }
+                onChange={(e: any) => {
+                  materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
+                    item?.id,
+                    "height",
+                    e.target.value
+                  );
+                  materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
+                    item?.id,
+                    "name",
+                    `${
+                      materialLaminationStateValue?.updateState[item?.id]?.width
+                    }X${e.target.value}`
+                  );
+                }}
+              />
             </div>
-            <GomakeTextInput
-              placeholder={t("materials.inputs.enterIndex")}
-              style={clasess.textInputStyle}
-              value={
-                materialLaminationStateValue?.updateState[item?.id]?.height
-              }
-              onChange={(e: any) => {
-                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
-                  item?.id,
-                  "height",
-                  e.target.value
-                );
-              }}
-            />
-          </div>
-          <div>
+            {/* <div>
             <div style={clasess.lableTextStyle}>
               {t("materials.inputs.name")}
             </div>
@@ -122,38 +128,59 @@ const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
                 );
               }}
             />
-          </div>
-          <div>
-            <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.name")}
+          </div> */}
+            <div>
+              <div style={clasess.lableTextStyle}>
+                {t("materials.inputs.fitToPrintType")}
+              </div>
+              <GoMakeAutoComplate
+                options={muliSelectOptions}
+                style={clasess.multiSelectStyle}
+                placeholder={t("materials.inputs.fitToPrintType")}
+                multiple={true}
+                onChange={(e: any, value: any) => {
+                  materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
+                    item?.id,
+                    "fitToPrintType",
+                    value?.map((item: any) => item?.label)
+                  );
+                }}
+                {...(materialLaminationStateValue?.updateState[item?.id]
+                  ?.fitToPrintType
+                  ? {
+                      value: materialLaminationStateValue?.updateState[
+                        item?.id
+                      ]?.fitToPrintType.map((item: any) => {
+                        return {
+                          label: item,
+                          id: item,
+                        };
+                      }),
+                    }
+                  : null)}
+              />
             </div>
-            <GoMakeAutoComplate
-              options={muliSelectOptions}
-              style={clasess.multiSelectStyle}
-              placeholder={t("materials.inputs.fitToPrintType")}
-              multiple={true}
-              onChange={(e: any, value: any) => {
-                materialLaminationStateValue?.onChangeUpdateStateLaminationWeights(
-                  item?.id,
-                  "fitToPrintType",
-                  value?.map((item: any) => item?.label)
-                );
-              }}
-              {...(materialLaminationStateValue?.updateState[item?.id]
-                ?.fitToPrintType
-                ? {
-                    value: materialLaminationStateValue?.updateState[
-                      item?.id
-                    ]?.fitToPrintType.map((item: any) => {
-                      return {
-                        label: item,
-                        id: item,
-                      };
-                    }),
-                  }
-                : null)}
-            />
           </div>
+          <ControlIconsWidget
+            t={t}
+            item={item}
+            onClickDelete={() =>
+              materialLaminationStateValue.deleteLaminationweight(
+                item?.id,
+                selectedItem?.categoryName
+              )
+            }
+            onClickUpdate={() =>
+              materialLaminationStateValue.updateLaminationweight(
+                item?.id,
+                selectedItem?.categoryName
+              )
+            }
+            title={t("materials.lamination.admin.deleteLaminationthicknesses")}
+            subTitle={t(
+              "materials.lamination.admin.subTitleDeleteThicknessesModal"
+            )}
+          />
         </div>
         <div style={clasess.titlePlusContainer}>
           <div style={clasess.sizeSectionTitleStyle}>
