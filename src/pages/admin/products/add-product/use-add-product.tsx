@@ -6,8 +6,10 @@ import { PricingIcon } from "./icons/pricing";
 import { FinishingIcon } from "./icons/finishing";
 import { PrintingDetails } from "./icons/printing-details";
 import { CustomerIcon } from "./icons/customer-details";
+import { SettingIcon } from "./icons/setting";
+import { PrameterIcon } from "./icons/parameter";
 
-const useDigitalOffsetPrice = () => {
+const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -389,6 +391,28 @@ const useDigitalOffsetPrice = () => {
     },
   ];
 
+  const [activeTab, setActiveTab] = useState("Settings");
+  const onClickSettingsTab = () => {
+    setActiveTab("Settings");
+  };
+  const onClickParametersTab = () => {
+    setActiveTab("Parameters");
+  };
+  const tabs = [
+    {
+      name: "Settings",
+      icon: <SettingIcon stroke="#1C1D58" />,
+      activeIcon: <SettingIcon />,
+      onclick: () => onClickSettingsTab,
+    },
+    {
+      name: "Parameters",
+      icon: <PrameterIcon />,
+      activeIcon: <PrameterIcon stroke="#ED028C" />,
+      onclick: () => onClickParametersTab,
+    },
+  ];
+
   return {
     t,
     handleTabClick,
@@ -396,7 +420,9 @@ const useDigitalOffsetPrice = () => {
     handlePreviousClick,
     activeIndex,
     template,
+    activeTab,
+    tabs,
   };
 };
 
-export { useDigitalOffsetPrice };
+export { useAddProduct };

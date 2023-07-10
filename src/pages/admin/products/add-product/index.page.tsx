@@ -1,6 +1,6 @@
 import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
-import { useDigitalOffsetPrice } from "./use-add-product";
+import { useAddProduct } from "./use-add-product";
 
 import { useStyle } from "./style";
 import {
@@ -9,8 +9,6 @@ import {
   GomakeTextInput,
   SecondSwitch,
 } from "@/components";
-import { Checkbox, Tooltip } from "@mui/material";
-import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { HiddenIcon } from "./icons/hidden-icon";
 import { NotHiddenIcon } from "./icons/not-hidden-icon";
 import { NotRequierdIcon } from "./icons/not-requierd-icon";
@@ -25,7 +23,9 @@ export default function AddProduct() {
     handlePreviousClick,
     activeIndex,
     template,
-  } = useDigitalOffsetPrice();
+    tabs,
+    activeTab,
+  } = useAddProduct();
   const _renderParameterType = (parameter) => {
     if (parameter?.parameterType === "input") {
       return (
@@ -82,6 +82,22 @@ export default function AddProduct() {
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
         <HeaderTitle title={t("products.addProduct.admin.title")} />
+        <div style={clasess.headerTabsContainer}>
+          {tabs?.map((item, index) => {
+            return (
+              <div key={index} style={clasess.headerTabContainer}>
+                <div>{item?.icon}</div>
+                <div>{item?.name}</div>
+              </div>
+            );
+          })}
+          {/* <div>
+            <div>Settings</div>
+          </div>
+          <div>
+            <div>Parameters</div>
+          </div> */}
+        </div>
         <div style={clasess.mainRowContainer}>
           <div style={clasess.leftSideContainer}>
             <div style={clasess.tabsContainer}>
