@@ -1,33 +1,34 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-  getAndSetAdditionsSuppliers,
-  getAndSetAllAdditions,
-  getAndSetAllAdditionsData,
-} from "@/services/hooks";
+import { getAndSetAllPlatsSizes } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar, useSupplier } from "@/hooks";
 import { useRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
-import { sheetCheckAllState } from "@/pages/materials-new/additions/store/sheet-check-all";
-import { sheetState } from "@/pages/materials-new/sheet-paper/store/sheet";
+import {
+  getMaterialsCategories,
+  getMaterialsSuppliers,
+} from "@/services/hooks/material-data";
+import { materialsDataCheckAllState } from "./store/material-check-all";
+import { materialsDataState } from "./store/material-store";
 
-const useMaterialData = () => {
+const useMaterialData = ({ materialData }: any) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
   const { suppliers, getSupplier } = useSupplier();
 
-  const [sheetStore, setSheetStore] = useRecoilState<any>(sheetState);
-  const [sheetCheckStore, setSheetCheckStore] =
-    useRecoilState(sheetCheckAllState);
+  const [materialsStore, setMaterialsStore] =
+    useRecoilState<any>(materialsDataState);
+  const [materialsCheckStore, setMaterialsCheckStore] = useRecoilState(
+    materialsDataCheckAllState
+  );
 
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [selectedMaterials, setSelectedMaterials] = useState<any>("");
   const [sheetCategories, setSheetCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
   const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
-
   const [actionType, setActionType] = useState(0);
-  const [selectedItems, setSelectedItems] = useState({});
+  const [selectedItems, setSelectedItems] = useState([]);
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
   const [isUpdateCurrency, setIsUpdateCurrency] = useState(false);
   const [data, setData] = useState();
@@ -66,13 +67,31 @@ const useMaterialData = () => {
     handleClose();
   };
 
+  const handleCheckboxChange = (sizeId, isChecked) => {
+    if (isChecked) {
+      setSelectedItems((prevSelectedItems) => [
+        ...prevSelectedItems,
+        { sizeId },
+      ]);
+    } else {
+      setSelectedItems((prevSelectedItems) =>
+        prevSelectedItems.filter((item) => !(item.sizeId === sizeId))
+      );
+    }
+  };
   useEffect(() => {
-    setSelectedItems({ data });
+    const updatedData: any = selectedItems.map((item) => {
+      return {
+        ...item,
+        data,
+      };
+    });
+    setSelectedItems(updatedData);
   }, [data]);
   const updatePricePetTon = useCallback(async () => {
-    const res = await callApi("POST", `/v1/additions/size-id-settngs`, {
-      categoryName: selectedMaterials.code,
-      supplierId: sheetStore.selectedSupplier,
+    const res = await callApi("POST", `/v1/plats/size-id-settngs`, {
+      categoryName: selectedMaterials?.key,
+      supplierId: materialsStore.selectedSupplier,
       actionType: actionType,
       data: selectedItems,
     });
@@ -84,7 +103,7 @@ const useMaterialData = () => {
       });
       onCloseUpdatePricePerTon();
       onCloseUpdateCurrency();
-      getSheetAllWeights(selectedMaterials, sheetStore.selectedSupplier);
+      getSheetAllWeights(selectedMaterials, materialsStore.selectedSupplier);
     } else {
       setSnackbarStateValue({
         state: true,
@@ -92,12 +111,18 @@ const useMaterialData = () => {
         type: "error",
       });
     }
-  }, [data, selectedItems, actionType, sheetStore.selectedSupplier, setData]);
-  useEffect(() => {}, [sheetStore]);
+  }, [
+    data,
+    selectedItems,
+    actionType,
+    materialsStore.selectedSupplier,
+    setData,
+  ]);
+  useEffect(() => {}, [materialsStore]);
   const updateToActive = async () => {
-    const res = await callApi("POST", `/v1/additions/size-id-settngs`, {
-      categoryName: selectedMaterials.code,
-      supplierId: sheetStore.selectedSupplier,
+    const res = await callApi("POST", `/v1/plats/size-id-settngs`, {
+      categoryName: selectedMaterials?.key,
+      supplierId: materialsStore.selectedSupplier,
       actionType: 3,
       data: selectedItems,
     });
@@ -108,7 +133,7 @@ const useMaterialData = () => {
         type: "sucess",
       });
       handleClose();
-      getSheetAllWeights(selectedMaterials, sheetStore.selectedSupplier);
+      getSheetAllWeights(selectedMaterials, materialsStore.selectedSupplier);
     } else {
       setSnackbarStateValue({
         state: true,
@@ -118,9 +143,9 @@ const useMaterialData = () => {
     }
   };
   const updateToInActive = useCallback(async () => {
-    const res = await callApi("POST", `/v1/additions/size-id-settngs`, {
-      categoryName: selectedMaterials.code,
-      supplierId: sheetStore.selectedSupplier,
+    const res = await callApi("POST", `/v1/plats/size-id-settngs`, {
+      categoryName: selectedMaterials?.key,
+      supplierId: materialsStore.selectedSupplier,
       actionType: 4,
       data: selectedItems,
     });
@@ -131,7 +156,7 @@ const useMaterialData = () => {
         type: "sucess",
       });
       handleClose();
-      getSheetAllWeights(selectedMaterials, sheetStore.selectedSupplier);
+      getSheetAllWeights(selectedMaterials, materialsStore.selectedSupplier);
     } else {
       setSnackbarStateValue({
         state: true,
@@ -139,17 +164,28 @@ const useMaterialData = () => {
         type: "error",
       });
     }
-  }, [data, selectedItems, actionType, sheetStore.selectedSupplier, setData]);
+  }, [
+    data,
+    selectedItems,
+    actionType,
+    materialsStore.selectedSupplier,
+    setData,
+  ]);
   const getSheetSuppliers = useCallback(
     async (categoryName) => {
-      let _data = await getAndSetAdditionsSuppliers(callApi, () => {}, {
-        categoryName: categoryName.code,
-      });
+      let _data = await getMaterialsSuppliers(
+        callApi,
+        () => {},
+        materialData?.getMaterialsSuppliersURL,
+        {
+          categoryName: categoryName?.key,
+        }
+      );
       _data.push({
         name: "Add new",
         code: "Add new",
       });
-      setSheetStore((prev) => {
+      setMaterialsStore((prev) => {
         return {
           ...prev,
           suppliers: _data.map((item) => ({
@@ -160,50 +196,61 @@ const useMaterialData = () => {
         };
       });
     },
-    [sheetStore]
+    [materialsStore, materialData]
   );
 
   const getSheetAllWeights = useCallback(
     async (categoryName: any, supplierId) => {
-      await getAndSetAllAdditionsData(callApi, setAllWeightsGrouped, {
-        categoryName: categoryName.code,
+      await getAndSetAllPlatsSizes(callApi, setAllWeightsGrouped, {
+        categoryName: categoryName?.key,
         supplierId: supplierId || "",
       });
     },
     [categoryName]
   );
   const getCategory = useCallback(async () => {
-    const data = await getAndSetAllAdditions(callApi, setSheetCategories);
+    const data = await getMaterialsCategories(
+      callApi,
+      setSheetCategories,
+      materialData?.getMaterialsCategoriesURL
+    );
+    // console.log("datadatadata", data);
     if (!categoryName) {
       setCategoryName(data[0]);
     }
-  }, [categoryName]);
+  }, [categoryName, materialData]);
+  // const getCategory = useCallback(async () => {
+  //   const data = await getAndSetPlatsCategores(callApi, setSheetCategories);
+  //   if (!categoryName) {
+  //     setCategoryName(data[0]);
+  //   }
+  // }, [categoryName]);
 
   const onClickAddNewSupplier = () => {
     setShowSupplierModal(true);
   };
 
   const onClickAddSupplier = async () => {
-    await callApi("POST", `/v1/additions/add-supplier-catogry`, {
-      categoryName: selectedMaterials.code,
-      supplierId: sheetStore.selectedSupplier,
+    await callApi("POST", materialData?.onClickAddSupplierURL, {
+      categoryName: selectedMaterials?.key,
+      supplierId: materialsStore.selectedSupplier,
     });
     setShowSupplierModal(false);
-    getSheetAllWeights(selectedMaterials, sheetStore.selectedSupplier);
+    getSheetAllWeights(selectedMaterials, materialsStore.selectedSupplier);
     getSheetSuppliers(selectedMaterials);
   };
 
   const onChangeSupplierToDefault = async (option, value) => {
     if (value) {
-      await callApi("POST", `/v1/additions/update-default-supplier`, {
-        categoryName: selectedMaterials.code,
+      await callApi("POST", materialData?.onChangeSupplierToDefaultURL, {
+        categoryName: selectedMaterials?.key,
         supplierId: option.value,
       });
       getSheetSuppliers(selectedMaterials);
     }
   };
   const onChangeSelectedSupplier = async (value) => {
-    setSheetStore((prev) => {
+    setMaterialsStore((prev) => {
       return {
         ...prev,
         selectedSupplier: value?.value,
@@ -214,9 +261,11 @@ const useMaterialData = () => {
   const [isUpdated, setIsUpdated] = useState(false);
   useEffect(() => {
     if (!isUpdated) {
-      const defaultItem = sheetStore?.suppliers?.find((item) => item.isDefault);
+      const defaultItem = materialsStore?.suppliers?.find(
+        (item) => item.isDefault
+      );
       if (defaultItem) {
-        setSheetStore((prev) => {
+        setMaterialsStore((prev) => {
           return {
             ...prev,
             selectedSupplier: defaultItem?.value,
@@ -226,11 +275,11 @@ const useMaterialData = () => {
         setIsUpdated(true);
       }
     }
-  }, [sheetStore.suppliers]);
+  }, [materialsStore.suppliers]);
 
   useEffect(() => {
     getCategory();
-  }, []);
+  }, [materialData?.getMaterialsCategoriesURL]);
 
   useEffect(() => {
     if (sheetCategories.length) {
@@ -240,7 +289,7 @@ const useMaterialData = () => {
   }, [sheetCategories]);
 
   useEffect(() => {
-    getSheetAllWeights(selectedMaterials, sheetStore.selectedSupplier);
+    getSheetAllWeights(selectedMaterials, materialsStore.selectedSupplier);
     getSheetSuppliers(selectedMaterials);
   }, [selectedMaterials]);
 
@@ -253,8 +302,8 @@ const useMaterialData = () => {
     categoryName,
     allWeightsGrouped,
     selectedMaterials,
-    selectedSupplier: sheetStore.selectedSupplier,
-    sheetStore,
+    selectedSupplier: materialsStore.selectedSupplier,
+    materialsStore,
     suppliers,
     showSupplierModal,
     modalTitle,
@@ -263,7 +312,7 @@ const useMaterialData = () => {
     isUpdateCurrency,
     open,
     anchorEl,
-    sheetCheckStore,
+    materialsCheckStore,
     setSelectedMaterials,
     getSheetAllWeights,
     onClickAddNewSupplier,
@@ -278,10 +327,11 @@ const useMaterialData = () => {
     updateToActive,
     onOpenUpdatePrice,
     onOpenAddPercentToPrice,
+    handleCheckboxChange,
     updatePricePetTon,
     onCloseUpdatePricePerTon,
     onCloseUpdateCurrency,
-    setSheetCheckStore,
+    setMaterialsCheckStore,
     onChangeSelectedSupplier,
   };
 };
