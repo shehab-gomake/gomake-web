@@ -334,8 +334,11 @@ const CategoriesTable = ({ admin = false }) => {
                             height={20}
                           />
                         }
+                        // onClick={() => {
+                        //   navigate(category.path);
+                        // }}
                         onClick={() => {
-                          navigate(category.path);
+                          navigate(`/materials/${category?.title}`);
                         }}
                         variant={"text"}
                       >

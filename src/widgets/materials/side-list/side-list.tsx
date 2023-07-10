@@ -114,7 +114,7 @@ const SideList = ({
               component="nav"
               aria-label="main mailbox folders"
             >
-              {filteredListCode().map((item: any) => (
+              {filteredListCode()?.map((item: any) => (
                 <ListButton
                   selected={item.code === selectedItem.code}
                   onClick={() => onSelect(item)}

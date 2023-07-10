@@ -5,7 +5,7 @@ export default function CustomerMachinesPage() {
   return (
     <div>
       <CustomerAuthLayout>
-        <h1>Materials</h1>
+        <h1 style={{ marginBottom: 10 }}>Materials</h1>
         <CategoriesTable />
       </CustomerAuthLayout>
     </div>
