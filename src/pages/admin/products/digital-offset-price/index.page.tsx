@@ -42,7 +42,6 @@ export default function Profits() {
     activeTab,
     tabs,
   } = useDigitalOffsetPrice();
-  console.log("template", template);
   const [expanded, setExpanded] = useState<string | false>("panel_0");
 
   const handleChange =

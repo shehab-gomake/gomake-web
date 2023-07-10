@@ -19,6 +19,20 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
       },
+      headerTabsContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 80,
+      },
+      headerTabContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 6,
+      },
       mainRowContainer: {
         display: "flex",
         flexDirection: "column" as "column",
