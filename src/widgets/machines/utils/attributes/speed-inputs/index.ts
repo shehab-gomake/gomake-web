@@ -47,10 +47,13 @@ import {rollDieCutMachine} from "@/widgets/machines/utils/attributes/speed-input
 import {
     rollAnalogEnhancementMachine
 } from "@/widgets/machines/utils/attributes/speed-inputs/roll-analog-enhancement-machine";
+import {digitalPrinting} from "@/widgets/machines/utils/attributes/speed-inputs/digital-printing";
 
 
 const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) => {
     switch (categoryId) {
+        case ECategoryId.DIGITAL_PRINTING:
+            return digitalPrinting(state);
         case ECategoryId.ROLL_DIGITAL_PRINTING:
             return rollDigitalPrinting(state);
         case ECategoryId.FLEXO_PRINTING:

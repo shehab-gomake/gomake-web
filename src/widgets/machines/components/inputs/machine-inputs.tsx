@@ -8,7 +8,7 @@ import {FormSelect} from "@/widgets/machines/components/inputs/form-select";
 import {StyledSwitch} from "@/widgets/machines/components/inputs/switch";
 import {useGomakeAxios} from "@/hooks";
 
-const MachineInput = ({input, error, changeState}: IMachineInput) => {
+const MachineInput = ({input, error, changeState, readonly}: IMachineInput) => {
     const [state, setState] = useState<string>(input.type === 'select' ? input.options[0]?.value : []);
     const [options, setOptions] = useState([]);
     const {callApi} = useGomakeAxios();
@@ -52,7 +52,7 @@ const MachineInput = ({input, error, changeState}: IMachineInput) => {
                                     onChange={selectChange}
                                     value={input.value}
                                     error={false}
-                                    disabled={!!input.disabled}>
+                                    disabled={!!readonly}>
                                     {
                                         input.optionsUrl ? options.map(option => <MenuItem key={option.value}
                                                                                            value={option.value}>{option.text}</MenuItem>)
@@ -69,7 +69,7 @@ const MachineInput = ({input, error, changeState}: IMachineInput) => {
                                         type={input.type}
                                         error={error}
                                         placeholder={t(input.placeholder)}
-                                        disabled={!!input.disabled}
+                                        disabled={!!readonly}
                                         value={input.value}
                                     />
                         }

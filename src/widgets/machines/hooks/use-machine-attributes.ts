@@ -4,7 +4,6 @@ import {useState} from "react";
 import {machineInputs} from "@/widgets/machines/utils/attributes/machine-inputs/machine-inputs";
 import {getCategoryBasicInputs} from "@/widgets/machines/utils/attributes/basic-inputs";
 import {getCategoryMediaInputs} from "@/widgets/machines/utils/attributes/media-inputs";
-import {getCategorySpeedOptionsInputs} from "@/widgets/machines/utils/attributes/speed-inputs/speed-options";
 import {getCategoryFeedersStackersInputs} from "@/widgets/machines/utils/attributes/feeders-stackers-inputs";
 import {getCategoryColorsInputs} from "@/widgets/machines/utils/attributes/colors-inputs";
 import {getCategoryBeatsInputs} from "@/widgets/machines/utils/attributes/beats-inputs";
@@ -61,7 +60,6 @@ const useMachineAttributes = () => {
     const machineBasicAttributes = () => !!machineState.category ? getCategoryBasicInputs(machineState.category, machineState) : [];
     const machineMediaAttributes = () => !!machineState.category ? getCategoryMediaInputs(machineState.category, machineState) : [];
     const machineSpeedAttributes = () => getCategorySpeedInputs(machineState.category, machineState);
-    const machineMultiOptionsSpeedAttributes = () => getCategorySpeedOptionsInputs(machineState.category, machineState);
     const machineFeedersStackersAttributes = () => !!machineState.category ? getCategoryFeedersStackersInputs(machineState.category, machineState) : [];
     const machineColorsAttributes = () => !!machineState.category ? getCategoryColorsInputs(machineState.category, machineState) : [];
     const machineBeatsAttributes = () => !!machineState.category ? getCategoryBeatsInputs(machineState.category, machineState) : [];
@@ -80,7 +78,6 @@ const useMachineAttributes = () => {
         machineGeneralAttributes,
         machineBasicAttributes,
         machineMediaAttributes,
-        machineMultiOptionsSpeedAttributes,
         machineFeedersStackersAttributes,
         machineColorsAttributes,
         machineBeatsAttributes,
