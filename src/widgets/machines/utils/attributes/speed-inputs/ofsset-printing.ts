@@ -1,5 +1,9 @@
+import {digitalPrinting} from "@/widgets/machines/utils/attributes/speed-inputs/digital-printing";
+
 const ofssetPrinting = (state: Record<string, any>) => {
-    const speedByPaperThickness = {
+    return [
+        ...digitalPrinting(state),
+        {
         name: 'machineAttributes.speedByPaperThickness',
         parameterKey: 'speedByPaperThickness',
         value: state.attributes?.speedByPaperThickness || [],
@@ -43,94 +47,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                 options: []
             },
         ]
-    };
-    // const inputs =  (method: ESpeedInputMethods): any[] =>  {
-    // switch (method) {
-    //     case ESpeedInputMethods.COLOR_SPEED:
-    //         return [
-    //             {
-    //                 name: 'machineAttributes.speedByColor',
-    //                 parameterKey: 'speedByColor',
-    //                 value: state.attributes?.speedByColor || [],
-    //                 machineInputType: 'multiArrayInput',
-    //                 isValid: state.attributes?.speedByColor?.length > 0,
-    //                 inputs: [
-    //                     {
-    //                         name: "color",
-    //                         label: "machineAttributes.color",
-    //                         type: "text",
-    //                         placeholder: "machineAttributes.color",
-    //                         required: true,
-    //                         parameterKey: "color",
-    //                         options: []
-    //                     },
-    //                     {
-    //                         name: "speed",
-    //                         label: "machineAttributes.speed",
-    //                         type: "text",
-    //                         placeholder: "machineAttributes.speed",
-    //                         required: true,
-    //                         parameterKey: "speed",
-    //                         options: []
-    //                     },
-    //                 ]
-    //             },
-    //             speedByPaperThickness
-    //         ];
-    //     case ESpeedInputMethods.COLOR_SIZE_SPEED:
-    //         return [
-    //
-    //             {
-    //                 name: 'machineAttributes.speedByPaperSizeByColor',
-    //                 parameterKey: 'speedByColor',
-    //                 value: state.attributes?.speedByColor || [],
-    //                 machineInputType: 'multiArrayInput',
-    //                 isValid: state.attributes?.speedByColor?.length > 0,
-    //                 inputs: [
-    //                     {
-    //                         name: "color",
-    //                         label: "machineAttributes.color",
-    //                         type: "text",
-    //                         placeholder: "machineAttributes.color",
-    //                         required: true,
-    //                         parameterKey: "color",
-    //                         options: []
-    //                     },
-    //                     {
-    //                         name: "mediaLength",
-    //                         label: "machineAttributes.mediaLength",
-    //                         type: "text",
-    //                         placeholder: "machineAttributes.mediaLength",
-    //                         required: true,
-    //                         parameterKey: "mediaLength",
-    //                         options: []
-    //                     },
-    //                     {
-    //                         name: "mediaWidth",
-    //                         label: "machineAttributes.mediaWidth",
-    //                         type: "text",
-    //                         placeholder: "machineAttributes.mediaWidth",
-    //                         required: true,
-    //                         parameterKey: "mediaWidth",
-    //                         options: []
-    //                     },
-    //                     {
-    //                         name: "speed",
-    //                         label: "machineAttributes.speed",
-    //                         type: "text",
-    //                         placeholder: "machineAttributes.speed",
-    //                         required: true,
-    //                         parameterKey: "speed",
-    //                         options: []
-    //                     },
-    //                 ]
-    //             },
-    //             speedByPaperThickness
-    //         ];
-    //     default:
-    //         return []
-    // }
-    return []
+    },
+        ]
 }
 
 

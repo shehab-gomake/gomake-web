@@ -1,16 +1,16 @@
 const digitalPrinting = (state: Record<string, any>) => {
     return [
         {
-            name: "setupTime",
-            label: "machineAttributes.setupTime",
+            name: "setupTimeMin",
+            label: "machineAttributes.setupTimeMin",
             type: "text",
-            placeholder: "machineAttributes.setupTime",
+            placeholder: "machineAttributes.setupTimeMin",
             required: true,
-            parameterKey: "setupTime",
+            parameterKey: "setupTimeMin",
             options: [],
-            value: state.attributes?.setupTime ? state.attributes?.setupTime : '',
+            value: state.attributes?.setupTimeMin ? state.attributes?.setupTimeMin : '',
             machineInputType: 'input',
-            isValid: !!state?.attributes?.setupTime,
+            isValid: !!state?.attributes?.setupTimeMin,
         },
         {
             name: "maxSpeed",
