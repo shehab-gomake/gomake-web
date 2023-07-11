@@ -6,9 +6,8 @@ import {laminationMachine} from "@/widgets/machines/utils/attributes/basic-input
 import {manualPeelingMachine} from "@/widgets/machines/utils/attributes/basic-inputs/manual-peeling-machine";
 import {generalBookSettings} from "@/widgets/machines/utils/attributes/basic-inputs/general-book-settings";
 import {generalBasicSettings} from "@/widgets/machines/utils/attributes/basic-inputs/general-basic-settings";
-import {IMachineInput} from "@/widgets/machines/utils/interface/machine-input";
 
-const getCategoryBasicInputs = (categoryId: string, state: Record<string, any>): IMachineInput[] => {
+const getCategoryBasicInputs = (categoryId: string, state: Record<string, any>) => {
     switch (categoryId) {
         case ECategoryId.DIGITAL_PRINTING:
             return digitalPrinting(state);
