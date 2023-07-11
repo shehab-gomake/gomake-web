@@ -22,7 +22,7 @@ const Tab = ({ tab }: IProps) => {
   const { navigate } = useGomakeRouter();
   const [isListOpen, setIsListOpen] = useState(tab?.key === selectedTabValue);
   const [isHover, setIsHover] = useState(false);
-  const { clasess } = useStyle({ isHover,navStatus:null });
+  const { clasess } = useStyle({ isHover, navStatus: null });
   const handleMouseEnter = useCallback(() => {
     setIsHover(true);
   }, []);
@@ -56,7 +56,7 @@ const Tab = ({ tab }: IProps) => {
         onMouseLeave={handleMouseLeave}
         onClick={onClickTab}
       >
-        {tab.isList && (
+        {tab.isList ? (
           <div>
             {isListOpen ? (
               <div style={clasess.rotate90}>
@@ -66,6 +66,8 @@ const Tab = ({ tab }: IProps) => {
               <TabCloseIcon />
             )}
           </div>
+        ) : (
+          <div style={{ marginLeft: 5 }} />
         )}
         <div>{tab.icon()}</div>
         <div style={clasess.tabTitle}>{tab.title}</div>

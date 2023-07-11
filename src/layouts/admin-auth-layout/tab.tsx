@@ -1,10 +1,8 @@
 import { TabCloseIcon } from "@/icons";
 import { Collapse } from "@mui/material";
-import Image from "next/image";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
-import { useAuthLayoutHook } from "./use-admin-auth-layout-hook";
 import { useGomakeRouter } from "@/hooks";
 interface IProps {
   tab: {
@@ -49,7 +47,7 @@ const Tab = ({ tab }: IProps) => {
         onMouseLeave={handleMouseLeave}
         onClick={onClickTab}
       >
-        {tab.isList && (
+        {tab.isList ? (
           <div>
             {isListOpen ? (
               <div style={clasess.rotate90}>
@@ -59,6 +57,8 @@ const Tab = ({ tab }: IProps) => {
               <TabCloseIcon />
             )}
           </div>
+        ) : (
+          <div style={{ marginLeft: 5 }} />
         )}
         <div>{tab.icon()}</div>
         <div style={clasess.tabTitle} onClick={onClickTab}>
