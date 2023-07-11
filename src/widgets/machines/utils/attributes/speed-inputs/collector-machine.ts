@@ -1,0 +1,67 @@
+
+const collectorMachine = (state: Record<string, any>) => {
+    return [
+        {
+            name: "speedSet",
+            label: "machineAttributes.speedSet",
+            type: "text",
+            placeholder: "machineAttributes.speedSet",
+            required: true,
+            parameterKey: "speedSet",
+            options: [],
+            value: state.attributes?.speedSet ? state.attributes?.speedSet : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.speedSet,
+        },
+        {
+            name: "cellChargingTime",
+            label: "machineAttributes.cellChargingTime",
+            type: "text",
+            placeholder: "machineAttributes.cellChargingTime",
+            required: true,
+            parameterKey: "cellChargingTime",
+            options: [],
+            value: state.attributes?.cellChargingTime ? state.attributes?.cellChargingTime : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.cellChargingTime,
+        },
+        {
+            name: "loadingWhileRunning",
+            label: "machineAttributes.loadingWhileRunning",
+            type: "switch",
+            placeholder: "machineAttributes.loadingWhileRunning",
+            required: true,
+            parameterKey: "loadingWhileRunning",
+            value: state.attributes?.loadingWhileRunning,
+            options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
+            machineInputType: 'input',
+            isValid: true,
+        },
+        {
+            name: "cellsAmount",
+            label: "machineAttributes.cellsAmount",
+            type: "text",
+            placeholder: "machineAttributes.cellsAmount",
+            required: true,
+            parameterKey: "cellsAmount",
+            options: [],
+            value: state.attributes?.cellsAmount ? state.attributes?.cellsAmount : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.cellsAmount,
+        },
+        {
+            name: "maxThicknessCells",
+            label: "machineAttributes.maxThicknessCells",
+            type: "text",
+            placeholder: "machineAttributes.maxThicknessCells",
+            required: true,
+            parameterKey: "maxThicknessCells",
+            options: [],
+            value: state.attributes?.maxThicknessCells ? state.attributes?.maxThicknessCells : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.maxThicknessCells,
+        },
+    ]
+}
+
+export {collectorMachine};

@@ -6,6 +6,7 @@ export interface IInput {
   required: boolean;
   parameterKey: string;
   options: {value: any; text: string}[];
+  optionsUrl?: string;
   value?: string;
   disabled?: boolean;
   machineInputType?: string;
@@ -16,7 +17,7 @@ export interface IMachineInput {
   input: IInput;
   changeState: (key: string, value: any) => void;
   error: boolean;
-
+  readonly?: boolean;
 }
 
 export interface IMachineMultiArrayInput {

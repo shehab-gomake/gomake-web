@@ -342,8 +342,180 @@ const initState: Record<string, Record<string, any>> = {
             doubleHead: false,
             coatingUnit: false,
             basicsColors: 1,
-            varnish: false
+            varnish: false,
+            loadingWhileRunning: false,
+            bookletConnection: {
+                canConnect: false,
+                machine: ''
+            },
+            BoosbinderConnection: {
+                canConnect: false,
+                machine: ''
+            },
+            sewingConnection: {
+                canConnect: false,
+                machine: ''
+            },
         }
+    },
+    [ECategoryId.BOOKLET_MACHINE]: {
+        category: ECategoryId.BOOKLET_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {
+            resolution: 0,
+            doubleHead: false,
+            coatingUnit: false,
+            basicsColors: 1,
+            varnish: false,
+            feedOption: 0,
+            collectionConnection: {
+                canConnect: false,
+                machine: ''
+            },
+            printingMachineConnection: {
+                canConnect: false,
+                machine: ''
+            },
+            cuttingUpDown: false,
+            cuttingSide: false,
+            squareBackSpaneOption: false
+        }
+    },
+    [ECategoryId.BOOKS_BINDER_MACHINE]: {
+        category: ECategoryId.BOOKS_BINDER_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {
+            feedOption: 0,
+            paperCategoriesSuitable: 0,
+            collectionConnection: {
+                canConnect: false,
+                machine: ''
+            },
+            printingMachineConnection: {
+                canConnect: false,
+                machine: ''
+            },
+            glueType: 0,
+            addonsBookmark: false,
+            addonsCapital: false
+        }
+    },
+    [ECategoryId.BOOKS_SEWING_MACHINE]: {
+        category: ECategoryId.BOOKS_SEWING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {
+            collectionConnection: {
+                canConnect: false,
+                machine: ''
+            }
+        }
+    },
+    [ECategoryId.SPIRAL_CLOSING_MACHINE]: {
+        category: ECategoryId.SPIRAL_CLOSING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {
+            actionType: 0,
+            collectionConnection: {
+                canConnect: false,
+                machine: ''
+            }
+        }
+    },
+    [ECategoryId.SPIRAL_PERFORATION_MACHINE]: {
+        category: ECategoryId.SPIRAL_PERFORATION_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {
+            autoActionFeederType: {
+                loadingWhileRunning: false
+            },
+            autoActionStackerType: {
+                loadingWhileRunning: false
+            },
+            collectionConnection: {
+                canConnect: false,
+                machine: ''
+            }
+        }
+    },
+    [ECategoryId.BOOK_CASING_IN_MACHINE]: {
+        category: ECategoryId.BOOK_CASING_IN_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.HARD_COVER_MAKING_MACHINE]: {
+        category: ECategoryId.HARD_COVER_MAKING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.GLUING_MACHINE]: {
+        category: ECategoryId.GLUING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.PRESSING_MACHINE]: {
+        category: ECategoryId.PRESSING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.SHRINK_PACKING_MACHINE]: {
+        category: ECategoryId.SHRINK_PACKING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.PACKAGE_TYING_MACHINE]: {
+        category: ECategoryId.PACKAGE_TYING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.CARTOON_PACKAGING_MACHINE]: {
+        category: ECategoryId.CARTOON_PACKAGING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.MANUAL_SEWING_MACHINE]: {
+        category: ECategoryId.MANUAL_SEWING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.ROLL_LASER_CUT_MACHINE]: {
+        category: ECategoryId.ROLL_LASER_CUT_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.ROLL_LAMINATION_MACHINE]: {
+        category: ECategoryId.ROLL_LAMINATION_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.ROLL_DIE_CUT_MACHINE]: {
+        category: ECategoryId.ROLL_DIE_CUT_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.ROLL_SHEET_MACHINE]: {
+        category: ECategoryId.ROLL_SHEET_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.ROLL_VARNISH_MACHINE]: {
+        category: ECategoryId.ROLL_VARNISH_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.ROLL_ANALOG_ENHANCEMENT_MACHINE]: {
+        category: ECategoryId.ROLL_ANALOG_ENHANCEMENT_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.AUTO_BOOK_CUTTING_MACHINE]: {
+        category: ECategoryId.AUTO_BOOK_CUTTING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE]: {
+        category: ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
     },
 }
 export {initState};
