@@ -8,6 +8,7 @@ import { PrintingDetails } from "./icons/printing-details";
 import { CustomerIcon } from "./icons/customer-details";
 import { SettingIcon } from "./icons/setting";
 import { PrameterIcon } from "./icons/parameter";
+import { GraphicIcon } from "./icons/graphic";
 
 const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
@@ -398,6 +399,9 @@ const useAddProduct = () => {
   const onClickParametersTab = () => {
     setActiveTab("Parameters");
   };
+  const onClickGraphicTab = () => {
+    setActiveTab("Graphic");
+  };
   const tabs = [
     {
       name: "Settings",
@@ -410,6 +414,12 @@ const useAddProduct = () => {
       icon: <PrameterIcon />,
       activeIcon: <PrameterIcon stroke="#ED028C" />,
       onclick: () => onClickParametersTab,
+    },
+    {
+      name: "Graphic",
+      icon: <GraphicIcon />,
+      activeIcon: <GraphicIcon stroke="#ED028C" />,
+      onclick: () => onClickGraphicTab,
     },
   ];
 
