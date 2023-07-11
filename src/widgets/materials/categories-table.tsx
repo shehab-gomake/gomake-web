@@ -174,131 +174,131 @@ const CategoriesTable = ({ admin = false }) => {
 
   const categoriesAdminList = useMemo(() => {
     return [
+      // {
+      //   key: "sheetPaper",
+      //   title: t("tabs.sheetPaper"),
+      //   path: "/admin/materials-new/sheets",
+      // },
       {
         key: "sheetPaper",
         title: t("tabs.sheetPaper"),
-        path: "/admin/materials-new/sheets",
+        path: "/admin/materials/sheets",
       },
       {
         key: "lamination",
         title: t("tabs.lamination"),
-        path: "/admin/materials-new/lamination",
+        path: "/admin/materials/lamination",
       },
-      // {
-      //   key: "plats",
-      //   title: t("tabs.plats"),
-      //   path: "/materials-new/plats",
-      // },
-      // {
-      //   key: "envelopes",
-      //   title: t("tabs.envelopes"),
-      //   path: "/materials-new/envelopes",
-      // },
-      // {
-      //   key: "tubes",
-      //   title: t("tabs.tubes"),
-      //   path: "/materials-new/tubes",
-      // },
-      // {
-      //   key: "printingMaterialsForRolls",
-      //   title: t("tabs.printingMaterialsForRolls"),
-      //   path: "/materials-new/printing-materials-for-rolls",
-      // },
-      // {
-      //   key: "hardboards",
-      //   title: t("tabs.hardboards"),
-      //   path: "/materials-new/hardboards",
-      // },
-      // {
-      //   key: "wildPrintingMaterials",
-      //   title: t("tabs.wildPrintingMaterials"),
-      //   path: "/materials/wild-printing-materials",
-      // },
-      // {
-      //   key: "profileFrames",
-      //   title: t("tabs.profileFrames"),
-      //   path: "/materials-new/profile-frames",
-      // },
-      // {
-      //   key: "applications",
-      //   title: t("tabs.applications"),
-      //   path: "/materials-new/applications",
-      // },
-      // {
-      //   key: "encapsulationRoll",
-      //   title: t("tabs.encapsulationRoll"),
-      //   path: "/materials-new/roll-encapsulations",
-      // },
-      // {
-      //   key: "additions",
-      //   title: t("tabs.additions"),
-      //   path: "/materials-new/additions",
-      // },
-      // {
-      //   key: "canvasFrames",
-      //   title: t("tabs.canvasFrames"),
-      //   path: "/materials-new/canvas-frames",
-      // },
-      // {
-      //   key: "frames",
-      //   title: t("tabs.frames"),
-      //   path: "/materials-new/frames",
-      // },
-      // {
-      //   key: "foils",
-      //   title: t("tabs.foils"),
-      //   path: "/materials-new/foils",
-      // },
-      // {
-      //   key: "packinDrums",
-      //   title: t("tabs.packinDrums"),
-      //   path: "/materials-new/packin-drums",
-      // },
-      // {
-      //   key: "packinUnits",
-      //   title: t("tabs.packinUnits"),
-      //   path: "/materials-new/packin-units",
-      // },
-      // {
-      //   key: "sheetEncapsulation",
-      //   title: t("tabs.sheetEncapsulation"),
-      //   path: "/materials-new/sheet-encapsulation",
-      // },
+      {
+        key: "plats",
+        title: t("tabs.plats"),
+        path: "/admin/materials/plats",
+      },
+      {
+        key: "envelopes",
+        title: t("tabs.envelopes"),
+        path: "/admin/materials/envelope",
+      },
+      {
+        key: "tubes",
+        title: t("tabs.tubes"),
+        path: "/admin/materials/tube",
+      },
+      {
+        key: "printingMaterialsForRolls",
+        title: t("tabs.printingMaterialsForRolls"),
+        path: "/admin/materials/material-roll-printing",
+      },
+      {
+        key: "hardboards",
+        title: t("tabs.hardboards"),
+        path: "/admin/materials/hardboards",
+      },
+      {
+        key: "profileFrames",
+        title: t("tabs.profileFrames"),
+        path: "/admin/materials/profile-frame",
+      },
+      {
+        key: "applications",
+        title: t("tabs.applications"),
+        path: "/admin/materials/applications",
+      },
+      {
+        key: "encapsulationRoll",
+        title: t("tabs.encapsulationRoll"),
+        path: "/admin/materials/roll-encapsulation",
+      },
+      {
+        key: "additions",
+        title: t("tabs.additions"),
+        path: "/admin/materials/additions",
+      },
+      {
+        key: "canvasFrames",
+        title: t("tabs.canvasFrames"),
+        path: "/admin/materials/canvans-frames",
+      },
+      {
+        key: "frames",
+        title: t("tabs.frames"),
+        path: "/admin/materials/frame",
+      },
+      {
+        key: "foils",
+        title: t("tabs.foils"),
+        path: "/admin/materials/foil",
+      },
+      {
+        key: "packinDrums",
+        title: t("tabs.packinDrums"),
+        path: "/admin/materials/packin-drums",
+      },
+      {
+        key: "packinUnits",
+        title: t("tabs.packinUnits"),
+        path: "/admin/materials/packin-units",
+      },
+      {
+        key: "sheetEncapsulation",
+        title: t("tabs.sheetEncapsulation"),
+        path: "/admin/materials/sheet-encapsulation",
+      },
       // {
       //   key: "colors",
       //   title: t("tabs.colors"),
-      //   path: "/materials-new/colors",
+      //   path: "/admin/materials/colors",
       // },
-      // {
-      //   key: "doubleSidedTapeRolls",
-      //   title: t("tabs.doubleSidedTapeRolls"),
-      //   path: "/materials-new/double-sided-tape-rolls",
-      // },
+      {
+        key: "doubleSidedTapeRolls",
+        title: t("tabs.doubleSidedTapeRolls"),
+        path: "/admin/materials/double-sided-tape-roll",
+      },
       // {
       //   key: "glues",
       //   title: t("tabs.glues"),
-      //   path: "/materials-new/glue",
+      //   path: "/admin/materials/glue",
       // },
-      // {
-      //   key: "magnets",
-      //   title: t("tabs.magnets"),
-      //   path: "/materials-new/magnet",
-      // },
-      // {
-      //   key: "packings",
-      //   title: t("tabs.packings"),
-      //   path: "/materials-new/packings",
-      // },
-      // {
-      //   key: "varnishs",
-      //   title: t("tabs.varnishs"),
-      //   path: "/materials-new/varnishs",
-      // },
-      // {
-      //   key: "wideFormatMaterial",
-      //   title: t("tabs.wideFormatMaterial"),
-      //   path: "/materials-new/wide-format-material",
-      // },
+      {
+        key: "magnets",
+        title: t("tabs.magnets"),
+        path: "/admin/materials/magnets",
+      },
+      {
+        key: "packings",
+        title: t("tabs.packings"),
+        path: "/admin/materials/packings",
+      },
+      {
+        key: "varnishs",
+        title: t("tabs.varnishs"),
+        path: "/admin/materials/varnish",
+      },
+      {
+        key: "wideFormatMaterial",
+        title: t("tabs.wideFormatMaterial"),
+        path: "/admin/materials/wide-format-material",
+      },
     ];
   }, []);
 
@@ -318,7 +318,7 @@ const CategoriesTable = ({ admin = false }) => {
           </TableHead>
           <TableBody>
             {selectList()
-              .filter((item: any) => item?.path?.includes("-new"))
+              .filter((item: any) => item?.path)
               .map((category) => {
                 return (
                   <StyledTableRow key={category.key}>
