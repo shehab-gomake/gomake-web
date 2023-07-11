@@ -1,11 +1,13 @@
 import { useGomakeAdminAuth, useGomakeRouter } from "@/hooks";
 import {
+  AdminPanel,
   CustomersIcon,
   HomeIcon,
   ProductFloorIcon,
   ProductsIcon,
   ReportsIcon,
   SalesIcon,
+  SettingNavBar,
   ShopingIcon,
 } from "@/icons";
 import { SuppliersIcon } from "@/icons/suppliers";
@@ -302,6 +304,30 @@ const useAuthLayoutHook = () => {
         isList: true,
         icon: () => {
           return <ReportsIcon />;
+        },
+      },
+      {
+        isLine: true,
+        key: "line_2",
+      },
+      {
+        isLine: false,
+        key: "admin_panel",
+        title: t("tabs.adminPanel"),
+        path: "/admin-panel",
+        isList: false,
+        icon: () => {
+          return <AdminPanel />;
+        },
+      },
+      {
+        isLine: false,
+        key: "settings",
+        title: t("tabs.settings"),
+        path: "/settings",
+        isList: false,
+        icon: () => {
+          return <SettingNavBar />;
         },
       },
     ];

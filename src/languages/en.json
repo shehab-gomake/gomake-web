@@ -55,7 +55,9 @@
     "varnishs": "Varnishs",
     "machines": "Machines",
     "addMachine": "Add machine",
-    "wideFormatMaterial": "Wide Format Material"
+    "wideFormatMaterial": "Wide Format Material",
+    "adminPanel": "Admin Panel",
+    "settings": "Settings"
   },
   "modal": {
     "close": "Close",
@@ -1137,7 +1139,6 @@
     "cross": "Cross",
     "oneHorizontalTies": "One horizontal ties",
     "twoHorizontalTies": "Two horizontal ties"
-
   },
   "currency": {
     "dollar": "Dollar",

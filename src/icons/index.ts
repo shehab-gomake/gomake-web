@@ -23,3 +23,5 @@ export * from "./checkbox-icon";
 export * from "./checked-icon";
 export * from "./add-plus-icon";
 export * from "./remove-icon";
+export * from "./admin-panel";
+export * from "./setting";
