@@ -69,7 +69,7 @@ const Tab = ({ tab }: IProps) => {
         ) : (
           <div style={{ marginLeft: 5 }} />
         )}
-        <div>{tab.icon()}</div>
+        <div>{tab?.icon()}</div>
         <div style={clasess.tabTitle}>{tab.title}</div>
       </div>
       <Collapse in={isListOpen}>

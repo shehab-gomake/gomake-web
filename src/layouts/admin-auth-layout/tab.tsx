@@ -60,7 +60,7 @@ const Tab = ({ tab }: IProps) => {
         ) : (
           <div style={{ marginLeft: 5 }} />
         )}
-        <div>{tab.icon()}</div>
+        <div>{tab?.icon()}</div>
         <div style={clasess.tabTitle} onClick={onClickTab}>
           {tab.title}
         </div>

@@ -6,6 +6,7 @@ import { useAuthLayoutHook } from "./use-auth-layout-hook";
 import { useRecoilState } from "recoil";
 import { navStatusState } from "@/store/nav-status";
 import { BackNavIcon } from "@/icons/back-nav";
+import config from "@/config";
 
 const LeftSideLayout = () => {
   const { t } = useTranslation();
@@ -41,13 +42,21 @@ const LeftSideLayout = () => {
         </div>
       )}
       <div style={clasess.tabsContainer}>
-        {tabs.map((tab) => {
-          if (tab.isLine) {
-            return <div key={tab.key} style={clasess.line} />;
-          } else {
-            return <Tab key={tab.key} tab={tab} />;
-          }
-        })}
+        {config.enviroment !== "dev"
+          ? tabs.slice(3, 5).map((tab) => {
+              if (tab.isLine) {
+                return <div key={tab.key} style={clasess.line} />;
+              } else {
+                return <Tab key={tab.key} tab={tab} />;
+              }
+            })
+          : tabs.map((tab) => {
+              if (tab.isLine) {
+                return <div key={tab.key} style={clasess.line} />;
+              } else {
+                return <Tab key={tab.key} tab={tab} />;
+              }
+            })}
       </div>
       {!navStatus.isClosed && (
         <div style={clasess.poweredContainer}>

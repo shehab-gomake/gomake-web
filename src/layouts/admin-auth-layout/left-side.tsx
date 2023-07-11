@@ -5,6 +5,7 @@ import { useAuthLayoutHook } from "./use-admin-auth-layout-hook";
 import { BackNavIcon } from "@/icons/back-nav";
 import { useRecoilState } from "recoil";
 import { navStatusState } from "@/store/nav-status";
+import config from "@/config";
 
 const LeftSideLayout = () => {
   const { t } = useTranslation();
@@ -37,13 +38,21 @@ const LeftSideLayout = () => {
         <div style={clasess.logoContainer}>Admin panel</div>
       )}
       <div style={clasess.tabsContainer}>
-        {tabs.map((tab) => {
-          if (tab.isLine) {
-            return <div key={tab.key} style={clasess.line} />;
-          } else {
-            return <Tab key={tab.key} tab={tab} />;
-          }
-        })}
+        {config.enviroment !== "dev"
+          ? tabs.slice(3, 5).map((tab) => {
+              if (tab.isLine) {
+                return <div key={tab.key} style={clasess.line} />;
+              } else {
+                return <Tab key={tab.key} tab={tab} />;
+              }
+            })
+          : tabs.map((tab) => {
+              if (tab.isLine) {
+                return <div key={tab.key} style={clasess.line} />;
+              } else {
+                return <Tab key={tab.key} tab={tab} />;
+              }
+            })}
       </div>
       {!navStatus.isClosed && (
         <div style={clasess.poweredContainer}>

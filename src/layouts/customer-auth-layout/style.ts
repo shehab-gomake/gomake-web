@@ -85,8 +85,10 @@ const useStyle = ({
       ///Tab
       tabsContainer: {
         alignSelf: "flex-start",
-        // height: "100%",
+        height: "100%",
+        width: "100%",
         marginTop: convertHeightToVH(46),
+        overflow: "scroll" as "scroll",
       },
       tabContainer: {
         display: "flex",
@@ -106,7 +108,7 @@ const useStyle = ({
       line: {
         border: "1px solid #FFFFFF",
         opacity: 0.4,
-        width: convertWidthToVW(207),
+        width: "100%",
         marginTop: convertHeightToVH(28),
         marginBottom: convertHeightToVH(32),
       },
