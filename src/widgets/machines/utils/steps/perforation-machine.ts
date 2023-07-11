@@ -8,13 +8,24 @@ import {MachineRunComponent} from "@/widgets/machines/components/forms/run";
 import {ConnectionComponent} from "@/widgets/machines/components/forms/connection-inputs";
 import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 
-const perforationMachineSteps: IStep[] = [
-    {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'media',  component: MediaSettingComponent},
-    {label: 'folding',  component: MachineRunComponent},
-    {label: 'connection',  component: ConnectionComponent},
-    {label: 'speed',  component: SpeedComponent},
-];
+const perforationMachineSteps = (isAdmin: boolean): IStep[] => {
+    return isAdmin ?
+        [
+            {label: 'basic', component: BasicInputsComponent},
+            {label: 'machineDimensions', component: MachineDimensionsComponent},
+            {label: 'media', component: MediaSettingComponent},
+            {label: 'folding', component: MachineRunComponent},
+            {label: 'speed', component: SpeedComponent},
+        ] :
+        [
+            {label: 'basic', component: BasicInputsComponent},
+            {label: 'machineDimensions', component: MachineDimensionsComponent},
+            {label: 'media', component: MediaSettingComponent},
+            {label: 'folding', component: MachineRunComponent},
+            {label: 'connection', component: ConnectionComponent},
+            {label: 'speed', component: SpeedComponent},
+        ];
+
+}
 
 export {perforationMachineSteps};

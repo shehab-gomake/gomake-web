@@ -4,7 +4,7 @@ const rollDigitalPrinting = (state: Record<string, any>) => {
         {
             name: "coatingUnit",
             label: "machineAttributes.coatingUnit",
-            type: "select",
+            type: "switch",
             placeholder: "machineAttributes.coatingUnit",
             required: true,
             parameterKey: "coatingUnit",

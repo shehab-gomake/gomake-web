@@ -9,12 +9,12 @@ import {useAdminAddMachine} from "@/widgets/machines/hooks/use-admin-add-machine
 
 const AdminAddMachine = () => {
     const {categoryList, categoryName} = useMachinesCategories();
-    const [selectedCategory, setSelectedCategory] = useState<string>(categoryList[0].value);
+    const [selectedCategory, setSelectedCategory] = useState<string>();
     const [activeStep, setActiveStep] = useState<number>(0);
     const {adminAddMachine, initMachineStateCategory} = useAdminAddMachine()
 
     const getCategorySteps = useCallback(() => {
-        return getSteps(selectedCategory as ECategoryId);
+        return getSteps(selectedCategory as ECategoryId, true);
     }, [selectedCategory])
     const navigateBack = () => {
         setActiveStep(activeStep - 1);
@@ -30,7 +30,7 @@ const AdminAddMachine = () => {
     const Side = () => <SideList list={categoryList} selectedItem={selectedCategory} onSelect={onSelectCategory}
                                  title={'Categories'}/>
   return (
-      <MachineLayout side={Side()} header={categoryName(selectedCategory)} subHeader={'Machine Name'}>
+      <MachineLayout side={Side()} header={categoryName(selectedCategory)} subHeader={'Add Machine'}>
 
           <MachineStepper steps={getCategorySteps()} activeStep={activeStep} previousStep={navigateBack}
                           nextStep={navigateNext} actionButtonClicked={adminAddMachine}

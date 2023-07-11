@@ -10,6 +10,7 @@ const useStyle = () => {
         display: "flex",
         gap: 26,
         padding: "14px 0",
+        maxHeight: '80vh'
       },
       sideList: {
         minWidth: 264,

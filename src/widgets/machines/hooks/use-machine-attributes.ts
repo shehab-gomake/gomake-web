@@ -4,7 +4,6 @@ import {useState} from "react";
 import {machineInputs} from "@/widgets/machines/utils/attributes/machine-inputs/machine-inputs";
 import {getCategoryBasicInputs} from "@/widgets/machines/utils/attributes/basic-inputs";
 import {getCategoryMediaInputs} from "@/widgets/machines/utils/attributes/media-inputs";
-import {getCategorySpeedOptionsInputs} from "@/widgets/machines/utils/attributes/speed-inputs/speed-options";
 import {getCategoryFeedersStackersInputs} from "@/widgets/machines/utils/attributes/feeders-stackers-inputs";
 import {getCategoryColorsInputs} from "@/widgets/machines/utils/attributes/colors-inputs";
 import {getCategoryBeatsInputs} from "@/widgets/machines/utils/attributes/beats-inputs";
@@ -16,6 +15,9 @@ import {getCategoryUnWinderInputs} from "@/widgets/machines/utils/attributes/unw
 import {getCategoryFoldingInputs} from "@/widgets/machines/utils/attributes/run-inputs";
 import {getCategoryConnectionInputs} from "@/widgets/machines/utils/attributes/connection-inputs";
 import {getCategorySpeedInputs} from "@/widgets/machines/utils/attributes/speed-inputs";
+import {getCategoryCuttingOptionsInputs} from "@/widgets/machines/utils/attributes/cutting-options-inputs";
+import {getCategoryInputs} from "@/widgets/machines/utils/attributes/other-settings";
+import {getCategoryStapleInputs} from "@/widgets/machines/utils/attributes/staple";
 
 
 const useMachineAttributes = () => {
@@ -58,7 +60,6 @@ const useMachineAttributes = () => {
     const machineBasicAttributes = () => !!machineState.category ? getCategoryBasicInputs(machineState.category, machineState) : [];
     const machineMediaAttributes = () => !!machineState.category ? getCategoryMediaInputs(machineState.category, machineState) : [];
     const machineSpeedAttributes = () => getCategorySpeedInputs(machineState.category, machineState);
-    const machineMultiOptionsSpeedAttributes = () => getCategorySpeedOptionsInputs(machineState.category, machineState);
     const machineFeedersStackersAttributes = () => !!machineState.category ? getCategoryFeedersStackersInputs(machineState.category, machineState) : [];
     const machineColorsAttributes = () => !!machineState.category ? getCategoryColorsInputs(machineState.category, machineState) : [];
     const machineBeatsAttributes = () => !!machineState.category ? getCategoryBeatsInputs(machineState.category, machineState) : [];
@@ -69,12 +70,14 @@ const useMachineAttributes = () => {
     const machineUnWinderAttributes = () => !!machineState.category ? getCategoryUnWinderInputs(machineState.category, machineState) : [];
     const machineFoldingAttributes = () => !!machineState.category ? getCategoryFoldingInputs(machineState.category, machineState) : [];
     const machineConnectionAttributes = () => !!machineState.category ? getCategoryConnectionInputs(machineState.category, machineState) : [];
+    const machineCuttingOptionsAttributes = () => !!machineState.category ? getCategoryCuttingOptionsInputs(machineState.category, machineState) : [];
+    const machineOtherSettingsAttributes = () => !!machineState.category ? getCategoryInputs(machineState.category, machineState) : [];
+    const machineStapleAttributes = () => !!machineState.category ? getCategoryStapleInputs(machineState.category, machineState) : [];
 
     return {
         machineGeneralAttributes,
         machineBasicAttributes,
         machineMediaAttributes,
-        machineMultiOptionsSpeedAttributes,
         machineFeedersStackersAttributes,
         machineColorsAttributes,
         machineBeatsAttributes,
@@ -86,6 +89,9 @@ const useMachineAttributes = () => {
         machineFoldingAttributes,
         machineConnectionAttributes,
         machineSpeedAttributes,
+        machineStapleAttributes,
+        machineAvenueAttributes: machineOtherSettingsAttributes,
+        machineCuttingOptionsAttributes,
         changeMachineAttributes,
         changeMachineGeneralAttributes,
         errors,

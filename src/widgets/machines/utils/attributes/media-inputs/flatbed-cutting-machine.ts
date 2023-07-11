@@ -1,29 +1,8 @@
+import {mediaSheetLossInput} from "@/widgets/machines/utils/attributes/media-inputs/media-sheet-loss-input";
+
 const flatbedCuttingMachine = (state: Record<string, any>) => {
     return [
-        {
-            name: "setupTimeMin",
-            label: "machineAttributes.setupTimeMin",
-            type: "text",
-            placeholder: "machineAttributes.setupTimeMin",
-            required: true,
-            parameterKey: "setupTimeMin",
-            options: [],
-            value: state?.attributes?.setupTimeMin ? state?.attributes?.setupTimeMin : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.setupTimeMin,
-        },
-        {
-            name: "mediaSheetsLoss",
-            label: "machineAttributes.mediaSheetsLoss",
-            type: "text",
-            placeholder: "machineAttributes.mediaSheetsLoss",
-            required: true,
-            parameterKey: "mediaSheetsLoss",
-            value: state?.attributes?.mediaSheetsLoss,
-            options: [],
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.mediaSheetsLoss,
-        },
+        ...mediaSheetLossInput(state),
         {
             name: "minWidthMarginCutting",
             label: "machineAttributes.minWidthMarginCutting",

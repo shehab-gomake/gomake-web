@@ -9,6 +9,9 @@ import {pastingBlocksMachine} from "@/widgets/machines/utils/attributes/colors-i
 import {digitalEnhancementMachine} from "@/widgets/machines/utils/attributes/colors-inputs/digital-enhancement-machine";
 import {analogEnhancementMachine} from "@/widgets/machines/utils/attributes/colors-inputs/analog-enhancement-machine";
 import {sideColoringMachine} from "@/widgets/machines/utils/attributes/colors-inputs/side-coloring-machine";
+import {
+    rollAnalogEnhancementMachine
+} from "@/widgets/machines/utils/attributes/colors-inputs/roll-analog-enhancement-machine";
 
 const getCategoryColorsInputs = (categoryId: string, state: Record<string, any>) => {
     switch (categoryId) {
@@ -31,7 +34,11 @@ const getCategoryColorsInputs = (categoryId: string, state: Record<string, any>)
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
             return analogEnhancementMachine(state);
         case ECategoryId.SIDE_COLORING:
-            return sideColoringMachine(state)
+            return sideColoringMachine(state);
+        case ECategoryId.ROLL_ANALOG_ENHANCEMENT_MACHINE:
+            return rollAnalogEnhancementMachine(state);
+        case ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE:
+            return rollAnalogEnhancementMachine(state);
         default:
             return []
     }
