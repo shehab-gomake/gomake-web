@@ -324,7 +324,7 @@ const useAuthLayoutHook = () => {
         isLine: false,
         key: "settings",
         title: t("tabs.settings"),
-        path: "/settings",
+        path: "/admin/settings",
         isList: false,
         icon: () => {
           return <SettingNavBar />;

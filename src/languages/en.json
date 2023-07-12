@@ -1314,6 +1314,24 @@
         "client": "Client",
         "quote": "Quote"
       }
+    },
+    "productManagement": {
+      "admin": {
+        "title": "Product management",
+        "addProduct": "Add product",
+        "selectProduct": "Select product",
+        "cleanUp": "Clean up",
+        "search": "Search",
+        "productCode": "Product code",
+        "prouctName": "Product Name",
+        "mainProduct": "Main product",
+        "details": "Details",
+        "groups": "Groups",
+        "type": "Type",
+        "board": "Board",
+        "status": "Status",
+        "more": "More"
+      }
     }
   },
   "skeleton": {
