@@ -1,6 +1,7 @@
 import { GoMakeAutoComplate} from "@/components";
 import { Skeleton } from "@mui/material";
 import { useStyle } from "./style";
+import { Placeholder } from "react-bootstrap";
 
 const HeaderFilter = ({
     setAllOptions,
@@ -17,8 +18,8 @@ const HeaderFilter = ({
                     placeholder={setPlaceholder}
                 />
             ) : (
-                <Skeleton variant="rectangular" width={200} height={40} />
-            )}
+                <Skeleton variant="rectangular" width={180} height={40} />
+                )}
         </div>
     );
 };
