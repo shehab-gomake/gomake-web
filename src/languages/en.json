@@ -1294,7 +1294,10 @@
         "textColor": "Text color",
         "graphicsRequired": "Graphics required",
         "startingPrice": "Starting price",
-        "additionToType": "Addition to type"
+        "additionToType": "Addition to type",
+        "modalProductSKUTitle": "Add New Product SKU",
+        "enterName": "Enter Name",
+        "enterCode": "Enter Code"
       }
     },
     "parameters": {

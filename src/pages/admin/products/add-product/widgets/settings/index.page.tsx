@@ -4,11 +4,21 @@ import { useStyle } from "./style";
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { useSettings } from "./use-settings";
 import { useTranslation } from "react-i18next";
+import { AddProductSkuModal } from "./modals/add-contact-modal";
 
 export default function SettingsWidget() {
   const { clasess } = useStyle();
   const { t } = useTranslation();
-  const { allProductSKU, allTemplate, allGroups } = useSettings();
+  const {
+    allProductSKU,
+    allTemplate,
+    allGroups,
+    isProductSKU,
+    onClickCloseProductSKU,
+    onChangeStateProductSKU,
+    onClickOpenProductSKU,
+    createNewProductSKU,
+  } = useSettings();
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.categoryNameStyle}>
@@ -41,7 +51,9 @@ export default function SettingsWidget() {
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.productSKU")}{" "}
-            <span style={clasess.requierdInput}>+</span>
+            <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
+              +
+            </span>
           </div>
           <div style={{ width: "100%" }}>
             <GoMakeAutoComplate
@@ -147,6 +159,13 @@ export default function SettingsWidget() {
           </div>
         </div>
       </div>
+      <AddProductSkuModal
+        openModal={isProductSKU}
+        modalTitle={t("products.addProduct.admin.modalProductSKUTitle")}
+        onClose={onClickCloseProductSKU}
+        onChangeStateProductSKU={onChangeStateProductSKU}
+        createNewProductSKU={createNewProductSKU}
+      />
     </div>
   );
 }
