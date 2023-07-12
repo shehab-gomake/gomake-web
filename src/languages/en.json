@@ -1281,7 +1281,20 @@
     },
     "addProduct": {
       "admin": {
-        "title": "Add Product"
+        "title": "Add Product",
+        "productCategory": "Product category",
+        "productName": "Product name",
+        "details": "Details",
+        "productSKU": "Product SKU",
+        "pricingType": "Pricing type",
+        "deliveryTime": "Delivery time (days)",
+        "groups": "Groups",
+        "style": "Style",
+        "noteColor": "Note color",
+        "textColor": "Text color",
+        "graphicsRequired": "Graphics required",
+        "startingPrice": "Starting price",
+        "additionToType": "Addition to type"
       }
     },
     "parameters": {

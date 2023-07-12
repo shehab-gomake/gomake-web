@@ -133,7 +133,7 @@ const useStyle = () => {
         alignItems: "center",
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(800),
-        width: "150px",
+        width: "10%",
       },
       row: {
         display: "flex",

@@ -1,24 +1,28 @@
 import { AdminAuthLayout } from "@/layouts";
-import { CategoriesTable } from "@/widgets/materials/categories-table";
 import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useTranslation } from "react-i18next";
-import { AddIcon, AddPlusIcon, SearchIcon } from "@/icons";
+import { AddPlusIcon, SearchIcon } from "@/icons";
 import { GoMakeAutoComplate, GoMakeTextInputIcon } from "@/components";
 import { InputAdornment } from "@mui/material";
-import { Row } from "../products/actions/widget/row";
 import { useSettings } from "./use-settings";
+import { Row } from "./widget/row";
+import { useGomakeRouter } from "@/hooks";
 
 export default function SettingsPage() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
+  const { navigate } = useGomakeRouter();
   const { tableHeaders, allProducts } = useSettings();
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
         <div style={clasess.mainHeadecontainer}>
           <HeaderTitle title={t("products.productManagement.admin.title")} />
-          <div style={clasess.addProductBtnStyle}>
+          <div
+            style={clasess.addProductBtnStyle}
+            onClick={() => navigate("/admin/products/add-product")}
+          >
             <AddPlusIcon stroke="#101020" />
             <div style={clasess.addProductBtnText}>
               {t("products.productManagement.admin.addProduct")}

@@ -63,6 +63,18 @@ const useStyle = () => {
         border: "0px",
         boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
+      multiSelectStyle: {
+        backgroundColor: "#FFFFFF",
+        width: "100%",
+        height: "100%",
+        borderRadius: 4,
+        display: "flex",
+        border: "0px",
+        flexDirection: "row" as "row",
+        alignitems: "center",
+        justifyContent: "center",
+        boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+      },
       labelTitleStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),

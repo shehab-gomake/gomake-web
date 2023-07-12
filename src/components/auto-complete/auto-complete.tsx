@@ -96,7 +96,7 @@ const GoMakeAutoComplate = ({
         option?.id === value?.id
       }
       getOptionSelected={(option: any, value: any) => {
-        return option.id === value.id;
+        return option?.id === value?.id;
       }}
     />
   );
