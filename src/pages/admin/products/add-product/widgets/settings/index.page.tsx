@@ -5,7 +5,7 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { useSettings } from "./use-settings";
 import { useTranslation } from "react-i18next";
 import { AddProductSkuModal } from "./modals/add-contact-modal";
-
+import ColorPicker from "react-pick-color";
 export default function SettingsWidget() {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -14,13 +14,19 @@ export default function SettingsWidget() {
     allTemplate,
     allGroups,
     isProductSKU,
+    color,
+    showColorPicker,
     onClickCloseProductSKU,
-    onChangeStateProductSKU,
     onClickOpenProductSKU,
+    onChangeStateProductSKU,
     createNewProductSKU,
+    toggleColorPicker,
+    closeColorPicker,
+    handleColorChange,
   } = useSettings();
+
   return (
-    <div style={clasess.mainContainer}>
+    <div style={clasess.mainContainer} onClick={closeColorPicker}>
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.productCategory")}
       </div>
@@ -124,14 +130,30 @@ export default function SettingsWidget() {
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.textColor")}
           </div>
-          <div>
+          <div onClick={toggleColorPicker}>
             <GomakeTextInput
               style={clasess.textInputStyle}
               placeholder={t("products.addProduct.admin.textColor")}
+              disabled={true}
+              value={color}
             />
           </div>
+          <div
+            onClick={toggleColorPicker}
+            style={{
+              width: 20,
+              height: 20,
+              backgroundColor: color,
+              position: "absolute",
+              right: 15,
+              bottom: 11,
+            }}
+          />
         </div>
       </div>
+      {showColorPicker && (
+        <ColorPicker color={color} onChange={handleColorChange} />
+      )}
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.graphicsRequired")}
       </div>
@@ -157,6 +179,14 @@ export default function SettingsWidget() {
               placeholder={t("products.addProduct.admin.additionToType")}
             />
           </div>
+        </div>
+      </div>
+      <div style={clasess.btnsContainer}>
+        <div style={clasess.goToListBtn}>
+          {t("products.addProduct.admin.addGoToList")}
+        </div>
+        <div style={clasess.addNwBtn}>
+          {t("products.addProduct.admin.addNewProduct")}
         </div>
       </div>
       <AddProductSkuModal

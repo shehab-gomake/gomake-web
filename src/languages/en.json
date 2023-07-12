@@ -1297,7 +1297,9 @@
         "additionToType": "Addition to type",
         "modalProductSKUTitle": "Add New Product SKU",
         "enterName": "Enter Name",
-        "enterCode": "Enter Code"
+        "enterCode": "Enter Code",
+        "addNewProduct": "Add new product",
+        "addGoToList": "Add and go to the list of parameters"
       }
     },
     "parameters": {

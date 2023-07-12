@@ -79,16 +79,35 @@ const useSettings = () => {
       });
     }
   }, [productSKU]);
+
+  const [color, setColor] = useState("#000");
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const handleColorChange = (color) => {
+    setColor(color.hex);
+  };
+  const toggleColorPicker = () => {
+    setShowColorPicker(!showColorPicker);
+  };
+  const closeColorPicker = () => {
+    if (showColorPicker) {
+      setShowColorPicker(false);
+    }
+  };
   return {
     t,
     allProductSKU,
     allTemplate,
     allGroups,
     isProductSKU,
+    color,
+    showColorPicker,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,
     createNewProductSKU,
+    toggleColorPicker,
+    closeColorPicker,
+    handleColorChange,
   };
 };
 
