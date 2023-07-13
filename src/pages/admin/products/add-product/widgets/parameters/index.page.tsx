@@ -23,51 +23,39 @@ export default function ParameterWidget() {
     handlePreviousClick,
     activeIndex,
     template,
-    tabs,
-    activeTab,
   } = useAddProduct();
   const _renderParameterType = (parameter) => {
-    if (parameter?.parameterType === "input") {
+    console.log("parameterparameter", parameter);
+    if (parameter?.parameterType === 1) {
       return (
         <GomakeTextInput
           style={clasess.textInputStyle}
           defaultValue={parameter.defaultValue}
-          placeholder={parameter.updatedName}
+          placeholder={parameter.name}
           // onChange={(e: any) => onChangeData(e.target.value)}
+          type="number"
         />
       );
-    } else if (parameter?.parameterType === "select") {
+    } else if (parameter?.parameterType === 2) {
+      return (
+        <GomakeTextInput
+          style={clasess.textInputStyle}
+          defaultValue={parameter.defaultValue}
+          placeholder={parameter.name}
+          // onChange={(e: any) => onChangeData(e.target.value)}
+          type="text"
+        />
+      );
+    } else if (parameter?.parameterType === 0) {
       return (
         <GoMakeAutoComplate
           options={parameter?.valuesConfigs}
-          placeholder={parameter.updatedName}
+          placeholder={parameter.name}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
-          renderOption={(props: any, option: any) => {
-            if (option.label === t("materials.sheetPaper.addNew")) {
-              return (
-                <div
-                  // onClick={onClickAddNewSupplier}
-                  style={clasess.addSupplierAutoComplate}
-                >
-                  {t("materials.sheetPaper.addNewSupplier")}
-                </div>
-              );
-            }
-            return (
-              <div style={clasess.optionsContainer}>
-                <div {...props} style={{ width: "100%" }}>
-                  {option.updateName}
-                </div>
-                <div style={clasess.flagsInDropDownContainer}>
-                  {parameter?.isHidden ? <HiddenIcon /> : <NotHiddenIcon />}
-                </div>
-              </div>
-            );
-          }}
         />
       );
-    } else if (parameter?.parameterType === "boolean") {
+    } else if (parameter?.parameterType === 3) {
       return (
         <SecondSwitch
         // checked={parameter?.IsDefault}
@@ -76,109 +64,124 @@ export default function ParameterWidget() {
         // }}
         />
       );
+    } else if (parameter?.parameterType === 4) {
+      return (
+        <GomakePrimaryButton
+          style={clasess.dynamicBtn}
+          // onClick={onOpeneChooseShape}
+        >
+          {parameter?.name}
+        </GomakePrimaryButton>
+      );
     }
   };
   return (
     <>
-      <div style={clasess.mainRowContainer}>
-        <div style={clasess.leftSideContainer}>
-          <div style={clasess.tabsContainer}>
-            {template[0].sections.map((item, index) => {
-              return (
-                <div
-                  style={clasess.tabContainer}
-                  key={index}
-                  onClick={() => handleTabClick(index)}
-                >
-                  <div style={{ height: 22, minWidth: 30 }}>
-                    {index === activeIndex
-                      ? item.activeIcon
-                      : index >= activeIndex
-                      ? item.icon
-                      : item.doneIcon}
-                  </div>
-                  <div
-                    style={
-                      index === activeIndex
-                        ? clasess.tabNameActiveStyle
-                        : clasess.tabNameStyle
-                    }
-                  >
-                    {item.name}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div style={clasess.sectionsContainer}>
-            {template[0]?.sections?.map((section, index) => {
-              if (index === activeIndex) {
-                return section?.subSections?.map((subSection, index) => {
+      {template && (
+        <>
+          <div style={clasess.mainRowContainer}>
+            <div style={clasess.leftSideContainer}>
+              <div style={clasess.tabsContainer}>
+                {template?.sections.map((item, index) => {
                   return (
-                    <div key={index} style={clasess.subSectionContainer}>
-                      <div style={clasess.subSectionTitleStyle}>
-                        {subSection.name}
+                    <div
+                      style={clasess.tabContainer}
+                      key={index}
+                      onClick={() => handleTabClick(index)}
+                    >
+                      <div style={{ height: 22, minWidth: 30 }}>
+                        {index === activeIndex
+                          ? item.activeIcon
+                          : index >= activeIndex
+                          ? item.icon
+                          : item.doneIcon}
                       </div>
-                      <div style={clasess.parametersContainer}>
-                        {subSection?.parameters?.map((parameter, index) => {
-                          console.log("parameter", parameter);
-                          return (
-                            <div key={index}>
-                              <div style={clasess.parameterContainer}>
-                                <div style={clasess.parameterLabelStyle}>
-                                  <div>
-                                    <GomakeTextInput
-                                      style={clasess.textInputWithoutStyle}
-                                      defaultValue={parameter?.updatedName}
-                                      placeholder={parameter?.updatedName}
-                                    />
-                                  </div>
-                                  {parameter?.isHidden ? (
-                                    <HiddenIcon />
-                                  ) : (
-                                    <NotHiddenIcon />
-                                  )}
-                                  {parameter?.isRequired ? (
-                                    <RequierdIcon />
-                                  ) : (
-                                    <NotRequierdIcon />
-                                  )}
-                                </div>
-                                <div
-                                  style={clasess.renderParameterTypeContainer}
-                                >
-                                  {_renderParameterType(parameter)}
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
+                      <div
+                        style={
+                          index === activeIndex
+                            ? clasess.tabNameActiveStyle
+                            : clasess.tabNameStyle
+                        }
+                      >
+                        {item.name}
                       </div>
                     </div>
                   );
-                });
-              }
-            })}
+                })}
+              </div>
+              <div style={clasess.sectionsContainer}>
+                {template?.sections?.map((section, index) => {
+                  if (index === activeIndex) {
+                    return section?.subSections?.map((subSection, index) => {
+                      return (
+                        <div key={index} style={clasess.subSectionContainer}>
+                          <div style={clasess.subSectionTitleStyle}>
+                            {subSection.name}
+                          </div>
+                          <div style={clasess.parametersContainer}>
+                            {subSection?.parameters?.map((parameter, index) => {
+                              console.log("parameter", parameter);
+                              return (
+                                <div key={index}>
+                                  <div style={clasess.parameterContainer}>
+                                    <div style={clasess.parameterLabelStyle}>
+                                      <div>
+                                        <GomakeTextInput
+                                          style={clasess.textInputWithoutStyle}
+                                          defaultValue={parameter?.name}
+                                          placeholder={parameter?.name}
+                                        />
+                                      </div>
+                                      {parameter?.isHidden ? (
+                                        <HiddenIcon />
+                                      ) : (
+                                        <NotHiddenIcon />
+                                      )}
+                                      {parameter?.isRequired ? (
+                                        <RequierdIcon />
+                                      ) : (
+                                        <NotRequierdIcon />
+                                      )}
+                                    </div>
+                                    <div
+                                      style={
+                                        clasess.renderParameterTypeContainer
+                                      }
+                                    >
+                                      {_renderParameterType(parameter)}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    });
+                  }
+                })}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div style={clasess.addPreviousContainer}>
-        {activeIndex != 0 ? (
-          <GomakePrimaryButton
-            style={clasess.previousBtnStyle}
-            onClick={handlePreviousClick}
-          >
-            {t("products.offsetPrice.admin.previousBtn")}
-          </GomakePrimaryButton>
-        ) : null}
+          <div style={clasess.addPreviousContainer}>
+            {activeIndex != 0 ? (
+              <GomakePrimaryButton
+                style={clasess.previousBtnStyle}
+                onClick={handlePreviousClick}
+              >
+                {t("products.offsetPrice.admin.previousBtn")}
+              </GomakePrimaryButton>
+            ) : null}
 
-        <GomakePrimaryButton
-          style={clasess.nextBtnStyle}
-          onClick={handleNextClick}
-        >
-          {t("products.offsetPrice.admin.nextBtn")}
-        </GomakePrimaryButton>
-      </div>
+            <GomakePrimaryButton
+              style={clasess.nextBtnStyle}
+              onClick={handleNextClick}
+            >
+              {t("products.offsetPrice.admin.nextBtn")}
+            </GomakePrimaryButton>
+          </div>
+        </>
+      )}
     </>
   );
 }

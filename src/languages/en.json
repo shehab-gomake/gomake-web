@@ -1282,6 +1282,7 @@
     "addProduct": {
       "admin": {
         "title": "Add Product",
+        "editProduct": "Edit Product",
         "productCategory": "Product category",
         "productName": "Product name",
         "details": "Details",

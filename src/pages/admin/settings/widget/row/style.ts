@@ -24,6 +24,7 @@ const useStyle = ({ width, index, tablePercent }: any) => {
         marginBottom: 8.5,
         marginTop: 8.5,
         width: "10%",
+        cursor: "pointer",
       },
       rowItemExpPofit: {
         display: "flex",

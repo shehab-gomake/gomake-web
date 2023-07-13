@@ -6,7 +6,7 @@ import { useSettings } from "./use-settings";
 import { useTranslation } from "react-i18next";
 import { AddProductSkuModal } from "./modals/add-contact-modal";
 import ColorPicker from "react-pick-color";
-export default function SettingsWidget() {
+export default function SettingsWidget({ onClickParametersTab }) {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -26,8 +26,8 @@ export default function SettingsWidget() {
     closeColorPicker,
     handleColorChange,
     createNewProduct,
-  } = useSettings();
-  console.log("productState", productState);
+    createNewProductAndGoToParameterList,
+  } = useSettings({ onClickParametersTab });
 
   return (
     // onClick={closeColorPicker}
@@ -214,10 +214,13 @@ export default function SettingsWidget() {
         </div>
       </div>
       <div style={clasess.btnsContainer}>
-        <div style={clasess.goToListBtn} onClick={createNewProduct}>
+        <div
+          style={clasess.goToListBtn}
+          onClick={createNewProductAndGoToParameterList}
+        >
           {t("products.addProduct.admin.addGoToList")}
         </div>
-        <div style={clasess.addNwBtn}>
+        <div style={clasess.addNwBtn} onClick={createNewProduct}>
           {t("products.addProduct.admin.addNewProduct")}
         </div>
       </div>
