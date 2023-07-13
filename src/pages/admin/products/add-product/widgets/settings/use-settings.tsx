@@ -93,6 +93,19 @@ const useSettings = () => {
       setShowColorPicker(false);
     }
   };
+
+  const [productState, setProductState] = useState<any>([]);
+  const onChangeStateProduct = useCallback(
+    (filedName: string, value: any) => {
+      setProductState((prev) => {
+        return {
+          ...prev,
+          [filedName]: value,
+        };
+      });
+    },
+    [productSKU]
+  );
   return {
     t,
     allProductSKU,
@@ -101,6 +114,8 @@ const useSettings = () => {
     isProductSKU,
     color,
     showColorPicker,
+    productState,
+    onChangeStateProduct,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,

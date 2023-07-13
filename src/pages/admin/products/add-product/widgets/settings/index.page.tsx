@@ -16,6 +16,8 @@ export default function SettingsWidget() {
     isProductSKU,
     color,
     showColorPicker,
+    productState,
+    onChangeStateProduct,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,
@@ -24,9 +26,11 @@ export default function SettingsWidget() {
     closeColorPicker,
     handleColorChange,
   } = useSettings();
+  console.log("productState", productState);
 
   return (
-    <div style={clasess.mainContainer} onClick={closeColorPicker}>
+    // onClick={closeColorPicker}
+    <div style={clasess.mainContainer}>
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.productCategory")}
       </div>
@@ -40,6 +44,9 @@ export default function SettingsWidget() {
             <GomakeTextInput
               style={clasess.textInputStyle}
               placeholder={t("products.addProduct.admin.productName")}
+              onChange={(e: any) => {
+                onChangeStateProduct("name", e.target.value);
+              }}
             />
           </div>
         </div>
@@ -51,6 +58,9 @@ export default function SettingsWidget() {
             <GomakeTextInput
               style={clasess.textInputStyle}
               placeholder={t("products.addProduct.admin.details")}
+              onChange={(e: any) => {
+                onChangeStateProduct("details", e.target.value);
+              }}
             />
           </div>
         </div>
@@ -67,6 +77,9 @@ export default function SettingsWidget() {
               placeholder={t("products.addProduct.admin.productSKU")}
               style={clasess.dropDownListStyle}
               getOptionLabel={(option: any) => option.name}
+              onChange={(e: any, value: any) => {
+                onChangeStateProduct("productSKUId", value);
+              }}
             />
           </div>
         </div>
@@ -80,6 +93,9 @@ export default function SettingsWidget() {
               placeholder={t("products.addProduct.admin.pricingType")}
               style={clasess.dropDownListStyle}
               getOptionLabel={(option: any) => option.name}
+              onChange={(e: any, value: any) => {
+                onChangeStateProduct("templateId", value);
+              }}
             />
           </div>
         </div>
@@ -91,6 +107,9 @@ export default function SettingsWidget() {
             <GomakeTextInput
               style={clasess.textInputStyle}
               placeholder={t("products.addProduct.admin.deliveryTime")}
+              onChange={(e: any) => {
+                onChangeStateProduct("deliveryTime", e.target.value);
+              }}
             />
           </div>
         </div>
@@ -106,6 +125,9 @@ export default function SettingsWidget() {
                 style={clasess.multiSelectStyle}
                 getOptionLabel={(option: any) => option.name}
                 multiple
+                onChange={(e: any, value: any) => {
+                  onChangeStateProduct("groups", value);
+                }}
               />
             )}
           </div>
@@ -123,6 +145,9 @@ export default function SettingsWidget() {
             <GomakeTextInput
               style={clasess.textInputStyle}
               placeholder={t("products.addProduct.admin.noteColor")}
+              onChange={(e: any) => {
+                onChangeStateProduct("noteColor", e.target.value);
+              }}
             />
           </div>
         </div>
@@ -166,6 +191,9 @@ export default function SettingsWidget() {
             <GomakeTextInput
               style={clasess.textInputStyle}
               placeholder={t("products.addProduct.admin.startingPrice")}
+              onChange={(e: any) => {
+                onChangeStateProduct("startingPrice", e.target.value);
+              }}
             />
           </div>
         </div>
@@ -177,6 +205,9 @@ export default function SettingsWidget() {
             <GomakeTextInput
               style={clasess.textInputStyle}
               placeholder={t("products.addProduct.admin.additionToType")}
+              onChange={(e: any) => {
+                onChangeStateProduct("additionPrice", e.target.value);
+              }}
             />
           </div>
         </div>
