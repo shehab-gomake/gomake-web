@@ -1,4 +1,4 @@
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
   getAllGroups,
   getAllTemplets,
@@ -6,11 +6,17 @@ import {
 } from "@/services/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { v4 as uuidv4 } from "uuid";
 
 const useSettings = () => {
   const { callApi } = useGomakeAxios();
+  const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
   const { setSnackbarStateValue } = useSnackBar();
+  const [RandomId, setRandomId] = useState();
+  useEffect(() => {
+    setRandomId(uuidv4());
+  }, []);
 
   const [allProductSKU, setAllProductSKU] = useState<any>();
   const [allTemplate, setAllTemplate] = useState<any>();
@@ -106,6 +112,42 @@ const useSettings = () => {
     },
     [productSKU]
   );
+
+  const createNewProduct = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/printhouse-config/products/create-product`,
+      {
+        id: RandomId,
+        name: productState?.name,
+        details: productState?.details,
+        groups: productState?.groups.map((item) => {
+          return item.id;
+        }),
+        deliveryTime: productState?.deliveryTime,
+        startingPrice: productState?.startingPrice,
+        additionPrice: productState?.additionPrice,
+        noteColor: productState?.noteColor,
+        textColor: color,
+        productSKUId: productState?.productSKUId?.id,
+        templateId: productState?.templateId?.id,
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+      navigate("/admin/settings");
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedfailed"),
+        type: "error",
+      });
+    }
+  }, [productState, RandomId, color]);
   return {
     t,
     allProductSKU,
@@ -123,6 +165,7 @@ const useSettings = () => {
     toggleColorPicker,
     closeColorPicker,
     handleColorChange,
+    createNewProduct,
   };
 };
 

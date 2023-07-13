@@ -25,6 +25,7 @@ export default function SettingsWidget() {
     toggleColorPicker,
     closeColorPicker,
     handleColorChange,
+    createNewProduct,
   } = useSettings();
   console.log("productState", productState);
 
@@ -213,7 +214,7 @@ export default function SettingsWidget() {
         </div>
       </div>
       <div style={clasess.btnsContainer}>
-        <div style={clasess.goToListBtn}>
+        <div style={clasess.goToListBtn} onClick={createNewProduct}>
           {t("products.addProduct.admin.addGoToList")}
         </div>
         <div style={clasess.addNwBtn}>
