@@ -7,3 +7,4 @@ export * from "./get-set-action-profit-test-results-by-action-id";
 export * from "./get-set-all-parameters";
 export * from "./get-set-product-by-id";
 export * from "./get-all-products-mongodb";
+export * from "./get-set-products";

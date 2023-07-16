@@ -1,6 +1,6 @@
 import { useGomakeAxios } from "@/hooks";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CustomerIcon } from "../../../products/add-product/icons/customer-details";
 import { DoneIcon } from "../../../products/add-product/icons/done";
 import { PrintingDetails } from "../../../products/add-product/icons/printing-details";
@@ -9,11 +9,27 @@ import { FinishingIcon } from "../../../products/add-product/icons/finishing";
 import { SettingIcon } from "../../../products/add-product/icons/setting";
 import { PrameterIcon } from "../../../products/add-product/icons/parameter";
 import { GraphicIcon } from "../../../products/add-product/icons/graphic";
+import { useRouter } from "next/router";
+import { getAndSetProductById } from "@/services/hooks";
 
 const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
+  const router = useRouter();
+
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
+  const [productState, setProductState] = useState<any>([]);
+  const onChangeStateProduct = useCallback(
+    (filedName: string, value: any) => {
+      setProductState((prev) => {
+        return {
+          ...prev,
+          [filedName]: value,
+        };
+      });
+    },
+    [productState]
+  );
   const handleTabClick = (index: number) => {
     if (index !== activeIndex) {
       setActiveIndex(index);
@@ -422,13 +438,26 @@ const useAddProduct = () => {
       onclick: () => onClickGraphicTab,
     },
   ];
+  const getProductById = useCallback(async () => {
+    if (router?.query?.productId) {
+      const data = await getAndSetProductById(callApi, setProductState, {
+        Id: router?.query?.productId,
+      });
+      setProductState(data);
+    }
+  }, [router]);
 
+  useEffect(() => {
+    getProductById();
+  }, []);
   return {
     t,
     handleTabClick,
     handleNextClick,
     handlePreviousClick,
     onClickParametersTab,
+    onChangeStateProduct,
+    productState,
     activeIndex,
     template,
     activeTab,

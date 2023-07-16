@@ -9,7 +9,14 @@ import GraphicWidget from "../../../products/add-product/widgets/graphic/index.p
 
 export default function EditProduct() {
   const { clasess } = useStyle();
-  const { t, tabs, activeTab, onClickParametersTab } = useAddProduct();
+  const {
+    t,
+    tabs,
+    activeTab,
+    onClickParametersTab,
+    onChangeStateProduct,
+    productState,
+  } = useAddProduct();
 
   return (
     <AdminAuthLayout>
@@ -40,7 +47,11 @@ export default function EditProduct() {
           })}
         </div>
         {activeTab === "Settings" ? (
-          <SettingsWidget onClickParametersTab={onClickParametersTab} />
+          <SettingsWidget
+            onClickParametersTab={onClickParametersTab}
+            onChangeStateProduct={onChangeStateProduct}
+            productState={productState}
+          />
         ) : activeTab === "Parameters" ? (
           <ParameterWidget />
         ) : (

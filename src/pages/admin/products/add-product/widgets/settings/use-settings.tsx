@@ -8,7 +8,11 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { v4 as uuidv4 } from "uuid";
 
-const useSettings = ({ onClickParametersTab }) => {
+const useSettings = ({
+  onClickParametersTab,
+  productState,
+  onChangeStateProduct,
+}) => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
@@ -17,7 +21,7 @@ const useSettings = ({ onClickParametersTab }) => {
   useEffect(() => {
     setRandomId(uuidv4());
   }, []);
-
+  console.log("productState", productState);
   const [allProductSKU, setAllProductSKU] = useState<any>();
   const [allTemplate, setAllTemplate] = useState<any>();
   const [allGroups, setAllGroups] = useState<any>();
@@ -100,18 +104,18 @@ const useSettings = ({ onClickParametersTab }) => {
     }
   };
 
-  const [productState, setProductState] = useState<any>([]);
-  const onChangeStateProduct = useCallback(
-    (filedName: string, value: any) => {
-      setProductState((prev) => {
-        return {
-          ...prev,
-          [filedName]: value,
-        };
-      });
-    },
-    [productSKU]
-  );
+  // const [productState, setProductState] = useState<any>([]);
+  // const onChangeStateProduct = useCallback(
+  //   (filedName: string, value: any) => {
+  //     setProductState((prev) => {
+  //       return {
+  //         ...prev,
+  //         [filedName]: value,
+  //       };
+  //     });
+  //   },
+  //   [productState]
+  // );
 
   const createNewProduct = useCallback(async () => {
     const res = await callApi(

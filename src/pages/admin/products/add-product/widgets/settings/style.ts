@@ -85,7 +85,7 @@ const useStyle = () => {
         color: secondColor(500),
       },
       plusInput: {
-        ...FONT_FAMILY.Lexend(500, 18),
+        ...FONT_FAMILY.Lexend(500, 14),
         color: secondColor(500),
         cursor: "pointer",
         paddingLeft: 5,

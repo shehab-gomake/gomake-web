@@ -8,7 +8,8 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { convertWidthToVW, leftRightAdapter } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor, secondColor, neutralColor } = useGomakeTheme();
+  const { primaryColor, secondColor, successColor, errorColor, neutralColor } =
+    useGomakeTheme();
 
   const clasess = useMemo(() => {
     return {
@@ -133,7 +134,7 @@ const useStyle = () => {
         alignItems: "center",
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(800),
-        width: "10%",
+        width: "16%",
       },
       row: {
         display: "flex",
@@ -146,6 +147,22 @@ const useStyle = () => {
         paddingRight: 54,
         backgroundColor: "#FFF",
         border: " 1px solid #EBECFF",
+      },
+      activeTabStyle: {
+        display: "flex",
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: successColor(500),
+      },
+      inActiveTabStyle: {
+        display: "flex",
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: errorColor(500),
+      },
+      line: {
+        borderBottom: `0.4px solid ${neutralColor(400)}`,
+        width: "100%",
+        paddingBottom: 10,
+        paddingTop: 5,
       },
     };
   }, [i18next.language, t]);
