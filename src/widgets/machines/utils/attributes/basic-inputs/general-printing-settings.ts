@@ -11,9 +11,11 @@ const generalPrintingSettings = (state: Record<string, any>) => {
             required: true,
             parameterKey: "resolution",
             value: state.attributes?.resolution,
-            options: [{value: 0, text: '2438 X 2438 dpi'}, {value: 1, text: '2400 X 2400 dpi'}],
+            options: [],
             machineInputType: 'input',
             isValid: true,
+            optionsUrl: '/v1/enum/get-enums/resolution'
+
         },
         {
             name: "printingSides",

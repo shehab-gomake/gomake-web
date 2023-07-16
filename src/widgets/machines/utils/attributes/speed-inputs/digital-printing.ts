@@ -29,7 +29,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             parameterKey: 'speedByColor',
             value: state.attributes?.speedByColor || [],
             machineInputType: 'multiArrayInput',
-            isValid: state.attributes?.speedByColor?.length > 0,
+            isValid: true,
             inputs: [
                 {
                     name: "color",
@@ -56,17 +56,8 @@ const digitalPrinting = (state: Record<string, any>) => {
             parameterKey: 'speedByColorBySize',
             value: state.attributes?.speedByColorBySize || [],
             machineInputType: 'multiArrayInput',
-            isValid: state.attributes?.speedByColorBySize?.length > 0,
+            isValid: true,
             inputs: [
-                {
-                    name: "color",
-                    label: "machineAttributes.color",
-                    type: "text",
-                    placeholder: "machineAttributes.color",
-                    required: true,
-                    parameterKey: "color",
-                    options: []
-                },
                 {
                     name: "mediaLength",
                     label: "machineAttributes.mediaLength",
@@ -101,7 +92,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             name: 'machineAttributes.speedByMediaWeight',
             parameterKey: 'speedByMediaWeight',
             value: state.attributes?.speedByMediaWeight || [],
-            isValid: state.attributes?.speedByMediaWeight?.length > 0,
+            isValid: true,
             machineInputType: 'multiArrayInput',
             inputs: [
                 {

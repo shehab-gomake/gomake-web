@@ -9,7 +9,6 @@ import {StyledSwitch} from "@/widgets/machines/components/inputs/switch";
 import {useGomakeAxios} from "@/hooks";
 
 const MachineInput = ({input, error, changeState, readonly}: IMachineInput) => {
-    const [state, setState] = useState<string>(input.type === 'select' ? input.options[0]?.value : []);
     const [options, setOptions] = useState([]);
     const {callApi} = useGomakeAxios();
     const {t} = useTranslation();
@@ -19,7 +18,6 @@ const MachineInput = ({input, error, changeState, readonly}: IMachineInput) => {
     };
     const selectChange = (event: SelectChangeEvent<any>, child: ReactNode): void => {
         changeState(input.parameterKey, event.target.value)
-        setState(event.target.value);
     }
 
     const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
@@ -50,9 +48,13 @@ const MachineInput = ({input, error, changeState, readonly}: IMachineInput) => {
                                     id="demo-simple-select"
                                     label={input.label}
                                     onChange={selectChange}
-                                    value={input.value}
+                                    value={!!input.value ? input.value : 'default value'  }
                                     error={false}
                                     disabled={!!readonly}>
+                                    {
+                                       !input.value &&  <MenuItem  key={'default-placeholder' + input.label}
+                                                                   value={'default value'}>{'select ' + t(input.label)}</MenuItem>
+                                    }
                                     {
                                         input.optionsUrl ? options.map(option => <MenuItem key={option.value}
                                                                                            value={option.value}>{option.text}</MenuItem>)

@@ -43,7 +43,7 @@ const AdminUpdateMachine = () => {
     const Side = () => <SideList list={getMachinesList} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
                                  title={'Machines'}/>
     return (
-        <MachineLayout side={Side()} header={categoryName} subHeader={selectedMachine.manufacturer + ' - ' + selectedMachine.nickName}>
+        <MachineLayout side={Side()} header={categoryName} subHeader={ selectedMachine.manufacturer ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.model : ''}>
 
             {!!selectedMachine.id && <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
                                                      nextStep={navigateNext} actionButtonClicked={updateMachine}

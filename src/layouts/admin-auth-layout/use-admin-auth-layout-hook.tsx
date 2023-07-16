@@ -13,15 +13,13 @@ import {
 import { SuppliersIcon } from "@/icons/suppliers";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
-import { machineCategoriesState } from "@/store/machine-categories";
+
 
 const useAuthLayoutHook = () => {
   const { t } = useTranslation();
   const { isAuth } = useGomakeAdminAuth();
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
-  const categories = useRecoilValue(machineCategoriesState);
   const tabs = useMemo(() => {
     return [
       {
@@ -175,56 +173,7 @@ const useAuthLayoutHook = () => {
         key: "machines",
         title: t("tabs.machines"),
         path: "/admin/machine",
-        isList: true,
-        icon: () => {
-          return <ProductsIcon />;
-        },
-        list: [
-          {
-            key: "add",
-            title: t("tabs.addMachine"),
-            path: "/admin/machine",
-          },
-          ...categories.map((category) => ({
-            key: category.id + category.name,
-            title: category.name,
-            path: `/admin/machine/category/${category.id}`,
-          })),
-        ],
-      },
-      {
-        isLine: false,
-        key: "products",
-        title: t("tabs.products"),
-        path: "/product-floor",
-        isList: true,
-        list: [
-          {
-            key: "addProduct",
-            title: t("products.addProduct.admin.title"),
-            path: "/admin/products/add-product",
-          },
-          {
-            key: "parameters",
-            title: t("products.parameters.admin.title"),
-            path: "/admin/products/parameters",
-          },
-          {
-            key: "offsetPrice",
-            title: t("products.offsetPrice.admin.title"),
-            path: "/admin/products/digital-offset-price",
-          },
-          {
-            key: "actions",
-            title: t("products.actions.admin.title"),
-            path: "/admin/products/actions",
-          },
-          {
-            key: "profits",
-            title: t("products.profits.admin.title"),
-            path: "/admin/products/profits",
-          },
-        ],
+        isList: false,
         icon: () => {
           return <ProductsIcon />;
         },

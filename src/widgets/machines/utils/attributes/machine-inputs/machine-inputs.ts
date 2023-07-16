@@ -1,4 +1,3 @@
-import {CURRENCY} from "@/widgets/machines/utils/const/currency";
 
 const machineInputs = (state: Record<string, any>)  => {
     return [
@@ -64,8 +63,9 @@ const machineInputs = (state: Record<string, any>)  => {
                     required: true,
                     parameterKey: "currency",
                     value: state?.price?.currency ? state?.price?.currency : 0,
-                    options: CURRENCY,
+                    options: [],
                     isValid: true,
+                    optionsUrl: '/v1/enum/get-enums/currency'
                 },
             ]
         }
