@@ -25,7 +25,6 @@ export default function ParameterWidget() {
     template,
   } = useAddProduct();
   const _renderParameterType = (parameter) => {
-    console.log("parameterparameter", parameter);
     if (parameter?.parameterType === 1) {
       return (
         <GomakeTextInput
@@ -120,7 +119,6 @@ export default function ParameterWidget() {
                           </div>
                           <div style={clasess.parametersContainer}>
                             {subSection?.parameters?.map((parameter, index) => {
-                              console.log("parameter", parameter);
                               return (
                                 <div key={index}>
                                   <div style={clasess.parameterContainer}>

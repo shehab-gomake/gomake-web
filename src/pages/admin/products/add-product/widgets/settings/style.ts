@@ -43,6 +43,15 @@ const useStyle = () => {
         width: "180px",
         position: "relative" as "relative",
       },
+      itemGropupsContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 10,
+        width: "380px",
+        position: "relative" as "relative",
+      },
       textInputStyle: {
         width: "100%",
         borderRadius: 4,

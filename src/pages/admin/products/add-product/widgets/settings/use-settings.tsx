@@ -21,7 +21,6 @@ const useSettings = ({
   useEffect(() => {
     setRandomId(uuidv4());
   }, []);
-  console.log("productState", productState);
   const [allProductSKU, setAllProductSKU] = useState<any>();
   const [allTemplate, setAllTemplate] = useState<any>();
   const [allGroups, setAllGroups] = useState<any>();
@@ -91,31 +90,28 @@ const useSettings = ({
   }, [productSKU]);
 
   const [color, setColor] = useState("#000");
+  const [noteColor, setNoteColor] = useState("#000");
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showColorPickerForNoteColor, setShowColorPickerForNoteColor] =
+    useState(false);
   const handleColorChange = (color) => {
     setColor(color.hex);
   };
+
+  const handleNoteColorChange = (color) => {
+    setNoteColor(color.hex);
+  };
   const toggleColorPicker = () => {
     setShowColorPicker(!showColorPicker);
+  };
+  const toggleColorPickerForNoteColor = () => {
+    setShowColorPickerForNoteColor(!showColorPickerForNoteColor);
   };
   const closeColorPicker = () => {
     if (showColorPicker) {
       setShowColorPicker(false);
     }
   };
-
-  // const [productState, setProductState] = useState<any>([]);
-  // const onChangeStateProduct = useCallback(
-  //   (filedName: string, value: any) => {
-  //     setProductState((prev) => {
-  //       return {
-  //         ...prev,
-  //         [filedName]: value,
-  //       };
-  //     });
-  //   },
-  //   [productState]
-  // );
 
   const createNewProduct = useCallback(async () => {
     const res = await callApi(
@@ -131,7 +127,7 @@ const useSettings = ({
         deliveryTime: productState?.deliveryTime,
         startingPrice: productState?.startingPrice,
         additionPrice: productState?.additionPrice,
-        noteColor: productState?.noteColor,
+        noteColor: noteColor,
         textColor: color,
         productSKUId: productState?.productSKUId?.id,
         templateId: productState?.templateId?.id,
@@ -166,7 +162,7 @@ const useSettings = ({
         deliveryTime: productState?.deliveryTime,
         startingPrice: productState?.startingPrice,
         additionPrice: productState?.additionPrice,
-        noteColor: productState?.noteColor,
+        noteColor: noteColor,
         textColor: color,
         productSKUId: productState?.productSKUId?.id,
         templateId: productState?.templateId?.id,
@@ -196,13 +192,17 @@ const useSettings = ({
     isProductSKU,
     color,
     showColorPicker,
+    showColorPickerForNoteColor,
     productState,
     onChangeStateProduct,
+    noteColor,
+    handleNoteColorChange,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,
     createNewProductSKU,
     toggleColorPicker,
+    toggleColorPickerForNoteColor,
     closeColorPicker,
     handleColorChange,
     createNewProduct,

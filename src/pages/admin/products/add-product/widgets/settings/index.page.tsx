@@ -20,12 +20,15 @@ export default function SettingsWidget({
     isProductSKU,
     color,
     showColorPicker,
+    showColorPickerForNoteColor,
+    noteColor,
+    handleNoteColorChange,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,
     createNewProductSKU,
     toggleColorPicker,
-    closeColorPicker,
+    toggleColorPickerForNoteColor,
     handleColorChange,
     createNewProduct,
     createNewProductAndGoToParameterList,
@@ -86,7 +89,7 @@ export default function SettingsWidget({
               <GoMakeAutoComplate
                 options={allProductSKU}
                 placeholder={
-                  defultProductSKU
+                  defultProductSKU?.length > 0
                     ? defultProductSKU[0]?.name
                     : t("products.addProduct.admin.productSKU")
                 }
@@ -105,20 +108,22 @@ export default function SettingsWidget({
             {t("products.addProduct.admin.pricingType")}
           </div>
           <div style={{ width: "100%" }}>
-            <GoMakeAutoComplate
-              options={allTemplate}
-              placeholder={
-                defultTemplate
-                  ? defultTemplate[0]?.name
-                  : t("products.addProduct.admin.pricingType")
-              }
-              style={clasess.dropDownListStyle}
-              getOptionLabel={(option: any) => option.name}
-              onChange={(e: any, value: any) => {
-                onChangeStateProduct("templateId", value);
-              }}
-              value={productState?.templateId}
-            />
+            {allTemplate && (
+              <GoMakeAutoComplate
+                options={allTemplate}
+                placeholder={
+                  defultTemplate?.length > 0
+                    ? defultTemplate[0]?.name
+                    : t("products.addProduct.admin.pricingType")
+                }
+                style={clasess.dropDownListStyle}
+                getOptionLabel={(option: any) => option.name}
+                onChange={(e: any, value: any) => {
+                  onChangeStateProduct("templateId", value);
+                }}
+                value={productState?.templateId}
+              />
+            )}
           </div>
         </div>
         <div style={clasess.itemOnFirstContainer}>
@@ -136,7 +141,7 @@ export default function SettingsWidget({
             />
           </div>
         </div>
-        <div style={clasess.itemOnFirstContainer}>
+        <div style={clasess.itemGropupsContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.groups")}
           </div>
@@ -151,7 +156,6 @@ export default function SettingsWidget({
                 onChange={(e: any, value: any) => {
                   onChangeStateProduct("groups", value);
                 }}
-                value={productState?.groups}
               />
             )}
           </div>
@@ -165,16 +169,25 @@ export default function SettingsWidget({
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.noteColor")}
           </div>
-          <div>
+          <div onClick={toggleColorPickerForNoteColor}>
             <GomakeTextInput
               style={clasess.textInputStyle}
-              placeholder={t("products.addProduct.admin.noteColor")}
-              onChange={(e: any) => {
-                onChangeStateProduct("noteColor", e.target.value);
-              }}
-              value={productState?.noteColor}
+              placeholder={t("products.addProduct.admin.textColor")}
+              disabled={true}
+              value={productState?.textColor || noteColor}
             />
           </div>
+          <div
+            onClick={toggleColorPickerForNoteColor}
+            style={{
+              width: 20,
+              height: 20,
+              backgroundColor: productState?.textColor || noteColor,
+              position: "absolute",
+              right: 15,
+              bottom: 11,
+            }}
+          />
         </div>
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
@@ -203,6 +216,9 @@ export default function SettingsWidget({
       </div>
       {showColorPicker && (
         <ColorPicker color={color} onChange={handleColorChange} />
+      )}
+      {showColorPickerForNoteColor && (
+        <ColorPicker color={noteColor} onChange={handleNoteColorChange} />
       )}
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.graphicsRequired")}
