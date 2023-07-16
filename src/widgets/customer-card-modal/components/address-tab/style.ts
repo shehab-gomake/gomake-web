@@ -7,16 +7,6 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
 
-      inputStyle: {
-        border: "none",
-        borderBottom: "1px solid black",
-        borderBottomColor: "#2E3092",
-        display: "inline-block",
-        boxShadow: "none",
-        outline: '1px solid white',
-        ...FONT_FAMILY.Lexend(500, 14),
-        color: "#8283BE",
-      },
 
       headersStyle: {
         fontFamily: "Outfit",
@@ -27,6 +17,28 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
       },
 
+      headerStyle: {
+        color: "var(--primary-900, #090A1D)",
+        fontFamily: "Lexend",
+        fontSize: "14px",
+        fontStyle: "normal",
+        fontWeight: 520,
+        lineHeight: "normal",
+      },
+
+      inputStyle: {
+        width: "180px",
+        height: "40px",
+        flexShrink: 0,
+        borderRadius: "4px",
+        background: "#FFF",
+        boxShadow: "0px 4px 60px 0px #00000014",
+        border: "none",
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: "#8283BE",
+      },
+
+
       autoButtonStyle: {
         width: convertWidthToVW(50),
         height: convertHeightToVH(30),
@@ -36,9 +48,39 @@ const useStyle = () => {
       },
 
       autoComplateStyle: {
-        width: convertWidthToVW(100),
-        height: convertHeightToVH(30),
+        display: "flex",
+        width: "180px",
+        height: "40px",
+        flexShrink: 0,
+        borderRadius: "4px",
+        background: "#FFF",
+        boxShadow: "0px 4px 60px 0px #00000014",
+        border: "none",
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: "#8283BE",
       },
+      
+      buttonsStyle: {
+        color: "var(--error-500, #D92C2C)",
+        fontFamily: 'Lexend',
+        fontSize: '14px',
+        fontStyle: 'normal',
+        fontWeight: 500,
+        lineHeight: 'normal',
+        border: "none",
+        background: "#FFF",
+        marginLeft: "7px",
+      },
+
+      switchHeaderStyle: {
+        color: "var(--primary-900, #090A1D)",
+        fontFamily: "Lexend",
+        fontSize: "12px",
+        fontStyle: "regular",
+        fontWeight: 400,
+        lineHeight: "normal",
+      },
+
 
     };
   }, []);

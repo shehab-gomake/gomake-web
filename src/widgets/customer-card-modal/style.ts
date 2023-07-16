@@ -18,7 +18,7 @@ const useStyle = () => {
         backgroundColor: "#F135A3",
       },
 
-      insideStyle: { width: "64%", height: "93%", maxWidth: "1240px", paddingLeft: "32px", paddingRight: "48px", paddingTop: "27px", paddingBottom: "27px", background: "#FDFDFD" },
+      insideStyle: { width: "64%", height: "93%", maxWidth: "1240px",  maxHeight: "1007px", paddingLeft: "32px", paddingRight: "48px", paddingTop: "27px", paddingBottom: "27px", background: "#FDFDFD" },
 
       subTitleStyle: {
         width: "113px",
@@ -50,9 +50,6 @@ const useStyle = () => {
         border: "none",
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#8283BE",
-
-
-
       },
 
       inputStyle: {
@@ -74,7 +71,19 @@ const useStyle = () => {
         fontStyle: "normal",
         fontWeight: 520,
         lineHeight: "normal",
-        
+      },
+
+      buttonsStyle: {
+        color: "var(--primary-500, #2E3092)",
+        fontFamily: "Lexend",
+        fontSize: "14px",
+        fontStyle: "normal",
+        fontWeight: 500,
+        lineHeight: "normal",
+        letterSpacing: "-0.14px",
+        border: "none",
+        background: "#FFF", 
+        marginLeft: "7px",
       },
 
       headersStyle: {
@@ -136,6 +145,7 @@ const useStyle = () => {
         width: convertWidthToVW(75),
         height: convertHeightToVH(30),
         marginRight: convertWidthToVW(1),
+        marginTop: convertWidthToVW(200),
       },
 
       updateButtonStyle: {

@@ -1,11 +1,10 @@
 import * as React from "react";
 import { useStyle } from "./style";
 import { HeaderFilter } from "./header-filter";
-import { GomakePrimaryButton } from "@/components";
-import { t } from "i18next";
-import { Col, Container, Row } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useTranslation } from "react-i18next";
+import { RemoveIcon } from "@/components/icons/icons";
+import { Col, Row } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 const ContactForm = ({ contact, onDelete }: any) => {
@@ -22,58 +21,63 @@ const ContactForm = ({ contact, onDelete }: any) => {
     );
 
     return (
-        <div style={{ width: "75%" ,marginBottom: '30px' }}>
-            <Row  style={{  marginBottom: '8px'}}>
-                <Col>
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.firstName")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
+        <div >
+            <Row style={{ marginBottom: '24px', marginTop: '14px' }}>
+            <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.firstName")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col>
-                <Col >
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.lastName")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
+                <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.lastName")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col>
-                <Col>
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.title")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
+                <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.title")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col>
-                <Col >
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.role")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
+                <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.role")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col>
-                <Col>
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.address")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
-                </Col>
-                <Col >
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.phone1")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
+                <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.address")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col>
             </Row>
-            <Row >
-                <Col>
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.phone2")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
+            <Row style={{ marginBottom: '24px' }} >
+            <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.phone1")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col>
-                <Col>
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.mobile")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
+                <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.phone2")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col>
-                <Col>
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.fax")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
+                <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.mobile")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col>
-                <Col>
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.email")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
+                <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.fax")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col>
-                <Col>
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.defaultInDocument")}</h3>
-                    <HeaderFilter  setAllOptions={DocumentsOptions} style={clasess.autoComplateStyle}></HeaderFilter>
-                </Col>
-                <Col>
-                    <GomakePrimaryButton style={clasess.autoButtonStyle} onClick={() => onDelete(contact.index)}>{t("customers.buttons.delete")}</GomakePrimaryButton>
+                <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.email")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col>
             </Row>
+            <Row style={{ marginBottom: '24px' }} >
+                <Col md={3} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.defaultInDocument")}</h3>
+                    <HeaderFilter setAllOptions={DocumentsOptions} style={clasess.autoComplateStyle} setPlaceholder="placeholder"></HeaderFilter>
+                </Col>
+                <Col >
+                    <a style={{ display: "flex", marginTop: "24px", justifyContent: 'flex-start' }} onClick={() => onDelete(contact.index)} >
+                        <RemoveIcon></RemoveIcon>
+                        <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
+                    </a>
+                </Col>
+            </Row >
         </div>
     );
 };

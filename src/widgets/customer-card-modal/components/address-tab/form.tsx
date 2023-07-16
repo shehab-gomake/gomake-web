@@ -1,11 +1,13 @@
 import * as React from "react";
 import { useStyle } from "./style";
 import { HeaderFilter } from "./header-filter";
-import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components";
+import { RemoveIcon } from "@/components/icons/icons";
 import { t } from "i18next";
 import { Col, Row } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState, useCallback } from 'react';
+import { AntSwitch } from "../switch-component";
+
 
 
 const AddressForm = ({ address, onDelete }: any) => {
@@ -68,69 +70,65 @@ const AddressForm = ({ address, onDelete }: any) => {
 
 
     return (
-        <div style={{ marginBottom: '30px', width: "75%" }} >
-            <Row style={{ marginBottom: '8px' }} >
-                <Col sm>
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.addressId")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
+        <div  >
+            <Row style={{ marginBottom: '24px', marginTop: '14px' }} >
+                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.addressId")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col >
-                <Col>
-                    <GoMakeAutoComplate
-                        options={citiesNames}
-                        style={clasess.autoComplateStyle}
-                        placeholder={t("customers.selectAgent")}
-                        onChange={handleCityChange}
-                        value={selectedCity}
-                    /></Col>
-
-                <Col>
-                    <GoMakeAutoComplate
-                        options={dooo}
-                        style={clasess.autoComplateStyle}
-                        placeholder={t("tjrbeee")}
-                    /></Col>
-                <Col sm >
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.city")}</h3>
-                    <HeaderFilter setAllOptions={citiesNames}
-                        style={clasess.autoComplateStyle} value={selectedCity} onChange={handleCityChange} ></HeaderFilter>
+                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.city")}</h3>
+                    <HeaderFilter setAllOptions={citiesNames} style={clasess.autoComplateStyle} value={selectedCity} onChange={handleCityChange} setPlaceholder="placeholder" ></HeaderFilter>
                 </Col>
-                <Col sm>
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.street")}</h3>
-                    <HeaderFilter setAllOptions={dooo} style={clasess.autoComplateStyle}></HeaderFilter>
+                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.street")}</h3>
+                    <HeaderFilter setAllOptions={dooo} style={clasess.autoComplateStyle} setPlaceholder="placeholder" ></HeaderFilter>
                 </Col>
-                <Col sm>
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.home")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
+                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.home")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col>
-                <Col sm>
-
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.entrance")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
+                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.entrance")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col >
-                <Col sm >
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.phone1")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
+            </Row>
+            <Row style={{ marginBottom: '24px' }}>
+                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headersStyle} >{t("customers.modal.floor")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                </Col>
+                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headersStyle} >{t("customers.modal.apartment")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                </Col>
+                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headersStyle} >{t("customers.modal.postalCode")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                </Col>
+                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headersStyle} >{t("customers.modal.po")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                </Col>
+                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <h3 style={clasess.headersStyle} >{t("customers.modal.country")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col>
             </Row>
-            <Row  >
-                <Col sm={2}>
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.apartment")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
+            <Row>
+                <Col md={3} style={{ display: "flex", flexDirection: "column", gap: "5px" }} >
+                    <h3 style={clasess.headerStyle} >{t("customers.modal.remarks")}</h3>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                    <a style={{ display: "flex", flexDirection: "row", gap: "8px"}} >
+                        <AntSwitch  inputProps={{ 'aria-label': 'ant design' }} />
+                        <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.default")}</h3>
+                    </a>
                 </Col>
-                <Col sm={2} >
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.postalCode")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
-                </Col>
-                <Col sm={2} >
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.country")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
-                </Col>
-                <Col sm={2}>
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.email")}</h3>
-                    <input style={clasess.inputStyle} type="text" />
-                </Col>
-                <Col sm={4} >
-                    <GomakePrimaryButton style={clasess.autoButtonStyle} onClick={() => onDelete(address.index)}>{t("customers.buttons.delete")}</GomakePrimaryButton>
+                <Col  >
+                    <a style={{ display: "flex", marginTop: "24px", justifyContent: 'flex-start' }} onClick={() => onDelete(address.index)} >
+                        <RemoveIcon></RemoveIcon>
+                        <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
+                    </a>
                 </Col>
             </Row>
         </div>
