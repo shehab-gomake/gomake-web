@@ -13,6 +13,7 @@ const useSettings = ({
   productState,
   onChangeStateProduct,
 }) => {
+  console.log("productState", productState);
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
@@ -121,8 +122,8 @@ const useSettings = ({
         id: RandomId,
         name: productState?.name,
         details: productState?.details,
-        groups: productState?.groups.map((item) => {
-          return item.id;
+        groups: productState?.groups?.map((item) => {
+          return item;
         }),
         deliveryTime: productState?.deliveryTime,
         startingPrice: productState?.startingPrice,
@@ -156,8 +157,8 @@ const useSettings = ({
         id: RandomId,
         name: productState?.name,
         details: productState?.details,
-        groups: productState?.groups.map((item) => {
-          return item.id;
+        groups: productState?.groups?.map((item) => {
+          return item;
         }),
         deliveryTime: productState?.deliveryTime,
         startingPrice: productState?.startingPrice,

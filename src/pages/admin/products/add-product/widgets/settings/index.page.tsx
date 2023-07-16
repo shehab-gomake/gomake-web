@@ -6,6 +6,7 @@ import { useSettings } from "./use-settings";
 import { useTranslation } from "react-i18next";
 import { AddProductSkuModal } from "./modals/add-contact-modal";
 import ColorPicker from "react-pick-color";
+import { group } from "console";
 export default function SettingsWidget({
   onClickParametersTab,
   productState,
@@ -98,7 +99,6 @@ export default function SettingsWidget({
                 onChange={(e: any, value: any) => {
                   onChangeStateProduct("productSKUId", value);
                 }}
-                // value={defultProductSKU[0]}
               />
             )}
           </div>
@@ -108,7 +108,7 @@ export default function SettingsWidget({
             {t("products.addProduct.admin.pricingType")}
           </div>
           <div style={{ width: "100%" }}>
-            {allTemplate && (
+            {allTemplate && defultTemplate && (
               <GoMakeAutoComplate
                 options={allTemplate}
                 placeholder={
@@ -121,7 +121,6 @@ export default function SettingsWidget({
                 onChange={(e: any, value: any) => {
                   onChangeStateProduct("templateId", value);
                 }}
-                value={productState?.templateId}
               />
             )}
           </div>
@@ -151,11 +150,23 @@ export default function SettingsWidget({
                 options={allGroups}
                 placeholder={t("products.addProduct.admin.groups")}
                 style={clasess.multiSelectStyle}
-                getOptionLabel={(option: any) => option.name}
                 multiple
                 onChange={(e: any, value: any) => {
-                  onChangeStateProduct("groups", value);
+                  onChangeStateProduct(
+                    "groups",
+                    value?.map((item: any) => item?.id)
+                  );
+                  console.log("groupsgroupsgroups", value);
                 }}
+                value={productState?.groups?.map((item: any) => {
+                  const group = allGroups?.find(
+                    (group: any) => group?.id === item
+                  );
+                  return {
+                    label: group?.label,
+                    id: group?.id,
+                  };
+                })}
               />
             )}
           </div>
