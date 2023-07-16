@@ -6,11 +6,11 @@ import { useSettings } from "./use-settings";
 import { useTranslation } from "react-i18next";
 import { AddProductSkuModal } from "./modals/add-contact-modal";
 import ColorPicker from "react-pick-color";
-import { group } from "console";
 export default function SettingsWidget({
   onClickParametersTab,
   productState,
   onChangeStateProduct,
+  isUpdate = false,
 }) {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -19,20 +19,17 @@ export default function SettingsWidget({
     allTemplate,
     allGroups,
     isProductSKU,
-    color,
     showColorPicker,
     showColorPickerForNoteColor,
-    noteColor,
-    handleNoteColorChange,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,
     createNewProductSKU,
     toggleColorPicker,
     toggleColorPickerForNoteColor,
-    handleColorChange,
     createNewProduct,
     createNewProductAndGoToParameterList,
+    updatedProduct,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
   const defultProductSKU = allProductSKU?.filter(
     (item) => item.id === productState?.productSKUId
@@ -156,7 +153,6 @@ export default function SettingsWidget({
                     "groups",
                     value?.map((item: any) => item?.id)
                   );
-                  console.log("groupsgroupsgroups", value);
                 }}
                 value={productState?.groups?.map((item: any) => {
                   const group = allGroups?.find(
@@ -185,7 +181,7 @@ export default function SettingsWidget({
               style={clasess.textInputStyle}
               placeholder={t("products.addProduct.admin.textColor")}
               disabled={true}
-              value={productState?.textColor || noteColor}
+              value={productState?.noteColor}
             />
           </div>
           <div
@@ -193,7 +189,7 @@ export default function SettingsWidget({
             style={{
               width: 20,
               height: 20,
-              backgroundColor: productState?.textColor || noteColor,
+              backgroundColor: productState?.noteColor,
               position: "absolute",
               right: 15,
               bottom: 11,
@@ -209,7 +205,7 @@ export default function SettingsWidget({
               style={clasess.textInputStyle}
               placeholder={t("products.addProduct.admin.textColor")}
               disabled={true}
-              value={productState?.textColor || color}
+              value={productState?.textColor}
             />
           </div>
           <div
@@ -217,7 +213,7 @@ export default function SettingsWidget({
             style={{
               width: 20,
               height: 20,
-              backgroundColor: productState?.textColor || color,
+              backgroundColor: productState?.textColor,
               position: "absolute",
               right: 15,
               bottom: 11,
@@ -226,10 +222,20 @@ export default function SettingsWidget({
         </div>
       </div>
       {showColorPicker && (
-        <ColorPicker color={color} onChange={handleColorChange} />
+        <ColorPicker
+          color={productState?.textColor}
+          onChange={(value: any) => {
+            onChangeStateProduct("textColor", value?.hex);
+          }}
+        />
       )}
       {showColorPickerForNoteColor && (
-        <ColorPicker color={noteColor} onChange={handleNoteColorChange} />
+        <ColorPicker
+          color={productState?.noteColor}
+          onChange={(value: any) => {
+            onChangeStateProduct("noteColor", value?.hex);
+          }}
+        />
       )}
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.graphicsRequired")}
@@ -266,17 +272,26 @@ export default function SettingsWidget({
           </div>
         </div>
       </div>
-      <div style={clasess.btnsContainer}>
-        <div
-          style={clasess.goToListBtn}
-          onClick={createNewProductAndGoToParameterList}
-        >
-          {t("products.addProduct.admin.addGoToList")}
+      {isUpdate ? (
+        <div style={clasess.btnsContainer}>
+          <div style={clasess.addNwBtn} onClick={updatedProduct}>
+            {t("products.addProduct.admin.updateNewProduct")}
+          </div>
         </div>
-        <div style={clasess.addNwBtn} onClick={createNewProduct}>
-          {t("products.addProduct.admin.addNewProduct")}
+      ) : (
+        <div style={clasess.btnsContainer}>
+          <div
+            style={clasess.goToListBtn}
+            onClick={createNewProductAndGoToParameterList}
+          >
+            {t("products.addProduct.admin.addGoToList")}
+          </div>
+          <div style={clasess.addNwBtn} onClick={createNewProduct}>
+            {t("products.addProduct.admin.addNewProduct")}
+          </div>
         </div>
-      </div>
+      )}
+
       <AddProductSkuModal
         openModal={isProductSKU}
         modalTitle={t("products.addProduct.admin.modalProductSKUTitle")}

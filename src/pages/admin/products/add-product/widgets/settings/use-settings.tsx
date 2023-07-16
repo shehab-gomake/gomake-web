@@ -4,6 +4,7 @@ import {
   getAllTemplets,
   getAlltProductSKU,
 } from "@/services/hooks";
+import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { v4 as uuidv4 } from "uuid";
@@ -16,6 +17,7 @@ const useSettings = ({
   console.log("productState", productState);
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
+  const router = useRouter();
   const { t } = useTranslation();
   const { setSnackbarStateValue } = useSnackBar();
   const [RandomId, setRandomId] = useState();
@@ -90,18 +92,18 @@ const useSettings = ({
     }
   }, [productSKU]);
 
-  const [color, setColor] = useState("#000");
-  const [noteColor, setNoteColor] = useState("#000");
+  // const [color, setColor] = useState("#000");
+  // const [noteColor, setNoteColor] = useState("#000");
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showColorPickerForNoteColor, setShowColorPickerForNoteColor] =
     useState(false);
-  const handleColorChange = (color) => {
-    setColor(color.hex);
-  };
+  // const handleColorChange = (color) => {
+  //   setColor(color.hex);
+  // };
 
-  const handleNoteColorChange = (color) => {
-    setNoteColor(color.hex);
-  };
+  // const handleNoteColorChange = (color) => {
+  //   setNoteColor(color.hex);
+  // };
   const toggleColorPicker = () => {
     setShowColorPicker(!showColorPicker);
   };
@@ -128,8 +130,8 @@ const useSettings = ({
         deliveryTime: productState?.deliveryTime,
         startingPrice: productState?.startingPrice,
         additionPrice: productState?.additionPrice,
-        noteColor: noteColor,
-        textColor: color,
+        noteColor: productState?.noteColor,
+        textColor: productState?.textColor,
         productSKUId: productState?.productSKUId?.id,
         templateId: productState?.templateId?.id,
       }
@@ -148,7 +150,7 @@ const useSettings = ({
         type: "error",
       });
     }
-  }, [productState, RandomId, color]);
+  }, [productState, RandomId]);
   const createNewProductAndGoToParameterList = useCallback(async () => {
     const res = await callApi(
       "POST",
@@ -163,8 +165,8 @@ const useSettings = ({
         deliveryTime: productState?.deliveryTime,
         startingPrice: productState?.startingPrice,
         additionPrice: productState?.additionPrice,
-        noteColor: noteColor,
-        textColor: color,
+        noteColor: productState?.noteColor,
+        textColor: productState?.textColor,
         productSKUId: productState?.productSKUId?.id,
         templateId: productState?.templateId?.id,
       }
@@ -184,20 +186,60 @@ const useSettings = ({
         type: "error",
       });
     }
-  }, [productState, RandomId, color]);
+  }, [productState, RandomId]);
+
+  const updatedProduct = useCallback(async () => {
+    const res = await callApi(
+      "PUT",
+      `/v1/printhouse-config/products/update-product`,
+      {
+        id: router?.query?.productId,
+        name: productState?.name,
+        details: productState?.details,
+        groups: productState?.groups?.map((item) => {
+          return item;
+        }),
+        deliveryTime: productState?.deliveryTime,
+        startingPrice: productState?.startingPrice,
+        additionPrice: productState?.additionPrice,
+        noteColor: productState?.noteColor,
+        textColor: productState?.textColor,
+        productSKUId:
+          typeof productState?.productSKUId === "string"
+            ? productState?.productSKUId
+            : productState?.productSKUId?.id,
+        templateId:
+          typeof productState?.templateId === "string"
+            ? productState?.templateId
+            : productState?.templateId?.id,
+        status: true,
+        sections: productState?.sections,
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedfailed"),
+        type: "error",
+      });
+    }
+  }, [productState, RandomId]);
   return {
     t,
     allProductSKU,
     allTemplate,
     allGroups,
     isProductSKU,
-    color,
     showColorPicker,
     showColorPickerForNoteColor,
     productState,
     onChangeStateProduct,
-    noteColor,
-    handleNoteColorChange,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,
@@ -205,9 +247,9 @@ const useSettings = ({
     toggleColorPicker,
     toggleColorPickerForNoteColor,
     closeColorPicker,
-    handleColorChange,
     createNewProduct,
     createNewProductAndGoToParameterList,
+    updatedProduct,
   };
 };
 

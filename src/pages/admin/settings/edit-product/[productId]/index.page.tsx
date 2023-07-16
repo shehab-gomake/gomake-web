@@ -51,6 +51,7 @@ export default function EditProduct() {
             onClickParametersTab={onClickParametersTab}
             onChangeStateProduct={onChangeStateProduct}
             productState={productState}
+            isUpdate={true}
           />
         ) : activeTab === "Parameters" ? (
           <ParameterWidget />

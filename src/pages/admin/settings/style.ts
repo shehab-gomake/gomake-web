@@ -109,7 +109,7 @@ const useStyle = () => {
       searchInputContainer: {
         width: convertWidthToVW(375),
         backgroundColor: "#FFFFFF",
-        boxShadow: "0px 4px 40px 0px rgba(0, 0, 0, 0.08)",
+        // boxShadow: "0px 4px 40px 0px rgba(0, 0, 0, 0.08)",
       },
       iconStyle: {
         position: "absolute" as "absolute",

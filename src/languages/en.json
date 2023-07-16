@@ -1300,7 +1300,8 @@
         "enterName": "Enter Name",
         "enterCode": "Enter Code",
         "addNewProduct": "Add new product",
-        "addGoToList": "Add and go to the list of parameters"
+        "addGoToList": "Add and go to the list of parameters",
+        "updateNewProduct": "Update product"
       }
     },
     "parameters": {
