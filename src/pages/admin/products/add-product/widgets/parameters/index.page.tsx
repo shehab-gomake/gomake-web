@@ -1,6 +1,3 @@
-import { AdminAuthLayout } from "@/layouts";
-import { HeaderTitle } from "@/widgets";
-
 import { useStyle } from "./style";
 import {
   GoMakeAutoComplate,
@@ -21,17 +18,34 @@ export default function ParameterWidget() {
     handleTabClick,
     handleNextClick,
     handlePreviousClick,
+    updatedProductParameterHidden,
+    updatedProductParameteRequierd,
+    updatedProductParameteName,
+    setChangeName,
+    setChangeDefaultValue,
+    updatedProductParameteDefaultValue,
+    updatedProductParameteDefaultValueForSwitch,
+    updatedProductParameterValuesConfigsHidden,
+    updatedProductParameterValuesConfigsDefault,
     activeIndex,
     template,
   } = useAddProduct();
-  const _renderParameterType = (parameter) => {
+
+  const _renderParameterType = (sectionId, subSectionId, parameter) => {
     if (parameter?.parameterType === 1) {
       return (
         <GomakeTextInput
           style={clasess.textInputStyle}
           defaultValue={parameter.defaultValue}
           placeholder={parameter.name}
-          // onChange={(e: any) => onChangeData(e.target.value)}
+          onChange={(e: any) => setChangeDefaultValue(e.target.value)}
+          onBlur={() =>
+            updatedProductParameteDefaultValue(
+              sectionId,
+              subSectionId,
+              parameter
+            )
+          }
           type="number"
         />
       );
@@ -41,8 +55,15 @@ export default function ParameterWidget() {
           style={clasess.textInputStyle}
           defaultValue={parameter.defaultValue}
           placeholder={parameter.name}
-          // onChange={(e: any) => onChangeData(e.target.value)}
+          onChange={(e: any) => setChangeDefaultValue(e.target.value)}
           type="text"
+          onBlur={() =>
+            updatedProductParameteDefaultValue(
+              sectionId,
+              subSectionId,
+              parameter
+            )
+          }
         />
       );
     } else if (parameter?.parameterType === 0) {
@@ -52,15 +73,71 @@ export default function ParameterWidget() {
           placeholder={parameter.name}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
+          onChange={(e: any, value: any) => {
+            updatedProductParameterValuesConfigsDefault(
+              sectionId,
+              subSectionId,
+              parameter,
+              value
+            );
+          }}
+          renderOption={(props: any, option: any) => {
+            return (
+              <div style={clasess.optionsContainer}>
+                <div {...props} style={{ width: "100%" }}>
+                  {option.updateName}
+                </div>
+                <div>
+                  {option.isHidden ? (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <HiddenIcon />
+                    </div>
+                  ) : (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <NotHiddenIcon />
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          }}
+          // onChange={(e, v) =>
+          //   handleAutocompleteChange(e, v, parameter?.valuesConfigs)
+          // }
         />
       );
     } else if (parameter?.parameterType === 3) {
       return (
         <SecondSwitch
-        // checked={parameter?.IsDefault}
-        // onChange={(a: any, value: any) => {
-        //   onChangeSupplierToDefault(option, value);
-        // }}
+          checked={parameter?.defaultValue}
+          onChange={(a: any, value: any) => {
+            updatedProductParameteDefaultValueForSwitch(
+              sectionId,
+              subSectionId,
+              parameter,
+              value
+            );
+          }}
         />
       );
     } else if (parameter?.parameterType === 4) {
@@ -128,17 +205,71 @@ export default function ParameterWidget() {
                                           style={clasess.textInputWithoutStyle}
                                           defaultValue={parameter?.name}
                                           placeholder={parameter?.name}
+                                          onChange={(e: any) =>
+                                            setChangeName(e.target.value)
+                                          }
+                                          onBlur={() =>
+                                            updatedProductParameteName(
+                                              section?.id,
+                                              subSection?.id,
+                                              parameter
+                                            )
+                                          }
                                         />
                                       </div>
                                       {parameter?.isHidden ? (
-                                        <HiddenIcon />
+                                        <div
+                                          style={{ cursor: "pointer" }}
+                                          onClick={() =>
+                                            updatedProductParameterHidden(
+                                              section?.id,
+                                              subSection?.id,
+                                              parameter
+                                            )
+                                          }
+                                        >
+                                          <HiddenIcon />
+                                        </div>
                                       ) : (
-                                        <NotHiddenIcon />
+                                        <div
+                                          style={{ cursor: "pointer" }}
+                                          onClick={() =>
+                                            updatedProductParameterHidden(
+                                              section?.id,
+                                              subSection?.id,
+                                              parameter
+                                            )
+                                          }
+                                        >
+                                          <NotHiddenIcon />
+                                        </div>
                                       )}
                                       {parameter?.isRequired ? (
-                                        <RequierdIcon />
+                                        <div
+                                          style={{ cursor: "pointer" }}
+                                          onClick={() =>
+                                            updatedProductParameteRequierd(
+                                              section?.id,
+                                              subSection?.id,
+                                              parameter
+                                            )
+                                          }
+                                        >
+                                          <RequierdIcon />
+                                        </div>
                                       ) : (
-                                        <NotRequierdIcon />
+                                        <div
+                                          style={{ cursor: "pointer" }}
+                                          onClick={() =>
+                                            updatedProductParameteRequierd(
+                                              section?.id,
+                                              subSection?.id,
+                                              parameter
+                                            )
+                                          }
+                                        >
+                                          <NotRequierdIcon />
+                                        </div>
                                       )}
                                     </div>
                                     <div
@@ -146,7 +277,11 @@ export default function ParameterWidget() {
                                         clasess.renderParameterTypeContainer
                                       }
                                     >
-                                      {_renderParameterType(parameter)}
+                                      {_renderParameterType(
+                                        section?.id,
+                                        subSection?.id,
+                                        parameter
+                                      )}
                                     </div>
                                   </div>
                                 </div>

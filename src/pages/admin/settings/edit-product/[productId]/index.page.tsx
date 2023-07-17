@@ -54,7 +54,10 @@ export default function EditProduct() {
             isUpdate={true}
           />
         ) : activeTab === "Parameters" ? (
-          <ParameterWidget />
+          <ParameterWidget
+          // onChangeStateProduct={onChangeStateProduct}
+          // productState={productState}
+          />
         ) : (
           <GraphicWidget />
         )}

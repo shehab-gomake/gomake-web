@@ -1,4 +1,4 @@
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
 
@@ -10,9 +10,13 @@ import { useRouter } from "next/router";
 
 const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
+  const { setSnackbarStateValue } = useSnackBar();
+
   const router = useRouter();
   const { t } = useTranslation();
   const [productState, setProductState] = useState<any>([]);
+  const [changeName, setChangeName] = useState("");
+  const [changeDefaultValue, setChangeDefaultValue] = useState("");
   const onChangeStateProduct = useCallback(
     (filedName: string, value: any) => {
       setProductState((prev) => {
@@ -79,11 +83,308 @@ const useAddProduct = () => {
       });
       setProductState(data);
     }
-  }, [router]);
+  }, [router, template]);
 
   useEffect(() => {
     getProductById();
   }, []);
+
+  const updatedProductParameterHidden = useCallback(
+    async (sectionId: string, subSectionId: string, parameter: any) => {
+      const res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/products/update-product-parameter`,
+        {
+          productId: router?.query?.productId,
+          sectionId: sectionId,
+          subSectionId: subSectionId,
+          productParameterType: 1,
+          parameter: {
+            id: parameter?.id,
+            name: parameter?.name,
+            defaultValue: parameter?.defaultValue,
+            parameterType: parameter?.parameterType,
+            isHidden: !parameter?.isHidden,
+            isRequired: parameter?.isRequired,
+            valuesConfigs: parameter?.valuesConfigs,
+          },
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getProductById();
+
+        // router.reload();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [router]
+  );
+
+  const updatedProductParameteRequierd = useCallback(
+    async (sectionId: string, subSectionId: string, parameter: any) => {
+      const res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/products/update-product-parameter`,
+        {
+          productId: router?.query?.productId,
+          sectionId: sectionId,
+          subSectionId: subSectionId,
+          productParameterType: 1,
+          parameter: {
+            id: parameter?.id,
+            name: parameter?.name,
+            defaultValue: parameter?.defaultValue,
+            parameterType: parameter?.parameterType,
+            isHidden: parameter?.isHidden,
+            isRequired: !parameter?.isRequired,
+            valuesConfigs: parameter?.valuesConfigs,
+          },
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getProductById();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [router]
+  );
+  const updatedProductParameteName = useCallback(
+    async (sectionId: string, subSectionId: string, parameter: any) => {
+      const res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/products/update-product-parameter`,
+        {
+          productId: router?.query?.productId,
+          sectionId: sectionId,
+          subSectionId: subSectionId,
+          productParameterType: 1,
+          parameter: {
+            id: parameter?.id,
+            name: changeName,
+            defaultValue: parameter?.defaultValue,
+            parameterType: parameter?.parameterType,
+            isHidden: parameter?.isHidden,
+            isRequired: parameter?.isRequired,
+            valuesConfigs: parameter?.valuesConfigs,
+          },
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getProductById();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [router, changeName]
+  );
+  const updatedProductParameteDefaultValue = useCallback(
+    async (sectionId: string, subSectionId: string, parameter: any) => {
+      const res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/products/update-product-parameter`,
+        {
+          productId: router?.query?.productId,
+          sectionId: sectionId,
+          subSectionId: subSectionId,
+          productParameterType: 1,
+          parameter: {
+            id: parameter?.id,
+            name: parameter?.name,
+            defaultValue: changeDefaultValue,
+            parameterType: parameter?.parameterType,
+            isHidden: parameter?.isHidden,
+            isRequired: parameter?.isRequired,
+            valuesConfigs: parameter?.valuesConfigs,
+          },
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getProductById();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [router, changeDefaultValue]
+  );
+  const updatedProductParameteDefaultValueForSwitch = useCallback(
+    async (
+      sectionId: string,
+      subSectionId: string,
+      parameter: any,
+      value: boolean
+    ) => {
+      const res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/products/update-product-parameter`,
+        {
+          productId: router?.query?.productId,
+          sectionId: sectionId,
+          subSectionId: subSectionId,
+          productParameterType: 1,
+          parameter: {
+            id: parameter?.id,
+            name: parameter?.name,
+            defaultValue: value.toString(),
+            parameterType: parameter?.parameterType,
+            isHidden: parameter?.isHidden,
+            isRequired: parameter?.isRequired,
+            valuesConfigs: parameter?.valuesConfigs,
+          },
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getProductById();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [router]
+  );
+
+  const updatedProductParameterValuesConfigsHidden = useCallback(
+    async (sectionId: string, subSectionId: string, parameter: any, option) => {
+      let temp = [...parameter?.valuesConfigs];
+
+      let objectIdToUpdate = option?.id;
+
+      const updatedArray = temp.map((obj) => {
+        if (obj.id === objectIdToUpdate) {
+          return { ...obj, isHidden: !obj.isHidden };
+        }
+        return obj;
+      });
+      const res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/products/update-product-parameter`,
+        {
+          productId: router?.query?.productId,
+          sectionId: sectionId,
+          subSectionId: subSectionId,
+          productParameterType: 1,
+          parameter: {
+            id: parameter?.id,
+            name: parameter?.name,
+            defaultValue: parameter?.defaultValue,
+            parameterType: parameter?.parameterType,
+            isHidden: parameter?.isHidden,
+            isRequired: parameter?.isRequired,
+            valuesConfigs: updatedArray,
+          },
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getProductById();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [router]
+  );
+  const updatedProductParameterValuesConfigsDefault = useCallback(
+    async (sectionId: string, subSectionId: string, parameter: any, option) => {
+      let temp = [...parameter?.valuesConfigs];
+
+      let objectIdToUpdate = option?.id;
+
+      const updatedArray = temp.map((obj) => {
+        if (obj.id === objectIdToUpdate) {
+          return { ...obj, isDefault: true };
+        } else {
+          return { ...obj, isDefault: false };
+        }
+      });
+      const res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/products/update-product-parameter`,
+        {
+          productId: router?.query?.productId,
+          sectionId: sectionId,
+          subSectionId: subSectionId,
+          productParameterType: 1,
+          parameter: {
+            id: parameter?.id,
+            name: parameter?.name,
+            defaultValue: parameter?.defaultValue,
+            parameterType: parameter?.parameterType,
+            isHidden: parameter?.isHidden,
+            isRequired: parameter?.isRequired,
+            valuesConfigs: updatedArray,
+          },
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getProductById();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [router]
+  );
   return {
     t,
     handleTabClick,
@@ -91,6 +392,17 @@ const useAddProduct = () => {
     handlePreviousClick,
     onClickParametersTab,
     onChangeStateProduct,
+    updatedProductParameterHidden,
+    updatedProductParameteRequierd,
+    updatedProductParameteName,
+    setChangeName,
+    setChangeDefaultValue,
+    updatedProductParameteDefaultValue,
+    updatedProductParameteDefaultValueForSwitch,
+    updatedProductParameterValuesConfigsHidden,
+    updatedProductParameterValuesConfigsDefault,
+    changeDefaultValue,
+    changeName,
     productState,
     activeIndex,
     template,
