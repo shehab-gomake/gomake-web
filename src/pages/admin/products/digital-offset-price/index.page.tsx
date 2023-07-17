@@ -49,7 +49,6 @@ export default function Profits() {
       setExpanded(newExpanded ? panel : false);
     };
   const _renderParameterType = (parameter) => {
-    console.log("parameterparameter", parameter);
     if (parameter?.parameterType === 1) {
       return (
         <GomakeTextInput

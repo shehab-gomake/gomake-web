@@ -11,7 +11,6 @@ const getAndSetProducts = async (
     "/v1/printhouse-config/products/get-all-products",
     data
   );
-  console.log("resultresultresult", result);
   return returnResult(result, setState);
 };
 

@@ -1281,7 +1281,27 @@
     },
     "addProduct": {
       "admin": {
-        "title": "Add Product"
+        "title": "Add Product",
+        "editProduct": "Edit Product",
+        "productCategory": "Product category",
+        "productName": "Product name",
+        "details": "Details",
+        "productSKU": "Product SKU",
+        "pricingType": "Pricing type",
+        "deliveryTime": "Delivery time (days)",
+        "groups": "Groups",
+        "style": "Style",
+        "noteColor": "Note color",
+        "textColor": "Text color",
+        "graphicsRequired": "Graphics required",
+        "startingPrice": "Starting price",
+        "additionToType": "Addition to type",
+        "modalProductSKUTitle": "Add New Product SKU",
+        "enterName": "Enter Name",
+        "enterCode": "Enter Code",
+        "addNewProduct": "Add new product",
+        "addGoToList": "Add and go to the list of parameters",
+        "updateNewProduct": "Update product"
       }
     },
     "parameters": {
@@ -1313,6 +1333,24 @@
         "chooseShape": "Choose shape",
         "client": "Client",
         "quote": "Quote"
+      }
+    },
+    "productManagement": {
+      "admin": {
+        "title": "Product management",
+        "addProduct": "Add product",
+        "selectProduct": "Select product",
+        "cleanUp": "Clean up",
+        "search": "Search",
+        "productCode": "Product code",
+        "prouctName": "Product Name",
+        "mainProduct": "Main product",
+        "details": "Details",
+        "groups": "Groups",
+        "type": "Type",
+        "board": "Board",
+        "status": "Status",
+        "more": "More"
       }
     }
   },
