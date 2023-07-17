@@ -10,7 +10,7 @@ import { MachineLayout } from "@/widgets/machines/components/layout/machine-layo
 import { useAdminMachines } from "@/widgets/machines/hooks/use-admin-machines";
 import { useRouter } from "next/router";
 import { machineState } from "@/widgets/machines/state/machine-state";
-import { PrimaryButton } from "@/widgets/machines/components/buttons/primary-button";
+import {GomakePrimaryButton} from "@/components";
 
 const CustomerAddMachine = () => {
   const router = useRouter();
@@ -50,13 +50,13 @@ const CustomerAddMachine = () => {
       onSelect={onSelectMachine}
       title={"Choose machines"}
     >
-      <PrimaryButton
+      <GomakePrimaryButton
         disabled={!selectedMachine.id}
         style={{ height: 40 }}
         onClick={addPrintHouseMachine}
       >
         Add Machine
-      </PrimaryButton>
+      </GomakePrimaryButton>
     </SideList>
   );
   return (

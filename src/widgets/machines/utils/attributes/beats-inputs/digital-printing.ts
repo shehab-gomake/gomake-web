@@ -36,11 +36,11 @@ const digitalPrinting = (state: Record<string, any>) => {
                 },
                 {
                     name: "",
-                    label: "machineAttributes.coast",
+                    label: "machineAttributes.cost",
                     type: "text",
-                    placeholder: "machineAttributes.coast",
+                    placeholder: "machineAttributes.cost",
                     required: true,
-                    parameterKey: "coast",
+                    parameterKey: "cost",
                     options: []
                 },
             ]
