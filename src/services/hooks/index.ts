@@ -1,7 +1,7 @@
 export * from "./get-set-suppliers";
 export * from "./get-set-sheet-category";
 export * from "./get-set-lamination-sizes";
-export * from "./get-set-brace-sizes";
+export * from "./get-set-plats-sizes";
 export * from "./get-set-envelops-sizes";
 export * from "./get-set-kernels-sizes";
 export * from "./get-set-printing-materials-sizes";
@@ -25,3 +25,4 @@ export * from "./get-set-packings";
 export * from "./get-set-varnishs";
 export * from "./admin-side";
 export * from "./generate-calaculation-test-link";
+export * from "./cart-side";

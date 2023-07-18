@@ -2,145 +2,29 @@
 const rollDigitalPrinting = (state: Record<string, any>) => {
     return [
         {
-            name: "coatingUnitNumber",
+            name: "coatingUnit",
             label: "machineAttributes.coatingUnit",
-            type: "text",
+            type: "switch",
             placeholder: "machineAttributes.coatingUnit",
             required: true,
-            parameterKey: "coatingUnitNumber",
-            options: [],
+            parameterKey: "coatingUnit",
+            value: state?.attributes?.coatingUnit,
+            options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
             machineInputType: 'input',
-            value: state?.attributes?.coatingUnitNumber ? state?.attributes?.coatingUnitNumber : '',
-            isValid: !!state?.attributes?.coatingUnitNumber
+            isValid: true,
         },
         {
-            name: "coatingCost",
-            label: "machineAttributes.coatingCost",
+            name: "coatingUnitCost",
+            label: "machineAttributes.coatingUnitCost",
             type: "text",
-            placeholder: "machineAttributes.coatingCost",
-            required: true,
-            parameterKey: "coatingCost",
+            placeholder: "machineAttributes.coatingUnitCost",
+            required: state?.coatingUnitCost,
+            parameterKey: "coatingUnitCost",
             options: [],
+            disabled: !state?.attributes?.coatingUnit,
+            value: state?.attributes?.coatingUnit && state?.attributes?.coatingUnitCost ? state?.attributes?.coatingUnitCost : '',
             machineInputType: 'input',
-            value: state?.attributes?.coatingCost ? state?.attributes?.coatingCost : '',
-            isValid: !!state?.attributes?.coatingCost
-        },
-        {
-            name: 'machineAttributes.coatingBlanket',
-            parameterKey: 'coatingBlanket',
-            machineInputType: 'multiInput',
-            isValid: !!state?.attributes?.coatingBlanket?.length &&
-                !!state?.attributes?.coatingBlanket?.width ,
-            inputs: [
-                {
-                    name: "",
-                    label: "machineAttributes.length",
-                    type: "text",
-                    placeholder: "machineAttributes.length",
-                    required: true,
-                    parameterKey: "length",
-                    options: [],
-                    value: state.attributes?.coatingBlanket?.length ? state.attributes?.coatingBlanket?.length : ''
-
-                },
-                {
-                    name: "",
-                    label: "machineAttributes.width",
-                    type: "text",
-                    placeholder: "machineAttributes.width",
-                    required: true,
-                    parameterKey: "width",
-                    options: [],
-                    value: state.attributes?.coatingBlanket?.width ? state.attributes?.coatingBlanket?.width : ''
-
-                },
-            ]
-        },
-        {
-            name: 'machineAttributes.coatingPlate',
-            parameterKey: 'coatingPlate',
-            machineInputType: 'multiInput',
-            isValid: !!state?.attributes?.coatingPlate?.length &&
-                !!state?.attributes?.coatingPlate?.width ,
-            inputs: [
-                {
-                    name: "",
-                    label: "machineAttributes.length",
-                    type: "text",
-                    placeholder: "machineAttributes.length",
-                    required: true,
-                    parameterKey: "length",
-                    options: [],
-                    value: state.attributes?.coatingPlate?.length ? state.attributes?.coatingPlate?.length : ''
-
-                },
-                {
-                    name: "",
-                    label: "machineAttributes.width",
-                    type: "text",
-                    placeholder: "machineAttributes.width",
-                    required: true,
-                    parameterKey: "width",
-                    options: [],
-                    value: state.attributes?.coatingPlate?.width ? state.attributes?.coatingPlate?.width : ''
-
-                },
-            ]
-        },
-        {
-            name: 'machineAttributes.maxCoatingArea',
-            parameterKey: 'maxCoatingArea',
-            machineInputType: 'multiInput',
-            isValid: !!state?.attributes?.maxCoatingArea?.length &&
-                !!state?.attributes?.maxCoatingArea?.width ,
-            inputs: [
-                {
-                    name: "",
-                    label: "machineAttributes.length",
-                    type: "text",
-                    placeholder: "machineAttributes.length",
-                    required: true,
-                    parameterKey: "length",
-                    options: [],
-                    value: state.attributes?.maxCoatingArea?.length ? state.attributes?.maxCoatingArea?.length : ''
-
-                },
-                {
-                    name: "",
-                    label: "machineAttributes.width",
-                    type: "text",
-                    placeholder: "machineAttributes.width",
-                    required: true,
-                    parameterKey: "width",
-                    options: [],
-                    value: state.attributes?.maxCoatingArea?.width ? state.attributes?.maxCoatingArea?.width : ''
-
-                },
-            ]
-        },
-        {
-            name: "machineAttributes.cylinderUndercut",
-            label: "machineAttributes.cylinderUndercut",
-            type: "text",
-            placeholder: "machineAttributes.cylinderUndercut",
-            required: true,
-            parameterKey: "coatingCylinderUndercut",
-            options: [],
-            machineInputType: 'input',
-            value: state?.attributes?.coatingCylinderUndercut ? state?.attributes?.coatingCylinderUndercut : '',
-            isValid: !!state?.attributes?.coatingCylinderUndercut
-        },
-        {
-            name: "Distance from lead edge",
-            label: "machineAttributes.coatingDistance",
-            type: "text",
-            placeholder: "machineAttributes.coatingDistance",
-            required: true,
-            parameterKey: "coatingDistance",
-            options: [],
-            machineInputType: 'input',
-            value: state?.attributes?.coatingDistance ? state?.attributes?.coatingDistance : '',
-            isValid: !!state?.attributes?.coatingDistance
+            isValid: true,
         },
     ]
 };

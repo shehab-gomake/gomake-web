@@ -11,23 +11,17 @@ const useStyle = ({ row }: any) => {
         display: "flex",
         width: "100%",
         justifyContent: "space-between",
-        alignItems: "center",
+        alignItems: "center" as "center",
         height: 60,
         position: "relative" as "relative",
-        cursor:
-          row?.exceptionType === "EditBase" || row?.exceptionType === "NewBase"
-            ? "pointer"
-            : "",
+        cursor: "pointer",
         gap: 5,
+        textAlign: "center" as "center",
       },
       rowItem: {
-        display: "flex",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
         ...FONT_FAMILY.Lexend(400, 14),
         color: primaryColor(900),
         textalign: "center",
-        width: "25%",
       },
       rowItemExpPofit: {
         display: "flex",

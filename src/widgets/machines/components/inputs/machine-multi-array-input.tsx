@@ -75,7 +75,8 @@ const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value,
                     return <div key={'row' + index} style={{...classes.inputsRow, paddingTop: 12}}>
                         {
                             inputs.map((input) => <MachineInput
-                                input={{...input, value: v[input.parameterKey], disabled: true}} error={false}
+                                readonly={true}
+                                input={{...input, value: v[input.parameterKey], disabled: false}} error={false}
                                 changeState={() => {
                                 }}
                             />)

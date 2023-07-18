@@ -1,4 +1,3 @@
-import {CURRENCY} from "@/widgets/machines/utils/const/currency";
 
 const machineInputs = (state: Record<string, any>)  => {
     return [
@@ -25,18 +24,6 @@ const machineInputs = (state: Record<string, any>)  => {
             value: state?.model ? state?.model : '',
             machineInputType: 'input',
             isValid: !!state?.model,
-        },
-        {
-            name: "code",
-            label: "machineAttributes.code",
-            type: "text",
-            placeholder: "machineAttributes.code",
-            required: true,
-            parameterKey: "code",
-            options: [],
-            value: state?.code ? state?.code : '',
-            machineInputType: 'input',
-            isValid: !!state?.code,
         },
         {
             name: "nickName",
@@ -76,8 +63,9 @@ const machineInputs = (state: Record<string, any>)  => {
                     required: true,
                     parameterKey: "currency",
                     value: state?.price?.currency ? state?.price?.currency : 0,
-                    options: CURRENCY,
+                    options: [],
                     isValid: true,
+                    optionsUrl: '/v1/enum/get-enums/currency'
                 },
             ]
         }

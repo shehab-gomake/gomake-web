@@ -22,8 +22,8 @@ const useAdminMachines = () => {
     }, [categoryId]);
 
     const getMachinesList = useMemo(() => {
-        return machines.map((machine: { nickName: string, manufacturer: string, id: string }) => ({
-            text: `${machine.manufacturer} - ${machine.nickName}`,
+        return machines.map((machine: { model: string, manufacturer: string, id: string }) => ({
+            text: `${machine.manufacturer} - ${machine.model}`,
             value: machine.id
         }))
     }, [machines]);

@@ -54,11 +54,7 @@ const AddQuantityModal = ({
               //   await profitsStateValue?.onClickSaveNewActionProfitRow();
               //   onCloseModal();
               // }}
-              onClick={
-                actionExceptionProfitIdValue
-                  ? profitsStateValue?.onClickSaveNewActionExceptionProfitRow
-                  : profitsStateValue?.onClickSaveNewActionProfitRow
-              }
+              onClick={profitsStateValue?.onClickSaveNewActionProfitRow}
             >
               Add
             </GomakePrimaryButton>

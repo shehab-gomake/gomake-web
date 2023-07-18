@@ -10,7 +10,8 @@ if (getConfig()) {
     google_place_service:
       publicRuntimeConfig.GOOGLE_PLACE_SERVICE ||
       serverRuntimeConfig.GOOGLE_PLACE_SERVICE,
-    enviroment: publicRuntimeConfig.ENVIROMENT,
+    enviroment:
+      publicRuntimeConfig.ENVIROMENT || serverRuntimeConfig.API_SERVER,
     user_app:
       publicRuntimeConfig.USER_APP_URL || serverRuntimeConfig.USER_APP_URL,
     hs_token: publicRuntimeConfig.HS_TOKEN || serverRuntimeConfig.HS_TOKEN,

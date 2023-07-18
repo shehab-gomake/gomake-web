@@ -1,5 +1,13 @@
 import { useGomakeAxios } from "@/hooks";
-import { getAndSetPricingListTableRows } from "@/services/hooks";
+import {
+  getAndSetActionProfitRowChartData,
+  getAndSetPricingListTableRows,
+} from "@/services/hooks";
+import {
+  actionExceptionProfitId,
+  actionProfitRows,
+  chartDataByActionProfitRow,
+} from "@/store";
 import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
 import { productTestState } from "@/store/product-test";
 import { useCallback, useState } from "react";
@@ -18,29 +26,98 @@ const useProfitsProfitsFunction = ({
   setOpenAddNewPricingStepRow,
   onCloseAddQuantityModal,
   actionProfitRowsNew,
+  selectTestDataVal,
+  getActionProfitRowChartData,
 }: any) => {
   const { callApi } = useGomakeAxios();
+
+  const [actionExceptionProfitIdValue, setactionExceptionProfitId] =
+    useRecoilState<any>(actionExceptionProfitId);
   const { t } = useTranslation();
   const [actionProfitPricingTableRows, setActionProfitPricingTableRows] =
     useRecoilState<any>(actionProfitPricingTableRowsState);
   const productTest = useRecoilValue<any>(productTestState);
+  const setChartDataValue = useSetRecoilState<any>(chartDataByActionProfitRow);
 
   const updateActionProfitRow = useCallback(async () => {
-    const res = await callApi(
-      "PUT",
-      `/v1/printhouse-config/profits/update-action-profit-row`,
-      {
-        id: editPriceListStateValue?.state?.id,
-        actionId: editPriceListStateValue?.state?.actionId,
-        quantity: editPriceListStateValue?.state?.quantity,
-        cost: editPriceListStateValue?.state?.cost,
-        profit: editPriceListStateValue?.state?.profit,
-        actionProfitId: actionProfits?.id,
-        recordId:
-          editPriceListStateValue?.state?.recordID ||
-          editPriceListStateValue?.state?.more?.props?.item?.recordID,
-      }
-    );
+    console.log("editPriceListStateValue", editPriceListStateValue);
+    let res;
+    if (editPriceListStateValue?.state?.changeOn == "totalPrice") {
+      let totalPrice = editPriceListStateValue?.state?.totalPrice;
+      let unitPrice = editPriceListStateValue?.state?.unitPrice;
+      let profit = editPriceListStateValue?.state?.profit;
+      let cost = editPriceListStateValue?.state?.cost;
+      profit = (totalPrice / cost - 1) * 100;
+      console.log("datadatadata", { totalPrice, unitPrice, profit, cost });
+
+      res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/profits/update-action-profit-row`,
+        {
+          id: editPriceListStateValue?.state?.id,
+          actionId: editPriceListStateValue?.state?.actionId,
+          quantity: editPriceListStateValue?.state?.quantity,
+          cost: editPriceListStateValue?.state?.cost,
+          profit: profit,
+          actionProfitId: actionProfits?.id,
+          recordId:
+            editPriceListStateValue?.state?.recordID ||
+            editPriceListStateValue?.state?.more?.props?.item?.recordID,
+          ...(actionExceptionProfitIdValue?.id?.length && {
+            exceptionId: actionExceptionProfitIdValue.id,
+          }),
+        }
+      );
+    } else if (editPriceListStateValue?.state?.changeOn == "unitPrice") {
+      let totalPrice = editPriceListStateValue?.state?.totalPrice;
+      let unitPrice = editPriceListStateValue?.state?.unitPrice;
+      let quantity = editPriceListStateValue?.state?.quantity;
+      let profit = editPriceListStateValue?.state?.profit;
+      let cost = editPriceListStateValue?.state?.cost;
+
+      totalPrice = unitPrice * quantity;
+      profit = (totalPrice / cost - 1) * 100;
+      console.log("datadatadata", { totalPrice, unitPrice, profit, cost });
+
+      res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/profits/update-action-profit-row`,
+        {
+          id: editPriceListStateValue?.state?.id,
+          actionId: editPriceListStateValue?.state?.actionId,
+          quantity: editPriceListStateValue?.state?.quantity,
+          cost: editPriceListStateValue?.state?.cost,
+          profit: profit,
+          actionProfitId: actionProfits?.id,
+          recordId:
+            editPriceListStateValue?.state?.recordID ||
+            editPriceListStateValue?.state?.more?.props?.item?.recordID,
+          ...(actionExceptionProfitIdValue?.id?.length && {
+            exceptionId: actionExceptionProfitIdValue.id,
+          }),
+        }
+      );
+    } else {
+      res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/profits/update-action-profit-row`,
+        {
+          id: editPriceListStateValue?.state?.id,
+          actionId: editPriceListStateValue?.state?.actionId,
+          quantity: editPriceListStateValue?.state?.quantity,
+          cost: editPriceListStateValue?.state?.cost,
+          profit: editPriceListStateValue?.state?.profit,
+          actionProfitId: actionProfits?.id,
+          recordId:
+            editPriceListStateValue?.state?.recordID ||
+            editPriceListStateValue?.state?.more?.props?.item?.recordID,
+          ...(actionExceptionProfitIdValue?.id?.length && {
+            exceptionId: actionExceptionProfitIdValue.id,
+          }),
+        }
+      );
+    }
+
     if (res?.success) {
       setSnackbarStateValue({
         state: true,
@@ -52,7 +129,25 @@ const useProfitsProfitsFunction = ({
       await getAndSetPricingListTableRows(
         callApi,
         setActionProfitPricingTableRows,
-        { actionId: selectedAction.id, productId: productTest.id }
+        {
+          actionId: selectedAction.id,
+          productId: productTest.id,
+          ...(actionExceptionProfitIdValue?.id?.length && {
+            exceptionId: actionExceptionProfitIdValue.id,
+          }),
+          actionProductId: productTest.actionProductId,
+        }
+      );
+      await getAndSetActionProfitRowChartData(
+        callApi,
+        setChartDataValue,
+        {
+          actionProfitId: actionProfits?.id,
+          ...(actionExceptionProfitIdValue?.id?.length && {
+            exceptionId: actionExceptionProfitIdValue.id,
+          }),
+        },
+        actionProfits?.pricingBy
       );
     } else {
       setSnackbarStateValue({
@@ -67,6 +162,7 @@ const useProfitsProfitsFunction = ({
     actionProfits,
     productTest,
     actionProfitPricingTableRows,
+    actionExceptionProfitIdValue,
   ]);
   const deleteActionProfitRow = useCallback(
     async (id: string) => {
@@ -84,8 +180,16 @@ const useProfitsProfitsFunction = ({
         await getAndSetPricingListTableRows(
           callApi,
           setActionProfitPricingTableRows,
-          { actionId: selectedAction.id, productId: productTest.id }
+          {
+            actionId: selectedAction.id,
+            productId: productTest.id,
+            ...(actionExceptionProfitIdValue?.id?.length && {
+              exceptionId: actionExceptionProfitIdValue.id,
+            }),
+            actionProductId: productTest.actionProductId,
+          }
         );
+        getActionProfitRowChartData();
       } else {
         setSnackbarStateValue({
           state: true,
@@ -94,10 +198,11 @@ const useProfitsProfitsFunction = ({
         });
       }
     },
-    [selectedAction, productTest]
+    [selectedAction, productTest, actionExceptionProfitIdValue]
   );
 
   const onClickSaveNewActionProfitRow = useCallback(async () => {
+    console.log("productTest", productTest);
     const findQuantity = actionProfitPricingTableRows.find(
       (item) => item.quantity == pricingListRowState.quantity
     );
@@ -113,8 +218,10 @@ const useProfitsProfitsFunction = ({
         `/v1/printhouse-config/profits/add-action-profit-row`,
         {
           actionId: selectedAction?.id,
-          // size: pricingListRowState?.height * pricingListRowState?.width,
-          ...pricingListRowState,
+          productId: productTest.id,
+          quantity: pricingListRowState.quantity,
+          actionProductId: productTest.actionProductId,
+          // actionProductId:
         }
       );
       if (res?.success) {
@@ -128,7 +235,14 @@ const useProfitsProfitsFunction = ({
         await getAndSetPricingListTableRows(
           callApi,
           setActionProfitPricingTableRows,
-          { actionId: selectedAction.id, productId: productTest.id }
+          {
+            actionId: selectedAction.id,
+            productId: productTest.id,
+            ...(actionExceptionProfitIdValue?.id?.length && {
+              exceptionId: actionExceptionProfitIdValue.id,
+            }),
+            actionProductId: productTest.actionProductId,
+          }
         );
         setPricingListRowState({});
         setOpenAddNewPricingStepRow(false);
@@ -147,6 +261,8 @@ const useProfitsProfitsFunction = ({
     actionProfitRowsNew,
     productTest,
     actionProfitPricingTableRows,
+    selectTestDataVal,
+    actionExceptionProfitIdValue,
   ]);
 
   const onChangeAddPricingListRow = useCallback(

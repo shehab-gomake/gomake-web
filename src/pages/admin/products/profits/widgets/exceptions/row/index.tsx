@@ -5,6 +5,8 @@ import { t } from "i18next";
 import { GoMakeDeleteModal } from "@/components";
 import { useRecoilValue } from "recoil";
 import { profitsState } from "../../../store/profits";
+import { EditIcon } from "@/icons";
+import { useState } from "react";
 
 const Row = ({ key, row }: any) => {
   const { clasess } = useStyle({ row });
@@ -16,12 +18,17 @@ const Row = ({ key, row }: any) => {
           if (
             entry[0] !== "id" &&
             entry[0] !== "selectedAdditional" &&
-            entry[0] !== "exceptionTypeValue"
+            entry[0] !== "exceptionTypeValue" &&
+            entry[0] !== "recordID" &&
+            entry[0] !== "item"
           ) {
             return (
               <div
                 key={`row_table_${index}`}
-                style={clasess.rowItem}
+                style={{
+                  ...clasess.rowItem,
+                  width: index === 3 ? "40%" : "20%",
+                }}
                 onClick={() =>
                   profitsStateValue?.onCklickActionExceptionProfitRow(
                     row?.id,
@@ -35,28 +42,17 @@ const Row = ({ key, row }: any) => {
             );
           }
         })}
-        {/* <div style={clasess.deleteContainer}>
-          <Tooltip title={t("materials.buttons.delete")}>
-            <IconButton
-              onClick={() =>
-                profitsStateValue?.onOpenDeleteExceptionProfitModal(row)
-              }
-            >
-              <DeleteIcon style={{ color: "#a1a2cd" }} />
-            </IconButton>
-          </Tooltip>
-        </div> */}
+
+        <IconButton
+          style={{
+            position: "absolute",
+            right: 0,
+          }}
+          onClick={() => profitsStateValue?.onOpenUpdateExceptionModal(row)}
+        >
+          <EditIcon />
+        </IconButton>
       </div>
-      {row === profitsStateValue.selectedExceptionProfit && (
-        <GoMakeDeleteModal
-          title={t("products.profits.exceptions.deleteExceptionProfit")}
-          yesBtn={t("materials.buttons.delete")}
-          openModal={profitsStateValue.openDeleteExceptionProfitModal}
-          onClose={profitsStateValue.onCloseDeleteExceptionProfitModal}
-          // subTitle={subTitle}
-          onClickDelete={() => profitsStateValue.deleteExceptionProfit(row?.id)}
-        />
-      )}
     </>
   );
 };

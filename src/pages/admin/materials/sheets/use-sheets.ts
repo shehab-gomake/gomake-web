@@ -204,7 +204,7 @@ const useSheets = () => {
       if (res?.success) {
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedSusuccessfully"),
+          message: t("modal.deleteSusuccessfully"),
           type: "sucess",
         });
         getSheets();
@@ -212,7 +212,7 @@ const useSheets = () => {
       } else {
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedfailed"),
+          message: t("modal.deletefailed"),
           type: "error",
         });
       }
@@ -228,7 +228,7 @@ const useSheets = () => {
       if (res?.success) {
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedSusuccessfully"),
+          message: t("modal.deleteSusuccessfully"),
           type: "sucess",
         });
         getSheets();
@@ -236,7 +236,7 @@ const useSheets = () => {
       } else {
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedfailed"),
+          message: t("modal.deletefailed"),
           type: "error",
         });
       }

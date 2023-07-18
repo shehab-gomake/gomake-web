@@ -17,6 +17,7 @@ const useStyle = () => {
         paddingRight: 33,
         gap: 65,
         marginTop: 25,
+        backgroundColor: "#FAFAFA",
         // position: "fixed" as "fixed",
         // bottom: 0,
       },
@@ -56,6 +57,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         color: "#ED028C",
         cursor: "pointer",
+        width: "25%",
       },
       rightSideContainer: {
         display: "flex",
@@ -71,13 +73,14 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
+        marginTop: 5,
       },
       totalBefore: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "space-between",
         alignItems: "center",
-        width: "45%",
+        width: "50%",
       },
       discountBefore: {
         display: "flex",
@@ -91,18 +94,26 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "space-between",
         alignItems: "center",
-        width: "30%",
-        // gap: 30,
+        width: "25%",
       },
 
       lableStyle: {
         ...FONT_FAMILY.Lexend(400, 16),
         color: "#000000",
-        width: 155,
+        width: "40%",
       },
       numbersStyle: {
         ...FONT_FAMILY.Lexend(400, 16),
         color: secondColor(400),
+        width: "25%",
+      },
+      totalContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 10,
+        height: 30,
       },
       totlaPriceContainer: {
         display: "flex",
@@ -144,6 +155,26 @@ const useStyle = () => {
         border: "1px solid #ED028C",
         ...FONT_FAMILY.Lexend(500, 16),
         width: "50%",
+      },
+      textInputWithoutStyle: {
+        width: "100%",
+        height: 20,
+        backgroundColor: "transparent",
+        ...FONT_FAMILY.Lexend(400, 16),
+        color: secondColor(400),
+        paddingLeft: 2,
+        boxShadow: "none",
+      },
+      textInputTotalWithoutStyle: {
+        height: 20,
+        backgroundColor: "transparent",
+        ...FONT_FAMILY.Lexend(700, 24),
+        color: primaryColor(500),
+        textAlign: "right",
+        boxShadow: "none",
+      },
+      lableTotal: {
+        color: primaryColor(500),
       },
     };
   }, []);

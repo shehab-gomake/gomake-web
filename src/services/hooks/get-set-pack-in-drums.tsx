@@ -47,4 +47,46 @@ const getAndSetPackInDrumsSizes = async (
 
   return _data;
 };
-export { getAndSetPackInDrumsCategory, getAndSetPackInDrumsSizes };
+const getAndSetAllPDSizes = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  if (data?.categoryName) {
+    const result: any = await callApi(
+      "GET",
+      "/v1/packin-drums/get-all-sizes",
+      data
+    );
+    const _data = returnResult(result, undefined);
+    const mapData = _data.map((item: any) => {
+      return {
+        ...item,
+      };
+    });
+    if (setState) {
+      setState(mapData);
+    }
+
+    return _data;
+  }
+};
+
+const getAndSetPDSuppliers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/packin-drums/get-supplier-by-category",
+    data
+  );
+  return returnResult(result, undefined);
+};
+export {
+  getAndSetPackInDrumsCategory,
+  getAndSetPackInDrumsSizes,
+  getAndSetAllPDSizes,
+  getAndSetPDSuppliers,
+};

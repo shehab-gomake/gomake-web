@@ -64,12 +64,14 @@ const useProfits = () => {
     setSelectedExceptionProfit,
     onCloseAddExceptionModal,
     onOpenAddExceptionModal,
+    selectedProfitException,
     setOpenAddExceptionModal,
     onCklickActionExceptionProfitRow,
     setTabelPricingHeaders,
     onCloseDeleteExceptionProfitModal,
     onClickSaveNewActionExceptionProfitRow,
     addedNewException,
+    updateException,
     setPricingListRowState,
     setOpenAddQuantityModal,
     onCloseAddQuantityModal,
@@ -77,6 +79,11 @@ const useProfits = () => {
     setOpenAddNewPricingStepRow,
     setState,
     updateActionProfitMinPrice,
+
+    openUpdateExceptionModal,
+    setOpenUpdateExceptionModal,
+    onCloseUpdateExceptionModal,
+    onOpenUpdateExceptionModal,
   } = useProfitsExeptionsFunction({
     actionProfits,
     actionProfitRowsNew,
@@ -98,6 +105,7 @@ const useProfits = () => {
     onChangeAddPricingListRow,
     updateActionProfit,
   } = useProfitsProfitsFunction({
+    getActionProfitRowChartData,
     editPriceListStateValue,
     actionProfits,
     selectedAction,
@@ -109,6 +117,7 @@ const useProfits = () => {
     setPricingListRowState,
     setOpenAddNewPricingStepRow,
     onCloseAddQuantityModal,
+    selectTestDataVal,
   });
 
   const {
@@ -135,6 +144,7 @@ const useProfits = () => {
     setSnackbarStateValue,
     getActionExceptionProfitRowByActionExceptionId,
     getTestProducts,
+    setTabelPricingHeaders,
   });
 
   const { istimeOutForProductsTest } = useProfitsEffects({
@@ -196,6 +206,7 @@ const useProfits = () => {
     setState,
     onChangeState,
     addedNewException,
+    updateException,
     onClickTestProduct,
     onChangeAddNewTestProduct,
     setOpenAddTestProductModal,
@@ -206,6 +217,11 @@ const useProfits = () => {
     onChangeSelectedAction,
     onCloseAddExceptionModal,
     onOpenAddExceptionModal,
+    openUpdateExceptionModal,
+    selectedProfitException,
+    setOpenUpdateExceptionModal,
+    onCloseUpdateExceptionModal,
+    onOpenUpdateExceptionModal,
     t,
   };
 };

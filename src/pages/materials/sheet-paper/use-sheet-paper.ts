@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
+  getAndSetAllSheetWeights,
   getAndSetSheetCategory,
   getAndSetSheetWeights,
 } from "@/services/hooks";
@@ -14,6 +15,7 @@ const useSheetPaper = () => {
   const [categoryName, setCategoryName] = useState(undefined);
   const [supplierId, setSupplierId] = useState(undefined);
   const [allWeights, setAllWeights] = useState([]);
+  const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
   const headerTable = useMemo(
     () => [
       t("materials.sheetPaper.weight"),
@@ -26,6 +28,13 @@ const useSheetPaper = () => {
 
   const getSheetWeights = useCallback(async () => {
     await getAndSetSheetWeights(callApi, setAllWeights, {
+      categoryName,
+      supplierId: supplierId || "",
+    });
+  }, [categoryName, supplierId]);
+
+  const getSheetAllWeights = useCallback(async () => {
+    await getAndSetAllSheetWeights(callApi, setAllWeightsGrouped, {
       categoryName,
       supplierId: supplierId || "",
     });
@@ -60,6 +69,7 @@ const useSheetPaper = () => {
     categoryName,
     allWeights,
     headerTable,
+    allWeightsGrouped,
   };
 };
 

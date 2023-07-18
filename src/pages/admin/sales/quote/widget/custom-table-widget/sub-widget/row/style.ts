@@ -24,8 +24,8 @@ const useStyle = () => {
         marginTop: 14,
       },
       detailsLine: {
-        width: 4,
-        height: 28,
+        width: 15,
+        height: 33,
         background: primaryColor(500),
         borderRadius: 24,
       },
@@ -41,6 +41,23 @@ const useStyle = () => {
       textInputStyle: {
         height: 42,
         width: 80,
+      },
+      textInputWithoutStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: primaryColor(900),
+        textAlign: "center",
+        marginBottom: 14,
+        marginTop: 14,
+        width: "100%",
+        height: 20,
+        backgroundColor: "transparent",
+        // ...FONT_FAMILY.Lexend(400, 16),
+        // color: secondColor(400),
+        paddingLeft: 2,
+        boxShadow: "none",
       },
     };
   }, []);

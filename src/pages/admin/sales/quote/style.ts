@@ -17,6 +17,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
+        position: "relative" as "relative",
       },
       headerContainer: {
         display: "flex",
@@ -26,7 +27,17 @@ const useStyle = () => {
         width: "100%",
         marginTop: 24,
         marginBottom: 7,
-        // paddingLeft: 16,
+      },
+      titleQuateContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 15,
+      },
+      quoteNumberStyle: {
+        ...FONT_FAMILY.Lexend(600, 20),
+        color: primaryColor(500),
       },
       rightSideHeaderContainer: {
         display: "flex",
@@ -53,9 +64,26 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         color: "#101020",
       },
+      scrollContainer: {
+        width: "100%",
+        height: 380,
+        overflow: "scroll" as "scroll",
+        boxShadow: "0px 4px 20px rgba(103, 103, 103, 0.08)",
+        marginTop: 20,
+      },
       deleverdDate: {
+        display: "flex",
+        position: "relative" as "relative",
         ...FONT_FAMILY.Lexend(500, 14),
         color: secondColor(500),
+        cursor: "pointer",
+      },
+      datePickerContainer: {
+        display: "flex",
+        position: "absolute" as "absolute",
+        top: 0,
+        right: 100,
+        visibility: "hidden" as "hidden",
       },
       tableContainer: {
         display: "flex",
@@ -72,7 +100,6 @@ const useStyle = () => {
         alignItems: "center",
         gap: 32,
         marginTop: 20,
-        // marginBottom: 10,
       },
       btnContainer: {
         display: "flex",

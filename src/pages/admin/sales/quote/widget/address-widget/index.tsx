@@ -1,6 +1,15 @@
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import { AddPlusIcon, PlusIcon, RemoveIcon } from "@/icons";
+import {
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+  GomakeTextInput,
+} from "@/components";
+
+import { AddAddressWidget } from "./add-address-widget";
 import { useStyle } from "./style";
-import { useTranslation } from "react-i18next";
+import { useAddressWidget } from "./use-address-widget";
+import { AddNewAddressModal } from "../modals-widgets/add-address-modal";
+
 interface IProps {
   isAddressID?: boolean;
   isCity?: boolean;
@@ -18,71 +27,192 @@ const AddressWidget = ({
   isAddNewAddress = true,
 }: IProps) => {
   const { clasess } = useStyle();
-  const { t } = useTranslation();
+  const {
+    quoteStateValue,
+    quoteItemValue,
+    clientAddressValue,
+    items,
+    changeItems,
+    updateClientAddress,
+    t,
+  } = useAddressWidget();
   return (
-    <div style={clasess.mainContainer}>
-      {isAddressID && (
-        <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>{t("sales.quote.addressID")}</div>
-          <GoMakeAutoComplate
-            options={["A", "B", "C", "D", "E", "F"]}
-            style={clasess.autoComplateStyle}
-            placeholder={t("sales.quote.addressID")}
-          />
+    <>
+      {items?.length > 0 ? (
+        <>
+          {items?.map((item, index) => {
+            return (
+              <div style={clasess.mainContainer}>
+                {isAddressID && (
+                  <div style={clasess.fieldContainer}>
+                    <div style={clasess.labelContainer}>
+                      <div style={clasess.labelStyle}>
+                        {t("sales.quote.addressID")}
+                      </div>
+                      {index === 0 ? (
+                        <div
+                          onClick={() =>
+                            quoteStateValue?.onOpenAddNewAddressClient()
+                          }
+                          style={clasess.plusIconContainer}
+                        >
+                          <PlusIcon />
+                        </div>
+                      ) : null}
+                    </div>
+                    <GoMakeAutoComplate
+                      options={clientAddressValue}
+                      getOptionLabel={(item) => item?.street}
+                      style={clasess.autoComplateStyle}
+                      placeholder={
+                        clientAddressValue[index]?.street
+                          ? clientAddressValue[index]?.street
+                          : t("sales.quote.addressID")
+                      }
+                    />
+                  </div>
+                )}
+
+                {isCity && (
+                  <div style={clasess.fieldContainer}>
+                    <div style={clasess.labelStyle}>
+                      {t("sales.quote.city")}
+                    </div>
+
+                    <GomakeTextInput
+                      placeholder={t("sales.quote.city")}
+                      style={clasess.textInputStyle}
+                      value={item?.city}
+                      onChange={(e: any) => {
+                        changeItems(index, "city", e.target.value);
+                      }}
+                      onBlur={() => updateClientAddress(item)}
+                    />
+                  </div>
+                )}
+
+                {isStreet && (
+                  <div style={clasess.fieldContainer}>
+                    <div style={clasess.labelStyle}>
+                      {t("sales.quote.street")}
+                    </div>
+
+                    <GomakeTextInput
+                      placeholder={t("sales.quote.street")}
+                      style={clasess.textInputStyle}
+                      value={item?.street}
+                      onChange={(e: any) => {
+                        changeItems(index, "street", e.target.value);
+                      }}
+                      onBlur={() => updateClientAddress(item)}
+                    />
+                  </div>
+                )}
+
+                {isEntrance && (
+                  <div style={clasess.fieldContainer}>
+                    <div style={clasess.labelStyle}>
+                      {t("sales.quote.entrance")}
+                    </div>
+
+                    <GomakeTextInput
+                      placeholder={t("sales.quote.entrance")}
+                      style={clasess.textInputStyle}
+                      value={item?.entry}
+                      onChange={(e: any) => {
+                        changeItems(index, "entry", e.target.value);
+                      }}
+                      onBlur={() => updateClientAddress(item)}
+                    />
+                  </div>
+                )}
+
+                {isApartment && (
+                  <div style={clasess.fieldContainer}>
+                    <div style={clasess.labelStyle}>
+                      {t("sales.quote.apartment")}
+                    </div>
+                    <GomakeTextInput
+                      placeholder={t("sales.quote.apartment")}
+                      style={clasess.textInputStyle}
+                      value={item?.apartment}
+                      onChange={(e: any) => {
+                        changeItems(index, "apartment", e.target.value);
+                      }}
+                      onBlur={() => updateClientAddress(item)}
+                    />
+                  </div>
+                )}
+                {isAddNewAddress && (
+                  <div style={clasess.fieldContainer}>
+                    <div style={clasess.labelStyle} />
+                    <div style={clasess.addDeleteContainer}>
+                      {index === quoteItemValue?.quoteAddresses?.length - 1 ? (
+                        <div>
+                          {!quoteStateValue.isAddNewAddressWidget && (
+                            <div
+                              style={clasess.addContactContainer}
+                              onClick={() =>
+                                quoteStateValue.setIsAddNewAddressWidget(true)
+                              }
+                            >
+                              <AddPlusIcon stroke={"#090A1D"} />
+                              <div style={clasess.addContactStyle}>
+                                {t("sales.quote.addNewAddress")}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ) : null}
+                      <div
+                        style={clasess.addContactContainer}
+                        onClick={() =>
+                          quoteStateValue?.onOpenDeleteModalAddress(item)
+                        }
+                      >
+                        <RemoveIcon />
+                        <div style={clasess.removeContactStyle}>
+                          {t("sales.quote.remove")}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </>
+      ) : (
+        <div style={clasess.noAddressContaner}>
+          {!quoteStateValue.isAddNewAddressWidget && (
+            <div
+              style={clasess.addContactContainer}
+              onClick={() => quoteStateValue.setIsAddNewAddressWidget(true)}
+            >
+              <AddPlusIcon stroke={"#090A1D"} />
+              <div style={clasess.addContactStyle}>
+                {t("sales.quote.addNewAddress")}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {isCity && (
-        <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>{t("sales.quote.city")}</div>
-          <GoMakeAutoComplate
-            options={["A", "B", "C", "D", "E", "F"]}
-            style={clasess.autoComplateStyle}
-            placeholder={t("sales.quote.city")}
-          />
-        </div>
-      )}
-
-      {isStreet && (
-        <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>{t("sales.quote.street")}</div>
-          <GoMakeAutoComplate
-            options={["A", "B", "C", "D", "E", "F"]}
-            style={clasess.autoComplateStyle}
-            placeholder={t("sales.quote.street")}
-          />
-        </div>
-      )}
-
-      {isEntrance && (
-        <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>{t("sales.quote.entrance")}</div>
-          <GoMakeAutoComplate
-            options={["A", "B", "C", "D", "E", "F"]}
-            style={clasess.autoComplateStyle}
-            placeholder={t("sales.quote.entrance")}
-          />
-        </div>
-      )}
-
-      {isApartment && (
-        <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle}>{t("sales.quote.apartment")}</div>
-          <GomakeTextInput
-            placeholder={t("sales.quote.apartment")}
-            style={clasess.textInputStyle}
-          />
-        </div>
-      )}
-      {isAddNewAddress && (
-        <div style={clasess.fieldContainer}>
-          <div style={clasess.labelStyle} />
-          <div style={clasess.addBtnStyle}>
-            {t("sales.quote.addNewAddress")}
-          </div>
-        </div>
-      )}
-    </div>
+      {quoteStateValue.isAddNewAddressWidget && <AddAddressWidget />}
+      <GoMakeDeleteModal
+        title={t("sales.quote.deleteAddressRow")}
+        yesBtn={t("materials.buttons.delete")}
+        openModal={quoteStateValue?.openDeleteModalAddress}
+        onClose={quoteStateValue?.onCloseDeleteModalAddress}
+        subTitle={t("sales.quote.subTitleDeleteAddressRow")}
+        onClickDelete={() =>
+          quoteStateValue?.onClickDeleteAddress(
+            quoteStateValue?.selectedAddress
+          )
+        }
+      />
+      <AddNewAddressModal />
+    </>
   );
 };
 

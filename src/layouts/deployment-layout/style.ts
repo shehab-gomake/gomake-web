@@ -74,8 +74,9 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
       ///Tab
       tabsContainer: {
         alignSelf: "flex-start",
-        // height: "100%",
+        height: "100%",
         marginTop: convertHeightToVH(46),
+        overflow: "scroll" as "scroll",
       },
       tabContainer: {
         display: "flex",

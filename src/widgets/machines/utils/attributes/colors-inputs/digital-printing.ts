@@ -10,9 +10,10 @@ const digitalPrinting = (state: Record<string, any>) => {
             required: true,
             parameterKey: "basicsColors",
             value: state?.attributes?.basicsColors,
-            options: [{value: 1, text: 'Black'}, {value: 2, text: 'CMYK'}],
+            options: [],
             machineInputType: 'input',
-            isValid: true
+            isValid: true,
+            optionsUrl: '/v1/enum/get-enums/basicColors'
         },
 
         {
@@ -30,19 +31,19 @@ const digitalPrinting = (state: Record<string, any>) => {
         {
             name: "printLayers",
             label: "machineAttributes.printLayers",
-            type: "select",
+            type: "switch",
             placeholder: "",
             required: true,
             parameterKey: "printLayers",
             value: state?.attributes?.printLayers,
-            options:  [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
+            options:  [],
             machineInputType: 'input',
             isValid: true
         },
         {
             name: "printLayersSameRun",
             label: "machineAttributes.printLayersSameRun",
-            type: "select",
+            type: "switch",
             placeholder: "",
             required: true,
             parameterKey: "printLayersSameRun",
@@ -71,7 +72,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             parameterKey: 'additionalColorsCoast',
             value: state?.attributes?.additionalColorsCoast ? state?.attributes?.additionalColorsCoast : [],
             machineInputType: 'multiArrayInput',
-            isValid: state?.attributes?.additionalColorsCoast?.length > 0,
+            isValid: true,
             inputs: [
                 {
                     name: "color",
@@ -85,7 +86,7 @@ const digitalPrinting = (state: Record<string, any>) => {
                 },
                 {
                     name: "cost",
-                    label: "machineAttributes.cost",
+                    label: "machineAttributes.costOfPrintPerCm",
                     type: "text",
                     placeholder: "machineAttributes.cost",
                     required: true,

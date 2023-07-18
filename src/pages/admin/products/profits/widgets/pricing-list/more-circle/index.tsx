@@ -19,7 +19,7 @@ const PricingListMenuWidget = ({ item }: any) => {
 
   return (
     <>
-      <IconButton onClick={handleClick}>
+      <IconButton disabled={!!item?.isBaseCaseQuantity} onClick={handleClick}>
         <MoreCircleIcon />
 
         {/* <DeleteIcon style={{ color: "#a1a2cd" }} /> */}
@@ -39,9 +39,7 @@ const PricingListMenuWidget = ({ item }: any) => {
         </MenuItem> */}
         <MenuItem
           onClick={() => {
-            actionExceptionProfitIdValue
-              ? profitsStateValue?.deleteActionExceptionProfitRow(item?.id)
-              : profitsStateValue?.deleteActionProfitRow(item?.id);
+            profitsStateValue?.deleteActionProfitRow(item?.id);
             handleClose();
           }}
 

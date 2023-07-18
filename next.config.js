@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
+  reactStrictMode: true,
   serverRuntimeConfig: {
     API_SERVER: process.env.API_SERVER,
     ENVIROMENT: process.env.ENVIROMENT,

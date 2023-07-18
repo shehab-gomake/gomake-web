@@ -1,10 +1,8 @@
 import { TabCloseIcon } from "@/icons";
 import { Collapse } from "@mui/material";
-import Image from "next/image";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
-import { useAuthLayoutHook } from "./use-admin-auth-layout-hook";
 import { useGomakeRouter } from "@/hooks";
 interface IProps {
   tab: {
@@ -20,7 +18,7 @@ interface IProps {
 const Tab = ({ tab }: IProps) => {
   const [isListOpen, setIsListOpen] = useState(false);
   const [isHover, setIsHover] = useState(false);
-  const { clasess } = useStyle({ isHover });
+  const { clasess } = useStyle({ isHover, navStatus: null });
   const { t } = useTranslation();
   const { navigate } = useGomakeRouter();
   const handleMouseEnter = useCallback(() => {
@@ -34,6 +32,8 @@ const Tab = ({ tab }: IProps) => {
   const onClickTab = useCallback(() => {
     if (tab.isList) {
       setIsListOpen(!isListOpen);
+    } else {
+      navigate(tab.path);
     }
   }, [tab, isListOpen, setIsListOpen]);
   const changeRoute = useCallback((route: string) => {
@@ -47,7 +47,7 @@ const Tab = ({ tab }: IProps) => {
         onMouseLeave={handleMouseLeave}
         onClick={onClickTab}
       >
-        {tab.isList && (
+        {tab.isList ? (
           <div>
             {isListOpen ? (
               <div style={clasess.rotate90}>
@@ -57,9 +57,13 @@ const Tab = ({ tab }: IProps) => {
               <TabCloseIcon />
             )}
           </div>
+        ) : (
+          <div style={{ marginLeft: 5 }} />
         )}
-        <div>{tab.icon()}</div>
-        <div style={clasess.tabTitle}>{tab.title}</div>
+        <div>{tab?.icon()}</div>
+        <div style={clasess.tabTitle} onClick={onClickTab}>
+          {tab.title}
+        </div>
       </div>
       <Collapse in={isListOpen}>
         {tab.list?.map((list: any) => {

@@ -1,6 +1,9 @@
 export * from "./get-set-sheets";
 export * from "./get-set-plats";
-export * from "./get-set-lamination";
+export {
+  getAndSetGetAllLaminations,
+  getAndSetGetAllNewLaminations,
+} from "./get-set-lamination";
 export * from "./get-set-tube";
 export * from "./get-set-envelope";
 export * from "./get-set-material-roll-printing";
@@ -23,3 +26,6 @@ export * from "./get-set-varnish";
 export * from "./products";
 export * from "./profits";
 export * from "./clients";
+export * from "./product-sku";
+export * from "./templets";
+export * from "./groups";

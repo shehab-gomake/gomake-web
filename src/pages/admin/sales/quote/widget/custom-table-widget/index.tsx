@@ -3,7 +3,7 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { HeaderTable } from "./sub-widget/header";
 import { RowCustomTable } from "./sub-widget/row";
-import { AddIcon, AddPlusIcon, PlusIcon } from "@/icons";
+import { useCustomTable } from "./use-custom-table";
 interface IProps {
   headerTitle?: string;
   tableHeaders?: any;
@@ -22,6 +22,9 @@ const CustomTableWidget = ({
 }: IProps) => {
   const { clasess } = useStyle({ headerWidth });
   const { t } = useTranslation();
+  const { items, changeItems } = useCustomTable({
+    data,
+  });
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.tableHeaderContainer}>
@@ -51,17 +54,17 @@ const CustomTableWidget = ({
         })}
       </div>
       <div style={clasess.row}>
-        {data?.map((row: any, index: number) => {
-          console.log("index", index);
-          console.log("data", data?.length);
+        {items?.map((row: any, index: number) => {
           return (
             <div key={`body_row${index}`} style={{ width: "100%" }}>
               <RowCustomTable
                 row={row}
                 tablePercent={tableRowPercent}
                 isCheckbox={isCheckbox}
+                changeItems={changeItems}
+                indexTable={index}
               />
-              {index != data?.length - 1 ? <div style={clasess.line} /> : null}
+              {index != items?.length - 1 ? <div style={clasess.line} /> : null}
             </div>
           );
         })}

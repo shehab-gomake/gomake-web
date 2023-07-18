@@ -1,32 +1,31 @@
 import { useGomakeAdminAuth, useGomakeRouter } from "@/hooks";
 import {
+  AdminPanel,
   CustomersIcon,
   HomeIcon,
   ProductFloorIcon,
   ProductsIcon,
   ReportsIcon,
   SalesIcon,
+  SettingNavBar,
   ShopingIcon,
 } from "@/icons";
 import { SuppliersIcon } from "@/icons/suppliers";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {useRecoilValue} from "recoil";
-import {machineCategoriesState} from "@/store/machine-categories";
 
 const useAuthLayoutHook = () => {
   const { t } = useTranslation();
   const { isAuth } = useGomakeAdminAuth();
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
-  const categories = useRecoilValue(machineCategoriesState)
   const tabs = useMemo(() => {
     return [
       {
         isLine: false,
         key: "home",
         title: t("tabs.home"),
-        path: "/home",
+        path: "/admin",
         isList: false,
         icon: () => {
           return <HomeIcon />;
@@ -50,8 +49,8 @@ const useAuthLayoutHook = () => {
         isLine: false,
         key: "materials",
         title: t("tabs.materials"),
-        path: "/product-floor",
-        isList: true,
+        path: "/admin/materials",
+        isList: false,
         list: [
           {
             key: "sheet",
@@ -173,37 +172,7 @@ const useAuthLayoutHook = () => {
         key: "machines",
         title: t("tabs.machines"),
         path: "/admin/machine",
-        isList: true,
-        icon: () => {
-          return <ProductsIcon />;
-        },
-        list: [
-          {
-            key: "add",
-            title: t("tabs.addMachine"),
-            path: "/admin/machine",
-          },
-            ...categories.map(category => ({key: category.id + category.name, title: category.name, path: `/admin/machine/category/${category.id}`}))
-        ]
-      },
-      {
-        isLine: false,
-        key: "products",
-        title: t("tabs.products"),
-        path: "/product-floor",
-        isList: true,
-        list: [
-          {
-            key: "actions",
-            title: t("products.actions.admin.title"),
-            path: "/admin/products/actions",
-          },
-          {
-            key: "profits",
-            title: t("products.profits.admin.title"),
-            path: "/admin/products/profits",
-          },
-        ],
+        isList: false,
         icon: () => {
           return <ProductsIcon />;
         },
@@ -219,6 +188,11 @@ const useAuthLayoutHook = () => {
             key: "add",
             title: t("tabs.addSales"),
             path: "/sales/add-machine",
+          },
+          {
+            key: "list",
+            title: t("tabs.listSales"),
+            path: "/sales/list",
           },
           {
             key: "quote",
@@ -278,6 +252,30 @@ const useAuthLayoutHook = () => {
         isList: true,
         icon: () => {
           return <ReportsIcon />;
+        },
+      },
+      {
+        isLine: true,
+        key: "line_2",
+      },
+      {
+        isLine: false,
+        key: "admin_panel",
+        title: t("tabs.adminPanel"),
+        path: "/admin-panel",
+        isList: false,
+        icon: () => {
+          return <AdminPanel />;
+        },
+      },
+      {
+        isLine: false,
+        key: "settings",
+        title: t("tabs.settings"),
+        path: "/admin/settings",
+        isList: false,
+        icon: () => {
+          return <SettingNavBar />;
         },
       },
     ];

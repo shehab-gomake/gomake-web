@@ -1,7 +1,6 @@
 import {SideList} from "@/widgets/machines/components/side-list/side-list";
 import {MachineStepper} from "@/widgets/machines/components/stepper/machines-stepper";
 import {useEffect, useState} from "react";
-import {useTranslation} from "react-i18next";
 import {useRecoilValue} from "recoil";
 import {machineCategoriesState} from "@/store/machine-categories";
 import {IStep} from "@/widgets/machines/utils/interface/step";
@@ -22,13 +21,12 @@ const AdminUpdateMachine = () => {
     const {getMachinesList, setMachine} = useAdminMachines();
     const {updateMachine} = useAdminAddMachine();
     const selectedMachine = useRecoilValue(machineState);
-    const {t} = useTranslation();
 
     useEffect(() => {
         if (categoryId) {
             const category = categories.find(category => category.id === categoryId)
             setCategoryName(category?.name ? category?.name : '');
-            if (category) setMachineSteps(getSteps(category.id));
+            if (category) setMachineSteps(getSteps(category.id, true));
         }
     }, [categoryId]);
     const navigateBack = () => {
@@ -45,7 +43,7 @@ const AdminUpdateMachine = () => {
     const Side = () => <SideList list={getMachinesList} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
                                  title={'Machines'}/>
     return (
-        <MachineLayout side={Side()} header={categoryName} subHeader={selectedMachine.manufacturer + ' - ' + selectedMachine.nickName}>
+        <MachineLayout side={Side()} header={categoryName} subHeader={ selectedMachine.manufacturer ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.model : ''}>
 
             {!!selectedMachine.id && <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
                                                      nextStep={navigateNext} actionButtonClicked={updateMachine}

@@ -74,8 +74,47 @@ const getAndSetPrintingMaterialsSize = async (
   return _data;
 };
 
+const getAndSetAllPMSizes = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  if (data?.categoryName) {
+    const result: any = await callApi(
+      "GET",
+      "/v1/material-roll-printings/get-all-sizes",
+      data
+    );
+    const _data = returnResult(result, undefined);
+    const mapData = _data.map((item: any) => {
+      return {
+        ...item,
+      };
+    });
+    if (setState) {
+      setState(mapData);
+    }
+
+    return _data;
+  }
+};
+
+const getAndSetPMSuppliers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/material-roll-printings/get-supplier-by-category",
+    data
+  );
+  return returnResult(result, undefined);
+};
 export {
   getAndSetPrintingMaterialsCategores,
   getAndSetPrintingMaterialsSuppliers,
   getAndSetPrintingMaterialsSize,
+  getAndSetAllPMSizes,
+  getAndSetPMSuppliers,
 };

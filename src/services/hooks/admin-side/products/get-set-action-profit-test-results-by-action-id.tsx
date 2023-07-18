@@ -30,6 +30,7 @@ const getAndSetPricingListTableRows = async (
   setState?: ISetState,
   data?: any
 ) => {
+  console.log("datadatadatadatadata", data);
   const result: any = await callApi(
     "GET",
     `/v1/printhouse-config/profits/get-pricing-table-rows`,
