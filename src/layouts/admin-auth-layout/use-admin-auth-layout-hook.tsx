@@ -14,7 +14,6 @@ import { SuppliersIcon } from "@/icons/suppliers";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-
 const useAuthLayoutHook = () => {
   const { t } = useTranslation();
   const { isAuth } = useGomakeAdminAuth();
@@ -26,7 +25,7 @@ const useAuthLayoutHook = () => {
         isLine: false,
         key: "home",
         title: t("tabs.home"),
-        path: "/home",
+        path: "/admin",
         isList: false,
         icon: () => {
           return <HomeIcon />;
