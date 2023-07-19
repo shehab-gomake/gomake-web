@@ -13,7 +13,8 @@ const useStyle = () => {
         alignItems: "center",
         backgroundColor: "#504FA1",
         flex: 0.5,
-        height: "100vh",
+        height: "100%",
+        minHeight: "100vh",
       },
       poweredContainer: {
         display: "flex",
