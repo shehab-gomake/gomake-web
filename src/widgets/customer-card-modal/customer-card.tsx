@@ -8,15 +8,14 @@ import { ContactForm } from "./components/contacts-tab";
 import { AddressForm } from "./components/address-tab";
 import { Table } from "@/widgets/table/table";
 import { PriceListForm } from "./components/priceList-tab/form";
-import { CustomerForm } from "./components/gomakeUser-tab/CustomerForm";
+import { UserForm } from "./components/gomakeUser-tab/form";
 import { AddIcon } from "@/components/icons/icons";
-import { IPaddressForm } from "./components/gomakeUser-tab/IPAddressForm";
 import { useTranslation } from "react-i18next";
-import { AntSwitch } from "./components/switch-component";
 import { Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { BookKeepingForm } from "./components/bookKeeping-tab/form";
+import Switch from "./components/switch-component";
 
 const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton
 
@@ -63,7 +62,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
   const tabPanelSwich = (label, value = null, onchange = null) => {
     return (
       <Col style={{ display: "flex", width: "170px", height: "14px", justifyContent: "flex-start", gap: "8px" }}>
-        <AntSwitch inputProps={{ 'aria-label': 'ant design' }} checked={value} onChange={onchange} />
+        <Switch  checked={value} onChange={onchange} />
         <h3 style={clasess.switchHeaderStyle} >{label}</h3>
       </Col>
     );
@@ -173,12 +172,6 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
     setIPaddresses(temp);
   }
 
-  const deleteIPAddressForm = (index) => {
-    debugger;
-    var temp = [...IPaddresses];
-    temp = temp.filter(x => x.index != index);
-    setIPaddresses(temp);
-  }
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -191,7 +184,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
       onClose={handleClose}
       insideStyle={clasess.insideStyle}
     >
-      <div style={{ width: "100%", marginBottom: '24px' }} >
+      <div  >
         <Row >
           <Col><h3 style={clasess.subTitleStyle} >{t("customers.modal.customerInfo")}</h3>
           </Col>
@@ -239,7 +232,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
       </Row>
       <div >
         <ThemeProvider theme={theme}>
-          <Tabs sx={{ '& .MuiTabs-root': { minHeight: 'unset', minWidth: 'unset' } }} value={selectedTab} onChange={handleTabChange} textColor="secondary" TabIndicatorProps={{ style: { display: 'none' }, }} >
+          <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary" TabIndicatorProps={{ style: { display: 'none' }, }} >
             <Tab sx={{ backgroundColor: selectedTab === 0 ? '#ED028C' : '#EBECFF', color: selectedTab === 0 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "82px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.general")} />
             <Tab sx={{ backgroundColor: selectedTab === 1 ? '#ED028C' : '#EBECFF', minWidth: '0px', width: "90px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.contacts")} />
             <Tab sx={{ backgroundColor: selectedTab === 2 ? '#ED028C' : '#EBECFF', minWidth: '0px', width: "100px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.addresses")} />
@@ -302,7 +295,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
                   )
                 }
               </Col>
-              <Col style={{ display: "flex", marginTop: "42px", marginRight: "30px", justifyContent: 'flex-end' }}>
+              <Col style={{ marginTop: "42px", marginRight: "30px", justifyContent: 'flex-end' }}>
                 <a onClick={addEmptyContact} >
                   <AddIcon></AddIcon>
                   <button style={clasess.buttonsStyle} >{t("customers.buttons.addContact")}</button>
@@ -321,7 +314,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
                   )
                 }
               </Col>
-              <Col style={{ display: "flex", marginTop: "42px", marginRight: "30px", justifyContent: 'flex-end' }}>
+              <Col style={{ marginTop: "42px", marginRight: "30px", justifyContent: 'flex-end' }}>
                 <a onClick={addEmptyAdress} >
                   <AddIcon></AddIcon>
                   <button style={clasess.buttonsStyle} >{t("customers.buttons.newAddress")}</button>
@@ -332,7 +325,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
           {
             //bookKeeping info
             selectedTab == 3 &&
-              <BookKeepingForm></BookKeepingForm>
+            <BookKeepingForm></BookKeepingForm>
           }
 
           {
@@ -356,36 +349,25 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
           {
             //GOMAKEUSER info
             selectedTab == 6 &&
-            <div >
-              <div>
-                <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyClient} >
-                  <AddIcon ></AddIcon>
-                  <Button style={{ color: "#8283BE" }}>{t("customers.buttons.newClient")}</Button>
-                </a>
+            <Row  style={{display: "flex" ,  }}>
+              <Col  md={10}>
                 {
                   useres.map(x =>
-                    <div key={x.index}>
-                      <CustomerForm user={x} onDelete={deleteClientForm}></CustomerForm>
-                    </div>)
+                    <UserForm key={x.index} user={x} onDelete={deleteClientForm}></UserForm>
+                  )
                 }
-              </div>
-              <div>
-                <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyIPAddress} >
-                  <AddIcon ></AddIcon>
-                  <Button style={{ color: "#8283BE" }}>{t("customers.buttons.newAddress")}</Button>
+              </Col>
+              <Col  style={{marginTop:"68px" , justifyContent: 'flex-end'}} >
+                <a onClick={addEmptyClient} >
+                  <AddIcon></AddIcon>
+                  <button style={clasess.buttonsStyle} >{t("customers.buttons.addContact")}</button>
                 </a>
-                {
-                  IPaddresses.map(x =>
-                    <div key={x.index}>
-                      <IPaddressForm IPaddress={x} onDelete={deleteIPAddressForm}></IPaddressForm>
-                    </div>)
-                }
-              </div>
-            </div>
+              </Col>
+            </Row>
           }
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "flex-end", gap: "10px", alignSelf: "stretch" }} >
-            {showAddButton && <GomakePrimaryButton style={clasess.autoButtonStyle} >{t("customers.modal.add")}</GomakePrimaryButton>}
-            {showUpdateButton && <GomakePrimaryButton style={clasess.updateButtonStyle} >{t("customers.buttons.updateChanges")}</GomakePrimaryButton>}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "flex-end", alignSelf: "stretch", marginTop: "24px" }} >
+            {showAddButton && <button style={clasess.autoButtonStyle} >{t("customers.buttons.updateChanges")}</button>}
+            {showUpdateButton && <button style={clasess.autoButtonStyle} >{t("customers.buttons.updateChanges")}</button>}
           </div>
         </ThemeProvider>
       </div>

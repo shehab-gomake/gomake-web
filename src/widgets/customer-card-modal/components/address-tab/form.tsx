@@ -6,7 +6,7 @@ import { t } from "i18next";
 import { Col, Row } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState, useCallback } from 'react';
-import { AntSwitch } from "../switch-component";
+import Switch from "../switch-component";
 
 
 
@@ -70,7 +70,7 @@ const AddressForm = ({ address, onDelete }: any) => {
 
 
     return (
-        <div  >
+        <div>
             <Row style={{ marginBottom: '24px', marginTop: '14px' }} >
                 <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <h3 style={clasess.headerStyle} >{t("customers.modal.addressId")}</h3>
@@ -120,7 +120,7 @@ const AddressForm = ({ address, onDelete }: any) => {
                     <h3 style={clasess.headerStyle} >{t("customers.modal.remarks")}</h3>
                     <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                     <a style={{ display: "flex", flexDirection: "row", gap: "8px"}} >
-                        <AntSwitch  inputProps={{ 'aria-label': 'ant design' }} />
+                        <Switch  checked={false} />
                         <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.default")}</h3>
                     </a>
                 </Col>

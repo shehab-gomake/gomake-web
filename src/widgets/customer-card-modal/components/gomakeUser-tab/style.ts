@@ -8,41 +8,50 @@ const useStyle = () => {
     return {
 
       inputStyle: {
+        width: "180px",
+        height: "40px",
+        flexShrink: 0,
+        borderRadius: "4px",
+        background: "#FFF",
+        boxShadow: "0px 4px 60px 0px #00000014",
         border: "none",
-        borderBottom: "1px solid black",
-        borderBottomColor: "#2E3092",
-        padding: "0.5rem",
-        display: "inline-block",
-        boxShadow: "none",
-        outline: '1px solid white',
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#8283BE",
       },
 
-      headersStyle: {
-        fontFamily: "Outfit",
+      switchHeaderStyle: {
+        color: "var(--primary-900, #090A1D)",
+        fontFamily: "Lexend",
+        fontSize: "12px",
         fontStyle: "normal",
-        fontWeight: 300,
-        fontSize: 14,
-        color: "#1C1D58",
-        ...FONT_FAMILY.Lexend(500, 14),
+        fontWeight: 400,
+        lineHeight: "normal",
+      },
+
+
+      buttonsStyle: {
+        color: "var(--error-500, #D92C2C)",
+        fontFamily: 'Lexend',
+        fontSize: '14px',
+        fontStyle: 'normal',
+        fontWeight: 500,
+        lineHeight: 'normal',
+        border: "none",
+        background: "#FFF",
+        marginLeft: "7px",
+      },
+
+      headerStyle: {
+        color: "var(--primary-900, #090A1D)",
+        TextAlign: "center",
+        fontFamily: "Lexend",
+        fontSize: "14px",
+        fontStyle: "normal",
+        fontWeight: 500,
+        lineHeight: "normal",
       },
 
       autoButtonStyle: {
-        width: convertWidthToVW(50),
-        height: convertHeightToVH(30),
-        marginRight: convertWidthToVW(1),
-        marginTop: "18px",
-        background: "#F135A3",
-      },
-
-      autoComplateStyle: {
-        width: convertWidthToVW(100),
-        height: convertHeightToVH(30),
-      },
-
-      switchStyle: {
-        alignSelf: "center",
       },
 
     };

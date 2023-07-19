@@ -1,10 +1,10 @@
 import * as React from "react";
 import { useStyle } from "./style";
-import { HeaderFilter } from "./header-filter";
 import { useTranslation } from "react-i18next";
 import { RemoveIcon } from "@/components/icons/icons";
 import { Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { HeaderFilter } from "../header-filter";
 
 
 const ContactForm = ({ contact, onDelete }: any) => {

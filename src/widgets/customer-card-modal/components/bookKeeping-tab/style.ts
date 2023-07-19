@@ -20,6 +20,8 @@ const useStyle = () => {
           },
     
           headerStyle: {
+            width: "180px",
+            height: "18px",
             color: "var(--primary-900, #090A1D)",
             fontFamily: "Lexend",
             fontSize: "14px",
@@ -45,10 +47,12 @@ const useStyle = () => {
           },
 
           switchHeaderStyle: {
+            width: "160px",
+            height: "15px",
             color: "var(--primary-900, #090A1D)",
             fontFamily: "Lexend",
             fontSize: "12px",
-            fontStyle: "regular",
+            fontStyle: "normal",
             fontWeight: 400,
             lineHeight: "normal",
           },
