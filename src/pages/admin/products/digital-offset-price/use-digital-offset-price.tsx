@@ -2,6 +2,7 @@ import { useGomakeAxios } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
 import { getAndSetProductById } from "@/services/hooks";
+import { useRouter } from "next/router";
 
 const useDigitalOffsetPrice = () => {
   const { callApi } = useGomakeAxios();
@@ -9,6 +10,7 @@ const useDigitalOffsetPrice = () => {
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
   const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
   const [template, setTemplate] = useState<any>();
+  const router = useRouter();
   const onCloseMakeShape = () => {
     setMakeShapeOpen(false);
   };
@@ -58,9 +60,9 @@ const useDigitalOffsetPrice = () => {
 
   const getProductById = useCallback(async () => {
     await getAndSetProductById(callApi, setTemplate, {
-      Id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      Id: router?.query?.productId,
     });
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     getProductById();

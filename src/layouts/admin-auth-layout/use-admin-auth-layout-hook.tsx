@@ -177,6 +177,43 @@ const useAuthLayoutHook = () => {
           return <ProductsIcon />;
         },
       },
+      // {
+      //   isLine: false,
+      //   key: "products",
+      //   title: t("tabs.products"),
+      //   path: "/product-floor",
+      //   isList: true,
+      //   list: [
+      //     {
+      //       key: "actions",
+      //       title: t("tabs.actions"),
+      //       path: "/admin/products/actions",
+      //     },
+      //     {
+      //       key: "add-product",
+      //       title: t("tabs.addProduct"),
+      //       path: "/admin/products/add-product",
+      //     },
+      //     {
+      //       key: "digital-offset-price",
+      //       title: t("tabs.offsetPrice"),
+      //       path: "/admin/products/digital-offset-price",
+      //     },
+      //     {
+      //       key: "parameters",
+      //       title: t("tabs.parameters"),
+      //       path: "/admin/products/parameters",
+      //     },
+      //     {
+      //       key: "profits",
+      //       title: t("tabs.profits"),
+      //       path: "/admin/products/profits",
+      //     },
+      //   ],
+      //   icon: () => {
+      //     return <ProductsIcon />;
+      //   },
+      // },
       {
         isLine: false,
         key: "sales",
@@ -199,16 +236,6 @@ const useAuthLayoutHook = () => {
             title: t("sales.quote.title"),
             path: "/admin/sales/quote",
           },
-          // {
-          //   key: "add",
-          //   title: t("tabs.addSales"),
-          //   path: "/sales/add",
-          // },
-          // {
-          //   key: "list",
-          //   title: t("tabs.listSales"),
-          //   path: "/sales/list",
-          // },
         ],
         icon: () => {
           return <SalesIcon />;
