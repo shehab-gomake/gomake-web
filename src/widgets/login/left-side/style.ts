@@ -12,7 +12,8 @@ const useStyle = () => {
         justifyContent: "flex-start" as "flex-start",
         alignItems: "center",
         flex: 0.5,
-        height: "100vh",
+        height: "100%",
+        minHeight: "100vh",
       },
       logoContainer: {
         marginTop: 100,
