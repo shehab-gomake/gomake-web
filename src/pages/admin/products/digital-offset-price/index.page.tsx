@@ -24,6 +24,7 @@ import { MakeShapeModal } from "./modals/make-shape-modal";
 import { ChooseShapeModal } from "./modals/choose-shape-modal";
 import { useState } from "react";
 import { DoneIcon } from "./icons/done";
+import { useRouter } from "next/router";
 export default function Profits() {
   const { clasess } = useStyle();
   const {
@@ -42,6 +43,7 @@ export default function Profits() {
     activeTab,
     tabs,
   } = useDigitalOffsetPrice();
+  const router = useRouter();
   const [expanded, setExpanded] = useState<string | false>("panel_0");
 
   const handleChange =

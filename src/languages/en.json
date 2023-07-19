@@ -57,7 +57,12 @@
     "addMachine": "Add machine",
     "wideFormatMaterial": "Wide Format Material",
     "adminPanel": "Admin Panel",
-    "settings": "Settings"
+    "settings": "Settings",
+    "actions": "Actions",
+    "addProduct": "Add Product",
+    "offsetPrice": "Offset price list",
+    "parameters": "Parameters",
+    "profits": "profits"
   },
   "modal": {
     "close": "Close",
@@ -67,6 +72,14 @@
     "updatedfailed": "Updated failed",
     "deleteSusuccessfully": "Deleted successfully",
     "deletefailed": "Deleted failed"
+  },
+  "home": {
+    "admin": {
+      "selectCustomer": "Select customer",
+      "selectType": "Select Type",
+      "selectProduct": "Select product",
+      "createQoute": "Create qoute"
+    }
   },
   "materials": {
     "inputs": {

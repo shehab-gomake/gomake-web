@@ -54,6 +54,7 @@ const GoMakeAutoComplate = ({
   disabled,
   multiple = false,
   arrowColor,
+  onChangeTextField,
 }: {
   value?: string | string[];
   onChange?: any;
@@ -69,6 +70,7 @@ const GoMakeAutoComplate = ({
   multiple?: any;
   disabled?: any;
   arrowColor?: any;
+  onChangeTextField?: any;
 }) => {
   return (
     <StyledAutocomplete
@@ -82,6 +84,7 @@ const GoMakeAutoComplate = ({
         <TextField
           {...params}
           placeholder={!multiple && (defaultValue?.label || placeholder)}
+          onChange={onChangeTextField || params.onChange}
         />
       )}
       defaultValue={defaultValue}
