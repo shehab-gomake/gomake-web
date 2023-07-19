@@ -10,6 +10,7 @@ import config from "@/config";
 const LeftSideLayout = () => {
   const { t } = useTranslation();
   const { tabs } = useAuthLayoutHook();
+  const displayedProductionTabs = tabs.filter((tab) => tab.isProduction);
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const { clasess } = useStyle({ navStatus });
   return (
@@ -39,7 +40,7 @@ const LeftSideLayout = () => {
       )}
       <div style={clasess.tabsContainer}>
         {config.enviroment !== "dev"
-          ? tabs.slice(3, 5).map((tab) => {
+          ? displayedProductionTabs.map((tab) => {
               if (tab.isLine) {
                 return <div key={tab.key} style={clasess.line} />;
               } else {

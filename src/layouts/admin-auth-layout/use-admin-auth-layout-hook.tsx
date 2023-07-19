@@ -30,6 +30,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <HomeIcon />;
         },
+        isProduction: true,
       },
       {
         isLine: false,
@@ -40,6 +41,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <ProductFloorIcon />;
         },
+        isProduction: false,
       },
       {
         isLine: true,
@@ -166,6 +168,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <ProductsIcon />;
         },
+        isProduction: true,
       },
       {
         isLine: false,
@@ -176,6 +179,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <ProductsIcon />;
         },
+        isProduction: true,
       },
       // {
       //   isLine: false,
@@ -240,6 +244,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <SalesIcon />;
         },
+        isProduction: false,
       },
       {
         isLine: false,
@@ -250,6 +255,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <ShopingIcon />;
         },
+        isProduction: false,
       },
       {
         isLine: false,
@@ -260,6 +266,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <CustomersIcon />;
         },
+        isProduction: false,
       },
       {
         isLine: false,
@@ -270,6 +277,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <SuppliersIcon />;
         },
+        isProduction: false,
       },
       {
         isLine: false,
@@ -280,6 +288,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <ReportsIcon />;
         },
+        isProduction: false,
       },
       {
         isLine: true,
@@ -294,6 +303,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <AdminPanel />;
         },
+        isProduction: false,
       },
       {
         isLine: false,
@@ -304,6 +314,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <SettingNavBar />;
         },
+        isProduction: true,
       },
     ];
   }, []);
