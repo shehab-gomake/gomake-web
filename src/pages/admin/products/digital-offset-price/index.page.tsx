@@ -1,6 +1,5 @@
 import { AdminAuthLayout } from "@/layouts";
 import { DoneIcon, HeaderTitle } from "@/widgets";
-import { useDigitalOffsetPrice } from "./use-digital-offset-price";
 
 import { useStyle } from "./style";
 import {
@@ -29,6 +28,7 @@ import {
   ChooseShapeModal,
   MakeShapeModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
+import { useDigitalOffsetPrice } from "@/hooks";
 export default function Profits() {
   const { clasess } = useStyle();
   const {

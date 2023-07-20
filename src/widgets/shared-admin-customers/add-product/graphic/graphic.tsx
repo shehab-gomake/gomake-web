@@ -1,4 +1,4 @@
-import { useAddProduct } from "@/pages/admin/products/add-product/use-add-product";
+import { useAddProduct } from "@/hooks";
 import { useStyle } from "./style";
 
 const GraphicWidget = () => {

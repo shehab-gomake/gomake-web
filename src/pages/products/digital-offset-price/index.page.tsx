@@ -1,6 +1,5 @@
 import { CustomerAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
-import { useDigitalOffsetPrice } from "./use-digital-offset-price";
 
 import { useStyle } from "./style";
 import {
@@ -28,6 +27,7 @@ import {
   DoneIcon,
   Progress,
 } from "@/widgets/shared-admin-customers/digital-offset-price/icons";
+import { useDigitalOffsetPrice } from "@/hooks";
 export default function DigitalOffsetPrice() {
   const { clasess } = useStyle();
   const {

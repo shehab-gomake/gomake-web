@@ -1,4 +1,3 @@
-import { useAddProduct } from "@/pages/admin/products/add-product/use-add-product";
 import { useStyle } from "./style";
 import {
   GoMakeAutoComplate,
@@ -10,6 +9,7 @@ import { HiddenIcon } from "../icons/hidden-icon";
 import { NotHiddenIcon } from "../icons/not-hidden-icon";
 import { RequierdIcon } from "../icons/requierd-icon";
 import { NotRequierdIcon } from "../icons/not-requierd-icon";
+import { useAddProduct } from "@/hooks";
 
 const ParameterWidget = () => {
   const { clasess } = useStyle();

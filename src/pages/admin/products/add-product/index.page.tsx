@@ -5,9 +5,9 @@ import {
   ParameterWidget,
   SettingsWidget,
 } from "@/widgets";
-import { useAddProduct } from "./use-add-product";
 
 import { useStyle } from "./style";
+import { useAddProduct } from "@/hooks";
 
 export default function AddProduct() {
   const { clasess } = useStyle();
