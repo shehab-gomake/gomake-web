@@ -13,7 +13,6 @@ const getAndSetActionProfitRowChartData = async (
     data
   );
   const _data = returnResult(result, undefined);
-  console.log("_data", _data);
   const costAxis = [];
   const quantityAxis = [];
   const profitAxis = [];
@@ -21,11 +20,6 @@ const getAndSetActionProfitRowChartData = async (
     costAxis.push(item.cost);
     quantityAxis.push(item.quantity || 0);
     profitAxis.push(item.profit);
-  });
-  console.log("_data", {
-    profitAxis,
-    costAxis,
-    quantityAxis,
   });
   if (setState) {
     setState({

@@ -194,10 +194,6 @@ export default function Profits() {
 
   const [actionExceptionProfitIdValue, setactionExceptionProfitId] =
     useRecoilState<any>(actionExceptionProfitId);
-
-  useEffect(() => {
-    console.log("A");
-  });
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>

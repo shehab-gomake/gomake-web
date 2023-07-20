@@ -96,8 +96,6 @@ const SideList = ({
       return list;
     }
   }, [filter, list]);
-
-  console.log(list);
   return (
     <>
       {isCode ? (

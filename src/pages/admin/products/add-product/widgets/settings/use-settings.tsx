@@ -14,7 +14,6 @@ const useSettings = ({
   productState,
   onChangeStateProduct,
 }) => {
-  console.log("productState", productState);
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const router = useRouter();

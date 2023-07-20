@@ -27,7 +27,6 @@ const usePackings = () => {
   const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
   const [actionType, setActionType] = useState(0);
   const [selectedItems, setSelectedItems] = useState([]);
-  console.log("selectedItems", selectedItems);
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
   const [isUpdateCurrency, setIsUpdateCurrency] = useState(false);
   const [data, setData] = useState();

@@ -41,7 +41,6 @@ const Tab = ({ tab }: IProps) => {
       navigate(tab.path);
     }
   }, [tab, isListOpen, setIsListOpen]);
-  console.log("tab", tab);
   const changeRoute = useCallback((route: string) => {
     navigate(route);
   }, []);

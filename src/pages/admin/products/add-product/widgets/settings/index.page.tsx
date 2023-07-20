@@ -1,11 +1,13 @@
 import React from "react";
 
-import { useStyle } from "./style";
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-import { useSettings } from "./use-settings";
 import { useTranslation } from "react-i18next";
-import { AddProductSkuModal } from "./modals/add-contact-modal";
 import { SketchPicker } from "react-color";
+
+import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+
+import { AddProductSkuModal } from "./modals/add-contact-modal";
+import { useSettings } from "./use-settings";
+import { useStyle } from "./style";
 
 export default function SettingsWidget({
   onClickParametersTab,
@@ -39,7 +41,6 @@ export default function SettingsWidget({
     (item) => item.id === productState?.templateId
   );
   return (
-    // onClick={closeColorPicker}
     <div style={clasess.mainContainer}>
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.productCategory")}

@@ -104,7 +104,6 @@ const useSheets = () => {
     [updateState]
   );
   const initialStateSheetWeights = (item: any) => {
-    console.log("itemitem", item);
     let temp = [...item?.sheetWeights];
     let final: any = [];
     temp.map((sheetWeight) => {
@@ -118,7 +117,6 @@ const useSheets = () => {
       });
     });
 
-    console.log("finalfinal", item);
     setUpdateState(final);
   };
 
@@ -131,7 +129,6 @@ const useSheets = () => {
     const data = await getAndSetCategory(callApi, setCategory, {
       categoryName,
     });
-    console.log("datadatadatadatadatadatadatadata", data);
     initialStateSheetWeights(data);
     setSelectedEditItem(data);
     return data;
@@ -162,7 +159,6 @@ const useSheets = () => {
   };
 
   const addNewSupplierSheet = useCallback(async () => {
-    console.log("items", items);
     const temp: any = items.map((item: any) => {
       const sheetSizes = item?.sheetSizes?.map((size: any) => {
         let tempSize = { ...size };
@@ -181,8 +177,6 @@ const useSheets = () => {
         sheetSizes,
       };
     });
-    console.log("temp", temp);
-
     const res = await callApi("POST", `/v1/administrator/sheet/add-sheet`, {
       categoryName,
       sheetWeights: temp,
