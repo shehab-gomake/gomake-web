@@ -1,11 +1,11 @@
-import { AdminAuthLayout } from "@/layouts";
+import { CustomerAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 import { useAddProduct } from "./use-add-product";
 
 import { useStyle } from "./style";
-import SettingsWidget from "../../../products/add-product/widgets/settings/index.page";
-import ParameterWidget from "../../../products/add-product/widgets/parameters/index.page";
-import GraphicWidget from "../../../products/add-product/widgets/graphic/index.page";
+import SettingsWidget from "@/widgets/shared-admin-customers/add-product/settings/settings-widget";
+import ParameterWidget from "@/widgets/shared-admin-customers/add-product/parameters/parameters";
+import GraphicWidget from "@/widgets/shared-admin-customers/add-product/graphic/graphic";
 
 export default function EditProduct() {
   const { clasess } = useStyle();
@@ -19,7 +19,7 @@ export default function EditProduct() {
   } = useAddProduct();
 
   return (
-    <AdminAuthLayout>
+    <CustomerAuthLayout>
       <div style={clasess.mainContainer}>
         <HeaderTitle title={t("products.addProduct.admin.editProduct")} />
         <div style={clasess.headerTabsContainer}>
@@ -59,6 +59,6 @@ export default function EditProduct() {
           <GraphicWidget />
         )}
       </div>
-    </AdminAuthLayout>
+    </CustomerAuthLayout>
   );
 }

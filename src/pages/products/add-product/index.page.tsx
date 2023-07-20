@@ -1,13 +1,13 @@
-import { AdminAuthLayout } from "@/layouts";
+import { CustomerAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 import { useAddProduct } from "./use-add-product";
 
+import SettingsWidget from "@/widgets/shared-admin-customers/add-product/settings/settings-widget";
+import ParameterWidget from "@/widgets/shared-admin-customers/add-product/parameters/parameters";
+import GraphicWidget from "@/widgets/shared-admin-customers/add-product/graphic/graphic";
 import { useStyle } from "./style";
-import SettingsWidget from "../../../products/add-product/widgets/settings/index.page";
-import ParameterWidget from "../../../products/add-product/widgets/parameters/index.page";
-import GraphicWidget from "../../../products/add-product/widgets/graphic/index.page";
 
-export default function EditProduct() {
+export default function AddProduct() {
   const { clasess } = useStyle();
   const {
     t,
@@ -19,17 +19,13 @@ export default function EditProduct() {
   } = useAddProduct();
 
   return (
-    <AdminAuthLayout>
+    <CustomerAuthLayout>
       <div style={clasess.mainContainer}>
-        <HeaderTitle title={t("products.addProduct.admin.editProduct")} />
+        <HeaderTitle title={t("products.addProduct.admin.title")} />
         <div style={clasess.headerTabsContainer}>
           {tabs?.map((item, index) => {
             return (
-              <div
-                key={index}
-                style={clasess.headerTabContainer}
-                onClick={item.onclick()}
-              >
+              <div key={index} style={clasess.headerTabContainer}>
                 <div>
                   {item?.name === activeTab ? item.activeIcon : item?.icon}
                 </div>
@@ -51,7 +47,6 @@ export default function EditProduct() {
             onClickParametersTab={onClickParametersTab}
             onChangeStateProduct={onChangeStateProduct}
             productState={productState}
-            isUpdate={true}
           />
         ) : activeTab === "Parameters" ? (
           <ParameterWidget />
@@ -59,6 +54,6 @@ export default function EditProduct() {
           <GraphicWidget />
         )}
       </div>
-    </AdminAuthLayout>
+    </CustomerAuthLayout>
   );
 }

@@ -60,6 +60,11 @@ const useQuoteWidget = () => {
       `/admin/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedCustomersList?.id}&productId=${selectedProduct?.id}`
     );
   };
+  const onClcikCreateQuoteForCustomer = () => {
+    navigate(
+      `/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedCustomersList?.id}&productId=${selectedProduct?.id}`
+    );
+  };
   return {
     clientTypesValue,
     productValue,
@@ -71,6 +76,7 @@ const useQuoteWidget = () => {
     checkWhatRenderArray,
     renderOptions,
     onClcikCreateQuote,
+    onClcikCreateQuoteForCustomer,
   };
 };
 
