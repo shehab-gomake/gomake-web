@@ -1,11 +1,13 @@
 import { AdminAuthLayout } from "@/layouts";
-import { HeaderTitle } from "@/widgets";
+import {
+  GraphicWidget,
+  HeaderTitle,
+  ParameterWidget,
+  SettingsWidget,
+} from "@/widgets";
 import { useAddProduct } from "./use-add-product";
 
 import { useStyle } from "./style";
-import SettingsWidget from "./widgets/settings/index.page";
-import ParameterWidget from "./widgets/parameters/index.page";
-import GraphicWidget from "./widgets/graphic/index.page";
 
 export default function AddProduct() {
   const { clasess } = useStyle();
@@ -25,11 +27,7 @@ export default function AddProduct() {
         <div style={clasess.headerTabsContainer}>
           {tabs?.map((item, index) => {
             return (
-              <div
-                key={index}
-                style={clasess.headerTabContainer}
-                // onClick={item.onclick()}
-              >
+              <div key={index} style={clasess.headerTabContainer}>
                 <div>
                   {item?.name === activeTab ? item.activeIcon : item?.icon}
                 </div>

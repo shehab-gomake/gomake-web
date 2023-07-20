@@ -1,5 +1,5 @@
 import { AdminAuthLayout } from "@/layouts";
-import { HeaderTitle } from "@/widgets";
+import { DoneIcon, HeaderTitle } from "@/widgets";
 import { useDigitalOffsetPrice } from "./use-digital-offset-price";
 
 import { useStyle } from "./style";
@@ -18,13 +18,17 @@ import {
   Checkbox,
 } from "@mui/material";
 import { CheckboxCheckedIcon, EditIcon } from "@/icons";
-import { CheckboxIcon } from "./icons/checkbox-icon";
-import { Progress } from "./icons/progress";
-import { MakeShapeModal } from "./modals/make-shape-modal";
-import { ChooseShapeModal } from "./modals/choose-shape-modal";
+
 import { useState } from "react";
-import { DoneIcon } from "./icons/done";
 import { useRouter } from "next/router";
+import {
+  CheckboxIcon,
+  Progress,
+} from "@/widgets/shared-admin-customers/digital-offset-price/icons";
+import {
+  ChooseShapeModal,
+  MakeShapeModal,
+} from "@/widgets/shared-admin-customers/digital-offset-price";
 export default function Profits() {
   const { clasess } = useStyle();
   const {

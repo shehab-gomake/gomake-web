@@ -1,10 +1,13 @@
 import { CustomerAuthLayout } from "@/layouts";
-import { HeaderTitle } from "@/widgets";
 import { useAddProduct } from "./use-add-product";
 
-import SettingsWidget from "@/widgets/shared-admin-customers/add-product/settings/settings-widget";
-import ParameterWidget from "@/widgets/shared-admin-customers/add-product/parameters/parameters";
-import GraphicWidget from "@/widgets/shared-admin-customers/add-product/graphic/graphic";
+import {
+  GraphicWidget,
+  HeaderTitle,
+  ParameterWidget,
+  SettingsWidget,
+} from "@/widgets";
+
 import { useStyle } from "./style";
 
 export default function AddProduct() {

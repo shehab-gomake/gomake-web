@@ -2,11 +2,9 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
 
-import { SettingIcon } from "./icons/setting";
-import { PrameterIcon } from "./icons/parameter";
-import { GraphicIcon } from "./icons/graphic";
 import { getAndSetProductById } from "@/services/hooks";
 import { useRouter } from "next/router";
+import { GraphicIcon, PrameterIcon, SettingIcon } from "@/widgets";
 
 const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
@@ -117,8 +115,6 @@ const useAddProduct = () => {
           type: "sucess",
         });
         getProductById();
-
-        // router.reload();
       } else {
         setSnackbarStateValue({
           state: true,

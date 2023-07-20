@@ -11,7 +11,7 @@ import { NotHiddenIcon } from "../icons/not-hidden-icon";
 import { RequierdIcon } from "../icons/requierd-icon";
 import { NotRequierdIcon } from "../icons/not-requierd-icon";
 
-export default function ParameterWidget() {
+const ParameterWidget = () => {
   const { clasess } = useStyle();
   const {
     t,
@@ -311,4 +311,6 @@ export default function ParameterWidget() {
       )}
     </>
   );
-}
+};
+
+export { ParameterWidget };

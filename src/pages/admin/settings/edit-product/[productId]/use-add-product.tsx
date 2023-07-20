@@ -1,11 +1,9 @@
 import { useGomakeAxios } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
-import { SettingIcon } from "../../../products/add-product/icons/setting";
-import { PrameterIcon } from "../../../products/add-product/icons/parameter";
-import { GraphicIcon } from "../../../products/add-product/icons/graphic";
 import { useRouter } from "next/router";
 import { getAndSetProductById } from "@/services/hooks";
+import { GraphicIcon, PrameterIcon, SettingIcon } from "@/widgets";
 
 const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
