@@ -1,11 +1,13 @@
 import { AdminAuthLayout } from "@/layouts";
-import { HeaderTitle } from "@/widgets";
+import {
+  GraphicWidget,
+  HeaderTitle,
+  ParameterWidget,
+  SettingsWidget,
+} from "@/widgets";
 import { useAddProduct } from "./use-add-product";
 
 import { useStyle } from "./style";
-import SettingsWidget from "../../../products/add-product/widgets/settings/index.page";
-import ParameterWidget from "../../../products/add-product/widgets/parameters/index.page";
-import GraphicWidget from "../../../products/add-product/widgets/graphic/index.page";
 
 export default function EditProduct() {
   const { clasess } = useStyle();
@@ -54,10 +56,7 @@ export default function EditProduct() {
             isUpdate={true}
           />
         ) : activeTab === "Parameters" ? (
-          <ParameterWidget
-          // onChangeStateProduct={onChangeStateProduct}
-          // productState={productState}
-          />
+          <ParameterWidget />
         ) : (
           <GraphicWidget />
         )}

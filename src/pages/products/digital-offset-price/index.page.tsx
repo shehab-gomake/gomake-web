@@ -1,5 +1,5 @@
-import { AdminAuthLayout } from "@/layouts";
-import { DoneIcon, HeaderTitle } from "@/widgets";
+import { CustomerAuthLayout } from "@/layouts";
+import { HeaderTitle } from "@/widgets";
 
 import { useStyle } from "./style";
 import {
@@ -17,19 +17,18 @@ import {
   Checkbox,
 } from "@mui/material";
 import { CheckboxCheckedIcon, EditIcon } from "@/icons";
-
 import { useState } from "react";
-import { useRouter } from "next/router";
-import {
-  CheckboxIcon,
-  Progress,
-} from "@/widgets/shared-admin-customers/digital-offset-price/icons";
 import {
   ChooseShapeModal,
   MakeShapeModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
+import {
+  CheckboxIcon,
+  DoneIcon,
+  Progress,
+} from "@/widgets/shared-admin-customers/digital-offset-price/icons";
 import { useDigitalOffsetPrice } from "@/hooks";
-export default function Profits() {
+export default function DigitalOffsetPrice() {
   const { clasess } = useStyle();
   const {
     t,
@@ -47,7 +46,6 @@ export default function Profits() {
     activeTab,
     tabs,
   } = useDigitalOffsetPrice();
-  const router = useRouter();
   const [expanded, setExpanded] = useState<string | false>("panel_0");
 
   const handleChange =
@@ -112,7 +110,7 @@ export default function Profits() {
     } else return `${data}%`;
   };
   return (
-    <AdminAuthLayout>
+    <CustomerAuthLayout>
       {template && (
         <div style={clasess.mainContainer}>
           <HeaderTitle title={t("products.offsetPrice.admin.title2")} />
@@ -140,7 +138,6 @@ export default function Profits() {
                           style={{
                             width: 30,
                             height: 24,
-                            // stroke: "red",
                           }}
                         />
                       </div>
@@ -456,6 +453,6 @@ export default function Profits() {
           />
         </div>
       )}
-    </AdminAuthLayout>
+    </CustomerAuthLayout>
   );
 }

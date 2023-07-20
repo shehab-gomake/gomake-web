@@ -1,7 +1,7 @@
+import { useAddProduct } from "@/hooks";
 import { useStyle } from "./style";
-import { useAddProduct } from "../../use-add-product";
 
-export default function GraphicWidget() {
+const GraphicWidget = () => {
   const { clasess } = useStyle();
   const {} = useAddProduct();
 
@@ -10,4 +10,6 @@ export default function GraphicWidget() {
       <div>ddd</div>
     </div>
   );
-}
+};
+
+export { GraphicWidget };

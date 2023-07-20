@@ -4,9 +4,8 @@ import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
-const useParameters = ({ productState, onChangeStateProduct }) => {
+const useParameters = () => {
   const { callApi } = useGomakeAxios();
-  const { navigate } = useGomakeRouter();
   const router = useRouter();
   const { t } = useTranslation();
   const { setSnackbarStateValue } = useSnackBar();

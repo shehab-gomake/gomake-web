@@ -5,13 +5,13 @@ import {
   GomakeTextInput,
   SecondSwitch,
 } from "@/components";
-import { useAddProduct } from "../../use-add-product";
-import { HiddenIcon } from "../../icons/hidden-icon";
-import { NotHiddenIcon } from "../../icons/not-hidden-icon";
-import { RequierdIcon } from "../../icons/requierd-icon";
-import { NotRequierdIcon } from "../../icons/not-requierd-icon";
+import { HiddenIcon } from "../icons/hidden-icon";
+import { NotHiddenIcon } from "../icons/not-hidden-icon";
+import { RequierdIcon } from "../icons/requierd-icon";
+import { NotRequierdIcon } from "../icons/not-requierd-icon";
+import { useAddProduct } from "@/hooks";
 
-export default function ParameterWidget() {
+const ParameterWidget = () => {
   const { clasess } = useStyle();
   const {
     t,
@@ -121,9 +121,6 @@ export default function ParameterWidget() {
               </div>
             );
           }}
-          // onChange={(e, v) =>
-          //   handleAutocompleteChange(e, v, parameter?.valuesConfigs)
-          // }
         />
       );
     } else if (parameter?.parameterType === 3) {
@@ -142,10 +139,7 @@ export default function ParameterWidget() {
       );
     } else if (parameter?.parameterType === 4) {
       return (
-        <GomakePrimaryButton
-          style={clasess.dynamicBtn}
-          // onClick={onOpeneChooseShape}
-        >
+        <GomakePrimaryButton style={clasess.dynamicBtn}>
           {parameter?.name}
         </GomakePrimaryButton>
       );
@@ -317,4 +311,6 @@ export default function ParameterWidget() {
       )}
     </>
   );
-}
+};
+
+export { ParameterWidget };

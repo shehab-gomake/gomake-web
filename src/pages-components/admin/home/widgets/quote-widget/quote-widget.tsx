@@ -5,7 +5,7 @@ import { useQuoteWidget } from "./use-quote-widget";
 
 import { useStyle } from "./style";
 
-const QuoteWidget = () => {
+const QuoteWidget = ({ isAdmin = true }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -17,6 +17,7 @@ const QuoteWidget = () => {
     checkWhatRenderArray,
     renderOptions,
     onClcikCreateQuote,
+    onClcikCreateQuoteForCustomer,
   } = useQuoteWidget();
 
   return (
@@ -60,7 +61,9 @@ const QuoteWidget = () => {
         </div>
       </div>
       <div style={clasess.btnContainer}>
-        <GomakePrimaryButton onClick={onClcikCreateQuote}>
+        <GomakePrimaryButton
+          onClick={isAdmin ? onClcikCreateQuote : onClcikCreateQuoteForCustomer}
+        >
           {t("home.admin.createQoute")}
         </GomakePrimaryButton>
       </div>

@@ -1,15 +1,15 @@
-import { AdminAuthLayout } from "@/layouts";
+import { CustomerAuthLayout } from "@/layouts";
 import {
   GraphicWidget,
   HeaderTitle,
   ParameterWidget,
   SettingsWidget,
 } from "@/widgets";
+import { useAddProduct } from "./use-add-product";
 
 import { useStyle } from "./style";
-import { useAddProduct } from "@/hooks";
 
-export default function AddProduct() {
+export default function EditProduct() {
   const { clasess } = useStyle();
   const {
     t,
@@ -21,13 +21,17 @@ export default function AddProduct() {
   } = useAddProduct();
 
   return (
-    <AdminAuthLayout>
+    <CustomerAuthLayout>
       <div style={clasess.mainContainer}>
-        <HeaderTitle title={t("products.addProduct.admin.title")} />
+        <HeaderTitle title={t("products.addProduct.admin.editProduct")} />
         <div style={clasess.headerTabsContainer}>
           {tabs?.map((item, index) => {
             return (
-              <div key={index} style={clasess.headerTabContainer}>
+              <div
+                key={index}
+                style={clasess.headerTabContainer}
+                onClick={item.onclick()}
+              >
                 <div>
                   {item?.name === activeTab ? item.activeIcon : item?.icon}
                 </div>
@@ -49,6 +53,7 @@ export default function AddProduct() {
             onClickParametersTab={onClickParametersTab}
             onChangeStateProduct={onChangeStateProduct}
             productState={productState}
+            isUpdate={true}
           />
         ) : activeTab === "Parameters" ? (
           <ParameterWidget />
@@ -56,6 +61,6 @@ export default function AddProduct() {
           <GraphicWidget />
         )}
       </div>
-    </AdminAuthLayout>
+    </CustomerAuthLayout>
   );
 }

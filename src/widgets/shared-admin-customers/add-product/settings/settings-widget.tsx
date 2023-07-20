@@ -9,12 +9,12 @@ import { AddProductSkuModal } from "./modals/add-contact-modal";
 import { useSettings } from "./use-settings";
 import { useStyle } from "./style";
 
-export default function SettingsWidget({
+const SettingsWidget = ({
   onClickParametersTab,
   productState,
   onChangeStateProduct,
   isUpdate = false,
-}) {
+}) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -303,4 +303,5 @@ export default function SettingsWidget({
       />
     </div>
   );
-}
+};
+export { SettingsWidget };

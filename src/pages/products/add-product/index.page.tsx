@@ -1,4 +1,6 @@
-import { AdminAuthLayout } from "@/layouts";
+import { CustomerAuthLayout } from "@/layouts";
+import { useAddProduct } from "./use-add-product";
+
 import {
   GraphicWidget,
   HeaderTitle,
@@ -7,7 +9,6 @@ import {
 } from "@/widgets";
 
 import { useStyle } from "./style";
-import { useAddProduct } from "@/hooks";
 
 export default function AddProduct() {
   const { clasess } = useStyle();
@@ -21,7 +22,7 @@ export default function AddProduct() {
   } = useAddProduct();
 
   return (
-    <AdminAuthLayout>
+    <CustomerAuthLayout>
       <div style={clasess.mainContainer}>
         <HeaderTitle title={t("products.addProduct.admin.title")} />
         <div style={clasess.headerTabsContainer}>
@@ -56,6 +57,6 @@ export default function AddProduct() {
           <GraphicWidget />
         )}
       </div>
-    </AdminAuthLayout>
+    </CustomerAuthLayout>
   );
 }
