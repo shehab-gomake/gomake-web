@@ -10,6 +10,7 @@ const useStyle = ({
   isHover?: boolean | undefined;
   navStatus?: any;
 }) => {
+  console.log("navStatusnavStatus", navStatus);
   const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
@@ -23,11 +24,12 @@ const useStyle = ({
         display: "flex",
         ...FONT_FAMILY.Lexend(700, 18),
         color: "white",
+        marginTop: navStatus?.isClosed ? 20 : 0,
       },
       leftContainer: {
         backgroundColor: primaryColor(500),
-        width: navStatus?.isClosed ? 55 : 280,
-        minWidth: navStatus?.isClosed ? 55 : 280,
+        width: navStatus?.isClosed ? 190 : 280,
+        minWidth: navStatus?.isClosed ? 190 : 280,
         height: "100%",
         display: "flex",
         flexDirection: "column" as "column",
@@ -95,7 +97,7 @@ const useStyle = ({
       tabContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "flex-start" as "flex-start",
+        justifyContent: navStatus?.isClosed ? "center" : "flex-start",
         alignItems: "center",
         gap: convertWidthToVW(8),
         marginTop: convertHeightToVH(28),
@@ -110,9 +112,17 @@ const useStyle = ({
       line: {
         border: "1px solid #FFFFFF",
         opacity: 0.4,
-        width: "100%",
+        width: "90%",
         marginTop: convertHeightToVH(28),
         marginBottom: convertHeightToVH(32),
+        alignSelf: "center",
+      },
+      lineContainer: {
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        alignSelf: "center",
       },
       tabList: {
         paddingTop: convertWidthToVW(15),

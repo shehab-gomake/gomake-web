@@ -8,12 +8,13 @@ const useStyle = () => {
     return {
       container: {
         backgroundColor: "#FFFFFF",
-        flex: 1,
+        // flex: 1,
         display: "flex",
         flexDirection: "row" as "row",
         alignItems: "center",
         justifyContent: "space-between" as "space-between",
-        minHeight: "100vh",
+        // minHeight: "100%",
+        // height: "100%",
         // ...FONT_FAMILY.Lexend(600),
       },
     };

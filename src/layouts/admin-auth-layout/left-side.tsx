@@ -10,6 +10,7 @@ import config from "@/config";
 const LeftSideLayout = () => {
   const { t } = useTranslation();
   const { tabs } = useAuthLayoutHook();
+  const displayedProductionTabs = tabs.filter((tab) => tab.isProduction);
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const { clasess } = useStyle({ navStatus });
   return (
@@ -21,8 +22,8 @@ const LeftSideLayout = () => {
       <div
         style={{
           position: "absolute",
-          left: navStatus.isClosed ? 35 : 265,
-          top: navStatus.isClosed ? 20 : 80,
+          left: navStatus.isClosed ? 176 : 265,
+          top: navStatus.isClosed ? 50 : 80,
           transform: navStatus.isClosed ? "rotate(180deg)" : "rotate(0)",
           // transform: "rotate(90deg)",
           zIndex: 10,
@@ -34,32 +35,39 @@ const LeftSideLayout = () => {
       >
         <BackNavIcon />
       </div>
-      {!navStatus.isClosed && (
-        <div style={clasess.logoContainer}>Admin panel</div>
-      )}
+
+      <div style={clasess.logoContainer}>Admin panel</div>
+
       <div style={clasess.tabsContainer}>
         {config.enviroment !== "dev"
-          ? tabs.slice(3, 5).map((tab) => {
+          ? displayedProductionTabs.map((tab) => {
               if (tab.isLine) {
-                return <div key={tab.key} style={clasess.line} />;
+                return (
+                  <div style={clasess.lineContainer}>
+                    <div key={tab.key} style={clasess.line} />
+                  </div>
+                );
               } else {
                 return <Tab key={tab.key} tab={tab} />;
               }
             })
           : tabs.map((tab) => {
               if (tab.isLine) {
-                return <div key={tab.key} style={clasess.line} />;
+                return (
+                  <div style={clasess.lineContainer}>
+                    <div key={tab.key} style={clasess.line} />
+                  </div>
+                );
               } else {
                 return <Tab key={tab.key} tab={tab} />;
               }
             })}
       </div>
-      {!navStatus.isClosed && (
-        <div style={clasess.poweredContainer}>
-          <div style={clasess.poweredByLbl}>{t("login.poweredBy")}</div>
-          <div style={clasess.gomakeByLbl}>{t("login.GoMake")}</div>
-        </div>
-      )}
+
+      <div style={clasess.poweredContainer}>
+        <div style={clasess.poweredByLbl}>{t("login.poweredBy")}</div>
+        <div style={clasess.gomakeByLbl}>{t("login.GoMake")}</div>
+      </div>
     </div>
   );
 };
