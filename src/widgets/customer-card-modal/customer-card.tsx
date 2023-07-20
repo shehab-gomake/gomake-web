@@ -16,10 +16,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { BookKeepingForm } from "./components/bookKeeping-tab/form";
 import Switch from "./components/switch-component";
+import { BudgetForm } from "./components/budget-tab/add-budget/form";
 
-const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton
-
-}: any) => {
+const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
 
   const theme = createMuiTheme({
     palette: {
@@ -45,8 +44,10 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
       t("customers.modal.sum"),
       t("customers.modal.balance"),
       t("customers.modal.invoiceNumber"),
+      t("customers.modal.period"),
+      t("customers.modal.paymentStatus"),
       t("customers.modal.status"),
-      t("customers.modal.hashtag"),
+      t("customers.modal.more"),
     ],
     []
   );
@@ -89,7 +90,6 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
   const [selectedTab, setSelectedTab] = useState(0);
   const [contacts, setContacts] = useState([]);
   const [addresses, setAddresses] = useState([]);
-  const [budgets, setBudgets] = useState([]);
   const [useres, setUsers] = useState([]);
   const [IPaddresses, setIPaddresses] = useState([]);
   const [open, setOpen] = useState(false);
@@ -137,20 +137,6 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
     setAddresses(temp);
   }
 
-  const addEmptyBudget = () => {
-    var temp = [...budgets];
-    const index = temp.length + 1;
-    temp.push({ name: "", index: index });
-    setBudgets(temp);
-  }
-
-  const deleteBudgetForm = (index) => {
-    debugger;
-    var temp = [...budgets];
-    temp = temp.filter(x => x.index != index);
-    setBudgets(temp);
-  }
-
   const addEmptyClient = () => {
     var temp = [...useres];
     const index = temp.length + 1;
@@ -172,7 +158,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
     setIPaddresses(temp);
   }
 
-
+  
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
@@ -234,13 +220,13 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
         <ThemeProvider theme={theme}>
           <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary" TabIndicatorProps={{ style: { display: 'none' }, }} >
             <Tab sx={{ backgroundColor: selectedTab === 0 ? '#ED028C' : '#EBECFF', color: selectedTab === 0 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "82px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.general")} />
-            <Tab sx={{ backgroundColor: selectedTab === 1 ? '#ED028C' : '#EBECFF', minWidth: '0px', width: "90px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.contacts")} />
-            <Tab sx={{ backgroundColor: selectedTab === 2 ? '#ED028C' : '#EBECFF', minWidth: '0px', width: "100px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.addresses")} />
-            <Tab sx={{ backgroundColor: selectedTab === 3 ? '#ED028C' : '#EBECFF', minWidth: '0px', width: "129px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "7px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.bookKeeping")} />
-            <Tab sx={{ backgroundColor: selectedTab === 4 ? '#ED028C' : '#EBECFF', minWidth: '0px', width: "188px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "5px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.budgetManagment")} />
-            <Tab sx={{ backgroundColor: selectedTab === 5 ? '#ED028C' : '#EBECFF', minWidth: '0px', width: "206px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "4px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.priceLists")} />
-            <Tab sx={{ backgroundColor: selectedTab === 6 ? '#ED028C' : '#EBECFF', minWidth: '0px', width: "137px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "7px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.gomakeUsers")} />
-            <Tab sx={{ backgroundColor: selectedTab === 7 ? '#ED028C' : '#EBECFF', minWidth: '0px', width: "106px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "7px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.cardIndex")} />
+            <Tab sx={{ backgroundColor: selectedTab === 1 ? '#ED028C' : '#EBECFF', color: selectedTab === 1 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "90px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.contacts")} />
+            <Tab sx={{ backgroundColor: selectedTab === 2 ? '#ED028C' : '#EBECFF', color: selectedTab === 2 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "100px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.addresses")} />
+            <Tab sx={{ backgroundColor: selectedTab === 3 ? '#ED028C' : '#EBECFF', color: selectedTab === 3 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "129px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "7px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.bookKeeping")} />
+            <Tab sx={{ backgroundColor: selectedTab === 4 ? '#ED028C' : '#EBECFF', color: selectedTab === 4 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "188px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "5px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.budgetManagment")} />
+            <Tab sx={{ backgroundColor: selectedTab === 5 ? '#ED028C' : '#EBECFF', color: selectedTab === 5 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "206px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "4px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.priceLists")} />
+            <Tab sx={{ backgroundColor: selectedTab === 6 ? '#ED028C' : '#EBECFF', color: selectedTab === 6 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "137px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "7px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.gomakeUsers")} />
+            <Tab sx={{ backgroundColor: selectedTab === 7 ? '#ED028C' : '#EBECFF', color: selectedTab === 7 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "106px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "7px", marginRight: "10px", textTransform: 'none', fontFamily: "Lexend", fontSize: "16px", fontStyle: "normal", fontWeight: 500, lineHeight: "normal", }} label={t("customers.modal.cardIndex")} />
           </Tabs>
           {
             //general info
@@ -327,19 +313,10 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
             selectedTab == 3 &&
             <BookKeepingForm></BookKeepingForm>
           }
-
           {
             //budget info
             selectedTab == 4 &&
-            <div>
-              <a style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} onClick={addEmptyBudget}  >
-                <AddBoxIcon style={{ fontSize: "1.1em", color: "#8283BE" }}></AddBoxIcon>
-                <Button style={{ color: "#8283BE" }}>{t("customers.buttons.newBudget")}</Button>
-              </a>
-              <div style={clasess.tableContainer}>
-                <Table tableHeaders={tabelHeaders} tableRows={null} ></Table>
-              </div>
-            </div>
+              <BudgetForm></BudgetForm>
           }
           {
             //price list info
@@ -349,7 +326,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
           {
             //GOMAKEUSER info
             selectedTab == 6 &&
-            <Row  style={{display: "flex" ,  }}>
+            <Row  style={{display: "flex"  }}>
               <Col  md={10}>
                 {
                   useres.map(x =>
