@@ -1,11 +1,13 @@
 import { CustomerAuthLayout } from "@/layouts";
-import { HeaderTitle } from "@/widgets";
+import {
+  GraphicWidget,
+  HeaderTitle,
+  ParameterWidget,
+  SettingsWidget,
+} from "@/widgets";
 import { useAddProduct } from "./use-add-product";
 
 import { useStyle } from "./style";
-import SettingsWidget from "@/widgets/shared-admin-customers/add-product/settings/settings-widget";
-import ParameterWidget from "@/widgets/shared-admin-customers/add-product/parameters/parameters";
-import GraphicWidget from "@/widgets/shared-admin-customers/add-product/graphic/graphic";
 
 export default function EditProduct() {
   const { clasess } = useStyle();

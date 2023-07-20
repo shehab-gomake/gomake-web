@@ -3,9 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getAndSetProductById } from "@/services/hooks";
-import { SettingIcon } from "@/pages/admin/products/add-product/icons/setting";
-import { PrameterIcon } from "@/pages/admin/products/add-product/icons/parameter";
-import { GraphicIcon } from "@/pages/admin/products/add-product/icons/graphic";
+import { GraphicIcon, PrameterIcon, SettingIcon } from "@/widgets";
 
 const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
