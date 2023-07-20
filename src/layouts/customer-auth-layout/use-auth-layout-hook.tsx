@@ -33,7 +33,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <HomeIcon />;
         },
-        isProduction: false,
+        isProduction: true,
       },
       {
         isLine: false,
