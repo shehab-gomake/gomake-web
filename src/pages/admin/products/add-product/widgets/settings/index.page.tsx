@@ -5,7 +5,8 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { useSettings } from "./use-settings";
 import { useTranslation } from "react-i18next";
 import { AddProductSkuModal } from "./modals/add-contact-modal";
-import ColorPicker from "react-pick-color";
+import { SketchPicker } from "react-color";
+
 export default function SettingsWidget({
   onClickParametersTab,
   productState,
@@ -222,17 +223,17 @@ export default function SettingsWidget({
         </div>
       </div>
       {showColorPicker && (
-        <ColorPicker
+        <SketchPicker
           color={productState?.textColor}
-          onChange={(value: any) => {
+          onChangeComplete={(value: any) => {
             onChangeStateProduct("textColor", value?.hex);
           }}
         />
       )}
       {showColorPickerForNoteColor && (
-        <ColorPicker
+        <SketchPicker
           color={productState?.noteColor}
-          onChange={(value: any) => {
+          onChangeComplete={(value: any) => {
             onChangeStateProduct("noteColor", value?.hex);
           }}
         />
