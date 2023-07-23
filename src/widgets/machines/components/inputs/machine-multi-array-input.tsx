@@ -1,6 +1,6 @@
-import {ChangeEvent, useState} from "react";
+import {useState} from "react";
 import {useStyle} from "@/widgets/machines/components/inputs/style";
-import {IMachineMultiArrayInput, IInput} from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
+import {IInput, IMachineMultiArrayInput} from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
 import {MachineInput} from "@/widgets/machines/components/inputs/machine-inputs";
 import {useTranslation} from "react-i18next";
 import {SecondaryButton} from "@/widgets/machines/components/buttons/secondary-button";
@@ -28,22 +28,16 @@ const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value,
             setState({});
         }
     }
-    const handleInputChanges = (e: ChangeEvent<HTMLInputElement>) => {
-        setState({...state, [e.target.name]: e.target.value})
-    }
 
     const handleInputChanges1 = (key: string, value: string) => {
         setErrors({...errors, [key]: false});
         setState({...state, [key]: value});
     }
 
-    const handleValuesChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const index = e.target.getAttribute('data-index');
-        if (e && index) {
-            const values = value;
-            values[+index] = {...values[+index], [e.target.name]: e.target.value};
+    const handleValuesChange = (key: string, newValue: any, index: number) => {
+            const values = [...value];
+            values[index] = {...values[index], [key]: newValue};
             updateState(parameterKey, values);
-        }
     }
 
     const handleRemoveRow = (index: number) => {
@@ -75,9 +69,11 @@ const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value,
                     return <div key={'row' + index} style={{...classes.inputsRow, paddingTop: 12}}>
                         {
                             inputs.map((input) => <MachineInput
-                                readonly={true}
-                                input={{...input, value: v[input.parameterKey], disabled: false}} error={false}
-                                changeState={() => {
+                                key={index}
+                                readonly={false}
+                                input={{...input, value:  v[input.parameterKey], disabled: false}} error={false}
+                                changeState={(key, value) => {
+                                    handleValuesChange(key, value, index);
                                 }}
                             />)
                         }

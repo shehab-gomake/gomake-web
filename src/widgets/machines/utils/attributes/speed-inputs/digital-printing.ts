@@ -78,9 +78,9 @@ const digitalPrinting = (state: Record<string, any>) => {
                 },
                 {
                     name: "speed",
-                    label: "machineAttributes.speed",
+                    label: "machineAttributes.speedPercentage",
                     type: "text",
-                    placeholder: "machineAttributes.speed",
+                    placeholder: "machineAttributes.speedPercentage",
                     required: true,
                     parameterKey: "speed",
                     options: []
