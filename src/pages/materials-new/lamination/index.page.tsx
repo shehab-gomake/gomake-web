@@ -7,7 +7,7 @@ import { SecondSwitch } from "@/components/switch/second";
 import { GoMakeAutoComplate } from "@/components";
 import { SettingsIcon } from "@/icons/settings";
 import { CustomerAuthLayout } from "@/layouts";
-import { IconButton } from "@mui/material";
+import { CircularProgress, IconButton } from "@mui/material";
 
 import { UpdatePricePerTonModal } from "./modals/update-price-per-ton-modal";
 import { UpdateCurrencyModal } from "./modals/update-currency-modal";
@@ -17,6 +17,7 @@ import { SheetSizesWidget } from "./widgets/sheet-sizes";
 import { SettingsMenuModal } from "./modals/menu";
 import { useLamination } from "./use-lamination";
 import { useStyle } from "./style";
+import { GomakeLoaderWidget } from "@/widgets";
 
 export default function Lamination() {
   const { t } = useTranslation();
@@ -37,6 +38,7 @@ export default function Lamination() {
     sheetCheckStore,
     modalTitle,
     selectedSupplier,
+    isLoader,
     getSheetAllWeights,
     setSheetCheckStore,
     setSelectedMaterials,
@@ -122,42 +124,51 @@ export default function Lamination() {
       <MaterialsLayout header={t("materials.lamination.title")} side={Side()}>
         {renderHeader()}
         <div style={{ paddingLeft: 0 }}>
-          {allWeightsGrouped.length === 0 ? (
-            <div style={clasess.noData}>
-              {t("materials.sheetPaper.supplierAddedSheetYet")}
-              <span style={clasess.noDataSpan} onClick={onClickAddNewSupplier}>
-                {t("materials.sheetPaper.pleaseAddNow")}
-              </span>
-            </div>
+          {isLoader ? (
+            <GomakeLoaderWidget />
           ) : (
             <>
-              {["header", ...allWeightsGrouped]?.map(
-                (row: any, index: number) => {
-                  if (row === "header") {
-                    return (
-                      <HeaderTableWidget
-                        setSheetCheckStore={setSheetCheckStore}
-                        sheetCheckStore={sheetCheckStore}
-                        index={index}
-                      />
-                    );
-                  }
-                  return (
-                    <div style={{ ...clasess.bodyRow }}>
-                      <div style={clasess.sheetSizeContainer}>
-                        <SheetSizesWidget
-                          row={row}
-                          selectedMaterials={selectedMaterials}
-                          selectedSupplier={selectedSupplier}
-                          getSheetAllWeights={getSheetAllWeights}
-                          index2={index}
-                          selectedItems={selectedItems}
-                          handleCheckboxChange={handleCheckboxChange}
-                        />
-                      </div>
-                    </div>
-                  );
-                }
+              {allWeightsGrouped?.length === 0 ? (
+                <div style={clasess.noData}>
+                  {t("materials.sheetPaper.supplierAddedSheetYet")}
+                  <span
+                    style={clasess.noDataSpan}
+                    onClick={onClickAddNewSupplier}
+                  >
+                    {t("materials.sheetPaper.pleaseAddNow")}
+                  </span>
+                </div>
+              ) : (
+                <>
+                  {["header", ...allWeightsGrouped]?.map(
+                    (row: any, index: number) => {
+                      if (row === "header") {
+                        return (
+                          <HeaderTableWidget
+                            setSheetCheckStore={setSheetCheckStore}
+                            sheetCheckStore={sheetCheckStore}
+                            index={index}
+                          />
+                        );
+                      }
+                      return (
+                        <div style={{ ...clasess.bodyRow }}>
+                          <div style={clasess.sheetSizeContainer}>
+                            <SheetSizesWidget
+                              row={row}
+                              selectedMaterials={selectedMaterials}
+                              selectedSupplier={selectedSupplier}
+                              getSheetAllWeights={getSheetAllWeights}
+                              index2={index}
+                              selectedItems={selectedItems}
+                              handleCheckboxChange={handleCheckboxChange}
+                            />
+                          </div>
+                        </div>
+                      );
+                    }
+                  )}
+                </>
               )}
             </>
           )}
