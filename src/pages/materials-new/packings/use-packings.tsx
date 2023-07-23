@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { sheetCheckAllState } from "./store/sheet-check-all";
 
 const usePackings = () => {
+  const [isLoader, setIsLoader] = useState(true);
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
@@ -182,6 +183,7 @@ const usePackings = () => {
 
   const getSheetAllWeights = useCallback(
     async (categoryName: any, supplierId) => {
+      setIsLoader(true);
       await getAndSetAllPackingsSizes(callApi, setAllWeightsGrouped, {
         categoryName: categoryName?.key,
         supplierId: supplierId || "",
@@ -264,7 +266,11 @@ const usePackings = () => {
   useEffect(() => {
     getSupplier();
   }, [allWeightsGrouped]);
-
+  useEffect(() => {
+    if (allWeightsGrouped) {
+      setIsLoader(false);
+    }
+  }, [allWeightsGrouped]);
   return {
     sheetCategories,
     categoryName,
@@ -281,6 +287,7 @@ const usePackings = () => {
     open,
     anchorEl,
     sheetCheckStore,
+    isLoader,
     setSelectedMaterials,
     getSheetAllWeights,
     onClickAddNewSupplier,

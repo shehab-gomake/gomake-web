@@ -1,19 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  getAndSetAdditionsSuppliers,
-  getAndSetAllAdditions,
-  getAndSetAllAdditionsData,
-  getAndSetAllGlue,
-  getAndSetAllGluesData,
-  getAndSetAllMegantsData,
-  getAndSetAllSizes,
   getAndSetAlldstrCodes,
   getAndSetAlldstrData,
-  getAndSetAllmegantCodes,
-  getAndSetGluesSuppliers,
-  getAndSetMagnetsSuppliers,
-  getAndSetTubesSuppliers,
-  getAndSetTubessCategores,
   getAndSetdstrSuppliers,
 } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar, useSupplier } from "@/hooks";
@@ -23,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { sheetCheckAllState } from "./store/sheet-check-all";
 
 const useTubes = () => {
+  const [isLoader, setIsLoader] = useState(true);
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
@@ -189,6 +178,7 @@ const useTubes = () => {
 
   const getSheetAllWeights = useCallback(
     async (categoryName: any, supplierId) => {
+      setIsLoader(true);
       await getAndSetAlldstrData(callApi, setAllWeightsGrouped, {
         categoryName: categoryName.code,
         supplierId: supplierId || "",
@@ -276,6 +266,11 @@ const useTubes = () => {
     getSupplier();
   }, [allWeightsGrouped]);
 
+  useEffect(() => {
+    if (allWeightsGrouped) {
+      setIsLoader(false);
+    }
+  }, [allWeightsGrouped]);
   return {
     sheetCategories,
     categoryName,
@@ -292,6 +287,7 @@ const useTubes = () => {
     open,
     anchorEl,
     sheetCheckStore,
+    isLoader,
     setSelectedMaterials,
     getSheetAllWeights,
     onClickAddNewSupplier,

@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { sheetCheckAllState } from "./store/sheet-check-all";
 
 const useColors = () => {
+  const [isLoader, setIsLoader] = useState(true);
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
@@ -164,6 +165,7 @@ const useColors = () => {
 
   const getSheetAllWeights = useCallback(
     async (categoryName: any, supplierId) => {
+      setIsLoader(true);
       await getAndSetAllColorsData(callApi, setAllWeightsGrouped, {
         categoryName: categoryName.code,
         supplierId: supplierId || "",
@@ -247,6 +249,11 @@ const useColors = () => {
     getSupplier();
   }, [allWeightsGrouped]);
 
+  useEffect(() => {
+    if (allWeightsGrouped) {
+      setIsLoader(false);
+    }
+  }, [allWeightsGrouped]);
   return {
     sheetCategories,
     categoryName,
@@ -263,6 +270,7 @@ const useColors = () => {
     open,
     anchorEl,
     sheetCheckStore,
+    isLoader,
     setSelectedMaterials,
     getSheetAllWeights,
     onClickAddNewSupplier,
