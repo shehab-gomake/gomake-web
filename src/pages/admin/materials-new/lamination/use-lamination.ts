@@ -353,7 +353,6 @@ const useLamination = () => {
     const data = await getAndSetCategory(callApi, setCategory, {
       categoryName,
     });
-    console.log("datadatadatadatadatadatadatadata", data);
     initialStateLaminationWeights(data);
     setSelectedEditItem(data);
     return data;

@@ -11,7 +11,6 @@ const getAllGroups = async (
     "/v1/printhouse-config/groups/get-all-groups",
     data
   );
-  console.log(result);
   const groups = returnResult(result, undefined);
   const mappedGroups = groups.map((group: any) => ({
     id: group.id,

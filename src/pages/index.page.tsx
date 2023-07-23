@@ -1,58 +1,10 @@
 import { CustomerAuthLayout } from "@/layouts";
+import { HomePageComponentForAdmin } from "@/pages-components/admin/home/home";
 
 export default function Home() {
   return (
     <CustomerAuthLayout>
-      <>home screen
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div> <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-        <div>home screen</div>
-
-      </>
+      <HomePageComponentForAdmin isAdmin={false} />
     </CustomerAuthLayout>
   );
 }
