@@ -24,7 +24,7 @@ const usePackings = () => {
   const [selectedMaterials, setSelectedMaterials] = useState<any>("");
   const [sheetCategories, setSheetCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
-  const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
+  const [allWeightsGrouped, setAllWeightsGrouped] = useState(null);
   const [actionType, setActionType] = useState(0);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
