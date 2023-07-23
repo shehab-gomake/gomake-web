@@ -44,7 +44,6 @@ const useSettings = ({
     getAllGroupsF();
   }, []);
 
-  /// Add Product SKU Modal
   const [isProductSKU, setIsProductSKU] = useState(false);
   const onClickCloseProductSKU = () => {
     setIsProductSKU(false);
@@ -90,19 +89,9 @@ const useSettings = ({
       });
     }
   }, [productSKU]);
-
-  // const [color, setColor] = useState("#000");
-  // const [noteColor, setNoteColor] = useState("#000");
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showColorPickerForNoteColor, setShowColorPickerForNoteColor] =
     useState(false);
-  // const handleColorChange = (color) => {
-  //   setColor(color.hex);
-  // };
-
-  // const handleNoteColorChange = (color) => {
-  //   setNoteColor(color.hex);
-  // };
   const toggleColorPicker = () => {
     setShowColorPicker(!showColorPicker);
   };
@@ -141,7 +130,7 @@ const useSettings = ({
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      navigate("/admin/settings");
+      navigate("/settings");
     } else {
       setSnackbarStateValue({
         state: true,
@@ -176,7 +165,7 @@ const useSettings = ({
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      navigate(`/admin/settings/edit-product/${RandomId}`);
+      navigate(`/settings/edit-product/${RandomId}`);
       onClickParametersTab();
     } else {
       setSnackbarStateValue({
