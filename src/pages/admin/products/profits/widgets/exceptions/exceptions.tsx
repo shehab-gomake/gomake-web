@@ -24,9 +24,6 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
     actionExceptionProfitId
   );
   const { t } = useTranslation();
-
-  console.log("tableRows", tableRows);
-
   return (
     <>
       <div style={clasess.container}>

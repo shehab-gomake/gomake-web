@@ -305,17 +305,17 @@ const useAuthLayoutHook = () => {
         },
         isProduction: false,
       },
-      {
-        isLine: false,
-        key: "settings",
-        title: t("tabs.settings"),
-        path: "/admin/settings",
-        isList: false,
-        icon: () => {
-          return <SettingNavBar />;
-        },
-        isProduction: true,
-      },
+      // {
+      //   isLine: false,
+      //   key: "settings",
+      //   title: t("tabs.settings"),
+      //   path: "/admin/settings",
+      //   isList: false,
+      //   icon: () => {
+      //     return <SettingNavBar />;
+      //   },
+      //   isProduction: true,
+      // },
     ];
   }, []);
 

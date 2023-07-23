@@ -29,9 +29,6 @@ const AddLaminationWeightsMapping = ({ index, selectedItem }) => {
           <Tooltip title={t("materials.lamination.admin.addNewLaminationSize")}>
             <IconButton
               onClick={() => {
-                console.log(
-                  "materialLaminationStateValuematerialLaminationStateValue"
-                );
                 const temp = [
                   ...materialLaminationStateValue?.items[index][
                     "laminationThicknesses"

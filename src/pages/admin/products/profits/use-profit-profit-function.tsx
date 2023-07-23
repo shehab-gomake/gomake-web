@@ -40,7 +40,6 @@ const useProfitsProfitsFunction = ({
   const setChartDataValue = useSetRecoilState<any>(chartDataByActionProfitRow);
 
   const updateActionProfitRow = useCallback(async () => {
-    console.log("editPriceListStateValue", editPriceListStateValue);
     let res;
     if (editPriceListStateValue?.state?.changeOn == "totalPrice") {
       let totalPrice = editPriceListStateValue?.state?.totalPrice;
@@ -48,8 +47,6 @@ const useProfitsProfitsFunction = ({
       let profit = editPriceListStateValue?.state?.profit;
       let cost = editPriceListStateValue?.state?.cost;
       profit = (totalPrice / cost - 1) * 100;
-      console.log("datadatadata", { totalPrice, unitPrice, profit, cost });
-
       res = await callApi(
         "PUT",
         `/v1/printhouse-config/profits/update-action-profit-row`,
@@ -77,8 +74,6 @@ const useProfitsProfitsFunction = ({
 
       totalPrice = unitPrice * quantity;
       profit = (totalPrice / cost - 1) * 100;
-      console.log("datadatadata", { totalPrice, unitPrice, profit, cost });
-
       res = await callApi(
         "PUT",
         `/v1/printhouse-config/profits/update-action-profit-row`,
@@ -202,7 +197,6 @@ const useProfitsProfitsFunction = ({
   );
 
   const onClickSaveNewActionProfitRow = useCallback(async () => {
-    console.log("productTest", productTest);
     const findQuantity = actionProfitPricingTableRows.find(
       (item) => item.quantity == pricingListRowState.quantity
     );
@@ -231,7 +225,6 @@ const useProfitsProfitsFunction = ({
           type: "sucess",
         });
         await getActionProfits();
-        console.log("selectedAction", selectedAction);
         await getAndSetPricingListTableRows(
           callApi,
           setActionProfitPricingTableRows,

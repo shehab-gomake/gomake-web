@@ -10,7 +10,6 @@ const useStyle = ({
   isHover?: boolean | undefined;
   navStatus?: any;
 }) => {
-  console.log("navStatusnavStatus", navStatus);
   const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {

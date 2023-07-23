@@ -6,7 +6,7 @@ import {
 import { productTestState } from "@/store/product-test";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {  useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
 import { actionExceptionProfitId, actionProfitLists } from "@/store";
 
@@ -19,7 +19,7 @@ export const renderProfits = (item: any, data: any = {}) => {
   const total = data?.expProfit
     ? cost * (1 + percentExpProfit)
     : cost * (1 + percentProfit);
-  const isBaseCaseQuantity = !!item?.isBaseCaseQuantity
+  const isBaseCaseQuantity = !!item?.isBaseCaseQuantity;
 
   return {
     cost: Number(cost),
@@ -30,7 +30,7 @@ export const renderProfits = (item: any, data: any = {}) => {
     totalPrice: Number(total).toFixed(2),
     recordID: item?.recordID,
     status: item?.status,
-    isBaseCaseQuantity: isBaseCaseQuantity
+    isBaseCaseQuantity: isBaseCaseQuantity,
   };
 };
 
@@ -62,7 +62,12 @@ const useProfitsAction = ({
   );
 
   const onCklickActionProfitTestResultsByActionId = useCallback(
-    async (productId: string, productName: string, actionProductId: string, isBaseCase?: boolean) => {
+    async (
+      productId: string,
+      productName: string,
+      actionProductId: string,
+      isBaseCase?: boolean
+    ) => {
       setActionExceptionProfitIdValue("");
       setTabelPricingHeaders([
         t("products.profits.pricingListWidget.cost"),
@@ -97,7 +102,12 @@ const useProfitsAction = ({
       //   };
       // });
       // setactionExceptionProfitId(productId);
-      setProductTest({ id: productId, name: productName, actionProductId, isBaseCase: !!isBaseCase });
+      setProductTest({
+        id: productId,
+        name: productName,
+        actionProductId,
+        isBaseCase: !!isBaseCase,
+      });
       // setActionExceptionProfitRows(mapData);
       // setActionProfitRowsNew(mapData);
     },
@@ -111,7 +121,6 @@ const useProfitsAction = ({
       setSelectedAction("");
       setProfitsStateValue("");
     } else {
-      console.log("value", value);
       setSelectedAction(value);
       setProductTest(null);
       // onCklickActionProfitTestResultsByActionId(value.id, value.name);
@@ -144,8 +153,6 @@ const useProfitsAction = ({
 
   const deleteTestProductResult = useCallback(
     async (item: any) => {
-      console.log("item", item);
-
       const res = await callApi(
         "DELETE",
         `/v1/printhouse-config/products/delete-product-price-test-result?actionId=${selectedAction?.id}&productId=${item?.item?.productId}&actionProductId=${item?.item?.id}`

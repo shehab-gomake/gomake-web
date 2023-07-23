@@ -66,7 +66,6 @@ export default function Tubes() {
       title={t("materials.sheetPaper.chooseName")}
     />
   );
-  console.log("sheetCategories", sheetCategories);
   const renderHeader = useCallback(() => {
     return (
       <div style={clasess.renderHeaderContainer}>
