@@ -51,7 +51,8 @@ const MachineStepper = ({
                             previousStep,
                             nextStep,
                             actionButtonClicked,
-                            isAddForm
+                            isAddForm,
+                            moveToStep
                         }: IMachineStepperProps) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
@@ -61,9 +62,10 @@ const MachineStepper = ({
                 const stepProps: { completed?: boolean } = {};
                 const labelProps: { optional?: ReactNode; } = {};
                 return (
-                    <Step key={step.label} {...stepProps}>
+                    <Step  key={step.label} {...stepProps}>
                         <StyledStepLabel
-                            style={activeStep === index ? classes.activeStepLabel : {}} {...labelProps}>
+                            onClick={()=> {moveToStep && moveToStep(index)}}
+                            style={activeStep === index ? classes.activeStepLabel : {cursor: 'pointer'}} {...labelProps}>
                             <div style={classes.stepLabel}>
                                 <span>{t('machineSteps.' + step.label)}</span>
                                 {activeStep === index ? <ExpandMoreIcon color={'inherit'}/> :

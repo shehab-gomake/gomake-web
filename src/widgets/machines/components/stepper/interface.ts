@@ -7,4 +7,5 @@ export interface IMachineStepperProps {
     nextStep: () => void;
     actionButtonClicked: () => void;
     isAddForm: boolean;
+    moveToStep?: (stepIndex: number) => void
 }

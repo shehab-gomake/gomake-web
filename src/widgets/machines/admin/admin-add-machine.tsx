@@ -27,13 +27,16 @@ const AdminAddMachine = () => {
         initMachineStateCategory(value as ECategoryId);
         setActiveStep(0);
     }
+    const moveToStepByIndex = (stepIndex: number) => {
+        setActiveStep(stepIndex)
+    }
     const Side = () => <SideList list={categoryList} selectedItem={selectedCategory} onSelect={onSelectCategory}
                                  title={'Categories'}/>
   return (
       <MachineLayout side={Side()} header={categoryName(selectedCategory)} subHeader={'Add Machine'}>
 
           <MachineStepper steps={getCategorySteps()} activeStep={activeStep} previousStep={navigateBack}
-                          nextStep={navigateNext} actionButtonClicked={adminAddMachine}
+                          nextStep={navigateNext} actionButtonClicked={adminAddMachine} moveToStep={moveToStepByIndex}
                           isAddForm={true}/>
       </MachineLayout>  );
 }

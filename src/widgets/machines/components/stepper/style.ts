@@ -20,6 +20,7 @@ const useStyle = () => {
       activeStepLabel: {
         backgroundColor: primaryColor(50),
         padding: 10,
+        cursor: 'pointer' as 'pointer'
 
       },
       stepContainer: {
