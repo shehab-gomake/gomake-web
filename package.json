@@ -30,6 +30,7 @@
     "i18next": "^22.4.10",
     "lodash.get": "^4.4.2",
     "lottie-react": "^2.4.0",
+    "match-sorter": "^6.3.1",
     "next": "13.2.3",
     "react": "18.2.0",
     "react-chartjs-2": "^5.2.0",
