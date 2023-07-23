@@ -43,6 +43,17 @@ const digitalPrinting = (state: Record<string, any>) => {
                     parameterKey: "cost",
                     options: []
                 },
+                {
+                    name: "currency",
+                    label: "machineAttributes.currency",
+                    type: "select",
+                    placeholder: "machineAttributes.currency",
+                    required: true,
+                    parameterKey: "currency",
+                    options: [],
+                    isValid: true,
+                    optionsUrl: '/v1/enum/get-enums/currency'
+                },
             ]
         },
     ]

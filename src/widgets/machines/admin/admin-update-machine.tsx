@@ -39,6 +39,9 @@ const AdminUpdateMachine = () => {
         setMachine(value);
         setActiveStep(0);
     }
+    const moveToStepByIndex = (stepIndex: number) => {
+        setActiveStep(stepIndex)
+    }
 
     const Side = () => <SideList list={getMachinesList} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
                                  title={'Machines'}/>
@@ -47,6 +50,7 @@ const AdminUpdateMachine = () => {
 
             {!!selectedMachine.id && <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
                                                      nextStep={navigateNext} actionButtonClicked={updateMachine}
+                                                     moveToStep={moveToStepByIndex}
                                                      isAddForm={false}/>}
         </MachineLayout>
     );
