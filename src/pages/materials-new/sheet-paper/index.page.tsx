@@ -7,7 +7,8 @@ import { SecondSwitch } from "@/components/switch/second";
 import { GoMakeAutoComplate } from "@/components";
 import { SettingsIcon } from "@/icons/settings";
 import { CustomerAuthLayout } from "@/layouts";
-import { CircularProgress, IconButton } from "@mui/material";
+import { GomakeLoaderWidget } from "@/widgets";
+import { IconButton } from "@mui/material";
 
 import { UpdatePricePerTonModal } from "./modals/update-price-per-ton-modal";
 import { UpdateCurrencyModal } from "./modals/update-currency-modal";
@@ -17,8 +18,8 @@ import { SheetSizesWidget } from "./widgets/sheet-sizes";
 import { SheetCheckBox } from "./widgets/checkbox";
 import { SettingsMenuModal } from "./modals/menu";
 import { useSheetPaper } from "./use-sheet-paper";
+
 import { useStyle } from "./style";
-import { GomakeLoaderWidget } from "@/widgets";
 
 export default function SheetPaper() {
   const { t } = useTranslation();

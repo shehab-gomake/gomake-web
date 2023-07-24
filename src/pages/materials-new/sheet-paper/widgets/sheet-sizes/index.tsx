@@ -3,6 +3,8 @@ import { useStyle } from "../../style";
 import { Switch } from "@mui/material";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
+import { GomakeTextInput } from "@/components";
+import { UpdateStockSheetPaperSizeses } from "@/pages/materials/sheet-paper/more-circle/update-stock-sheet-paper";
 
 const SheetSizesWidget = ({
   index2,
@@ -83,7 +85,12 @@ const SheetSizesWidget = ({
   return (
     <div style={index2 % 2 == 0 ? clasess.bodyRow : clasess.secondRow}>
       <div style={clasess.sizeContainer}>{size?.name}</div>
-      <div style={clasess.thiknessContainer}>{size?.thickness}</div>
+      <div style={clasess.thiknessContainer}>
+        <GomakeTextInput
+          style={clasess.thiknessTextInputStyle}
+          value={size?.thickness}
+        />
+      </div>
       <div style={clasess.costsContainer}>
         {size?.pricePerUnit}/{size?.pricePerTon}
       </div>
@@ -95,7 +102,14 @@ const SheetSizesWidget = ({
         />
       </div>
       <div style={clasess.currencyContainer}>{size?.currency}</div>
-      <div style={clasess.stokContainer}>{size?.stock}</div>
+      <div style={clasess.stokContainer}>
+        <UpdateStockSheetPaperSizeses
+          categoryName={selectedMaterials?.key}
+          sizeId={size?.id}
+          stockValue={size?.stock}
+          weightId={row?.weightId}
+        />
+      </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useStyle } from "../../style";
 import { Switch } from "@mui/material";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
