@@ -69,7 +69,6 @@ const UpdateStockLaminationThickness = ({
       onChange={onChange}
       style={{
         height: 38,
-        // width: 50,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
