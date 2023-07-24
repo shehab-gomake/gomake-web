@@ -1,6 +1,18 @@
 const digitalPrinting = (state: Record<string, any>) => {
     return [
         {
+            name: "currency",
+            label: "machineAttributes.currency",
+            type: "select",
+            placeholder: "machineAttributes.currency",
+            required: true,
+            parameterKey: "beatsCurrency",
+            options: [],
+            isValid: true,
+            value: state?.attributes?.beatsCurrency,
+            optionsUrl: '/v1/enum/get-enums/currency'
+        },
+        {
             name: 'machineAttributes.beatByColorsBySize',
             parameterKey: 'beats',
             value: state?.attributes?.beats ? state?.attributes?.beats : [],
@@ -42,17 +54,6 @@ const digitalPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "cost",
                     options: []
-                },
-                {
-                    name: "currency",
-                    label: "machineAttributes.currency",
-                    type: "select",
-                    placeholder: "machineAttributes.currency",
-                    required: true,
-                    parameterKey: "currency",
-                    options: [],
-                    isValid: true,
-                    optionsUrl: '/v1/enum/get-enums/currency'
                 },
             ]
         },
