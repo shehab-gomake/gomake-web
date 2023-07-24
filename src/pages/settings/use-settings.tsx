@@ -1,7 +1,10 @@
-import { useGomakeAxios } from "@/hooks";
-import { getAllProductsMongoDB } from "@/services/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { matchSorter } from "match-sorter";
+
+import { getAllProductsMongoDB } from "@/services/hooks";
+import { useGomakeAxios } from "@/hooks";
+
 import { MoreMenuWidget } from "./widget/more-circle";
 import { useStyle } from "./style";
 
@@ -10,6 +13,8 @@ const useSettings = () => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const [allProducts, setAllProducts] = useState<any>();
+  const [term, setTerm] = useState<any>("");
+  const [productSearched, setProductSearched] = useState([]);
   const getActions = useCallback(async () => {
     const data = await getAllProductsMongoDB(callApi, setAllProducts);
     const mapData = data?.map((item: any) => {
@@ -59,7 +64,21 @@ const useSettings = () => {
     t("products.productManagement.admin.status"),
     t("products.productManagement.admin.more"),
   ];
-  return { tableHeaders, allProducts };
+  useEffect(() => {
+    if (allProducts?.length) {
+      const temp = matchSorter(allProducts, term, {
+        keys: ["name", "code", "details"],
+      });
+      setProductSearched(temp);
+    }
+  }, [term, allProducts]);
+  return {
+    tableHeaders,
+    allProducts,
+    term,
+    productSearched,
+    setTerm,
+  };
 };
 
 export { useSettings };

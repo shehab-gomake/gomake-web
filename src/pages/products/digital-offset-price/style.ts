@@ -42,8 +42,11 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "30%",
         backgroundColor: "white",
-        height: "100%",
         padding: 16,
+        marginTop: -89,
+        boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.05)",
+        marginBottom: 20,
+        borderRadius: 5,
       },
       tabsContainer: {
         display: "flex",
@@ -68,6 +71,14 @@ const useStyle = () => {
       tabNameActiveStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
         color: secondColor(500),
+      },
+      selectedTabLine: {
+        display: "flex",
+        width: "100%",
+        height: 1,
+        backgroundColor: secondColor(500),
+        borderBottom: `1px solid ${secondColor(500)}`,
+        marginTop: 10,
       },
       sectionsContainer: {
         display: "flex",
@@ -315,6 +326,7 @@ const useStyle = () => {
       },
       addOrderBtn: {
         backgroundColor: secondColor(500),
+        height: 40,
       },
       noVatStyle: {
         marginTop: 6,

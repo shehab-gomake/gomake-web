@@ -28,6 +28,7 @@ import {
   Progress,
 } from "@/widgets/shared-admin-customers/digital-offset-price/icons";
 import { useDigitalOffsetPrice } from "@/hooks";
+import { useMaterials } from "@/hooks/use-materials";
 export default function DigitalOffsetPrice() {
   const { clasess } = useStyle();
   const {
@@ -47,7 +48,7 @@ export default function DigitalOffsetPrice() {
     tabs,
   } = useDigitalOffsetPrice();
   const [expanded, setExpanded] = useState<string | false>("panel_0");
-
+  const { allMaterials } = useMaterials();
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
@@ -113,43 +114,55 @@ export default function DigitalOffsetPrice() {
     <CustomerAuthLayout>
       {template && (
         <div style={clasess.mainContainer}>
-          <HeaderTitle title={t("products.offsetPrice.admin.title2")} />
+          <HeaderTitle
+            title={t("products.offsetPrice.admin.title2")}
+            marginTop={50}
+          />
           <div style={clasess.mainRowContainer}>
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
                 {template?.sections?.map((item, index) => {
                   return (
-                    <div
-                      style={clasess.tabContainer}
-                      key={index}
-                      onClick={() => handleTabClick(index)}
-                    >
-                      <div style={{ height: 22, minWidth: 30 }}>
-                        <img
-                          src={
-                            index === activeIndex ? (
-                              item.icon
-                            ) : index >= activeIndex ? (
-                              item.icon
-                            ) : (
-                              <DoneIcon />
-                            )
-                          }
-                          style={{
-                            width: 30,
-                            height: 24,
-                          }}
-                        />
-                      </div>
+                    <div>
                       <div
-                        style={
-                          index === activeIndex
-                            ? clasess.tabNameActiveStyle
-                            : clasess.tabNameStyle
-                        }
+                        style={clasess.tabContainer}
+                        key={index}
+                        onClick={() => handleTabClick(index)}
                       >
-                        {item.name}
+                        <div style={{ height: 22, minWidth: 30 }}>
+                          {index === activeIndex ? (
+                            <img
+                              src={item.icon}
+                              style={{
+                                width: 30,
+                                height: 24,
+                              }}
+                            />
+                          ) : index >= activeIndex ? (
+                            <img
+                              src={item.icon}
+                              style={{
+                                width: 30,
+                                height: 24,
+                              }}
+                            />
+                          ) : (
+                            <DoneIcon />
+                          )}
+                        </div>
+                        <div
+                          style={
+                            index === activeIndex
+                              ? clasess.tabNameActiveStyle
+                              : clasess.tabNameStyle
+                          }
+                        >
+                          {item.name}
+                        </div>
                       </div>
+                      {index === activeIndex && (
+                        <div style={clasess.selectedTabLine} />
+                      )}
                     </div>
                   );
                 })}

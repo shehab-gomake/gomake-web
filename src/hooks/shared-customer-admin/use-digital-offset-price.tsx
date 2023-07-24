@@ -66,7 +66,7 @@ const useDigitalOffsetPrice = () => {
 
   useEffect(() => {
     getProductById();
-  }, []);
+  }, [router]);
   return {
     t,
     handleTabClick,

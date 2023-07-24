@@ -15,7 +15,7 @@ const useSheetPaper = () => {
   const [categoryName, setCategoryName] = useState(undefined);
   const [supplierId, setSupplierId] = useState(undefined);
   const [allWeights, setAllWeights] = useState([]);
-  const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
+  const [allWeightsGrouped, setAllWeightsGrouped] = useState(null);
   const headerTable = useMemo(
     () => [
       t("materials.sheetPaper.weight"),

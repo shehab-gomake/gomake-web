@@ -13,6 +13,7 @@ const useStyle = () => {
     return {
       renderHeaderContainer: {
         display: "flex",
+        textAlign: "center" as "center",
         justifyContent: "space-between",
         alignItems: "center",
         marginBottom: "10px",
@@ -20,16 +21,19 @@ const useStyle = () => {
       subRenderHeaderContainer: {
         width: "40%",
         display: "flex",
+        textAlign: "center" as "center",
         alignItems: "center",
       },
       dropDownStyle: { width: "100%" },
       optionsContainer: {
         display: "flex",
+        textAlign: "center" as "center",
         justifyContent: "space-between",
         alignItems: "center",
       },
       header: {
         display: "flex",
+        textAlign: "center" as "center",
         width: "100%",
         justifyContent: "space-around",
         alignItems: "center",
@@ -40,18 +44,18 @@ const useStyle = () => {
       },
       bodyRow: {
         display: "flex",
+        textAlign: "center" as "center",
         width: "100%",
         minHeight: 60,
-        textAlign: "center" as "center",
       },
       secondRow: {
         display: "flex",
+        textAlign: "center" as "center",
         width: "100%",
         minHeight: 60,
         backgroundColor: "#F6F6F6",
         paddingBottom: 20,
         paddingTop: 20,
-        textAlign: "center" as "center",
       },
       noData: {
         width: "100%",
@@ -91,12 +95,14 @@ const useStyle = () => {
       checkboxHeaderContainer: {
         width: "5%",
         display: "flex",
+        textAlign: "center" as "center",
         justifyContent: "center",
         alignItems: "center",
       },
       weightContainer: {
         width: "10%",
         display: "flex",
+        textAlign: "center" as "center",
         justifyContent: "center",
         alignItems: "center",
         marginLeft: -5,
@@ -105,6 +111,7 @@ const useStyle = () => {
       rowWeightContainer: {
         width: "100%",
         display: "flex",
+        textAlign: "center" as "center",
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
@@ -114,6 +121,7 @@ const useStyle = () => {
       sizeContainer: {
         width: "13%",
         display: "flex",
+        textAlign: "center" as "center",
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
@@ -122,6 +130,7 @@ const useStyle = () => {
       thiknessContainer: {
         width: "15%",
         display: "flex",
+        textAlign: "center" as "center",
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
@@ -129,6 +138,7 @@ const useStyle = () => {
       costsContainer: {
         width: "15%",
         display: "flex",
+        textAlign: "center" as "center",
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
@@ -136,13 +146,28 @@ const useStyle = () => {
       directionContainer: {
         width: "15%",
         display: "flex",
+        textAlign: "center" as "center",
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
       },
+      thiknessTextInputStyle: {
+        height: 38,
+        display: "flex",
+        textAlign: "center" as "center",
+        justifyContent: "center",
+        alignItems: "center",
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: primaryColor(500),
+        width: "100%",
+        backgroundColor: "transparent",
+        paddingLeft: 2,
+        boxShadow: "none",
+      },
       activeContainer: {
         width: "15%",
         display: "flex",
+        textAlign: "center" as "center",
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
@@ -151,6 +176,7 @@ const useStyle = () => {
       currencyContainer: {
         width: "16%",
         display: "flex",
+        textAlign: "center" as "center",
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
@@ -158,6 +184,7 @@ const useStyle = () => {
       stokContainer: {
         width: "20%",
         display: "flex",
+        textAlign: "center" as "center",
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
@@ -168,6 +195,7 @@ const useStyle = () => {
         justifyContent: "center",
         alignItems: "center",
         display: "flex",
+        textAlign: "center" as "center",
         minHeight: 60,
         paddingTop: 20,
         paddingBottom: 20,
@@ -176,6 +204,7 @@ const useStyle = () => {
       checkboxSizeContainer: {
         width: "5%",
         display: "flex",
+        textAlign: "center" as "center",
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
@@ -183,6 +212,7 @@ const useStyle = () => {
       weightSizeContainer: {
         width: "10%",
         display: "flex",
+        textAlign: "center" as "center",
         justifyContent: "center",
         alignItems: "center",
         marginLeft: -5,
@@ -191,6 +221,7 @@ const useStyle = () => {
       sheetSizeContainer: {
         width: "100%",
         display: "flex",
+        textAlign: "center" as "center",
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
@@ -200,6 +231,7 @@ const useStyle = () => {
       selectedSupplierContainer: {
         height: "100%",
         display: "flex",
+        textAlign: "center" as "center",
         flexDirection: "column" as "column",
         justifyContent: "space-between",
       },

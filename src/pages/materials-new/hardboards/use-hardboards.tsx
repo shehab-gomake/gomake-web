@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { sheetCheckAllState } from "./store/sheet-check-all";
 
 const useHardboards = () => {
+  const [isLoader, setIsLoader] = useState(true);
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
@@ -24,7 +25,7 @@ const useHardboards = () => {
   const [selectedMaterials, setSelectedMaterials] = useState<any>("");
   const [sheetCategories, setSheetCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
-  const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
+  const [allWeightsGrouped, setAllWeightsGrouped] = useState(null);
   const [actionType, setActionType] = useState(0);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
@@ -191,6 +192,7 @@ const useHardboards = () => {
 
   const getSheetAllWeights = useCallback(
     async (categoryName: any, supplierId) => {
+      setIsLoader(true);
       await getAndSetAllHardboardsSizes(callApi, setAllWeightsGrouped, {
         categoryName: categoryName?.key,
         supplierId: supplierId || "",
@@ -274,6 +276,11 @@ const useHardboards = () => {
     getSupplier();
   }, [allWeightsGrouped]);
 
+  useEffect(() => {
+    if (allWeightsGrouped) {
+      setIsLoader(false);
+    }
+  }, [allWeightsGrouped]);
   return {
     sheetCategories,
     categoryName,
@@ -290,6 +297,7 @@ const useHardboards = () => {
     open,
     anchorEl,
     sheetCheckStore,
+    isLoader,
     onOpenUpdatePricePerRoll,
     onOpenUpdatePricePerSquareMeter,
     setSelectedMaterials,

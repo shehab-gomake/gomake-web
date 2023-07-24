@@ -1,19 +1,24 @@
-import { CustomerAuthLayout } from "@/layouts";
-import { useStyle } from "./style";
-import { HeaderTitle } from "@/widgets";
 import { useTranslation } from "react-i18next";
-import { AddPlusIcon, SearchIcon } from "@/icons";
-import { GoMakeAutoComplate, GoMakeTextInputIcon } from "@/components";
 import { InputAdornment } from "@mui/material";
+
+import { GoMakeAutoComplate, GoMakeTextInputIcon } from "@/components";
+import { AddPlusIcon, SearchIcon } from "@/icons";
+import { CustomerAuthLayout } from "@/layouts";
+import { useGomakeRouter } from "@/hooks";
+import { HeaderTitle } from "@/widgets";
+
 import { useSettings } from "./use-settings";
 import { Row } from "./widget/row";
-import { useGomakeRouter } from "@/hooks";
+
+import { useStyle } from "./style";
 
 export default function SettingsPage() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const { navigate } = useGomakeRouter();
-  const { tableHeaders, allProducts } = useSettings();
+  const { tableHeaders, allProducts, term, productSearched, setTerm } =
+    useSettings();
+
   return (
     <CustomerAuthLayout>
       <div style={clasess.mainContainer}>
@@ -54,6 +59,9 @@ export default function SettingsPage() {
             <GoMakeTextInputIcon
               style={clasess.searchInputContainer}
               placeholder={t("header.search")}
+              onChange={(e) => {
+                setTerm(e.target.value);
+              }}
               startAdornment={
                 <InputAdornment position="start">
                   <div style={clasess.iconStyle}>
@@ -69,18 +77,33 @@ export default function SettingsPage() {
             return <div style={clasess.headerNameStyle}>{item}</div>;
           })}
         </div>
-        <div style={clasess.row}>
-          {allProducts?.map((row: any, index: number) => {
-            return (
-              <div key={`body_row${index}`} style={{ width: "100%" }}>
-                <Row row={row} index={index} />
-                {index != allProducts?.length - 1 ? (
-                  <div style={clasess.line} />
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
+        {term ? (
+          <div style={clasess.row}>
+            {productSearched?.map((row: any, index: number) => {
+              return (
+                <div key={`body_row${index}`} style={{ width: "100%" }}>
+                  <Row row={row} index={index} />
+                  {index != allProducts?.length - 1 ? (
+                    <div style={clasess.line} />
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div style={clasess.row}>
+            {allProducts?.map((row: any, index: number) => {
+              return (
+                <div key={`body_row${index}`} style={{ width: "100%" }}>
+                  <Row row={row} index={index} />
+                  {index != allProducts?.length - 1 ? (
+                    <div style={clasess.line} />
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </CustomerAuthLayout>
   );

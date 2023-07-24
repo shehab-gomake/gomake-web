@@ -79,11 +79,11 @@ const CategoriesTable = ({ admin = false }) => {
         title: t("tabs.hardboards"),
         path: "/materials-new/hardboards",
       },
-      {
-        key: "wildPrintingMaterials",
-        title: t("tabs.wildPrintingMaterials"),
-        path: "/materials/wild-printing-materials",
-      },
+      // {
+      //   key: "wildPrintingMaterials",
+      //   title: t("tabs.wildPrintingMaterials"),
+      //   path: "/materials/wild-printing-materials",
+      // },
       {
         key: "profileFrames",
         title: t("tabs.profileFrames"),
