@@ -28,6 +28,7 @@ import {
   Progress,
 } from "@/widgets/shared-admin-customers/digital-offset-price/icons";
 import { useDigitalOffsetPrice } from "@/hooks";
+import { useMaterials } from "@/hooks/use-materials";
 export default function DigitalOffsetPrice() {
   const { clasess } = useStyle();
   const {
@@ -47,7 +48,7 @@ export default function DigitalOffsetPrice() {
     tabs,
   } = useDigitalOffsetPrice();
   const [expanded, setExpanded] = useState<string | false>("panel_0");
-
+  const { allMaterials } = useMaterials();
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
