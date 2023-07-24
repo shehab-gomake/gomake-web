@@ -45,6 +45,8 @@ const useStyle = () => {
         padding: 16,
         marginTop: -89,
         boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.05)",
+        marginBottom: 20,
+        borderRadius: 5,
       },
       tabsContainer: {
         display: "flex",
