@@ -1146,7 +1146,9 @@
     "basicPrice": "Basic price",
     "costBySize": "The Cost coefficient according to size Type",
     "costPercentage": "The percentage of cost increase",
-    "cm2": "CM^2"
+    "cm2": "CM^2",
+    "actions": "Actions",
+    "machineActions": "Machine actions"
   },
   "tyingOptions": {
     "cross": "Cross",
@@ -1217,7 +1219,8 @@
     "core": "Core",
     "laminationSettings": "Lamination settings",
     "varnishSettings": "Varnish settings",
-    "bookDimensions": "Book dimensions"
+    "bookDimensions": "Book dimensions",
+    "actions&materials": "Actions & Materials"
   },
   "products": {
     "profits": {
