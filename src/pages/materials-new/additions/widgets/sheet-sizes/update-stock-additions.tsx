@@ -4,15 +4,10 @@ import { useDebounce } from "@/utils/use-debounce";
 import { GomakeTextInput } from "@/components";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-import { IUpdateCanvasFramesStock } from "./update-additions.interface";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 
-const UpdateStockCanvasFrames = ({
-  stockValue,
-  categoryName,
-  sizeId,
-}: IUpdateCanvasFramesStock) => {
+const UpdateStockAdditions = ({ code, stockValue }: any) => {
   const { callApi } = useGomakeAxios();
 
   const [stock, setStock] = useState(stockValue);
@@ -32,35 +27,33 @@ const UpdateStockCanvasFrames = ({
     },
     [setIsChanged]
   );
-  const updateStock = useCallback(async () => {
-    const updated = await callApi("POST", "/v1/canvas-frames/update-stock", {
-      stock: finalStock,
-      categoryName,
-      sizeId,
-    });
-    if (updated?.success) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.updatedSusuccessfully"),
-        type: "sucess",
+  const updateStock = useCallback(
+    async (code: string) => {
+      const updated = await callApi("POST", "/v1/additions/update-stock", {
+        code,
+        stock: parseInt(finalStock),
       });
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.updatedfailed"),
-        type: "error",
-      });
-    }
-  }, [finalStock]);
+      if (updated?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedSusuccessfully"),
+          type: "sucess",
+        });
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [finalStock]
+  );
   useEffect(() => {
     if (finalStock && isChanged) {
-      updateStock();
+      updateStock(code);
     }
-  }, [finalStock, isChanged, stockValue]);
-  useEffect(() => {
-    setStock(stockValue);
-  }, [stockValue]);
-
+  }, [finalStock, isChanged]);
   return (
     <GomakeTextInput
       value={stock}
@@ -81,4 +74,4 @@ const UpdateStockCanvasFrames = ({
     />
   );
 };
-export { UpdateStockCanvasFrames };
+export { UpdateStockAdditions };

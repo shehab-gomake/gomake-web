@@ -1,5 +1,5 @@
 export interface IUpdateCanvasFramesStock {
-  code: string;
+  code?: string;
   stockValue: string;
   categoryName: string;
   sizeId: string;

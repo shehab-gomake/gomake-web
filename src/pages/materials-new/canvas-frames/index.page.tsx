@@ -120,7 +120,7 @@ export default function CanvasFrames() {
 
   return (
     <CustomerAuthLayout>
-      <MaterialsLayout header={t("materials.plat.title")} side={Side()}>
+      <MaterialsLayout header={t("materials.canvasFrames.title")} side={Side()}>
         {renderHeader()}
         <div style={{ paddingLeft: 0 }}>
           {isLoader ? (

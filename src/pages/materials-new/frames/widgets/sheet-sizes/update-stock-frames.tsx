@@ -1,24 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useDebounce } from "@/utils/use-debounce";
-import { GomakeTextInput } from "@/components";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { GomakeTextInput } from "@/components";
+import { useDebounce } from "@/utils/use-debounce";
 
-import { IUpdateCanvasFramesStock } from "./update-additions.interface";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 
-const UpdateStockCanvasFrames = ({
-  stockValue,
-  categoryName,
-  sizeId,
-}: IUpdateCanvasFramesStock) => {
+const UpdateStockFrames = ({ categoryName, sizeId, stockValue }: any) => {
   const { callApi } = useGomakeAxios();
-
-  const [stock, setStock] = useState(stockValue);
-  const [isChanged, setIsChanged] = useState(false);
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
+  const [stock, setStock] = useState(stockValue);
+  const [isChanged, setIsChanged] = useState(false);
+
   const debounce = useDebounce(stock, 500);
   const [finalStock, setFinalStock] = useState("");
   useEffect(() => {
@@ -32,37 +27,41 @@ const UpdateStockCanvasFrames = ({
     },
     [setIsChanged]
   );
-  const updateStock = useCallback(async () => {
-    const updated = await callApi("POST", "/v1/canvas-frames/update-stock", {
-      stock: finalStock,
-      categoryName,
-      sizeId,
-    });
-    if (updated?.success) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.updatedSusuccessfully"),
-        type: "sucess",
+  const updateStock = useCallback(
+    async (categoryName: string, sizeId: string) => {
+      const updated = await callApi("POST", "/v1/frames/update-stock", {
+        categoryName,
+        sizeId,
+        stock: finalStock,
       });
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.updatedfailed"),
-        type: "error",
-      });
-    }
-  }, [finalStock]);
+      if (updated?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedSusuccessfully"),
+          type: "sucess",
+        });
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [finalStock]
+  );
   useEffect(() => {
     if (finalStock && isChanged) {
-      updateStock();
+      updateStock(categoryName, sizeId);
     }
-  }, [finalStock, isChanged, stockValue]);
+  }, [finalStock, isChanged, sizeId, stockValue]);
   useEffect(() => {
     setStock(stockValue);
   }, [stockValue]);
 
   return (
     <GomakeTextInput
+      key={sizeId}
       value={stock}
       type={"number"}
       onChange={onChange}
@@ -81,4 +80,4 @@ const UpdateStockCanvasFrames = ({
     />
   );
 };
-export { UpdateStockCanvasFrames };
+export { UpdateStockFrames };
