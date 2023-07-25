@@ -4,16 +4,10 @@ import { useDebounce } from "@/utils/use-debounce";
 import { GomakeTextInput } from "@/components";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-import { IUpdateSheetPaperSizesStock } from "./update-stock.interface";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 
-const UpdateStockWildPrintingMaterialSizeses = ({
-  categoryName,
-  sizeId,
-  stockValue,
-  typeId,
-}: IUpdateSheetPaperSizesStock) => {
+const UpdateStockVarnishs = ({ code, stockValue }: any) => {
   const { callApi } = useGomakeAxios();
 
   const [stock, setStock] = useState(stockValue);
@@ -34,17 +28,11 @@ const UpdateStockWildPrintingMaterialSizeses = ({
     [setIsChanged]
   );
   const updateStock = useCallback(
-    async (categoryName: string, sizeId: string, typeId: string) => {
-      const updated = await callApi(
-        "POST",
-        "/v1/wide-format-material/update-stock",
-        {
-          categoryName,
-          sizeId,
-          typeId,
-          stock: finalStock,
-        }
-      );
+    async (code: string) => {
+      const updated = await callApi("POST", "/v1/varnishs/update-stock", {
+        code,
+        stock: parseInt(finalStock),
+      });
       if (updated?.success) {
         setSnackbarStateValue({
           state: true,
@@ -63,9 +51,9 @@ const UpdateStockWildPrintingMaterialSizeses = ({
   );
   useEffect(() => {
     if (finalStock && isChanged) {
-      updateStock(categoryName, sizeId, typeId);
+      updateStock(code);
     }
-  }, [finalStock, isChanged, sizeId]);
+  }, [finalStock, isChanged]);
   return (
     <GomakeTextInput
       value={stock}
@@ -86,4 +74,4 @@ const UpdateStockWildPrintingMaterialSizeses = ({
     />
   );
 };
-export { UpdateStockWildPrintingMaterialSizeses };
+export { UpdateStockVarnishs };

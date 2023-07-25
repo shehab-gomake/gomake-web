@@ -1,25 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useDebounce } from "@/utils/use-debounce";
-import { GomakeTextInput } from "@/components";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { GomakeTextInput } from "@/components";
+import { useDebounce } from "@/utils/use-debounce";
 
-import { IUpdateSheetPaperSizesStock } from "./update-stock.interface";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 
-const UpdateStockWildPrintingMaterialSizeses = ({
-  categoryName,
-  sizeId,
-  stockValue,
-  typeId,
-}: IUpdateSheetPaperSizesStock) => {
+const UpdateStockPackings = ({ categoryName, volumeId, stockValue }: any) => {
   const { callApi } = useGomakeAxios();
-
-  const [stock, setStock] = useState(stockValue);
-  const [isChanged, setIsChanged] = useState(false);
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
+  const [stock, setStock] = useState(stockValue);
+  const [isChanged, setIsChanged] = useState(false);
+
   const debounce = useDebounce(stock, 500);
   const [finalStock, setFinalStock] = useState("");
   useEffect(() => {
@@ -34,17 +28,12 @@ const UpdateStockWildPrintingMaterialSizeses = ({
     [setIsChanged]
   );
   const updateStock = useCallback(
-    async (categoryName: string, sizeId: string, typeId: string) => {
-      const updated = await callApi(
-        "POST",
-        "/v1/wide-format-material/update-stock",
-        {
-          categoryName,
-          sizeId,
-          typeId,
-          stock: finalStock,
-        }
-      );
+    async (categoryName: string, volumeId: string) => {
+      const updated = await callApi("POST", "/v1/packings/update-stock", {
+        categoryName,
+        volumeId,
+        stock: finalStock,
+      });
       if (updated?.success) {
         setSnackbarStateValue({
           state: true,
@@ -63,11 +52,16 @@ const UpdateStockWildPrintingMaterialSizeses = ({
   );
   useEffect(() => {
     if (finalStock && isChanged) {
-      updateStock(categoryName, sizeId, typeId);
+      updateStock(categoryName, volumeId);
     }
-  }, [finalStock, isChanged, sizeId]);
+  }, [finalStock, isChanged, volumeId, stockValue]);
+  useEffect(() => {
+    setStock(stockValue);
+  }, [stockValue]);
+
   return (
     <GomakeTextInput
+      key={volumeId}
       value={stock}
       type={"number"}
       onChange={onChange}
@@ -86,4 +80,4 @@ const UpdateStockWildPrintingMaterialSizeses = ({
     />
   );
 };
-export { UpdateStockWildPrintingMaterialSizeses };
+export { UpdateStockPackings };
