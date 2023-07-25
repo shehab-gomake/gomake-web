@@ -785,7 +785,7 @@
     },
     "doubleSidedTapeRolls": {
       "admin": {
-        "title": "Double sided tape roll",
+        "title": "Double sided tape rolls",
         "settings": "Settings",
         "addNewDoubleSidedTapeRoll": "Add new double sided tape roll",
         "deleteDoubleSidedTapeRoll": "Delete double sided tape roll",

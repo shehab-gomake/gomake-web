@@ -118,7 +118,10 @@ export default function Tubes() {
 
   return (
     <CustomerAuthLayout>
-      <MaterialsLayout header={t("materials.magnets.title")} side={Side()}>
+      <MaterialsLayout
+        header={t("materials.doubleSidedTapeRolls.title")}
+        side={Side()}
+      >
         {renderHeader()}
         <div style={{ paddingLeft: 0 }}>
           {isLoader ? (
