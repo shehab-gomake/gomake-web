@@ -2,9 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useDebounce } from "@/utils/use-debounce";
 import { GomakeTextInput } from "@/components";
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 import { IUpdateEncapsulationStock } from "./update-stock.interface";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { useTranslation } from "react-i18next";
 
 const UpdateStockEncapsulationRoll = ({
   categoryName,
@@ -16,7 +18,8 @@ const UpdateStockEncapsulationRoll = ({
 
   const [stock, setStock] = useState(stockValue);
   const [isChanged, setIsChanged] = useState(false);
-
+  const { setSnackbarStateValue } = useSnackBar();
+  const { t } = useTranslation();
   const debounce = useDebounce(stock, 500);
   const [finalStock, setFinalStock] = useState("");
   useEffect(() => {
@@ -32,12 +35,29 @@ const UpdateStockEncapsulationRoll = ({
   );
   const updateStock = useCallback(
     async (categoryName: string, sizeId: string, thicknessId: string) => {
-      await callApi("POST", "/v1/roll-encapsulations/update-stock", {
-        categoryName,
-        sizeId,
-        thicknessId,
-        stock: finalStock,
-      });
+      const updated = await callApi(
+        "POST",
+        "/v1/roll-encapsulations/update-stock",
+        {
+          categoryName,
+          sizeId,
+          thicknessId,
+          stock: finalStock,
+        }
+      );
+      if (updated?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedSusuccessfully"),
+          type: "sucess",
+        });
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.updatedfailed"),
+          type: "error",
+        });
+      }
     },
     [finalStock]
   );
@@ -52,8 +72,16 @@ const UpdateStockEncapsulationRoll = ({
       type={"number"}
       onChange={onChange}
       style={{
-        height: 40,
-        width: 100,
+        height: 38,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: "#2E3092",
+        textAlign: "center" as "center",
+        backgroundColor: "transparent",
+        paddingLeft: 2,
+        boxShadow: "none",
       }}
     />
   );
