@@ -50,11 +50,6 @@ const CategoriesTable = ({ admin = false }) => {
         path: "/materials-new/sheet-paper",
       },
       {
-        key: "lamination",
-        title: t("tabs.lamination"),
-        path: "/materials-new/lamination",
-      },
-      {
         key: "plats",
         title: t("tabs.plats"),
         path: "/materials-new/plats",
@@ -79,15 +74,20 @@ const CategoriesTable = ({ admin = false }) => {
         title: t("tabs.hardboards"),
         path: "/materials-new/hardboards",
       },
-      // {
-      //   key: "wildPrintingMaterials",
-      //   title: t("tabs.wildPrintingMaterials"),
-      //   path: "/materials/wild-printing-materials",
-      // },
+      {
+        key: "wideFormatMaterial",
+        title: t("tabs.wideFormatMaterial"),
+        path: "/materials-new/wide-format-material",
+      },
       {
         key: "profileFrames",
         title: t("tabs.profileFrames"),
         path: "/materials-new/profile-frames",
+      },
+      {
+        key: "lamination",
+        title: t("tabs.lamination"),
+        path: "/materials-new/lamination",
       },
       {
         key: "applications",
@@ -100,9 +100,9 @@ const CategoriesTable = ({ admin = false }) => {
         path: "/materials-new/roll-encapsulations",
       },
       {
-        key: "additions",
-        title: t("tabs.additions"),
-        path: "/materials-new/additions",
+        key: "frames",
+        title: t("tabs.frames"),
+        path: "/materials-new/frames",
       },
       {
         key: "canvasFrames",
@@ -110,29 +110,9 @@ const CategoriesTable = ({ admin = false }) => {
         path: "/materials-new/canvas-frames",
       },
       {
-        key: "frames",
-        title: t("tabs.frames"),
-        path: "/materials-new/frames",
-      },
-      {
-        key: "foils",
-        title: t("tabs.foils"),
-        path: "/materials-new/foils",
-      },
-      {
-        key: "packinDrums",
-        title: t("tabs.packinDrums"),
-        path: "/materials-new/packin-drums",
-      },
-      {
-        key: "packinUnits",
-        title: t("tabs.packinUnits"),
-        path: "/materials-new/packin-units",
-      },
-      {
-        key: "sheetEncapsulation",
-        title: t("tabs.sheetEncapsulation"),
-        path: "/materials-new/sheet-encapsulation",
+        key: "additions",
+        title: t("tabs.additions"),
+        path: "/materials-new/additions",
       },
       {
         key: "colors",
@@ -140,24 +120,14 @@ const CategoriesTable = ({ admin = false }) => {
         path: "/materials-new/colors",
       },
       {
-        key: "doubleSidedTapeRolls",
-        title: t("tabs.doubleSidedTapeRolls"),
-        path: "/materials-new/double-sided-tape-rolls",
+        key: "foils",
+        title: t("tabs.foils"),
+        path: "/materials-new/foils",
       },
       {
-        key: "glues",
-        title: t("tabs.glues"),
-        path: "/materials-new/glue",
-      },
-      {
-        key: "magnets",
-        title: t("tabs.magnets"),
-        path: "/materials-new/magnet",
-      },
-      {
-        key: "packings",
-        title: t("tabs.packings"),
-        path: "/materials-new/packings",
+        key: "sheetEncapsulation",
+        title: t("tabs.sheetEncapsulation"),
+        path: "/materials-new/sheet-encapsulation",
       },
       {
         key: "varnishs",
@@ -165,9 +135,34 @@ const CategoriesTable = ({ admin = false }) => {
         path: "/materials-new/varnishs",
       },
       {
-        key: "wideFormatMaterial",
-        title: t("tabs.wideFormatMaterial"),
-        path: "/materials-new/wide-format-material",
+        key: "magnets",
+        title: t("tabs.magnets"),
+        path: "/materials-new/magnet",
+      },
+      {
+        key: "packinUnits",
+        title: t("tabs.packinUnits"),
+        path: "/materials-new/packin-units",
+      },
+      {
+        key: "packinDrums",
+        title: t("tabs.packinDrums"),
+        path: "/materials-new/packin-drums",
+      },
+      {
+        key: "glues",
+        title: t("tabs.glues"),
+        path: "/materials-new/glue",
+      },
+      {
+        key: "doubleSidedTapeRolls",
+        title: t("tabs.doubleSidedTapeRolls"),
+        path: "/materials-new/double-sided-tape-rolls",
+      },
+      {
+        key: "packings",
+        title: t("tabs.packings"),
+        path: "/materials-new/packings",
       },
     ];
   }, []);
