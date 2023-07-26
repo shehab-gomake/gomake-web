@@ -123,7 +123,7 @@ export default function SheetPaper() {
 
   return (
     <CustomerAuthLayout>
-      <MaterialsLayout header={t("materials.sheetPaper.title")} side={Side()}>
+      <MaterialsLayout header={t("tabs.sheetPaper")} side={Side()}>
         {renderHeader()}
         <div style={{ paddingLeft: 0 }}>
           {isLoader ? (

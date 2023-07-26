@@ -199,6 +199,11 @@
       "subTitleDeleteModal": "Are you sure to delete {{name}}"
     },
     "sheetPaper": {
+      "inputs": {
+        "size": "Size (cm)",
+        "thickness": "Thickness (mm)",
+        "stock": "Stock (units)"
+      },
       "admin": {
         "title": "Sheets",
         "addNewSheet": "Add New Sheet",
@@ -298,6 +303,11 @@
       }
     },
     "plat": {
+      "inputs": {
+        "width": "Width (cm)",
+        "height": "Height (cm)",
+        "stock": "Stock (units)"
+      },
       "admin": {
         "title": "Plates",
         "addNewPlat": "Add New Plat",
@@ -353,6 +363,12 @@
       "code": "Code"
     },
     "tubes": {
+      "inputs": {
+        "diameter": "Diameter (cm)",
+        "lenght": "Lenght (cm)",
+        "weight": "Weight (gm)",
+        "stock": "Stock (units)"
+      },
       "admin": {
         "title": "Tubes",
         "addNewTubes": "Add New Tube",
@@ -375,6 +391,11 @@
       "settings": "Settings"
     },
     "printingMaterials": {
+      "inputs": {
+        "length": "Length (cm)",
+        "weight": "Weight (gm/m^2)",
+        "stock": "Stock (m)"
+      },
       "admin": {
         "title": "Material Roll Printing",
         "addNewMaterialRollPrinting": "Add New Material Roll Printing",
@@ -398,6 +419,12 @@
       "settings": "Settings"
     },
     "hardboards": {
+      "inputs": {
+        "size": "Size (cm*cm)",
+        "thickness": "Thickness (mm)",
+        "stiffnessFactor": "Stiffness factor",
+        "stock": "Stock (units)"
+      },
       "admin": {
         "title": "Flatbed",
         "subTitle": "Flatbed",
@@ -484,6 +511,13 @@
       }
     },
     "wideFormatMaterial": {
+      "inputs": {
+        "size": "Size (cm*m)",
+        "thickness": "Thickness (µm)",
+        "weight": "Weight (m^2)",
+        "stiffnessFactor": "Stiffness factor",
+        "stock": "Stock (m)"
+      },
       "admin": {
         "title": "Wide format Rolls",
         "addNewWideFormatMaterial": "Add New Wide format Rolls",

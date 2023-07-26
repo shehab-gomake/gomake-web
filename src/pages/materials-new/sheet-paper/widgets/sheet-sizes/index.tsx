@@ -94,20 +94,20 @@ const SheetSizesWidget = ({
       <div style={clasess.costsContainer}>
         {size?.pricePerUnit}/{size?.pricePerTon}
       </div>
-      <div style={clasess.directionContainer}>{size?.direction}</div>
-      <div style={clasess.activeContainer}>
-        <Switch
-          checked={size?.isActive}
-          onChange={(e: any) => onChangeActiveState(e.target.checked)}
-        />
-      </div>
       <div style={clasess.currencyContainer}>{size?.currency}</div>
+      <div style={clasess.directionContainer}>{size?.direction}</div>
       <div style={clasess.stokContainer}>
         <UpdateStockSheetPaperSizeses
           categoryName={selectedMaterials?.key}
           sizeId={size?.id}
           stockValue={size?.stock}
           weightId={row?.weightId}
+        />
+      </div>
+      <div style={clasess.activeContainer}>
+        <Switch
+          checked={size?.isActive}
+          onChange={(e: any) => onChangeActiveState(e.target.checked)}
         />
       </div>
     </div>
