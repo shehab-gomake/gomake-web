@@ -97,11 +97,13 @@ const SheetSizesWidget = ({
   }, [row, selectedMaterials, selectedSupplier, price]);
   return (
     <div style={index2 % 2 == 0 ? clasess.bodyRow : clasess.secondRow}>
-      <div style={clasess.costsContainer}>{row?.withGlue ? "Yes" : "No"}</div>
       <div style={clasess.costsContainer}>{row?.width}</div>
-      <div style={clasess.costsContainer}>{row?.weight}</div>
-      <div style={clasess.costsContainer}>{row?.linkage ? "Yes" : "No"}</div>
       <div style={clasess.costsContainer}>{row?.height}</div>
+      <div style={clasess.costsContainer}>{row?.weight}</div>
+      {/* <div style={clasess.thiknessContainer}>{row?.thickness}</div> */}
+      <div style={clasess.costsContainer}>{row?.withGlue ? "Yes" : "No"}</div>
+
+      <div style={clasess.costsContainer}>{row?.linkage ? "Yes" : "No"}</div>
       <div style={clasess.costsContainer}>
         {row?.directPrinting ? "Yes" : "No"}
       </div>
@@ -115,17 +117,16 @@ const SheetSizesWidget = ({
       </div>
 
       <div style={clasess.currencyContainer}>{row?.currency}</div>
+      <div style={clasess.stokContainer}>
+        <UpdateStockMagnet
+          stockValue={row?.stock}
+          code={selectedMaterials?.code}
+        />
+      </div>
       <div style={clasess.activeContainer}>
         <Switch
           checked={row?.isActive}
           onChange={(e: any) => onChangeActiveState(e.target.checked)}
-        />
-      </div>
-      <div style={clasess.stokContainer}>
-        {" "}
-        <UpdateStockMagnet
-          stockValue={row?.stock}
-          code={selectedMaterials?.code}
         />
       </div>
     </div>

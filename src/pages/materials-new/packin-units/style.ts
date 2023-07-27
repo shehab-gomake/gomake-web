@@ -117,7 +117,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 20,
       },
       thiknessContainer: {
         width: "12%",
@@ -132,6 +131,14 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
+      },
+      maxBookThickness: {
+        width: "25%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center" as "center",
       },
       directionContainer: {
         width: "20%",
@@ -150,16 +157,14 @@ const useStyle = () => {
         color: primaryColor(500),
         width: "100%",
         backgroundColor: "transparent",
-        paddingLeft: 2,
         boxShadow: "none",
       },
       activeContainer: {
-        width: "15%",
+        width: "10%",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 30,
       },
       currencyContainer: {
         width: "16%",

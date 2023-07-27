@@ -8,11 +8,21 @@ const HeaderTableWidget = ({ setSheetCheckStore, sheetCheckStore, index }) => {
   const { clasess } = useStyle();
   return (
     <div style={clasess.header}>
+      <div style={clasess.costsContainer}>
+        {t("materials.inputs.width")} (cm)
+      </div>
+      <div style={clasess.costsContainer}>
+        {t("materials.inputs.height")} (cm)
+      </div>
+      <div style={clasess.costsContainer}>
+        {t("materials.inputs.weight")} (gm)
+      </div>
+      {/* <div style={clasess.thiknessContainer}>
+        {t("materials.inputs.thickness")} (mm)
+      </div> */}
       <div style={clasess.costsContainer}>{t("materials.inputs.withGlue")}</div>
-      <div style={clasess.costsContainer}>{t("materials.inputs.width")}</div>
-      <div style={clasess.costsContainer}>{t("materials.inputs.weight")}</div>
+
       <div style={clasess.costsContainer}>{t("materials.inputs.linkage")}</div>
-      <div style={clasess.costsContainer}>{t("materials.inputs.height")}</div>
       <div style={clasess.costsContainer}>
         {t("materials.inputs.directPrinting")}
       </div>
@@ -20,8 +30,10 @@ const HeaderTableWidget = ({ setSheetCheckStore, sheetCheckStore, index }) => {
       <div style={clasess.currencyContainer}>
         {t("materials.inputs.currency")}
       </div>
+      <div style={clasess.stokContainer}>
+        {t("materials.sheetPaper.stock")} (units)
+      </div>
       <div style={clasess.activeContainer}>{t("products.actions.active")}</div>
-      <div style={clasess.stokContainer}>{t("materials.sheetPaper.stock")}</div>
     </div>
   );
 };
