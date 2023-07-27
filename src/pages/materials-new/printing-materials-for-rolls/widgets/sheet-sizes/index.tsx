@@ -154,6 +154,7 @@ const SheetSizesWidget = ({
           stockValue={row?.stock}
         />
       </div>
+      <div style={clasess.costsContainer}>BE</div>
       <div style={clasess.activeContainer}>
         <Switch
           checked={row?.isActive}

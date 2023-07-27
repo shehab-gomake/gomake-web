@@ -173,7 +173,7 @@ const useStyle = () => {
         alignItems: "center",
       },
       stokContainer: {
-        width: "20%",
+        width: "15%",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "center",
