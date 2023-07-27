@@ -122,7 +122,7 @@ export default function PrintingMaterialsForRolls() {
   return (
     <CustomerAuthLayout>
       <MaterialsLayout
-        header={t("materials.printingMaterials.title")}
+        header={t("tabs.printingMaterialsForRolls")}
         side={Side()}
       >
         {renderHeader()}

@@ -126,9 +126,9 @@ const SheetSizesWidget = ({
   }, [row, selectedMaterials, selectedSupplier, pricePerLiter]);
   return (
     <div style={index2 % 2 == 0 ? clasess.bodyRow : clasess.secondRow}>
-      <div style={clasess.costsContainer}>{row?.weightPerLiter}</div>
-      <div style={clasess.costsContainer}>{row?.typeName}</div>
+      <div style={clasess.costsContainer}>BE</div>
       <div style={clasess.costsContainer}>{row?.volumeInLiters}</div>
+      <div style={clasess.costsContainer2}>BE</div>
       <div style={clasess.costsContainer}>{row?.literInSquareMeter}</div>
       <div style={clasess.costsContainer}>
         <GomakeTextInput
@@ -138,26 +138,28 @@ const SheetSizesWidget = ({
           onBlur={updatePricePerContainer}
         />
       </div>
-      <div style={clasess.costsContainer}>
+      <div style={clasess.currencyContainer}>{row?.currency}</div>
+      <div style={clasess.costsContainer}>{row?.weightPerLiter}</div>
+      {/* <div style={clasess.costsContainer}>{row?.typeName}</div> */}
+
+      {/* <div style={clasess.costsContainer}>
         <GomakeTextInput
           style={clasess.thiknessTextInputStyle}
           value={pricePerLiter}
           onChange={(event: any) => setPricePerLiter(event.target.value)}
           onBlur={updatePricePerLiter}
         />
+      </div> */}
+      <div style={clasess.stokContainer}>
+        <UpdateStockGlue
+          stockValue={row?.stock}
+          code={selectedMaterials?.code}
+        />
       </div>
-      <div style={clasess.currencyContainer}>{row?.currency}</div>
       <div style={clasess.activeContainer}>
         <Switch
           checked={row?.isActive}
           onChange={(e: any) => onChangeActiveState(e.target.checked)}
-        />
-      </div>
-      <div style={clasess.stokContainer}>
-        {" "}
-        <UpdateStockGlue
-          stockValue={row?.stock}
-          code={selectedMaterials?.code}
         />
       </div>
     </div>

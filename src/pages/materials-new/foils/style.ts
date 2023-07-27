@@ -117,7 +117,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 20,
       },
       thiknessContainer: {
         width: "13%",
@@ -127,7 +126,7 @@ const useStyle = () => {
         alignItems: "center",
       },
       costsContainer: {
-        width: "10%",
+        width: "15%",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "center",
@@ -150,11 +149,10 @@ const useStyle = () => {
         color: primaryColor(500),
         width: "100%",
         backgroundColor: "transparent",
-        paddingLeft: 2,
         boxShadow: "none",
       },
       widthContainer: {
-        width: "8%",
+        width: "15%",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "center",
@@ -166,7 +164,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 40,
       },
       activeContainer: {
         width: "13%",
@@ -174,7 +171,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 30,
       },
       currencyContainer: {
         width: "16%",

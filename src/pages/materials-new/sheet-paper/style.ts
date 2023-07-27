@@ -154,7 +154,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 40,
       },
       activeContainer: {
         width: "13%",
@@ -162,7 +161,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 30,
       },
       currencyContainer: {
         width: "13%",

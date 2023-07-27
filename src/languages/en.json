@@ -158,7 +158,7 @@
       "enterLinkage": "Enter linkage",
       "typeName": "Type Name",
       "enterTypeName": "Enter type Name",
-      "volumeInLiters": "Volume in liters",
+      "volumeInLiters": "Volume (liters)",
       "enterVolumeInLiters": "Enter volume in liters",
       "weightPerLiter": "Weight per liter",
       "weightOfLiter": "Weight Of Liter",
@@ -185,7 +185,14 @@
       "pricePerContainer": "Price/container",
       "pricePerLiter": "Price/liter",
       "glueSuppliers": "Glue supplier",
-      "pricePerUnit": "Price/unit"
+      "pricePerUnit": "Price/unit",
+      "machine": "Machine",
+      "inkConsumption": "Ink consumption per square meter",
+      "conditions": "Conditions",
+      "pitch": "Pitch",
+      "maxBookThickness": "Max book thickness",
+      "loopsQuantity": "loops quantity",
+      "speralSize": "Speral size"
     },
     "buttons": {
       "cancel": "Cancel",
@@ -199,6 +206,11 @@
       "subTitleDeleteModal": "Are you sure to delete {{name}}"
     },
     "sheetPaper": {
+      "inputs": {
+        "size": "Size (cm)",
+        "thickness": "Thickness (mm)",
+        "stock": "Stock (units)"
+      },
       "admin": {
         "title": "Sheets",
         "addNewSheet": "Add New Sheet",
@@ -298,6 +310,11 @@
       }
     },
     "plat": {
+      "inputs": {
+        "width": "Width (cm)",
+        "height": "Height (cm)",
+        "stock": "Stock (units)"
+      },
       "admin": {
         "title": "Plates",
         "addNewPlat": "Add New Plat",
@@ -353,6 +370,12 @@
       "code": "Code"
     },
     "tubes": {
+      "inputs": {
+        "diameter": "Diameter (cm)",
+        "lenght": "Lenght (cm)",
+        "weight": "Weight (gm)",
+        "stock": "Stock (units)"
+      },
       "admin": {
         "title": "Tubes",
         "addNewTubes": "Add New Tube",
@@ -375,6 +398,11 @@
       "settings": "Settings"
     },
     "printingMaterials": {
+      "inputs": {
+        "length": "Length (cm)",
+        "weight": "Weight (gm/m^2)",
+        "stock": "Stock (m)"
+      },
       "admin": {
         "title": "Material Roll Printing",
         "addNewMaterialRollPrinting": "Add New Material Roll Printing",
@@ -398,6 +426,12 @@
       "settings": "Settings"
     },
     "hardboards": {
+      "inputs": {
+        "size": "Size (cm*cm)",
+        "thickness": "Thickness (mm)",
+        "stiffnessFactor": "Stiffness factor",
+        "stock": "Stock (units)"
+      },
       "admin": {
         "title": "Flatbed",
         "subTitle": "Flatbed",
@@ -484,6 +518,13 @@
       }
     },
     "wideFormatMaterial": {
+      "inputs": {
+        "size": "Size (cm*m)",
+        "thickness": "Thickness (µm)",
+        "weight": "Weight (m^2)",
+        "stiffnessFactor": "Stiffness factor",
+        "stock": "Stock (m)"
+      },
       "admin": {
         "title": "Wide format Rolls",
         "addNewWideFormatMaterial": "Add New Wide format Rolls",
@@ -771,7 +812,7 @@
       "supplier": "Supplier",
       "code": "Code",
       "colorName": "Color name",
-      "volumeInLiters": "Volume in liters",
+      "volumeInLiters": "Volume (liters)",
       "literInSquareMeter": "Liter in square meter",
       "pricePerContainer": "Price per container",
       "stock": "Stock",
@@ -813,7 +854,7 @@
       "title": "Glue",
       "code": "Code",
       "typeName": "TypeName",
-      "volumeInLiters": "Volume in liters",
+      "volumeInLiters": "Volume (liters)",
       "weightPerLiter": "Weight per liter",
       "literInSquareMeter": "Liter in square meter",
       "stock": "Stock",
@@ -887,7 +928,7 @@
       "title": "Varnish",
       "code": "Code",
       "typeName": "Type name",
-      "volumeInLiters": "Volume in liters",
+      "volumeInLiters": "Volume (liters)",
       "weightPerLiter": "Weight per liter",
       "literInSquareMeter": "Liter in square meter",
       "stock": "Stock",

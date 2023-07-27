@@ -18,21 +18,29 @@ const HeaderTableWidget = ({ setSheetCheckStore, sheetCheckStore, index }) => {
         />
       </div>
       <div style={clasess.thiknessContainer}>{t("materials.inputs.type")}</div>
-      <div style={clasess.costsContainer}>{t("materials.inputs.size")}</div>
+      <div style={clasess.costsContainer}>
+        {t("materials.wideFormatMaterial.inputs.size")}
+      </div>
       <div style={clasess.directionContainer}>
-        {t("materials.inputs.weightPerMeterSquare")}
+        {t("materials.wideFormatMaterial.inputs.thickness")}
+      </div>
+      <div style={clasess.directionContainer}>
+        {t("materials.wideFormatMaterial.inputs.weight")}
+      </div>
+      <div style={clasess.directionContainer}>
+        {t("materials.wideFormatMaterial.inputs.stiffnessFactor")}
       </div>
       <div style={clasess.directionContainer}>
         {t("materials.inputs.pricePerMeterSquare")}
       </div>
-      <div style={clasess.directionContainer}>
-        {t("materials.inputs.thickness")}
-      </div>
-      <div style={clasess.activeContainer}>{t("products.actions.active")}</div>
+
       <div style={clasess.currencyContainer}>
         {t("materials.inputs.currency")}
       </div>
-      <div style={clasess.stokContainer}>{t("materials.sheetPaper.stock")}</div>
+      <div style={clasess.stokContainer}>
+        {t("materials.wideFormatMaterial.inputs.stock")}
+      </div>
+      <div style={clasess.activeContainer}>{t("products.actions.active")}</div>
     </div>
   );
 };

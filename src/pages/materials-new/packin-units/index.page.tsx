@@ -120,7 +120,7 @@ export default function PackinUnits() {
 
   return (
     <CustomerAuthLayout>
-      <MaterialsLayout header={t("materials.packinUnits.title")} side={Side()}>
+      <MaterialsLayout header={t("tabs.packinUnits")} side={Side()}>
         {renderHeader()}
         <div style={{ paddingLeft: 0 }}>
           {isLoader ? (

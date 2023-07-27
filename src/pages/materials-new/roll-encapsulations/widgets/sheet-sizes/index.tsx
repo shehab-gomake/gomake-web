@@ -128,18 +128,14 @@ const SheetSizesWidget = ({
   return (
     <div style={index2 % 2 == 0 ? clasess.bodyRow : clasess.secondRow}>
       <div style={clasess.sizeContainer}>{size?.size}</div>
+      <div style={clasess.sizeContainer}>{row?.thickness}</div>
+      <div style={clasess.sizeContainer}>{row?.weightPerSquareMeter}</div>
       <div style={clasess.thiknessContainer}>
         <GomakeTextInput
           style={clasess.thiknessTextInputStyle}
           value={pricePerSquareMeter}
           onChange={(event: any) => setPricePerSquareMeter(event.target.value)}
           onBlur={updatePricePerSquareMeter}
-        />
-      </div>
-      <div style={clasess.activeContainer}>
-        <Switch
-          checked={size?.isActive}
-          onChange={(e: any) => onChangeActiveState(e.target.checked)}
         />
       </div>
       <div style={clasess.currencyContainer}>{size?.currency}</div>
@@ -149,6 +145,12 @@ const SheetSizesWidget = ({
           sizeId={size?.sizeId}
           stockValue={size?.stock}
           thicknessId={row?.thicknessId}
+        />
+      </div>
+      <div style={clasess.activeContainer}>
+        <Switch
+          checked={size?.isActive}
+          onChange={(e: any) => onChangeActiveState(e.target.checked)}
         />
       </div>
     </div>

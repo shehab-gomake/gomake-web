@@ -124,6 +124,7 @@ const SheetSizesWidget = ({
         />
       </div>
       <div style={clasess.thiknessContainer}>{row?.size}</div>
+      <div style={clasess.activeContainer}>{row?.thickness}</div>
       <div style={clasess.directionContainer}>
         <GomakeTextInput
           style={clasess.thiknessTextInputStyle}
@@ -132,20 +133,20 @@ const SheetSizesWidget = ({
           onBlur={updatePrice}
         />
       </div>
-      <div style={clasess.activeContainer}>{row?.thickness}</div>
-      <div style={clasess.activeContainer}>
-        <Switch
-          checked={row?.isActive}
-          onChange={(e: any) => onChangeActiveState(e.target.checked)}
-        />
-      </div>
       <div style={clasess.currencyContainer}>{row?.currency}</div>
+
       <div style={clasess.stokContainer}>
         <UpdateStockLaminationThickness
           categoryName={selectedMaterials?.key}
           sizeId={row?.sizeId}
           stockValue={row?.stock}
           thicknessId={row?.thicknessId}
+        />
+      </div>
+      <div style={clasess.activeContainer}>
+        <Switch
+          checked={row?.isActive}
+          onChange={(e: any) => onChangeActiveState(e.target.checked)}
         />
       </div>
     </div>
