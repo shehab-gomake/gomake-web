@@ -92,7 +92,7 @@ const RollEncapsulationSizeMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.width")}
+              {t("materials.inputs.width")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWidth")}
@@ -112,7 +112,7 @@ const RollEncapsulationSizeMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.height")}
+              {t("materials.inputs.height")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterHeight")}

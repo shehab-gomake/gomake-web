@@ -46,7 +46,7 @@ const FoilSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.thickness")}
+            {t("materials.inputs.thickness")} (µm)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterThickness")}
@@ -63,7 +63,7 @@ const FoilSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.width")}
+            {t("materials.inputs.width")} (cm)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterWidth")}
@@ -80,7 +80,7 @@ const FoilSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.height")}
+            {t("materials.inputs.height")} (m)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterHeight")}
@@ -97,10 +97,10 @@ const FoilSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.weightPerSquareMeter")}
+            {t("materials.inputs.weight")} (gm/m^2)
           </div>
           <GomakeTextInput
-            placeholder={t("materials.inputs.enterWeightPerSquareMeter")}
+            placeholder={t("materials.inputs.weight")}
             style={clasess.textInputStyle}
             value={materialFoilStateValue?.items[index]["weightPerSquareMeter"]}
             onChange={(e: any) => {
