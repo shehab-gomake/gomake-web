@@ -34,7 +34,7 @@ const LaminationSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.thickness")}
+            {t("materials.inputs.thickness")} (µm)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterThickness")}
@@ -73,7 +73,7 @@ const LaminationSizeInputs = ({ index, sheetWeightIndex, sheetSize }) => {
             {t("materials.inputs.coldOrHot")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.lamination.admin.enterColdOrHot")}
+            placeholder={t("materials.inputs.coldOrHot")}
             style={clasess.textInputStyle}
             value={sheetSize[index]["coldOrHot"]}
             onChange={(e: any) => {

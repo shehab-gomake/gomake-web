@@ -80,7 +80,7 @@ const ProfileFrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.width")}
+              {t("materials.inputs.width")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWidth")}
@@ -99,7 +99,7 @@ const ProfileFrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.height")}
+              {t("materials.inputs.height")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterHeight")}
@@ -118,7 +118,7 @@ const ProfileFrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.length")}
+              {t("materials.inputs.length")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterLength")}
@@ -137,7 +137,7 @@ const ProfileFrameWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.stock")}
+              {t("materials.inputs.stock")} (units)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterStock")}
