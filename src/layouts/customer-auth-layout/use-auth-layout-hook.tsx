@@ -263,7 +263,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <CustomersIcon />;
         },
-        isProduction: false,
+        isProduction: true,
       },
       {
         isLine: false,

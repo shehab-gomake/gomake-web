@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 const AddCustomerButton = ({ item }: any) => {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
-  const [customer, setCustomer] = useState([]);
+  const [customer, setCustomer] = useState(null);
 
 
 

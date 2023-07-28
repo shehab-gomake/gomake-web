@@ -10,7 +10,7 @@ import Switch from "../switch-component";
 
 
 
-const AddressForm = ({ address, onDelete }: any) => {
+const AddressForm = ({ address, onDelete , setAddress}: any) => {
 
     const { clasess } = useStyle();
     const [cities, setCities] = useState([]);

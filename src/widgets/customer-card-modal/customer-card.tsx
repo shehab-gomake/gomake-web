@@ -76,13 +76,13 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
   const { clasess } = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
   const [open, setOpen] = useState(false);
-  const [contacts, setContacts] = useState([]);
-  const [addresses, setAddresses] = useState([]);
+  const [contacts, setContacts] = useState( customer && customer.contacts ? customer.contacts : [] );
+  const [addresses, setAddresses] = useState(customer && customer.addresses ? customer.addresses : []);
 
   useEffect(() => {
-    addEmptyAdress();
-    addEmptyContact();
-  }, []);
+    addInitContact();
+    addInitAddress();
+  }, [openModal]);
 
   useEffect(() => {
     setOpen(openModal);
@@ -105,12 +105,39 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
     temp.push({ name: "", index: index });
     setContacts(temp);
   }
+
+  const addInitContact = () => {
+    var temp = [];
+    if(customer && customer.contacts){
+      temp = customer.contacts;
+      if(temp){
+        let index = 0;
+        temp.forEach(x=>{
+          x.index = index;
+          index++;
+        })
+      }
+    }else{
+      const index = temp.length + 1;
+      temp.push({ name: "", index: index });
+    }
+    setContacts(temp);
+  }
+
   const deleteContactForm = (index) => {
     debugger;
     var temp = [...contacts];
     temp = temp.filter(x => x.index != index);
     setContacts(temp);
   }
+
+  const updateContact = (index, updatedContactData) => {
+    setContacts((prevContacts) =>
+      prevContacts.map((contact) =>
+        contact.index === index ? { ...contact, ...updatedContactData } : contact
+      )
+    );
+  };
 
   // Address info
   const addEmptyAdress = () => {
@@ -119,12 +146,39 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
     temp.push({ name: "", index: index });
     setAddresses(temp);
   }
+
+  const addInitAddress = () => {
+    var temp = [];
+    if(customer && customer.addresses){
+      temp = customer.addresses;
+      if(temp){
+        let index = 0;
+        temp.forEach(x=>{
+          x.index = index;
+          index++;
+        })
+      }
+    }else{
+      const index = temp.length + 1;
+      temp.push({ name: "", index: index });
+    }
+    setAddresses(temp);
+  }
+
   const deleteAddressForm = (index) => {
     debugger;
     var temp = [...addresses];
     temp = temp.filter(x => x.index != index);
     setAddresses(temp);
   }
+
+  const updateAddress = (index, updatedAddressData) => {
+    setAddresses((prevAddresses) =>
+    prevAddresses.map((address) =>
+      address.index === index ? { ...address, ...updatedAddressData } : address
+      )
+    );
+  };
 
   // User info
   const addEmptyClient = () => {
@@ -142,7 +196,6 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
     const updatedCustomer = { ...customer, users: temp };
     setCustomer(updatedCustomer);
   }
-
   
   return (
     <GoMakeModal
@@ -254,12 +307,9 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
             <Row>
               <Col md={10} >
                 {
-                  contacts.length === 0 ? (
-                    <ContactForm key={0} contact={{ name: "", index: 1 }} onDelete={deleteContactForm} />
-                  ) : (
-                  contacts.map(x =>
-                    <ContactForm key={x.index} contact={x} onDelete={deleteContactForm}></ContactForm>
-                  ))
+                   contacts.map(x =>
+                    <ContactForm key={x.index} contact={x} onDelete={deleteContactForm} setContact={(updatedContactData) => updateContact(x.index, updatedContactData)} ></ContactForm>
+                  )
                 }
               </Col>
               <Col style={{ marginTop: "42px", marginRight: "30px", justifyContent: 'flex-end' }}>
@@ -276,12 +326,9 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
             <Row>
               <Col md={10} >
                 {
-                  addresses.length === 0 ? (
-                    <AddressForm key={0} address={{ name: "", index: 1 }} onDelete={deleteAddressForm} />
-                  ) : (
                   addresses.map(x =>
-                    <AddressForm key={x.index} address={x} onDelete={deleteAddressForm}></AddressForm>
-                  ))
+                    <AddressForm key={x.index} address={x} onDelete={deleteAddressForm} setAddress={(updatedAddressData) => updateAddress(x.index, updatedAddressData)}></AddressForm>
+                  )
                 }
               </Col>
               <Col style={{ marginTop: "42px", marginRight: "30px", justifyContent: 'flex-end' }}>

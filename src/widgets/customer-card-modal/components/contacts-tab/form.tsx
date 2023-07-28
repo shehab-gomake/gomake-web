@@ -5,9 +5,14 @@ import { RemoveIcon } from "@/components/icons/icons";
 import { Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { HeaderFilter } from "../header-filter";
+import IContact from "@/types/IContact";
 
-
-const ContactForm = ({ contact, onDelete }: any) => {
+interface IProps{
+    contact:IContact,
+    onDelete:any,
+    setContact: any,
+}
+const ContactForm = ({contact , onDelete , setContact }:IProps) => {
 
     const { clasess } = useStyle();
     const { t } = useTranslation();
@@ -25,51 +30,51 @@ const ContactForm = ({ contact, onDelete }: any) => {
             <Row style={{ marginBottom: '24px', marginTop: '14px' }}>
             <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <h3 style={clasess.headerStyle} >{t("customers.modal.firstName")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={contact.firstName} onChange={(e) => setContact({ ...contact, firstName: e.target.value })}/>
                 </Col>
                 <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <h3 style={clasess.headerStyle} >{t("customers.modal.lastName")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={contact.lastName} onChange={(e) => setContact({ ...contact, lastName: e.target.value })}/>
                 </Col>
                 <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <h3 style={clasess.headerStyle} >{t("customers.modal.title")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={contact.title} onChange={(e) => setContact({ ...contact, title: e.target.value })} />
                 </Col>
                 <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <h3 style={clasess.headerStyle} >{t("customers.modal.role")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={contact.position} onChange={(e) => setContact({ ...contact, position: e.target.value })}/>
                 </Col>
                 <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <h3 style={clasess.headerStyle} >{t("customers.modal.address")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={contact.address} onChange={(e) => setContact({ ...contact, address: e.target.value })}/>
                 </Col>
             </Row>
             <Row style={{ marginBottom: '24px' }} >
             <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <h3 style={clasess.headerStyle} >{t("customers.modal.phone1")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={contact.tel1} onChange={(e) => setContact({ ...contact, tel1: e.target.value })}/>
                 </Col>
                 <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <h3 style={clasess.headerStyle} >{t("customers.modal.phone2")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={contact.tel2} onChange={(e) => setContact({ ...contact, tel2: e.target.value })}/>
                 </Col>
                 <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <h3 style={clasess.headerStyle} >{t("customers.modal.mobile")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={contact.phone} onChange={(e) => setContact({ ...contact, phone: e.target.value })}/>
                 </Col>
                 <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <h3 style={clasess.headerStyle} >{t("customers.modal.fax")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={contact.fax} onChange={(e) => setContact({ ...contact, fax: e.target.value })}/>
                 </Col>
                 <Col style={{display: "flex" , width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <h3 style={clasess.headerStyle} >{t("customers.modal.email")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={contact.mail} onChange={(e) => setContact({ ...contact, mail: e.target.value })}/>
                 </Col>
             </Row>
             <Row style={{ marginBottom: '24px' }} >
                 <Col md={3}  style={{display: "none"}}>
                     <h3 style={clasess.headerStyle} >{t("customers.modal.defaultInDocument")}</h3>
-                    <HeaderFilter setAllOptions={DocumentsOptions} style={clasess.autoComplateStyle} setPlaceholder="placeholder"></HeaderFilter>
+                    <HeaderFilter setAllOptions={DocumentsOptions} style={clasess.autoComplateStyle} setPlaceholder="placeholder" ></HeaderFilter>
                 </Col>
                 <Col>
                     <a style={{ display: "flex", justifyContent: 'flex-start' }} onClick={() => onDelete(contact.index)} >
