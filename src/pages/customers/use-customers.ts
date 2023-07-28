@@ -5,14 +5,12 @@ import { getAndSetAllCustomers, getAndSetCustomers } from "@/services/hooks/get-
 import { getAndSetEmployees } from "@/services/hooks/get-set-employee";
 import { getAndSetClientTypes } from "@/services/hooks/get-set-clientTypes";
 
-
 const useCustomers = (clientType, pageNumber) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [allCustomers, setAllCustomers] = useState([]);
   const [pagesCount, setPagesCount] = useState(0);
   const pageSize = 10;
-
 
   const tabelHeaders = useMemo(
     () => [
@@ -40,7 +38,6 @@ const useCustomers = (clientType, pageNumber) => {
     ],
     []
   );
-
 
   const [name, setCustomerName] = useState("");
   const onChangeCustomer = useCallback(async (e: any, value: any) => {
@@ -127,18 +124,18 @@ const useCustomers = (clientType, pageNumber) => {
       { ClientType: clientType,
         onlyCreateOrderClients: false }
     );
-    console.log(data);
-    setPagesCount(data.length / pageSize);
     const customersNames = data.map(customer => ({
       label: customer.name,
       id: customer.id
     }));
-    setAgentsCategores(customersNames);
+    setCustomersCategores(customersNames);
   }, []);
 
   useEffect(() => {
     getCustomersCategores();
   }, []);
+
+
 
   /////////////////////////  table data //////////////////////////////
 
@@ -152,14 +149,14 @@ const useCustomers = (clientType, pageNumber) => {
       agentId,
       isActive,
     });
-    console.log(data);
-
+    setPagesCount(Math.ceil(data / pageSize));
     return data;
   }, [pageNumber, name, ClientTypeId, agentId, isActive]);
 
   useEffect(() => {
     getAllCustomers();
-  }, [pageNumber, name, ClientTypeId, agentId, isActive]);
+  }, [pageNumber, name, ClientTypeId, agentId, isActive]);  
+
 
   return {
     tabelHeaders,
@@ -177,6 +174,7 @@ const useCustomers = (clientType, pageNumber) => {
     agentName,
     valStatus,
     valClientType,
+    pagesCount,
   };
 };
 export { useCustomers };

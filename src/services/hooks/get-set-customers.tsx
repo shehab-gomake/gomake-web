@@ -29,6 +29,19 @@ const getAndSetCustomer = async (
   );
   return returnResult(result, setState);
 };
+
+
+///  instead this i used getAndSetAllCustomers an return _data.totalItems;
+const getCustomerCount = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi("GET", "/v1/customers/get-all-customers", data);
+  const _data = returnResult(result, undefined);
+  return _data.totalItems;
+};
+
     
 const getAndSetAllCustomers = async (
   callApi: ICallApi,
@@ -37,7 +50,7 @@ const getAndSetAllCustomers = async (
 ) => {
   const result: any = await callApi("GET", "/v1/customers/get-all-customers", data);
   const _data = returnResult(result, undefined);
-  const mapData = _data.map((customer: any) => {
+  const mapData = _data.data.map((customer: any) => {
     return {
       customerCode: customer.code,
       name: customer.name,
@@ -56,7 +69,7 @@ const getAndSetAllCustomers = async (
   if (setState) {
     setState(mapData);
   }
-  return _data;
+  return _data.totalItems;
 };
 
 export {

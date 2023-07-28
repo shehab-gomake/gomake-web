@@ -15,7 +15,7 @@ export default function Home() {
   const { clasess } = useStyle();
   const [pageNumber, setPageNumber] = useState(1);
   const { tabelHeaders, setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType,
-    valStatus } = useCustomers("C",pageNumber);
+    valStatus , pagesCount} = useCustomers("C",pageNumber);
 
 
   return (
@@ -44,7 +44,7 @@ export default function Home() {
       <div style={clasess.tableContainer}>
         <Table tableHeaders={tabelHeaders} tableRows={allCustomers}></Table>
       </div>
-      <Pagination  count={5} variant="outlined" color="primary"  page={pageNumber}
+      <Pagination  count={pagesCount} variant="outlined" color="primary"  page={pageNumber}
         onChange={(event, value) => setPageNumber(value)} />
         </Stack>
     </CustomerAuthLayout>

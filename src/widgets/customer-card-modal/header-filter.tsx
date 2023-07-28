@@ -6,6 +6,7 @@ import { Placeholder } from "react-bootstrap";
 const HeaderFilter = ({
     setAllOptions,
     setPlaceholder,
+    val,
   }: any) => {
     const { clasess } = useStyle();
 
@@ -16,6 +17,7 @@ const HeaderFilter = ({
                     options={setAllOptions}
                     style={clasess.autoComplateStyle}
                     placeholder={setPlaceholder}
+                    value={val}
                 />
             ) : (
                 <Skeleton variant="rectangular" width={180} height={40} />

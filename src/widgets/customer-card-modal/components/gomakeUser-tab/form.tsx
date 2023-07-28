@@ -15,12 +15,12 @@ const UserForm = ({ user, onDelete }: any) => {
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "16px", marginTop: "24px" , width:"886px"}} >
                 <div style={{ width: '180px' }}>
                     <h3 style={clasess.headerStyle}>{t("customers.modal.userName")}</h3>
-                    <input style={clasess.inputStyle} placeholder="placeholder" type="text" />
+                    <input style={clasess.inputStyle} placeholder="placeholder" type="text" value={user?.username}/>
                 </div >
                 <div style={{ width: '180px' }}>
                     <h3 style={clasess.headerStyle}>{t("customers.modal.password")}</h3>
-                    <input style={clasess.inputStyle} placeholder="placeholder" type="text" />
-                </div >
+                    <input style={clasess.inputStyle} placeholder="placeholder" type="text" value={user?.password} />
+                </div>
                 <div style={{ display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "16px", width:"376px"}}>
                     <div  style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
                     <h3 style={clasess.headerStyle}>{t("customers.modal.email")}</h3>

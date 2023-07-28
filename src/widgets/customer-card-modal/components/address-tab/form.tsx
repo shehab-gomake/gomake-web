@@ -115,8 +115,8 @@ const AddressForm = ({ address, onDelete }: any) => {
                     <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                 </Col>
             </Row>
-            <Row>
-                <Col md={3} style={{ display: "flex", flexDirection: "column", gap: "5px" }} >
+            <Row style={{ display: "flex", width: "33%"}}>
+                <Col style={{ display: "flex", flexDirection: "column", gap: "5px" }} >
                     <h3 style={clasess.headerStyle} >{t("customers.modal.remarks")}</h3>
                     <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
                     <a style={{ display: "flex", flexDirection: "row", gap: "8px"}} >
@@ -124,8 +124,8 @@ const AddressForm = ({ address, onDelete }: any) => {
                         <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.default")}</h3>
                     </a>
                 </Col>
-                <Col  >
-                    <a style={{ display: "flex", marginTop: "24px", justifyContent: 'flex-start' }} onClick={() => onDelete(address.index)} >
+                <Col style={{ display: "flex", marginTop: "24px", justifyContent: 'flex-start' }} >
+                    <a onClick={() => onDelete(address.index)} >
                         <RemoveIcon></RemoveIcon>
                         <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
                     </a>

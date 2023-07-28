@@ -67,12 +67,12 @@ const ContactForm = ({ contact, onDelete }: any) => {
                 </Col>
             </Row>
             <Row style={{ marginBottom: '24px' }} >
-                <Col md={3} >
+                <Col md={3}  style={{display: "none"}}>
                     <h3 style={clasess.headerStyle} >{t("customers.modal.defaultInDocument")}</h3>
                     <HeaderFilter setAllOptions={DocumentsOptions} style={clasess.autoComplateStyle} setPlaceholder="placeholder"></HeaderFilter>
                 </Col>
-                <Col >
-                    <a style={{ display: "flex", marginTop: "24px", justifyContent: 'flex-start' }} onClick={() => onDelete(contact.index)} >
+                <Col>
+                    <a style={{ display: "flex", justifyContent: 'flex-start' }} onClick={() => onDelete(contact.index)} >
                         <RemoveIcon></RemoveIcon>
                         <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
                     </a>

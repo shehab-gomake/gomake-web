@@ -62,10 +62,8 @@ const useStyle = () => {
       
       buttonsStyle: {
         color: "var(--error-500, #D92C2C)",
-        fontFamily: 'Lexend',
-        fontSize: '14px',
+        ...FONT_FAMILY.Lexend(500, 14),
         fontStyle: 'normal',
-        fontWeight: 500,
         lineHeight: 'normal',
         border: "none",
         background: "#FFF",
