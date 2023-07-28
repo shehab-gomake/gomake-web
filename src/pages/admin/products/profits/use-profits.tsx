@@ -1,369 +1,177 @@
 import { useTranslation } from "react-i18next";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  actionLists,
-  actionProfitLists,
-  clientTypesState,
-  machincesState,
-  parametersState,
-  productsState,
-} from "@/store";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { GoMakeAutoComplate } from "@/components";
+import { useEffect, useState } from "react";
 import { useStyle } from "./style";
-import {
-  getAndSetActionProfitRowByActionId,
-  getAndSetActions,
-  getAndSetProducts,
-  getAndSetMachinces,
-  getAndSetParameters,
-  getAndSetClientTypes,
-} from "@/services/hooks";
-import { editPriceListState } from "./store/edit-price-list";
+import { useProfitsGetData } from "./use-profit-get-data";
+import { useProfitsExeptionsFunction } from "./use-profit-exeptions-function";
+import { useProfitsProfitsFunction } from "./use-profit-profit-function";
+import { useProfitsAction } from "./use-profit-action.";
+import { useProfitsEffects } from "./use-profits-effects";
 
 const useProfits = () => {
-  const [machincesStateValue, setMachincesState] =
-    useRecoilState<any>(machincesState);
-  const [productsStateValue, setProductsState] =
-    useRecoilState<any>(productsState);
-  const [parametersStateValue, setParametersState] =
-    useRecoilState<any>(parametersState);
-  const [clientTypesStateValue, setClientTypesState] =
-    useRecoilState<any>(clientTypesState);
-  const { setSnackbarStateValue } = useSnackBar();
-  const [editPriceListStateValue, setEditPriceListState] =
-    useRecoilState<any>(editPriceListState);
-  const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const [allActions, setAllActions] = useRecoilState(actionLists);
-  const [selectedAction, setSelectedAction] = useState<any>({});
-  const [openAddExceptionModal, setOpenAddExceptionModal] = useState(false);
-  const [openAddNewPricingStepRow, setOpenAddNewPricingStepRow] =
-    useState(false);
-  const [pricingListRowState, setPricingListRowState] = useState<any>({});
-  const [openAddTestProductModal, setOpenAddTestProductModal] = useState(false);
-  const [testProductState, setTestProductState] = useState<any>({});
-  const [openDeleteExceptionProfitModal, setOpenDeleteExceptionProfitModal] =
-    useState(false);
-  const [selectedExceptionProfit, setSelectedExceptionProfit] = useState();
-  const onCloseDeleteExceptionProfitModal = () => {
-    setOpenDeleteExceptionProfitModal(false);
-  };
+  const {
+    allActions,
+    parametersStateValue,
+    actionProfits,
+    actionExceptionProfitIdValue,
+    actionProfitRowsNew,
+    selectTestDataVal,
+    actionExceptionProfitRowsVal,
+    machincesStateValue,
+    productsStateValue,
+    selectedAction,
+    clientTypesStateValue,
+    testProductsState,
+    router,
+    setactionExceptionProfitId,
+    getActionProfitRowChartData,
+    getActionExceptionProfitRowByActionExceptionId,
+    getActionProfits,
+    getClientTypes,
+    getActions,
+    getParameters,
+    setActionProfitRowsNew,
+    setSelectTestData,
+    setActionExceptionProfitRows,
+    setMachincesState,
+    setProductsState,
+    setSelectedAction,
+    getMachincesProfits,
+    getProducts,
+    getTestProducts,
+    setTestProductsState,
+  } = useProfitsGetData();
 
-  const onOpenDeleteExceptionProfitModal = (item: any) => {
-    setSelectedExceptionProfit(item);
-    setOpenDeleteExceptionProfitModal(true);
-  };
+  const {
+    tabelExceptionsHeaders,
+    openDeleteExceptionProfitModal,
+    editPriceListStateValue,
+    selectedExceptionProfit,
+    openAddExceptionModal,
+    tabelPricingHeaders,
+    pricingListRowState,
+    openAddQuantityModal,
+    openAddNewPricingStepRow,
+    state,
+    onChangeState,
+    setEditPriceListState,
+    updateActionExceptionProfitRow,
+    setSnackbarStateValue,
+    deleteActionExceptionProfitRow,
+    deleteExceptionProfit,
+    setOpenDeleteExceptionProfitModal,
+    onOpenDeleteExceptionProfitModal,
+    setSelectedExceptionProfit,
+    onCloseAddExceptionModal,
+    onOpenAddExceptionModal,
+    selectedProfitException,
+    setOpenAddExceptionModal,
+    onCklickActionExceptionProfitRow,
+    setTabelPricingHeaders,
+    onCloseDeleteExceptionProfitModal,
+    onClickSaveNewActionExceptionProfitRow,
+    addedNewException,
+    updateException,
+    setPricingListRowState,
+    setOpenAddQuantityModal,
+    onCloseAddQuantityModal,
+    onOpenAddQuantityModal,
+    setOpenAddNewPricingStepRow,
+    setState,
+    updateActionProfitMinPrice,
 
-  const onCloseAddExceptionModal = () => {
-    setOpenAddExceptionModal(false);
-  };
-  const onOpenAddExceptionModal = () => {
-    setOpenAddExceptionModal(true);
-  };
-  const { clasess } = useStyle();
-  const [actionProfits, setActionProfits] =
-    useRecoilState<any>(actionProfitLists);
-  const getActions = useCallback(async () => {
-    await getAndSetActions(callApi, setAllActions);
-  }, []);
-  const getParameters = useCallback(async () => {
-    await getAndSetParameters(callApi, setParametersState);
-  }, []);
+    openUpdateExceptionModal,
+    setOpenUpdateExceptionModal,
+    onCloseUpdateExceptionModal,
+    onOpenUpdateExceptionModal,
+  } = useProfitsExeptionsFunction({
+    actionProfits,
+    actionProfitRowsNew,
+    selectTestDataVal,
+    actionExceptionProfitRowsVal,
+    actionExceptionProfitIdValue,
+    selectedAction,
+    getActionExceptionProfitRowByActionExceptionId,
+    getActionProfits,
+    setActionExceptionProfitRows,
+    setactionExceptionProfitId,
+    setActionProfitRowsNew,
+  });
 
-  const getClientTypes = useCallback(async () => {
-    await getAndSetClientTypes(callApi, setClientTypesState);
-  }, []);
+  const {
+    updateActionProfitRow,
+    deleteActionProfitRow,
+    onClickSaveNewActionProfitRow,
+    onChangeAddPricingListRow,
+    updateActionProfit,
+  } = useProfitsProfitsFunction({
+    getActionProfitRowChartData,
+    editPriceListStateValue,
+    actionProfits,
+    selectedAction,
+    pricingListRowState,
+    actionProfitRowsNew,
+    setSnackbarStateValue,
+    setEditPriceListState,
+    getActionProfits,
+    setPricingListRowState,
+    setOpenAddNewPricingStepRow,
+    onCloseAddQuantityModal,
+    selectTestDataVal,
+  });
 
-  const getActionProfits = useCallback(async () => {
-    console.log("selectedAction", selectedAction);
-    await getAndSetActionProfitRowByActionId(
-      callApi,
-      setActionProfits,
-      machincesStateValue,
-      productsStateValue,
-      clientTypesStateValue,
-      parametersStateValue,
-      {
-        actionId: selectedAction?.id,
-      }
-    );
-  }, [selectedAction]);
-  const getMachincesProfits = useCallback(async () => {
-    await getAndSetMachinces(callApi, setMachincesState);
-  }, []);
-  const getProducts = useCallback(async () => {
-    await getAndSetProducts(callApi, setProductsState);
-  }, []);
-  const onChangeSelectedAction = useCallback(async (e: any, value: any) => {
-    setSelectedAction(value);
-  }, []);
+  const {
+    testProductState,
+    openAddTestProductModal,
+    setProductTest,
+    onCklickActionProfitTestResultsByActionId,
+    onChangeSelectedAction,
+    onChangeAddNewTestProduct,
+    setTestProductState,
+    deleteTestProductResult,
+    onClickTestProduct,
+    setOpenAddTestProductModal,
+  } = useProfitsAction({
+    setSelectedAction,
+    actionProfitRowsNew,
+    setActionExceptionProfitRows,
+    setSelectTestData,
+    actionProfits,
+    selectedAction,
+    setActionProfitRowsNew,
+    selectTestDataVal,
+    router,
+    setSnackbarStateValue,
+    getActionExceptionProfitRowByActionExceptionId,
+    getTestProducts,
+    setTabelPricingHeaders,
+  });
 
-  useEffect(() => {
-    getActions();
-    getMachincesProfits();
-    getProducts();
-    getParameters();
-    getClientTypes();
-  }, []);
-  useEffect(() => {
-    getActionProfits();
-  }, [selectedAction]);
-  const tabelPricingHeaders = useMemo(() => {
-    let isQuantity = false;
-    actionProfits?.actionProfitRowsMapped?.forEach((element) => {
-      if (element.hasOwnProperty("quantity")) {
-        isQuantity = true;
-        return;
-      }
-    });
-    return [
-      ...(isQuantity
-        ? [t("products.profits.pricingListWidget.quantity")]
-        : [
-            t("products.profits.pricingListWidget.width"),
-            t("products.profits.pricingListWidget.height"),
-          ]),
-      t("products.profits.pricingListWidget.cost"),
-      t("products.profits.pricingListWidget.profit"),
-      t("products.profits.pricingListWidget.meterPrice"),
-      t("products.profits.pricingListWidget.expMeter"),
-      t("products.profits.pricingListWidget.price"),
-      t("products.profits.pricingListWidget.totalPrice"),
-      t("products.profits.pricingListWidget.more"),
-    ];
-  }, [actionProfits]);
-  const tabelExceptionsHeaders = useMemo(
-    () => [
-      t("products.profits.exceptions.type"),
-      // t("products.profits.exceptions.parameter"),
-      // t("products.profits.exceptions.value"),
-      "",
-      t("products.profits.exceptions.scopeOfChange"),
-    ],
-    []
-  );
-  const tabelExceptionsRows = useMemo(
-    () => [
-      {
-        type: "machine",
-        parameter: "Color =",
-        value: "black",
-        scopeOfChange: (
-          <GoMakeAutoComplate
-            options={["prices1", "prices2", "prices3"]}
-            style={clasess.autoComplateStyle}
-            placeholder={t("products.profits.exceptions.chooseScope")}
-            onChange={""}
-          />
-        ),
-      },
-      {
-        type: "machine",
-        property: "Color =",
-        value: "black",
-        scopeOfChange: (
-          <GoMakeAutoComplate
-            options={["prices1", "prices2", "prices3"]}
-            style={clasess.autoComplateStyle}
-            placeholder={t("products.profits.exceptions.chooseScope")}
-            onChange={""}
-          />
-        ),
-      },
-    ],
-    []
-  );
+  const { istimeOutForProductsTest } = useProfitsEffects({
+    router,
+    allActions,
+    productsStateValue,
+    selectedAction,
+    actionProfitRowsNew,
+    actionProfits,
+    onChangeSelectedAction,
+    onCklickActionProfitTestResultsByActionId,
+    getActionProfitRowChartData,
+    getActions,
+    getMachincesProfits,
+    getProducts,
+    getParameters,
+    getClientTypes,
+    getActionProfits,
+    getTestProducts,
+    setTabelPricingHeaders,
+  });
 
-  const updateActionProfit = useCallback(
-    async (value: number) => {
-      const res = await callApi(
-        "PUT",
-        `/v1/printhouse-config/profits/update-action-profit`,
-        {
-          transitionType: value,
-          printingActionId: actionProfits?.printingActionId,
-          recordID: actionProfits?.recordID,
-          id: actionProfits?.id,
-        }
-      );
-      getActionProfits();
-    },
-    [actionProfits]
-  );
-
-  const onChangeAddPricingListRow = useCallback(
-    (key: string, value: any) => {
-      let temp: any;
-      temp = {
-        ...pricingListRowState,
-        [key]: value,
-      };
-      setPricingListRowState(temp);
-    },
-    [pricingListRowState]
-  );
-
-  const onClickSaveNewPricingListRow = useCallback(async () => {
-    const res = await callApi(
-      "POST",
-      `/v1/printhouse-config/profits/add-action-profit-row`,
-      {
-        actionId: selectedAction?.id,
-        size: pricingListRowState?.height * pricingListRowState?.width,
-        ...pricingListRowState,
-      }
-    );
-    if (res?.success) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedSusuccessfully"),
-        type: "sucess",
-      });
-      await getActionProfits();
-      setPricingListRowState({}), setOpenAddNewPricingStepRow(false);
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedfailed"),
-        type: "error",
-      });
-    }
-  }, [pricingListRowState, selectedAction]);
-
-  const onChangeAddNewTestProduct = useCallback(
-    (key: string, value: any) => {
-      let temp: any = {
-        [key]: value,
-      };
-      setTestProductState(temp);
-    },
-    [testProductState]
-  );
-  const onClickSendNewProduct = useCallback(async () => {
-    console.log("testProductState", testProductState);
-  }, [testProductState]);
-
-  const [state, setState] = useState<any>({});
-  const onChangeState = (key: any, value: any) => {
-    setState((prevState: any) => {
-      return {
-        ...prevState,
-        [key]: value,
-      };
-    });
-  };
-  const addedNewException = useCallback(async () => {
-    let newState = { ...state };
-    delete newState?.priceListParameter;
-    delete newState?.typeOfException;
-    delete newState?.machine;
-    delete newState?.subProduct;
-    delete newState?.clientType;
-
-    const res = await callApi(
-      "POST",
-      `/v1/printhouse-config/profits/add-exception-profit`,
-      {
-        actionProfitId: actionProfits?.id,
-        ...newState,
-      }
-    );
-    if (res?.success) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedSusuccessfully"),
-        type: "sucess",
-      });
-      getActionProfits();
-      onCloseAddExceptionModal();
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedfailed"),
-        type: "error",
-      });
-    }
-  }, [state]);
-  const deleteExceptionProfit = useCallback(
-    async (id: string) => {
-      const res = await callApi(
-        "DELETE",
-        `/v1/printhouse-config/profits/delete-exception-profit?actionExceptionId=${id}`
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.deleteSusuccessfully"),
-          type: "sucess",
-        });
-        getActionProfits();
-        onCloseDeleteExceptionProfitModal();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.deletefailed"),
-          type: "error",
-        });
-      }
-    },
-    [selectedAction]
-  );
-
-  const deleteActionProfitRow = useCallback(
-    async (id: string) => {
-      const res = await callApi(
-        "DELETE",
-        `/v1/printhouse-config/profits/delete-action-profit-row?Id=${id}`
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.deleteSusuccessfully"),
-          type: "sucess",
-        });
-        getActionProfits();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.deletefailed"),
-          type: "error",
-        });
-      }
-    },
-    [selectedAction]
-  );
-  const updateActionProfitRow = useCallback(async () => {
-    const res = await callApi(
-      "PUT",
-      `/v1/printhouse-config/profits/update-action-profit-row`,
-      {
-        ...editPriceListStateValue?.state,
-      }
-    );
-    if (res?.success) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.updatedSusuccessfully"),
-        type: "sucess",
-      });
-      setEditPriceListState({ isEdit: false });
-      getActionProfits();
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.updatedfailed"),
-        type: "error",
-      });
-    }
-  }, [selectedAction, editPriceListStateValue]);
   return {
     allActions,
     selectedAction,
     tabelPricingHeaders,
     tabelExceptionsHeaders,
-    tabelExceptionsRows,
     actionProfits,
     machincesStateValue,
     productsStateValue,
@@ -376,6 +184,20 @@ const useProfits = () => {
     state,
     selectedExceptionProfit,
     openDeleteExceptionProfitModal,
+    istimeOutForProductsTest,
+    testProductsState,
+    openAddQuantityModal,
+    selectTestDataVal,
+    onCloseAddQuantityModal,
+    onOpenAddQuantityModal,
+    updateActionProfitMinPrice,
+    onCklickActionExceptionProfitRow,
+    onCklickActionProfitTestResultsByActionId,
+    deleteTestProductResult,
+    setTestProductState,
+    onClickSaveNewActionExceptionProfitRow,
+    updateActionExceptionProfitRow,
+    deleteActionExceptionProfitRow,
     updateActionProfitRow,
     deleteActionProfitRow,
     onCloseDeleteExceptionProfitModal,
@@ -384,16 +206,22 @@ const useProfits = () => {
     setState,
     onChangeState,
     addedNewException,
-    onClickSendNewProduct,
+    updateException,
+    onClickTestProduct,
     onChangeAddNewTestProduct,
     setOpenAddTestProductModal,
-    onClickSaveNewPricingListRow,
+    onClickSaveNewActionProfitRow,
     onChangeAddPricingListRow,
     setOpenAddNewPricingStepRow,
     updateActionProfit,
     onChangeSelectedAction,
     onCloseAddExceptionModal,
     onOpenAddExceptionModal,
+    openUpdateExceptionModal,
+    selectedProfitException,
+    setOpenUpdateExceptionModal,
+    onCloseUpdateExceptionModal,
+    onOpenUpdateExceptionModal,
     t,
   };
 };

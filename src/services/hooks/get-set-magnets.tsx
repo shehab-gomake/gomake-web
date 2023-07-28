@@ -40,4 +40,64 @@ const getAndSetAllMagnets = async (
 
   return _data;
 };
-export { getAndSetAllMagnets };
+
+const getAndSetMagnetsSuppliers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/magnets/get-supplier-by-category",
+    data
+  );
+  return returnResult(result, undefined);
+};
+
+const getAndSetAllMegantsData = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  if (data?.categoryName) {
+    const result: any = await callApi("GET", "/v1/magnets/get-all-sizes", data);
+    const _data = returnResult(result, undefined);
+    const mapData = _data.map((item: any) => {
+      return {
+        ...item,
+      };
+    });
+    if (setState) {
+      setState(mapData);
+    }
+
+    return _data;
+  }
+};
+
+const getAndSetAllmegantCodes = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi("GET", "/v1/magnets/get-all-codes", data);
+  const _data = returnResult(result, undefined);
+  const mapData = _data.map((size: any) => {
+    return {
+      code: size.key,
+      name: size.value,
+    };
+  });
+  if (setState) {
+    setState(mapData);
+  }
+
+  return _data;
+};
+
+export {
+  getAndSetAllMagnets,
+  getAndSetMagnetsSuppliers,
+  getAndSetAllMegantsData,
+  getAndSetAllmegantCodes,
+};

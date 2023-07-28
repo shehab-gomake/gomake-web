@@ -1,4 +1,3 @@
-import Lottie from "lottie-react";
 import * as animationData from "./loading.json";
 
 import { useStyle } from "./style";

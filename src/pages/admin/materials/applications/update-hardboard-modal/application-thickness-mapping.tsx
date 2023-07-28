@@ -86,7 +86,7 @@ const ApplicationThicknessMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.thickness")}
+              {t("materials.inputs.thickness")} (µm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterThickness")}
@@ -105,10 +105,10 @@ const ApplicationThicknessMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.weightPerSquareMeter")}
+              {t("materials.inputs.weight")} (gm/m^2)
             </div>
             <GomakeTextInput
-              placeholder={t("materials.inputs.enterWeightPerSquareMeter")}
+              placeholder={t("materials.inputs.weight")}
               style={clasess.textInputStyle}
               value={
                 materialApplicationsStateValue?.updateState[item?.id]

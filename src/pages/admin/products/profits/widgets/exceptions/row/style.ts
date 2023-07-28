@@ -2,25 +2,35 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const useStyle = () => {
+const useStyle = ({ row }: any) => {
   const { primaryColor, secondColor } = useGomakeTheme();
+
   const clasess = useMemo(() => {
     return {
       bodyRow: {
         display: "flex",
         width: "100%",
         justifyContent: "space-between",
-        alignItems: "center",
+        alignItems: "center" as "center",
         height: 60,
         position: "relative" as "relative",
+        cursor: "pointer",
+        gap: 5,
+        textAlign: "center" as "center",
       },
       rowItem: {
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: primaryColor(900),
+        textalign: "center",
+      },
+      rowItemExpPofit: {
         display: "flex",
         justifyContent: "flex-start",
         alignItems: "flex-start",
         ...FONT_FAMILY.Lexend(400, 14),
         color: primaryColor(900),
         textalign: "center",
+        width: "25%",
       },
       scopeRowItem: {
         display: "flex",

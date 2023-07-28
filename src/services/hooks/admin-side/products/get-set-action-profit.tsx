@@ -1,12 +1,14 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../../call-api.interface";
-import { IconButton } from "@mui/material";
-import { MoreCircleIcon } from "@/icons";
 import { PricingListMenuWidget } from "@/pages/admin/products/profits/widgets/pricing-list/more-circle";
+import { GoMakeAutoComplate } from "@/components";
+import { renderProfits } from "@/pages/admin/products/profits/use-profit-action.";
 
 const getAndSetActionProfitRowByActionId = async (
   callApi: ICallApi,
   setState?: ISetState,
+  setActionProfitRows?: any,
+  setActionProfitRowsNew?: any,
   machincesStateValue?: any,
   productsStateValue?: any,
   clientTypesStateValue?: any,
@@ -18,24 +20,25 @@ const getAndSetActionProfitRowByActionId = async (
       const myArry = machincesStateValue.find(
         (ele: any) => ele?.id == item.machineId
       );
-      return { type: "machine", name: myArry?.name };
+      return { type: "machine", parameter: "machine", name: myArry?.name };
     } else if (item?.subProductId != null) {
       const myArry = productsStateValue.find(
         (ele: any) => ele?.id == item.subProductId
       );
-      return { type: "product", name: myArry?.name };
+      return { type: "product", parameter: "product", name: myArry?.name };
     } else if (item?.clientTypeId != null) {
       const myArry = clientTypesStateValue.find(
         (ele: any) => ele?.id == item.clientTypeId
       );
-      return { type: "client", name: myArry?.name };
+      return { type: "client", parameter: "client", name: myArry?.name };
     } else if (item?.priceListParameterId != null) {
       const myArry = parametersStateValue.find(
         (ele: any) => ele?.id == item.priceListParameterId
       );
       return {
         type: "parameter",
-        name: `${myArry?.name} - ${item?.paramValueName}`,
+        name: `${myArry?.name} `,
+        parameter: item?.paramValueName,
       };
     }
   };
@@ -47,33 +50,82 @@ const getAndSetActionProfitRowByActionId = async (
   const _data: any = returnResult(result, undefined);
   const mapData = _data?.actionProfitRows?.map((item: any) => {
     return {
-      ...(_data?.pricingBy === 1
-        ? {
-            width: item?.width,
-            height: item?.height,
-          }
-        : { quantity: item?.quantity }),
-
-      cost: item?.cost,
-      profit: item?.profit,
-      meterPrice: item?.meterPrice,
-      expMeter: item?.expMeter,
-      price: item?.price,
-      totalPrice: item?.totalPrice,
+      // ...(_data?.pricingBy === 1
+      //   ? {
+      //       width: item?.width,
+      //       height: item?.height,
+      //     }
+      //   : { quantity: item?.quantity }),
+      ...renderProfits(item),
+      // testFinalPrice,
       more: <PricingListMenuWidget item={item} />,
       id: item?.id,
+      recordID: item?.recordID,
     };
   });
+  const actionProfitRowsMapping = _data?.actionProfitRows?.map((item: any) => {
+    return {
+      ...renderProfits(item),
+      // testFinalPrice,
+      more: <PricingListMenuWidget item={item} />,
+      id: item?.id,
+      recordID: item?.recordID,
+    };
+  });
+  // item?.exceptionType === 0
+  //         ? `Additional (${item?.additionalProfit})`
+  //         : item?.exceptionType === 1
+  //         ? "NewBase"
+  //         : "EditBase",
   const mapActionExpections = _data?.actionExpections?.map((item: any) => {
     return {
       ...renderType(item),
       exceptionType:
         item?.exceptionType === 0
-          ? `Additional (${item?.additionalProfit})`
-          : "NewBase",
+          ? `Additional(${item?.additionalProfit})`
+          : item?.exceptionType === 1
+          ? "NewBase"
+          : "EditBase",
+      // exceptionType: (
+      //   <GoMakeAutoComplate
+      //     key={"item-" + item.id}
+      //     options={[
+      //       `Additional(${item?.additionalProfit})`,
+      //       "NewBase",
+      //       "EditBase",
+      //     ]}
+      //     // style={clasess.autoComplateStyle}
+      //     onChange={""}
+      //     defaultValue={
+      //       item?.exceptionType === 0
+      //         ? `Additional(${item?.additionalProfit})`
+      //         : item?.exceptionType === 1
+      //         ? "NewBase"
+      //         : "EditBase"
+      //     }
+      //     disableClearable={true}
+      //     style={{
+      //       width: 160,
+      //       border: 0,
+      //       color: "#F135A3",
+      //       marginLeft: -20,
+      //     }}
+      //   />
+      // ),
       id: item?.id,
+      recordID: item?.recordID,
+      item,
+      selectedAdditional: item?.additionalProfit,
+      exceptionTypeValue:
+        item?.exceptionType === 0
+          ? `Additional`
+          : item?.exceptionType === 1
+          ? "NewBase"
+          : "EditBase",
     };
   });
+  setActionProfitRows(mapData);
+  setActionProfitRowsNew(actionProfitRowsMapping);
   _data.actionProfitRowsMapped = mapData;
   _data.actionExpectionRowsMapped = mapActionExpections;
   if (setState) {

@@ -1,6 +1,6 @@
 import { AdminAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { profitsState } from "./store/profits";
 import { useProfits } from "./use-profits";
 import { useEffect } from "react";
@@ -9,16 +9,20 @@ import { ProductList } from "./widgets/products-list";
 import { PricingList } from "./widgets/pricing-list/pricing-list";
 import { useStyle } from "./style";
 import { Exceptions } from "./widgets/exceptions/exceptions";
-import { actionProfitLists } from "@/store";
+import { actionExceptionProfitId, actionProfitLists } from "@/store";
+import { productTestState } from "@/store/product-test";
+import { LineChart } from "./widgets/line-chart";
 
 export default function Profits() {
+  const { clasess } = useStyle();
+  const profitsStateValue = useRecoilValue<any>(actionProfitLists);
+  const productTest = useRecoilValue<any>(productTestState);
   const setProfitsState = useSetRecoilState<any>(profitsState);
   const {
     allActions,
     selectedAction,
     tabelPricingHeaders,
     tabelExceptionsHeaders,
-    tabelExceptionsRows,
     actionProfits,
     machincesStateValue,
     productsStateValue,
@@ -31,24 +35,44 @@ export default function Profits() {
     state,
     selectedExceptionProfit,
     openDeleteExceptionProfitModal,
-    deleteActionProfitRow,
+    istimeOutForProductsTest,
+    testProductsState,
+    openAddQuantityModal,
+    selectTestDataVal,
+    onCloseAddQuantityModal,
+    onOpenAddQuantityModal,
+    updateActionProfitMinPrice,
+    onCklickActionExceptionProfitRow,
+    onCklickActionProfitTestResultsByActionId,
+    deleteTestProductResult,
+    setTestProductState,
+    onClickSaveNewActionExceptionProfitRow,
+    updateActionExceptionProfitRow,
+    deleteActionExceptionProfitRow,
     updateActionProfitRow,
+    deleteActionProfitRow,
     onCloseDeleteExceptionProfitModal,
     onOpenDeleteExceptionProfitModal,
-    setState,
     deleteExceptionProfit,
+    setState,
     onChangeState,
     addedNewException,
-    onClickSendNewProduct,
+    updateException,
+    onClickTestProduct,
     onChangeAddNewTestProduct,
     setOpenAddTestProductModal,
-    onClickSaveNewPricingListRow,
+    onClickSaveNewActionProfitRow,
     onChangeAddPricingListRow,
     setOpenAddNewPricingStepRow,
     updateActionProfit,
     onChangeSelectedAction,
     onCloseAddExceptionModal,
     onOpenAddExceptionModal,
+    selectedProfitException,
+    openUpdateExceptionModal,
+    setOpenUpdateExceptionModal,
+    onCloseUpdateExceptionModal,
+    onOpenUpdateExceptionModal,
     t,
   } = useProfits();
   useEffect(() => {
@@ -57,7 +81,6 @@ export default function Profits() {
       selectedAction,
       tabelPricingHeaders,
       tabelExceptionsHeaders,
-      tabelExceptionsRows,
       actionProfits,
       machincesStateValue,
       productsStateValue,
@@ -70,24 +93,43 @@ export default function Profits() {
       state,
       selectedExceptionProfit,
       openDeleteExceptionProfitModal,
-      deleteActionProfitRow,
+      istimeOutForProductsTest,
+      testProductsState,
+      openAddQuantityModal,
+      onCloseAddQuantityModal,
+      onOpenAddQuantityModal,
+      updateActionProfitMinPrice,
+      onCklickActionExceptionProfitRow,
+      onCklickActionProfitTestResultsByActionId,
+      deleteTestProductResult,
+      setTestProductState,
+      onClickSaveNewActionExceptionProfitRow,
+      updateActionExceptionProfitRow,
+      deleteActionExceptionProfitRow,
       updateActionProfitRow,
+      deleteActionProfitRow,
       onCloseDeleteExceptionProfitModal,
       onOpenDeleteExceptionProfitModal,
       deleteExceptionProfit,
       setState,
       onChangeState,
       addedNewException,
-      onClickSendNewProduct,
+      updateException,
+      onClickTestProduct,
       onChangeAddNewTestProduct,
       setOpenAddTestProductModal,
-      onClickSaveNewPricingListRow,
+      onClickSaveNewActionProfitRow,
       onChangeAddPricingListRow,
       setOpenAddNewPricingStepRow,
       updateActionProfit,
       onChangeSelectedAction,
       onCloseAddExceptionModal,
       onOpenAddExceptionModal,
+      selectedProfitException,
+      openUpdateExceptionModal,
+      setOpenUpdateExceptionModal,
+      onCloseUpdateExceptionModal,
+      onOpenUpdateExceptionModal,
       t,
     });
   }, [
@@ -95,7 +137,6 @@ export default function Profits() {
     selectedAction,
     tabelPricingHeaders,
     tabelExceptionsHeaders,
-    tabelExceptionsRows,
     actionProfits,
     machincesStateValue,
     productsStateValue,
@@ -108,48 +149,94 @@ export default function Profits() {
     state,
     selectedExceptionProfit,
     openDeleteExceptionProfitModal,
-    deleteActionProfitRow,
+    istimeOutForProductsTest,
+    testProductsState,
+    openAddQuantityModal,
+    selectTestDataVal,
+    profitsStateValue,
+    productTest,
+    onCloseAddQuantityModal,
+    onOpenAddQuantityModal,
+    updateActionProfitMinPrice,
+    onCklickActionExceptionProfitRow,
+    onCklickActionProfitTestResultsByActionId,
+    deleteTestProductResult,
+    setTestProductState,
+    onClickSaveNewActionExceptionProfitRow,
+    updateActionExceptionProfitRow,
+    deleteActionExceptionProfitRow,
     updateActionProfitRow,
+    deleteActionProfitRow,
     onCloseDeleteExceptionProfitModal,
     onOpenDeleteExceptionProfitModal,
     deleteExceptionProfit,
     setState,
     onChangeState,
     addedNewException,
-    onClickSendNewProduct,
+    updateException,
+    onClickTestProduct,
     onChangeAddNewTestProduct,
     setOpenAddTestProductModal,
-    onClickSaveNewPricingListRow,
+    onClickSaveNewActionProfitRow,
     onChangeAddPricingListRow,
     setOpenAddNewPricingStepRow,
     updateActionProfit,
     onChangeSelectedAction,
     onCloseAddExceptionModal,
     onOpenAddExceptionModal,
+    selectedProfitException,
+    openUpdateExceptionModal,
+    setOpenUpdateExceptionModal,
+    onCloseUpdateExceptionModal,
+    onOpenUpdateExceptionModal,
     t,
   ]);
-  const { clasess } = useStyle();
-  const profitsStateValue = useRecoilValue<any>(actionProfitLists);
+
+  const [actionExceptionProfitIdValue, setactionExceptionProfitId] =
+    useRecoilState<any>(actionExceptionProfitId);
   return (
     <AdminAuthLayout>
       <div style={clasess.mainContainer}>
-        <HeaderTitle title={t("products.profits.admin.title")} />
         <SelectAction />
-        {profitsStateValue.id ? (
-          <>
+        {profitsStateValue?.id?.length > 0 ? (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
+            }}
+          >
             <ProductList />
-            <div style={clasess.pricingAndExceptionsCointaner}>
-              <div style={clasess.pricingCointaner}>
-                <PricingList tableHeaders={tabelPricingHeaders} />
+            {productTest?.id?.length > 0 && (
+              <div style={clasess.pricingAndExceptionsCointaner}>
+                <div style={clasess.pricingCointaner}>
+                  <PricingList
+                    tableHeaders={tabelPricingHeaders}
+                    tablePercent={
+                      actionExceptionProfitIdValue?.id?.length > 0
+                        ? [
+                            "80px",
+                            "80px",
+                            "80px",
+                            "80px",
+                            "100px",
+                            "100px",
+                            "50px",
+                          ]
+                        : ["80px", "80px", "80px", "100px", "100px", "50px"]
+                    }
+                  />
+                </div>
+
+                <div style={clasess.exceptionsCointaner}>
+                  <Exceptions
+                    tableHeaders={tabelExceptionsHeaders}
+                    tableRows={profitsStateValue?.actionExpectionRowsMapped}
+                  />
+                </div>
               </div>
-              <div style={clasess.exceptionsCointaner}>
-                <Exceptions
-                  tableHeaders={tabelExceptionsHeaders}
-                  tableRows={profitsStateValue?.actionExpectionRowsMapped}
-                />
-              </div>
-            </div>
-          </>
+            )}
+          </div>
         ) : null}
       </div>
     </AdminAuthLayout>

@@ -3,7 +3,13 @@ import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
+const useStyle = ({
+  isHover = false,
+  navStatus,
+}: {
+  isHover?: boolean;
+  navStatus: any;
+}) => {
   const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
@@ -12,31 +18,43 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         height: "100vh",
         display: "flex",
         flexDirection: "row" as "row",
+        backgroundColor: "#FFFFFF",
       },
       logoContainer: {
         display: "flex",
+        marginTop: navStatus?.isClosed ? 20 : 0,
       },
       leftContainer: {
         backgroundColor: primaryColor(500),
-        width: convertWidthToVW(281),
+        width: navStatus?.isClosed ? 190 : 280,
+        minWidth: navStatus?.isClosed ? 190 : 280,
         height: "100%",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "space-between" as "space-between",
         alignItems: "center",
-        paddingRight: convertWidthToVW(26),
-        paddingLeft: convertWidthToVW(26),
-        paddingTop: convertHeightToVH(40),
-        paddingBottom: convertHeightToVH(40),
+        paddingRight: navStatus?.isClosed
+          ? convertWidthToVW(5)
+          : convertWidthToVW(26),
+        paddingLeft: navStatus?.isClosed
+          ? convertWidthToVW(5)
+          : convertWidthToVW(26),
+        paddingTop: navStatus?.isClosed
+          ? convertHeightToVH(8)
+          : convertWidthToVW(40),
+        paddingBottom: navStatus?.isClosed
+          ? convertHeightToVH(8)
+          : convertWidthToVW(40),
         overflowY: "scroll" as "scroll",
       },
       rightContainer: {
-        backgroundColor: "#FDFDFD",
-        width: convertWidthToVW(1468 - 281),
+        // backgroundColor: "#FDFDFD",
+        width: "100%",
         display: "flex",
         flexDirection: "column" as "column",
         padding: convertWidthToVW(20),
         overflowY: "scroll" as "scroll",
+        backgroundColor: "#FFFFFF",
       },
       headerContainer: {
         height: convertHeightToVH(101),
@@ -45,11 +63,13 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         alignItems: "center",
         justifyContent: "center",
         width: "100%",
+        backgroundColor: "#FFFFFF",
       },
       bodyContainer: {
         height: convertHeightToVH(1024 - 101),
         display: "flex",
         flexDirection: "column" as "column",
+        backgroundColor: "#FFFFFF",
       },
       poweredContainer: {
         display: "flex",
@@ -70,13 +90,15 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
       ///Tab
       tabsContainer: {
         alignSelf: "flex-start",
-        // height: "100%",
+        height: "100%",
+        width: "100%",
         marginTop: convertHeightToVH(46),
+        overflow: "scroll" as "scroll",
       },
       tabContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "flex-start" as "flex-start",
+        justifyContent: navStatus?.isClosed ? "center" : "flex-start",
         alignItems: "center",
         gap: convertWidthToVW(8),
         marginTop: convertHeightToVH(28),
@@ -91,9 +113,16 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
       line: {
         border: "1px solid #FFFFFF",
         opacity: 0.4,
-        width: convertWidthToVW(207),
+        width: "90%",
         marginTop: convertHeightToVH(28),
         marginBottom: convertHeightToVH(32),
+      },
+      lineContainer: {
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        alignSelf: "center",
       },
       tabList: {
         paddingTop: convertWidthToVW(15),
@@ -106,7 +135,7 @@ const useStyle = ({ isHover = false }: { isHover?: boolean }) => {
         animation: "rotate90 0.5s forwards ",
       },
     };
-  }, [isHover]);
+  }, [isHover, navStatus]);
   return {
     clasess,
   };

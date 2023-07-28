@@ -48,7 +48,7 @@ const RollPrintingSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.width")}
+            {t("materials.inputs.width")} (cm)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterWidth")}
@@ -67,7 +67,7 @@ const RollPrintingSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.height")}
+            {t("materials.inputs.height")} (m)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterHeight")}
@@ -86,7 +86,7 @@ const RollPrintingSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.weightPerSquareMeter")}
+            {t("materials.inputs.weight")} (gm/m^2)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterWeightPerSquareMeter")}
@@ -137,7 +137,7 @@ const RollPrintingSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.stock")}
+            {t("materials.inputs.stock")} (m)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterStock")}

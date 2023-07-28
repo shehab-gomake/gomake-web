@@ -1,73 +1,105 @@
+import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
-import { useStyle } from "../style";
-import { profitsState } from "../store/profits";
-import { AddIcon, MoreCircleIcon } from "@/icons";
-import { IconButton } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { AddIcon } from "@/icons";
+
 import { AddTestProductModal } from "./add-test-product-modal";
+import { profitsState } from "../store/profits";
+
+import { useStyle } from "../style";
+import { productTestState } from "@/store/product-test";
+import { useEffect } from "react";
 
 const ProductList = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
-  const array = [
-    {
-      name: "Flyer",
-      details:
-        "this is text for product new of this current available details  this is text for product new of this current available details ",
-      more: (
-        <IconButton>
-          <MoreCircleIcon />
-        </IconButton>
-      ),
-    },
-    {
-      name: "Test 1",
-      details:
-        "this is text for product new of this current available details  this is text for product new of this current available details ",
-      more: (
-        <IconButton>
-          <MoreCircleIcon />
-        </IconButton>
-      ),
-    },
-  ];
+  const productTest = useRecoilValue<any>(productTestState);
+
+  useEffect(() => {
+    if (!productTest && profitsStateValue?.testProductsState) {
+      profitsStateValue?.onCklickActionProfitTestResultsByActionId(
+        profitsStateValue?.testProductsState[0]?.item?.productId,
+        profitsStateValue?.testProductsState[0]?.name,
+        profitsStateValue?.testProductsState[0]?.item?.id
+      );
+    }
+  }, [profitsStateValue?.testProductsState, productTest]);
   return (
-    <div style={clasess.mainContainerForProductTable}>
-      <div style={clasess.titleHeadersTale}>
-        <div style={clasess.titleHederTextStyle}>Item name</div>
-        <div style={clasess.titleHederTextStyle}>Details</div>
-        <div style={clasess.titleHederTextStyle}>More</div>
-      </div>
-      <div style={{ width: "100%" }}>
-        {array?.map((item, index) => {
-          return (
-            <div
-              style={
-                index & 1
-                  ? clasess.bodyTableEvenContainer
-                  : clasess.bodyTableOddContainer
-              }
-            >
-              <div style={clasess.nameStyle}>{item?.name}</div>
-              <div style={clasess.detailsStyle}>{item?.details}</div>
-              <div style={clasess.moreStyle}>{item?.more}</div>
+    <>
+      {profitsStateValue?.testProductsState?.length > 0 ? (
+        <div style={clasess.mainContainerForProductTable}>
+          <div style={clasess.titleHeadersTale}>
+            <div style={clasess.titleHederTextStyle}>
+              {t("products.profits.itemName")}
             </div>
-          );
-        })}
-      </div>
-      <div
-        style={clasess.addNewProductContainer}
-        onClick={() => profitsStateValue.setOpenAddTestProductModal(true)}
-      >
-        <AddIcon />
-        <div style={clasess.addProductStyle}>
-          {t("products.profits.addTestProduct")}
+            <div style={clasess.titleHederTextStyle}>
+              {t("products.profits.details")}
+            </div>
+            <div style={clasess.titleHederTextStyle}>
+              {t("products.profits.more")}
+            </div>
+          </div>
+          <div style={{ width: "100%" }}>
+            <>
+              {profitsStateValue?.testProductsState?.map((item: any) => {
+                return (
+                  <div
+                    style={
+                      item?.id === productTest?.id &&
+                      item?.item?.id === productTest?.actionProductId
+                        ? clasess.bodyTableOddContainer
+                        : clasess.bodyTableEvenContainer
+                    }
+                    onClick={() => {
+                      !(
+                        item?.id === productTest?.id &&
+                        item?.item?.id === productTest?.actionProductId
+                      ) &&
+                        profitsStateValue?.onCklickActionProfitTestResultsByActionId(
+                          item?.item?.productId,
+                          item?.name,
+                          item?.item?.id,
+                          !!item?.item?.isBaseCase
+                        );
+                    }}
+                  >
+                    <div style={clasess.nameStyle}>{item?.name}</div>
+                    <div style={clasess.detailsStyle} className="scrollBlue">
+                      {item?.details}
+                    </div>
+                    <div style={clasess.moreStyle}>{item?.more}</div>
+                  </div>
+                );
+              })}
+            </>
+          </div>
+          <div
+            style={clasess.addNewProductContainer2}
+            onClick={() => profitsStateValue.setOpenAddTestProductModal(true)}
+          >
+            <AddIcon />
+            <div style={clasess.addProductStyle}>
+              {t("products.profits.addNewProduct")}
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div style={clasess.noDataContainer}>
+          <div
+            style={clasess.addNewProductContainer}
+            onClick={() => profitsStateValue.setOpenAddTestProductModal(true)}
+          >
+            <AddIcon />
+            <div style={clasess.addProductStyle}>
+              {t("products.profits.addNewProduct")}
+            </div>
+          </div>
+        </div>
+      )}
+
       <AddTestProductModal />
-    </div>
+    </>
   );
 };
 export { ProductList };

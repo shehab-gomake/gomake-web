@@ -72,7 +72,7 @@ const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
 
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.width")}
+              {t("materials.inputs.width")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWidth")}
@@ -89,7 +89,7 @@ const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.height")}
+              {t("materials.inputs.height")} (m)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterIndex")}
@@ -108,10 +108,10 @@ const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.name")}
+              {t("materials.inputs.type")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.inputs.enterName")}
+              placeholder={t("materials.inputs.type")}
               style={clasess.textInputStyle}
               value={materialLaminationStateValue?.updateState[item?.id]?.name}
               onChange={(e: any) => {
@@ -125,7 +125,7 @@ const LaminationWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.name")}
+              {t("materials.inputs.fitToPrintType")}
             </div>
             <GoMakeAutoComplate
               options={muliSelectOptions}

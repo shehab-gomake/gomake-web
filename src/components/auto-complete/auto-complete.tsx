@@ -24,6 +24,7 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
     fontFamily: "Lexend",
     fontStyle: "normal",
     fontWeight: 300,
+    ...props?.style,
     "& fieldset": {
       border: "transparent",
       boxSizing: "border-box",
@@ -36,6 +37,7 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
   "& .MuiAutocomplete-endAdornment": {
     top: "calc(50% - 12px)",
   },
+  ...props?.style,
 }));
 
 const GoMakeAutoComplate = ({
@@ -52,6 +54,8 @@ const GoMakeAutoComplate = ({
   defaultValue,
   disabled,
   multiple = false,
+  arrowColor,
+  onChangeTextField,
 }: {
   value?: string | string[];
   onChange?: any;
@@ -66,6 +70,8 @@ const GoMakeAutoComplate = ({
   defaultValue?: any;
   multiple?: any;
   disabled?: any;
+  arrowColor?: any;
+  onChangeTextField?: any;
 }) => {
   return (
     <StyledAutocomplete
@@ -74,11 +80,12 @@ const GoMakeAutoComplate = ({
       style={style}
       options={options}
       disabled={disabled}
-      popupIcon={<ArrowDownIcon />}
+      popupIcon={<ArrowDownIcon fill={arrowColor} />}
       renderInput={(params: any) => (
         <TextField
           {...params}
           placeholder={!multiple && (defaultValue?.label || placeholder)}
+          onChange={onChangeTextField || params.onChange}
         />
       )}
       defaultValue={defaultValue}
@@ -93,7 +100,7 @@ const GoMakeAutoComplate = ({
         option?.id === value?.id
       }
       getOptionSelected={(option: any, value: any) => {
-        return option.id === value.id;
+        return option?.id === value?.id;
       }}
     />
   );

@@ -82,7 +82,7 @@ const AdditionMapping = ({ index, item }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.weight")}
+              {t("materials.inputs.weight")} (gm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWeight")}

@@ -4,10 +4,13 @@ import { useCallback } from "react";
 import { useRecoilState } from "recoil";
 import { useGomakeAxios } from "./use-gomake-axios";
 import { useGomakeRouter } from "./use-gomake-router";
+import { userTypeState } from "@/store/user-type";
 
 const useAdmin = () => {
   const { callApi } = useGomakeAxios();
   const [admin, setAdmin] = useRecoilState<any>(adminState);
+  const [userType, setUserType] = useRecoilState<any>(userTypeState);
+
   const [permissions, setPermissions] = useRecoilState<any>(permissionsState);
   const { navigate } = useGomakeRouter();
   const logOut = useCallback(() => {
@@ -20,6 +23,7 @@ const useAdmin = () => {
     const validate: any = await callApi("GET", "/v1/admin/validate");
     if (validate?.success) {
       setAdmin(validate?.data?.data?.admin);
+      setUserType({ type: "admin" });
       //   setPermissions(validate?.data?.data?.permissions); will  be implemented later
       return true;
     }

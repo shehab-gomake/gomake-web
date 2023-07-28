@@ -11,7 +11,7 @@ const StyledTextField = styled(TextField, {
 })((props: any) => ({
   width: "100%",
   input: {
-    backgroundColor: "#FFFFFF",
+    // backgroundColor: "#FDFDFD",
     boxSizing: "border-box",
     borderRadius: props?.style?.borderRadius || 4,
     height: 56,
@@ -22,6 +22,7 @@ const StyledTextField = styled(TextField, {
     lineHeight: "21px",
     display: "flex",
     alignItems: "center",
+    boxShadow: "0px 1px 60px rgba(0, 0, 0, 0.08)",
     width: "100%",
     color: props.error
       ? `${props.errorColor(300)}`
@@ -33,18 +34,18 @@ const StyledTextField = styled(TextField, {
     "&:hover fieldset": {
       border: props.error
         ? `2px solid ${props.errorColor(300)}`
-        : `2px solid #B9B9D9`,
+        : `2px solid #FFFFFF`,
     },
     "& fieldset": {
       border: props.error
         ? `1px solid ${props.errorColor(300)}`
-        : `1px solid #B9B9D9`,
+        : `1px solid #FFFFFF`,
       boxSizing: "border-box",
       borderRadius: props?.style?.borderRadius || 4,
       width: "100%",
     },
     "&.Mui-focused fieldset": {
-      borderColor: props.error ? `${props.errorColor(300)}` : "#B9B9D9",
+      borderColor: props.error ? `${props.errorColor(300)}` : "#FFFFFF",
       borderRadius: props?.style?.borderRadius || 4,
       width: "100%",
     },
@@ -62,6 +63,10 @@ const GomakeTextInput = ({
   onKeyDown,
   multiline,
   InputProps,
+  autoFocus,
+  onMouseLeave,
+  defaultValue,
+  onBlur,
 }: {
   labelText?: string;
   value?: string;
@@ -74,10 +79,15 @@ const GomakeTextInput = ({
   onKeyDown?: any;
   multiline?: any;
   InputProps?: any;
+  autoFocus?: any;
+  onMouseLeave?: any;
+  defaultValue?: any;
+  onBlur?: any;
 }) => {
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
   return (
     <StyledTextField
+      autoFocus={autoFocus}
       value={value}
       onChange={onChange}
       style={style}
@@ -92,6 +102,9 @@ const GomakeTextInput = ({
       secondColor={secondColor}
       primaryColor={primaryColor}
       errorColor={errorColor}
+      onMouseLeave={onMouseLeave}
+      defaultValue={defaultValue}
+      onBlur={onBlur}
     />
   );
 };

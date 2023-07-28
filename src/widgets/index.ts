@@ -5,3 +5,4 @@ export * from "./loading";
 export * from "./admin-login";
 export * from "./header-title";
 export * from "./delete-material-modal";
+export * from "./shared-admin-customers";

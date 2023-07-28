@@ -3,8 +3,9 @@ import { Collapse } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { useGomakeRouter } from "@/hooks";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { selectedTabState } from "@/store";
+import { navStatusState } from "@/store/nav-status";
 interface IProps {
   tab: {
     isLine?: boolean;
@@ -22,7 +23,9 @@ const Tab = ({ tab }: IProps) => {
   const { navigate } = useGomakeRouter();
   const [isListOpen, setIsListOpen] = useState(tab?.key === selectedTabValue);
   const [isHover, setIsHover] = useState(false);
-  const { clasess } = useStyle({ isHover });
+  const navStatus = useRecoilValue(navStatusState);
+
+  const { clasess } = useStyle({ isHover, navStatus });
   const handleMouseEnter = useCallback(() => {
     setIsHover(true);
   }, []);
@@ -34,6 +37,8 @@ const Tab = ({ tab }: IProps) => {
   const onClickTab = useCallback(() => {
     if (tab.isList) {
       setIsListOpen(!isListOpen);
+    } else {
+      changeRoute(tab.path);
     }
     setSelectedTabValue(tab.key || "");
   }, [tab, isListOpen, setIsListOpen]);
@@ -54,7 +59,7 @@ const Tab = ({ tab }: IProps) => {
         onMouseLeave={handleMouseLeave}
         onClick={onClickTab}
       >
-        {tab.isList && (
+        {tab.isList ? (
           <div>
             {isListOpen ? (
               <div style={clasess.rotate90}>
@@ -64,9 +69,13 @@ const Tab = ({ tab }: IProps) => {
               <TabCloseIcon />
             )}
           </div>
+        ) : (
+          <div style={{ marginLeft: 5 }} />
         )}
-        <div>{tab.icon()}</div>
-        <div style={clasess.tabTitle}>{tab.title}</div>
+        <div>{tab?.icon()}</div>
+        <div style={clasess.tabTitle}>
+          {!navStatus.isClosed ? tab.title : null}
+        </div>
       </div>
       <Collapse in={isListOpen}>
         {tab.list?.map((list: any) => {

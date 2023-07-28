@@ -3,7 +3,8 @@ import { AdminAuthLayout } from "@/layouts";
 export default function Home() {
   return (
     <AdminAuthLayout>
-      <>admin screen</>
+      Admin Page
+      {/* <HomePageComponentForAdmin isAdmin={true} /> */}
     </AdminAuthLayout>
   );
 }

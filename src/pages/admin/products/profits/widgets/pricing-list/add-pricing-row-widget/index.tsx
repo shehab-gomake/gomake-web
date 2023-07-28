@@ -3,8 +3,13 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import SaveIcon from "@mui/icons-material/Save";
 import { IconButton, Tooltip } from "@mui/material";
+import { useRecoilValue } from "recoil";
+import { actionExceptionProfitId } from "@/store";
 
 const AddPricingListRowWidget = ({ pricingBy, profitsStateValue }: any) => {
+  const actionExceptionProfitIdValue = useRecoilValue<any>(
+    actionExceptionProfitId
+  );
   const { t } = useTranslation();
   const { clasess } = useStyle();
   return (
@@ -65,7 +70,7 @@ const AddPricingListRowWidget = ({ pricingBy, profitsStateValue }: any) => {
       />
 
       <Tooltip title={t("products.profits.pricingListWidget.saveStep")}>
-        <IconButton onClick={profitsStateValue?.onClickSaveNewPricingListRow}>
+        <IconButton onClick={profitsStateValue?.onClickSaveNewActionProfitRow}>
           <SaveIcon style={clasess.saveBotton} />
         </IconButton>
       </Tooltip>

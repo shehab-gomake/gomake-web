@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
-import { getAndSetBraceCategores, getAndSetBraceSize } from "@/services/hooks";
+import { getAndSetPlatsCategores, getAndSetBraceSize } from "@/services/hooks";
 
 const usePlats = () => {
   const { callApi } = useGomakeAxios();
@@ -18,7 +18,7 @@ const usePlats = () => {
   }, []);
 
   const getBraceCategores = useCallback(async () => {
-    const data = await getAndSetBraceCategores(callApi, setPlatsCategores);
+    const data = await getAndSetPlatsCategores(callApi, setPlatsCategores);
 
     if (!categoryName) {
       setCategoryName(data[0]);
