@@ -814,6 +814,7 @@
       "colorName": "Color name",
       "volumeInLiters": "Volume (liters)",
       "literInSquareMeter": "Liter in square meter",
+      "literPerSquareMeter": "Liter (meter^2)",
       "pricePerContainer": "Price per container",
       "stock": "Stock",
       "pricePerLiter": "Price per liter",
@@ -822,7 +823,10 @@
       "selectCurrency": "Select currency",
       "currency": "Currency",
       "default": "Default",
-      "controls": "Controls"
+      "controls": "Controls",
+      "addNewColor": "Add new color",
+      "inkConsumption": "Ink consumption per square meter",
+      "conditions": "Conditions"
     },
     "doubleSidedTapeRolls": {
       "admin": {

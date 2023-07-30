@@ -239,11 +239,11 @@ const CategoriesTable = ({ admin = false }) => {
         title: t("tabs.additions"),
         path: "/admin/materials/additions",
       },
-      // {
-      //   key: "colors",
-      //   title: t("tabs.colors"),
-      //   path: "/admin/materials/colors",
-      // },
+      {
+        key: "colors",
+        title: t("tabs.colors"),
+        path: "/admin/materials/colors",
+      },
       {
         key: "foils",
         title: t("tabs.foils"),
