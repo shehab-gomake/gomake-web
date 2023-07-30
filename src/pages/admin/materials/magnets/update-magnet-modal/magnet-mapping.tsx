@@ -188,6 +188,22 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
               }}
             />
           </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.inputs.thickness")} (mm)
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.inputs.enterThickness")}
+              style={clasess.textInputStyle}
+              value={materialMagnetStateValue?.updateState?.thickness}
+              onChange={(e: any) => {
+                materialMagnetStateValue?.onChangeUpdateStateMagnet(
+                  "thickness",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
         </div>
       </div>
     </>
