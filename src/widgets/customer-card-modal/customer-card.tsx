@@ -1,5 +1,5 @@
 import { Tab, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import { useStyle } from "./style";
 import { GoMakeModal } from "@/components";
 import { HeaderFilter } from "./header-filter";
@@ -78,10 +78,13 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
   const [open, setOpen] = useState(false);
   const [contacts, setContacts] = useState( customer && customer.contacts ? customer.contacts : [] );
   const [addresses, setAddresses] = useState(customer && customer.addresses ? customer.addresses : []);
+  const [users, setUsers] = useState(customer && customer.users ? customer.users : []);
+
 
   useEffect(() => {
     addInitContact();
     addInitAddress();
+    addInitUser();
   }, [openModal]);
 
   useEffect(() => {
@@ -182,20 +185,44 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
 
   // User info
   const addEmptyClient = () => {
-    var temp = [...customer?.users];
+    var temp = [...users];
     const index = temp.length + 1;
     temp.push({ name: "", index: index });
-    const updatedCustomer = { ...customer, users: temp };
-    setCustomer(updatedCustomer);
+    setUsers(temp);
+  }
+
+  const addInitUser = () => {
+    var temp = [];
+    if(customer && customer.users){
+      temp = customer.users;
+      if(temp){
+        let index = 0;
+        temp.forEach(x=>{
+          x.index = index;
+          index++;
+        })
+      }
+    }else{
+      const index = temp.length + 1;
+      temp.push({ name: "", index: index });
+    }
+    setUsers(temp);
   }
   
   const deleteClientForm = (index) => {
     debugger;
-    var temp = [...customer?.users];
+    var temp = [...users];
     temp = temp.filter(x => x.index != index);
-    const updatedCustomer = { ...customer, users: temp };
-    setCustomer(updatedCustomer);
+    setUsers(temp);
   }
+
+  const updateUser = (index, updatedUserData) => {
+    setUsers((prevUsers) =>
+    prevUsers.map((user) =>
+      user.index === index ? { ...user, ...updatedUserData } : user
+      )
+    );
+  };
   
   return (
     <GoMakeModal
@@ -360,12 +387,9 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
             <Row  style={{display: "flex"  }}>
               <Col  md={10}>
                 {
-                  customer?.users.length === 0 ? (
-                    <UserForm key={0} user={{ name: "", index: 1 }} onDelete={deleteClientForm} />
-                  ) : (
-                    customer?.users.map(x =>
-                    <UserForm key={x.index} user={x} onDelete={deleteClientForm}></UserForm>
-                  ))
+                    users?.map(x =>
+                    <UserForm key={x.index} user={x} onDelete={deleteClientForm} setUser={(updatedUserData) => updateUser(x.index, updatedUserData)}></UserForm>
+                  )
                 }
               </Col>
               <Col  style={{marginTop:"42px" , justifyContent: 'flex-end'}} >
