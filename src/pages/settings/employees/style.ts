@@ -38,10 +38,7 @@ const useStyle = () => {
         marginRight: convertWidthToVW(1),
       },
       headersStyle: {
-        fontFamily: "Outfit",
         fontStyle: "normal",
-        fontWeight: 300,
-        fontSize: 14,
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(500, 14),
       },

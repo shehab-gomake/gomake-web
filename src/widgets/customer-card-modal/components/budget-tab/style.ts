@@ -17,11 +17,9 @@ const useStyle = () => {
             headerStyle: {
                 color: "var(--primary-900, #090A1D)",
                 texAlign: "center",
-                fontFamily: "Lexend",
-                fontSize: "14px",
                 fontStyle: "normal",
-                fontWeight: 500,
                 lineHeight: "normal",
+                ...FONT_FAMILY.Lexend(500, 14),
             },
 
             inputStyle: {
@@ -51,15 +49,13 @@ const useStyle = () => {
 
               buttonsStyle: {
                 color: "var(--primary-500, #2E3092)",
-                fontFamily: "Lexend",
-                fontSize: "14px",
                 fontStyle: "normal",
-                fontWeight: 500,
                 lineHeight: "normal",
                 letterSpacing: "-0.14px",
                 border: "none",
                 background: "#FFF", 
                 marginLeft: "7px",
+                ...FONT_FAMILY.Lexend(500, 14),
               },
 
         };

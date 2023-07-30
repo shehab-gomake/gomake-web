@@ -23,11 +23,9 @@ const useStyle = () => {
             width: "180px",
             height: "18px",
             color: "var(--primary-900, #090A1D)",
-            fontFamily: "Lexend",
-            fontSize: "14px",
             fontStyle: "normal",
-            fontWeight: 520,
             lineHeight: "normal",
+            ...FONT_FAMILY.Lexend(520, 14),
           },
 
           buttonsStyle: {
@@ -50,11 +48,9 @@ const useStyle = () => {
             width: "160px",
             height: "15px",
             color: "var(--primary-900, #090A1D)",
-            fontFamily: "Lexend",
-            fontSize: "12px",
             fontStyle: "normal",
-            fontWeight: 400,
             lineHeight: "normal",
+            ...FONT_FAMILY.Lexend(400, 12),
           },
     
 

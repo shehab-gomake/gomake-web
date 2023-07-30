@@ -7,23 +7,12 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
 
-
-      headersStyle: {
-        fontFamily: "Outfit",
-        fontStyle: "normal",
-        fontWeight: 300,
-        fontSize: 14,
-        color: "#1C1D58",
-        ...FONT_FAMILY.Lexend(500, 14),
-      },
-
       headerStyle: {
         color: "var(--primary-900, #090A1D)",
-        fontFamily: "Lexend",
-        fontSize: "14px",
         fontStyle: "normal",
-        fontWeight: 520,
         lineHeight: "normal",
+        TextAlign: "center",
+        ...FONT_FAMILY.Lexend(500, 14),
       },
 
       inputStyle: {
@@ -37,7 +26,6 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#8283BE",
       },
-
 
       autoButtonStyle: {
         width: convertWidthToVW(50),
@@ -72,13 +60,10 @@ const useStyle = () => {
 
       switchHeaderStyle: {
         color: "var(--primary-900, #090A1D)",
-        fontFamily: "Lexend",
-        fontSize: "12px",
-        fontStyle: "regular",
-        fontWeight: 400,
+        fontStyle: "normal",
         lineHeight: "normal",
+        ...FONT_FAMILY.Lexend(400, 12),
       },
-
 
     };
   }, []);

@@ -30,10 +30,7 @@ const useStyle = () => {
       },
 
       headersStyle: {
-        fontFamily: "Outfit",
         fontStyle: "normal",
-        fontWeight: 300,
-        fontSize: 14,
         color: "#1C1D58",
         ...FONT_FAMILY.Lexend(500, 14),
       },

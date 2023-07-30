@@ -11,31 +11,25 @@ const useStyle = () => {
         height: "18px",
         color: "var(--second-500, #ED028C)",
         TextAlign: "center",
-        fontFamily: "Lexend",
-        fontSize: "14px",
         fontStyle: "normal",
-        fontWeight: "500",
         lineHeight: "normal",
+        ...FONT_FAMILY.Lexend(500, 14),
       },
 
       headerStyle1: {
         color: "var(--primary-900, #090A1D)",
         TextAlign: "center",
-        fontFamily: "Lexend",
-        fontSize: "14px",
         fontStyle: "normal",
-        fontWeight: 500,
         lineHeight: "normal",
+        ...FONT_FAMILY.Lexend(500, 14),
       },
-
 
       switchHeaderStyle: {
         color: "var(--primary-900, #090A1D)",
-        fontFamily: "Lexend",
-        fontSize: "12px",
         fontStyle: "normal",
-        fontWeight: 400,
         lineHeight: "normal",
+        ...FONT_FAMILY.Lexend(400, 12),
+
       },
 
       autoComplateStyle: {
@@ -49,8 +43,6 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#8283BE",
       },
-
-
 
     };
   }, []);

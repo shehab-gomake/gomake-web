@@ -2,17 +2,9 @@ import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-
 const useStyle = () => {
   const clasess = useMemo(() => {
     return {
-      autoButtonStyle: {
-        width: convertWidthToVW(50),
-        height: convertHeightToVH(30),
-        marginRight: convertWidthToVW(1),
-        marginTop: "18px",
-        background: "#F135A3",
-      },
 
       autoComplateStyle: {
         width: "180px",
@@ -40,23 +32,20 @@ const useStyle = () => {
 
       headerStyle: {
         color: "var(--primary-900, #090A1D)",
-        fontFamily: "Lexend",
-        fontSize: "14px",
+        TextAlign: "center",
         fontStyle: "normal",
-        fontWeight: 520,
         lineHeight: "normal",
+        ...FONT_FAMILY.Lexend(500, 14),
       },
 
       buttonsStyle: {
         color: "var(--error-500, #D92C2C)",
-        fontFamily: 'Lexend',
-        fontSize: '14px',
         fontStyle: 'normal',
-        fontWeight: 500,
         lineHeight: 'normal',
         border: "none",
         background: "#FFF",
         marginLeft: "7px",
+        ...FONT_FAMILY.Lexend(500, 14),
       },
 
     };

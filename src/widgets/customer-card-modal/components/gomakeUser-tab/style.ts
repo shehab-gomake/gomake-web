@@ -21,37 +21,29 @@ const useStyle = () => {
 
       switchHeaderStyle: {
         color: "var(--primary-900, #090A1D)",
-        fontFamily: "Lexend",
-        fontSize: "12px",
         fontStyle: "normal",
-        fontWeight: 400,
         lineHeight: "normal",
+        ...FONT_FAMILY.Lexend(400, 11),
       },
 
 
       buttonsStyle: {
         color: "var(--error-500, #D92C2C)",
-        fontFamily: 'Lexend',
-        fontSize: '14px',
         fontStyle: 'normal',
-        fontWeight: 500,
         lineHeight: 'normal',
         border: "none",
         background: "#FFF",
         marginLeft: "7px",
+        ...FONT_FAMILY.Lexend(500, 14),
       },
 
       headerStyle: {
         color: "var(--primary-900, #090A1D)",
         TextAlign: "center",
-        fontFamily: "Lexend",
-        fontSize: "14px",
         fontStyle: "normal",
-        fontWeight: 500,
         lineHeight: "normal",
-      },
+        ...FONT_FAMILY.Lexend(500, 14),
 
-      autoButtonStyle: {
       },
 
     };

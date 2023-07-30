@@ -1,9 +1,7 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { colors } from "@mui/material";
 import { useMemo } from "react";
-import { Placeholder } from "react-bootstrap";
 
 
 const useStyle = () => {
@@ -21,14 +19,10 @@ const useStyle = () => {
       insideStyle: { width: "64%", height: "93%", maxWidth: "1240px",  maxHeight: "1007px", paddingLeft: "32px", paddingRight: "48px", paddingTop: "27px", paddingBottom: "27px", background: "#FDFDFD" },
 
       subTitleStyle: {
-        width: "113px",
-        height: "20px",
-        fontFamily: "Lexend",
-        fontSize: "16px",
         fontStyle: "normal",
-        fontWeight: 600,
         lineHeight: "normal",
         color: "#ED028C",
+        ...FONT_FAMILY.Lexend(600,16),
       },
 
       colStyle: {
@@ -66,36 +60,20 @@ const useStyle = () => {
 
       headerStyle: {
         color: "var(--primary-900, #090A1D)",
-        fontFamily: "Lexend",
-        fontSize: "14px",
         fontStyle: "normal",
-        fontWeight: 520,
         lineHeight: "normal",
+        ...FONT_FAMILY.Lexend(500,14),
       },
 
       buttonsStyle: {
         color: "var(--primary-500, #2E3092)",
-        fontFamily: "Lexend",
-        fontSize: "14px",
         fontStyle: "normal",
-        fontWeight: 500,
         lineHeight: "normal",
         letterSpacing: "-0.14px",
         border: "none",
         background: "#FFF", 
         marginLeft: "7px",
-      },
-
-      headersStyle: {
-        width: "220px",
-        height: "30px",
-        fontFamily: "Lexend",
-        fontStyle: "normal",
-        fontWeight: 500,
-        fontSize: "24px",
-        color: "#2E3092",
-        lineheight: "normal",
-        ...FONT_FAMILY.Lexend(500, 14),
+        ...FONT_FAMILY.Lexend(500,14),
       },
 
       tabStyle: {
@@ -106,13 +84,11 @@ const useStyle = () => {
         justifyContent: "center",
         alignItems: "center",
         gap: '27px',
-        fontFamily: "Lexend",
-        fontSize: "16px",
         fontStyle: "normal",
-        fontWeight: "500",
         lineHeight: "normal",
         borderRadius: "4px",
-        background: "#ED028C"
+        background: "#ED028C",
+        ...FONT_FAMILY.Lexend(500,16),
       },
 
       filterStyle: {
@@ -134,11 +110,9 @@ const useStyle = () => {
 
       switchHeaderStyle: {
         color: "var(--primary-900, #090A1D)",
-        fontFamily: "Lexend",
-        fontSize: "12px",
         fontStyle: "normal",
-        fontWeight: 400,
         lineHeight: "normal",
+        ...FONT_FAMILY.Lexend(400,12),
       },
 
       autoButtonStyle: {
@@ -149,12 +123,10 @@ const useStyle = () => {
       background: "var(--second-500, #ED028C)",
       color: "var(--puree, #FFF)",
       TextAlign: "center",
-      fontFamily: "Lexend",
-      fontSize: "16px",
       fontStyle: "normal",
-      fontWeight: 500,
       lineHeight: "normal",
       border: "none",
+      ...FONT_FAMILY.Lexend(500,16),
       },
 
       autoComplateStyle: {
@@ -184,11 +156,9 @@ const useStyle = () => {
         borderRadius: "4px",
         border: "1px solid var(--primary-500, #2E3092)",
         color: "var(--medium-300, #9695C7)",
-        fontFamily: "Lexend",
-        fontSize: "12px",
         fontStyle: "normal",
-        fontWeight: 500,
         lineHeight: "normal",
+        ...FONT_FAMILY.Lexend(500,12)
       }
 
     };
@@ -198,7 +168,3 @@ const useStyle = () => {
   };
 };
 export { useStyle };
-function primaryColor(arg0: number): any {
-  throw new Error("Function not implemented.");
-}
-

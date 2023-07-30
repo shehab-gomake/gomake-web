@@ -17,7 +17,6 @@ const AddressForm = ({ address, onDelete , setAddress}: any) => {
     const [streets, setStreets] = useState([]);
     const [streets1, setStreets1] = useState([]);
     const [dooo, setdooo] = useState([]);
-
     const [selectedCity, setSelectedCity] = useState([]);
 
 
@@ -48,10 +47,7 @@ const AddressForm = ({ address, onDelete , setAddress}: any) => {
         const selectedCityaa = value?.id;
         setSelectedCity(selectedCity);
         const selectedCityStreets = streets.filter((street) => street.city_code == selectedCityaa);
-        console.log(selectedCityStreets);
-
         if (selectedCityStreets) {
-            console.log("noooooooooooooooooooo");
             setStreets1(selectedCityStreets);
         }
     }, []);
@@ -69,63 +65,65 @@ const AddressForm = ({ address, onDelete , setAddress}: any) => {
     }, [selectedCity]);
 
 
+
+
     return (
         <div>
-            <Row style={{ marginBottom: '24px', marginTop: '14px' }} >
-                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <h3 style={clasess.headerStyle} >{t("customers.modal.addressId")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+            <Row style={{ marginBottom: '24px', marginTop: '24px' }} >
+                <Col style={{ display: "flex", width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <span style={clasess.headerStyle} >{t("customers.modal.addressId")}</span>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.address1} />
                 </Col >
-                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <h3 style={clasess.headerStyle} >{t("customers.modal.city")}</h3>
-                    <HeaderFilter setAllOptions={citiesNames} style={clasess.autoComplateStyle} value={selectedCity} onChange={handleCityChange} setPlaceholder="placeholder" ></HeaderFilter>
+                <Col style={{ display: "flex", width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <span style={clasess.headerStyle} >{t("customers.modal.city")}</span>
+                    <HeaderFilter setAllOptions={citiesNames} style={clasess.autoComplateStyle} val={address.city} onChange={handleCityChange} setPlaceholder="placeholder" ></HeaderFilter>
                 </Col>
-                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <h3 style={clasess.headerStyle} >{t("customers.modal.street")}</h3>
-                    <HeaderFilter setAllOptions={dooo} style={clasess.autoComplateStyle} setPlaceholder="placeholder" ></HeaderFilter>
+                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <span style={clasess.headerStyle} >{t("customers.modal.street")}</span>
+                    <HeaderFilter setAllOptions={dooo} style={clasess.autoComplateStyle} setPlaceholder="placeholder" val={address.street}></HeaderFilter>
                 </Col>
-                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <h3 style={clasess.headerStyle} >{t("customers.modal.home")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                <Col style={{ display: "flex", width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <span style={clasess.headerStyle} >{t("customers.modal.home")}</span>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.homeNumber}/>
                 </Col>
-                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <h3 style={clasess.headerStyle} >{t("customers.modal.entrance")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                <Col style={{ display: "flex", width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <span style={clasess.headerStyle} >{t("customers.modal.entrance")}</span>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.entry} />
                 </Col >
             </Row>
             <Row style={{ marginBottom: '24px' }}>
-                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.floor")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                <Col style={{ display: "flex", width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <span style={clasess.headerStyle} >{t("customers.modal.floor")}</span>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.floor}/>
                 </Col>
-                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.apartment")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                <Col style={{ display: "flex", width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <span style={clasess.headerStyle} >{t("customers.modal.apartment")}</span>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.apartment}/>
                 </Col>
-                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.postalCode")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <span style={clasess.headerStyle} >{t("customers.modal.postalCode")}</span>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.zipCode}/>
                 </Col>
-                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.po")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                <Col style={{ display: "flex", width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <span style={clasess.headerStyle} >{t("customers.modal.po")}</span>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.postbox}/>
                 </Col>
-                <Col style={{ display: "flex", width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <h3 style={clasess.headersStyle} >{t("customers.modal.country")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                    <span style={clasess.headerStyle} >{t("customers.modal.country")}</span>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.county}/>
                 </Col>
             </Row>
-            <Row style={{ display: "flex", width: "33%"}}>
+            <Row style={{ display: "flex", width: "33%" , flexWrap: "nowrap"}}>
                 <Col style={{ display: "flex", flexDirection: "column", gap: "5px" }} >
-                    <h3 style={clasess.headerStyle} >{t("customers.modal.remarks")}</h3>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" />
+                    <span style={clasess.headerStyle} >{t("customers.modal.remarks")}</span>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.notes} />
                     <a style={{ display: "flex", flexDirection: "row", gap: "8px"}} >
-                        <Switch  checked={false} />
-                        <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.default")}</h3>
+                        <Switch  checked={address?.isDefault} />
+                        <span style={clasess.switchHeaderStyle} >{t("customers.modal.default")}</span>
                     </a>
                 </Col>
                 <Col style={{ display: "flex", marginTop: "24px", justifyContent: 'flex-start' }} >
-                    <a onClick={() => onDelete(address.index)} >
+                    <a style={{width:"102px"}} onClick={() => onDelete(address.index)} >
                         <RemoveIcon></RemoveIcon>
                         <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
                     </a>

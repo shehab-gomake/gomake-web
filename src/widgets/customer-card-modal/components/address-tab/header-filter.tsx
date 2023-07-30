@@ -6,6 +6,8 @@ import { useStyle } from "./style";
 const HeaderFilter = ({
     setAllOptions,
     setPlaceholder,
+    val
+
   }: any) => {
     const { t } = useTranslation();
     const { clasess } = useStyle();
@@ -17,6 +19,7 @@ const HeaderFilter = ({
                     options={setAllOptions}
                     style={clasess.autoComplateStyle}
                     placeholder={setPlaceholder}
+                    value={val}
                 />
             ) : (
                 <Skeleton variant="rectangular" width={180} height={40} />
