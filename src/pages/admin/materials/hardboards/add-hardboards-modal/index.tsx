@@ -59,6 +59,7 @@ const AddLaminationModal = () => {
                   onChange={(e: any) => {
                     materialHardboardsStateValue?.setHardness(e.target.value);
                   }}
+                  type={"number"}
                 />
               </div>
             </div>
