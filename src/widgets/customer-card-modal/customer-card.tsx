@@ -1,5 +1,5 @@
 import { Tab, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
-import { use, useEffect, useMemo, useState } from "react";
+import { use, useCallback, useEffect, useMemo, useState } from "react";
 import { useStyle } from "./style";
 import { GoMakeModal } from "@/components";
 import { HeaderFilter } from "./header-filter";
@@ -16,10 +16,11 @@ import { BookKeepingForm } from "./components/bookKeeping-tab/form";
 import Switch from "./components/switch-component";
 import { BudgetForm } from "./components/budget-tab/add-budget/form";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { useSupplier } from "@/hooks/use-supplier";
+import { useCustomersModal } from "./use-customer-modal";
 
 const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
 
+  const {currencyCategores} = useCustomersModal();
   const { t } = useTranslation();
   const theme = createMuiTheme({
     palette: {
@@ -29,12 +30,10 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
     },
   });
 
-
-
   const TestOptions = useMemo(
-    () => [t("USD (US Dollar): $"),
-    t("aaa"),
-    t("bbb"),],
+    () => [
+    t("string1"),
+    t("string2"),],
     []
   );
 
@@ -249,7 +248,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
           </Col>
           <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
             <h3 style={clasess.headerStyle} >{t("customers.modal.currency")}</h3>
-            <HeaderFilter style={clasess.autoComplateStyle} setPlaceholder="placeholder" ></HeaderFilter>
+            <HeaderFilter style={clasess.autoComplateStyle} setPlaceholder="placeholder" setAllOptions={currencyCategores} ></HeaderFilter>
           </Col>
         </Row>
       </div>
@@ -287,7 +286,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
                     <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.active")}</h3>
                   </Col>
                   <Col style={{ display: "flex", width: "170px", height: "14px", justifyContent: "flex-start", gap: "8px" }}>
-                    <Switch checked={customer?.isOccasional} onChange={(e) => setCustomer({ ...customer, isOccasional: true })} />
+                    <Switch checked={customer?.isOccasional}  />
                     <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.anOccasionalCustomer")}</h3>
                   </Col>
                 </Col>

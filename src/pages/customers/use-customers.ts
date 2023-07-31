@@ -26,7 +26,6 @@ const useCustomers = (clientType, pageNumber) => {
 
   //select agent options
   const [agentsCategores, setAgentsCategores] = useState([]);
-
   const [customersCategores, setCustomersCategores] = useState([]);
 
 

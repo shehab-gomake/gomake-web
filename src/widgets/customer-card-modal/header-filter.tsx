@@ -1,22 +1,23 @@
 import { GoMakeAutoComplate} from "@/components";
 import { Skeleton } from "@mui/material";
 import { useStyle } from "./style";
-import { Placeholder } from "react-bootstrap";
 
 const HeaderFilter = ({
     setAllOptions,
     setPlaceholder,
+    onchange,
     val,
   }: any) => {
     const { clasess } = useStyle();
 
     return (
         <div >
-            {setAllOptions?.length > 0 ? (
+            {setAllOptions?.length > 0 || val!=null ? (
                 <GoMakeAutoComplate
                     options={setAllOptions}
                     style={clasess.autoComplateStyle}
                     placeholder={setPlaceholder}
+                    onChange={onchange}
                     value={val}
                 />
             ) : (

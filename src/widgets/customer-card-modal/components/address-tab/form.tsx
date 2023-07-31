@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useStyle } from "./style";
-import { HeaderFilter } from "./header-filter";
+import { HeaderFilter } from "../../header-filter";
 import { RemoveIcon } from "@/components/icons/icons";
 import { t } from "i18next";
 import { Col, Row } from "react-bootstrap";

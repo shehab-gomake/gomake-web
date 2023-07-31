@@ -3,7 +3,6 @@ import { ICallApi, ISetState } from "./call-api.interface";
 import { ShowCustomerCard } from "@/pages/customers/edit-customer";
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 
-
 const getAndSetCustomers = async (
   callApi: ICallApi,
   setState?: ISetState,
@@ -28,18 +27,6 @@ const getAndSetCustomer = async (
     data
   );
   return returnResult(result, setState);
-};
-
-
-///  instead this i used getAndSetAllCustomers an return _data.totalItems;
-const getCustomerCount = async (
-  callApi: ICallApi,
-  setState?: ISetState,
-  data?: any
-) => {
-  const result: any = await callApi("GET", "/v1/customers/get-all-customers", data);
-  const _data = returnResult(result, undefined);
-  return _data.totalItems;
 };
 
     

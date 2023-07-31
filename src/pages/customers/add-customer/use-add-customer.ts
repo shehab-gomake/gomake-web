@@ -14,6 +14,7 @@ const useAddCustomer = ({ item }: any) => {
     async (data: any, setData: any) => {
       const res = await callApi("POST", `/v1/customers/add-customer`, {
         id: item?.id,
+        customer: item , 
         clientType: item?.clientType,
         name: item?.name,
         fName: item?.fName,

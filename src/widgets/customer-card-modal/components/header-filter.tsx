@@ -6,6 +6,7 @@ import { useStyle } from "./style";
 const HeaderFilter = ({
     setAllOptions,
     setPlaceholder,
+    onchange,
     val
   }: any) => {
     const { t } = useTranslation();
@@ -18,6 +19,7 @@ const HeaderFilter = ({
                     options={setAllOptions}
                     style={clasess.autoComplateStyle}
                     placeholder={setPlaceholder}
+                    onChange={onchange}
                     value={val}
                 />
             ) : (
