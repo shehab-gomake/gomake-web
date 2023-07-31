@@ -8,17 +8,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState, useCallback } from 'react';
 import Switch from "../switch-component";
 
-
-
-const AddressForm = ({ address, onDelete , setAddress}: any) => {
+const AddressForm = ({ address, onDelete, setAddress }: any) => {
 
     const { clasess } = useStyle();
     const [cities, setCities] = useState([]);
-    const [streets, setStreets] = useState([]);
-    const [streets1, setStreets1] = useState([]);
-    const [dooo, setdooo] = useState([]);
-    const [selectedCity, setSelectedCity] = useState([]);
-
+    const [cityStreets, setCityStreets] = useState([]);
+    const [selectedCity, setSelectedCity] = useState(address?.city);
+    const [selectedStreet, setSelectedStreet] = useState(address?.street);
 
     useEffect(() => {
         const fetchCities = async () => {
@@ -26,13 +22,9 @@ const AddressForm = ({ address, onDelete , setAddress}: any) => {
                 const response = await fetch('/cities.json');
                 const data = await response.json();
                 setCities(data);
-                const response1 = await fetch('/streets.json');
-                const data1 = await response1.json();
-                setStreets(data1);
             } catch (error) {
                 console.error('Error fetching cities:', error);
             }
-
         };
         fetchCities();
     }, []);
@@ -43,87 +35,84 @@ const AddressForm = ({ address, onDelete , setAddress}: any) => {
     }));
 
     const handleCityChange = useCallback(async (e: any, value: any) => {
-        const selectedCity = value?.label;
-        const selectedCityaa = value?.id;
-        setSelectedCity(selectedCity);
-        const selectedCityStreets = streets.filter((street) => street.city_code == selectedCityaa);
-        if (selectedCityStreets) {
-            setStreets1(selectedCityStreets);
-        }
-    }, []);
-
-    const getCityStreets = useCallback(async () => {
-        const streetsNames = streets1.map(street => ({
+        const selectedCityLabel = value?.label;
+        const selectedCityId = value?.id;
+        setSelectedCity(selectedCityLabel);
+        setAddress({ ...address, city: selectedCityLabel})
+        const response1 = await fetch('/streets.json');
+        const data1 = await response1.json();
+        const selectedCityStreets = data1.filter((street) => street.city_code == selectedCityId);
+        const streetsNames = selectedCityStreets.map(street => ({
             label: street.name,
             id: street.id
         }));
-        setdooo(streetsNames)
+        setCityStreets(streetsNames);
+        setSelectedStreet(streetsNames[0]?.label);
     }, []);
 
-    useEffect(() => {
-        getCityStreets();
-    }, [selectedCity]);
-
-
-
+    const handleStreetChange = useCallback(async (e: any, value: any) => {
+        const selectedStreetLabel = value?.label;
+        setSelectedStreet(selectedStreetLabel);
+        setAddress({ ...address, street: selectedStreetLabel})
+    }, []);
 
     return (
         <div>
             <Row style={{ marginBottom: '24px', marginTop: '24px' }} >
-                <Col style={{ display: "flex", width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.addressId")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.address1} />
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.address1} onChange={(e) => setAddress({ ...address, address1: e.target.value })} />
                 </Col >
-                <Col style={{ display: "flex", width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.city")}</span>
-                    <HeaderFilter setAllOptions={citiesNames} style={clasess.autoComplateStyle} val={address.city} onChange={handleCityChange} setPlaceholder="placeholder" ></HeaderFilter>
+                    <HeaderFilter setAllOptions={citiesNames} style={clasess.autoComplateStyle} setPlaceholder="placeholder" val={selectedCity} onchange={handleCityChange} ></HeaderFilter>
                 </Col>
                 <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.street")}</span>
-                    <HeaderFilter setAllOptions={dooo} style={clasess.autoComplateStyle} setPlaceholder="placeholder" val={address.street}></HeaderFilter>
+                    <HeaderFilter setAllOptions={cityStreets} style={clasess.autoComplateStyle} setPlaceholder="placeholder" val={selectedStreet} onchange={handleStreetChange}></HeaderFilter>
                 </Col>
-                <Col style={{ display: "flex", width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.home")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.homeNumber}/>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.homeNumber} onChange={(e) => setAddress({ ...address, homeNumber: e.target.value })} />
                 </Col>
-                <Col style={{ display: "flex", width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.entrance")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.entry} />
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.entry} onChange={(e) => setAddress({ ...address, entry: e.target.value })} />
                 </Col >
             </Row>
             <Row style={{ marginBottom: '24px' }}>
-                <Col style={{ display: "flex", width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.floor")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.floor}/>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.floor} onChange={(e) => setAddress({ ...address, floor: e.target.value })} />
                 </Col>
-                <Col style={{ display: "flex", width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.apartment")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.apartment}/>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.apartment} onChange={(e) => setAddress({ ...address, apartment: e.target.value })} />
                 </Col>
                 <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.postalCode")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.zipCode}/>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.zipCode} onChange={(e) => setAddress({ ...address, zipCode: e.target.value })} />
                 </Col>
-                <Col style={{ display: "flex", width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.po")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.postbox}/>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.postbox} onChange={(e) => setAddress({ ...address, postbox: e.target.value })} />
                 </Col>
                 <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.country")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.county}/>
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.county} onChange={(e) => setAddress({ ...address, county: e.target.value })} />
                 </Col>
             </Row>
-            <Row style={{ display: "flex", width: "33%" , flexWrap: "nowrap"}}>
+            <Row style={{ display: "flex", width: "33%", flexWrap: "nowrap" }}>
                 <Col style={{ display: "flex", flexDirection: "column", gap: "5px" }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.remarks")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.notes} />
-                    <a style={{ display: "flex", flexDirection: "row", gap: "8px"}} >
-                        <Switch  checked={address?.isDefault} />
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.notes} onChange={(e) => setAddress({ ...address, notes: e.target.value })} />
+                    <a style={{ display: "flex", flexDirection: "row", gap: "8px" }} >
+                        <Switch checked={address?.isDefault} />
                         <span style={clasess.switchHeaderStyle} >{t("customers.modal.default")}</span>
                     </a>
                 </Col>
                 <Col style={{ display: "flex", marginTop: "24px", justifyContent: 'flex-start' }} >
-                    <a style={{width:"102px"}} onClick={() => onDelete(address.index)} >
+                    <a style={{ width: "102px" }} onClick={() => onDelete(address.index)} >
                         <RemoveIcon></RemoveIcon>
                         <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
                     </a>

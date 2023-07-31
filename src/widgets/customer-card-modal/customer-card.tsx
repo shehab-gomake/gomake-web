@@ -10,7 +10,7 @@ import { PriceListForm } from "./components/priceList-tab/form";
 import { UserForm } from "./components/gomakeUser-tab/form";
 import { AddIcon } from "@/components/icons/icons";
 import { useTranslation } from "react-i18next";
-import { Container,Col, Row } from 'react-bootstrap';
+import { Container, Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BookKeepingForm } from "./components/bookKeeping-tab/form";
 import Switch from "./components/switch-component";
@@ -29,7 +29,6 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
     },
   });
 
-  const { suppliersCurrencies, getSupplierCurrencies } = useSupplier();
 
 
   const TestOptions = useMemo(
@@ -41,18 +40,9 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
 
   const tabPanelInput = (label, val = null, onchange = null) => {
     return (
-      <Col style={{  display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
+      <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
         <h3 style={clasess.headerStyle}>{label}</h3>
         <input style={clasess.inputStyle1} type="text" placeholder="placeholder" value={val} onChange={onchange} /></Col>
-    );
-  };
-
-  const tabPanelSwich = (label, value = null, onchange = null) => {
-    return (
-      <Col style={{ display: "flex", width: "170px", height: "14px", justifyContent: "flex-start", gap: "8px" }}>
-        <Switch checked={value} onChange={onchange}/>
-        <h3 style={clasess.switchHeaderStyle} >{label}</h3>
-      </Col>
     );
   };
 
@@ -259,7 +249,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
           </Col>
           <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
             <h3 style={clasess.headerStyle} >{t("customers.modal.currency")}</h3>
-            <HeaderFilter style={clasess.autoComplateStyle} setPlaceholder="placeholder" setAllOptions={suppliersCurrencies} value={customer?.currency} ></HeaderFilter>
+            <HeaderFilter style={clasess.autoComplateStyle} setPlaceholder="placeholder" ></HeaderFilter>
           </Col>
         </Row>
       </div>
@@ -291,9 +281,15 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
                 {tabPanelInput(t("customers.modal.email"), customer?.mail, (e) => setCustomer({ ...customer, mail: e.target.value }))}
                 {tabPanelInput(t("customers.modal.fax"), customer?.fax, (e) => setCustomer({ ...customer, fax: e.target.value }))}
                 {tabPanelSelect(t("customers.modal.agent"), TestOptions, "select agent", customer?.agent)}
-                <Col style={{display: "flex" ,flexDirection: "column" , marginTop: "45px"}}>
-                {tabPanelSwich(t("customers.modal.active"), customer?.isActive, (e) => setCustomer({ ...customer, isActive: e.target.checked }))}
-                {tabPanelSwich(t("customers.modal.anOccasionalCustomer"), customer?.isOccasional, (e) => setCustomer({ ...customer, isOccasional: e.target.checked }))}
+                <Col style={{ display: "flex", flexDirection: "column", marginTop: "45px" }}>
+                  <Col style={{ display: "flex", width: "170px", height: "14px", justifyContent: "flex-start", gap: "8px" }}>
+                    <Switch checked={customer?.isActive} onChange={(e) => setCustomer({ ...customer, isActive: !customer?.isActive })}/>
+                    <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.active")}</h3>
+                  </Col>
+                  <Col style={{ display: "flex", width: "170px", height: "14px", justifyContent: "flex-start", gap: "8px" }}>
+                    <Switch checked={customer?.isOccasional} onChange={(e) => setCustomer({ ...customer, isOccasional: true })} />
+                    <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.anOccasionalCustomer")}</h3>
+                  </Col>
                 </Col>
               </Row>
               <Row style={{ marginBottom: '24px', width: "72%", display: "flex", justifyContent: "center", alignItems: "center" }} >
@@ -304,7 +300,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
                 {tabPanelSelect(t("customers.modal.messageGroup"), TestOptions, "placeholder", customer?.messageGroup, (e) => setCustomer({ ...customer, messageGroup: e.target.value }), "none")}
               </Row>
               <Row style={{ marginBottom: '24px' }}>
-                <span style={{ color: "var(--second-500, #ED028C)", fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 14) , lineHeight: "normal" }}>{t("customers.modal.lastOrderDetails")}</span>
+                <span style={{ color: "var(--second-500, #ED028C)", fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 14), lineHeight: "normal" }}>{t("customers.modal.lastOrderDetails")}</span>
               </Row>
               <Row style={{ marginBottom: '24px', width: "90%" }}>
                 {tabPanelInput(t("customers.modal.name"), customer?.lastOrderContactName, (e) => setCustomer({ ...customer, lastOrderContactName: e.target.value }))}
@@ -332,7 +328,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
                 }
               </Col>
               <Col style={{ marginTop: "52px", justifyContent: 'flex-end' }}>
-                <a style={{display: "flex",justifyContent: "center",alignItems: "center", gap: "7px"}} onClick={addEmptyContact} >
+                <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "7px" }} onClick={addEmptyContact} >
                   <AddIcon></AddIcon>
                   <button style={clasess.buttonsStyle} >{t("customers.buttons.addContact")}</button>
                 </a>
@@ -351,7 +347,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
                 }
               </Col>
               <Col style={{ marginTop: "52px", justifyContent: 'flex-end' }}>
-                <a style={{display: "flex",justifyContent: "center",alignItems: "center", gap: "7px"}} onClick={addEmptyAdress} >
+                <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "7px" }} onClick={addEmptyAdress} >
                   <AddIcon></AddIcon>
                   <button style={clasess.buttonsStyle} >{t("customers.buttons.newAddress")}</button>
                 </a>
@@ -385,7 +381,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
                 }
               </Col>
               <Col style={{ marginTop: "63px", justifyContent: 'flex-end' }} >
-                <a style={{display: "flex",justifyContent: "center",alignItems: "center", gap: "7px"}} onClick={addEmptyClient} >
+                <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "7px" }} onClick={addEmptyClient} >
                   <AddIcon></AddIcon>
                   <button style={clasess.buttonsStyle} >{t("customers.buttons.addContact")}</button>
                 </a>
