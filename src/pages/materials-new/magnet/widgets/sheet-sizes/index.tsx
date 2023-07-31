@@ -117,6 +117,7 @@ const SheetSizesWidget = ({
       </div>
 
       <div style={clasess.currencyContainer}>{row?.currency}</div>
+      <div style={clasess.costsContainer}>{row?.thickness}</div>
       <div style={clasess.stokContainer}>
         <UpdateStockMagnet
           stockValue={row?.stock}

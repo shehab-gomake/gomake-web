@@ -30,6 +30,9 @@ const HeaderTableWidget = ({ setSheetCheckStore, sheetCheckStore, index }) => {
       <div style={clasess.currencyContainer}>
         {t("materials.inputs.currency")}
       </div>
+      <div style={clasess.costsContainer}>
+        {t("materials.inputs.thickness")}
+      </div>
       <div style={clasess.stokContainer}>
         {t("materials.sheetPaper.stock")} (units)
       </div>

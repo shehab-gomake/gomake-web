@@ -124,6 +124,24 @@ const WideFormatMaterialsSizeInputs = ({
             }}
           />
         </div>
+        <div>
+          <div style={clasess.lableTextStyle}>
+            {t("materials.hardboards.inputs.stiffnessFactor")}
+          </div>
+          <GomakeTextInput
+            placeholder={t("materials.hardboards.inputs.stiffnessFactor")}
+            style={clasess.textInputStyle}
+            value={sheetSize[index]["stiffnessFactor"]}
+            onChange={(e: any) => {
+              materialWideFormatMaterialStateValue?.changeItemsWideFormatMaterialSize(
+                sheetWeightIndex,
+                index,
+                "stiffnessFactor",
+                e.target.value
+              );
+            }}
+          />
+        </div>
       </div>
     </>
   );

@@ -121,7 +121,7 @@ const SheetSizesWidget = ({
 
       <div style={clasess.thiknessContainer}>{row?.material}</div>
       <div style={clasess.thiknessContainer}>{row?.sizeName}</div>
-      <div style={clasess.maxBookThickness}>BE</div>
+      <div style={clasess.maxBookThickness}>{row?.maxBookThickness}</div>
       <div style={clasess.directionContainer}>
         <GomakeTextInput
           style={clasess.thiknessTextInputStyle}

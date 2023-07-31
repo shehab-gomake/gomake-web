@@ -122,7 +122,7 @@ const SheetSizesWidget = ({
       <div style={clasess.costsContainer}>{row?.sizeName}</div>
       <div style={clasess.twintyContainer}>{row?.drumRingNumber}</div>
       <div style={clasess.costsContainer}>{row?.size}</div>
-      <div style={clasess.maxBookThickness}>BE</div>
+      <div style={clasess.maxBookThickness}>{row?.maxBookThickness}</div>
 
       <div style={clasess.costsContainer}>
         <GomakeTextInput

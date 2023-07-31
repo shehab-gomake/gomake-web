@@ -140,7 +140,7 @@ const SheetSizesWidget = ({
       <div style={clasess.costsContainer}>{row?.size}</div>
       <div style={clasess.directionContainer}>{row?.thickness}</div>
       <div style={clasess.directionContainer}>{row?.weightPerMeterSquare}</div>
-      <div style={clasess.directionContainer}>BE</div>
+      <div style={clasess.directionContainer}>{row?.stiffnessFactor}</div>
       <div style={clasess.directionContainer}>
         <GomakeTextInput
           style={clasess.thiknessTextInputStyle}

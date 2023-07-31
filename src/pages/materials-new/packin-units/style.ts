@@ -126,7 +126,7 @@ const useStyle = () => {
         alignItems: "center",
       },
       costsContainer: {
-        width: "12%",
+        width: "14%",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "center",
