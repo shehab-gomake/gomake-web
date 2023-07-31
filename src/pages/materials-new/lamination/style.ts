@@ -127,7 +127,7 @@ const useStyle = () => {
         alignItems: "center",
       },
       thiknessContainer: {
-        width: "15%",
+        width: "10%",
         display: "flex",
         textAlign: "center" as "center",
         flexDirection: "column" as "column",

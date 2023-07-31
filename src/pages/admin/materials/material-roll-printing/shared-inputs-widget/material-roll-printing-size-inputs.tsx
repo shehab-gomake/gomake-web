@@ -175,6 +175,26 @@ const RollPrintingSizeInputs = ({ index }) => {
             }}
           />
         </div>
+        <div>
+          <div style={clasess.lableTextStyle}>
+            {t("materials.hardboards.inputs.stiffnessFactor")}
+          </div>
+          <GomakeTextInput
+            placeholder={t("materials.hardboards.inputs.stiffnessFactor")}
+            value={
+              materialMaterialRollPrintingStateValue?.items[index][
+                "stiffnessFactor"
+              ]
+            }
+            onChange={(e: any) => {
+              materialMaterialRollPrintingStateValue?.changeItems(
+                index,
+                "stiffnessFactor",
+                e.target.value
+              );
+            }}
+          />
+        </div>
       </div>
     </>
   );

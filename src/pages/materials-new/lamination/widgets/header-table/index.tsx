@@ -18,7 +18,10 @@ const HeaderTableWidget = ({ setSheetCheckStore, sheetCheckStore, index }) => {
         />
       </div>
       <div style={clasess.thiknessContainer}>
-        {t("materials.inputs.size")} (cm*m)
+        {t("materials.inputs.width")} (cm)
+      </div>
+      <div style={clasess.thiknessContainer}>
+        {t("materials.inputs.length")} (m)
       </div>
       <div style={clasess.activeContainer}>
         {t("materials.inputs.thickness")} (µm)

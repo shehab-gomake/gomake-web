@@ -113,6 +113,24 @@ const HardboardThicknessesMapping = ({
               }}
             />
           </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.hardboards.inputs.stiffnessFactor")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.hardboards.inputs.stiffnessFactor")}
+              style={clasess.textInputStyle}
+              value={hardboardThicknes[index]["stiffnessFactor"]}
+              onChange={(e: any) => {
+                materialHardboardsStateValue?.changeItemsHardboardnSize(
+                  hardboardSize,
+                  index,
+                  "stiffnessFactor",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
         </div>
       </div>
     </>

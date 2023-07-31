@@ -135,7 +135,7 @@ const SheetSizesWidget = ({
       </div>
 
       <div style={clasess.currencyContainer}>{row?.currency}</div>
-      <div style={clasess.stokContainer}>BE</div>
+      <div style={clasess.stokContainer}>{row?.stiffnessFactor}</div>
       <div style={clasess.stokContainer}>
         <UpdateStockHardboardsThickness
           categoryName={selectedMaterials?.key}

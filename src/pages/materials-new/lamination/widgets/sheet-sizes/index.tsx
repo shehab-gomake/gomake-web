@@ -123,7 +123,8 @@ const SheetSizesWidget = ({
           row={row}
         />
       </div>
-      <div style={clasess.thiknessContainer}>{row?.size}</div>
+      <div style={clasess.thiknessContainer}>{row?.width}</div>
+      <div style={clasess.thiknessContainer}>{row?.height}</div>
       <div style={clasess.activeContainer}>{row?.thickness}</div>
       <div style={clasess.directionContainer}>
         <GomakeTextInput

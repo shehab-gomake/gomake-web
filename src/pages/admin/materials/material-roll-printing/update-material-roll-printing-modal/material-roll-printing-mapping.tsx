@@ -215,6 +215,25 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
               }}
             />
           </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.hardboards.inputs.stiffnessFactor")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.hardboards.inputs.stiffnessFactor")}
+              value={
+                materialMaterialRollPrintingStateValue?.updateState[item?.id]
+                  ?.stiffnessFactor
+              }
+              onChange={(e: any) => {
+                materialMaterialRollPrintingStateValue?.onChangeUpdateStateMaterialRollPrintingSize(
+                  item?.id,
+                  "stiffnessFactor",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
         </div>
       </div>
     </>
