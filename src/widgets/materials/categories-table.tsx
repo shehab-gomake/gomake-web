@@ -275,11 +275,11 @@ const CategoriesTable = ({ admin = false }) => {
         title: t("tabs.packinDrums"),
         path: "/admin/materials/packin-drums",
       },
-      // {
-      //   key: "glues",
-      //   title: t("tabs.glues"),
-      //   path: "/admin/materials/glue",
-      // },
+      {
+        key: "glues",
+        title: t("tabs.glues"),
+        path: "/admin/materials/glues",
+      },
       {
         key: "doubleSidedTapeRolls",
         title: t("tabs.doubleSidedTapeRolls"),

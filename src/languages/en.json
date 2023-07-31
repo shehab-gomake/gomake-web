@@ -857,7 +857,7 @@
     "glues": {
       "title": "Glue",
       "code": "Code",
-      "typeName": "TypeName",
+      "typeName": "Type name",
       "volumeInLiters": "Volume (liters)",
       "weightPerLiter": "Weight per liter",
       "literInSquareMeter": "Liter in square meter",
@@ -869,7 +869,8 @@
       "default": "Default",
       "controls": "Controls",
       "selectSupplier": "Select supplier",
-      "selectCurrency": "Select currency"
+      "selectCurrency": "Select currency",
+      "addNewGlue": "Add new glue"
     },
     "magnets": {
       "admin": {

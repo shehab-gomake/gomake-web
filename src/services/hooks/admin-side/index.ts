@@ -24,6 +24,7 @@ export * from "./get-set-magnets";
 export * from "./get-set-packins";
 export * from "./get-set-varnish";
 export * from "./get-set-colors";
+export * from "./get-set-glues";
 export * from "./products";
 export * from "./profits";
 export * from "./clients";
