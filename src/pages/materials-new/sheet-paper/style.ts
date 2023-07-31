@@ -144,7 +144,7 @@ const useStyle = () => {
       costsContainer: {
         width: "20%",
         display: "flex",
-        flexDirection: "column" as "column",
+        flexDirection: "row" as "row",
         justifyContent: "center",
         alignItems: "center",
       },
