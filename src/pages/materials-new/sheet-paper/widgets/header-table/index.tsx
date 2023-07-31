@@ -24,21 +24,23 @@ const HeaderTableWidget = ({ setSheetCheckStore, sheetCheckStore, index }) => {
       <div style={clasess.weightContainer}>{t("materials.inputs.weight")}</div>
       <div style={clasess.rowWeightContainer}>
         <div style={index % 2 == 0 ? clasess.bodyRow : clasess.secondRow}>
-          <div style={clasess.sizeContainer}>
-            {t("materials.sheetPaper.inputs.size")}
-          </div>
           <div style={clasess.thiknessContainer}>
             {t("materials.sheetPaper.inputs.thickness")}
           </div>
+          <div style={clasess.directionContainer}>
+            {t("materials.inputs.directions")}
+          </div>
+          <div style={clasess.sizeContainer}>
+            {t("materials.sheetPaper.inputs.size")}
+          </div>
+
           <div style={clasess.costsContainer}>
             {t("materials.inputs.unitTon")}
           </div>
           <div style={clasess.currencyContainer}>
             {t("materials.inputs.currency")}
           </div>
-          <div style={clasess.directionContainer}>
-            {t("materials.inputs.directions")}
-          </div>
+
           <div style={clasess.stokContainer}>
             {t("materials.sheetPaper.inputs.stock")}
           </div>

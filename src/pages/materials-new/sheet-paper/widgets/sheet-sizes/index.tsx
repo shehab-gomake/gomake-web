@@ -202,9 +202,6 @@ const SheetSizesWidget = ({
   }, [row, selectedMaterials, selectedSupplier, directions]);
   return (
     <div style={index2 % 2 == 0 ? clasess.bodyRow : clasess.secondRow}>
-      <div style={clasess.sizeContainer}>
-        {size?.width}X{size?.height}
-      </div>
       <div style={clasess.thiknessContainer}>
         <GomakeTextInput
           style={clasess.thiknessTextInputStyle}
@@ -213,22 +210,6 @@ const SheetSizesWidget = ({
           onBlur={updateThickness}
         />
       </div>
-      <div style={clasess.costsContainer}>
-        <GomakeTextInput
-          style={clasess.thiknessTextInputStyle}
-          value={pricePerUnit}
-          onChange={(event: any) => setPricePerUnit(event.target.value)}
-          onBlur={updatePricePerUnit}
-        />
-        /
-        <GomakeTextInput
-          style={clasess.thiknessTextInputStyle}
-          value={pricePerTon}
-          onChange={(event: any) => setPricePerTon(event.target.value)}
-          onBlur={updatePricePerTon}
-        />
-      </div>
-      <div style={clasess.currencyContainer}>{size?.currency}</div>
       <div style={clasess.directionContainer}>
         <GomakeTextInput
           style={clasess.thiknessTextInputStyle}
@@ -237,6 +218,27 @@ const SheetSizesWidget = ({
           onBlur={updateDirections}
         />
       </div>
+      <div style={clasess.sizeContainer}>
+        {size?.width}X{size?.height}
+      </div>
+
+      <div style={clasess.costsContainer}>
+        <GomakeTextInput
+          style={clasess.thiknessTextInputStyle2}
+          value={pricePerUnit}
+          onChange={(event: any) => setPricePerUnit(event.target.value)}
+          onBlur={updatePricePerUnit}
+        />
+        /
+        <GomakeTextInput
+          style={clasess.thiknessTextInputStyle1}
+          value={pricePerTon}
+          onChange={(event: any) => setPricePerTon(event.target.value)}
+          onBlur={updatePricePerTon}
+        />
+      </div>
+      <div style={clasess.currencyContainer}>{size?.currency}</div>
+
       <div style={clasess.stokContainer}>
         <UpdateStockSheetPaperSizeses
           categoryName={selectedMaterials?.key}
