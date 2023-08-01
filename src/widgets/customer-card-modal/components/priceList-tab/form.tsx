@@ -10,12 +10,6 @@ const PriceListForm = () => {
 
     const { clasess } = useStyle();
     const { t } = useTranslation();
-    const DocumentsOptions = React.useMemo(
-        () => [t("option1"),
-        t("option2"),
-        t("option3"), ,],
-        []
-    );
 
     return (
         <div style={{ display: "flex", width: "960px", height: "227", flexDirection: "column", alignItems: "flex-start", gap: "24px", marginTop: "24px" }}>
@@ -81,7 +75,7 @@ const PriceListForm = () => {
             </div>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
                 <h3 style={clasess.headerStyle1} >{t("customers.modal.selectProducts")}</h3>
-                <HeaderFilter setAllOptions={DocumentsOptions} style={clasess.autoComplateStyle} setPlaceholder="placeholder"></HeaderFilter>
+                <HeaderFilter style={clasess.autoComplateStyle} setPlaceholder="placeholder"></HeaderFilter>
             </div>
         </div>
     );

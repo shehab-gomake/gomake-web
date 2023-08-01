@@ -1,5 +1,5 @@
 import { Tab, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
-import { use, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useStyle } from "./style";
 import { GoMakeModal } from "@/components";
 import { HeaderFilter } from "./header-filter";
@@ -17,10 +17,16 @@ import Switch from "./components/switch-component";
 import { BudgetForm } from "./components/budget-tab/add-budget/form";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useCustomersModal } from "./use-customer-modal";
+import { useCustomers } from "@/pages/customers/use-customers";
+import { useAddCustomer } from "@/pages/customers/add-customer/use-add-customer";
 
 const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
 
+  ////???
+  const {addNewCustomer} = useAddCustomer(customer);
+  ////???
   const {currencyCategores} = useCustomersModal();
+  const {agentsCategores} = useCustomers("C" , 1) ;
   const { t } = useTranslation();
   const theme = createMuiTheme({
     palette: {
@@ -32,8 +38,8 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
 
   const TestOptions = useMemo(
     () => [
-    t("string1"),
-    t("string2"),],
+      t("string1"),
+      t("string2"),],
     []
   );
 
@@ -45,11 +51,11 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
     );
   };
 
-  const tabPanelSelect = (label, options = null, placeHold = "placeholder", val = null, onChange = null, flag = "flex") => {
+  const tabPanelSelect = (label, options = null, placeHold = "placeholder", val, onChange = null, flag = "flex") => {
     return (
       <Col style={{ display: flag, flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
         <h3 style={clasess.headerStyle}>{label}</h3>
-        <HeaderFilter style={clasess.autoComplateStyle} setPlaceholder={placeHold} setAllOptions={options} value={val} onChange={onChange}></HeaderFilter>
+        <HeaderFilter style={clasess.autoComplateStyle} setPlaceholder={placeHold} setAllOptions={options} val={val} onchange={onChange}></HeaderFilter>
       </Col>
     );
   };
@@ -61,6 +67,27 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
       </Col>
     );
   };
+
+  // is this ok ???
+  const [agentName, setAgentName] = useState([]);
+  const onChangeAgent = useCallback(async (e: any, value: any) => {
+    setAgentName(value?.label);
+    setCustomer({ ...customer, agentId: value?.id })  }, 
+    []);
+
+  useEffect(() => {
+    setAgentName(customer && customer.agentId ? agentsCategores.find((agent) => agent.id == customer?.agentId)?.label : []);
+  }, [customer]);
+
+  /////////////////////////////////////////////////////
+  const [currencyText, setCurrencyText] = useState([]);
+  const onChangeCurrency = useCallback(async (e: any, value: any) => {
+    setCurrencyText(value?.label);
+    setCustomer({ ...customer, currency: value?.id })}, 
+    []);
+
+  ////////////////////////////////////////////////////
+
 
   const { clasess } = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
@@ -248,7 +275,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
           </Col>
           <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
             <h3 style={clasess.headerStyle} >{t("customers.modal.currency")}</h3>
-            <HeaderFilter style={clasess.autoComplateStyle} setPlaceholder="placeholder" setAllOptions={currencyCategores} ></HeaderFilter>
+            <HeaderFilter style={clasess.autoComplateStyle} setPlaceholder="placeholder" setAllOptions={currencyCategores} val={customer?.currency}></HeaderFilter>
           </Col>
         </Row>
       </div>
@@ -272,30 +299,30 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
               <Row style={{ marginBottom: '24px', marginTop: '24px', width: "90%" }}>
                 {tabPanelInput(t("customers.modal.phone1"), customer?.tel1, (e) => setCustomer({ ...customer, tel1: e.target.value }))}
                 {tabPanelInput(t("customers.modal.phone2"), customer?.tel2, (e) => setCustomer({ ...customer, tel2: e.target.value }))}
-                {tabPanelInput(t("customers.modal.site"), customer?.site, (e) => setCustomer({ ...customer, site: e.target.value }))}
+                {tabPanelInput(t("customers.modal.site"), customer?.internetSite, (e) => setCustomer({ ...customer, internetSite: e.target.value }))}
                 {tabPanelInput(t("customers.modal.mainContactName"), customer?.mainContactName, (e) => setCustomer({ ...customer, mainContactName: e.target.value }))}
                 {tabPanelInput(t("customers.modal.mobile"), customer?.phone, (e) => setCustomer({ ...customer, phone: e.target.value }))}
               </Row>
               <Row style={{ marginBottom: '24px', width: "72.5%", display: "flex", justifyContent: "center", alignItems: "center" }} >
                 {tabPanelInput(t("customers.modal.email"), customer?.mail, (e) => setCustomer({ ...customer, mail: e.target.value }))}
                 {tabPanelInput(t("customers.modal.fax"), customer?.fax, (e) => setCustomer({ ...customer, fax: e.target.value }))}
-                {tabPanelSelect(t("customers.modal.agent"), TestOptions, "select agent", customer?.agent)}
+                {tabPanelSelect(t("customers.modal.agent"), agentsCategores, "placeholder", agentName , onChangeAgent)}
                 <Col style={{ display: "flex", flexDirection: "column", marginTop: "45px" }}>
                   <Col style={{ display: "flex", width: "170px", height: "14px", justifyContent: "flex-start", gap: "8px" }}>
-                    <Switch checked={customer?.isActive} onChange={(e) => setCustomer({ ...customer, isActive: !customer?.isActive })}/>
+                    <Switch checked={customer?.isActive} onChange={(e) => setCustomer({ ...customer, isActive: !customer?.isActive })} />
                     <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.active")}</h3>
                   </Col>
                   <Col style={{ display: "flex", width: "170px", height: "14px", justifyContent: "flex-start", gap: "8px" }}>
-                    <Switch checked={customer?.isOccasional}  />
+                    <Switch checked={customer?.isOccasional} />
                     <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.anOccasionalCustomer")}</h3>
                   </Col>
                 </Col>
               </Row>
               <Row style={{ marginBottom: '24px', width: "72%", display: "flex", justifyContent: "center", alignItems: "center" }} >
                 {tabPanelSelect(t("customers.modal.typeOfDelivery"), TestOptions, "placeholder", customer?.shipmentType, (e) => setCustomer({ ...customer, shipmentType: e.target.value }))}
-                {tabPanelSelect(t("customers.modal.responsibleGraphicArtist"), TestOptions, "placeholder")}
-                {tabPanelSelect(t("customers.modal.closingOrder"), TestOptions, "placeholder")}
-                {tabPanelSelect(t("customers.modal.howToCloseInvoicing"), TestOptions, "placeholder")}
+                {tabPanelSelect(t("customers.modal.responsibleGraphicArtist"), TestOptions, "placeholder", null)}
+                {tabPanelSelect(t("customers.modal.closingOrder"), TestOptions, "placeholder", null)}
+                {tabPanelSelect(t("customers.modal.howToCloseInvoicing"), TestOptions, "placeholder", null)}
                 {tabPanelSelect(t("customers.modal.messageGroup"), TestOptions, "placeholder", customer?.messageGroup, (e) => setCustomer({ ...customer, messageGroup: e.target.value }), "none")}
               </Row>
               <Row style={{ marginBottom: '24px' }}>
@@ -310,7 +337,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
               </Row>
               <Row style={{ marginBottom: '24px', marginTop: '24px', width: "90%", display: "flex", justifyContent: "center", alignItems: "center" }} >
                 {tabPanelTextArea(t("customers.modal.generalComment"), customer?.generalNotes, (e) => setCustomer({ ...customer, generalNotes: e.target.value }))}
-                {tabPanelTextArea(t("customers.modal.orderOpeningNotes"))}
+                {tabPanelTextArea(t("customers.modal.orderOpeningNotes") ,customer?.newItemNotes , (e) => setCustomer({ ...customer, newItemNotes: e.target.value }))}
                 {tabPanelTextArea(t("customers.modal.orderClosingNotes"), customer?.closeOrderNotes, (e) => setCustomer({ ...customer, closeOrderNotes: e.target.value }))}
               </Row>
             </div>
@@ -395,6 +422,5 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
       </div>
     </GoMakeModal>
   );
-
 };
 export { CustomerCardWidget };

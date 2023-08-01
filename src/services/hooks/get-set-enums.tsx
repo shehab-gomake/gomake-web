@@ -10,13 +10,12 @@ const getAndSetCurrency= async (
     const _data = returnResult(result, undefined);
     const mapData = _data.map((currency: any) => {
       return {
-      label: currency.value,
-      id: currency.text
+      id: currency.value,
+      label: currency.text
   };});
     if (setState) {
       setState(mapData);
     }
-
     return _data;
   };
 

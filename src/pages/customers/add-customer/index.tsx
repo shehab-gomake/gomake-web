@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 const AddCustomerButton = ({ item }: any) => {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
-  const [customer, setCustomer] = useState(null);
+  const [customer, setCustomer] = useState([]);
 
 
 
@@ -15,7 +15,7 @@ const AddCustomerButton = ({ item }: any) => {
     <>
     <CustomerCardWidget openModal={open} modalTitle={t("customers.modal.addTitle")} onClose={()=>setOpen(false)} showAddButton={true} customer={customer} setCustomer={setCustomer} >
         </CustomerCardWidget>
-     <GomakePrimaryButton variant="contained" onClick={()=>setOpen(!open)} style={{width: convertWidthToVW(100),height: convertHeightToVH(50),marginRight: convertWidthToVW(10),backgroundColor: "#F135A3",}}>{t("customers.buttons.addCustomer")}</GomakePrimaryButton>
+     <GomakePrimaryButton variant="contained" onClick={()=>setOpen(!open)} style={{width: "150px",height: convertHeightToVH(50),marginRight: convertWidthToVW(10),backgroundColor: "#F135A3",letterSpacing:"0"}}>{t("customers.buttons.addCustomer")}</GomakePrimaryButton>
          </>
   );
 };

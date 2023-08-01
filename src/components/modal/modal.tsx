@@ -1,8 +1,6 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-
 import { IconButton, Modal, Tooltip } from "@mui/material";
-
 import { CloseIcon } from "./icon/close";
 import { useStyle } from "./style";
 
@@ -16,7 +14,8 @@ const GoMakeModal = ({
 }: any) => {
   const { children }: any = props;
   const { t } = useTranslation();
-  const { clasess } = useStyle({ insideStyle });
+  const { clasess } = useStyle({ insideStyle});
+
   return (
     <Modal disableEnforceFocus open={openModal} onClose={onClose} {...props}>
       <div style={clasess.container}>

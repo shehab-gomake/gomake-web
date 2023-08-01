@@ -44,8 +44,10 @@ export default function Home() {
       <div style={clasess.tableContainer}>
         <Table tableHeaders={tabelHeaders} tableRows={allCustomers}></Table>
       </div>
+      <div style={{marginBottom: "5px"}}>
       <Pagination  count={pagesCount} variant="outlined" color="primary"  page={pageNumber}
         onChange={(event, value) => setPageNumber(value)} />
+        </div>
         </Stack>
     </CustomerAuthLayout>
   );
