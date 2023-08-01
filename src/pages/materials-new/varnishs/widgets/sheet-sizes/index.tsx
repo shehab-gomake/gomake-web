@@ -128,7 +128,7 @@ const SheetSizesWidget = ({
     <div style={index2 % 2 == 0 ? clasess.bodyRow : clasess.secondRow}>
       <div style={clasess.costsContainer}>Machine</div>
       <div style={clasess.costsContainer}>{row?.volumeInLiters}</div>
-      <div style={clasess.costsContainer}>BE</div>
+      <div style={clasess.costsContainer}>{row?.inkConsumption}</div>
 
       <div style={clasess.costsContainer}>{row?.weightOfLiter}</div>
       {/* <div style={clasess.costsContainer}>{row?.typeName}</div> */}

@@ -139,13 +139,7 @@ export default function Tubes() {
                   {["header", ...allWeightsGrouped]?.map(
                     (row: any, index: number) => {
                       if (row === "header") {
-                        return (
-                          <HeaderTableWidget
-                            setSheetCheckStore={setSheetCheckStore}
-                            sheetCheckStore={sheetCheckStore}
-                            index={index}
-                          />
-                        );
+                        return <HeaderTableWidget />;
                       }
                       return (
                         <div style={{ ...clasess.bodyRow }}>

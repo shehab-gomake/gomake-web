@@ -24,14 +24,14 @@ const useVarnish = () => {
   const [selectedVarnish, setSelectedVarnish] = useState({});
   const [items, setItems] = useState([
     {
-      name: "",
-      weight: "",
-      withGlue: "",
-      directPrinting: "",
-      linkage: "",
-      width: "",
-      height: "",
-      defaultPrice: "",
+      code: "",
+      typeName: "",
+      volumeInLiters: "",
+      weightOfLiter: "",
+      literInSquareMeter: "",
+      defaultPricePerLiter: "",
+      defaultPricePerContainer: "",
+      inkConsumption: "",
     },
   ]);
   const changeItems = (index: number, filedName: string, value: any) => {
@@ -70,14 +70,14 @@ const useVarnish = () => {
   const onOpnModalAdded = () => {
     setItems([
       {
-        name: "",
-        weight: "",
-        withGlue: "",
-        directPrinting: "",
-        linkage: "",
-        width: "",
-        height: "",
-        defaultPrice: "",
+        code: "",
+        typeName: "",
+        volumeInLiters: "",
+        weightOfLiter: "",
+        literInSquareMeter: "",
+        defaultPricePerLiter: "",
+        defaultPricePerContainer: "",
+        inkConsumption: "",
       },
     ]);
     setOpenAddApplicationsModal(true);

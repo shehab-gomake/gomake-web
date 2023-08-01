@@ -140,13 +140,7 @@ export default function Varnishs() {
                   {["header", ...allWeightsGrouped]?.map(
                     (row: any, index: number) => {
                       if (row === "header") {
-                        return (
-                          <HeaderTableWidget
-                            setSheetCheckStore={setSheetCheckStore}
-                            sheetCheckStore={sheetCheckStore}
-                            index={index}
-                          />
-                        );
+                        return <HeaderTableWidget />;
                       }
                       return (
                         <div style={{ ...clasess.bodyRow }}>

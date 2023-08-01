@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import { GomakeTextInput } from "@/components";
 
 import { ControlIconsWidget } from "./control-icons-widget";
 import { materialVarnishState } from "../store/varnish";
@@ -70,10 +70,10 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWeightPerLiter")}
               style={clasess.textInputStyle}
-              value={materialVarnishStateValue?.updateState?.weightPerLiter}
+              value={materialVarnishStateValue?.updateState?.weightOfLiter}
               onChange={(e: any) => {
                 materialVarnishStateValue?.onChangeUpdateStateVarnish(
-                  "weightPerLiter",
+                  "weightOfLiter",
                   e.target.value
                 );
               }}
@@ -126,6 +126,22 @@ const DoubleSidedTapeRollMapping = ({ index, item, selectedItem }) => {
               onChange={(e: any) => {
                 materialVarnishStateValue?.onChangeUpdateStateVarnish(
                   "defaultPricePerContainer",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.colors.inkConsumption")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.colors.inkConsumption")}
+              style={clasess.textInputStyle}
+              value={materialVarnishStateValue?.updateState?.inkConsumption}
+              onChange={(e: any) => {
+                materialVarnishStateValue?.onChangeUpdateStateVarnish(
+                  "inkConsumption",
                   e.target.value
                 );
               }}
