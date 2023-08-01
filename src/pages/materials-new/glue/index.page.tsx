@@ -124,7 +124,7 @@ export default function Tubes() {
             <GomakeLoaderWidget />
           ) : (
             <>
-              {allWeightsGrouped.length === 0 ? (
+              {sheetStore?.suppliers[0].label === "Add new" ? (
                 <div style={clasess.noData}>
                   {t("materials.sheetPaper.supplierAddedSheetYet")}
                   <span

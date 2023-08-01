@@ -20,6 +20,7 @@ const useVarnishs = () => {
   const [sheetStore, setSheetStore] = useRecoilState<any>(sheetState);
   const [sheetCheckStore, setSheetCheckStore] =
     useRecoilState(sheetCheckAllState);
+  console.log("sheetStore", sheetStore);
 
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [selectedMaterials, setSelectedMaterials] = useState<any>("");
