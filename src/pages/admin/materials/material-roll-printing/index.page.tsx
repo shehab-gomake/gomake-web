@@ -109,7 +109,7 @@ export default function MaterialRollPrinting() {
   ]);
   return (
     <AdminAuthLayout>
-      <HeaderTitle title={t("materials.printingMaterials.admin.title")} />
+      <HeaderTitle title={t("tabs.printingMaterialsForRolls")} />
       <HeaderFilter />
       <Table
         tableHeaders={headerTable}

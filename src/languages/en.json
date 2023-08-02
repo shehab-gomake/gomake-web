@@ -31,31 +31,31 @@
     "listSales": "List sales",
     "sheetPaper": "Sheets",
     "lamination": "Lamination",
-    "plats": "Plats",
+    "plats": "Plates",
     "envelopes": "Envelopes",
     "tubes": "Tubes",
-    "printingMaterialsForRolls": "Printing materials for rolls",
-    "hardboards": "Hardboards",
+    "printingMaterialsForRolls": "Rolls printing material",
+    "hardboards": "Flatbed",
     "wildPrintingMaterials": "Wild Printing Materials",
-    "profileFrames": "Profile frames",
+    "profileFrames": "Profiles for framing",
     "applications": "Applications",
     "encapsulationRoll": "Roll Encapsulation",
     "additions": "Additions",
-    "canvasFrames": "Canvas frames",
+    "canvasFrames": "Canvas frame",
     "frames": "Frames",
-    "foils": "Foils",
-    "packinDrums": "Pack in drums",
-    "packinUnits": "Pack in units",
+    "foils": "Foil",
+    "packinDrums": "Spiral drum",
+    "packinUnits": "Spiral units",
     "sheetEncapsulation": "Sheet encapsulation",
     "colors": "Colors",
-    "doubleSidedTapeRolls": "Double sided tape rolls",
-    "glues": "Glues",
+    "doubleSidedTapeRolls": "double sided tape roll",
+    "glues": "Glue",
     "magnets": "Magnets",
-    "packings": "Packings",
-    "varnishs": "Varnishs",
+    "packings": "Packing",
+    "varnishs": "Varnish",
     "machines": "Machines",
     "addMachine": "Add machine",
-    "wideFormatMaterial": "Wide Format Material",
+    "wideFormatMaterial": "Wide format Rolls",
     "adminPanel": "Admin Panel",
     "settings": "Settings",
     "actions": "Actions",
@@ -158,7 +158,7 @@
       "enterLinkage": "Enter linkage",
       "typeName": "Type Name",
       "enterTypeName": "Enter type Name",
-      "volumeInLiters": "Volume in liters",
+      "volumeInLiters": "Volume (liters)",
       "enterVolumeInLiters": "Enter volume in liters",
       "weightPerLiter": "Weight per liter",
       "weightOfLiter": "Weight Of Liter",
@@ -185,7 +185,14 @@
       "pricePerContainer": "Price/container",
       "pricePerLiter": "Price/liter",
       "glueSuppliers": "Glue supplier",
-      "pricePerUnit": "Price/unit"
+      "pricePerUnit": "Price/unit",
+      "machine": "Machine",
+      "inkConsumption": "Ink consumption per square meter",
+      "conditions": "Conditions",
+      "pitch": "Pitch",
+      "maxBookThickness": "Max book thickness",
+      "loopsQuantity": "loops quantity",
+      "speralSize": "Speral size"
     },
     "buttons": {
       "cancel": "Cancel",
@@ -199,6 +206,11 @@
       "subTitleDeleteModal": "Are you sure to delete {{name}}"
     },
     "sheetPaper": {
+      "inputs": {
+        "size": "Size (cm)",
+        "thickness": "Thickness (mm)",
+        "stock": "Stock (units)"
+      },
       "admin": {
         "title": "Sheets",
         "addNewSheet": "Add New Sheet",
@@ -298,8 +310,13 @@
       }
     },
     "plat": {
+      "inputs": {
+        "width": "Width (cm)",
+        "height": "Height (cm)",
+        "stock": "Stock (units)"
+      },
       "admin": {
-        "title": "Plats",
+        "title": "Plates",
         "addNewPlat": "Add New Plat",
         "platSizeSection": "Plat Size Section",
         "addPlatSize": "Add new plat size",
@@ -308,7 +325,7 @@
         "deletePlatSize": "Delete Plat Size",
         "subTitleDeleteSizeModal": "Are you sure you want to delete plat size?"
       },
-      "title": "Plats",
+      "title": "Plates",
       "category": "Category",
       "code": "Code",
       "supplier": "Supplier",
@@ -353,6 +370,12 @@
       "code": "Code"
     },
     "tubes": {
+      "inputs": {
+        "diameter": "Diameter (cm)",
+        "lenght": "Lenght (cm)",
+        "weight": "Weight (gm)",
+        "stock": "Stock (units)"
+      },
       "admin": {
         "title": "Tubes",
         "addNewTubes": "Add New Tube",
@@ -375,6 +398,11 @@
       "settings": "Settings"
     },
     "printingMaterials": {
+      "inputs": {
+        "length": "Length (cm)",
+        "weight": "Weight (gm/m^2)",
+        "stock": "Stock (m)"
+      },
       "admin": {
         "title": "Material Roll Printing",
         "addNewMaterialRollPrinting": "Add New Material Roll Printing",
@@ -398,9 +426,15 @@
       "settings": "Settings"
     },
     "hardboards": {
+      "inputs": {
+        "size": "Size (cm*cm)",
+        "thickness": "Thickness (mm)",
+        "stiffnessFactor": "Stiffness factor",
+        "stock": "Stock (units)"
+      },
       "admin": {
-        "title": "Hardboards",
-        "subTitle": "Hardboards",
+        "title": "Flatbed",
+        "subTitle": "Flatbed",
         "addNewHardboard": "Add new hardboard",
         "hardboardSizesSection": "Hardboard sizes section",
         "addNewHardboardSize": "Add new hardboard size",
@@ -418,7 +452,7 @@
         "addHardboardThickness": "Add new hardboard thicknes"
       },
       "code": "Code",
-      "title": "Hardboards",
+      "title": "Flatbed",
       "category": "Category",
       "supplier": "Supplier",
       "height": "height",
@@ -462,7 +496,7 @@
         "deleteProfileFrameSizeTitle": "Delete profile frame size",
         "deleteLProfileFrameSizeSubTitle": "Are you sure you want to delete profile frame size?"
       },
-      "title": "Profile frames",
+      "title": "Profiles for framing",
       "category": "Category",
       "supplier": "Supplier",
       "code": "Code",
@@ -484,19 +518,26 @@
       }
     },
     "wideFormatMaterial": {
+      "inputs": {
+        "size": "Size (cm*m)",
+        "thickness": "Thickness (µm)",
+        "weight": "Weight (m^2)",
+        "stiffnessFactor": "Stiffness factor",
+        "stock": "Stock (m)"
+      },
       "admin": {
-        "title": "Wide Format Material",
-        "addNewWideFormatMaterial": "Add New Wide Format Material",
-        "WideFormatMaterialTypeSection": "Wide Format Material Type Section",
+        "title": "Wide format Rolls",
+        "addNewWideFormatMaterial": "Add New Wide format Rolls",
+        "WideFormatMaterialTypeSection": "Wide format Rolls Type Section",
         "addWideFormatMaterialType": "Add new wide format material type",
         "removeWideFormatMaterialType": "Remove last wide format material type",
         "addWideFormatMaterialSize": "Add new wide format material size",
         "removeWideFormatMaterialSize": "Remove last wide format material size",
-        "WideFormatMaterialSizeSection": "Wide Format Material Size Section",
-        "deleteWideFormatMaterialSize": "Delete Wide Format Material Size",
-        "deleteWideFormatMaterial": "Delete Wide Format Material",
+        "WideFormatMaterialSizeSection": "Wide format Rolls Size Section",
+        "deleteWideFormatMaterialSize": "Delete Wide format Rolls Size",
+        "deleteWideFormatMaterial": "Delete Wide format Rolls",
         "subTitleDeleteSizeModal": "Are you sure you want to delete wide format material size?",
-        "deleteWideFormatMaterialType": "Delete Wide Format Material Type",
+        "deleteWideFormatMaterialType": "Delete Wide format Rolls Type",
         "subTitleDeleteTypeModal": "Are you sure you want to delete wide format material type?"
       }
     },
@@ -600,7 +641,7 @@
       "controls": "Controls"
     },
     "canvasFrames": {
-      "title": "Canvas frames",
+      "title": "Canvas frame",
       "code": "Code",
       "height": "Height",
       "width": "Width",
@@ -609,7 +650,7 @@
       "settings": "Settings",
       "admin": {
         "title": "Canvas Frames",
-        "subTitle": "Canvas frames",
+        "subTitle": "Canvas frame",
         "settings": "Settings",
         "addNewCanvasFrame": "Add new Canvas Frame",
         "canvasFrameSizeSection": "Canvas frame size section",
@@ -663,7 +704,7 @@
         "subTitleDeleteSizeModal": "Are you sure you want to delete foil size?",
         "deleteFoil": "Delete Foil "
       },
-      "title": "Foils",
+      "title": "Foil",
       "code": "Code",
       "categoryName": "Category name",
       "height": "Height",
@@ -692,7 +733,7 @@
         "subTitleDeleteSizeModal": "Are you sure you want to delete packin drum size?",
         "deletePackinDrum": "Delete Packin Drum "
       },
-      "title": "Pack in drums",
+      "title": "Spiral drum",
       "code": "Code",
       "material": "Material",
       "sizeName": "Size name",
@@ -771,8 +812,9 @@
       "supplier": "Supplier",
       "code": "Code",
       "colorName": "Color name",
-      "volumeInLiters": "Volume in liters",
+      "volumeInLiters": "Volume (liters)",
       "literInSquareMeter": "Liter in square meter",
+      "literPerSquareMeter": "Liter (meter^2)",
       "pricePerContainer": "Price per container",
       "stock": "Stock",
       "pricePerLiter": "Price per liter",
@@ -781,11 +823,14 @@
       "selectCurrency": "Select currency",
       "currency": "Currency",
       "default": "Default",
-      "controls": "Controls"
+      "controls": "Controls",
+      "addNewColor": "Add new color",
+      "inkConsumption": "Ink consumption per square meter",
+      "conditions": "Conditions"
     },
     "doubleSidedTapeRolls": {
       "admin": {
-        "title": "Double sided tape roll",
+        "title": "double sided tape roll",
         "settings": "Settings",
         "addNewDoubleSidedTapeRoll": "Add new double sided tape roll",
         "deleteDoubleSidedTapeRoll": "Delete double sided tape roll",
@@ -794,7 +839,7 @@
         "doubleSidedTapeRoll": "Double sided tape roll",
         "deletedoubleSidedTapeRollSubTitle": "Are you sure to delete the double sided tape roll?"
       },
-      "title": "Double sided tape rolls",
+      "title": "double sided tape roll",
       "code": "Code",
       "name": "Name",
       "weightPerSquareMeter": "Weight per square meter",
@@ -810,10 +855,10 @@
       "selectCurrency": "Select currency"
     },
     "glues": {
-      "title": "Glues",
+      "title": "Glue",
       "code": "Code",
-      "typeName": "TypeName",
-      "volumeInLiters": "Volume in liters",
+      "typeName": "Type name",
+      "volumeInLiters": "Volume (liters)",
       "weightPerLiter": "Weight per liter",
       "literInSquareMeter": "Liter in square meter",
       "stock": "Stock",
@@ -824,7 +869,8 @@
       "default": "Default",
       "controls": "Controls",
       "selectSupplier": "Select supplier",
-      "selectCurrency": "Select currency"
+      "selectCurrency": "Select currency",
+      "addNewGlue": "Add new glue"
     },
     "magnets": {
       "admin": {
@@ -862,7 +908,7 @@
         "deletePackingVolume": "Delete packing volume",
         "subTitleDeleteVolumeModal": "Are you sure you want to delete packin volume?"
       },
-      "title": "Packings",
+      "title": "Packing",
       "code": "Code",
       "height": "Height",
       "width": "Width",
@@ -887,7 +933,7 @@
       "title": "Varnish",
       "code": "Code",
       "typeName": "Type name",
-      "volumeInLiters": "Volume in liters",
+      "volumeInLiters": "Volume (liters)",
       "weightPerLiter": "Weight per liter",
       "literInSquareMeter": "Liter in square meter",
       "stock": "Stock",
@@ -1146,7 +1192,9 @@
     "basicPrice": "Basic price",
     "costBySize": "The Cost coefficient according to size Type",
     "costPercentage": "The percentage of cost increase",
-    "cm2": "CM^2"
+    "cm2": "CM^2",
+    "actions": "Actions",
+    "machineActions": "Machine actions"
   },
   "tyingOptions": {
     "cross": "Cross",
@@ -1217,7 +1265,8 @@
     "core": "Core",
     "laminationSettings": "Lamination settings",
     "varnishSettings": "Varnish settings",
-    "bookDimensions": "Book dimensions"
+    "bookDimensions": "Book dimensions",
+    "actions&materials": "Actions & Materials"
   },
   "products": {
     "profits": {
@@ -1345,7 +1394,8 @@
         "makeShape": "Make your own shape",
         "chooseShape": "Choose shape",
         "client": "Client",
-        "quote": "Quote"
+        "quote": "Quote",
+        "type": "Type"
       }
     },
     "productManagement": {

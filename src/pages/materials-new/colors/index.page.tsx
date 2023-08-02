@@ -17,6 +17,7 @@ import { SheetSizesWidget } from "./widgets/sheet-sizes";
 import { SettingsMenuModal } from "./modals/menu";
 import { useColors } from "./use-colors";
 import { useStyle } from "./style";
+import { GomakeLoaderWidget } from "@/widgets";
 
 export default function Colors() {
   const { t } = useTranslation();
@@ -36,6 +37,7 @@ export default function Colors() {
     sheetCheckStore,
     modalTitle,
     selectedSupplier,
+    isLoader,
     getSheetAllWeights,
     setSheetCheckStore,
     setSelectedMaterials,
@@ -119,40 +121,43 @@ export default function Colors() {
       <MaterialsLayout header={t("materials.colors.title")} side={Side()}>
         {renderHeader()}
         <div style={{ paddingLeft: 0 }}>
-          {allWeightsGrouped.length === 0 ? (
-            <div style={clasess.noData}>
-              {t("materials.sheetPaper.supplierAddedSheetYet")}
-              <span style={clasess.noDataSpan} onClick={onClickAddNewSupplier}>
-                {t("materials.sheetPaper.pleaseAddNow")}
-              </span>
-            </div>
+          {isLoader ? (
+            <GomakeLoaderWidget />
           ) : (
             <>
-              {["header", ...allWeightsGrouped]?.map(
-                (row: any, index: number) => {
-                  if (row === "header") {
-                    return (
-                      <HeaderTableWidget
-                        setSheetCheckStore={setSheetCheckStore}
-                        sheetCheckStore={sheetCheckStore}
-                        index={index}
-                      />
-                    );
-                  }
-                  return (
-                    <div style={{ ...clasess.bodyRow }}>
-                      <div style={clasess.sheetSizeContainer}>
-                        <SheetSizesWidget
-                          row={row}
-                          selectedMaterials={selectedMaterials}
-                          selectedSupplier={selectedSupplier}
-                          getSheetAllWeights={getSheetAllWeights}
-                          index2={index}
-                        />
-                      </div>
-                    </div>
-                  );
-                }
+              {sheetStore?.suppliers[0].label === "Add new" ? (
+                <div style={clasess.noData}>
+                  {t("materials.sheetPaper.supplierAddedSheetYet")}
+                  <span
+                    style={clasess.noDataSpan}
+                    onClick={onClickAddNewSupplier}
+                  >
+                    {t("materials.sheetPaper.pleaseAddNow")}
+                  </span>
+                </div>
+              ) : (
+                <>
+                  {["header", ...allWeightsGrouped]?.map(
+                    (row: any, index: number) => {
+                      if (row === "header") {
+                        return <HeaderTableWidget />;
+                      }
+                      return (
+                        <div style={{ ...clasess.bodyRow }}>
+                          <div style={clasess.sheetSizeContainer}>
+                            <SheetSizesWidget
+                              row={row}
+                              selectedMaterials={selectedMaterials}
+                              selectedSupplier={selectedSupplier}
+                              getSheetAllWeights={getSheetAllWeights}
+                              index2={index}
+                            />
+                          </div>
+                        </div>
+                      );
+                    }
+                  )}
+                </>
               )}
             </>
           )}

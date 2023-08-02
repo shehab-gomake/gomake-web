@@ -4,6 +4,8 @@ import { Switch } from "@mui/material";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { SheetCheckBox } from "../checkbox";
+import { GomakeTextInput } from "@/components";
+import { UpdateStockPackings } from "./update-stock-packings";
 
 const SheetSizesWidget = ({
   row,
@@ -18,7 +20,7 @@ const SheetSizesWidget = ({
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
-
+  const [pricePerUnit, setPricePerUnit] = useState(row?.defaultPricePerUnit);
   const updateToActive = useCallback(async () => {
     const res = await callApi("POST", `/v1/packings/size-id-settngs`, {
       categoryName: selectedMaterials?.key,
@@ -79,7 +81,35 @@ const SheetSizesWidget = ({
       updateToInActive();
     }
   };
+  console.log("row", row);
+  const updatePricePerUnit = useCallback(async () => {
+    const res = await callApi("POST", `/v1/packings/size-id-settngs`, {
+      categoryName: selectedMaterials?.key,
+      supplierId: selectedSupplier,
+      actionType: 1,
+      data: [
+        {
+          data: pricePerUnit,
+          volumeId: row?.id,
+        },
+      ],
+    });
 
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedSusuccessfully"),
+        type: "sucess",
+      });
+      getSheetAllWeights(selectedMaterials, selectedSupplier);
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedfailed"),
+        type: "error",
+      });
+    }
+  }, [row, selectedMaterials, selectedSupplier, pricePerUnit]);
   return (
     <div style={index2 % 2 == 0 ? clasess.bodyRow : clasess.secondRow}>
       <div style={clasess.checkboxHeaderContainer}>
@@ -89,19 +119,33 @@ const SheetSizesWidget = ({
           row={row}
         />
       </div>
-      <div style={clasess.thiknessContainer}>{row?.weight}</div>
       <div style={clasess.thiknessContainer}>{row?.width}</div>
-      <div style={clasess.costsContainer}>{row?.height}</div>
       <div style={clasess.costsContainer}>{row?.length}</div>
-      <div style={clasess.directionContainer}>{row?.defaultPricePerUnit}</div>
+      <div style={clasess.costsContainer}>{row?.height}</div>
+      <div style={clasess.thiknessContainer}>{row?.weight}</div>
+      <div style={clasess.costsContainer}>
+        <GomakeTextInput
+          style={clasess.thiknessTextInputStyle}
+          value={pricePerUnit}
+          onChange={(event: any) => setPricePerUnit(event.target.value)}
+          onBlur={updatePricePerUnit}
+        />
+      </div>
+      <div style={clasess.currencyContainer}>{row?.currency}</div>
+
+      <div style={clasess.stokContainer}>
+        <UpdateStockPackings
+          categoryName={selectedMaterials?.key}
+          volumeId={row?.id}
+          stockValue={row?.stock}
+        />
+      </div>
       <div style={clasess.activeContainer}>
         <Switch
           checked={row?.isActive}
           onChange={(e: any) => onChangeActiveState(e.target.checked)}
         />
       </div>
-      <div style={clasess.currencyContainer}>{row?.currency}</div>
-      <div style={clasess.stokContainer}>{row?.stock}</div>
     </div>
   );
 };

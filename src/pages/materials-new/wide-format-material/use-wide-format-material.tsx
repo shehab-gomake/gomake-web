@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { sheetCheckAllState } from "./store/sheet-check-all";
 
 const useWideFormatMaterial = () => {
+  const [isLoader, setIsLoader] = useState(true);
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
@@ -24,7 +25,7 @@ const useWideFormatMaterial = () => {
   const [selectedMaterials, setSelectedMaterials] = useState<any>("");
   const [sheetCategories, setSheetCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
-  const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
+  const [allWeightsGrouped, setAllWeightsGrouped] = useState(null);
   const [actionType, setActionType] = useState(0);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
@@ -194,12 +195,18 @@ const useWideFormatMaterial = () => {
           })),
         };
       });
+      return _data.map((item) => ({
+        label: item.name,
+        value: item.id,
+        isDefault: item.isDefault,
+      }));
     },
     [sheetStore]
   );
 
   const getSheetAllWeights = useCallback(
     async (categoryName: any, supplierId) => {
+      setIsLoader(true);
       await getAndSetAllWideFormatMaterialSizes(callApi, setAllWeightsGrouped, {
         categoryName: categoryName?.key,
         supplierId: supplierId || "",
@@ -282,14 +289,25 @@ const useWideFormatMaterial = () => {
   }, [sheetCategories]);
 
   useEffect(() => {
-    getSheetAllWeights(selectedMaterials, sheetStore.selectedSupplier);
-    getSheetSuppliers(selectedMaterials);
+    const getData = async () => {
+      const suppliers = await getSheetSuppliers(selectedMaterials);
+      const defaultItem = suppliers?.find((item) => item.isDefault);
+      console.log("defaultItem", defaultItem);
+      if (defaultItem) {
+        getSheetAllWeights(selectedMaterials, defaultItem?.value);
+      }
+    };
+    getData();
   }, [selectedMaterials]);
 
   useEffect(() => {
     getSupplier();
   }, [allWeightsGrouped]);
-
+  useEffect(() => {
+    if (allWeightsGrouped) {
+      setIsLoader(false);
+    }
+  }, [allWeightsGrouped]);
   return {
     sheetCategories,
     categoryName,
@@ -306,6 +324,7 @@ const useWideFormatMaterial = () => {
     open,
     anchorEl,
     sheetCheckStore,
+    isLoader,
     setSelectedMaterials,
     getSheetAllWeights,
     onClickAddNewSupplier,

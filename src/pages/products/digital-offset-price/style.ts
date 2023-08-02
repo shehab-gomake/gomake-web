@@ -25,7 +25,6 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
-        height: "100%",
       },
       leftSideContainer: {
         display: "flex",
@@ -33,17 +32,20 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "68%",
-        marginBottom: 31,
       },
       rightSideContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "30%",
+        width: "330px",
         backgroundColor: "white",
-        height: "100%",
         padding: 16,
+        marginTop: -105,
+        boxShadow: "0px 4px 40px 0px rgba(129, 129, 129, 0.12)",
+        borderRadius: 5,
+        height: "85vh",
+        overflow: "scroll",
       },
       tabsContainer: {
         display: "flex",
@@ -68,6 +70,14 @@ const useStyle = () => {
       tabNameActiveStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
         color: secondColor(500),
+      },
+      selectedTabLine: {
+        display: "flex",
+        width: "100%",
+        height: 1,
+        backgroundColor: secondColor(500),
+        borderBottom: `1px solid ${secondColor(500)}`,
+        marginTop: 10,
       },
       sectionsContainer: {
         display: "flex",
@@ -136,13 +146,8 @@ const useStyle = () => {
         borderRadius: 4,
         height: 40,
         backgroundColor: "#FFF",
-        // boxShadow: "0px 4px 15px 0px rgba(0, 0, 0, 0.08)",
-      },
-      renderParameterTypeContainer: {
-        display: "flex",
-        width: "95%",
-        backgroundColor: "#FFF",
-        borderRadius: 4,
+        border: "0px",
+        // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
       dropDownListStyle: {
         width: "100%",
@@ -150,8 +155,15 @@ const useStyle = () => {
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
-        boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+        // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
+      renderParameterTypeContainer: {
+        display: "flex",
+        width: "95%",
+        backgroundColor: "#FFF",
+        borderRadius: 4,
+      },
+
       switchStyle: {
         ".MuiSwitch-switchBase.Mui-checked": {
           color: "green",
@@ -184,7 +196,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "48%",
+        width: "35%",
       },
       labelTextStyle: {
         ...FONT_FAMILY.Lexend(500, 12),
@@ -196,7 +208,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "48%",
+        width: "62%",
       },
       flyerText: {
         color: primaryColor(900),
@@ -261,6 +273,12 @@ const useStyle = () => {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 24),
       },
+      inputPriceStyle: {
+        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(700, 24),
+        height: 28,
+        width: "100px",
+      },
       priceRecoveryContainer: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -315,6 +333,7 @@ const useStyle = () => {
       },
       addOrderBtn: {
         backgroundColor: secondColor(500),
+        height: 40,
       },
       noVatStyle: {
         marginTop: 6,
@@ -326,7 +345,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-end",
         alignItems: "center",
-        marginBottom: 50,
+        // marginBottom: 50,
         marginTop: 30,
         width: "100%",
         gap: 16,

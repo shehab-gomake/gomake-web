@@ -72,7 +72,7 @@ const TubeWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.length")}
+              {t("materials.inputs.length")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterLength")}
@@ -89,7 +89,7 @@ const TubeWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.diameter")}
+              {t("materials.inputs.diameter")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterDiameter")}
@@ -106,7 +106,7 @@ const TubeWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.weight")}
+              {t("materials.inputs.weight")} (gm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWeight")}

@@ -1,19 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  getAndSetAdditionsSuppliers,
-  getAndSetAllAdditions,
-  getAndSetAllAdditionsData,
-  getAndSetAllGlue,
-  getAndSetAllGluesData,
-  getAndSetAllMegantsData,
-  getAndSetAllSizes,
   getAndSetAlldstrCodes,
   getAndSetAlldstrData,
-  getAndSetAllmegantCodes,
-  getAndSetGluesSuppliers,
-  getAndSetMagnetsSuppliers,
-  getAndSetTubesSuppliers,
-  getAndSetTubessCategores,
   getAndSetdstrSuppliers,
 } from "@/services/hooks";
 import { useGomakeAxios, useSnackBar, useSupplier } from "@/hooks";
@@ -23,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { sheetCheckAllState } from "./store/sheet-check-all";
 
 const useTubes = () => {
+  const [isLoader, setIsLoader] = useState(true);
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
@@ -36,7 +25,7 @@ const useTubes = () => {
   const [selectedMaterials, setSelectedMaterials] = useState<any>("");
   const [sheetCategories, setSheetCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
-  const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
+  const [allWeightsGrouped, setAllWeightsGrouped] = useState(null);
 
   const [actionType, setActionType] = useState(0);
   const [selectedItems, setSelectedItems] = useState({});
@@ -183,12 +172,18 @@ const useTubes = () => {
           })),
         };
       });
+      return _data.map((item) => ({
+        label: item.name,
+        value: item.id,
+        isDefault: item.isDefault,
+      }));
     },
     [sheetStore]
   );
 
   const getSheetAllWeights = useCallback(
     async (categoryName: any, supplierId) => {
+      setIsLoader(true);
       await getAndSetAlldstrData(callApi, setAllWeightsGrouped, {
         categoryName: categoryName.code,
         supplierId: supplierId || "",
@@ -268,14 +263,26 @@ const useTubes = () => {
   }, [sheetCategories]);
 
   useEffect(() => {
-    getSheetAllWeights(selectedMaterials, sheetStore.selectedSupplier);
-    getSheetSuppliers(selectedMaterials);
+    const getData = async () => {
+      const suppliers = await getSheetSuppliers(selectedMaterials);
+      const defaultItem = suppliers?.find((item) => item.isDefault);
+      console.log("defaultItem", defaultItem);
+      if (defaultItem) {
+        getSheetAllWeights(selectedMaterials, defaultItem?.value);
+      }
+    };
+    getData();
   }, [selectedMaterials]);
 
   useEffect(() => {
     getSupplier();
   }, [allWeightsGrouped]);
 
+  useEffect(() => {
+    if (allWeightsGrouped) {
+      setIsLoader(false);
+    }
+  }, [allWeightsGrouped]);
   return {
     sheetCategories,
     categoryName,
@@ -292,6 +299,7 @@ const useTubes = () => {
     open,
     anchorEl,
     sheetCheckStore,
+    isLoader,
     setSelectedMaterials,
     getSheetAllWeights,
     onClickAddNewSupplier,

@@ -17,25 +17,26 @@ const HeaderTableWidget = ({ setSheetCheckStore, sheetCheckStore, index }) => {
           checked={sheetCheckStore}
         />
       </div>
-      <div style={clasess.sizeContainer}>{t("materials.inputs.weight")}</div>
-      <div style={clasess.thiknessContainer}>
-        {" "}
-        {t("materials.inputs.price")}
+      <div style={clasess.costsContainer}>
+        {t("materials.tubes.inputs.diameter")}
       </div>
-      <div style={clasess.costsContainer}>{t("materials.inputs.diameter")}</div>
       <div style={clasess.directionContainer}>
-        {" "}
-        {t("materials.inputs.lenght")}
+        {t("materials.tubes.inputs.lenght")}
       </div>
-      <div style={clasess.activeContainer}>{t("products.actions.active")}</div>
+
+      <div style={clasess.thiknessContainer}>{t("materials.inputs.price")}</div>
       <div style={clasess.currencyContainer}>
-        {" "}
         {t("materials.inputs.currency")}
       </div>
-      <div style={clasess.stokContainer}>
-        {" "}
-        {t("materials.sheetPaper.stock")}
+
+      <div style={clasess.sizeContainer}>
+        {t("materials.tubes.inputs.weight")}
       </div>
+
+      <div style={clasess.stokContainer}>
+        {t("materials.tubes.inputs.stock")}
+      </div>
+      <div style={clasess.activeContainer}>{t("products.actions.active")}</div>
     </div>
   );
 };

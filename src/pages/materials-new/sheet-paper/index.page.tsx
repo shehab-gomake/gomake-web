@@ -7,6 +7,7 @@ import { SecondSwitch } from "@/components/switch/second";
 import { GoMakeAutoComplate } from "@/components";
 import { SettingsIcon } from "@/icons/settings";
 import { CustomerAuthLayout } from "@/layouts";
+import { GomakeLoaderWidget } from "@/widgets";
 import { IconButton } from "@mui/material";
 
 import { UpdatePricePerTonModal } from "./modals/update-price-per-ton-modal";
@@ -17,6 +18,7 @@ import { SheetSizesWidget } from "./widgets/sheet-sizes";
 import { SheetCheckBox } from "./widgets/checkbox";
 import { SettingsMenuModal } from "./modals/menu";
 import { useSheetPaper } from "./use-sheet-paper";
+
 import { useStyle } from "./style";
 
 export default function SheetPaper() {
@@ -38,6 +40,7 @@ export default function SheetPaper() {
     sheetCheckStore,
     modalTitle,
     selectedSupplier,
+    isLoader,
     getSheetAllWeights,
     setSheetCheckStore,
     setSelectedMaterials,
@@ -75,7 +78,7 @@ export default function SheetPaper() {
       <div style={clasess.renderHeaderContainer}>
         <div style={clasess.title}>{selectedMaterials?.value}</div>
         <div style={clasess.subRenderHeaderContainer} key={selectedMaterials}>
-          {sheetStore?.suppliers.length > 0 && (
+          {sheetStore?.suppliers?.length > 0 && (
             <GoMakeAutoComplate
               style={clasess.dropDownStyle}
               options={sheetStore?.suppliers}
@@ -120,74 +123,92 @@ export default function SheetPaper() {
 
   return (
     <CustomerAuthLayout>
-      <MaterialsLayout header={t("materials.sheetPaper.title")} side={Side()}>
+      <MaterialsLayout header={t("tabs.sheetPaper")} side={Side()}>
         {renderHeader()}
         <div style={{ paddingLeft: 0 }}>
-          {allWeightsGrouped.length === 0 ? (
-            <div style={clasess.noData}>
-              {t("materials.sheetPaper.supplierAddedSheetYet")}
-              <span style={clasess.noDataSpan} onClick={onClickAddNewSupplier}>
-                {t("materials.sheetPaper.pleaseAddNow")}
-              </span>
-            </div>
+          {isLoader ? (
+            <GomakeLoaderWidget />
           ) : (
             <>
-              {["header", ...allWeightsGrouped]?.map(
-                (row: any, index: number) => {
-                  if (row === "header") {
-                    return (
-                      <HeaderTableWidget
-                        setSheetCheckStore={setSheetCheckStore}
-                        sheetCheckStore={sheetCheckStore}
-                        index={index}
-                      />
-                    );
-                  }
-                  return (
-                    <div
-                      style={{ ...clasess.bodyRow, borderBottom: "1px solid" }}
-                    >
-                      <div style={clasess.sizeWaightsContainer}>
-                        {row?.sheetSizes?.length &&
-                          row?.sheetSizes?.map((size: any, index2: number) => {
-                            return (
-                              <div
-                                style={clasess.checkboxSizeContainer}
-                                key={index2}
-                              >
-                                <SheetCheckBox
-                                  selectedItems={selectedItems}
-                                  handleCheckboxChange={handleCheckboxChange}
-                                  size={size}
-                                  row={row}
-                                />
-                              </div>
-                            );
-                          })}
-                      </div>
+              {sheetStore?.suppliers[0].label === "Add new" ? (
+                <div style={clasess.noData}>
+                  {t("materials.sheetPaper.supplierAddedSheetYet")}
+                  <span
+                    style={clasess.noDataSpan}
+                    onClick={onClickAddNewSupplier}
+                  >
+                    {t("materials.sheetPaper.pleaseAddNow")}
+                  </span>
+                </div>
+              ) : (
+                <>
+                  {["header", ...allWeightsGrouped]?.map(
+                    (row: any, index: number) => {
+                      if (row === "header") {
+                        return (
+                          <HeaderTableWidget
+                            setSheetCheckStore={setSheetCheckStore}
+                            sheetCheckStore={sheetCheckStore}
+                            index={index}
+                          />
+                        );
+                      }
+                      return (
+                        <div
+                          style={{
+                            ...clasess.bodyRow,
+                            borderBottom: "1px solid",
+                          }}
+                        >
+                          <div style={clasess.sizeWaightsContainer}>
+                            {row?.sheetSizes?.length &&
+                              row?.sheetSizes?.map(
+                                (size: any, index2: number) => {
+                                  return (
+                                    <div
+                                      style={clasess.checkboxSizeContainer}
+                                      key={index2}
+                                    >
+                                      <SheetCheckBox
+                                        selectedItems={selectedItems}
+                                        handleCheckboxChange={
+                                          handleCheckboxChange
+                                        }
+                                        size={size}
+                                        row={row}
+                                      />
+                                    </div>
+                                  );
+                                }
+                              )}
+                          </div>
 
-                      <div style={clasess.weightSizeContainer}>
-                        {row.weight}
-                      </div>
-                      <div style={clasess.sheetSizeContainer}>
-                        {row?.sheetSizes?.length &&
-                          row?.sheetSizes?.map((size: any, index2: number) => {
-                            return (
-                              <SheetSizesWidget
-                                key={index2}
-                                index2={index2}
-                                size={size}
-                                row={row}
-                                selectedMaterials={selectedMaterials}
-                                selectedSupplier={selectedSupplier}
-                                getSheetAllWeights={getSheetAllWeights}
-                              />
-                            );
-                          })}
-                      </div>
-                    </div>
-                  );
-                }
+                          <div style={clasess.weightSizeContainer}>
+                            {row.weight}
+                          </div>
+                          <div style={clasess.sheetSizeContainer}>
+                            {row?.sheetSizes?.length &&
+                              row?.sheetSizes?.map(
+                                (size: any, index2: number) => {
+                                  return (
+                                    <SheetSizesWidget
+                                      key={index2}
+                                      index2={index2}
+                                      size={size}
+                                      row={row}
+                                      selectedMaterials={selectedMaterials}
+                                      selectedSupplier={selectedSupplier}
+                                      getSheetAllWeights={getSheetAllWeights}
+                                    />
+                                  );
+                                }
+                              )}
+                          </div>
+                        </div>
+                      );
+                    }
+                  )}
+                </>
               )}
             </>
           )}

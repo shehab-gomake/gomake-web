@@ -17,6 +17,7 @@ import { SheetSizesWidget } from "./widgets/sheet-sizes";
 import { SettingsMenuModal } from "./modals/menu";
 import { usePackinUnits } from "./use-packin-units";
 import { useStyle } from "./style";
+import { GomakeLoaderWidget } from "@/widgets";
 
 export default function PackinUnits() {
   const { t } = useTranslation();
@@ -37,6 +38,7 @@ export default function PackinUnits() {
     sheetCheckStore,
     modalTitle,
     selectedSupplier,
+    isLoader,
     getSheetAllWeights,
     setSheetCheckStore,
     setSelectedMaterials,
@@ -118,45 +120,54 @@ export default function PackinUnits() {
 
   return (
     <CustomerAuthLayout>
-      <MaterialsLayout header={t("materials.packinUnits.title")} side={Side()}>
+      <MaterialsLayout header={t("tabs.packinUnits")} side={Side()}>
         {renderHeader()}
         <div style={{ paddingLeft: 0 }}>
-          {allWeightsGrouped.length === 0 ? (
-            <div style={clasess.noData}>
-              {t("materials.sheetPaper.supplierAddedSheetYet")}
-              <span style={clasess.noDataSpan} onClick={onClickAddNewSupplier}>
-                {t("materials.sheetPaper.pleaseAddNow")}
-              </span>
-            </div>
+          {isLoader ? (
+            <GomakeLoaderWidget />
           ) : (
             <>
-              {["header", ...allWeightsGrouped]?.map(
-                (row: any, index: number) => {
-                  if (row === "header") {
-                    return (
-                      <HeaderTableWidget
-                        setSheetCheckStore={setSheetCheckStore}
-                        sheetCheckStore={sheetCheckStore}
-                        index={index}
-                      />
-                    );
-                  }
-                  return (
-                    <div style={{ ...clasess.bodyRow }}>
-                      <div style={clasess.sheetSizeContainer}>
-                        <SheetSizesWidget
-                          row={row}
-                          selectedMaterials={selectedMaterials}
-                          selectedSupplier={selectedSupplier}
-                          getSheetAllWeights={getSheetAllWeights}
-                          index2={index}
-                          selectedItems={selectedItems}
-                          handleCheckboxChange={handleCheckboxChange}
-                        />
-                      </div>
-                    </div>
-                  );
-                }
+              {sheetStore?.suppliers[0].label === "Add new" ? (
+                <div style={clasess.noData}>
+                  {t("materials.sheetPaper.supplierAddedSheetYet")}
+                  <span
+                    style={clasess.noDataSpan}
+                    onClick={onClickAddNewSupplier}
+                  >
+                    {t("materials.sheetPaper.pleaseAddNow")}
+                  </span>
+                </div>
+              ) : (
+                <>
+                  {["header", ...allWeightsGrouped]?.map(
+                    (row: any, index: number) => {
+                      if (row === "header") {
+                        return (
+                          <HeaderTableWidget
+                            setSheetCheckStore={setSheetCheckStore}
+                            sheetCheckStore={sheetCheckStore}
+                            index={index}
+                          />
+                        );
+                      }
+                      return (
+                        <div style={{ ...clasess.bodyRow }}>
+                          <div style={clasess.sheetSizeContainer}>
+                            <SheetSizesWidget
+                              row={row}
+                              selectedMaterials={selectedMaterials}
+                              selectedSupplier={selectedSupplier}
+                              getSheetAllWeights={getSheetAllWeights}
+                              index2={index}
+                              selectedItems={selectedItems}
+                              handleCheckboxChange={handleCheckboxChange}
+                            />
+                          </div>
+                        </div>
+                      );
+                    }
+                  )}
+                </>
               )}
             </>
           )}

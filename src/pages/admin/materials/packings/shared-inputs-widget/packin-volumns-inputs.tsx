@@ -29,7 +29,9 @@ const PackingVolumnInputs = ({ index }) => {
         />
       </div>
       <div>
-        <div style={clasess.lableTextStyle}>{t("materials.inputs.width")}</div>
+        <div style={clasess.lableTextStyle}>
+          {t("materials.inputs.width")} (cm)
+        </div>
         <GomakeTextInput
           placeholder={t("materials.inputs.enterWidth")}
           style={clasess.textInputStyle}
@@ -44,7 +46,9 @@ const PackingVolumnInputs = ({ index }) => {
         />
       </div>
       <div>
-        <div style={clasess.lableTextStyle}>{t("materials.inputs.height")}</div>
+        <div style={clasess.lableTextStyle}>
+          {t("materials.inputs.height")} (cm)
+        </div>
         <GomakeTextInput
           placeholder={t("materials.inputs.enterHeight")}
           style={clasess.textInputStyle}
@@ -59,7 +63,9 @@ const PackingVolumnInputs = ({ index }) => {
         />
       </div>
       <div>
-        <div style={clasess.lableTextStyle}>{t("materials.inputs.length")}</div>
+        <div style={clasess.lableTextStyle}>
+          {t("materials.inputs.length")} (cm)
+        </div>
         <GomakeTextInput
           placeholder={t("materials.inputs.enterLength")}
           style={clasess.textInputStyle}
@@ -75,7 +81,9 @@ const PackingVolumnInputs = ({ index }) => {
       </div>
 
       <div>
-        <div style={clasess.lableTextStyle}>{t("materials.inputs.weight")}</div>
+        <div style={clasess.lableTextStyle}>
+          {t("materials.inputs.weight")} (gm)
+        </div>
         <GomakeTextInput
           placeholder={t("materials.inputs.enterWeight")}
           style={clasess.textInputStyle}

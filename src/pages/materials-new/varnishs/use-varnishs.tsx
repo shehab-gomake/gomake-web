@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { sheetCheckAllState } from "./store/sheet-check-all";
 
 const useVarnishs = () => {
+  const [isLoader, setIsLoader] = useState(true);
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
@@ -19,12 +20,13 @@ const useVarnishs = () => {
   const [sheetStore, setSheetStore] = useRecoilState<any>(sheetState);
   const [sheetCheckStore, setSheetCheckStore] =
     useRecoilState(sheetCheckAllState);
+  console.log("sheetStore", sheetStore);
 
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [selectedMaterials, setSelectedMaterials] = useState<any>("");
   const [sheetCategories, setSheetCategories] = useState([]);
   const [categoryName, setCategoryName] = useState(undefined);
-  const [allWeightsGrouped, setAllWeightsGrouped] = useState([]);
+  const [allWeightsGrouped, setAllWeightsGrouped] = useState(null);
   const [actionType, setActionType] = useState(0);
   const [selectedItems, setSelectedItems] = useState({});
   const [isUpdatePricePerTon, setIsUpdatePricePerTon] = useState(false);
@@ -158,12 +160,18 @@ const useVarnishs = () => {
           })),
         };
       });
+      return _data.map((item) => ({
+        label: item.name,
+        value: item.id,
+        isDefault: item.isDefault,
+      }));
     },
     [sheetStore]
   );
 
   const getSheetAllWeights = useCallback(
     async (categoryName: any, supplierId) => {
+      setIsLoader(true);
       await getAndSetAllVarnishsData(callApi, setAllWeightsGrouped, {
         categoryName: categoryName.code,
         supplierId: supplierId || "",
@@ -225,7 +233,7 @@ const useVarnishs = () => {
         setIsUpdated(true);
       }
     }
-  }, [sheetStore.suppliers]);
+  }, [sheetStore.suppliers, isUpdated]);
 
   useEffect(() => {
     getCategory();
@@ -239,14 +247,24 @@ const useVarnishs = () => {
   }, [sheetCategories]);
 
   useEffect(() => {
-    getSheetAllWeights(selectedMaterials, sheetStore.selectedSupplier);
-    getSheetSuppliers(selectedMaterials);
+    const getData = async () => {
+      const suppliers = await getSheetSuppliers(selectedMaterials);
+      const defaultItem = suppliers?.find((item) => item.isDefault);
+      if (defaultItem) {
+        getSheetAllWeights(selectedMaterials, defaultItem?.value);
+      }
+    };
+    getData();
   }, [selectedMaterials]);
 
   useEffect(() => {
     getSupplier();
   }, [allWeightsGrouped]);
-
+  useEffect(() => {
+    if (allWeightsGrouped) {
+      setIsLoader(false);
+    }
+  }, [allWeightsGrouped]);
   return {
     sheetCategories,
     categoryName,
@@ -263,6 +281,7 @@ const useVarnishs = () => {
     open,
     anchorEl,
     sheetCheckStore,
+    isLoader,
     setSelectedMaterials,
     getSheetAllWeights,
     onClickAddNewSupplier,

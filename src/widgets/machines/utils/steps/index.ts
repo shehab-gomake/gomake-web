@@ -52,112 +52,163 @@ import {rollAnalogEnhancementMachineSteps} from "@/widgets/machines/utils/steps/
 import {
     rollDigitalEnhancementMachineSteps
 } from "@/widgets/machines/utils/steps/roll-digital-enhancement-machine-steps";
+import {adminActionsMaterialsStep} from "@/widgets/machines/utils/steps/admin-actions-materials-step";
 
 const getSteps = (categoryId: ECategoryId, isAdmin: boolean): IStep[] => {
+    let steps: IStep[];
     switch (categoryId) {
         case ECategoryId.DIGITAL_PRINTING:
-            return printingMachineSteps;
+            steps = printingMachineSteps;
+            break;
         case ECategoryId.OFSSET_PRINTING:
-            return ofssetPrintingSteps;
+            steps = ofssetPrintingSteps;
+            break;
         case ECategoryId.ROLL_DIGITAL_PRINTING:
-            return rollDigitalPrintingSteps;
+            steps = rollDigitalPrintingSteps;
+            break;
         case ECategoryId.FLEXO_PRINTING:
-            return flexoPrintingMachineSteps;
+            steps = flexoPrintingMachineSteps;
+            break;
         case ECategoryId.ROLL_WIDE_PRINTING:
-            return rollWidePrintingMachineSteps;
+            steps = rollWidePrintingMachineSteps;
+            break;
         case ECategoryId.FLATBED_WIDE_PRINTING:
-            return flatbedWidePrintingMachineSteps;
+            steps = flatbedWidePrintingMachineSteps;
+            break;
         case ECategoryId.LAMINATION_MACHINE:
-            return laminationMachineSteps;
+            steps = laminationMachineSteps;
+            break;
         case ECategoryId.PUNCHING_MACHINE:
-            return punchingMachineSteps;
+            steps = punchingMachineSteps;
+            break;
         case ECategoryId.ROUNDING_CORNERS_MACHINE:
-            return roundingCornersMachineSteps;
+            steps = roundingCornersMachineSteps;
+            break;
         case ECategoryId.FOLDING_MACHINE:
-            return foldingMachineSteps(isAdmin);
+            steps = foldingMachineSteps(isAdmin);
+            break;
         case ECategoryId.PASTING_BLOCKS_MACHINE:
-            return pastingBlocksMachineSteps;
+            steps = pastingBlocksMachineSteps;
+            break;
         case ECategoryId.SCORING_MACHINE:
-            return scoringMachineSteps(isAdmin);
+            steps = scoringMachineSteps(isAdmin);
+            break;
         case ECategoryId.PERFORATION_MACHINE:
-            return perforationMachineSteps(isAdmin);
+            steps = perforationMachineSteps(isAdmin);
+            break;
         case ECategoryId.FOLDING_GLUING_MACHINE:
-            return foldingGluingMachineSteps;
+            steps = foldingGluingMachineSteps;
+            break;
         case ECategoryId.DIGITAL_ENHANCEMENT_MACHINE:
-            return digitalEnhancementMachineSteps;
+            steps = digitalEnhancementMachineSteps;
+            break;
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
-            return analogEnhancementMachineSteps;
+            steps = analogEnhancementMachineSteps;
+            break;
         case ECategoryId.ENCAPSULATION_MACHINE:
-            return encapsulationMachineSteps;
+            steps = encapsulationMachineSteps;
+            break;
         case ECategoryId.SIDE_COLORING:
-            return sideColoringMachineSteps;
+            steps = sideColoringMachineSteps;
+            break;
         case ECategoryId.GUILLOTINE:
-            return guillottineMachineSteps;
+            steps = guillottineMachineSteps;
+            break;
         case ECategoryId.FLATBED_CUTTING_MACHINE:
-            return flatbedCuttingMachineSteps;
+            steps = flatbedCuttingMachineSteps;
+            break;
         case ECategoryId.ROLL_FED_CUTTING_PLOTTERS:
-            return rollFedCuttingMachineSteps;
+            steps = rollFedCuttingMachineSteps;
+            break;
         case ECategoryId.STAPLER_MACHINE:
-            return staplerMachineSteps;
+            steps = staplerMachineSteps;
+            break;
         case ECategoryId.MANUAL_PEELING_STICKERS:
-            return manualPeelingStickersMachineSteps;
+            steps = manualPeelingStickersMachineSteps;
+            break;
         case ECategoryId.MANUAL_SEWING_MACHINE:
-            return manualSewingMachineSteps(isAdmin);
+            steps = manualSewingMachineSteps(isAdmin);
+            break;
         case ECategoryId.PIERCING_MACHINE:
-            return piercingMachineSteps;
+            steps = piercingMachineSteps;
+            break;
         case ECategoryId.FRAMING_IN_FIXED_FRAMES:
-            return framingInFixedFramesMachineSteps;
+            steps = framingInFixedFramesMachineSteps;
+            break;
         case ECategoryId.CUSTOM_FRAMING:
-            return customFramingMachineSteps;
+            steps = customFramingMachineSteps;
+            break;
         case ECategoryId.LINKAGE:
-            return linkageMachineSteps;
+            steps = linkageMachineSteps;
+            break;
         case ECategoryId.PVC_BENDING_MACHINE:
-            return pvcBendingMachineSteps;
+            steps = pvcBendingMachineSteps;
+            break;
         case ECategoryId.COLLECTOR:
-            return collectorMachineSteps(isAdmin);
+            steps = collectorMachineSteps(isAdmin);
+            break;
         case ECategoryId.BOOKLET_MACHINE:
-            return bookletMachineSteps(isAdmin);
+            steps = bookletMachineSteps(isAdmin);
+            break;
         case ECategoryId.BOOKS_BINDER_MACHINE:
-            return bookBinderMachineSteps(isAdmin);
+            steps = bookBinderMachineSteps(isAdmin);
+            break;
         case ECategoryId.BOOKS_SEWING_MACHINE:
-            return bookSewingMachineSteps(isAdmin);
+            steps = bookSewingMachineSteps(isAdmin);
+            break;
         case ECategoryId.SPIRAL_CLOSING_MACHINE:
-            return spiralClosingMachineSteps(isAdmin);
+            steps = spiralClosingMachineSteps(isAdmin);
+            break;
         case ECategoryId.SPIRAL_PERFORATION_MACHINE:
-            return spiralPerforationMachineSteps(isAdmin);
+            steps = spiralPerforationMachineSteps(isAdmin);
+            break;
         case ECategoryId.BOOK_CASING_IN_MACHINE:
-            return bookCasingInMachineSteps(isAdmin);
+            steps = bookCasingInMachineSteps(isAdmin);
+            break;
         case ECategoryId.HARD_COVER_MAKING_MACHINE:
-            return hardCoverMakingMachineSteps(isAdmin);
+            steps = hardCoverMakingMachineSteps(isAdmin);
+            break;
         case ECategoryId.GLUING_MACHINE:
-            return gluingMachineSteps(isAdmin);
+            steps = gluingMachineSteps(isAdmin);
+            break;
         case ECategoryId.PRESSING_MACHINE:
-            return pressingMachineSteps(isAdmin);
+            steps = pressingMachineSteps(isAdmin);
+            break;
         case ECategoryId.SHRINK_PACKING_MACHINE:
-            return shrinkPackingMachineSteps;
+            steps = shrinkPackingMachineSteps;
+            break;
         case ECategoryId.PACKAGE_TYING_MACHINE:
-            return packageTyingMachineSteps;
+            steps = packageTyingMachineSteps;
+            break;
         case ECategoryId.CARTOON_PACKAGING_MACHINE:
-            return cartoonPackagingMachineSteps;
+            steps = cartoonPackagingMachineSteps;
+            break;
         case ECategoryId.ROLL_LASER_CUT_MACHINE:
-            return rollLaserCutMachineSteps(isAdmin);
+            steps = rollLaserCutMachineSteps(isAdmin);
+            break;
         case ECategoryId.ROLL_LAMINATION_MACHINE:
-            return rollLaminationMachineSteps(isAdmin);
+            steps = rollLaminationMachineSteps(isAdmin);
+            break;
         case ECategoryId.ROLL_SHEET_MACHINE:
-            return rollSheeterMachineSteps(isAdmin);
+            steps = rollSheeterMachineSteps(isAdmin);
+            break;
         case ECategoryId.ROLL_VARNISH_MACHINE:
-            return rollVarnishMachineSteps(isAdmin);
+            steps = rollVarnishMachineSteps(isAdmin);
+            break;
         case ECategoryId.AUTO_BOOK_CUTTING_MACHINE:
-            return autoBookMachineSteps;
+            steps = autoBookMachineSteps;
+            break;
         case ECategoryId.ROLL_DIE_CUT_MACHINE:
-            return rollDieCutMachineSteps(isAdmin);
+            steps = rollDieCutMachineSteps(isAdmin);
+            break;
         case ECategoryId.ROLL_ANALOG_ENHANCEMENT_MACHINE:
-            return rollAnalogEnhancementMachineSteps(isAdmin);
+            steps = rollAnalogEnhancementMachineSteps(isAdmin);
+            break;
         case ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE:
-            return rollDigitalEnhancementMachineSteps(isAdmin);
-        default:
-            return []
+            steps = rollDigitalEnhancementMachineSteps(isAdmin);
+            break;
     }
+    return isAdmin && steps ? [...steps, ...adminActionsMaterialsStep] : steps ? steps : []
 }
 
 export {getSteps};

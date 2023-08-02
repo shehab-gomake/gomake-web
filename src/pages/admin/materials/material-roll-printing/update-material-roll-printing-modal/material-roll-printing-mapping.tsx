@@ -84,7 +84,7 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.width")}
+              {t("materials.inputs.width")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWidth")}
@@ -104,7 +104,7 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.height")}
+              {t("materials.inputs.height")} (m)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterHeight")}
@@ -124,7 +124,7 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.weightPerSquareMeter")}
+              {t("materials.inputs.weight")} (gm/m^2)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWeightPerSquareMeter")}
@@ -175,7 +175,7 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.stock")}
+              {t("materials.inputs.stock")} (m)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterStock")}
@@ -210,6 +210,25 @@ const MaterialRollPrintingWeightsMapping = ({ index, item, selectedItem }) => {
                 materialMaterialRollPrintingStateValue?.onChangeUpdateStateMaterialRollPrintingSize(
                   item?.id,
                   "defaultPricePerSquareMeter",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.hardboards.inputs.stiffnessFactor")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.hardboards.inputs.stiffnessFactor")}
+              value={
+                materialMaterialRollPrintingStateValue?.updateState[item?.id]
+                  ?.stiffnessFactor
+              }
+              onChange={(e: any) => {
+                materialMaterialRollPrintingStateValue?.onChangeUpdateStateMaterialRollPrintingSize(
+                  item?.id,
+                  "stiffnessFactor",
                   e.target.value
                 );
               }}

@@ -18,6 +18,7 @@ import { SheetCheckBox } from "./widgets/checkbox";
 import { SettingsMenuModal } from "./modals/menu";
 import { useRollEncapsulations } from "./use-roll-encapsulations";
 import { useStyle } from "./style";
+import { GomakeLoaderWidget } from "@/widgets";
 
 export default function RollEncapsulations() {
   const { t } = useTranslation();
@@ -38,6 +39,7 @@ export default function RollEncapsulations() {
     sheetCheckStore,
     modalTitle,
     selectedSupplier,
+    isLoader,
     getSheetAllWeights,
     setSheetCheckStore,
     setSelectedMaterials,
@@ -125,71 +127,85 @@ export default function RollEncapsulations() {
       >
         {renderHeader()}
         <div style={{ paddingLeft: 0 }}>
-          {allWeightsGrouped.length === 0 ? (
-            <div style={clasess.noData}>
-              {t("materials.sheetPaper.supplierAddedSheetYet")}
-              <span style={clasess.noDataSpan} onClick={onClickAddNewSupplier}>
-                {t("materials.sheetPaper.pleaseAddNow")}
-              </span>
-            </div>
+          {isLoader ? (
+            <GomakeLoaderWidget />
           ) : (
             <>
-              {["header", ...allWeightsGrouped]?.map(
-                (row: any, index: number) => {
-                  if (row === "header") {
-                    return (
-                      <HeaderTableWidget
-                        setSheetCheckStore={setSheetCheckStore}
-                        sheetCheckStore={sheetCheckStore}
-                        index={index}
-                      />
-                    );
-                  }
-                  return (
-                    <div
-                      style={{ ...clasess.bodyRow, borderBottom: "1px solid" }}
-                    >
-                      <div style={clasess.sizeWaightsContainer}>
-                        {row?.sizes?.length &&
-                          row?.sizes?.map((size: any, index2: number) => {
-                            return (
-                              <div
-                                style={clasess.checkboxSizeContainer}
-                                key={index2}
-                              >
-                                <SheetCheckBox
-                                  selectedItems={selectedItems}
-                                  handleCheckboxChange={handleCheckboxChange}
-                                  size={size}
-                                  row={row}
-                                />
-                              </div>
-                            );
-                          })}
-                      </div>
+              {sheetStore?.suppliers[0].label === "Add new" ? (
+                <div style={clasess.noData}>
+                  {t("materials.sheetPaper.supplierAddedSheetYet")}
+                  <span
+                    style={clasess.noDataSpan}
+                    onClick={onClickAddNewSupplier}
+                  >
+                    {t("materials.sheetPaper.pleaseAddNow")}
+                  </span>
+                </div>
+              ) : (
+                <>
+                  {["header", ...allWeightsGrouped]?.map(
+                    (row: any, index: number) => {
+                      if (row === "header") {
+                        return (
+                          <HeaderTableWidget
+                            setSheetCheckStore={setSheetCheckStore}
+                            sheetCheckStore={sheetCheckStore}
+                            index={index}
+                          />
+                        );
+                      }
+                      return (
+                        <div
+                          style={{
+                            ...clasess.bodyRow,
+                            borderBottom: "1px solid",
+                          }}
+                        >
+                          <div style={clasess.sizeWaightsContainer}>
+                            {row?.sizes?.length &&
+                              row?.sizes?.map((size: any, index2: number) => {
+                                return (
+                                  <div
+                                    style={clasess.checkboxSizeContainer}
+                                    key={index2}
+                                  >
+                                    <SheetCheckBox
+                                      selectedItems={selectedItems}
+                                      handleCheckboxChange={
+                                        handleCheckboxChange
+                                      }
+                                      size={size}
+                                      row={row}
+                                    />
+                                  </div>
+                                );
+                              })}
+                          </div>
 
-                      <div style={clasess.weightSizeContainer}>
-                        {row.weightPerSquareMeter}
-                      </div>
-                      <div style={clasess.sheetSizeContainer}>
-                        {row?.sizes?.length &&
-                          row?.sizes?.map((size: any, index2: number) => {
-                            return (
-                              <SheetSizesWidget
-                                key={index2}
-                                index2={index2}
-                                size={size}
-                                row={row}
-                                selectedMaterials={selectedMaterials}
-                                selectedSupplier={selectedSupplier}
-                                getSheetAllWeights={getSheetAllWeights}
-                              />
-                            );
-                          })}
-                      </div>
-                    </div>
-                  );
-                }
+                          <div style={clasess.weightSizeContainer}>
+                            {row.weightPerSquareMeter}
+                          </div>
+                          <div style={clasess.sheetSizeContainer}>
+                            {row?.sizes?.length &&
+                              row?.sizes?.map((size: any, index2: number) => {
+                                return (
+                                  <SheetSizesWidget
+                                    key={index2}
+                                    index2={index2}
+                                    size={size}
+                                    row={row}
+                                    selectedMaterials={selectedMaterials}
+                                    selectedSupplier={selectedSupplier}
+                                    getSheetAllWeights={getSheetAllWeights}
+                                  />
+                                );
+                              })}
+                          </div>
+                        </div>
+                      );
+                    }
+                  )}
+                </>
               )}
             </>
           )}

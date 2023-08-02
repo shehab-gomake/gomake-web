@@ -56,22 +56,7 @@ const AddAplicationSizesMapping = ({
                   }}
                 />
               </div>
-              <div>
-                <div style={clasess.lableTextStyle}>Height</div>
-                <GomakeTextInput
-                  placeholder="Height"
-                  style={clasess.textInputStyle}
-                  value={applicationSize[index]["height"]}
-                  onChange={(e: any) => {
-                    materialApplicationsStateValue?.changeItemsApplicationThickness(
-                      applicationThicknessIndex,
-                      index,
-                      "height",
-                      e.target.value
-                    );
-                  }}
-                />
-              </div>
+
               <div>
                 <div style={clasess.lableTextStyle}>Name</div>
                 <GomakeTextInput
@@ -89,7 +74,7 @@ const AddAplicationSizesMapping = ({
                 />
               </div>
               <div>
-                <div style={clasess.lableTextStyle}>Width</div>
+                <div style={clasess.lableTextStyle}>Width (cm)</div>
                 <GomakeTextInput
                   placeholder="Width"
                   style={clasess.textInputStyle}
@@ -99,6 +84,22 @@ const AddAplicationSizesMapping = ({
                       applicationThicknessIndex,
                       index,
                       "width",
+                      e.target.value
+                    );
+                  }}
+                />
+              </div>
+              <div>
+                <div style={clasess.lableTextStyle}>Height (m)</div>
+                <GomakeTextInput
+                  placeholder="Height"
+                  style={clasess.textInputStyle}
+                  value={applicationSize[index]["height"]}
+                  onChange={(e: any) => {
+                    materialApplicationsStateValue?.changeItemsApplicationThickness(
+                      applicationThicknessIndex,
+                      index,
+                      "height",
                       e.target.value
                     );
                   }}

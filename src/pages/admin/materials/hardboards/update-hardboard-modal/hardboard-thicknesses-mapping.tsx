@@ -130,7 +130,7 @@ const HardboardThicknessesMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.thickness")}
+              {t("materials.inputs.thickness")} (mm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterThickness")}
@@ -143,6 +143,26 @@ const HardboardThicknessesMapping = ({
                 materialHardboardsStateValue?.onChangeUpdateStateHardboardWeights(
                   hardboardThicknes?.id,
                   "thickness",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.hardboards.inputs.stiffnessFactor")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.hardboards.inputs.stiffnessFactor")}
+              style={clasess.textInputStyle}
+              value={
+                materialHardboardsStateValue?.updateState[hardboardThicknes?.id]
+                  ?.stiffnessFactor
+              }
+              onChange={(e: any) => {
+                materialHardboardsStateValue?.onChangeUpdateStateHardboardWeights(
+                  hardboardThicknes?.id,
+                  "stiffnessFactor",
                   e.target.value
                 );
               }}

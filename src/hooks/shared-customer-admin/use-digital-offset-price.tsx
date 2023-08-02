@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 const useDigitalOffsetPrice = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const [defaultPrice, setDefaultPrice] = useState<any>(30);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
   const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
   const [template, setTemplate] = useState<any>();
@@ -66,7 +67,7 @@ const useDigitalOffsetPrice = () => {
 
   useEffect(() => {
     getProductById();
-  }, []);
+  }, [router]);
   return {
     t,
     handleTabClick,
@@ -76,6 +77,8 @@ const useDigitalOffsetPrice = () => {
     onOpeneMakeShape,
     onCloseChooseShape,
     onCloseMakeShape,
+    setDefaultPrice,
+    defaultPrice,
     makeShapeOpen,
     chooseShapeOpen,
     activeIndex,

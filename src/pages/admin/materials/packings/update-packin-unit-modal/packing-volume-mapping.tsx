@@ -52,7 +52,7 @@ const PackingVolumeMapping = ({ index, item, selectedItem }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.width")}
+            {t("materials.inputs.width")} (cm)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterWidth")}
@@ -69,7 +69,7 @@ const PackingVolumeMapping = ({ index, item, selectedItem }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.height")}
+            {t("materials.inputs.height")} (cm)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterHeight")}
@@ -86,7 +86,7 @@ const PackingVolumeMapping = ({ index, item, selectedItem }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.length")}
+            {t("materials.inputs.length")} (cm)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterLength")}
@@ -104,7 +104,7 @@ const PackingVolumeMapping = ({ index, item, selectedItem }) => {
 
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.weight")}
+            {t("materials.inputs.weight")} (gm)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterWeight")}

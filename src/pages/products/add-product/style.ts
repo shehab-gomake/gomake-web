@@ -18,6 +18,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
+        backgroundColor: "#FFFFFF",
       },
       headerTabsContainer: {
         display: "flex",
