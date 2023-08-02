@@ -7,7 +7,7 @@ import { SecondSwitch } from "@/components/switch/second";
 import { GoMakeAutoComplate } from "@/components";
 import { SettingsIcon } from "@/icons/settings";
 import { CustomerAuthLayout } from "@/layouts";
-import { CircularProgress, IconButton } from "@mui/material";
+import { IconButton } from "@mui/material";
 
 import { UpdatePricePerTonModal } from "./modals/update-price-per-ton-modal";
 import { UpdateCurrencyModal } from "./modals/update-currency-modal";

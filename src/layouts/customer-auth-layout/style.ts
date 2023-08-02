@@ -26,8 +26,8 @@ const useStyle = ({
       },
       leftContainer: {
         backgroundColor: primaryColor(500),
-        width: navStatus?.isClosed ? 190 : 280,
-        minWidth: navStatus?.isClosed ? 190 : 280,
+        width: navStatus?.isClosed ? 140 : 280,
+        minWidth: navStatus?.isClosed ? 140 : 280,
         height: "100%",
         display: "flex",
         flexDirection: "column" as "column",
