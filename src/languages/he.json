@@ -16,11 +16,18 @@
   },
   "tabs": {
     "home": "Home",
-    "productFloor": "Product Floor"
+    "productFloor": "Product Floor",
+    "properties":"Properties"
   },
   "materials": {
     "lamination":{
       "title": "Lamination"
     }
+  },
+  "properties":{
+    "parameter":"Parameter",
+    "rule":"Rule",
+    "type":"Type",
+    "more":"More"
   }
 }

@@ -62,7 +62,17 @@
     "addProduct": "Add Product",
     "offsetPrice": "Offset price list",
     "parameters": "Parameters",
-    "profits": "profits"
+    "profits": "profits",
+    "properties": "Properties"
+  },
+  "properties": {
+    "parameter": "Parameter",
+    "rule":"Rule",
+    "type":"Type",
+    "more":"More",
+    "addNewRule":"Add new rule",
+    "addRule": "Add rule",
+    "editRules": "Edit rules"
   },
   "modal": {
     "close": "Close",
@@ -500,7 +510,6 @@
         "subTitleDeleteTypeModal": "Are you sure you want to delete wide format material type?"
       }
     },
-
     "applications": {
       "admin": {
         "title": "Applications",
@@ -621,7 +630,6 @@
         "subTitleDeleteSizeModal": "Are you sure you want to delete canvas frame size?"
       }
     },
-
     "frames": {
       "admin": {
         "title": "Frame",
