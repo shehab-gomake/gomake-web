@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
-import { getAndSetAllCustomers, getAndSetCustomers } from "@/services/hooks/get-set-customers";
+import { getAndSetAllCustomers, getAndSetCustomer, getAndSetCustomers } from "@/services/hooks/get-set-customers";
 import { getAndSetEmployees } from "@/services/hooks/get-set-employee";
 import { getAndSetClientTypes } from "@/services/hooks/get-set-clientTypes";
 
@@ -9,6 +9,9 @@ const useCustomers = (clientType, pageNumber) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [allCustomers, setAllCustomers] = useState([]);
+  const [customerForEdit, setCustomerForEdit] = useState(null);
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
+
   const [pagesCount, setPagesCount] = useState(0);
   const pageSize = 10;
 
@@ -80,6 +83,7 @@ const useCustomers = (clientType, pageNumber) => {
   const [clientTypesCategores, setClientTypesCategores] = useState([]);
 
   const getClientTypesCategores = useCallback(async () => {
+    
     const data = await getAndSetClientTypes(
       callApi,
       setClientTypesCategores,
@@ -94,6 +98,7 @@ const useCustomers = (clientType, pageNumber) => {
   useEffect(() => {
     getClientTypesCategores();
   }, []);
+
 
   ///////////////////////// select agent //////////////////////////////
 
@@ -137,7 +142,12 @@ const useCustomers = (clientType, pageNumber) => {
 
 
   /////////////////////////  table data //////////////////////////////
-
+  const getCustomerForEdit = async (id)=> {
+    await getAndSetCustomer(callApi, setCustomerForEdit, {
+      customerId: id ,
+    });
+    setShowCustomerModal(true)
+  }
   const getAllCustomers = useCallback(async () => {
     const data = await getAndSetAllCustomers(callApi, setAllCustomers, {
       clientType,
@@ -147,7 +157,7 @@ const useCustomers = (clientType, pageNumber) => {
       ClientTypeId,
       agentId,
       isActive,
-    });
+    },getCustomerForEdit);
     setPagesCount(Math.ceil(data / pageSize));
     return data;
   }, [pageNumber, name, ClientTypeId, agentId, isActive]);
@@ -174,6 +184,10 @@ const useCustomers = (clientType, pageNumber) => {
     valStatus,
     valClientType,
     pagesCount,
+    customerForEdit,
+    setCustomerForEdit,
+    showCustomerModal,
+    setShowCustomerModal
   };
 };
 export { useCustomers };

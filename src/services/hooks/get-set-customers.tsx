@@ -33,7 +33,8 @@ const getAndSetCustomer = async (
 const getAndSetAllCustomers = async (
   callApi: ICallApi,
   setState?: ISetState,
-  data?: any
+  data?: any,
+  onClick?:any,
 ) => {
   const result: any = await callApi("GET", "/v1/customers/get-all-customers", data);
   const _data = returnResult(result, undefined);
@@ -47,7 +48,7 @@ const getAndSetAllCustomers = async (
       hashTag: (
         <div style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} >
           <a>
-            <ShowCustomerCard item={customer} clientType={data.clientType} />
+            <ShowCustomerCard onClick={onClick} item={customer} clientType={data.clientType} />
           </a>
         </div>
       ),

@@ -6,7 +6,7 @@ import { t } from "i18next";
 import { Col, Row } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState, useCallback } from 'react';
-import Switch from "../switch-component";
+import Switch from '@mui/material/Switch';
 
 const AddressForm = ({ address, onDelete, setAddress }: any) => {
 
@@ -38,7 +38,7 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
         const selectedCityLabel = value?.label;
         const selectedCityId = value?.id;
         setSelectedCity(selectedCityLabel);
-        setAddress({ ...address, city: selectedCityLabel})
+        setAddress({ ...address, city: selectedCityLabel })
         const response1 = await fetch('/streets.json');
         const data1 = await response1.json();
         const selectedCityStreets = data1.filter((street) => street.city_code == selectedCityId);
@@ -53,7 +53,7 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
     const handleStreetChange = useCallback(async (e: any, value: any) => {
         const selectedStreetLabel = value?.label;
         setSelectedStreet(selectedStreetLabel);
-        setAddress({ ...address, street: selectedStreetLabel})
+        setAddress({ ...address, street: selectedStreetLabel })
     }, []);
 
     return (
@@ -106,8 +106,8 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
                 <Col style={{ display: "flex", flexDirection: "column", gap: "5px" }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.remarks")}</span>
                     <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={address.notes} onChange={(e) => setAddress({ ...address, notes: e.target.value })} />
-                    <a style={{ display: "flex", flexDirection: "row", gap: "8px" }} >
-                        <Switch checked={address?.isDefault} />
+                    <a >
+                        <Switch checked={address?.isDefault} size="small" onChange={(e) => setAddress({ ...address, isDefault: e.target.checked })} />
                         <span style={clasess.switchHeaderStyle} >{t("customers.modal.default")}</span>
                     </a>
                 </Col>

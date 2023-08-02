@@ -61,7 +61,6 @@ const useStyle = () => {
       switchHeaderStyle: {
         color: "var(--primary-900, #090A1D)",
         fontStyle: "normal",
-        lineHeight: "normal",
         ...FONT_FAMILY.Lexend(400, 12),
       },
 

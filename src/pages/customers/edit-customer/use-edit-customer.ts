@@ -2,27 +2,29 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-const useAddCustomer = () => {
+const useEditCustomer = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [state, setState] = useState<any>({});
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { setSnackbarStateValue } = useSnackBar();
 
-  const addNewCustomer = useCallback(
+  const editCustomer = useCallback(
     async (data: any, setData: any) => {
       console.log(data);
-      const res = await callApi("POST", `/v1/customers/add-customer`, data);
+      const res = await callApi("PUT", `/v1/customers/update-customer`, {
+        customer: data , 
+      });
       if (res?.success) {
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedSusuccessfully"),
+          message: t("modal.updatedSusuccessfully"),
           type: "sucess",
         });
       } else {
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedfailed"),
+          message: t("modal.Updated failed"),
           type: "error",
         });
       }
@@ -43,8 +45,8 @@ const useAddCustomer = () => {
     openDeleteModal,
     onCloseDeleteModal,
     onOpenDeleteModal,
-    addNewCustomer,
+    editCustomer,
   };
 };
 
-export { useAddCustomer };
+export { useEditCustomer };
