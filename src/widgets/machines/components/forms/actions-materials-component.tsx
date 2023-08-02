@@ -8,6 +8,8 @@ import {Grid} from "@mui/material";
 import Button from "@mui/material/Button";
 import {useTranslation} from "react-i18next";
 import {CheckBoxList} from "@/widgets/machines/components/list/check-box-list";
+import {useRecoilValue} from "recoil";
+import {machineState as STATE} from "@/widgets/machines/state/machine-state";
 
 
 const ActionsMaterialsComponent = ({
@@ -21,10 +23,11 @@ const ActionsMaterialsComponent = ({
                                        onClickUpdate
                                    }: IStepFormProps) => {
     const {classes} = useStyle();
-    const {machineCuttingOptionsAttributes, isValidStep, changeMachineAttributes} = useMachineAttributes();
+    const machineState = useRecoilValue(STATE);
+    const {changeMachineAttributes} = useMachineAttributes();
     const {callApi} = useGomakeAxios();
     const [actions, setActions] = useState([]);
-    const [relatedActions, setRelatedActions] = useState([]);
+    const [machineActions, setMachineActions] = useState([]);
     const [materials, setMaterials] = useState([]);
     const [machineMaterials, setMachineMaterials] = useState([]);
 
@@ -33,62 +36,57 @@ const ActionsMaterialsComponent = ({
         callApi('GET', '/v1/printhouse-config/actions/get-all-actions').then((res) => {
             if (res?.success) {
                 if (res?.data?.data?.data) {
-                    const apiActions = res?.data?.data?.data.map(action => ({...action, checked: false}));
-                    setActions(apiActions);
+                    const data = res?.data?.data?.data;
+                    const apiActions = data.map(action => ({...action, checked: false}));
+                    if (machineState?.attributes?.actions) {
+                        setActions(apiActions.filter(action => !machineState?.attributes?.actions.includes(action.id)));
+                        setMachineActions(apiActions.filter(action => machineState?.attributes?.actions.includes(action.id)));
+                    } else {
+                        setActions(apiActions);
+                    }
                 }
             }
         });
         callApi('GET', '/v1/administrator/get-all-materials').then((res) => {
             if (res?.success) {
                 if (res?.data?.data?.data) {
-                    const apiMaterials = res?.data?.data?.data.map(material => ({id: material, name: material, checked: false}));
+                    const apiMaterials = res?.data?.data?.data.map(material => ({
+                        id: material,
+                        name: material,
+                        checked: false
+                    }));
+                    if (machineState?.attributes?.materials) {
+                        setMaterials(apiMaterials.filter(material => !machineState?.attributes?.materials.includes(material.id)));
+                        setMachineMaterials(apiMaterials.filter(material => machineState?.attributes?.materials.includes(material.id)));
+                    } else {
                     setMaterials(apiMaterials);
+                    }
                 }
             }
         });
     }, []);
     useEffect(() => {
-        changeMachineAttributes('actions', relatedActions.map(action => action.id));
-    }, [relatedActions])
+        changeMachineAttributes('actions', machineActions.map(action => action.id));
+    }, [machineActions])
+    useEffect(() => {
+        changeMachineAttributes('materials', machineMaterials.map(material => material.id));
+    }, [machineMaterials])
     const onClickBack = () => {
         navigateBack();
     }
     const onClickNext = () => {
-        const validStep = isValidStep(machineCuttingOptionsAttributes());
-        if (validStep) {
-            navigateNext();
-        }
+        onClickNext()
     }
 
     const handleUpdate = () => {
-        const validStep = isValidStep(machineCuttingOptionsAttributes());
-        if (validStep) {
-            onClickUpdate();
-        }
+        onClickUpdate()
     };
     const handleAddMachine = () => {
-        const validStep = isValidStep(machineCuttingOptionsAttributes());
-        if (validStep) {
-            onClickAdd();
-        }
+        onClickAdd();
     };
 
-    const handleCheckActions = (id: string) =>  {
-       const updatedActions = actions.map(action => {
-           if (action.id === id) {
-               return {
-                   ...action,
-                   checked: !action.checked
-               }
-           } else {
-               return action;
-           }
-       })
-        setActions(updatedActions);
-    };
-
-    const handleCheckRelatedActions = (id: string) =>  {
-        const updatedRelatedActions = relatedActions.map(action => {
+    const handleCheckAction = (id: string) => {
+        const updatedActions = actions.map(action => {
             if (action.id === id) {
                 return {
                     ...action,
@@ -98,10 +96,24 @@ const ActionsMaterialsComponent = ({
                 return action;
             }
         })
-        setRelatedActions(updatedRelatedActions);
+        setActions(updatedActions);
     };
 
-    const handleCheckMaterials = (id: string) =>  {
+    const handleCheckMachineAction = (id: string) => {
+        const updatedMachineActions = machineActions.map(action => {
+            if (action.id === id) {
+                return {
+                    ...action,
+                    checked: !action.checked
+                }
+            } else {
+                return action;
+            }
+        })
+        setMachineActions(updatedMachineActions);
+    };
+
+    const handleCheckMaterial = (id: string) => {
         const updatedMaterials = materials.map(material => {
             if (material.id === id) {
                 return {
@@ -115,7 +127,7 @@ const ActionsMaterialsComponent = ({
         setMaterials(updatedMaterials);
     };
 
-    const handleCheckMachineMaterials = (id: string) =>  {
+    const handleCheckMachineMaterial = (id: string) => {
         const updatedMachineMaterials = machineMaterials.map(material => {
             if (material.id === id) {
                 return {
@@ -130,13 +142,13 @@ const ActionsMaterialsComponent = ({
     };
 
     const moveCheckedActionsToRelatedActions = () => {
-        setRelatedActions(relatedActions.concat(actions.filter(a => a.checked)));
+        setMachineActions(machineActions.concat(actions.filter(a => a.checked)));
         setActions(actions.filter(a => !a.checked));
     }
 
     const moveCheckedRelatedActionsTActions = () => {
-        setActions(actions.concat(relatedActions.filter(a => a.checked)));
-        setRelatedActions(relatedActions.filter(a => !a.checked));
+        setActions(actions.concat(machineActions.filter(a => a.checked)));
+        setMachineActions(machineActions.filter(a => !a.checked));
     }
     const moveCheckedMaterialsToMachineMaterials = () => {
         setMachineMaterials(machineMaterials.concat(materials.filter(m => m.checked)));
@@ -154,7 +166,7 @@ const ActionsMaterialsComponent = ({
                 <Grid container spacing={2} justifyContent="center" alignItems="center">
                     <Grid item>
                         <h3>{t('machineAttributes.actions')}</h3>
-                        {CheckBoxList(actions, handleCheckActions)}
+                        {CheckBoxList(actions, handleCheckAction)}
                     </Grid>
                     <Grid item>
                         <Grid container direction="column" alignItems="center">
@@ -180,11 +192,11 @@ const ActionsMaterialsComponent = ({
                     </Grid>
                     <Grid item>
                         <h3>{t('machineAttributes.machineActions')}</h3>
-                        {CheckBoxList(relatedActions, handleCheckRelatedActions)}
+                        {CheckBoxList(machineActions, handleCheckMachineAction)}
                     </Grid>
                     <Grid item>
-                        <h3>{t('Materials')}</h3>
-                        {CheckBoxList(materials, handleCheckMaterials)}
+                        <h3>{t('machineAttributes.materialsList')}</h3>
+                        {CheckBoxList(materials, handleCheckMaterial)}
                     </Grid>
                     <Grid item>
                         <Grid container direction="column" alignItems="center">
@@ -209,8 +221,8 @@ const ActionsMaterialsComponent = ({
                         </Grid>
                     </Grid>
                     <Grid item>
-                        <h3>{t('machineAttributes.machineActions')}</h3>
-                        {CheckBoxList(machineMaterials, handleCheckMachineMaterials)}
+                        <h3>{t('machineAttributes.machineMaterialsList')}</h3>
+                        {CheckBoxList(machineMaterials, handleCheckMachineMaterial)}
                     </Grid>
                 </Grid>
             </div>
