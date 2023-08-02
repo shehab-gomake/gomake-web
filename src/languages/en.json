@@ -1394,7 +1394,8 @@
         "makeShape": "Make your own shape",
         "chooseShape": "Choose shape",
         "client": "Client",
-        "quote": "Quote"
+        "quote": "Quote",
+        "type": "Type"
       }
     },
     "productManagement": {
