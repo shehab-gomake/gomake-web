@@ -50,9 +50,9 @@ const ActionsMaterialsComponent = ({
         callApi('GET', '/v1/administrator/get-all-materials').then((res) => {
             if (res?.success) {
                 if (res?.data?.data?.data) {
-                    const apiMaterials = res?.data?.data?.data.map(material => ({
-                        id: material,
-                        name: material,
+                    const apiMaterials = Object.entries(res?.data?.data?.data).map(([key, value]) => ({
+                        id: key,
+                        name: value,
                         checked: false
                     }));
                     if (machineState?.attributes?.materials) {
