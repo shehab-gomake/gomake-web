@@ -63,7 +63,7 @@ const LaminationSizeMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.thickness")}
+              {t("materials.inputs.thickness")} (µm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterThickness")}
@@ -106,7 +106,7 @@ const LaminationSizeMapping = ({
               {t("materials.inputs.coldOrHot")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.lamination.admin.enterColdOrHot")}
+              placeholder={t("materials.inputs.coldOrHot")}
               style={clasess.textInputStyle}
               value={
                 materialLaminationStateValue?.updateState[sheetSize?.id]

@@ -120,14 +120,14 @@ export default function PackinUnits() {
 
   return (
     <CustomerAuthLayout>
-      <MaterialsLayout header={t("materials.packinUnits.title")} side={Side()}>
+      <MaterialsLayout header={t("tabs.packinUnits")} side={Side()}>
         {renderHeader()}
         <div style={{ paddingLeft: 0 }}>
           {isLoader ? (
             <GomakeLoaderWidget />
           ) : (
             <>
-              {allWeightsGrouped.length === 0 ? (
+              {sheetStore?.suppliers[0].label === "Add new" ? (
                 <div style={clasess.noData}>
                   {t("materials.sheetPaper.supplierAddedSheetYet")}
                   <span

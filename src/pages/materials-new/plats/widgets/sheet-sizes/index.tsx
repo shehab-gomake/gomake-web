@@ -127,18 +127,19 @@ const SheetSizesWidget = ({
           onBlur={updatePrice}
         />
       </div>
-      <div style={clasess.activeContainer}>
-        <Switch
-          checked={row?.isActive}
-          onChange={(e: any) => onChangeActiveState(e.target.checked)}
-        />
-      </div>
       <div style={clasess.currencyContainer}>{row?.currency}</div>
+
       <div style={clasess.stokContainer}>
         <UpdateStockBrace
           categoryName={selectedMaterials?.key}
           sizeId={row?.sizeId}
           stockValue={row?.stock}
+        />
+      </div>
+      <div style={clasess.activeContainer}>
+        <Switch
+          checked={row?.isActive}
+          onChange={(e: any) => onChangeActiveState(e.target.checked)}
         />
       </div>
     </div>

@@ -49,7 +49,9 @@ const PackinDrumSizeInputs = ({ index }) => {
           />
         </div>
         <div>
-          <div style={clasess.lableTextStyle}>{t("materials.inputs.size")}</div>
+          <div style={clasess.lableTextStyle}>
+            {t("materials.inputs.speralSize")} (inch)
+          </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterSize")}
             style={clasess.textInputStyle}
@@ -65,10 +67,10 @@ const PackinDrumSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.sizeName")}
+            {t("materials.inputs.pitch")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.inputs.enterSizeName")}
+            placeholder={t("materials.inputs.pitch")}
             style={clasess.textInputStyle}
             value={materialPackinDrumStateValue?.items[index]["sizeName"]}
             onChange={(e: any) => {
@@ -82,10 +84,10 @@ const PackinDrumSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.drumRingNumber")}
+            {t("materials.inputs.loopsQuantity")}
           </div>
           <GomakeTextInput
-            placeholder={t("materials.inputs.enterDrumRingNumber")}
+            placeholder={t("materials.inputs.loopsQuantity")}
             style={clasess.textInputStyle}
             value={materialPackinDrumStateValue?.items[index]["drumRingNumber"]}
             onChange={(e: any) => {
@@ -99,7 +101,7 @@ const PackinDrumSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.weight")}
+            {t("materials.inputs.weight")} (kg)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterWeight")}
@@ -128,6 +130,25 @@ const PackinDrumSizeInputs = ({ index }) => {
               materialPackinDrumStateValue?.changeItems(
                 index,
                 "defaultPricePerDrum",
+                e.target.value
+              );
+            }}
+          />
+        </div>
+        <div>
+          <div style={clasess.lableTextStyle}>
+            {t("materials.inputs.maxBookThickness")} (cm)
+          </div>
+          <GomakeTextInput
+            placeholder={t("materials.inputs.maxBookThickness")}
+            style={clasess.textInputStyle}
+            value={
+              materialPackinDrumStateValue?.items[index]["maxBookThickness"]
+            }
+            onChange={(e: any) => {
+              materialPackinDrumStateValue?.changeItems(
+                index,
+                "maxBookThickness",
                 e.target.value
               );
             }}

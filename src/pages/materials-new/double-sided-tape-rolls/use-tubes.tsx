@@ -172,6 +172,11 @@ const useTubes = () => {
           })),
         };
       });
+      return _data.map((item) => ({
+        label: item.name,
+        value: item.id,
+        isDefault: item.isDefault,
+      }));
     },
     [sheetStore]
   );
@@ -258,8 +263,15 @@ const useTubes = () => {
   }, [sheetCategories]);
 
   useEffect(() => {
-    getSheetAllWeights(selectedMaterials, sheetStore.selectedSupplier);
-    getSheetSuppliers(selectedMaterials);
+    const getData = async () => {
+      const suppliers = await getSheetSuppliers(selectedMaterials);
+      const defaultItem = suppliers?.find((item) => item.isDefault);
+      console.log("defaultItem", defaultItem);
+      if (defaultItem) {
+        getSheetAllWeights(selectedMaterials, defaultItem?.value);
+      }
+    };
+    getData();
   }, [selectedMaterials]);
 
   useEffect(() => {

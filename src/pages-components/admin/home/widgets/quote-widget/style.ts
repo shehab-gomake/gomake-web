@@ -1,9 +1,8 @@
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-  const { primaryColor, secondColor } = useGomakeTheme();
+  const { secondColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       mainContainer: {
@@ -34,10 +33,8 @@ const useStyle = () => {
         border: `1px solid ${secondColor(300)}`,
         borderRadius: "4px",
         height: 40,
-        ...FONT_FAMILY.Lexend(300, 14),
         display: "flex",
         alignItems: "center" as "center",
-        color: "#B9B9D9",
       },
       selectTypeContainer: {
         width: "100%",

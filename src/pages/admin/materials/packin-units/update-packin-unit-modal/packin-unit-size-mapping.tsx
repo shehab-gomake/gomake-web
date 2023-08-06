@@ -88,7 +88,7 @@ const PackinUnitSizeMapping = ({ index, item, selectedItem }) => {
             </div>
             <div>
               <div style={clasess.lableTextStyle}>
-                {t("materials.inputs.size")}
+                {t("materials.inputs.size")} (inch)
               </div>
               <GomakeTextInput
                 placeholder={t("materials.inputs.enterSize")}
@@ -107,10 +107,10 @@ const PackinUnitSizeMapping = ({ index, item, selectedItem }) => {
             </div>
             <div>
               <div style={clasess.lableTextStyle}>
-                {t("materials.inputs.sizeName")}
+                {t("materials.inputs.pitch")}
               </div>
               <GomakeTextInput
-                placeholder={t("materials.inputs.enterSizeName")}
+                placeholder={t("materials.inputs.pitch")}
                 style={clasess.textInputStyle}
                 value={
                   materialPackinUnitsStateValue?.updateState[item?.id]?.sizeName
@@ -126,7 +126,7 @@ const PackinUnitSizeMapping = ({ index, item, selectedItem }) => {
             </div>
             <div>
               <div style={clasess.lableTextStyle}>
-                {t("materials.inputs.width")}
+                {t("materials.inputs.width")} (cm)
               </div>
               <GomakeTextInput
                 placeholder={t("materials.inputs.enterwidth")}
@@ -145,7 +145,7 @@ const PackinUnitSizeMapping = ({ index, item, selectedItem }) => {
             </div>
             <div>
               <div style={clasess.lableTextStyle}>
-                {t("materials.inputs.weight")}
+                {t("materials.inputs.weight")} (kg)
               </div>
               <GomakeTextInput
                 placeholder={t("materials.inputs.enterWeight")}
@@ -177,6 +177,26 @@ const PackinUnitSizeMapping = ({ index, item, selectedItem }) => {
                   materialPackinUnitsStateValue?.onChangeUpdateStatePackinUnitSize(
                     item?.id,
                     "defaultPricePerUnit",
+                    e.target.value
+                  );
+                }}
+              />
+            </div>
+            <div>
+              <div style={clasess.lableTextStyle}>
+                {t("materials.inputs.maxBookThickness")} (cm)
+              </div>
+              <GomakeTextInput
+                placeholder={t("materials.inputs.maxBookThickness")}
+                style={clasess.textInputStyle}
+                value={
+                  materialPackinUnitsStateValue?.updateState[item?.id]
+                    ?.maxBookThickness
+                }
+                onChange={(e: any) => {
+                  materialPackinUnitsStateValue?.onChangeUpdateStatePackinUnitSize(
+                    item?.id,
+                    "maxBookThickness",
                     e.target.value
                   );
                 }}

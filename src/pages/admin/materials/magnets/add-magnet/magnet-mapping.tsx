@@ -36,7 +36,7 @@ const MagnetMapping = ({ index }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.weight")}
+              {t("materials.inputs.weight")} (gm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWeight")}
@@ -131,7 +131,7 @@ const MagnetMapping = ({ index }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.width")}
+              {t("materials.inputs.width")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWidth")}
@@ -148,7 +148,7 @@ const MagnetMapping = ({ index }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.height")}
+              {t("materials.inputs.height")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterHeight")}
@@ -175,6 +175,23 @@ const MagnetMapping = ({ index }) => {
                 materialMagnetStateValue?.changeItems(
                   index,
                   "defaultPrice",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.inputs.thickness")} (mm)
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.inputs.enterThickness")}
+              style={clasess.textInputStyle}
+              value={materialMagnetStateValue?.items[index]["thickness"]}
+              onChange={(e: any) => {
+                materialMagnetStateValue?.changeItems(
+                  index,
+                  "thickness",
                   e.target.value
                 );
               }}

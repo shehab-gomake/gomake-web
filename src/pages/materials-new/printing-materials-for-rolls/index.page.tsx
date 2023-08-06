@@ -122,7 +122,7 @@ export default function PrintingMaterialsForRolls() {
   return (
     <CustomerAuthLayout>
       <MaterialsLayout
-        header={t("materials.printingMaterials.title")}
+        header={t("tabs.printingMaterialsForRolls")}
         side={Side()}
       >
         {renderHeader()}
@@ -131,7 +131,7 @@ export default function PrintingMaterialsForRolls() {
             <GomakeLoaderWidget />
           ) : (
             <>
-              {allWeightsGrouped.length === 0 ? (
+              {sheetStore?.suppliers[0].label === "Add new" ? (
                 <div style={clasess.noData}>
                   {t("materials.sheetPaper.supplierAddedSheetYet")}
                   <span

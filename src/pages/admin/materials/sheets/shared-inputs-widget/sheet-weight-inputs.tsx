@@ -48,7 +48,7 @@ const SheetWeightsInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.thickness")}
+            {t("materials.inputs.thickness")} (mm)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterThickness")}

@@ -98,8 +98,6 @@ const SheetSizesWidget = ({
   }, [row, selectedMaterials, selectedSupplier, price]);
   return (
     <div style={index2 % 2 == 0 ? clasess.bodyRow : clasess.secondRow}>
-      <div style={clasess.costsContainer}>{row?.weight}</div>
-      <div style={clasess.costsContainer}>{row?.adaptationField}</div>
       <div style={clasess.costsContainer}>
         <GomakeTextInput
           style={clasess.thiknessTextInputStyle}
@@ -109,16 +107,18 @@ const SheetSizesWidget = ({
         />
       </div>
       <div style={clasess.currencyContainer}>{row?.currency}</div>
-      <div style={clasess.activeContainer}>
-        <Switch
-          checked={row?.isActive}
-          onChange={(e: any) => onChangeActiveState(e.target.checked)}
-        />
-      </div>
+      <div style={clasess.costsContainer}>{row?.weight}</div>
+      <div style={clasess.costsContainer}>{row?.adaptationField}</div>
       <div style={clasess.stokContainer}>
         <UpdateStockAdditions
           stockValue={row?.stock}
           code={selectedMaterials?.code}
+        />
+      </div>
+      <div style={clasess.activeContainer}>
+        <Switch
+          checked={row?.isActive}
+          onChange={(e: any) => onChangeActiveState(e.target.checked)}
         />
       </div>
     </div>

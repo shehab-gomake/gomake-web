@@ -118,10 +118,10 @@ const SheetSizesWidget = ({
           row={row}
         />
       </div>
+
       <div style={clasess.thiknessContainer}>{row?.material}</div>
-      <div style={clasess.costsContainer}>{row?.size}</div>
-      <div style={clasess.costsContainer}>{row?.weight}</div>
-      <div style={clasess.costsContainer}>{row?.width}</div>
+      <div style={clasess.thiknessContainer}>{row?.sizeName}</div>
+      <div style={clasess.maxBookThickness}>{row?.maxBookThickness}</div>
       <div style={clasess.directionContainer}>
         <GomakeTextInput
           style={clasess.thiknessTextInputStyle}
@@ -130,19 +130,23 @@ const SheetSizesWidget = ({
           onBlur={updatePricePerUnit}
         />
       </div>
-      <div style={clasess.activeContainer}>
-        <Switch
-          checked={row?.isActive}
-          onChange={(e: any) => onChangeActiveState(e.target.checked)}
-        />
-      </div>
       <div style={clasess.currencyContainer}>{row?.currency}</div>
       <div style={clasess.stokContainer}>
-        {" "}
         <UpdateStockPackinUnits
           categoryName={selectedMaterials?.key}
           sizeId={row?.sizeId}
           stockValue={row?.stock}
+        />
+      </div>
+
+      <div style={clasess.costsContainer}>{row?.size}</div>
+      <div style={clasess.costsContainer}>{row?.weight}</div>
+      <div style={clasess.costsContainer}>{row?.width}</div>
+
+      <div style={clasess.activeContainer}>
+        <Switch
+          checked={row?.isActive}
+          onChange={(e: any) => onChangeActiveState(e.target.checked)}
         />
       </div>
     </div>

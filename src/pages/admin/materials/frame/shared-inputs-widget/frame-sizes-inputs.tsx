@@ -63,7 +63,7 @@ const FrameSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.width")}
+            {t("materials.inputs.width")} (cm)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterWidth")}
@@ -80,7 +80,7 @@ const FrameSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.height")}
+            {t("materials.inputs.height")} (cm)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterHeight")}
@@ -97,7 +97,7 @@ const FrameSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.thickness")}
+            {t("materials.inputs.thickness")} (mm)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterthickness")}
@@ -114,7 +114,7 @@ const FrameSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.weight")}
+            {t("materials.inputs.weight")} (gm)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterWeight")}
@@ -131,7 +131,7 @@ const FrameSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.stock")}
+            {t("materials.inputs.stock")} (units)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterStock")}

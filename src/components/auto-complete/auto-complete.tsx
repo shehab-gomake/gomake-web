@@ -17,6 +17,7 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
   alignItems: "center",
   color: props?.error ? "red" : "#B9B9D9",
   border: props?.error ? "1px solid red" : "1px solid #9E9E9E",
+  boxShadow: "0px 1px 60px rgba(0, 0, 0, 0.08)",
   "& .MuiOutlinedInput-root": {
     color: props?.error ? "red" : "",
     height: props?.style?.height || 40,

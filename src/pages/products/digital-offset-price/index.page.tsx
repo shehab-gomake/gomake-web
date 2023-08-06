@@ -15,6 +15,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Checkbox,
+  Slider,
 } from "@mui/material";
 import { CheckboxCheckedIcon, EditIcon } from "@/icons";
 import { useState } from "react";
@@ -25,7 +26,6 @@ import {
 import {
   CheckboxIcon,
   DoneIcon,
-  Progress,
 } from "@/widgets/shared-admin-customers/digital-offset-price/icons";
 import { useDigitalOffsetPrice } from "@/hooks";
 import { useMaterials } from "@/hooks/use-materials";
@@ -46,6 +46,8 @@ export default function DigitalOffsetPrice() {
     template,
     activeTab,
     tabs,
+    defaultPrice,
+    setDefaultPrice,
   } = useDigitalOffsetPrice();
   const [expanded, setExpanded] = useState<string | false>("panel_0");
   const { allMaterials } = useMaterials();
@@ -120,174 +122,195 @@ export default function DigitalOffsetPrice() {
           />
           <div style={clasess.mainRowContainer}>
             <div style={clasess.leftSideContainer}>
-              <div style={clasess.tabsContainer}>
-                {template?.sections?.map((item, index) => {
-                  return (
-                    <div>
-                      <div
-                        style={clasess.tabContainer}
-                        key={index}
-                        onClick={() => handleTabClick(index)}
-                      >
-                        <div style={{ height: 22, minWidth: 30 }}>
-                          {index === activeIndex ? (
-                            <img
-                              src={item.icon}
-                              style={{
-                                width: 30,
-                                height: 24,
-                              }}
-                            />
-                          ) : index >= activeIndex ? (
-                            <img
-                              src={item.icon}
-                              style={{
-                                width: 30,
-                                height: 24,
-                              }}
-                            />
-                          ) : (
-                            <DoneIcon />
-                          )}
-                        </div>
+              <div style={{ height: "66vh", overflow: "scroll" }}>
+                <div style={clasess.tabsContainer}>
+                  {template?.sections?.map((item, index) => {
+                    return (
+                      <div>
                         <div
-                          style={
-                            index === activeIndex
-                              ? clasess.tabNameActiveStyle
-                              : clasess.tabNameStyle
-                          }
+                          style={clasess.tabContainer}
+                          key={index}
+                          onClick={() => handleTabClick(index)}
                         >
-                          {item.name}
-                        </div>
-                      </div>
-                      {index === activeIndex && (
-                        <div style={clasess.selectedTabLine} />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              <div style={clasess.sectionsContainer}>
-                {template?.sections?.map((section, index) => {
-                  if (index === activeIndex) {
-                    if (section.isAccordion) {
-                      return section?.subSections?.map((subSection, index) => {
-                        return (
-                          <Accordion
-                            expanded={expanded === `panel_${index}`}
-                            onChange={handleChange(`panel_${index}`)}
-                            key={index}
+                          <div style={{ height: 22, minWidth: 30 }}>
+                            {index === activeIndex ? (
+                              <img
+                                src={item.icon}
+                                style={{
+                                  width: 30,
+                                  height: 24,
+                                }}
+                              />
+                            ) : index >= activeIndex ? (
+                              <img
+                                src={item.icon}
+                                style={{
+                                  width: 30,
+                                  height: 24,
+                                }}
+                              />
+                            ) : (
+                              <DoneIcon />
+                            )}
+                          </div>
+                          <div
+                            style={
+                              index === activeIndex
+                                ? clasess.tabNameActiveStyle
+                                : clasess.tabNameStyle
+                            }
                           >
-                            <AccordionSummary
-                              style={
-                                expanded === `panel_${index}`
-                                  ? clasess.activeTabContainer
-                                  : null
-                              }
-                            >
-                              <div style={clasess.headerAccordionContainer}>
-                                <EditIcon />
-                                <div
+                            {item.name}
+                          </div>
+                        </div>
+                        {index === activeIndex && (
+                          <div style={clasess.selectedTabLine} />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div style={clasess.sectionsContainer}>
+                  {template?.sections?.map((section, index) => {
+                    if (index === activeIndex) {
+                      if (section.isAccordion) {
+                        return section?.subSections?.map(
+                          (subSection, index) => {
+                            return (
+                              <Accordion
+                                expanded={expanded === `panel_${index}`}
+                                onChange={handleChange(`panel_${index}`)}
+                                key={index}
+                              >
+                                <AccordionSummary
                                   style={
                                     expanded === `panel_${index}`
-                                      ? clasess.subSectionAccordionActiveStyle
-                                      : clasess.subSectionAccordionStyle
+                                      ? clasess.activeTabContainer
+                                      : null
                                   }
                                 >
-                                  {subSection.name}
-                                </div>
-                              </div>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                              <div style={clasess.parametersContainer}>
-                                {subSection?.parameters?.map(
-                                  (parameter, index) => {
-                                    return (
-                                      <div key={index}>
-                                        {!parameter?.isHidden ? (
-                                          <div
-                                            style={clasess.parameterContainer}
-                                          >
-                                            <div
-                                              style={
-                                                clasess.parameterLabelStyle
-                                              }
-                                            >
-                                              {parameter?.name}
-                                              {parameter?.isRequired ? (
-                                                <span
-                                                  style={clasess.spanRequierd}
-                                                >
-                                                  {" "}
-                                                  *
-                                                </span>
-                                              ) : null}
-                                            </div>
-                                            <div
-                                              style={
-                                                clasess.renderParameterTypeContainer
-                                              }
-                                            >
-                                              {_renderParameterType(parameter)}
-                                            </div>
-                                          </div>
-                                        ) : null}
-                                      </div>
-                                    );
-                                  }
-                                )}
-                              </div>
-                            </AccordionDetails>
-                          </Accordion>
-                        );
-                      });
-                    } else {
-                      return section?.subSections?.map((subSection, index) => {
-                        return (
-                          <div key={index} style={clasess.subSectionContainer}>
-                            <div style={clasess.subSectionTitleStyle}>
-                              {subSection.name}
-                            </div>
-                            <div style={clasess.parametersContainer}>
-                              {subSection?.parameters?.map(
-                                (parameter, index) => {
-                                  return (
-                                    <div key={index}>
-                                      {!parameter?.isHidden ? (
-                                        <div style={clasess.parameterContainer}>
-                                          <div
-                                            style={clasess.parameterLabelStyle}
-                                          >
-                                            {parameter?.name}
-                                            {parameter?.isRequired ? (
-                                              <span
-                                                style={clasess.spanRequierd}
+                                  <div style={clasess.headerAccordionContainer}>
+                                    <EditIcon />
+                                    <div
+                                      style={
+                                        expanded === `panel_${index}`
+                                          ? clasess.subSectionAccordionActiveStyle
+                                          : clasess.subSectionAccordionStyle
+                                      }
+                                    >
+                                      {subSection.name}
+                                    </div>
+                                  </div>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                  <div style={clasess.parametersContainer}>
+                                    {subSection?.parameters?.map(
+                                      (parameter, index) => {
+                                        return (
+                                          <div key={index}>
+                                            {!parameter?.isHidden ? (
+                                              <div
+                                                style={
+                                                  clasess.parameterContainer
+                                                }
                                               >
-                                                {" "}
-                                                *
-                                              </span>
+                                                <div
+                                                  style={
+                                                    clasess.parameterLabelStyle
+                                                  }
+                                                >
+                                                  {parameter?.name}
+                                                  {parameter?.isRequired ? (
+                                                    <span
+                                                      style={
+                                                        clasess.spanRequierd
+                                                      }
+                                                    >
+                                                      {" "}
+                                                      *
+                                                    </span>
+                                                  ) : null}
+                                                </div>
+                                                <div
+                                                  style={
+                                                    clasess.renderParameterTypeContainer
+                                                  }
+                                                >
+                                                  {_renderParameterType(
+                                                    parameter
+                                                  )}
+                                                </div>
+                                              </div>
                                             ) : null}
                                           </div>
-                                          <div
-                                            style={
-                                              clasess.renderParameterTypeContainer
-                                            }
-                                          >
-                                            {_renderParameterType(parameter)}
-                                          </div>
-                                        </div>
-                                      ) : null}
-                                    </div>
-                                  );
-                                }
-                              )}
-                            </div>
-                          </div>
+                                        );
+                                      }
+                                    )}
+                                  </div>
+                                </AccordionDetails>
+                              </Accordion>
+                            );
+                          }
                         );
-                      });
+                      } else {
+                        return section?.subSections?.map(
+                          (subSection, index) => {
+                            return (
+                              <div
+                                key={index}
+                                style={clasess.subSectionContainer}
+                              >
+                                <div style={clasess.subSectionTitleStyle}>
+                                  {subSection.name}
+                                </div>
+                                <div style={clasess.parametersContainer}>
+                                  {subSection?.parameters?.map(
+                                    (parameter, index) => {
+                                      return (
+                                        <div key={index}>
+                                          {!parameter?.isHidden ? (
+                                            <div
+                                              style={clasess.parameterContainer}
+                                            >
+                                              <div
+                                                style={
+                                                  clasess.parameterLabelStyle
+                                                }
+                                              >
+                                                {parameter?.name}
+                                                {parameter?.isRequired ? (
+                                                  <span
+                                                    style={clasess.spanRequierd}
+                                                  >
+                                                    {" "}
+                                                    *
+                                                  </span>
+                                                ) : null}
+                                              </div>
+                                              <div
+                                                style={
+                                                  clasess.renderParameterTypeContainer
+                                                }
+                                              >
+                                                {_renderParameterType(
+                                                  parameter
+                                                )}
+                                              </div>
+                                            </div>
+                                          ) : null}
+                                        </div>
+                                      );
+                                    }
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          }
+                        );
+                      }
                     }
-                  }
-                })}
+                  })}
+                </div>
               </div>
               <div style={clasess.addPreviousContainer}>
                 {activeIndex != 0 ? (
@@ -306,21 +329,26 @@ export default function DigitalOffsetPrice() {
                 </GomakePrimaryButton>
               </div>
             </div>
+
             <div style={clasess.rightSideContainer}>
               <div style={clasess.headerClientRightSide}>
                 <div style={clasess.clientContainer}>
-                  <div style={clasess.labelTextStyle}>Client</div>
+                  <div style={clasess.labelTextStyle}>
+                    {t("products.offsetPrice.admin.client")}
+                  </div>
                   <GoMakeAutoComplate
                     options={["q", "w"]}
-                    placeholder={t("products.offsetPrice.admin.quote")}
+                    placeholder={t("products.offsetPrice.admin.client")}
                     style={clasess.dropDownListStyle}
                   />
                 </div>
                 <div style={clasess.typeContainer}>
-                  <div style={clasess.labelTextStyle}>Type</div>
+                  <div style={clasess.labelTextStyle}>
+                    {t("products.offsetPrice.admin.type")}
+                  </div>
                   <GoMakeAutoComplate
                     options={["q", "w"]}
-                    placeholder={t("products.offsetPrice.admin.client")}
+                    placeholder={t("products.offsetPrice.admin.type")}
                     style={clasess.dropDownListStyle}
                   />
                 </div>
@@ -362,7 +390,7 @@ export default function DigitalOffsetPrice() {
                 })}
               </div>
               <div style={clasess.progress}>
-                <Progress width={"100%"} data={renderData(80)} />
+                <Slider defaultValue={50} aria-label="Default" />
               </div>
               <div style={clasess.labelBrogressContainer}>
                 <div style={clasess.labelStyle}>10.00</div>
@@ -372,7 +400,14 @@ export default function DigitalOffsetPrice() {
                 <div style={clasess.totalStyle}>
                   {t("products.offsetPrice.admin.total")}
                 </div>
-                <div style={clasess.totalStyle}>30.00 USD</div>
+                <div style={clasess.totalStyle}>
+                  <GomakeTextInput
+                    value={defaultPrice}
+                    onChange={(e: any) => setDefaultPrice(e.target.value)}
+                    style={clasess.inputPriceStyle}
+                  />{" "}
+                  USD
+                </div>
               </div>
               <div style={clasess.priceRecoveryContainer}>
                 <Checkbox

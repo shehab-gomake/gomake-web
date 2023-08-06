@@ -30,7 +30,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
             style={clasess.selectCustomerContainer}
             getOptionLabel={(option: any) => `${option.name}-${option.code}`}
             onChangeTextField={checkWhatRenderArray}
-            onChange={(event: any, value: any) => {
+            onChange={(e: any, value: any) => {
               setSelectedCustomersList(value);
             }}
           />
@@ -41,7 +41,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
             placeholder={t("home.admin.selectType")}
             style={clasess.selectTypeContainer}
             getOptionLabel={(option: any) => option.name}
-            onChange={(event: any, value: any) => {
+            onChange={(e: any, value: any) => {
               setSelectedClientType(value);
             }}
           />
@@ -54,7 +54,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
             placeholder={t("home.admin.selectProduct")}
             style={clasess.selectTypeContainer}
             getOptionLabel={(option: any) => option.name}
-            onChange={(event: any, value: any) => {
+            onChange={(e: any, value: any) => {
               setSelectedProduct(value);
             }}
           />

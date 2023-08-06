@@ -117,7 +117,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 20,
       },
       thiknessContainer: {
         width: "13%",
@@ -133,6 +132,14 @@ const useStyle = () => {
         justifyContent: "center",
         alignItems: "center",
       },
+      costsContainer2: {
+        width: "15%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center" as "center",
+      },
       thiknessTextInputStyle: {
         height: 38,
         display: "flex",
@@ -143,7 +150,6 @@ const useStyle = () => {
         color: primaryColor(500),
         width: "100%",
         backgroundColor: "transparent",
-        paddingLeft: 2,
         boxShadow: "none",
       },
       directionContainer: {
@@ -152,7 +158,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 40,
       },
       activeContainer: {
         width: "13%",
@@ -160,7 +165,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 30,
       },
       currencyContainer: {
         width: "16%",

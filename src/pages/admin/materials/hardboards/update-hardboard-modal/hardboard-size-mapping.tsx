@@ -48,7 +48,24 @@ const HardboardSizesMapping = ({ index, item, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.height")}
+              {t("materials.inputs.name")}
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.inputs.enterName")}
+              style={clasess.textInputStyle}
+              value={materialHardboardsStateValue?.updateState[item?.id]?.name}
+              onChange={(e: any) => {
+                materialHardboardsStateValue?.onChangeUpdateStateHardboardWeights(
+                  item?.id,
+                  "name",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.inputs.height")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterHeight")}
@@ -67,24 +84,7 @@ const HardboardSizesMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.name")}
-            </div>
-            <GomakeTextInput
-              placeholder={t("materials.inputs.enterName")}
-              style={clasess.textInputStyle}
-              value={materialHardboardsStateValue?.updateState[item?.id]?.name}
-              onChange={(e: any) => {
-                materialHardboardsStateValue?.onChangeUpdateStateHardboardWeights(
-                  item?.id,
-                  "name",
-                  e.target.value
-                );
-              }}
-            />
-          </div>
-          <div>
-            <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.width")}
+              {t("materials.inputs.width")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWidth")}

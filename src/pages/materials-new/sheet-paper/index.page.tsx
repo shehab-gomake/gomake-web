@@ -123,14 +123,14 @@ export default function SheetPaper() {
 
   return (
     <CustomerAuthLayout>
-      <MaterialsLayout header={t("materials.sheetPaper.title")} side={Side()}>
+      <MaterialsLayout header={t("tabs.sheetPaper")} side={Side()}>
         {renderHeader()}
         <div style={{ paddingLeft: 0 }}>
           {isLoader ? (
             <GomakeLoaderWidget />
           ) : (
             <>
-              {allWeightsGrouped?.length === 0 ? (
+              {sheetStore?.suppliers[0].label === "Add new" ? (
                 <div style={clasess.noData}>
                   {t("materials.sheetPaper.supplierAddedSheetYet")}
                   <span

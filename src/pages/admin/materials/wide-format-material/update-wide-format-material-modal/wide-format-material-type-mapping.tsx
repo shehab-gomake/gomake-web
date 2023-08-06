@@ -48,10 +48,10 @@ const WideFormatMaterialWeightsMapping = ({ index, item, selectedItem }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.name")}
+              {t("materials.inputs.type")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.inputs.enterName")}
+              placeholder={t("materials.inputs.type")}
               style={clasess.textInputStyle}
               value={
                 materialWideFormatMaterialStateValue?.updateState[item?.id]
@@ -68,10 +68,10 @@ const WideFormatMaterialWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.weightPerMeterSquare")}
+              {t("materials.inputs.weight")} (m^2)
             </div>
             <GomakeTextInput
-              placeholder={t("materials.inputs.enterWeightPerMeterSquare")}
+              placeholder={t("materials.inputs.weight")}
               style={clasess.textInputStyle}
               value={
                 materialWideFormatMaterialStateValue?.updateState[item?.id]
@@ -88,7 +88,7 @@ const WideFormatMaterialWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.thickness")}
+              {t("materials.inputs.thickness")} (µm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterThickness")}

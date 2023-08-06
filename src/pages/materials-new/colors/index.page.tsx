@@ -125,7 +125,7 @@ export default function Colors() {
             <GomakeLoaderWidget />
           ) : (
             <>
-              {allWeightsGrouped.length === 0 ? (
+              {sheetStore?.suppliers[0].label === "Add new" ? (
                 <div style={clasess.noData}>
                   {t("materials.sheetPaper.supplierAddedSheetYet")}
                   <span
@@ -140,13 +140,7 @@ export default function Colors() {
                   {["header", ...allWeightsGrouped]?.map(
                     (row: any, index: number) => {
                       if (row === "header") {
-                        return (
-                          <HeaderTableWidget
-                            setSheetCheckStore={setSheetCheckStore}
-                            sheetCheckStore={sheetCheckStore}
-                            index={index}
-                          />
-                        );
+                        return <HeaderTableWidget />;
                       }
                       return (
                         <div style={{ ...clasess.bodyRow }}>

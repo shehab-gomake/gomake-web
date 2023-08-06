@@ -88,26 +88,7 @@ const ApplicationSizeesMapping = ({
               }}
             />
           </div>
-          <div>
-            <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.height")}
-            </div>
-            <GomakeTextInput
-              placeholder={t("materials.inputs.enterHeight")}
-              style={clasess.textInputStyle}
-              value={
-                materialApplicationsStateValue?.updateState[applicationSize?.id]
-                  ?.height
-              }
-              onChange={(e: any) => {
-                materialApplicationsStateValue?.onChangeUpdateStateApplicationThickness(
-                  applicationSize?.id,
-                  "height",
-                  e.target.value
-                );
-              }}
-            />
-          </div>
+
           <div>
             <div style={clasess.lableTextStyle}>
               {t("materials.inputs.name")}
@@ -130,7 +111,7 @@ const ApplicationSizeesMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.width")}
+              {t("materials.inputs.width")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWidth")}
@@ -143,6 +124,26 @@ const ApplicationSizeesMapping = ({
                 materialApplicationsStateValue?.onChangeUpdateStateApplicationThickness(
                   applicationSize?.id,
                   "width",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.inputs.height")} (m)
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.inputs.enterHeight")}
+              style={clasess.textInputStyle}
+              value={
+                materialApplicationsStateValue?.updateState[applicationSize?.id]
+                  ?.height
+              }
+              onChange={(e: any) => {
+                materialApplicationsStateValue?.onChangeUpdateStateApplicationThickness(
+                  applicationSize?.id,
+                  "height",
                   e.target.value
                 );
               }}
