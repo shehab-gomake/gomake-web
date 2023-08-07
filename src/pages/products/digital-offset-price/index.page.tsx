@@ -45,6 +45,7 @@ export default function DigitalOffsetPrice() {
     onOpeneMakeShape,
     onCloseChooseShape,
     onCloseMakeShape,
+    onChangeForPrice,
     makeShapeOpen,
     chooseShapeOpen,
     activeIndex,
@@ -142,14 +143,26 @@ export default function DigitalOffsetPrice() {
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
     };
-  const _renderParameterType = (parameter) => {
+  const _renderParameterType = (
+    parameter: any,
+    subSection: any,
+    section: any
+  ) => {
     if (parameter?.parameterType === 1) {
       return (
         <GomakeTextInput
           style={clasess.textInputStyle}
           defaultValue={parameter.defaultValue}
           placeholder={parameter.name}
-          // onChange={(e: any,value:any) => onChangeData(e.target.value)}
+          onChange={(e: any, item: any) =>
+            onChangeForPrice(
+              parameter?.ParamterId,
+              subSection?.subSectionId,
+              section?.sectionId,
+              parameter?.parameterType,
+              { value: e.target.value }
+            )
+          }
           type="number"
         />
       );
@@ -159,7 +172,15 @@ export default function DigitalOffsetPrice() {
           style={clasess.textInputStyle}
           defaultValue={parameter.defaultValue}
           placeholder={parameter.name}
-          // onChange={(e: any) => onChangeData(e.target.value)}
+          onChange={(e: any, value: any) =>
+            onChangeForPrice(
+              parameter?.ParamterId,
+              subSection?.subSectionId,
+              section?.sectionId,
+              parameter?.parameterType,
+              { value: e.target.value }
+            )
+          }
           type="text"
         />
       );
@@ -170,15 +191,30 @@ export default function DigitalOffsetPrice() {
           placeholder={parameter.name}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
+          onChange={(e: any, value: any) =>
+            onChangeForPrice(
+              parameter?.ParamterId,
+              subSection?.subSectionId,
+              section?.sectionId,
+              parameter?.parameterType,
+              { valueId: value.valueId, valueName: value.updateName }
+            )
+          }
         />
       );
     } else if (parameter?.parameterType === 3) {
       return (
         <SecondSwitch
-        // checked={parameter?.IsDefault}
-        // onChange={(a: any, value: any) => {
-        //   onChangeSupplierToDefault(option, value);
-        // }}
+          // checked={parameter?.IsDefault}
+          onChange={(e: any, value: any) =>
+            onChangeForPrice(
+              parameter?.ParamterId,
+              subSection?.subSectionId,
+              section?.sectionId,
+              parameter?.parameterType,
+              { value }
+            )
+          }
         />
       );
     } else if (parameter?.parameterType === 4) {
@@ -212,6 +248,13 @@ export default function DigitalOffsetPrice() {
             getOptionLabel={(option: any) => option.value}
             onChange={(e: any, value: any) => {
               if (parameter?.materialPath?.length == 3) {
+                onChangeForPrice(
+                  parameter?.ParamterId,
+                  subSection?.subSectionId,
+                  section?.sectionId,
+                  parameter?.parameterType,
+                  { valueId: value.valueId, valueName: value.value }
+                );
                 setDigidatPriceData({
                   ...digitalPriceData,
                   selectedMaterialLvl3: value,
@@ -219,6 +262,13 @@ export default function DigitalOffsetPrice() {
                 });
               }
               if (parameter?.materialPath?.length == 2) {
+                onChangeForPrice(
+                  parameter?.ParamterId,
+                  subSection?.subSectionId,
+                  section?.sectionId,
+                  parameter?.parameterType,
+                  { valueId: value.valueId, valueName: value.value }
+                );
                 setDigidatPriceData({
                   ...digitalPriceData,
                   selectedMaterialLvl2: value?.data,
@@ -227,6 +277,13 @@ export default function DigitalOffsetPrice() {
                 });
               }
               if (parameter?.materialPath?.length == 1) {
+                onChangeForPrice(
+                  parameter?.ParamterId,
+                  subSection?.subSectionId,
+                  section?.sectionId,
+                  parameter?.parameterType,
+                  { valueId: value.valueId, valueName: value.value }
+                );
                 setDigidatPriceData({
                   ...digitalPriceData,
                   selectedMaterialLvl1: value?.data,
@@ -366,7 +423,9 @@ export default function DigitalOffsetPrice() {
                                                   }
                                                 >
                                                   {_renderParameterType(
-                                                    parameter
+                                                    parameter,
+                                                    subSection,
+                                                    section
                                                   )}
                                                 </div>
                                               </div>
@@ -422,7 +481,9 @@ export default function DigitalOffsetPrice() {
                                                 }
                                               >
                                                 {_renderParameterType(
-                                                  parameter
+                                                  parameter,
+                                                  subSection,
+                                                  section
                                                 )}
                                               </div>
                                             </div>
