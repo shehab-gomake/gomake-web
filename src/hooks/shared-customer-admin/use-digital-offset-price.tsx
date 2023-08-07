@@ -21,11 +21,11 @@ const templateMock: any = [
         icon: <FinishingIcon />,
         activeIcon: <FinishingIcon stroke="#ED028C" />,
         doneIcon: <DoneIcon />,
-        isAccordion: false,
         subSections: [
           {
             subSectionId: "222a",
             name: "Product category",
+            isAccordion: false,
             parameters: [
               {
                 ParamterId: "1",
@@ -91,6 +91,7 @@ const templateMock: any = [
           {
             subSectionId: "222b",
             name: "Size & Shape",
+            isAccordion: false,
             parameters: [
               {
                 ParamterId: "1",
@@ -158,6 +159,7 @@ const templateMock: any = [
           {
             subSectionId: "222c",
             name: "Media",
+            isAccordion: false,
             parameters: [
               {
                 ParamterId: "1",
@@ -234,6 +236,7 @@ const templateMock: any = [
           {
             subSectionId: "222d",
             name: "Colors",
+            isAccordion: false,
             parameters: [
               {
                 ParamterId: "1",
@@ -338,21 +341,23 @@ const templateMock: any = [
         icon: <PrintingDetails />,
         activeIcon: <PrintingDetails stroke="#ED028C" />,
         doneIcon: <DoneIcon />,
-        isAccordion: false,
         subSections: [
           {
             subSectionId: "333a",
             name: "Size & Shape",
+            isAccordion: false,
             parameters: [],
           },
           {
             subSectionId: "333b",
             name: "Media",
+            isAccordion: false,
             parameters: [],
           },
           {
             subSectionId: "333c",
             name: "Colors",
+            isAccordion: false,
             parameters: [],
           },
         ],
@@ -364,11 +369,12 @@ const templateMock: any = [
         icon: <FinishingIcon />,
         activeIcon: <FinishingIcon stroke="#ED028C" />,
         doneIcon: <DoneIcon />,
-        isAccordion: true,
+
         subSections: [
           {
             subSectionId: "444a",
             name: "Product category",
+            isAccordion: true,
             parameters: [
               {
                 ParamterId: "1",
@@ -434,6 +440,7 @@ const templateMock: any = [
           {
             subSectionId: "444b",
             name: "Size & Shape",
+            isAccordion: true,
             parameters: [
               {
                 ParamterId: "1",
@@ -501,6 +508,7 @@ const templateMock: any = [
           {
             subSectionId: "444c",
             name: "Media",
+            isAccordion: true,
             parameters: [
               {
                 ParamterId: "1",
@@ -585,6 +593,7 @@ const templateMock: any = [
           {
             subSectionId: "444d",
             name: "Colors",
+            isAccordion: false,
             parameters: [
               {
                 ParamterId: "1",
@@ -689,11 +698,11 @@ const templateMock: any = [
         icon: <PricingIcon />,
         activeIcon: <PricingIcon stroke="#ED028C" />,
         doneIcon: <DoneIcon />,
-        isAccordion: false,
         subSections: [
           {
             subSectionId: "555a",
             name: "Size & Shape",
+            isAccordion: false,
             parameters: [],
           },
         ],

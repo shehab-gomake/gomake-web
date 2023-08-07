@@ -359,98 +359,35 @@ export default function DigitalOffsetPrice() {
                 <div style={clasess.sectionsContainer}>
                   {template[0]?.sections?.map((section, index) => {
                     if (index === activeIndex) {
-                      if (section.isAccordion) {
-                        return section?.subSections?.map(
-                          (subSection, index) => {
-                            return (
-                              <Accordion
-                                expanded={expanded === `panel_${index}`}
-                                onChange={handleChange(`panel_${index}`)}
-                                key={index}
+                      return section?.subSections?.map((subSection, index) => {
+                        if (subSection?.isAccordion) {
+                          return (
+                            <Accordion
+                              expanded={expanded === `panel_${index}`}
+                              onChange={handleChange(`panel_${index}`)}
+                              key={index}
+                            >
+                              <AccordionSummary
+                                style={
+                                  expanded === `panel_${index}`
+                                    ? clasess.activeTabContainer
+                                    : null
+                                }
                               >
-                                <AccordionSummary
-                                  style={
-                                    expanded === `panel_${index}`
-                                      ? clasess.activeTabContainer
-                                      : null
-                                  }
-                                >
-                                  <div style={clasess.headerAccordionContainer}>
-                                    <EditIcon />
-                                    <div
-                                      style={
-                                        expanded === `panel_${index}`
-                                          ? clasess.subSectionAccordionActiveStyle
-                                          : clasess.subSectionAccordionStyle
-                                      }
-                                    >
-                                      {subSection.name}
-                                    </div>
+                                <div style={clasess.headerAccordionContainer}>
+                                  <EditIcon />
+                                  <div
+                                    style={
+                                      expanded === `panel_${index}`
+                                        ? clasess.subSectionAccordionActiveStyle
+                                        : clasess.subSectionAccordionStyle
+                                    }
+                                  >
+                                    {subSection.name}
                                   </div>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                  <div style={clasess.parametersContainer}>
-                                    {subSection?.parameters?.map(
-                                      (parameter, index) => {
-                                        return (
-                                          <div key={index}>
-                                            {!parameter?.isHidden ? (
-                                              <div
-                                                style={
-                                                  clasess.parameterContainer
-                                                }
-                                              >
-                                                <div
-                                                  style={
-                                                    clasess.parameterLabelStyle
-                                                  }
-                                                >
-                                                  {parameter?.updatedName}
-                                                  {parameter?.isRequired ? (
-                                                    <span
-                                                      style={
-                                                        clasess.spanRequierd
-                                                      }
-                                                    >
-                                                      {" "}
-                                                      *
-                                                    </span>
-                                                  ) : null}
-                                                </div>
-                                                <div
-                                                  style={
-                                                    clasess.renderParameterTypeContainer
-                                                  }
-                                                >
-                                                  {_renderParameterType(
-                                                    parameter,
-                                                    subSection,
-                                                    section
-                                                  )}
-                                                </div>
-                                              </div>
-                                            ) : null}
-                                          </div>
-                                        );
-                                      }
-                                    )}
-                                  </div>
-                                </AccordionDetails>
-                              </Accordion>
-                            );
-                          }
-                        );
-                      } else {
-                        return section?.subSections?.map(
-                          (subSection, index) => {
-                            return (
-                              <div
-                                key={index}
-                                style={clasess.subSectionContainer}
-                              >
-                                <div style={clasess.subSectionTitleStyle}>
-                                  {subSection.name}
                                 </div>
+                              </AccordionSummary>
+                              <AccordionDetails>
                                 <div style={clasess.parametersContainer}>
                                   {subSection?.parameters?.map(
                                     (parameter, index) => {
@@ -493,11 +430,64 @@ export default function DigitalOffsetPrice() {
                                     }
                                   )}
                                 </div>
+                              </AccordionDetails>
+                            </Accordion>
+                          );
+                        } else {
+                          return (
+                            <div
+                              key={index}
+                              style={clasess.subSectionContainer}
+                            >
+                              <div style={clasess.subSectionTitleStyle}>
+                                {subSection.name}
                               </div>
-                            );
-                          }
-                        );
-                      }
+                              <div style={clasess.parametersContainer}>
+                                {subSection?.parameters?.map(
+                                  (parameter, index) => {
+                                    return (
+                                      <div key={index}>
+                                        {!parameter?.isHidden ? (
+                                          <div
+                                            style={clasess.parameterContainer}
+                                          >
+                                            <div
+                                              style={
+                                                clasess.parameterLabelStyle
+                                              }
+                                            >
+                                              {parameter?.updatedName}
+                                              {parameter?.isRequired ? (
+                                                <span
+                                                  style={clasess.spanRequierd}
+                                                >
+                                                  {" "}
+                                                  *
+                                                </span>
+                                              ) : null}
+                                            </div>
+                                            <div
+                                              style={
+                                                clasess.renderParameterTypeContainer
+                                              }
+                                            >
+                                              {_renderParameterType(
+                                                parameter,
+                                                subSection,
+                                                section
+                                              )}
+                                            </div>
+                                          </div>
+                                        ) : null}
+                                      </div>
+                                    );
+                                  }
+                                )}
+                              </div>
+                            </div>
+                          );
+                        }
+                      });
                     }
                   })}
                 </div>
