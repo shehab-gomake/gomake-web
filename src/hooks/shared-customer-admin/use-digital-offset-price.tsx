@@ -720,10 +720,41 @@ const useDigitalOffsetPrice = () => {
   const [priceTemplate, setPriceTemplate] = useState<any>([]);
   console.log("priceTemplate", priceTemplate);
 
+  useEffect(() => {
+    let tempMockData = [...templateMock];
+    let temp = [...priceTemplate];
+    tempMockData[0]?.sections?.map((section, i) => {
+      return section?.subSections?.map((subSection, i) => {
+        return subSection.parameters?.map((parameter, i) => {
+          const index = temp.findIndex(
+            (item) =>
+              item.parId === parameter?.ParamterId &&
+              item.sectionId === section?.sectionId &&
+              item.subSectionId === subSection?.subSectionId
+          );
+          if (index !== -1) {
+            temp[index] = {
+              ...temp[index],
+            };
+          } else {
+            temp.push({
+              parId: parameter?.ParamterId,
+              sectionId: section?.sectionId,
+              subSectionId: subSection?.subSectionId,
+              parameterType: parameter?.parameterType,
+              // ...data,
+            });
+          }
+        });
+      });
+    });
+    setPriceTemplate(temp);
+  }, []);
+
   const onChangeForPrice = (
     parId: any,
-    sectionId: any,
     subSectionId: any,
+    sectionId: any,
     ParameterType: any,
     data: any
   ) => {

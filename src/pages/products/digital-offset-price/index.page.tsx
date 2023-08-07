@@ -34,7 +34,6 @@ import { digitslPriceState } from "@/hooks/shared-customer-admin/store";
 export default function DigitalOffsetPrice() {
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
-  console.log("digitalPriceData", digitalPriceData);
   const { clasess } = useStyle();
   const {
     t,
