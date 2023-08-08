@@ -29,7 +29,11 @@ import {
 } from "@/widgets/shared-admin-customers/digital-offset-price/icons";
 import { useDigitalOffsetPrice } from "@/hooks";
 import { useMaterials } from "@/hooks/use-materials";
+import { useRecoilState } from "recoil";
+import { digitslPriceState } from "@/hooks/shared-customer-admin/store";
 export default function DigitalOffsetPrice() {
+  const [digitalPriceData, setDigidatPriceData] =
+    useRecoilState<any>(digitslPriceState);
   const { clasess } = useStyle();
   const {
     t,
@@ -40,6 +44,7 @@ export default function DigitalOffsetPrice() {
     onOpeneMakeShape,
     onCloseChooseShape,
     onCloseMakeShape,
+    onChangeForPrice,
     makeShapeOpen,
     chooseShapeOpen,
     activeIndex,
@@ -50,19 +55,113 @@ export default function DigitalOffsetPrice() {
     setDefaultPrice,
   } = useDigitalOffsetPrice();
   const [expanded, setExpanded] = useState<string | false>("panel_0");
-  const { allMaterials } = useMaterials();
+  // const { allMaterials } = useMaterials();
+  // console.log(allMaterials);
+  const allMaterials = [
+    {
+      pathName: "Sheets",
+      data: [
+        {
+          valueId: "Paper Type",
+          value: "Paper Type",
+          pathName: "Weights",
+          data: [
+            {
+              valueId: "aa257644-93a1-414f-a853-e881739935a9",
+              value: "120gm",
+              pathName: "Sizes",
+              data: [
+                {
+                  valueId: "2b9d57ff-90ca-4520-910a-1c8caefe50bb",
+                  value: "10X10",
+                },
+                {
+                  valueId: "efd0e196-f960-49e7-a664-9d0d0a5a6a71",
+                  value: "20X20",
+                },
+              ],
+            },
+            {
+              valueId: "4f945175-658f-4dce-83e4-a69f796ed6ed",
+              value: "150gm",
+              pathName: "Sizes",
+              data: [
+                {
+                  valueId: "978eaf75-982f-4e53-a9b2-63eb7325ea2a",
+                  value: "30X30",
+                },
+                {
+                  valueId: "e4abfeb3-a341-49a3-a61c-8375a0702b32",
+                  value: "50X50",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          valueId: "Paper Type2",
+          value: "Paper Type2",
+          pathName: "Weights",
+          data: [
+            {
+              valueId: "aa257644-93a1-414f-a853-e881739935a9",
+              value: "125gm",
+              pathName: "Sizes",
+              data: [
+                {
+                  valueId: "2b9d57ff-90ca-4520-910a-1c8caefe50bb",
+                  value: "10X10",
+                },
+                {
+                  valueId: "efd0e196-f960-49e7-a664-9d0d0a5a6a71",
+                  value: "20X20",
+                },
+              ],
+            },
+            {
+              valueId: "4f945175-658f-4dce-83e4-a69f796ed6ed",
+              value: "155gm",
+              pathName: "Sizes",
+              data: [
+                {
+                  valueId: "978eaf75-982f-4e53-a9b2-63eb7325ea2a",
+                  value: "30X30",
+                },
+                {
+                  valueId: "e4abfeb3-a341-49a3-a61c-8375a0702b32",
+                  value: "50X50",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ];
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
     };
-  const _renderParameterType = (parameter) => {
+  const _renderParameterType = (
+    parameter: any,
+    subSection: any,
+    section: any
+  ) => {
     if (parameter?.parameterType === 1) {
       return (
         <GomakeTextInput
           style={clasess.textInputStyle}
           defaultValue={parameter.defaultValue}
           placeholder={parameter.name}
-          // onChange={(e: any) => onChangeData(e.target.value)}
+          onChange={(e: any, item: any) =>
+            onChangeForPrice(
+              parameter?.ParamterId,
+              subSection?.subSectionId,
+              section?.sectionId,
+              parameter?.parameterType,
+              { value: e.target.value }
+            )
+          }
           type="number"
         />
       );
@@ -72,7 +171,15 @@ export default function DigitalOffsetPrice() {
           style={clasess.textInputStyle}
           defaultValue={parameter.defaultValue}
           placeholder={parameter.name}
-          // onChange={(e: any) => onChangeData(e.target.value)}
+          onChange={(e: any, value: any) =>
+            onChangeForPrice(
+              parameter?.ParamterId,
+              subSection?.subSectionId,
+              section?.sectionId,
+              parameter?.parameterType,
+              { value: e.target.value }
+            )
+          }
           type="text"
         />
       );
@@ -83,15 +190,30 @@ export default function DigitalOffsetPrice() {
           placeholder={parameter.name}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
+          onChange={(e: any, value: any) =>
+            onChangeForPrice(
+              parameter?.ParamterId,
+              subSection?.subSectionId,
+              section?.sectionId,
+              parameter?.parameterType,
+              { valueId: value.valueId, valueName: value.updateName }
+            )
+          }
         />
       );
     } else if (parameter?.parameterType === 3) {
       return (
         <SecondSwitch
-        // checked={parameter?.IsDefault}
-        // onChange={(a: any, value: any) => {
-        //   onChangeSupplierToDefault(option, value);
-        // }}
+          // checked={parameter?.IsDefault}
+          onChange={(e: any, value: any) =>
+            onChangeForPrice(
+              parameter?.ParamterId,
+              subSection?.subSectionId,
+              section?.sectionId,
+              parameter?.parameterType,
+              { value }
+            )
+          }
         />
       );
     } else if (parameter?.parameterType === 4) {
@@ -103,18 +225,81 @@ export default function DigitalOffsetPrice() {
           {parameter?.name}
         </GomakePrimaryButton>
       );
+    } else if (parameter?.parameterType === 5) {
+      let options: any = allMaterials;
+      if (parameter?.materialPath?.length == 3) {
+        options = digitalPriceData?.selectedMaterialLvl2;
+      }
+      if (parameter?.materialPath?.length == 2) {
+        options = digitalPriceData?.selectedMaterialLvl1;
+      }
+      if (parameter?.materialPath?.length == 1) {
+        options = allMaterials.find(
+          (material) => material.pathName === parameter?.materialPath[0]
+        )?.data;
+      }
+      return (
+        options?.length > 0 && (
+          <GoMakeAutoComplate
+            options={options}
+            placeholder={parameter.updatedName}
+            style={clasess.dropDownListStyle}
+            getOptionLabel={(option: any) => option.value}
+            onChange={(e: any, value: any) => {
+              if (parameter?.materialPath?.length == 3) {
+                onChangeForPrice(
+                  parameter?.ParamterId,
+                  subSection?.subSectionId,
+                  section?.sectionId,
+                  parameter?.parameterType,
+                  { valueId: value.valueId, valueName: value.value }
+                );
+                setDigidatPriceData({
+                  ...digitalPriceData,
+                  selectedMaterialLvl3: value,
+                  selectedOptionLvl3: value,
+                });
+              }
+              if (parameter?.materialPath?.length == 2) {
+                onChangeForPrice(
+                  parameter?.ParamterId,
+                  subSection?.subSectionId,
+                  section?.sectionId,
+                  parameter?.parameterType,
+                  { valueId: value.valueId, valueName: value.value }
+                );
+                setDigidatPriceData({
+                  ...digitalPriceData,
+                  selectedMaterialLvl2: value?.data,
+                  selectedOptionLvl2: value,
+                  selectedMaterialLvl3: null,
+                });
+              }
+              if (parameter?.materialPath?.length == 1) {
+                onChangeForPrice(
+                  parameter?.ParamterId,
+                  subSection?.subSectionId,
+                  section?.sectionId,
+                  parameter?.parameterType,
+                  { valueId: value.valueId, valueName: value.value }
+                );
+                setDigidatPriceData({
+                  ...digitalPriceData,
+                  selectedMaterialLvl1: value?.data,
+                  selectedOptionLvl1: value,
+                  selectedMaterialLvl2: null,
+                  selectedMaterialLvl3: null,
+                });
+              }
+            }}
+          />
+        )
+      );
     }
-  };
-  const renderData = (data) => {
-    if (data <= 3) {
-      return "3%";
-    } else if (data >= 97) {
-      return "97%";
-    } else return `${data}%`;
   };
   return (
     <CustomerAuthLayout>
-      {template && (
+      {template[0] && (
         <div style={clasess.mainContainer}>
           <HeaderTitle
             title={t("products.offsetPrice.admin.title2")}
@@ -124,7 +309,7 @@ export default function DigitalOffsetPrice() {
             <div style={clasess.leftSideContainer}>
               <div style={{ height: "66vh", overflow: "scroll" }}>
                 <div style={clasess.tabsContainer}>
-                  {template?.sections?.map((item, index) => {
+                  {template[0]?.sections?.map((item, index) => {
                     return (
                       <div>
                         <div
@@ -171,98 +356,37 @@ export default function DigitalOffsetPrice() {
                   })}
                 </div>
                 <div style={clasess.sectionsContainer}>
-                  {template?.sections?.map((section, index) => {
+                  {template[0]?.sections?.map((section, index) => {
                     if (index === activeIndex) {
-                      if (section.isAccordion) {
-                        return section?.subSections?.map(
-                          (subSection, index) => {
-                            return (
-                              <Accordion
-                                expanded={expanded === `panel_${index}`}
-                                onChange={handleChange(`panel_${index}`)}
-                                key={index}
+                      return section?.subSections?.map((subSection, index) => {
+                        if (subSection?.isAccordion) {
+                          return (
+                            <Accordion
+                              expanded={expanded === `panel_${index}`}
+                              onChange={handleChange(`panel_${index}`)}
+                              key={index}
+                            >
+                              <AccordionSummary
+                                style={
+                                  expanded === `panel_${index}`
+                                    ? clasess.activeTabContainer
+                                    : null
+                                }
                               >
-                                <AccordionSummary
-                                  style={
-                                    expanded === `panel_${index}`
-                                      ? clasess.activeTabContainer
-                                      : null
-                                  }
-                                >
-                                  <div style={clasess.headerAccordionContainer}>
-                                    <EditIcon />
-                                    <div
-                                      style={
-                                        expanded === `panel_${index}`
-                                          ? clasess.subSectionAccordionActiveStyle
-                                          : clasess.subSectionAccordionStyle
-                                      }
-                                    >
-                                      {subSection.name}
-                                    </div>
+                                <div style={clasess.headerAccordionContainer}>
+                                  <EditIcon />
+                                  <div
+                                    style={
+                                      expanded === `panel_${index}`
+                                        ? clasess.subSectionAccordionActiveStyle
+                                        : clasess.subSectionAccordionStyle
+                                    }
+                                  >
+                                    {subSection.name}
                                   </div>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                  <div style={clasess.parametersContainer}>
-                                    {subSection?.parameters?.map(
-                                      (parameter, index) => {
-                                        return (
-                                          <div key={index}>
-                                            {!parameter?.isHidden ? (
-                                              <div
-                                                style={
-                                                  clasess.parameterContainer
-                                                }
-                                              >
-                                                <div
-                                                  style={
-                                                    clasess.parameterLabelStyle
-                                                  }
-                                                >
-                                                  {parameter?.name}
-                                                  {parameter?.isRequired ? (
-                                                    <span
-                                                      style={
-                                                        clasess.spanRequierd
-                                                      }
-                                                    >
-                                                      {" "}
-                                                      *
-                                                    </span>
-                                                  ) : null}
-                                                </div>
-                                                <div
-                                                  style={
-                                                    clasess.renderParameterTypeContainer
-                                                  }
-                                                >
-                                                  {_renderParameterType(
-                                                    parameter
-                                                  )}
-                                                </div>
-                                              </div>
-                                            ) : null}
-                                          </div>
-                                        );
-                                      }
-                                    )}
-                                  </div>
-                                </AccordionDetails>
-                              </Accordion>
-                            );
-                          }
-                        );
-                      } else {
-                        return section?.subSections?.map(
-                          (subSection, index) => {
-                            return (
-                              <div
-                                key={index}
-                                style={clasess.subSectionContainer}
-                              >
-                                <div style={clasess.subSectionTitleStyle}>
-                                  {subSection.name}
                                 </div>
+                              </AccordionSummary>
+                              <AccordionDetails>
                                 <div style={clasess.parametersContainer}>
                                   {subSection?.parameters?.map(
                                     (parameter, index) => {
@@ -277,7 +401,7 @@ export default function DigitalOffsetPrice() {
                                                   clasess.parameterLabelStyle
                                                 }
                                               >
-                                                {parameter?.name}
+                                                {parameter?.updatedName}
                                                 {parameter?.isRequired ? (
                                                   <span
                                                     style={clasess.spanRequierd}
@@ -293,7 +417,9 @@ export default function DigitalOffsetPrice() {
                                                 }
                                               >
                                                 {_renderParameterType(
-                                                  parameter
+                                                  parameter,
+                                                  subSection,
+                                                  section
                                                 )}
                                               </div>
                                             </div>
@@ -303,11 +429,64 @@ export default function DigitalOffsetPrice() {
                                     }
                                   )}
                                 </div>
+                              </AccordionDetails>
+                            </Accordion>
+                          );
+                        } else {
+                          return (
+                            <div
+                              key={index}
+                              style={clasess.subSectionContainer}
+                            >
+                              <div style={clasess.subSectionTitleStyle}>
+                                {subSection.name}
                               </div>
-                            );
-                          }
-                        );
-                      }
+                              <div style={clasess.parametersContainer}>
+                                {subSection?.parameters?.map(
+                                  (parameter, index) => {
+                                    return (
+                                      <div key={index}>
+                                        {!parameter?.isHidden ? (
+                                          <div
+                                            style={clasess.parameterContainer}
+                                          >
+                                            <div
+                                              style={
+                                                clasess.parameterLabelStyle
+                                              }
+                                            >
+                                              {parameter?.updatedName}
+                                              {parameter?.isRequired ? (
+                                                <span
+                                                  style={clasess.spanRequierd}
+                                                >
+                                                  {" "}
+                                                  *
+                                                </span>
+                                              ) : null}
+                                            </div>
+                                            <div
+                                              style={
+                                                clasess.renderParameterTypeContainer
+                                              }
+                                            >
+                                              {_renderParameterType(
+                                                parameter,
+                                                subSection,
+                                                section
+                                              )}
+                                            </div>
+                                          </div>
+                                        ) : null}
+                                      </div>
+                                    );
+                                  }
+                                )}
+                              </div>
+                            </div>
+                          );
+                        }
+                      });
                     }
                   })}
                 </div>
