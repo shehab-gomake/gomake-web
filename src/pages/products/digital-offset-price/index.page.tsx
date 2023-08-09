@@ -8,8 +8,6 @@ import {
   GomakeTextInput,
   SecondSwitch,
 } from "@/components";
-import Image from "next/image";
-import ImgProduct from "./icons/img.png";
 import {
   Accordion,
   AccordionDetails,
@@ -222,7 +220,7 @@ export default function DigitalOffsetPrice() {
   };
   return (
     <CustomerAuthLayout>
-      {template && (
+      {template?.sections?.length > 0 && (
         <div style={clasess.mainContainer}>
           <HeaderTitle
             title={t("products.offsetPrice.admin.title2")}
