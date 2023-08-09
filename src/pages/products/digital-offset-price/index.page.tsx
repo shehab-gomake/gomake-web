@@ -184,21 +184,25 @@ export default function DigitalOffsetPrice() {
         />
       );
     } else if (parameter?.parameterType === 0) {
+      const defaultObject = parameter.valuesConfigs.find(
+        (item) => item.isDefault === true
+      );
       return (
         <GoMakeAutoComplate
           options={parameter?.valuesConfigs}
           placeholder={parameter.name}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
-          onChange={(e: any, value: any) =>
+          value={defaultObject}
+          onChange={(e: any, value: any) => {
             onChangeForPrice(
               parameter?.id,
               subSection?.id,
               section?.id,
               parameter?.parameterType,
               { valueId: value?.id, valueName: value?.updateName }
-            )
-          }
+            );
+          }}
         />
       );
     } else if (parameter?.parameterType === 3) {
