@@ -286,7 +286,6 @@ const useSheetEncapsulation = () => {
     const getData = async () => {
       const suppliers = await getSheetSuppliers(selectedMaterials);
       const defaultItem = suppliers?.find((item) => item.isDefault);
-      console.log("defaultItem", defaultItem);
       if (defaultItem) {
         getSheetAllWeights(selectedMaterials, defaultItem?.value);
       }

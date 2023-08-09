@@ -1236,16 +1236,12 @@ const useDigitalOffsetPrice = () => {
   const [defaultPrice, setDefaultPrice] = useState<any>(30);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
   const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
-  // const [template, setTemplate] = useState<any>(templateMock);
   const [template, setTemplate] = useState<any>([]);
-  console.log("template", template);
   const [priceTemplate, setPriceTemplate] = useState<any>([]);
-  console.log("priceTemplate", priceTemplate);
 
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let tempMockData: any = [...template?.sections];
-      console.log("tempMockData", tempMockData);
       let temp = [...priceTemplate];
       tempMockData?.map((section, i) => {
         return section?.subSections?.map((subSection, i) => {
