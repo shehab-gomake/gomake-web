@@ -124,7 +124,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        gap: 16,
+        gap: 25,
       },
       parameterLabelStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
@@ -138,8 +138,9 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        gap: 10,
-        width: 180,
+        gap: 20,
+        width: "fit-content",
+        minWidth: 180,
       },
       textInputStyle: {
         width: "100%",

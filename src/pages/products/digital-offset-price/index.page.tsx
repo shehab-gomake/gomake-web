@@ -155,9 +155,9 @@ export default function DigitalOffsetPrice() {
           placeholder={parameter.name}
           onChange={(e: any, item: any) =>
             onChangeForPrice(
-              parameter?.ParamterId,
-              subSection?.subSectionId,
-              section?.sectionId,
+              parameter?.id,
+              subSection?.id,
+              section?.id,
               parameter?.parameterType,
               { value: e.target.value }
             )
@@ -173,10 +173,10 @@ export default function DigitalOffsetPrice() {
           placeholder={parameter.name}
           onChange={(e: any, value: any) =>
             onChangeForPrice(
-              parameter?.ParamterId,
-              subSection?.subSectionId,
-              section?.sectionId,
-              parameter?.parameterType,
+              parameter?.id,
+              subSection?.id,
+              section?.id,
+              parameter?.id,
               { value: e.target.value }
             )
           }
@@ -192,11 +192,11 @@ export default function DigitalOffsetPrice() {
           getOptionLabel={(option: any) => option.updateName}
           onChange={(e: any, value: any) =>
             onChangeForPrice(
-              parameter?.ParamterId,
-              subSection?.subSectionId,
-              section?.sectionId,
+              parameter?.id,
+              subSection?.id,
+              section?.id,
               parameter?.parameterType,
-              { valueId: value.valueId, valueName: value.updateName }
+              { valueId: value?.id, valueName: value?.updateName }
             )
           }
         />
@@ -207,9 +207,9 @@ export default function DigitalOffsetPrice() {
           // checked={parameter?.IsDefault}
           onChange={(e: any, value: any) =>
             onChangeForPrice(
-              parameter?.ParamterId,
-              subSection?.subSectionId,
-              section?.sectionId,
+              parameter?.id,
+              subSection?.id,
+              section?.id,
               parameter?.parameterType,
               { value }
             )
@@ -248,11 +248,11 @@ export default function DigitalOffsetPrice() {
             onChange={(e: any, value: any) => {
               if (parameter?.materialPath?.length == 3) {
                 onChangeForPrice(
-                  parameter?.ParamterId,
-                  subSection?.subSectionId,
-                  section?.sectionId,
+                  parameter?.id,
+                  subSection?.id,
+                  section?.id,
                   parameter?.parameterType,
-                  { valueId: value.valueId, valueName: value.value }
+                  { valueId: value?.id, valueName: value.value }
                 );
                 setDigidatPriceData({
                   ...digitalPriceData,
@@ -262,11 +262,11 @@ export default function DigitalOffsetPrice() {
               }
               if (parameter?.materialPath?.length == 2) {
                 onChangeForPrice(
-                  parameter?.ParamterId,
-                  subSection?.subSectionId,
-                  section?.sectionId,
+                  parameter?.id,
+                  subSection?.id,
+                  section?.id,
                   parameter?.parameterType,
-                  { valueId: value.valueId, valueName: value.value }
+                  { valueId: value?.id, valueName: value.value }
                 );
                 setDigidatPriceData({
                   ...digitalPriceData,
@@ -277,11 +277,11 @@ export default function DigitalOffsetPrice() {
               }
               if (parameter?.materialPath?.length == 1) {
                 onChangeForPrice(
-                  parameter?.ParamterId,
-                  subSection?.subSectionId,
-                  section?.sectionId,
+                  parameter?.id,
+                  subSection?.id,
+                  section?.id,
                   parameter?.parameterType,
-                  { valueId: value.valueId, valueName: value.value }
+                  { valueId: value?.id, valueName: value.value }
                 );
                 setDigidatPriceData({
                   ...digitalPriceData,
@@ -299,7 +299,7 @@ export default function DigitalOffsetPrice() {
   };
   return (
     <CustomerAuthLayout>
-      {template[0] && (
+      {template && (
         <div style={clasess.mainContainer}>
           <HeaderTitle
             title={t("products.offsetPrice.admin.title2")}
@@ -309,7 +309,7 @@ export default function DigitalOffsetPrice() {
             <div style={clasess.leftSideContainer}>
               <div style={{ height: "66vh", overflow: "scroll" }}>
                 <div style={clasess.tabsContainer}>
-                  {template[0]?.sections?.map((item, index) => {
+                  {template?.sections?.map((item, index) => {
                     return (
                       <div>
                         <div
@@ -356,7 +356,7 @@ export default function DigitalOffsetPrice() {
                   })}
                 </div>
                 <div style={clasess.sectionsContainer}>
-                  {template[0]?.sections?.map((section, index) => {
+                  {template?.sections?.map((section, index) => {
                     if (index === activeIndex) {
                       return section?.subSections?.map((subSection, index) => {
                         if (subSection?.isAccordion) {
@@ -455,7 +455,7 @@ export default function DigitalOffsetPrice() {
                                                 clasess.parameterLabelStyle
                                               }
                                             >
-                                              {parameter?.updatedName}
+                                              {parameter?.name}
                                               {parameter?.isRequired ? (
                                                 <span
                                                   style={clasess.spanRequierd}
