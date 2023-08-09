@@ -204,7 +204,7 @@ export default function DigitalOffsetPrice() {
     } else if (parameter?.parameterType === 3) {
       return (
         <SecondSwitch
-          // checked={parameter?.IsDefault}
+          defaultChecked={parameter?.defaultValue === "true"}
           onChange={(e: any, value: any) =>
             onChangeForPrice(
               parameter?.id,

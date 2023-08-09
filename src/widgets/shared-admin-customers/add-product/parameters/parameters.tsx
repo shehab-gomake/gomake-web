@@ -10,6 +10,10 @@ import { NotHiddenIcon } from "../icons/not-hidden-icon";
 import { RequierdIcon } from "../icons/requierd-icon";
 import { NotRequierdIcon } from "../icons/not-requierd-icon";
 import { useAddProduct } from "@/hooks";
+import { DoneIcon } from "../icons";
+import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import { EditIcon } from "../../digital-offset-price/icons";
+import { useState } from "react";
 
 const ParameterWidget = () => {
   const { clasess } = useStyle();
@@ -30,7 +34,11 @@ const ParameterWidget = () => {
     activeIndex,
     template,
   } = useAddProduct();
-
+  const [expanded, setExpanded] = useState<string | false>("panel_0");
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
   const _renderParameterType = (sectionId, subSectionId, parameter) => {
     if (parameter?.parameterType === 1) {
       return (
@@ -160,11 +168,25 @@ const ParameterWidget = () => {
                       onClick={() => handleTabClick(index)}
                     >
                       <div style={{ height: 22, minWidth: 30 }}>
-                        {index === activeIndex
-                          ? item.activeIcon
-                          : index >= activeIndex
-                          ? item.icon
-                          : item.doneIcon}
+                        {index === activeIndex ? (
+                          <img
+                            src={item.icon}
+                            style={{
+                              width: 30,
+                              height: 24,
+                            }}
+                          />
+                        ) : index >= activeIndex ? (
+                          <img
+                            src={item.icon}
+                            style={{
+                              width: 30,
+                              height: 24,
+                            }}
+                          />
+                        ) : (
+                          <DoneIcon />
+                        )}
                       </div>
                       <div
                         style={
@@ -183,107 +205,188 @@ const ParameterWidget = () => {
                 {template?.sections?.map((section, index) => {
                   if (index === activeIndex) {
                     return section?.subSections?.map((subSection, index) => {
-                      return (
-                        <div key={index} style={clasess.subSectionContainer}>
-                          <div style={clasess.subSectionTitleStyle}>
-                            {subSection.name}
-                          </div>
-                          <div style={clasess.parametersContainer}>
-                            {subSection?.parameters?.map((parameter, index) => {
-                              return (
-                                <div key={index}>
-                                  <div style={clasess.parameterContainer}>
-                                    <div style={clasess.parameterLabelStyle}>
-                                      <div>
-                                        <GomakeTextInput
-                                          style={clasess.textInputWithoutStyle}
-                                          defaultValue={parameter?.name}
-                                          placeholder={parameter?.name}
-                                          onChange={(e: any) =>
-                                            setChangeName(e.target.value)
-                                          }
-                                          onBlur={() =>
-                                            updatedProductParameteName(
-                                              section?.id,
-                                              subSection?.id,
-                                              parameter
-                                            )
-                                          }
-                                        />
-                                      </div>
-                                      {parameter?.isHidden ? (
-                                        <div
-                                          style={{ cursor: "pointer" }}
-                                          onClick={() =>
-                                            updatedProductParameterHidden(
-                                              section?.id,
-                                              subSection?.id,
-                                              parameter
-                                            )
-                                          }
-                                        >
-                                          <HiddenIcon />
-                                        </div>
-                                      ) : (
-                                        <div
-                                          style={{ cursor: "pointer" }}
-                                          onClick={() =>
-                                            updatedProductParameterHidden(
-                                              section?.id,
-                                              subSection?.id,
-                                              parameter
-                                            )
-                                          }
-                                        >
-                                          <NotHiddenIcon />
-                                        </div>
-                                      )}
-                                      {parameter?.isRequired ? (
-                                        <div
-                                          style={{ cursor: "pointer" }}
-                                          onClick={() =>
-                                            updatedProductParameteRequierd(
-                                              section?.id,
-                                              subSection?.id,
-                                              parameter
-                                            )
-                                          }
-                                        >
-                                          <RequierdIcon />
-                                        </div>
-                                      ) : (
-                                        <div
-                                          style={{ cursor: "pointer" }}
-                                          onClick={() =>
-                                            updatedProductParameteRequierd(
-                                              section?.id,
-                                              subSection?.id,
-                                              parameter
-                                            )
-                                          }
-                                        >
-                                          <NotRequierdIcon />
-                                        </div>
-                                      )}
-                                    </div>
-                                    <div
-                                      style={
-                                        clasess.renderParameterTypeContainer
-                                      }
-                                    >
-                                      {_renderParameterType(
-                                        section?.id,
-                                        subSection?.id,
-                                        parameter
-                                      )}
-                                    </div>
-                                  </div>
+                      if (subSection?.isAccordion) {
+                        return (
+                          <Accordion
+                            expanded={expanded === `panel_${index}`}
+                            onChange={handleChange(`panel_${index}`)}
+                            key={index}
+                          >
+                            <AccordionSummary
+                              style={
+                                expanded === `panel_${index}`
+                                  ? clasess.activeTabContainer
+                                  : null
+                              }
+                            >
+                              <div style={clasess.headerAccordionContainer}>
+                                <EditIcon />
+                                <div
+                                  style={
+                                    expanded === `panel_${index}`
+                                      ? clasess.subSectionAccordionActiveStyle
+                                      : clasess.subSectionAccordionStyle
+                                  }
+                                >
+                                  {subSection.name}
                                 </div>
-                              );
-                            })}
+                              </div>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                              <div style={clasess.parametersContainer}>
+                                {subSection?.parameters?.map(
+                                  (parameter, index) => {
+                                    return (
+                                      <div key={index}>
+                                        {!parameter?.isHidden ? (
+                                          <div
+                                            style={clasess.parameterContainer}
+                                          >
+                                            <div
+                                              style={
+                                                clasess.parameterLabelStyle
+                                              }
+                                            >
+                                              {parameter?.updatedName}
+                                              {parameter?.isRequired ? (
+                                                <span
+                                                  style={clasess.spanRequierd}
+                                                >
+                                                  {" "}
+                                                  *
+                                                </span>
+                                              ) : null}
+                                            </div>
+                                            <div
+                                              style={
+                                                clasess.renderParameterTypeContainer
+                                              }
+                                            >
+                                              {_renderParameterType(
+                                                parameter,
+                                                subSection,
+                                                section
+                                              )}
+                                            </div>
+                                          </div>
+                                        ) : null}
+                                      </div>
+                                    );
+                                  }
+                                )}
+                              </div>
+                            </AccordionDetails>
+                          </Accordion>
+                        );
+                      } else {
+                        return (
+                          <div key={index} style={clasess.subSectionContainer}>
+                            <div style={clasess.subSectionTitleStyle}>
+                              {subSection.name}
+                            </div>
+                            <div style={clasess.parametersContainer}>
+                              {subSection?.parameters?.map(
+                                (parameter, index) => {
+                                  return (
+                                    <div key={index}>
+                                      <div style={clasess.parameterContainer}>
+                                        <div
+                                          style={clasess.parameterLabelStyle}
+                                        >
+                                          <div>
+                                            <GomakeTextInput
+                                              style={
+                                                clasess.textInputWithoutStyle
+                                              }
+                                              defaultValue={parameter?.name}
+                                              placeholder={parameter?.name}
+                                              onChange={(e: any) =>
+                                                setChangeName(e.target.value)
+                                              }
+                                              onBlur={() =>
+                                                updatedProductParameteName(
+                                                  section?.id,
+                                                  subSection?.id,
+                                                  parameter
+                                                )
+                                              }
+                                            />
+                                          </div>
+                                          {parameter?.isHidden ? (
+                                            <div
+                                              style={{ cursor: "pointer" }}
+                                              onClick={() =>
+                                                updatedProductParameterHidden(
+                                                  section?.id,
+                                                  subSection?.id,
+                                                  parameter
+                                                )
+                                              }
+                                            >
+                                              <HiddenIcon />
+                                            </div>
+                                          ) : (
+                                            <div
+                                              style={{ cursor: "pointer" }}
+                                              onClick={() =>
+                                                updatedProductParameterHidden(
+                                                  section?.id,
+                                                  subSection?.id,
+                                                  parameter
+                                                )
+                                              }
+                                            >
+                                              <NotHiddenIcon />
+                                            </div>
+                                          )}
+                                          {parameter?.isRequired ? (
+                                            <div
+                                              style={{ cursor: "pointer" }}
+                                              onClick={() =>
+                                                updatedProductParameteRequierd(
+                                                  section?.id,
+                                                  subSection?.id,
+                                                  parameter
+                                                )
+                                              }
+                                            >
+                                              <RequierdIcon />
+                                            </div>
+                                          ) : (
+                                            <div
+                                              style={{ cursor: "pointer" }}
+                                              onClick={() =>
+                                                updatedProductParameteRequierd(
+                                                  section?.id,
+                                                  subSection?.id,
+                                                  parameter
+                                                )
+                                              }
+                                            >
+                                              <NotRequierdIcon />
+                                            </div>
+                                          )}
+                                        </div>
+                                        <div
+                                          style={
+                                            clasess.renderParameterTypeContainer
+                                          }
+                                        >
+                                          {_renderParameterType(
+                                            section?.id,
+                                            subSection?.id,
+                                            parameter
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      );
+                        );
+                      }
                     });
                   }
                 })}
