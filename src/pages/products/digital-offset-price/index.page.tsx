@@ -307,54 +307,54 @@ export default function DigitalOffsetPrice() {
           />
           <div style={clasess.mainRowContainer}>
             <div style={clasess.leftSideContainer}>
-              <div style={{ height: "66vh", overflow: "scroll" }}>
-                <div style={clasess.tabsContainer}>
-                  {template?.sections?.map((item, index) => {
-                    return (
-                      <div>
-                        <div
-                          style={clasess.tabContainer}
-                          key={index}
-                          onClick={() => handleTabClick(index)}
-                        >
-                          <div style={{ height: 22, minWidth: 30 }}>
-                            {index === activeIndex ? (
-                              <img
-                                src={item.icon}
-                                style={{
-                                  width: 30,
-                                  height: 24,
-                                }}
-                              />
-                            ) : index >= activeIndex ? (
-                              <img
-                                src={item.icon}
-                                style={{
-                                  width: 30,
-                                  height: 24,
-                                }}
-                              />
-                            ) : (
-                              <DoneIcon />
-                            )}
-                          </div>
-                          <div
-                            style={
-                              index === activeIndex
-                                ? clasess.tabNameActiveStyle
-                                : clasess.tabNameStyle
-                            }
-                          >
-                            {item.name}
-                          </div>
+              <div style={clasess.tabsContainer}>
+                {template?.sections?.map((item, index) => {
+                  return (
+                    <div>
+                      <div
+                        style={clasess.tabContainer}
+                        key={index}
+                        onClick={() => handleTabClick(index)}
+                      >
+                        <div style={{ height: 22, minWidth: 30 }}>
+                          {index === activeIndex ? (
+                            <img
+                              src={item.icon}
+                              style={{
+                                width: 30,
+                                height: 24,
+                              }}
+                            />
+                          ) : index >= activeIndex ? (
+                            <img
+                              src={item.icon}
+                              style={{
+                                width: 30,
+                                height: 24,
+                              }}
+                            />
+                          ) : (
+                            <DoneIcon />
+                          )}
                         </div>
-                        {index === activeIndex && (
-                          <div style={clasess.selectedTabLine} />
-                        )}
+                        <div
+                          style={
+                            index === activeIndex
+                              ? clasess.tabNameActiveStyle
+                              : clasess.tabNameStyle
+                          }
+                        >
+                          {item.name}
+                        </div>
                       </div>
-                    );
-                  })}
-                </div>
+                      {index === activeIndex && (
+                        <div style={clasess.selectedTabLine} />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <div style={{ height: "60vh", overflow: "scroll" }}>
                 <div style={clasess.sectionsContainer}>
                   {template?.sections?.map((section, index) => {
                     if (index === activeIndex) {
@@ -540,11 +540,16 @@ export default function DigitalOffsetPrice() {
                 <div style={clasess.flyerText}>2.00 USD</div>
               </div>
               <div style={clasess.imgProductContainer}>
-                <Image
+                <img
+                  src={template.img}
+                  alt="gomake"
+                  style={{ width: "100%", borderRadius: 16 }}
+                />
+                {/* <Image
                   src={ImgProduct}
                   alt="gomake"
                   style={{ width: "100%" }}
-                />
+                /> */}
               </div>
               <div style={clasess.urgentEstimateContainer}>
                 <div style={clasess.secondText}>

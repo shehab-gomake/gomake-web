@@ -66,6 +66,8 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 50,
+        marginTop: 20,
+        marginBottom: 20,
       },
       tabContainer: {
         display: "flex",
