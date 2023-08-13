@@ -1361,7 +1361,6 @@ export default function DigitalOffsetPrice() {
   };
   const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
   const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
-  console.log("clientDefaultValue", clientDefaultValue);
   const { clientTypesValue, renderOptions, checkWhatRenderArray } =
     useQuoteWidget();
   useEffect(() => {
@@ -1602,7 +1601,6 @@ export default function DigitalOffsetPrice() {
               >
                 <div style={clasess.sectionsContainer}>
                   {templateMock?.sections?.map((section, index) => {
-                    console.log("section", section);
                     if (index === activeIndex) {
                       if (section.name === "Pricing") {
                         return (
@@ -1638,7 +1636,6 @@ export default function DigitalOffsetPrice() {
                               Actions
                             </div>
                             {section.actions?.map((action) => {
-                              console.log("action", action);
                               return (
                                 <div style={clasess.summaryContainer}>
                                   <div style={clasess.actionNameStyle}>
