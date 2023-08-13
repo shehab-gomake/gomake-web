@@ -1,6 +1,5 @@
 import * as React from "react";
-import { alpha, styled } from "@mui/material/styles";
-import { pink } from "@mui/material/colors";
+import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const SecondSwitchStyled = styled(Switch)<any>(({ colorX }: any) => ({

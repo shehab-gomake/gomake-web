@@ -81,7 +81,6 @@ const SheetSizesWidget = ({
       updateToInActive();
     }
   };
-  console.log("row", row);
   const updatePricePerUnit = useCallback(async () => {
     const res = await callApi("POST", `/v1/packings/size-id-settngs`, {
       categoryName: selectedMaterials?.key,

@@ -18,7 +18,6 @@ const useQuoteWidget = () => {
   const [selectedClientType, setSelectedClientType] = useState<any>({});
   const [selectedCustomersList, setSelectedCustomersList] = useState<any>({});
   const [selectedProduct, setSelectedProduct] = useState<any>({});
-
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
       setCanOrder(true);

@@ -1,4 +1,4 @@
 export interface IProps {
-  tableHeaders: string[];
-  tableRows: any;
+  tableHeaders?: string[];
+  tableRows?: any;
 }

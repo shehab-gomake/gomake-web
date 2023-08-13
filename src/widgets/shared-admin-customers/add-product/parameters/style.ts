@@ -8,7 +8,8 @@ import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor, secondColor, errorColor } = useGomakeTheme();
+  const { primaryColor, secondColor, errorColor, neutralColor } =
+    useGomakeTheme();
 
   const clasess = useMemo(() => {
     return {
@@ -65,13 +66,15 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 50,
+        marginTop: 20,
+        marginBottom: 20,
       },
       tabContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        // gap: 8,
+        gap: 8,
         cursor: "pointer",
       },
       tabNameStyle: {
@@ -125,7 +128,9 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        width: "100%",
+        width: "fit-content",
+        minWidth: 180,
+        marginBottom: 25,
       },
       textInputStyle: {
         width: "100%",
@@ -209,6 +214,26 @@ const useStyle = () => {
         backgroundColor: "white",
         border: `1px solid ${secondColor(500)}`,
         color: secondColor(500),
+      },
+      activeTabContainer: {
+        backgroundColor: "#EBECFF",
+        minHeight: 48,
+        marginTop: 20,
+      },
+      headerAccordionContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 10,
+      },
+      subSectionAccordionStyle: {
+        ...FONT_FAMILY.Lexend(600, 16),
+        color: primaryColor(500),
+      },
+      subSectionAccordionActiveStyle: {
+        ...FONT_FAMILY.Lexend(600, 16),
+        color: neutralColor(800),
       },
     };
   }, [i18next.language, t]);
