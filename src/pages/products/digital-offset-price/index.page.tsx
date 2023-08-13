@@ -16,7 +16,7 @@ import {
   Slider,
 } from "@mui/material";
 import { CheckboxCheckedIcon, EditIcon } from "@/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ChooseShapeModal,
   MakeShapeModal,
@@ -30,6 +30,8 @@ import { useMaterials } from "@/hooks/use-materials";
 import { useRecoilState } from "recoil";
 import { digitslPriceState } from "@/hooks/shared-customer-admin/store";
 import { Table } from "@/widgets/table/table";
+import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
+import { useRouter } from "next/router";
 export default function DigitalOffsetPrice() {
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
@@ -53,7 +55,7 @@ export default function DigitalOffsetPrice() {
     defaultPrice,
     setDefaultPrice,
   } = useDigitalOffsetPrice();
-  console.log("activeIndex", activeIndex);
+  const router = useRouter();
   const [expanded, setExpanded] = useState<string | false>("panel_0");
   const { allMaterials } = useMaterials();
   const templateMock: any = {
@@ -1357,6 +1359,24 @@ export default function DigitalOffsetPrice() {
       },
     ],
   };
+  const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
+  const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
+  console.log("clientDefaultValue", clientDefaultValue);
+  const { clientTypesValue, renderOptions, checkWhatRenderArray } =
+    useQuoteWidget();
+  useEffect(() => {
+    setClientTypeDefaultValue(
+      clientTypesValue.find(
+        (item: any) => item?.id === router?.query?.clientTypeId
+      )
+    );
+    setClientDefaultValue(
+      renderOptions().find(
+        (item: any) => item?.id === router?.query?.customerId
+      )
+    );
+  }, [clientTypesValue, router]);
+
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
@@ -1806,21 +1826,32 @@ export default function DigitalOffsetPrice() {
                   <div style={clasess.labelTextStyle}>
                     {t("products.offsetPrice.admin.client")}
                   </div>
-                  <GoMakeAutoComplate
-                    options={["q", "w"]}
-                    placeholder={t("products.offsetPrice.admin.client")}
-                    style={clasess.dropDownListStyle}
-                  />
+                  {clientDefaultValue && (
+                    <GoMakeAutoComplate
+                      options={renderOptions()}
+                      placeholder={t("products.offsetPrice.admin.client")}
+                      getOptionLabel={(option: any) =>
+                        `${option.name}-${option.code}`
+                      }
+                      defaultValue={clientDefaultValue}
+                      onChangeTextField={checkWhatRenderArray}
+                      style={clasess.dropDownListStyle}
+                    />
+                  )}
                 </div>
                 <div style={clasess.typeContainer}>
                   <div style={clasess.labelTextStyle}>
                     {t("products.offsetPrice.admin.type")}
                   </div>
-                  <GoMakeAutoComplate
-                    options={["q", "w"]}
-                    placeholder={t("products.offsetPrice.admin.type")}
-                    style={clasess.dropDownListStyle}
-                  />
+                  {clientTypeDefaultValue && (
+                    <GoMakeAutoComplate
+                      options={clientTypesValue}
+                      placeholder={t("products.offsetPrice.admin.type")}
+                      getOptionLabel={(option: any) => option.name}
+                      defaultValue={clientTypeDefaultValue}
+                      style={clasess.dropDownListStyle}
+                    />
+                  )}
                 </div>
               </div>
 
