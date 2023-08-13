@@ -85,7 +85,7 @@ const useAddProduct = () => {
 
   useEffect(() => {
     getProductById();
-  }, []);
+  }, [router]);
 
   const updatedProductParameterHidden = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {

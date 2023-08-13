@@ -4,6 +4,7 @@ const PVCBendingMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.pvc',
             parameterKey: 'pvc',
             machineInputType: 'multiInput',
+            value: state?.attributes?.pvc,
             isValid: !!state?.attributes?.pvc?.maxWidth &&
                 !!state?.attributes?.pvc?.maxLength &&
                 !!state?.attributes?.pvc?.maxThickness ,

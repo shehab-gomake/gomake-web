@@ -4,7 +4,7 @@ const foldingMachine = (state: Record<string, any>) => {
             name: '',
             parameterKey: 'folding',
             machineInputType: 'multiInput',
-            value: state.attributes?.folding ? state.attributes?.folding : {},
+            value: state?.attributes?.folding,
             isValid: !!state?.attributes?.folding?.maxLength &&
                 !!state?.attributes?.folding?.maxWidth,
             inputs: [

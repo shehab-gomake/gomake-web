@@ -1193,8 +1193,10 @@
     "costBySize": "The Cost coefficient according to size Type",
     "costPercentage": "The percentage of cost increase",
     "cm2": "CM^2",
-    "actions": "Actions",
-    "machineActions": "Machine actions"
+    "actions": "Actions list",
+    "machineActions": "Machine actions list",
+    "materialsList": "Materials list",
+    "machineMaterialsList": "Machine materials list"
   },
   "tyingOptions": {
     "cross": "Cross",
@@ -1395,7 +1397,14 @@
         "chooseShape": "Choose shape",
         "client": "Client",
         "quote": "Quote",
-        "type": "Type"
+        "type": "Type",
+        "sampleType": "Sample type",
+        "summary": "Summary",
+        "jobDetails": "Job details",
+        "totalCost": "Total cost",
+        "totalProductionTime": "Total production time",
+        "finalPrice": "Final price",
+        "actions": "Actions"
       }
     },
     "productManagement": {

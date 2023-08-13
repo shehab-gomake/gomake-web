@@ -9,7 +9,7 @@ import {useRouter} from "next/router";
 import {useAdminMachines} from "@/widgets/machines/hooks/use-admin-machines";
 
 const useAdminAddMachine = () => {
-    const {callApi} = useGomakeAxios()
+    const {callApi} = useGomakeAxios();
     const state = useRecoilValue(machineState);
     const setState = useSetRecoilState(machineState);
     const {push} = useRouter();
@@ -20,8 +20,8 @@ const useAdminAddMachine = () => {
         setState(initState[categoryId]);
     }
 
-    const curMachineCategoryId = useCallback(() => state?.category ? state?.category.toString() : '', [state]);
 
+    const curMachineCategoryId = useCallback(() => state?.category ? state?.category.toString() : '', [state]);
     const adminAddMachine = useCallback( () => {
         callApi('POST', '/v1/administrator/add-machine', {...state}).then(res => {
             if (res?.success) {

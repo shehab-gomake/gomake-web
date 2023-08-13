@@ -7,7 +7,7 @@ const GraphicWidget = () => {
 
   return (
     <div>
-      <div>ddd</div>
+      <div>coming soon</div>
     </div>
   );
 };
