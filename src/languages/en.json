@@ -1395,7 +1395,14 @@
         "chooseShape": "Choose shape",
         "client": "Client",
         "quote": "Quote",
-        "type": "Type"
+        "type": "Type",
+        "sampleType": "Sample type",
+        "summary": "Summary",
+        "jobDetails": "Job details",
+        "totalCost": "Total cost",
+        "totalProductionTime": "Total production time",
+        "finalPrice": "Final price",
+        "actions": "Actions"
       }
     },
     "productManagement": {

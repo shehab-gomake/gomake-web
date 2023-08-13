@@ -1600,91 +1600,156 @@ export default function DigitalOffsetPrice() {
                 style={{ height: "60vh", overflow: "scroll", width: "100%" }}
               >
                 <div style={clasess.sectionsContainer}>
-                  {templateMock?.sections?.map((section, index) => {
-                    if (index === activeIndex) {
-                      if (section.name === "Pricing") {
-                        return (
-                          <div style={clasess.pricingSectionContainer}>
-                            <div style={clasess.summaryContainer}>
-                              <div style={clasess.summaryStyle}>Summary</div>
-                              <div style={clasess.jobDetailsContainer}>
-                                <div style={clasess.jobDetailsStyle}>
-                                  Job details
+                  {templateMock?.sections?.map(
+                    (section: any, index: number) => {
+                      if (index === activeIndex) {
+                        if (section.name === "Pricing") {
+                          return (
+                            <div style={clasess.pricingSectionContainer}>
+                              <div style={clasess.summaryContainer}>
+                                <div style={clasess.summaryStyle}>
+                                  {t("products.offsetPrice.admin.summary")}
                                 </div>
-                                <div style={clasess.jobDetails}>
-                                  {section.jobDetails}
-                                </div>
-                              </div>
-                              <div style={{ width: "100%" }}>
-                                <Table
-                                  tableHeaders={[
-                                    "Total cost",
-                                    "Total production time",
-                                    "Final price",
-                                  ]}
-                                  tableRows={[
-                                    {
-                                      "Total cost": "562.00 USD",
-                                      "Total production time": "3.14",
-                                      "Final price": "2432.00 USD",
-                                    },
-                                  ]}
-                                />
-                              </div>
-                            </div>
-                            <div style={clasess.actionsStyleContainer}>
-                              Actions
-                            </div>
-                            {section.actions?.map((action) => {
-                              return (
-                                <div style={clasess.summaryContainer}>
-                                  <div style={clasess.actionNameStyle}>
-                                    {action?.actionName}
+                                <div style={clasess.jobDetailsContainer}>
+                                  <div style={clasess.jobDetailsStyle}>
+                                    {t("products.offsetPrice.admin.jobDetails")}
                                   </div>
-
-                                  <div
-                                    style={{ width: "100%", marginTop: -85 }} //when real data delete the  marginTop
-                                  >
-                                    <Table tableRows={action?.Flows} />
+                                  <div style={clasess.jobDetails}>
+                                    {section.jobDetails}
                                   </div>
                                 </div>
-                              );
-                            })}
-                          </div>
-                        );
-                      } else {
-                        return section?.subSections?.map(
-                          (subSection, index) => {
-                            if (subSection?.isAccordion) {
-                              return (
-                                <Accordion
-                                  expanded={expanded === `panel_${index}`}
-                                  onChange={handleChange(`panel_${index}`)}
-                                  key={index}
-                                >
-                                  <AccordionSummary
-                                    style={
-                                      expanded === `panel_${index}`
-                                        ? clasess.activeTabContainer
-                                        : null
-                                    }
-                                  >
-                                    <div
-                                      style={clasess.headerAccordionContainer}
-                                    >
-                                      <EditIcon />
-                                      <div
-                                        style={
-                                          expanded === `panel_${index}`
-                                            ? clasess.subSectionAccordionActiveStyle
-                                            : clasess.subSectionAccordionStyle
-                                        }
-                                      >
-                                        {subSection.name}
-                                      </div>
+                                <div style={{ width: "100%" }}>
+                                  <Table
+                                    tableHeaders={[
+                                      t("products.offsetPrice.admin.totalCost"),
+                                      t(
+                                        "products.offsetPrice.admin.totalProductionTime"
+                                      ),
+                                      t(
+                                        "products.offsetPrice.admin.finalPrice"
+                                      ),
+                                    ]}
+                                    tableRows={[
+                                      {
+                                        totalCost: "562.00 USD",
+                                        totalProductionTime: "3.14",
+                                        finalPrice: "2432.00 USD",
+                                      },
+                                    ]}
+                                  />
+                                </div>
+                              </div>
+                              <div style={clasess.actionsStyleContainer}>
+                                {t("products.offsetPrice.admin.actions")}
+                              </div>
+                              {section.actions?.map((action) => {
+                                return (
+                                  <div style={clasess.summaryContainer}>
+                                    <div style={clasess.actionNameStyle}>
+                                      {action?.actionName}
                                     </div>
-                                  </AccordionSummary>
-                                  <AccordionDetails>
+
+                                    <div
+                                      style={{ width: "100%", marginTop: -85 }} //When it is real data, delete marginTop
+                                    >
+                                      <Table tableRows={action?.Flows} />
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          );
+                        } else {
+                          return section?.subSections?.map(
+                            (subSection, index) => {
+                              if (subSection?.isAccordion) {
+                                return (
+                                  <Accordion
+                                    expanded={expanded === `panel_${index}`}
+                                    onChange={handleChange(`panel_${index}`)}
+                                    key={index}
+                                  >
+                                    <AccordionSummary
+                                      style={
+                                        expanded === `panel_${index}`
+                                          ? clasess.activeTabContainer
+                                          : null
+                                      }
+                                    >
+                                      <div
+                                        style={clasess.headerAccordionContainer}
+                                      >
+                                        <EditIcon />
+                                        <div
+                                          style={
+                                            expanded === `panel_${index}`
+                                              ? clasess.subSectionAccordionActiveStyle
+                                              : clasess.subSectionAccordionStyle
+                                          }
+                                        >
+                                          {subSection.name}
+                                        </div>
+                                      </div>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                      <div style={clasess.parametersContainer}>
+                                        {subSection?.parameters?.map(
+                                          (parameter, index) => {
+                                            return (
+                                              <div key={index}>
+                                                {!parameter?.isHidden ? (
+                                                  <div
+                                                    style={
+                                                      clasess.parameterContainer
+                                                    }
+                                                  >
+                                                    <div
+                                                      style={
+                                                        clasess.parameterLabelStyle
+                                                      }
+                                                    >
+                                                      {parameter?.updatedName}
+                                                      {parameter?.isRequired ? (
+                                                        <span
+                                                          style={
+                                                            clasess.spanRequierd
+                                                          }
+                                                        >
+                                                          {" "}
+                                                          *
+                                                        </span>
+                                                      ) : null}
+                                                    </div>
+                                                    <div
+                                                      style={
+                                                        clasess.renderParameterTypeContainer
+                                                      }
+                                                    >
+                                                      {_renderParameterType(
+                                                        parameter,
+                                                        subSection,
+                                                        section
+                                                      )}
+                                                    </div>
+                                                  </div>
+                                                ) : null}
+                                              </div>
+                                            );
+                                          }
+                                        )}
+                                      </div>
+                                    </AccordionDetails>
+                                  </Accordion>
+                                );
+                              } else {
+                                return (
+                                  <div
+                                    key={index}
+                                    style={clasess.subSectionContainer}
+                                  >
+                                    <div style={clasess.subSectionTitleStyle}>
+                                      {subSection.name}
+                                    </div>
                                     <div style={clasess.parametersContainer}>
                                       {subSection?.parameters?.map(
                                         (parameter, index) => {
@@ -1701,7 +1766,7 @@ export default function DigitalOffsetPrice() {
                                                       clasess.parameterLabelStyle
                                                     }
                                                   >
-                                                    {parameter?.updatedName}
+                                                    {parameter?.name}
                                                     {parameter?.isRequired ? (
                                                       <span
                                                         style={
@@ -1731,72 +1796,15 @@ export default function DigitalOffsetPrice() {
                                         }
                                       )}
                                     </div>
-                                  </AccordionDetails>
-                                </Accordion>
-                              );
-                            } else {
-                              return (
-                                <div
-                                  key={index}
-                                  style={clasess.subSectionContainer}
-                                >
-                                  <div style={clasess.subSectionTitleStyle}>
-                                    {subSection.name}
                                   </div>
-                                  <div style={clasess.parametersContainer}>
-                                    {subSection?.parameters?.map(
-                                      (parameter, index) => {
-                                        return (
-                                          <div key={index}>
-                                            {!parameter?.isHidden ? (
-                                              <div
-                                                style={
-                                                  clasess.parameterContainer
-                                                }
-                                              >
-                                                <div
-                                                  style={
-                                                    clasess.parameterLabelStyle
-                                                  }
-                                                >
-                                                  {parameter?.name}
-                                                  {parameter?.isRequired ? (
-                                                    <span
-                                                      style={
-                                                        clasess.spanRequierd
-                                                      }
-                                                    >
-                                                      {" "}
-                                                      *
-                                                    </span>
-                                                  ) : null}
-                                                </div>
-                                                <div
-                                                  style={
-                                                    clasess.renderParameterTypeContainer
-                                                  }
-                                                >
-                                                  {_renderParameterType(
-                                                    parameter,
-                                                    subSection,
-                                                    section
-                                                  )}
-                                                </div>
-                                              </div>
-                                            ) : null}
-                                          </div>
-                                        );
-                                      }
-                                    )}
-                                  </div>
-                                </div>
-                              );
+                                );
+                              }
                             }
-                          }
-                        );
+                          );
+                        }
                       }
                     }
-                  })}
+                  )}
                 </div>
               </div>
               <div style={clasess.addPreviousContainer}>
@@ -1944,11 +1952,13 @@ export default function DigitalOffsetPrice() {
                 </div>
                 {activeTab === "Production" ? (
                   <div style={clasess.productionStatus}>
-                    <div style={clasess.sampleTypeStyle}>Sample type</div>
+                    <div style={clasess.sampleTypeStyle}>
+                      {t("products.offsetPrice.admin.sampleType")}
+                    </div>
                     <div style={clasess.autoCompleteContainer}>
                       <GoMakeAutoComplate
                         options={["q", "w"]}
-                        placeholder={t("products.offsetPrice.admin.quote")}
+                        placeholder={t("products.offsetPrice.admin.sampleType")}
                         style={clasess.dropDownListStyle}
                       />
                     </div>
@@ -1962,11 +1972,13 @@ export default function DigitalOffsetPrice() {
                   </div>
                 ) : (
                   <div style={clasess.productionStatus}>
-                    <div style={clasess.sampleTypeStyle}>Sample type</div>
+                    <div style={clasess.sampleTypeStyle}>
+                      {t("products.offsetPrice.admin.sampleType")}
+                    </div>
                     <div style={clasess.autoCompleteContainer}>
                       <GoMakeAutoComplate
                         options={["q", "w"]}
-                        placeholder={t("products.offsetPrice.admin.quote")}
+                        placeholder={t("products.offsetPrice.admin.sampleType")}
                         style={clasess.dropDownListStyle}
                       />
                     </div>
