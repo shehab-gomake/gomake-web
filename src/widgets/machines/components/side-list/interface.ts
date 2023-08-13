@@ -5,6 +5,7 @@ export interface ISideListProps {
     title: string;
     children?: any;
     quickActions?: boolean;
+    isAdmin?: boolean;
 }
 
 
