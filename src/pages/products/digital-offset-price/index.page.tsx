@@ -6,7 +6,6 @@ import {
   GoMakeAutoComplate,
   GomakePrimaryButton,
   GomakeTextInput,
-  SecondSwitch,
 } from "@/components";
 import {
   Accordion,
@@ -16,7 +15,6 @@ import {
   Slider,
 } from "@mui/material";
 import { CheckboxCheckedIcon, EditIcon } from "@/icons";
-import { useEffect, useState } from "react";
 import {
   ChooseShapeModal,
   MakeShapeModal,
@@ -26,26 +24,17 @@ import {
   DoneIcon,
 } from "@/widgets/shared-admin-customers/digital-offset-price/icons";
 import { useDigitalOffsetPrice } from "@/hooks";
-import { useMaterials } from "@/hooks/use-materials";
-import { useRecoilState } from "recoil";
-import { digitslPriceState } from "@/hooks/shared-customer-admin/store";
 import { Table } from "@/widgets/table/table";
-import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
-import { useRouter } from "next/router";
 export default function DigitalOffsetPrice() {
-  const [digitalPriceData, setDigidatPriceData] =
-    useRecoilState<any>(digitslPriceState);
   const { clasess } = useStyle();
   const {
     t,
     handleTabClick,
     handleNextClick,
     handlePreviousClick,
-    onOpeneChooseShape,
     onOpeneMakeShape,
     onCloseChooseShape,
     onCloseMakeShape,
-    onChangeForPrice,
     makeShapeOpen,
     chooseShapeOpen,
     activeIndex,
@@ -54,10 +43,17 @@ export default function DigitalOffsetPrice() {
     tabs,
     defaultPrice,
     setDefaultPrice,
-  } = useDigitalOffsetPrice();
-  const router = useRouter();
-  const [expanded, setExpanded] = useState<string | false>("panel_0");
-  const { allMaterials } = useMaterials();
+
+    expanded,
+    handleChange,
+    _renderParameterType,
+    clientDefaultValue,
+    renderOptions,
+    checkWhatRenderArray,
+    clientTypeDefaultValue,
+    clientTypesValue,
+  } = useDigitalOffsetPrice({ clasess });
+
   const templateMock: any = {
     id: "2d40c22d-5cdd-4aaa-a223-0b0f26621398",
     name: "Real data test",
@@ -1359,186 +1355,7 @@ export default function DigitalOffsetPrice() {
       },
     ],
   };
-  const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
-  const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
-  const { clientTypesValue, renderOptions, checkWhatRenderArray } =
-    useQuoteWidget();
-  useEffect(() => {
-    setClientTypeDefaultValue(
-      clientTypesValue.find(
-        (item: any) => item?.id === router?.query?.clientTypeId
-      )
-    );
-    setClientDefaultValue(
-      renderOptions().find(
-        (item: any) => item?.id === router?.query?.customerId
-      )
-    );
-  }, [clientTypesValue, router]);
 
-  const handleChange =
-    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
-      setExpanded(newExpanded ? panel : false);
-    };
-  const _renderParameterType = (
-    parameter: any,
-    subSection: any,
-    section: any
-  ) => {
-    if (parameter?.parameterType === 1) {
-      return (
-        <GomakeTextInput
-          style={clasess.textInputStyle}
-          defaultValue={parameter.defaultValue}
-          placeholder={parameter.name}
-          onChange={(e: any, item: any) =>
-            onChangeForPrice(
-              parameter?.id,
-              subSection?.id,
-              section?.id,
-              parameter?.parameterType,
-              { value: e.target.value }
-            )
-          }
-          type="number"
-        />
-      );
-    } else if (parameter?.parameterType === 2) {
-      return (
-        <GomakeTextInput
-          style={clasess.textInputStyle}
-          defaultValue={parameter.defaultValue}
-          placeholder={parameter.name}
-          onChange={(e: any, value: any) =>
-            onChangeForPrice(
-              parameter?.id,
-              subSection?.id,
-              section?.id,
-              parameter?.id,
-              { value: e.target.value }
-            )
-          }
-          type="text"
-        />
-      );
-    } else if (parameter?.parameterType === 0) {
-      const defaultObject = parameter.valuesConfigs.find(
-        (item) => item.isDefault === true
-      );
-      return (
-        <GoMakeAutoComplate
-          options={parameter?.valuesConfigs}
-          placeholder={parameter.name}
-          style={clasess.dropDownListStyle}
-          getOptionLabel={(option: any) => option.updateName}
-          value={defaultObject}
-          onChange={(e: any, value: any) => {
-            onChangeForPrice(
-              parameter?.id,
-              subSection?.id,
-              section?.id,
-              parameter?.parameterType,
-              { valueId: value?.id, valueName: value?.updateName }
-            );
-          }}
-        />
-      );
-    } else if (parameter?.parameterType === 3) {
-      return (
-        <SecondSwitch
-          defaultChecked={parameter?.defaultValue === "true"}
-          onChange={(e: any, value: any) =>
-            onChangeForPrice(
-              parameter?.id,
-              subSection?.id,
-              section?.id,
-              parameter?.parameterType,
-              { value }
-            )
-          }
-        />
-      );
-    } else if (parameter?.parameterType === 4) {
-      return (
-        <GomakePrimaryButton
-          style={clasess.dynamicBtn}
-          onClick={onOpeneChooseShape}
-        >
-          {parameter?.name}
-        </GomakePrimaryButton>
-      );
-    } else if (parameter?.parameterType === 5) {
-      let options: any = allMaterials;
-      if (parameter?.materialPath?.length == 3) {
-        options = digitalPriceData?.selectedMaterialLvl2;
-      }
-      if (parameter?.materialPath?.length == 2) {
-        options = digitalPriceData?.selectedMaterialLvl1;
-      }
-      if (parameter?.materialPath?.length == 1) {
-        options = allMaterials.find(
-          (material) => material.pathName === parameter?.materialPath[0]
-        )?.data;
-      }
-      return (
-        options?.length > 0 && (
-          <GoMakeAutoComplate
-            options={options}
-            placeholder={parameter.updatedName}
-            style={clasess.dropDownListStyle}
-            getOptionLabel={(option: any) => option.value}
-            onChange={(e: any, value: any) => {
-              if (parameter?.materialPath?.length == 3) {
-                onChangeForPrice(
-                  parameter?.id,
-                  subSection?.id,
-                  section?.id,
-                  parameter?.parameterType,
-                  { valueId: value?.id, valueName: value.value }
-                );
-                setDigidatPriceData({
-                  ...digitalPriceData,
-                  selectedMaterialLvl3: value,
-                  selectedOptionLvl3: value,
-                });
-              }
-              if (parameter?.materialPath?.length == 2) {
-                onChangeForPrice(
-                  parameter?.id,
-                  subSection?.id,
-                  section?.id,
-                  parameter?.parameterType,
-                  { valueId: value?.id, valueName: value.value }
-                );
-                setDigidatPriceData({
-                  ...digitalPriceData,
-                  selectedMaterialLvl2: value?.data,
-                  selectedOptionLvl2: value,
-                  selectedMaterialLvl3: null,
-                });
-              }
-              if (parameter?.materialPath?.length == 1) {
-                onChangeForPrice(
-                  parameter?.id,
-                  subSection?.id,
-                  section?.id,
-                  parameter?.parameterType,
-                  { valueId: value?.id, valueName: value.value }
-                );
-                setDigidatPriceData({
-                  ...digitalPriceData,
-                  selectedMaterialLvl1: value?.data,
-                  selectedOptionLvl1: value,
-                  selectedMaterialLvl2: null,
-                  selectedMaterialLvl3: null,
-                });
-              }
-            }}
-          />
-        )
-      );
-    }
-  };
   return (
     <CustomerAuthLayout>
       {templateMock?.sections?.length > 0 && (
@@ -1708,7 +1525,7 @@ export default function DigitalOffsetPrice() {
                                                         clasess.parameterLabelStyle
                                                       }
                                                     >
-                                                      {parameter?.updatedName}
+                                                      {parameter?.name}
                                                       {parameter?.isRequired ? (
                                                         <span
                                                           style={
