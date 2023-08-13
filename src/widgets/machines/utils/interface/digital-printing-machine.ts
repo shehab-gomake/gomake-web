@@ -33,6 +33,7 @@ export interface IDigitalPrintingMachine extends IMachine{
         media: WidthLengthValue;
         speed: number;
     };
+    speed: Record<string, {} | []>
     speedCoefficientByWeight: {weight: number, speedPercentage: number}[]
     feeders: NumberHeightValue[];
     stackers: NumberHeightValue[];
