@@ -10,6 +10,7 @@ const foldingGluingMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.mediaASize',
             parameterKey: 'mediaASize',
             machineInputType: 'multiInput',
+            value: state?.attributes?.mediaASize,
             isValid: !!state?.attributes?.mediaASize?.min &&
                 !!state?.attributes?.mediaASize?.max,
 
@@ -41,6 +42,7 @@ const foldingGluingMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.mediaBSize',
             parameterKey: 'mediaBSize',
             machineInputType: 'multiInput',
+            value: state?.attributes?.mediaBSize,
             isValid: !!state?.attributes?.mediaBSize?.min &&
                 !!state?.attributes?.mediaBSize?.max,
 
@@ -72,6 +74,7 @@ const foldingGluingMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.mediaCSize',
             parameterKey: 'mediaCSize',
             machineInputType: 'multiInput',
+            value: state?.attributes?.mediaCSize,
             isValid: !!state?.attributes?.mediaCSize?.min &&
                 !!state?.attributes?.mediaCSize?.max,
 
@@ -103,6 +106,7 @@ const foldingGluingMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.mediaDSize',
             parameterKey: 'mediaDSize',
             machineInputType: 'multiInput',
+            value: state?.attributes?.mediaDSize,
             isValid: !!state?.attributes?.mediaDSize?.min &&
                 !!state?.attributes?.mediaDSize?.max,
 

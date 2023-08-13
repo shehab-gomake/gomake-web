@@ -19,6 +19,7 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.tableDimensions',
             parameterKey: 'tableDimensions',
             machineInputType: 'multiInput',
+            value: state?.attributes?.tableDimensions,
             isValid: !!state?.attributes?.tableDimensions?.width &&
                 !!state?.attributes?.tableDimensions?.length &&
                 !!state?.attributes?.tableDimensions?.thickness ,

@@ -77,6 +77,7 @@ const bookBinderMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.paperThickness',
             parameterKey: 'paperThickness',
             machineInputType: 'multiInput',
+            value: state?.attributes?.paperThickness,
             isValid: !!state?.attributes?.paperThickness?.min &&
                 !!state?.attributes?.paperThickness?.max,
             inputs: [

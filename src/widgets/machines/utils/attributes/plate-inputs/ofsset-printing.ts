@@ -4,6 +4,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             name: 'machineAttributes.plateCylinder',
             parameterKey: 'plateCylinder',
             machineInputType: 'multiInput',
+            value: state?.attributes?.plateCylinder,
             isValid: !!state?.attributes?.plateCylinder?.underCut &&
                 !!state?.attributes?.plateCylinder?.distance,
             inputs: [
@@ -34,6 +35,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             name: 'machineAttributes.plateSize',
             parameterKey: 'plateSize',
             machineInputType: 'multiInput',
+            value: state?.attributes?.plateSize,
             isValid: !!state?.attributes?.plateSize?.length &&
                 !!state?.attributes?.plateSize?.width &&
                 !!state?.attributes?.plateSize?.thickness,

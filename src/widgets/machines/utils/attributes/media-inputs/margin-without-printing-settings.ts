@@ -5,6 +5,7 @@ const marginWithoutPrintingSettings = (state: Record<string, any>) => {
             name: 'machineAttributes.minMarginWithoutPrinting',
             parameterKey: 'minMarginWithoutPrinting',
             machineInputType: 'multiInput',
+            value: state?.attributes?.minMarginWithoutPrinting,
             isValid: !!state?.attributes?.minMarginWithoutPrinting?.width &&
                 !!state?.attributes?.minMarginWithoutPrinting?.length  ,
             inputs: [
