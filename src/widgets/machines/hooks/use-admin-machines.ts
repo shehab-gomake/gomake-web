@@ -40,10 +40,17 @@ const useAdminMachines = () => {
         setMachineState(updatedMachine);
     }
 
+    const addMachineToList = (machine: Record<string, any>) => {
+        const machinesList = [...machines];
+        machinesList.push(machine)
+        setMachines(machinesList);
+    }
+
     return {
         getMachinesList,
         setMachine,
-        setUpdatedMachine
+        setUpdatedMachine,
+        addMachineToList
     };
 }
 

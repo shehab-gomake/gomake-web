@@ -44,7 +44,7 @@ const AdminUpdateMachine = () => {
     }
 
     const Side = () => <SideList list={getMachinesList} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
-                                 title={'Machines'}/>
+                                 title={'Machines'} quickActions={true} isAdmin={true}/>
     return (
         <MachineLayout side={Side()} header={categoryName} subHeader={ selectedMachine.manufacturer ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.model : ''}>
 
