@@ -23,18 +23,21 @@ const Table = ({ tableHeaders, tableRows }: IProps) => {
   }, [tableRows]);
   return (
     <div style={clasess.container}>
-      <div style={clasess.header}>
-        {tableHeaders.map((header: string, index: number) => {
-          return (
-            <Header
-              key={`header_item${index}`}
-              header={header}
-              index={index}
-              width={`${100 / tableHeaders.length}%`}
-            />
-          );
-        })}
-      </div>
+      {tableHeaders && (
+        <div style={clasess.header}>
+          {tableHeaders?.map((header: string, index: number) => {
+            return (
+              <Header
+                key={`header_item${index}`}
+                header={header}
+                index={index}
+                width={`${100 / tableHeaders.length}%`}
+              />
+            );
+          })}
+        </div>
+      )}
+
       <div style={clasess.tableBody}>
         {_tableRows?.length > 0 ? (
           <>
