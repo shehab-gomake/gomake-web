@@ -450,6 +450,25 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         color: secondColor(500),
       },
+      cellsContainerStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        width: "100%",
+        flexWrap: "wrap" as "wrap",
+        textAlign: "center" as "center",
+      },
+      cellContainer: {
+        padding: 22,
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: primaryColor(500),
+        minWidth: 135,
+      },
+      actoionsSelectContainer: {
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: primaryColor(500),
+      },
     };
   }, [i18next.language, t]);
   return {

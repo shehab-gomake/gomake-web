@@ -6,6 +6,7 @@ import {spiralPerforationMachine} from "@/widgets/machines/utils/attributes/othe
 import {rollLaminationMachine} from "@/widgets/machines/utils/attributes/other-settings/roll-lamination-machine";
 import {rollVarnishMachine} from "@/widgets/machines/utils/attributes/other-settings/roll-varnish-machine";
 import {rollDieCutMachine} from "@/widgets/machines/utils/attributes/other-settings/roll-die-cut-machine";
+import {rollLaserCutMachine} from "@/widgets/machines/utils/attributes/other-settings/roll-laser-cut-machine";
 
 
 const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[] => {
@@ -24,6 +25,8 @@ const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[
             return rollVarnishMachine(state);
         case ECategoryId.ROLL_DIE_CUT_MACHINE:
             return rollDieCutMachine(state);
+        case ECategoryId.ROLL_LASER_CUT_MACHINE:
+            return rollLaserCutMachine(state);
         default:
             return []
     }
