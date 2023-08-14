@@ -2,29 +2,20 @@ import { CustomerAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 
 import { useStyle } from "./style";
-import {
-  GoMakeAutoComplate,
-  GomakePrimaryButton,
-  GomakeTextInput,
-} from "@/components";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Checkbox,
-  Slider,
-} from "@mui/material";
-import { CheckboxCheckedIcon, EditIcon } from "@/icons";
+import { GomakePrimaryButton } from "@/components";
 import {
   ChooseShapeModal,
   MakeShapeModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
-import {
-  CheckboxIcon,
-  DoneIcon,
-} from "@/widgets/shared-admin-customers/digital-offset-price/icons";
 import { useDigitalOffsetPrice } from "@/hooks";
-import { Table } from "@/widgets/table/table";
+import { useRecoilValue } from "recoil";
+import { machineCategoriesState } from "@/store/machine-categories";
+import { useState } from "react";
+import { TabsMappingWidget } from "./widgets/tabs-mapping.page";
+import { AccordionMappingWidget } from "./widgets/accordion-mapping";
+import { SectionMappingWidget } from "./widgets/section-mapping";
+import { PricingSectionMappingWidget } from "./widgets/pricing-section-mapping";
+import { RightSideWidget } from "./widgets/right-side-widget";
 export default function DigitalOffsetPrice() {
   const { clasess } = useStyle();
   const {
@@ -53,7 +44,6 @@ export default function DigitalOffsetPrice() {
     clientTypeDefaultValue,
     clientTypesValue,
   } = useDigitalOffsetPrice({ clasess });
-
   const templateMock: any = {
     id: "2d40c22d-5cdd-4aaa-a223-0b0f26621398",
     name: "Real data test",
@@ -1280,25 +1270,76 @@ export default function DigitalOffsetPrice() {
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
         actions: [
           {
-            actionId: "",
+            actionId: "a1",
             machineCategories: [
               {
-                machineCategoryId: "",
-                machineCategoryName: "Digital Printing",
+                machineCategoryId: "1",
                 machines: [
                   {
-                    machineName: "",
-                    machineId: "",
+                    machineName: "machine1",
+                    machineId: "m1",
+                  },
+                  {
+                    machineName: "machine2",
+                    machineId: "m2",
                   },
                 ],
               },
               {
-                machineCategoryId: "",
-                machineCategoryName: "Offset Printing",
+                machineCategoryId: "2",
                 machines: [
                   {
-                    machineName: "",
-                    machineId: "",
+                    machineName: "machine3",
+                    machineId: "m3",
+                  },
+                ],
+              },
+              {
+                machineCategoryId: "3",
+                machines: [
+                  {
+                    machineName: "machine4",
+                    machineId: "m4",
+                  },
+                  {
+                    machineName: "machine5",
+                    machineId: "m5",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            actionId: "a2",
+            machineCategories: [
+              {
+                machineCategoryId: "4",
+                machines: [
+                  {
+                    machineName: "machine6",
+                    machineId: "m6",
+                  },
+                  {
+                    machineName: "machine7",
+                    machineId: "m7",
+                  },
+                ],
+              },
+              {
+                machineCategoryId: "5",
+                machines: [
+                  {
+                    machineName: "machine8",
+                    machineId: "m8",
+                  },
+                ],
+              },
+              {
+                machineCategoryId: "6",
+                machines: [
+                  {
+                    machineName: "machine6",
+                    machineId: "m9",
                   },
                 ],
               },
@@ -1307,13 +1348,13 @@ export default function DigitalOffsetPrice() {
         ],
         flows: [
           {
-            totalCost: "",
+            totalCost: "200",
             actions: [
               {
-                actionId: "",
+                actionId: "a1",
                 actionName: "Action1",
-                machineId: "",
-                machineCategoryId: "",
+                machineId: "m1",
+                machineCategoryId: "1",
                 outputs: [
                   {
                     name: "Setup time",
@@ -1366,14 +1407,14 @@ export default function DigitalOffsetPrice() {
                 ],
               },
               {
-                actionId: "",
+                actionId: "a2",
                 actionName: "Action2",
                 machineId: "",
-                machineCategoryId: "",
+                machineCategoryId: "4",
                 outputs: [
                   {
                     name: "Setup time",
-                    value: "5.5",
+                    value: "8.5",
                   },
                   {
                     name: "Run time",
@@ -1427,7 +1468,16 @@ export default function DigitalOffsetPrice() {
       },
     ],
   };
-
+  const machineCategories = useRecoilValue(machineCategoriesState);
+  const [actionState, setActionState] = useState({});
+  console.log("actionState", actionState);
+  const onChangeCategoryData = (actionId, categoryId, value) => {
+    setActionState({
+      actionId,
+      categoryId,
+      value,
+    });
+  };
   return (
     <CustomerAuthLayout>
       {templateMock?.sections?.length > 0 && (
@@ -1441,47 +1491,14 @@ export default function DigitalOffsetPrice() {
               <div style={clasess.tabsContainer}>
                 {templateMock?.sections?.map((item, index) => {
                   return (
-                    <div>
-                      <div
-                        style={clasess.tabContainer}
-                        key={index}
-                        onClick={() => handleTabClick(index)}
-                      >
-                        <div style={{ height: 22, minWidth: 30 }}>
-                          {index === activeIndex ? (
-                            <img
-                              src={item.icon}
-                              style={{
-                                width: 30,
-                                height: 24,
-                              }}
-                            />
-                          ) : index >= activeIndex ? (
-                            <img
-                              src={item.icon}
-                              style={{
-                                width: 30,
-                                height: 24,
-                              }}
-                            />
-                          ) : (
-                            <DoneIcon />
-                          )}
-                        </div>
-                        <div
-                          style={
-                            index === activeIndex
-                              ? clasess.tabNameActiveStyle
-                              : clasess.tabNameStyle
-                          }
-                        >
-                          {item.name}
-                        </div>
-                      </div>
-                      {index === activeIndex && (
-                        <div style={clasess.selectedTabLine} />
-                      )}
-                    </div>
+                    <TabsMappingWidget
+                      key={`tab-${index}`}
+                      clasess={clasess}
+                      index={index}
+                      handleTabClick={handleTabClick}
+                      activeIndex={activeIndex}
+                      item={item}
+                    />
                   );
                 })}
               </div>
@@ -1494,280 +1511,37 @@ export default function DigitalOffsetPrice() {
                       if (index === activeIndex) {
                         if (section.name === "Pricing") {
                           return (
-                            <div style={clasess.pricingSectionContainer}>
-                              <div style={clasess.summaryContainer}>
-                                <div style={clasess.summaryStyle}>
-                                  {t("products.offsetPrice.admin.summary")}
-                                </div>
-                                <div style={clasess.jobDetailsContainer}>
-                                  <div style={clasess.jobDetailsStyle}>
-                                    {t("products.offsetPrice.admin.jobDetails")}
-                                  </div>
-                                  <div style={clasess.jobDetails}>
-                                    {section.jobDetails}
-                                  </div>
-                                </div>
-                                <div style={{ width: "100%" }}>
-                                  <Table
-                                    tableHeaders={[
-                                      t("products.offsetPrice.admin.totalCost"),
-                                      t(
-                                        "products.offsetPrice.admin.totalProductionTime"
-                                      ),
-                                      t(
-                                        "products.offsetPrice.admin.finalPrice"
-                                      ),
-                                    ]}
-                                    tableRows={[
-                                      {
-                                        totalCost: "562.00 USD",
-                                        totalProductionTime: "3.14",
-                                        finalPrice: "2432.00 USD",
-                                      },
-                                    ]}
-                                  />
-                                </div>
-                              </div>
-                              <div style={clasess.actionsStyleContainer}>
-                                {t("products.offsetPrice.admin.actions")}
-                              </div>
-                              {section?.flows?.map((flow: any) => {
-                                return (
-                                  <>
-                                    {flow?.actions?.map((action: any) => {
-                                      return (
-                                        <div style={clasess.summaryContainer}>
-                                          <div style={clasess.actionNameStyle}>
-                                            {action?.actionName}
-                                          </div>
-                                          <div
-                                            style={clasess.cellsContainerStyle}
-                                          >
-                                            <div
-                                              style={{
-                                                minWidth: 180,
-                                                padding: 22,
-                                              }}
-                                            >
-                                              <GoMakeAutoComplate
-                                                options={["q", "w"]}
-                                                placeholder={t(
-                                                  "products.offsetPrice.admin.stationName"
-                                                )}
-                                                style={
-                                                  clasess.actoionsSelectContainer
-                                                }
-                                              />
-                                            </div>
-                                            <div
-                                              style={{
-                                                minWidth: 180,
-                                                padding: 22,
-                                              }}
-                                            >
-                                              <GoMakeAutoComplate
-                                                options={["q", "w"]}
-                                                placeholder={t(
-                                                  "products.offsetPrice.admin.actionType"
-                                                )}
-                                                style={
-                                                  clasess.actoionsSelectContainer
-                                                }
-                                              />
-                                            </div>
-                                            <div
-                                              style={{
-                                                minWidth: 180,
-                                                padding: 22,
-                                              }}
-                                            >
-                                              <GoMakeAutoComplate
-                                                options={["q", "w"]}
-                                                placeholder={t(
-                                                  "products.offsetPrice.admin.machine"
-                                                )}
-                                                style={
-                                                  clasess.actoionsSelectContainer
-                                                }
-                                              />
-                                            </div>
-
-                                            {action?.outputs.map(
-                                              (output: any) => {
-                                                return (
-                                                  <div
-                                                    style={
-                                                      clasess.cellContainer
-                                                    }
-                                                  >
-                                                    <div>{output?.name}</div>
-                                                    <div>{output.value}</div>
-                                                  </div>
-                                                );
-                                              }
-                                            )}
-                                          </div>
-                                        </div>
-                                      );
-                                    })}
-                                  </>
-                                );
-                              })}
-                              {/* {section.actions?.map((action) => {
-                                return (
-                                  <div style={clasess.summaryContainer}>
-                                    <div style={clasess.actionNameStyle}>
-                                      {action?.actionName}
-                                    </div>
-
-                                    <div
-                                      style={{ width: "100%", marginTop: -85 }} //When it is real data, delete marginTop
-                                    >
-                                      <Table tableRows={action?.Flows} />
-                                    </div>
-                                  </div>
-                                );
-                              })} */}
-                            </div>
+                            <PricingSectionMappingWidget
+                              clasess={clasess}
+                              machineCategories={machineCategories}
+                              onChangeCategoryData={onChangeCategoryData}
+                              section={section}
+                            />
                           );
                         } else {
                           return section?.subSections?.map(
                             (subSection, index) => {
                               if (subSection?.isAccordion) {
                                 return (
-                                  <Accordion
-                                    expanded={expanded === `panel_${index}`}
-                                    onChange={handleChange(`panel_${index}`)}
-                                    key={index}
-                                  >
-                                    <AccordionSummary
-                                      style={
-                                        expanded === `panel_${index}`
-                                          ? clasess.activeTabContainer
-                                          : null
-                                      }
-                                    >
-                                      <div
-                                        style={clasess.headerAccordionContainer}
-                                      >
-                                        <EditIcon />
-                                        <div
-                                          style={
-                                            expanded === `panel_${index}`
-                                              ? clasess.subSectionAccordionActiveStyle
-                                              : clasess.subSectionAccordionStyle
-                                          }
-                                        >
-                                          {subSection.name}
-                                        </div>
-                                      </div>
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                      <div style={clasess.parametersContainer}>
-                                        {subSection?.parameters?.map(
-                                          (parameter, index) => {
-                                            return (
-                                              <div key={index}>
-                                                {!parameter?.isHidden ? (
-                                                  <div
-                                                    style={
-                                                      clasess.parameterContainer
-                                                    }
-                                                  >
-                                                    <div
-                                                      style={
-                                                        clasess.parameterLabelStyle
-                                                      }
-                                                    >
-                                                      {parameter?.name}
-                                                      {parameter?.isRequired ? (
-                                                        <span
-                                                          style={
-                                                            clasess.spanRequierd
-                                                          }
-                                                        >
-                                                          {" "}
-                                                          *
-                                                        </span>
-                                                      ) : null}
-                                                    </div>
-                                                    <div
-                                                      style={
-                                                        clasess.renderParameterTypeContainer
-                                                      }
-                                                    >
-                                                      {_renderParameterType(
-                                                        parameter,
-                                                        subSection,
-                                                        section
-                                                      )}
-                                                    </div>
-                                                  </div>
-                                                ) : null}
-                                              </div>
-                                            );
-                                          }
-                                        )}
-                                      </div>
-                                    </AccordionDetails>
-                                  </Accordion>
+                                  <AccordionMappingWidget
+                                    clasess={clasess}
+                                    expanded={expanded}
+                                    index={index}
+                                    handleChange={handleChange}
+                                    subSection={subSection}
+                                    section={section}
+                                    _renderParameterType={_renderParameterType}
+                                  />
                                 );
                               } else {
                                 return (
-                                  <div
-                                    key={index}
-                                    style={clasess.subSectionContainer}
-                                  >
-                                    <div style={clasess.subSectionTitleStyle}>
-                                      {subSection.name}
-                                    </div>
-                                    <div style={clasess.parametersContainer}>
-                                      {subSection?.parameters?.map(
-                                        (parameter, index) => {
-                                          return (
-                                            <div key={index}>
-                                              {!parameter?.isHidden ? (
-                                                <div
-                                                  style={
-                                                    clasess.parameterContainer
-                                                  }
-                                                >
-                                                  <div
-                                                    style={
-                                                      clasess.parameterLabelStyle
-                                                    }
-                                                  >
-                                                    {parameter?.name}
-                                                    {parameter?.isRequired ? (
-                                                      <span
-                                                        style={
-                                                          clasess.spanRequierd
-                                                        }
-                                                      >
-                                                        {" "}
-                                                        *
-                                                      </span>
-                                                    ) : null}
-                                                  </div>
-                                                  <div
-                                                    style={
-                                                      clasess.renderParameterTypeContainer
-                                                    }
-                                                  >
-                                                    {_renderParameterType(
-                                                      parameter,
-                                                      subSection,
-                                                      section
-                                                    )}
-                                                  </div>
-                                                </div>
-                                              ) : null}
-                                            </div>
-                                          );
-                                        }
-                                      )}
-                                    </div>
-                                  </div>
+                                  <SectionMappingWidget
+                                    clasess={clasess}
+                                    index={index}
+                                    subSection={subSection}
+                                    section={section}
+                                    _renderParameterType={_renderParameterType}
+                                  />
                                 );
                               }
                             }
@@ -1796,184 +1570,20 @@ export default function DigitalOffsetPrice() {
               </div>
             </div>
 
-            <div style={clasess.rightSideContainer}>
-              <div style={clasess.headerClientRightSide}>
-                <div style={clasess.clientContainer}>
-                  <div style={clasess.labelTextStyle}>
-                    {t("products.offsetPrice.admin.client")}
-                  </div>
-                  {clientDefaultValue && (
-                    <GoMakeAutoComplate
-                      options={renderOptions()}
-                      placeholder={t("products.offsetPrice.admin.client")}
-                      getOptionLabel={(option: any) =>
-                        `${option.name}-${option.code}`
-                      }
-                      defaultValue={clientDefaultValue}
-                      onChangeTextField={checkWhatRenderArray}
-                      style={clasess.dropDownListStyle}
-                    />
-                  )}
-                </div>
-                <div style={clasess.typeContainer}>
-                  <div style={clasess.labelTextStyle}>
-                    {t("products.offsetPrice.admin.type")}
-                  </div>
-                  {clientTypeDefaultValue && (
-                    <GoMakeAutoComplate
-                      options={clientTypesValue}
-                      placeholder={t("products.offsetPrice.admin.type")}
-                      getOptionLabel={(option: any) => option.name}
-                      defaultValue={clientTypeDefaultValue}
-                      style={clasess.dropDownListStyle}
-                    />
-                  )}
-                </div>
-              </div>
-
-              <div style={clasess.headerRightSide}>
-                <div style={clasess.flyerText}>
-                  {t("products.offsetPrice.admin.flyerPoster")}
-                </div>
-                <div style={clasess.flyerText}>2.00 USD</div>
-              </div>
-              <div style={clasess.imgProductContainer}>
-                <img
-                  src={templateMock.img}
-                  alt="gomake"
-                  style={{ width: "100%", borderRadius: 16 }}
-                />
-                {/* <Image
-                  src={ImgProduct}
-                  alt="gomake"
-                  style={{ width: "100%" }}
-                /> */}
-              </div>
-              <div style={clasess.urgentEstimateContainer}>
-                <div style={clasess.secondText}>
-                  {t("products.offsetPrice.admin.takeEstimate", {
-                    data: "5 days",
-                  })}
-                </div>
-                <div style={clasess.urgentContainer}>
-                  <Checkbox
-                    icon={<CheckboxIcon />}
-                    checkedIcon={<CheckboxCheckedIcon />}
-                  />
-                  <div style={clasess.secondText}>
-                    {t("products.offsetPrice.admin.urgentOrder")}
-                  </div>
-                </div>
-              </div>
-              <div style={clasess.orderContainer}>
-                {t("products.offsetPrice.admin.orderToral", {
-                  pieceNum: "15",
-                  price: "2.00",
-                })}
-              </div>
-              <div style={clasess.progress}>
-                <Slider defaultValue={50} aria-label="Default" />
-              </div>
-              <div style={clasess.labelBrogressContainer}>
-                <div style={clasess.labelStyle}>10.00</div>
-                <div style={clasess.labelStyle}>100.00</div>
-              </div>
-              <div style={clasess.totalContainer}>
-                <div style={clasess.totalStyle}>
-                  {t("products.offsetPrice.admin.total")}
-                </div>
-                <div style={clasess.totalStyle}>
-                  <GomakeTextInput
-                    value={defaultPrice}
-                    onChange={(e: any) => setDefaultPrice(e.target.value)}
-                    style={clasess.inputPriceStyle}
-                  />{" "}
-                  USD
-                </div>
-              </div>
-              <div style={clasess.priceRecoveryContainer}>
-                <Checkbox
-                  icon={<CheckboxIcon />}
-                  checkedIcon={<CheckboxCheckedIcon />}
-                />
-                <div style={clasess.secondText}>
-                  {t("products.offsetPrice.admin.priceRecovery")}
-                </div>
-              </div>
-
-              <div style={clasess.switchAdditionsContainer}>
-                <div style={clasess.additionsText}>
-                  {t("products.offsetPrice.admin.additions")}
-                </div>
-                <div style={clasess.tabsTypesContainer}>
-                  {tabs?.map((tab) => {
-                    return (
-                      <div
-                        onClick={tab.onclick()}
-                        style={
-                          activeTab === tab.name
-                            ? clasess.activeTabStyle
-                            : clasess.unActiveTabStyle
-                        }
-                      >
-                        {tab.name}
-                      </div>
-                    );
-                  })}
-                </div>
-                {activeTab === "Production" ? (
-                  <div style={clasess.productionStatus}>
-                    <div style={clasess.sampleTypeStyle}>
-                      {t("products.offsetPrice.admin.sampleType")}
-                    </div>
-                    <div style={clasess.autoCompleteContainer}>
-                      <GoMakeAutoComplate
-                        options={["q", "w"]}
-                        placeholder={t("products.offsetPrice.admin.sampleType")}
-                        style={clasess.dropDownListStyle}
-                      />
-                    </div>
-                    <div style={clasess.multiLineContainer}>
-                      <GomakeTextInput
-                        multiline={6}
-                        style={clasess.multiLineTextInputStyle}
-                        placeholder="Production comment"
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div style={clasess.productionStatus}>
-                    <div style={clasess.sampleTypeStyle}>
-                      {t("products.offsetPrice.admin.sampleType")}
-                    </div>
-                    <div style={clasess.autoCompleteContainer}>
-                      <GoMakeAutoComplate
-                        options={["q", "w"]}
-                        placeholder={t("products.offsetPrice.admin.sampleType")}
-                        style={clasess.dropDownListStyle}
-                      />
-                    </div>
-                    <div style={clasess.multiLineContainer}>
-                      <GomakeTextInput
-                        multiline={6}
-                        style={clasess.multiLineTextInputStyle}
-                        placeholder="Graphic design comment"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <GomakePrimaryButton
-                style={clasess.addOrderBtn}
-                onClick={onOpeneMakeShape}
-              >
-                {t("products.offsetPrice.admin.addOrder")}
-              </GomakePrimaryButton>
-              <div style={clasess.noVatStyle}>
-                {t("products.offsetPrice.admin.dontVAT")}
-              </div>
-            </div>
+            <RightSideWidget
+              clasess={clasess}
+              clientDefaultValue={clientDefaultValue}
+              renderOptions={renderOptions}
+              checkWhatRenderArray={checkWhatRenderArray}
+              clientTypeDefaultValue={clientTypeDefaultValue}
+              clientTypesValue={clientTypesValue}
+              templateMock={templateMock}
+              setDefaultPrice={setDefaultPrice}
+              defaultPrice={defaultPrice}
+              tabs={tabs}
+              activeTab={activeTab}
+              onOpeneMakeShape={onOpeneMakeShape}
+            />
           </div>
           <MakeShapeModal
             openModal={makeShapeOpen}
