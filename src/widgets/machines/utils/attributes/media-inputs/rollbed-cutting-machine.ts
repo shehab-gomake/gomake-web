@@ -28,6 +28,7 @@ const rollbedCuttingMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.media',
             parameterKey: 'media',
             machineInputType: 'multiInput',
+            value: state?.attributes?.media,
             isValid: !!state?.attributes?.media?.width &&
                 !!state?.attributes?.media?.length &&
                 !!state?.attributes?.media?.thickness ,

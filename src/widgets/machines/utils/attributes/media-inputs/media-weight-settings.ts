@@ -5,6 +5,7 @@ const mediaWeightSettings = (state: Record<string, any>) => {
             name: 'machineAttributes.mediaWeight',
             parameterKey: 'mediaWeight',
             machineInputType: 'multiInput',
+            value: state?.attributes?.mediaWeight,
             isValid: !!state?.attributes?.mediaWeight?.min &&
                 !!state?.attributes?.mediaWeight?.max  ,
             inputs: [

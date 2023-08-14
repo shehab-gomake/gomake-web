@@ -4,6 +4,7 @@ const bookletMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.thickness',
             parameterKey: 'thickness',
             machineInputType: 'multiInput',
+            value: state?.attributes?.thickness,
             isValid: !!state?.attributes?.thickness?.min &&
                 !!state?.attributes?.thickness?.max,
             inputs: [

@@ -16,6 +16,7 @@ const linkageMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.rolls',
             parameterKey: 'rolls',
             machineInputType: 'multiInput',
+            value: state?.attributes?.rolls,
             isValid: !!state?.attributes?.rolls?.maxWidth &&
                 !!state?.attributes?.rolls?.maxLength &&
                 !!state?.attributes?.rolls?.maxThickness ,
@@ -58,6 +59,7 @@ const linkageMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.flatbeds',
             parameterKey: 'flatbeds',
             machineInputType: 'multiInput',
+            value: state?.attributes?.flatbeds,
             isValid: !!state?.attributes?.flatbeds?.maxWidth &&
                 !!state?.attributes?.flatbeds?.maxLength &&
                 !!state?.attributes?.flatbeds?.maxThickness ,

@@ -29,6 +29,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             name: 'machineAttributes.coatingBlanket',
             parameterKey: 'coatingBlanket',
             machineInputType: 'multiInput',
+            value: state?.attributes?.coatingBlanket,
             isValid: !!state?.attributes?.coatingBlanket?.length &&
                 !!state?.attributes?.coatingBlanket?.width ,
             inputs: [
@@ -60,6 +61,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             name: 'machineAttributes.coatingPlate',
             parameterKey: 'coatingPlate',
             machineInputType: 'multiInput',
+            value: state?.attributes?.coatingPlate,
             isValid: !!state?.attributes?.coatingPlate?.length &&
                 !!state?.attributes?.coatingPlate?.width ,
             inputs: [
@@ -91,6 +93,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             name: 'machineAttributes.maxCoatingArea',
             parameterKey: 'maxCoatingArea',
             machineInputType: 'multiInput',
+            value: state?.attributes?.maxCoatingArea,
             isValid: !!state?.attributes?.maxCoatingArea?.length &&
                 !!state?.attributes?.maxCoatingArea?.width ,
             inputs: [

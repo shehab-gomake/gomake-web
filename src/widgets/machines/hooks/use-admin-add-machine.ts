@@ -14,7 +14,7 @@ const useAdminAddMachine = () => {
     const setState = useSetRecoilState(machineState);
     const {push} = useRouter();
     const { setSnackbarStateValue } = useSnackBar();
-    const {setUpdatedMachine} = useAdminMachines()
+    const {setUpdatedMachine, addMachineToList} = useAdminMachines()
     const {t} = useTranslation();
     const initMachineStateCategory = (categoryId: ECategoryId) => {
         setState(initState[categoryId]);
@@ -42,6 +42,30 @@ const useAdminAddMachine = () => {
         })
     }, [state]);
 
+    const adminDuplicateMachine = () => {
+        const payload = {...state};
+        delete payload['_id'];
+        delete payload['id'];
+        payload.nickName = payload?.nickName + 'duplicated'
+        callApi('POST', '/v1/administrator/add-machine', payload).then(res => {
+            if (res?.success) {
+                addMachineToList(res.data.data);
+                setState(res?.data?.data);
+                setSnackbarStateValue({
+                    state: true,
+                    message: t("modal.addedSusuccessfully"),
+                    type: "success",
+                });
+            } else {
+                setSnackbarStateValue({
+                    state: true,
+                    message: t("modal.addedfailed"),
+                    type: "error",
+                });
+            }
+        })
+    }
+
     const updateMachine = async () => {
         const result = await callApi('POST', '/v1/administrator/update-machine', {...state});
         if (result?.success) {
@@ -67,7 +91,8 @@ const useAdminAddMachine = () => {
         adminAddMachine,
         curMachineCategoryId,
         initMachineStateCategory,
-        updateMachine
+        updateMachine,
+        adminDuplicateMachine
     };
 };
 
