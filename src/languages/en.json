@@ -1404,7 +1404,10 @@
         "totalCost": "Total cost",
         "totalProductionTime": "Total production time",
         "finalPrice": "Final price",
-        "actions": "Actions"
+        "actions": "Actions",
+        "stationName": "Station name",
+        "actionType": "Action type",
+        "machine": "Machine"
       }
     },
     "productManagement": {

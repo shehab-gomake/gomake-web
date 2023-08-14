@@ -1280,74 +1280,146 @@ export default function DigitalOffsetPrice() {
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
         actions: [
           {
-            actionName: "Action1",
-            Flows: [
-              {},
+            actionId: "",
+            machineCategories: [
               {
-                StationName: "StationName",
-                ActionType: "ActionType",
-                Machine: "Machine",
-                SetupTime: "SetupTime",
-                RunTime: "RunTime",
-                DeliveryTime: "DeliveryTime",
-                Cost: "Cost",
-                Profit: "Profit",
+                machineCategoryId: "",
+                machineCategoryName: "Digital Printing",
+                machines: [
+                  {
+                    machineName: "",
+                    machineId: "",
+                  },
+                ],
               },
               {
-                StationName: "3,353,42",
-                ActionType: "3,353,42",
-                Machine: "3,353,42",
-                SetupTime: "3,353,42",
-                RunTime: "3,353,42",
-                DeliveryTime: "3,353,42",
-                Cost: "3,353,42",
-                Profit: "55%",
-              },
-              {
-                StationName: "3,353,42",
-                ActionType: "3,353,42",
-                Machine: "3,353,42",
-                SetupTime: "3,353,42",
-                RunTime: "3,353,42",
-                DeliveryTime: "3,353,42",
-                Cost: "3,353,42",
-                Profit: "55%",
+                machineCategoryId: "",
+                machineCategoryName: "Offset Printing",
+                machines: [
+                  {
+                    machineName: "",
+                    machineId: "",
+                  },
+                ],
               },
             ],
           },
+        ],
+        flows: [
           {
-            actionName: "Action2",
-            Flows: [
-              {},
+            totalCost: "",
+            actions: [
               {
-                StationName: "StationName",
-                ActionType: "ActionType",
-                Machine: "Machine",
-                SetupTime: "SetupTime",
-                RunTime: "RunTime",
-                DeliveryTime: "DeliveryTime",
-                Cost: "Cost",
-                Profit: "Profit",
+                actionId: "",
+                actionName: "Action1",
+                machineId: "",
+                machineCategoryId: "",
+                outputs: [
+                  {
+                    name: "Setup time",
+                    value: "5.5",
+                  },
+                  {
+                    name: "Run time",
+                    value: "5.5",
+                  },
+                  {
+                    name: "Delivery time",
+                    value: "3/32",
+                  },
+                  {
+                    name: "Station name",
+                    value: "3,353,42",
+                  },
+                  {
+                    name: "Setup cost",
+                    value: "3,353,42",
+                  },
+                  {
+                    name: "Run cost",
+                    value: "3,353,42",
+                  },
+                  {
+                    name: "Total Cost",
+                    value: "3,353,42",
+                  },
+                  {
+                    name: "Profit",
+                    value: "555%",
+                  },
+                  {
+                    name: "Media/Material",
+                    value: "3,443,33",
+                  },
+                  {
+                    name: "Type",
+                    value: "XXX",
+                  },
+                  {
+                    name: "Quantity",
+                    value: "555",
+                  },
+                  {
+                    name: "Cost",
+                    value: "542",
+                  },
+                ],
               },
               {
-                StationName: "Station name 3,353,42",
-                ActionType: "Station name 3,353,42",
-                Machine: "Station name 3,353,42",
-                SetupTime: "Setup cost 3,353,42",
-                RunTime: "Run cost 3,353,42",
-                DeliveryTime: "Total Cost 3,353,42",
-                Cost: "Profit 555%",
-                Profit: "Price 555",
-              },
-              {
-                StationName: "3,353,42",
-                ActionType: "3,353,42",
-                Machine: "3,353,42",
-                SetupTime: "3,353,42",
-                RunTime: "3,353,42",
-                DeliveryTime: "3,353,42",
-                Cost: "3,353,42",
-                Profit: "55%",
+                actionId: "",
+                actionName: "Action2",
+                machineId: "",
+                machineCategoryId: "",
+                outputs: [
+                  {
+                    name: "Setup time",
+                    value: "5.5",
+                  },
+                  {
+                    name: "Run time",
+                    value: "5.5",
+                  },
+                  {
+                    name: "Delivery time",
+                    value: "3/32",
+                  },
+                  {
+                    name: "Station name",
+                    value: "3,353,42",
+                  },
+                  {
+                    name: "Setup cost",
+                    value: "3,353,42",
+                  },
+                  {
+                    name: "Run cost",
+                    value: "3,353,42",
+                  },
+                  {
+                    name: "Total Cost",
+                    value: "3,353,42",
+                  },
+                  {
+                    name: "Profit",
+                    value: "555%",
+                  },
+                  {
+                    name: "Media/Material",
+                    value: "3,443,33",
+                  },
+                  {
+                    name: "Type",
+                    value: "XXX",
+                  },
+                  {
+                    name: "Quantity",
+                    value: "555",
+                  },
+                  {
+                    name: "Cost",
+                    value: "542",
+                  },
+                ],
               },
             ],
           },
@@ -1459,7 +1531,89 @@ export default function DigitalOffsetPrice() {
                               <div style={clasess.actionsStyleContainer}>
                                 {t("products.offsetPrice.admin.actions")}
                               </div>
-                              {section.actions?.map((action) => {
+                              {section?.flows?.map((flow: any) => {
+                                return (
+                                  <>
+                                    {flow?.actions?.map((action: any) => {
+                                      return (
+                                        <div style={clasess.summaryContainer}>
+                                          <div style={clasess.actionNameStyle}>
+                                            {action?.actionName}
+                                          </div>
+                                          <div
+                                            style={clasess.cellsContainerStyle}
+                                          >
+                                            <div
+                                              style={{
+                                                minWidth: 180,
+                                                padding: 22,
+                                              }}
+                                            >
+                                              <GoMakeAutoComplate
+                                                options={["q", "w"]}
+                                                placeholder={t(
+                                                  "products.offsetPrice.admin.stationName"
+                                                )}
+                                                style={
+                                                  clasess.actoionsSelectContainer
+                                                }
+                                              />
+                                            </div>
+                                            <div
+                                              style={{
+                                                minWidth: 180,
+                                                padding: 22,
+                                              }}
+                                            >
+                                              <GoMakeAutoComplate
+                                                options={["q", "w"]}
+                                                placeholder={t(
+                                                  "products.offsetPrice.admin.actionType"
+                                                )}
+                                                style={
+                                                  clasess.actoionsSelectContainer
+                                                }
+                                              />
+                                            </div>
+                                            <div
+                                              style={{
+                                                minWidth: 180,
+                                                padding: 22,
+                                              }}
+                                            >
+                                              <GoMakeAutoComplate
+                                                options={["q", "w"]}
+                                                placeholder={t(
+                                                  "products.offsetPrice.admin.machine"
+                                                )}
+                                                style={
+                                                  clasess.actoionsSelectContainer
+                                                }
+                                              />
+                                            </div>
+
+                                            {action?.outputs.map(
+                                              (output: any) => {
+                                                return (
+                                                  <div
+                                                    style={
+                                                      clasess.cellContainer
+                                                    }
+                                                  >
+                                                    <div>{output?.name}</div>
+                                                    <div>{output.value}</div>
+                                                  </div>
+                                                );
+                                              }
+                                            )}
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </>
+                                );
+                              })}
+                              {/* {section.actions?.map((action) => {
                                 return (
                                   <div style={clasess.summaryContainer}>
                                     <div style={clasess.actionNameStyle}>
@@ -1473,7 +1627,7 @@ export default function DigitalOffsetPrice() {
                                     </div>
                                   </div>
                                 );
-                              })}
+                              })} */}
                             </div>
                           );
                         } else {
