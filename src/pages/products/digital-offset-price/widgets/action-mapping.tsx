@@ -1,4 +1,5 @@
 import { GoMakeAutoComplate } from "@/components";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const ActionMappingWidget = ({
@@ -7,9 +8,17 @@ const ActionMappingWidget = ({
   actionData,
   machineCategories,
   onChangeCategoryData,
-  machinesArray,
 }: any) => {
   const { t } = useTranslation();
+
+  const [machinesArray, setMachinesArray] = useState([]);
+  useEffect(() => {
+    setMachinesArray(
+      actionData?.machineCategories.find(
+        (c) => c.machineCategoryId === action.machineCategoryId
+      ).machines
+    );
+  }, [machineCategories]);
   return (
     <div style={clasess.summaryContainer}>
       <div style={clasess.actionNameStyle}>{action?.actionName}</div>
@@ -47,7 +56,7 @@ const ActionMappingWidget = ({
               (c) => c.id === action.machineCategoryId
             )}
             onChange={(e: any, item: any) => {
-              console.log("item", item);
+              setMachinesArray(item?.machines);
               onChangeCategoryData(
                 action.actionId,
                 action.machineCategoryId,
@@ -65,10 +74,13 @@ const ActionMappingWidget = ({
             padding: 22,
           }}
         >
-          {machinesArray && (
+          {machinesArray?.length > 0 && (
             <GoMakeAutoComplate
               options={machinesArray}
               getOptionLabel={(option: any) => option.machineName}
+              defaultValue={machinesArray.find(
+                (c) => c.machineId === action.machineId
+              )}
               placeholder={t("products.offsetPrice.admin.machine")}
               style={clasess.actoionsSelectContainer}
             />

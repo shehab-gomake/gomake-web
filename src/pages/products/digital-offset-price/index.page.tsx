@@ -1409,7 +1409,7 @@ export default function DigitalOffsetPrice() {
               {
                 actionId: "a2",
                 actionName: "Action2",
-                machineId: "",
+                machineId: "m6",
                 machineCategoryId: "4",
                 outputs: [
                   {
@@ -1470,7 +1470,6 @@ export default function DigitalOffsetPrice() {
   };
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
-  console.log("actionState", actionState);
   const onChangeCategoryData = (actionId, categoryId, value) => {
     setActionState({
       actionId,
@@ -1520,7 +1519,7 @@ export default function DigitalOffsetPrice() {
                           );
                         } else {
                           return section?.subSections?.map(
-                            (subSection, index) => {
+                            (subSection: any, index: number) => {
                               if (subSection?.isAccordion) {
                                 return (
                                   <AccordionMappingWidget
