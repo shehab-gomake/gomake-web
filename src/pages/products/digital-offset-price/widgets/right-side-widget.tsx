@@ -14,7 +14,7 @@ const RightSideWidget = ({
   checkWhatRenderArray,
   clientTypeDefaultValue,
   clientTypesValue,
-  templateMock,
+  template,
   setDefaultPrice,
   defaultPrice,
   tabs,
@@ -64,7 +64,7 @@ const RightSideWidget = ({
       </div>
       <div style={clasess.imgProductContainer}>
         <img
-          src={templateMock.img}
+          src={template.img}
           alt="gomake"
           style={{ width: "100%", borderRadius: 16 }}
         />

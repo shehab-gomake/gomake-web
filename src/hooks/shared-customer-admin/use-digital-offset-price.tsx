@@ -23,39 +23,39 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const [template, setTemplate] = useState<any>([]);
   const [priceTemplate, setPriceTemplate] = useState<any>([]);
 
-  // useEffect(() => {
-  //   if (template?.sections?.length > 0) {
-  //     let tempMockData: any = [...template?.sections];
-  //     let temp = [...priceTemplate];
-  //     tempMockData?.map((section, i) => {
-  //       return section?.subSections?.map((subSection, i) => {
-  //         return subSection.parameters?.map((parameter, i) => {
-  //           const index = temp.findIndex(
-  //             (item) =>
-  //               item.parameterId === parameter?.id &&
-  //               item.sectionId === section?.id &&
-  //               item.subSectionId === subSection?.id
-  //           );
-  //           if (index !== -1) {
-  //             temp[index] = {
-  //               ...temp[index],
-  //             };
-  //           } else {
-  //             temp.push({
-  //               parameterId: parameter?.id,
-  //               sectionId: section?.id,
-  //               subSectionId: subSection?.id,
-  //               parameterType: parameter?.parameterType,
-  //               actionId: parameter?.actionId,
-  //               // ...data,
-  //             });
-  //           }
-  //         });
-  //       });
-  //     });
-  //     setPriceTemplate(temp);
-  //   }
-  // }, [template]);
+  useEffect(() => {
+    if (template?.sections?.length > 0) {
+      let tempMockData: any = [...template?.sections];
+      let temp = [...priceTemplate];
+      tempMockData?.map((section, i) => {
+        return section?.subSections?.map((subSection, i) => {
+          return subSection.parameters?.map((parameter, i) => {
+            const index = temp.findIndex(
+              (item) =>
+                item.parameterId === parameter?.id &&
+                item.sectionId === section?.id &&
+                item.subSectionId === subSection?.id
+            );
+            if (index !== -1) {
+              temp[index] = {
+                ...temp[index],
+              };
+            } else {
+              temp.push({
+                parameterId: parameter?.id,
+                sectionId: section?.id,
+                subSectionId: subSection?.id,
+                parameterType: parameter?.parameterType,
+                actionId: parameter?.actionId,
+                // ...data,
+              });
+            }
+          });
+        });
+      });
+      setPriceTemplate(temp);
+    }
+  }, [template]);
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
   const router = useRouter();
