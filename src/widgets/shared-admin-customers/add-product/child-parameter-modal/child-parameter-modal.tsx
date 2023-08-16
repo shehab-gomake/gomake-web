@@ -8,6 +8,7 @@ import {
 import { useStyle } from "./style";
 import { PlusIcon, RemoveIcon } from "@/icons";
 import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 const ChildParameterModal = ({
   openModal,
@@ -72,10 +73,11 @@ const ChildParameterModal = ({
               onClick={() => {
                 let temp = [...state.valuesConfigs];
                 temp.push({
+                  id: uuidv4(),
                   isHidden: false,
-                  isDefault: true,
-                  updateName: "",
+                  isDefault: false,
                   isDeleted: false,
+                  updateName: "",
                   materialValueIds: [],
                   values: {},
                 });
@@ -91,8 +93,11 @@ const ChildParameterModal = ({
               style={{ cursor: "pointer" }}
               onClick={() => {
                 let temp = [...state.valuesConfigs];
-                // temp.pop();
-                // setItems(temp);
+                temp.pop();
+                setState({
+                  ...state,
+                  valuesConfigs: temp,
+                });
               }}
             >
               <RemoveIcon />
