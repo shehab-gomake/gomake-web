@@ -10,10 +10,12 @@ import { NotHiddenIcon } from "../icons/not-hidden-icon";
 import { RequierdIcon } from "../icons/requierd-icon";
 import { NotRequierdIcon } from "../icons/not-requierd-icon";
 import { useAddProduct } from "@/hooks";
-import { DoneIcon } from "../icons";
+import { DoneIcon, SettingIcon } from "../icons";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { EditIcon } from "../../digital-offset-price/icons";
 import { useState } from "react";
+import { PlusIcon } from "@/icons";
+import { ChildParameterModal } from "../child-parameter-modal";
 
 const ParameterWidget = () => {
   const { clasess } = useStyle();
@@ -34,6 +36,19 @@ const ParameterWidget = () => {
     activeIndex,
     template,
   } = useAddProduct();
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedParameter, setSelectedParameter] = useState<any>({});
+  const [selectedSectonId, setSelectedSectonId] = useState({});
+  const [selectedSubSection, setSelectedSubSection] = useState({});
+  const onCloseModal = () => {
+    setOpenModal(false);
+  };
+  const onOpenModal = (parameter, sectionId, subSectionId) => {
+    setSelectedParameter(parameter);
+    setSelectedSectonId(sectionId);
+    setSelectedSubSection(subSectionId);
+    setOpenModal(true);
+  };
   const [expanded, setExpanded] = useState<string | false>("panel_0");
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -63,8 +78,8 @@ const ParameterWidget = () => {
           style={clasess.textInputStyle}
           defaultValue={parameter.defaultValue}
           placeholder={parameter.name}
-          onChange={(e: any) => setChangeDefaultValue(e.target.value)}
           type="text"
+          onChange={(e: any) => setChangeDefaultValue(e.target.value)}
           onBlur={() =>
             updatedProductParameteDefaultValue(
               sectionId,
@@ -154,6 +169,64 @@ const ParameterWidget = () => {
         <GomakePrimaryButton style={clasess.dynamicBtn}>
           {parameter?.name}
         </GomakePrimaryButton>
+      );
+    } else if (parameter?.parameterType === 6) {
+      return (
+        <GoMakeAutoComplate
+          options={parameter?.valuesConfigs}
+          placeholder={parameter.name}
+          style={clasess.dropDownListStyle}
+          getOptionLabel={(option: any) => option.updateName}
+          // value={defaultObject}
+          onChange={(e: any, value: any) => {
+            updatedProductParameterValuesConfigsDefault(
+              sectionId,
+              subSectionId,
+              parameter,
+              value
+            );
+          }}
+          renderOption={(props: any, option: any) => {
+            return (
+              <div style={clasess.optionsContainer}>
+                <div {...props} style={{ width: "100%" }}>
+                  {option.updateName}
+                </div>
+                <div>
+                  {option.isHidden ? (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <HiddenIcon />
+                    </div>
+                  ) : (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <NotHiddenIcon />
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          }}
+        />
       );
     }
   };
@@ -320,6 +393,23 @@ const ParameterWidget = () => {
                                                 }
                                               />
                                             </div>
+                                            {parameter?.parameterType === 6 && (
+                                              <div
+                                                style={clasess.plusIconStyle}
+                                                onClick={() =>
+                                                  onOpenModal(
+                                                    parameter,
+                                                    section?.id,
+                                                    subSection?.id
+                                                  )
+                                                }
+                                              >
+                                                <SettingIcon
+                                                  width={20}
+                                                  height={20}
+                                                />
+                                              </div>
+                                            )}
                                             {parameter?.isHidden ? (
                                               <div
                                                 style={{ cursor: "pointer" }}
@@ -419,6 +509,14 @@ const ParameterWidget = () => {
               {t("products.offsetPrice.admin.nextBtn")}
             </GomakePrimaryButton>
           </div>
+          <ChildParameterModal
+            openModal={openModal}
+            onClose={onCloseModal}
+            selectedParameter={selectedParameter}
+            modalTitle={`${selectedParameter?.name} values`}
+            selectedSectonId={selectedSectonId}
+            selectedSubSection={selectedSubSection}
+          />
         </>
       )}
     </>
