@@ -66,6 +66,7 @@ const ChildParameterModal = ({
               alignItems: "center",
               justifyContent: "flex-start",
               gap: 10,
+              marginBottom: 15,
             }}
           >
             <div
@@ -103,47 +104,52 @@ const ChildParameterModal = ({
               <RemoveIcon />
             </div>
           </div>
-          {state.valuesConfigs?.map((item, index) => {
-            return (
-              <div style={clasess.addNewValueContainer} key={`parent_${index}`}>
-                <div style={clasess.textInputContainer}>
-                  <GomakeTextInput
-                    style={clasess.textInputStyle}
-                    placeholder="Enter Value"
-                    onChange={(e) =>
-                      changeItems(index, "updateName", e.target.value)
-                    }
-                    defaultValue={item?.updateName}
-                  />
-                </div>
+          <div style={{ height: 150, overflow: "scroll" }}>
+            {state.valuesConfigs?.map((item, index) => {
+              return (
+                <div
+                  style={clasess.addNewValueContainer}
+                  key={`parent_${index}`}
+                >
+                  <div style={clasess.textInputContainer}>
+                    <GomakeTextInput
+                      style={clasess.textInputStyle}
+                      placeholder="Enter Value"
+                      onChange={(e) =>
+                        changeItems(index, "updateName", e.target.value)
+                      }
+                      defaultValue={item?.updateName}
+                    />
+                  </div>
 
-                {state?.childsParameters?.map(
-                  (value: any, indexChild: number) => {
-                    return (
-                      <div
-                        style={clasess.textInputContainer}
-                        key={`child_${indexChild}`}
-                      >
-                        <GomakeTextInput
-                          style={clasess.textInputStyle}
-                          placeholder={`Enter ${value?.name}`}
-                          onChange={(e) => {
-                            changeItems(index, "values", {
-                              ...state.valuesConfigs[index].values,
-                              [value?.id]: e.target.value,
-                            });
-                          }}
-                          defaultValue={
-                            state.valuesConfigs[index].values[value?.id]
-                          }
-                        />
-                      </div>
-                    );
-                  }
-                )}
-              </div>
-            );
-          })}
+                  {state?.childsParameters?.map(
+                    (value: any, indexChild: number) => {
+                      return (
+                        <div
+                          style={clasess.textInputContainer}
+                          key={`child_${indexChild}`}
+                        >
+                          <GomakeTextInput
+                            style={clasess.textInputStyle}
+                            placeholder={`Enter ${value?.name}`}
+                            onChange={(e) => {
+                              changeItems(index, "values", {
+                                ...state.valuesConfigs[index].values,
+                                [value?.id]: e.target.value,
+                              });
+                            }}
+                            defaultValue={
+                              state.valuesConfigs[index].values[value?.id]
+                            }
+                          />
+                        </div>
+                      );
+                    }
+                  )}
+                </div>
+              );
+            })}
+          </div>
           <div
             style={{
               marginTop: 50,
