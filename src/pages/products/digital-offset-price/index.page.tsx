@@ -16,7 +16,7 @@ import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
 import { PricingSectionMappingWidget } from "./widgets/pricing-section-mapping";
 import { RightSideWidget } from "./widgets/right-side-widget";
-
+import { PricingTab } from "./data";
 export default function DigitalOffsetPrice() {
   const { clasess } = useStyle();
   const {
@@ -65,7 +65,7 @@ export default function DigitalOffsetPrice() {
           <div style={clasess.mainRowContainer}>
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
-                {template?.sections?.map((item, index) => {
+                {[...template?.sections, PricingTab]?.map((item, index) => {
                   return (
                     <TabsMappingWidget
                       key={`tab-${index}`}
@@ -82,48 +82,50 @@ export default function DigitalOffsetPrice() {
                 style={{ height: "60vh", overflow: "scroll", width: "100%" }}
               >
                 <div style={clasess.sectionsContainer}>
-                  {template?.sections?.map((section: any, index: number) => {
-                    if (index === activeIndex) {
-                      if (section.name === "Pricing") {
-                        return (
-                          <PricingSectionMappingWidget
-                            clasess={clasess}
-                            machineCategories={machineCategories}
-                            onChangeCategoryData={onChangeCategoryData}
-                            section={section}
-                          />
-                        );
-                      } else {
-                        return section?.subSections?.map(
-                          (subSection: any, index: number) => {
-                            if (subSection?.isAccordion) {
-                              return (
-                                <AccordionMappingWidget
-                                  clasess={clasess}
-                                  expanded={expanded}
-                                  index={index}
-                                  handleChange={handleChange}
-                                  subSection={subSection}
-                                  section={section}
-                                  _renderParameterType={_renderParameterType}
-                                />
-                              );
-                            } else {
-                              return (
-                                <SectionMappingWidget
-                                  clasess={clasess}
-                                  index={index}
-                                  subSection={subSection}
-                                  section={section}
-                                  _renderParameterType={_renderParameterType}
-                                />
-                              );
+                  {[...template?.sections, PricingTab]?.map(
+                    (section: any, index: number) => {
+                      if (index === activeIndex) {
+                        if (section.name === "Pricing") {
+                          return (
+                            <PricingSectionMappingWidget
+                              clasess={clasess}
+                              machineCategories={machineCategories}
+                              onChangeCategoryData={onChangeCategoryData}
+                              section={section}
+                            />
+                          );
+                        } else {
+                          return section?.subSections?.map(
+                            (subSection: any, index: number) => {
+                              if (subSection?.isAccordion) {
+                                return (
+                                  <AccordionMappingWidget
+                                    clasess={clasess}
+                                    expanded={expanded}
+                                    index={index}
+                                    handleChange={handleChange}
+                                    subSection={subSection}
+                                    section={section}
+                                    _renderParameterType={_renderParameterType}
+                                  />
+                                );
+                              } else {
+                                return (
+                                  <SectionMappingWidget
+                                    clasess={clasess}
+                                    index={index}
+                                    subSection={subSection}
+                                    section={section}
+                                    _renderParameterType={_renderParameterType}
+                                  />
+                                );
+                              }
                             }
-                          }
-                        );
+                          );
+                        }
                       }
                     }
-                  })}
+                  )}
                 </div>
               </div>
               <div style={clasess.addPreviousContainer}>
