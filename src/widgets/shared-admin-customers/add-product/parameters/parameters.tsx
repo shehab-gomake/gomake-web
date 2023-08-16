@@ -159,7 +159,7 @@ const ParameterWidget = () => {
     } else if (parameter?.parameterType === 3) {
       return (
         <SecondSwitch
-          checked={parameter?.defaultValue}
+          checked={parameter?.defaultValue === "true"}
           onChange={(a: any, value: any) => {
             updatedProductParameteDefaultValueForSwitch(
               sectionId,
