@@ -105,7 +105,7 @@ const ParameterWidget = () => {
           placeholder={parameter.name}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
-          value={defaultObject}
+          defaultValue={defaultObject}
           onChange={(e: any, value: any) => {
             updatedProductParameterValuesConfigsDefault(
               sectionId,
@@ -177,13 +177,16 @@ const ParameterWidget = () => {
         </GomakePrimaryButton>
       );
     } else if (parameter?.parameterType === 6) {
+      const defaultObject = parameter.valuesConfigs.find(
+        (item) => item.isDefault === true
+      );
       return (
         <GoMakeAutoComplate
           options={parameter?.valuesConfigs}
           placeholder={parameter.name}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
-          // value={defaultObject}
+          defaultValue={defaultObject}
           onChange={(e: any, value: any) => {
             updatedProductParameterValuesConfigsDefault(
               sectionId,
