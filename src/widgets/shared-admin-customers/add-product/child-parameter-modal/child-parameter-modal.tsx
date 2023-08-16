@@ -1,9 +1,12 @@
 import { useTranslation } from "react-i18next";
-import { GoMakeModal, GomakeTextInput } from "@/components";
+import {
+  GoMakeModal,
+  GomakePrimaryButton,
+  GomakeTextInput,
+} from "@/components";
 
 import { useStyle } from "./style";
-import { PlusIcon } from "@/icons";
-import { DeleteIcon } from "@/components/icons/delete-icon";
+import { PlusIcon, RemoveIcon } from "@/icons";
 import { useEffect, useState } from "react";
 
 const ChildParameterModal = ({
@@ -11,41 +14,39 @@ const ChildParameterModal = ({
   onClose,
   modalTitle,
   selectedParameter,
+  updatedValuesConfigsForParameters,
   selectedSectonId,
   selectedSubSection,
 }: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
 
-  const [values, setValues] = useState<any>([]);
+  const [state, setState] = useState({
+    valuesConfigs: selectedParameter.valuesConfigs,
+    childsParameters: selectedParameter.childsParameters,
+  });
+
+  useEffect(() => {
+    if (selectedParameter?.valuesConfigs) {
+      setState({
+        valuesConfigs: [...selectedParameter.valuesConfigs],
+        childsParameters: selectedParameter.childsParameters,
+      });
+    }
+  }, [selectedParameter]);
+
   const changeItems = (index: number, filedName: string, value: any) => {
-    let temp = [...values];
-    temp[index] = {
-      ...temp[index],
-      [filedName]: value,
-    };
-    setValues(temp);
-  };
-
-  useEffect(() => {
-    setValues(selectedParameter);
-  }, [selectedParameter]);
-
-  console.log("values", values);
-  const [inputValues, setInputValues] = useState<any>([]);
-  useEffect(() => {
-    setInputValues(selectedParameter?.valuesConfigs);
-  }, [selectedParameter]);
-  const handleUpdateNameChange = (index, newValue) => {
-    const updatedInputValues: any = [...inputValues];
-    updatedInputValues[index].updateName = newValue;
-    setInputValues(updatedInputValues);
-  };
-
-  const handleValueChange = (configIndex, valueId, newValue) => {
-    const updatedInputValues: any = [...inputValues];
-    updatedInputValues[configIndex].values[valueId] = newValue;
-    setInputValues(updatedInputValues);
+    setState((prev) => {
+      let temp = [...prev.valuesConfigs];
+      temp[index] = {
+        ...temp[index],
+        [filedName]: value,
+      };
+      return {
+        ...prev,
+        valuesConfigs: temp,
+      };
+    });
   };
 
   return (
@@ -57,67 +58,108 @@ const ChildParameterModal = ({
         insideStyle={clasess.insideStyle}
       >
         <div>
-          <div style={clasess.addNewValueContainer}>
-            <div style={clasess.textInputContainer}>
-              <GomakeTextInput
-                style={clasess.textInputStyle}
-                placeholder="Enter Value"
-              />
-            </div>
-
-            {values?.childsParameters?.map((value: any, index: number) => {
-              return (
-                <div style={clasess.textInputContainer} key={`child_${index}`}>
-                  <GomakeTextInput
-                    style={clasess.textInputStyle}
-                    placeholder={`Enter ${value?.name}`}
-                  />
-                </div>
-              );
-            })}
-            <div style={{ cursor: "pointer" }}>
-              <PlusIcon width={25} height={25} />
-            </div>
-          </div>
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              gap: 10,
             }}
           >
-            {values?.valuesConfigs?.map((value: any, index: number) => {
-              return (
-                <div style={clasess.addNewValueContainer}>
-                  <div style={clasess.textInputContainer}>
-                    <GomakeTextInput
-                      style={clasess.textInputStyle}
-                      placeholder="Enter Value"
-                      defaultValue={value?.updateName}
-                      onChange={(e) =>
-                        handleUpdateNameChange(index, e.target.value)
-                      }
-                    />
-                  </div>
-                  {Object.keys(value.values).map((valueId) => {
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                let temp = [...state.valuesConfigs];
+                temp.push({
+                  isHidden: false,
+                  isDefault: true,
+                  updateName: "",
+                  isDeleted: false,
+                  materialValueIds: [],
+                  values: {},
+                });
+                setState({
+                  ...state,
+                  valuesConfigs: temp,
+                });
+              }}
+            >
+              <PlusIcon width={25} height={25} />
+            </div>
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                let temp = [...state.valuesConfigs];
+                // temp.pop();
+                // setItems(temp);
+              }}
+            >
+              <RemoveIcon />
+            </div>
+          </div>
+          {state.valuesConfigs?.map((item, index) => {
+            return (
+              <div style={clasess.addNewValueContainer} key={`parent_${index}`}>
+                <div style={clasess.textInputContainer}>
+                  <GomakeTextInput
+                    style={clasess.textInputStyle}
+                    placeholder="Enter Value"
+                    onChange={(e) =>
+                      changeItems(index, "updateName", e.target.value)
+                    }
+                    defaultValue={item?.updateName}
+                  />
+                </div>
+
+                {state?.childsParameters?.map(
+                  (value: any, indexChild: number) => {
                     return (
-                      <div style={clasess.textInputContainer} key={valueId}>
+                      <div
+                        style={clasess.textInputContainer}
+                        key={`child_${indexChild}`}
+                      >
                         <GomakeTextInput
                           style={clasess.textInputStyle}
-                          placeholder="Enter Value"
-                          defaultValue={value.values[valueId]}
-                          onChange={(e) =>
-                            handleValueChange(index, valueId, e.target.value)
+                          placeholder={`Enter ${value?.name}`}
+                          onChange={(e) => {
+                            changeItems(index, "values", {
+                              ...state.valuesConfigs[index].values,
+                              [value?.id]: e.target.value,
+                            });
+                          }}
+                          defaultValue={
+                            state.valuesConfigs[index].values[value?.id]
                           }
                         />
                       </div>
                     );
-                  })}
-                  <div style={{ cursor: "pointer" }}>
-                    <DeleteIcon color="red" />
-                  </div>
-                </div>
-              );
-            })}
+                  }
+                )}
+              </div>
+            );
+          })}
+          <div
+            style={{
+              marginTop: 50,
+              display: "flex",
+              justifyContent: "center",
+              width: "100%",
+            }}
+          >
+            <GomakePrimaryButton
+              style={{ width: "50%", height: 40 }}
+              onClick={() => {
+                updatedValuesConfigsForParameters(
+                  selectedSectonId,
+                  selectedSubSection,
+                  { ...selectedParameter, ...state }
+                );
+                onClose();
+              }}
+            >
+              Add Values
+            </GomakePrimaryButton>
           </div>
         </div>
       </GoMakeModal>

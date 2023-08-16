@@ -13,9 +13,8 @@ import { useAddProduct } from "@/hooks";
 import { DoneIcon, SettingIcon } from "../icons";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { EditIcon } from "../../digital-offset-price/icons";
-import { useState } from "react";
-import { PlusIcon } from "@/icons";
 import { ChildParameterModal } from "../child-parameter-modal";
+import { useState } from "react";
 
 const ParameterWidget = () => {
   const { clasess } = useStyle();
@@ -33,21 +32,28 @@ const ParameterWidget = () => {
     updatedProductParameteDefaultValueForSwitch,
     updatedProductParameterValuesConfigsHidden,
     updatedProductParameterValuesConfigsDefault,
+    updatedValuesConfigsForParameters,
     activeIndex,
     template,
   } = useAddProduct();
+
   const [openModal, setOpenModal] = useState(false);
   const [selectedParameter, setSelectedParameter] = useState<any>({});
+
   const [selectedSectonId, setSelectedSectonId] = useState({});
   const [selectedSubSection, setSelectedSubSection] = useState({});
   const onCloseModal = () => {
+    setSelectedParameter({});
     setOpenModal(false);
   };
+
   const onOpenModal = (parameter, sectionId, subSectionId) => {
     setSelectedParameter(parameter);
     setSelectedSectonId(sectionId);
     setSelectedSubSection(subSectionId);
-    setOpenModal(true);
+    setTimeout(() => {
+      setOpenModal(true);
+    }, 100);
   };
   const [expanded, setExpanded] = useState<string | false>("panel_0");
   const handleChange =
@@ -516,6 +522,10 @@ const ParameterWidget = () => {
             modalTitle={`${selectedParameter?.name} values`}
             selectedSectonId={selectedSectonId}
             selectedSubSection={selectedSubSection}
+            setSelectedParameter={setSelectedParameter}
+            updatedValuesConfigsForParameters={
+              updatedValuesConfigsForParameters
+            }
           />
         </>
       )}
