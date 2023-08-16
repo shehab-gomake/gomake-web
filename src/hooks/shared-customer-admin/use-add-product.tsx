@@ -381,6 +381,39 @@ const useAddProduct = () => {
     },
     [router]
   );
+
+  const updatedValuesConfigsForParameters = useCallback(
+    async (sectionId: string, subSectionId: string, data: any) => {
+      console.log("data", data);
+      const res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/products/update-product-parameter`,
+        {
+          productId: router?.query?.productId,
+          sectionId: sectionId,
+          subSectionId: subSectionId,
+          productParameterType: 1,
+          parameter: data,
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getProductById();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [router]
+  );
+
   return {
     t,
     handleTabClick,
@@ -397,6 +430,7 @@ const useAddProduct = () => {
     updatedProductParameteDefaultValueForSwitch,
     updatedProductParameterValuesConfigsHidden,
     updatedProductParameterValuesConfigsDefault,
+    updatedValuesConfigsForParameters,
     changeDefaultValue,
     changeName,
     productState,

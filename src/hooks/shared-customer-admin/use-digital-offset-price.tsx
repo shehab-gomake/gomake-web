@@ -22,7 +22,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
   const [template, setTemplate] = useState<any>([]);
   const [priceTemplate, setPriceTemplate] = useState<any>([]);
-
+  console.log("priceTemplate", priceTemplate);
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let tempMockData: any = [...template?.sections];
@@ -133,7 +133,31 @@ const useDigitalOffsetPrice = ({ clasess }) => {
           placeholder={parameter.name}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
-          value={defaultObject}
+          defaultValue={defaultObject}
+          // value={defaultObject}
+          onChange={(e: any, value: any) => {
+            onChangeForPrice(
+              parameter?.id,
+              subSection?.id,
+              section?.id,
+              parameter?.parameterType,
+              { valueId: value?.id, valueName: value?.updateName }
+            );
+          }}
+        />
+      );
+    } else if (parameter?.parameterType === 6) {
+      const defaultObject = parameter.valuesConfigs.find(
+        (item) => item.isDefault === true
+      );
+      return (
+        <GoMakeAutoComplate
+          options={parameter?.valuesConfigs}
+          placeholder={parameter.name}
+          style={clasess.dropDownListStyle}
+          getOptionLabel={(option: any) => option.updateName}
+          defaultValue={defaultObject}
+          // value={defaultObject}
           onChange={(e: any, value: any) => {
             onChangeForPrice(
               parameter?.id,
