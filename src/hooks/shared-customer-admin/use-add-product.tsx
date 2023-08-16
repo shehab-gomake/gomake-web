@@ -172,40 +172,23 @@ const useAddProduct = () => {
       parameter: any,
       value: boolean
     ) => {
-      const res = await callApi(
-        "PUT",
-        `/v1/printhouse-config/products/update-product-parameter`,
-        {
-          productId: router?.query?.productId,
-          sectionId: sectionId,
-          subSectionId: subSectionId,
-          productParameterType: 1,
-          parameter: {
-            ...parameter,
-            defaultValue: value.toString(),
-          },
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        getProductById();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...parameter,
+          defaultValue: value.toString(),
+        },
+      });
     },
     [router]
   );
 
   const updatedProductParameterValuesConfigsHidden = useCallback(
-    async (sectionId: string, subSectionId: string, parameter: any, option) => {
+    async (
+      sectionId: string,
+      subSectionId: string,
+      parameter: any,
+      option: any
+    ) => {
       let temp = [...parameter?.valuesConfigs];
 
       let objectIdToUpdate = option?.id;
@@ -216,39 +199,22 @@ const useAddProduct = () => {
         }
         return obj;
       });
-      const res = await callApi(
-        "PUT",
-        `/v1/printhouse-config/products/update-product-parameter`,
-        {
-          productId: router?.query?.productId,
-          sectionId: sectionId,
-          subSectionId: subSectionId,
-          productParameterType: 1,
-          parameter: {
-            ...parameter,
-            valuesConfigs: updatedArray,
-          },
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        getProductById();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...parameter,
+          valuesConfigs: updatedArray,
+        },
+      });
     },
     [router]
   );
   const updatedProductParameterValuesConfigsDefault = useCallback(
-    async (sectionId: string, subSectionId: string, parameter: any, option) => {
+    async (
+      sectionId: string,
+      subSectionId: string,
+      parameter: any,
+      option: any
+    ) => {
       let temp = [...parameter?.valuesConfigs];
 
       let objectIdToUpdate = option?.id;
@@ -260,34 +226,12 @@ const useAddProduct = () => {
           return { ...obj, isDefault: false };
         }
       });
-      const res = await callApi(
-        "PUT",
-        `/v1/printhouse-config/products/update-product-parameter`,
-        {
-          productId: router?.query?.productId,
-          sectionId: sectionId,
-          subSectionId: subSectionId,
-          productParameterType: 1,
-          parameter: {
-            ...parameter,
-            valuesConfigs: updatedArray,
-          },
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        getProductById();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...parameter,
+          valuesConfigs: updatedArray,
+        },
+      });
     },
     [router]
   );
