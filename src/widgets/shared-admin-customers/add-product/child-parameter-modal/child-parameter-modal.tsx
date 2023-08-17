@@ -59,14 +59,10 @@ const ChildParameterModal = ({
     return result;
   };
   const [items, setItems] = useState([]);
-  console.log("items", items);
   const onDragEnd = (result) => {
-    console.log("AAA");
-
     if (!result.destination) {
       return;
     }
-    console.log("dragEnd");
     const updatedItems = reorder(
       items,
       result.source.index,

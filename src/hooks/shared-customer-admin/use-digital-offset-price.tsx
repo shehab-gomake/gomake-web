@@ -202,9 +202,9 @@ const useDigitalOffsetPrice = ({ clasess }) => {
         options = digitalPriceData?.selectedMaterialLvl1;
       }
       if (parameter?.materialPath?.length == 1) {
-        options = allMaterials.find(
-          (material) => material.pathName === parameter?.materialPath[0]
-        )?.data;
+        options = allMaterials.find((material) => {
+          return material.pathName === parameter?.materialPath[0];
+        })?.data;
       }
       return (
         options?.length > 0 && (
