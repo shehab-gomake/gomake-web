@@ -4,11 +4,13 @@ import {
   GomakePrimaryButton,
   GomakeTextInput,
 } from "@/components";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 import { useStyle } from "./style";
-import { PlusIcon, RemoveIcon } from "@/icons";
+import { PlusIcon, ReOrderIcon, RemoveIcon } from "@/icons";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { ChildParameteMapping } from "./child-parameter-mapping";
 
 const ChildParameterModal = ({
   openModal,
@@ -49,7 +51,42 @@ const ChildParameterModal = ({
       };
     });
   };
+  const reorder = (list: any, startIndex: any, endIndex: any) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
 
+    return result;
+  };
+  const [items, setItems] = useState([]);
+  const onDragEnd = (result) => {
+    if (!result.destination) {
+      return;
+    }
+    const updatedItems = reorder(
+      items,
+      result.source.index,
+      result.destination.index
+    );
+
+    setItems(updatedItems);
+  };
+  useEffect(() => {
+    if (state?.valuesConfigs?.length) {
+      setItems(state.valuesConfigs);
+    }
+  }, [state]);
+  const deleteRow = (selectedRow: any) => {
+    const temp = [...state?.valuesConfigs];
+    const index = temp.findIndex((obj: any) => obj?.id === selectedRow?.id);
+    if (index !== -1) {
+      temp.splice(index, 1);
+    }
+    setState({
+      ...state,
+      valuesConfigs: temp,
+    });
+  };
   return (
     <>
       <GoMakeModal
@@ -90,65 +127,30 @@ const ChildParameterModal = ({
             >
               <PlusIcon width={25} height={25} />
             </div>
-            <div
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                let temp = [...state.valuesConfigs];
-                temp.pop();
-                setState({
-                  ...state,
-                  valuesConfigs: temp,
-                });
-              }}
-            >
-              <RemoveIcon />
-            </div>
           </div>
-          <div style={{ height: 150, overflow: "scroll" }}>
-            {state.valuesConfigs?.map((item, index) => {
-              return (
-                <div
-                  style={clasess.addNewValueContainer}
-                  key={`parent_${index}`}
-                >
-                  <div style={clasess.textInputContainer}>
-                    <GomakeTextInput
-                      style={clasess.textInputStyle}
-                      placeholder="Enter Value"
-                      onChange={(e) =>
-                        changeItems(index, "updateName", e.target.value)
-                      }
-                      defaultValue={item?.updateName}
-                    />
-                  </div>
-
-                  {state?.childsParameters?.map(
-                    (value: any, indexChild: number) => {
-                      return (
-                        <div
-                          style={clasess.textInputContainer}
-                          key={`child_${indexChild}`}
-                        >
-                          <GomakeTextInput
-                            style={clasess.textInputStyle}
-                            placeholder={`Enter ${value?.name}`}
-                            onChange={(e) => {
-                              changeItems(index, "values", {
-                                ...state.valuesConfigs[index].values,
-                                [value?.id]: e.target.value,
-                              });
-                            }}
-                            defaultValue={
-                              state.valuesConfigs[index].values[value?.id]
-                            }
+          <div style={{ height: 450, overflow: "scroll" }}>
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId="droppable">
+                {(provided: any, snapshot: any) => {
+                  return (
+                    <div ref={provided.innerRef} {...provided.droppableProps}>
+                      {state?.valuesConfigs?.map((item, index) => (
+                        <div key={item?.id}>
+                          <ChildParameteMapping
+                            item={item}
+                            index={index}
+                            changeItems={changeItems}
+                            state={state}
+                            deleteRow={deleteRow}
                           />
                         </div>
-                      );
-                    }
-                  )}
-                </div>
-              );
-            })}
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  );
+                }}
+              </Droppable>
+            </DragDropContext>
           </div>
           <div
             style={{

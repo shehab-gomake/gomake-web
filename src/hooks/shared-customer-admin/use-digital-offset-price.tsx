@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
 import { getAndSetProductById } from "@/services/hooks";
 import { useRouter } from "next/router";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { digitslPriceState } from "./store";
 import { useMaterials } from "../use-materials";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
@@ -13,20 +13,23 @@ import {
   GomakeTextInput,
   SecondSwitch,
 } from "@/components";
+import { materialsCategoriesState } from "@/store/material-categories";
 
 const useDigitalOffsetPrice = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const [defaultPrice, setDefaultPrice] = useState<any>(30);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
   const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
   const [template, setTemplate] = useState<any>([]);
-  const [priceTemplate, setPriceTemplate] = useState<any>([]);
-  console.log("priceTemplate", priceTemplate);
+  const [generalParameters, setGeneralParameters] = useState<any>([]);
+  console.log("generalParameters", generalParameters);
+  const [materialPath, setMaterialPath] = useState<any>();
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let tempMockData: any = [...template?.sections];
-      let temp = [...priceTemplate];
+      let temp = [...generalParameters];
       tempMockData?.map((section, i) => {
         return section?.subSections?.map((subSection, i) => {
           return subSection.parameters?.map((parameter, i) => {
@@ -41,19 +44,32 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                 ...temp[index],
               };
             } else {
+              const value = parameter?.valuesConfigs?.find(
+                (item) => item?.isDefault == true
+              );
+              const defaultValue = parameter?.defaultValue;
+              const data = materialsEnumsValues.find(
+                (item) => item.name === parameter?.materialPath[0]
+              );
+              console.log("data", data);
+
               temp.push({
                 parameterId: parameter?.id,
+                parameterName: parameter?.name,
+                actionId: parameter?.actionId,
+                ...(data?.id > 0 && { material: data?.id }),
+                parameterType: parameter?.parameterType,
+                ...(defaultValue?.length > 0 && { value: defaultValue }),
+                ...(value && { valueId: value?.id, value: value?.updateName }),
+
                 sectionId: section?.id,
                 subSectionId: subSection?.id,
-                parameterType: parameter?.parameterType,
-                actionId: parameter?.actionId,
-                // ...data,
               });
             }
           });
         });
       });
-      setPriceTemplate(temp);
+      setGeneralParameters(temp);
     }
   }, [template]);
   const [digitalPriceData, setDigidatPriceData] =
@@ -202,9 +218,9 @@ const useDigitalOffsetPrice = ({ clasess }) => {
         options = digitalPriceData?.selectedMaterialLvl1;
       }
       if (parameter?.materialPath?.length == 1) {
-        options = allMaterials.find(
-          (material) => material.pathName === parameter?.materialPath[0]
-        )?.data;
+        options = allMaterials.find((material) => {
+          return material.pathName === parameter?.materialPath[0];
+        })?.data;
       }
       return (
         options?.length > 0 && (
@@ -272,7 +288,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     ParameterType: any,
     data: any
   ) => {
-    let temp = [...priceTemplate];
+    let temp = [...generalParameters];
     const index = temp.findIndex(
       (item) =>
         item.parameterId === parameterId &&
@@ -294,7 +310,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
         ...data,
       });
     }
-    setPriceTemplate(temp);
+    setGeneralParameters(temp);
   };
   const onCloseMakeShape = () => {
     setMakeShapeOpen(false);

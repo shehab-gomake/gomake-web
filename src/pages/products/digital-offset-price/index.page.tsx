@@ -44,7 +44,6 @@ export default function DigitalOffsetPrice() {
     clientTypeDefaultValue,
     clientTypesValue,
   } = useDigitalOffsetPrice({ clasess });
-  console.log("template", template);
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
   const onChangeCategoryData = (actionId, categoryId, value) => {
