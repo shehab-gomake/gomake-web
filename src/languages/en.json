@@ -192,7 +192,8 @@
       "pitch": "Pitch",
       "maxBookThickness": "Max book thickness",
       "loopsQuantity": "loops quantity",
-      "speralSize": "Speral size"
+      "speralSize": "Speral size",
+      "noData": "No Data"
     },
     "buttons": {
       "cancel": "Cancel",
