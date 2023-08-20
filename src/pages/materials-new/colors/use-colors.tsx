@@ -251,6 +251,8 @@ const useColors = () => {
       const defaultItem = suppliers?.find((item) => item.isDefault);
       if (defaultItem) {
         getSheetAllWeights(selectedMaterials, defaultItem?.value);
+      } else {
+        getSheetAllWeights(selectedMaterials, "");
       }
     };
     getData();
