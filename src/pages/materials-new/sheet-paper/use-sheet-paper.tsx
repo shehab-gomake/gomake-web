@@ -198,10 +198,14 @@ const useSheetPaper = () => {
   const getSheetAllWeights = useCallback(
     async (categoryName: any, supplierId) => {
       setIsLoader(true);
-      await getAndSetAllSheetWeights(callApi, setAllWeightsGrouped, {
-        categoryName: categoryName?.key,
-        supplierId: supplierId || "",
-      });
+      const result = await getAndSetAllSheetWeights(
+        callApi,
+        setAllWeightsGrouped,
+        {
+          categoryName: categoryName?.key,
+          supplierId: supplierId || "",
+        }
+      );
     },
     [categoryName]
   );
@@ -278,6 +282,8 @@ const useSheetPaper = () => {
       const defaultItem = suppliers?.find((item) => item.isDefault);
       if (defaultItem) {
         getSheetAllWeights(selectedMaterials, defaultItem?.value);
+      } else {
+        getSheetAllWeights(selectedMaterials, "");
       }
     };
     getData();
