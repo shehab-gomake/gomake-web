@@ -246,6 +246,11 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "space-between",
       },
+      noDataStyle: {
+        marginTop: 20,
+        ...FONT_FAMILY.Lexend(600, 22),
+        color: primaryColor(500),
+      },
     };
   }, [i18next.language, t]);
   return {
