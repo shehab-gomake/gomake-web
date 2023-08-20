@@ -195,7 +195,7 @@ export default function Tubes() {
           />
         </MaterialsLayout>
       ) : (
-        <div style={clasess.noDataStyle}>No Data</div>
+        <div style={clasess.noDataStyle}>{t("materials.inputs.noData")}</div>
       )}
     </CustomerAuthLayout>
   );
