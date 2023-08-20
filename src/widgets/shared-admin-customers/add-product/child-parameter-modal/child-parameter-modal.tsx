@@ -58,24 +58,22 @@ const ChildParameterModal = ({
 
     return result;
   };
-  const [items, setItems] = useState([]);
   const onDragEnd = (result) => {
+    console.log("AAA", result);
     if (!result.destination) {
       return;
     }
     const updatedItems = reorder(
-      items,
+      state.valuesConfigs,
       result.source.index,
       result.destination.index
     );
 
-    setItems(updatedItems);
+    setState({
+      ...state,
+      valuesConfigs: updatedItems,
+    });
   };
-  useEffect(() => {
-    if (state?.valuesConfigs?.length) {
-      setItems(state.valuesConfigs);
-    }
-  }, [state]);
   const deleteRow = (selectedRow: any) => {
     const temp = [...state?.valuesConfigs];
     const index = temp.findIndex((obj: any) => obj?.id === selectedRow?.id);
@@ -87,6 +85,28 @@ const ChildParameterModal = ({
       valuesConfigs: temp,
     });
   };
+  const getItemStyle = (isDragging, draggableStyle) => ({
+    padding: 5 * 2,
+    margin: `0 0 ${5}px 0`,
+    mrginLeft: -100,
+    userSelect: "none",
+    display: "flex",
+    flexDirection: "row" as "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    width: "100%",
+    gap: 15,
+    flexWrap: "wrap" as "wrap",
+    marginBottom: 25,
+    backgroundColor: isDragging ? "#FAFAFA" : "",
+    ...draggableStyle,
+    top: 0,
+    left: 0,
+    position: "relative",
+  });
+  const getListStyle = (isDraggingOver) => ({
+    width: "100%",
+  });
   return (
     <>
       <GoMakeModal
@@ -133,17 +153,94 @@ const ChildParameterModal = ({
               <Droppable droppableId="droppable">
                 {(provided: any, snapshot: any) => {
                   return (
-                    <div ref={provided.innerRef} {...provided.droppableProps}>
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      style={getListStyle(snapshot.isDraggingOver)}
+                    >
                       {state?.valuesConfigs?.map((item, index) => (
-                        <div key={item?.id}>
-                          <ChildParameteMapping
-                            item={item}
-                            index={index}
-                            changeItems={changeItems}
-                            state={state}
-                            deleteRow={deleteRow}
-                          />
-                        </div>
+                        <Draggable
+                          key={item.id}
+                          draggableId={item.id}
+                          index={index}
+                        >
+                          {(provided: any, snapshot: any) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              style={getItemStyle(
+                                snapshot.isDragging,
+                                provided.draggableProps.style
+                              )}
+                              // style={clasess.addNewValueContainer}
+                            >
+                              <div
+                                style={{
+                                  cursor: "grab",
+                                }}
+                              >
+                                <ReOrderIcon />
+                              </div>
+
+                              <div style={clasess.textInputContainer}>
+                                <GomakeTextInput
+                                  style={clasess.textInputStyle}
+                                  placeholder="Enter Value"
+                                  onChange={(e) =>
+                                    changeItems(
+                                      index,
+                                      "updateName",
+                                      e.target.value
+                                    )
+                                  }
+                                  defaultValue={item?.updateName}
+                                />
+                              </div>
+
+                              {state?.childsParameters?.map(
+                                (value: any, indexChild: number) => {
+                                  return (
+                                    <div
+                                      style={clasess.textInputContainer}
+                                      key={`child_${indexChild}`}
+                                    >
+                                      <GomakeTextInput
+                                        style={clasess.textInputStyle}
+                                        placeholder={`Enter ${value?.name}`}
+                                        onChange={(e) => {
+                                          changeItems(index, "values", {
+                                            ...state.valuesConfigs[index]
+                                              .values,
+                                            [value?.id]: e.target.value,
+                                          });
+                                        }}
+                                        defaultValue={
+                                          state.valuesConfigs[index].values[
+                                            value?.id
+                                          ]
+                                        }
+                                      />
+                                    </div>
+                                  );
+                                }
+                              )}
+                              <div
+                                style={{ cursor: "pointer" }}
+                                onClick={() => deleteRow(item)}
+                              >
+                                <RemoveIcon />
+                              </div>
+                            </div>
+                          )}
+                        </Draggable>
+                        // <ChildParameteMapping
+                        //   item={item}
+                        //   index={index}
+                        //   changeItems={changeItems}
+                        //   state={state}
+                        //   deleteRow={deleteRow}
+                        // />
                       ))}
                       {provided.placeholder}
                     </div>
