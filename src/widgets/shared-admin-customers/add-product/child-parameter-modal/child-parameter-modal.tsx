@@ -85,8 +85,10 @@ const ChildParameterModal = ({
       valuesConfigs: temp,
     });
   };
-  let grid = 8;
   const getItemStyle = (isDragging, draggableStyle) => ({
+    padding: 5 * 2,
+    margin: `0 0 ${5}px 0`,
+    mrginLeft: -100,
     userSelect: "none",
     display: "flex",
     flexDirection: "row" as "row",
@@ -96,7 +98,11 @@ const ChildParameterModal = ({
     gap: 15,
     flexWrap: "wrap" as "wrap",
     marginBottom: 25,
+    backgroundColor: isDragging ? "#FAFAFA" : "",
     ...draggableStyle,
+    top: 0,
+    left: 0,
+    position: "relative",
   });
   const getListStyle = (isDraggingOver) => ({
     width: "100%",
