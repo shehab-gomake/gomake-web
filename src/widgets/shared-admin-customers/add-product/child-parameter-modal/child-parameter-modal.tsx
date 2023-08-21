@@ -59,7 +59,6 @@ const ChildParameterModal = ({
     return result;
   };
   const onDragEnd = (result) => {
-    console.log("AAA", result);
     if (!result.destination) {
       return;
     }

@@ -63,7 +63,6 @@ export default function SheetPaper() {
     updateToActive,
     onChangeSelectedSupplier,
   } = useSheetPaper();
-  console.log("sheetCategories", sheetCategories?.length > 0);
   const Side = () => (
     <SideList
       list={sheetCategories}

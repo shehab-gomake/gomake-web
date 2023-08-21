@@ -60,7 +60,6 @@ export default function Plats() {
     updateToActive,
     onChangeSelectedSupplier,
   } = usePlats();
-  console.log("sheetCategories", sheetCategories);
   const Side = () => (
     <SideList
       list={sheetCategories}
