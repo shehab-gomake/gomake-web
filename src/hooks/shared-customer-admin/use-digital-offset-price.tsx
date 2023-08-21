@@ -25,7 +25,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const [template, setTemplate] = useState<any>([]);
   const [generalParameters, setGeneralParameters] = useState<any>([]);
   console.log("generalParameters", generalParameters);
-  const [materialPath, setMaterialPath] = useState<any>();
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let tempMockData: any = [...template?.sections];
@@ -44,27 +43,82 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                 ...temp[index],
               };
             } else {
-              const value = parameter?.valuesConfigs?.find(
-                (item) => item?.isDefault == true
-              );
-              const defaultValue = parameter?.defaultValue;
-              const data = materialsEnumsValues.find(
-                (item) => item.name === parameter?.materialPath[0]
-              );
-              console.log("data", data);
+              if (
+                parameter?.parameterType === 1 ||
+                parameter?.parameterType === 2 ||
+                parameter?.parameterType === 3
+              ) {
+                if (parameter?.defaultValue?.length > 0) {
+                  const defaultValue = parameter?.defaultValue;
+                  temp.push({
+                    parameterId: parameter?.id,
+                    parameterName: parameter?.name,
+                    actionId: parameter?.actionId,
+                    parameterType: parameter?.parameterType,
+                    ...(defaultValue?.length > 0 && { value: defaultValue }),
+                    sectionId: section?.id,
+                    subSectionId: subSection?.id,
+                  });
+                }
+              } else if (parameter?.parameterType === 0) {
+                const value = parameter?.valuesConfigs?.find(
+                  (item) => item?.isDefault == true
+                );
+                if (value) {
+                  const data = materialsEnumsValues.find(
+                    (item) => item.name === parameter?.materialPath[0]
+                  );
+                  temp.push({
+                    parameterId: parameter?.id,
+                    parameterName: parameter?.name,
+                    actionId: parameter?.actionId,
+                    ...(data?.id > 0 && { material: data?.id }),
+                    parameterType: parameter?.parameterType,
+                    ...(value && {
+                      valueId: value?.id,
+                      value: value?.updateName,
+                    }),
+                    sectionId: section?.id,
+                    subSectionId: subSection?.id,
+                  });
+                }
+              } else if (parameter?.parameterType === 6) {
+                const defaultObject = parameter.valuesConfigs.find(
+                  (item) => item.isDefault === true
+                );
+                parameter?.childsParameters.forEach((parameter) => {
+                  const parameterId = parameter.id;
+                  if (defaultObject?.values.hasOwnProperty(parameterId)) {
+                    parameter.defaultValue = defaultObject?.values[parameterId];
+                  }
+                });
+                if (defaultObject) {
+                  temp.push({
+                    parameterId: parameter?.id,
+                    parameterName: parameter?.name,
+                    actionId: parameter?.actionId,
+                    parameterType: parameter?.parameterType,
+                    ...(defaultObject && {
+                      valueId: defaultObject?.id,
+                      value: defaultObject?.updateName,
+                    }),
 
-              temp.push({
-                parameterId: parameter?.id,
-                parameterName: parameter?.name,
-                actionId: parameter?.actionId,
-                ...(data?.id > 0 && { material: data?.id }),
-                parameterType: parameter?.parameterType,
-                ...(defaultValue?.length > 0 && { value: defaultValue }),
-                ...(value && { valueId: value?.id, value: value?.updateName }),
-
-                sectionId: section?.id,
-                subSectionId: subSection?.id,
-              });
+                    sectionId: section?.id,
+                    subSectionId: subSection?.id,
+                  });
+                  parameter?.childsParameters?.map((item) => {
+                    temp.push({
+                      parameterId: item?.id,
+                      parameterName: item?.name,
+                      actionId: item?.actionId,
+                      parameterType: item?.parameterType,
+                      value: item?.defaultValue,
+                      sectionId: section?.id,
+                      subSectionId: subSection?.id,
+                    });
+                  });
+                }
+              }
             }
           });
         });
@@ -157,7 +211,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               subSection?.id,
               section?.id,
               parameter?.parameterType,
-              { valueId: value?.id, valueName: value?.updateName }
+              { valueId: value?.id, value: value?.updateName }
             );
           }}
         />
@@ -173,15 +227,44 @@ const useDigitalOffsetPrice = ({ clasess }) => {
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
           defaultValue={defaultObject}
-          // value={defaultObject}
           onChange={(e: any, value: any) => {
+            let temp = [...generalParameters];
+            parameter?.childsParameters.forEach((parameter) => {
+              const parameterId = parameter.id;
+              if (value?.values.hasOwnProperty(parameterId)) {
+                const index = temp.findIndex(
+                  (item) =>
+                    item.parameterId === parameter?.id &&
+                    item.sectionId === section?.id &&
+                    item.subSectionId === subSection?.id
+                );
+
+                if (index !== -1) {
+                  temp[index] = {
+                    ...temp[index],
+                    value: value?.values[parameterId],
+                  };
+                } else {
+                  temp.push({
+                    parameterId: parameter?.id,
+                    sectionId: section?.id,
+                    subSectionId: subSection?.id,
+                    ParameterType: parameter?.parameterType,
+                    value: 5,
+                  });
+                }
+              }
+            });
+            setGeneralParameters(temp);
+
             onChangeForPrice(
               parameter?.id,
               subSection?.id,
               section?.id,
               parameter?.parameterType,
-              { valueId: value?.id, valueName: value?.updateName }
+              { valueId: value?.id, value: value?.updateName }
             );
+            setGeneralParameters(temp);
           }}
         />
       );
@@ -210,6 +293,9 @@ const useDigitalOffsetPrice = ({ clasess }) => {
         </GomakePrimaryButton>
       );
     } else if (parameter?.parameterType === 5) {
+      const data = materialsEnumsValues.find(
+        (item) => item.name === parameter?.materialPath[0]
+      );
       let options: any = allMaterials;
       if (parameter?.materialPath?.length == 3) {
         options = digitalPriceData?.selectedMaterialLvl2;
@@ -218,7 +304,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
         options = digitalPriceData?.selectedMaterialLvl1;
       }
       if (parameter?.materialPath?.length == 1) {
-        options = allMaterials.find((material) => {
+        options = allMaterials?.find((material) => {
           return material.pathName === parameter?.materialPath[0];
         })?.data;
       }
@@ -236,7 +322,11 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                   subSection?.id,
                   section?.id,
                   parameter?.parameterType,
-                  { valueId: value?.id, valueName: value.value }
+                  {
+                    valueId: value?.valueId,
+                    value: value.value,
+                    ...(data?.id > 0 && { material: data?.id }),
+                  }
                 );
                 setDigidatPriceData({
                   ...digitalPriceData,
@@ -250,7 +340,11 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                   subSection?.id,
                   section?.id,
                   parameter?.parameterType,
-                  { valueId: value?.id, valueName: value.value }
+                  {
+                    valueId: value?.valueId,
+                    value: value.value,
+                    ...(data?.id > 0 && { material: data?.id }),
+                  }
                 );
                 setDigidatPriceData({
                   ...digitalPriceData,
@@ -265,7 +359,12 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                   subSection?.id,
                   section?.id,
                   parameter?.parameterType,
-                  { valueId: value?.id, valueName: value.value }
+
+                  {
+                    valueId: value?.valueId,
+                    value: value.value,
+                    ...(data?.id > 0 && { material: data?.id }),
+                  }
                 );
                 setDigidatPriceData({
                   ...digitalPriceData,
@@ -368,6 +467,25 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   useEffect(() => {
     getProductById();
   }, [router]);
+  const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
+  console.log("pricingDefaultValue", pricingDefaultValue);
+  const calculationProduct = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/calculation-service/calculations/calculate-product`,
+      {
+        clientId: router?.query?.customerId,
+        clientTypeId: router?.query?.clientTypeId,
+        productId: router?.query?.productId,
+        generalParameters: generalParameters,
+      }
+    );
+    setPricingDefaultValue(res);
+  }, [generalParameters, router]);
+
+  useEffect(() => {
+    calculationProduct();
+  }, [generalParameters]);
   return {
     t,
     handleTabClick,
