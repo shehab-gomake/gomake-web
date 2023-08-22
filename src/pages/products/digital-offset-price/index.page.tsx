@@ -16,7 +16,6 @@ import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
 import { PricingSectionMappingWidget } from "./widgets/pricing-section-mapping";
 import { RightSideWidget } from "./widgets/right-side-widget";
-import { PricingTab } from "./data";
 export default function DigitalOffsetPrice() {
   const { clasess } = useStyle();
   const {
@@ -43,6 +42,7 @@ export default function DigitalOffsetPrice() {
     clientDefaultValue,
     clientTypeDefaultValue,
     clientTypesValue,
+    PricingTab,
   } = useDigitalOffsetPrice({ clasess });
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
