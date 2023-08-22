@@ -26,11 +26,32 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const [generalParameters, setGeneralParameters] = useState<any>([]);
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   console.log("generalParameters", generalParameters);
+  console.log("isRequiredParameters", isRequiredParameters);
+
   useEffect(() => {
     if (template?.sections?.length > 0) {
-      template?.sections?.map((section) => {});
+      let temp = [...isRequiredParameters];
+      template?.sections?.map((section) => {
+        return section?.subSections?.map((subSection, i) => {
+          return subSection.parameters?.map((parameter, i) => {
+            const index = temp.findIndex(
+              (item) => item.parameterId === parameter?.id
+            );
+            if (index !== -1) {
+              temp[index] = {
+                ...temp[index],
+              };
+            } else {
+              if (parameter?.isRequired) {
+                temp.push(parameter);
+              }
+            }
+          });
+        });
+      });
+      setIsRequiredParameters(temp);
     }
-  }, []);
+  }, [template]);
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let tempMockData: any = [...template?.sections];
@@ -38,9 +59,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
       tempMockData?.map((section, i) => {
         return section?.subSections?.map((subSection, i) => {
           return subSection.parameters?.map((parameter, i) => {
-            // var requiredObjects = parameter.filter(function(obj) {
-            //   return obj.isRequired === true;
-            // });
             const index = temp.findIndex(
               (item) =>
                 item.parameterId === parameter?.id &&
@@ -178,6 +196,8 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               subSection?.id,
               section?.id,
               parameter?.parameterType,
+              parameter?.name,
+              parameter?.actionId,
               { value: e.target.value }
             )
           }
@@ -195,7 +215,9 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               parameter?.id,
               subSection?.id,
               section?.id,
-              parameter?.id,
+              parameter?.parameterType,
+              parameter?.name,
+              parameter?.actionId,
               { value: e.target.value }
             )
           }
@@ -213,13 +235,14 @@ const useDigitalOffsetPrice = ({ clasess }) => {
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
           defaultValue={defaultObject}
-          // value={defaultObject}
           onChange={(e: any, value: any) => {
             onChangeForPrice(
               parameter?.id,
               subSection?.id,
               section?.id,
               parameter?.parameterType,
+              parameter?.name,
+              parameter?.actionId,
               { valueId: value?.id, value: value?.updateName }
             );
           }}
@@ -259,7 +282,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                     sectionId: section?.id,
                     subSectionId: subSection?.id,
                     ParameterType: parameter?.parameterType,
-                    value: 5,
+                    value: value?.values[parameterId],
                   });
                 }
               }
@@ -271,6 +294,8 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               subSection?.id,
               section?.id,
               parameter?.parameterType,
+              parameter?.name,
+              parameter?.actionId,
               { valueId: value?.id, value: value?.updateName }
             );
             setGeneralParameters(temp);
@@ -287,6 +312,8 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               subSection?.id,
               section?.id,
               parameter?.parameterType,
+              parameter?.name,
+              parameter?.actionId,
               { value }
             )
           }
@@ -332,6 +359,8 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                     subSection?.id,
                     section?.id,
                     parameter?.parameterType,
+                    parameter?.name,
+                    parameter?.actionId,
                     {
                       valueId: value?.valueId,
                       value: value.value,
@@ -350,6 +379,8 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                     subSection?.id,
                     section?.id,
                     parameter?.parameterType,
+                    parameter?.name,
+                    parameter?.actionId,
                     {
                       valueId: value?.valueId,
                       value: value.value,
@@ -369,7 +400,8 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                     subSection?.id,
                     section?.id,
                     parameter?.parameterType,
-
+                    parameter?.name,
+                    parameter?.actionId,
                     {
                       valueId: value?.valueId,
                       value: value.value,
@@ -396,6 +428,8 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     subSectionId: any,
     sectionId: any,
     ParameterType: any,
+    parameterName: any,
+    actionId: any,
     data: any
   ) => {
     let temp = [...generalParameters];
@@ -417,6 +451,8 @@ const useDigitalOffsetPrice = ({ clasess }) => {
         sectionId: sectionId,
         subSectionId: subSectionId,
         ParameterType: ParameterType,
+        parameterName: parameterName,
+        actionId: actionId,
         ...data,
       });
     }
@@ -478,20 +514,46 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   useEffect(() => {
     getProductById();
   }, [router]);
+  const validateParameters = (inputArray) => {
+    for (const item of inputArray) {
+      const value = item?.valuesConfigs?.find(
+        (item) => item?.isDefault == true
+      );
+      if (
+        (item.parameterType === 1 ||
+          item.parameterType === 2 ||
+          item.parameterType === 3) &&
+        item.defaultValue.length <= 0
+      ) {
+        return false;
+      }
+      if (
+        (item.parameterType === 0 || item.parameterType === 6) &&
+        value?.length <= 0
+      ) {
+        return false;
+      }
+    }
+    return true;
+  };
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
   const calculationProduct = useCallback(async () => {
-    const res = await callApi(
-      "POST",
-      `/v1/calculation-service/calculations/calculate-product`,
-      {
-        clientId: router?.query?.customerId,
-        clientTypeId: router?.query?.clientTypeId,
-        productId: router?.query?.productId,
-        generalParameters: generalParameters,
-      }
-    );
-    setPricingDefaultValue(res?.data?.data?.data);
-  }, [generalParameters, router]);
+    let checkParameter = validateParameters(isRequiredParameters);
+    console.log("checkParameter", checkParameter);
+    if (checkParameter) {
+      const res = await callApi(
+        "POST",
+        `/v1/calculation-service/calculations/calculate-product`,
+        {
+          clientId: router?.query?.customerId,
+          clientTypeId: router?.query?.clientTypeId,
+          productId: router?.query?.productId,
+          generalParameters: generalParameters,
+        }
+      );
+      setPricingDefaultValue(res?.data?.data?.data);
+    }
+  }, [generalParameters, router, isRequiredParameters, validateParameters]);
 
   useEffect(() => {
     calculationProduct();

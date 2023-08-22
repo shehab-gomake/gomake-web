@@ -11,11 +11,11 @@ import { useDigitalOffsetPrice } from "@/hooks";
 import { useRecoilValue } from "recoil";
 import { machineCategoriesState } from "@/store/machine-categories";
 import { useState } from "react";
-import { TabsMappingWidget } from "./widgets/tabs-mapping.page";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
 import { PricingSectionMappingWidget } from "./widgets/pricing-section-mapping";
 import { RightSideWidget } from "./widgets/right-side-widget";
+import { TabsMappingWidget } from "./widgets/tabs-mapping";
 export default function DigitalOffsetPrice() {
   const { clasess } = useStyle();
   const {
@@ -43,6 +43,7 @@ export default function DigitalOffsetPrice() {
     clientTypeDefaultValue,
     clientTypesValue,
     PricingTab,
+    pricingDefaultValue,
   } = useDigitalOffsetPrice({ clasess });
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
@@ -91,6 +92,7 @@ export default function DigitalOffsetPrice() {
                               machineCategories={machineCategories}
                               onChangeCategoryData={onChangeCategoryData}
                               section={section}
+                              pricingDefaultValue={pricingDefaultValue}
                             />
                           );
                         } else {

@@ -157,9 +157,7 @@ const useAddProduct = () => {
       await updateProductParameterEndPoint(sectionId, subSectionId, {
         parameter: {
           ...parameter,
-          defaultValue: changeDefaultValue?.length
-            ? changeDefaultValue
-            : parameter.defaultValue,
+          defaultValue: changeDefaultValue,
         },
       });
     },
