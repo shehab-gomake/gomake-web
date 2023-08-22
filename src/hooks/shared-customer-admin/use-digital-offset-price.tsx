@@ -58,98 +58,102 @@ const useDigitalOffsetPrice = ({ clasess }) => {
       let temp = [...generalParameters];
       tempMockData?.map((section, i) => {
         return section?.subSections?.map((subSection, i) => {
-          return subSection.parameters?.map((parameter, i) => {
-            const index = temp.findIndex(
-              (item) =>
-                item.parameterId === parameter?.id &&
-                item.sectionId === section?.id &&
-                item.subSectionId === subSection?.id
-            );
-            if (index !== -1) {
-              temp[index] = {
-                ...temp[index],
-              };
-            } else {
-              if (
-                parameter?.parameterType === 1 ||
-                parameter?.parameterType === 2 ||
-                parameter?.parameterType === 3
-              ) {
-                if (parameter?.defaultValue?.length > 0) {
-                  const defaultValue = parameter?.defaultValue;
-                  temp.push({
-                    parameterId: parameter?.id,
-                    parameterName: parameter?.name,
-                    actionId: parameter?.actionId,
-                    parameterType: parameter?.parameterType,
-                    ...(defaultValue?.length > 0 && { value: defaultValue }),
-                    sectionId: section?.id,
-                    subSectionId: subSection?.id,
-                  });
-                }
-              } else if (parameter?.parameterType === 0) {
-                const value = parameter?.valuesConfigs?.find(
-                  (item) => item?.isDefault == true
-                );
-                if (value) {
-                  const data = materialsEnumsValues.find(
-                    (item) => item.name === parameter?.materialPath[0]
-                  );
-                  temp.push({
-                    parameterId: parameter?.id,
-                    parameterName: parameter?.name,
-                    actionId: parameter?.actionId,
-                    ...(data?.id > 0 && { material: data?.id }),
-                    parameterType: parameter?.parameterType,
-                    ...(value && {
-                      valueId: value?.id,
-                      value: value?.updateName,
-                    }),
-                    sectionId: section?.id,
-                    subSectionId: subSection?.id,
-                  });
-                }
-              } else if (parameter?.parameterType === 6) {
-                const defaultObject = parameter.valuesConfigs.find(
-                  (item) => item.isDefault === true
-                );
-                parameter?.childsParameters.forEach((parameter) => {
-                  const parameterId = parameter.id;
-                  if (defaultObject?.values.hasOwnProperty(parameterId)) {
-                    parameter.defaultValue = defaultObject?.values[parameterId];
-                  }
-                });
-                if (defaultObject) {
-                  temp.push({
-                    parameterId: parameter?.id,
-                    parameterName: parameter?.name,
-                    actionId: parameter?.actionId,
-                    parameterType: parameter?.parameterType,
-                    ...(defaultObject && {
-                      valueId: defaultObject?.id,
-                      value: defaultObject?.updateName,
-                    }),
-
-                    sectionId: section?.id,
-                    subSectionId: subSection?.id,
-                  });
-                  parameter?.childsParameters?.map((item) => {
+          return subSection.parameters
+            ?.filter((param) => !param.isHidden)
+            .map((parameter, i) => {
+              const index = temp.findIndex(
+                (item) =>
+                  item.parameterId === parameter?.id &&
+                  item.sectionId === section?.id &&
+                  item.subSectionId === subSection?.id
+              );
+              if (index !== -1) {
+                temp[index] = {
+                  ...temp[index],
+                };
+              } else {
+                if (
+                  parameter?.parameterType === 1 ||
+                  parameter?.parameterType === 2 ||
+                  parameter?.parameterType === 3
+                ) {
+                  if (parameter?.defaultValue?.length > 0) {
+                    const defaultValue = parameter?.defaultValue;
                     temp.push({
-                      parameterId: item?.id,
-                      parameterName: item?.name,
-                      actionId: item?.actionId,
-                      parameterType: item?.parameterType,
-                      value: item?.defaultValue,
+                      parameterId: parameter?.id,
+                      parameterName: parameter?.name,
+                      actionId: parameter?.actionId,
+                      parameterType: parameter?.parameterType,
+                      ...(defaultValue?.length > 0 && { value: defaultValue }),
                       sectionId: section?.id,
                       subSectionId: subSection?.id,
                     });
+                  }
+                } else if (parameter?.parameterType === 0) {
+                  const value = parameter?.valuesConfigs?.find(
+                    (item) => item?.isDefault == true
+                  );
+                  if (value) {
+                    const data = materialsEnumsValues.find(
+                      (item) => item.name === parameter?.materialPath[0]
+                    );
+                    temp.push({
+                      parameterId: parameter?.id,
+                      parameterName: parameter?.name,
+                      actionId: parameter?.actionId,
+                      ...(data?.id > 0 && { material: data?.id }),
+                      parameterType: parameter?.parameterType,
+                      ...(value && {
+                        valueId: value?.id,
+                        value: value?.updateName,
+                      }),
+                      sectionId: section?.id,
+                      subSectionId: subSection?.id,
+                    });
+                  }
+                } else if (parameter?.parameterType === 6) {
+                  const defaultObject = parameter.valuesConfigs.find(
+                    (item) => item.isDefault === true
+                  );
+                  parameter?.childsParameters.forEach((parameter) => {
+                    const parameterId = parameter.id;
+                    if (defaultObject?.values.hasOwnProperty(parameterId)) {
+                      parameter.defaultValue =
+                        defaultObject?.values[parameterId];
+                    }
                   });
+                  if (defaultObject) {
+                    temp.push({
+                      parameterId: parameter?.id,
+                      parameterName: parameter?.name,
+                      actionId: parameter?.actionId,
+                      parameterType: parameter?.parameterType,
+                      ...(defaultObject && {
+                        valueId: defaultObject?.id,
+                        value: defaultObject?.updateName,
+                      }),
+
+                      sectionId: section?.id,
+                      subSectionId: subSection?.id,
+                    });
+                    parameter?.childsParameters?.map((item) => {
+                      temp.push({
+                        parameterId: item?.id,
+                        parameterName: item?.name,
+                        actionId: item?.actionId,
+                        parameterType: item?.parameterType,
+                        value: item?.defaultValue,
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                      });
+                    });
+                  }
                 }
               }
-            }
-          });
+            });
         });
       });
+
       setGeneralParameters(temp);
     }
   }, [template]);
@@ -515,32 +519,23 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     getProductById();
   }, [router]);
   const validateParameters = (inputArray) => {
+    let isValid = true;
     for (const item of inputArray) {
-      const value = item?.valuesConfigs?.find(
-        (item) => item?.isDefault == true
+      const index = generalParameters.findIndex(
+        (par) => par.parameterId === item.id && par?.value?.length
       );
-      if (
-        (item.parameterType === 1 ||
-          item.parameterType === 2 ||
-          item.parameterType === 3) &&
-        item.defaultValue.length <= 0
-      ) {
-        return false;
-      }
-      if (
-        (item.parameterType === 0 || item.parameterType === 6) &&
-        value?.length <= 0
-      ) {
-        return false;
+      if (index == -1) {
+        isValid = false;
+        break;
       }
     }
-    return true;
+    return isValid;
   };
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
   const calculationProduct = useCallback(async () => {
     let checkParameter = validateParameters(isRequiredParameters);
     console.log("checkParameter", checkParameter);
-    if (checkParameter) {
+    if (!!checkParameter) {
       const res = await callApi(
         "POST",
         `/v1/calculation-service/calculations/calculate-product`,
