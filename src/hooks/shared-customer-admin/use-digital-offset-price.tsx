@@ -25,7 +25,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const [template, setTemplate] = useState<any>([]);
   const [generalParameters, setGeneralParameters] = useState<any>([]);
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
-
+  console.log("generalParameters", generalParameters);
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let temp = [...isRequiredParameters];
@@ -186,12 +186,20 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     subSection: any,
     section: any
   ) => {
+    let temp = [...generalParameters];
+    const index = temp.findIndex(
+      (item) =>
+        item.parameterId === parameter?.id &&
+        item.sectionId === section?.id &&
+        item.subSectionId === subSection?.id
+    );
     if (parameter?.parameterType === 1) {
       return (
         <GomakeTextInput
           style={clasess.textInputStyle}
           defaultValue={parameter.defaultValue}
           placeholder={parameter.name}
+          value={index !== -1 ? temp[index].value : ""}
           onChange={(e: any, item: any) =>
             onChangeForPrice(
               parameter?.id,
@@ -200,7 +208,8 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               parameter?.parameterType,
               parameter?.name,
               parameter?.actionId,
-              { value: e.target.value }
+              { value: e.target.value },
+              index
             )
           }
           type="number"
@@ -220,9 +229,11 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               parameter?.parameterType,
               parameter?.name,
               parameter?.actionId,
-              { value: e.target.value }
+              { value: e.target.value },
+              index
             )
           }
+          value={index !== -1 ? temp[index].value : ""}
           type="text"
         />
       );
@@ -236,7 +247,9 @@ const useDigitalOffsetPrice = ({ clasess }) => {
           placeholder={parameter.name}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
-          defaultValue={defaultObject}
+          defaultValue={
+            index !== -1 ? { updateName: temp[index].value } : defaultObject
+          }
           onChange={(e: any, value: any) => {
             onChangeForPrice(
               parameter?.id,
@@ -245,7 +258,8 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               parameter?.parameterType,
               parameter?.name,
               parameter?.actionId,
-              { valueId: value?.id, value: value?.updateName }
+              { valueId: value?.id, value: value?.updateName },
+              index
             );
           }}
         />
@@ -260,37 +274,10 @@ const useDigitalOffsetPrice = ({ clasess }) => {
           placeholder={parameter.name}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
-          defaultValue={defaultObject}
+          defaultValue={
+            index !== -1 ? { updateName: temp[index].value } : defaultObject
+          }
           onChange={(e: any, value: any) => {
-            let temp = [...generalParameters];
-            parameter?.childsParameters.forEach((parameter) => {
-              const parameterId = parameter.id;
-              if (value?.values.hasOwnProperty(parameterId)) {
-                const index = temp.findIndex(
-                  (item) =>
-                    item.parameterId === parameter?.id &&
-                    item.sectionId === section?.id &&
-                    item.subSectionId === subSection?.id
-                );
-
-                if (index !== -1) {
-                  temp[index] = {
-                    ...temp[index],
-                    value: value?.values[parameterId],
-                  };
-                } else {
-                  temp.push({
-                    parameterId: parameter?.id,
-                    sectionId: section?.id,
-                    subSectionId: subSection?.id,
-                    ParameterType: parameter?.parameterType,
-                    value: value?.values[parameterId],
-                  });
-                }
-              }
-            });
-            setGeneralParameters(temp);
-
             onChangeForPrice(
               parameter?.id,
               subSection?.id,
@@ -298,9 +285,40 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               parameter?.parameterType,
               parameter?.name,
               parameter?.actionId,
-              { valueId: value?.id, value: value?.updateName }
+              { valueId: value?.id, value: value?.updateName },
+              index
             );
-            setGeneralParameters(temp);
+            setGeneralParameters((prev) => {
+              let temp = [...prev];
+              parameter?.childsParameters.forEach((parameter) => {
+                const parameterId = parameter.id;
+                if (value?.values.hasOwnProperty(parameterId)) {
+                  const index = temp.findIndex(
+                    (item) =>
+                      item.parameterId === parameter?.id &&
+                      item.sectionId === section?.id &&
+                      item.subSectionId === subSection?.id
+                  );
+
+                  if (index !== -1) {
+                    temp[index] = {
+                      ...temp[index],
+                      value: value?.values[parameterId],
+                    };
+                  } else {
+                    temp.push({
+                      parameterId: parameter?.id,
+                      sectionId: section?.id,
+                      subSectionId: subSection?.id,
+                      ParameterType: parameter?.parameterType,
+                      value: value?.values[parameterId],
+                    });
+                  }
+                }
+              });
+
+              return temp;
+            });
           }}
         />
       );
@@ -308,6 +326,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
       return (
         <SecondSwitch
           defaultChecked={parameter?.defaultValue === "true"}
+          checked={index !== -1 ? temp[index].value : ""}
           onChange={(e: any, value: any) =>
             onChangeForPrice(
               parameter?.id,
@@ -316,7 +335,8 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               parameter?.parameterType,
               parameter?.name,
               parameter?.actionId,
-              { value }
+              { value: value?.toString() },
+              index
             )
           }
         />
@@ -351,7 +371,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
           options?.length > 0 && (
             <GoMakeAutoComplate
               options={options}
-              placeholder={parameter.updatedName}
+              placeholder={parameter.name}
               style={clasess.dropDownListStyle}
               getOptionLabel={(option: any) => option.value}
               onChange={(e: any, value: any) => {
@@ -365,9 +385,10 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                     parameter?.actionId,
                     {
                       valueId: value?.valueId,
-                      value: value.value,
+                      value: value?.value,
                       ...(data?.id > 0 && { material: data?.id }),
-                    }
+                    },
+                    index
                   );
                   setDigidatPriceData({
                     ...digitalPriceData,
@@ -385,9 +406,10 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                     parameter?.actionId,
                     {
                       valueId: value?.valueId,
-                      value: value.value,
+                      value: value?.value,
                       ...(data?.id > 0 && { material: data?.id }),
-                    }
+                    },
+                    index
                   );
                   setDigidatPriceData({
                     ...digitalPriceData,
@@ -406,9 +428,10 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                     parameter?.actionId,
                     {
                       valueId: value?.valueId,
-                      value: value.value,
+                      value: value?.value,
                       ...(data?.id > 0 && { material: data?.id }),
-                    }
+                    },
+                    index
                   );
                   setDigidatPriceData({
                     ...digitalPriceData,
@@ -432,33 +455,31 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     ParameterType: any,
     parameterName: any,
     actionId: any,
-    data: any
+    data: any,
+    index
   ) => {
-    let temp = [...generalParameters];
-    const index = temp.findIndex(
-      (item) =>
-        item.parameterId === parameterId &&
-        item.sectionId === sectionId &&
-        item.subSectionId === subSectionId
-    );
+    setGeneralParameters((prev) => {
+      let temp = [...prev];
 
-    if (index !== -1) {
-      temp[index] = {
-        ...temp[index],
-        ...data,
-      };
-    } else {
-      temp.push({
-        parameterId: parameterId,
-        sectionId: sectionId,
-        subSectionId: subSectionId,
-        ParameterType: ParameterType,
-        parameterName: parameterName,
-        actionId: actionId,
-        ...data,
-      });
-    }
-    setGeneralParameters(temp);
+      if (index !== -1) {
+        temp[index] = {
+          ...temp[index],
+          ...data,
+        };
+      } else {
+        temp.push({
+          parameterId: parameterId,
+          sectionId: sectionId,
+          subSectionId: subSectionId,
+          ParameterType: ParameterType,
+          parameterName: parameterName,
+          actionId: actionId,
+          ...data,
+        });
+      }
+
+      return temp;
+    });
   };
   const onCloseMakeShape = () => {
     setMakeShapeOpen(false);
