@@ -25,8 +25,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const [template, setTemplate] = useState<any>([]);
   const [generalParameters, setGeneralParameters] = useState<any>([]);
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
-  console.log("generalParameters", generalParameters);
-  console.log("isRequiredParameters", isRequiredParameters);
 
   useEffect(() => {
     if (template?.sections?.length > 0) {
@@ -534,7 +532,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
   const calculationProduct = useCallback(async () => {
     let checkParameter = validateParameters(isRequiredParameters);
-    console.log("checkParameter", checkParameter);
     if (!!checkParameter) {
       const res = await callApi(
         "POST",
