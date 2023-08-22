@@ -31,9 +31,9 @@ const PricingSectionMappingWidget = ({
             ]}
             tableRows={[
               {
-                totalCost: "562.00 USD",
-                totalProductionTime: "3.14",
-                finalPrice: "2432.00 USD",
+                totalCost: "0.00 USD",
+                totalProductionTime: "0.00",
+                finalPrice: "0.00 USD",
               },
             ]}
           />

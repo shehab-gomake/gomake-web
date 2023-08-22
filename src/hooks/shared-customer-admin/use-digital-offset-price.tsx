@@ -326,7 +326,9 @@ const useDigitalOffsetPrice = ({ clasess }) => {
       return (
         <SecondSwitch
           defaultChecked={parameter?.defaultValue === "true"}
-          checked={index !== -1 ? temp[index].value : ""}
+          checked={
+            index !== -1 ? (temp[index].value === "true" ? true : false) : ""
+          }
           onChange={(e: any, value: any) =>
             onChangeForPrice(
               parameter?.id,
