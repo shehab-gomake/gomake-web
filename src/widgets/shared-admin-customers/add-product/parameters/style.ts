@@ -116,7 +116,7 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
-        alignItems: "flex-end",
+        alignItems: "center",
         gap: 8,
       },
       spanRequierd: {
@@ -159,6 +159,12 @@ const useStyle = () => {
         border: `1px solid ${secondColor(500)}`,
         color: secondColor(500),
       },
+      nameIconContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+      },
       textInputWithoutStyle: {
         display: "flex",
         justifyContent: "flex-start",
@@ -171,6 +177,9 @@ const useStyle = () => {
         backgroundColor: "transparent",
         paddingLeft: 2,
         boxShadow: "none",
+      },
+      plusIconStyle: {
+        cursor: "pointer",
       },
       addSupplierAutoComplate: {
         width: "100%",

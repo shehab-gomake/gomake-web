@@ -15,14 +15,11 @@ const FlowsMappingWidget = ({
         const actionData = section.actions.find(
           (item: any) => item.actionId === action.actionId
         );
-        console.log("actionData", actionData);
 
         const machinData = actionData?.machineCategories;
-        console.log("machinData", machinData);
         const machinesArray = machinData.find(
           (item) => item.machineCategoryId === action?.machineCategoryId
         )?.machines;
-        console.log("machinesArray", machinesArray);
 
         if (actionData) {
           return (
