@@ -7,6 +7,7 @@ const PricingSectionMappingWidget = ({
   machineCategories,
   onChangeCategoryData,
   section,
+  pricingDefaultValue,
 }: any) => {
   const { t } = useTranslation();
   return (
