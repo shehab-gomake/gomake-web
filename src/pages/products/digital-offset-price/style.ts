@@ -150,7 +150,6 @@ const useStyle = () => {
         alignItems: "flex-start",
         gap: 8,
         width: "fit-content",
-        minWidth: 180,
       },
 
       textInputStyle: {
