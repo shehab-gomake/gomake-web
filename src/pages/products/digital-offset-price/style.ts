@@ -103,7 +103,8 @@ const useStyle = () => {
       activeTabContainer: {
         backgroundColor: "#EBECFF",
         minHeight: 48,
-        marginTop: 20,
+        // marginTop: 20,
+        borderBottom: "none",
       },
       headerAccordionContainer: {
         display: "flex",
@@ -129,6 +130,10 @@ const useStyle = () => {
       parameterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
+      },
+      parameterType3ActiveLabelStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: secondColor(500),
       },
       spanRequierd: {
         ...FONT_FAMILY.Lexend(500, 14),

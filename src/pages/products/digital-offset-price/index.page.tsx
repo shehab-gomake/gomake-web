@@ -29,6 +29,7 @@ export default function DigitalOffsetPrice() {
     setDefaultPrice,
     handleChange,
     _renderParameterType,
+    _getParameter,
     renderOptions,
     checkWhatRenderArray,
     makeShapeOpen,
@@ -109,6 +110,7 @@ export default function DigitalOffsetPrice() {
                                     subSection={subSection}
                                     section={section}
                                     _renderParameterType={_renderParameterType}
+                                    _getParameter={_getParameter}
                                   />
                                 );
                               } else {
@@ -119,6 +121,7 @@ export default function DigitalOffsetPrice() {
                                     subSection={subSection}
                                     section={section}
                                     _renderParameterType={_renderParameterType}
+                                    _getParameter={_getParameter}
                                   />
                                 );
                               }

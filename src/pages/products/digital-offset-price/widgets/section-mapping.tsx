@@ -4,6 +4,7 @@ const SectionMappingWidget = ({
   subSection,
   section,
   _renderParameterType,
+  _getParameter,
 }: any) => {
   return (
     <div key={index} style={clasess.subSectionContainer}>
@@ -13,10 +14,17 @@ const SectionMappingWidget = ({
           ?.filter((param: any) => !param.isHidden)
           ?.map((parameter: any, index: number) => {
             if (parameter?.parameterType === 3) {
+              const value = _getParameter(parameter, subSection, section);
               return (
                 <div key={index}>
                   <div style={clasess.parameterType3Container}>
-                    <div style={clasess.parameterLabelStyle}>
+                    <div
+                      style={
+                        value?.value === "true"
+                          ? clasess.parameterType3ActiveLabelStyle
+                          : clasess.parameterLabelStyle
+                      }
+                    >
                       {parameter?.name}
                       {parameter?.isRequired ? (
                         <span style={clasess.spanRequierd}> *</span>

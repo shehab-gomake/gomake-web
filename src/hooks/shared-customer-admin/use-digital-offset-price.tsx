@@ -181,6 +181,17 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
     };
+  const _getParameter = (parameter: any, subSection: any, section: any) => {
+    let temp = [...generalParameters];
+    const index = temp.findIndex(
+      (item) =>
+        item.parameterId === parameter?.id &&
+        item.sectionId === section?.id &&
+        item.subSectionId === subSection?.id
+    );
+
+    return temp[index];
+  };
   const _renderParameterType = (
     parameter: any,
     subSection: any,
@@ -369,6 +380,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
             return material.pathName === parameter?.materialPath[0];
           })?.data;
         }
+        console.log("options", options);
         return (
           options?.length > 0 && (
             <GoMakeAutoComplate
@@ -376,6 +388,10 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               placeholder={parameter.name}
               style={clasess.dropDownListStyle}
               getOptionLabel={(option: any) => option.value}
+              value={
+                //@ts-ignore
+                index !== -1 ? { value: temp[index].value } : { value: "" }
+              }
               onChange={(e: any, value: any) => {
                 if (parameter?.materialPath?.length == 3) {
                   onChangeForPrice(
@@ -604,6 +620,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     expanded,
     handleChange,
     _renderParameterType,
+    _getParameter,
     clientDefaultValue,
     renderOptions,
     checkWhatRenderArray,
