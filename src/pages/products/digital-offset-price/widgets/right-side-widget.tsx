@@ -66,7 +66,7 @@ const RightSideWidget = ({
         <img
           src={template.img}
           alt="gomake"
-          style={{ width: "100%", borderRadius: 16 }}
+          style={{ width: "100%", height: 170, borderRadius: 16 }}
         />
       </div>
       <div style={clasess.urgentEstimateContainer}>

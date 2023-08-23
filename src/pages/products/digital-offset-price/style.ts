@@ -38,10 +38,10 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "330px",
+        width: "330",
         backgroundColor: "white",
-        padding: 16,
-        marginTop: -105,
+        padding: 15,
+        marginTop: -100,
         boxShadow: "0px 4px 40px 0px rgba(129, 129, 129, 0.12)",
         borderRadius: 5,
         height: "85vh",
@@ -103,7 +103,6 @@ const useStyle = () => {
       activeTabContainer: {
         backgroundColor: "#EBECFF",
         minHeight: 48,
-        // marginTop: 20,
         borderBottom: "none",
       },
       headerAccordionContainer: {
@@ -261,7 +260,7 @@ const useStyle = () => {
         marginBottom: 16,
       },
       progress: {
-        marginBottom: 11,
+        marginBottom: 8,
         width: "100%",
       },
       labelBrogressContainer: {
@@ -270,7 +269,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        marginBottom: 32,
+        marginBottom: 18,
       },
       labelStyle: {
         color: primaryColor(800),
@@ -349,6 +348,7 @@ const useStyle = () => {
       addOrderBtn: {
         backgroundColor: secondColor(500),
         height: 40,
+        padding: 20,
       },
       noVatStyle: {
         marginTop: 6,
@@ -360,7 +360,6 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-end",
         alignItems: "center",
-        // marginBottom: 50,
         marginTop: 30,
         width: "100%",
         gap: 16,
