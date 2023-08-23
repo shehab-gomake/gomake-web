@@ -14,12 +14,12 @@ const TabsMappingWidget = ({
         key={index}
         onClick={() => handleTabClick(index)}
       >
-        <div style={{ height: 22, minWidth: 30 }}>
+        <div style={{ height: 24, minWidth: 24 }}>
           {index === activeIndex ? (
             <img
               src={item.icon}
               style={{
-                width: 30,
+                width: 24,
                 height: 24,
               }}
             />
@@ -27,7 +27,7 @@ const TabsMappingWidget = ({
             <img
               src={item.icon}
               style={{
-                width: 30,
+                width: 24,
                 height: 24,
               }}
             />
