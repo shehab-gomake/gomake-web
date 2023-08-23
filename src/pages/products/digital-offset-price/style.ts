@@ -52,15 +52,15 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: 50,
-        marginBottom: 24,
+        gap: 80,
+        marginBottom: 20,
       },
       tabContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
-        alignItems: "center",
-        gap: 8,
+        alignItems: "flex-start",
+        gap: 6,
         cursor: "pointer",
       },
       tabNameStyle: {
@@ -90,7 +90,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        marginTop: 24,
       },
       subSectionTitleStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
@@ -124,14 +123,15 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        gap: 25,
-        paddingBottom: 50,
+        gap: 16,
+        paddingBottom: 24,
       },
       parameterLabelStyle: {
-        ...FONT_FAMILY.Lexend(600, 16),
-        color: "#090A1D",
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: primaryColor(900),
       },
       spanRequierd: {
+        ...FONT_FAMILY.Lexend(500, 14),
         color: errorColor(500),
       },
       parameterContainer: {
@@ -143,13 +143,22 @@ const useStyle = () => {
         width: "fit-content",
         minWidth: 180,
       },
+      parameterType3Container: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 8,
+        width: "fit-content",
+        minWidth: 180,
+      },
+
       textInputStyle: {
         width: "100%",
         borderRadius: 4,
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
-        // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
       dropDownListStyle: {
         width: "100%",

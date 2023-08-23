@@ -60,7 +60,8 @@ export default function DigitalOffsetPrice() {
         <div style={clasess.mainContainer}>
           <HeaderTitle
             title={t("products.offsetPrice.admin.title2")}
-            marginTop={50}
+            marginTop={38}
+            marginBottom={24}
           />
           <div style={clasess.mainRowContainer}>
             <div style={clasess.leftSideContainer}>

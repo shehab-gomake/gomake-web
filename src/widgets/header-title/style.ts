@@ -13,7 +13,7 @@ const useStyle = ({ marginTop, marginBottom }) => {
       },
       titleStyle: {
         display: "flex",
-        ...FONT_FAMILY.Lexend(600, 20),
+        ...FONT_FAMILY.Lexend(700, 20),
         color: primaryColor(500),
       },
     };
