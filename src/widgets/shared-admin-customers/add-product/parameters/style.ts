@@ -52,6 +52,14 @@ const useStyle = () => {
         width: "100%",
         height: "100%",
       },
+      selectedTabLine: {
+        display: "flex",
+        width: "100%",
+        height: 1,
+        backgroundColor: secondColor(500),
+        borderBottom: `1px solid ${secondColor(500)}`,
+        marginTop: 10,
+      },
       leftSideContainer: {
         display: "flex",
         flexDirection: "column" as "column",
@@ -65,9 +73,9 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: 50,
-        marginTop: 20,
-        marginBottom: 20,
+        gap: 56,
+        width: "100%",
+        marginBottom: 31,
       },
       tabContainer: {
         display: "flex",
@@ -96,7 +104,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        marginTop: 24,
+        marginBottom: 24,
       },
       subSectionTitleStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
@@ -132,12 +140,21 @@ const useStyle = () => {
         minWidth: 180,
         marginBottom: 25,
       },
+      parameterType3Container: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 10,
+        width: "fit-content",
+        minWidth: 180,
+        marginBottom: 25,
+      },
       textInputStyle: {
         width: "100%",
         borderRadius: 4,
         height: 40,
         backgroundColor: "#FFF",
-        // boxShadow: "0px 4px 15px 0px rgba(0, 0, 0, 0.08)",
       },
       renderParameterTypeContainer: {
         display: "flex",
@@ -151,7 +168,6 @@ const useStyle = () => {
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
-        boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
       dynamicBtn: {
         height: 40,

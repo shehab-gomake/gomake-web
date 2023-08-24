@@ -4,9 +4,20 @@ import { useCallback, useEffect, useState } from "react";
 
 import { getAndSetProductById } from "@/services/hooks";
 import { useRouter } from "next/router";
-import { GraphicIcon, PrameterIcon, SettingIcon } from "@/widgets";
+import {
+  GraphicIcon,
+  HiddenIcon,
+  NotHiddenIcon,
+  PrameterIcon,
+  SettingIcon,
+} from "@/widgets";
+import {
+  GoMakeAutoComplate,
+  GomakeTextInput,
+  SecondSwitch,
+} from "@/components";
 
-const useAddProduct = () => {
+const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
 
@@ -268,7 +279,204 @@ const useAddProduct = () => {
     [router]
   );
 
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedParameter, setSelectedParameter] = useState<any>({});
+
+  const [selectedSectonId, setSelectedSectonId] = useState({});
+  const [selectedSubSection, setSelectedSubSection] = useState({});
+  const onCloseModal = () => {
+    setSelectedParameter({});
+    setOpenModal(false);
+  };
+  const onOpenModal = (parameter, sectionId, subSectionId) => {
+    setSelectedParameter(parameter);
+    setSelectedSectonId(sectionId);
+    setSelectedSubSection(subSectionId);
+    setTimeout(() => {
+      setOpenModal(true);
+    }, 100);
+  };
+  const _renderParameterType = (sectionId, subSectionId, parameter) => {
+    if (parameter?.parameterType === 1) {
+      return (
+        <GomakeTextInput
+          style={clasess.textInputStyle}
+          defaultValue={parameter.defaultValue}
+          placeholder={parameter.name}
+          onChange={(e: any) => setChangeDefaultValue(e.target.value)}
+          onBlur={() =>
+            updatedProductParameteDefaultValue(
+              sectionId,
+              subSectionId,
+              parameter
+            )
+          }
+          type="number"
+        />
+      );
+    } else if (parameter?.parameterType === 2) {
+      return (
+        <GomakeTextInput
+          style={clasess.textInputStyle}
+          defaultValue={parameter.defaultValue}
+          placeholder={parameter.name}
+          type="text"
+          onChange={(e: any) => setChangeDefaultValue(e.target.value)}
+          onBlur={() =>
+            updatedProductParameteDefaultValue(
+              sectionId,
+              subSectionId,
+              parameter
+            )
+          }
+        />
+      );
+    } else if (parameter?.parameterType === 0) {
+      const defaultObject = parameter.valuesConfigs.find(
+        (item) => item.isDefault === true
+      );
+      return (
+        <GoMakeAutoComplate
+          options={parameter?.valuesConfigs}
+          placeholder={parameter.name}
+          style={clasess.dropDownListStyle}
+          getOptionLabel={(option: any) => option.updateName}
+          defaultValue={defaultObject}
+          onChange={(e: any, value: any) => {
+            updatedProductParameterValuesConfigsDefault(
+              sectionId,
+              subSectionId,
+              parameter,
+              value
+            );
+          }}
+          renderOption={(props: any, option: any) => {
+            return (
+              <div style={clasess.optionsContainer}>
+                <div {...props} style={{ width: "100%" }}>
+                  {option.updateName}
+                </div>
+                <div>
+                  {option.isHidden ? (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <HiddenIcon />
+                    </div>
+                  ) : (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <NotHiddenIcon />
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          }}
+        />
+      );
+    } else if (parameter?.parameterType === 3) {
+      return (
+        <SecondSwitch
+          checked={parameter?.defaultValue === "true"}
+          onChange={(a: any, value: any) => {
+            updatedProductParameteDefaultValueForSwitch(
+              sectionId,
+              subSectionId,
+              parameter,
+              value
+            );
+          }}
+        />
+      );
+    } else if (parameter?.parameterType === 6) {
+      const defaultObject = parameter.valuesConfigs.find(
+        (item) => item.isDefault === true
+      );
+      return (
+        <GoMakeAutoComplate
+          options={parameter?.valuesConfigs}
+          placeholder={parameter.name}
+          style={clasess.dropDownListStyle}
+          getOptionLabel={(option: any) => option.updateName}
+          defaultValue={defaultObject}
+          onChange={(e: any, value: any) => {
+            updatedProductParameterValuesConfigsDefault(
+              sectionId,
+              subSectionId,
+              parameter,
+              value
+            );
+          }}
+          renderOption={(props: any, option: any) => {
+            return (
+              <div style={clasess.optionsContainer}>
+                <div {...props} style={{ width: "100%" }}>
+                  {option.updateName}
+                </div>
+                <div>
+                  {option.isHidden ? (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <HiddenIcon />
+                    </div>
+                  ) : (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <NotHiddenIcon />
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          }}
+        />
+      );
+    }
+  };
   return {
+    setOpenModal,
+    setSelectedParameter,
+    setSelectedSectonId,
+    setSelectedSubSection,
+    onCloseModal,
+    _renderParameterType,
+    onOpenModal,
     t,
     handleTabClick,
     handleNextClick,
@@ -292,6 +500,10 @@ const useAddProduct = () => {
     template,
     activeTab,
     tabs,
+    selectedSubSection,
+    selectedSectonId,
+    selectedParameter,
+    openModal,
   };
 };
 
