@@ -23,6 +23,8 @@ const useStyle = () => {
       },
       searchInputContainer: {
         width: convertWidthToVW(375),
+        backgroundColor: "#F8F8F8",
+        borderRadius: 10,
       },
       iconStyle: {
         position: "absolute" as "absolute",
