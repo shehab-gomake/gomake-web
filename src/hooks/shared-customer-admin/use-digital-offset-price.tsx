@@ -380,7 +380,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
             return material.pathName === parameter?.materialPath[0];
           })?.data;
         }
-        console.log("options", options);
         return (
           options?.length > 0 && (
             <GoMakeAutoComplate
