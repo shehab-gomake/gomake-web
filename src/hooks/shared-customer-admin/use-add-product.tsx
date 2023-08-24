@@ -149,6 +149,7 @@ const useAddProduct = () => {
           name: changeName?.length ? changeName : parameter.name,
         },
       });
+      setChangeName("");
     },
     [router, changeName]
   );
@@ -157,10 +158,12 @@ const useAddProduct = () => {
       await updateProductParameterEndPoint(sectionId, subSectionId, {
         parameter: {
           ...parameter,
-          defaultValue: changeDefaultValue,
+          defaultValue: changeDefaultValue?.length && changeDefaultValue,
         },
       });
+      setChangeDefaultValue("");
     },
+
     [router, changeDefaultValue]
   );
   const updatedProductParameteDefaultValueForSwitch = useCallback(

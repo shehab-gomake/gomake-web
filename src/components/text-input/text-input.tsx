@@ -67,6 +67,7 @@ const GomakeTextInput = ({
   onMouseLeave,
   defaultValue,
   onBlur,
+  onClick,
 }: {
   labelText?: string;
   value?: string;
@@ -83,6 +84,7 @@ const GomakeTextInput = ({
   onMouseLeave?: any;
   defaultValue?: any;
   onBlur?: any;
+  onClick?: any;
 }) => {
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
   return (
@@ -105,6 +107,7 @@ const GomakeTextInput = ({
       onMouseLeave={onMouseLeave}
       defaultValue={defaultValue}
       onBlur={onBlur}
+      onClick={onClick}
     />
   );
 };
