@@ -1,7 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { InputAdornment } from "@mui/material";
 
-import { GoMakeAutoComplate, GoMakeTextInputIcon } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GoMakeTextInputIcon,
+  GomakePrimaryButton,
+} from "@/components";
 import { AddPlusIcon, SearchIcon } from "@/icons";
 import { CustomerAuthLayout } from "@/layouts";
 import { useGomakeRouter } from "@/hooks";
@@ -28,16 +32,20 @@ export default function SettingsPage() {
     <CustomerAuthLayout>
       <div style={clasess.mainContainer}>
         <div style={clasess.mainHeadecontainer}>
-          <HeaderTitle title={t("products.productManagement.admin.title")} />
-          <div
+          <HeaderTitle
+            title={t("products.productManagement.admin.title")}
+            marginBottom={40}
+          />
+          <GomakePrimaryButton
             style={clasess.addProductBtnStyle}
+            leftIcon={<AddPlusIcon stroke="#101020" />}
             onClick={() => navigate("/products/add-product")}
           >
-            <AddPlusIcon stroke="#101020" />
+            <div></div>
             <div style={clasess.addProductBtnText}>
               {t("products.productManagement.admin.addProduct")}
             </div>
-          </div>
+          </GomakePrimaryButton>
         </div>
         <div style={clasess.subHeaderContainer}>
           <div style={clasess.subHeaderLeftSide}>
@@ -57,17 +65,17 @@ export default function SettingsPage() {
                 />
               </div>
             </div>
-            <div
+            <GomakePrimaryButton
               style={clasess.cleanUpContainer}
               onClick={() => {
                 setTerm("");
               }}
             >
               {t("products.productManagement.admin.cleanUp")}
-            </div>
-            <div style={clasess.searchContainer}>
+            </GomakePrimaryButton>
+            <GomakePrimaryButton style={clasess.searchContainer}>
               {t("products.productManagement.admin.search")}
-            </div>
+            </GomakePrimaryButton>
           </div>
           <div style={clasess.subHeaderRightSide}>
             <GoMakeTextInputIcon
