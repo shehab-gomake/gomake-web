@@ -109,7 +109,7 @@ const useStyle = () => {
       searchInputContainer: {
         width: convertWidthToVW(375),
         backgroundColor: "#FFFFFF",
-        // boxShadow: "0px 4px 40px 0px rgba(0, 0, 0, 0.08)",
+        boxShadow: "5px 3px 20px 3px rgba(0, 0, 0, 0.08)",
       },
       iconStyle: {
         position: "absolute" as "absolute",
@@ -123,8 +123,8 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         padding: 20,
-        paddingLeft: 83,
-        paddingRight: 54,
+        paddingLeft: 20,
+        paddingRight: 20,
         backgroundColor: primaryColor(50),
         border: " 1px solid #EBECFF",
       },
@@ -143,8 +143,6 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         padding: 20,
-        paddingLeft: 83,
-        paddingRight: 54,
         backgroundColor: "#FFF",
         border: " 1px solid #EBECFF",
       },

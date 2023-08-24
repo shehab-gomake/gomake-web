@@ -16,9 +16,14 @@ export default function SettingsPage() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const { navigate } = useGomakeRouter();
-  const { tableHeaders, allProducts, term, productSearched, setTerm } =
-    useSettings();
-
+  const {
+    tableHeaders,
+    allProducts,
+    term,
+    productSearched,
+    allProductSKU,
+    setTerm,
+  } = useSettings();
   return (
     <CustomerAuthLayout>
       <div style={clasess.mainContainer}>
@@ -42,13 +47,22 @@ export default function SettingsPage() {
               </div>
               <div style={{ width: "100%" }}>
                 <GoMakeAutoComplate
-                  options={["a", "b", "c", "d", "e", "f", "g", "h", "i"]}
+                  options={allProductSKU}
                   placeholder={"Product SKU"}
                   style={clasess.dropDownListStyle}
+                  getOptionLabel={(option: any) => option.name}
+                  onChange={(e: any, value: any) => {
+                    setTerm(value?.code);
+                  }}
                 />
               </div>
             </div>
-            <div style={clasess.cleanUpContainer}>
+            <div
+              style={clasess.cleanUpContainer}
+              onClick={() => {
+                setTerm("");
+              }}
+            >
               {t("products.productManagement.admin.cleanUp")}
             </div>
             <div style={clasess.searchContainer}>
@@ -83,9 +97,6 @@ export default function SettingsPage() {
               return (
                 <div key={`body_row${index}`} style={{ width: "100%" }}>
                   <Row row={row} index={index} />
-                  {index != allProducts?.length - 1 ? (
-                    <div style={clasess.line} />
-                  ) : null}
                 </div>
               );
             })}
@@ -96,9 +107,6 @@ export default function SettingsPage() {
               return (
                 <div key={`body_row${index}`} style={{ width: "100%" }}>
                   <Row row={row} index={index} />
-                  {index != allProducts?.length - 1 ? (
-                    <div style={clasess.line} />
-                  ) : null}
                 </div>
               );
             })}
