@@ -9,14 +9,12 @@ import { HeaderWidget } from "@/widgets/header";
 
 const CustomerAuthLayout = ({ children }: IAuthLayout) => {
   const {} = useAuthLayoutHook();
-  const { clasess } = useStyle({isHover:false,navStatus:null});
+  const { clasess } = useStyle({ isHover: false, navStatus: null });
   return (
     <div style={clasess.container}>
       <LeftSideLayout />
       <div style={clasess.rightContainer}>
-        <div style={clasess.headerContainer}>
-          <HeaderWidget />
-        </div>
+        <HeaderWidget />
         <div style={clasess.bodyContainer}>{children}</div>
       </div>
     </div>

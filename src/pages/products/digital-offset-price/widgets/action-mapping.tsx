@@ -16,7 +16,7 @@ const ActionMappingWidget = ({
     setMachinesArray(
       actionData?.machineCategories.find(
         (c) => c.machineCategoryId === action.machineCategoryId
-      ).machines
+      )?.machines
     );
   }, [machineCategories]);
   return (

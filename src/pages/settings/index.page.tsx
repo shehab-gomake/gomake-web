@@ -1,7 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { InputAdornment } from "@mui/material";
 
-import { GoMakeAutoComplate, GoMakeTextInputIcon } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GoMakeTextInputIcon,
+  GomakePrimaryButton,
+} from "@/components";
 import { AddPlusIcon, SearchIcon } from "@/icons";
 import { CustomerAuthLayout } from "@/layouts";
 import { useGomakeRouter } from "@/hooks";
@@ -16,23 +20,32 @@ export default function SettingsPage() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const { navigate } = useGomakeRouter();
-  const { tableHeaders, allProducts, term, productSearched, setTerm } =
-    useSettings();
-
+  const {
+    tableHeaders,
+    allProducts,
+    term,
+    productSearched,
+    allProductSKU,
+    setTerm,
+  } = useSettings();
   return (
     <CustomerAuthLayout>
       <div style={clasess.mainContainer}>
         <div style={clasess.mainHeadecontainer}>
-          <HeaderTitle title={t("products.productManagement.admin.title")} />
-          <div
+          <HeaderTitle
+            title={t("products.productManagement.admin.title")}
+            marginBottom={40}
+          />
+          <GomakePrimaryButton
             style={clasess.addProductBtnStyle}
+            leftIcon={<AddPlusIcon stroke="#101020" />}
             onClick={() => navigate("/products/add-product")}
           >
-            <AddPlusIcon stroke="#101020" />
+            <div></div>
             <div style={clasess.addProductBtnText}>
               {t("products.productManagement.admin.addProduct")}
             </div>
-          </div>
+          </GomakePrimaryButton>
         </div>
         <div style={clasess.subHeaderContainer}>
           <div style={clasess.subHeaderLeftSide}>
@@ -42,18 +55,27 @@ export default function SettingsPage() {
               </div>
               <div style={{ width: "100%" }}>
                 <GoMakeAutoComplate
-                  options={["a", "b", "c", "d", "e", "f", "g", "h", "i"]}
+                  options={allProductSKU}
                   placeholder={"Product SKU"}
                   style={clasess.dropDownListStyle}
+                  getOptionLabel={(option: any) => option.name}
+                  onChange={(e: any, value: any) => {
+                    setTerm(value?.code);
+                  }}
                 />
               </div>
             </div>
-            <div style={clasess.cleanUpContainer}>
+            <GomakePrimaryButton
+              style={clasess.cleanUpContainer}
+              onClick={() => {
+                setTerm("");
+              }}
+            >
               {t("products.productManagement.admin.cleanUp")}
-            </div>
-            <div style={clasess.searchContainer}>
+            </GomakePrimaryButton>
+            <GomakePrimaryButton style={clasess.searchContainer}>
               {t("products.productManagement.admin.search")}
-            </div>
+            </GomakePrimaryButton>
           </div>
           <div style={clasess.subHeaderRightSide}>
             <GoMakeTextInputIcon
@@ -83,9 +105,6 @@ export default function SettingsPage() {
               return (
                 <div key={`body_row${index}`} style={{ width: "100%" }}>
                   <Row row={row} index={index} />
-                  {index != allProducts?.length - 1 ? (
-                    <div style={clasess.line} />
-                  ) : null}
                 </div>
               );
             })}
@@ -96,9 +115,6 @@ export default function SettingsPage() {
               return (
                 <div key={`body_row${index}`} style={{ width: "100%" }}>
                   <Row row={row} index={index} />
-                  {index != allProducts?.length - 1 ? (
-                    <div style={clasess.line} />
-                  ) : null}
                 </div>
               );
             })}

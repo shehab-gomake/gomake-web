@@ -25,6 +25,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 80,
+        marginBottom: 20,
       },
       headerTabContainer: {
         display: "flex",
@@ -33,7 +34,18 @@ const useStyle = () => {
         alignItems: "center",
         gap: 6,
         cursor: "pointer",
-        marginBottom: 25,
+        paddingBottom: 6,
+      },
+      activeHeaderTabContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 6,
+        cursor: "pointer",
+
+        borderBottom: `1px solid ${secondColor(500)}`,
+        paddingBottom: 5,
       },
       activeStyle: {
         ...FONT_FAMILY.Lexend(500, 16),

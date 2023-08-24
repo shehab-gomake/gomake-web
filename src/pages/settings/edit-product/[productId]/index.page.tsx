@@ -23,13 +23,20 @@ export default function EditProduct() {
   return (
     <CustomerAuthLayout>
       <div style={clasess.mainContainer}>
-        <HeaderTitle title={t("products.addProduct.admin.editProduct")} />
+        <HeaderTitle
+          title={t("products.addProduct.admin.editProduct")}
+          marginBottom={20}
+        />
         <div style={clasess.headerTabsContainer}>
           {tabs?.map((item, index) => {
             return (
               <div
                 key={index}
-                style={clasess.headerTabContainer}
+                style={
+                  item?.name === activeTab
+                    ? clasess.activeHeaderTabContainer
+                    : clasess.headerTabContainer
+                }
                 onClick={item.onclick()}
               >
                 <div>

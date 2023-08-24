@@ -29,6 +29,7 @@ export default function DigitalOffsetPrice() {
     setDefaultPrice,
     handleChange,
     _renderParameterType,
+    _getParameter,
     renderOptions,
     checkWhatRenderArray,
     makeShapeOpen,
@@ -60,7 +61,8 @@ export default function DigitalOffsetPrice() {
         <div style={clasess.mainContainer}>
           <HeaderTitle
             title={t("products.offsetPrice.admin.title2")}
-            marginTop={50}
+            marginTop={38}
+            marginBottom={24}
           />
           <div style={clasess.mainRowContainer}>
             <div style={clasess.leftSideContainer}>
@@ -108,6 +110,7 @@ export default function DigitalOffsetPrice() {
                                     subSection={subSection}
                                     section={section}
                                     _renderParameterType={_renderParameterType}
+                                    _getParameter={_getParameter}
                                   />
                                 );
                               } else {
@@ -118,6 +121,7 @@ export default function DigitalOffsetPrice() {
                                     subSection={subSection}
                                     section={section}
                                     _renderParameterType={_renderParameterType}
+                                    _getParameter={_getParameter}
                                   />
                                 );
                               }
@@ -160,6 +164,7 @@ export default function DigitalOffsetPrice() {
               tabs={tabs}
               activeTab={activeTab}
               onOpeneMakeShape={onOpeneMakeShape}
+              pricingDefaultValue={pricingDefaultValue}
             />
           </div>
           <MakeShapeModal

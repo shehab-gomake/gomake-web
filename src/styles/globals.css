@@ -59,3 +59,9 @@ margin: 0px !important;
 .MuiAccordion-root{
   width: 100% !important;
 }
+.MuiAccordion-root:before{
+  position: relative !important;
+}
+.MuiAccordionDetails-root{
+  padding-top: 12px !important;
+}

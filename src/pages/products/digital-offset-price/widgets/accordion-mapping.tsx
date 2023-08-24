@@ -1,7 +1,7 @@
 import { EditIcon } from "@/icons";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { useTranslation } from "react-i18next";
-
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 const AccordionMappingWidget = ({
   clasess,
   expanded,
@@ -10,6 +10,7 @@ const AccordionMappingWidget = ({
   subSection,
   section,
   _renderParameterType,
+  _getParameter,
 }: any) => {
   const { t } = useTranslation();
   return (
@@ -17,14 +18,21 @@ const AccordionMappingWidget = ({
       expanded={expanded === `panel_${index}`}
       onChange={handleChange(`panel_${index}`)}
       key={index}
+      sx={{ borderBottom: "0px solid red" }}
     >
       <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
         style={
           expanded === `panel_${index}` ? clasess.activeTabContainer : null
         }
       >
         <div style={clasess.headerAccordionContainer}>
-          <EditIcon />
+          {expanded === `panel_${index}` ? (
+            <EditIcon stroke={"rgba(18, 19, 58, 1)"} />
+          ) : (
+            <EditIcon />
+          )}
+
           <div
             style={
               expanded === `panel_${index}`
@@ -39,9 +47,32 @@ const AccordionMappingWidget = ({
       <AccordionDetails>
         <div style={clasess.parametersContainer}>
           {subSection?.parameters?.map((parameter, index) => {
-            return (
-              <div key={index}>
-                {!parameter?.isHidden ? (
+            if (parameter?.parameterType === 3) {
+              const value = _getParameter(parameter, subSection, section);
+              return (
+                <div key={index}>
+                  <div style={clasess.parameterType3Container}>
+                    <div
+                      style={
+                        value?.value === "true"
+                          ? clasess.parameterType3ActiveLabelStyle
+                          : clasess.parameterLabelStyle
+                      }
+                    >
+                      {parameter?.name}
+                      {parameter?.isRequired ? (
+                        <span style={clasess.spanRequierd}> *</span>
+                      ) : null}
+                    </div>
+                    <div style={{ marginTop: -9 }}>
+                      {_renderParameterType(parameter, subSection, section)}
+                    </div>
+                  </div>
+                </div>
+              );
+            } else {
+              return (
+                <div key={index}>
                   <div style={clasess.parameterContainer}>
                     <div style={clasess.parameterLabelStyle}>
                       {parameter?.name}
@@ -53,9 +84,9 @@ const AccordionMappingWidget = ({
                       {_renderParameterType(parameter, subSection, section)}
                     </div>
                   </div>
-                ) : null}
-              </div>
-            );
+                </div>
+              );
+            }
           })}
         </div>
       </AccordionDetails>
