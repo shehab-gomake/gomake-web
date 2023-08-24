@@ -1,7 +1,7 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
-
+import { v4 as uuidv4 } from "uuid";
 import { getAndSetProductById } from "@/services/hooks";
 import { useRouter } from "next/router";
 import {
@@ -16,6 +16,10 @@ import {
   GomakeTextInput,
   SecondSwitch,
 } from "@/components";
+import { useMaterials } from "../use-materials";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { materialsCategoriesState } from "@/store/material-categories";
+import { digitslPriceState } from "./store";
 
 const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
@@ -247,6 +251,76 @@ const useAddProduct = ({ clasess }) => {
     },
     [router]
   );
+  const updatedParameterMaterialTypeValuesConfigsDefault = useCallback(
+    async (
+      sectionId: string,
+      subSectionId: string,
+      parameter: any,
+      option: any
+    ) => {
+      let temp = [...parameter?.valuesConfigs];
+      if (temp?.length <= 0) {
+        temp.push({
+          id: uuidv4(),
+          isHidden: false,
+          isDefault: true,
+          isDeleted: false,
+          materialValueIds: [
+            {
+              path: option?.pathName,
+              valueId: option?.valueId,
+            },
+          ],
+        });
+        await updatedValuesConfigsForParameters(sectionId, subSectionId, {
+          ...parameter,
+          valuesConfigs: temp,
+        });
+      } else {
+        let objectIdToUpdate = option?.id;
+        if (objectIdToUpdate) {
+          const updatedArray = temp.map((obj) => {
+            if (obj.id === objectIdToUpdate) {
+              return { ...obj, isDefault: true };
+            } else {
+              return { ...obj, isDefault: false };
+            }
+          });
+          await updateProductParameterEndPoint(sectionId, subSectionId, {
+            parameter: {
+              ...parameter,
+              valuesConfigs: updatedArray,
+            },
+          });
+        } else {
+          temp.push({
+            id: uuidv4(),
+            isHidden: false,
+            isDefault: true,
+            isDeleted: false,
+            materialValueIds: [
+              {
+                path: option?.pathName,
+                valueId: option?.valueId,
+              },
+            ],
+          });
+          const updatedArray = temp.map((obj) => {
+            if (obj.id === objectIdToUpdate) {
+              return { ...obj, isDefault: true };
+            } else {
+              return { ...obj, isDefault: false };
+            }
+          });
+          await updatedValuesConfigsForParameters(sectionId, subSectionId, {
+            ...parameter,
+            valuesConfigs: updatedArray,
+          });
+        }
+      }
+    },
+    [router]
+  );
 
   const updatedValuesConfigsForParameters = useCallback(
     async (sectionId: string, subSectionId: string, data: any) => {
@@ -296,6 +370,10 @@ const useAddProduct = ({ clasess }) => {
       setOpenModal(true);
     }, 100);
   };
+  const { allMaterials } = useMaterials();
+  const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
+  const [digitalPriceData, setDigidatPriceData] =
+    useRecoilState<any>(digitslPriceState);
   const _renderParameterType = (sectionId, subSectionId, parameter) => {
     if (parameter?.parameterType === 1) {
       return (
@@ -467,6 +545,122 @@ const useAddProduct = ({ clasess }) => {
           }}
         />
       );
+    } else if (parameter?.parameterType === 5) {
+      if (allMaterials?.length > 0) {
+        const data = materialsEnumsValues.find(
+          (item) => item.name === parameter?.materialPath[0]
+        );
+        let options: any = allMaterials;
+        if (parameter?.materialPath?.length == 3) {
+          options = digitalPriceData?.selectedMaterialLvl2;
+        }
+        if (parameter?.materialPath?.length == 2) {
+          options = digitalPriceData?.selectedMaterialLvl1;
+        }
+        if (parameter?.materialPath?.length == 1) {
+          options = allMaterials?.find((material) => {
+            return material.pathName === parameter?.materialPath[0];
+          })?.data;
+        }
+        console.log("options", options);
+        return (
+          options?.length > 0 && (
+            <GoMakeAutoComplate
+              options={options}
+              placeholder={parameter.name}
+              style={clasess.dropDownListStyle}
+              getOptionLabel={(option: any) => option.value}
+              onChange={(e: any, value: any) => {
+                if (parameter?.materialPath?.length == 3) {
+                  // onChangeForPrice(
+                  //   parameter?.id,
+                  //   subSectionId,
+                  //   sectionId,
+                  //   parameter?.parameterType,
+                  //   parameter?.name,
+                  //   parameter?.actionId,
+                  //   {
+                  //     valueId: value?.valueId,
+                  //     value: value?.value,
+                  //     ...(data?.id > 0 && { material: data?.id }),
+                  //   },
+
+                  // );
+                  updatedParameterMaterialTypeValuesConfigsDefault(
+                    sectionId,
+                    subSectionId,
+                    parameter,
+                    value
+                  );
+                  setDigidatPriceData({
+                    ...digitalPriceData,
+                    selectedMaterialLvl3: value,
+                    selectedOptionLvl3: value,
+                  });
+                }
+                if (parameter?.materialPath?.length == 2) {
+                  // onChangeForPrice(
+                  //   parameter?.id,
+                  //   subSectionId,
+                  //   sectionId,
+                  //   parameter?.parameterType,
+                  //   parameter?.name,
+                  //   parameter?.actionId,
+                  //   {
+                  //     valueId: value?.valueId,
+                  //     value: value?.value,
+                  //     ...(data?.id > 0 && { material: data?.id }),
+                  //   },
+                  // );
+                  updatedParameterMaterialTypeValuesConfigsDefault(
+                    sectionId,
+                    subSectionId,
+                    parameter,
+                    value
+                  );
+                  setDigidatPriceData({
+                    ...digitalPriceData,
+                    selectedMaterialLvl2: value?.data,
+                    selectedOptionLvl2: value,
+                    selectedMaterialLvl3: null,
+                  });
+                }
+                if (parameter?.materialPath?.length == 1) {
+                  updatedParameterMaterialTypeValuesConfigsDefault(
+                    sectionId,
+                    subSectionId,
+                    parameter,
+                    value
+                  );
+                  // onChange={(e: any, value: any) => {
+
+                  // }}
+                  // onChangeForPrice(
+                  //   parameter?.id,
+                  //   subSectionId,
+                  //   sectionId,
+                  //   parameter?.parameterType,
+                  //   parameter?.name,
+                  //   parameter?.actionId,
+                  //   {
+                  //     valueId: value?.valueId,
+                  //     value: value?.value,
+                  //     ...(data?.id > 0 && { material: data?.id }),
+                  //   },
+                  // );
+                  setDigidatPriceData({
+                    ...digitalPriceData,
+                    selectedMaterialLvl1: value?.data,
+                    selectedOptionLvl1: value,
+                    selectedMaterialLvl2: null,
+                    selectedMaterialLvl3: null,
+                  });
+                }
+              }}
+            />
+          )
+        );
+      }
     }
   };
   return {
