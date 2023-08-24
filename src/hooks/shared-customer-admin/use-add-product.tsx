@@ -1,12 +1,27 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
-
+import { v4 as uuidv4 } from "uuid";
 import { getAndSetProductById } from "@/services/hooks";
 import { useRouter } from "next/router";
-import { GraphicIcon, PrameterIcon, SettingIcon } from "@/widgets";
+import {
+  GraphicIcon,
+  HiddenIcon,
+  NotHiddenIcon,
+  PrameterIcon,
+  SettingIcon,
+} from "@/widgets";
+import {
+  GoMakeAutoComplate,
+  GomakeTextInput,
+  SecondSwitch,
+} from "@/components";
+import { useMaterials } from "../use-materials";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { materialsCategoriesState } from "@/store/material-categories";
+import { digitslPriceState } from "./store";
 
-const useAddProduct = () => {
+const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
 
@@ -149,6 +164,7 @@ const useAddProduct = () => {
           name: changeName?.length ? changeName : parameter.name,
         },
       });
+      setChangeName("");
     },
     [router, changeName]
   );
@@ -157,10 +173,12 @@ const useAddProduct = () => {
       await updateProductParameterEndPoint(sectionId, subSectionId, {
         parameter: {
           ...parameter,
-          defaultValue: changeDefaultValue,
+          defaultValue: changeDefaultValue?.length && changeDefaultValue,
         },
       });
+      setChangeDefaultValue("");
     },
+
     [router, changeDefaultValue]
   );
   const updatedProductParameteDefaultValueForSwitch = useCallback(
@@ -233,6 +251,76 @@ const useAddProduct = () => {
     },
     [router]
   );
+  const updatedParameterMaterialTypeValuesConfigsDefault = useCallback(
+    async (
+      sectionId: string,
+      subSectionId: string,
+      parameter: any,
+      option: any
+    ) => {
+      let temp = [...parameter?.valuesConfigs];
+      if (temp?.length <= 0) {
+        temp.push({
+          id: uuidv4(),
+          isHidden: false,
+          isDefault: true,
+          isDeleted: false,
+          materialValueIds: [
+            {
+              path: option?.pathName,
+              valueId: option?.valueId,
+            },
+          ],
+        });
+        await updatedValuesConfigsForParameters(sectionId, subSectionId, {
+          ...parameter,
+          valuesConfigs: temp,
+        });
+      } else {
+        let objectIdToUpdate = option?.id;
+        if (objectIdToUpdate) {
+          const updatedArray = temp.map((obj) => {
+            if (obj.id === objectIdToUpdate) {
+              return { ...obj, isDefault: true };
+            } else {
+              return { ...obj, isDefault: false };
+            }
+          });
+          await updateProductParameterEndPoint(sectionId, subSectionId, {
+            parameter: {
+              ...parameter,
+              valuesConfigs: updatedArray,
+            },
+          });
+        } else {
+          temp.push({
+            id: uuidv4(),
+            isHidden: false,
+            isDefault: true,
+            isDeleted: false,
+            materialValueIds: [
+              {
+                path: option?.pathName,
+                valueId: option?.valueId,
+              },
+            ],
+          });
+          const updatedArray = temp.map((obj) => {
+            if (obj.id === objectIdToUpdate) {
+              return { ...obj, isDefault: true };
+            } else {
+              return { ...obj, isDefault: false };
+            }
+          });
+          await updatedValuesConfigsForParameters(sectionId, subSectionId, {
+            ...parameter,
+            valuesConfigs: updatedArray,
+          });
+        }
+      }
+    },
+    [router]
+  );
 
   const updatedValuesConfigsForParameters = useCallback(
     async (sectionId: string, subSectionId: string, data: any) => {
@@ -265,7 +353,296 @@ const useAddProduct = () => {
     [router]
   );
 
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedParameter, setSelectedParameter] = useState<any>({});
+
+  const [selectedSectonId, setSelectedSectonId] = useState({});
+  const [selectedSubSection, setSelectedSubSection] = useState({});
+  const onCloseModal = () => {
+    setSelectedParameter({});
+    setOpenModal(false);
+  };
+  const onOpenModal = (parameter, sectionId, subSectionId) => {
+    setSelectedParameter(parameter);
+    setSelectedSectonId(sectionId);
+    setSelectedSubSection(subSectionId);
+    setTimeout(() => {
+      setOpenModal(true);
+    }, 100);
+  };
+  const { allMaterials } = useMaterials();
+  const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
+  const [digitalPriceData, setDigidatPriceData] =
+    useRecoilState<any>(digitslPriceState);
+  const _renderParameterType = (sectionId, subSectionId, parameter) => {
+    if (parameter?.parameterType === 1) {
+      return (
+        <GomakeTextInput
+          style={clasess.textInputStyle}
+          defaultValue={parameter.defaultValue}
+          placeholder={parameter.name}
+          onChange={(e: any) => setChangeDefaultValue(e.target.value)}
+          onBlur={() =>
+            updatedProductParameteDefaultValue(
+              sectionId,
+              subSectionId,
+              parameter
+            )
+          }
+          type="number"
+        />
+      );
+    } else if (parameter?.parameterType === 2) {
+      return (
+        <GomakeTextInput
+          style={clasess.textInputStyle}
+          defaultValue={parameter.defaultValue}
+          placeholder={parameter.name}
+          type="text"
+          onChange={(e: any) => setChangeDefaultValue(e.target.value)}
+          onBlur={() =>
+            updatedProductParameteDefaultValue(
+              sectionId,
+              subSectionId,
+              parameter
+            )
+          }
+        />
+      );
+    } else if (parameter?.parameterType === 0) {
+      const defaultObject = parameter.valuesConfigs.find(
+        (item) => item.isDefault === true
+      );
+      return (
+        <GoMakeAutoComplate
+          options={parameter?.valuesConfigs}
+          placeholder={parameter.name}
+          style={clasess.dropDownListStyle}
+          getOptionLabel={(option: any) => option.updateName}
+          defaultValue={defaultObject}
+          onChange={(e: any, value: any) => {
+            updatedProductParameterValuesConfigsDefault(
+              sectionId,
+              subSectionId,
+              parameter,
+              value
+            );
+          }}
+          renderOption={(props: any, option: any) => {
+            return (
+              <div style={clasess.optionsContainer}>
+                <div {...props} style={{ width: "100%" }}>
+                  {option.updateName}
+                </div>
+                <div>
+                  {option.isHidden ? (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <HiddenIcon />
+                    </div>
+                  ) : (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <NotHiddenIcon />
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          }}
+        />
+      );
+    } else if (parameter?.parameterType === 3) {
+      return (
+        <SecondSwitch
+          checked={parameter?.defaultValue === "true"}
+          onChange={(a: any, value: any) => {
+            updatedProductParameteDefaultValueForSwitch(
+              sectionId,
+              subSectionId,
+              parameter,
+              value
+            );
+          }}
+        />
+      );
+    } else if (parameter?.parameterType === 6) {
+      const defaultObject = parameter.valuesConfigs.find(
+        (item) => item.isDefault === true
+      );
+      return (
+        <GoMakeAutoComplate
+          options={parameter?.valuesConfigs}
+          placeholder={parameter.name}
+          style={clasess.dropDownListStyle}
+          getOptionLabel={(option: any) => option.updateName}
+          defaultValue={defaultObject}
+          onChange={(e: any, value: any) => {
+            updatedProductParameterValuesConfigsDefault(
+              sectionId,
+              subSectionId,
+              parameter,
+              value
+            );
+          }}
+          renderOption={(props: any, option: any) => {
+            return (
+              <div style={clasess.optionsContainer}>
+                <div {...props} style={{ width: "100%" }}>
+                  {option.updateName}
+                </div>
+                <div>
+                  {option.isHidden ? (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <HiddenIcon />
+                    </div>
+                  ) : (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <NotHiddenIcon />
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          }}
+        />
+      );
+    } else if (parameter?.parameterType === 5) {
+      if (allMaterials?.length > 0) {
+        const data = materialsEnumsValues.find(
+          (item) => item.name === parameter?.materialPath[0]
+        );
+        let options: any = allMaterials;
+        if (parameter?.materialPath?.length == 3) {
+          options = digitalPriceData?.selectedMaterialLvl2;
+        }
+        if (parameter?.materialPath?.length == 2) {
+          options = digitalPriceData?.selectedMaterialLvl1;
+        }
+        if (parameter?.materialPath?.length == 1) {
+          options = allMaterials?.find((material) => {
+            return material.pathName === parameter?.materialPath[0];
+          })?.data;
+        }
+        return (
+          options?.length > 0 && (
+            <GoMakeAutoComplate
+              options={options}
+              placeholder={parameter.name}
+              style={clasess.dropDownListStyle}
+              getOptionLabel={(option: any) => option.value}
+              onChange={(e: any, value: any) => {
+                if (parameter?.materialPath?.length == 3) {
+                  updatedParameterMaterialTypeValuesConfigsDefault(
+                    sectionId,
+                    subSectionId,
+                    parameter,
+                    value
+                  );
+                  setDigidatPriceData({
+                    ...digitalPriceData,
+                    selectedMaterialLvl3: value,
+                    selectedOptionLvl3: value,
+                  });
+                }
+                if (parameter?.materialPath?.length == 2) {
+                  updatedParameterMaterialTypeValuesConfigsDefault(
+                    sectionId,
+                    subSectionId,
+                    parameter,
+                    value
+                  );
+                  setDigidatPriceData({
+                    ...digitalPriceData,
+                    selectedMaterialLvl2: value?.data,
+                    selectedOptionLvl2: value,
+                    selectedMaterialLvl3: null,
+                  });
+                }
+                if (parameter?.materialPath?.length == 1) {
+                  updatedParameterMaterialTypeValuesConfigsDefault(
+                    sectionId,
+                    subSectionId,
+                    parameter,
+                    value
+                  );
+                  // onChange={(e: any, value: any) => {
+
+                  // }}
+                  // onChangeForPrice(
+                  //   parameter?.id,
+                  //   subSectionId,
+                  //   sectionId,
+                  //   parameter?.parameterType,
+                  //   parameter?.name,
+                  //   parameter?.actionId,
+                  //   {
+                  //     valueId: value?.valueId,
+                  //     value: value?.value,
+                  //     ...(data?.id > 0 && { material: data?.id }),
+                  //   },
+                  // );
+                  setDigidatPriceData({
+                    ...digitalPriceData,
+                    selectedMaterialLvl1: value?.data,
+                    selectedOptionLvl1: value,
+                    selectedMaterialLvl2: null,
+                    selectedMaterialLvl3: null,
+                  });
+                }
+              }}
+            />
+          )
+        );
+      }
+    }
+  };
   return {
+    setOpenModal,
+    setSelectedParameter,
+    setSelectedSectonId,
+    setSelectedSubSection,
+    onCloseModal,
+    _renderParameterType,
+    onOpenModal,
     t,
     handleTabClick,
     handleNextClick,
@@ -289,6 +666,10 @@ const useAddProduct = () => {
     template,
     activeTab,
     tabs,
+    selectedSubSection,
+    selectedSectonId,
+    selectedParameter,
+    openModal,
   };
 };
 

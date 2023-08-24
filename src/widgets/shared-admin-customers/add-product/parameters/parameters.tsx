@@ -1,24 +1,21 @@
 import { useStyle } from "./style";
-import {
-  GoMakeAutoComplate,
-  GomakePrimaryButton,
-  GomakeTextInput,
-  SecondSwitch,
-} from "@/components";
+import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { HiddenIcon } from "../icons/hidden-icon";
 import { NotHiddenIcon } from "../icons/not-hidden-icon";
 import { RequierdIcon } from "../icons/requierd-icon";
 import { NotRequierdIcon } from "../icons/not-requierd-icon";
 import { useAddProduct } from "@/hooks";
-import { DoneIcon, SettingIcon } from "../icons";
-import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
-import { EditIcon } from "../../digital-offset-price/icons";
+import { SettingIcon } from "../icons";
 import { ChildParameterModal } from "../child-parameter-modal";
-import { useState } from "react";
+import { TabsMappingWidget } from "@/pages/products/digital-offset-price/widgets/tabs-mapping";
 
 const ParameterWidget = () => {
   const { clasess } = useStyle();
   const {
+    setSelectedParameter,
+    onCloseModal,
+    _renderParameterType,
+    onOpenModal,
     t,
     handleTabClick,
     handleNextClick,
@@ -27,218 +24,15 @@ const ParameterWidget = () => {
     updatedProductParameteRequierd,
     updatedProductParameteName,
     setChangeName,
-    setChangeDefaultValue,
-    updatedProductParameteDefaultValue,
-    updatedProductParameteDefaultValueForSwitch,
-    updatedProductParameterValuesConfigsHidden,
-    updatedProductParameterValuesConfigsDefault,
     updatedValuesConfigsForParameters,
     activeIndex,
     template,
-  } = useAddProduct();
+    selectedSubSection,
+    selectedSectonId,
+    selectedParameter,
+    openModal,
+  } = useAddProduct({ clasess });
 
-  const [openModal, setOpenModal] = useState(false);
-  const [selectedParameter, setSelectedParameter] = useState<any>({});
-
-  const [selectedSectonId, setSelectedSectonId] = useState({});
-  const [selectedSubSection, setSelectedSubSection] = useState({});
-  const onCloseModal = () => {
-    setSelectedParameter({});
-    setOpenModal(false);
-  };
-
-  const onOpenModal = (parameter, sectionId, subSectionId) => {
-    setSelectedParameter(parameter);
-    setSelectedSectonId(sectionId);
-    setSelectedSubSection(subSectionId);
-    setTimeout(() => {
-      setOpenModal(true);
-    }, 100);
-  };
-  const [expanded, setExpanded] = useState<string | false>("panel_0");
-  const handleChange =
-    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
-      setExpanded(newExpanded ? panel : false);
-    };
-  const _renderParameterType = (sectionId, subSectionId, parameter) => {
-    if (parameter?.parameterType === 1) {
-      return (
-        <GomakeTextInput
-          style={clasess.textInputStyle}
-          defaultValue={parameter.defaultValue}
-          placeholder={parameter.name}
-          onChange={(e: any) => setChangeDefaultValue(e.target.value)}
-          onBlur={() =>
-            updatedProductParameteDefaultValue(
-              sectionId,
-              subSectionId,
-              parameter
-            )
-          }
-          type="number"
-        />
-      );
-    } else if (parameter?.parameterType === 2) {
-      return (
-        <GomakeTextInput
-          style={clasess.textInputStyle}
-          defaultValue={parameter.defaultValue}
-          placeholder={parameter.name}
-          type="text"
-          onChange={(e: any) => setChangeDefaultValue(e.target.value)}
-          onBlur={() =>
-            updatedProductParameteDefaultValue(
-              sectionId,
-              subSectionId,
-              parameter
-            )
-          }
-        />
-      );
-    } else if (parameter?.parameterType === 0) {
-      const defaultObject = parameter.valuesConfigs.find(
-        (item) => item.isDefault === true
-      );
-      return (
-        <GoMakeAutoComplate
-          options={parameter?.valuesConfigs}
-          placeholder={parameter.name}
-          style={clasess.dropDownListStyle}
-          getOptionLabel={(option: any) => option.updateName}
-          defaultValue={defaultObject}
-          onChange={(e: any, value: any) => {
-            updatedProductParameterValuesConfigsDefault(
-              sectionId,
-              subSectionId,
-              parameter,
-              value
-            );
-          }}
-          renderOption={(props: any, option: any) => {
-            return (
-              <div style={clasess.optionsContainer}>
-                <div {...props} style={{ width: "100%" }}>
-                  {option.updateName}
-                </div>
-                <div>
-                  {option.isHidden ? (
-                    <div
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        updatedProductParameterValuesConfigsHidden(
-                          sectionId,
-                          subSectionId,
-                          parameter,
-                          option
-                        )
-                      }
-                    >
-                      <HiddenIcon />
-                    </div>
-                  ) : (
-                    <div
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        updatedProductParameterValuesConfigsHidden(
-                          sectionId,
-                          subSectionId,
-                          parameter,
-                          option
-                        )
-                      }
-                    >
-                      <NotHiddenIcon />
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          }}
-        />
-      );
-    } else if (parameter?.parameterType === 3) {
-      return (
-        <SecondSwitch
-          checked={parameter?.defaultValue === "true"}
-          onChange={(a: any, value: any) => {
-            updatedProductParameteDefaultValueForSwitch(
-              sectionId,
-              subSectionId,
-              parameter,
-              value
-            );
-          }}
-        />
-      );
-    } else if (parameter?.parameterType === 4) {
-      return (
-        <GomakePrimaryButton style={clasess.dynamicBtn}>
-          {parameter?.name}
-        </GomakePrimaryButton>
-      );
-    } else if (parameter?.parameterType === 6) {
-      const defaultObject = parameter.valuesConfigs.find(
-        (item) => item.isDefault === true
-      );
-      return (
-        <GoMakeAutoComplate
-          options={parameter?.valuesConfigs}
-          placeholder={parameter.name}
-          style={clasess.dropDownListStyle}
-          getOptionLabel={(option: any) => option.updateName}
-          defaultValue={defaultObject}
-          onChange={(e: any, value: any) => {
-            updatedProductParameterValuesConfigsDefault(
-              sectionId,
-              subSectionId,
-              parameter,
-              value
-            );
-          }}
-          renderOption={(props: any, option: any) => {
-            return (
-              <div style={clasess.optionsContainer}>
-                <div {...props} style={{ width: "100%" }}>
-                  {option.updateName}
-                </div>
-                <div>
-                  {option.isHidden ? (
-                    <div
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        updatedProductParameterValuesConfigsHidden(
-                          sectionId,
-                          subSectionId,
-                          parameter,
-                          option
-                        )
-                      }
-                    >
-                      <HiddenIcon />
-                    </div>
-                  ) : (
-                    <div
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        updatedProductParameterValuesConfigsHidden(
-                          sectionId,
-                          subSectionId,
-                          parameter,
-                          option
-                        )
-                      }
-                    >
-                      <NotHiddenIcon />
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          }}
-        />
-      );
-    }
-  };
   return (
     <>
       {template && (
@@ -248,42 +42,14 @@ const ParameterWidget = () => {
               <div style={clasess.tabsContainer}>
                 {template?.sections.map((item, index) => {
                   return (
-                    <div
-                      style={clasess.tabContainer}
-                      key={index}
-                      onClick={() => handleTabClick(index)}
-                    >
-                      <div style={{ height: 22, minWidth: 30 }}>
-                        {index === activeIndex ? (
-                          <img
-                            src={item.icon}
-                            style={{
-                              width: 30,
-                              height: 24,
-                            }}
-                          />
-                        ) : index >= activeIndex ? (
-                          <img
-                            src={item.icon}
-                            style={{
-                              width: 30,
-                              height: 24,
-                            }}
-                          />
-                        ) : (
-                          <DoneIcon />
-                        )}
-                      </div>
-                      <div
-                        style={
-                          index === activeIndex
-                            ? clasess.tabNameActiveStyle
-                            : clasess.tabNameStyle
-                        }
-                      >
-                        {item.name}
-                      </div>
-                    </div>
+                    <TabsMappingWidget
+                      key={`tab-${index}`}
+                      clasess={clasess}
+                      index={index}
+                      handleTabClick={handleTabClick}
+                      activeIndex={activeIndex}
+                      item={item}
+                    />
                   );
                 })}
               </div>

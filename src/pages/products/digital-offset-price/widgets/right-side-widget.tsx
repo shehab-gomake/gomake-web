@@ -5,6 +5,7 @@ import {
 } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox, Slider } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const RightSideWidget = ({
@@ -15,12 +16,19 @@ const RightSideWidget = ({
   clientTypeDefaultValue,
   clientTypesValue,
   template,
-  setDefaultPrice,
-  defaultPrice,
   tabs,
   activeTab,
   onOpeneMakeShape,
+  pricingDefaultValue,
 }: any) => {
+  const [defaultPrice, setDefaultPrice] = useState<any>();
+  useEffect(() => {
+    if (pricingDefaultValue?.workFlows?.length > 0) {
+      setDefaultPrice(pricingDefaultValue?.workFlows[0]?.totalPrice.toFixed(2));
+    } else {
+      setDefaultPrice("----");
+    }
+  }, [pricingDefaultValue]);
   const { t } = useTranslation();
   return (
     <div style={clasess.rightSideContainer}>
@@ -66,7 +74,7 @@ const RightSideWidget = ({
         <img
           src={template.img}
           alt="gomake"
-          style={{ width: "100%", borderRadius: 16 }}
+          style={{ width: "100%", height: 170, borderRadius: 16 }}
         />
       </div>
       <div style={clasess.urgentEstimateContainer}>

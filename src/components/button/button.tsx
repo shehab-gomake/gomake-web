@@ -16,7 +16,7 @@ const StyledButton = styled(Button, {
   lineHeight: "1.5px",
   backgroundColor: props.primaryColor(500),
   borderColor: "#FFFFFF",
-  height: 56,
+  height: props.height || 56,
   borderRadius: 4,
   gap: 7,
   color: "#FFFFFF",

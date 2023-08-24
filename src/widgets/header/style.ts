@@ -15,11 +15,16 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        paddingLeft: convertWidthToVW(30),
-        paddingRight: convertWidthToVW(54),
+        paddingRight: 30,
+        paddingLeft: 30,
+        paddingTop: 2,
+        gap: 48,
+        marginBottom: 22,
       },
       searchInputContainer: {
         width: convertWidthToVW(375),
+        backgroundColor: "#F8F8F8",
+        borderRadius: 10,
       },
       iconStyle: {
         position: "absolute" as "absolute",
