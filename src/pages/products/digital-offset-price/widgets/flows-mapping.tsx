@@ -17,7 +17,7 @@ const FlowsMappingWidget = ({
         );
 
         const machinData = actionData?.machineCategories;
-        const machinesArray = machinData.find(
+        const machinesArray = machinData?.find(
           (item) => item.machineCategoryId === action?.machineCategoryId
         )?.machines;
 

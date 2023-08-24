@@ -22,37 +22,45 @@ const PricingSectionMappingWidget = ({
           </div>
           <div style={clasess.jobDetails}>{section.jobDetails}</div>
         </div>
-        <div style={{ width: "100%" }}>
-          <Table
-            tableHeaders={[
-              t("products.offsetPrice.admin.totalCost"),
-              t("products.offsetPrice.admin.totalProductionTime"),
-              t("products.offsetPrice.admin.finalPrice"),
-            ]}
-            tableRows={[
-              {
-                totalCost: "0.00 USD",
-                totalProductionTime: "0.00",
-                finalPrice: "0.00 USD",
-              },
-            ]}
-          />
-        </div>
+        {pricingDefaultValue?.workFlows?.length > 0 && (
+          <>
+            <div style={{ width: "100%" }}>
+              <Table
+                tableHeaders={[
+                  t("products.offsetPrice.admin.totalCost"),
+                  t("products.offsetPrice.admin.totalProductionTime"),
+                  t("products.offsetPrice.admin.finalPrice"),
+                ]}
+                tableRows={[
+                  {
+                    totalCost: `${pricingDefaultValue?.workFlows[0]?.totalCost} USD`,
+                    totalProductionTime: `${pricingDefaultValue?.workFlows[0]?.totalProductionTime}`,
+                    finalPrice: `${pricingDefaultValue?.workFlows[0]?.totalPrice} USD`,
+                  },
+                ]}
+              />
+            </div>
+          </>
+        )}
       </div>
-      <div style={clasess.actionsStyleContainer}>
-        {t("products.offsetPrice.admin.actions")}
-      </div>
-      {section?.flows?.map((flow: any) => {
-        return (
-          <FlowsMappingWidget
-            clasess={clasess}
-            flow={flow}
-            machineCategories={machineCategories}
-            onChangeCategoryData={onChangeCategoryData}
-            section={section}
-          />
-        );
-      })}
+      {pricingDefaultValue?.workFlows?.length > 0 && (
+        <>
+          <div style={clasess.actionsStyleContainer}>
+            {t("products.offsetPrice.admin.actions")}
+          </div>
+          {pricingDefaultValue?.workFlows?.map((flow: any) => {
+            return (
+              <FlowsMappingWidget
+                clasess={clasess}
+                flow={flow}
+                machineCategories={machineCategories}
+                onChangeCategoryData={onChangeCategoryData}
+                section={section}
+              />
+            );
+          })}
+        </>
+      )}
     </div>
   );
 };

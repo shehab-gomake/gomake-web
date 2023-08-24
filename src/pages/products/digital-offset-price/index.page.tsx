@@ -164,6 +164,7 @@ export default function DigitalOffsetPrice() {
               tabs={tabs}
               activeTab={activeTab}
               onOpeneMakeShape={onOpeneMakeShape}
+              pricingDefaultValue={pricingDefaultValue}
             />
           </div>
           <MakeShapeModal
