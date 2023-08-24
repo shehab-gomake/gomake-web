@@ -562,7 +562,6 @@ const useAddProduct = ({ clasess }) => {
             return material.pathName === parameter?.materialPath[0];
           })?.data;
         }
-        console.log("options", options);
         return (
           options?.length > 0 && (
             <GoMakeAutoComplate
@@ -572,20 +571,6 @@ const useAddProduct = ({ clasess }) => {
               getOptionLabel={(option: any) => option.value}
               onChange={(e: any, value: any) => {
                 if (parameter?.materialPath?.length == 3) {
-                  // onChangeForPrice(
-                  //   parameter?.id,
-                  //   subSectionId,
-                  //   sectionId,
-                  //   parameter?.parameterType,
-                  //   parameter?.name,
-                  //   parameter?.actionId,
-                  //   {
-                  //     valueId: value?.valueId,
-                  //     value: value?.value,
-                  //     ...(data?.id > 0 && { material: data?.id }),
-                  //   },
-
-                  // );
                   updatedParameterMaterialTypeValuesConfigsDefault(
                     sectionId,
                     subSectionId,
@@ -599,19 +584,6 @@ const useAddProduct = ({ clasess }) => {
                   });
                 }
                 if (parameter?.materialPath?.length == 2) {
-                  // onChangeForPrice(
-                  //   parameter?.id,
-                  //   subSectionId,
-                  //   sectionId,
-                  //   parameter?.parameterType,
-                  //   parameter?.name,
-                  //   parameter?.actionId,
-                  //   {
-                  //     valueId: value?.valueId,
-                  //     value: value?.value,
-                  //     ...(data?.id > 0 && { material: data?.id }),
-                  //   },
-                  // );
                   updatedParameterMaterialTypeValuesConfigsDefault(
                     sectionId,
                     subSectionId,
