@@ -256,7 +256,9 @@ const useAddProduct = ({ clasess }) => {
       sectionId: string,
       subSectionId: string,
       parameter: any,
-      option: any
+      option: any,
+      subSectionParameters,
+      level: number
     ) => {
       let temp = [...parameter?.valuesConfigs];
       if (temp?.length <= 0) {
@@ -265,6 +267,7 @@ const useAddProduct = ({ clasess }) => {
           isHidden: false,
           isDefault: true,
           isDeleted: false,
+          value: option?.value,
           materialValueIds: [
             {
               path: option?.pathName,
@@ -277,10 +280,14 @@ const useAddProduct = ({ clasess }) => {
           valuesConfigs: temp,
         });
       } else {
-        let objectIdToUpdate = option?.id;
-        if (objectIdToUpdate) {
+        let objectIdToUpdate = option?.valueId;
+        if (
+          temp.findIndex(
+            (item) => item?.materialValueIds[0]?.valueId === objectIdToUpdate
+          ) !== -1
+        ) {
           const updatedArray = temp.map((obj) => {
-            if (obj.id === objectIdToUpdate) {
+            if (obj.materialValueIds[0]?.valueId === objectIdToUpdate) {
               return { ...obj, isDefault: true };
             } else {
               return { ...obj, isDefault: false };
@@ -298,6 +305,7 @@ const useAddProduct = ({ clasess }) => {
             isHidden: false,
             isDefault: true,
             isDeleted: false,
+            value: option?.value,
             materialValueIds: [
               {
                 path: option?.pathName,
@@ -306,7 +314,7 @@ const useAddProduct = ({ clasess }) => {
             ],
           });
           const updatedArray = temp.map((obj) => {
-            if (obj.id === objectIdToUpdate) {
+            if (obj.materialValueIds[0]?.valueId === objectIdToUpdate) {
               return { ...obj, isDefault: true };
             } else {
               return { ...obj, isDefault: false };
@@ -317,6 +325,18 @@ const useAddProduct = ({ clasess }) => {
             valuesConfigs: updatedArray,
           });
         }
+      }
+      if (level === 1) {
+        const lvl2 = subSectionParameters?.find(
+          (item) =>
+            item?.materialPath[0] === parameter?.materialPath[0] &&
+            item.materialPath.length == 2
+        );
+        await updatedValuesConfigsForParameters(sectionId, subSectionId, {
+          ...lvl2,
+          valuesConfigs: [],
+        });
+      } else if (level === 2) {
       }
     },
     [router]
@@ -371,10 +391,14 @@ const useAddProduct = ({ clasess }) => {
     }, 100);
   };
   const { allMaterials } = useMaterials();
-  const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
-  const _renderParameterType = (sectionId, subSectionId, parameter) => {
+  const _renderParameterType = (
+    sectionId,
+    subSectionId,
+    parameter,
+    subSectionParameters
+  ) => {
     if (parameter?.parameterType === 1) {
       return (
         <GomakeTextInput
@@ -547,90 +571,111 @@ const useAddProduct = ({ clasess }) => {
       );
     } else if (parameter?.parameterType === 5) {
       if (allMaterials?.length > 0) {
-        const data = materialsEnumsValues.find(
-          (item) => item.name === parameter?.materialPath[0]
+        let isDefaultObj = parameter?.valuesConfigs?.find(
+          (item) => item.isDefault === true
         );
         let options: any = allMaterials;
+        let defailtObjectValue = {};
         if (parameter?.materialPath?.length == 3) {
           options = digitalPriceData?.selectedMaterialLvl2;
+          let x = options?.find(
+            (item: any) =>
+              item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
+          );
+          defailtObjectValue = x;
         }
         if (parameter?.materialPath?.length == 2) {
+          let qqq = subSectionParameters?.find((item) =>
+            item.valuesConfigs?.find((item) => item?.isDefault)
+          );
+          let xxx = qqq?.valuesConfigs?.find((item) => item?.isDefault);
+          let yyyy = xxx?.materialValueIds[0]?.valueId;
+
           options = digitalPriceData?.selectedMaterialLvl1;
+          if (!!!options) {
+            let optionsLvl1 = allMaterials
+              ?.find((material) => {
+                return material.pathName === parameter?.materialPath[0];
+              })
+              ?.data?.find((item) => item?.valueId === yyyy);
+
+            options = optionsLvl1?.data || [];
+            let x = options?.find(
+              (item: any) =>
+                item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
+            );
+            defailtObjectValue = x;
+          }
         }
         if (parameter?.materialPath?.length == 1) {
-          options = allMaterials?.find((material) => {
+          options = allMaterials?.find((material: any) => {
             return material.pathName === parameter?.materialPath[0];
           })?.data;
+          let x = options?.find(
+            (item: any) =>
+              item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
+          );
+          defailtObjectValue = x;
         }
         return (
-          options?.length > 0 && (
-            <GoMakeAutoComplate
-              options={options}
-              placeholder={parameter.name}
-              style={clasess.dropDownListStyle}
-              getOptionLabel={(option: any) => option.value}
-              onChange={(e: any, value: any) => {
-                if (parameter?.materialPath?.length == 3) {
-                  updatedParameterMaterialTypeValuesConfigsDefault(
-                    sectionId,
-                    subSectionId,
-                    parameter,
-                    value
-                  );
-                  setDigidatPriceData({
-                    ...digitalPriceData,
-                    selectedMaterialLvl3: value,
-                    selectedOptionLvl3: value,
-                  });
-                }
-                if (parameter?.materialPath?.length == 2) {
-                  updatedParameterMaterialTypeValuesConfigsDefault(
-                    sectionId,
-                    subSectionId,
-                    parameter,
-                    value
-                  );
-                  setDigidatPriceData({
-                    ...digitalPriceData,
-                    selectedMaterialLvl2: value?.data,
-                    selectedOptionLvl2: value,
-                    selectedMaterialLvl3: null,
-                  });
-                }
-                if (parameter?.materialPath?.length == 1) {
-                  updatedParameterMaterialTypeValuesConfigsDefault(
-                    sectionId,
-                    subSectionId,
-                    parameter,
-                    value
-                  );
-                  // onChange={(e: any, value: any) => {
+          <GoMakeAutoComplate
+            options={options}
+            placeholder={parameter.name}
+            style={clasess.dropDownListStyle}
+            defaultValue={defailtObjectValue}
+            getOptionLabel={(option: any) => option.value}
+            onChange={(e: any, value: any) => {
+              if (parameter?.materialPath?.length == 3) {
+                updatedParameterMaterialTypeValuesConfigsDefault(
+                  sectionId,
+                  subSectionId,
+                  parameter,
+                  value,
+                  subSectionParameters,
+                  3
+                );
+                setDigidatPriceData({
+                  ...digitalPriceData,
+                  selectedMaterialLvl3: value,
+                  selectedOptionLvl3: value,
+                });
+              }
+              if (parameter?.materialPath?.length == 2) {
+                updatedParameterMaterialTypeValuesConfigsDefault(
+                  sectionId,
+                  subSectionId,
+                  parameter,
+                  value,
+                  subSectionParameters,
+                  2
+                );
+                setDigidatPriceData({
+                  ...digitalPriceData,
+                  selectedMaterialLvl2: value?.data,
+                  selectedOptionLvl2: value,
+                  selectedMaterialLvl3: null,
+                });
+              }
+              if (parameter?.materialPath?.length == 1) {
+                updatedParameterMaterialTypeValuesConfigsDefault(
+                  sectionId,
+                  subSectionId,
+                  parameter,
+                  value,
+                  subSectionParameters,
 
-                  // }}
-                  // onChangeForPrice(
-                  //   parameter?.id,
-                  //   subSectionId,
-                  //   sectionId,
-                  //   parameter?.parameterType,
-                  //   parameter?.name,
-                  //   parameter?.actionId,
-                  //   {
-                  //     valueId: value?.valueId,
-                  //     value: value?.value,
-                  //     ...(data?.id > 0 && { material: data?.id }),
-                  //   },
-                  // );
-                  setDigidatPriceData({
-                    ...digitalPriceData,
-                    selectedMaterialLvl1: value?.data,
-                    selectedOptionLvl1: value,
-                    selectedMaterialLvl2: null,
-                    selectedMaterialLvl3: null,
-                  });
-                }
-              }}
-            />
-          )
+                  1
+                );
+                setDigidatPriceData({
+                  ...digitalPriceData,
+                  selectedMaterialLvl1: value?.data,
+                  selectedOptionLvl1: value,
+                  selectedMaterialLvl2: null,
+                  selectedMaterialLvl3: null,
+                });
+              }
+            }}
+          />
         );
       }
     }
