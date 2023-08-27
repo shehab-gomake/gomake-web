@@ -171,7 +171,8 @@ const ParameterWidget = () => {
                                           {_renderParameterType(
                                             section?.id,
                                             subSection?.id,
-                                            parameter
+                                            parameter,
+                                            subSection?.parameters
                                           )}
                                         </div>
                                       </div>
