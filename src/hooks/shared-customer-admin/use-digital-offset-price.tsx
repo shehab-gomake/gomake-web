@@ -195,7 +195,8 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const _renderParameterType = (
     parameter: any,
     subSection: any,
-    section: any
+    section: any,
+    subSectionParameters
   ) => {
     let temp = [...generalParameters];
     const index = temp.findIndex(
@@ -368,17 +369,50 @@ const useDigitalOffsetPrice = ({ clasess }) => {
         const data = materialsEnumsValues.find(
           (item) => item.name === parameter?.materialPath[0]
         );
+        let isDefaultObj = parameter?.valuesConfigs?.find(
+          (item) => item.isDefault === true
+        );
         let options: any = allMaterials;
+        let defailtObjectValue = {};
         if (parameter?.materialPath?.length == 3) {
           options = digitalPriceData?.selectedMaterialLvl2;
         }
         if (parameter?.materialPath?.length == 2) {
+          // options = digitalPriceData?.selectedMaterialLvl1;
+          let defsultParameters = subSectionParameters?.find((item) =>
+            item.valuesConfigs?.find((item) => item?.isDefault)
+          );
+          let defaultParameter = defsultParameters?.valuesConfigs?.find(
+            (item) => item?.isDefault
+          );
+          let valueIdIsDefault = defaultParameter?.materialValueIds[0]?.valueId;
+
           options = digitalPriceData?.selectedMaterialLvl1;
+
+          if (!!!options) {
+            let optionsLvl1 = allMaterials
+              ?.find((material) => {
+                return material.pathName === parameter?.materialPath[0];
+              })
+              ?.data?.find((item) => item?.valueId === valueIdIsDefault);
+
+            options = optionsLvl1?.data || [];
+            let x = options?.find(
+              (item: any) =>
+                item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
+            );
+            defailtObjectValue = x;
+          }
         }
         if (parameter?.materialPath?.length == 1) {
-          options = allMaterials?.find((material) => {
+          options = allMaterials?.find((material: any) => {
             return material.pathName === parameter?.materialPath[0];
           })?.data;
+          let selectedObj = options?.find(
+            (item: any) =>
+              item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
+          );
+          defailtObjectValue = selectedObj;
         }
         return (
           options?.length > 0 && (
@@ -386,10 +420,11 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               options={options}
               placeholder={parameter.name}
               style={clasess.dropDownListStyle}
+              defaultValue={defailtObjectValue}
               getOptionLabel={(option: any) => option.value}
+              //@ts-ignore
               value={
-                //@ts-ignore
-                index !== -1 ? { value: temp[index].value } : { value: "" }
+                index !== -1 ? { value: temp[index].value } : defailtObjectValue
               }
               onChange={(e: any, value: any) => {
                 if (parameter?.materialPath?.length == 3) {

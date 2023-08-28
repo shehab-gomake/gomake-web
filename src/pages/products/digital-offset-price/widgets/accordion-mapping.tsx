@@ -65,7 +65,12 @@ const AccordionMappingWidget = ({
                       ) : null}
                     </div>
                     <div style={{ marginTop: -9 }}>
-                      {_renderParameterType(parameter, subSection, section)}
+                      {_renderParameterType(
+                        parameter,
+                        subSection,
+                        section,
+                        subSection?.parameters
+                      )}
                     </div>
                   </div>
                 </div>
@@ -81,7 +86,12 @@ const AccordionMappingWidget = ({
                       ) : null}
                     </div>
                     <div style={clasess.renderParameterTypeContainer}>
-                      {_renderParameterType(parameter, subSection, section)}
+                      {_renderParameterType(
+                        parameter,
+                        subSection,
+                        section,
+                        subSection?.parameters
+                      )}
                     </div>
                   </div>
                 </div>
