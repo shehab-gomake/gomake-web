@@ -255,7 +255,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
       );
       return (
         <GoMakeAutoComplate
-          options={parameter?.valuesConfigs}
+          options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
           placeholder={parameter.name}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
@@ -282,7 +282,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
       );
       return (
         <GoMakeAutoComplate
-          options={parameter?.valuesConfigs}
+          options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
           placeholder={parameter.name}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
@@ -417,7 +417,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
         return (
           options?.length > 0 && (
             <GoMakeAutoComplate
-              options={options}
+              options={options?.filter((value) => !value.isHidden)}
               placeholder={parameter.name}
               style={clasess.dropDownListStyle}
               defaultValue={defailtObjectValue}
