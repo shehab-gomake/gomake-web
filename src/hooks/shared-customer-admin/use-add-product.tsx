@@ -585,11 +585,13 @@ const useAddProduct = ({ clasess }) => {
           defailtObjectValue = x;
         }
         if (parameter?.materialPath?.length == 2) {
-          let qqq = subSectionParameters?.find((item) =>
+          let defsultParameters = subSectionParameters?.find((item) =>
             item.valuesConfigs?.find((item) => item?.isDefault)
           );
-          let xxx = qqq?.valuesConfigs?.find((item) => item?.isDefault);
-          let yyyy = xxx?.materialValueIds[0]?.valueId;
+          let defaultParameter = defsultParameters?.valuesConfigs?.find(
+            (item) => item?.isDefault
+          );
+          let valueIdIsDefault = defaultParameter?.materialValueIds[0]?.valueId;
 
           options = digitalPriceData?.selectedMaterialLvl1;
           if (!!!options) {
@@ -597,7 +599,7 @@ const useAddProduct = ({ clasess }) => {
               ?.find((material) => {
                 return material.pathName === parameter?.materialPath[0];
               })
-              ?.data?.find((item) => item?.valueId === yyyy);
+              ?.data?.find((item) => item?.valueId === valueIdIsDefault);
 
             options = optionsLvl1?.data || [];
             let x = options?.find(
