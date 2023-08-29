@@ -11,7 +11,6 @@ const getAllProductsForDropDownList = async (
     "/v1/printhouse-config/products/get-all-products-for-dropdownlist",
     data
   );
-  console.log(result);
   return returnResult(result, setState);
 };
 

@@ -12,7 +12,6 @@ const useQuoteWidget = () => {
   const { navigate } = useGomakeRouter();
   const [clientTypesValue, setClientTypesValues] = useState([]);
   const [productValue, setProductValues] = useState([]);
-  console.log("productValue", productValue);
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
   const [canOrder, setCanOrder] = useState(false);
