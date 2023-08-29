@@ -20,11 +20,12 @@ const useSettings = () => {
     await getAlltProductSKU(callApi, setAllProductSKU);
   }, []);
   const updatedProduct = useCallback(async (product: any) => {
+    console.log("product", product);
     const res: any = await callApi(
       "PUT",
-      `/v1/printhouse-config/products/update-product`,
+      `/v1/printhouse-config/products/update-product-status`,
       {
-        ...product,
+        Id: product.id,
         status: !product?.status,
       }
     );

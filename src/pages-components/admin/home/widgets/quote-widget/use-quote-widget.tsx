@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import {
-  getAllProductsMongoDB,
+  getAllProductsForDropDownList,
   getAndSetAllCustomers,
   getAndSetClientTypes,
 } from "@/services/hooks";
@@ -12,6 +12,7 @@ const useQuoteWidget = () => {
   const { navigate } = useGomakeRouter();
   const [clientTypesValue, setClientTypesValues] = useState([]);
   const [productValue, setProductValues] = useState([]);
+  console.log("productValue", productValue);
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
   const [canOrder, setCanOrder] = useState(false);
@@ -34,7 +35,7 @@ const useQuoteWidget = () => {
     await getAndSetClientTypes(callApi, setClientTypesValues);
   }, []);
   const getAllProducts = useCallback(async () => {
-    await getAllProductsMongoDB(callApi, setProductValues);
+    await getAllProductsForDropDownList(callApi, setProductValues);
   }, []);
   const getAllCustomersCreateQuote = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
