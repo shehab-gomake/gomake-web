@@ -369,6 +369,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
         const data = materialsEnumsValues.find(
           (item) => item.name === parameter?.materialPath[0]
         );
+        let valuesConfigs = parameter?.valuesConfigs;
         let isDefaultObj = parameter?.valuesConfigs?.find(
           (item) => item.isDefault === true
         );
@@ -378,7 +379,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
           options = digitalPriceData?.selectedMaterialLvl2;
         }
         if (parameter?.materialPath?.length == 2) {
-          // options = digitalPriceData?.selectedMaterialLvl1;
           let defsultParameters = subSectionParameters?.find((item) =>
             item.valuesConfigs?.find((item) => item?.isDefault)
           );
@@ -388,6 +388,17 @@ const useDigitalOffsetPrice = ({ clasess }) => {
           let valueIdIsDefault = defaultParameter?.materialValueIds[0]?.valueId;
 
           options = digitalPriceData?.selectedMaterialLvl1;
+          if (options) {
+            const hiddenValueIds = valuesConfigs
+              .filter((config) => config.isHidden === true)
+              .flatMap((config) =>
+                config.materialValueIds.map((id) => id.valueId)
+              );
+            const filteredOptions = options.filter(
+              (option) => !hiddenValueIds.includes(option.valueId)
+            );
+            options = filteredOptions;
+          }
 
           if (!!!options) {
             let optionsLvl1 = allMaterials
@@ -395,8 +406,16 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                 return material.pathName === parameter?.materialPath[0];
               })
               ?.data?.find((item) => item?.valueId === valueIdIsDefault);
-
             options = optionsLvl1?.data || [];
+            const hiddenValueIds = valuesConfigs
+              .filter((config) => config.isHidden === true)
+              .flatMap((config) =>
+                config.materialValueIds.map((id) => id.valueId)
+              );
+            const filteredOptions = options.filter(
+              (option) => !hiddenValueIds.includes(option.valueId)
+            );
+            options = filteredOptions;
             let x = options?.find(
               (item: any) =>
                 item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
@@ -405,9 +424,19 @@ const useDigitalOffsetPrice = ({ clasess }) => {
           }
         }
         if (parameter?.materialPath?.length == 1) {
+          const hiddenValueIds = valuesConfigs
+            .filter((config) => config.isHidden === true)
+            .flatMap((config) =>
+              config.materialValueIds.map((id) => id.valueId)
+            );
           options = allMaterials?.find((material: any) => {
             return material.pathName === parameter?.materialPath[0];
           })?.data;
+
+          const filteredOptions = options.filter(
+            (option) => !hiddenValueIds.includes(option.valueId)
+          );
+          options = filteredOptions;
           let selectedObj = options?.find(
             (item: any) =>
               item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
@@ -417,7 +446,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
         return (
           options?.length > 0 && (
             <GoMakeAutoComplate
-              options={options?.filter((value) => !value.isHidden)}
+              options={options}
               placeholder={parameter.name}
               style={clasess.dropDownListStyle}
               defaultValue={defailtObjectValue}
