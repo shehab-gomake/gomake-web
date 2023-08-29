@@ -22,9 +22,9 @@ const useSettings = () => {
   const updatedProduct = useCallback(async (product: any) => {
     const res: any = await callApi(
       "PUT",
-      `/v1/printhouse-config/products/update-product`,
+      `/v1/printhouse-config/products/update-product-status`,
       {
-        ...product,
+        Id: product.id,
         status: !product?.status,
       }
     );
