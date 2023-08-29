@@ -12,6 +12,7 @@ const useAddCustomer = () => {
   const addNewCustomer = useCallback(
     async (data: any, setData: any) => {
       console.log(data);
+      console.log("newwwww client")
       const res = await callApi("POST", `/v1/customers/add-customer`, data);
       if (res?.success) {
         setSnackbarStateValue({

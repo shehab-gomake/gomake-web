@@ -424,7 +424,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
             </Row>
           }
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "flex-end", alignSelf: "stretch", marginTop: "24px" }} >
-            {showAddButton && <button style={clasess.autoButtonStyle} onClick={handleAddCustomer} >{t("customers.buttons.updateChanges")}</button>}
+            {showAddButton && <button style={clasess.autoButtonStyle} onClick={handleAddCustomer} >{t("customers.buttons.addCustomer")}</button>}
             {showUpdateButton && <button style={clasess.autoButtonStyle} onClick={handleEditCustomer}>{t("customers.buttons.updateChanges")}</button>}
           </div>
         </ThemeProvider>

@@ -12,6 +12,7 @@ const useEditCustomer = () => {
   const editCustomer = useCallback(
     async (data: any, setData: any) => {
       console.log(data);
+      console.log("updateeee client")
       const res = await callApi("PUT", `/v1/customers/update-customer`, {
         customer: data , 
       });
@@ -24,7 +25,7 @@ const useEditCustomer = () => {
       } else {
         setSnackbarStateValue({
           state: true,
-          message: t("modal.Updated failed"),
+          message: t("modal.updatedfailed"),
           type: "error",
         });
       }
