@@ -370,14 +370,12 @@ const useAddProduct = ({ clasess }) => {
         });
       } else {
         let objectIdToUpdate = option?.valueId;
-        console.log("objectIdToUpdate", objectIdToUpdate);
         if (
           temp.findIndex(
             (item) => item?.materialValueIds[0]?.valueId === objectIdToUpdate
           ) !== -1
         ) {
           const updatedArray = temp.map((obj) => {
-            console.log("obj", obj);
             if (obj?.materialValueIds[0]?.valueId === objectIdToUpdate) {
               return { ...obj, isHidden: !obj.isHidden };
             }
