@@ -3,6 +3,7 @@ import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import Autocomplete from "@mui/material/Autocomplete";
 import { ArrowDownIcon } from "@/icons/arrow-down";
+import { useState } from "react";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
   return {
@@ -20,7 +21,7 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
     border: props?.selectedOption
       ? "1px solid #43c3e8"
       : "1px solid rgba(237, 2, 140, 1)",
-    boxShadow: "0px 1px 60px rgba(0, 0, 0, 0.08)",
+    boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
     "& .MuiOutlinedInput-root": {
       color: props?.error ? "red" : "",
       height: props?.style?.height || 40,
@@ -77,13 +78,11 @@ const GoMakeAutoComplate = ({
   arrowColor?: any;
   onChangeTextField?: any;
 }) => {
-  const [selectedOption, setSelectedOption] = React.useState();
+  const [selectedOption, setSelectedOption] = useState<any>();
   return (
     <StyledAutocomplete
       {...(value && { value })}
-      //@ts-ignore
       {...(selectedOption && { selectedOption })}
-      // onChange={onChange}
       onChange={(e: any, value: any) => {
         onChange(e, value);
         setSelectedOption(value);
