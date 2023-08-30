@@ -32,7 +32,7 @@ const useStyle = () => {
       },
       selectCustomerContainer: {
         width: "100%",
-        border: `1px solid ${secondColor(300)}`,
+        // border: `1px solid ${secondColor(300)}`,
         borderRadius: "4px",
         height: 40,
         display: "flex",
@@ -40,7 +40,7 @@ const useStyle = () => {
       },
       selectTypeContainer: {
         width: "100%",
-        border: `1px solid ${secondColor(300)}`,
+        // border: `1px solid ${secondColor(300)}`,
       },
       btnContainer: {
         display: "flex",
