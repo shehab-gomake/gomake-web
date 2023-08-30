@@ -15,11 +15,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        paddingRight: 30,
-        paddingLeft: 30,
-        paddingTop: 2,
-        gap: 48,
-        marginBottom: 22,
+        marginBottom: 24,
       },
       searchInputContainer: {
         width: convertWidthToVW(375),
@@ -36,7 +32,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: convertWidthToVW(32),
+        // gap: 8,
       },
       profileContainer: {
         display: "flex",

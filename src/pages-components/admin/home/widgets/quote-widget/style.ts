@@ -15,9 +15,11 @@ const useStyle = () => {
         paddingBottom: 40,
         paddingLeft: 20,
         paddingRight: 20,
-        backgroundColor: "white",
+        backgroundColor: "#FFFFFF",
         borderRadius: 8,
-        boxShadow: "0px 4px 3px 0px rgba(0, 0, 0, 0.03)",
+        // boxShadow: "0px 4px 15px 0px rgba(0, 0, 0, 0.08)",
+        boxShadow:
+          "0 1px 0px 0 rgba(0, 0, 0, 0.08), 0 0px 5px 0 rgba(0, 0, 0, 0.08)",
         gap: 30,
       },
       autoComplateRowContainer: {

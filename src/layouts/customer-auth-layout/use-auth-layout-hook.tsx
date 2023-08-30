@@ -44,7 +44,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <ProductFloorIcon />;
         },
-        isProduction: false,
+        isProduction: true,
       },
       {
         isLine: true,
@@ -211,7 +211,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <ProductsIcon />;
         },
-        isProduction: false,
+        isProduction: true,
       },
       {
         isLine: false,
@@ -234,7 +234,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <SalesIcon />;
         },
-        isProduction: false,
+        isProduction: true,
       },
       {
         isLine: false,
@@ -245,7 +245,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <ShopingIcon />;
         },
-        isProduction: false,
+        isProduction: true,
       },
       {
         isLine: false,
@@ -256,7 +256,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <CustomersIcon />;
         },
-        isProduction: false,
+        isProduction: true,
       },
       {
         isLine: false,
@@ -267,7 +267,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <SuppliersIcon />;
         },
-        isProduction: false,
+        isProduction: true,
       },
       {
         isLine: false,
@@ -278,7 +278,7 @@ const useAuthLayoutHook = () => {
         icon: () => {
           return <ReportsIcon />;
         },
-        isProduction: false,
+        isProduction: true,
       },
       {
         isLine: true,
