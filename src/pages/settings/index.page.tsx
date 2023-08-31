@@ -6,7 +6,6 @@ import {AddPlusIcon, SearchIcon} from "@/icons";
 import {CustomerAuthLayout} from "@/layouts";
 import {useGomakeRouter} from "@/hooks";
 import {HeaderTitle} from "@/widgets";
-
 import {useSettings} from "./use-settings";
 import {Row} from "./widget/row";
 
