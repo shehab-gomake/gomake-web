@@ -165,17 +165,22 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const { clientTypesValue, renderOptions, checkWhatRenderArray } =
     useQuoteWidget();
   useEffect(() => {
-    setClientTypeDefaultValue(
-      clientTypesValue.find(
-        (item: any) => item?.id === router?.query?.clientTypeId
-      )
-    );
-    setClientDefaultValue(
-      renderOptions().find(
-        (item: any) => item?.id === router?.query?.customerId
-      )
-    );
-  }, [clientTypesValue, router]);
+    if (router?.query?.clientTypeId) {
+      setClientTypeDefaultValue(
+        clientTypesValue.find(
+          (item: any) => item?.id === router?.query?.clientTypeId
+        )
+      );
+    }
+
+    if (router?.query?.customerId) {
+      setClientDefaultValue(
+        renderOptions().find(
+          (item: any) => item?.id === router?.query?.customerId
+        )
+      );
+    }
+  }, [clientTypesValue, clientDefaultValue, router]);
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
