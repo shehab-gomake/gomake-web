@@ -1,5 +1,5 @@
 import {useGomakeAxios} from "@/hooks";
-import {useEffect, useMemo} from "react";
+import {useCallback, useEffect} from "react";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {machineState} from "@/widgets/machines/state/machine-state";
 import {useRouter} from "next/router";
@@ -9,7 +9,7 @@ import {
 } from "@/widgets/machines/state/machines";
 import {ECategoryId} from "@/widgets/machines/enums/category-id";
 
-const usePrintHouseMachines = (loop?: boolean) => {
+const usePrintHouseMachines = () => {
     const router = useRouter();
     const {categoryId} = router.query
     const {callApi} = useGomakeAxios();
@@ -17,19 +17,19 @@ const usePrintHouseMachines = (loop?: boolean) => {
 
     const setMachineState = useSetRecoilState(machineState);
 
-    useEffect(() => {
-        if (loop) {
-            getMachinesByCategoryId(categoryId as ECategoryId).then(
-                (res) => {
-                    setMachines(res?.data?.data?.data ? res?.data?.data?.data : []);
+
+
+    const getAndSetMachines = ()=> {
+        getMachinesByCategoryId(categoryId as ECategoryId).then(
+            (res) => {
+                if (res?.data?.data?.data?.length > 0) {
+                    setMachines(res?.data?.data?.data);
                 }
-            );
-        }
-    }, [categoryId]);
-
-
+            }
+        );
+    }
     const getMachinesByCategoryId = async (category: ECategoryId) => {
-        return  await callApi('Get', `/v1/machines/category/${category}`);
+        return await callApi('Get', `/v1/machines/category/${category}`);
     };
 
     const machinesToList = (machinesList: { nickName: string, manufacturer: string, model: string, id: string }[]) => {
@@ -39,7 +39,7 @@ const usePrintHouseMachines = (loop?: boolean) => {
         }));
     };
 
-    const getPrintHouseMachinesList = useMemo(() => {
+    const getPrintHouseMachinesList = useCallback(() => {
         return machinesToList(machines);
     }, [machines]);
 
@@ -65,6 +65,7 @@ const usePrintHouseMachines = (loop?: boolean) => {
         setMachines(newArray);
         setMachineState(machine)
     }
+    useEffect(() => console.log(machines), [machines])
 
     return {
         getPrintHouseMachinesList,
@@ -74,7 +75,8 @@ const usePrintHouseMachines = (loop?: boolean) => {
         deleteMachineFromArray,
         setMachines,
         addMachineToList,
-        machinesToList
+        machinesToList,
+        getAndSetMachines
     }
 }
 

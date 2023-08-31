@@ -1,11 +1,9 @@
-import {GomakeTextInput} from "@/components";
+import {GoMakeAutoComplate, GomakeTextInput, SecondSwitch} from "@/components";
 import {ChangeEvent, ReactNode, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useStyle} from "@/widgets/machines/components/inputs/style";
-import {MenuItem, SelectChangeEvent} from "@mui/material";
+import {SelectChangeEvent} from "@mui/material";
 import {IMachineInput} from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
-import {FormSelect} from "@/widgets/machines/components/inputs/form-select";
-import {StyledSwitch} from "@/widgets/machines/components/inputs/switch";
 import {useGomakeAxios} from "@/hooks";
 
 const MachineInput = ({input, error, changeState, readonly}: IMachineInput) => {
@@ -42,28 +40,16 @@ const MachineInput = ({input, error, changeState, readonly}: IMachineInput) => {
                     <div style={classes.input}>
                         {
                             input.type === 'select' ?
-                                <FormSelect
-                                    style={{height: '40px'}}
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    label={input.label}
+                                <GoMakeAutoComplate
+                                    style={{minWidth: 200, border: 0}}
                                     onChange={selectChange}
-                                    value={!!input.value ? input.value : 'default value'  }
+                                    value={!!input.value ? input.value : ''  }
                                     error={false}
-                                    disabled={!!readonly}>
-                                    {
-                                       !input.value &&  <MenuItem  key={'default-placeholder' + input.label}
-                                                                   value={'default value'}>{'select ' + t(input.label)}</MenuItem>
-                                    }
-                                    {
-                                        input.optionsUrl ? options.map(option => <MenuItem key={option.value}
-                                                                                           value={option.value}>{option.text}</MenuItem>)
-                                            : input.options.map(option => <MenuItem key={option.value}
-                                                                                    value={option.value}>{t(option.text)}</MenuItem>)
-                                    }
-                                </FormSelect> :
+                                    disabled={!!readonly}
+                                    placeholder={t(input.placeholder)}
+                                options={input.optionsUrl ? options.map(({value, text}) => ({label: text, value})) : input.options.map(({value, text}) => ({label: text, value}))}/>:
                                 input.type === 'switch' ?
-                                    <StyledSwitch checked={!!input.value} onChange={handleSwitchCheck}/>
+                                    <SecondSwitch checked={!!input.value} onChange={handleSwitchCheck}/>
                                     :
                                     <GomakeTextInput
                                         style={{height: '40px'}}

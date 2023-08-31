@@ -1,5 +1,5 @@
 import {useRouter} from "next/router";
-import {useEffect, useMemo} from "react";
+import {useMemo} from "react";
 import {useGomakeAxios} from "@/hooks";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {machineState} from "@/widgets/machines/state/machine-state";
@@ -11,16 +11,12 @@ const useAdminMachines = () => {
     const {callApi} = useGomakeAxios();
     const [machines, setMachines] = useRecoilState(machinesListState);
     const setMachineState = useSetRecoilState(machineState);
-    useEffect(() => {
-        const call = async () => {
-            if (categoryId) {
-                const res = await callApi('Get', `/v1/administrator/machines/category/${categoryId}`);
-                setMachines(res?.data?.data?.data ? res?.data?.data?.data : []);
-            }
+    const getAndSetAdminMachines = async () => {
+        if (categoryId) {
+            const res = await callApi('Get', `/v1/administrator/machines/category/${categoryId}`);
+            setMachines(res?.data?.data?.data ? res?.data?.data?.data : []);
         }
-        call().then();
-    }, [categoryId]);
-
+    }
     const getMachinesList = useMemo(() => {
         return machines.map((machine: { model: string, manufacturer: string, id: string }) => ({
             text: `${machine.manufacturer} - ${machine.model}`,
@@ -50,7 +46,8 @@ const useAdminMachines = () => {
         getMachinesList,
         setMachine,
         setUpdatedMachine,
-        addMachineToList
+        addMachineToList,
+        getAndSetAdminMachines
     };
 }
 

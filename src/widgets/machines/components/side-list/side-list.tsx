@@ -4,7 +4,7 @@ import {
     Divider,
     IconButton,
     List,
-    ListItemButton,
+    ListItemButton, ListItemIcon,
     ListItemText,
     Menu,
     MenuItem,
@@ -41,7 +41,7 @@ const SideList = ({
                       title,
                       quickActions = false,
                       children,
-                      isAdmin
+                      isAdmin,
                   }: ISideListProps) => {
     const {primaryColor} = useGomakeTheme();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -104,6 +104,7 @@ const SideList = ({
                             selected={item?.value === selectedItem}
                             onClick={() => onSelect(item?.value)}
                         >
+                            {!!item.icon && <ListItemIcon sx={{minWidth: 28}}>{item.icon()}</ListItemIcon>}
                             <ListItemText primary={item.text}/>
                             {selectedItem === item?.value && quickActions && (
                                 <IconButton

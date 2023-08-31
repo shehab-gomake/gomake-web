@@ -394,7 +394,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               .flatMap((config) =>
                 config.materialValueIds.map((id) => id.valueId)
               );
-            const filteredOptions = options.filter(
+            const filteredOptions = options?.filter(
               (option) => !hiddenValueIds.includes(option.valueId)
             );
             options = filteredOptions;
@@ -412,7 +412,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               .flatMap((config) =>
                 config.materialValueIds.map((id) => id.valueId)
               );
-            const filteredOptions = options.filter(
+            const filteredOptions = options?.filter(
               (option) => !hiddenValueIds.includes(option.valueId)
             );
             options = filteredOptions;
@@ -433,7 +433,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
             return material.pathName === parameter?.materialPath[0];
           })?.data;
 
-          const filteredOptions = options.filter(
+          const filteredOptions = options?.filter(
             (option) => !hiddenValueIds.includes(option.valueId)
           );
           options = filteredOptions;

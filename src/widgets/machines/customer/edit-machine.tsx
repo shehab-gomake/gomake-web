@@ -20,15 +20,17 @@ const CustomerEditMachines = () => {
     const [categoryName, setCategoryName] = useState<string>();
     const [machineSteps, setMachineSteps] = useState<IStep[]>([]);
     const selectedMachine = useRecoilValue(machineState);
-    const {getPrintHouseMachinesList, setMachine} = usePrintHouseMachines(true);
+    const {getPrintHouseMachinesList, setMachine, getAndSetMachines} = usePrintHouseMachines();
     const {updateMachine} = usePrintHouseAddMachine()
 
     useEffect(() => {
+        getAndSetMachines();
         if (categoryId) {
             const category = categories.find(category => category.id === categoryId)
             setCategoryName(category?.name ? category?.name : '');
             if (category) setMachineSteps(getSteps(category.id, false));
         }
+
     }, [categoryId]);
     const navigateBack = () => {
         setActiveStep(activeStep - 1);
@@ -41,7 +43,7 @@ const CustomerEditMachines = () => {
         setActiveStep(0);
     }
     const Side = () => {
-        return <SideList list={getPrintHouseMachinesList} selectedItem={selectedMachine.id} onSelect={onSelectMachine}
+        return <SideList list={getPrintHouseMachinesList()} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
                          title={'Machines'} quickActions={true}>
             <SecondaryButton variant={'contained'} style={{width: '100%'}} href={`/machines/add-machine/category/${categoryId}`}> add
                 Machine</SecondaryButton>
@@ -49,8 +51,8 @@ const CustomerEditMachines = () => {
     }
     return (
         <MachineLayout side={Side()} header={categoryName}
-                       subHeader={selectedMachine.manufacturer && selectedMachine.nickName ? selectedMachine.manufacturer + ' - ' + selectedMachine.nickName : ''}>
-            {!!selectedMachine.id &&
+                       subHeader={selectedMachine?.manufacturer && selectedMachine?.nickName ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.nickName : ''}>
+            {!!selectedMachine?.id &&
                 <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
                                 nextStep={navigateNext} actionButtonClicked={updateMachine}
                                 isAddForm={false}/>}

@@ -22,6 +22,7 @@ const useAdminAddMachine = () => {
 
 
     const curMachineCategoryId = useCallback(() => state?.category ? state?.category.toString() : '', [state]);
+
     const adminAddMachine = useCallback( () => {
         callApi('POST', '/v1/administrator/add-machine', {...state}).then(res => {
             if (res?.success) {

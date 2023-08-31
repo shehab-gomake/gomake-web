@@ -3,7 +3,7 @@ import { convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = ({ insideStyle }: any) => {
+const useStyle = ({ insideStyle, headerPadding }: any) => {
   const { primaryColor } = useGomakeTheme();
 
   const clasess = useMemo(() => {
@@ -20,10 +20,10 @@ const useStyle = ({ insideStyle }: any) => {
         left: "50%",
         top: "50%",
         transform: "translate(-50%, -50%)",
-        height: "80%",
+        height: "90%",
         overFlow: "auto" as "auto",
         paddingTop: convertWidthToVW(25),
-        paddingLeft: convertWidthToVW(20),
+        paddingLeft:  convertWidthToVW(20),
         paddingRight: convertWidthToVW(20),
         paddingBottom: convertWidthToVW(20),
         ...insideStyle,
@@ -32,16 +32,13 @@ const useStyle = ({ insideStyle }: any) => {
         display: "flex",
         justifyContent: "flex-end",
         alignItems: "center",
-        position: "absolute" as "absolute",
-        right: "20px",
-        top: "25px",
         cursor: "pointer" as "pointer",
       },
       titleModalStyle: {
         display: "flex",
         color: primaryColor(500),
-        marginBottom: convertWidthToVW(24),
         ...FONT_FAMILY.Lexend(500, 24),
+
       },
       boxContainer: {
         height: "100%",
@@ -54,8 +51,16 @@ const useStyle = ({ insideStyle }: any) => {
         flexDirection: "column" as "column",
         width: "100%",
       },
+      headerContainer: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingRight: headerPadding,
+        paddingLeft: headerPadding
+      }
     };
-  }, [insideStyle]);
+  }, [insideStyle, headerPadding]);
   return {
     clasess,
   };

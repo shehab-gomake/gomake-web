@@ -1,4 +1,5 @@
 import {COLORS} from "@/widgets/machines/utils/const";
+import {basicColorsInput} from "@/widgets/machines/utils/attributes/colors-inputs/basic-colors-input";
 
 const flexoPrinting = (state: Record<string, any>) => {
     return [
@@ -14,18 +15,7 @@ const flexoPrinting = (state: Record<string, any>) => {
             value: state?.attributes?.numberOfPrintingUnits ? state?.attributes?.numberOfPrintingUnits : '',
             isValid: !!state?.attributes?.numberOfPrintingUnits
         },
-        {
-            name: "basicsColors",
-            label: "machineAttributes.basicsColors",
-            type: "select",
-            placeholder: "machineAttributes.basicsColors",
-            required: true,
-            parameterKey: "basicsColors",
-            value: state?.attributes?.basicsColors,
-            options: [{value: 1, text: 'Black'}, {value: 2, text: 'CMYK'}],
-            machineInputType: 'input',
-            isValid: true
-        },
+        ...basicColorsInput(state),
 
         {
             name: "amountColorStations",
