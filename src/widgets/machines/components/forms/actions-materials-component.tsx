@@ -142,22 +142,22 @@ const ActionsMaterialsComponent = ({
     };
 
     const moveCheckedActionsToRelatedActions = () => {
-        setMachineActions(machineActions.concat(actions.filter(a => a.checked)));
+        setMachineActions(machineActions.concat(actions.filter(a => a.checked)).map(item => ({...item, checked: false})));
         setActions(actions.filter(a => !a.checked));
     }
 
     const moveCheckedRelatedActionsTActions = () => {
-        setActions(actions.concat(machineActions.filter(a => a.checked)));
-        setMachineActions(machineActions.filter(a => !a.checked));
+        setActions(actions.concat(machineActions.filter(a => a.checked)).map(item => ({...item, checked: false})));
+        setMachineActions(machineActions.filter(a => !a.checked).map(item => ({...item, checked: false})));
     }
     const moveCheckedMaterialsToMachineMaterials = () => {
-        setMachineMaterials(machineMaterials.concat(materials.filter(m => m.checked)));
-        setMaterials(materials.filter(m => !m.checked));
+        setMachineMaterials(machineMaterials.concat(materials.filter(m => m.checked)).map(item => ({...item, checked: false})));
+        setMaterials(materials.filter(m => !m.checked).map(item => ({...item, checked: false})));
     }
 
     const moveCheckedMachineMaterialsToMaterials = () => {
-        setMaterials(materials.concat(machineMaterials.filter(m => m.checked)));
-        setMachineMaterials(machineMaterials.filter(m => !m.checked));
+        setMaterials(materials.concat(machineMaterials.filter(m => m.checked)).map(item => ({...item, checked: false})));
+        setMachineMaterials(machineMaterials.filter(m => !m.checked).map(item => ({...item, checked: false})));
     }
 
     return (

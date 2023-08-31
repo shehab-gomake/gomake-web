@@ -7,9 +7,13 @@ export const FormSelect = styled(Select)((props: SelectProps) => {
     const {secondColor} = useGomakeTheme();
     return {
         ...FONT_FAMILY.Lexend(400, 12),
-        '& .MuiSelect-select': {},
+        backgroundColor: '#FFF',
+        boxShadow: '0px 4px 60px 0px rgba(0, 0, 0, 0.08)',
+        minWidth: 180,
         '& .MuiSelect-icon': {
             color: secondColor(400),
+            width: 20,
+            height: 30
         },
         '& 	.Mui-error': {
             borderColor: secondColor(600),

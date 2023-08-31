@@ -1,4 +1,5 @@
 import {COLOR_TYPES} from "@/widgets/machines/utils/const";
+import {basicColorsInput} from "@/widgets/machines/utils/attributes/colors-inputs/basic-colors-input";
 
 const ofssetPrinting = (state: Record<string, any>) => {
     return [
@@ -14,18 +15,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             value: state?.attributes?.printingUnits ? state?.attributes?.printingUnits : '',
             isValid: !!state?.attributes?.printingUnits
         },
-        {
-            name: "basicsColors",
-            label: "machineAttributes.basicsColors",
-            type: "select",
-            placeholder: "machineAttributes.basicsColors",
-            required: true,
-            parameterKey: "basicsColors",
-            value: state?.attributes?.basicsColors,
-            options: [{value: 1, text: 'Black'}, {value: 2, text: 'CMYK'}],
-            machineInputType: 'input',
-            isValid: true
-        },
+        ...basicColorsInput(state),
 
         {
             name: "colorStations",
@@ -41,11 +31,11 @@ const ofssetPrinting = (state: Record<string, any>) => {
         },
         {
             name: "fIfthStation",
-            label: "machineAttributes.fIfthStation",
+            label: "machineAttributes.fifthStation",
             type: "text",
-            placeholder: "machineAttributes.fIfthStation",
+            placeholder: "machineAttributes.fifthStation",
             required: true,
-            parameterKey: "fIfthStation",
+            parameterKey: "fifthStation",
             options: [],
             machineInputType: 'input',
             value: state?.attributes?.fIfthStation ? state?.attributes?.fIfthStation : '',
@@ -68,7 +58,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             parameterKey: 'varnishPrice',
             value: state?.attributes?.varnishPrice ? state?.attributes?.varnishPrice : [],
             machineInputType: 'multiArrayInput',
-            isValid: state?.attributes?.varnishPrice?.length > 0,
+            isValid: true,
             inputs: [
                 {
                     name: "color",

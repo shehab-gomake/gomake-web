@@ -10,14 +10,15 @@ const useStyle = () => {
         display: "flex",
         gap: 26,
         padding: "14px 0",
-        maxHeight: '82vh'
+        minHeight: '100%',
+        maxHeight: '80vh'
       },
       sideList: {
         minWidth: 264,
       },
       main: {
         width: "100%",
-        overflow: "auto",
+        // overflow: "auto",
       },
       header: {
         ...FONT_FAMILY.Lexend(700, 20),
