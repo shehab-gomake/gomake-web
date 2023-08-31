@@ -57,128 +57,134 @@ export default function DigitalOffsetPrice() {
   };
   return (
     <CustomerAuthLayout>
-      {template?.sections?.length > 0 && (
-        <div style={clasess.mainContainer}>
-          <HeaderTitle
-            title={t("products.offsetPrice.admin.title2")}
-            marginTop={38}
-            marginBottom={24}
-          />
-          <div style={clasess.mainRowContainer}>
-            <div style={clasess.leftSideContainer}>
-              <div style={clasess.tabsContainer}>
-                {[...template?.sections, PricingTab]?.map((item, index) => {
-                  return (
-                    <TabsMappingWidget
-                      key={`tab-${index}`}
-                      clasess={clasess}
-                      index={index}
-                      handleTabClick={handleTabClick}
-                      activeIndex={activeIndex}
-                      item={item}
-                    />
-                  );
-                })}
-              </div>
-              <div
-                style={{ height: "60vh", overflow: "scroll", width: "100%" }}
-              >
-                <div style={clasess.sectionsContainer}>
-                  {[...template?.sections, PricingTab]?.map(
-                    (section: any, index: number) => {
-                      if (index === activeIndex) {
-                        if (section.name === "Pricing") {
-                          return (
-                            <PricingSectionMappingWidget
-                              clasess={clasess}
-                              machineCategories={machineCategories}
-                              onChangeCategoryData={onChangeCategoryData}
-                              section={section}
-                              pricingDefaultValue={pricingDefaultValue}
-                            />
-                          );
-                        } else {
-                          return section?.subSections?.map(
-                            (subSection: any, index: number) => {
-                              if (subSection?.isAccordion) {
-                                return (
-                                  <AccordionMappingWidget
-                                    clasess={clasess}
-                                    expanded={expanded}
-                                    index={index}
-                                    handleChange={handleChange}
-                                    subSection={subSection}
-                                    section={section}
-                                    _renderParameterType={_renderParameterType}
-                                    _getParameter={_getParameter}
-                                  />
-                                );
-                              } else {
-                                return (
-                                  <SectionMappingWidget
-                                    clasess={clasess}
-                                    index={index}
-                                    subSection={subSection}
-                                    section={section}
-                                    _renderParameterType={_renderParameterType}
-                                    _getParameter={_getParameter}
-                                  />
-                                );
+      <div style={{ height: "100%" }}>
+        {template?.sections?.length > 0 && (
+          <div style={clasess.mainContainer}>
+            <HeaderTitle
+              title={t("products.offsetPrice.admin.title2")}
+              marginTop={38}
+              marginBottom={24}
+            />
+            <div style={clasess.mainRowContainer}>
+              <div style={clasess.leftSideContainer}>
+                <div style={clasess.tabsContainer}>
+                  {[...template?.sections, PricingTab]?.map((item, index) => {
+                    return (
+                      <TabsMappingWidget
+                        key={`tab-${index}`}
+                        clasess={clasess}
+                        index={index}
+                        handleTabClick={handleTabClick}
+                        activeIndex={activeIndex}
+                        item={item}
+                      />
+                    );
+                  })}
+                </div>
+                <div
+                  style={{ height: "53vh", overflow: "scroll", width: "100%" }}
+                >
+                  <div style={clasess.sectionsContainer}>
+                    {[...template?.sections, PricingTab]?.map(
+                      (section: any, index: number) => {
+                        if (index === activeIndex) {
+                          if (section.name === "Pricing") {
+                            return (
+                              <PricingSectionMappingWidget
+                                clasess={clasess}
+                                machineCategories={machineCategories}
+                                onChangeCategoryData={onChangeCategoryData}
+                                section={section}
+                                pricingDefaultValue={pricingDefaultValue}
+                              />
+                            );
+                          } else {
+                            return section?.subSections?.map(
+                              (subSection: any, index: number) => {
+                                if (subSection?.isAccordion) {
+                                  return (
+                                    <AccordionMappingWidget
+                                      clasess={clasess}
+                                      expanded={expanded}
+                                      index={index}
+                                      handleChange={handleChange}
+                                      subSection={subSection}
+                                      section={section}
+                                      _renderParameterType={
+                                        _renderParameterType
+                                      }
+                                      _getParameter={_getParameter}
+                                    />
+                                  );
+                                } else {
+                                  return (
+                                    <SectionMappingWidget
+                                      clasess={clasess}
+                                      index={index}
+                                      subSection={subSection}
+                                      section={section}
+                                      _renderParameterType={
+                                        _renderParameterType
+                                      }
+                                      _getParameter={_getParameter}
+                                    />
+                                  );
+                                }
                               }
-                            }
-                          );
+                            );
+                          }
                         }
                       }
-                    }
-                  )}
+                    )}
+                  </div>
+                </div>
+                <div style={clasess.addPreviousContainer}>
+                  {activeIndex != 0 ? (
+                    <GomakePrimaryButton
+                      style={clasess.previousBtnStyle}
+                      onClick={handlePreviousClick}
+                    >
+                      {t("products.offsetPrice.admin.previousBtn")}
+                    </GomakePrimaryButton>
+                  ) : null}
+                  <GomakePrimaryButton
+                    style={clasess.nextBtnStyle}
+                    onClick={handleNextClick}
+                  >
+                    {t("products.offsetPrice.admin.nextBtn")}
+                  </GomakePrimaryButton>
                 </div>
               </div>
-              <div style={clasess.addPreviousContainer}>
-                {activeIndex != 0 ? (
-                  <GomakePrimaryButton
-                    style={clasess.previousBtnStyle}
-                    onClick={handlePreviousClick}
-                  >
-                    {t("products.offsetPrice.admin.previousBtn")}
-                  </GomakePrimaryButton>
-                ) : null}
-                <GomakePrimaryButton
-                  style={clasess.nextBtnStyle}
-                  onClick={handleNextClick}
-                >
-                  {t("products.offsetPrice.admin.nextBtn")}
-                </GomakePrimaryButton>
-              </div>
-            </div>
 
-            <RightSideWidget
-              clasess={clasess}
-              clientDefaultValue={clientDefaultValue}
-              renderOptions={renderOptions}
-              checkWhatRenderArray={checkWhatRenderArray}
-              clientTypeDefaultValue={clientTypeDefaultValue}
-              clientTypesValue={clientTypesValue}
-              template={template}
-              setDefaultPrice={setDefaultPrice}
-              defaultPrice={defaultPrice}
-              tabs={tabs}
-              activeTab={activeTab}
-              onOpeneMakeShape={onOpeneMakeShape}
-              pricingDefaultValue={pricingDefaultValue}
+              <RightSideWidget
+                clasess={clasess}
+                clientDefaultValue={clientDefaultValue}
+                renderOptions={renderOptions}
+                checkWhatRenderArray={checkWhatRenderArray}
+                clientTypeDefaultValue={clientTypeDefaultValue}
+                clientTypesValue={clientTypesValue}
+                template={template}
+                setDefaultPrice={setDefaultPrice}
+                defaultPrice={defaultPrice}
+                tabs={tabs}
+                activeTab={activeTab}
+                onOpeneMakeShape={onOpeneMakeShape}
+                pricingDefaultValue={pricingDefaultValue}
+              />
+            </div>
+            <MakeShapeModal
+              openModal={makeShapeOpen}
+              onClose={onCloseMakeShape}
+              modalTitle={t("products.offsetPrice.admin.makeShape")}
+            />
+            <ChooseShapeModal
+              openModal={chooseShapeOpen}
+              onClose={onCloseChooseShape}
+              modalTitle={t("products.offsetPrice.admin.chooseShape")}
             />
           </div>
-          <MakeShapeModal
-            openModal={makeShapeOpen}
-            onClose={onCloseMakeShape}
-            modalTitle={t("products.offsetPrice.admin.makeShape")}
-          />
-          <ChooseShapeModal
-            openModal={chooseShapeOpen}
-            onClose={onCloseChooseShape}
-            modalTitle={t("products.offsetPrice.admin.chooseShape")}
-          />
-        </div>
-      )}
+        )}
+      </div>
     </CustomerAuthLayout>
   );
 }

@@ -45,7 +45,7 @@ const HeaderWidget = () => {
           <IconButton>
             <ProfileImg />
           </IconButton>
-          <div style={clasess.userNameStyle}>{user?.displayName}</div>
+          {/* <div style={clasess.userNameStyle}>{user?.displayName}</div> */}
         </div>
       </div>
     </div>

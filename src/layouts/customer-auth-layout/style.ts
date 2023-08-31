@@ -14,11 +14,10 @@ const useStyle = ({
   const clasess = useMemo(() => {
     return {
       container: {
-        width: "100vw",
+        width: "100%",
         height: "100vh",
         display: "flex",
         flexDirection: "row" as "row",
-        backgroundColor: "#FFFFFF",
       },
       logoContainer: {
         display: "flex",
@@ -28,7 +27,7 @@ const useStyle = ({
         backgroundColor: primaryColor(500),
         width: navStatus?.isClosed ? 140 : 280,
         minWidth: navStatus?.isClosed ? 140 : 280,
-        height: "100%",
+        height: "100vh",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "space-between" as "space-between",
@@ -56,7 +55,7 @@ const useStyle = ({
         backgroundColor: "#FFFFFF",
       },
       headerContainer: {
-        height: 101,
+        // height: 101,
         display: "flex",
         flexDirection: "column" as "column",
         alignItems: "center",
@@ -65,10 +64,10 @@ const useStyle = ({
         backgroundColor: "#FFFFFF",
       },
       bodyContainer: {
-        height: convertHeightToVH(1024 - 101),
         display: "flex",
         flexDirection: "column" as "column",
         backgroundColor: "#FFFFFF",
+        overflowY: "scroll" as "scroll",
       },
       poweredContainer: {
         display: "flex",
@@ -89,7 +88,7 @@ const useStyle = ({
       ///Tab
       tabsContainer: {
         alignSelf: "flex-start",
-        height: "100%",
+        // height: "100%",
         width: "100%",
         marginTop: convertHeightToVH(46),
         overflow: "scroll" as "scroll",
