@@ -1,6 +1,6 @@
-import {COLORS} from "@/widgets/machines/utils/const";
+import {additionalColorsInput} from "@/widgets/machines/utils/attributes/colors-inputs/additional-colors-input";
 
-const rollAnalogEnhancementMachine = (state: Record<string, any>) => {
+const enhancementMachine = (state: Record<string, any>) => {
     return [
         {
             name: "available",
@@ -38,37 +38,9 @@ const rollAnalogEnhancementMachine = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: true
         },
-        {
-            name: 'machineAttributes.additionalColorsCoast',
-            parameterKey: 'additionalColorsCoast',
-            value: state?.attributes?.additionalColorsCoast ? state?.attributes?.additionalColorsCoast : [],
-            machineInputType: 'multiArrayInput',
-            isValid: state?.attributes?.additionalColorsCoast?.length > 0,
-            inputs: [
-                {
-                    name: "color",
-                    label: "machineAttributes.color",
-                    type: "select",
-                    placeholder: "machineAttributes.color",
-                    required: true,
-                    parameterKey: "color",
-                    value: COLORS[0].value,
-                    options:  COLORS
-                },
-                {
-                    name: "cost",
-                    label: "machineAttributes.cost",
-                    type: "text",
-                    placeholder: "machineAttributes.cost",
-                    required: true,
-                    parameterKey: "cost",
-                    options: []
-                },
-
-            ]
-        },
+        ...additionalColorsInput(state),
     ]
 };
 
 
-export {rollAnalogEnhancementMachine}
+export {enhancementMachine}

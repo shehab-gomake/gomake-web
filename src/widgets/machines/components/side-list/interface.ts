@@ -11,5 +11,7 @@ export interface ISideListProps {
 
 export interface IListItem {
     text: string;
-    value: string;
+    value?: string;
+    component?: ()=> JSX.Element;
+    icon?: () => JSX.Element;
 }

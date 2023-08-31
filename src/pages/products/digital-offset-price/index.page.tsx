@@ -16,7 +16,7 @@ import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
 import { PricingSectionMappingWidget } from "./widgets/pricing-section-mapping";
 import { RightSideWidget } from "./widgets/right-side-widget";
-import { templateMock } from "./data";
+
 export default function DigitalOffsetPrice() {
   const { clasess } = useStyle();
   const {

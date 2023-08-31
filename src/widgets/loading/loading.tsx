@@ -8,7 +8,7 @@ const GomakeLoading = () => {
   const loading = useRecoilValue(loadgingState);
 
   return (
-    <Backdrop open={loading}>
+    <Backdrop sx={{zIndex: 1}} open={loading}>
       <div
         style={{
           position: "absolute",
