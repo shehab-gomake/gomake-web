@@ -20,7 +20,7 @@ const CustomerEditMachines = () => {
     const [categoryName, setCategoryName] = useState<string>();
     const [machineSteps, setMachineSteps] = useState<IStep[]>([]);
     const selectedMachine = useRecoilValue(machineState);
-    const {getPrintHouseMachinesList, setMachine, getAndSetMachines} = usePrintHouseMachines(true);
+    const {getPrintHouseMachinesList, setMachine, getAndSetMachines} = usePrintHouseMachines();
     const {updateMachine} = usePrintHouseAddMachine()
 
     useEffect(() => {

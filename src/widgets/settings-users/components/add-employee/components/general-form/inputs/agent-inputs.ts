@@ -1,4 +1,4 @@
-import {Employee} from "@/widgets/add-employee/interface/employee";
+import {Employee} from "@/widgets/settings-users/interface/employee";
 
 const agentInputs = (state: Employee)  => {
     return [

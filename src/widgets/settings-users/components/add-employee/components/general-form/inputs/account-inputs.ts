@@ -1,4 +1,4 @@
-import {IUserData} from "@/widgets/add-employee/interface/employee";
+import {IUserData} from "@/widgets/settings-users/interface/employee";
 
 const accountInputs = (state: IUserData)  => {
     return [
