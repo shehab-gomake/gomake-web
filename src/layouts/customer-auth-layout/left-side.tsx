@@ -6,14 +6,12 @@ import { useAuthLayoutHook } from "./use-auth-layout-hook";
 import { useRecoilState } from "recoil";
 import { navStatusState } from "@/store/nav-status";
 import { BackNavIcon } from "@/icons/back-nav";
-import config from "@/config";
 import { adaptRight } from "@/utils/adapter";
 
 const LeftSideLayout = () => {
   const { t } = useTranslation();
-  const { tabs } = useAuthLayoutHook();
+  const { tabs1, tabs2, tabs3 } = useAuthLayoutHook();
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
-  const displayedProductionTabs = tabs.filter((tab) => tab.isProduction);
 
   const { clasess } = useStyle({ navStatus });
   return (
@@ -22,9 +20,8 @@ const LeftSideLayout = () => {
         style={{
           position: "absolute",
           ...adaptRight(t("direction"), navStatus.isClosed ? 127 : 265),
-          top: navStatus.isClosed ? 50 : 80,
+          top: navStatus.isClosed ? 50 : 60,
           transform: navStatus.isClosed ? "rotate(180deg)" : "rotate(0)",
-          // transform: "rotate(90deg)",
           zIndex: 10,
           cursor: "pointer",
         }}
@@ -45,29 +42,50 @@ const LeftSideLayout = () => {
       </div>
 
       <div style={clasess.tabsContainer}>
-        {config.enviroment !== "dev"
-          ? displayedProductionTabs.map((tab) => {
-              if (tab.isLine) {
-                return (
-                  <div style={clasess.lineContainer}>
-                    <div key={tab.key} style={clasess.line} />
-                  </div>
-                );
-              } else {
-                return <Tab key={tab.key} tab={tab} />;
-              }
-            })
-          : tabs.map((tab) => {
-              if (tab.isLine) {
-                return (
-                  <div style={clasess.lineContainer}>
-                    <div key={tab.key} style={clasess.line} />
-                  </div>
-                );
-              } else {
-                return <Tab key={tab.key} tab={tab} />;
-              }
-            })}
+        {tabs1.map((tab) => {
+          if (tab.isLine) {
+            return (
+              <div style={clasess.lineContainer}>
+                <div key={tab.key} style={clasess.line} />
+              </div>
+            );
+          } else {
+            return <Tab key={tab.key} tab={tab} />;
+          }
+        })}
+      </div>
+      <div
+        style={{
+          height: "100%",
+          width: "100%",
+          overflow: "scroll",
+          alignSelf: "flex-start",
+        }}
+      >
+        {tabs2.map((tab) => {
+          if (tab.isLine) {
+            return (
+              <div style={clasess.lineContainer}>
+                <div key={tab.key} style={clasess.line} />
+              </div>
+            );
+          } else {
+            return <Tab key={tab.key} tab={tab} />;
+          }
+        })}
+      </div>
+      <div style={clasess.lastTabsContainer}>
+        {tabs3.map((tab) => {
+          if (tab.isLine) {
+            return (
+              <div style={clasess.lineContainer}>
+                <div key={tab.key} style={clasess.line} />
+              </div>
+            );
+          } else {
+            return <Tab key={tab.key} tab={tab} />;
+          }
+        })}
       </div>
 
       <div style={clasess.poweredContainer}>

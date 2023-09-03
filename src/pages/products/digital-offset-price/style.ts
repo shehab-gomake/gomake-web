@@ -43,13 +43,13 @@ const useStyle = () => {
         maxWidth: 330,
         backgroundColor: "white",
         padding: 15,
-        marginTop: -100,
+        marginTop: -87,
         boxShadow: "0px 4px 40px 0px rgba(129, 129, 129, 0.12)",
         borderRadius: 5,
         height: "100%",
       },
       rightSideContainer: {
-        height: "67vh",
+        height: "100%",
         overflow: "scroll",
       },
       tabsContainer: {
@@ -355,7 +355,7 @@ const useStyle = () => {
         backgroundColor: secondColor(500),
         height: 40,
         padding: 20,
-        marginTop: 34,
+        // marginTop: 34,
       },
       noVatStyle: {
         marginTop: 6,
@@ -367,7 +367,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-end",
         alignItems: "center",
-        marginTop: 30,
+        // marginTop: 30,
         width: "100%",
         gap: 16,
       },
