@@ -1,18 +1,17 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useCustomers } from "../use-customers";
 
 const useAddCustomer = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [state, setState] = useState<any>({});
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openAddCustomerModal, setOpenAddCustomerModal] =useState(true);
   const { setSnackbarStateValue } = useSnackBar();
 
   const addNewCustomer = useCallback(
     async (data: any, setData: any) => {
-      console.log(data);
-      console.log("newwwww client")
       const res = await callApi("POST", `/v1/customers/add-customer`, data);
       if (res?.success) {
         setSnackbarStateValue({
@@ -31,19 +30,12 @@ const useAddCustomer = () => {
     [state]
   );
   
-  const onCloseDeleteModal = () => {
-    setOpenDeleteModal(false);
-  };
-
-  const onOpenDeleteModal = (item: any) => {
-    setOpenDeleteModal(true);
+  const onCloseModalAdded = () => {
+    setOpenAddCustomerModal(false);
   };
 
   return {
     state,
-    openDeleteModal,
-    onCloseDeleteModal,
-    onOpenDeleteModal,
     addNewCustomer,
   };
 };

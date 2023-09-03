@@ -5,13 +5,12 @@ import { getAndSetAllCustomers, getAndSetCustomer, getAndSetCustomers } from "@/
 import { getAndSetEmployees } from "@/services/hooks/get-set-employee";
 import { getAndSetClientTypes } from "@/services/hooks/get-set-clientTypes";
 
-const useCustomers = (clientType, pageNumber) => {
+const useCustomers = (clientType, pageNumber ) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [allCustomers, setAllCustomers] = useState([]);
   const [customerForEdit, setCustomerForEdit] = useState(null);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
-
   const [pagesCount, setPagesCount] = useState(0);
   const pageSize = 10;
 
@@ -30,7 +29,6 @@ const useCustomers = (clientType, pageNumber) => {
   //select agent options
   const [agentsCategores, setAgentsCategores] = useState([]);
   const [customersCategores, setCustomersCategores] = useState([]);
-
 
   // select status options
   const statuses = useMemo(
@@ -53,7 +51,7 @@ const useCustomers = (clientType, pageNumber) => {
     setAgentName(value?.label);
   }, []);
 
-  const [isActive, setStatus] = useState([]);
+  const [isActive, setStatus] = useState(true);
   const [valStatus, setValStatus] = useState([]);
   const onChangeStatus = useCallback(async (e: any, value: any) => {
     setStatus(value?.value);

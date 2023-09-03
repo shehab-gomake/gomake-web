@@ -1589,7 +1589,6 @@
       "invoice": "invoice",
       "receipt": "receipt",
       "deliveryNote": "delivery note",
-
       "selectStatus": "Select status",
       "shipmentType": "Shipment Type",
       "selectShipmentType": "Select shipment type",

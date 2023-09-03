@@ -20,7 +20,7 @@ import { useCustomersModal } from "./use-customer-modal";
 import { useAddCustomer } from "@/pages/customers/add-customer/use-add-customer";
 import { useEditCustomer } from "@/pages/customers/edit-customer/use-edit-customer";
 
-const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
+const CustomerCardWidget = ({ openModal , modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
 
   const {addNewCustomer} = useAddCustomer();
   const {editCustomer} = useEditCustomer();
@@ -31,9 +31,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
     palette: {
       secondary: {
         main: '#FFF',
-      },
-    },
-  });
+      },},});
 
   const TestOptions = useMemo(
     () => [
@@ -93,8 +91,6 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
   const [addresses, setAddresses] = useState(customer && customer.addresses ? customer.addresses : []);
   const [users, setUsers] = useState(customer && customer.users ? customer.users : []);
 
-
-
   useEffect(() => {
     addInitContact();
     addInitAddress();
@@ -106,7 +102,9 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
   const handleClose = () => {
     setOpen(false);
     onClose();
+    setCustomer(null);
   };
+
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
@@ -235,18 +233,27 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
   };
 
   const handleAddCustomer = async () => {
-    setCustomer({ ...customer, addresses: addresses });
-    setCustomer({ ...customer, contacts: contacts });
-    setCustomer({ ...customer, users: users });
-    addNewCustomer(customer,setCustomer);
-
+    const updatedCustomer = {
+      ...customer,
+      addresses: addresses,
+      contacts: contacts,
+      users: users
+    };
+    setCustomer(updatedCustomer);
+    addNewCustomer(updatedCustomer, setCustomer);
   };
 
   const handleEditCustomer = () => {
-    setCustomer({ ...customer, addresses: addresses });
-    setCustomer({ ...customer, contacts: contacts });
-    setCustomer({ ...customer, users: users });
-    editCustomer(customer,setCustomer);
+    const updatedCustomer = {
+      ...customer,
+      addresses: addresses,
+      contacts: contacts,
+      users: users
+    };
+    setCustomer(updatedCustomer);
+    console.log("test");
+    console.log(updatedCustomer);
+    editCustomer(updatedCustomer,setCustomer);
   };
 
   return (
@@ -294,7 +301,7 @@ const CustomerCardWidget = ({ openModal, modalTitle, onClose, customer, setCusto
       </Row>
       <div >
         <ThemeProvider theme={theme}>
-          <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary" TabIndicatorProps={{ style: { display: 'none' }, }} >
+          <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary" TabIndicatorProps={{ style: { display: 'none' }}} >
             <Tab sx={{ backgroundColor: selectedTab === 0 ? '#ED028C' : '#EBECFF', color: selectedTab === 0 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "82px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.general")} />
             <Tab sx={{ backgroundColor: selectedTab === 1 ? '#ED028C' : '#EBECFF', color: selectedTab === 1 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "90px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.contacts")} />
             <Tab sx={{ backgroundColor: selectedTab === 2 ? '#ED028C' : '#EBECFF', color: selectedTab === 2 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "100px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.addresses")} />

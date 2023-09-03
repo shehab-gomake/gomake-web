@@ -14,17 +14,15 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 export default function Home() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const [pageNumber, setPageNumber] = useState(1);
-
+  const [pageNumber,setPageNumber] = useState(1);
   const { tabelHeaders, setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType,
     valStatus , pagesCount,customerForEdit,setCustomerForEdit,showCustomerModal,setShowCustomerModal} = useCustomers("C",pageNumber);
-
 
   return (
     <CustomerAuthLayout>
       <div style={clasess.sameRow}>
         <HeaderTitle title={t("customers.title")} />
-        <AddCustomerButton></AddCustomerButton>
+        <AddCustomerButton></AddCustomerButton> 
       </div>
       <HeaderFilter
         setAllCustomers={setAllCustomers}
