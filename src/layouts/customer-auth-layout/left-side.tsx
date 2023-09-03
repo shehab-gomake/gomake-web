@@ -7,6 +7,7 @@ import { useRecoilState } from "recoil";
 import { navStatusState } from "@/store/nav-status";
 import { BackNavIcon } from "@/icons/back-nav";
 import config from "@/config";
+import { adaptRight } from "@/utils/adapter";
 
 const LeftSideLayout = () => {
   const { t } = useTranslation();
@@ -20,7 +21,7 @@ const LeftSideLayout = () => {
       <div
         style={{
           position: "absolute",
-          left: navStatus.isClosed ? 127 : 265,
+          ...adaptRight(t("direction"), navStatus.isClosed ? 127 : 265),
           top: navStatus.isClosed ? 50 : 80,
           transform: navStatus.isClosed ? "rotate(180deg)" : "rotate(0)",
           // transform: "rotate(90deg)",

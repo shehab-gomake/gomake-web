@@ -24,7 +24,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: 80,
+        gap: 40,
         marginBottom: 20,
       },
       headerTabContainer: {
