@@ -30,20 +30,12 @@ const useStyle = ({
         height: "100vh",
         display: "flex",
         flexDirection: "column" as "column",
-        justifyContent: "space-between" as "space-between",
+        justifyContent: "flex-start" as "flex-start",
         alignItems: "center",
-        paddingRight: navStatus?.isClosed
-          ? convertWidthToVW(5)
-          : convertWidthToVW(26),
-        paddingLeft: navStatus?.isClosed
-          ? convertWidthToVW(5)
-          : convertWidthToVW(26),
-        paddingTop: navStatus?.isClosed
-          ? convertHeightToVH(8)
-          : convertWidthToVW(40),
-        paddingBottom: navStatus?.isClosed
-          ? convertHeightToVH(8)
-          : convertWidthToVW(40),
+        paddingRight: navStatus?.isClosed ? 5 : 26,
+        paddingLeft: navStatus?.isClosed ? 5 : 26,
+        paddingTop: navStatus?.isClosed ? 8 : 40,
+        paddingBottom: navStatus?.isClosed ? 8 : 40,
         overflowY: "scroll" as "scroll",
       },
       rightContainer: {
@@ -52,7 +44,6 @@ const useStyle = ({
         flexDirection: "column" as "column",
         padding: 20,
         paddingTop: 7,
-        // overflowY: "scroll" as "scroll",
         backgroundColor: "#FFFFFF",
       },
       headerContainer: {
@@ -89,10 +80,13 @@ const useStyle = ({
       ///Tab
       tabsContainer: {
         alignSelf: "flex-start",
-        // height: "100%",
         width: "100%",
-        marginTop: convertHeightToVH(46),
-        overflow: "scroll" as "scroll",
+        // height: "100%",
+        marginTop: 46,
+      },
+      lastTabsContainer: {
+        alignSelf: "flex-start",
+        width: "100%",
       },
       tabContainer: {
         display: "flex",
