@@ -204,7 +204,7 @@ const RightSideWidget = ({
           )}
         </div>
       </div>
-      <GomakePrimaryButton
+      {/* <GomakePrimaryButton
         style={clasess.addOrderBtn}
         onClick={onOpeneMakeShape}
       >
@@ -212,7 +212,7 @@ const RightSideWidget = ({
       </GomakePrimaryButton>
       <div style={clasess.noVatStyle}>
         {t("products.offsetPrice.admin.dontVAT")}
-      </div>
+      </div> */}
     </div>
   );
 };

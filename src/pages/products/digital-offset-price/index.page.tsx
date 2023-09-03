@@ -57,7 +57,14 @@ export default function DigitalOffsetPrice() {
   };
   return (
     <CustomerAuthLayout>
-      <div style={{ height: "100%" }}>
+      <div
+        style={{
+          height: "100%",
+          minHeight: "100%",
+          maxHeight: "100%",
+          // backgroundColor: "beige",
+        }}
+      >
         {template?.sections?.length > 0 && (
           <div style={clasess.mainContainer}>
             <HeaderTitle
@@ -81,9 +88,7 @@ export default function DigitalOffsetPrice() {
                     );
                   })}
                 </div>
-                <div
-                  style={{ height: "53vh", overflow: "scroll", width: "100%" }}
-                >
+                <div style={{ height: 645, overflow: "scroll", width: "100%" }}>
                   <div style={clasess.sectionsContainer}>
                     {[...template?.sections, PricingTab]?.map(
                       (section: any, index: number) => {
@@ -138,22 +143,6 @@ export default function DigitalOffsetPrice() {
                     )}
                   </div>
                 </div>
-                <div style={clasess.addPreviousContainer}>
-                  {activeIndex != 0 ? (
-                    <GomakePrimaryButton
-                      style={clasess.previousBtnStyle}
-                      onClick={handlePreviousClick}
-                    >
-                      {t("products.offsetPrice.admin.previousBtn")}
-                    </GomakePrimaryButton>
-                  ) : null}
-                  <GomakePrimaryButton
-                    style={clasess.nextBtnStyle}
-                    onClick={handleNextClick}
-                  >
-                    {t("products.offsetPrice.admin.nextBtn")}
-                  </GomakePrimaryButton>
-                </div>
               </div>
 
               <RightSideWidget
@@ -182,6 +171,49 @@ export default function DigitalOffsetPrice() {
               onClose={onCloseChooseShape}
               modalTitle={t("products.offsetPrice.admin.chooseShape")}
             />
+            <div
+              style={{
+                width: "100%",
+                // height: 40,
+                background: "#FFFFFF",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                // boxShadow: "0px 0px 15px  rgba(0, 0, 0, 0.08)",
+                paddingTop: 10,
+              }}
+            >
+              <div style={{ width: "68%" }}>
+                <div style={clasess.addPreviousContainer}>
+                  {activeIndex != 0 ? (
+                    <GomakePrimaryButton
+                      style={clasess.previousBtnStyle}
+                      onClick={handlePreviousClick}
+                    >
+                      {t("products.offsetPrice.admin.previousBtn")}
+                    </GomakePrimaryButton>
+                  ) : null}
+                  <GomakePrimaryButton
+                    style={clasess.nextBtnStyle}
+                    onClick={handleNextClick}
+                  >
+                    {t("products.offsetPrice.admin.nextBtn")}
+                  </GomakePrimaryButton>
+                </div>
+              </div>
+              <div style={{ width: 330 }}>
+                <GomakePrimaryButton
+                  style={clasess.addOrderBtn}
+                  onClick={onOpeneMakeShape}
+                >
+                  {t("products.offsetPrice.admin.addOrder")}
+                </GomakePrimaryButton>
+                <div style={clasess.noVatStyle}>
+                  {t("products.offsetPrice.admin.dontVAT")}
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
