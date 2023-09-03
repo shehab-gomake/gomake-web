@@ -6,14 +6,12 @@ import { useAuthLayoutHook } from "./use-auth-layout-hook";
 import { useRecoilState } from "recoil";
 import { navStatusState } from "@/store/nav-status";
 import { BackNavIcon } from "@/icons/back-nav";
-import config from "@/config";
 import { adaptRight } from "@/utils/adapter";
 
 const LeftSideLayout = () => {
   const { t } = useTranslation();
   const { tabs1, tabs2, tabs3 } = useAuthLayoutHook();
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
-  const displayedProductionTabs = tabs1.filter((tab) => tab.isProduction);
 
   const { clasess } = useStyle({ navStatus });
   return (
@@ -60,7 +58,6 @@ const LeftSideLayout = () => {
         style={{
           height: "100%",
           width: "100%",
-          // background: "red",
           overflow: "scroll",
           alignSelf: "flex-start",
         }}
