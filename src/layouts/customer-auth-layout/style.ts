@@ -51,6 +51,7 @@ const useStyle = ({
         display: "flex",
         flexDirection: "column" as "column",
         padding: 20,
+        paddingTop: 7,
         // overflowY: "scroll" as "scroll",
         backgroundColor: "#FFFFFF",
       },
