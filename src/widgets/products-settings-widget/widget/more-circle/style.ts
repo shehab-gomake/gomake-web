@@ -24,6 +24,17 @@ const useStyle = () => {
         height: 1,
         backgroundColor: "#EEEEEE",
       },
+      menuRowStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 8,
+      },
+      rowTextStyle: {
+        ...FONT_FAMILY.Lexend(500, 10),
+        color: "rgba(130, 131, 190, 1)",
+      },
     };
   }, []);
   return {

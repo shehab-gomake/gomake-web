@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { matchSorter } from "match-sorter";
 
-import { getAllProductsMongoDB } from "@/services/hooks";
+import { getAllProductsMongoDB, getAlltProductSKU } from "@/services/hooks";
 import { useGomakeAxios } from "@/hooks";
 
 import { MoreMenuWidget } from "./widget/more-circle";
@@ -15,6 +15,27 @@ const useSettings = () => {
   const [allProducts, setAllProducts] = useState<any>();
   const [term, setTerm] = useState<any>("");
   const [productSearched, setProductSearched] = useState([]);
+  const [allProductSKU, setAllProductSKU] = useState<any>();
+  const getAllProductsSKU = useCallback(async () => {
+    await getAlltProductSKU(callApi, setAllProductSKU);
+  }, []);
+  const updatedProduct = useCallback(async (product: any) => {
+    const res: any = await callApi(
+      "PUT",
+      `/v1/printhouse-config/products/update-product-status`,
+      {
+        Id: product.id,
+        status: !product?.status,
+      }
+    );
+    if (res?.success) {
+      getActions();
+      return true;
+    } else {
+      return false;
+    }
+  }, []);
+
   const getActions = useCallback(async () => {
     const data = await getAllProductsMongoDB(callApi, setAllProducts);
     const mapData = data?.map((item: any) => {
@@ -47,7 +68,7 @@ const useSettings = () => {
             )}
           </div>
         ),
-        more: <MoreMenuWidget />,
+        more: <MoreMenuWidget item={item} updatedProduct={updatedProduct} />,
         id: item?.id,
       };
     });
@@ -55,6 +76,7 @@ const useSettings = () => {
   }, []);
   useEffect(() => {
     getActions();
+    getAllProductsSKU();
   }, []);
   const tableHeaders = [
     t("products.productManagement.admin.productCode"),
@@ -77,6 +99,7 @@ const useSettings = () => {
     allProducts,
     term,
     productSearched,
+    allProductSKU,
     setTerm,
   };
 };

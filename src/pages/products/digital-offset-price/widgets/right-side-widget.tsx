@@ -48,6 +48,9 @@ const RightSideWidget = ({
                 defaultValue={clientDefaultValue}
                 onChangeTextField={checkWhatRenderArray}
                 style={clasess.dropDownListStyle}
+                onChange={(e, value) => {
+                  console.log(value);
+                }}
               />
             )}
           </div>
@@ -62,6 +65,9 @@ const RightSideWidget = ({
                 getOptionLabel={(option: any) => option.name}
                 defaultValue={clientTypeDefaultValue}
                 style={clasess.dropDownListStyle}
+                onChange={(e, value) => {
+                  console.log(value);
+                }}
               />
             )}
           </div>
@@ -159,6 +165,9 @@ const RightSideWidget = ({
                   options={["q", "w"]}
                   placeholder={t("products.offsetPrice.admin.sampleType")}
                   style={clasess.dropDownListStyle}
+                  onChange={(e, value) => {
+                    console.log(value);
+                  }}
                 />
               </div>
               <div style={clasess.multiLineContainer}>
@@ -179,6 +188,9 @@ const RightSideWidget = ({
                   options={["q", "w"]}
                   placeholder={t("products.offsetPrice.admin.sampleType")}
                   style={clasess.dropDownListStyle}
+                  onChange={(e, value) => {
+                    console.log(value);
+                  }}
                 />
               </div>
               <div style={clasess.multiLineContainer}>
@@ -192,7 +204,7 @@ const RightSideWidget = ({
           )}
         </div>
       </div>
-      <GomakePrimaryButton
+      {/* <GomakePrimaryButton
         style={clasess.addOrderBtn}
         onClick={onOpeneMakeShape}
       >
@@ -200,7 +212,7 @@ const RightSideWidget = ({
       </GomakePrimaryButton>
       <div style={clasess.noVatStyle}>
         {t("products.offsetPrice.admin.dontVAT")}
-      </div>
+      </div> */}
     </div>
   );
 };

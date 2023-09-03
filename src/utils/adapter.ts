@@ -7,6 +7,24 @@ export const convertHeightToVH = (width: number) => {
 export const leftRightAdapter = (dir: string, size: number) => {
   return dir === "rtl" ? { right: size } : { left: size };
 };
+export const adaptRight = (dir: string, size: number) => {
+  return dir === "rtl"
+    ? {
+        right: size,
+      }
+    : {
+        left: size,
+      };
+};
+export const adaptLeft = (dir: string, size: number) => {
+  return dir === "rtl"
+    ? {
+        left: size,
+      }
+    : {
+        right: size,
+      };
+};
 
 export const DateFormatterDDMMYYYY = (date: string) => {
   if (date) {

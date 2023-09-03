@@ -15,24 +15,24 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        marginBottom: 24,
+        marginBottom: 7,
       },
       searchInputContainer: {
         width: convertWidthToVW(375),
         backgroundColor: "#F8F8F8",
         borderRadius: 10,
+        height: 30,
       },
       iconStyle: {
         position: "absolute" as "absolute",
         ...leftRightAdapter(t("direction"), 16),
-        top: 8,
+        top: 5,
       },
       rightSideContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        // gap: 8,
       },
       profileContainer: {
         display: "flex",
