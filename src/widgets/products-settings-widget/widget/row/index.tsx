@@ -15,7 +15,7 @@ const Row = ({ row, width, tablePercent, index }: any) => {
               key={`row_table_${index}`}
               style={clasess.rowItem}
               className="scrollBlue"
-              onClick={() => navigate(`/settings/edit-product/${row?.id}`)}
+              // onClick={() => navigate(`/settings/edit-product/${row?.id}`)}
             >
               {entry[1]}
             </div>
