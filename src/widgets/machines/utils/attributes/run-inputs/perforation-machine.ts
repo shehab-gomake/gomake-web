@@ -2,11 +2,11 @@ const perforationMachine = (state: Record<string, any>) => {
     return [
         {
             name: '',
-            parameterKey: 'folding',
+            parameterKey: 'perforation',
             machineInputType: 'multiInput',
-            value: state.attributes?.folding ? state.attributes?.folding : {},
-            isValid: !!state?.attributes?.folding?.maxLength &&
-                !!state?.attributes?.folding?.maxWidth,
+            value: state.attributes?.perforation ? state.attributes?.perforation : {},
+            isValid: !!state?.attributes?.perforation?.maxLength &&
+                !!state?.attributes?.perforation?.maxWidth,
             inputs: [
                 {
                     name: "",

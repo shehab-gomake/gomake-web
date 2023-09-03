@@ -39,8 +39,9 @@ const useStyle = () => {
                 '&:hover': {
                     backgroundColor: primaryColor(200),
                 },
-                marginBottom: '40px'
-            },
+                marginBottom: '40px',
+                textTransform: 'capitalize'
+    },
             exportBtn: {
                 ...FONT_FAMILY.Lexend(500, 16),
                 backgroundColor: '#FFF',
@@ -49,7 +50,9 @@ const useStyle = () => {
                 '&:hover': {
                     backgroundColor: secondColor(500),
                     color: '#FFF'
-                }
+                },
+                textTransform: 'capitalize'
+
             },
             printBtn: {
                 ...FONT_FAMILY.Lexend(500, 16),
@@ -57,8 +60,10 @@ const useStyle = () => {
                 color: '#FFF',
                 '&:hover': {
                     backgroundColor: secondColor(200),
-                }
-            }
+                },
+            textTransform: 'capitalize'
+            },
+
         };
     }, [theme]);
     return {
