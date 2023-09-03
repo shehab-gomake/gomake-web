@@ -1,10 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { InputAdornment } from "@mui/material";
-import {
-  GoMakeAutoComplate,
-  GoMakeTextInputIcon,
-  GomakePrimaryButton,
-} from "@/components";
+import { GoMakeAutoComplate, GoMakeTextInputIcon } from "@/components";
 import { AddPlusIcon, SearchIcon } from "@/icons";
 import { useGomakeRouter } from "@/hooks";
 import { HeaderTitle } from "@/widgets";
@@ -97,9 +93,6 @@ const ProductsSettingsWidget = () => {
             return (
               <div key={`body_row${index}`} style={{ width: "100%" }}>
                 <Row row={row} index={index} />
-                {index != allProducts?.length - 1 ? (
-                  <div style={clasess.line} />
-                ) : null}
               </div>
             );
           })}
@@ -110,9 +103,6 @@ const ProductsSettingsWidget = () => {
             return (
               <div key={`body_row${index}`} style={{ width: "100%" }}>
                 <Row row={row} index={index} />
-                {index != allProducts?.length - 1 ? (
-                  <div style={clasess.line} />
-                ) : null}
               </div>
             );
           })}
