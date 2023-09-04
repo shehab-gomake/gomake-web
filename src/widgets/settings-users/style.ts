@@ -13,6 +13,7 @@ const useStyle = () => {
                 backgroundColor: '#FFF',
                 zIndex: 1,
                 padding: 1,
+                paddingTop: 0,
                 paddingBottom: '12px'
             },
             headerBtn: {
@@ -39,7 +40,7 @@ const useStyle = () => {
                 '&:hover': {
                     backgroundColor: primaryColor(200),
                 },
-                marginBottom: '40px',
+                marginBottom: '20px',
                 textTransform: 'capitalize'
     },
             exportBtn: {

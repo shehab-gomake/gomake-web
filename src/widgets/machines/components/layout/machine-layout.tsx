@@ -13,7 +13,7 @@ const MachineLayout = ({side, children, subHeader, header}: IMachineLayoutProps)
                     {side}
                 </div>
                 <div style={classes.main}>
-                    <h2 style={classes.subHeader}>{subHeader}</h2>
+                    {subHeader && <h2 style={classes.subHeader}>{subHeader}</h2>}
                     <div style={{overflow: 'scroll', maxHeight: '100%'}}>
                         {children}
                     </div>
