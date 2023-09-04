@@ -62,14 +62,13 @@ export default function DigitalOffsetPrice() {
           height: "100%",
           minHeight: "100%",
           maxHeight: "100%",
-          // backgroundColor: "beige",
         }}
       >
         {template?.sections?.length > 0 && (
           <div style={clasess.mainContainer}>
             <HeaderTitle
               title={t("products.offsetPrice.admin.title2")}
-              marginTop={38}
+              marginTop={24}
               marginBottom={24}
             />
             <div style={clasess.mainRowContainer}>

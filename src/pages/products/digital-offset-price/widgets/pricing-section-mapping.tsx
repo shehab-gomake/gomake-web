@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Table } from "@/widgets/table/table";
 import { FlowsMappingWidget } from "./flows-mapping";
+import { ActionMappingWidget } from "./action-mapping";
 
 const PricingSectionMappingWidget = ({
   clasess,
@@ -9,6 +10,7 @@ const PricingSectionMappingWidget = ({
   section,
   pricingDefaultValue,
 }: any) => {
+  console.log("pricingDefaultValue", pricingDefaultValue);
   const { t } = useTranslation();
   return (
     <div style={clasess.pricingSectionContainer}>
@@ -48,15 +50,32 @@ const PricingSectionMappingWidget = ({
           <div style={clasess.actionsStyleContainer}>
             {t("products.offsetPrice.admin.actions")}
           </div>
-          {pricingDefaultValue?.workFlows?.map((flow: any) => {
+          {pricingDefaultValue?.workFlows[0]?.actions?.map((flow: any) => {
+            const actionData = section.actions.find(
+              (item: any) => item.actionId === flow.actionId
+            );
+            const machinData = actionData?.machineCategories;
+            const machinesArray = machinData?.find(
+              (item) => item.machineCategoryId === flow?.machineCategoryId
+            )?.machines;
+            console.log("actionData", actionData);
+            console.log("flow", flow);
             return (
-              <FlowsMappingWidget
+              <ActionMappingWidget
                 clasess={clasess}
-                flow={flow}
+                action={flow}
+                actionData={actionData}
                 machineCategories={machineCategories}
                 onChangeCategoryData={onChangeCategoryData}
-                section={section}
+                machinesArray={machinesArray}
               />
+              // <FlowsMappingWidget
+              //   clasess={clasess}
+              //   flow={flow}
+              //   machineCategories={machineCategories}
+              //   onChangeCategoryData={onChangeCategoryData}
+              //   section={section}
+              // />
             );
           })}
         </>

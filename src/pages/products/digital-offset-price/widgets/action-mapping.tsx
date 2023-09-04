@@ -10,12 +10,13 @@ const ActionMappingWidget = ({
   onChangeCategoryData,
 }: any) => {
   const { t } = useTranslation();
-
+  console.log("actionDataaa", actionData);
+  console.log("actionnnn", action);
   const [machinesArray, setMachinesArray] = useState([]);
   useEffect(() => {
     setMachinesArray(
       actionData?.machineCategories.find(
-        (c) => c.machineCategoryId === action.machineCategoryId
+        (c) => c.machineCategoryId === action.categoryId
       )?.machines
     );
   }, [machineCategories]);
@@ -23,7 +24,7 @@ const ActionMappingWidget = ({
     <div style={clasess.summaryContainer}>
       <div style={clasess.actionNameStyle}>{action?.actionName}</div>
       <div style={clasess.cellsContainerStyle}>
-        <div
+        {/* <div
           style={{
             minWidth: 180,
             padding: 22,
@@ -34,7 +35,7 @@ const ActionMappingWidget = ({
             placeholder={t("products.offsetPrice.admin.stationName")}
             style={clasess.actoionsSelectContainer}
           />
-        </div>
+        </div> */}
         <div
           style={{
             minWidth: 180,
@@ -68,13 +69,14 @@ const ActionMappingWidget = ({
             style={clasess.actoionsSelectContainer}
           />
         </div>
-        <div
-          style={{
-            minWidth: 180,
-            padding: 22,
-          }}
-        >
-          {machinesArray?.length > 0 && (
+
+        {machinesArray?.length > 0 ? (
+          <div
+            style={{
+              minWidth: 180,
+              padding: 22,
+            }}
+          >
             <GoMakeAutoComplate
               options={machinesArray}
               getOptionLabel={(option: any) => option.machineName}
@@ -83,9 +85,12 @@ const ActionMappingWidget = ({
               )}
               placeholder={t("products.offsetPrice.admin.machine")}
               style={clasess.actoionsSelectContainer}
+              onChange={(e: any, item: any) => {
+                console.log("item", item);
+              }}
             />
-          )}
-        </div>
+          </div>
+        ) : null}
 
         {action?.outputs.map((output: any) => {
           return (
