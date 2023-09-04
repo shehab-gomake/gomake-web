@@ -1,11 +1,11 @@
-import { CustomerAuthLayout } from "@/layouts";
+import {useEffect} from "react";
+import {useRouter} from "next/router";
+import {list} from "@/widgets/settings/side-list";
 
-import { SettingsWidget } from "@/widgets/settings/settings";
-
-export default function SettingsPage() {
-  return (
-    <CustomerAuthLayout>
-      <SettingsWidget />
-    </CustomerAuthLayout>
-  );
+export default function S() {
+    const {push} = useRouter()
+    useEffect(() => {
+        push('/settings/' + list[0].path).then();
+    }, [])
+    return <div/>
 }

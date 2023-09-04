@@ -26,6 +26,18 @@ const foldingMachine = (state: Record<string, any>) => {
             isValid: !!state?.attributes?.unitDelay,
         },
         {
+            name: "foldingDelay",
+            label: "machineAttributes.foldingDelay",
+            type: "text",
+            placeholder: "machineAttributes.foldingDelay",
+            required: true,
+            parameterKey: "foldingDelay",
+            options: [],
+            value: state?.attributes?.foldingDelay ? state?.attributes?.foldingDelay : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.foldingDelay,
+        },
+        {
             name: 'machineAttributes.speedByMediaWeight',
             parameterKey: 'speedByMediaWeight',
             value: state.attributes?.speedByMediaWeight || [],

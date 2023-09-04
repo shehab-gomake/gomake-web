@@ -9,9 +9,9 @@ const useStyle = () => {
       container: {
         display: "flex",
         gap: 26,
-        padding: "14px 0",
+        padding: "14px 20px",
         minHeight: '100%',
-        maxHeight: '80vh'
+        maxHeight: '89vh',
       },
       sideList: {
         minWidth: 264,

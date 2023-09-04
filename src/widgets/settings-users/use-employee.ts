@@ -51,9 +51,12 @@ const useEmployee = () => {
     const editEmployee = (id: string) => {
         callApi('GET', '/v1/crm-service/employee/get-employee/' + id).then(
             (res) => {
-                setEmployeeState({...employee, employee: {...employee.employee, ...res?.data?.data?.data}});
-                setAction(EmployeeActions.UPDATE);
-                setOpenModal(true);
+                if (res.success) {
+                    setEmployeeState(res?.data?.data?.data);
+                    setAction(EmployeeActions.UPDATE);
+                    setOpenModal(true);
+
+                }
             }
         )
     }
@@ -83,10 +86,50 @@ const useEmployee = () => {
     }
 
     const onAddEmployee = () => {
-        callApi('POST', '/v1/crm-service/employee/add-employee', employee).then()
+        callApi('POST', '/v1/crm-service/employee/add-employee', employee).then(
+            (res) => {
+                if (res.success) {
+                    setSnackbarStateValue({
+                        state: true,
+                        message: t("modal.addedSusuccessfully"),
+                        type: "sucess",
+                    });
+                    const newEmployee: IUser= res?.data?.data?.data
+                    setUsers([newEmployee, ...users]);
+                    setOpenModal(false);
+                    setEmployeeState(initState);
+                }else {
+                    setSnackbarStateValue({
+                        state: true,
+                        message: t("modal.addedfailed"),
+                        type: "error",
+                    });
+                }
+            }
+        )
     }
     const onUpdateEmployee = () => {
-        callApi('PUT', '/v1/crm-service/employee/update-employee', employee).then()
+        callApi('PUT', '/v1/crm-service/employee/update-employee', employee).then(
+            (res) => {
+                if (res.success) {
+                    const newEmployee = res.data?.data?.data;
+                    setUsers(users.map(user => user.id === newEmployee?.id ? newEmployee : user))
+                    setOpenModal(false);
+                    setEmployeeState(initState);
+                    setSnackbarStateValue({
+                        state: true,
+                        message: t("modal.updatedSusuccessfully"),
+                        type: "sucess",
+                    });
+                }else {
+                    setSnackbarStateValue({
+                        state: true,
+                        message: t("modal.updatedfailed"),
+                        type: "error",
+                    });
+                }
+            }
+        )
     }
 
     const handleAddEmployeeClick = () => {
