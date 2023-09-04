@@ -70,13 +70,13 @@ const CustomerCardWidget = ({ openModal , modalTitle, onClose, customer, setCust
   const onChangeAgent = useCallback(async (e: any, value: any) => {
     setAgentName(value?.label);
     setCustomer({ ...customer, agentId: value?.id })
-  },[]);
+  },[customer]);
 
   const [currencyText, setCurrencyText] = useState([]);
   const onChangeCurrency = useCallback(async (e: any, value: any) => {
     setCurrencyText(value?.label);
     setCustomer({ ...customer, currency: value?.id })
-  },[]);
+  },[customer]);
 
   useEffect(() => {
     setAgentName(customer && customer.agentId ? agentsCategores.find((agent) => agent.id == customer?.agentId)?.label : []);
@@ -243,7 +243,6 @@ const CustomerCardWidget = ({ openModal , modalTitle, onClose, customer, setCust
       users: filteredUserss
     };
     setCustomer(updatedCustomer);
-    console.log(updatedCustomer);
     addNewCustomer(updatedCustomer, setCustomer);
   };
 
@@ -258,7 +257,6 @@ const CustomerCardWidget = ({ openModal , modalTitle, onClose, customer, setCust
       users: filteredUserss
     };
     setCustomer(updatedCustomer);
-    console.log(updatedCustomer);
     editCustomer(updatedCustomer,setCustomer);
   };
 
@@ -335,7 +333,12 @@ const CustomerCardWidget = ({ openModal , modalTitle, onClose, customer, setCust
               <Row style={{ marginBottom: '24px', width: "72.5%", display: "flex", justifyContent: "center", alignItems: "center" }} >
                 {tabPanelInput(t("customers.modal.email"), customer?.mail, (e) => setCustomer({ ...customer, mail: e.target.value }))}
                 {tabPanelInput(t("customers.modal.fax"), customer?.fax, (e) => setCustomer({ ...customer, fax: e.target.value }))}
-                {tabPanelSelect(t("customers.modal.agent"), agentsCategores, "placeholder", agentName, onChangeAgent)}
+                <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
+        <h3 style={clasess.headerStyle}>{t("customers.modal.agent")}</h3>
+        <HeaderFilter style={clasess.autoComplateStyle}  setAllOptions={agentsCategores} val={agentName} onchange={onChangeAgent}></HeaderFilter>
+      </Col>
+
+
                 <Col style={{ display: "flex", flexDirection: "column", marginTop: "45px" }}>
                   <Col style={{ display: "flex", width: "170px", height: "14px", justifyContent: "flex-start", gap: "8px" }}>
                     <Switch checked={customer?.isActive} size="small" onChange={(e) => setCustomer({ ...customer, isActive: e.target.checked })} />
