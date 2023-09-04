@@ -26,7 +26,6 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        marginBottom: 20,
       },
       addProductBtnStyle: {
         display: "flex",
@@ -40,6 +39,8 @@ const useStyle = () => {
         backgroundColor: "#DCDCEC",
         borderRadius: 4,
         cursor: "pointer",
+        width: 180,
+        height: 40,
       },
       addProductBtnText: {
         ...FONT_FAMILY.Lexend(500, 16),
@@ -91,6 +92,9 @@ const useStyle = () => {
         marginLeft: 32,
         cursor: "pointer",
         borderRadius: 4,
+        backgroundColor: "white",
+        height: 40,
+        width: 150,
       },
       searchContainer: {
         display: "flex",
@@ -102,6 +106,8 @@ const useStyle = () => {
         cursor: "pointer",
         padding: "10px 32px",
         borderRadius: 4,
+        height: 40,
+        width: 120,
       },
       subHeaderRightSide: {
         display: "flex",
@@ -109,7 +115,8 @@ const useStyle = () => {
       searchInputContainer: {
         width: convertWidthToVW(375),
         backgroundColor: "#FFFFFF",
-        // boxShadow: "0px 4px 40px 0px rgba(0, 0, 0, 0.08)",
+        boxShadow: "5px 3px 150px 3px rgba(0, 0, 0, 0.08)",
+        borderRadius: 10,
       },
       iconStyle: {
         position: "absolute" as "absolute",
@@ -122,9 +129,8 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        padding: 20,
-        paddingLeft: 83,
-        paddingRight: 54,
+        padding: 10,
+
         backgroundColor: primaryColor(50),
         border: " 1px solid #EBECFF",
       },
@@ -142,9 +148,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: 20,
-        paddingLeft: 83,
-        paddingRight: 54,
+        padding: 10,
         backgroundColor: "#FFF",
         border: " 1px solid #EBECFF",
       },

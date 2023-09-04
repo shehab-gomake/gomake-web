@@ -3,42 +3,47 @@ import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import Autocomplete from "@mui/material/Autocomplete";
 import { ArrowDownIcon } from "@/icons/arrow-down";
+import { useState } from "react";
 
-const StyledAutocomplete: any = styled(Autocomplete)((props: any) => ({
-  boxSizing: "border-box",
-  borderRadius: "4px",
-  height: props?.style?.height || 40,
-  fontFamily: "Lexend",
-  fontStyle: "normal",
-  fontWeight: 300,
-  fontSize: 14,
-  lineHeight: "21px",
-  display: "flex",
-  alignItems: "center",
-  color: props?.error ? "red" : "#B9B9D9",
-  border: props?.error ? "1px solid red" : "1px solid #9E9E9E",
-  boxShadow: "0px 1px 60px rgba(0, 0, 0, 0.08)",
-  "& .MuiOutlinedInput-root": {
-    color: props?.error ? "red" : "",
+const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
+  return {
+    boxSizing: "border-box",
+    borderRadius: "4px",
     height: props?.style?.height || 40,
     fontFamily: "Lexend",
     fontStyle: "normal",
     fontWeight: 300,
+    fontSize: 14,
+    lineHeight: "21px",
+    display: "flex",
+    alignItems: "center",
+    color: props?.error ? "red" : "#B9B9D9",
+    border: props?.selectedOption
+      ? "1px solid #43c3e8"
+      : "1px solid rgba(237, 2, 140, 1)",
+    boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+    "& .MuiOutlinedInput-root": {
+      color: props?.error ? "red" : "",
+      height: props?.style?.height || 40,
+      fontFamily: "Lexend",
+      fontStyle: "normal",
+      fontWeight: 300,
+      ...props?.style,
+      "& fieldset": {
+        border: "transparent",
+        boxSizing: "border-box",
+        borderRadius: "4px",
+      },
+      "& .MuiAutocomplete-input": {
+        padding: 0,
+      },
+    },
+    "& .MuiAutocomplete-endAdornment": {
+      top: "calc(50% - 12px)",
+    },
     ...props?.style,
-    "& fieldset": {
-      border: "transparent",
-      boxSizing: "border-box",
-      borderRadius: "4px",
-    },
-    "& .MuiAutocomplete-input": {
-      padding: 0,
-    },
-  },
-  "& .MuiAutocomplete-endAdornment": {
-    top: "calc(50% - 12px)",
-  },
-  ...props?.style,
-}));
+  };
+});
 
 const GoMakeAutoComplate = ({
   value,
@@ -73,10 +78,15 @@ const GoMakeAutoComplate = ({
   arrowColor?: any;
   onChangeTextField?: any;
 }) => {
+  const [selectedOption, setSelectedOption] = useState<any>();
   return (
     <StyledAutocomplete
       {...(value && { value })}
-      onChange={onChange}
+      {...(selectedOption && { selectedOption })}
+      onChange={(e: any, value: any) => {
+        onChange(e, value);
+        setSelectedOption(value);
+      }}
       style={style}
       options={options}
       disabled={disabled}

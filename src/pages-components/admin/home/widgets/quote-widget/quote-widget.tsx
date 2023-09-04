@@ -31,6 +31,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
             getOptionLabel={(option: any) => `${option.name}-${option.code}`}
             onChangeTextField={checkWhatRenderArray}
             onChange={(e: any, value: any) => {
+              console.log("value", value);
               setSelectedCustomersList(value);
             }}
           />

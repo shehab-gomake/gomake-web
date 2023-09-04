@@ -1,6 +1,3 @@
-import { canAccessState } from "@/store/access";
-import { WaitingAuth } from "@/widgets";
-import { useRecoilState, useRecoilValue } from "recoil";
 import { IAuthLayout } from "./interfaces";
 import { LeftSideLayout } from "./left-side";
 import { useStyle } from "./style";

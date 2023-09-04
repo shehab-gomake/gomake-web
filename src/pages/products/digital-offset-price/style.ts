@@ -33,18 +33,23 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "68%",
       },
-      rightSideContainer: {
+      rightSideMainContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "330",
+        width: 330,
+        minWidth: 330,
+        maxWidth: 330,
         backgroundColor: "white",
         padding: 15,
-        marginTop: -100,
+        marginTop: -87,
         boxShadow: "0px 4px 40px 0px rgba(129, 129, 129, 0.12)",
         borderRadius: 5,
-        height: "85vh",
+        height: "100%",
+      },
+      rightSideContainer: {
+        height: "100%",
         overflow: "scroll",
       },
       tabsContainer: {
@@ -52,7 +57,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: 80,
+        gap: 40,
         marginBottom: 20,
       },
       tabContainer: {
@@ -210,7 +215,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "35%",
+        width: "62%",
       },
       labelTextStyle: {
         ...FONT_FAMILY.Lexend(500, 12),
@@ -222,7 +227,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "62%",
+        width: "35%",
       },
       flyerText: {
         color: primaryColor(900),
@@ -292,6 +297,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(700, 24),
         height: 28,
         width: "100px",
+        boxShadow: "none",
       },
       priceRecoveryContainer: {
         display: "flex",
@@ -349,6 +355,7 @@ const useStyle = () => {
         backgroundColor: secondColor(500),
         height: 40,
         padding: 20,
+        // marginTop: 34,
       },
       noVatStyle: {
         marginTop: 6,
@@ -360,7 +367,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-end",
         alignItems: "center",
-        marginTop: 30,
+        // marginTop: 30,
         width: "100%",
         gap: 16,
       },
@@ -394,7 +401,6 @@ const useStyle = () => {
       },
       multiLineContainer: {
         width: "100%",
-        marginBottom: 34,
       },
       multiLineTextInputStyle: {
         width: "100%",
