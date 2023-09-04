@@ -9,9 +9,14 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+
   /* background-color: white; */
 }
 
+html *
+{
+  font-family: "Heebo", "sans-serif" !important;
+}
 @-moz-keyframes rotate90 { 
   100% { 
     -moz-transform: rotate(90deg); 
