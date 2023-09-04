@@ -14,7 +14,7 @@ import {
   SecondSwitch,
 } from "@/components";
 import { materialsCategoriesState } from "@/store/material-categories";
-import { loadgingState } from "@/store/loading";
+import { isLoadgingState } from "@/store";
 
 const useDigitalOffsetPrice = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
@@ -459,7 +459,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               style={clasess.dropDownListStyle}
               defaultValue={defailtObjectValue || { value: "" }}
               getOptionLabel={(option: any) => option.value}
-              disableClearable={true}
               value={
                 index !== -1
                   ? {
@@ -648,7 +647,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     return isValid;
   };
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
-  const setLoading = useSetRecoilState(loadgingState);
+  const setLoading = useSetRecoilState(isLoadgingState);
   const calculationProduct = useCallback(async () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {

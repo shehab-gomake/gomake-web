@@ -4,6 +4,7 @@ import {
   GomakeTextInput,
 } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { isLoadgingState } from "@/store";
 import { loadgingState } from "@/store/loading";
 import { Checkbox, CircularProgress, Slider } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -23,7 +24,7 @@ const RightSideWidget = ({
   onOpeneMakeShape,
   pricingDefaultValue,
 }: any) => {
-  const isLoading = useRecoilValue(loadgingState);
+  const isLoading = useRecoilValue(isLoadgingState);
   const [defaultPrice, setDefaultPrice] = useState<any>();
   useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0) {
