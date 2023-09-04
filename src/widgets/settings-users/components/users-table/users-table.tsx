@@ -57,7 +57,7 @@ const UsersTable = ({users, onEditEmployee, onToggleEmployeeStatus}: IUsersTable
                                 <MenuItem onClick={() => onToggleEmployeeStatus(user.id)}>
                                     <div style={classes.menuBtn}>
                                         <ConvertIcon {...classes.icon}/>
-                                        <span>{user.isActive ? t('usersSettings.unActiveUser') : t('usersSettings.activeUser')}</span>
+                                        <span>{user.isActive ? t('usersSettings.InActiveUser') : t('usersSettings.activeUser')}</span>
                                     </div>
                                 </MenuItem>
                             </OptionsButton>
