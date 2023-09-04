@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
 import { getAndSetProductById } from "@/services/hooks";
 import { useRouter } from "next/router";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { digitslPriceState } from "./store";
 import { useMaterials } from "../use-materials";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
@@ -14,6 +14,7 @@ import {
   SecondSwitch,
 } from "@/components";
 import { materialsCategoriesState } from "@/store/material-categories";
+import { loadgingState } from "@/store/loading";
 
 const useDigitalOffsetPrice = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
@@ -25,7 +26,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const [template, setTemplate] = useState<any>([]);
   const [generalParameters, setGeneralParameters] = useState<any>([]);
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
-  console.log("generalParameters", generalParameters);
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let temp = [...isRequiredParameters];
@@ -637,9 +637,11 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     return isValid;
   };
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
+  const setLoading = useSetRecoilState(loadgingState);
   const calculationProduct = useCallback(async () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
+      setLoading(true);
       const res = await callApi(
         "POST",
         `/v1/calculation-service/calculations/calculate-product`,
@@ -648,8 +650,10 @@ const useDigitalOffsetPrice = ({ clasess }) => {
           clientTypeId: router?.query?.clientTypeId,
           productId: router?.query?.productId,
           generalParameters: generalParameters,
-        }
+        },
+        false
       );
+      setLoading(false);
       setPricingDefaultValue(res?.data?.data?.data);
     }
   }, [generalParameters, router, isRequiredParameters, validateParameters]);

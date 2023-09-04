@@ -4,9 +4,11 @@ import {
   GomakeTextInput,
 } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { Checkbox, Slider } from "@mui/material";
+import { loadgingState } from "@/store/loading";
+import { Checkbox, CircularProgress, Slider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
 
 const RightSideWidget = ({
   clasess,
@@ -21,6 +23,7 @@ const RightSideWidget = ({
   onOpeneMakeShape,
   pricingDefaultValue,
 }: any) => {
+  const isLoading = useRecoilValue(loadgingState);
   const [defaultPrice, setDefaultPrice] = useState<any>();
   useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0) {
@@ -120,11 +123,15 @@ const RightSideWidget = ({
             {t("products.offsetPrice.admin.total")}
           </div>
           <div style={clasess.totalStyle}>
-            <GomakeTextInput
-              value={defaultPrice}
-              onChange={(e: any) => setDefaultPrice(e.target.value)}
-              style={clasess.inputPriceStyle}
-            />{" "}
+            {isLoading ? (
+              <CircularProgress />
+            ) : (
+              <GomakeTextInput
+                value={defaultPrice}
+                onChange={(e: any) => setDefaultPrice(e.target.value)}
+                style={clasess.inputPriceStyle}
+              />
+            )}{" "}
             USD
           </div>
         </div>
