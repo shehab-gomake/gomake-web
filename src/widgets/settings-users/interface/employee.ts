@@ -5,7 +5,7 @@ export interface AllowedIP {
 }
 
 export interface Employee {
-    id: string;
+    id?: string;
     agentCode: string | null;
     firstname: string;
     lastname: string;
@@ -20,8 +20,8 @@ export interface Employee {
     isCourier: boolean | null;
     mailService: string;
     mailServicePassword: string;
-    creationDate: string;
-    printHouseId: string;
+    creationDate: Date;
+    printHouseId?: string;
     mailProviderId: string | null;
     smsTemplatesGroupId: string | null;
     quoteLimitationType: string | null;

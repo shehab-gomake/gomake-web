@@ -26,6 +26,18 @@ const scoringMachine = (state: Record<string, any>) => {
             isValid: !!state?.attributes?.unitDelay,
         },
         {
+            name: "scoringDelay",
+            label: "machineAttributes.scoringDelay",
+            type: "text",
+            placeholder: "machineAttributes.scoringDelay",
+            required: true,
+            parameterKey: "scoringDelay",
+            options: [],
+            value: state?.attributes?.scoringDelay ? state?.attributes?.scoringDelay : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.scoringDelay,
+        },
+        {
             name: 'machineAttributes.speedByMediaWeight',
             parameterKey: 'speedByMediaWeight',
             value: state.attributes?.speedByMediaWeight || [],

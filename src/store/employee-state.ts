@@ -2,14 +2,12 @@ import { atom } from "recoil";
 import {IUserData} from "@/widgets/settings-users/interface/employee";
 
 export const initState: IUserData = {
-  id: "",
   username: "",
   password: "",
   roleID: "",
   isCanLoginWithCode: false,
   allowedIPs: [],
   employee: {
-    id: null,
     agentCode: null,
     firstname: null,
     lastname: null,
@@ -24,8 +22,7 @@ export const initState: IUserData = {
     isCourier: null,
     mailService: null,
     mailServicePassword: "",
-    creationDate: null,
-    printHouseId: null,
+    creationDate: new Date(),
     mailProviderId: null,
     smsTemplatesGroupId: null,
     quoteLimitationType: null,

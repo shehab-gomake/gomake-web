@@ -17,6 +17,7 @@ import {
 import {
     accountInputs
 } from "@/widgets/settings-users/components/add-employee/components/general-form/inputs/account-inputs";
+import {useCallback, useEffect} from "react";
 
 const EmployeeGeneralForm = () => {
     const {t} = useTranslation();
@@ -37,13 +38,24 @@ const EmployeeGeneralForm = () => {
             [key]: value
         });
     };
+
+    const inputs = useCallback(() => {
+        return {
+            employee: employeeInfoInputs(state.employee),
+            account: accountInputs(state),
+            agent: agentInputs(state.employee),
+            ips: ipAddressesInputs(state)
+        }
+    }, [state]);
+
+    useEffect(() => console.log(state), [state])
     return (
         <div style={classes.container}>
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t('usersSettings.employeeInfo')}</h3>
                 <div style={classes.inputsContainer}>
                     {
-                        employeeInfoInputs(state.employee).map(employee => <MachineInput key={employee.parameterKey}
+                        inputs().employee.map(employee => <MachineInput key={employee.parameterKey}
                                                                                          input={employee as IInput}
                                                                                          changeState={updateEmployeeState}
                                                                                          error={false}/>)
@@ -54,7 +66,7 @@ const EmployeeGeneralForm = () => {
                 <h3 style={classes.subSectionHeader}>{t('usersSettings.account')}</h3>
                 <div style={classes.inputsContainer}>
                     {
-                        accountInputs(state).map(employee => <MachineInput key={employee.parameterKey}
+                        inputs().account.map(employee => <MachineInput key={employee.parameterKey}
                                                                            input={employee as IInput}
                                                                            changeState={updateUserState}
                                                                            error={false}/>)
@@ -65,7 +77,7 @@ const EmployeeGeneralForm = () => {
                 <h3 style={classes.subSectionHeader}>{t('usersSettings.agent')}</h3>
                 <div style={classes.inputsContainer}>
                     {
-                        agentInputs(state.employee).map(employee => <MachineInput key={employee.parameterKey}
+                        inputs().agent.map(employee => <MachineInput key={employee.parameterKey}
                                                                                   input={employee as IInput}
                                                                                   changeState={updateEmployeeState}
                                                                                   error={false}/>)
@@ -75,7 +87,7 @@ const EmployeeGeneralForm = () => {
             <div style={classes.subSection}>
                 <div style={classes.inputsContainer}>
                     {
-                        ipAddressesInputs(state).map(employee => <MachineMultiArrayInput name={employee.name}
+                        inputs().ips.map(employee => <MachineMultiArrayInput name={employee.name}
                                                                                          key={employee.parameterKey}
                                                                                          parameterKey={employee.parameterKey}
                                                                                          value={employee.value}

@@ -14,4 +14,5 @@ export interface IListItem {
     value?: string;
     component?: ()=> JSX.Element;
     icon?: () => JSX.Element;
+    path?: string;
 }
