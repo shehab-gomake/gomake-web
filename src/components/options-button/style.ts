@@ -6,7 +6,9 @@ const useStyle = () => {
     const classes = useMemo(() => {
         return {
            button: {
-               border: "1px solid", color: primaryColor(500)
+               border: "1px solid", color: primaryColor(500),
+               height: 22,
+               width: 22
            },
             menuItem: {
                 display: 'flex',

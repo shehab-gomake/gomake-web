@@ -5,7 +5,9 @@ const MachineLayout = ({side, children, subHeader, header}: IMachineLayoutProps)
     const {classes} = useStyle();
     return (
         <div>
-            <h1 style={classes.header}>{header}</h1>
+            {
+                header && <h1 style={classes.header}>{header}</h1>
+            }
             <div style={classes.container}>
                 <div style={classes.sideList}>
                     {side}
