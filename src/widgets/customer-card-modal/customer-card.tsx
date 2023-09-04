@@ -233,27 +233,40 @@ const CustomerCardWidget = ({ openModal , modalTitle, onClose, customer, setCust
   };
 
   const handleAddCustomer = async () => {
+    const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
+    const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
+    const filteredUserss = users.filter(user => !isNameIndexOnly(user));
     const updatedCustomer = {
       ...customer,
-      addresses: addresses,
-      contacts: contacts,
-      users: users
+      contacts: filteredContacts,
+      addresses: filteredAddresses,
+      users: filteredUserss
     };
     setCustomer(updatedCustomer);
+    console.log(updatedCustomer);
     addNewCustomer(updatedCustomer, setCustomer);
   };
 
   const handleEditCustomer = () => {
+    const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
+    const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
+    const filteredUserss = users.filter(user => !isNameIndexOnly(user));
     const updatedCustomer = {
       ...customer,
-      addresses: addresses,
-      contacts: contacts,
-      users: users
+      contacts: filteredContacts,
+      addresses: filteredAddresses,
+      users: filteredUserss
     };
     setCustomer(updatedCustomer);
-    console.log("test");
     console.log(updatedCustomer);
     editCustomer(updatedCustomer,setCustomer);
+  };
+
+  // in order to avoid sending an empty object that include just name & index
+  const isNameIndexOnly = (dataObject) => {
+    const { name, index, ...otherProps } = dataObject;
+    const emptyProps = Object.values(otherProps).every(prop => prop === null || prop === "");
+    return emptyProps;
   };
 
   return (

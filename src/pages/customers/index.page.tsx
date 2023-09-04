@@ -16,7 +16,7 @@ export default function Home() {
   const { clasess } = useStyle();
   const [pageNumber,setPageNumber] = useState(1);
   const { tabelHeaders, setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType,
-    valStatus , pagesCount,customerForEdit,setCustomerForEdit,showCustomerModal,setShowCustomerModal} = useCustomers("C",pageNumber);
+    valStatus , pagesCount,customerForEdit,setCustomerForEdit,showCustomerModal,setShowCustomerModal} = useCustomers("C",pageNumber , setPageNumber);
 
   return (
     <CustomerAuthLayout>
