@@ -379,7 +379,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
           (item) => item.isDefault === true
         );
         let options: any = allMaterials;
-        let defailtObjectValue = {};
+        let defailtObjectValue = { value: "" };
         if (parameter?.materialPath?.length == 3) {
           options = digitalPriceData?.selectedMaterialLvl2;
         }
@@ -391,7 +391,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
             (item) => item?.isDefault
           );
           let valueIdIsDefault = defaultParameter?.materialValueIds[0]?.valueId;
-
           options = digitalPriceData?.selectedMaterialLvl1;
           if (options) {
             const hiddenValueIds = valuesConfigs
@@ -425,7 +424,9 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               (item: any) =>
                 item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
             );
-            defailtObjectValue = x;
+            if (x) {
+              defailtObjectValue = x;
+            }
           }
         }
         if (parameter?.materialPath?.length == 1) {
@@ -446,7 +447,9 @@ const useDigitalOffsetPrice = ({ clasess }) => {
             (item: any) =>
               item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
           );
-          defailtObjectValue = selectedObj;
+          if (selectedObj) {
+            defailtObjectValue = selectedObj;
+          }
         }
         return (
           options?.length > 0 && (
@@ -454,11 +457,19 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               options={options}
               placeholder={parameter.name}
               style={clasess.dropDownListStyle}
-              defaultValue={defailtObjectValue}
+              defaultValue={defailtObjectValue || { value: "" }}
               getOptionLabel={(option: any) => option.value}
-              //@ts-ignore
+              disableClearable={true}
               value={
-                index !== -1 ? { value: temp[index].value } : defailtObjectValue
+                index !== -1
+                  ? {
+                      //@ts-ignore
+                      value:
+                        temp[index].value === "undefined"
+                          ? { value: "" }
+                          : temp[index].value,
+                    }
+                  : defailtObjectValue
               }
               onChange={(e: any, value: any) => {
                 if (parameter?.materialPath?.length == 3) {
@@ -523,8 +534,8 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                     ...digitalPriceData,
                     selectedMaterialLvl1: value?.data,
                     selectedOptionLvl1: value,
-                    selectedMaterialLvl2: null,
-                    selectedMaterialLvl3: null,
+                    selectedMaterialLvl2: { value: "" },
+                    selectedMaterialLvl3: { value: "" },
                   });
                 }
               }}
