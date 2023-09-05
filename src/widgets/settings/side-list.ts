@@ -9,6 +9,7 @@ import {ProductsSettingsIcon} from "@/components/icons/products-settings-icon";
 import {DocumentIcon} from "@/components/icons/document-icon";
 import {PeopleIcon} from "@/components/icons/people-icon";
 import {DollarCircleIcon} from "@/components/icons/dollar-circle-icon";
+import { SettingsPermissionsWidget } from "../settings-permissions-managment/settings-permission-widget";
 
 export const list: IListItem[] = [
     {component: EmptyComponent, text: 'settings.profile', value: '1', icon: ProfileIcon},
@@ -17,6 +18,8 @@ export const list: IListItem[] = [
     {component: EmptyComponent, text: 'settings.materials', value: '4', icon: CubeIcon},
     {component: EmptyComponent, text: 'settings.documenting', value: '5', icon: DocumentIcon},
     {component: SettingsUsersWidget, text: 'settings.users', value: '6', icon: PeopleIcon},
-    {component: EmptyComponent, text: 'settings.finances', value: '7', icon: DollarCircleIcon},
+    {component: EmptyComponent, text: 'settings.finances', value: '7', icon: DollarCircleIcon},  
+    {component: SettingsPermissionsWidget, text: 'test', value: '8', icon: DollarCircleIcon},
+
 
 ]
