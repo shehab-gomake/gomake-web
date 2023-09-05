@@ -1,4 +1,4 @@
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
 import { getAndSetProductById } from "@/services/hooks";
@@ -18,6 +18,7 @@ import { isLoadgingState } from "@/store";
 
 const useDigitalOffsetPrice = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
+  const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const [defaultPrice, setDefaultPrice] = useState<any>(30);
@@ -715,6 +716,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     clientTypeDefaultValue,
     clientTypesValue,
     pricingDefaultValue,
+    navigate,
   };
 };
 

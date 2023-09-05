@@ -32,6 +32,7 @@ export default function DigitalOffsetPrice() {
     _getParameter,
     renderOptions,
     checkWhatRenderArray,
+    navigate,
     makeShapeOpen,
     chooseShapeOpen,
     activeIndex,
@@ -55,8 +56,6 @@ export default function DigitalOffsetPrice() {
       value,
     });
   };
-  console.log("GGGGGGG");
-  console.log("activeIndex", activeIndex);
   return (
     <CustomerAuthLayout>
       <div
@@ -209,7 +208,7 @@ export default function DigitalOffsetPrice() {
               <div style={{ width: 330 }}>
                 <GomakePrimaryButton
                   style={clasess.addOrderBtn}
-                  onClick={onOpeneMakeShape}
+                  onClick={() => navigate("/quote")}
                 >
                   {t("products.offsetPrice.admin.addOrder")}
                 </GomakePrimaryButton>
