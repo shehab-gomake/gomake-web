@@ -1610,6 +1610,7 @@
     "selectStatus": "Select status",
     "active": "active",
     "inactive": "inactive",
+    "all": "all",
     "customerCode": "Customer Code",
     "name": "Name",
     "email": "Email",

@@ -35,6 +35,7 @@ const useCustomers = (clientType, pageNumber , setPageNumber ) => {
     () => [
       { label: t("customers.active"), value: "true" },
       { label: t("customers.inactive"), value: "false" },
+      { label: t("customers.all"), value: "" },
     ],
     []
   );
@@ -140,13 +141,16 @@ const useCustomers = (clientType, pageNumber , setPageNumber ) => {
     getCustomersCategores();
   }, []);
 
-  /////////////////////////  table data //////////////////////////////
+  /////////////////////////  data table  //////////////////////////////
+
   const getCustomerForEdit = async (id)=> {
     await getAndSetCustomer(callApi, setCustomerForEdit, {
       customerId: id ,
     });
     setShowCustomerModal(true)
   }
+
+  
   const getAllCustomers = useCallback(async () => {
     const data = await getAndSetAllCustomers(callApi, setAllCustomers, {
       clientType,
@@ -185,7 +189,9 @@ const useCustomers = (clientType, pageNumber , setPageNumber ) => {
     customerForEdit,
     setCustomerForEdit,
     showCustomerModal,
-    setShowCustomerModal
+    setShowCustomerModal,
+    getCustomerForEdit,
+    getAllCustomers
   };
 };
 export { useCustomers };

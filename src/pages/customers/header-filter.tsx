@@ -6,8 +6,7 @@ import { useEffect } from "react";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import * as React from 'react';
 
-const HeaderFilter = ({ setAllCustomers,
-    allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeAgent, onChangeCustomer, onChangeClientType, onChangeStatus, handleClean, cutomerName, agentName, valClientType, valStatus }: any) => {
+const HeaderFilter = ({ setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeAgent, onChangeCustomer, onChangeClientType, onChangeStatus, handleClean, cutomerName, agentName, valClientType, valStatus }: any) => {
     const { t } = useTranslation();
     const { clasess } = useStyle();
 
@@ -46,6 +45,7 @@ const HeaderFilter = ({ setAllCustomers,
                         placeholder={t("customers.selectCustomerType")}
                         onChange={onChangeClientType}
                         value={valClientType}
+                    
                     />
                 ) : (
                     <Skeleton variant="rectangular" width={200} height={40} />)}
@@ -56,6 +56,7 @@ const HeaderFilter = ({ setAllCustomers,
                         placeholder={t("customers.selectStatus")}
                         onChange={onChangeStatus}
                         value={valStatus}
+                        disableClearable={true}
                     />
                 ) : (
                     <Skeleton variant="rectangular" width={200} height={40} />

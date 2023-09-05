@@ -10,19 +10,25 @@ import Pagination from '@mui/material/Pagination';
 import { useState } from "react";
 import Stack from '@mui/material/Stack';
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
+import { customerMapFunction } from "@/services/hooks/get-set-customers";
+
 
 export default function Home() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const [pageNumber,setPageNumber] = useState(1);
-  const { tabelHeaders, setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType,
-    valStatus , pagesCount,customerForEdit,setCustomerForEdit,showCustomerModal,setShowCustomerModal} = useCustomers("C",pageNumber , setPageNumber);
+  const [pageNumber, setPageNumber] = useState(1);
+  const { tabelHeaders, setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers("C", pageNumber, setPageNumber);
+
+  const onCustomeradd = (customer) => {
+    const mapData = customerMapFunction(customer, getCustomerForEdit);
+    setAllCustomers([...allCustomers, mapData])
+  };
 
   return (
     <CustomerAuthLayout>
       <div style={clasess.sameRow}>
         <HeaderTitle title={t("customers.title")} />
-        <AddCustomerButton></AddCustomerButton> 
+        <AddCustomerButton onCustomeradd={onCustomeradd}></AddCustomerButton>
       </div>
       <HeaderFilter
         setAllCustomers={setAllCustomers}
@@ -41,15 +47,23 @@ export default function Home() {
         valStatus={valStatus}
       />
       <Stack spacing={3}>
-      <div style={clasess.tableContainer}>
-        <Table tableHeaders={tabelHeaders} tableRows={allCustomers}></Table>
-      </div>
-      <CustomerCardWidget openModal={showCustomerModal} modalTitle={t("customers.modal.editTitle") } onClose={()=>setShowCustomerModal(false)} customer={customerForEdit} setCustomer={setCustomerForEdit} showUpdateButton={true}></CustomerCardWidget>
-      <div style={{marginBottom: "5px"}}>
-      <Pagination  count={pagesCount} variant="outlined" color="primary"  page={pageNumber}
-        onChange={(event, value) => setPageNumber(value)} />
+        <div style={clasess.tableContainer}>
+          <Table tableHeaders={tabelHeaders} tableRows={allCustomers}></Table>
         </div>
-        </Stack>
+        <CustomerCardWidget
+          getAllCustomers={getAllCustomers}
+          openModal={showCustomerModal}
+          modalTitle={t("customers.modal.editTitle")}
+          onClose={() => setShowCustomerModal(false)}
+          customer={customerForEdit}
+          setCustomer={setCustomerForEdit}
+          showUpdateButton={true}>
+        </CustomerCardWidget>
+        <div style={{ marginBottom: "5px" }}>
+          <Pagination count={pagesCount} variant="outlined" color="primary" page={pageNumber}
+            onChange={(event, value) => setPageNumber(value)} />
+        </div>
+      </Stack>
     </CustomerAuthLayout>
   );
 }

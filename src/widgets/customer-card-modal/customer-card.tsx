@@ -20,18 +20,19 @@ import { useCustomersModal } from "./use-customer-modal";
 import { useAddCustomer } from "@/pages/customers/add-customer/use-add-customer";
 import { useEditCustomer } from "@/pages/customers/edit-customer/use-edit-customer";
 
-const CustomerCardWidget = ({ openModal , modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
-
-  const {addNewCustomer} = useAddCustomer();
-  const {editCustomer} = useEditCustomer();
-
+const CustomerCardWidget = ({ getAllCustomers,onCustomeradd,openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
+  const [open, setOpen] = useState(false);
+  const { addNewCustomer } = useAddCustomer();
+  const { editCustomer } = useEditCustomer();
   const { currencyCategores, agentsCategores } = useCustomersModal();
   const { t } = useTranslation();
   const theme = createMuiTheme({
     palette: {
       secondary: {
         main: '#FFF',
-      },},});
+      },
+    },
+  });
 
   const TestOptions = useMemo(
     () => [
@@ -70,13 +71,13 @@ const CustomerCardWidget = ({ openModal , modalTitle, onClose, customer, setCust
   const onChangeAgent = useCallback(async (e: any, value: any) => {
     setAgentName(value?.label);
     setCustomer({ ...customer, agentId: value?.id })
-  },[customer]);
+  }, [customer]);
 
   const [currencyText, setCurrencyText] = useState([]);
   const onChangeCurrency = useCallback(async (e: any, value: any) => {
     setCurrencyText(value?.label);
     setCustomer({ ...customer, currency: value?.id })
-  },[customer]);
+  }, [customer]);
 
   useEffect(() => {
     setAgentName(customer && customer.agentId ? agentsCategores.find((agent) => agent.id == customer?.agentId)?.label : []);
@@ -86,7 +87,6 @@ const CustomerCardWidget = ({ openModal , modalTitle, onClose, customer, setCust
 
   const { clasess } = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
-  const [open, setOpen] = useState(false);
   const [contacts, setContacts] = useState(customer && customer.contacts ? customer.contacts : []);
   const [addresses, setAddresses] = useState(customer && customer.addresses ? customer.addresses : []);
   const [users, setUsers] = useState(customer && customer.users ? customer.users : []);
@@ -232,6 +232,7 @@ const CustomerCardWidget = ({ openModal , modalTitle, onClose, customer, setCust
     );
   };
 
+  // add customer buttone
   const handleAddCustomer = async () => {
     const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
     const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
@@ -243,9 +244,13 @@ const CustomerCardWidget = ({ openModal , modalTitle, onClose, customer, setCust
       users: filteredUserss
     };
     setCustomer(updatedCustomer);
-    addNewCustomer(updatedCustomer, setCustomer);
+    addNewCustomer(updatedCustomer).then(x => {
+      onCustomeradd(x);
+      handleClose();
+    });
   };
 
+  // edit customer buttone
   const handleEditCustomer = () => {
     const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
     const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
@@ -257,7 +262,10 @@ const CustomerCardWidget = ({ openModal , modalTitle, onClose, customer, setCust
       users: filteredUserss
     };
     setCustomer(updatedCustomer);
-    editCustomer(updatedCustomer,setCustomer);
+    editCustomer(updatedCustomer, setCustomer).then(x => {
+      getAllCustomers();
+      handleClose();
+    });
   };
 
   // in order to avoid sending an empty object that include just name & index
@@ -312,7 +320,7 @@ const CustomerCardWidget = ({ openModal , modalTitle, onClose, customer, setCust
       </Row>
       <div >
         <ThemeProvider theme={theme}>
-          <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary" TabIndicatorProps={{ style: { display: 'none' }}} >
+          <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary" TabIndicatorProps={{ style: { display: 'none' } }} >
             <Tab sx={{ backgroundColor: selectedTab === 0 ? '#ED028C' : '#EBECFF', color: selectedTab === 0 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "82px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.general")} />
             <Tab sx={{ backgroundColor: selectedTab === 1 ? '#ED028C' : '#EBECFF', color: selectedTab === 1 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "90px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.contacts")} />
             <Tab sx={{ backgroundColor: selectedTab === 2 ? '#ED028C' : '#EBECFF', color: selectedTab === 2 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "100px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.addresses")} />
@@ -334,11 +342,9 @@ const CustomerCardWidget = ({ openModal , modalTitle, onClose, customer, setCust
                 {tabPanelInput(t("customers.modal.email"), customer?.mail, (e) => setCustomer({ ...customer, mail: e.target.value }))}
                 {tabPanelInput(t("customers.modal.fax"), customer?.fax, (e) => setCustomer({ ...customer, fax: e.target.value }))}
                 <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
-        <h3 style={clasess.headerStyle}>{t("customers.modal.agent")}</h3>
-        <HeaderFilter style={clasess.autoComplateStyle}  setAllOptions={agentsCategores} val={agentName} onchange={onChangeAgent}></HeaderFilter>
-      </Col>
-
-
+                  <h3 style={clasess.headerStyle}>{t("customers.modal.agent")}</h3>
+                  <HeaderFilter style={clasess.autoComplateStyle} setPlaceholder="placeholder" setAllOptions={agentsCategores} val={agentName} onchange={onChangeAgent}></HeaderFilter>
+                </Col>
                 <Col style={{ display: "flex", flexDirection: "column", marginTop: "45px" }}>
                   <Col style={{ display: "flex", width: "170px", height: "14px", justifyContent: "flex-start", gap: "8px" }}>
                     <Switch checked={customer?.isActive} size="small" onChange={(e) => setCustomer({ ...customer, isActive: e.target.checked })} />

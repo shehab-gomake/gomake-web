@@ -6,44 +6,41 @@ const useEditCustomer = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [state, setState] = useState<any>({});
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { setSnackbarStateValue } = useSnackBar();
 
   const editCustomer = useCallback(
     async (data: any, setData: any) => {
-      const res = await callApi("PUT", `/v1/customers/update-customer`, {
-        customer: data , 
+      return new Promise(async (resolve, reject) => {
+        try {
+          const res = await callApi("PUT", `/v1/customers/update-customer`, {
+            customer: data,
+          });
+          if (res?.success) {
+            setSnackbarStateValue({
+              state: true,
+              message: t("modal.updatedSusuccessfully"),
+              type: "success",
+            });
+            resolve(true); 
+          } else {
+            setSnackbarStateValue({
+              state: true,
+              message: t("modal.updatedfailed"),
+              type: "error",
+            });
+            reject("API call failed"); 
+          }
+        } catch (error) {
+          console.error("Error editing customer:", error);
+          reject(error); 
+        }
       });
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.updatedSusuccessfully"),
-          type: "sucess",
-        });
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.updatedfailed"),
-          type: "error",
-        });
-      }
     },
     [state]
   );
   
-  const onCloseDeleteModal = () => {
-    setOpenDeleteModal(false);
-  };
-
-  const onOpenDeleteModal = (item: any) => {
-    setOpenDeleteModal(true);
-  };
-
   return {
     state,
-    openDeleteModal,
-    onCloseDeleteModal,
-    onOpenDeleteModal,
     editCustomer,
   };
 };
