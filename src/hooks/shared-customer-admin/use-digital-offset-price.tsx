@@ -180,7 +180,13 @@ const useDigitalOffsetPrice = ({ clasess }) => {
         )
       );
     }
-  }, [clientTypesValue, clientDefaultValue, router]);
+  }, [
+    clientTypesValue,
+    clientDefaultValue,
+    clientTypeDefaultValue,
+    router,
+    router?.query?.customerId,
+  ]);
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {

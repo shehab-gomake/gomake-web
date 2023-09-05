@@ -55,6 +55,8 @@ export default function DigitalOffsetPrice() {
       value,
     });
   };
+  console.log("GGGGGGG");
+  console.log("activeIndex", activeIndex);
   return (
     <CustomerAuthLayout>
       <div
@@ -193,12 +195,15 @@ export default function DigitalOffsetPrice() {
                       {t("products.offsetPrice.admin.previousBtn")}
                     </GomakePrimaryButton>
                   ) : null}
-                  <GomakePrimaryButton
-                    style={clasess.nextBtnStyle}
-                    onClick={handleNextClick}
-                  >
-                    {t("products.offsetPrice.admin.nextBtn")}
-                  </GomakePrimaryButton>
+                  {[...template?.sections, PricingTab].length - 1 !=
+                  activeIndex ? (
+                    <GomakePrimaryButton
+                      style={clasess.nextBtnStyle}
+                      onClick={handleNextClick}
+                    >
+                      {t("products.offsetPrice.admin.nextBtn")}
+                    </GomakePrimaryButton>
+                  ) : null}
                 </div>
               </div>
               <div style={{ width: 330 }}>
