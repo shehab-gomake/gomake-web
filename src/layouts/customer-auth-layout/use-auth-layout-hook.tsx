@@ -105,24 +105,6 @@ const useAuthLayoutHook = () => {
       },
       {
         isLine: false,
-        key: "suppliers",
-        title: t("tabs.suppliers"),
-        path: "/product-floor",
-        isList: true,
-        list: [
-          {
-            key: "suppliers",
-            title: t("tabs.suppliers"),
-            path: "/suppliers",
-          },
-        ],
-        icon: () => {
-          return <SuppliersIcon />;
-        },
-        isProduction: true,
-      },
-      {
-        isLine: false,
         key: "reports",
         title: t("tabs.reports"),
         path: "/product-floor",
@@ -173,23 +155,6 @@ const useAuthLayoutHook = () => {
           return <SettingNavBar />;
         },
         isProduction: true,
-      },
-      {
-        isLine: false,
-        key: "settings",
-        title: t("tabs.settings"),
-        path: "/product-floor",
-        isList: true,
-        list: [
-          {
-            key: "employees",
-            title: t("tabs.employees"),
-            path: "/settings/employees",
-          },
-        ],
-        icon: () => {
-          return <ProductsIcon />;
-        },
       },
     ];
   }, []);
