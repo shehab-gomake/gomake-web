@@ -10,7 +10,6 @@ const PricingSectionMappingWidget = ({
   section,
   pricingDefaultValue,
 }: any) => {
-  console.log("pricingDefaultValue", pricingDefaultValue);
   const { t } = useTranslation();
   return (
     <div style={clasess.pricingSectionContainer}>
@@ -58,8 +57,6 @@ const PricingSectionMappingWidget = ({
             const machinesArray = machinData?.find(
               (item) => item.machineCategoryId === flow?.machineCategoryId
             )?.machines;
-            console.log("actionData", actionData);
-            console.log("flow", flow);
             return (
               <ActionMappingWidget
                 clasess={clasess}

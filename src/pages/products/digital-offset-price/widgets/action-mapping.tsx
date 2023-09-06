@@ -10,8 +10,6 @@ const ActionMappingWidget = ({
   onChangeCategoryData,
 }: any) => {
   const { t } = useTranslation();
-  console.log("actionDataaa", actionData);
-  console.log("actionnnn", action);
   const [machinesArray, setMachinesArray] = useState([]);
   useEffect(() => {
     setMachinesArray(
