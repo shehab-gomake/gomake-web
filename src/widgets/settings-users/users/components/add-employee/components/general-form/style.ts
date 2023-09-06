@@ -3,7 +3,7 @@ import {useMemo} from "react";
 import {FONT_FAMILY} from "@/utils/font-family";
 
 const useStyle = () => {
-    const {theme, primaryColor, secondColor} = useGomakeTheme();
+    const {theme, secondColor} = useGomakeTheme();
     const classes = useMemo(() => {
         return {
             subSectionHeader: {
