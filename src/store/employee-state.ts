@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import {IUserData} from "@/widgets/settings-users/interface/employee";
+import {IUserData} from "@/widgets/settings-users/users/interface/employee";
 
 export const initState: IUserData = {
   username: "",
@@ -28,7 +28,7 @@ export const initState: IUserData = {
     quoteLimitationType: null,
     quotePriceLimit: null,
     mailProvider: null,
-    PinCodeForLoginWithApplication: null
+    pinCodeForLoginWithApplication: null
   }
 };
 export const employeeState = atom<IUserData>({
