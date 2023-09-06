@@ -125,7 +125,7 @@ const RightSideWidget = ({
           </div>
           <div style={clasess.totalStyle}>
             {isLoading ? (
-              <CircularProgress />
+              <CircularProgress size={25} style={{ marginRight: 40 }} />
             ) : (
               <GomakeTextInput
                 value={defaultPrice}

@@ -32,6 +32,7 @@ export default function DigitalOffsetPrice() {
     _getParameter,
     renderOptions,
     checkWhatRenderArray,
+    navigate,
     makeShapeOpen,
     chooseShapeOpen,
     activeIndex,
@@ -193,18 +194,21 @@ export default function DigitalOffsetPrice() {
                       {t("products.offsetPrice.admin.previousBtn")}
                     </GomakePrimaryButton>
                   ) : null}
-                  <GomakePrimaryButton
-                    style={clasess.nextBtnStyle}
-                    onClick={handleNextClick}
-                  >
-                    {t("products.offsetPrice.admin.nextBtn")}
-                  </GomakePrimaryButton>
+                  {[...template?.sections, PricingTab].length - 1 !=
+                  activeIndex ? (
+                    <GomakePrimaryButton
+                      style={clasess.nextBtnStyle}
+                      onClick={handleNextClick}
+                    >
+                      {t("products.offsetPrice.admin.nextBtn")}
+                    </GomakePrimaryButton>
+                  ) : null}
                 </div>
               </div>
               <div style={{ width: 330 }}>
                 <GomakePrimaryButton
                   style={clasess.addOrderBtn}
-                  onClick={onOpeneMakeShape}
+                  onClick={() => navigate("/quote")}
                 >
                   {t("products.offsetPrice.admin.addOrder")}
                 </GomakePrimaryButton>
