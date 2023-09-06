@@ -12,6 +12,7 @@ const useContactWidget = () => {
 
   const quoteStateValue = useRecoilValue<any>(quoteState);
   const quoteItemValue: any = useRecoilValue(quoteItemState);
+  console.log("quoteItemValue", quoteItemValue);
   const [clientContactsValue] = useRecoilState<any>(clientContactsState);
   const [items, setItems] = useState([]);
   const changeItems = (index: number, filedName: string, value: any) => {

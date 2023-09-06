@@ -68,7 +68,7 @@ const useStyle = () => {
         width: "100%",
         height: 380,
         overflow: "scroll" as "scroll",
-        boxShadow: "0px 4px 20px 0 rgba(103, 103, 103, 0.08)",
+        boxShadow: "0px 4px 6px 0 rgba(103, 103, 103, 0.08)",
         marginTop: 20,
         borderRadius: 8,
       },

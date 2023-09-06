@@ -22,10 +22,11 @@ const useStyle = () => {
       leftSideContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        justifyContent: "flex-start",
+        justifyContent: "space-between",
         alignItems: "flex-start",
         gap: 16,
         width: "47%",
+        height: "100%",
       },
       textInputStyle: {
         width: "100%",
@@ -37,10 +38,10 @@ const useStyle = () => {
       btnsContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "flex-start",
+        justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
-        gap: 16,
+        // gap: 16,
       },
       btnStyle: {
         display: "flex",
@@ -53,9 +54,10 @@ const useStyle = () => {
         paddingLeft: 20,
         paddingRight: 20,
         ...FONT_FAMILY.Lexend(500, 16),
-        color: "#ED028C",
+        color: secondColor(500),
         cursor: "pointer",
-        width: "25%",
+        width: "23%",
+        height: 40,
       },
       rightSideContainer: {
         display: "flex",
@@ -141,6 +143,7 @@ const useStyle = () => {
         color: "#FFFFFF",
         ...FONT_FAMILY.Lexend(500, 16),
         width: "50%",
+        height: 40,
       },
       sendMessageBtn: {
         display: "flex",
@@ -153,6 +156,7 @@ const useStyle = () => {
         border: "1px solid #ED028C",
         ...FONT_FAMILY.Lexend(500, 16),
         width: "50%",
+        height: 40,
       },
       textInputWithoutStyle: {
         width: "100%",
