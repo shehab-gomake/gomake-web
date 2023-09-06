@@ -5,7 +5,7 @@ import {FONT_FAMILY} from "@/utils/font-family";
 import {convertWidthToVW} from "@/utils/adapter";
 
 
-const StyledTabs = styled(Tabs)((props: TabsProps) => {
+const AddEmployeeTabs = styled(Tabs)((props: TabsProps) => {
     const {secondColor} = useGomakeTheme();
     return {
         paddingLeft: convertWidthToVW(20),
@@ -18,7 +18,7 @@ const StyledTabs = styled(Tabs)((props: TabsProps) => {
         }
     }
 });
-const StyledTab = styled(Tab)((props: TabProps) => {
+const AddEmployeeTab = styled(Tab)((props: TabProps) => {
     const {secondColor, primaryColor} = useGomakeTheme();
     return {
         minWidth: 'auto',
@@ -35,4 +35,4 @@ const StyledTab = styled(Tab)((props: TabProps) => {
     }
 });
 
-export {StyledTab, StyledTabs}
+export {AddEmployeeTab, AddEmployeeTabs}

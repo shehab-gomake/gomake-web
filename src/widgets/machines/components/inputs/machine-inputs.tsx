@@ -7,7 +7,7 @@ import {useGomakeAxios} from "@/hooks";
 
 const MachineInput = ({input, error, changeState, readonly}: IMachineInput) => {
     const [options, setOptions] = useState([]);
-    const [selectedLabel, setSelectedLabel] = useState(' ');
+    const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
     const {callApi} = useGomakeAxios();
     const {t} = useTranslation();
     const {classes} = useStyle();
@@ -17,8 +17,8 @@ const MachineInput = ({input, error, changeState, readonly}: IMachineInput) => {
         changeState(input.parameterKey, e.target.value as string);
     };
     const selectChange = (event: SyntheticEvent, value): void => {
-        setSelectedLabel(value.label);
-        changeState(input.parameterKey, value.value)
+        setSelectedLabel(value?.label ? value.label : '');
+        changeState(input.parameterKey, value?.value ? value.value : '')
     }
 
     const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +30,7 @@ const MachineInput = ({input, error, changeState, readonly}: IMachineInput) => {
         if (selectedValue) {
             setSelectedLabel(selectedValue.label);
         }
-    }, [input, options])
+    }, [options])
 
     useEffect(() => {
         if (input.optionsUrl) {
@@ -44,12 +44,21 @@ const MachineInput = ({input, error, changeState, readonly}: IMachineInput) => {
         } else {
             setOptions(input.options.map(({value, text}) => ({label: text, value})))
         }
-    }, [input])
+        const selectedValue = options?.find(option => option.value === input.value);
+        if (selectedValue) {
+            setSelectedLabel(selectedValue.label);
+        }
+    }, [])
     return (
         <>
             {
                 !input.disabled && <div style={classes.inputContainer} key={input.parameterKey}>
-                    <div style={classes.inputLbl}>{t(input.label)}</div>
+                    <div style={classes.inputLbl}>
+                        <span>{t(input.label)}</span>
+                        {
+                            input.required && <span style={classes.required}>*</span>
+                        }
+                    </div>
                     <div style={classes.input}>
                         {
                             input.type === 'select' ?
@@ -57,7 +66,7 @@ const MachineInput = ({input, error, changeState, readonly}: IMachineInput) => {
                                     style={{minWidth: 200, border: 0}}
                                     onChange={selectChange}
                                     value={selectedLabel}
-                                    error={false}
+                                    error={error}
                                     disabled={!!readonly}
                                     placeholder={t(input.placeholder)}
                                 options={options}/>:
@@ -68,7 +77,7 @@ const MachineInput = ({input, error, changeState, readonly}: IMachineInput) => {
                                         style={{height: '40px'}}
                                         onChange={onChangeState}
                                         type={input.type}
-                                        error={error}
+                                        error={error || (input.value && input.regex && !input.regex.test(input.value))}
                                         placeholder={t(input.placeholder)}
                                         disabled={!!readonly}
                                         value={input.value}

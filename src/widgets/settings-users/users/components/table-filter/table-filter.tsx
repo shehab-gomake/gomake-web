@@ -1,6 +1,6 @@
-import {ITableFilterProps} from "@/widgets/settings-users/interface/components-props";
+import {ITableFilterProps} from "@/widgets/settings-users/users/interface/components-props";
 import {GoMakeTextInputIcon, SecondSwitch} from "@/components";
-import {useStyle} from "@/widgets/settings-users/components/table-filter/style";
+import {useStyle} from "@/widgets/settings-users/users/components/table-filter/style";
 import {useTranslation} from "react-i18next";
 import {InputAdornment} from "@mui/material";
 import {SearchIcon} from "@/icons";

@@ -21,6 +21,12 @@ const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value,
                     canAdd = false;
                 }
             }
+            if (!!input.regex) {
+                if (!input.regex.test(state[input.parameterKey])) {
+                    canAdd = false;
+                }
+            }
+
         })
         setErrors(requiredErrors);
         if (canAdd) {
@@ -56,7 +62,7 @@ const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value,
                         input.value = state[input.parameterKey] ? state[input.parameterKey] : '';
                         return <MachineInput key={input.parameterKey + index}
                                              input={input}
-                                             error={!!(errors && errors[input.parameterKey]) || !isValid}
+                                             error={!!input.value && !!input.regex ? !input.regex.test(input.value) : !!(errors && errors[input.parameterKey]) || !isValid}
                                              changeState={handleInputChanges1}/>
                     })
                 }
