@@ -10,8 +10,9 @@ export interface IInput {
   value?: string;
   disabled?: boolean;
   machineInputType?: string;
-  inputs: IInput[];
   isValid: boolean;
+  regex?: RegExp;
+  inputs: IInput[];
 }
 export interface IMachineInput {
   input: IInput;
@@ -24,7 +25,7 @@ export interface IMachineMultiArrayInput {
   name: string,
   parameterKey: string;
   value: any[];
-  inputs: IInput[];
+  inputs: IInput[] | any[];
   updateState: (key: string, value: any) => void;
   machineInputType?: string;
   isValid: boolean;

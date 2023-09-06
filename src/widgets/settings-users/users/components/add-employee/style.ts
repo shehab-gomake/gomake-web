@@ -1,6 +1,5 @@
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {useMemo} from "react";
-import {FONT_FAMILY} from "@/utils/font-family";
 
 const useStyle = () => {
     const {theme, secondColor} = useGomakeTheme();
@@ -22,12 +21,14 @@ const useStyle = () => {
                 position: 'sticky' as 'sticky',
                 bottom: 0
             },
-            addBtn: {
+            actionBtn: {
                 backgroundColor: secondColor(500),
                 color: '#FFFFFF',
                 '&:hover': {
                     backgroundColor: secondColor(700),
-                }
+                },
+                textTransform: 'capitalize'
+
             }
         };
     }, [theme]);

@@ -1,6 +1,7 @@
-import {IUserData} from "@/widgets/settings-users/interface/employee";
+import {IUserData} from "@/widgets/settings-users/users/interface/employee";
+import {EmployeeActions} from "@/widgets/settings-users/users/enums/employee-actions";
 
-const accountInputs = (state: IUserData)  => {
+const accountInputs = (state: IUserData, action: EmployeeActions)  => {
     return [
         {
             name: "username",
@@ -17,7 +18,7 @@ const accountInputs = (state: IUserData)  => {
         {
             name: "password",
             label: "usersSettings.password",
-            type: "text",
+            type: "password",
             placeholder: "usersSettings.password",
             required: true,
             parameterKey: "password",
@@ -25,6 +26,7 @@ const accountInputs = (state: IUserData)  => {
             value: state.password,
             machineInputType: 'input',
             isValid: !!state.password,
+            disabled: action === EmployeeActions.UPDATE
         },
         {
             name: "roleID",
@@ -43,7 +45,7 @@ const accountInputs = (state: IUserData)  => {
             label: "usersSettings.isCanLoginWithCode",
             type: "switch",
             placeholder: "usersSettings.isCanLoginWithCode",
-            required: true,
+            required: false,
             parameterKey: "isCanLoginWithCode",
             value: state.isCanLoginWithCode,
             options: [],

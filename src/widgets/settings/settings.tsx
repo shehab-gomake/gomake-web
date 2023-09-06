@@ -10,7 +10,7 @@ import {useRouter} from "next/router";
 const SettingsWidget = () => {
     const {t} = useTranslation();
     const {push, query} = useRouter();
-    const {settingsRoute} = query;
+    const {settingsRoute, id} = query;
     const [selected, setSelected] = useState<IListItem>();
     const onSelectItem = (value: string) => {
         const selectedItem = list.find(item => item.value === value);
@@ -20,9 +20,12 @@ const SettingsWidget = () => {
     useEffect(() => {
         if (settingsRoute) {
             const item = list.find(item => item.path === settingsRoute);
+                if (id && !item.editComponent) {
+                    push('/settings/' + item.path).then();
+                }
                 setSelected(!!item ? item : list[0]);
         }
-    }, [settingsRoute])
+    }, [settingsRoute, id])
     const Side = () => {
         return <SideList list={list.map(item => ({...item, text: t(item.text)}))} selectedItem={selected?.value} onSelect={onSelectItem}
                   title={t('settings.settings')}/>
@@ -30,7 +33,10 @@ const SettingsWidget = () => {
     return (
         <MachineLayout side={Side()} header={''} subHeader={''}>
             {
-                selected && <selected.component/>
+                selected && selected.component && !id &&<selected.component/>
+            }
+            {
+                selected && selected.component && selected.editComponent && id &&<selected.editComponent/>
             }
         </MachineLayout>
     )
