@@ -262,6 +262,7 @@ const CustomerCardWidget = ({ getAllCustomers,onCustomeradd,openModal, modalTitl
       users: filteredUserss
     };
     setCustomer(updatedCustomer);
+    console.log(updatedCustomer);
     editCustomer(updatedCustomer, setCustomer).then(x => {
       getAllCustomers();
       handleClose();
@@ -294,7 +295,7 @@ const CustomerCardWidget = ({ getAllCustomers,onCustomeradd,openModal, modalTitl
           </Col>
           <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
             <h3 style={clasess.headerStyle}>{t("customers.modal.CPAcode")}</h3>
-            <input style={clasess.inputStyle1} type="text" placeholder="placeholder" value={customer?.cpaClientCode} onChange={(e: any) => setCustomer({ ...customer, cpaClientCode: e.target.value })} />
+            <input style={clasess.inputStyle1} type="text" placeholder="placeholder" value={customer?.cpaClientCode} onChange={(e: any) => setCustomer({ ...customer, cpaClientCode: e.target.value })}  />
           </Col>
           <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
             <h3 style={clasess.headerStyle}>{t("customers.modal.clientName")}</h3>
@@ -386,7 +387,8 @@ const CustomerCardWidget = ({ getAllCustomers,onCustomeradd,openModal, modalTitl
             <Row>
               <Col md={10} >
                 {
-                  contacts.map(x =>
+                  //to check before
+                  contacts.filter(contact => !contact.isMainContact).map(x =>
                     <ContactForm key={x.index} contact={x} onDelete={deleteContactForm} setContact={(updatedContactData) => updateContact(x.index, updatedContactData)} ></ContactForm>
                   )
                 }

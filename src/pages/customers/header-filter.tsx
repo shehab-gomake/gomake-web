@@ -23,7 +23,9 @@ const HeaderFilter = ({ setAllCustomers, allCustomers, agentsCategores, clientTy
                 style={{
                     height: convertHeightToVH(42),
                     width: convertWidthToVW(200),
+                    color: "black",                    
                 }}
+                
                 value={cutomerName}
             />
             <div style={clasess.filterContainer}>
@@ -57,6 +59,7 @@ const HeaderFilter = ({ setAllCustomers, allCustomers, agentsCategores, clientTy
                         onChange={onChangeStatus}
                         value={valStatus}
                         disableClearable={true}
+                        //defaultValue={statuses[0]}
                     />
                 ) : (
                     <Skeleton variant="rectangular" width={200} height={40} />

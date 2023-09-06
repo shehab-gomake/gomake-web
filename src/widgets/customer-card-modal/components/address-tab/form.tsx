@@ -37,8 +37,9 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
     const handleCityChange = useCallback(async (e: any, value: any) => {
         const selectedCityLabel = value?.label;
         const selectedCityId = value?.id;
+        const updatedAddress= {...address, city: selectedCityLabel};
         setSelectedCity(selectedCityLabel);
-        setAddress({ ...address, city: selectedCityLabel })
+        setAddress(updatedAddress);
         const response1 = await fetch('/streets.json');
         const data1 = await response1.json();
         const selectedCityStreets = data1.filter((street) => street.city_code == selectedCityId);
@@ -47,14 +48,17 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
             id: street.id
         }));
         setCityStreets(streetsNames);
+        // street set by default to be the first option
         setSelectedStreet(streetsNames[0]?.label);
-    }, []);
+        const updatedAddressNew = {...updatedAddress, street: streetsNames[0]?.label };
+        setAddress(updatedAddressNew);
+    }, [address]);
 
     const handleStreetChange = useCallback(async (e: any, value: any) => {
         const selectedStreetLabel = value?.label;
         setSelectedStreet(selectedStreetLabel);
-        setAddress({ ...address, street: selectedStreetLabel })
-    }, []);
+        setAddress({ ...address, street: selectedStreetLabel });
+    }, [address]);
 
     return (
         <div>

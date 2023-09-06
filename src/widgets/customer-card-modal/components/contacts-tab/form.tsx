@@ -38,7 +38,7 @@ const ContactForm = ({contact , onDelete , setContact }:IProps) => {
                 </Col>
                 <Col style={{display: "flex" , width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.title")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={contact?.title} onChange={(e) => setContact({ ...contact, title: e.target.value })} />
+                    <input style={clasess.inputStyle} type="text" placeholder="placeholder" value={contact?.position} onChange={(e) => setContact({ ...contact, title: e.target.value })} />
                 </Col>
                 <Col style={{display: "flex" , width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.role")}</span>
