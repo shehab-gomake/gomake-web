@@ -1,5 +1,5 @@
-import {IUser} from "@/widgets/settings-users/interface/user";
-import {EmployeeActions} from "@/widgets/settings-users/enums/employee-actions";
+import {IUser} from "@/widgets/settings-users/users/interface/user";
+import {EmployeeActions} from "@/widgets/settings-users/users/enums/employee-actions";
 
 export interface ITableFilterProps {
     onChangeShowInActive: (value: boolean)=>void;
