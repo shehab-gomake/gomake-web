@@ -1,10 +1,8 @@
 import * as React from "react";
-import {useTranslation} from "react-i18next";
-
-import {IconButton, Modal, Tooltip} from "@mui/material";
-
-import {CloseIcon} from "./icon/close";
-import {useStyle} from "./style";
+import { useTranslation } from "react-i18next";
+import { IconButton, Modal, Tooltip } from "@mui/material";
+import { CloseIcon } from "./icon/close";
+import { useStyle } from "./style";
 
 const GoMakeModal = ({
                          openModal,
@@ -39,4 +37,4 @@ const GoMakeModal = ({
     );
 };
 
-export {GoMakeModal};
+export { GoMakeModal };

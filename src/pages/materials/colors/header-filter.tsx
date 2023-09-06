@@ -18,6 +18,7 @@ const HeaderFilter = ({ setAllColors, onChangeSupplier, allColors }: any) => {
   useEffect(() => {
     setAllColors(allColors);
   }, [allColors]);
+  
   return (
     <div style={clasess.filterContainer}>
       {suppliers?.length > 0 ? (
