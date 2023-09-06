@@ -1,10 +1,10 @@
 import {useTranslation} from "react-i18next";
-import {useStyle} from "@/widgets/settings-users/components/users-table/style";
+import {useStyle} from "@/widgets/settings-users/users/components/users-table/style";
 import {OptionsButton} from "@/components/options-button/options-button";
 import {Divider, MenuItem} from "@mui/material";
 import {ConvertIcon} from "@/components/icons/convert-icon";
 import {EditIcon} from "@/components/icons/edit-icon";
-import {IUsersTableProps} from "@/widgets/settings-users/interface/components-props";
+import {IUsersTableProps} from "@/widgets/settings-users/users/interface/components-props";
 
 const formatDate = (date): string => {
     const d = new Date(date);

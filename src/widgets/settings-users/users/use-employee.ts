@@ -2,20 +2,26 @@ import {useRecoilState} from "recoil";
 import {employeeState, initState} from "@/store/employee-state";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {useCallback, useState} from "react";
-import {IUser} from "@/widgets/settings-users/interface/user";
+
 import {useTranslation} from "react-i18next";
 import * as XLSX from 'xlsx/xlsx.mjs';
 import {saveAs} from 'file-saver';
-import {EmployeeActions} from "@/widgets/settings-users/enums/employee-actions";
+import {EmployeeActions} from "@/widgets/settings-users/users/enums/employee-actions";
+import {IUser} from "@/widgets/settings-users/users/interface/user";
+import {addEmployeeOpenModalState, employeeActionState} from "@/widgets/settings-users/state/open-modat-state";
+import {IUserData} from "@/widgets/settings-users/users/interface/employee";
+import {usersArrayState} from "@/widgets/settings-users/state/users-state";
+import {emailRegex} from "@/utils/regex";
+
 
 const useEmployee = () => {
     const {setSnackbarStateValue} = useSnackBar();
-    const [employee, setEmployeeState] = useRecoilState(employeeState);
-    const [users, setUsers] = useState<IUser[]>([]);
+    const [employee, setEmployeeState] = useRecoilState<IUserData>(employeeState);
+    const [users, setUsers] = useRecoilState<IUser[]>(usersArrayState);
     const [showInActiveEmployees, setShowInActiveEmployees] = useState<boolean>(false);
     const {callApi} = useGomakeAxios();
-    const [openModal, setOpenModal] = useState(false);
-    const [action, setAction] = useState<EmployeeActions | null>(null);
+    const [openModal, setOpenModal] = useRecoilState<boolean>(addEmployeeOpenModalState);
+    const [action, setAction] = useRecoilState<EmployeeActions | null>(employeeActionState);
     const [search, setSearch] = useState<string>('');
     const {t} = useTranslation();
 
@@ -39,7 +45,8 @@ const useEmployee = () => {
                     user.firstname?.includes(search) ||
                     user.lastname?.includes(search) ||
                     user.phone?.includes(search) ||
-                    user.role?.includes(search)
+                    user.role?.includes(search) ||
+                    (user.firstname + ' ' + user.lastname).includes(search)
                 )
             }
 
@@ -86,50 +93,54 @@ const useEmployee = () => {
     }
 
     const onAddEmployee = () => {
-        callApi('POST', '/v1/crm-service/employee/add-employee', employee).then(
-            (res) => {
-                if (res.success) {
-                    setSnackbarStateValue({
-                        state: true,
-                        message: t("modal.addedSusuccessfully"),
-                        type: "sucess",
-                    });
-                    const newEmployee: IUser= res?.data?.data?.data
-                    setUsers([newEmployee, ...users]);
-                    setOpenModal(false);
-                    setEmployeeState(initState);
-                }else {
-                    setSnackbarStateValue({
-                        state: true,
-                        message: t("modal.addedfailed"),
-                        type: "error",
-                    });
+        if (isValidAddEmployee() && validateEmail()) {
+            callApi('POST', '/v1/crm-service/employee/add-employee', employee).then(
+                (res) => {
+                    if (res.success) {
+                        setSnackbarStateValue({
+                            state: true,
+                            message: t("modal.addedSusuccessfully"),
+                            type: "sucess",
+                        });
+                        const newEmployee: IUser = res?.data?.data?.data
+                        setUsers([newEmployee, ...users]);
+                        setOpenModal(false);
+                        setEmployeeState(initState);
+                    } else {
+                        setSnackbarStateValue({
+                            state: true,
+                            message: t("modal.addedfailed"),
+                            type: "error",
+                        });
+                    }
                 }
-            }
-        )
+            )
+        }
     }
     const onUpdateEmployee = () => {
-        callApi('PUT', '/v1/crm-service/employee/update-employee', employee).then(
-            (res) => {
-                if (res.success) {
-                    const newEmployee = res.data?.data?.data;
-                    setUsers(users.map(user => user.id === newEmployee?.id ? newEmployee : user))
-                    setOpenModal(false);
-                    setEmployeeState(initState);
-                    setSnackbarStateValue({
-                        state: true,
-                        message: t("modal.updatedSusuccessfully"),
-                        type: "sucess",
-                    });
-                }else {
-                    setSnackbarStateValue({
-                        state: true,
-                        message: t("modal.updatedfailed"),
-                        type: "error",
-                    });
+        if (isValidEditEmployee() && validateEmail()) {
+            callApi('PUT', '/v1/crm-service/employee/update-employee', employee).then(
+                (res) => {
+                    if (res.success) {
+                        const newEmployee = res.data?.data?.data;
+                        setUsers(users.map(user => user.id === newEmployee?.id ? newEmployee : user))
+                        setOpenModal(false);
+                        setEmployeeState(initState);
+                        setSnackbarStateValue({
+                            state: true,
+                            message: t("modal.updatedSusuccessfully"),
+                            type: "sucess",
+                        });
+                    } else {
+                        setSnackbarStateValue({
+                            state: true,
+                            message: t("modal.updatedfailed"),
+                            type: "error",
+                        });
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     const handleAddEmployeeClick = () => {
@@ -147,6 +158,23 @@ const useEmployee = () => {
         saveAs(excelBlob, 'users.xlsx');
     }
 
+    const isValidAddEmployee = () => {
+        return !!employee.employee.firstname &&
+            !!employee.employee.lastname &&
+            !!employee.username &&
+            !!employee.password &&
+            !!employee.roleID
+
+    };
+
+    const validateEmail = () => !!employee.employee.email ? emailRegex.test(employee.employee.email) : true;
+    const isValidEditEmployee = () => {
+        return !!employee.employee.firstname &&
+            !!employee.employee.lastname &&
+            !!employee.username &&
+            !!employee.roleID &&
+            emailRegex.test(employee.employee.email)
+    }
     const updateSearch = (value: string) => {
         setSearch(value);
     }

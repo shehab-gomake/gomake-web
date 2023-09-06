@@ -2,19 +2,19 @@ import {Box, Typography} from "@mui/material";
 import {useState} from "react";
 import {useTranslation} from "react-i18next";
 import Button from "@mui/material/Button";
-import {useStyle} from "@/widgets/settings-users/components/add-employee/style";
-import {StyledTab, StyledTabs} from "@/widgets/settings-users/components/add-employee/components/tabs";
+import {useStyle} from "@/widgets/settings-users/users/components/add-employee/style";
+import {AddEmployeeTab, AddEmployeeTabs} from "@/widgets/settings-users/users/components/add-employee/components/tabs";
 import {
     EmployeeGeneralForm
-} from "@/widgets/settings-users/components/add-employee/components/general-form/employee-general-form";
+} from "@/widgets/settings-users/users/components/add-employee/components/general-form/employee-general-form";
 import {
     WorkingDaysForm
-} from "@/widgets/settings-users/components/add-employee/components/working-days-form/working-days-form";
+} from "@/widgets/settings-users/users/components/add-employee/components/working-days-form/working-days-form";
 import {
     MissionsStationsForm
-} from "@/widgets/settings-users/components/add-employee/components/missions-stations-form/missions-stations-form";
-import {IAddEmployeeProps} from "@/widgets/settings-users/interface/components-props";
-import {EmployeeActions} from "@/widgets/settings-users/enums/employee-actions";
+} from "@/widgets/settings-users/users/components/add-employee/components/missions-stations-form/missions-stations-form";
+import {IAddEmployeeProps} from "@/widgets/settings-users/users/interface/components-props";
+import {EmployeeActions} from "@/widgets/settings-users/users/enums/employee-actions";
 import {convertWidthToVW} from "@/utils/adapter";
 
 interface TabPanelProps {
@@ -53,24 +53,24 @@ const AddEmployee = ({onClickAdd, action, onClickUpdate}: IAddEmployeeProps) => 
     return (
         <div style={classes.container}>
             <div style={classes.headerContainer}>
-                <StyledTabs value={value} onChange={handleChange} aria-label="tabs example">
-                    <StyledTab label={t('usersSettings.general')}/>
-                    <StyledTab label={t('usersSettings.workingDays')}/>
-                    <StyledTab label={t('usersSettings.missionStations')}/>
-                </StyledTabs>
+                <AddEmployeeTabs value={value} onChange={handleChange} aria-label="tabs example">
+                    <AddEmployeeTab label={t('usersSettings.general')}/>
+                    <AddEmployeeTab label={t('usersSettings.workingDays')}/>
+                    <AddEmployeeTab label={t('usersSettings.missionStations')}/>
+                </AddEmployeeTabs>
             </div>
 
             <CustomTabPanel value={value} index={0}>
-                <EmployeeGeneralForm/>
+                <EmployeeGeneralForm action={action}/>
                 <div style={classes.btnContainer}>
-                    <Button sx={classes.addBtn} onClick={() => setValue(1)}>{t('usersSettings.next')}</Button>
+                    <Button sx={classes.actionBtn} onClick={() => setValue(1)}>{t('usersSettings.next')}</Button>
                 </div>
             </CustomTabPanel>
 
             <CustomTabPanel value={value} index={1}>
                 <WorkingDaysForm/>
                 <div style={classes.btnContainer}>
-                    <Button sx={classes.addBtn} onClick={() => setValue(2)}>{t('usersSettings.next')}</Button>
+                    <Button sx={classes.actionBtn} onClick={() => setValue(2)}>{t('usersSettings.next')}</Button>
                 </div>
             </CustomTabPanel>
 
@@ -79,10 +79,10 @@ const AddEmployee = ({onClickAdd, action, onClickUpdate}: IAddEmployeeProps) => 
                 <div style={classes.btnContainer}>
                     {
                         action === EmployeeActions.ADD &&
-                        <Button sx={classes.addBtn} onClick={onClickAdd}>{t('usersSettings.add')}</Button>
+                        <Button sx={classes.actionBtn} onClick={onClickAdd}>{t('usersSettings.add')}</Button>
                     }{
                     action === EmployeeActions.UPDATE &&
-                    <Button sx={classes.addBtn} onClick={onClickUpdate}>{t('usersSettings.update')}</Button>
+                    <Button sx={classes.actionBtn} onClick={onClickUpdate}>{t('usersSettings.update')}</Button>
                 }
                 </div>
             </CustomTabPanel>

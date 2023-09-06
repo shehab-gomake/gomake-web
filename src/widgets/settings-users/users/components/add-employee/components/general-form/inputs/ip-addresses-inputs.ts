@@ -1,4 +1,5 @@
-import {IUserData} from "@/widgets/settings-users/interface/employee";
+import {IUserData} from "@/widgets/settings-users/users/interface/employee";
+import {ipAddressRegex} from "@/utils/regex";
 
 const ipAddressesInputs = (state: IUserData)  => {
     return [
@@ -16,16 +17,32 @@ const ipAddressesInputs = (state: IUserData)  => {
                     placeholder: "usersSettings.ip",
                     required: true,
                     parameterKey: "ip",
-                    options: []
+                    options: [],
+                    readonly: true,
+                    isValid: true,
+                    regex: ipAddressRegex
                 },
                 {
                     name: "description",
                     label: "usersSettings.description",
                     type: "text",
                     placeholder: "usersSettings.description",
-                    required: true,
+                    required: false,
                     parameterKey: "description",
-                    options: []
+                    options: [],
+                    readonly: true,
+                    isValid: true
+                },
+                {
+                    name: "isActiveIp",
+                    label: "usersSettings.isActive",
+                    type: "switch",
+                    placeholder: "usersSettings.isActive",
+                    required: false,
+                    parameterKey: "isActive",
+                    options: [],
+                    isValid: true,
+                    disabled: true,
                 },
             ]
         },

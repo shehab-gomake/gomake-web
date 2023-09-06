@@ -1482,6 +1482,7 @@
   "usersSettings": {
     "add": "Add",
     "addEmployee": "Add Employee",
+    "editEmployee": "Update Employee",
     "employeeInfo": "Employee info",
     "firstname": "First name",
     "lastname": "Last name",
@@ -1516,7 +1517,10 @@
     "workingDays": "Working days",
     "excel": "Excel",
     "print": "print",
-    "update": "Update"
+    "update": "Update",
+    "users": "Users",
+    "permission": "Permission management",
+    "isActive": "Active"
   },
   "settings": {
     "settings": "Settings",
