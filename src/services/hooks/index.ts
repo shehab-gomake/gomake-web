@@ -27,5 +27,4 @@ export * from "./admin-side";
 export * from "./generate-calaculation-test-link";
 export * from "./cart-side";
 export * from "./get-set-customers";
-export * from "./get-set-employee";
 
