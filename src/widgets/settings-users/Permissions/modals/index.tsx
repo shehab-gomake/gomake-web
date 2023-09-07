@@ -6,6 +6,8 @@ import {
   GomakeTextInput,
 } from "@/components";
 import { useStyle } from "./style";
+import { AddRole } from "./use-add-role";
+import { useState } from "react";
 
 
 
@@ -17,6 +19,13 @@ const AddRoleModal = ({
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
+  const { addNewRole } = AddRole();
+  const [Val,setVal] = useState();
+
+  const handleClick22222222= (val) => {
+    addNewRole(val);
+  };
+
   return (
     <>
       <GoMakeModal
@@ -31,14 +40,14 @@ const AddRoleModal = ({
               <GomakeTextInput
                 style={clasess.textInputStyle}
                 placeholder={t("permissionsSettings.Role name")}
-          
+                onChange={(e: any) => setVal(e.target.value)}
               />
           
             </div>
             <div style={clasess.btnContainer}>
               <GomakePrimaryButton
                 style={clasess.addBtnStyle}
-        
+                onClick = { ()=>handleClick22222222(Val)}
               >
                 {t("permissionsSettings.add")}
               </GomakePrimaryButton>

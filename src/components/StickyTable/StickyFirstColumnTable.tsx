@@ -12,6 +12,7 @@ const StickyFirstColumnTable = ({ data, columns }) => {
     const [_tableRows, setTableRows] = useState(data);
     const [istimeOut, setIsTimeOut] = useState(false);
     const { t } = useTranslation();
+    console.log(_tableRows)
 
    return (
     <TableContainer style={{width:"100%"}}>
@@ -30,10 +31,10 @@ const StickyFirstColumnTable = ({ data, columns }) => {
       )}
 
         <div style={clasess.tableBody}>
-        {_tableRows?.length > 0 ? (
+         
+        {data?.length > 0 ? (
           <>
-            {_tableRows?.map((row: any, index: number) => {
-                debugger
+            {data?.map((row: any, index: number) => {
                 return (
                 <Row
                     key={`body_row${index}`}
