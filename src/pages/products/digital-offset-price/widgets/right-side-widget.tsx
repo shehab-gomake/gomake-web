@@ -4,9 +4,12 @@ import {
   GomakeTextInput,
 } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { Checkbox, Slider } from "@mui/material";
+import { isLoadgingState } from "@/store";
+import { loadgingState } from "@/store/loading";
+import { Checkbox, CircularProgress, Slider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
 
 const RightSideWidget = ({
   clasess,
@@ -21,6 +24,7 @@ const RightSideWidget = ({
   onOpeneMakeShape,
   pricingDefaultValue,
 }: any) => {
+  const isLoading = useRecoilValue(isLoadgingState);
   const [defaultPrice, setDefaultPrice] = useState<any>();
   useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0) {
@@ -48,6 +52,9 @@ const RightSideWidget = ({
                 defaultValue={clientDefaultValue}
                 onChangeTextField={checkWhatRenderArray}
                 style={clasess.dropDownListStyle}
+                onChange={(e, value) => {
+                  console.log(value);
+                }}
               />
             )}
           </div>
@@ -62,6 +69,9 @@ const RightSideWidget = ({
                 getOptionLabel={(option: any) => option.name}
                 defaultValue={clientTypeDefaultValue}
                 style={clasess.dropDownListStyle}
+                onChange={(e, value) => {
+                  console.log(value);
+                }}
               />
             )}
           </div>
@@ -114,11 +124,15 @@ const RightSideWidget = ({
             {t("products.offsetPrice.admin.total")}
           </div>
           <div style={clasess.totalStyle}>
-            <GomakeTextInput
-              value={defaultPrice}
-              onChange={(e: any) => setDefaultPrice(e.target.value)}
-              style={clasess.inputPriceStyle}
-            />{" "}
+            {isLoading ? (
+              <CircularProgress size={25} style={{ marginRight: 40 }} />
+            ) : (
+              <GomakeTextInput
+                value={defaultPrice}
+                onChange={(e: any) => setDefaultPrice(e.target.value)}
+                style={clasess.inputPriceStyle}
+              />
+            )}{" "}
             USD
           </div>
         </div>
@@ -159,6 +173,9 @@ const RightSideWidget = ({
                   options={["q", "w"]}
                   placeholder={t("products.offsetPrice.admin.sampleType")}
                   style={clasess.dropDownListStyle}
+                  onChange={(e, value) => {
+                    console.log(value);
+                  }}
                 />
               </div>
               <div style={clasess.multiLineContainer}>
@@ -179,6 +196,9 @@ const RightSideWidget = ({
                   options={["q", "w"]}
                   placeholder={t("products.offsetPrice.admin.sampleType")}
                   style={clasess.dropDownListStyle}
+                  onChange={(e, value) => {
+                    console.log(value);
+                  }}
                 />
               </div>
               <div style={clasess.multiLineContainer}>
@@ -192,7 +212,7 @@ const RightSideWidget = ({
           )}
         </div>
       </div>
-      <GomakePrimaryButton
+      {/* <GomakePrimaryButton
         style={clasess.addOrderBtn}
         onClick={onOpeneMakeShape}
       >
@@ -200,7 +220,7 @@ const RightSideWidget = ({
       </GomakePrimaryButton>
       <div style={clasess.noVatStyle}>
         {t("products.offsetPrice.admin.dontVAT")}
-      </div>
+      </div> */}
     </div>
   );
 };

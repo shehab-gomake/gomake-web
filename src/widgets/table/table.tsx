@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { Header } from "./components";
 import { IProps } from "./interfaces";
 import { Row } from "./components";
@@ -7,7 +6,7 @@ import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-const Table = ({ tableHeaders, tableRows }: IProps) => {
+const Table = ({ tableHeaders, tableRows , styleContainer }: IProps) => {
   const [_tableRows, setTableRows] = useState(tableRows);
   const { clasess } = useStyle();
   const [istimeOut, setIsTimeOut] = useState(false);
@@ -22,7 +21,7 @@ const Table = ({ tableHeaders, tableRows }: IProps) => {
     setTableRows(tableRows);
   }, [tableRows]);
   return (
-    <div style={clasess.container}>
+    <div style={styleContainer || clasess.container}>
       {tableHeaders && (
         <div style={clasess.header}>
           {tableHeaders?.map((header: string, index: number) => {

@@ -20,7 +20,7 @@ const OptionsButton = ({children}: IOptionsButtonProps) => {
               sx={classes.button}
               size={"small"}
           >
-              <MoreVertIcon sx={{width: 23, height: 23}}>M</MoreVertIcon>
+              <MoreVertIcon sx={{width: 13, height: 18}}>M</MoreVertIcon>
           </IconButton>
 
           <Menu

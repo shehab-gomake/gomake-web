@@ -1,9 +1,9 @@
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
 import { getAndSetProductById } from "@/services/hooks";
 import { useRouter } from "next/router";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { digitslPriceState } from "./store";
 import { useMaterials } from "../use-materials";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
@@ -14,9 +14,11 @@ import {
   SecondSwitch,
 } from "@/components";
 import { materialsCategoriesState } from "@/store/material-categories";
+import { isLoadgingState } from "@/store";
 
 const useDigitalOffsetPrice = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
+  const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const [defaultPrice, setDefaultPrice] = useState<any>(30);
@@ -25,7 +27,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const [template, setTemplate] = useState<any>([]);
   const [generalParameters, setGeneralParameters] = useState<any>([]);
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
-  console.log("generalParameters", generalParameters);
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let temp = [...isRequiredParameters];
@@ -180,7 +181,13 @@ const useDigitalOffsetPrice = ({ clasess }) => {
         )
       );
     }
-  }, [clientTypesValue, clientDefaultValue, router]);
+  }, [
+    clientTypesValue,
+    clientDefaultValue,
+    clientTypeDefaultValue,
+    router,
+    router?.query?.customerId,
+  ]);
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -379,7 +386,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
           (item) => item.isDefault === true
         );
         let options: any = allMaterials;
-        let defailtObjectValue = {};
+        let defailtObjectValue = { value: "" };
         if (parameter?.materialPath?.length == 3) {
           options = digitalPriceData?.selectedMaterialLvl2;
         }
@@ -391,7 +398,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
             (item) => item?.isDefault
           );
           let valueIdIsDefault = defaultParameter?.materialValueIds[0]?.valueId;
-
           options = digitalPriceData?.selectedMaterialLvl1;
           if (options) {
             const hiddenValueIds = valuesConfigs
@@ -425,7 +431,9 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               (item: any) =>
                 item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
             );
-            defailtObjectValue = x;
+            if (x) {
+              defailtObjectValue = x;
+            }
           }
         }
         if (parameter?.materialPath?.length == 1) {
@@ -446,90 +454,100 @@ const useDigitalOffsetPrice = ({ clasess }) => {
             (item: any) =>
               item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
           );
-          defailtObjectValue = selectedObj;
+          if (selectedObj) {
+            defailtObjectValue = selectedObj;
+          }
         }
         return (
-          options?.length > 0 && (
-            <GoMakeAutoComplate
-              options={options}
-              placeholder={parameter.name}
-              style={clasess.dropDownListStyle}
-              defaultValue={defailtObjectValue}
-              getOptionLabel={(option: any) => option.value}
-              //@ts-ignore
-              value={
-                index !== -1 ? { value: temp[index].value } : defailtObjectValue
+          <GoMakeAutoComplate
+            options={options}
+            placeholder={parameter.name}
+            style={clasess.dropDownListStyle}
+            // defaultValue={defailtObjectValue || { value: "" }}
+            defaultValue={
+              index !== -1 ? { value: temp[index].value } : defailtObjectValue
+            }
+            getOptionLabel={(option: any) => option.value}
+            // value={
+            //   index !== -1
+            //     ? {
+            //         //@ts-ignore
+            //         value:
+            //           temp[index].value === "undefined"
+            //             ? { value: "" }
+            //             : temp[index].value,
+            //       }
+            //     : defailtObjectValue
+            // }
+            onChange={(e: any, value: any) => {
+              if (parameter?.materialPath?.length == 3) {
+                onChangeForPrice(
+                  parameter?.id,
+                  subSection?.id,
+                  section?.id,
+                  parameter?.parameterType,
+                  parameter?.name,
+                  parameter?.actionId,
+                  {
+                    valueId: value?.valueId,
+                    value: value?.value,
+                    ...(data?.id > 0 && { material: data?.id }),
+                  },
+                  index
+                );
+                setDigidatPriceData({
+                  ...digitalPriceData,
+                  selectedMaterialLvl3: value,
+                  selectedOptionLvl3: value,
+                });
               }
-              onChange={(e: any, value: any) => {
-                if (parameter?.materialPath?.length == 3) {
-                  onChangeForPrice(
-                    parameter?.id,
-                    subSection?.id,
-                    section?.id,
-                    parameter?.parameterType,
-                    parameter?.name,
-                    parameter?.actionId,
-                    {
-                      valueId: value?.valueId,
-                      value: value?.value,
-                      ...(data?.id > 0 && { material: data?.id }),
-                    },
-                    index
-                  );
-                  setDigidatPriceData({
-                    ...digitalPriceData,
-                    selectedMaterialLvl3: value,
-                    selectedOptionLvl3: value,
-                  });
-                }
-                if (parameter?.materialPath?.length == 2) {
-                  onChangeForPrice(
-                    parameter?.id,
-                    subSection?.id,
-                    section?.id,
-                    parameter?.parameterType,
-                    parameter?.name,
-                    parameter?.actionId,
-                    {
-                      valueId: value?.valueId,
-                      value: value?.value,
-                      ...(data?.id > 0 && { material: data?.id }),
-                    },
-                    index
-                  );
-                  setDigidatPriceData({
-                    ...digitalPriceData,
-                    selectedMaterialLvl2: value?.data,
-                    selectedOptionLvl2: value,
-                    selectedMaterialLvl3: null,
-                  });
-                }
-                if (parameter?.materialPath?.length == 1) {
-                  onChangeForPrice(
-                    parameter?.id,
-                    subSection?.id,
-                    section?.id,
-                    parameter?.parameterType,
-                    parameter?.name,
-                    parameter?.actionId,
-                    {
-                      valueId: value?.valueId,
-                      value: value?.value,
-                      ...(data?.id > 0 && { material: data?.id }),
-                    },
-                    index
-                  );
-                  setDigidatPriceData({
-                    ...digitalPriceData,
-                    selectedMaterialLvl1: value?.data,
-                    selectedOptionLvl1: value,
-                    selectedMaterialLvl2: null,
-                    selectedMaterialLvl3: null,
-                  });
-                }
-              }}
-            />
-          )
+              if (parameter?.materialPath?.length == 2) {
+                onChangeForPrice(
+                  parameter?.id,
+                  subSection?.id,
+                  section?.id,
+                  parameter?.parameterType,
+                  parameter?.name,
+                  parameter?.actionId,
+                  {
+                    valueId: value?.valueId,
+                    value: value?.value,
+                    ...(data?.id > 0 && { material: data?.id }),
+                  },
+                  index
+                );
+                setDigidatPriceData({
+                  ...digitalPriceData,
+                  selectedMaterialLvl2: value?.data,
+                  selectedOptionLvl2: value,
+                  selectedMaterialLvl3: null,
+                });
+              }
+              if (parameter?.materialPath?.length == 1) {
+                onChangeForPrice(
+                  parameter?.id,
+                  subSection?.id,
+                  section?.id,
+                  parameter?.parameterType,
+                  parameter?.name,
+                  parameter?.actionId,
+                  {
+                    valueId: value?.valueId,
+                    value: value?.value,
+                    ...(data?.id > 0 && { material: data?.id }),
+                  },
+                  index
+                );
+                setDigidatPriceData({
+                  ...digitalPriceData,
+                  selectedMaterialLvl1: value?.data,
+                  selectedOptionLvl1: value,
+                  selectedMaterialLvl2: { value: "" },
+                  selectedMaterialLvl3: { value: "" },
+                });
+              }
+            }}
+          />
         );
       }
     }
@@ -637,9 +655,11 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     return isValid;
   };
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
+  const setLoading = useSetRecoilState(isLoadgingState);
   const calculationProduct = useCallback(async () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
+      setLoading(true);
       const res = await callApi(
         "POST",
         `/v1/calculation-service/calculations/calculate-product`,
@@ -648,8 +668,10 @@ const useDigitalOffsetPrice = ({ clasess }) => {
           clientTypeId: router?.query?.clientTypeId,
           productId: router?.query?.productId,
           generalParameters: generalParameters,
-        }
+        },
+        false
       );
+      setLoading(false);
       setPricingDefaultValue(res?.data?.data?.data);
     }
   }, [generalParameters, router, isRequiredParameters, validateParameters]);
@@ -695,6 +717,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     clientTypeDefaultValue,
     clientTypesValue,
     pricingDefaultValue,
+    navigate,
   };
 };
 

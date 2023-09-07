@@ -3,34 +3,13 @@ import {useMemo} from "react";
 import {FONT_FAMILY} from "@/utils/font-family";
 
 const useStyle = () => {
-    const {theme, primaryColor, secondColor} = useGomakeTheme();
+    const {theme, primaryColor} = useGomakeTheme();
     const classes = useMemo(() => {
         return {
-            header: {
-                position: 'sticky' as 'sticky',
-                top: 0,
-                width: '100%',
-                backgroundColor: '#FFF',
-                zIndex: 1,
-                padding: 1,
-                paddingBottom: '12px'
-            },
-            headerBtn: {
+            tabsContainer: {
                 display: 'flex',
-                justifyContent: 'flex-end' as 'flex-end',
-                gap: 16
-            },
-            footer: {
-                position: 'sticky' as 'sticky',
-                bottom: 0,
-                width: '100%',
-                backgroundColor: '#FFF',
-                zIndex: 1,
-                padding: 1,
-                paddingTop: '12px',
-                display: 'flex',
-                justifyContent: 'flex-end' as 'flex-end',
-                gap: 16
+                justifyContent: 'space-between' as 'space-between',
+                alignItems: 'center' as 'center'
             },
             addBtn: {
                 ...FONT_FAMILY.Lexend(500, 16),
@@ -39,26 +18,9 @@ const useStyle = () => {
                 '&:hover': {
                     backgroundColor: primaryColor(200),
                 },
-                marginBottom: '40px'
+                marginBottom: '20px',
+                textTransform: 'capitalize'
             },
-            exportBtn: {
-                ...FONT_FAMILY.Lexend(500, 16),
-                backgroundColor: '#FFF',
-                color: secondColor(500),
-                border: `1px solid ${secondColor(500)}`,
-                '&:hover': {
-                    backgroundColor: secondColor(500),
-                    color: '#FFF'
-                }
-            },
-            printBtn: {
-                ...FONT_FAMILY.Lexend(500, 16),
-                backgroundColor: secondColor(500),
-                color: '#FFF',
-                '&:hover': {
-                    backgroundColor: secondColor(200),
-                }
-            }
         };
     }, [theme]);
     return {

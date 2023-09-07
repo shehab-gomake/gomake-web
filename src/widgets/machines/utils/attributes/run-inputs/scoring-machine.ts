@@ -2,11 +2,11 @@ const scoringMachine = (state: Record<string, any>) => {
     return [
         {
             name: '',
-            parameterKey: 'folding',
+            parameterKey: 'scoring',
             machineInputType: 'multiInput',
-            value: state.attributes?.folding ? state.attributes?.folding : {},
-            isValid: !!state?.attributes?.folding?.maxLength &&
-                !!state?.attributes?.folding?.maxWidth,
+            value: state.attributes?.scoring ? state.attributes?.scoring : {},
+            isValid: !!state?.attributes?.scoring?.maxLength &&
+                !!state?.attributes?.scoring?.maxWidth,
             inputs: [
                 {
                     name: "",

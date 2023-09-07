@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import {FONT_FAMILY} from "@/utils/font-family";
 
 const useStyle = () => {
-  const { theme, primaryColor, secondColor } = useGomakeTheme();
+  const { theme, primaryColor, secondColor, errorColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       container: {
@@ -41,6 +41,8 @@ const useStyle = () => {
       inputLbl: {
         color: primaryColor(900),
         ...FONT_FAMILY.Lexend(600, 14),
+        display: 'flex',
+        gap: 3
       },
       input: {
       },
@@ -55,7 +57,11 @@ const useStyle = () => {
         gap: 16,
         width: '100%'
       },
-      iconColor: secondColor(500)
+      iconColor: secondColor(500),
+      required: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: errorColor(500)
+      }
     };
   }, [theme]);
   return {

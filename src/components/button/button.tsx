@@ -42,6 +42,8 @@ const GomakePrimaryButton = ({ ...props }) => {
           width: "100%",
           justifyContent: "space-between",
           alignItems: "center",
+          flexWrap: "wrap",
+
         }}
       >
         {props.leftIcon && (
@@ -59,6 +61,8 @@ const GomakePrimaryButton = ({ ...props }) => {
         <span
           style={{
             width: props.leftIcon ? "85%" : "100%",
+            flexWrap: "wrap",
+
           }}
         >
           {props.children}
