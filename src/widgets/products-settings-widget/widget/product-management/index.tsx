@@ -96,7 +96,7 @@ const ProductManagementWidget = () => {
           })}
         </div>
       )}
-      <div style={clasess.filtersSwichContainer}>
+      {/* <div style={clasess.filtersSwichContainer}>
         <div style={clasess.filterSwichContainer}>
           <SecondSwitch />
           <div style={clasess.labelTextContainer}>
@@ -115,7 +115,7 @@ const ProductManagementWidget = () => {
             Takes a maximum for the quantity in purchase orders
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
