@@ -2,7 +2,7 @@
 import {useTranslation} from "react-i18next";
 import { HeaderTitle } from "../header-title/header-title";
 import {useStyle} from "./style";
-import { InputAdornment, Tab, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
+import { InputAdornment, Tab, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
 import { useState } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { GoMakeTextInputIcon } from "@/components";
@@ -10,6 +10,9 @@ import { AddPlusIcon, SearchIcon } from "@/icons";
 import { useSettings } from "./use-settings";
 import { Row } from "@/pages/settings/widget/row";
 import { AddRoleModal } from "./modals";
+import StickyFirstColumnTable from "@/components/StickyTable/StickyFirstColumnTable";
+import { Table } from "../table/table";
+
 
 
 
@@ -86,14 +89,16 @@ const SettingsPermissionsWidget = () => {
                             />
                 </div>
             </div>
-            <div style={{width:"100%",marginTop:12}}>
+
+            {/* <div style={{width:"100%",marginTop:12,overflow:"auto"}}>
+             
                 <div style={classes.tableHeaderStyle}>
                         {tableHeaders?.map((item) => {
                             return <div style={classes.headerNameStyle}><div style={{marginRight:12}}>{item.text}</div>{item.icon}</div>;
                         })}
                 </div>
             </div>
-            <div style={{width:"100%"}}>
+            <div style={{width:"100%",overflow:"auto"}}>
                     <div style={classes.row}>
                         {allProducts?.map((row: any, index: number) => {
                             return (
@@ -106,7 +111,10 @@ const SettingsPermissionsWidget = () => {
                             );
                         })}
                     </div>
-            </div>
+            </div> */}
+             <Table tableHeaders={tableHeaders} tableRows={allProducts}></Table>
+            {/* <StickyFirstColumnTable columns={tableHeaders} data={allProducts} /> */}
+               
             <AddRoleModal
                 openModal={isNewRole}
                 modalTitle={t("permissionsSettings.AddNewRole")}

@@ -35,6 +35,16 @@ const useStyle = ({ width }: any) => {
         paddingRight: 22,
         width: `${width}`,
       },
+      table: {
+        minWidth: 650
+      },
+      sticky: {
+        position:"sticky" as "sticky" ,
+        left: 0,
+        background: "white",
+        boxShadow: "5px 2px 5px grey",
+        borderRight: "2px solid black"
+      } 
     };
   }, []);
   return {

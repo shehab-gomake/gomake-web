@@ -159,6 +159,16 @@ const useStyle = () => {
         paddingBottom: 10,
         paddingTop: 5,
       },
+      table: {
+        minWidth: 650
+      },
+      sticky: {
+        position: "sticky",
+        left: 0,
+        background: "white",
+        boxShadow: "5px 2px 5px grey",
+        borderRight: "2px solid black"
+      }
     };
   }, [i18next.language, t]);
   return {
