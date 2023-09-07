@@ -1,7 +1,7 @@
 import { useCallback, useEffect,  useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { getAndSetCurrency } from "@/services/hooks/get-set-enums";
-import { getAndSetEmployees } from "@/services/hooks/get-set-employee";
+import { getAndSetAllEmployees} from "@/services/hooks";
 
 const useCustomersModal = () => {
   const { callApi } = useGomakeAxios();
@@ -11,7 +11,7 @@ const useCustomersModal = () => {
   ///////////////////////// select agent //////////////////////////////
 
   const getAgentCategores = useCallback(async () => {
-    const data = await getAndSetEmployees(
+    const data = await getAndSetAllEmployees(
       callApi,
       setAgentsCategores,
       { isAgent: true }
