@@ -21,7 +21,6 @@ const useStyle = ({ width, index, tablePercent }: any) => {
         lineHeight: "18px",
         color: primaryColor(900),
         width: "16%",
-        cursor: "pointer",
         textAlign: "center" as "center",
         maxHeight: 50,
         minHeight: 46,

@@ -5,10 +5,10 @@ import { matchSorter } from "match-sorter";
 import { getAllProductsMongoDB, getAlltProductSKU } from "@/services/hooks";
 import { useGomakeAxios } from "@/hooks";
 
-import { MoreMenuWidget } from "./widget/more-circle";
 import { useStyle } from "./style";
+import { MoreMenuWidget } from "../more-circle";
 
-const useSettings = () => {
+const useProductManagement = () => {
   const { callApi } = useGomakeAxios();
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -104,4 +104,4 @@ const useSettings = () => {
   };
 };
 
-export { useSettings };
+export { useProductManagement };
