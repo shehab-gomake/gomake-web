@@ -3,7 +3,7 @@ import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
 import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/hooks/get-set-customers";
 import { getAndSetClientTypes } from "@/services/hooks/get-set-clientTypes";
-import { getAndSetAllCustomers , getAndSetAllEmployees} from "@/services/hooks";
+import { getAndSetAllCustomers , getAndSetEmployees2} from "@/services/hooks";
 
 const useCustomers = (clientType, pageNumber, setPageNumber) => {
   const { callApi } = useGomakeAxios();
@@ -30,7 +30,7 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
   const [agentsCategores, setAgentsCategores] = useState([]);
   const [customersCategores, setCustomersCategores] = useState([]);
 
-  // select status options
+  //select status options
   const statuses = useMemo(
     () => [
       { label: t("customers.active"), value: "true" },
@@ -102,7 +102,7 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
 
   ///////////////////////// select agent //////////////////////////////
   const getAgentCategores = useCallback(async () => {
-    const data = await getAndSetAllEmployees(
+    const data = await getAndSetEmployees2(
       callApi,
       setAgentsCategores,
       { isAgent: true }
