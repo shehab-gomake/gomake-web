@@ -1362,6 +1362,7 @@
         "startingPrice": "Starting price",
         "additionToType": "Addition to type",
         "modalProductSKUTitle": "Add New Product SKU",
+        "modalProductSKU": "Product SKU",
         "enterName": "Enter Name",
         "enterCode": "Enter Code",
         "addNewProduct": "Add new product",
@@ -1529,7 +1530,10 @@
     "materials": "Materials",
     "documenting": "Documenting",
     "users": "Users",
-    "finances": "Finances"
+    "finances": "Finances",
+    "productManagement": "Product management",
+    "shipmentsSetting": "Shipments setting",
+    "pricingSetting": "Pricing setting"
   },
   "customers": {
     "buttons": {
@@ -1560,7 +1564,7 @@
       "vatNO": "Vat number",
       "amountBalance": "Amount balance",
       "shippingCertificate": "Shipping certificate",
-      "openInvitations": "Open invitations", 
+      "openInvitations": "Open invitations",
       "currency": "Currency",
       "categories": "Categories",
       "general": "General",
@@ -1642,8 +1646,8 @@
       "shelfPriceList": "Advanced shelf products",
       "bidPriceList": "Roll price list",
       "envelopesPriceList": "Envelope price list",
-      "printingPriceList":"Skill price list and printing on products",
-      "selectProducts":"Select products",
+      "printingPriceList": "Skill price list and printing on products",
+      "selectProducts": "Select products",
       "userName": "Username",
       "password": "Password",
       "IPaddress": "IP  address",
@@ -1713,7 +1717,7 @@
     "buttons": {
       "addEmployeee": "Add Employee",
       "delete": "DELETE",
-      "saveChanges" : "Save"
+      "saveChanges": "Save"
     },
     "modal": {
       "addTitle": "Add Employee",
