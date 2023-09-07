@@ -1,1 +1,0 @@
-export {EmployeeCardWidget} from "./employee-card-modal";

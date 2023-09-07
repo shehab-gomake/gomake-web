@@ -3,20 +3,9 @@ import { ICallApi, ISetState } from "./call-api.interface";
 import { ShowCustomerCard } from "@/pages/customers/edit-customer";
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 
-const getAndSetCustomers = async (
-  callApi: ICallApi,
-  setState?: ISetState,
-  data?: any
-) => {
-  const result: any = await callApi(
-    "GET",
-    "/v1/customers/get-customers",
-    data
-  );
-  return returnResult(result, setState);
-};
 
-const getAndSetCustomer = async (
+// get by id 
+const getAndSetCustomerById = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
@@ -46,14 +35,15 @@ const customerMapFunction = (customer , onClick) => {
     ),
   };
 }
-    
-const getAndSetAllCustomers = async (
+
+// data table
+const getAndSetCustomersPagination = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any,
   onClick?:any,
 ) => {
-  const result: any = await callApi("GET", "/v1/customers/get-all-customers", data);
+  const result: any = await callApi("GET", "/v1/customers/get-customers-pagination", data);
   const _data = returnResult(result, undefined);
 
   const mapData = _data.data.map((customer: any) => customerMapFunction(customer , onClick));
@@ -64,8 +54,7 @@ const getAndSetAllCustomers = async (
 };
 
 export {
-  getAndSetCustomers,
-  getAndSetCustomer,
-  getAndSetAllCustomers,
+  getAndSetCustomerById,
+  getAndSetCustomersPagination,
   customerMapFunction
 };
