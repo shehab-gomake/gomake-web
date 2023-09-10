@@ -1,10 +1,12 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "./call-api.interface";
-import { ShowCustomerCard } from "@/pages/customers/edit-customer";
+import { useCallback } from "react";
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
+import { FONT_FAMILY } from "@/utils/font-family";
+import { MoreMenuWidget } from "@/widgets/customer-card-modal/more-circle";
 
 
-// get by id 
+//get by id 
 const getAndSetCustomerById = async (
   callApi: ICallApi,
   setState?: ISetState,
@@ -18,35 +20,59 @@ const getAndSetCustomerById = async (
   return returnResult(result, setState);
 };
 
+const updatedStatus = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "PUT",
+    "/v1/crm-service/customer/update-customer-status",
+    {
+      Id: data.id,
+      status: !data?.isActive,
+    }
+  );
+  if (result?.success) {
+    //getAndSetCustomersPagination;
+    return true;
+  } else {
+    return false;
+  }};
+
 //helper function
-const customerMapFunction = (customer , onClick) => {
+const customerMapFunction = (customer, onClick, updatedStatus) => {
   return {
     customerCode: customer.code,
     name: customer.name,
-    email: customer.mail ? customer.mail : <HorizontalRuleIcon/>,
-    phone: customer.phone ? customer.phone : <HorizontalRuleIcon/>,
-    status: customer.isActive ? "Active" : "Inactive",
-    hashTag: (
-      <div style={{ display: "flex", justifyContent: 'flex-end', alignItems: "center" }} >
-        <a>
-          <ShowCustomerCard onClick={onClick} item={customer} clientType={customer.clientType} />
-        </a>
+    email: customer.mail ? customer.mail : <HorizontalRuleIcon />,
+    phone: customer.phone ? customer.phone : <HorizontalRuleIcon />,
+    status: (
+      <div>
+        {customer?.isActive === false ? (
+          <div style={{ display: "flex", ...FONT_FAMILY.Lexend(500, 14), color: "#D92C2C" }}>Inactive</div>
+        ) : (
+          <div style={{ display: "flex", ...FONT_FAMILY.Lexend(500, 14), color: "#40CC4E" }} >Active</div>
+        )}
       </div>
     ),
+    // hashTag: <ShowCustomerCard onClick={onClick} item={customer} />,
+    hashTag: <MoreMenuWidget item={customer} onClickEdit={onClick} updatedProduct={updatedStatus}/>,
   };
 }
+
 
 // data table
 const getAndSetCustomersPagination = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any,
-  onClick?:any,
+  onClick?: any,
 ) => {
   const result: any = await callApi("GET", "/v1/customers/get-customers-pagination", data);
   const _data = returnResult(result, undefined);
 
-  const mapData = _data.data.map((customer: any) => customerMapFunction(customer , onClick));
+  const mapData = _data.data.map((customer: any) => customerMapFunction(customer, onClick,updatedStatus));
   if (setState) {
     setState(mapData);
   }
@@ -56,5 +82,6 @@ const getAndSetCustomersPagination = async (
 export {
   getAndSetCustomerById,
   getAndSetCustomersPagination,
-  customerMapFunction
+  customerMapFunction, 
+  updatedStatus
 };

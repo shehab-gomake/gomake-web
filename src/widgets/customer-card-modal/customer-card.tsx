@@ -250,7 +250,7 @@ const CustomerCardWidget = ({ getAllCustomers,onCustomeradd,openModal, modalTitl
     });
   };
 
-  // edit customer buttone
+  // edit customer button
   const handleEditCustomer = () => {
     const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
     const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
