@@ -1,10 +1,10 @@
 import {useTranslation} from "react-i18next";
-import {MachineLayout} from "@/widgets/machines/components/layout/machine-layout";
 import {SideList} from "@/widgets/machines/components/side-list/side-list";
 import {list} from "@/widgets/settings/side-list";
 import {useEffect, useState} from "react";
 import {IListItem} from "@/widgets/machines/components/side-list/interface";
 import {useRouter} from "next/router";
+import {SideBarContainer} from "@/components/containers/side-bar-container";
 
 
 const SettingsWidget = () => {
@@ -31,14 +31,14 @@ const SettingsWidget = () => {
                   title={t('settings.settings')}/>
     }
     return (
-        <MachineLayout side={Side()} header={''} subHeader={''}>
+        <SideBarContainer side={Side()} header={''} subHeader={''}>
             {
                 selected && selected.component && !id &&<selected.component/>
             }
             {
                 selected && selected.component && selected.editComponent && id &&<selected.editComponent/>
             }
-        </MachineLayout>
+        </SideBarContainer>
     )
 }
 
