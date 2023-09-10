@@ -88,7 +88,7 @@ export default function DigitalOffsetPrice() {
                     );
                   })}
                 </div>
-                <div style={{ overflow: "scroll", width: "100%" }}>
+                <div style={{ height: 700, overflow: "scroll", width: "100%" }}>
                   <div style={clasess.sectionsContainer}>
                     {[...template?.sections, PricingTab]?.map(
                       (section: any, index: number) => {
