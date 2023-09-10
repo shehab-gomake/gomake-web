@@ -25,6 +25,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
+        marginBottom: 55,
       },
       leftSideContainer: {
         display: "flex",
@@ -46,11 +47,12 @@ const useStyle = () => {
         marginTop: -87,
         boxShadow: "0px 4px 40px 0px rgba(129, 129, 129, 0.12)",
         borderRadius: 5,
-        height: 815,
+        // height: 720,
       },
       rightSideContainer: {
         height: "100%",
         overflow: "scroll",
+        width: "100%",
       },
       tabsContainer: {
         display: "flex",
@@ -443,7 +445,7 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         backgroundColor: "#FFFFFF",
-        boxShadow: "0px 4px 40px 0px rgba(129, 129, 129, 0.1)",
+        boxShadow: "0px 0px 20px 0px rgba(129, 129, 129, 0.1)",
         paddingTop: 12,
         paddingBottom: 20,
       },
@@ -467,6 +469,7 @@ const useStyle = () => {
       actionNameStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
         color: secondColor(500),
+        marginBottom: 18,
       },
       cellsContainerStyle: {
         display: "flex",
@@ -476,9 +479,30 @@ const useStyle = () => {
         width: "100%",
         flexWrap: "wrap" as "wrap",
         textAlign: "center" as "center",
+        paddingTop: 14,
+        backgroundColor: "rgba(246, 246, 246, 1)",
+      },
+      cellsContainerStyle2: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        width: "100%",
+        flexWrap: "wrap" as "wrap",
+        textAlign: "center" as "center",
+        paddingTop: 14,
+        backgroundColor: "#FFF",
+      },
+      cellContainerMod: {
+        paddingRight: 22,
+        paddingBottom: 22,
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: primaryColor(500),
+        minWidth: 135,
       },
       cellContainer: {
-        padding: 22,
+        paddingRight: 22,
+        paddingBottom: 22,
         ...FONT_FAMILY.Lexend(400, 12),
         color: primaryColor(500),
         minWidth: 135,
@@ -486,6 +510,10 @@ const useStyle = () => {
       actoionsSelectContainer: {
         ...FONT_FAMILY.Lexend(400, 12),
         color: primaryColor(500),
+        border: "none",
+        backgroundColor: "none",
+        boxShadow: "none",
+        height: 36,
       },
     };
   }, [i18next.language, t]);

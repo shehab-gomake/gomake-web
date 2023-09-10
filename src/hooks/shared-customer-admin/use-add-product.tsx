@@ -90,9 +90,9 @@ const useAddProduct = ({ clasess }) => {
   ];
 
   const getProductById = useCallback(async () => {
-    if (router?.query?.productId) {
+    if (router?.query?.id) {
       const data = await getAndSetProductById(callApi, setTemplate, {
-        Id: router?.query?.productId,
+        Id: router?.query?.id,
       });
       setProductState(data);
     }
@@ -110,7 +110,7 @@ const useAddProduct = ({ clasess }) => {
       "PUT",
       `/v1/printhouse-config/products/update-product-parameter`,
       {
-        productId: router?.query?.productId,
+        productId: router?.query?.id,
         sectionId: sectionId,
         subSectionId: subSectionId,
         productParameterType: 1,
@@ -415,7 +415,7 @@ const useAddProduct = ({ clasess }) => {
         "PUT",
         `/v1/printhouse-config/products/update-product-parameter`,
         {
-          productId: router?.query?.productId,
+          productId: router?.query?.id,
           sectionId: sectionId,
           subSectionId: subSectionId,
           productParameterType: 1,

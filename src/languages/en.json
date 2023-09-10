@@ -1362,6 +1362,7 @@
         "startingPrice": "Starting price",
         "additionToType": "Addition to type",
         "modalProductSKUTitle": "Add New Product SKU",
+        "modalProductSKU": "Product SKU",
         "enterName": "Enter Name",
         "enterCode": "Enter Code",
         "addNewProduct": "Add new product",
@@ -1393,7 +1394,7 @@
         "priceRecovery": "Price recovery",
         "additions": "Additions",
         "dontVAT": "Doesn’t include VAT",
-        "addOrder": "Add order",
+        "addOrder": "Add",
         "makeShape": "Make your own shape",
         "chooseShape": "Choose shape",
         "client": "Client",
@@ -1552,7 +1553,10 @@
     "materials": "Materials",
     "documenting": "Documenting",
     "users": "Users",
-    "finances": "Finances"
+    "finances": "Finances",
+    "productManagement": "Product management",
+    "shipmentsSetting": "Shipments setting",
+    "pricingSetting": "Pricing setting"
   },
   "customers": {
     "buttons": {
@@ -1583,7 +1587,7 @@
       "vatNO": "Vat number",
       "amountBalance": "Amount balance",
       "shippingCertificate": "Shipping certificate",
-      "openInvitations": "Open invitations", 
+      "openInvitations": "Open invitations",
       "currency": "Currency",
       "categories": "Categories",
       "general": "General",
@@ -1665,8 +1669,8 @@
       "shelfPriceList": "Advanced shelf products",
       "bidPriceList": "Roll price list",
       "envelopesPriceList": "Envelope price list",
-      "printingPriceList":"Skill price list and printing on products",
-      "selectProducts":"Select products",
+      "printingPriceList": "Skill price list and printing on products",
+      "selectProducts": "Select products",
       "userName": "Username",
       "password": "Password",
       "IPaddress": "IP  address",
@@ -1736,7 +1740,7 @@
     "buttons": {
       "addEmployeee": "Add Employee",
       "delete": "DELETE",
-      "saveChanges" : "Save"
+      "saveChanges": "Save"
     },
     "modal": {
       "addTitle": "Add Employee",
@@ -1772,5 +1776,47 @@
     "successfullyDeactivated": "Successfully deactivated",
     "successfullyUpdated": "Successfully updated",
     "updatedfailed": "Updated failed"
+  },
+  "profileSettings": {
+    "profileTab": "My profile",
+    "companyProfile": "Company profile",
+    "fullName": "Full name",
+    "companyName": "Company name",
+    "position": "Position",
+    "demoCode": "Demo code",
+    "email": "Email",
+    "phone": "Phone number",
+    "address": "Address",
+    "postalCode": "Postal code",
+    "contact": "Contact",
+    "personal": "Personal",
+    "changePassword": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmNewPassword":"Confirm new password",
+    "company": "Company",
+    "businessName": "Business name",
+    "dashboardCode": "Dashboard code",
+    "contacts": "Contacts",
+    "email1": "Email 1",
+    "email2": "Email 2",
+    "phone1": "Phone 1",
+    "phone2": "Phone 2",
+    "mobile": "Mobile",
+    "country": "Country",
+    "city": "City",
+    "street": "Street",
+    "streetNumber": "Number",
+    "zipCode": "Postal code",
+    "po": "P.O",
+    "accountCode": "Account code",
+    "bankReference": "Bank reference",
+    "depositAccount": "Deposited into the account",
+    "depositor": "The depositor",
+    "depositBranch": "Entrusted to the branch",
+    "location": "Location",
+    "financial": "Financial"
+
+
   }
 }

@@ -24,6 +24,8 @@ const SettingsWidget = ({
     isProductSKU,
     showColorPicker,
     showColorPickerForNoteColor,
+    errorName,
+    errorCode,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,
@@ -296,10 +298,12 @@ const SettingsWidget = ({
 
       <AddProductSkuModal
         openModal={isProductSKU}
-        modalTitle={t("products.addProduct.admin.modalProductSKUTitle")}
+        modalTitle={t("products.addProduct.admin.modalProductSKU")}
         onClose={onClickCloseProductSKU}
         onChangeStateProductSKU={onChangeStateProductSKU}
         createNewProductSKU={createNewProductSKU}
+        errorName={errorName}
+        errorCode={errorCode}
       />
     </div>
   );

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
-import { getAndSetAllCustomers, getAndSetCustomer, getAndSetCustomers } from "@/services/hooks/get-set-customers";
-import { getAndSetEmployees } from "@/services/hooks/get-set-employee";
+import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/hooks/get-set-customers";
 import { getAndSetClientTypes } from "@/services/hooks/get-set-clientTypes";
+import { getAndSetAllCustomers , getAndSetAllEmployees} from "@/services/hooks";
 
-const useCustomers = (clientType, pageNumber , setPageNumber ) => {
+const useCustomers = (clientType, pageNumber, setPageNumber) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [allCustomers, setAllCustomers] = useState([]);
@@ -82,10 +82,9 @@ const useCustomers = (clientType, pageNumber , setPageNumber ) => {
   }, []);
 
   ///////////////////////// select clientType //////////////////////////////
-
   const [clientTypesCategores, setClientTypesCategores] = useState([]);
   const getClientTypesCategores = useCallback(async () => {
-    
+
     const data = await getAndSetClientTypes(
       callApi,
       setClientTypesCategores,
@@ -101,11 +100,9 @@ const useCustomers = (clientType, pageNumber , setPageNumber ) => {
     getClientTypesCategores();
   }, []);
 
-
   ///////////////////////// select agent //////////////////////////////
-
   const getAgentCategores = useCallback(async () => {
-    const data = await getAndSetEmployees(
+    const data = await getAndSetAllEmployees(
       callApi,
       setAgentsCategores,
       { isAgent: true }
@@ -122,13 +119,14 @@ const useCustomers = (clientType, pageNumber , setPageNumber ) => {
   }, []);
 
   ///////////////////////// select customer + get the number of customers //////////////////////////////
-
   const getCustomersCategores = useCallback(async () => {
-    const data = await getAndSetCustomers(
+    const data = await getAndSetAllCustomers(
       callApi,
       setCustomersCategores,
-      { ClientType: clientType,
-        onlyCreateOrderClients: false }
+      {
+        ClientType: clientType,
+        onlyCreateOrderClients: false
+      }
     );
     const customersNames = data.map(customer => ({
       label: customer.name,
@@ -143,16 +141,16 @@ const useCustomers = (clientType, pageNumber , setPageNumber ) => {
 
   /////////////////////////  data table  //////////////////////////////
 
-  const getCustomerForEdit = async (id)=> {
-    await getAndSetCustomer(callApi, setCustomerForEdit, {
-      customerId: id ,
+  const getCustomerForEdit = async (id) => {
+    await getAndSetCustomerById(callApi, setCustomerForEdit, {
+      customerId: id,
     });
     setShowCustomerModal(true)
   }
 
-  
+
   const getAllCustomers = useCallback(async () => {
-    const data = await getAndSetAllCustomers(callApi, setAllCustomers, {
+    const data = await getAndSetCustomersPagination(callApi, setAllCustomers, {
       clientType,
       pageNumber,
       pageSize,
@@ -160,14 +158,14 @@ const useCustomers = (clientType, pageNumber , setPageNumber ) => {
       ClientTypeId,
       agentId,
       isActive,
-    },getCustomerForEdit);
+    }, getCustomerForEdit);
     setPagesCount(Math.ceil(data / pageSize));
     return data;
   }, [pageNumber, name, ClientTypeId, agentId, isActive]);
 
   useEffect(() => {
     getAllCustomers();
-  }, [pageNumber, name, ClientTypeId, agentId, isActive]);  
+  }, [pageNumber, name, ClientTypeId, agentId, isActive]);
 
   return {
     tabelHeaders,

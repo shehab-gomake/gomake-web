@@ -1,48 +1,42 @@
 import { AddPlusIcon } from "@/icons";
 
 import { useProductsSettings } from "./use-products-settings";
-import { useStyle } from "./style";
 import { ProductManagementWidget } from "./widget/product-management";
+import {
+  CustomTabPanel,
+  UsersSettingsTab,
+  UsersSettingsTabs,
+} from "../settings-users/tabs";
+import { useStyle } from "./style";
+import { GomakePrimaryButton } from "@/components";
+import { AddProductWidget } from "./widget/add-product";
 
 const ProductsSettingsWidget = () => {
   const { clasess } = useStyle();
-  const { tabs, activeTab, setActiveTab, navigate, t } = useProductsSettings();
-  const _renderActiveWidget = (tabName: string) => {
-    if (tabName === "Product management") {
-      return <ProductManagementWidget />;
-    } else if (tabName === "Shipments setting") {
-      return "coming soon";
-    } else if (tabName === "Pricing setting") {
-      return "coming soon";
-    }
-  };
+  const { tabs, value, navigate, handleChange, setValue, t } =
+    useProductsSettings();
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.mainHeadecontainer}>
-        <div style={clasess.tabsContainer}>
+        <UsersSettingsTabs
+          value={value}
+          onChange={handleChange}
+          aria-label="tabs example"
+        >
           {tabs?.map((tab) => {
-            return (
-              <>
-                {tab.name === activeTab ? (
-                  <div
-                    onClick={() => setActiveTab(tab.name)}
-                    style={clasess.tabActiveContainer}
-                  >
-                    {tab.name}
-                  </div>
-                ) : (
-                  <div
-                    onClick={() => setActiveTab(tab.name)}
-                    style={clasess.tabUnActiveContainer}
-                  >
-                    {tab.name}
-                  </div>
-                )}
-              </>
-            );
+            return <UsersSettingsTab label={tab.name} />;
           })}
-        </div>
-        <div
+        </UsersSettingsTabs>
+        <GomakePrimaryButton
+          style={clasess.addProductBtnStyle}
+          leftIcon={<AddPlusIcon stroke="#101020" />}
+          onClick={() => setValue(3)}
+        >
+          <div style={clasess.addProductBtnText}>
+            {t("products.productManagement.admin.addProduct")}
+          </div>
+        </GomakePrimaryButton>
+        {/* <div
           style={clasess.addProductBtnStyle}
           onClick={() => navigate("/products/add-product")}
         >
@@ -50,9 +44,20 @@ const ProductsSettingsWidget = () => {
           <div style={clasess.addProductBtnText}>
             {t("products.productManagement.admin.addProduct")}
           </div>
-        </div>
+        </div> */}
       </div>
-      {_renderActiveWidget(activeTab)}
+      <CustomTabPanel value={value} index={0}>
+        <ProductManagementWidget />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={1}>
+        "coming soon"
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={2}>
+        coming soon
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={3}>
+        <AddProductWidget />
+      </CustomTabPanel>
     </div>
   );
 };

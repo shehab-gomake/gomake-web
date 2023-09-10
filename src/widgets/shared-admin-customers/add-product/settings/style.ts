@@ -117,6 +117,7 @@ const useStyle = () => {
         color: secondColor(500),
         ...FONT_FAMILY.Lexend(500, 16),
         cursor: "pointer",
+        height: 40,
       },
       addNwBtn: {
         display: "flex",
@@ -128,6 +129,7 @@ const useStyle = () => {
         backgroundColor: secondColor(500),
         ...FONT_FAMILY.Lexend(500, 16),
         cursor: "pointer",
+        height: 40,
       },
     };
   }, [i18next.language, t]);
