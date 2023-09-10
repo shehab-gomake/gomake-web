@@ -13,36 +13,14 @@ import {useRecoilValue} from "recoil";
 import {machineCategoriesState} from "@/store/machine-categories";
 import {EditIcon} from "@/components/icons/edit-icon";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {PrimaryButton} from "@/widgets/machines/components/buttons/primary-button";
 import {useStyle} from "@/widgets/machines/components/categories-table/style";
 import {GomakeTextInput} from "@/components";
 import {useCallback, useState} from "react";
-import {SecondaryButton} from "@/widgets/machines/components/buttons/secondary-button";
+import {SecondaryButton} from "@/components/button/secondary-button";
 import AddIcon from '@mui/icons-material/Add';
-import { ICategoriesTableProps } from "./interface";
-
-const StyledTableCell = styled(TableCell)(() => ({
-    [`&.${tableCellClasses.head}`]: {
-        backgroundColor: "#EBECFF",
-        color: "#292929",
-        ...FONT_FAMILY.Lexend(500, 14),
-    },
-    [`&.${tableCellClasses.body}`]: {
-        ...FONT_FAMILY.Lexend(500, 14),
-        color: "#2E3092",
-    },
-}));
-
-const StyledTableRow = styled(TableRow)(() => ({
-    "&:nth-of-type(even)": {
-        backgroundColor: "#F6F6F6",
-    },
-    // hide last border
-    "&:last-child td, &:last-child th": {
-        border: 0,
-    },
-}));
-
+import {ICategoriesTableProps} from "./interface";
+import {PrimaryTable} from "@/components/tables/primary-table";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 const CategoriesTable = ({isAdmin}: ICategoriesTableProps) => {
     const [filter, setFilter] = useState<string>('');
@@ -56,6 +34,24 @@ const CategoriesTable = ({isAdmin}: ICategoriesTableProps) => {
         }
         return categoriesList
     }, [filter, categoriesList])
+
+    const tableHeaders = ['Category', 'internal/Out source', 'active', 'edit machine'];
+    const tableRows = categories()?.map(category => [category.name , ' ', ' ', <PrimaryButton
+        startIcon={
+            <EditIcon
+                color={primaryColor(500)}
+                width={20}
+                height={20}
+            />
+        }
+        href={
+            isAdmin ? `/admin/machine/category/${category.id}`
+                : `/machines/category/${category.id}`
+        }
+        variant={"text"}
+    >
+        Edit
+    </PrimaryButton>])
 
     return (
         <>
@@ -74,51 +70,7 @@ const CategoriesTable = ({isAdmin}: ICategoriesTableProps) => {
                     Add Machine
                 </SecondaryButton>
             }
-            <TableContainer>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <StyledTableCell align={"center"}>Category</StyledTableCell>
-                            <StyledTableCell align={"center"}>
-                                internal/Out source
-                            </StyledTableCell>
-                            <StyledTableCell align={"center"}>active</StyledTableCell>
-                            <StyledTableCell align={"center"}>edit machine</StyledTableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {categories().map((category) => {
-                            return (
-                                <StyledTableRow>
-                                    <StyledTableCell align={"center"}>
-                                        {category.name}
-                                    </StyledTableCell>
-                                    <StyledTableCell align={"center"}></StyledTableCell>
-                                    <StyledTableCell align={"center"}></StyledTableCell>
-                                    <StyledTableCell align={"center"}>
-                                        <PrimaryButton
-                                            startIcon={
-                                                <EditIcon
-                                                    color={primaryColor(500)}
-                                                    width={20}
-                                                    height={20}
-                                                />
-                                            }
-                                            href={
-                                            isAdmin ? `/admin/machine/category/${category.id}`
-                                                : `/machines/category/${category.id}`
-                                        }
-                                            variant={"text"}
-                                        >
-                                            Edit
-                                        </PrimaryButton>
-                                    </StyledTableCell>
-                                </StyledTableRow>
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <PrimaryTable rows={tableRows} headers={tableHeaders}/>
         </>
     );
 };

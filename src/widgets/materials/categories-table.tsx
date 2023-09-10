@@ -9,14 +9,12 @@ import {
   TableRow,
 } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { useRecoilValue } from "recoil";
-import { machineCategoriesState } from "@/store/machine-categories";
 import { EditIcon } from "@/components/icons/edit-icon";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { PrimaryButton } from "@/widgets/machines/components/buttons/primary-button";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeRouter } from "@/hooks";
+import {PrimaryButton} from "@/components/button/primary-button";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
