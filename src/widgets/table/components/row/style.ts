@@ -11,6 +11,7 @@ const useStyle = ({ width }: any) => {
         width: "100%",
         justifyContent: "space-around",
         alignItems: "center",
+        backgroundColor: "white",
         height: 60,
       },
       secondRow: {
@@ -20,6 +21,14 @@ const useStyle = ({ width }: any) => {
         alignItems: "center",
         height: 60,
         backgroundColor: "#F6F6F6",
+      },
+      isSticky: {
+        display: "flex",
+        width: "100%",
+        justifyContent: "space-around",
+        alignItems: "center",
+        backgroundColor: "white",
+        height: 60,
       },
       rowItem: {
         display: "flex",
@@ -41,9 +50,8 @@ const useStyle = ({ width }: any) => {
       sticky: {
         position:"sticky" as "sticky" ,
         left: 0,
-        background: "white",
-        boxShadow: "5px 2px 5px grey",
-        borderRight: "2px solid black"
+        backgroundColor:"white",
+        Zindex:1000000000,
       } 
     };
   }, []);

@@ -5,66 +5,88 @@ import { useGomakeAxios } from "@/hooks";
 
 import { useStyle } from "./style";
 import Switch from "@mui/material/Switch";
-import { ThemeProvider, createMuiTheme } from "@mui/material/styles";
-import { getAndSetPermissions, getAndSetRoles } from "@/services/hooks/get-set-permissionRoles";
+import {ThemeProvider,  createMuiTheme, createTheme } from "@mui/material/styles";
+import { getAndSetPermissions, getAndSetPermissionsRolesRelation, getAndSetRoles } from "@/services/hooks/get-set-permissionRoles";
+import {getPermissionRolesRelationsByGroupId} from "@/services/hooks/get-permissions-by-id-group";
 
 const useSettings = () => {
   const { callApi } = useGomakeAxios();
   const { classes } = useStyle();
 
-  const [roles,setRoles] = useState([]);
-  const [permissions,setpermissions] =  useState([]);
-  const [permissionDesc , setpermissionDesc] = useState([]);
+  const [groups,setgroups] = useState([]);
   const [permissionsRoles,setpermissionsRoles] = useState([]);
   const [tableHeaders, setTableHeaders] = useState([]);
+  const [permissions, setpermissions] = useState([]);
+  const [table, setTable] = useState([]);
   const { t } = useTranslation();
-  const theme = createMuiTheme({
+  const theme = createTheme({
     palette: {
       secondary: {
         main: '#ED028C',
-      },
-    },
-  });
-  const getRoles = useCallback(async () => {
-    const data = await getAndSetRoles(callApi, setRoles);
-    const newTableHeaders = [ { text : t("permissionsSettings.Permission") , icon : "" }];
-  
-
-    if (data) {
-      data.forEach((row) => {
-        newTableHeaders.push( {text : row.text , icon : "" } );
-      });
+      }
     }
-
-    setTableHeaders(newTableHeaders);
-  }, [callApi, setTableHeaders, t]);
-
-  const getPermissions = useCallback(async () => {
-   const data = await getAndSetPermissions(callApi, setpermissions);
-  const PermissionTable = [];
-   if (data) {
-    data.forEach((row) => {
-      PermissionTable.push( {Permision : row.description  } );
-    });
-    setpermissionDesc(PermissionTable);
-  }
+  });
+  const getSwitch = (roleId,permissionId)=>{
+    return (
+      <ThemeProvider theme={theme}>
+          <Switch  color="secondary" checked={true} />
+    </ThemeProvider> 
+    );
   
-  },[callApi, setpermissions, t]);
+  }
+  const getSwitchFale = (roleId,permissionId)=>{
+    return (
+      <ThemeProvider  theme={theme}>   
+         <Switch  color="secondary"checked={false}/>
+      </ThemeProvider>
+    );
+  }
   const getPermissionRolesRelations = useCallback(async () => {
-    await getAndSetPermissions(callApi, setpermissionsRoles);
+    const data = await getAndSetPermissionsRolesRelation(callApi, setpermissionsRoles);
+    const roles = [...data.roles]; // Create a new array and copy elements from 'data.roles'
+    roles.unshift([]); // Adds an empty array to the beginning of the new 'roles' array
+    setTableHeaders(roles);
+    setgroups(data.groups)
+    setpermissions(data.permissions);
+    var col =[]
+    const row = [col];
+    const table2 = [];
+    data.permissions.forEach(permission => {
+      var row = [];
+      row.push(permission.description);
+      roles.forEach(role => {
+        var relation =  permission.rolesPermissionsRelationships.find(x=> x.roleId == role.id)
+        var col = relation ? getSwitch(role.id,permission.id) : getSwitchFale(role.id,permission.id)
+        row.push(col);
+      });
+      table2.push(row)
+    })
+    setTable(table2);
   
   },[callApi, setpermissionsRoles, t])
+
+
+
+  const getAndSetPermissionRolesRelationsByGroupId = useCallback(async () => {
+    const data = await getPermissionRolesRelationsByGroupId(callApi,setpermissionsRoles);
+  },[callApi,setpermissionsRoles,t])
   useEffect(() => {
-    getRoles();
-    getPermissions();
-    getPermissionRolesRelations();
-  }, [getRoles,getPermissions,getPermissionRolesRelations]);
+    const fetchData = async () => {
+      await getPermissionRolesRelations();
+    };
+  
+    fetchData();
+  }, [getPermissionRolesRelations]);
+
+
+  console.log(table)
 
   return {
     tableHeaders,
-    permissions,
-    permissionDesc,
     permissionsRoles,
+    groups,
+    permissions,
+    table
   };
 };
 

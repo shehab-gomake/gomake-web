@@ -163,7 +163,7 @@ const useStyle = () => {
         minWidth: 650
       },
       sticky: {
-        position: "sticky",
+        position: "sticky" as "sticky",
         left: 0,
         background: "white",
         boxShadow: "5px 2px 5px grey",

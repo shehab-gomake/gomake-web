@@ -18,6 +18,8 @@ const useStyle = () => {
           sticky: {
             position:"sticky" as "sticky",
             left: 0,
+            Zindex:100000,
+            backgroundColor: primaryColor(50),
         
           },
           headerItem: {
@@ -25,7 +27,6 @@ const useStyle = () => {
             justifyContent: "center",
             alignItems: "center",
             color: primaryColor(700),
-        
             textalign: "center",
             paddingTop: 14,
             paddingBottom: 14,

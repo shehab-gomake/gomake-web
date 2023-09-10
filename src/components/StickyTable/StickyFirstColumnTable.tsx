@@ -21,11 +21,12 @@ const StickyFirstColumnTable = ({ data, columns }) => {
         aria-label="simple table"
         style={clasess.table}
         >
-        {columns && (
+        {
+        columns && (
             <div style={clasess.header}>
             {columns?.map((header: any, index: number) => 
                 
-                index == 0 ? (<div style={clasess.sticky}>{header.text}</div>) :  (<div style={clasess.headerItem}>{header.text}{header.icon}</div>)
+                index == 0 ? (<div style={clasess.sticky}>{header.name}</div>) :  (<div style={clasess.headerItem}>{header.name}{header.icon}</div>)
             )}
             </div>
       )}
@@ -40,6 +41,7 @@ const StickyFirstColumnTable = ({ data, columns }) => {
                     key={`body_row${index}`}
                     index={index}
                     row={row}
+                    isSticky={true}
                     width={`${100 / Object.entries(row).length}%`}
                   />
                 );

@@ -5,7 +5,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { HeaderTitle } from "@/widgets/header-title";
 
 import { useState } from "react";
-import { InputAdornment, Tab, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
+import { InputAdornment, Tab, Table,TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { AddRoleModal } from "./modals";
@@ -24,15 +24,17 @@ const PermissionsWidget = () => {
     });
     const handleTabChange = (event, newValue) => {
       setSelectedTab(newValue);
+    
     };
     const [isNewRole, setisNewRole] = useState(false);
     const onClickCloseNewRole = () => {
       setisNewRole(false);
     };
     const [selectedTab, setSelectedTab] = useState(0);
-    const {tableHeaders,permissions,permissionDesc,permissionsRoles} =
+    const {tableHeaders,permissionsRoles,groups,table,permissions} =
     useSettings();
 
+   
   return (
       <div style={classes.mainContainer}>
           <div style={{display:"flex",justifyContent:"flex-end",alignItems:"flex-end",width:"100%"}}>
@@ -56,16 +58,24 @@ const PermissionsWidget = () => {
           <div style={{width:"98%"}}>
               <ThemeProvider theme={theme}>
                   <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary"  indicatorColor="secondary">
-                      <Tab  sx={{ color: selectedTab === 0 ? '#ED028C' : '#1C1D58',  marginLeft:"4px",marginRight:"4px",paddingLeft:"1px",paddingRight:"1px",textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("permissionsSettings.General")} />
-                      <Tab sx={{  color: selectedTab === 1 ? '#ED028C' : '#1C1D58', marginLeft:"4px",marginRight:"4px",paddingLeft:"1px",paddingRight:"1px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("permissionsSettings.Book keeping")} />
-                      <Tab sx={{  color: selectedTab === 2 ? '#ED028C' : '#1C1D58', marginLeft:"3px",marginRight:"4px",paddingLeft:"1px",paddingRight:"1px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("permissionsSettings.Boards")} />
-                      <Tab sx={{  color: selectedTab === 3 ? '#ED028C' : '#1C1D58', marginLeft:"3px",marginRight:"4px",paddingLeft:"1px",paddingRight:"1px",  textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("permissionsSettings.Orders and quotes")} />
-                      <Tab sx={{  color: selectedTab === 4 ? '#ED028C' :  '#1C1D58', marginLeft:"3px",marginRight:"4px",paddingLeft:"1px",paddingRight:"1px",  textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("permissionsSettings.Work order")} />
-                      <Tab sx={{  color: selectedTab === 5 ? '#ED028C' : '#1C1D58', marginLeft:"4px",marginRight:"4px",paddingLeft:"1px",paddingRight:"1px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("permissionsSettings.Users")} />
-                      <Tab sx={{  color: selectedTab === 6 ? '#ED028C' : '#1C1D58', marginLeft:"4px",marginRight:"4px",paddingLeft:"1px",paddingRight:"1px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("permissionsSettings.Tenders and fixed price lists")} />
-                      <Tab sx={{  color: selectedTab === 7 ? '#ED028C' : '#1C1D58', marginLeft:"4px",marginRight:"4px",paddingLeft:"1px",paddingRight:"1px",textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("permissionsSettings.Add/update price screen")} />
-                      <Tab sx={{  color: selectedTab === 8 ? '#ED028C' : '#1C1D58', marginLeft:"4px",marginRight:"4px",paddingLeft:"1px",paddingRight:"1px",  textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("permissionsSettings.editing an order")} />
-                  </Tabs>
+                  {groups?.map(x => (
+                        <Tab
+                        key={x} // Don't forget to add a unique key when rendering an array of components
+                        sx={{
+                            color: selectedTab === 0 ? '#ED028C' : '#1C1D58',
+                            marginLeft: '4px',
+                            marginRight: '4px',
+                            paddingLeft: '1px',
+                            paddingRight: '1px',
+                            textTransform: 'none',
+                            fontStyle: 'normal',
+                            ...FONT_FAMILY.Lexend(500, 16),
+                            lineHeight: 'normal',
+                        }}
+                        label={x.name}
+                        />
+                    ))}
+                  </Tabs>   
               </ThemeProvider>
         
           </div>
@@ -85,8 +95,7 @@ const PermissionsWidget = () => {
               </div>
           </div>
 
-       
-          <StickyFirstColumnTable columns={tableHeaders} data={permissionDesc} /> 
+        <StickyFirstColumnTable columns={tableHeaders} data={table} /> 
 
           <AddRoleModal
               openModal={isNewRole}
@@ -95,7 +104,7 @@ const PermissionsWidget = () => {
            
           />
   
-          
+         
       </div>
   )
 }
