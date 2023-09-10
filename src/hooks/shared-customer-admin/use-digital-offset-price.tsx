@@ -187,6 +187,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     clientTypeDefaultValue,
     router,
     router?.query?.customerId,
+    renderOptions,
   ]);
 
   const handleChange =

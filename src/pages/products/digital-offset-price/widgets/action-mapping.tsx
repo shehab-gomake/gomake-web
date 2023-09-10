@@ -22,57 +22,49 @@ const ActionMappingWidget = ({
     <div style={clasess.summaryContainer}>
       <div style={clasess.actionNameStyle}>{action?.actionName}</div>
       <div style={clasess.cellsContainerStyle}>
-        {/* <div
-          style={{
-            minWidth: 180,
-            padding: 22,
-          }}
-        >
-          <GoMakeAutoComplate
-            options={["q", "w"]}
-            placeholder={t("products.offsetPrice.admin.stationName")}
-            style={clasess.actoionsSelectContainer}
-          />
-        </div> */}
-        <div
-          style={{
-            minWidth: 180,
-            padding: 22,
-          }}
-        >
-          <GoMakeAutoComplate
-            options={actionData?.machineCategories?.map((category) => {
-              const findMachineCategory = machineCategories.find(
-                (c) => c.id === category.machineCategoryId
-              );
-
-              return {
-                ...findMachineCategory,
-                machines: category.machines,
-              };
-            })}
-            defaultValue={machineCategories.find(
-              (c) => c.id === action.machineCategoryId
-            )}
-            onChange={(e: any, item: any) => {
-              setMachinesArray(item?.machines);
-              onChangeCategoryData(
-                action.actionId,
-                action.machineCategoryId,
-                item
-              );
+        {actionData?.machineCategories && (
+          <div
+            style={{
+              minWidth: 180,
+              paddingRight: 22,
+              paddingBottom: 22,
             }}
-            getOptionLabel={(option: any) => option.name}
-            placeholder={t("products.offsetPrice.admin.actionType")}
-            style={clasess.actoionsSelectContainer}
-          />
-        </div>
+          >
+            <GoMakeAutoComplate
+              options={actionData?.machineCategories?.map((category) => {
+                const findMachineCategory = machineCategories.find(
+                  (c) => c.id === category.machineCategoryId
+                );
+
+                return {
+                  ...findMachineCategory,
+                  machines: category.machines,
+                };
+              })}
+              defaultValue={machineCategories.find(
+                (c) => c.id === action.machineCategoryId
+              )}
+              onChange={(e: any, item: any) => {
+                setMachinesArray(item?.machines);
+                onChangeCategoryData(
+                  action.actionId,
+                  action.machineCategoryId,
+                  item
+                );
+              }}
+              getOptionLabel={(option: any) => option.name}
+              placeholder={t("products.offsetPrice.admin.actionType")}
+              style={clasess.actoionsSelectContainer}
+            />
+          </div>
+        )}
 
         {machinesArray?.length > 0 ? (
           <div
             style={{
               minWidth: 180,
-              padding: 22,
+              paddingRight: 22,
+              paddingBottom: 22,
             }}
           >
             <GoMakeAutoComplate
@@ -89,16 +81,56 @@ const ActionMappingWidget = ({
             />
           </div>
         ) : null}
-
-        {action?.outputs.map((output: any) => {
-          return (
+        <div style={{ display: "flex" }}></div>
+        {action?.outputs.slice(0, 3).map((item, index) => (
+          <div
+            key={index}
+            // style={{ backgroundColor: index % 1 === 0 ? "lightgray" : "white" }}
+          >
             <div style={clasess.cellContainer}>
-              <div>{output?.name}</div>
-              <div>{output.value}</div>
+              <div>{item?.name}</div>
+              <div>{item.value}</div>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
+      <div style={clasess.cellsContainerStyle2}>
+        <div style={{ display: "flex" }}></div>
+        {action?.outputs.slice(3, 8).map((item, index) => (
+          <div key={index}>
+            <div style={clasess.cellContainer}>
+              <div>{item?.name}</div>
+              <div>{item.value}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      {action?.outputs.slice(8, 12)?.lengh && (
+        <div style={clasess.cellsContainerStyle}>
+          <div style={{ display: "flex" }}></div>
+          {action?.outputs.slice(8, 12).map((item, index) => (
+            <div key={index}>
+              <div style={clasess.cellContainer}>
+                <div>{item?.name}</div>
+                <div>{item.value}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {action?.outputs.slice(12, 18)?.lengh && (
+        <div style={clasess.cellsContainerStyle}>
+          <div style={{ display: "flex" }}></div>
+          {action?.outputs.slice(12, 18).map((item, index) => (
+            <div key={index}>
+              <div style={clasess.cellContainer}>
+                <div>{item?.name}</div>
+                <div>{item.value}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

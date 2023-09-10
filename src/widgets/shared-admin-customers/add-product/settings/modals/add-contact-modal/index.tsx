@@ -18,8 +18,6 @@ const AddProductSkuModal = ({
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  console.log("errorName", errorName);
-  console.log("errorCode", errorCode);
   return (
     <>
       <GoMakeModal

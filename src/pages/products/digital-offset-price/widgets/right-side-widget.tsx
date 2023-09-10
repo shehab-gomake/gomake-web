@@ -26,6 +26,7 @@ const RightSideWidget = ({
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
   const [defaultPrice, setDefaultPrice] = useState<any>();
+
   useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0) {
       setDefaultPrice(pricingDefaultValue?.workFlows[0]?.totalPrice.toFixed(2));

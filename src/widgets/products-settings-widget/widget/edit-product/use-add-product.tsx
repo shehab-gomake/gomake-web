@@ -8,7 +8,6 @@ import { GraphicIcon, PrameterIcon, SettingIcon } from "@/widgets";
 const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
   const router = useRouter();
-  console.log("router?.query?.id", router?.query?.id);
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
   const [productState, setProductState] = useState<any>([]);
