@@ -10,14 +10,15 @@ import { PeopleIcon } from "@/components/icons/people-icon";
 import { DollarCircleIcon } from "@/components/icons/dollar-circle-icon";
 import { SettingsUsersWidget } from "@/widgets/settings-users/settings-users-widget";
 import { EditProductWidget } from "../products-settings-widget/widget/edit-product";
+import {SettingsProfileWidget} from "@/widgets/settings-profile-widget/settings-profile-widget";
 
 export const list: IListItem[] = [
   {
-    component: EmptyComponent,
+    component: SettingsProfileWidget,
     text: "settings.profile",
     value: "1",
     icon: ProfileIcon,
-    path: "profits",
+    path: "profile",
   },
   {
     component: ProductsSettingsWidget,

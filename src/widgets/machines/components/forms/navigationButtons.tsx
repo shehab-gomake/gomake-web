@@ -1,6 +1,6 @@
 import {useStyle} from "@/widgets/machines/components/forms/style";
 import {GomakePrimaryButton} from "@/components";
-import {SecondaryButton} from "@/widgets/machines/components/buttons/secondary-button";
+import {SecondaryButton} from "@/components/button/secondary-button";
 
 const NavigationButtons = ({
                                onClickNext,

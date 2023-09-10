@@ -1,7 +1,8 @@
-import {IMachineLayoutProps} from "@/widgets/machines/components/layout/interface";
-import {useStyle} from "@/widgets/machines/components/layout/style";
+import {ISideBarContainer} from "@/components/containers/interface";
+import {useStyle} from "@/components/containers/style";
 
-const MachineLayout = ({side, children, subHeader, header}: IMachineLayoutProps) => {
+
+const SideBarContainer = ({side, children, subHeader, header}: ISideBarContainer) => {
     const {classes} = useStyle();
     return (
         <div>
@@ -20,7 +21,7 @@ const MachineLayout = ({side, children, subHeader, header}: IMachineLayoutProps)
                 </div>
             </div>
         </div>
-    );
+    )
 }
 
-export {MachineLayout}
+export {SideBarContainer};
