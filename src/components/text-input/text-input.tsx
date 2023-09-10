@@ -11,7 +11,6 @@ const StyledTextField = styled(TextField, {
 })((props: any) => ({
   width: "100%",
   input: {
-    // backgroundColor: "#FDFDFD",
     boxSizing: "border-box",
     borderRadius: props?.style?.borderRadius || 4,
     height: 56,

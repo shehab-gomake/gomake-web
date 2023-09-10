@@ -1,15 +1,13 @@
-import { CustomerAuthLayout } from "@/layouts";
 import {
   GraphicWidget,
   HeaderTitle,
   ParameterWidget,
   SettingsWidget,
 } from "@/widgets";
+import { useStyle } from "./style";
 import { useAddProduct } from "./use-add-product";
 
-import { useStyle } from "./style";
-
-export default function EditProduct() {
+const EditProductWidget = () => {
   const { clasess } = useStyle();
   const {
     t,
@@ -19,9 +17,8 @@ export default function EditProduct() {
     onChangeStateProduct,
     productState,
   } = useAddProduct();
-
   return (
-    <CustomerAuthLayout>
+    <>
       <div style={clasess.mainContainer}>
         <HeaderTitle title={t("products.addProduct.admin.editProduct")} />
         <div style={clasess.headerTabsContainer}>
@@ -61,6 +58,8 @@ export default function EditProduct() {
           <GraphicWidget />
         )}
       </div>
-    </CustomerAuthLayout>
+    </>
   );
-}
+};
+
+export { EditProductWidget };

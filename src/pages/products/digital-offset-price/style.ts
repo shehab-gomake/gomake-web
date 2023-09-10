@@ -46,7 +46,7 @@ const useStyle = () => {
         marginTop: -87,
         boxShadow: "0px 4px 40px 0px rgba(129, 129, 129, 0.12)",
         borderRadius: 5,
-        height: 815,
+        height: 720,
       },
       rightSideContainer: {
         height: "100%",
