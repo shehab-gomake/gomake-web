@@ -53,6 +53,8 @@ const useSettings = ({
   };
 
   const [productSKU, setProductSKU] = useState<any>([]);
+  const [errorName, setErrorName] = useState(false);
+  const [errorCode, setErrorCode] = useState(false);
   const onChangeStateProductSKU = useCallback(
     (filedName: string, value: any) => {
       setProductSKU((prev) => {
@@ -65,30 +67,43 @@ const useSettings = ({
     [productSKU]
   );
   const createNewProductSKU = useCallback(async () => {
-    const res = await callApi(
-      "POST",
-      `/v1/printhouse-config/productsSKU/create-product-sku`,
-      {
-        name: productSKU?.name,
-        code: productSKU?.code,
+    if (productSKU?.name?.length > 0 && productSKU?.code?.length > 0) {
+      const res = await callApi(
+        "POST",
+        `/v1/printhouse-config/productsSKU/create-product-sku`,
+        {
+          name: productSKU?.name,
+          code: productSKU?.code,
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getAllProductsSKU();
+        onClickCloseProductSKU();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
       }
-    );
-    if (res?.success) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedSusuccessfully"),
-        type: "sucess",
-      });
-      getAllProductsSKU();
-      onClickCloseProductSKU();
     } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedfailed"),
-        type: "error",
-      });
+      if (productSKU?.name?.length > 0) {
+        setErrorName(false);
+      } else {
+        setErrorName(true);
+      }
+      if (productSKU?.code?.length > 0) {
+        setErrorCode(false);
+      } else {
+        setErrorCode(true);
+      }
     }
-  }, [productSKU]);
+  }, [productSKU, errorName, errorCode]);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showColorPickerForNoteColor, setShowColorPickerForNoteColor] =
     useState(false);
@@ -130,7 +145,7 @@ const useSettings = ({
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      navigate("/settings");
+      navigate("/settings/products");
     } else {
       setSnackbarStateValue({
         state: true,
@@ -165,7 +180,7 @@ const useSettings = ({
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      navigate(`/settings/edit-product/${RandomId}`);
+      navigate(`/settings/products/edit/${RandomId}`);
       onClickParametersTab();
     } else {
       setSnackbarStateValue({
@@ -228,6 +243,8 @@ const useSettings = ({
     showColorPickerForNoteColor,
     productState,
     onChangeStateProduct,
+    errorName,
+    errorCode,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,

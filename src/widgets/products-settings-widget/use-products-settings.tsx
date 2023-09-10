@@ -5,21 +5,23 @@ import { useTranslation } from "react-i18next";
 const useProductsSettings = () => {
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
-
-  const [activeTab, setActiveTab] = useState("Product management");
+  const [value, setValue] = useState(0);
+  const handleChange = (event: any, newValue: any) => {
+    setValue(newValue);
+  };
   const tabs = [
     {
-      name: "Product management",
+      name: t("settings.productManagement"),
     },
     {
-      name: "Shipments setting",
+      name: t("settings.shipmentsSetting"),
     },
     {
-      name: "Pricing setting",
+      name: t("settings.pricingSetting"),
     },
   ];
 
-  return { tabs, activeTab, setActiveTab, navigate, t };
+  return { tabs, value, navigate, handleChange, setValue, t };
 };
 
 export { useProductsSettings };

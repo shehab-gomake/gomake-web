@@ -1363,6 +1363,7 @@
         "startingPrice": "Starting price",
         "additionToType": "Addition to type",
         "modalProductSKUTitle": "Add New Product SKU",
+        "modalProductSKU": "Product SKU",
         "enterName": "Enter Name",
         "enterCode": "Enter Code",
         "addNewProduct": "Add new product",
