@@ -6,10 +6,9 @@ import {
     ChangePasswordComponent
 } from "@/widgets/settings-profile-widget/components/change-password/change-password-component";
 import Stack from "@mui/material/Stack";
-import {MachineInput} from "@/widgets/machines/components/inputs/machine-inputs";
 import {IInput} from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
 import {useStyle} from "@/widgets/settings-profile-widget/components/profiles/style";
-import {SecondaryButton} from "@/widgets/machines/components/buttons/secondary-button";
+import {SecondaryButton} from "@/components/button/secondary-button";
 import {IUserProfile, userProfileState} from "@/store/user-profile";
 import {useRecoilState} from "recoil";
 import {
@@ -24,6 +23,7 @@ import {
 import {
     companyFinancialInputs
 } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-financial-inputs";
+import {FormInput} from "@/components/form-inputs/form-input";
 
 
 const CompanyProfileComponent = () => {
@@ -61,7 +61,7 @@ const CompanyProfileComponent = () => {
                                 <h3 style={classes.subSectionHeader}>{t(section.title)}</h3>
                                 <Stack gap={'16px'} direction={'row'} display={'flex'} flexWrap={'wrap'}>
                                     {
-                                        section.inputs.map(companyInput => <MachineInput key={companyInput.parameterKey}
+                                        section.inputs.map(companyInput => <FormInput key={companyInput.parameterKey}
                                                                                              input={companyInput as IInput}
                                                                                              changeState={changeState}
                                                                                              error={false}/>)

@@ -1,12 +1,12 @@
 import {useState} from "react";
 import {useStyle} from "@/widgets/machines/components/inputs/style";
-import {IInput, IMachineMultiArrayInput} from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
-import {MachineInput} from "@/widgets/machines/components/inputs/machine-inputs";
 import {useTranslation} from "react-i18next";
-import {SecondaryButton} from "@/widgets/machines/components/buttons/secondary-button";
-import {DeleteIcon} from "@/components/icons/delete-icon";
+import {RemoveSecondaryBtn} from "@/components/button/remove-secondary-btn";
+import {IFormArrayInputsProps, IInput} from "@/components/form-inputs/interfaces";
+import {FormInput} from "@/components/form-inputs/form-input";
+import {SecondaryButton} from "@/components/button/secondary-button";
 
-const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value, isValid}: IMachineMultiArrayInput) => {
+const FormArrayInput = ({name, inputs, updateState, parameterKey, value, isValid}: IFormArrayInputsProps) => {
     const [state, setState] = useState<Record<string, any>>({});
     const [errors, setErrors] = useState<Record<string, boolean>>();
     const {t} = useTranslation();
@@ -60,7 +60,7 @@ const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value,
                 {
                     inputs.map((input: IInput, index: number) => {
                         input.value = state[input.parameterKey] ? state[input.parameterKey] : '';
-                        return <MachineInput key={input.parameterKey + index}
+                        return <FormInput key={input.parameterKey + index}
                                              input={input}
                                              error={!!input.value && !!input.regex ? !input.regex.test(input.value) : !!(errors && errors[input.parameterKey]) || !isValid}
                                              changeState={handleInputChanges1}/>
@@ -74,7 +74,7 @@ const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value,
                 value.map((v: Record<string, string>, index: number) => {
                     return <div key={'row' + index} style={{...classes.inputsRow, paddingTop: 12}}>
                         {
-                            inputs.map((input) => <MachineInput
+                            inputs.map((input) => <FormInput
                                 key={index}
                                 readonly={false}
                                 input={{...input, value:  v[input.parameterKey], disabled: false}} error={false}
@@ -83,11 +83,7 @@ const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value,
                                 }}
                             />)
                         }
-                        <SecondaryButton variant={'text'}  onClick={() => handleRemoveRow(index)}  style={classes.deleteIcon}
-                                startIcon={<DeleteIcon height={20} width={20} color={classes.iconColor}/>}>
-                            Remove
-                        </SecondaryButton>
-
+                        <RemoveSecondaryBtn onClick={()=>handleRemoveRow(index)}/>
                     </div>
                 })
             }
@@ -95,4 +91,4 @@ const MachineMultiArrayInput = ({name, inputs, updateState, parameterKey, value,
     );
 }
 
-export {MachineMultiArrayInput}
+export {FormArrayInput}

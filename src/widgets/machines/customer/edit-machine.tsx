@@ -5,12 +5,12 @@ import {useRecoilValue} from "recoil";
 import {machineCategoriesState} from "@/store/machine-categories";
 import {IStep} from "@/widgets/machines/utils/interface/step";
 import {getSteps} from "@/widgets/machines/utils/steps";
-import {MachineLayout} from "@/widgets/machines/components/layout/machine-layout";
 import {useRouter} from "next/router";
 import {usePrintHouseMachines} from "@/widgets/machines/hooks/use-print-house-machines";
 import {machineState} from "@/widgets/machines/state/machine-state";
-import {SecondaryButton} from "@/widgets/machines/components/buttons/secondary-button";
+import {SecondaryButton} from "@/components/button/secondary-button";
 import {usePrintHouseAddMachine} from "@/widgets/machines/hooks/use-print-house-add-machine";
+import {SideBarContainer} from "@/components/containers/side-bar-container";
 
 const CustomerEditMachines = () => {
     const router = useRouter();
@@ -50,13 +50,13 @@ const CustomerEditMachines = () => {
         </SideList>
     }
     return (
-        <MachineLayout side={Side()} header={categoryName}
+        <SideBarContainer side={Side()} header={categoryName}
                        subHeader={selectedMachine?.manufacturer && selectedMachine?.nickName ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.nickName : ''}>
             {!!selectedMachine?.id &&
                 <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
                                 nextStep={navigateNext} actionButtonClicked={updateMachine}
                                 isAddForm={false}/>}
-        </MachineLayout>
+        </SideBarContainer>
 
     );
 }
