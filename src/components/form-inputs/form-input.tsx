@@ -1,11 +1,11 @@
 import {GoMakeAutoComplate, GomakeTextInput, SecondSwitch} from "@/components";
 import {ChangeEvent, SyntheticEvent, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {useStyle} from "@/widgets/machines/components/inputs/style";
-import {IMachineInput} from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
 import {useGomakeAxios} from "@/hooks";
+import {useStyle} from "@/components/form-inputs/style";
+import {IFormInput} from "@/components/form-inputs/interfaces";
 
-const MachineInput = ({input, error, changeState, readonly}: IMachineInput) => {
+const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
     const [options, setOptions] = useState([]);
     const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
     const {callApi} = useGomakeAxios();
@@ -90,4 +90,4 @@ const MachineInput = ({input, error, changeState, readonly}: IMachineInput) => {
         </>
     );
 };
-export {MachineInput};
+export {FormInput};

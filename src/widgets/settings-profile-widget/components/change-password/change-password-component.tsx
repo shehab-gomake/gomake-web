@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import {GomakeTextInput} from "@/components";
 import {useTranslation} from "react-i18next";
-import {SecondaryButton} from "@/widgets/machines/components/buttons/secondary-button";
+import {SecondaryButton} from "@/components/button/secondary-button";
 
 const ChangePasswordComponent = () => {
    const {t} = useTranslation();

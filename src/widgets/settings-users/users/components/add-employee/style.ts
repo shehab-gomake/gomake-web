@@ -7,7 +7,7 @@ const useStyle = () => {
         return {
             container: {
                 maxHeight: '100%',
-                position: 'relative' as 'relative'
+                position: 'relative' as 'relative',
             },
             headerContainer: {
                 position: 'sticky' as 'sticky',

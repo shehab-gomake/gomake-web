@@ -7,13 +7,13 @@ import {
 } from "@/widgets/settings-profile-widget/components/change-password/change-password-component";
 import Stack from "@mui/material/Stack";
 import {IUserProfile} from "@/widgets/settings-profile-widget/components/profiles/interface";
-import {MachineInput} from "@/widgets/machines/components/inputs/machine-inputs";
 import {IInput} from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
 import {personalInputs} from "@/widgets/settings-profile-widget/components/profiles/inputs/personal-inputs";
 import {contactsInputs} from "@/widgets/settings-profile-widget/components/profiles/inputs/contacts-inputs";
 import {useStyle} from "@/widgets/settings-profile-widget/components/profiles/style";
 import Button from "@mui/material/Button";
-import {SecondaryButton} from "@/widgets/machines/components/buttons/secondary-button";
+import {SecondaryButton} from "@/components/button/secondary-button";
+import {FormInput} from "@/components/form-inputs/form-input";
 
 const initState = {
     fullName: '',
@@ -52,7 +52,7 @@ const UserProfile = () => {
                                 <h3 style={classes.subSectionHeader}>{t(section.title)}</h3>
                                 <Stack gap={'16px'} direction={'row'} display={'flex'} flexWrap={'wrap'}>
                                     {
-                                        section.inputs.map(companyInput => <MachineInput key={companyInput.parameterKey}
+                                        section.inputs.map(companyInput => <FormInput key={companyInput.parameterKey}
                                                                                          input={companyInput as IInput}
                                                                                          changeState={changeState}
                                                                                          error={false}/>)
