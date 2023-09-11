@@ -122,10 +122,7 @@ const UpdateExceptionModal = () => {
                   {t("products.profits.exceptions.SelectValueNameOfParameter")}
                 </div>
                 <GoMakeAutoComplate
-                  options={
-                    profitsStateValue?.state?.priceListParameter
-                      ?.parameterValues
-                  }
+                  options={profitsStateValue?.state?.priceListParameter?.values}
                   placeholder={
                     profitsStateValue?.selectedProfitException.parameter
                   }

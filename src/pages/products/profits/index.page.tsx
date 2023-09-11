@@ -194,7 +194,7 @@ export default function Profits() {
   return (
     <CustomerAuthLayout>
       <div style={clasess.mainContainer}>
-        <SelectAction />
+        {/* <SelectAction /> */}
         {profitsStateValue?.id?.length > 0 ? (
           <div
             style={{
