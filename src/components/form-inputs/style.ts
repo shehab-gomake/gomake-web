@@ -1,9 +1,12 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import {FONT_FAMILY} from "@/utils/font-family";
+import {convertWidthToVW, leftRightAdapter} from "@/utils/adapter";
+import {useTranslation} from "react-i18next";
 
 const useStyle = () => {
   const { theme, primaryColor, secondColor, errorColor } = useGomakeTheme();
+  const {t} = useTranslation();
   const classes = useMemo(() => {
     return {
       container: {
@@ -61,7 +64,23 @@ const useStyle = () => {
       required: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: errorColor(500)
-      }
+      },
+      subSectionHeader: {
+        ...FONT_FAMILY.Lexend(600, 16),
+        color: secondColor(500),
+      },
+      searchInput: {
+        maxWidth: 335,
+        height: 40,
+        width: convertWidthToVW(375),
+        backgroundColor: "#F8F8F8",
+        borderRadius: 10,
+      },
+      iconStyle: {
+        position: "absolute" as "absolute",
+        ...leftRightAdapter(t("direction"), 16),
+        top: 10,
+      },
     };
   }, [theme]);
   return {

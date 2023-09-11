@@ -2,13 +2,10 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import {
   GoMakeAutoComplate,
-  GoMakeTextInputIcon,
-  SecondSwitch,
 } from "@/components";
-import { InputAdornment } from "@mui/material";
-import { SearchIcon } from "@/icons";
 import { Row } from "../row";
 import { useProductManagement } from "./use-product-management";
+import {SearchInputComponent} from "@/components/form-inputs/search-input-component";
 
 const ProductManagementWidget = () => {
   const { t } = useTranslation();
@@ -54,20 +51,7 @@ const ProductManagementWidget = () => {
           </GomakePrimaryButton> */}
         </div>
         <div style={clasess.subHeaderRightSide}>
-          <GoMakeTextInputIcon
-            style={clasess.searchInputContainer}
-            placeholder={t("header.search")}
-            onChange={(e) => {
-              setTerm(e.target.value);
-            }}
-            startAdornment={
-              <InputAdornment position="start">
-                <div style={clasess.iconStyle}>
-                  <SearchIcon />
-                </div>
-              </InputAdornment>
-            }
-          />
+          <SearchInputComponent onChange={setTerm}/>
         </div>
       </div>
       <div style={clasess.tableHeaderStyle}>
