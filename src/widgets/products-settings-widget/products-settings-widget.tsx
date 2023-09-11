@@ -15,7 +15,6 @@ const ProductsSettingsWidget = () => {
   const { clasess } = useStyle();
   const { tabs, value, navigate, handleChange, setValue, t } =
     useProductsSettings();
-  console.log("value", value);
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.mainHeadecontainer}>

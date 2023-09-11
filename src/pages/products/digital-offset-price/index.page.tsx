@@ -88,7 +88,7 @@ export default function DigitalOffsetPrice() {
                     );
                   })}
                 </div>
-                <div style={{ height: 590, overflow: "scroll", width: "100%" }}>
+                <div style={{ height: 700, overflow: "scroll", width: "100%" }}>
                   <div style={clasess.sectionsContainer}>
                     {[...template?.sections, PricingTab]?.map(
                       (section: any, index: number) => {
@@ -174,14 +174,14 @@ export default function DigitalOffsetPrice() {
             <div
               style={{
                 width: "100%",
-                // height: 40,
-                background: "#FFFFFF",
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-between",
                 alignItems: "flex-start",
-                // boxShadow: "0px 0px 15px  rgba(0, 0, 0, 0.08)",
-                paddingTop: 10,
+                position: "absolute",
+                gap: 20,
+                bottom: 0,
+                right: 20,
               }}
             >
               <div style={{ width: "68%" }}>

@@ -39,6 +39,7 @@ const PricingSectionMappingWidget = ({
                     finalPrice: `${pricingDefaultValue?.workFlows[0]?.totalPrice} USD`,
                   },
                 ]}
+                styleContainer={{ marginTop: 20 }}
               />
             </div>
           </>
