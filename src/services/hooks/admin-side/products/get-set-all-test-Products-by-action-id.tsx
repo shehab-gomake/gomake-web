@@ -1,6 +1,6 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../../call-api.interface";
-import { ProductTestListMoreCircleWidget } from "@/pages/admin/products/profits/widgets/pricing-list/product-list-more-circle";
+import { ProductTestListMoreCircleWidget } from "@/pages/products/profits/widgets/pricing-list/product-list-more-circle";
 
 const getAndSetGetAllTestProductsByActionId = async (
   callApi: ICallApi,

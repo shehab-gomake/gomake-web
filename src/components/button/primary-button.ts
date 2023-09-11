@@ -7,7 +7,7 @@ const PrimaryButton = styled(Button)((props: ButtonProps) => {
     const {primaryColor} = useGomakeTheme();
     return {
         boxShadow: "none",
-        textTransform: "none",
+        textTransform: "capitalize",
         padding: "10px 32px",
         lineHeight: "1.5px",
         height: 40,

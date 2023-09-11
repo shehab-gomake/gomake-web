@@ -24,6 +24,7 @@ import {
     companyFinancialInputs
 } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-financial-inputs";
 import {FormInput} from "@/components/form-inputs/form-input";
+import {FormInputsSectionComponent} from "@/components/form-inputs/form-inputs-section";
 
 
 const CompanyProfileComponent = () => {
@@ -57,17 +58,15 @@ const CompanyProfileComponent = () => {
                 {
                     formSections.map(section => {
                         return (
-                            <Stack direction={'column'} gap={'32px'}>
-                                <h3 style={classes.subSectionHeader}>{t(section.title)}</h3>
-                                <Stack gap={'16px'} direction={'row'} display={'flex'} flexWrap={'wrap'}>
-                                    {
-                                        section.inputs.map(companyInput => <FormInput key={companyInput.parameterKey}
-                                                                                             input={companyInput as IInput}
-                                                                                             changeState={changeState}
-                                                                                             error={false}/>)
-                                    }
-                                </Stack>
-                            </Stack>
+                            <FormInputsSectionComponent sectionTitle={section.title}>
+
+                                {
+                                    section.inputs.map(companyInput => <FormInput key={companyInput.parameterKey}
+                                                                                  input={companyInput as IInput}
+                                                                                  changeState={changeState}
+                                                                                  error={false}/>)
+                                }
+                            </FormInputsSectionComponent>
                         );
                     })
                 }
@@ -88,4 +87,4 @@ const CompanyProfileComponent = () => {
 
     )
 }
-export {CompanyProfileComponent};
+    export {CompanyProfileComponent};

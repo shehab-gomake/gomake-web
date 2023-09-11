@@ -40,10 +40,13 @@ const SecondaryTab = styled(Tab)((props: TabProps) => {
     }
 });
 
-const SecondaryTabsComponent = ({tabs, children, navigationButtons}: ITabsProps) => {
+const SecondaryTabsComponent = ({tabs, children, navigationButtons, onSelectTab}: ITabsProps) => {
     const [value, setValue] = useState(0);
     const handleChange = (event, newValue) => {
         setValue(newValue);
+        if (!!onSelectTab) {
+            onSelectTab(newValue);
+        }
     };
     return (
         <>
