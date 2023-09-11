@@ -2,6 +2,7 @@ import i18next from "i18next";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
   const { t } = useTranslation();
@@ -37,6 +38,25 @@ const useStyle = () => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+      },
+      addCustomerBtnText: {
+        ...FONT_FAMILY.Lexend(500, 16),
+        color: "#101020",
+      },
+      addCustomerBtnStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 10,
+        padding: 10,
+        paddingLeft: 20,
+        paddingRight: 20,
+        backgroundColor: "#DCDCEC",
+        borderRadius: 4,
+        cursor: "pointer",
+        width: 180,
+        height: 40,
       },
     };
   }, [i18next.language, t]);
