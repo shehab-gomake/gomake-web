@@ -1,7 +1,7 @@
 import { IconButton } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 
-const ShowCustomerCard = ({ item , clientType,onClick }: any) => {
+const ShowCustomerCard = ({ item ,onClick }: any) => {
 
   const handleEditClick = async () => {
    onClick(item.id)

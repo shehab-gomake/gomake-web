@@ -1693,7 +1693,7 @@
     "email": "Email",
     "phone": "Phone",
     "status": "Status",
-    "hashtag": "#"
+    "hashtag": "More"
   },
   "suppliers": {
     "buttons": {
@@ -1709,7 +1709,7 @@
     "email": "Email",
     "phone": "Phone",
     "status": "Status",
-    "hashtag": "#",
+    "hashtag": "More",
     "addModalTitle": "Add Supplier",
     "editModalTitle": "Edit Supplier"
   },
@@ -1748,7 +1748,7 @@
     "email": "Email",
     "creationDate": "Creation date",
     "role": "Role",
-    "hashtag": "#",
+    "hashtag": "More",
     "successfullyActivated": "Successfully activated",
     "successfullyDeactivated": "Successfully deactivated",
     "successfullyUpdated": "Successfully updated",
