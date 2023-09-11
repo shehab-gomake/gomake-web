@@ -1,5 +1,5 @@
 import { FONT_FAMILY } from "@/utils/font-family";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
+import { convertHeightToVH } from "@/utils/adapter";
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 

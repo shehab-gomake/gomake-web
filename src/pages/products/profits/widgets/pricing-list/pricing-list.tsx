@@ -3,16 +3,10 @@ import { useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { GoMakeAutoComplate } from "@/components";
 import { Header } from "./header";
 import { Row } from "./row";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import {
-  actionExceptionProfitId,
-  actionProfitLists,
-  actionProfitRows,
-  actionProfitRowsState,
-} from "@/store";
+import { actionExceptionProfitId, actionProfitLists } from "@/store";
 import { Plus } from "./icons/plus";
 import { profitsState } from "../../store/profits";
 import { AddPricingListRowWidget } from "./add-pricing-row-widget";
@@ -153,18 +147,18 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
             />
           </>
         )}
-          {
-              !!productTest?.isBaseCase && <div
-              style={clasess.addNewQuantity}
-              // onClick={() => {
-              //   profitsValue?.setOpenAddNewPricingStepRow(true);
-              // }}
-              onClick={profitsStateValue?.onOpenAddQuantityModal}
+        {!!productTest?.isBaseCase && (
+          <div
+            style={clasess.addNewQuantity}
+            // onClick={() => {
+            //   profitsValue?.setOpenAddNewPricingStepRow(true);
+            // }}
+            onClick={profitsStateValue?.onOpenAddQuantityModal}
           >
-              <Plus/>
-              {t("products.profits.pricingListWidget.addNewQuantity")}
+            <Plus />
+            {t("products.profits.pricingListWidget.addNewQuantity")}
           </div>
-          }
+        )}
         <div
           style={{
             maxHeight: 300,

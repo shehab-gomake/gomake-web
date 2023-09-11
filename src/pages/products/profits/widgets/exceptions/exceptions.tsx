@@ -1,18 +1,13 @@
 import { IProps } from "./interfaces";
 import { useStyle } from "./style";
-import { IconButton, Skeleton } from "@mui/material";
-import { Header } from "./header";
 import { Row } from "./row";
 import { Plus } from "./icons/plus";
 import { AddExceptionModal } from "../add-exception-modal";
 import { useRecoilValue } from "recoil";
 import { profitsState } from "../../store/profits";
-import { useExceptions } from "./use-exception";
 import { actionExceptionProfitId, actionProfitLists } from "@/store";
 import { UpdateMinPrice } from "./update-min-price";
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { EditIcon } from "@/icons";
 import { UpdateExceptionModal } from "../update-exception-modal";
 
 const Exceptions = ({ tableHeaders, tableRows }: IProps) => {

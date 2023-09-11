@@ -6,12 +6,7 @@ import {
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  actionExceptionProfitId,
-  actionProfitLists,
-  actionProfitRowsState,
-} from "@/store";
-import { useEffect } from "react";
+import { actionExceptionProfitId, actionProfitRowsState } from "@/store";
 
 const AddQuantityModal = ({
   openModal,

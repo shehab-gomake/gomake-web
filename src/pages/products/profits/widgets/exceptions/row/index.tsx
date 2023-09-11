@@ -1,12 +1,8 @@
-import { IconButton, Tooltip } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { useStyle } from "./style";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { t } from "i18next";
-import { GoMakeDeleteModal } from "@/components";
 import { useRecoilValue } from "recoil";
 import { profitsState } from "../../../store/profits";
 import { EditIcon } from "@/icons";
-import { useState } from "react";
 
 const Row = ({ key, row }: any) => {
   const { clasess } = useStyle({ row });
