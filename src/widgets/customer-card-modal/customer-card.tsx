@@ -10,7 +10,7 @@ import { PriceListForm } from "./components/priceList-tab/form";
 import { UserForm } from "./components/gomakeUser-tab/form";
 import { AddIcon } from "@/components/icons/icons";
 import { useTranslation } from "react-i18next";
-import { Container, Col, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BookKeepingForm } from "./components/bookKeeping-tab/form";
 import Switch from '@mui/material/Switch';
@@ -262,7 +262,6 @@ const CustomerCardWidget = ({ getAllCustomers,onCustomeradd,openModal, modalTitl
       users: filteredUserss
     };
     setCustomer(updatedCustomer);
-    console.log(updatedCustomer);
     editCustomer(updatedCustomer, setCustomer).then(x => {
       getAllCustomers();
       handleClose();

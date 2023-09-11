@@ -2,7 +2,7 @@ import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-const useMoreCircle = ({ updatedProduct }) => {
+const useMoreCircle = ({ updatedStatus }) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const { setSnackbarStateValue } = useSnackBar();
@@ -16,19 +16,19 @@ const useMoreCircle = ({ updatedProduct }) => {
     setAnchorEl(null);
   };
 
-  const updatedCustomerStatus = useCallback(async (product: any) => {
-    const res: any = await updatedProduct(product);
+  const updatedCustomerStatus = useCallback(async (customer: any) => {
+    const res: any = await updatedStatus(customer);
     if (res) {
       setSnackbarStateValue({
         state: true,
-        message: t("yes"),
+        message: t("modal.updatedSusuccessfully"),
         type: "sucess",
       });
       handleClose();
     } else {
       setSnackbarStateValue({
         state: true,
-        message: t("Np"),
+        message: t("modal.updatedfailed"),
         type: "error",
       });
     }

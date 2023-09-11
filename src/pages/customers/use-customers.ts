@@ -3,16 +3,18 @@ import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
 import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/hooks/get-set-customers";
 import { getAndSetClientTypes } from "@/services/hooks/get-set-clientTypes";
-import { getAndSetAllCustomers , getAndSetEmployees2} from "@/services/hooks";
+import { getAndSetAllCustomers, getAndSetEmployees2 } from "@/services/hooks";
 
 const useCustomers = (clientType, pageNumber, setPageNumber) => {
   const { callApi } = useGomakeAxios();
+
   const { t } = useTranslation();
   const [allCustomers, setAllCustomers] = useState([]);
   const [customerForEdit, setCustomerForEdit] = useState(null);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [pagesCount, setPagesCount] = useState(0);
   const pageSize = 10;
+  
 
   const tabelHeaders = useMemo(
     () => [
@@ -70,16 +72,16 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
     setValClientType(value?.label);
   }, []);
 
-  const handleClean = useCallback(async () => {
-    setCustomerName("");
-    setAgentId(null);
-    setAgentName(null);
-    setStatus(true);
-    setValStatus(null);
-    setClientTypeId(null);
-    setValClientType(null);
-    setPageNumber(1);
-  }, []);
+
+  const [filters, setFilters] = useState({
+    clientType,
+    pageNumber,
+    pageSize,
+    name,
+    ClientTypeId,
+    agentId,
+    isActive,
+  });
 
   ///////////////////////// select clientType //////////////////////////////
   const [clientTypesCategores, setClientTypesCategores] = useState([]);
@@ -148,6 +150,24 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
     setShowCustomerModal(true)
   }
 
+  const updatedStatus = useCallback(async (data: any, filters) => {
+    const res: any = await callApi(
+      "PUT",
+      "/v1/crm-service/customer/update-customer-status",
+      {
+        Id: data.id,
+        status: !data?.isActive,
+      }
+    );
+    if (res?.success) {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+      }));  
+          return true;
+    } else {
+      return false;
+    }
+  }, []);
 
   const getAllCustomers = useCallback(async () => {
     const data = await getAndSetCustomersPagination(callApi, setAllCustomers, {
@@ -158,14 +178,25 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
       ClientTypeId,
       agentId,
       isActive,
-    }, getCustomerForEdit);
+    }, getCustomerForEdit, updatedStatus);
     setPagesCount(Math.ceil(data / pageSize));
     return data;
   }, [pageNumber, name, ClientTypeId, agentId, isActive]);
 
   useEffect(() => {
     getAllCustomers();
-  }, [pageNumber, name, ClientTypeId, agentId, isActive]);
+  }, [filters, clientType, pageNumber, pageSize, name, ClientTypeId, agentId, isActive]);
+
+  const handleClean = useCallback(async () => {
+    setCustomerName("");
+    setAgentId(null);
+    setAgentName(null);
+    setStatus(true);
+    setValStatus(null);
+    setClientTypeId(null);
+    setValClientType(null);
+    setPageNumber(1);
+  }, []);
 
   return {
     tabelHeaders,
@@ -189,7 +220,8 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
     showCustomerModal,
     setShowCustomerModal,
     getCustomerForEdit,
-    getAllCustomers
+    getAllCustomers,
+    updatedStatus
   };
 };
 export { useCustomers };

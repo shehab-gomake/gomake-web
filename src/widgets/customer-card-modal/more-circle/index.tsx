@@ -6,7 +6,7 @@ import { useStyle } from "./style";
 import { ConvertIcon } from "./icons/convert";
 import { EditingIcon } from "./icons/editing";
 
-const MoreMenuWidget = ({ item, updatedProduct , onClickEdit}: any) => {
+const MoreMenuWidget = ({ item, updatedStatus, onClickEdit }: any) => {
   const { clasess } = useStyle();
   const {
     open,
@@ -15,17 +15,13 @@ const MoreMenuWidget = ({ item, updatedProduct , onClickEdit}: any) => {
     handleClick,
     updatedCustomerStatus,
   } = useMoreCircle({
-    updatedProduct,
+    updatedStatus,
   });
 
   const handleEditClick = async () => {
     onClickEdit(item.id)
-   };
+  };
 
-   const handleConvertClick = async () => {
-    updatedCustomerStatus(item)
-   };
-   
   return (
     <>
       <IconButton onClick={handleClick}>
@@ -38,7 +34,7 @@ const MoreMenuWidget = ({ item, updatedProduct , onClickEdit}: any) => {
             <div style={clasess.rowTextStyle}>Editing</div>
           </div>
         </MenuItem>
-        <MenuItem onClick={()=>handleConvertClick}>
+        <MenuItem onClick={() => updatedCustomerStatus(item)}>
           <div style={clasess.menuRowStyle}>
             <ConvertIcon />
             <div style={clasess.rowTextStyle}>
