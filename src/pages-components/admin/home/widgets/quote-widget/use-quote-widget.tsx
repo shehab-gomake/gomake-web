@@ -14,10 +14,14 @@ const useQuoteWidget = () => {
   const [productValue, setProductValues] = useState([]);
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
+
   const [canOrder, setCanOrder] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
   const [selectedCustomersList, setSelectedCustomersList] = useState<any>({});
   const [selectedProduct, setSelectedProduct] = useState<any>({});
+  console.log("customersListCreateOrder", customersListCreateOrder);
+  console.log("customersListCreateQuote", customersListCreateQuote);
+  console.log("canOrder", canOrder);
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
       setCanOrder(true);
@@ -26,7 +30,7 @@ const useQuoteWidget = () => {
     }
   };
   const renderOptions = () => {
-    if (canOrder) {
+    if (!!!canOrder) {
       return customersListCreateOrder;
     } else return customersListCreateQuote;
   };
