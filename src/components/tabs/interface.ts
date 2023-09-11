@@ -3,6 +3,7 @@ export interface ITabsProps {
     children?: JSX.Element;
     navigationButtons?: boolean;
     actionBtn?: HTMLButtonElement;
+    onSelectTab?: (index: number) => void;
 }
 
 export interface ITab {
