@@ -136,9 +136,10 @@ const useProfitsAction = ({
       const data = await generateCalaculationTestLink(callApi, () => {}, {
         productId: id || "",
         actionId: selectedAction?.id || "",
+        systemID: 2,
       });
       if (data?.url) {
-        const fullUrl: any = `https://omanim-dev.gomake.co.il${data?.url}`;
+        const fullUrl: any = `${data?.url}`;
         window.location = fullUrl;
       } else if (!data?.url) {
         setSnackbarStateValue({

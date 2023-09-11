@@ -12,7 +12,7 @@ const useProfitsEffects = ({
   getActionProfitRowChartData,
   actionProfits,
   getActions,
-  getMachincesProfits,
+  // getMachincesProfits,
   getProducts,
   getParameters,
   getClientTypes,
@@ -80,7 +80,7 @@ const useProfitsEffects = ({
 
   useEffect(() => {
     getActions();
-    getMachincesProfits();
+    // getMachincesProfits();
     getProducts();
     getParameters();
     getClientTypes();

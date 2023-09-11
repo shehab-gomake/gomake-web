@@ -1,9 +1,11 @@
 import { useGomakeAxios } from "@/hooks";
 import {
+  getAllProductsForDropDownList,
   getAndSetActionExceptionProfitRowByActionExceptionId,
   getAndSetActionProfitRowByActionId,
   getAndSetActionProfitRowChartData,
   getAndSetActions,
+  getAndSetAllParameters,
   getAndSetClientTypes,
   getAndSetGetAllTestProductsByActionId,
   getAndSetMachinces,
@@ -25,9 +27,10 @@ import {
 } from "@/store";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { renderProfits } from "./use-profit-action.";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
+import { machineCategoriesState } from "@/store/machine-categories";
 
 const useProfitsGetData = () => {
   const router: any = useRouter();
@@ -35,8 +38,9 @@ const useProfitsGetData = () => {
   const [selectedAction, setSelectedAction] = useState<any>({});
   const [productsStateValue, setProductsState] =
     useRecoilState<any>(productsState);
-  const [machincesStateValue, setMachincesState] =
-    useRecoilState<any>(machincesState);
+  // const [machincesStateValue, setMachincesState] =
+  //   useRecoilState<any>(machincesState);
+  const machincesStateValue = useRecoilValue(machineCategoriesState);
   const [actionExceptionProfitRowsVal, setActionExceptionProfitRows] =
     useRecoilState<any>(actionProfitRows);
   const [selectTestDataVal, setSelectTestData] =
@@ -61,7 +65,7 @@ const useProfitsGetData = () => {
     await getAndSetActions(callApi, setAllActions);
   }, []);
   const getParameters = useCallback(async () => {
-    return await getAndSetParameters(callApi, setParametersState);
+    return await getAndSetAllParameters(callApi, setParametersState);
   }, []);
 
   const getClientTypes = useCallback(async () => {
@@ -129,11 +133,11 @@ const useProfitsGetData = () => {
     );
   }, [actionProfits, actionExceptionProfitIdValue]);
 
-  const getMachincesProfits = useCallback(async () => {
-    await getAndSetMachinces(callApi, setMachincesState);
-  }, []);
+  // const getMachincesProfits = useCallback(async () => {
+  //   await getAndSetMachinces(callApi, setMachincesState);
+  // }, []);
   const getProducts = useCallback(async () => {
-    await getAndSetProducts(callApi, setProductsState);
+    await getAllProductsForDropDownList(callApi, setProductsState);
   }, []);
 
   const getTestProducts = useCallback(async () => {
@@ -175,10 +179,10 @@ const useProfitsGetData = () => {
     setActionProfitRowsNew,
     setSelectTestData,
     setActionExceptionProfitRows,
-    setMachincesState,
+    // setMachincesState,
     setProductsState,
     setSelectedAction,
-    getMachincesProfits,
+    // getMachincesProfits,
     getProducts,
     getTestProducts,
   };
