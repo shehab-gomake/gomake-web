@@ -1,4 +1,4 @@
-import { AdminAuthLayout } from "@/layouts";
+import { CustomerAuthLayout } from "@/layouts";
 import { HeaderTitle } from "@/widgets";
 import { useActions } from "./use-actions";
 
@@ -10,9 +10,13 @@ export default function Profits() {
   const { tableHeaders, allActions, t } = useActions();
 
   return (
-    <AdminAuthLayout>
+    <CustomerAuthLayout>
       <div style={clasess.mainContainer}>
-        <HeaderTitle title={t("products.actions.admin.title")} />
+        <HeaderTitle
+          title={t("products.actions.admin.title")}
+          marginTop={1}
+          marginBottom={20}
+        />
         <div style={clasess.tableHeaderStyle}>
           {tableHeaders?.map((item) => {
             return <div style={clasess.headerNameStyle}>{item}</div>;
@@ -28,6 +32,6 @@ export default function Profits() {
           })}
         </div>
       </div>
-    </AdminAuthLayout>
+    </CustomerAuthLayout>
   );
 }

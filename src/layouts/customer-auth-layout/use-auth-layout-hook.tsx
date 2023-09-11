@@ -9,7 +9,6 @@ import {
   SettingNavBar,
   ShopingIcon,
 } from "@/icons";
-import { SuppliersIcon } from "@/icons/suppliers";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -139,6 +138,17 @@ const useAuthLayoutHook = () => {
         key: "machines",
         title: t("tabs.machines"),
         path: "/machines",
+        isList: false,
+        icon: () => {
+          return <ProductsIcon />;
+        },
+        isProduction: true,
+      },
+      {
+        isLine: false,
+        key: "actions",
+        title: t("tabs.actions"),
+        path: "/actions",
         isList: false,
         icon: () => {
           return <ProductsIcon />;
