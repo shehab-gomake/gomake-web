@@ -10,17 +10,19 @@ import { useStyle } from "./style";
 import { profitsState } from "../../store/profits";
 import { useRecoilValue } from "recoil";
 import { useExceptions } from "../exceptions/use-exception";
+import { machineCategoriesState } from "@/store/machine-categories";
 
 const AddExceptionModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
   const {
-    machincesStateValue,
+    // machincesStateValue,
     productsStateValue,
     parametersStateValue,
     clientTypesStateValue,
   } = useExceptions({});
+  const categoriesList = useRecoilValue(machineCategoriesState);
   return (
     <>
       <GoMakeModal
@@ -63,7 +65,7 @@ const AddExceptionModal = () => {
                 {t("products.profits.exceptions.selectMachine")}
               </div>
               <GoMakeAutoComplate
-                options={machincesStateValue}
+                options={categoriesList}
                 placeholder={t("products.profits.exceptions.selectMachine")}
                 getOptionLabel={(value: any) => value?.name}
                 onChange={(e: any, item: any) => {
@@ -154,17 +156,16 @@ const AddExceptionModal = () => {
                   </div>
                   <GoMakeAutoComplate
                     options={
-                      profitsStateValue?.state?.priceListParameter
-                        ?.parameterValues
+                      profitsStateValue?.state?.priceListParameter?.values
                     }
                     placeholder={t(
                       "products.profits.exceptions.SelectValueNameOfParameter"
                     )}
-                    getOptionLabel={(value: any) => value?.value}
+                    getOptionLabel={(value: any) => value?.name}
                     onChange={(e: any, item: any) => {
                       profitsStateValue?.onChangeState(
                         "paramValueName",
-                        item?.value
+                        item?.name
                       );
                     }}
                     style={{
