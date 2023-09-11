@@ -3,13 +3,13 @@ import StickyFirstColumnTable from "@/components/StickyTable/StickyFirstColumnTa
 import { AddPlusIcon, SearchIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { HeaderTitle } from "@/widgets/header-title";
-
 import { useState } from "react";
 import { InputAdornment, Tab, Table,TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { AddRoleModal } from "./modals";
 import { useSettings } from "./use-settings";
+import {  SecondaryTabsComponent } from "@/components/tabs/secondary-tabs";
 
 
 const PermissionsWidget = () => {
@@ -33,7 +33,10 @@ const PermissionsWidget = () => {
     const [selectedTab, setSelectedTab] = useState(0);
     const {tableHeaders,permissionsRoles,groups,table,permissions} =
     useSettings();
-
+    const tabs = [];
+    groups?.forEach((row) => {
+        tabs.push({ title: row.name});
+      });
    
   return (
       <div style={classes.mainContainer}>
@@ -56,7 +59,8 @@ const PermissionsWidget = () => {
               <HeaderTitle title={t("permissionsSettings.title")} marginBottom={3}/>
           </div>
           <div style={{width:"98%"}}>
-              <ThemeProvider theme={theme}>
+          <SecondaryTabsComponent tabs={tabs} />
+              {/* <ThemeProvider theme={theme}>
                   <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary"  indicatorColor="secondary">
                   {groups?.map(x => (
                         <Tab
@@ -76,7 +80,7 @@ const PermissionsWidget = () => {
                         />
                     ))}
                   </Tabs>   
-              </ThemeProvider>
+              </ThemeProvider> */}
         
           </div>
           <div style={{display:"flex",width:"100%",justifyContent:"flex-end",flexDirection:"row"}}>

@@ -1,14 +1,13 @@
-import {styled} from "@mui/material/styles";
-import {Tab, TabProps, Tabs, TabsProps} from "@mui/material";
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {FONT_FAMILY} from "@/utils/font-family";
-import {convertWidthToVW} from "@/utils/adapter";
-import {ITabsProps} from "@/components/tabs/interface";
-import {useState} from "react";
-import Stack from "@mui/material/Stack";
-import {CustomTabPanel} from "@/components/tabs/tab-panel";
-import {SecondaryButton} from "@/components/button/secondary-button";
 
+import { ITabsProps } from "@/components/tabs/interface";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { convertWidthToVW } from "@/utils/adapter";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { useState } from "react";
+import Stack from "@mui/material/Stack";
+import {Tab, TabProps, Tabs, TabsProps} from "@mui/material";
+import styled from "styled-components";
+import { CustomTabPanel } from "../tabs";
 
 const SecondaryTabs = styled(Tabs)((props: TabsProps) => {
     const {secondColor} = useGomakeTheme();
@@ -40,8 +39,8 @@ const SecondaryTab = styled(Tab)((props: TabProps) => {
     }
 });
 
-const SecondaryTabsComponent = ({tabs, children, navigationButtons}: ITabsProps) => {
-    debugger
+const PermissionTabs = ({tabs}: ITabsProps) => {
+
     const [value, setValue] = useState(0);
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -57,7 +56,7 @@ const SecondaryTabsComponent = ({tabs, children, navigationButtons}: ITabsProps)
                         tabs?.map(tab => <SecondaryTab label={tab.title}/>)
                     }
                 </SecondaryTabs>
-                <div>{children}</div>
+        
             </Stack>
             <div style={{padding: '0 20px'}}>
                 {
@@ -69,13 +68,18 @@ const SecondaryTabsComponent = ({tabs, children, navigationButtons}: ITabsProps)
                             position: 'sticky' as 'sticky',
                             bottom: 0
                         }}>
-                            {navigationButtons && index + 1 < tabs.length && <SecondaryButton variant={'contained'}
-                                                                                              onClick={() => setValue(index + 1)}>Next</SecondaryButton>}
                         </div>
                     </CustomTabPanel>)
                 }
             </div>
         </>
     );
-}
-export {SecondaryTab, SecondaryTabs, SecondaryTabsComponent}
+
+
+
+
+
+
+};
+export {SecondaryTab, SecondaryTabs, PermissionTabs}
+
