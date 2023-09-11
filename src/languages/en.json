@@ -1770,7 +1770,7 @@
     "changePassword": "Change password",
     "currentPassword": "Current password",
     "newPassword": "New password",
-    "confirmNewPassword":"Confirm new password",
+    "confirmNewPassword": "Confirm new password",
     "company": "Company",
     "businessName": "Business name",
     "dashboardCode": "Dashboard code",
@@ -1793,7 +1793,5 @@
     "depositBranch": "Entrusted to the branch",
     "location": "Location",
     "financial": "Financial"
-
-
   }
 }

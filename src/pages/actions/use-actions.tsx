@@ -25,13 +25,14 @@ const useActions = () => {
               justifyContent: "flex-start",
               alignItems: "center",
               gap: 6,
+              cursor: "pointer",
             }}
           >
             <EditIcon />
             <div>Edit</div>
           </div>
         ),
-        properties: "Edit",
+        properties: <div style={{ cursor: "pointer" }}>Edit</div>,
         id: item?.id,
       };
     });

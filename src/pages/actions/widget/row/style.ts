@@ -2,7 +2,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const useStyle = ({ width, index, tablePercent }: any) => {
+const useStyle = ({ width }: any) => {
   const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
@@ -17,9 +17,9 @@ const useStyle = ({ width, index, tablePercent }: any) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        ...FONT_FAMILY.Lexend(400, 14),
+        ...FONT_FAMILY.Lexend(500, 14),
         lineHeight: "18px",
-        color: primaryColor(900),
+        color: primaryColor(500),
         textalign: "center",
         marginBottom: 8.5,
         marginTop: 8.5,
@@ -31,7 +31,6 @@ const useStyle = ({ width, index, tablePercent }: any) => {
         alignItems: "center",
         ...FONT_FAMILY.Lexend(400, 14),
         lineHeight: "18px",
-        // color: primaryColor(900),
         textalign: "center",
         marginBottom: 8.5,
         marginTop: 8.5,

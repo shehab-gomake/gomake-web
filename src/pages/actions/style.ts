@@ -5,10 +5,9 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor, secondColor } = useGomakeTheme();
+  const { primaryColor } = useGomakeTheme();
 
   const clasess = useMemo(() => {
     return {
@@ -25,9 +24,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        padding: 20,
-        paddingLeft: 83,
-        paddingRight: 54,
+        padding: 10,
         backgroundColor: primaryColor(50),
         border: " 1px solid #EBECFF",
       },
@@ -46,11 +43,11 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: 20,
-        paddingLeft: 83,
-        paddingRight: 54,
+        padding: 10,
         backgroundColor: "#FFF",
         border: " 1px solid #EBECFF",
+        overflow: "scroll",
+        height: 750,
       },
     };
   }, [i18next.language, t]);
