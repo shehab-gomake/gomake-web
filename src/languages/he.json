@@ -1,5 +1,5 @@
 {
-  "direction": "ltr",
+  "direction": "rtl",
   "pageName": {
     "welcome": "ברוך הבא"
   },
@@ -1021,5 +1021,11 @@
     "depositBranch": "שם הסניף",
     "location": "מיקום",
     "financial": "פיננסי"
+  },
+  "remainWords": {
+    "newQuote": "ציטוט חדש",
+    "convertToInactive": "המר לבלתי פעיל",
+    "convertToActive": "המר לפעיל",
+    "editing": "עֲרִיכָה"
   }
 }
