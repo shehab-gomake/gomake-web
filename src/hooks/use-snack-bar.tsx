@@ -24,6 +24,7 @@ const useSnackBar = () => {
     }, 1000);
   };
 
+
   return { snackbarStateValue, setSnackbarStateValue, handleClose, Alert };
 };
 

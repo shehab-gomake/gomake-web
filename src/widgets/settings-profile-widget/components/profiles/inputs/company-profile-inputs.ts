@@ -1,7 +1,7 @@
-import {IUserProfile} from "@/store/user-profile";
+import {ICompanyProfile} from "@/store/user-profile";
 
 
-const companyProfileInputs = (state: IUserProfile)  => {
+const companyProfileInputs = (state: ICompanyProfile)  => {
     return [
         {
             name: "businessName",
@@ -9,7 +9,7 @@ const companyProfileInputs = (state: IUserProfile)  => {
             type: "text",
             placeholder: "profileSettings.businessName",
             required: true,
-            parameterKey: "businessName",
+            parameterKey: "name",
             options: [],
             value: state.name,
             machineInputType: 'input',

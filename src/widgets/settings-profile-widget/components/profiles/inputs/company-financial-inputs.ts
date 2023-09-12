@@ -1,7 +1,7 @@
-import {IUserProfile} from "@/store/user-profile";
+import {ICompanyProfile} from "@/store/user-profile";
 
 
-const companyFinancialInputs = (state: IUserProfile)  => {
+const companyFinancialInputs = (state: ICompanyProfile)  => {
     return [
         {
             name: "accountCode",

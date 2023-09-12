@@ -12,6 +12,13 @@ import {addEmployeeOpenModalState, employeeActionState} from "@/widgets/settings
 import {IUserData} from "@/widgets/settings-users/users/interface/employee";
 import {usersArrayState} from "@/widgets/settings-users/state/users-state";
 import {emailRegex} from "@/utils/regex";
+import {
+    addNewEmployee,
+    getAllUsersApi,
+    getEmployeeApi,
+    toggleEmployeeStatus,
+    updateEmployee
+} from "@/services/api-service/users/users-api";
 
 
 const useEmployee = () => {
@@ -26,11 +33,7 @@ const useEmployee = () => {
     const {t} = useTranslation();
 
     const getAllUsers = () => {
-        callApi('GET', '/v1/crm-service/employee/get-employees').then(
-            (res) => {
-                setUsers(res.data?.data?.data);
-            }
-        )
+        getAllUsersApi(callApi, setUsers).then();
     }
     const onShowInActiveChange = (value: boolean) => {
         setShowInActiveEmployees(value);
@@ -56,21 +59,16 @@ const useEmployee = () => {
     }, [users, showInActiveEmployees, search])
 
     const editEmployee = (id: string) => {
-        callApi('GET', '/v1/crm-service/employee/get-employee/' + id).then(
-            (res) => {
-                if (res.success) {
-                    setEmployeeState(res?.data?.data?.data);
-                    setAction(EmployeeActions.UPDATE);
-                    setOpenModal(true);
+        getEmployeeApi(callApi, setEmployeeState, id).then(() => {
+            setAction(EmployeeActions.UPDATE);
+            setOpenModal(true);
 
-                }
-            }
-        )
+        });
     }
 
     const toggleEmployeeActive = (id: string) => {
-        callApi('PUT', '/v1/crm-service/employee/toggle-employee-active/' + id)
-            .then((res) => {
+        toggleEmployeeStatus(callApi, undefined, id).then(
+            (res) => {
                 if (res.success) {
                     setSnackbarStateValue({
                         state: true,
@@ -82,19 +80,22 @@ const useEmployee = () => {
                             user => {
                                 return user.id === id ? {...user, isActive: !user.isActive} : user
                             }))
-                } else {
+                }
+                else {
                     setSnackbarStateValue({
                         state: true,
                         message: t("modal.updatedfailed"),
                         type: "error",
                     });
                 }
-            })
+            }
+        )
+
     }
 
     const onAddEmployee = () => {
         if (isValidAddEmployee() && validateEmail()) {
-            callApi('POST', '/v1/crm-service/employee/add-employee', employee).then(
+            addNewEmployee(callApi, undefined, employee).then(
                 (res) => {
                     if (res.success) {
                         setSnackbarStateValue({
@@ -102,7 +103,7 @@ const useEmployee = () => {
                             message: t("modal.addedSusuccessfully"),
                             type: "sucess",
                         });
-                        const newEmployee: IUser = res?.data?.data?.data
+                        const newEmployee: IUser = res.data
                         setUsers([newEmployee, ...users]);
                         setOpenModal(false);
                         setEmployeeState(initState);
@@ -119,10 +120,10 @@ const useEmployee = () => {
     }
     const onUpdateEmployee = () => {
         if (isValidEditEmployee() && validateEmail()) {
-            callApi('PUT', '/v1/crm-service/employee/update-employee', employee).then(
+            updateEmployee(callApi, undefined, employee).then(
                 (res) => {
                     if (res.success) {
-                        const newEmployee = res.data?.data?.data;
+                        const newEmployee = res.data;
                         setUsers(users.map(user => user.id === newEmployee?.id ? newEmployee : user))
                         setOpenModal(false);
                         setEmployeeState(initState);
@@ -172,8 +173,7 @@ const useEmployee = () => {
         return !!employee.employee.firstname &&
             !!employee.employee.lastname &&
             !!employee.username &&
-            !!employee.roleID &&
-            emailRegex.test(employee.employee.email)
+            !!employee.roleID
     }
     const updateSearch = (value: string) => {
         setSearch(value);
