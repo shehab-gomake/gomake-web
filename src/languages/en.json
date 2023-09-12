@@ -1793,5 +1793,11 @@
     "depositBranch": "Entrusted to the branch",
     "location": "Location",
     "financial": "Financial"
+  },
+  "remainWords": {
+    "newQuote": "New quote",
+    "convertToInactive": "Convert to inactive",
+    "convertToActive": "Convert to active",
+    "editing": "Editing"
   }
 }

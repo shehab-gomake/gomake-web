@@ -5,10 +5,11 @@ import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
 import { ConvertIcon } from "./icons/convert";
 import { EditingIcon } from "./icons/editing";
-import { FONT_FAMILY } from "@/utils/font-family";
+import { useTranslation } from "react-i18next";
 
 const MoreMenuWidget = ({ item, updatedProduct }: any) => {
   const { clasess } = useStyle();
+  const { t } = useTranslation();
   const {
     open,
     anchorEl,
@@ -31,14 +32,16 @@ const MoreMenuWidget = ({ item, updatedProduct }: any) => {
         >
           <div style={clasess.menuRowStyle}>
             <EditingIcon />
-            <div style={clasess.rowTextStyle}>Editing</div>
+            <div style={clasess.rowTextStyle}>{t("remainWords.editing")}</div>
           </div>
         </MenuItem>
         <MenuItem onClick={() => updatedProductInside(item)}>
           <div style={clasess.menuRowStyle}>
             <ConvertIcon />
             <div style={clasess.rowTextStyle}>
-              {item?.status ? " Convert to inactive" : " Convert to active"}
+              {item?.status
+                ? t("remainWords.convertToInactive")
+                : t("remainWords.convertToActive")}
             </div>
           </div>
         </MenuItem>

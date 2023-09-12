@@ -695,6 +695,35 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     flows: pricingDefaultValue?.workFlows,
   };
 
+  const createProfitTestCase = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/printhouse-config/profits/create-profit-test-case?systemID=2`,
+      {
+        clientId: router?.query?.customerId,
+        clientTypeId: router?.query?.clientTypeId,
+        generalParameters: generalParameters,
+        productItemDTO: {
+          productId: router?.query?.productId,
+          details: "dddd",
+          itemParmetersValues: generalParameters,
+          workFlow: pricingDefaultValue?.workFlows[0],
+        },
+        actionId: router?.query?.actionId,
+        actionProductId: router?.query?.actionProductId,
+      },
+      false
+    );
+    console.log("res", res);
+  }, [generalParameters, router, pricingDefaultValue]);
+
+  const navigateForRouter = () => {
+    if (router?.query?.actionId) {
+      createProfitTestCase();
+    } else {
+      navigate("/quote");
+    }
+  };
   return {
     t,
     handleTabClick,
@@ -706,6 +735,14 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     onCloseMakeShape,
     setDefaultPrice,
     onChangeForPrice,
+    handleChange,
+    _renderParameterType,
+    _getParameter,
+    createProfitTestCase,
+    renderOptions,
+    checkWhatRenderArray,
+    navigate,
+    navigateForRouter,
     defaultPrice,
     makeShapeOpen,
     chooseShapeOpen,
@@ -715,16 +752,10 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     activeTab,
     PricingTab,
     expanded,
-    handleChange,
-    _renderParameterType,
-    _getParameter,
     clientDefaultValue,
-    renderOptions,
-    checkWhatRenderArray,
     clientTypeDefaultValue,
     clientTypesValue,
     pricingDefaultValue,
-    navigate,
   };
 };
 

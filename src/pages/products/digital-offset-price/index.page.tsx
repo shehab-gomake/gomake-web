@@ -33,18 +33,19 @@ export default function DigitalOffsetPrice() {
     renderOptions,
     checkWhatRenderArray,
     navigate,
+    navigateForRouter,
+    defaultPrice,
     makeShapeOpen,
     chooseShapeOpen,
     activeIndex,
     template,
-    activeTab,
     tabs,
-    defaultPrice,
+    activeTab,
+    PricingTab,
     expanded,
     clientDefaultValue,
     clientTypeDefaultValue,
     clientTypesValue,
-    PricingTab,
     pricingDefaultValue,
   } = useDigitalOffsetPrice({ clasess });
   const machineCategories = useRecoilValue(machineCategoriesState);
@@ -208,7 +209,7 @@ export default function DigitalOffsetPrice() {
               <div style={{ width: 330 }}>
                 <GomakePrimaryButton
                   style={clasess.addOrderBtn}
-                  onClick={() => navigate("/quote")}
+                  onClick={navigateForRouter}
                 >
                   {t("products.offsetPrice.admin.addOrder")}
                 </GomakePrimaryButton>
