@@ -19,12 +19,6 @@ const useStyle = () => {
       autoComplateStyle: {
         width: convertWidthToVW(200),
       },
-      buttonStyle: {
-        width: convertWidthToVW(100),
-        height: convertHeightToVH(50),
-        marginRight: convertWidthToVW(10),
-        backgroundColor: "#F135A3",
-      },
       tableContainer: {
         width: "100%",
       },
@@ -44,6 +38,30 @@ const useStyle = () => {
         borderRadius: 10,
         height: 30,
       },
+      subHeaderRightSide: {
+        display: "flex",
+        alignSelf: "flex-end",
+      },
+      subHeaderContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "16px",
+        width: "100%",
+      },
+      dropDownListStyle: {
+        width: convertWidthToVW(200),
+        borderRadius: 4,
+        height: 40,
+        backgroundColor: "#FFF",
+        border: "0px",
+        boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+      },
+      cleanBtnStyle: {
+        backgroundColor: "#F8F8F8"
+      },
+
     };
   }, [i18next.language, t]);
   return {

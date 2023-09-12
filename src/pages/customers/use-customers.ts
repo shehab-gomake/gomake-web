@@ -14,7 +14,6 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [pagesCount, setPagesCount] = useState(0);
   const pageSize = 10;
-  
 
   const tabelHeaders = useMemo(
     () => [
@@ -27,6 +26,10 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
     ],
     []
   );
+
+  const getCustomersRows = useCallback(()=> {
+    return allCustomers.map(customer => [customer?.customerCode, customer?.name, customer?.email, customer?.phone, customer?.status, customer?.hashTag])
+  }, [allCustomers])
 
   //select agent options
   const [agentsCategores, setAgentsCategores] = useState([]);
@@ -188,7 +191,7 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
   }, [filters, clientType, pageNumber, pageSize, name, ClientTypeId, agentId, isActive]);
 
   const handleClean = useCallback(async () => {
-    setCustomerName(null);
+    setCustomerName("");
     setAgentId(null);
     setAgentName(null);
     setStatus(true);
@@ -221,7 +224,8 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
     setShowCustomerModal,
     getCustomerForEdit,
     getAllCustomers,
-    updatedStatus
+    updatedStatus,
+    getCustomersRows
   };
 };
 export { useCustomers };
