@@ -14,6 +14,7 @@ import {useStyle} from "@/widgets/settings-profile-widget/components/profiles/st
 import Button from "@mui/material/Button";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import {FormInput} from "@/components/form-inputs/form-input";
+import {FormInputsSectionComponent} from "@/components/form-inputs/form-inputs-section";
 
 const initState = {
     fullName: '',
@@ -43,22 +44,18 @@ const UserProfile = () => {
     return (
         <div style={{paddingBottom: 2, paddingTop: '40px'}}>
             <ProfileAvatar title={'ahmad ali'}/>
-
             <Stack direction={'column'} gap={'32px'} paddingTop={'44px'}>
                 {
                     formSections.map(section => {
                         return (
-                            <Stack direction={'column'} gap={'32px'}>
-                                <h3 style={classes.subSectionHeader}>{t(section.title)}</h3>
-                                <Stack gap={'16px'} direction={'row'} display={'flex'} flexWrap={'wrap'}>
+                            <FormInputsSectionComponent sectionTitle={section.title}>
                                     {
                                         section.inputs.map(companyInput => <FormInput key={companyInput.parameterKey}
                                                                                          input={companyInput as IInput}
                                                                                          changeState={changeState}
                                                                                          error={false}/>)
                                     }
-                                </Stack>
-                            </Stack>
+                            </FormInputsSectionComponent>
                         );
                     })
                 }

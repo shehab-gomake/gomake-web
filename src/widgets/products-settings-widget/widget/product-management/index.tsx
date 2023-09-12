@@ -1,14 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
-import {
-  GoMakeAutoComplate,
-  GoMakeTextInputIcon,
-  SecondSwitch,
-} from "@/components";
-import { InputAdornment } from "@mui/material";
-import { SearchIcon } from "@/icons";
+import { GoMakeAutoComplate } from "@/components";
 import { Row } from "../row";
 import { useProductManagement } from "./use-product-management";
+import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 
 const ProductManagementWidget = () => {
   const { t } = useTranslation();
@@ -32,7 +27,7 @@ const ProductManagementWidget = () => {
             <div style={{ width: "100%" }}>
               <GoMakeAutoComplate
                 options={allProductSKU}
-                placeholder={"Product SKU"}
+                placeholder={t("products.addProduct.admin.modalProductSKU")}
                 style={clasess.dropDownListStyle}
                 getOptionLabel={(option: any) => option.name}
                 onChange={(e: any, value: any) => {
@@ -54,20 +49,7 @@ const ProductManagementWidget = () => {
           </GomakePrimaryButton> */}
         </div>
         <div style={clasess.subHeaderRightSide}>
-          <GoMakeTextInputIcon
-            style={clasess.searchInputContainer}
-            placeholder={t("header.search")}
-            onChange={(e) => {
-              setTerm(e.target.value);
-            }}
-            startAdornment={
-              <InputAdornment position="start">
-                <div style={clasess.iconStyle}>
-                  <SearchIcon />
-                </div>
-              </InputAdornment>
-            }
-          />
+          <SearchInputComponent onChange={setTerm} />
         </div>
       </div>
       <div style={clasess.tableHeaderStyle}>

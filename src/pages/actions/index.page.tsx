@@ -4,6 +4,7 @@ import { useActions } from "./use-actions";
 
 import { useStyle } from "./style";
 import { Row } from "./widget/row";
+import { PrimaryTable } from "@/components/tables/primary-table";
 
 export default function Profits() {
   const { clasess } = useStyle();
@@ -17,7 +18,8 @@ export default function Profits() {
           marginTop={1}
           marginBottom={20}
         />
-        <div style={clasess.tableHeaderStyle}>
+        <PrimaryTable rows={allActions} headers={tableHeaders} />
+        {/* <div style={clasess.tableHeaderStyle}>
           {tableHeaders?.map((item) => {
             return <div style={clasess.headerNameStyle}>{item}</div>;
           })}
@@ -30,7 +32,7 @@ export default function Profits() {
               </div>
             );
           })}
-        </div>
+        </div> */}
       </div>
     </CustomerAuthLayout>
   );
