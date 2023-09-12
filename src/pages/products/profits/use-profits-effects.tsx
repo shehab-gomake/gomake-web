@@ -52,7 +52,7 @@ const useProfitsEffects = ({
     if (
       router?.query?.actionId &&
       selectedAction?.id &&
-      actionProfitRowsNew.length > 0 &&
+      actionProfitRowsNew?.length > 0 &&
       !isUpdated
     ) {
       const testName = productsStateValue.find(

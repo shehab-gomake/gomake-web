@@ -2,7 +2,7 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EditIcon } from "@/icons";
-import { getAndSetActions } from "@/services/hooks";
+import { getAllPrintHouseActions } from "@/services/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -13,16 +13,20 @@ const useActions = () => {
   const { t } = useTranslation();
   const [allActions, setAllActions] = useState<any>();
   const getActions = useCallback(async () => {
-    const data = await getAndSetActions(callApi, setAllActions);
-    const mapData = data?.map((category) => [
-      category.name,
-      '"Yes/No"',
-      "On/Off",
+    const data = await getAllPrintHouseActions(callApi, setAllActions);
+    const mapData = data?.map((action) => [
+      action?.name,
+      `${action?.isInternal ? "Yes" : "No"} / ${
+        action?.isOutsource ? "Yes" : "No"
+      }`,
+      action?.isActive ? "Yes" : "No",
       <PrimaryButton
         startIcon={
           <EditIcon color={primaryColor(500)} width={20} height={20} />
         }
-        onClick={() => navigate(`/products/profits?actionId=${category?.id}`)}
+        onClick={() =>
+          navigate(`/products/profits?actionId=${action?.actionId}`)
+        }
         variant={"text"}
       >
         Edit
