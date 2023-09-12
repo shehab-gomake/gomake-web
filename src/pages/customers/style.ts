@@ -15,6 +15,7 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         gap: "20px",
+        marginBottom: "35px",
       },
       autoComplateStyle: {
         width: convertWidthToVW(200),
@@ -44,11 +45,9 @@ const useStyle = () => {
       },
       subHeaderContainer: {
         display: "flex",
-        flexDirection: "column" as "column",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "16px",
+        flexDirection: "row" as "row",
         width: "100%",
+        gap: "20px",
       },
       dropDownListStyle: {
         width: convertWidthToVW(200),
@@ -61,7 +60,6 @@ const useStyle = () => {
       cleanBtnStyle: {
         backgroundColor: "#F8F8F8"
       },
-
     };
   }, [i18next.language, t]);
   return {
