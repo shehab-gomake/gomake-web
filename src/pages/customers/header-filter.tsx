@@ -5,6 +5,8 @@ import { useStyle } from "./style";
 import { useEffect } from "react";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import * as React from 'react';
+import { SearchInput } from "@/components/containers/search-input";
+import {SearchInputComponent} from "@/components/form-inputs/search-input-component";
 
 const HeaderFilter = ({ setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeAgent, onChangeCustomer, onChangeClientType, onChangeStatus, handleClean, cutomerName, agentName, valClientType, valStatus }: any) => {
     const { t } = useTranslation();
@@ -16,18 +18,6 @@ const HeaderFilter = ({ setAllCustomers, allCustomers, agentsCategores, clientTy
 
     return (
         <div>
-            <GomakeTextInput
-                type={"text"}
-                onChange={onChangeCustomer}
-                placeholder={t("customers.selectCustomer")}
-                style={{
-                    height: convertHeightToVH(42),
-                    width: convertWidthToVW(200),
-                    color: "black",                    
-                }}
-                
-                value={cutomerName}
-            />
             <div style={clasess.filterContainer}>
                 {agentsCategores?.length > 0 ? (
                     <GoMakeAutoComplate
@@ -66,6 +56,22 @@ const HeaderFilter = ({ setAllCustomers, allCustomers, agentsCategores, clientTy
                 )}
                 <GomakePrimaryButton style={clasess.autoButtonStyle} onClick={handleClean} >{t("customers.buttons.clean")}</GomakePrimaryButton>
             </div>
+
+            <GomakeTextInput
+                type={"text"}
+                onChange={onChangeCustomer}
+                placeholder={t("customers.selectCustomer")}
+                style={{        
+
+                    height: convertHeightToVH(42),
+                    width: convertWidthToVW(200),
+                    color: "black",                  
+                }}
+                
+                value={cutomerName}
+            />
+
+            <SearchInputComponent onChange={onChangeCustomer}></SearchInputComponent>
         </div>
     );
 };

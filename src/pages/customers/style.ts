@@ -14,8 +14,7 @@ const useStyle = () => {
         justifyContainer: "flex-start",
         alignItems: "center",
         width: "100%",
-        gap: convertWidthToVW(50),
-        marginTop: convertHeightToVH(40),
+        gap: "20px",
       },
       autoComplateStyle: {
         width: convertWidthToVW(200),
@@ -39,24 +38,11 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
       },
-      addCustomerBtnText: {
-        ...FONT_FAMILY.Lexend(500, 16),
-        color: "#101020",
-      },
-      addCustomerBtnStyle: {
-        display: "flex",
-        flexDirection: "row" as "row",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 10,
-        padding: 10,
-        paddingLeft: 20,
-        paddingRight: 20,
-        backgroundColor: "#DCDCEC",
-        borderRadius: 4,
-        cursor: "pointer",
-        width: 180,
-        height: 40,
+      searchInputContainer: {
+        width: convertWidthToVW(375),
+        backgroundColor: "#F8F8F8",
+        borderRadius: 10,
+        height: 30,
       },
     };
   }, [i18next.language, t]);

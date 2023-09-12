@@ -1,10 +1,11 @@
-import {  useState } from "react";
+import { useState } from "react";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { GomakePrimaryButton } from "@/components";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../style";
 import { AddPlusIcon } from "@/icons";
+import { AddButton } from "@/components/button/add-button";
 
 const AddCustomerButton = ({ onCustomeradd }: any) => {
   const [open, setOpen] = useState(false);
@@ -14,18 +15,10 @@ const AddCustomerButton = ({ onCustomeradd }: any) => {
 
   return (
     <>
-    <CustomerCardWidget  onCustomeradd={onCustomeradd} openModal={open} modalTitle={t("customers.modal.addTitle")} onClose={()=>setOpen(false)} showAddButton={true} customer={customer} setCustomer={setCustomer} >
-        </CustomerCardWidget>
-     <GomakePrimaryButton
-          style={clasess.addCustomerBtnStyle}
-          leftIcon={<AddPlusIcon stroke="#101020" />}
-          onClick={()=>setOpen(!open)}
-        >
-          <div style={clasess.addCustomerBtnText}>
-          {t("customers.buttons.addCustomer")}
-          </div>
-        </GomakePrimaryButton>
-         </>
+      <CustomerCardWidget onCustomeradd={onCustomeradd} openModal={open} modalTitle={t("customers.modal.addTitle")} onClose={() => setOpen(false)} showAddButton={true} customer={customer} setCustomer={setCustomer} >
+      </CustomerCardWidget>
+      <AddButton onClick={() => setOpen(!open)} label={t("customers.buttons.addCustomer")}></AddButton>
+    </>
   );
 };
 export { AddCustomerButton };

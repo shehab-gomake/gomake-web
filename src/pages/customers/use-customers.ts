@@ -43,9 +43,9 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
   );
 
   const [name, setCustomerName] = useState("");
-  const onChangeCustomer = useCallback(async (e: any, value: any) => {
+  const onChangeCustomer = useCallback((value: string) => {
     setPageNumber(1);
-    setCustomerName(e.target.value);
+    setCustomerName(value);
   }, []);
 
   const [agentId, setAgentId] = useState([]);
@@ -188,7 +188,7 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
   }, [filters, clientType, pageNumber, pageSize, name, ClientTypeId, agentId, isActive]);
 
   const handleClean = useCallback(async () => {
-    setCustomerName("");
+    setCustomerName(null);
     setAgentId(null);
     setAgentName(null);
     setStatus(true);
