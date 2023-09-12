@@ -15,7 +15,7 @@ const StickyFirstColumnTable = ({ data, columns }) => {
     console.log(_tableRows)
 
    return (
-    <TableContainer style={{width:"100%"}}>
+    <TableContainer style={{width:"90%",maxHeight: "800px"}}>
         <Table
      
         aria-label="simple table"

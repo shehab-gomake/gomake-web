@@ -13,7 +13,7 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
         table: {
-            minWidth: 650,
+          overflowY: "auto",overflowX:"auto",
           },
           sticky: {
             position:"sticky" as "sticky",

@@ -4,19 +4,7 @@ import {AddPlusIcon, SearchIcon} from "@/icons";
 import {FONT_FAMILY} from "@/utils/font-family";
 import {HeaderTitle} from "@/widgets/header-title";
 import {useState} from "react";
-import {
-    InputAdornment,
-    Tab,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Tabs,
-    ThemeProvider,
-    createMuiTheme
-} from "@mui/material";
+import {InputAdornment, createMuiTheme} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {useStyle} from "./style";
 import {AddRoleModal} from "./modals";
@@ -34,20 +22,16 @@ const PermissionsWidget = () => {
             },
         },
     });
-    const handleTabChange = (event, newValue) => {
-        setSelectedTab(newValue);
-
-    };
+ 
     const [isNewRole, setisNewRole] = useState(false);
     const onClickCloseNewRole = () => {
         setisNewRole(false);
     };
-    const [selectedTab, setSelectedTab] = useState(0);
-    const {tableHeaders, permissionsRoles, groups, table, permissions, onSelectTab} =
+    const {tableHeaders, groups, table, onSelectTab} =
         useSettings();
     const tabs = [];
     groups?.forEach((row) => {
-        tabs.push({title: row.name});
+        tabs.push({title: row.name , selectedTab :  onSelectTab});
     });
 
     return (
@@ -72,28 +56,6 @@ const PermissionsWidget = () => {
             </div>
             <div style={{width: "98%"}}>
                 <SecondaryTabsComponent tabs={tabs} onSelectTab={onSelectTab}/>
-                {/* <ThemeProvider theme={theme}>
-                  <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary"  indicatorColor="secondary">
-                  {groups?.map(x => (
-                        <Tab
-                        key={x} // Don't forget to add a unique key when rendering an array of components
-                        sx={{
-                            color: selectedTab === 0 ? '#ED028C' : '#1C1D58',
-                            marginLeft: '4px',
-                            marginRight: '4px',
-                            paddingLeft: '1px',
-                            paddingRight: '1px',
-                            textTransform: 'none',
-                            fontStyle: 'normal',
-                            ...FONT_FAMILY.Lexend(500, 16),
-                            lineHeight: 'normal',
-                        }}
-                        label={x.name}
-                        />
-                    ))}
-                  </Tabs>   
-              </ThemeProvider> */}
-
             </div>
             <div style={{display: "flex", width: "100%", justifyContent: "flex-end", flexDirection: "row"}}>
                 <div style={classes.subHeaderRightSide}>

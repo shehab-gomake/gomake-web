@@ -1,3 +1,4 @@
+
 import { ICallApi, ISetState } from "./call-api.interface";
 import { returnResult } from "@/utils/helpers";
 
@@ -26,9 +27,23 @@ const getAndSetPermissionsRolesRelation = async (
   const result: any = await callApi("GET", "/v1/crm-service/permissionsRolesRealtionship/get-all-permission-roles-relation", data);
   return returnResult(result, setState);
 };
+const getPermissionRolesRelationsByGroupId = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/crm-service/Permissions/get-permissions-group-byID",
+    data
+  );
+  return returnResult(result, setState);
+};
 
 export {
   getAndSetRoles,
   getAndSetPermissions,
-  getAndSetPermissionsRolesRelation
+  getAndSetPermissionsRolesRelation,
+  getPermissionRolesRelationsByGroupId,
+  
 };

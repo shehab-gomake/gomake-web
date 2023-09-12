@@ -1,22 +1,15 @@
 import {useCallback, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useGomakeAxios} from "@/hooks";
-
-
-import {useStyle} from "./style";
 import Switch from "@mui/material/Switch";
 import {ThemeProvider, createMuiTheme, createTheme} from "@mui/material/styles";
 import {
-    getAndSetPermissions,
-    getAndSetPermissionsRolesRelation,
-    getAndSetRoles
+    getAndSetPermissionsRolesRelation, getPermissionRolesRelationsByGroupId,
 } from "@/services/hooks/get-set-permissionRoles";
-import {getPermissionRolesRelationsByGroupId} from "@/services/hooks/get-permissions-by-id-group";
+import { useEditPermissionRolesRelationShip } from '../Permissions/use-update-permissionsRoles-relationship';
 
 const useSettings = () => {
     const {callApi} = useGomakeAxios();
-    const {classes} = useStyle();
-
     const [groups, setgroups] = useState([]);
     const [permissionsRoles, setpermissionsRoles] = useState([]);
     const [tableHeaders, setTableHeaders] = useState([]);
@@ -25,17 +18,25 @@ const useSettings = () => {
     const [selectedTab, setSelectedTab] = useState<{id: string; title: string}>();
     const {t} = useTranslation();
 
-
+    const { editPrmissionRole } = useEditPermissionRolesRelationShip();
+    const [Val, setVal] = useState(false); 
+   
+    const getAndSetPermissionRolesRelationsByGroupId = useCallback(async (id) => {
+        const data = await getPermissionRolesRelationsByGroupId(callApi, setpermissionsRoles,{id});
+        getPermissionsTable(data,tableHeaders);
+    }, [ ])
     useEffect(()=> {
+    
       if (!!selectedTab) {
-
+        getAndSetPermissionRolesRelationsByGroupId(selectedTab.id)
       }
     }, [selectedTab])
     const onSelectTab = (index: number) => {
         const newSelectedTab = groups[index];
         if (!!newSelectedTab) {
-          setSelectedTab(selectedTab)
+          setSelectedTab(newSelectedTab)
       }
+
     }
     const theme = createTheme({
         palette: {
@@ -44,10 +45,18 @@ const useSettings = () => {
             }
         }
     });
+    const UpdatePermission = (roleId,permissionId) => {
+        const data  = {
+            permissionId:permissionId,
+            roleId:roleId
+        }
+        setVal((prevVal) => !prevVal);
+        editPrmissionRole(data);
+    }
     const getSwitch = (roleId, permissionId) => {
         return (
             <ThemeProvider theme={theme}>
-                <Switch color="secondary" checked={true}/>
+                <Switch color="secondary"  onClick={() => UpdatePermission(roleId,permissionId)} checked={true}/>
             </ThemeProvider>
         );
 
@@ -55,21 +64,16 @@ const useSettings = () => {
     const getSwitchFale = (roleId, permissionId) => {
         return (
             <ThemeProvider theme={theme}>
-                <Switch color="secondary" checked={false}/>
+                <Switch color="secondary"  onClick={() => UpdatePermission(roleId,permissionId)} checked={false}/>
             </ThemeProvider>
         );
     }
-    const getPermissionRolesRelations = useCallback(async () => {
-        const data = await getAndSetPermissionsRolesRelation(callApi, setpermissionsRoles);
-        const roles = [...data.roles]; // Create a new array and copy elements from 'data.roles'
-        roles.unshift([]); // Adds an empty array to the beginning of the new 'roles' array
-        setTableHeaders(roles);
-        setgroups(data.groups)
-        setpermissions(data.permissions);
+
+    const getPermissionsTable = (permissions,roles) =>{
         var col = []
-        const row = [col];
+        const row = [];
         const table2 = [];
-        data.permissions.forEach(permission => {
+        permissions.forEach(permission => {
             var row = [];
             row.push(permission.description);
             roles.forEach(role => {
@@ -81,12 +85,17 @@ const useSettings = () => {
         })
         setTable(table2);
 
+    };
+    const getPermissionRolesRelations = useCallback(async () => {
+        const data = await getAndSetPermissionsRolesRelation(callApi, setpermissionsRoles);
+        const roles = [...data.roles];
+        roles.unshift({}); 
+        setTableHeaders(roles);
+        setgroups(data.groups)
+        setpermissions(data.permissions);
+        getPermissionsTable(data.permissions,roles);
     }, [callApi, setpermissionsRoles, t])
 
-
-    const getAndSetPermissionRolesRelationsByGroupId = useCallback(async () => {
-        const data = await getPermissionRolesRelationsByGroupId(callApi, setpermissionsRoles);
-    }, [callApi, setpermissionsRoles, t])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -95,9 +104,6 @@ const useSettings = () => {
 
         fetchData();
     }, [getPermissionRolesRelations]);
-
-
-    console.log(table)
 
     return {
         tableHeaders,
