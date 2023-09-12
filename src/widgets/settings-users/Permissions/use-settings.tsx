@@ -17,20 +17,21 @@ const useSettings = () => {
     const [table, setTable] = useState([]);
     const [selectedTab, setSelectedTab] = useState<{id: string; title: string}>();
     const {t} = useTranslation();
-
     const { editPrmissionRole } = useEditPermissionRolesRelationShip();
     const [Val, setVal] = useState(false); 
    
     const getAndSetPermissionRolesRelationsByGroupId = useCallback(async (id) => {
         const data = await getPermissionRolesRelationsByGroupId(callApi, setpermissionsRoles,{id});
-        getPermissionsTable(data,tableHeaders);
-    }, [ ])
+        console.log("tableHeader="+tableHeaders)
+        getPermissionsTable(data);
+    }, [tableHeaders])
     useEffect(()=> {
     
       if (!!selectedTab) {
         getAndSetPermissionRolesRelationsByGroupId(selectedTab.id)
       }
     }, [selectedTab])
+
     const onSelectTab = (index: number) => {
         const newSelectedTab = groups[index];
         if (!!newSelectedTab) {
@@ -38,6 +39,12 @@ const useSettings = () => {
       }
 
     }
+    
+    useEffect(()=> {
+        if(groups && !selectedTab) {
+            setSelectedTab(groups[0])
+        }
+    }, [groups, selectedTab])
     const theme = createTheme({
         palette: {
             secondary: {
@@ -45,56 +52,63 @@ const useSettings = () => {
             }
         }
     });
-    const UpdatePermission = (roleId,permissionId) => {
+    const UpdatePermission = (roleId,permissionId,isChecked) => {
         const data  = {
             permissionId:permissionId,
             roleId:roleId
         }
-        setVal((prevVal) => !prevVal);
+    
+        setVal(!isChecked); 
         editPrmissionRole(data);
     }
-    const getSwitch = (roleId, permissionId) => {
+    const getSwitch = (roleId, permissionId, isChecked) => {
+    
         return (
             <ThemeProvider theme={theme}>
-                <Switch color="secondary"  onClick={() => UpdatePermission(roleId,permissionId)} checked={true}/>
-            </ThemeProvider>
-        );
-
-    }
-    const getSwitchFale = (roleId, permissionId) => {
-        return (
-            <ThemeProvider theme={theme}>
-                <Switch color="secondary"  onClick={() => UpdatePermission(roleId,permissionId)} checked={false}/>
+                <Switch
+                    color="secondary"
+                    onClick={() => UpdatePermission(roleId, permissionId, isChecked)}
+                    checked={isChecked}
+                />
             </ThemeProvider>
         );
     }
-
-    const getPermissionsTable = (permissions,roles) =>{
+    const getPermissionsTable = useCallback((permissions) => {
+        debugger
         var col = []
         const row = [];
         const table2 = [];
+
         permissions.forEach(permission => {
             var row = [];
             row.push(permission.description);
-            roles.forEach(role => {
+            tableHeaders.forEach(role => {
+                debugger
                 var relation = permission.rolesPermissionsRelationships.find(x => x.roleId == role.id)
-                var col = relation ? getSwitch(role.id, permission.id) : getSwitchFale(role.id, permission.id)
+                if(role.id !== '')
+                {
+                     var col = relation && relation !== undefined   ? getSwitch(role.id, permission.id,true) : getSwitch(role.id, permission.id,false)
                 row.push(col);
+
+                }
+               
             });
             table2.push(row)
         })
         setTable(table2);
 
-    };
+
+    }, [tableHeaders]) 
+    
     const getPermissionRolesRelations = useCallback(async () => {
         const data = await getAndSetPermissionsRolesRelation(callApi, setpermissionsRoles);
         const roles = [...data.roles];
-        roles.unshift({}); 
+        roles.unshift({id : "" , name : " Permission"});
         setTableHeaders(roles);
         setgroups(data.groups)
         setpermissions(data.permissions);
-        getPermissionsTable(data.permissions,roles);
-    }, [callApi, setpermissionsRoles, t])
+        getPermissionsTable(data.permissions);
+    }, [])
 
 
     useEffect(() => {
@@ -103,8 +117,7 @@ const useSettings = () => {
         };
 
         fetchData();
-    }, [getPermissionRolesRelations]);
-
+    }, []);
     return {
         tableHeaders,
         permissionsRoles,

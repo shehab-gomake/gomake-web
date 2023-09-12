@@ -19,16 +19,16 @@ const useStyle = ({ width }: any) => {
         width: "100%",
         justifyContent: "space-around",
         alignItems: "center",
-        height: 60,
         backgroundColor: "#F6F6F6",
+  
       },
       isSticky: {
         display: "flex",
         width: "100%",
         justifyContent: "space-around",
         alignItems: "center",
-        backgroundColor: "white",
-        height: 60,
+      
+   
       },
       rowItem: {
         display: "flex",
@@ -51,7 +51,8 @@ const useStyle = ({ width }: any) => {
         position:"sticky" as "sticky" ,
         left: 0,
         backgroundColor:"white",
-        Zindex:1000000000,
+        zIndex:1,
+        width:"10%",
       } 
     };
   }, []);

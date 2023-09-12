@@ -12,10 +12,10 @@ const StickyFirstColumnTable = ({ data, columns }) => {
     const [_tableRows, setTableRows] = useState(data);
     const [istimeOut, setIsTimeOut] = useState(false);
     const { t } = useTranslation();
-    console.log(_tableRows)
+  
 
    return (
-    <TableContainer style={{width:"90%",maxHeight: "800px"}}>
+    <TableContainer style={{width:"90%",maxHeight: "900px"}}>
         <Table
      
         aria-label="simple table"

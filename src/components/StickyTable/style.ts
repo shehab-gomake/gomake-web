@@ -13,13 +13,13 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
         table: {
-          overflowY: "auto",overflowX:"auto",
+          overflow: "scroll",
           },
           sticky: {
             position:"sticky" as "sticky",
             left: 0,
-            Zindex:100000,
             backgroundColor: primaryColor(50),
+            width:"10%",
         
           },
           headerItem: {
@@ -28,6 +28,7 @@ const useStyle = () => {
             alignItems: "center",
             color: primaryColor(700),
             textalign: "center",
+         
             paddingTop: 14,
             paddingBottom: 14,
             paddingLeft: 22,
@@ -39,9 +40,11 @@ const useStyle = () => {
             justifyContent: "space-around",
             alignItems: "center",
             backgroundColor: primaryColor(50),
-            height: 42,
             lineHeight: "17.5px",
             ...FONT_FAMILY.Lexend(500, 14),
+            position:"sticky" as "sticky",
+            top:0,
+            zIndex:2,
           },
           HeaderTable:{
             backgroundColor:"#EBECFF",
@@ -51,7 +54,9 @@ const useStyle = () => {
             width: "100%",
             flexDirection: "column" as "column",
             alignitems: "flex-start",
-            textalign: "center",
+            textalign: "center",  
+            
+        
           },
           skeletonRowStyle: {
             marginTop: convertHeightToVH(10),
