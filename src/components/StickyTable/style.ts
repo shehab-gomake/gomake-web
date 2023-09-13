@@ -19,7 +19,7 @@ const useStyle = () => {
             position:"sticky" as "sticky",
             left: 0,
             backgroundColor: primaryColor(50),
-            width:"10%",
+            minWidth:"200px",
         
           },
           headerItem: {
@@ -28,7 +28,7 @@ const useStyle = () => {
             alignItems: "center",
             color: primaryColor(700),
             textalign: "center",
-         
+            width:"10%",
             paddingTop: 14,
             paddingBottom: 14,
             paddingLeft: 22,
@@ -53,7 +53,7 @@ const useStyle = () => {
             display: "flex",
             width: "100%",
             flexDirection: "column" as "column",
-            alignitems: "flex-start",
+            alignitems: "center",
             textalign: "center",  
             
         

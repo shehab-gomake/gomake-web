@@ -10,10 +10,10 @@ const Row = ({ index, row, width , isSticky }: any) => {
   const showUnderRowWidget = useRecoilValue(ShowSupplierList);
   return (
     <>
-      <div style={isSticky ? clasess.isSticky : index % 2 == 0 ? clasess.bodyRow : clasess.secondRow}>
+      <div style={(isSticky && index % 2 == 0 ? clasess.isSticky : clasess.secondRowSticky ) || (index % 2 == 0 ? clasess.bodyRow : clasess.secondRow)}>
         {Object.entries(row).map((entry: [string, any], index: number) => {
           return (
-            <div key={`row_table_${index}`} style={ index == 0 ? clasess.sticky : clasess.rowItem }>
+            <div key={`row_table_${index}`} style={ index == 0  ? clasess.sticky : clasess.rowItem }>
               {entry[1]}
             </div>
           );
