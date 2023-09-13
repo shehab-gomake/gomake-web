@@ -1,5 +1,5 @@
 import { Tab, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { GoMakeModal } from "@/components";
 import { HeaderFilter } from "./header-filter";
@@ -12,15 +12,15 @@ import { AddIcon } from "@/components/icons/icons";
 import { useTranslation } from "react-i18next";
 import { Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BookKeepingForm } from "./components/bookKeeping-tab/form";
-import Switch from '@mui/material/Switch';
-import { BudgetForm } from "./components/budget-tab/add-budget/form";
+import { SecondSwitch } from "@/components/switch/second";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useCustomersModal } from "./use-customer-modal";
 import { useAddCustomer } from "@/pages/customers/add-customer/use-add-customer";
 import { useEditCustomer } from "@/pages/customers/edit-customer/use-edit-customer";
+import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
+import { ITab } from "@/components/tabs/interface";
 
-const CustomerCardWidget = ({ getAllCustomers,onCustomeradd,openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
+const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
@@ -33,14 +33,6 @@ const CustomerCardWidget = ({ getAllCustomers,onCustomeradd,openModal, modalTitl
       },
     },
   });
-
-  const TestOptions = useMemo(
-    () => [
-      t("A"),
-      t("B"),
-      t("C"),],
-    []
-  );
 
   const tabPanelInput = (label, val = null, onchange = null) => {
     return (
@@ -83,7 +75,6 @@ const CustomerCardWidget = ({ getAllCustomers,onCustomeradd,openModal, modalTitl
     setAgentName(customer && customer.agentId ? agentsCategores.find((agent) => agent.id == customer?.agentId)?.label : []);
     setCurrencyText(customer && customer.currency ? currencyCategores.find((currency) => currency.id == customer?.currency)?.label : []);
   }, [customer]);
-
 
   const { clasess } = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
@@ -294,7 +285,7 @@ const CustomerCardWidget = ({ getAllCustomers,onCustomeradd,openModal, modalTitl
           </Col>
           <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
             <h3 style={clasess.headerStyle}>{t("customers.modal.CPAcode")}</h3>
-            <input style={clasess.inputStyle1} type="text" placeholder="placeholder" value={customer?.cpaClientCode} onChange={(e: any) => setCustomer({ ...customer, cpaClientCode: e.target.value })}  />
+            <input style={clasess.inputStyle1} type="text" placeholder="placeholder" value={customer?.cpaClientCode} onChange={(e: any) => setCustomer({ ...customer, cpaClientCode: e.target.value })} />
           </Col>
           <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
             <h3 style={clasess.headerStyle}>{t("customers.modal.clientName")}</h3>
@@ -324,8 +315,7 @@ const CustomerCardWidget = ({ getAllCustomers,onCustomeradd,openModal, modalTitl
             <Tab sx={{ backgroundColor: selectedTab === 0 ? '#ED028C' : '#EBECFF', color: selectedTab === 0 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "82px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.general")} />
             <Tab sx={{ backgroundColor: selectedTab === 1 ? '#ED028C' : '#EBECFF', color: selectedTab === 1 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "90px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.contacts")} />
             <Tab sx={{ backgroundColor: selectedTab === 2 ? '#ED028C' : '#EBECFF', color: selectedTab === 2 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "100px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.addresses")} />
-            <Tab sx={{ backgroundColor: selectedTab === 3 ? '#ED028C' : '#EBECFF', color: selectedTab === 3 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "206px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "4px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.priceLists")} />
-            <Tab sx={{ backgroundColor: selectedTab === 4 ? '#ED028C' : '#EBECFF', color: selectedTab === 4 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "137px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "7px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.gomakeUsers")} />
+            <Tab sx={{ backgroundColor: selectedTab === 3 ? '#ED028C' : '#EBECFF', color: selectedTab === 4 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "137px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "7px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.gomakeUsers")} />
           </Tabs>
           {
             //general info
@@ -347,21 +337,14 @@ const CustomerCardWidget = ({ getAllCustomers,onCustomeradd,openModal, modalTitl
                 </Col>
                 <Col style={{ display: "flex", flexDirection: "column", marginTop: "45px" }}>
                   <Col style={{ display: "flex", width: "170px", height: "14px", justifyContent: "flex-start", gap: "8px" }}>
-                    <Switch checked={customer?.isActive} size="small" onChange={(e) => setCustomer({ ...customer, isActive: e.target.checked })} />
+                    <SecondSwitch checked={customer?.isActive} size="small" onChange={(e) => setCustomer({ ...customer, isActive: e.target.checked })} />
                     <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.active")}</h3>
                   </Col>
                   <Col style={{ display: "flex", width: "190px", height: "14px", justifyContent: "flex-start", gap: "8px" }}>
-                    <Switch checked={customer?.isOccasional} size="small" onChange={(e) => setCustomer({ ...customer, isOccasional: e.target.checked })} />
+                    <SecondSwitch checked={customer?.isOccasional} size="small" onChange={(e) => setCustomer({ ...customer, isOccasional: e.target.checked })} />
                     <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.anOccasionalCustomer")}</h3>
                   </Col>
                 </Col>
-              </Row>
-              <Row style={{ marginBottom: '24px', width: "72%", display: "flex", justifyContent: "center", alignItems: "center" }} >
-                {tabPanelSelect(t("customers.modal.typeOfDelivery"), TestOptions, "placeholder", customer?.shipmentType, (e) => setCustomer({ ...customer, shipmentType: e.target.value }))}
-                {tabPanelSelect(t("customers.modal.responsibleGraphicArtist"), TestOptions, "placeholder", null)}
-                {tabPanelSelect(t("customers.modal.closingOrder"), TestOptions, "placeholder", null)}
-                {tabPanelSelect(t("customers.modal.howToCloseInvoicing"), TestOptions, "placeholder", null)}
-                {tabPanelSelect(t("customers.modal.messageGroup"), TestOptions, "placeholder", customer?.messageGroup, (e) => setCustomer({ ...customer, messageGroup: e.target.value }), "none")}
               </Row>
               <Row style={{ marginBottom: '24px' }}>
                 <span style={{ color: "var(--second-500, #ED028C)", fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 14), lineHeight: "normal" }}>{t("customers.modal.lastOrderDetails")}</span>
@@ -420,23 +403,8 @@ const CustomerCardWidget = ({ getAllCustomers,onCustomeradd,openModal, modalTitl
             </Row>
           }
           {
-            //bookKeeping info
-            selectedTab == 5 &&
-            <BookKeepingForm></BookKeepingForm>
-          }
-          {
-            //budget info
-            selectedTab == 5 &&
-            <BudgetForm></BudgetForm>
-          }
-          {
-            //price list info
-            selectedTab == 3 &&
-            <PriceListForm></PriceListForm>
-          }
-          {
             //GOMAKEUSER info
-            selectedTab == 4 &&
+            selectedTab == 3 &&
             <Row style={{ display: "flex" }}>
               <Col md={10}>
                 {
@@ -453,7 +421,7 @@ const CustomerCardWidget = ({ getAllCustomers,onCustomeradd,openModal, modalTitl
               </Col>
             </Row>
           }
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "flex-end", alignSelf: "stretch", marginTop: "24px" }} >
+          <div style={clasess.footerStyle} >
             {showAddButton && <button style={clasess.autoButtonStyle} onClick={handleAddCustomer} >{t("customers.buttons.addCustomer")}</button>}
             {showUpdateButton && <button style={clasess.autoButtonStyle} onClick={handleEditCustomer}>{t("customers.buttons.updateChanges")}</button>}
           </div>

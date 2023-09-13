@@ -8,6 +8,8 @@ import { EmployeeActions } from "@/widgets/settings-users/users/enums/employee-a
 import {AddButton} from "@/components/button/add-button";
 import {PrimaryTabsComponent} from "@/components/tabs/primary-tabs";
 import {ITab} from "@/components/tabs/interface";
+import { useState } from "react";
+import { AddRoleModal } from "./Permissions/modals";
 
 const SettingsUsersWidget = () => {
   const { t } = useTranslation();
@@ -19,6 +21,10 @@ const SettingsUsersWidget = () => {
     onAddEmployee,
     action,
   } = useEmployee();
+  const [isNewRole, setisNewRole] = useState(false);
+  const onClickCloseNewRole = () => {
+      setisNewRole(false);
+  };
 
   const tabs: ITab[] = [
       {title: t("usersSettings.users"), component: <UsersSettings/>},
@@ -27,8 +33,18 @@ const SettingsUsersWidget = () => {
   return (
     <div>
         <PrimaryTabsComponent tabs={tabs}>
-          <AddButton label={t("usersSettings.addEmployee")} onClick={handleAddEmployeeClick}/>
+         
+            <AddButton label={t("usersSettings.addEmployee")} onClick={handleAddEmployeeClick}/>
+            <AddButton label={t("permissionsSettings.AddRole")} onClick={() => setisNewRole(true)}/>
+         
+     
         </PrimaryTabsComponent>
+        <AddRoleModal
+                openModal={isNewRole}
+                modalTitle={t("permissionsSettings.AddNewRole")}
+                onClose={onClickCloseNewRole}
+
+            />
       <GoMakeModal
         insideStyle={{ paddingLeft: 0, paddingRight: 0 }}
         headerPadding={20}

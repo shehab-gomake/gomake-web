@@ -23,10 +23,7 @@ const PermissionsWidget = () => {
         },
     });
  
-    const [isNewRole, setisNewRole] = useState(false);
-    const onClickCloseNewRole = () => {
-        setisNewRole(false);
-    };
+ 
     const {tableHeaders, groups, table, onSelectTab} =
         useSettings();
     const tabs = [];
@@ -36,20 +33,7 @@ const PermissionsWidget = () => {
 
     return (
         <div style={classes.mainContainer}>
-            <div style={{display: "flex", justifyContent: "flex-end", alignItems: "flex-end", width: "100%"}}>
-                <div
-                    style={classes.addProductBtnStyle}
-                    onClick={() => setisNewRole(true)}
-
-                >
-                    <AddPlusIcon stroke="#101020"/>
-                    <div style={classes.addProductBtnText}>
-                        {t("permissionsSettings.AddRole")}
-                    </div>
-                </div>
-
-            </div>
-
+      
             <div style={classes.mainHeadecontainer}>
 
                 <HeaderTitle title={t("permissionsSettings.title")} marginBottom={3}/>
@@ -57,30 +41,31 @@ const PermissionsWidget = () => {
             <div style={{width: "98%"}}>
                 <SecondaryTabsComponent tabs={tabs} onSelectTab={onSelectTab}/>
             </div>
-            <div style={{display: "flex", width: "100%", justifyContent: "flex-end", flexDirection: "row"}}>
-                <div style={classes.subHeaderRightSide}>
-                    <GoMakeTextInputIcon
-                        style={classes.searchInputContainer}
-                        placeholder={t("header.search")}
-                        startAdornment={
-                            <InputAdornment position="start">
-                                <div style={classes.iconStyle}>
-                                    <SearchIcon/>
-                                </div>
-                            </InputAdornment>
-                        }
-                    />
+            <div style={{display:"flex",flexDirection:"column",width:"71%"}}>
+                <div style={{display: "flex", width: "100%", justifyContent: "flex-end", flexDirection: "row"}}>
+                    <div style={classes.subHeaderRightSide}>
+                        <GoMakeTextInputIcon
+                            style={classes.searchInputContainer}
+                            placeholder={t("header.search")}
+                            startAdornment={
+                                <InputAdornment position="start">
+                                    <div style={classes.iconStyle}>
+                                        <SearchIcon/>
+                                    </div>
+                                </InputAdornment>
+                            }
+                        />
+                    </div>
                 </div>
+                <div style={{width:"95%"}}>
+                <StickyFirstColumnTable columns={tableHeaders} data={table}/>
+
+                </div>
+                
+
             </div>
-
-            <StickyFirstColumnTable columns={tableHeaders} data={table}/>
-
-            <AddRoleModal
-                openModal={isNewRole}
-                modalTitle={t("permissionsSettings.AddNewRole")}
-                onClose={onClickCloseNewRole}
-
-            />
+            
+         
 
 
         </div>
