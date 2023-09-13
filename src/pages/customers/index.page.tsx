@@ -29,8 +29,6 @@ export default function Home() {
         <AddCustomerButton onCustomeradd={onCustomeradd}></AddCustomerButton>
       </div>
       <HeaderFilter
-        setAllCustomers={setAllCustomers}
-        allCustomers={allCustomers}
         agentsCategores={agentsCategores}
         clientTypesCategores={clientTypesCategores}
         statuses={statuses}

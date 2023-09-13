@@ -24,7 +24,7 @@ const ContactForm = ({contact , onDelete , setContact }:IProps) => {
         t("customers.modal.deliveryNote"),],
         []
     );
-
+    
     return (
         <div >
             <Row style={{ marginBottom: '24px', marginTop: '24px' }}>
