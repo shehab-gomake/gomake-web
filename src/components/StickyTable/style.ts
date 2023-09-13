@@ -14,10 +14,12 @@ const useStyle = () => {
     return {
         table: {
           overflow: "scroll",
+          zIndex : -1,
           },
           sticky: {
             position:"sticky" as "sticky",
             left: 0,
+            marginLeft: "20px",
             backgroundColor: primaryColor(50),
             minWidth:"200px",
         
@@ -44,7 +46,7 @@ const useStyle = () => {
             ...FONT_FAMILY.Lexend(500, 14),
             position:"sticky" as "sticky",
             top:0,
-            zIndex:2,
+            zIndex:1,
           },
           HeaderTable:{
             backgroundColor:"#EBECFF",

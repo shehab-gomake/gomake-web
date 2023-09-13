@@ -18,7 +18,8 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "100%",
+
+        position:"fixed" as "fixed",
       },
       mainHeadecontainer: {
         display: "flex",
