@@ -149,9 +149,6 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
         {!!productTest?.isBaseCase && (
           <div
             style={clasess.addNewQuantity}
-            // onClick={() => {
-            //   profitsValue?.setOpenAddNewPricingStepRow(true);
-            // }}
             onClick={profitsStateValue?.onOpenAddQuantityModal}
           >
             <Plus />

@@ -212,7 +212,6 @@ const useProfitsProfitsFunction = ({
           quantity: pricingListRowState.quantity,
           actionProductId: productTest.actionProductId,
           systemID: 2,
-          // actionProductId:
         }
       );
       if (res?.success) {

@@ -43,8 +43,6 @@ const useProfitsEffects = ({
           name: actionName?.name,
         }
       );
-
-      // setProductTest({});
     }
   }, [router, allActions, productsStateValue]);
 
