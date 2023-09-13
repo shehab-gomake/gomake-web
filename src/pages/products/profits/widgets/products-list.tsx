@@ -17,11 +17,12 @@ const ProductList = () => {
   const productTest = useRecoilValue<any>(productTestState);
 
   useEffect(() => {
-    if (!productTest && profitsStateValue?.testProductsState) {
+    if (!productTest && profitsStateValue?.testProductsState?.length > 0) {
       profitsStateValue?.onCklickActionProfitTestResultsByActionId(
         profitsStateValue?.testProductsState[0]?.item?.productId,
         profitsStateValue?.testProductsState[0]?.name,
-        profitsStateValue?.testProductsState[0]?.item?.id
+        profitsStateValue?.testProductsState[0]?.item?.id,
+        true
       );
     }
   }, [profitsStateValue?.testProductsState, productTest]);

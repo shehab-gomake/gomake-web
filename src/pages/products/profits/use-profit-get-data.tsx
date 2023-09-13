@@ -1,5 +1,6 @@
 import { useGomakeAxios } from "@/hooks";
 import {
+  getAllPrintHouseActions,
   getAllProductsForDropDownList,
   getAndSetActionExceptionProfitRowByActionExceptionId,
   getAndSetActionProfitRowByActionId,
@@ -8,9 +9,6 @@ import {
   getAndSetAllParameters,
   getAndSetClientTypes,
   getAndSetGetAllTestProductsByActionId,
-  getAndSetMachinces,
-  getAndSetParameters,
-  getAndSetProducts,
 } from "@/services/hooks";
 import {
   actionExceptionProfitId,
@@ -62,7 +60,7 @@ const useProfitsGetData = () => {
     useRecoilState<any>(clientTypesState);
   const { callApi } = useGomakeAxios();
   const getActions = useCallback(async () => {
-    await getAndSetActions(callApi, setAllActions);
+    await getAllPrintHouseActions(callApi, setAllActions);
   }, []);
   const getParameters = useCallback(async () => {
     return await getAndSetAllParameters(callApi, setParametersState);
