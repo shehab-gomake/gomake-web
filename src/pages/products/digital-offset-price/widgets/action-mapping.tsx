@@ -9,8 +9,6 @@ const ActionMappingWidget = ({
   machineCategories,
   onChangeCategoryData,
 }: any) => {
-  console.log("machineCategories", machineCategories);
-  console.log("action", action);
   const { t } = useTranslation();
   const [machinesArray, setMachinesArray] = useState([]);
   useEffect(() => {
@@ -20,7 +18,6 @@ const ActionMappingWidget = ({
       )?.machines
     );
   }, [machineCategories]);
-  console.log("machinesArray", machinesArray);
 
   return (
     <div style={clasess.summaryContainer}>

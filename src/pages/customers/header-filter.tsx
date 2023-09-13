@@ -3,36 +3,24 @@ import { GoMakeAutoComplate, GomakePrimaryButton, GomakeTextInput } from "@/comp
 import { Skeleton } from "@mui/material";
 import { useStyle } from "./style";
 import { useEffect } from "react";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import * as React from 'react';
+import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 const HeaderFilter = ({ setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeAgent, onChangeCustomer, onChangeClientType, onChangeStatus, handleClean, cutomerName, agentName, valClientType, valStatus }: any) => {
     const { t } = useTranslation();
     const { clasess } = useStyle();
-
     useEffect(() => {
         setAllCustomers(allCustomers);
     }, [allCustomers]);
 
     return (
-        <div>
-            <GomakeTextInput
-                type={"text"}
-                onChange={onChangeCustomer}
-                placeholder={t("customers.selectCustomer")}
-                style={{
-                    height: convertHeightToVH(42),
-                    width: convertWidthToVW(200),
-                    color: "black",                    
-                }}
-                
-                value={cutomerName}
-            />
+        <div style={clasess.subHeaderContainer}>
             <div style={clasess.filterContainer}>
                 {agentsCategores?.length > 0 ? (
                     <GoMakeAutoComplate
                         options={agentsCategores}
-                        style={clasess.autoComplateStyle}
+                        style={clasess.dropDownListStyle}
                         placeholder={t("customers.selectAgent")}
                         onChange={onChangeAgent}
                         value={agentName}
@@ -43,18 +31,17 @@ const HeaderFilter = ({ setAllCustomers, allCustomers, agentsCategores, clientTy
                 {clientTypesCategores?.length > 0 ? (
                     <GoMakeAutoComplate
                         options={clientTypesCategores}
-                        style={clasess.autoComplateStyle}
+                        style={clasess.dropDownListStyle}
                         placeholder={t("customers.selectCustomerType")}
                         onChange={onChangeClientType}
                         value={valClientType}
-                    
                     />
                 ) : (
                     <Skeleton variant="rectangular" width={200} height={40} />)}
                 {statuses?.length > 0 ? (
                     <GoMakeAutoComplate
                         options={statuses}
-                        style={clasess.autoComplateStyle}
+                        style={clasess.dropDownListStyle}
                         placeholder={t("customers.selectStatus")}
                         onChange={onChangeStatus}
                         value={valStatus}
@@ -64,7 +51,10 @@ const HeaderFilter = ({ setAllCustomers, allCustomers, agentsCategores, clientTy
                 ) : (
                     <Skeleton variant="rectangular" width={200} height={40} />
                 )}
-                <GomakePrimaryButton style={clasess.autoButtonStyle} onClick={handleClean} >{t("customers.buttons.clean")}</GomakePrimaryButton>
+                <SecondaryButton style={clasess.cleanBtnStyle} onClick={handleClean} >{t("customers.buttons.clean")}</SecondaryButton>
+            </div>
+            <div style={clasess.subHeaderRightSide}>
+                <SearchInputComponent onChange={onChangeCustomer} value={cutomerName}></SearchInputComponent>
             </div>
         </div>
     );

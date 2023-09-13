@@ -694,7 +694,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     actions: pricingDefaultValue?.actions,
     flows: pricingDefaultValue?.workFlows,
   };
-  console.log(pricingDefaultValue?.jobDetails);
   const createProfitTestCase = useCallback(async () => {
     const res = await callApi(
       "POST",

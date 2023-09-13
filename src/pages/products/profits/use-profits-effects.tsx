@@ -43,8 +43,6 @@ const useProfitsEffects = ({
           name: actionName?.name,
         }
       );
-
-      // setProductTest({});
     }
   }, [router, allActions, productsStateValue]);
 
@@ -61,7 +59,7 @@ const useProfitsEffects = ({
       onCklickActionProfitTestResultsByActionId(
         router?.query?.productId || "",
         testName?.name,
-        testName.id
+        testName?.id
       );
       setIsUpdated(true);
     }
