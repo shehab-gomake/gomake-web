@@ -2,7 +2,7 @@ import * as React from "react";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { RemoveIcon } from "@/components/icons/icons";
-import Switch from '@mui/material/Switch';
+import { SecondSwitch } from "@/components/switch/second";
 import { Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -25,7 +25,7 @@ const UserForm = ({ user, onDelete, setUser }: any) => {
                 <span style={clasess.headerStyle}>{t("customers.modal.email")}</span>
                 <input style={clasess.inputStyle} placeholder="placeholder" type="text" value={user?.email} onChange={(e) => setUser({ ...user, email: e.target.value })} />
                 <a style={{ display: "flex", flexDirection: "row", alignItems: "center", width: "180px", height: "18px" }} >
-                    <Switch checked={user?.isCanLoginWithCode} size="small" onChange={(e) => setUser({ ...user, isCanLoginWithCode: e.target.checked })} />
+                    <SecondSwitch checked={user?.isCanLoginWithCode} size="small" onChange={(e) => setUser({ ...user, isCanLoginWithCode: e.target.checked })} />
                     <span style={clasess.switchHeaderStyle} >{t("customers.modal.loginUsingEmailCode")}</span>
                 </a>
             </Col>
