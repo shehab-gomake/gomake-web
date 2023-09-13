@@ -1,5 +1,6 @@
 import { useGomakeAxios } from "@/hooks";
 import {
+  getAllPrintHouseActions,
   getAllProductsForDropDownList,
   getAndSetActionExceptionProfitRowByActionExceptionId,
   getAndSetActionProfitRowByActionId,
@@ -8,9 +9,6 @@ import {
   getAndSetAllParameters,
   getAndSetClientTypes,
   getAndSetGetAllTestProductsByActionId,
-  getAndSetMachinces,
-  getAndSetParameters,
-  getAndSetProducts,
 } from "@/services/hooks";
 import {
   actionExceptionProfitId,

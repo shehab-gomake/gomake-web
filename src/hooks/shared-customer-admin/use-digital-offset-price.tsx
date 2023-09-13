@@ -694,7 +694,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     actions: pricingDefaultValue?.actions,
     flows: pricingDefaultValue?.workFlows,
   };
-  console.log(pricingDefaultValue?.jobDetails);
   const createProfitTestCase = useCallback(async () => {
     const res = await callApi(
       "POST",
@@ -715,7 +714,9 @@ const useDigitalOffsetPrice = ({ clasess }) => {
       false
     );
     if (res?.success) {
-      navigate(`/products/profits?actionId=${router?.query?.actionId}`);
+      navigate(
+        `/products/profits?actionId=${router?.query?.actionId}&productId=${router?.query?.productId}`
+      );
     }
   }, [generalParameters, router, pricingDefaultValue]);
 

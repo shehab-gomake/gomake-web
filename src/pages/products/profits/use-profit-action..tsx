@@ -90,26 +90,12 @@ const useProfitsAction = ({
             actionProductId,
           }
         );
-      // const mapData = actionProfitRowsNew?.map((item: any) => {
-      //   return {
-      //     ...renderProfits(item),
-
-      //     // testFinalPrice: (
-      //     //   item?.quantity * selectTestDataVal[0]?.unitPrice
-      //     // )?.toFixed(2),
-      //     more: <PricingListMenuWidget item={item} />,
-      //     id: item?.id,
-      //   };
-      // });
-      // setactionExceptionProfitId(productId);
       setProductTest({
         id: productId,
         name: productName,
         actionProductId,
         isBaseCase: !!isBaseCase,
       });
-      // setActionExceptionProfitRows(mapData);
-      // setActionProfitRowsNew(mapData);
     },
     [selectedAction, actionProfitRowsNew, selectTestDataVal]
   );
@@ -123,7 +109,6 @@ const useProfitsAction = ({
     } else {
       setSelectedAction(value);
       setProductTest(null);
-      // onCklickActionProfitTestResultsByActionId(value.id, value.name);
     }
   }, []);
 

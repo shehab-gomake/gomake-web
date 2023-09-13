@@ -45,7 +45,6 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
     return () => clearTimeout(timer);
   }, []);
   const productTest = useRecoilValue<any>(productTestState);
-
   return (
     <>
       <div style={clasess.headerMainCointaner}>

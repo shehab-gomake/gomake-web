@@ -61,7 +61,7 @@ const useProfitsEffects = ({
       onCklickActionProfitTestResultsByActionId(
         router?.query?.productId || "",
         testName?.name,
-        testName.id
+        testName?.id
       );
       setIsUpdated(true);
     }
