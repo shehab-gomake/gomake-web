@@ -30,9 +30,9 @@ const customerMapFunction = (customer, onClick, onClickStatus) => {
     status: (
       <div>
         {customer?.isActive === false ? (
-          <div style={{ display: "flex", ...FONT_FAMILY.Lexend(500, 14), color: "#D92C2C" }}>Inactive</div>
+          <div style={{ display: "inline-flex", ...FONT_FAMILY.Lexend(500, 14), color: "#D92C2C" }}>Inactive</div>
         ) : (
-          <div style={{ display: "flex", ...FONT_FAMILY.Lexend(500, 14), color: "#40CC4E" }} >Active</div>
+          <div style={{ display: "inline-flex", ...FONT_FAMILY.Lexend(500, 14), color: "#40CC4E" }} >Active</div>
         )}
       </div>
     ),
