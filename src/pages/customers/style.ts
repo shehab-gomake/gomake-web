@@ -2,7 +2,6 @@ import i18next from "i18next";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
-import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
   const { t } = useTranslation();
