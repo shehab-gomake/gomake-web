@@ -714,9 +714,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
       false
     );
     if (res?.success) {
-      navigate(
-        `/products/profits?actionId=${router?.query?.actionId}&productId=${router?.query?.productId}`
-      );
+      navigate(`/products/profits?actionId=${router?.query?.actionId}`);
     }
   }, [generalParameters, router, pricingDefaultValue]);
 

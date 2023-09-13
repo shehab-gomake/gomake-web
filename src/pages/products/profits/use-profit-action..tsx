@@ -78,18 +78,17 @@ const useProfitsAction = ({
         t("products.profits.pricingListWidget.more"),
       ]);
       setActionProfitPricingTableRows("");
-      const selectTestDataVal =
-        await getAndSetGetActionProfitTestResultsByActionId(
-          callApi,
-          setActionProfitPricingTableRows,
-          setSelectTestData,
-          actionProfits,
-          {
-            actionId: selectedAction?.id,
-            productId,
-            actionProductId,
-          }
-        );
+      await getAndSetGetActionProfitTestResultsByActionId(
+        callApi,
+        setActionProfitPricingTableRows,
+        setSelectTestData,
+        actionProfits,
+        {
+          actionId: selectedAction?.id,
+          productId,
+          actionProductId,
+        }
+      );
       setProductTest({
         id: productId,
         name: productName,
