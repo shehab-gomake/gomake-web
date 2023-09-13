@@ -59,8 +59,8 @@ const useStyle = ({ width }: any) => {
       sticky: {
         position:"sticky" as "sticky" ,
         left: 0,
-    
-        zIndex:1,
+        marginLeft:20,
+        zIndex:0,
         minWidth:"200px",
       } 
     };

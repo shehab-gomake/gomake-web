@@ -1,4 +1,4 @@
-import { TableContainer, TableHead, TableRow,Table, TableCell, TableBody, makeStyles, Skeleton } from "@mui/material";
+import { TableContainer, Table, Skeleton } from "@mui/material";
 import { useStyle } from "./style";
 import { Header, Row } from "@/widgets/table/components";
 import { useEffect, useState } from "react";

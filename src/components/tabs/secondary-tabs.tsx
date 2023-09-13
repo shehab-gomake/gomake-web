@@ -15,11 +15,17 @@ const SecondaryTabs = styled(Tabs)((props: TabsProps) => {
     return {
         paddingLeft: convertWidthToVW(20),
         paddingRight: convertWidthToVW(20),
-        '& .MuiTabs-indicator': {
-            borderBottom: `3px solid ${secondColor(500)}`,
-        },
         '& .MuiButtonBase-root': {
             textTransform: 'initial',
+        },
+        '& .MuiTabs-indicator': {
+            borderBottom: `none !important`,
+            backgroundColor:"white"
+        },
+        '& .MuiTabs-flexContainer' : {
+            display:"flex",
+            flexWrap:"wrap",
+            width:"80%"
         }
     }
 });
@@ -36,7 +42,10 @@ const SecondaryTab = styled(Tab)((props: TabProps) => {
         '&.Mui-selected': {
             ...FONT_FAMILY.Lexend(500, 16),
             color: secondColor(500),
+            borderBottom: `3px solid ${secondColor(500)}`,
         },
+   
+
     }
 });
 
@@ -52,14 +61,20 @@ const SecondaryTabsComponent = ({tabs, children, navigationButtons, onSelectTab}
         <>
             <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} position={'sticky'} top={0}
                    bgcolor={'#FFF'} zIndex={1}>
-                <SecondaryTabs
+                <SecondaryTabs  
                     value={value}
                     onChange={handleChange}>
                     {
-                        tabs?.map(tab => <SecondaryTab label={tab.title}/>)
+                        tabs?.map(tab => <SecondaryTab  label={tab.title}/>)
                     }
                 </SecondaryTabs>
-                <div>{children}</div>
+                {Array.isArray(children) ? (
+                        children.map((child, index) => (
+                        <div key={index}>{child}</div>
+                        ))
+                    ) : (
+                        <div>{children}</div>
+                    )}
             </Stack>
             <div style={{padding: '0 20px'}}>
                 {
