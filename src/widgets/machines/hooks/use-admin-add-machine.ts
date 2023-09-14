@@ -13,7 +13,7 @@ const useAdminAddMachine = () => {
     const state = useRecoilValue(machineState);
     const setState = useSetRecoilState(machineState);
     const {push} = useRouter();
-    const { alertSuccessAdded, alertFaultAdded, alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+    const {alertSuccessAdded, alertFaultAdded, alertSuccessUpdate, alertFaultUpdate} = useSnackBar();
     const {setUpdatedMachine, addMachineToList} = useAdminMachines()
     const initMachineStateCategory = (categoryId: ECategoryId) => {
         setState(initState[categoryId]);
@@ -22,7 +22,7 @@ const useAdminAddMachine = () => {
 
     const curMachineCategoryId = useCallback(() => state?.category ? state?.category.toString() : '', [state]);
 
-    const adminAddMachine = useCallback( async () => {
+    const adminAddMachine = useCallback(async () => {
         const callBack = (res) => {
             if (res.success) {
                 push('/admin/machine/category/' + res.data?.category).then(() => setState(res.data))
@@ -64,15 +64,14 @@ const useAdminAddMachine = () => {
         const result = await adminUpdateMachine(callApi, callBack, state);
 
     }
-  };
 
-  return {
-    adminAddMachine,
-    curMachineCategoryId,
-    initMachineStateCategory,
-    updateMachine,
-    adminDuplicateMachine,
-  };
-};
 
-export { useAdminAddMachine };
+    return {
+        adminAddMachine,
+        curMachineCategoryId,
+        initMachineStateCategory,
+        updateMachine,
+        adminDuplicateMachine,
+    };
+}
+export {useAdminAddMachine};
