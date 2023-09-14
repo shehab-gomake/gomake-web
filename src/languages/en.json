@@ -1782,7 +1782,8 @@
   "profileSettings": {
     "profileTab": "My profile",
     "companyProfile": "Company profile",
-    "fullName": "Full name",
+    "firstName": "First name",
+    "lastName": "Last name",
     "companyName": "Company name",
     "position": "Position",
     "demoCode": "Demo code",

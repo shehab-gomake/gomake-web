@@ -1,7 +1,7 @@
-import {IUserProfile} from "@/store/user-profile";
+import {ICompanyProfile} from "@/store/company-profile";
 
 
-const companyProfileInputs = (state: IUserProfile)  => {
+const companyProfileInputs = (state: ICompanyProfile)  => {
     return [
         {
             name: "businessName",
@@ -9,10 +9,9 @@ const companyProfileInputs = (state: IUserProfile)  => {
             type: "text",
             placeholder: "profileSettings.businessName",
             required: true,
-            parameterKey: "businessName",
+            parameterKey: "name",
             options: [],
             value: state.name,
-            machineInputType: 'input',
             isValid: !!state.name,
         },
         {
@@ -21,10 +20,9 @@ const companyProfileInputs = (state: IUserProfile)  => {
             type: "text",
             placeholder: "profileSettings.dashboardCode",
             required: true,
-            parameterKey: "email2",
+            parameterKey: "dashboardCode",
             options: [],
             value: state.dashboardCode,
-            machineInputType: 'input',
             isValid: !!state.dashboardCode,
         },
     ];

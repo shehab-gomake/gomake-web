@@ -5,11 +5,11 @@ import { InputContainer } from "./input";
 import { IInput } from "./interfaces";
 import { useStyle } from "./style";
 import {useRecoilValue} from "recoil";
-import {userProfileState} from "@/store/user-profile";
+import {companyProfileState} from "@/store/company-profile";
 
 const LoginLeftSide = () => {
   const { clasess } = useStyle();
-  const userProfile = useRecoilValue(userProfileState);
+  const userProfile = useRecoilValue(companyProfileState);
   const { errors, inputs, changeState, onClickLogin } = useGomakeLogin();
   return (
     <div style={clasess.leftContainer}>

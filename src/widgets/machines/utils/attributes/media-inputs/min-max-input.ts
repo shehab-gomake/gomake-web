@@ -1,5 +1,4 @@
 const minMaxInput = (state: Record<string, any>, parameterKey: string, label: string ) => {
-    debugger
     return [
         {
             name: `machineAttributes.${label}`,
