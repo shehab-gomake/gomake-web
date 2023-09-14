@@ -717,12 +717,39 @@ const useDigitalOffsetPrice = ({ clasess }) => {
       navigate(`/products/profits?actionId=${router?.query?.actionId}`);
     }
   }, [generalParameters, router, pricingDefaultValue]);
-
+  const quantity = generalParameters?.find(
+    (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+  );
+  const addItemForQuotes = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/erp-service/quote/add-item`,
+      {
+        productId: router?.query?.productId,
+        userID: "34d57e82-5236-43bc-bb0d-5b8e95129617",
+        customerID: router?.query?.customerId,
+        unitPrice: pricingDefaultValue?.workFlows[0]?.totalPrice,
+        amount: quantity?.value,
+        isNeedGraphics: false,
+        isUrgentWork: false,
+        printingNotes: "",
+        graphicNotes: "",
+        isNeedExample: false,
+        itemParmetersValues: generalParameters,
+        workFlow: pricingDefaultValue?.workFlows[0],
+      },
+      false
+    );
+    if (res?.success) {
+      console.log("res", res);
+    }
+  }, [generalParameters, router, pricingDefaultValue, quantity]);
   const navigateForRouter = () => {
     if (router?.query?.actionId) {
       createProfitTestCase();
     } else {
-      navigate("/quote");
+      // navigate("/quote");
+      addItemForQuotes();
     }
   };
   return {
