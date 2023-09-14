@@ -26,7 +26,7 @@ const useQuoteWidget = () => {
     }
   };
   const renderOptions = () => {
-    if (!!!canOrder) {
+    if (!!canOrder) {
       return customersListCreateOrder;
     } else return customersListCreateQuote;
   };

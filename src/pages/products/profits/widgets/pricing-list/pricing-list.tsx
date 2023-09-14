@@ -28,10 +28,6 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
   const [actionExceptionProfitIdValue, setactionExceptionProfitId] =
     useRecoilState<any>(actionExceptionProfitId);
 
-  // const actionProfitRowsVal = useRecoilValue<any>(actionProfitRows);
-
-  // const actionProfitRowsNew = useRecoilValue<any>(actionProfitRowsState);
-
   const actionProfitPricingTableRows = useRecoilValue<any>(
     actionProfitPricingTableRowsState
   );
@@ -45,7 +41,6 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
     return () => clearTimeout(timer);
   }, []);
   const productTest = useRecoilValue<any>(productTestState);
-
   return (
     <>
       <div style={clasess.headerMainCointaner}>
@@ -150,9 +145,6 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
         {!!productTest?.isBaseCase && (
           <div
             style={clasess.addNewQuantity}
-            // onClick={() => {
-            //   profitsValue?.setOpenAddNewPricingStepRow(true);
-            // }}
             onClick={profitsStateValue?.onOpenAddQuantityModal}
           >
             <Plus />

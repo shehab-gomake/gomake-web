@@ -11,6 +11,7 @@ const useStyle = ({ width }: any) => {
         width: "100%",
         justifyContent: "space-around",
         alignItems: "center",
+        backgroundColor: "white",
         height: 60,
       },
       secondRow: {
@@ -18,8 +19,25 @@ const useStyle = ({ width }: any) => {
         width: "100%",
         justifyContent: "space-around",
         alignItems: "center",
-        height: 60,
         backgroundColor: "#F6F6F6",
+  
+      },
+      isSticky: {
+        display: "flex",
+        width: "100%",
+        justifyContent: "space-around",
+        alignItems: "center",
+        backgroundColor: "white",
+       
+      },
+      secondRowSticky: {
+        display: "flex",
+        width: "100%",
+        justifyContent: "space-around",
+        alignItems: "center",
+        backgroundColor: "#F6F6F6",
+      
+  
       },
       rowItem: {
         display: "flex",
@@ -35,6 +53,17 @@ const useStyle = ({ width }: any) => {
         paddingRight: 22,
         width: `${width}`,
       },
+      table: {
+        minWidth: 650
+      },
+      sticky: {
+        position:"sticky" as "sticky" ,
+        left: 0,
+        marginLeft:20,
+        zIndex:1,
+        backgroundColor:"inherit",
+        minWidth:"200px",
+      } 
     };
   }, []);
   return {

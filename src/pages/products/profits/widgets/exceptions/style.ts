@@ -25,6 +25,9 @@ const useStyle = () => {
         width: "100%",
         flexDirection: "column" as "column",
         alignitems: "flex-start",
+        height: 360,
+        overflow: "scroll",
+        // backgroundColor: "red",
       },
       skeletonRowStyle: {
         marginTop: convertHeightToVH(10),

@@ -14,7 +14,6 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [pagesCount, setPagesCount] = useState(0);
   const pageSize = 10;
-  
 
   const tabelHeaders = useMemo(
     () => [
@@ -47,9 +46,9 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
   );
 
   const [name, setCustomerName] = useState("");
-  const onChangeCustomer = useCallback(async (e: any, value: any) => {
+  const onChangeCustomer = useCallback((value: string) => {
     setPageNumber(1);
-    setCustomerName(e.target.value);
+    setCustomerName(value);
   }, []);
 
   const [agentId, setAgentId] = useState([]);

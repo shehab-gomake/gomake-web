@@ -16,13 +16,13 @@ const useStyle = () => {
         backgroundColor: "#F135A3",
       },
 
-      insideStyle: { width: "64%", height: "93%", maxWidth: "1240px",  maxHeight: "1007px", paddingLeft: "32px", paddingRight: "48px", paddingTop: "27px", paddingBottom: "27px", background: "#FDFDFD" },
+      insideStyle: { width: "64%", height: "93%", maxWidth: "1240px", maxHeight: "1007px", paddingLeft: "32px", paddingRight: "48px", paddingTop: "27px", paddingBottom: "27px", background: "#FDFDFD" },
 
       subTitleStyle: {
         fontStyle: "normal",
         lineHeight: "normal",
         color: "#ED028C",
-        ...FONT_FAMILY.Lexend(600,16),
+        ...FONT_FAMILY.Lexend(600, 16),
       },
 
       colStyle: {
@@ -62,7 +62,7 @@ const useStyle = () => {
         color: "var(--primary-900, #090A1D)",
         fontStyle: "normal",
         lineHeight: "normal",
-        ...FONT_FAMILY.Lexend(500,14),
+        ...FONT_FAMILY.Lexend(500, 14),
       },
 
       buttonsStyle: {
@@ -71,9 +71,9 @@ const useStyle = () => {
         lineHeight: "normal",
         letterSpacing: "-0.14px",
         border: "none",
-        background: "#FFF", 
+        background: "#FFF",
         marginLeft: "7px",
-        ...FONT_FAMILY.Lexend(500,14),
+        ...FONT_FAMILY.Lexend(500, 14),
       },
 
       tabStyle: {
@@ -88,7 +88,7 @@ const useStyle = () => {
         lineHeight: "normal",
         borderRadius: "4px",
         background: "#ED028C",
-        ...FONT_FAMILY.Lexend(500,16),
+        ...FONT_FAMILY.Lexend(500, 16),
       },
 
       filterStyle: {
@@ -112,21 +112,20 @@ const useStyle = () => {
         color: "var(--primary-900, #090A1D)",
         fontStyle: "normal",
         lineHeight: "normal",
-        ...FONT_FAMILY.Lexend(400,12),
+        ...FONT_FAMILY.Lexend(400, 12),
       },
 
       autoButtonStyle: {
-      width: "193px",
-      height: "40px",
-      padding: "10px 32px",
-      borderRadius: "4px",
-      background: "var(--second-500, #ED028C)",
-      color: "var(--puree, #FFF)",
-      TextAlign: "center",
-      fontStyle: "normal",
-      lineHeight: "normal",
-      border: "none",
-      ...FONT_FAMILY.Lexend(500,16),
+        height: "40px",
+        padding: "10px 32px",
+        borderRadius: "4px",
+        background: "var(--second-500, #ED028C)",
+        color: "var(--puree, #FFF)",
+        TextAlign: "center",
+        fontStyle: "normal",
+        lineHeight: "normal",
+        border: "none",
+        ...FONT_FAMILY.Lexend(500, 16),
       },
 
       autoComplateStyle: {
@@ -140,12 +139,10 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#8283BE",
       },
-
       selectStyle: {
         width: convertWidthToVW(150),
         height: convertHeightToVH(30),
       },
-
       textAreaStyle: {
         display: "flex",
         width: "308px",
@@ -158,9 +155,14 @@ const useStyle = () => {
         color: "var(--medium-300, #9695C7)",
         fontStyle: "normal",
         lineHeight: "normal",
-        ...FONT_FAMILY.Lexend(500,12)
+        ...FONT_FAMILY.Lexend(500, 12)
+      },
+      footerStyle: {
+        display: "flex",
+        justifyContent: "flex-end",
+        position: "fixed" as "fixed",
+        bottom: "10px",
       }
-
     };
   }, []);
   return {

@@ -20,8 +20,10 @@ const getAndSetCustomerById = async (
 };
 
 
+
 //helper function
 const customerMapFunction = (customer, onClick, onClickStatus) => {
+
   return {
     customerCode: customer.code,
     name: customer.name,
@@ -30,9 +32,9 @@ const customerMapFunction = (customer, onClick, onClickStatus) => {
     status: (
       <div>
         {customer?.isActive === false ? (
-          <div style={{ display: "flex", ...FONT_FAMILY.Lexend(500, 14), color: "#D92C2C" }}>Inactive</div>
+          <div style={{ display: "inline-flex", ...FONT_FAMILY.Lexend(500, 14), color: "#D92C2C" }}>Inactive</div>
         ) : (
-          <div style={{ display: "flex", ...FONT_FAMILY.Lexend(500, 14), color: "#40CC4E" }} >Active</div>
+          <div style={{ display: "inline-flex", ...FONT_FAMILY.Lexend(500, 14), color: "#40CC4E" }} >Active</div>
         )}
       </div>
     ),
@@ -48,6 +50,7 @@ const getAndSetCustomersPagination = async (
   onClick?: any,
   onClickStatus?: any,
 ) => {
+
   const result: any = await callApi("GET", "/v1/customers/get-customers-pagination", data);
   const _data = returnResult(result, undefined);
   const mapData = _data.data.map((customer: any) => customerMapFunction(customer, onClick, onClickStatus));

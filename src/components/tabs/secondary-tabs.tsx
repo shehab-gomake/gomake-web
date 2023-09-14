@@ -8,6 +8,7 @@ import {useState} from "react";
 import Stack from "@mui/material/Stack";
 import {CustomTabPanel} from "@/components/tabs/tab-panel";
 import {SecondaryButton} from "@/components/button/secondary-button";
+import { wrap } from "module";
 
 
 const SecondaryTabs = styled(Tabs)((props: TabsProps) => {
@@ -15,12 +16,15 @@ const SecondaryTabs = styled(Tabs)((props: TabsProps) => {
     return {
         paddingLeft: convertWidthToVW(20),
         paddingRight: convertWidthToVW(20),
-        '& .MuiTabs-indicator': {
-            borderBottom: `3px solid ${secondColor(500)}`,
-        },
+        display:"flex",
+        flexWrap:"wrap",
         '& .MuiButtonBase-root': {
             textTransform: 'initial',
-        }
+        },
+        '& .MuiTabs-indicator': {
+            display: 'none',
+        },
+   
     }
 });
 const SecondaryTab = styled(Tab)((props: TabProps) => {
@@ -36,7 +40,10 @@ const SecondaryTab = styled(Tab)((props: TabProps) => {
         '&.Mui-selected': {
             ...FONT_FAMILY.Lexend(500, 16),
             color: secondColor(500),
+            borderBottom: `3px solid ${secondColor(500)}`,
         },
+   
+
     }
 });
 
@@ -50,13 +57,13 @@ const SecondaryTabsComponent = ({tabs, children, navigationButtons, onSelectTab}
     };
     return (
         <>
-            <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} position={'sticky'} top={0}
+            <Stack direction={'row'} flexWrap={"wrap"} justifyContent={'space-between'} alignItems={'center'} position={'sticky'} top={0}
                    bgcolor={'#FFF'} zIndex={1}>
-                <SecondaryTabs
+                <SecondaryTabs  
                     value={value}
                     onChange={handleChange}>
                     {
-                        tabs?.map(tab => <SecondaryTab label={tab.title}/>)
+                        tabs?.map(tab => <SecondaryTab  label={tab.title}/>)
                     }
                 </SecondaryTabs>
                 <div>{children}</div>

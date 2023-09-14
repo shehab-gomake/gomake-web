@@ -64,14 +64,15 @@ const useAdminAddMachine = () => {
         const result = await adminUpdateMachine(callApi, callBack, state);
 
     }
+  };
 
-    return {
-        adminAddMachine,
-        curMachineCategoryId,
-        initMachineStateCategory,
-        updateMachine,
-        adminDuplicateMachine
-    };
+  return {
+    adminAddMachine,
+    curMachineCategoryId,
+    initMachineStateCategory,
+    updateMachine,
+    adminDuplicateMachine,
+  };
 };
 
-export {useAdminAddMachine};
+export { useAdminAddMachine };

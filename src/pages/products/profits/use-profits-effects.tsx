@@ -12,7 +12,7 @@ const useProfitsEffects = ({
   getActionProfitRowChartData,
   actionProfits,
   getActions,
-  // getMachincesProfits,
+  getMachincesProfits,
   getProducts,
   getParameters,
   getClientTypes,
@@ -43,8 +43,6 @@ const useProfitsEffects = ({
           name: actionName?.name,
         }
       );
-
-      // setProductTest({});
     }
   }, [router, allActions, productsStateValue]);
 
@@ -52,7 +50,7 @@ const useProfitsEffects = ({
     if (
       router?.query?.actionId &&
       selectedAction?.id &&
-      actionProfitRowsNew.length > 0 &&
+      actionProfitRowsNew?.length > 0 &&
       !isUpdated
     ) {
       const testName = productsStateValue.find(
@@ -61,7 +59,7 @@ const useProfitsEffects = ({
       onCklickActionProfitTestResultsByActionId(
         router?.query?.productId || "",
         testName?.name,
-        testName.id
+        testName?.id
       );
       setIsUpdated(true);
     }
@@ -80,7 +78,7 @@ const useProfitsEffects = ({
 
   useEffect(() => {
     getActions();
-    // getMachincesProfits();
+    getMachincesProfits();
     getProducts();
     getParameters();
     getClientTypes();

@@ -78,38 +78,23 @@ const useProfitsAction = ({
         t("products.profits.pricingListWidget.more"),
       ]);
       setActionProfitPricingTableRows("");
-      const selectTestDataVal =
-        await getAndSetGetActionProfitTestResultsByActionId(
-          callApi,
-          setActionProfitPricingTableRows,
-          setSelectTestData,
-          actionProfits,
-          {
-            actionId: selectedAction?.id,
-            productId,
-            actionProductId,
-          }
-        );
-      // const mapData = actionProfitRowsNew?.map((item: any) => {
-      //   return {
-      //     ...renderProfits(item),
-
-      //     // testFinalPrice: (
-      //     //   item?.quantity * selectTestDataVal[0]?.unitPrice
-      //     // )?.toFixed(2),
-      //     more: <PricingListMenuWidget item={item} />,
-      //     id: item?.id,
-      //   };
-      // });
-      // setactionExceptionProfitId(productId);
+      await getAndSetGetActionProfitTestResultsByActionId(
+        callApi,
+        setActionProfitPricingTableRows,
+        setSelectTestData,
+        actionProfits,
+        {
+          actionId: selectedAction?.id,
+          productId,
+          actionProductId,
+        }
+      );
       setProductTest({
         id: productId,
         name: productName,
         actionProductId,
         isBaseCase: !!isBaseCase,
       });
-      // setActionExceptionProfitRows(mapData);
-      // setActionProfitRowsNew(mapData);
     },
     [selectedAction, actionProfitRowsNew, selectTestDataVal]
   );
@@ -123,7 +108,6 @@ const useProfitsAction = ({
     } else {
       setSelectedAction(value);
       setProductTest(null);
-      // onCklickActionProfitTestResultsByActionId(value.id, value.name);
     }
   }, []);
 

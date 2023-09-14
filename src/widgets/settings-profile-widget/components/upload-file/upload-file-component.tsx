@@ -1,6 +1,7 @@
 import React, {useRef, useState} from 'react';
 import Stack from "@mui/material/Stack";
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
+
 import Button from "@mui/material/Button";
 import {IFileUploadComponentProps} from "@/widgets/settings-profile-widget/components/upload-file/interface";
 import {Avatar} from "@mui/material";
@@ -73,4 +74,5 @@ const FileUploadComponent = ({onUpload}: IFileUploadComponentProps) => {
     );
 }
 
-export {FileUploadComponent};
+
+export { FileUploadComponent };

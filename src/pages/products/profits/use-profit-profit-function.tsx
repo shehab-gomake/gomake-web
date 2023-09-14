@@ -116,7 +116,6 @@ const useProfitsProfitsFunction = ({
         type: "sucess",
       });
       setEditPriceListState({ isEdit: false });
-      // getActionProfits();
       await getAndSetPricingListTableRows(
         callApi,
         setActionProfitPricingTableRows,
@@ -211,7 +210,7 @@ const useProfitsProfitsFunction = ({
           productId: productTest.id,
           quantity: pricingListRowState.quantity,
           actionProductId: productTest.actionProductId,
-          // actionProductId:
+          systemID: 2,
         }
       );
       if (res?.success) {

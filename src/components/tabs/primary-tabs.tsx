@@ -54,7 +54,10 @@ const PrimaryTabsComponent = ({tabs, children, navigationButtons}: ITabsProps) =
                         tabs?.map(tab => <PrimaryTab label={tab.title}/>)
                     }
                 </PrimaryTabs>
+                   
                 <div>{children}</div>
+                   
+                            
             </Stack>
             {
                 tabs?.map((tab, index: number) => <CustomTabPanel key={'tabs' + index} value={value} index={index}>

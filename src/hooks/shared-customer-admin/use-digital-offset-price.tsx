@@ -694,7 +694,64 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     actions: pricingDefaultValue?.actions,
     flows: pricingDefaultValue?.workFlows,
   };
-
+  const createProfitTestCase = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/printhouse-config/profits/create-profit-test-case?systemID=2`,
+      {
+        clientId: router?.query?.customerId,
+        clientTypeId: router?.query?.clientTypeId,
+        generalParameters: generalParameters,
+        productItemDTO: {
+          productId: router?.query?.productId,
+          details: pricingDefaultValue?.jobDetails,
+          itemParmetersValues: generalParameters,
+          workFlow: pricingDefaultValue?.workFlows[0],
+        },
+        actionId: router?.query?.actionId,
+        actionProductId: router?.query?.actionProductId,
+      },
+      false
+    );
+    if (res?.success) {
+      navigate(`/products/profits?actionId=${router?.query?.actionId}`);
+    }
+  }, [generalParameters, router, pricingDefaultValue]);
+  const quantity = generalParameters?.find(
+    (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+  );
+  const addItemForQuotes = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/erp-service/quote/add-item`,
+      {
+        productId: router?.query?.productId,
+        userID: "34d57e82-5236-43bc-bb0d-5b8e95129617",
+        customerID: router?.query?.customerId,
+        unitPrice: pricingDefaultValue?.workFlows[0]?.totalPrice,
+        amount: quantity?.value,
+        isNeedGraphics: false,
+        isUrgentWork: false,
+        printingNotes: "",
+        graphicNotes: "",
+        isNeedExample: false,
+        itemParmetersValues: generalParameters,
+        workFlow: pricingDefaultValue?.workFlows[0],
+      },
+      false
+    );
+    if (res?.success) {
+      console.log("res", res);
+    }
+  }, [generalParameters, router, pricingDefaultValue, quantity]);
+  const navigateForRouter = () => {
+    if (router?.query?.actionId) {
+      createProfitTestCase();
+    } else {
+      // navigate("/quote");
+      addItemForQuotes();
+    }
+  };
   return {
     t,
     handleTabClick,
@@ -706,6 +763,14 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     onCloseMakeShape,
     setDefaultPrice,
     onChangeForPrice,
+    handleChange,
+    _renderParameterType,
+    _getParameter,
+    createProfitTestCase,
+    renderOptions,
+    checkWhatRenderArray,
+    navigate,
+    navigateForRouter,
     defaultPrice,
     makeShapeOpen,
     chooseShapeOpen,
@@ -715,16 +780,10 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     activeTab,
     PricingTab,
     expanded,
-    handleChange,
-    _renderParameterType,
-    _getParameter,
     clientDefaultValue,
-    renderOptions,
-    checkWhatRenderArray,
     clientTypeDefaultValue,
     clientTypesValue,
     pricingDefaultValue,
-    navigate,
   };
 };
 
