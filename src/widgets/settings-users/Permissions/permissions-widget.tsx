@@ -16,6 +16,7 @@ import { SearchInputComponent } from "@/components/form-inputs/search-input-comp
 const PermissionsWidget = () => {
     const {t} = useTranslation();
     const {classes} = useStyle();
+   
     const theme = createMuiTheme({
         palette: {
             secondary: {
@@ -25,7 +26,7 @@ const PermissionsWidget = () => {
     });
  
  
-    const {tableHeaders, groups, table, onSelectTab} =
+    const {tableHeaders, groups, table, onSelectTab,onChangePermissionSearch,PermissionName} =
         useSettings();
     const tabs = [];
     groups?.forEach((row) => {
@@ -44,7 +45,7 @@ const PermissionsWidget = () => {
             </div>
             <div style={{display:"flex",flexDirection:"column",width:"71%"}}>
                 <div style={{display: "flex", width: "85%", justifyContent: "flex-end", flexDirection: "row",marginBottom:10}}>
-                      <SearchInputComponent onChange={()=>console.log("heeey")}/>
+                      <SearchInputComponent onChange={onChangePermissionSearch} value={PermissionName} />
                 </div>
                 <div style={{width:"95%"}}>
                 <StickyFirstColumnTable columns={tableHeaders} data={table}/>
@@ -54,8 +55,6 @@ const PermissionsWidget = () => {
 
             </div>
             
-         
-
 
         </div>
     )

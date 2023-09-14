@@ -16,10 +16,10 @@ const useSettings = () => {
     const [tableHeaders, setTableHeaders] = useState([]);
     const [permissions, setpermissions] = useState([]);
     const [table, setTable] = useState([]);
+    const [PermissionName,setPermissionName] = useState("");
     const [selectedTab, setSelectedTab] = useState<{id: string; title: string}>();
     const {t} = useTranslation();
     const { editPrmissionRole } = useEditPermissionRolesRelationShip();
-    const [Val, setVal] = useState(false); 
    
     const getAndSetPermissionRolesRelationsByGroupId = useCallback(async (id) => {
         const data = await getPermissionRolesRelationsByGroupId(callApi, setpermissionsRoles,{id});
@@ -134,6 +134,17 @@ const useSettings = () => {
         getPermissionsTable(data.permissions);
     }, [])
 
+    const onChangePermissionSearch = useCallback((value: string) => {
+        var permissionsList = [...permissions];
+        const filteredPermissions = permissionsList.filter(permission => {
+             return permission.description.includes(value);
+        });
+
+        getPermissionsTable(filteredPermissions);
+        setPermissionName(value);
+      }, [PermissionName]);
+
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -148,7 +159,10 @@ const useSettings = () => {
         groups,
         permissions,
         table,
-        onSelectTab
+        onSelectTab,
+        onChangePermissionSearch,
+        PermissionName
+
     };
 };
 
