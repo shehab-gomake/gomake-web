@@ -12,10 +12,17 @@ import {addEmployeeOpenModalState, employeeActionState} from "@/widgets/settings
 import {IUserData} from "@/widgets/settings-users/users/interface/employee";
 import {usersArrayState} from "@/widgets/settings-users/state/users-state";
 import {emailRegex} from "@/utils/regex";
+import {
+    addNewEmployee,
+    getAllUsersApi,
+    getEmployeeApi,
+    toggleEmployeeStatus,
+    updateEmployee
+} from "@/services/api-service/users/users-api";
 
 
 const useEmployee = () => {
-    const {setSnackbarStateValue} = useSnackBar();
+    const {alertFaultUpdate, alertSuccessUpdate, alertSuccessAdded, alertFaultAdded} = useSnackBar();
     const [employee, setEmployeeState] = useRecoilState<IUserData>(employeeState);
     const [users, setUsers] = useRecoilState<IUser[]>(usersArrayState);
     const [showInActiveEmployees, setShowInActiveEmployees] = useState<boolean>(false);
@@ -26,11 +33,12 @@ const useEmployee = () => {
     const {t} = useTranslation();
 
     const getAllUsers = () => {
-        callApi('GET', '/v1/crm-service/employee/get-employees').then(
-            (res) => {
-                setUsers(res.data?.data?.data);
+        const callBackFunction = (data) => {
+            if (data.success) {
+                setUsers(data.data);
             }
-        )
+        }
+        getAllUsersApi(callApi, callBackFunction).then();
     }
     const onShowInActiveChange = (value: boolean) => {
         setShowInActiveEmployees(value);
@@ -55,91 +63,66 @@ const useEmployee = () => {
         return usersArray
     }, [users, showInActiveEmployees, search])
 
-    const editEmployee = (id: string) => {
-        callApi('GET', '/v1/crm-service/employee/get-employee/' + id).then(
-            (res) => {
-                if (res.success) {
-                    setEmployeeState(res?.data?.data?.data);
-                    setAction(EmployeeActions.UPDATE);
-                    setOpenModal(true);
+    const editEmployee = async (id: string) => {
+        const callBack = (data) => {
+            if (data.success) {
+                setEmployeeState(data.data);
+                setAction(EmployeeActions.UPDATE);
+                setOpenModal(true);
 
+            }
+        }
+        await getEmployeeApi(callApi, callBack, id)
+    }
+
+    const toggleEmployeeActive = async (id: string) => {
+        const callback = (data) => {
+            if (data.success) {
+                alertSuccessUpdate();
+                setUsers(
+                    users.map(
+                        user => {
+                            return user.id === id ? {...user, isActive: !user.isActive} : user
+                        }))
+            } else {
+                alertSuccessUpdate();
+            }
+        }
+        await toggleEmployeeStatus(callApi, callback, id);
+    }
+
+
+    const onAddEmployee = async () => {
+        if (isValidAddEmployee() && validateEmail()) {
+            const callback = (data) => {
+                if (data.success) {
+                    alertSuccessAdded();
+                    const newEmployee: IUser = data.data
+                    setUsers([newEmployee, ...users]);
+                    setOpenModal(false);
+                    setEmployeeState(initState);
+                } else {
+                    alertFaultAdded();
                 }
             }
-        )
-    }
-
-    const toggleEmployeeActive = (id: string) => {
-        callApi('PUT', '/v1/crm-service/employee/toggle-employee-active/' + id)
-            .then((res) => {
-                if (res.success) {
-                    setSnackbarStateValue({
-                        state: true,
-                        message: t("modal.updatedSusuccessfully"),
-                        type: "sucess",
-                    });
-                    setUsers(
-                        users.map(
-                            user => {
-                                return user.id === id ? {...user, isActive: !user.isActive} : user
-                            }))
-                } else {
-                    setSnackbarStateValue({
-                        state: true,
-                        message: t("modal.updatedfailed"),
-                        type: "error",
-                    });
-                }
-            })
-    }
-
-    const onAddEmployee = () => {
-        if (isValidAddEmployee() && validateEmail()) {
-            callApi('POST', '/v1/crm-service/employee/add-employee', employee).then(
-                (res) => {
-                    if (res.success) {
-                        setSnackbarStateValue({
-                            state: true,
-                            message: t("modal.addedSusuccessfully"),
-                            type: "sucess",
-                        });
-                        const newEmployee: IUser = res?.data?.data?.data
-                        setUsers([newEmployee, ...users]);
-                        setOpenModal(false);
-                        setEmployeeState(initState);
-                    } else {
-                        setSnackbarStateValue({
-                            state: true,
-                            message: t("modal.addedfailed"),
-                            type: "error",
-                        });
-                    }
-                }
-            )
+           await addNewEmployee(callApi, callback, employee);
         }
     }
-    const onUpdateEmployee = () => {
+    const onUpdateEmployee = async () => {
         if (isValidEditEmployee() && validateEmail()) {
-            callApi('PUT', '/v1/crm-service/employee/update-employee', employee).then(
-                (res) => {
-                    if (res.success) {
-                        const newEmployee = res.data?.data?.data;
-                        setUsers(users.map(user => user.id === newEmployee?.id ? newEmployee : user))
-                        setOpenModal(false);
-                        setEmployeeState(initState);
-                        setSnackbarStateValue({
-                            state: true,
-                            message: t("modal.updatedSusuccessfully"),
-                            type: "sucess",
-                        });
-                    } else {
-                        setSnackbarStateValue({
-                            state: true,
-                            message: t("modal.updatedfailed"),
-                            type: "error",
-                        });
-                    }
+            const callBack = (data) => {
+                if (data.success) {
+                    const newEmployee = data.data;
+                    setUsers(users.map(user => user.id === newEmployee?.id ? newEmployee : user))
+                    setOpenModal(false);
+                    setEmployeeState(initState);
+                    alertSuccessUpdate();
+                } else {
+                    alertFaultUpdate();
                 }
-            )
+            }
+
+            await updateEmployee(callApi, callBack, employee)
         }
     }
 
@@ -172,8 +155,7 @@ const useEmployee = () => {
         return !!employee.employee.firstname &&
             !!employee.employee.lastname &&
             !!employee.username &&
-            !!employee.roleID &&
-            emailRegex.test(employee.employee.email)
+            !!employee.roleID
     }
     const updateSearch = (value: string) => {
         setSearch(value);

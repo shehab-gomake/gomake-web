@@ -2,101 +2,86 @@ import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {machineState as STATE} from "@/widgets/machines/state/machine-state";
 import {useRouter} from "next/router";
-import {useTranslation} from "react-i18next";
 import {usePrintHouseMachines} from "@/widgets/machines/hooks/use-print-house-machines";
+import {
+    printHouseAddNewMachine,
+    printHouseDeleteMachine,
+    printHouseUpdateMachine
+} from "@/services/api-service/machines/print-house-machines";
 
 const usePrintHouseAddMachine = () => {
     const {addMachineToList, setUpdatedMachine, deleteMachineFromArray} = usePrintHouseMachines();
     const {callApi} = useGomakeAxios();
     const machineState = useRecoilValue(STATE);
     const setMachineState = useSetRecoilState(STATE);
-    const {setSnackbarStateValue} = useSnackBar();
-    const {t} = useTranslation();
+    const {
+        alertFaultAdded,
+        alertSuccessAdded,
+        alertFaultDelete,
+        alertSuccessDelete,
+        alertFaultUpdate,
+        alertSuccessUpdate
+    } = useSnackBar();
     const {push} = useRouter();
-    function addPrintHouseMachine() {
+
+    const addPrintHouseMachine = async () => {
         const payload = {...machineState};
         payload.machineId = machineState.id;
         delete payload['_id'];
         delete payload['id'];
-        callApi('POST', '/v1/add-machine', payload).then(res => {
-            if (res?.success) {
-                setSnackbarStateValue({
-                    state: true,
-                    message: t("modal.addedSusuccessfully"),
-                    type: "success",
-                });
-                push(`/machines/category/${machineState?.category}`)
-                    .then(() => setMachineState(res.data.data))
+        const callBack = async (res) => {
+            if (res.success) {
+                setMachineState(res.data);
+                alertSuccessAdded();
+                await push(`/machines/category/${machineState?.category}`)
             } else {
-                setSnackbarStateValue({
-                    state: true,
-                    message: t("modal.addedfailed"),
-                    type: "error",
-                });
+                alertFaultAdded();
             }
-        })
+        }
+        await printHouseAddNewMachine(callApi, callBack, payload)
     }
 
-    const duplicateMachine = () => {
+    const duplicateMachine = async () => {
         const payload = {...machineState};
         delete payload['_id'];
         delete payload['id'];
         payload.nickName = payload.nickName + ' - Duplicated'
-        callApi('POST', '/v1/add-machine', payload).then(res => {
+        const callBack = (res) => {
             if (res?.success) {
-                addMachineToList(res.data.data)
-                setSnackbarStateValue({
-                    state: true,
-                    message: t("modal.addedSusuccessfully"),
-                    type: "success",
-                });
+                setMachineState(res.data);
+                addMachineToList(res.data)
+                alertSuccessAdded();
             } else {
-                setSnackbarStateValue({
-                    state: true,
-                    message: t("modal.addedfailed"),
-                    type: "error",
-                });
+                alertFaultAdded();
             }
-        })
+        }
+        await printHouseAddNewMachine(callApi, callBack, payload);
     }
 
-    const deleteMachine = () => {
-        callApi('POST', '/v1/delete-machine', {id: machineState.id}).then(res => {
+    const deleteMachine = async () => {
+        const callBack = (res) => {
             if (res?.success) {
+                alertSuccessDelete();
                 deleteMachineFromArray(machineState.id);
                 setMachineState({});
-                setSnackbarStateValue({
-                    state: true,
-                    message: t('modal.deleteSusuccessfully'),
-                    type: "success",
-                });
             } else {
-                setSnackbarStateValue({
-                    state: true,
-                    message: t('modal.deletefailed'),
-                    type: "error",
-                });
+                alertFaultDelete();
             }
-        })
+        }
+        await printHouseDeleteMachine(callApi, callBack, {id: machineState?.id})
     };
 
 
     const updateMachine = async () => {
-        const result = await callApi('POST', '/v1/update-machine', {...machineState});
-        if (result?.success) {
-            setUpdatedMachine(result.data.data);
-            setSnackbarStateValue({
-                state: true,
-                message: t("modal.updatedSusuccessfully"),
-                type: "sucess",
-            });
-        } else {
-            setSnackbarStateValue({
-                state: true,
-                message: t("modal.updatedfailed"),
-                type: "error",
-            });
+        const callBack = (res) => {
+            if (res.success) {
+                setUpdatedMachine(res.data);
+                alertSuccessUpdate();
+            } else {
+                alertFaultUpdate();
+            }
         }
+        await printHouseUpdateMachine(callApi, callBack, {...machineState});
     }
 
     return {

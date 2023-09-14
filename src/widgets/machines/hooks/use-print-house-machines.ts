@@ -65,11 +65,13 @@ const usePrintHouseMachines = () => {
     setMachines(machines.filter((machine) => machineId !== machine.id));
   };
 
+
   const addMachineToList = (machine) => {
     const newArray = [...machines, machine];
     setMachines(newArray);
     setMachineState(machine);
   };
+
 
   return {
     getPrintHouseMachinesList,

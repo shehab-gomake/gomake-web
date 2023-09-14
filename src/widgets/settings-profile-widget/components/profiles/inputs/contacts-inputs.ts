@@ -1,4 +1,4 @@
-import {IUserProfile} from "@/widgets/settings-profile-widget/components/profiles/interface";
+import {IUserProfile} from "@/store/user-profile";
 
 
 const contactsInputs = (state: IUserProfile)  => {
@@ -21,36 +21,13 @@ const contactsInputs = (state: IUserProfile)  => {
             type: "text",
             placeholder: "profileSettings.phone",
             required: true,
-            parameterKey: "phone",
+            parameterKey: "phoneNumber",
             options: [],
-            value: state.phone,
+            value: state.phoneNumber,
             machineInputType: 'input',
-            isValid: !!state.phone,
+            isValid: !!state.phoneNumber,
         },
-        {
-            name: "address",
-            label: "profileSettings.address",
-            type: "text",
-            placeholder: "profileSettings.address",
-            required: true,
-            parameterKey: "address",
-            options: [],
-            value: state.address,
-            machineInputType: 'input',
-            isValid: !!state.address,
-        },
-        {
-            name: "postalCode",
-            label: "profileSettings.postalCode",
-            type: "text",
-            placeholder: "profileSettings.postalCode",
-            required: true,
-            parameterKey: "postalCode",
-            options: [],
-            value: state.postalCode,
-            machineInputType: 'input',
-            isValid: !!state.postalCode,
-        },
+
     ];
 }
 
