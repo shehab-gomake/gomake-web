@@ -116,7 +116,6 @@ const useStyle = () => {
       },
 
       autoButtonStyle: {
-        width: "193px",
         height: "40px",
         padding: "10px 32px",
         borderRadius: "4px",
@@ -161,7 +160,7 @@ const useStyle = () => {
       footerStyle: {
         display: "flex",
         justifyContent: "flex-end",
-        position: 'sticky' as 'sticky',
+        position: "fixed" as "fixed",
         bottom: "10px",
       }
     };

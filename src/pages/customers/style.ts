@@ -14,7 +14,7 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         gap: "20px",
-        marginBottom: "35px",
+        marginBottom: "20px",
       },
       autoComplateStyle: {
         width: convertWidthToVW(200),
