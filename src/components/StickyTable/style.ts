@@ -22,6 +22,7 @@ const useStyle = () => {
             marginLeft: "20px",
             backgroundColor: primaryColor(50),
             minWidth:"200px",
+            padding:"20px"
         
           },
           headerItem: {
@@ -46,7 +47,8 @@ const useStyle = () => {
             ...FONT_FAMILY.Lexend(500, 14),
             position:"sticky" as "sticky",
             top:0,
-            zIndex:1,
+          
+            zIndex:3,
           },
           HeaderTable:{
             backgroundColor:"#EBECFF",

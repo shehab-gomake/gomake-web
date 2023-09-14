@@ -7,6 +7,7 @@ import {
     getAndSetPermissionsRolesRelation, getPermissionRolesRelationsByGroupId,
 } from "@/services/hooks/get-set-permissionRoles";
 import { useEditPermissionRolesRelationShip } from '../Permissions/use-update-permissionsRoles-relationship';
+import { SecondSwitch } from "@/components/switch/second";
 
 const useSettings = () => {
     const {callApi} = useGomakeAxios();
@@ -15,14 +16,13 @@ const useSettings = () => {
     const [tableHeaders, setTableHeaders] = useState([]);
     const [permissions, setpermissions] = useState([]);
     const [table, setTable] = useState([]);
+    const [PermissionName,setPermissionName] = useState("");
     const [selectedTab, setSelectedTab] = useState<{id: string; title: string}>();
     const {t} = useTranslation();
     const { editPrmissionRole } = useEditPermissionRolesRelationShip();
-    const [Val, setVal] = useState(false); 
    
     const getAndSetPermissionRolesRelationsByGroupId = useCallback(async (id) => {
         const data = await getPermissionRolesRelationsByGroupId(callApi, setpermissionsRoles,{id});
-        console.log("tableHeader="+tableHeaders)
         getPermissionsTable(data);
     }, [tableHeaders])
     useEffect(()=> {
@@ -53,23 +53,41 @@ const useSettings = () => {
         }
     });
     const UpdatePermission = (roleId,permissionId,isChecked) => {
+      
         const data  = {
             permissionId:permissionId,
             roleId:roleId
         }
-    
-        setVal(!isChecked); 
-        editPrmissionRole(data);
+       
+
+        editPrmissionRole(data).then(x=>{
+            if(x)
+            {
+                var permissionsList = [...permissions];
+                var permission = permissionsList.find(x=>x.id == permissionId);
+                if(permission){
+                    var isRoleExits = permission.rolesPermissionsRelationships.find(x=>x.roleId == roleId);
+                    if(isRoleExits){
+                        permission.rolesPermissionsRelationships = permission.rolesPermissionsRelationships.filter(x=>x.roleId != roleId )
+                    }else{
+                        permission.rolesPermissionsRelationships.push({permissionId:permissionId,
+                            roleId:roleId})
+                    }
+                    setpermissions(permissionsList)
+                    getPermissionsTable(permissionsList)
+                }
+            }
+        }).catch(e=>{
+
+        });
+     
+        
     }
     const getSwitch = (roleId, permissionId, isChecked) => {
-    
+      
         return (
-            <ThemeProvider theme={theme}>
-                <Switch
-                    color="secondary"
-                    onClick={() => UpdatePermission(roleId, permissionId, isChecked)}
-                    checked={isChecked}
-                />
+            <ThemeProvider theme={theme}>             
+                <SecondSwitch checked={isChecked}  onChange={() => UpdatePermission(roleId, permissionId, isChecked )} />
             </ThemeProvider>
         );
     }
@@ -78,7 +96,6 @@ const useSettings = () => {
         var col = []
         const row = [];
         const table2 = [];
-
         permissions.forEach(permission => {
             var row = [];
             row.push(permission.description);
@@ -95,8 +112,15 @@ const useSettings = () => {
             });
             table2.push(row)
         })
-        setTable(table2);
-
+        if (Array.isArray(table2) && table2.length > 0) 
+            setTable(table2);
+        else
+            {
+                 const emptyRow = {}; 
+                  setTable([emptyRow]);
+            }
+       
+        
 
     }, [tableHeaders]) 
     
@@ -109,6 +133,17 @@ const useSettings = () => {
         setpermissions(data.permissions);
         getPermissionsTable(data.permissions);
     }, [])
+
+    const onChangePermissionSearch = useCallback((value: string) => {
+        var permissionsList = [...permissions];
+        const filteredPermissions = permissionsList.filter(permission => {
+             return permission.description.includes(value);
+        });
+
+        getPermissionsTable(filteredPermissions);
+        setPermissionName(value);
+      }, [PermissionName]);
+
 
 
     useEffect(() => {
@@ -124,7 +159,10 @@ const useSettings = () => {
         groups,
         permissions,
         table,
-        onSelectTab
+        onSelectTab,
+        onChangePermissionSearch,
+        PermissionName
+
     };
 };
 

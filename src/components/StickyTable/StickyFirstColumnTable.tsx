@@ -30,7 +30,7 @@ const StickyFirstColumnTable = ({ data, columns }) => {
             )}
             </div>
       )}
-
+    
         <div style={clasess.tableBody}>
          
         {data?.length > 0 ? (
