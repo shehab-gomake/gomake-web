@@ -284,16 +284,16 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
             <input style={clasess.inputStyle1} readOnly={true} type="text" placeholder="placeholder" value={customer?.code} />
           </Col>
           <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
-            <h3 style={clasess.headerStyle}>{t("customers.modal.CPAcode")}</h3>
-            <input style={clasess.inputStyle1} type="text" placeholder="placeholder" value={customer?.cpaClientCode} onChange={(e: any) => setCustomer({ ...customer, cpaClientCode: e.target.value })} />
-          </Col>
-          <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
             <h3 style={clasess.headerStyle}>{t("customers.modal.clientName")}</h3>
             <input style={clasess.inputStyle1} type="text" placeholder="placeholder" value={customer?.name} onChange={(e: any) => setCustomer({ ...customer, name: e.target.value })} />
           </Col>
           <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
             <h3 style={clasess.headerStyle}>{t("customers.modal.vatNO")}</h3>
             <input style={clasess.inputStyle1} type="text" placeholder="placeholder" value={customer?.buisnessNumber} onChange={(e) => setCustomer({ ...customer, buisnessNumber: e.target.value })} required />
+          </Col>
+          <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
+            <h3 style={clasess.headerStyle}>{t("customers.modal.CPAcode")}</h3>
+            <input style={clasess.inputStyle1} type="text" placeholder="placeholder" value={customer?.cpaClientCode} onChange={(e: any) => setCustomer({ ...customer, cpaClientCode: e.target.value })} />
           </Col>
           <Col style={{ display: 'none', width: "180px", height: "68px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
             <h3 style={clasess.headerStyle}>{t("customers.modal.amountBalance")}</h3>
@@ -416,7 +416,7 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
               <Col style={{ marginTop: "63px", justifyContent: 'flex-end' }} >
                 <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "7px" }} onClick={addEmptyClient} >
                   <AddIcon></AddIcon>
-                  <button style={clasess.buttonsStyle} >{t("customers.buttons.addContact")}</button>
+                  <button style={clasess.buttonsStyle} >{t("customers.buttons.addUser")}</button>
                 </a>
               </Col>
             </Row>
