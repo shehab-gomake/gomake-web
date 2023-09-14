@@ -1567,6 +1567,7 @@
       "shippingCertificate": "Shipping certificate",
       "openInvitations": "Open invitations",
       "currency": "Currency",
+      "clientType": "Client type",
       "categories": "Categories",
       "general": "General",
       "contacts": "Contacts",
