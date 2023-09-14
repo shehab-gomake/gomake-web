@@ -10,6 +10,7 @@ import {
   getAndSetClientTypes,
   getAndSetGetAllTestProductsByActionId,
   getAndSetMachinces,
+  getAndSetMachincesNew,
 } from "@/services/hooks";
 import {
   actionExceptionProfitId,
@@ -136,7 +137,7 @@ const useProfitsGetData = () => {
     await getAllProductsForDropDownList(callApi, setProductsState);
   }, []);
   const getMachincesProfits = useCallback(async () => {
-    await getAndSetMachinces(callApi, setMachincesState);
+    await getAndSetMachincesNew(callApi, setMachincesState);
   }, []);
 
   const getTestProducts = useCallback(async () => {

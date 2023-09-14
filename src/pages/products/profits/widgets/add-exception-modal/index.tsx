@@ -65,7 +65,9 @@ const AddExceptionModal = () => {
               <GoMakeAutoComplate
                 options={machincesStateValue}
                 placeholder={t("products.profits.exceptions.selectMachine")}
-                getOptionLabel={(value: any) => value?.name}
+                getOptionLabel={(value: any) =>
+                  `${value?.manufacturer} ${value?.model}`
+                }
                 onChange={(e: any, item: any) => {
                   profitsStateValue?.onChangeState("machine", item);
                   profitsStateValue?.onChangeState("machineId", item?.id);

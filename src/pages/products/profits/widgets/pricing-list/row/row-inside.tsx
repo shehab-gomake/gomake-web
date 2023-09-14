@@ -127,7 +127,9 @@ const RowInside = ({
               }
             }}
           >
-            {Number(entry[1]).toFixed(2)}
+            {entry[0] !== "quantity"
+              ? Number(entry[1]).toFixed(2)
+              : Number(entry[1]).toFixed(0)}
             {entry[0] === "profit" && "%"}
             {entry[0] === "expProfit" && "%"}
           </div>
