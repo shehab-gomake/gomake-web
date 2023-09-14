@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState, useCallback } from 'react';
 import { SecondSwitch } from "@/components/switch/second";
 import { GomakeTextInput } from "@/components/text-input/text-input";
+import { fetchS3JsonContent } from "@/utils/S3Content";
 
 const AddressForm = ({ address, onDelete, setAddress }: any) => {
 
@@ -20,8 +21,7 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
     useEffect(() => {
         const fetchCities = async () => {
             try {
-                const response = await fetch('/cities.json');
-                const data = await response.json();
+                let data = await fetchS3JsonContent("cities.json")
                 setCities(data);
             } catch (error) {
                 console.error('Error fetching cities:', error);
@@ -41,8 +41,7 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
         const updatedAddress = { ...address, city: selectedCityLabel };
         setSelectedCity(selectedCityLabel);
         setAddress(updatedAddress);
-        const response1 = await fetch('/streets.json');
-        const data1 = await response1.json();
+        let data1 = await fetchS3JsonContent("streets.json")
         const selectedCityStreets = data1.filter((street) => street.city_code == selectedCityId);
         const streetsNames = selectedCityStreets.map(street => ({
             label: street.name,

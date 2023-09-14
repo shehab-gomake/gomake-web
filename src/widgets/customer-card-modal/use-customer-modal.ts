@@ -1,13 +1,13 @@
-import { useCallback, useEffect,  useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { getAndSetCurrency } from "@/services/hooks/get-set-enums";
-import { getAndSetEmployees2 , getAndSetClientTypes} from "@/services/hooks";
+import { getAndSetEmployees2, getAndSetClientTypes } from "@/services/hooks";
 
 const useCustomersModal = () => {
   const { callApi } = useGomakeAxios();
   const [agentsCategores, setAgentsCategores] = useState([]);
   const [clientTypesCategores, setClientTypesCategores] = useState([]);
-  const [currencyCategores, setCurrencyCategores] = useState([]);
+  //const [currencyCategores, setCurrencyCategores] = useState([]);
 
 
   ///////////////////////// select agent //////////////////////////////
@@ -29,41 +29,39 @@ const useCustomersModal = () => {
     getAgentCategores();
   }, []);
 
-///////////////////////// select clientType //////////////////////////////
-const getClientTypesCategores = useCallback(async () => {
+  ///////////////////////// select clientType //////////////////////////////
+  const getClientTypesCategores = useCallback(async () => {
 
-  const data = await getAndSetClientTypes(
-    callApi,
-    setClientTypesCategores,
-  );
-  const clientTypes = data.map(types => ({
-    label: `${types.name}`,
-    id: types.id
-  }));
-  setClientTypesCategores(clientTypes);
-}, []);
-
-useEffect(() => {
-  getClientTypesCategores();
-}, []);
-
-  ///////////////////////// select currency //////////////////////////////
-  
-  const getCurrencyCategores = useCallback(async () => {
-    await getAndSetCurrency(
+    const data = await getAndSetClientTypes(
       callApi,
-      setCurrencyCategores,
+      setClientTypesCategores,
     );
+    const clientTypes = data.map(types => ({
+      label: `${types.name}`,
+      id: types.id
+    }));
+    setClientTypesCategores(clientTypes);
   }, []);
 
   useEffect(() => {
-    getCurrencyCategores();
+    getClientTypesCategores();
   }, []);
 
-   
+  ///////////////////////// select currency //////////////////////////////
+  // const getCurrencyCategores = useCallback(async () => {
+  //   await getAndSetCurrency(
+  //     callApi,
+  //     setCurrencyCategores,
+  //   );
+  // }, []);
+
+  // useEffect(() => {
+  //   getCurrencyCategores();
+  // }, []);
+
+
 
   return {
-    currencyCategores,
     agentsCategores,
     clientTypesCategores
   };

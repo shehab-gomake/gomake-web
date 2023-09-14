@@ -1559,7 +1559,7 @@
       "addTitle": "Add new customer",
       "editTitle": "Edit Customer",
       "customerInfo": "Customer info",
-      "code": "Code*",
+      "code": "Code",
       "CPAcode": "CPA code",
       "clientName": "Client name",
       "vatNO": "Business number",

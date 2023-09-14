@@ -10,7 +10,6 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 const HeaderFilter = ({ agentsCategores, clientTypesCategores, statuses, onChangeAgent, onChangeCustomer, onChangeClientType, onChangeStatus, handleClean, cutomerName, agentName, valClientType, valStatus }: any) => {
     const { t } = useTranslation();
     const { clasess } = useStyle();
-
     return (
         <div style={clasess.subHeaderContainer} >
         <div style={clasess.filterContainer}>
