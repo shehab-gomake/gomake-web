@@ -19,8 +19,7 @@ const SecondaryTabs = styled(Tabs)((props: TabsProps) => {
             textTransform: 'initial',
         },
         '& .MuiTabs-indicator': {
-            borderBottom: `none !important`,
-            backgroundColor:"white"
+            display: 'none',
         },
         '& .MuiTabs-flexContainer' : {
             display:"flex",

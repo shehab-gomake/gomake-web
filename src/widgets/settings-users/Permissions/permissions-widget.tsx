@@ -10,6 +10,7 @@ import {useStyle} from "./style";
 import {AddRoleModal} from "./modals";
 import {useSettings} from "./use-settings";
 import {SecondaryTabsComponent} from "@/components/tabs/secondary-tabs";
+import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 
 
 const PermissionsWidget = () => {
@@ -42,20 +43,8 @@ const PermissionsWidget = () => {
                 <SecondaryTabsComponent tabs={tabs} onSelectTab={onSelectTab}/>
             </div>
             <div style={{display:"flex",flexDirection:"column",width:"71%"}}>
-                <div style={{display: "flex", width: "100%", justifyContent: "flex-end", flexDirection: "row"}}>
-                    <div style={classes.subHeaderRightSide}>
-                        <GoMakeTextInputIcon
-                            style={classes.searchInputContainer}
-                            placeholder={t("header.search")}
-                            startAdornment={
-                                <InputAdornment position="start">
-                                    <div style={classes.iconStyle}>
-                                        <SearchIcon/>
-                                    </div>
-                                </InputAdornment>
-                            }
-                        />
-                    </div>
+                <div style={{display: "flex", width: "85%", justifyContent: "flex-end", flexDirection: "row",marginBottom:10}}>
+                      <SearchInputComponent onChange={()=>console.log("heeey")}/>
                 </div>
                 <div style={{width:"95%"}}>
                 <StickyFirstColumnTable columns={tableHeaders} data={table}/>
