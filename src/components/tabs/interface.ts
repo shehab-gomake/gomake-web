@@ -1,6 +1,6 @@
 export interface ITabsProps {
     tabs: ITab[];
-    children?: JSX.Element[] | JSX.Element;
+    children?: JSX.Element;
     navigationButtons?: boolean;
     actionBtn?: HTMLButtonElement;
     onSelectTab?: (index: number) => void;
