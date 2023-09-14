@@ -19,7 +19,7 @@ const apiRequest = async (method = "GET", url: string, data: any = {}) => {
         Accept: "application/json",
         "Content-Type": "application/json",
         "project-name": "business-dashboard",
-        ...(getUserToken() && { "auth-token": getUserToken() }),
+        ...(getUserToken() && { "Authorization": "Bearer "+ getUserToken() }),
         ...(data.customAuth && { "auth-token": data.customAuth }),
         lang: "en",
       },
