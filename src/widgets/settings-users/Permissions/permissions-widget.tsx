@@ -1,16 +1,14 @@
-import {GoMakeTextInputIcon} from "@/components";
+
 import StickyFirstColumnTable from "@/components/StickyTable/StickyFirstColumnTable";
-import {AddPlusIcon, SearchIcon} from "@/icons";
-import {FONT_FAMILY} from "@/utils/font-family";
 import {HeaderTitle} from "@/widgets/header-title";
-import {useState} from "react";
-import {InputAdornment, createMuiTheme} from "@mui/material";
+import { createMuiTheme} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {useStyle} from "./style";
-import {AddRoleModal} from "./modals";
 import {useSettings} from "./use-settings";
 import {SecondaryTabsComponent} from "@/components/tabs/secondary-tabs";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
+import { EditIcon } from "@/icons";
+
 
 
 const PermissionsWidget = () => {
@@ -29,6 +27,10 @@ const PermissionsWidget = () => {
     const {tableHeaders, groups, table, onSelectTab,onChangePermissionSearch,PermissionName} =
         useSettings();
     const tabs = [];
+    const headers = [];
+    tableHeaders?.forEach((row) =>{
+        headers.push({name : row.name , icon : <EditIcon/>})
+    })
     groups?.forEach((row) => {
         tabs.push({title: row.name , selectedTab :  onSelectTab});
     });
@@ -48,7 +50,7 @@ const PermissionsWidget = () => {
                       <SearchInputComponent onChange={onChangePermissionSearch} value={PermissionName} />
                 </div>
                 <div style={{width:"95%"}}>
-                <StickyFirstColumnTable columns={tableHeaders} data={table}/>
+                <StickyFirstColumnTable columns={headers} data={table}/>
 
                 </div>
                 
