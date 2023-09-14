@@ -21,6 +21,7 @@ const useProfits = () => {
     clientTypesStateValue,
     testProductsState,
     router,
+    getMachincesProfits,
     setactionExceptionProfitId,
     getActionProfitRowChartData,
     getActionExceptionProfitRowByActionExceptionId,
@@ -155,6 +156,7 @@ const useProfits = () => {
     getActionProfitRowChartData,
     getActions,
     getProducts,
+    getMachincesProfits,
     getParameters,
     getClientTypes,
     getActionProfits,
@@ -217,6 +219,7 @@ const useProfits = () => {
     setOpenUpdateExceptionModal,
     onCloseUpdateExceptionModal,
     onOpenUpdateExceptionModal,
+    getMachincesProfits,
     t,
   };
 };

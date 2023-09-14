@@ -116,7 +116,6 @@ const useProfitsProfitsFunction = ({
         type: "sucess",
       });
       setEditPriceListState({ isEdit: false });
-      // getActionProfits();
       await getAndSetPricingListTableRows(
         callApi,
         setActionProfitPricingTableRows,

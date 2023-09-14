@@ -17,6 +17,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
+        maxHeight: "89vh",
       },
       tableHeaderStyle: {
         display: "flex",

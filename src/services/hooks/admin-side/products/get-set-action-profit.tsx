@@ -44,19 +44,13 @@ const getAndSetActionProfitRowByActionId = async (
   const result: any = await callApi(
     "GET",
     `/v1/printhouse-config/profits/get-action-profit-by-action-id`,
-    data
+    data,
+    false
   );
   const _data: any = returnResult(result, undefined);
   const mapData = _data?.actionProfitRows?.map((item: any) => {
     return {
-      // ...(_data?.pricingBy === 1
-      //   ? {
-      //       width: item?.width,
-      //       height: item?.height,
-      //     }
-      //   : { quantity: item?.quantity }),
       ...renderProfits(item),
-      // testFinalPrice,
       more: <PricingListMenuWidget item={item} />,
       id: item?.id,
       recordID: item?.recordID,
@@ -65,17 +59,11 @@ const getAndSetActionProfitRowByActionId = async (
   const actionProfitRowsMapping = _data?.actionProfitRows?.map((item: any) => {
     return {
       ...renderProfits(item),
-      // testFinalPrice,
       more: <PricingListMenuWidget item={item} />,
       id: item?.id,
       recordID: item?.recordID,
     };
   });
-  // item?.exceptionType === 0
-  //         ? `Additional (${item?.additionalProfit})`
-  //         : item?.exceptionType === 1
-  //         ? "NewBase"
-  //         : "EditBase",
   const mapActionExpections = _data?.actionExpections?.map((item: any) => {
     return {
       ...renderType(item),
@@ -85,32 +73,6 @@ const getAndSetActionProfitRowByActionId = async (
           : item?.exceptionType === 1
           ? "NewBase"
           : "EditBase",
-      // exceptionType: (
-      //   <GoMakeAutoComplate
-      //     key={"item-" + item.id}
-      //     options={[
-      //       `Additional(${item?.additionalProfit})`,
-      //       "NewBase",
-      //       "EditBase",
-      //     ]}
-      //     // style={clasess.autoComplateStyle}
-      //     onChange={""}
-      //     defaultValue={
-      //       item?.exceptionType === 0
-      //         ? `Additional(${item?.additionalProfit})`
-      //         : item?.exceptionType === 1
-      //         ? "NewBase"
-      //         : "EditBase"
-      //     }
-      //     disableClearable={true}
-      //     style={{
-      //       width: 160,
-      //       border: 0,
-      //       color: "#F135A3",
-      //       marginLeft: -20,
-      //     }}
-      //   />
-      // ),
       id: item?.id,
       recordID: item?.recordID,
       item,

@@ -10,19 +10,17 @@ import { useStyle } from "./style";
 import { profitsState } from "../../store/profits";
 import { useRecoilValue } from "recoil";
 import { useExceptions } from "../exceptions/use-exception";
-import { machineCategoriesState } from "@/store/machine-categories";
 
 const AddExceptionModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
   const {
-    // machincesStateValue,
+    machincesStateValue,
     productsStateValue,
     parametersStateValue,
     clientTypesStateValue,
   } = useExceptions({});
-  const categoriesList = useRecoilValue(machineCategoriesState);
   return (
     <>
       <GoMakeModal
@@ -43,7 +41,7 @@ const AddExceptionModal = () => {
           options={[
             { label: "Machines", value: "machine" },
             { label: "Products", value: "product" },
-            { label: "Clients", value: "client" },
+            { label: "Clients Type", value: "client" },
             { label: "Parameters", value: "parameter" },
           ]}
           placeholder={t("products.profits.exceptions.selectTypeOfException")}
@@ -65,9 +63,11 @@ const AddExceptionModal = () => {
                 {t("products.profits.exceptions.selectMachine")}
               </div>
               <GoMakeAutoComplate
-                options={categoriesList}
+                options={machincesStateValue}
                 placeholder={t("products.profits.exceptions.selectMachine")}
-                getOptionLabel={(value: any) => value?.name}
+                getOptionLabel={(value: any) =>
+                  `${value?.manufacturer} ${value?.model}`
+                }
                 onChange={(e: any, item: any) => {
                   profitsStateValue?.onChangeState("machine", item);
                   profitsStateValue?.onChangeState("machineId", item?.id);

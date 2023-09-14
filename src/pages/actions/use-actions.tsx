@@ -29,50 +29,10 @@ const useActions = () => {
         }
         variant={"text"}
       >
-        Edit
+        {t("materials.buttons.edit")}
       </PrimaryButton>,
-      // <span
-      //   style={{
-      //     display: "inline-flex",
-      //     flexDirection: "row",
-      //     justifyContent: "flex-start",
-      //     alignItems: "center",
-      //     gap: 6,
-      //     cursor: "pointer",
-      //     margin: "auto",
-      //   }}
-      //   onClick={() => navigate(`/products/profits?actionId=${category?.id}`)}
-      // >
-      //   <EditIcon />
-      //   <div>Edit</div>
-      // </span>,
-      <div style={{ cursor: "pointer" }}>Edit</div>,
+      <div style={{ cursor: "pointer" }}>{t("materials.buttons.edit")}</div>,
     ]);
-    // const mapData = data?.map((item: any) => {
-    //   return {
-    //     name: item?.name,
-    //     source: "Yes/No",
-    //     active: "On/Off",
-    //     profit: (
-    //       <div
-    //         style={{
-    //           display: "flex",
-    //           flexDirection: "row",
-    //           justifyContent: "flex-start",
-    //           alignItems: "center",
-    //           gap: 6,
-    //           cursor: "pointer",
-    //         }}
-    //         onClick={() => navigate(`/products/profits?actionId=${item?.id}`)}
-    //       >
-    //         <EditIcon />
-    //         <div>Edit</div>
-    //       </div>
-    //     ),
-    //     properties: <div style={{ cursor: "pointer" }}>Edit</div>,
-    //     id: item?.id,
-    //   };
-    // });
     setAllActions(mapData);
   }, []);
   useEffect(() => {
