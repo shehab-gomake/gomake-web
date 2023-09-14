@@ -29,7 +29,7 @@ const PermissionsWidget = () => {
     const tabs = [];
     const headers = [];
     tableHeaders?.forEach((row) =>{
-        headers.push({name : row.name , icon : <EditIcon/>})
+        headers.push({name : row.name})
     })
     groups?.forEach((row) => {
         tabs.push({title: row.name , selectedTab :  onSelectTab});
