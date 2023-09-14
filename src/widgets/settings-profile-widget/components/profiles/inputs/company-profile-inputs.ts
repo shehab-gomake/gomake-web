@@ -1,4 +1,4 @@
-import {ICompanyProfile} from "@/store/user-profile";
+import {ICompanyProfile} from "@/store/company-profile";
 
 
 const companyProfileInputs = (state: ICompanyProfile)  => {
@@ -12,7 +12,6 @@ const companyProfileInputs = (state: ICompanyProfile)  => {
             parameterKey: "name",
             options: [],
             value: state.name,
-            machineInputType: 'input',
             isValid: !!state.name,
         },
         {
@@ -21,10 +20,9 @@ const companyProfileInputs = (state: ICompanyProfile)  => {
             type: "text",
             placeholder: "profileSettings.dashboardCode",
             required: true,
-            parameterKey: "email2",
+            parameterKey: "dashboardCode",
             options: [],
             value: state.dashboardCode,
-            machineInputType: 'input',
             isValid: !!state.dashboardCode,
         },
     ];

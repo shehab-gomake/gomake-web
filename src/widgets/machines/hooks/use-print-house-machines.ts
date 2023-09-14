@@ -60,10 +60,9 @@ const usePrintHouseMachines = () => {
     }
 
     const addMachineToList = (machine) => {
-        console.log(machine);
         const newArray = [...machines, machine];
         setMachines(newArray);
-        setMachineState(machine)
+        // setMachineState(machine)
     }
     useEffect(() => console.log(machines), [machines])
 

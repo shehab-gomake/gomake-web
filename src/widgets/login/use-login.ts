@@ -2,7 +2,7 @@ import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { updateTokenStorage } from "@/services/storage-data";
 import { useCallback, useMemo, useState } from "react";
 import { useSetRecoilState } from "recoil";
-import {companyProfileState} from "@/store/user-profile";
+import {companyProfileState} from "@/store/company-profile";
 
 const useGomakeLogin = () => {
   const { callApi } = useGomakeAxios();

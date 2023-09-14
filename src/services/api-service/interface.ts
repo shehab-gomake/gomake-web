@@ -6,4 +6,8 @@ export type ICallApi = (
 ) => any;
 export type ISetState = (data: any) => void
 
-export type ICallAndSetData = (callApi: ICallApi, setState: ISetState, data?: any ) => Promise<any>;
+export interface ApiResponse {
+    success: boolean,
+    data: any
+}
+export type ICallAndSetData = (callApi: ICallApi, setState: ISetState, data?: any ) => Promise<ApiResponse>;

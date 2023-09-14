@@ -3,19 +3,18 @@ import {useRecoilValue, useSetRecoilState} from "recoil";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {machineState} from "@/widgets/machines/state/machine-state";
 import {initState} from "@/widgets/machines/state/init-state";
-import {useTranslation} from "react-i18next";
 import {ECategoryId} from "@/widgets/machines/enums/category-id";
 import {useRouter} from "next/router";
 import {useAdminMachines} from "@/widgets/machines/hooks/use-admin-machines";
+import {adminAddNewMachine, adminUpdateMachine} from "@/services/api-service/machines/admin-machines";
 
 const useAdminAddMachine = () => {
     const {callApi} = useGomakeAxios();
     const state = useRecoilValue(machineState);
     const setState = useSetRecoilState(machineState);
     const {push} = useRouter();
-    const { setSnackbarStateValue } = useSnackBar();
+    const { alertSuccessAdded, alertFaultAdded, alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
     const {setUpdatedMachine, addMachineToList} = useAdminMachines()
-    const {t} = useTranslation();
     const initMachineStateCategory = (categoryId: ECategoryId) => {
         setState(initState[categoryId]);
     }
@@ -24,21 +23,12 @@ const useAdminAddMachine = () => {
     const curMachineCategoryId = useCallback(() => state?.category ? state?.category.toString() : '', [state]);
 
     const adminAddMachine = useCallback( () => {
-        callApi('POST', '/v1/administrator/add-machine', {...state}).then(res => {
-            if (res?.success) {
-                console.log(res.data);
-                push('/admin/machine/category/' + res.data.data.category).then(() => setState(res.data.data))
-                setSnackbarStateValue({
-                    state: true,
-                    message: t("modal.addedSusuccessfully"),
-                    type: "sucess",
-                });
+        adminAddNewMachine(callApi, undefined, {...state}).then(res => {
+            if (res.success) {
+                push('/admin/machine/category/' + res.data?.category).then(() => setState(res.data))
+                alertSuccessAdded();
             } else {
-                setSnackbarStateValue({
-                    state: true,
-                    message: t("modal.addedfailed"),
-                    type: "error",
-                });
+                alertFaultAdded();
             }
         })
     }, [state]);
@@ -47,44 +37,25 @@ const useAdminAddMachine = () => {
         const payload = {...state};
         delete payload['_id'];
         delete payload['id'];
-        payload.nickName = payload?.nickName + 'duplicated'
-        callApi('POST', '/v1/administrator/add-machine', payload).then(res => {
-            if (res?.success) {
-                addMachineToList(res.data.data);
-                setState(res?.data?.data);
-                setSnackbarStateValue({
-                    state: true,
-                    message: t("modal.addedSusuccessfully"),
-                    type: "success",
-                });
+        payload.nickName = payload?.nickName + 'duplicated';
+
+        adminAddNewMachine(callApi, setState, payload).then(res => {
+            if (res.success) {
+                addMachineToList(res.data);
+                alertSuccessAdded();
             } else {
-                setSnackbarStateValue({
-                    state: true,
-                    message: t("modal.addedfailed"),
-                    type: "error",
-                });
+                alertFaultAdded();
             }
         })
     }
 
     const updateMachine = async () => {
-        const result = await callApi('POST', '/v1/administrator/update-machine', {...state});
+        const result = await adminUpdateMachine(callApi, setState, state);
         if (result?.success) {
-            console.log(result.data.data)
-            setUpdatedMachine(result.data.data);
-            setState(result.data.data);
-            setSnackbarStateValue({
-                state: true,
-                message: t("modal.updatedSusuccessfully"),
-                type: "sucess",
-            });
-
+            setUpdatedMachine(result.data);
+            alertSuccessUpdate()
         } else {
-            setSnackbarStateValue({
-                state: true,
-                message: t("modal.updatedfailed"),
-                type: "error",
-            });
+            alertFaultUpdate();
         }
     }
 

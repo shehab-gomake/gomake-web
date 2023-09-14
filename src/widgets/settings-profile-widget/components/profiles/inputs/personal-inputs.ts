@@ -1,31 +1,31 @@
-import {IUserProfile} from "@/widgets/settings-profile-widget/components/profiles/interface";
+import {IUserProfile} from "@/store/user-profile";
 
 
 const personalInputs = (state: IUserProfile)  => {
     return [
         {
-            name: "fullName",
-            label: "profileSettings.fullName",
+            name: "firstName",
+            label: "profileSettings.firstName",
             type: "text",
-            placeholder: "profileSettings.fullName",
+            placeholder: "profileSettings.firstName",
             required: true,
-            parameterKey: "fullName",
+            parameterKey: "firstName",
             options: [],
-            value: state.fullName,
+            value: state.firstName,
             machineInputType: 'input',
-            isValid: !!state.fullName,
+            isValid: !!state.firstName,
         },
         {
-            name: "companyName",
-            label: "profileSettings.companyName",
+            name: "lastName",
+            label: "profileSettings.lastName",
             type: "text",
-            placeholder: "profileSettings.companyName",
+            placeholder: "profileSettings.lastName",
             required: true,
-            parameterKey: "companyName",
+            parameterKey: "lastName",
             options: [],
-            value: state.companyName,
+            value: state.lastName,
             machineInputType: 'input',
-            isValid: !!state.companyName,
+            isValid: !!state.lastName,
         },
         {
             name: "position",
@@ -35,22 +35,11 @@ const personalInputs = (state: IUserProfile)  => {
             required: true,
             parameterKey: "position",
             options: [],
-            value: state.position,
+            value: state.role,
             machineInputType: 'input',
-            isValid: !!state.position,
+            isValid: !!state.role,
         },
-        {
-            name: "demoCode",
-            label: "profileSettings.demoCode",
-            type: "text",
-            placeholder: "profileSettings.demoCode",
-            required: true,
-            parameterKey: "demoCode",
-            options: [],
-            value: state.demoCode,
-            machineInputType: 'input',
-            isValid: !!state.demoCode,
-        },
+
     ];
 }
 

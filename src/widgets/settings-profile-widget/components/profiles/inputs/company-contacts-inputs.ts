@@ -1,4 +1,4 @@
-import {ICompanyProfile} from "@/store/user-profile";
+import {ICompanyProfile} from "@/store/company-profile";
 
 
 const companyContactsInputs = (state: ICompanyProfile)  => {

@@ -5,7 +5,7 @@ import { InputContainer } from "./input";
 import { IInput } from "./interfaces";
 import { useStyle } from "./style";
 import {useRecoilValue} from "recoil";
-import {companyProfileState} from "@/store/user-profile";
+import {companyProfileState} from "@/store/company-profile";
 
 const LoginLeftSide = () => {
   const { clasess } = useStyle();

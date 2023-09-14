@@ -28,6 +28,10 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
     []
   );
 
+  const getCustomersRows = useCallback(()=> {
+    return allCustomers.map(customer => [customer?.customerCode, customer?.name, customer?.email, customer?.phone, customer?.status, customer?.hashTag])
+  }, [allCustomers])
+
   //select agent options
   const [agentsCategores, setAgentsCategores] = useState([]);
   const [customersCategores, setCustomersCategores] = useState([]);
@@ -221,7 +225,8 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
     setShowCustomerModal,
     getCustomerForEdit,
     getAllCustomers,
-    updatedStatus
+    updatedStatus,
+    getCustomersRows
   };
 };
 export { useCustomers };

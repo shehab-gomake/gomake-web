@@ -10,7 +10,7 @@ const getSetApiData = async (
   setState?: ISetState,
   data?: any,
 
-) => {
+): Promise<{success: boolean, data: any}> => {
   const result: any = await callApi(
     method,
     url,

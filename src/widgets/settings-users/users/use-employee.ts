@@ -22,7 +22,7 @@ import {
 
 
 const useEmployee = () => {
-    const {setSnackbarStateValue} = useSnackBar();
+    const {alertFaultUpdate, alertSuccessUpdate, alertSuccessAdded, alertFaultAdded} = useSnackBar();
     const [employee, setEmployeeState] = useRecoilState<IUserData>(employeeState);
     const [users, setUsers] = useRecoilState<IUser[]>(usersArrayState);
     const [showInActiveEmployees, setShowInActiveEmployees] = useState<boolean>(false);
@@ -70,11 +70,7 @@ const useEmployee = () => {
         toggleEmployeeStatus(callApi, undefined, id).then(
             (res) => {
                 if (res.success) {
-                    setSnackbarStateValue({
-                        state: true,
-                        message: t("modal.updatedSusuccessfully"),
-                        type: "sucess",
-                    });
+                    alertSuccessUpdate();
                     setUsers(
                         users.map(
                             user => {
@@ -82,11 +78,7 @@ const useEmployee = () => {
                             }))
                 }
                 else {
-                    setSnackbarStateValue({
-                        state: true,
-                        message: t("modal.updatedfailed"),
-                        type: "error",
-                    });
+                    alertSuccessUpdate();
                 }
             }
         )
@@ -98,21 +90,13 @@ const useEmployee = () => {
             addNewEmployee(callApi, undefined, employee).then(
                 (res) => {
                     if (res.success) {
-                        setSnackbarStateValue({
-                            state: true,
-                            message: t("modal.addedSusuccessfully"),
-                            type: "sucess",
-                        });
+                       alertSuccessAdded();
                         const newEmployee: IUser = res.data
                         setUsers([newEmployee, ...users]);
                         setOpenModal(false);
                         setEmployeeState(initState);
                     } else {
-                        setSnackbarStateValue({
-                            state: true,
-                            message: t("modal.addedfailed"),
-                            type: "error",
-                        });
+                        alertFaultAdded();
                     }
                 }
             )
@@ -127,17 +111,9 @@ const useEmployee = () => {
                         setUsers(users.map(user => user.id === newEmployee?.id ? newEmployee : user))
                         setOpenModal(false);
                         setEmployeeState(initState);
-                        setSnackbarStateValue({
-                            state: true,
-                            message: t("modal.updatedSusuccessfully"),
-                            type: "sucess",
-                        });
+                        alertSuccessUpdate();
                     } else {
-                        setSnackbarStateValue({
-                            state: true,
-                            message: t("modal.updatedfailed"),
-                            type: "error",
-                        });
+                        alertFaultUpdate();
                     }
                 }
             )

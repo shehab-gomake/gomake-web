@@ -1,8 +1,17 @@
 import {Avatar, Badge} from "@mui/material";
 import {useStyle} from "@/widgets/settings-profile-widget/components/avatar/style";
 import {CameraMenu} from "@/widgets/settings-profile-widget/components/avatar/camera-menu";
+import {IProfileAvatar} from "@/widgets/settings-profile-widget/components/avatar/interface";
 
-const ProfileAvatar = ({title, src}: {title: string; src?: string;}) => {
+const ProfileAvatar = ({
+                           title,
+                           src,
+                           onUploadImage,
+                           changeInitials,
+                           onChangeInitials,
+                           initials,
+                           bgColor
+                       }: IProfileAvatar) => {
     const {classes} = useStyle();
     return (
         <div style={{
@@ -13,8 +22,17 @@ const ProfileAvatar = ({title, src}: {title: string; src?: string;}) => {
             <Badge
                 overlap="circular"
                 anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
-                badgeContent={<CameraMenu/>}>
-                <Avatar src={src ? src : ''} sx={classes.avatar}>rf</Avatar>
+                badgeContent={<CameraMenu onUploadImage={onUploadImage} changeInitials={changeInitials}
+                                          onChangeInitials={onChangeInitials}/>}>
+                {
+                  !changeInitials && <Avatar src={src} sx={classes.avatar}/>
+                }
+                {
+                    changeInitials && src && <Avatar src={src} sx={classes.avatar}/>
+                }
+                {
+                    changeInitials && !src &&  <Avatar  sx={{...classes.avatar, bgcolor: bgColor}}>{initials}</Avatar>
+                }
             </Badge>
             <span style={classes.avatarTitle}>{title}</span>
         </div>

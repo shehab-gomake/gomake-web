@@ -4,6 +4,7 @@ import {useGomakeAxios} from "@/hooks";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {machineState} from "@/widgets/machines/state/machine-state";
 import {machinesListState} from "@/widgets/machines/state/machines";
+import {adminGetAllMachineByCategory} from "@/services/api-service/machines/admin-machines";
 
 const useAdminMachines = () => {
     const router = useRouter();
@@ -13,10 +14,10 @@ const useAdminMachines = () => {
     const setMachineState = useSetRecoilState(machineState);
     const getAndSetAdminMachines = async () => {
         if (categoryId) {
-            const res = await callApi('Get', `/v1/administrator/machines/category/${categoryId}`);
-            setMachines(res?.data?.data?.data ? res?.data?.data?.data : []);
+            await adminGetAllMachineByCategory(callApi, setMachines, categoryId);
         }
     }
+
     const getMachinesList = useMemo(() => {
         return machines.map((machine: { model: string, manufacturer: string, id: string }) => ({
             text: `${machine.manufacturer} - ${machine.model}`,

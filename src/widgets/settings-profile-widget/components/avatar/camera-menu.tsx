@@ -8,11 +8,18 @@ import {FileUploadComponent} from "@/widgets/settings-profile-widget/components/
 import {
     EditInitialsComponent
 } from "@/widgets/settings-profile-widget/components/edit-initials/edit-initials-component";
+import {useRecoilState} from "recoil";
+import {
+    changeProfileImageState,
+    changeProfileInitialsState
+} from "@/widgets/settings-profile-widget/state/change-profile-image";
+import {ICameraMenuProps} from "@/widgets/settings-profile-widget/components/avatar/interface";
 
-const CameraMenu = () => {
+const CameraMenu = ({onUploadImage, changeInitials}: ICameraMenuProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const [modalComponent, setModalComponent] = useState<JSX.Element>(<div/>);
+    const [state, setState] = useState<boolean>(false);
+    const [openImageModal, setOpenImageModal] = useRecoilState<boolean>(changeProfileImageState);
+    const [openInitialsModal, setOpenInitialsModal] = useRecoilState<boolean>(changeProfileInitialsState);
     const [modalHeader, setModalHeader] = useState<string>('');
     const {classes} = useStyle();
     const {t} = useTranslation();
@@ -40,38 +47,53 @@ const CameraMenu = () => {
                 anchorOrigin={{horizontal: "right", vertical: "bottom"}}
                 onClick={handleCloseMenu}
             >
-                    <MenuItem onClick={() => {
-                        setOpenModal(true);
-                        setModalComponent(<FileUploadComponent/>);
-                        setModalHeader('Upload file');
-                    }}>
-                        <div style={classes.menuBtn}>
-                            <span>{t('Add profile image')}</span>
-                        </div>
-                    </MenuItem>
-                    <Divider/>
-                    <MenuItem onClick={() => {
-                        setOpenModal(true);
-                        setModalComponent(<EditInitialsComponent/>);
-                        setModalHeader('Edit initials');
-                    }}>
-                        <div style={classes.menuBtn}>
-                            <span>{t('Edit initials')}</span>
-                        </div>
-                    </MenuItem>
+                <MenuItem onClick={() => {
+                    setState(true);
+                    setModalHeader('Upload file');
+                    setOpenImageModal(true);
+                }}>
+                    <div style={classes.menuBtn}>
+                        <span>{t('Add profile image')}</span>
+                    </div>
+                </MenuItem>
+                {
+                    changeInitials && <>
+                        <Divider/>
+                        <MenuItem onClick={() => {
+                            setModalHeader('Edit initials');
+                            setOpenInitialsModal(true);
+                        }}>
+                            <div style={classes.menuBtn}>
+                                <span>{t('Edit initials')}</span>
+                            </div>
+                        </MenuItem>
+                    </>
+                }
             </Menu>
             <GoMakeModal
                 insideStyle={{paddingLeft: 0, paddingRight: 0, height: 'fit-content', width: 380}}
                 headerPadding={20}
-                openModal={openModal}
+                openModal={openImageModal && state}
                 onClose={() => {
-                    setOpenModal(false);
-                    setModalComponent(<div/>);
                     setModalHeader('');
+                    setOpenImageModal(false);
                 }}
                 modalTitle={modalHeader}
             >
-                {modalComponent}
+                <FileUploadComponent onUpload={onUploadImage}/>
+            </GoMakeModal>
+
+            <GoMakeModal
+                insideStyle={{paddingLeft: 0, paddingRight: 0, height: 'fit-content', width: 380}}
+                headerPadding={20}
+                openModal={openInitialsModal}
+                onClose={() => {
+                    setModalHeader('');
+                    setOpenInitialsModal(false)
+                }}
+                modalTitle={modalHeader}
+            >
+                <EditInitialsComponent/>
             </GoMakeModal>
         </>
     )

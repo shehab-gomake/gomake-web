@@ -2,26 +2,45 @@ import Stack from "@mui/material/Stack";
 import {GomakeTextInput} from "@/components";
 import {useTranslation} from "react-i18next";
 import {SecondaryButton} from "@/components/button/secondary-button";
+import {useUserProfile} from "@/hooks/use-user-profile";
+import {useState} from "react";
 
 const ChangePasswordComponent = () => {
    const {t} = useTranslation();
+   const [currentPassword, setCurrentPassword] = useState<string>('');
+   const [newPassword, setNewPassword] = useState<string>('');
+   const [confirmPassword, setConfirmPassword] = useState<string>('');
+   const {updateUserPassword} = useUserProfile();
+   const handleClick = () => {
+       if (!currentPassword || !newPassword || !confirmPassword) {
+           return;
+       }
+       if (newPassword !== confirmPassword) {
+           return;
+       }
+        updateUserPassword({
+            currentPassword,
+            newPassword,
+            confirmPassword,
+        }).then();
+   }
     return (
         <div>
             <Stack direction={'column'} gap={'20px'} padding={'20px'}>
                 <Stack direction={'column'} gap={'13px'}>
                     <span>{t('profileSettings.currentPassword')}</span>
-                    <GomakeTextInput type={'password'} style={{height: 40}}/>
+                    <GomakeTextInput onChange={(e) => setCurrentPassword(e.target.value)} type={'password'} style={{height: 40}}/>
                 </Stack>
                 <Stack direction={'column'} gap={'13px'}>
                     <span>{t('profileSettings.newPassword')}</span>
-                    <GomakeTextInput type={'password'} style={{height: 40}}/>
+                    <GomakeTextInput onChange={(e) => setNewPassword(e.target.value)} type={'password'} style={{height: 40}}/>
                 </Stack>
                 <Stack direction={'column'} gap={'13px'}>
                     <span>{t('profileSettings.confirmNewPassword')}</span>
-                    <GomakeTextInput type={'password'} style={{height: 40}}/>
+                    <GomakeTextInput onChange={(e) => setConfirmPassword(e.target.value)} type={'password'} style={{height: 40}}/>
                 </Stack>
                 <Stack direction={'row'} justifyContent={'flex-end'}>
-                    <SecondaryButton variant={'contained'}>change</SecondaryButton>
+                    <SecondaryButton onClick={handleClick} variant={'contained'}>change</SecondaryButton>
                 </Stack>
             </Stack>
         </div>

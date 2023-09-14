@@ -3,7 +3,7 @@ import rocket from "./rocket.png";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
 import {useRecoilValue} from "recoil";
-import {companyProfileState} from "@/store/user-profile";
+import {companyProfileState} from "@/store/company-profile";
 
 const LoginRightSide = () => {
   const { clasess } = useStyle();
