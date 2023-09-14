@@ -33,7 +33,12 @@ const useEmployee = () => {
     const {t} = useTranslation();
 
     const getAllUsers = () => {
-        getAllUsersApi(callApi, setUsers).then();
+        const callBackFunction = (data) => {
+            if (data.success) {
+                setUsers(data.data);
+            }
+        }
+        getAllUsersApi(callApi, callBackFunction).then();
     }
     const onShowInActiveChange = (value: boolean) => {
         setShowInActiveEmployees(value);
@@ -58,65 +63,66 @@ const useEmployee = () => {
         return usersArray
     }, [users, showInActiveEmployees, search])
 
-    const editEmployee = (id: string) => {
-        getEmployeeApi(callApi, setEmployeeState, id).then(() => {
-            setAction(EmployeeActions.UPDATE);
-            setOpenModal(true);
+    const editEmployee = async (id: string) => {
+        const callBack = (data) => {
+            if (data.success) {
+                setEmployeeState(data.data);
+                setAction(EmployeeActions.UPDATE);
+                setOpenModal(true);
 
-        });
+            }
+        }
+        await getEmployeeApi(callApi, callBack, id)
     }
 
-    const toggleEmployeeActive = (id: string) => {
-        toggleEmployeeStatus(callApi, undefined, id).then(
-            (res) => {
-                if (res.success) {
-                    alertSuccessUpdate();
-                    setUsers(
-                        users.map(
-                            user => {
-                                return user.id === id ? {...user, isActive: !user.isActive} : user
-                            }))
-                }
-                else {
-                    alertSuccessUpdate();
+    const toggleEmployeeActive = async (id: string) => {
+        const callback = (data) => {
+            if (data.success) {
+                alertSuccessUpdate();
+                setUsers(
+                    users.map(
+                        user => {
+                            return user.id === id ? {...user, isActive: !user.isActive} : user
+                        }))
+            } else {
+                alertSuccessUpdate();
+            }
+        }
+        await toggleEmployeeStatus(callApi, callback, id);
+    }
+
+
+    const onAddEmployee = async () => {
+        if (isValidAddEmployee() && validateEmail()) {
+            const callback = (data) => {
+                if (data.success) {
+                    alertSuccessAdded();
+                    const newEmployee: IUser = data.data
+                    setUsers([newEmployee, ...users]);
+                    setOpenModal(false);
+                    setEmployeeState(initState);
+                } else {
+                    alertFaultAdded();
                 }
             }
-        )
-
-    }
-
-    const onAddEmployee = () => {
-        if (isValidAddEmployee() && validateEmail()) {
-            addNewEmployee(callApi, undefined, employee).then(
-                (res) => {
-                    if (res.success) {
-                       alertSuccessAdded();
-                        const newEmployee: IUser = res.data
-                        setUsers([newEmployee, ...users]);
-                        setOpenModal(false);
-                        setEmployeeState(initState);
-                    } else {
-                        alertFaultAdded();
-                    }
-                }
-            )
+           await addNewEmployee(callApi, callback, employee);
         }
     }
-    const onUpdateEmployee = () => {
+    const onUpdateEmployee = async () => {
         if (isValidEditEmployee() && validateEmail()) {
-            updateEmployee(callApi, undefined, employee).then(
-                (res) => {
-                    if (res.success) {
-                        const newEmployee = res.data;
-                        setUsers(users.map(user => user.id === newEmployee?.id ? newEmployee : user))
-                        setOpenModal(false);
-                        setEmployeeState(initState);
-                        alertSuccessUpdate();
-                    } else {
-                        alertFaultUpdate();
-                    }
+            const callBack = (data) => {
+                if (data.success) {
+                    const newEmployee = data.data;
+                    setUsers(users.map(user => user.id === newEmployee?.id ? newEmployee : user))
+                    setOpenModal(false);
+                    setEmployeeState(initState);
+                    alertSuccessUpdate();
+                } else {
+                    alertFaultUpdate();
                 }
-            )
+            }
+
+            await updateEmployee(callApi, callBack, employee)
         }
     }
 

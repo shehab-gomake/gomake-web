@@ -21,23 +21,34 @@ const useUserProfile = () => {
 
 
     const getProfile = async () => {
-        await getUserProfile(callApi, setProfileState);
+        const callBack = (res) => {
+            if (res.success) {
+                setProfileState(res.data);
+            }
+        }
+
+        await getUserProfile(callApi, callBack);
     }
     const updateProfile = async () => {
-        const res = await updateUserProfile(callApi, undefined, profileState);
-        if (res.success) {
-            alertSuccessUpdate();
-        } else {
-            alertFaultUpdate();
+        const callBack = (res) => {
+            if (res.success) {
+                alertSuccessUpdate();
+            } else {
+                alertFaultUpdate();
+            }
         }
+        await updateUserProfile(callApi, callBack, profileState);
     }
     const changeUserProfileImage = async (file: any) => {
-        setProfileState({...profileState, imagePath: ''})
-        const res = await updateUserProfileImage(callApi, undefined, {userId: profileState.id, fileBase64: file});
-        if (res.success) {
-           setProfileState({...profileState, imagePath: res.data?.url});
+        const callBack = (res) => {
+            if (res.success) {
+                setProfileState({...profileState, imagePath: res.data?.url});
+                setChangeProfileImage(false);
+            }
         }
-        setChangeProfileImage(false);
+
+        setProfileState({...profileState, imagePath: ''})
+        const res = await updateUserProfileImage(callApi, callBack, {userId: profileState.id, fileBase64: file});
         return res.success
     }
 
@@ -45,14 +56,17 @@ const useUserProfile = () => {
         avatarBackGroundColor: string,
         avatarInitials: string
     }) => {
-        const res = await resetUserInitials(callApi, undefined, {...data, id: profileState.id});
-        if (res.success) {
-            setProfileState({...profileState, ...data, imagePath: ''})
-            setInitialsModal(false);
-            alertSuccessUpdate()
-        }else {
-            alertFaultUpdate()
+        const callBack = (res) => {
+            if (res.success) {
+                setProfileState({...profileState, ...data, imagePath: ''})
+                setInitialsModal(false);
+                alertSuccessUpdate()
+            } else {
+                alertFaultUpdate()
+            }
         }
+
+        await resetUserInitials(callApi, callBack, {...data, id: profileState.id});
     }
 
     const updateUserPassword = async (data: {
@@ -60,12 +74,15 @@ const useUserProfile = () => {
         newPassword: string,
         confirmPassword: string
     }) => {
-        const res = await resetUserPassword(callApi, undefined, {id: profileState.id, ...data})
-        if (res.success) {
-            alertSuccessUpdate();
-        }else {
-            alertFaultUpdate();
+
+        const callBack = (res) => {
+            if (res.success) {
+                alertSuccessUpdate();
+            } else {
+                alertFaultUpdate();
+            }
         }
+        await resetUserPassword(callApi, callBack, {id: profileState.id, ...data})
     }
     return {
         updateProfile,

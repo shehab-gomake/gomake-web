@@ -1,24 +1,15 @@
-import { returnResult } from "@/utils/helpers";
-import {ICallApi, ISetState} from "@/services/api-service/interface";
+import {ICallApi, ICallBack} from "@/services/api-service/interface";
 import {EHttpMethod} from "@/services/api-service/enums";
+import get from "lodash.get";
 
 
-const getSetApiData = async (
-  callApi: ICallApi,
-  method: EHttpMethod,
-  url: string,
-  setState?: ISetState,
-  data?: any,
-
-): Promise<{success: boolean, data: any}> => {
-  const result: any = await callApi(
-    method,
-    url,
-    data
-  );
-  const _data = returnResult(result, setState);
-
-  return {success: !!result.success, data: _data};
+const getSetApiData = async (callApi: ICallApi, method: EHttpMethod, url: string , callBackFunction: ICallBack = () =>{}, data?: any,): Promise<{ success: boolean, data: any }> => {
+    const result: any = await callApi(method, url, data);
+    const dataKey = "data.data.data";
+    const _data = get(result, dataKey);
+    const res = {success: !!result.success, data: _data};
+    callBackFunction(res);
+    return res;
 };
 
-export { getSetApiData };
+export {getSetApiData};

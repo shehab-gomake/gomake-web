@@ -14,7 +14,12 @@ const useAdminMachines = () => {
     const setMachineState = useSetRecoilState(machineState);
     const getAndSetAdminMachines = async () => {
         if (categoryId) {
-            await adminGetAllMachineByCategory(callApi, setMachines, categoryId);
+            const callBack = (res) => {
+                if (res.success) {
+                    setMachines(res.data);
+                }
+            }
+            await adminGetAllMachineByCategory(callApi, callBack, categoryId);
         }
     }
 

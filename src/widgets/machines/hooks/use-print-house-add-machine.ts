@@ -2,7 +2,6 @@ import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {machineState as STATE} from "@/widgets/machines/state/machine-state";
 import {useRouter} from "next/router";
-import {useTranslation} from "react-i18next";
 import {usePrintHouseMachines} from "@/widgets/machines/hooks/use-print-house-machines";
 import {
     printHouseAddNewMachine,
@@ -25,38 +24,42 @@ const usePrintHouseAddMachine = () => {
     } = useSnackBar();
     const {push} = useRouter();
 
-    function addPrintHouseMachine() {
+    const addPrintHouseMachine = async () => {
         const payload = {...machineState};
         payload.machineId = machineState.id;
         delete payload['_id'];
         delete payload['id'];
-        printHouseAddNewMachine(callApi, setMachineState, payload).then(res => {
+        const callBack = async (res) => {
             if (res.success) {
+                setMachineState(res.data);
                 alertSuccessAdded();
-                push(`/machines/category/${machineState?.category}`).then()
+                await push(`/machines/category/${machineState?.category}`)
             } else {
                 alertFaultAdded();
             }
-        })
+        }
+        await printHouseAddNewMachine(callApi, callBack, payload)
     }
 
-    const duplicateMachine = () => {
+    const duplicateMachine = async () => {
         const payload = {...machineState};
         delete payload['_id'];
         delete payload['id'];
         payload.nickName = payload.nickName + ' - Duplicated'
-        printHouseAddNewMachine(callApi, setMachineState, payload).then(res => {
+        const callBack = (res) => {
             if (res?.success) {
+                setMachineState(res.data);
                 addMachineToList(res.data)
                 alertSuccessAdded();
             } else {
                 alertFaultAdded();
             }
-        })
+        }
+        await printHouseAddNewMachine(callApi, callBack, payload);
     }
 
-    const deleteMachine = () => {
-        printHouseDeleteMachine(callApi, undefined, {id: machineState?.id}).then(res => {
+    const deleteMachine = async () => {
+        const callBack = (res) => {
             if (res?.success) {
                 alertSuccessDelete();
                 deleteMachineFromArray(machineState.id);
@@ -64,18 +67,21 @@ const usePrintHouseAddMachine = () => {
             } else {
                 alertFaultDelete();
             }
-        })
+        }
+        await printHouseDeleteMachine(callApi, callBack, {id: machineState?.id})
     };
 
 
     const updateMachine = async () => {
-        const result = await printHouseUpdateMachine(callApi, undefined, {...machineState});
-        if (result.success) {
-            setUpdatedMachine(result.data);
-            alertSuccessUpdate();
-        } else {
-            alertFaultUpdate();
+        const callBack = (res) => {
+            if (res.success) {
+                setUpdatedMachine(res.data);
+                alertSuccessUpdate();
+            } else {
+                alertFaultUpdate();
+            }
         }
+        await printHouseUpdateMachine(callApi, callBack, {...machineState});
     }
 
     return {
