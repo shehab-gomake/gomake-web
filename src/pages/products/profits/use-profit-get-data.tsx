@@ -9,6 +9,8 @@ import {
   getAndSetAllParameters,
   getAndSetClientTypes,
   getAndSetGetAllTestProductsByActionId,
+  getAndSetMachinces,
+  getAndSetMachincesNew,
 } from "@/services/hooks";
 import {
   actionExceptionProfitId,
@@ -25,10 +27,9 @@ import {
 } from "@/store";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { renderProfits } from "./use-profit-action.";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
-import { machineCategoriesState } from "@/store/machine-categories";
 
 const useProfitsGetData = () => {
   const router: any = useRouter();
@@ -36,9 +37,10 @@ const useProfitsGetData = () => {
   const [selectedAction, setSelectedAction] = useState<any>({});
   const [productsStateValue, setProductsState] =
     useRecoilState<any>(productsState);
-  // const [machincesStateValue, setMachincesState] =
-  //   useRecoilState<any>(machincesState);
-  const machincesStateValue = useRecoilValue(machineCategoriesState);
+  const [machincesStateValue, setMachincesState] =
+    useRecoilState<any>(machincesState);
+  console.log("machincesStateValue", machincesStateValue);
+  // const machincesStateValue = useRecoilValue(machineCategoriesState);
   const [actionExceptionProfitRowsVal, setActionExceptionProfitRows] =
     useRecoilState<any>(actionProfitRows);
   const [selectTestDataVal, setSelectTestData] =
@@ -131,11 +133,11 @@ const useProfitsGetData = () => {
     );
   }, [actionProfits, actionExceptionProfitIdValue]);
 
-  // const getMachincesProfits = useCallback(async () => {
-  //   await getAndSetMachinces(callApi, setMachincesState);
-  // }, []);
   const getProducts = useCallback(async () => {
     await getAllProductsForDropDownList(callApi, setProductsState);
+  }, []);
+  const getMachincesProfits = useCallback(async () => {
+    await getAndSetMachincesNew(callApi, setMachincesState);
   }, []);
 
   const getTestProducts = useCallback(async () => {
@@ -147,7 +149,7 @@ const useProfitsGetData = () => {
         actionId: selectedAction?.id,
       }
     );
-  }, [selectedAction, productsStateValue, router]);
+  }, [selectedAction, productsStateValue]);
 
   return {
     router,
@@ -177,10 +179,10 @@ const useProfitsGetData = () => {
     setActionProfitRowsNew,
     setSelectTestData,
     setActionExceptionProfitRows,
-    // setMachincesState,
+    setMachincesState,
     setProductsState,
     setSelectedAction,
-    // getMachincesProfits,
+    getMachincesProfits,
     getProducts,
     getTestProducts,
   };

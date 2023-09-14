@@ -28,10 +28,6 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
   const [actionExceptionProfitIdValue, setactionExceptionProfitId] =
     useRecoilState<any>(actionExceptionProfitId);
 
-  // const actionProfitRowsVal = useRecoilValue<any>(actionProfitRows);
-
-  // const actionProfitRowsNew = useRecoilValue<any>(actionProfitRowsState);
-
   const actionProfitPricingTableRows = useRecoilValue<any>(
     actionProfitPricingTableRowsState
   );
