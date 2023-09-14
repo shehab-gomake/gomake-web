@@ -18,8 +18,9 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        // padding: convertWidthToVW(30),
-        marginBottom: convertWidthToVW(30),
+        padding: convertWidthToVW(30),
+        paddingTop: 0,
+        // marginBottom: convertWidthToVW(30),
         // minHeight: "120vh",
       },
       skeletonRowStyle: {
@@ -157,13 +158,16 @@ const useStyle = () => {
         display: "flex",
         width: "100%",
         gap: 24,
+        height: 580,
       },
       pricingCointaner: {
         width: "70%",
         dropShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
+        height: "100%",
       },
       exceptionsCointaner: {
         width: "41%",
+        height: "100%",
       },
       titleActionName: {
         ...FONT_FAMILY.Lexend(600, 20),

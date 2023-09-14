@@ -41,7 +41,7 @@ const ProductList = () => {
               {t("products.profits.more")}
             </div>
           </div>
-          <div style={{ width: "100%" }}>
+          <div style={{ width: "100%", maxHeight: 135, overflow: "scroll" }}>
             <>
               {profitsStateValue?.testProductsState?.map((item: any) => {
                 return (
