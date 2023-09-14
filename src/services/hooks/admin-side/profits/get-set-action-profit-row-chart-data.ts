@@ -10,7 +10,8 @@ const getAndSetActionProfitRowChartData = async (
   const result: any = await callApi(
     "GET",
     "/v1/printhouse-config/profits/get-action-profit-row-chart-data",
-    data
+    data,
+    false
   );
   const _data = returnResult(result, undefined);
   const costAxis = [];

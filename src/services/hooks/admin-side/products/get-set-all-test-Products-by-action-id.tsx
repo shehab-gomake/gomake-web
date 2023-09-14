@@ -17,7 +17,8 @@ const getAndSetGetAllTestProductsByActionId = async (
   const result: any = await callApi(
     "GET",
     "/v1/printhouse-config/products/get-test-product-by-action-id",
-    data
+    data,
+    false
   );
   const _data = returnResult(result, undefined);
   const mapData = _data.map((item: any) => {
