@@ -33,9 +33,11 @@ const SettingsUsersWidget = () => {
   return (
     <div>
         <PrimaryTabsComponent tabs={tabs}>
-         
-            <AddButton label={t("usersSettings.addEmployee")} onClick={handleAddEmployeeClick}/>
-            <AddButton label={t("permissionsSettings.AddRole")} onClick={() => setisNewRole(true)}/>
+          <div style={{display:"flex",gap:10}}>
+               <AddButton label={t("usersSettings.addEmployee")} onClick={handleAddEmployeeClick}/>
+              <AddButton label={t("permissionsSettings.AddRole")} onClick={() => setisNewRole(true)}/>
+          </div>
+          
          
      
         </PrimaryTabsComponent>

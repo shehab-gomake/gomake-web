@@ -60,7 +60,8 @@ const useStyle = ({ width }: any) => {
         position:"sticky" as "sticky" ,
         left: 0,
         marginLeft:20,
-        zIndex:0,
+        zIndex:1,
+        backgroundColor:"inherit",
         minWidth:"200px",
       } 
     };
