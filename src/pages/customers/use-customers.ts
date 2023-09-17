@@ -95,8 +95,8 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
       setClientTypesCategores,
     );
     const clientTypes = data.map(types => ({
-      label: `${types.name}`,
-      id: types.id
+      label: types.text, 
+      id: types.value    
     }));
     setClientTypesCategores(clientTypes);
   }, []);
@@ -106,6 +106,7 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
   }, []);
 
   ///////////////////////// select agent //////////////////////////////
+
   const getAgentCategores = useCallback(async () => {
     const data = await getAndSetEmployees2(
       callApi,
@@ -113,8 +114,8 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
       { isAgent: true }
     );
     const agentNames = data.map(agent => ({
-      label: `${agent.firstname} ${agent.lastname}`,
-      id: agent.id
+      label: agent.text, 
+      id: agent.value    
     }));
     setAgentsCategores(agentNames);
   }, []);

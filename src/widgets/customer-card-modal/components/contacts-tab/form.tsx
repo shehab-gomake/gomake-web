@@ -6,13 +6,17 @@ import { Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { HeaderFilter } from "../header-filter";
 import IContact from "@/types/IContact";
+import { contactInputs1, contactInputs2 } from "../../inputs/contact-inputs";
+import { FormInput } from "@/components/form-inputs/form-input";
+import { IInput } from "@/components/form-inputs/interfaces";
 
-interface IProps{
-    contact:IContact,
-    onDelete:any,
+
+interface IProps {
+    contact: IContact,
+    onDelete: any,
     setContact: any,
 }
-const ContactForm = ({contact , onDelete , setContact }:IProps) => {
+const ContactForm = ({ contact, onDelete, setContact }: IProps) => {
 
     const { clasess } = useStyle();
     const { t } = useTranslation();
@@ -24,55 +28,27 @@ const ContactForm = ({contact , onDelete , setContact }:IProps) => {
         t("customers.modal.deliveryNote"),],
         []
     );
-    
+
+    const onChangeInputs = (key, value) => {
+        setContact({ ...contact, [key]: value })
+    }
+
     return (
         <div >
             <Row style={{ marginBottom: '24px', marginTop: '24px' }}>
-            <Col style={{display: "flex" , width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.firstName")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder={t("customers.modal.firstName")} value={contact?.firstName} onChange={(e) => setContact({ ...contact, firstName: e.target.value })}/>
-                </Col>
-                <Col style={{display: "flex" , width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.lastName")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder={t("customers.modal.lastName")} value={contact?.lastName} onChange={(e) => setContact({ ...contact, lastName: e.target.value })}/>
-                </Col>
-                <Col style={{display: "flex" , width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.title")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder={t("customers.modal.title")} value={contact?.position} onChange={(e) => setContact({ ...contact, title: e.target.value })} />
-                </Col>
-                <Col style={{display: "flex" , width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.role")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder={t("customers.modal.role")} value={contact?.position} onChange={(e) => setContact({ ...contact, position: e.target.value })}/>
-                </Col>
-                <Col style={{display: "flex" , width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.address")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder={t("customers.modal.address")} value={contact?.address} onChange={(e) => setContact({ ...contact, address: e.target.value })}/>
-                </Col>
+                {
+                    contactInputs1(contact).map(item => <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                        <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+                }
+            </Row>
+            <Row style={{ marginBottom: '24px', marginTop: '24px' }}>
+                {
+                    contactInputs2(contact).map(item => <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                        <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+                }
             </Row>
             <Row style={{ marginBottom: '24px' }} >
-            <Col style={{display: "flex" , width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.phone1")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder={t("customers.modal.phone1")} value={contact?.tel1} onChange={(e) => setContact({ ...contact, tel1: e.target.value })}/>
-                </Col>
-                <Col style={{display: "flex" , width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.phone2")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder={t("customers.modal.phone2")} value={contact?.tel2} onChange={(e) => setContact({ ...contact, tel2: e.target.value })}/>
-                </Col>
-                <Col style={{display: "flex" , width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.mobile")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder={t("customers.modal.mobile")} value={contact?.phone} onChange={(e) => setContact({ ...contact, phone: e.target.value })}/>
-                </Col>
-                <Col style={{display: "flex" , width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.fax")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder={t("customers.modal.fax")} value={contact?.fax} onChange={(e) => setContact({ ...contact, fax: e.target.value })}/>
-                </Col>
-                <Col style={{display: "flex" , width: "180px",  flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.email")}</span>
-                    <input style={clasess.inputStyle} type="text" placeholder={t("customers.modal.email")} value={contact?.mail} onChange={(e) => setContact({ ...contact, mail: e.target.value })}/>
-                </Col>
-            </Row>
-            <Row style={{ marginBottom: '24px' }} >
-                <Col md={3}  style={{display: "none"}}>
+                <Col md={3} style={{ display: "none" }}>
                     <span style={clasess.headerStyle} >{t("customers.modal.defaultInDocument")}</span>
                     <HeaderFilter setAllOptions={DocumentsOptions} style={clasess.autoComplateStyle} setPlaceholder={t("customers.modal.defaultInDocument")} ></HeaderFilter>
                 </Col>

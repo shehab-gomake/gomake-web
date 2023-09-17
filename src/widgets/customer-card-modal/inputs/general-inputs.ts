@@ -1,0 +1,187 @@
+
+const generalInputs = (state) => {
+    return [
+        {
+            name: "phone1",
+            label: "customers.modal.phone1",
+            type: "text",
+            placeholder: "customers.modal.phone1",
+            required: false,
+            parameterKey: "tel1",
+            options: [],
+            value: state?.tel1,
+            isValid: true,
+        },
+        {
+            name: "phone2",
+            label: "customers.modal.phone2",
+            type: "text",
+            placeholder: "customers.modal.phone2",
+            required: false,
+            parameterKey: "tel2",
+            options: [],
+            value: state?.tel2,
+            isValid: true,
+        },
+        {
+            name: "site",
+            label: "customers.modal.site",
+            type: "text",
+            placeholder: "customers.modal.site",
+            required: false,
+            parameterKey: "internetSite",
+            options: [],
+            value: state?.internetSite,
+            isValid: true,
+        },
+        {
+            name: "mainContactName",
+            label: "customers.modal.mainContactName",
+            type: "text",
+            placeholder: "customers.modal.mainContactName",
+            required: false,
+            parameterKey: "mainContactName",
+            options: [],
+            value: state?.mainContactName,
+            isValid: true,
+        },
+        {
+            name: "mobile",
+            label: "customers.modal.mobile",
+            type: "text",
+            placeholder: "customers.modal.mobile",
+            required: false,
+            parameterKey: "phone",
+            options: [],
+            value: state?.phone,
+            isValid: true,
+        },
+
+    ];
+}
+
+
+const generalInputs2 = (state) => {
+    return [
+        {
+            name: "mail",
+            label: "customers.modal.email",
+            type: "text",
+            placeholder: "customers.modal.email",
+            required: false,
+            parameterKey: "mail",
+            options: [],
+            value: state?.mail,
+            isValid: true,
+        },
+        {
+            name: "fax",
+            label: "customers.modal.fax",
+            type: "text",
+            placeholder: "customers.modal.fax",
+            required: false,
+            parameterKey: "fax",
+            options: [],
+            value: state?.fax,
+            isValid: true,
+        },
+        {
+            name: "agent",
+            label: "customers.modal.agent",
+            type: "select",
+            placeholder: "customers.modal.agent",
+            required: true,
+            parameterKey: "agentId",
+            options: [],
+            optionsUrl: "/v1/employee/get-all-agents",
+            value: state?.agentId,
+            isValid: true,
+        },
+        
+        {
+            name: "isOccasional",
+            label: "customers.modal.anOccasionalCustomer",
+            type: "switch",
+            placeholder: "customers.modal.anOccasionalCustomer",
+            required: false,
+            parameterKey: "isOccasional",
+            options: [],
+            value: state?.isOccasional,
+            isValid: true,
+        },
+        {
+            name: "isActive",
+            label: "customers.modal.active",
+            type: "switch",
+            placeholder: "customers.modal.active",
+            required: false,
+            parameterKey: "isActive",
+            options: [],
+            value: state?.isActive,
+            isValid: true,
+        },
+
+    ];
+}
+
+const lastOrderInputs = (state) => {
+    return [
+        {
+            name: "lastOrderContactName",
+            label: "customers.modal.name",
+            type: "text",
+            placeholder: "customers.modal.name",
+            required: false,
+            parameterKey: "lastOrderContactName",
+            options: [],
+            value: state?.lastOrderContactName,
+            isValid: true,
+        },
+        {
+            name: "lastOrderContactPhone",
+            label: "customers.modal.phone",
+            type: "text",
+            placeholder: "customers.modal.phone",
+            required: false,
+            parameterKey: "lastOrderContactPhone",
+            options: [],
+            value: state?.lastOrderContactPhone,
+            isValid: true,
+        },
+        {
+            name: "lastOrderContactMail",
+            label: "customers.modal.email",
+            type: "text",
+            placeholder: "customers.modal.email",
+            required: false,
+            parameterKey: "lastOrderContactMail",
+            options: [],
+            value: state?.lastOrderContactMail,
+            isValid: true,
+        },
+        {
+            name: "lastOrderContactAddress",
+            label: "customers.modal.address",
+            type: "text",
+            placeholder: "customers.modal.address",
+            required: false,
+            parameterKey: "lastOrderContactAddress",
+            options: [],
+            value: state?.lastOrderContactAddress,
+            isValid: true,
+        },
+        {
+            name: "lastOrderContactPhone",
+            label: "customers.modal.mobile",
+            type: "text",
+            placeholder: "customers.modal.mobile",
+            required: false,
+            parameterKey: "lastOrderContactPhone",
+            options: [],
+            value: state?.lastOrderContactPhone,
+            isValid: true,
+        },
+    ];
+}
+
+export { generalInputs, generalInputs2 , lastOrderInputs};
