@@ -1,4 +1,8 @@
 export interface ITableProps {
     rows: any[][];
-    headers: string[]
+    headers: string[];
+    stickyHeader: boolean;
+    stickyFirstCol: boolean;
+    maxHeight?: number;
+
 }
