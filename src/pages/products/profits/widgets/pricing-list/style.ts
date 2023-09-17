@@ -37,6 +37,7 @@ const useStyle = () => {
         paddingRight: 10,
         maxHeight: 160,
         overflow: "scroll",
+        paddingTop: 10,
       },
       tableBody: {
         display: "flex",

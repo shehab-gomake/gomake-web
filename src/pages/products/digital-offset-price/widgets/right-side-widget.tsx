@@ -5,7 +5,6 @@ import {
 } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { isLoadgingState } from "@/store";
-import { loadgingState } from "@/store/loading";
 import { Checkbox, CircularProgress, Slider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,6 +22,12 @@ const RightSideWidget = ({
   activeTab,
   onOpeneMakeShape,
   pricingDefaultValue,
+  setUrgentOrder,
+  urgentOrder,
+  setPrintingNotes,
+  setGraphicNotes,
+  printingNotes,
+  graphicNotes,
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
   const [defaultPrice, setDefaultPrice] = useState<any>();
@@ -101,6 +106,10 @@ const RightSideWidget = ({
             <Checkbox
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon />}
+              onChange={() => {
+                setUrgentOrder(!urgentOrder);
+              }}
+              checked={urgentOrder}
             />
             <div style={clasess.secondText}>
               {t("products.offsetPrice.admin.urgentOrder")}
@@ -183,6 +192,10 @@ const RightSideWidget = ({
                 <GomakeTextInput
                   multiline={6}
                   style={clasess.multiLineTextInputStyle}
+                  onChange={(e: any) => {
+                    setPrintingNotes(e.target.value);
+                  }}
+                  value={printingNotes}
                   placeholder="Production comment"
                 />
               </div>
@@ -205,6 +218,10 @@ const RightSideWidget = ({
               <div style={clasess.multiLineContainer}>
                 <GomakeTextInput
                   multiline={6}
+                  onChange={(e: any) => {
+                    setGraphicNotes(e.target.value);
+                  }}
+                  value={graphicNotes}
                   style={clasess.multiLineTextInputStyle}
                   placeholder="Graphic design comment"
                 />
