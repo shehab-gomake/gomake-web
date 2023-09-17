@@ -3,6 +3,7 @@ import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EditIcon } from "@/icons";
 import { getAllPrintHouseActions } from "@/services/hooks";
+import { FONT_FAMILY } from "@/utils/font-family";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -19,7 +20,27 @@ const useActions = () => {
       `${action?.isInternal ? "Yes" : "No"} / ${
         action?.isOutsource ? "Yes" : "No"
       }`,
-      action?.isActive ? "Yes" : "No",
+      action?.isActive ? (
+        <div
+          style={{
+            display: "inline-flex",
+            ...FONT_FAMILY.Lexend(500, 14),
+            color: "#40CC4E",
+          }}
+        >
+          {t("usersSettings.active")}
+        </div>
+      ) : (
+        <div
+          style={{
+            display: "inline-flex",
+            ...FONT_FAMILY.Lexend(500, 14),
+            color: "#D92C2C",
+          }}
+        >
+          {t("usersSettings.inactive")}
+        </div>
+      ),
       <PrimaryButton
         startIcon={
           <EditIcon color={primaryColor(500)} width={20} height={20} />

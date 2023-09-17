@@ -51,15 +51,19 @@ const useQuoteGetData = () => {
   }, []);
 
   const getAllClientContacts = useCallback(async () => {
-    await getAndSetClientContacts(callApi, setClientContactsValue, {
-      ClientId: quoteItemValue?.customerID,
-    });
+    if (quoteItemValue?.customerID) {
+      await getAndSetClientContacts(callApi, setClientContactsValue, {
+        ClientId: quoteItemValue?.customerID,
+      });
+    }
   }, [quoteItemValue]);
 
   const getAllClientAddress = useCallback(async () => {
-    await getAndSetClientAddress(callApi, setClientAddressValue, {
-      ClientId: quoteItemValue?.customerID,
-    });
+    if (quoteItemValue?.customerID) {
+      await getAndSetClientAddress(callApi, setClientAddressValue, {
+        ClientId: quoteItemValue?.customerID,
+      });
+    }
   }, [quoteItemValue]);
   useEffect(() => {
     getAllCustomers();

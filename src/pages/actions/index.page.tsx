@@ -3,7 +3,6 @@ import { HeaderTitle } from "@/widgets";
 import { useActions } from "./use-actions";
 
 import { useStyle } from "./style";
-import { Row } from "./widget/row";
 import { PrimaryTable } from "@/components/tables/primary-table";
 
 export default function Profits() {
