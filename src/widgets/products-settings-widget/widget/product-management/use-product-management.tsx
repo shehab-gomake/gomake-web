@@ -62,9 +62,13 @@ const useProductManagement = () => {
         status: (
           <div>
             {item?.status === false ? (
-              <div style={clasess.inActiveTabStyle}>Inactive</div>
+              <div style={clasess.inActiveTabStyle}>
+                {t("usersSettings.inactive")}
+              </div>
             ) : (
-              <div style={clasess.activeTabStyle}>Active</div>
+              <div style={clasess.activeTabStyle}>
+                {t("usersSettings.active")}
+              </div>
             )}
           </div>
         ),

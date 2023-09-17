@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import { Table } from "@/widgets/table/table";
-import { FlowsMappingWidget } from "./flows-mapping";
 import { ActionMappingWidget } from "./action-mapping";
 
 const PricingSectionMappingWidget = ({

@@ -741,7 +741,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
       false
     );
     if (res?.success) {
-      console.log("res", res);
+      navigate("/quote");
     }
   }, [generalParameters, router, pricingDefaultValue, quantity]);
   const navigateForRouter = () => {

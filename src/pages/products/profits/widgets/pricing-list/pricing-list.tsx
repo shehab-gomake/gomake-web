@@ -79,9 +79,9 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
                   <div
                     style={{
                       width: 100,
-                      height: "98%",
+                      height: "90%",
                       position: "absolute",
-                      top: -10,
+                      top: 0,
                       left: "29.2%",
                       border: "1px solid #F135A3",
                       borderRadius: 4,

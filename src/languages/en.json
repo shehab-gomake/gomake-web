@@ -226,6 +226,8 @@
       },
       "title": "Sheet paper",
       "category": "Category",
+      "viewMaterial": "View Material",
+      "view": "View",
       "supplier": "Supplier",
       "search": "Search",
       "weight": "Weight",

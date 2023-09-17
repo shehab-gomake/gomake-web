@@ -55,6 +55,7 @@ const useQuoteGetData = () => {
       ClientId: quoteItemValue?.customerID,
     });
   }, [quoteItemValue]);
+  console.log("quoteItemValue", quoteItemValue);
 
   const getAllClientAddress = useCallback(async () => {
     await getAndSetClientAddress(callApi, setClientAddressValue, {
