@@ -11,6 +11,7 @@ const HeaderFilter = ({ agentsCategores, clientTypesCategores, statuses, onChang
     const { t } = useTranslation();
     const { clasess } = useStyle();
 
+    
     return (
         <div style={clasess.subHeaderContainer} >
         <div style={clasess.filterContainer}>
@@ -43,7 +44,6 @@ const HeaderFilter = ({ agentsCategores, clientTypesCategores, statuses, onChang
                     onChange={onChangeStatus}
                     value={valStatus}
                     disableClearable={true}
-                //defaultValue={statuses[0]}
                 />
             ) : (
                 <Skeleton variant="rectangular" width={200} height={40} />

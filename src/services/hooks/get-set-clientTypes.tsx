@@ -15,3 +15,4 @@ const getAndSetClientTypes = async (
 export {
   getAndSetClientTypes,
 };
+
