@@ -17,11 +17,12 @@ const ProductList = () => {
   const productTest = useRecoilValue<any>(productTestState);
 
   useEffect(() => {
-    if (!productTest && profitsStateValue?.testProductsState) {
+    if (!productTest && profitsStateValue?.testProductsState?.length > 0) {
       profitsStateValue?.onCklickActionProfitTestResultsByActionId(
         profitsStateValue?.testProductsState[0]?.item?.productId,
         profitsStateValue?.testProductsState[0]?.name,
-        profitsStateValue?.testProductsState[0]?.item?.id
+        profitsStateValue?.testProductsState[0]?.item?.id,
+        true
       );
     }
   }, [profitsStateValue?.testProductsState, productTest]);
@@ -40,7 +41,7 @@ const ProductList = () => {
               {t("products.profits.more")}
             </div>
           </div>
-          <div style={{ width: "100%" }}>
+          <div style={{ width: "100%", maxHeight: 135, overflow: "scroll" }}>
             <>
               {profitsStateValue?.testProductsState?.map((item: any) => {
                 return (

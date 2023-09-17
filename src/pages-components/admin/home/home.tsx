@@ -10,7 +10,7 @@ const HomePageComponentForAdmin = ({ isAdmin }) => {
 
   return (
     <div style={clasess.mainContainer}>
-      <div style={clasess.titleStyle}>New quote</div>
+      <div style={clasess.titleStyle}>{t("remainWords.newQuote")}</div>
       <div style={clasess.firstRowContainer}>
         <QuoteWidget isAdmin={isAdmin} />
         <div style={{ width: "100%" }} />

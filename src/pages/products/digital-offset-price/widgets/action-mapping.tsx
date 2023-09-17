@@ -18,6 +18,7 @@ const ActionMappingWidget = ({
       )?.machines
     );
   }, [machineCategories]);
+
   return (
     <div style={clasess.summaryContainer}>
       <div style={clasess.actionNameStyle}>{action?.actionName}</div>
@@ -42,7 +43,7 @@ const ActionMappingWidget = ({
                 };
               })}
               defaultValue={machineCategories.find(
-                (c) => c.id === action.machineCategoryId
+                (c) => c.id === action.categoryId
               )}
               onChange={(e: any, item: any) => {
                 setMachinesArray(item?.machines);
@@ -71,7 +72,7 @@ const ActionMappingWidget = ({
               options={machinesArray}
               getOptionLabel={(option: any) => option.machineName}
               defaultValue={machinesArray.find(
-                (c) => c.machineId === action.machineId
+                (c) => c.machineId === action.mongoDBMachineId
               )}
               placeholder={t("products.offsetPrice.admin.machine")}
               style={clasess.actoionsSelectContainer}

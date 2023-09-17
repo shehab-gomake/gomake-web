@@ -1,7 +1,7 @@
-import {IUserProfile} from "@/store/user-profile";
+import {ICompanyProfile} from "@/store/company-profile";
 
 
-const companyContactsInputs = (state: IUserProfile)  => {
+const companyContactsInputs = (state: ICompanyProfile)  => {
     return [
         {
             name: "email1",

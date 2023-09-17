@@ -1324,7 +1324,7 @@
         "selectTypeOfException": "Select type of exception",
         "selectMachine": "Select machine",
         "selectProduct": "Select product",
-        "selectClient": "Select client",
+        "selectClient": "Select client Type",
         "selectParameter": "Select parameter",
         "SelectValueNameOfParameter": "Select value name of parameter",
         "selectScopeOfChange": "Select scope of change",
@@ -1521,6 +1521,29 @@
     "users": "Users",
     "permission": "Permission management",
     "isActive": "Active"
+  },
+  "permissionsSettings": {
+    "title": "Management of roles and privileges",
+    "General": "General",
+    "Book keeping": "Book keeping",
+    "Boards": "Boards",
+    "Orders and quotes": "Orders and quotes",
+    "Work order": "Work order",
+    "Users": "Users",
+    "Tenders and fixed price lists": "Tenders and fixed price lists",
+    "Add/update price screen": "Add/update price screen",
+    "editing an order": "editing an order",
+    "Permission": "Permission",
+    "Production manager": "Production manager",
+    "Graphics": "Graphics",
+    "Services and sales": "Services and sales",
+    "Production": "Production",
+    "Service and Sales Manager": "Service and Sales Manager",
+    "Director": "Director",
+    "AddRole": "Add Role",
+    "AddNewRole": "Add new role",
+    "Role name": "Role name",
+    "add": "Add"
   },
   "settings": {
     "settings": "Settings",
@@ -1759,7 +1782,8 @@
   "profileSettings": {
     "profileTab": "My profile",
     "companyProfile": "Company profile",
-    "fullName": "Full name",
+    "firstName": "First name",
+    "lastName": "Last name",
     "companyName": "Company name",
     "position": "Position",
     "demoCode": "Demo code",
@@ -1795,5 +1819,11 @@
     "depositBranch": "Entrusted to the branch",
     "location": "Location",
     "financial": "Financial"
+  },
+  "remainWords": {
+    "newQuote": "New quote",
+    "convertToInactive": "Convert to inactive",
+    "convertToActive": "Convert to active",
+    "editing": "Editing"
   }
 }

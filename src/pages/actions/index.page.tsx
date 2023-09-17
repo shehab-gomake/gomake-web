@@ -19,20 +19,6 @@ export default function Profits() {
           marginBottom={20}
         />
         <PrimaryTable rows={allActions} headers={tableHeaders} />
-        {/* <div style={clasess.tableHeaderStyle}>
-          {tableHeaders?.map((item) => {
-            return <div style={clasess.headerNameStyle}>{item}</div>;
-          })}
-        </div>
-        <div style={clasess.row}>
-          {allActions?.map((row: any, index: number) => {
-            return (
-              <div key={`body_row${index}`} style={{ width: "100%" }}>
-                <Row row={row} index={index} />
-              </div>
-            );
-          })}
-        </div> */}
       </div>
     </CustomerAuthLayout>
   );
