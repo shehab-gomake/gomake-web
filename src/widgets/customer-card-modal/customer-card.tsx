@@ -16,9 +16,10 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useCustomersModal } from "./use-customer-modal";
 import { useAddCustomer } from "@/pages/customers/add-customer/use-add-customer";
 import { useEditCustomer } from "@/pages/customers/edit-customer/use-edit-customer";
-import { customerInputs } from "./inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
+import { customerInputs } from "./inputs/customer-inputs";
+import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general-inputs";
 
 
 
@@ -26,7 +27,7 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
-  const { clientTypesCategores , agentsCategores } = useCustomersModal();
+  const { clientTypesCategores, agentsCategores } = useCustomersModal();
   const { t } = useTranslation();
   const theme = createMuiTheme({
     palette: {
@@ -35,14 +36,6 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
       },
     },
   });
-
-  const tabPanelInput = (label, val = null, onchange = null, placeHolder = "placeholder") => {
-    return (
-      <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
-        <h3 style={clasess.headerStyle}>{label}</h3>
-        <input style={clasess.inputStyle1} type="text" placeholder={placeHolder} value={val} onChange={onchange} /></Col>
-    );
-  };
 
   const tabPanelTextArea = (placeHolder = null, value = null, onchange = null) => {
     return (
@@ -254,15 +247,14 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
       users: filteredUserss
     };
     setCustomer(updatedCustomer);
-    console.log(updatedCustomer);
     editCustomer(updatedCustomer, setCustomer).then(x => {
       getAllCustomers();
       handleClose();
     });
   };
 
-  const onChangeInputs= (key,value)=>{
-    setCustomer({...customer, [key]:value})
+  const onChangeInputs = (key, value) => {
+    setCustomer({ ...customer, [key]: value })
   }
 
   // in order to avoid sending an empty object that include just name & index
@@ -284,13 +276,12 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
           <Col><span style={clasess.subTitleStyle} >{t("customers.modal.customerInfo")}</span>
           </Col>
         </Row>
-        <Row style={{ marginTop: '16px', width: "90%" , marginBottom: '24px'}}>
-
-        {
-          customerInputs(customer).map(item=><Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
-          <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={!!item.readonly} /></Col>)
-        }
-                </Row>
+        <Row style={{ marginTop: '16px', width: "90%", marginBottom: '24px' }}>
+          {
+            customerInputs(customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
+              <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={!!item.readonly} /></Col>)
+          }
+        </Row>
 
         {/*<Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
             <h3 style={clasess.headerStyle} >{t("customers.modal.clientType")}</h3>
@@ -305,53 +296,47 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
           </Tabs>
         </ThemeProvider>
       </div>
-      <div>
-        {
-          //general info
-          selectedTab == 0 &&
-          <div>
-            <Row style={{ marginBottom: '24px', marginTop: '24px', width: "90%" }}>
-              {tabPanelInput(t("customers.modal.phone1"), customer?.tel1, (e) => setCustomer({ ...customer, tel1: e.target.value }), t("customers.modal.phone1"))}
-              {tabPanelInput(t("customers.modal.phone2"), customer?.tel2, (e) => setCustomer({ ...customer, tel2: e.target.value }), t("customers.modal.phone2"))}
-              {tabPanelInput(t("customers.modal.site"), customer?.internetSite, (e) => setCustomer({ ...customer, internetSite: e.target.value }), t("customers.modal.site"))}
-              {tabPanelInput(t("customers.modal.mainContactName"), customer?.mainContactName, (e) => setCustomer({ ...customer, mainContactName: e.target.value }), t("customers.modal.mobile"))}
-              {tabPanelInput(t("customers.modal.mobile"), customer?.phone, (e) => setCustomer({ ...customer, phone: e.target.value }), t("customers.modal.mobile"))}
-            </Row>
-            <Row style={{ marginBottom: '24px', width: "72.5%", display: "flex", justifyContent: "center", alignItems: "center" }} >
-              {tabPanelInput(t("customers.modal.email"), customer?.mail, (e) => setCustomer({ ...customer, mail: e.target.value }), t("customers.modal.email"))}
-              {tabPanelInput(t("customers.modal.fax"), customer?.fax, (e) => setCustomer({ ...customer, fax: e.target.value }), t("customers.modal.fax"))}
-              <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
-                <h3 style={clasess.headerStyle}>{t("customers.modal.agent")}</h3>
-                <HeaderFilter style={clasess.autoComplateStyle} setPlaceholder={t("customers.modal.agent")} setAllOptions={agentsCategores} val={agentName} onchange={onChangeAgent}></HeaderFilter>
-              </Col>
-              <Col style={{ display: "flex", flexDirection: "column", marginTop: "45px" }}>
-                <Col style={{ display: "flex", width: "170px", height: "14px", justifyContent: "flex-start", gap: "8px" }}>
-                  <SecondSwitch checked={customer?.isActive} size="small" onChange={(e) => setCustomer({ ...customer, isActive: e.target.checked })} />
-                  <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.active")}</h3>
-                </Col>
-                <Col style={{ display: "flex", width: "190px", height: "14px", justifyContent: "flex-start", gap: "8px" }}>
-                  <SecondSwitch checked={customer?.isOccasional} size="small" onChange={(e) => setCustomer({ ...customer, isOccasional: e.target.checked })} />
-                  <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.anOccasionalCustomer")}</h3>
-                </Col>
-              </Col>
-            </Row>
-            <Row style={{ marginBottom: '24px' }}>
-              <span style={{ color: "var(--second-500, #ED028C)", fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 14), lineHeight: "normal" }}>{t("customers.modal.lastOrderDetails")}</span>
-            </Row>
-            <Row style={{ marginBottom: '24px', width: "90%" }}>
-              {tabPanelInput(t("customers.modal.name"), customer?.lastOrderContactName, (e) => setCustomer({ ...customer, lastOrderContactName: e.target.value }), t("customers.modal.name"))}
-              {tabPanelInput(t("customers.modal.phone"), customer?.lastOrderContactPhone, (e) => setCustomer({ ...customer, lastOrderContactPhone: e.target.value }), t("customers.modal.phone"))}
-              {tabPanelInput(t("customers.modal.email"), customer?.lastOrderContactMail, (e) => setCustomer({ ...customer, lastOrderContactMail: e.target.value }), t("customers.modal.email"))}
-              {tabPanelInput(t("customers.modal.address"), customer?.lastOrderContactAddress, (e) => setCustomer({ ...customer, lastOrderContactAddress: e.target.value }), t("customers.modal.address"))}
-              {tabPanelInput(t("customers.modal.mobile"), customer?.lastOrderContactPhone, (e) => setCustomer({ ...customer, lastOrderContactPhone: e.target.value }), t("customers.modal.mobile"))}
-            </Row>
-            <Row style={{ marginBottom: '24px', marginTop: '24px', width: "90%", display: "flex", justifyContent: "center", alignItems: "center" }} >
+      {
+        selectedTab == 0 &&
+        <Row style={{ marginTop: '16px', width: "90%", marginBottom: '24px' }}>
+          {
+            generalInputs(customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
+              <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+          }
+        </Row>
+      }
+      {
+        selectedTab == 0 &&
+        <Row style={{ marginTop: '16px', width: "90%", marginBottom: '24px' }}>
+          {
+            generalInputs2(customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
+              <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+          }
+        </Row>
+      }
+
+      {
+        selectedTab == 0 &&
+        <div>
+          <Row style={{ marginBottom: '24px' }}>
+            <span style={{ color: "var(--second-500, #ED028C)", fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 14), lineHeight: "normal" }}>{t("customers.modal.lastOrderDetails")}</span>
+          </Row>
+          <Row style={{ marginBottom: '24px', width: "90%" }}>
+            {
+              lastOrderInputs(customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
+                <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+            }
+          </Row>
+          <Row style={{ marginBottom: '24px', marginTop: '24px', width: "90%", display: "flex", justifyContent: "center", alignItems: "center" }} >
               {tabPanelTextArea(t("customers.modal.generalComment"), customer?.generalNotes, (e) => setCustomer({ ...customer, generalNotes: e.target.value }))}
               {tabPanelTextArea(t("customers.modal.orderOpeningNotes"), customer?.newItemNotes, (e) => setCustomer({ ...customer, newItemNotes: e.target.value }))}
               {tabPanelTextArea(t("customers.modal.orderClosingNotes"), customer?.closeOrderNotes, (e) => setCustomer({ ...customer, closeOrderNotes: e.target.value }))}
             </Row>
-          </div>
-        }
+
+
+        </div>
+      }
+      <div>
         {
           //contacts info
           selectedTab == 1 &&
@@ -410,11 +395,11 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
             </Col>
           </Row>
         }
-        <div style={{display: "flex" , justifyContent: "flex-end" }}>
-        <div style={clasess.footerStyle} >
-          {showAddButton && <button style={clasess.autoButtonStyle} onClick={handleAddCustomer} >{t("customers.buttons.addCustomer")}</button>}
-          {showUpdateButton && <button style={clasess.autoButtonStyle} onClick={handleEditCustomer}>{t("customers.buttons.updateChanges")}</button>}
-        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <div style={clasess.footerStyle} >
+            {showAddButton && <button style={clasess.autoButtonStyle} onClick={handleAddCustomer} >{t("customers.buttons.addCustomer")}</button>}
+            {showUpdateButton && <button style={clasess.autoButtonStyle} onClick={handleEditCustomer}>{t("customers.buttons.updateChanges")}</button>}
+          </div>
         </div>
       </div>
     </GoMakeModal>

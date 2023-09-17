@@ -9,6 +9,9 @@ import { useEffect, useState, useCallback } from 'react';
 import { SecondSwitch } from "@/components/switch/second";
 import { GomakeTextInput } from "@/components/text-input/text-input";
 import { fetchS3JsonContent } from "@/utils/S3Content";
+import { FormInput } from "@/components/form-inputs/form-input";
+import { IInput } from "@/components/form-inputs/interfaces";
+import { addressInputs1, addressInputs2, addressInputs3} from "../../inputs/address-inputs";
 
 const AddressForm = ({ address, onDelete, setAddress }: any) => {
 
@@ -17,6 +20,11 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
     const [cityStreets, setCityStreets] = useState([]);
     const [selectedCity, setSelectedCity] = useState(address?.city);
     const [selectedStreet, setSelectedStreet] = useState(address?.street);
+
+    const onChangeInputs = (key, value) => {
+        setAddress({ ...address, [key]: value })
+    }
+
 
     useEffect(() => {
         const fetchCities = async () => {
@@ -58,11 +66,32 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
         const selectedStreetLabel = value?.label;
         setSelectedStreet(selectedStreetLabel);
         setAddress({ ...address, street: selectedStreetLabel });
-    }, [address]);
+    }, [address]); 
 
     return (
         <div>
-            <Row style={{ marginBottom: '24px', marginTop: '24px' }} >
+
+            <Row style={{ marginBottom: '24px', marginTop: '24px' }}>
+                {
+                    addressInputs1(address).map(item => <Col style={{ display: "flex", width: "220px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                        <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+                }
+            </Row>
+            <Row style={{ marginBottom: '24px', marginTop: '24px' }}>
+                {
+                    addressInputs2(address).map(item => <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                        <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+                }
+            </Row>
+
+            <Row style={{ marginBottom: '24px', marginTop: '24px' , width: "40%"}}>
+                {
+                    addressInputs3(address).map(item => <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                        <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+                }
+            </Row>
+
+            {/* <Row style={{ marginBottom: '24px', marginTop: '24px' }} >
                 <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <span style={clasess.headerStyle} >{t("customers.modal.addressId")}</span>
                     <GomakeTextInput style={clasess.inputStyle} type="text" placeholder={t("customers.modal.addressId")} value={address.address1} onChange={(e) => setAddress({ ...address, address1: e.target.value })} />
@@ -83,43 +112,16 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
                     <span style={clasess.headerStyle} >{t("customers.modal.entrance")}</span>
                     <GomakeTextInput style={clasess.inputStyle} type="text" placeholder={t("customers.modal.entrance")} value={address.entry} onChange={(e) => setAddress({ ...address, entry: e.target.value })} />
                 </Col >
-            </Row>
-            <Row style={{ marginBottom: '24px' }}>
-                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.floor")}</span>
-                    <GomakeTextInput style={clasess.inputStyle} type="text" placeholder={t("customers.modal.floor")} value={address.floor} onChange={(e) => setAddress({ ...address, floor: e.target.value })} />
-                </Col>
-                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.apartment")}</span>
-                    <GomakeTextInput style={clasess.inputStyle} type="text" placeholder={t("customers.modal.apartment")} value={address.apartment} onChange={(e) => setAddress({ ...address, apartment: e.target.value })} />
-                </Col>
-                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.postalCode")}</span>
-                    <GomakeTextInput style={clasess.inputStyle} type="text" placeholder={t("customers.modal.postalCode")} value={address.zipCode} onChange={(e) => setAddress({ ...address, zipCode: e.target.value })} />
-                </Col>
-                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.po")}</span>
-                    <GomakeTextInput style={clasess.inputStyle} type="text" placeholder={t("customers.modal.po")} value={address.postbox} onChange={(e) => setAddress({ ...address, postbox: e.target.value })} />
-                </Col>
-                <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.country")}</span>
-                    <GomakeTextInput style={clasess.inputStyle} type="text" placeholder={t("customers.modal.country")} value={address.county} onChange={(e) => setAddress({ ...address, county: e.target.value })} />
-                </Col>
-            </Row>
-            <Row style={{ display: "flex", width: "33%", flexWrap: "nowrap" }}>
-                <Col style={{ display: "flex", flexDirection: "column", gap: "5px" }} >
-                    <span style={clasess.headerStyle} >{t("customers.modal.remarks")}</span>
-                    <GomakeTextInput style={clasess.inputStyle} type="text" placeholder={t("customers.modal.remarks")} value={address.notes} onChange={(e) => setAddress({ ...address, notes: e.target.value })} />
-                    <a><span style={clasess.switchHeaderStyle} >{t("customers.modal.default")}</span>
-                        <SecondSwitch checked={address?.isDefault} onChange={(e) => setAddress({ ...address, isDefault: e.target.checked })} size="small" /></a>
-                </Col>
+            </Row> */}
+
                 <Col style={{ display: "flex", marginTop: "24px", justifyContent: 'flex-start' }} >
                     <a style={{ width: "102px" }} onClick={() => onDelete(address.index)} >
                         <RemoveIcon></RemoveIcon>
                         <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
                     </a>
                 </Col>
-            </Row>
+
+
         </div>
     );
 };

@@ -49,9 +49,9 @@ const customerInputs = (state)  => {
         // },
         {
             name: "Currency",
-            label: "customers.modal.code",
+            label: "customers.modal.currency",
             type: "select",
-            placeholder: "customers.modal.code",
+            placeholder: "customers.modal.currency",
             required: false,
             parameterKey: "currency",
             options: [],
