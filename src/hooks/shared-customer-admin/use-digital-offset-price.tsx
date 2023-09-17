@@ -27,6 +27,12 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const [template, setTemplate] = useState<any>([]);
   const [generalParameters, setGeneralParameters] = useState<any>([]);
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
+  const [urgentOrder, setUrgentOrder] = useState(false);
+  const [printingNotes, setPrintingNotes] = useState("");
+  const [graphicNotes, setGraphicNotes] = useState("");
+
+  console.log("printingNotes", printingNotes);
+  console.log("graphicNotes", graphicNotes);
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let temp = [...isRequiredParameters];
@@ -728,12 +734,13 @@ const useDigitalOffsetPrice = ({ clasess }) => {
         productId: router?.query?.productId,
         userID: "34d57e82-5236-43bc-bb0d-5b8e95129617",
         customerID: router?.query?.customerId,
-        unitPrice: pricingDefaultValue?.workFlows[0]?.totalPrice,
+        unitPrice:
+          pricingDefaultValue?.workFlows[0]?.totalPrice / quantity?.value,
         amount: quantity?.value,
         isNeedGraphics: false,
-        isUrgentWork: false,
-        printingNotes: "",
-        graphicNotes: "",
+        isUrgentWork: urgentOrder,
+        printingNotes,
+        graphicNotes,
         isNeedExample: false,
         itemParmetersValues: generalParameters,
         workFlow: pricingDefaultValue?.workFlows[0],
@@ -743,12 +750,19 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     if (res?.success) {
       navigate("/quote");
     }
-  }, [generalParameters, router, pricingDefaultValue, quantity]);
+  }, [
+    generalParameters,
+    router,
+    pricingDefaultValue,
+    quantity,
+    urgentOrder,
+    graphicNotes,
+    printingNotes,
+  ]);
   const navigateForRouter = () => {
     if (router?.query?.actionId) {
       createProfitTestCase();
     } else {
-      // navigate("/quote");
       addItemForQuotes();
     }
   };
@@ -771,6 +785,12 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     checkWhatRenderArray,
     navigate,
     navigateForRouter,
+    setUrgentOrder,
+    setPrintingNotes,
+    setGraphicNotes,
+    graphicNotes,
+    printingNotes,
+    urgentOrder,
     defaultPrice,
     makeShapeOpen,
     chooseShapeOpen,

@@ -32,8 +32,13 @@ export default function DigitalOffsetPrice() {
     _getParameter,
     renderOptions,
     checkWhatRenderArray,
-    navigate,
     navigateForRouter,
+    setUrgentOrder,
+    setPrintingNotes,
+    setGraphicNotes,
+    graphicNotes,
+    printingNotes,
+    urgentOrder,
     defaultPrice,
     makeShapeOpen,
     chooseShapeOpen,
@@ -160,6 +165,12 @@ export default function DigitalOffsetPrice() {
                 activeTab={activeTab}
                 onOpeneMakeShape={onOpeneMakeShape}
                 pricingDefaultValue={pricingDefaultValue}
+                setUrgentOrder={setUrgentOrder}
+                urgentOrder={urgentOrder}
+                setPrintingNotes={setPrintingNotes}
+                setGraphicNotes={setGraphicNotes}
+                graphicNotes={graphicNotes}
+                printingNotes={printingNotes}
               />
             </div>
             <MakeShapeModal
