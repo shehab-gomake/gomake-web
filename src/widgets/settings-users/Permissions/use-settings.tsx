@@ -43,7 +43,7 @@ const useSettings = () => {
         }
     }, [groups, selectedTab])
 
-    const UpdatePermission = (roleId, permissionId) => {
+    const UpdatePermission = (roleId, permissionId, isChecked) => {
         const data = {
             permissionId: permissionId,
             roleId: roleId
