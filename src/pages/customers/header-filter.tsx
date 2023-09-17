@@ -10,12 +10,14 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 const HeaderFilter = ({ agentsCategores, clientTypesCategores, statuses, onChangeAgent, onChangeCustomer, onChangeClientType, onChangeStatus, handleClean, cutomerName, agentName, valClientType, valStatus }: any) => {
     const { t } = useTranslation();
     const { clasess } = useStyle();
+
+    
     return (
         <div style={clasess.subHeaderContainer} >
         <div style={clasess.filterContainer}>
             {agentsCategores?.length > 0 ? (
                 <GoMakeAutoComplate
-                    options={agentsCategores}
+                    options={null}
                     style={clasess.dropDownListStyle}
                     placeholder={t("customers.selectAgent")}
                     onChange={onChangeAgent}
@@ -42,7 +44,7 @@ const HeaderFilter = ({ agentsCategores, clientTypesCategores, statuses, onChang
                     onChange={onChangeStatus}
                     value={valStatus}
                     disableClearable={true}
-                //defaultValue={statuses[0]}
+                    //defaultValue={statuses[0]}
                 />
             ) : (
                 <Skeleton variant="rectangular" width={200} height={40} />

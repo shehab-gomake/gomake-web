@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { userInputs } from "../../inputs/user-inputs";
+import { Stack } from "@mui/material";
 
 const UserForm = ({ user, onDelete, setUser }: any) => {
 
@@ -20,11 +21,14 @@ const UserForm = ({ user, onDelete, setUser }: any) => {
 
     return (
         <div >
-            <Row style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "24px" }} >                {
+
+<Stack  direction={'row'} display={'flex'}  marginTop={"24px"} alignItems={"center"} justifyContent={"center"}>
+
+                            {
                 userInputs(user).map(item => <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                     <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
             }
-            </Row>
+            </Stack>
             <Row style={{ marginTop: "24px", marginBottom: '24px' }} >
 
                 <Col>

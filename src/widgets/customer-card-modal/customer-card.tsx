@@ -2,7 +2,6 @@ import { Tab, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { GoMakeModal } from "@/components";
-import { HeaderFilter } from "./header-filter";
 import { TextareaAutosize } from '@mui/base';
 import { ContactForm } from "./components/contacts-tab";
 import { AddressForm } from "./components/address-tab";
@@ -11,7 +10,6 @@ import { AddIcon } from "@/components/icons/icons";
 import { useTranslation } from "react-i18next";
 import { Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { SecondSwitch } from "@/components/switch/second";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useCustomersModal } from "./use-customer-modal";
 import { useAddCustomer } from "@/pages/customers/add-customer/use-add-customer";
@@ -20,6 +18,7 @@ import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { customerInputs } from "./inputs/customer-inputs";
 import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general-inputs";
+import { HeaderFilter } from "./header-filter";
 
 
 
@@ -27,7 +26,7 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
-  const { clientTypesCategores, agentsCategores } = useCustomersModal();
+  const { clientTypesCategores } = useCustomersModal();
   const { t } = useTranslation();
   const theme = createMuiTheme({
     palette: {
@@ -45,18 +44,6 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
     );
   };
 
-  const [agentName, setAgentName] = useState([]);
-  const onChangeAgent = useCallback(async (e: any, value: any) => {
-    setAgentName(value?.label);
-    setCustomer({ ...customer, agentId: value?.id })
-  }, [customer]);
-
-  // const [currencyText, setCurrencyText] = useState([]);
-  // const onChangeCurrency = useCallback(async (e: any, value: any) => {
-  //   setCurrencyText(value?.label);
-  //   setCustomer({ ...customer, currency: value?.id })
-  // }, [customer]);
-
   const [clientType, setClientType] = useState([]);
   const onChangeClientType = useCallback(async (e: any, value: any) => {
     setClientType(value?.label);
@@ -64,8 +51,6 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
   }, [customer]);
 
   useEffect(() => {
-    setAgentName(customer && customer.agentId ? agentsCategores.find((agent) => agent.id == customer?.agentId)?.label : []);
-    //setCurrencyText(customer && customer.currency ? currencyCategores.find((currency) => currency.id == customer?.currency)?.label : []);
     setClientType(customer && customer.clientTypeId ? clientTypesCategores.find((clientType) => clientType.id == customer?.clientTypeId)?.label : []);
   }, [customer]);
 
@@ -282,11 +267,12 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
               <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={!!item.readonly} /></Col>)
           }
         </Row>
-
-        {/*<Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
+        <Row style={{ marginBottom: '24px' }}>
+          <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
             <h3 style={clasess.headerStyle} >{t("customers.modal.clientType")}</h3>
             <HeaderFilter style={clasess.autoComplateStyle} setPlaceholder={t("customers.modal.clientType")} setAllOptions={clientTypesCategores} val={clientType} onchange={onChangeClientType}></HeaderFilter>
-          </Col>*/}
+          </Col>
+        </Row>
         <ThemeProvider theme={theme}>
           <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary" TabIndicatorProps={{ style: { display: 'none' } }} >
             <Tab sx={{ backgroundColor: selectedTab === 0 ? '#ED028C' : '#EBECFF', color: selectedTab === 0 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "82px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.general")} />
@@ -314,7 +300,6 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
           }
         </Row>
       }
-
       {
         selectedTab == 0 &&
         <div>
@@ -328,12 +313,10 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
             }
           </Row>
           <Row style={{ marginBottom: '24px', marginTop: '24px', width: "90%", display: "flex", justifyContent: "center", alignItems: "center" }} >
-              {tabPanelTextArea(t("customers.modal.generalComment"), customer?.generalNotes, (e) => setCustomer({ ...customer, generalNotes: e.target.value }))}
-              {tabPanelTextArea(t("customers.modal.orderOpeningNotes"), customer?.newItemNotes, (e) => setCustomer({ ...customer, newItemNotes: e.target.value }))}
-              {tabPanelTextArea(t("customers.modal.orderClosingNotes"), customer?.closeOrderNotes, (e) => setCustomer({ ...customer, closeOrderNotes: e.target.value }))}
-            </Row>
-
-
+            {tabPanelTextArea(t("customers.modal.generalComment"), customer?.generalNotes, (e) => setCustomer({ ...customer, generalNotes: e.target.value }))}
+            {tabPanelTextArea(t("customers.modal.orderOpeningNotes"), customer?.newItemNotes, (e) => setCustomer({ ...customer, newItemNotes: e.target.value }))}
+            {tabPanelTextArea(t("customers.modal.orderClosingNotes"), customer?.closeOrderNotes, (e) => setCustomer({ ...customer, closeOrderNotes: e.target.value }))}
+          </Row>
         </div>
       }
       <div>

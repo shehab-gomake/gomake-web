@@ -105,7 +105,10 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
     getClientTypesCategores();
   }, []);
 
+
+
   ///////////////////////// select agent //////////////////////////////
+  ///////////////////////////warrning!!!!////////////////////////////
   const getAgentCategores = useCallback(async () => {
     const data = await getAndSetEmployees2(
       callApi,
@@ -116,7 +119,7 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
       label: `${agent.firstname} ${agent.lastname}`,
       id: agent.id
     }));
-    setAgentsCategores(agentNames);
+    setAgentsCategores(data);
   }, []);
 
   useEffect(() => {

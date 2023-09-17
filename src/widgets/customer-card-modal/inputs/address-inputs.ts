@@ -1,6 +1,10 @@
-import { Cities } from "./cities";
+const addressInputs1 = (state, cities, cityStreets)  => {
 
-const addressInputs1 = (state)  => {
+    const selectedCity = state?.city;
+    console.log(selectedCity);
+    const filteredCityStreets = cityStreets.filter((street) => street.city_code == selectedCity);
+    console.log(filteredCityStreets);
+    
     return [
         {
             name: "addressId",
@@ -20,8 +24,11 @@ const addressInputs1 = (state)  => {
             placeholder: "customers.modal.city",
             required: false,
             parameterKey: "city",
-            options: Cities,
-           // value: citiesNameSSSs[0].text,
+            options:  cities.map(city => ({
+                value: city.Code,
+                text: city.Name           
+            })),
+            value: state?.city,
         },
         {
             name: "street",
@@ -30,8 +37,11 @@ const addressInputs1 = (state)  => {
             placeholder: "customers.modal.street",
             required: false,
             parameterKey: "street",
-            options: [],
-           // value: state?.street,
+            options: filteredCityStreets.map(street => ({
+                value: street.id,
+                text: street.name,
+            })),
+            value: state?.street,
         },
         {
             name: "home",

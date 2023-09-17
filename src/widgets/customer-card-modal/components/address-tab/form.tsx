@@ -18,62 +18,85 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
     const { clasess } = useStyle();
     const [cities, setCities] = useState([]);
     const [cityStreets, setCityStreets] = useState([]);
-    const [selectedCity, setSelectedCity] = useState(address?.city);
-    const [selectedStreet, setSelectedStreet] = useState(address?.street);
+    // const [selectedCity, setSelectedCity] = useState(address?.city);
+    // const [selectedStreet, setSelectedStreet] = useState(address?.street);
 
     const onChangeInputs = (key, value) => {
         setAddress({ ...address, [key]: value })
     }
-
 
     useEffect(() => {
         const fetchCities = async () => {
             try {
                 let data = await fetchS3JsonContent("cities.json")
                 setCities(data);
+                let data1 = await fetchS3JsonContent("streets.json")
+                setCityStreets(data1);
+
             } catch (error) {
                 console.error('Error fetching cities:', error);
             }
         };
         fetchCities();
     }, []);
+  
 
-    const citiesNames = cities.map(city => ({
-        label: city.Name,
-        id: city.Code
-    }));
+    // const handleCityChange = useCallback(async (e: any, value: any) => {
+    //     const selectedCityLabel = value?.label;
+    //     const selectedCityId = value?.id;
+    //     const updatedAddress = { ...address, city: selectedCityLabel };
+    //     setSelectedCity(selectedCityLabel);
+    //     setAddress(updatedAddress);
+    //     let data1 = await fetchS3JsonContent("streets.json")
+    //     const selectedCityStreets = data1.filter((street) => street.city_code == selectedCityId);
+    //     const streetsNames = selectedCityStreets.map(street => ({
+    //         text: street.name,
+    //         value: street.id
+    //     }));
+    //     setCityStreets(streetsNames);
+    //     // street set by default to be the first option
+    //     setSelectedStreet(streetsNames[0]?.text);
+    //     const updatedAddressNew = { ...updatedAddress, street: streetsNames[0]?.text };
+    //     setAddress(updatedAddressNew);
+    // }, [address]);
 
-    const handleCityChange = useCallback(async (e: any, value: any) => {
-        const selectedCityLabel = value?.label;
-        const selectedCityId = value?.id;
-        const updatedAddress = { ...address, city: selectedCityLabel };
-        setSelectedCity(selectedCityLabel);
-        setAddress(updatedAddress);
-        let data1 = await fetchS3JsonContent("streets.json")
-        const selectedCityStreets = data1.filter((street) => street.city_code == selectedCityId);
-        const streetsNames = selectedCityStreets.map(street => ({
-            label: street.name,
-            id: street.id
-        }));
-        setCityStreets(streetsNames);
-        // street set by default to be the first option
-        setSelectedStreet(streetsNames[0]?.label);
-        const updatedAddressNew = { ...updatedAddress, street: streetsNames[0]?.label };
-        setAddress(updatedAddressNew);
-    }, [address]);
 
-    const handleStreetChange = useCallback(async (e: any, value: any) => {
-        const selectedStreetLabel = value?.label;
-        setSelectedStreet(selectedStreetLabel);
-        setAddress({ ...address, street: selectedStreetLabel });
-    }, [address]); 
+    // const sss = useCallback(async (e: any, value: any) => {
+    //     const selectedCityLabel = value?.label;
+    //     const selectedCityId = value?.id;
+    //     const updatedAddress = { ...address, city: selectedCityLabel };
+    //     setSelectedCity(selectedCityLabel);
+    //     setAddress(updatedAddress);
+    //     let data1 = await fetchS3JsonContent("streets.json")
+    //     const selectedCityStreets = data1.filter((street) => street.city_code == selectedCityId);
+    //     const streetsNames = selectedCityStreets.map(street => ({
+    //         text: street.name,
+    //         value: street.id
+    //     }));
+    //     setCityStreets(streetsNames);
+    //     // street set by default to be the first option
+    //     setSelectedStreet(streetsNames[0]?.text);
+    //     const updatedAddressNew = { ...updatedAddress, street: streetsNames[0]?.text };
+    //     setAddress(updatedAddressNew);
+    // }, [address]);
 
+
+    // const handleStreetChange = useCallback(async (e: any, value: any) => {
+    //     const selectedStreetLabel = value?.text;
+    //     setSelectedStreet(selectedStreetLabel);
+    //     setAddress({ ...address, street: selectedStreetLabel });
+    // }, [address]); 
+
+
+
+    
     return (
         <div>
 
             <Row style={{ marginBottom: '24px', marginTop: '24px' }}>
                 {
-                    addressInputs1(address).map(item => <Col style={{ display: "flex", width: "220px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
+                     ((cities && cities.length > 0) && (cityStreets && cityStreets.length > 0)) &&
+                                     addressInputs1(address , cities , cityStreets).map(item => <Col style={{ display: "flex", width: "220px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
                         <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
                 }
             </Row>

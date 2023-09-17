@@ -97,17 +97,7 @@ const generalInputs2 = (state) => {
             value: state?.agentId,
             isValid: true,
         },
-        {
-            name: "isActive",
-            label: "customers.modal.active",
-            type: "switch",
-            placeholder: "customers.modal.active",
-            required: false,
-            parameterKey: "isActive",
-            options: [],
-            value: state?.isActive,
-            isValid: true,
-        },
+        
         {
             name: "isOccasional",
             label: "customers.modal.anOccasionalCustomer",
@@ -117,6 +107,17 @@ const generalInputs2 = (state) => {
             parameterKey: "isOccasional",
             options: [],
             value: state?.isOccasional,
+            isValid: true,
+        },
+        {
+            name: "isActive",
+            label: "customers.modal.active",
+            type: "switch",
+            placeholder: "customers.modal.active",
+            required: false,
+            parameterKey: "isActive",
+            options: [],
+            value: state?.isActive,
             isValid: true,
         },
 

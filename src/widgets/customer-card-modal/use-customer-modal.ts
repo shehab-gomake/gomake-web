@@ -5,29 +5,29 @@ import { getAndSetEmployees2, getAndSetClientTypes } from "@/services/hooks";
 
 const useCustomersModal = () => {
   const { callApi } = useGomakeAxios();
-  const [agentsCategores, setAgentsCategores] = useState([]);
+  //const [agentsCategores, setAgentsCategores] = useState([]);
   const [clientTypesCategores, setClientTypesCategores] = useState([]);
   //const [currencyCategores, setCurrencyCategores] = useState([]);
 
 
   ///////////////////////// select agent //////////////////////////////
 
-  const getAgentCategores = useCallback(async () => {
-    const data = await getAndSetEmployees2(
-      callApi,
-      setAgentsCategores,
-      { isAgent: true }
-    );
-    const agentNames = data.map(agent => ({
-      label: `${agent.firstname} ${agent.lastname}`,
-      id: agent.id
-    }));
-    setAgentsCategores(agentNames);
-  }, []);
+  // const getAgentCategores = useCallback(async () => {
+  //   const data = await getAndSetEmployees2(
+  //     callApi,
+  //     setAgentsCategores,
+  //     { isAgent: true }
+  //   );
+  //   const agentNames = data.map(agent => ({
+  //     label: `${agent.firstname} ${agent.lastname}`,
+  //     id: agent.id
+  //   }));
+  //   setAgentsCategores(agentNames);
+  // }, []);
 
-  useEffect(() => {
-    getAgentCategores();
-  }, []);
+  // useEffect(() => {
+  //   getAgentCategores();
+  // }, []);
 
   ///////////////////////// select clientType //////////////////////////////
   const getClientTypesCategores = useCallback(async () => {
@@ -62,7 +62,6 @@ const useCustomersModal = () => {
 
 
   return {
-    agentsCategores,
     clientTypesCategores
   };
 };
