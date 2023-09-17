@@ -1543,7 +1543,9 @@
     "AddRole": "Add Role",
     "AddNewRole": "Add new role",
     "Role name": "Role name",
-    "add": "Add"
+    "add": "Add",
+    "update":"update",
+    "UpdateRole" : "Update Role"
   },
   "settings": {
     "settings": "Settings",

@@ -45,6 +45,8 @@ const SettingsUsersWidget = () => {
                 openModal={isNewRole}
                 modalTitle={t("permissionsSettings.AddNewRole")}
                 onClose={onClickCloseNewRole}
+                roleId={""}
+                updateRole={false}
 
             />
       <GoMakeModal

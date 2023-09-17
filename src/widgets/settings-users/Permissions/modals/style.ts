@@ -39,7 +39,7 @@ const useStyle = () => {
         width: "100%",
       },
       addBtnStyle: {
-        width: "15%",
+        width: "18%",
         backgroundColor:"#F135A3",
       },
     };

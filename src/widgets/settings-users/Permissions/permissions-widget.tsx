@@ -7,8 +7,9 @@ import {useStyle} from "./style";
 import {useSettings} from "./use-settings";
 import {SecondaryTabsComponent} from "@/components/tabs/secondary-tabs";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import { EditIcon } from "@/icons";
-
+import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
+import { AddRoleModal } from "../Permissions/modals/index";
+import { useState } from "react";
 
 
 const PermissionsWidget = () => {
@@ -22,14 +23,33 @@ const PermissionsWidget = () => {
             },
         },
     });
+    const [isNewRole, setisNewRole] = useState(false);
+    const [roleId, setroleId] = useState();
+    const onClickCloseNewRole = () => {
+        setisNewRole(false);
+    };
  
- 
+    
     const {tableHeaders, groups, table, onSelectTab,onChangePermissionSearch,PermissionName} =
         useSettings();
     const tabs = [];
     const headers = [];
+
+    const ColorOutLineIcon = (roleId) =>{
+        return(
+            <BorderColorOutlinedIcon  onClick={()=>UpdateRoleModal(roleId)}/>
+        )
+    }
+
+
+    const UpdateRoleModal = (roleId) => {
+        setisNewRole(true);
+        setroleId(roleId);
+    }
+
+
     tableHeaders?.forEach((row) =>{
-        headers.push({name : row.name})
+        headers.push({name : row.name,icon : <ColorOutLineIcon style={{cursor:"pointer"}} roleId={row.id} />})
     })
     groups?.forEach((row) => {
         tabs.push({title: row.name , selectedTab :  onSelectTab});
@@ -37,9 +57,7 @@ const PermissionsWidget = () => {
 
     return (
         <div style={classes.mainContainer}>
-      
             <div style={classes.mainHeadecontainer}>
-
                 <HeaderTitle title={t("permissionsSettings.title")} marginBottom={3}/>
             </div>
             <div style={{width: "98%"}}>
@@ -50,14 +68,16 @@ const PermissionsWidget = () => {
                       <SearchInputComponent onChange={onChangePermissionSearch} value={PermissionName} />
                 </div>
                 <div style={{width:"95%"}}>
-                <StickyFirstColumnTable columns={headers} data={table}/>
-
+                     <StickyFirstColumnTable columns={headers} data={table}/>
                 </div>
-                
-
             </div>
-            
-
+            <AddRoleModal  
+            openModal={isNewRole}
+                modalTitle={t("permissionsSettings.UpdateRole")}
+                onClose={onClickCloseNewRole} 
+                roleId={roleId}
+                updateRole={true}
+                />
         </div>
     )
 }

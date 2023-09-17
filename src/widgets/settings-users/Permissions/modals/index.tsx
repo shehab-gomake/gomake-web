@@ -8,6 +8,7 @@ import {
 import { useStyle } from "./style";
 import { AddRole } from "./use-add-role";
 import { useState } from "react";
+import { EditIcon, RemoveIcon } from "@/icons";
 
 
 
@@ -15,16 +16,19 @@ const AddRoleModal = ({
   openModal,
   modalTitle,
   onClose,
-
+  roleId,
+  updateRole,
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const { addNewRole } = AddRole();
-  const [Val,setVal] = useState();
+  const [Val,setVal] = useState(roleId || '');
 
   const handleClick22222222= (val) => {
     addNewRole(val);
   };
+
+
 
   return (
     <>
@@ -42,14 +46,25 @@ const AddRoleModal = ({
                 placeholder={t("permissionsSettings.Role name")}
                 onChange={(e: any) => setVal(e.target.value)}
               />
-          
+                 {roleId &&   <div style={{display:"flex",gap:"10px"}}> <EditIcon/> <RemoveIcon/></div>}
             </div>
+         
             <div style={clasess.btnContainer}>
               <GomakePrimaryButton
                 style={clasess.addBtnStyle}
-                onClick = { ()=>handleClick22222222(Val)}
+                onClick={() => {
+                  if (roleId) {
+                    // If roleId is provided, it's an update
+                    updateRole(roleId, Val); // Pass the roleId and updated value
+                  } else {
+                    // Otherwise, it's a new role
+                    handleClick22222222(Val);
+                  }
+                  onClose(); // Close the modal
+                }}
               >
-                {t("permissionsSettings.add")}
+                {roleId ? t("permissionsSettings.update") : t("permissionsSettings.add")}
+             
               </GomakePrimaryButton>
             </div>
           </div>
