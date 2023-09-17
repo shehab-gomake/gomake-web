@@ -8,11 +8,9 @@ import {useState} from "react";
 import Stack from "@mui/material/Stack";
 import {CustomTabPanel} from "@/components/tabs/tab-panel";
 import {SecondaryButton} from "@/components/button/secondary-button";
-import { wrap } from "module";
 
 
 const SecondaryTabs = styled(Tabs)((props: TabsProps) => {
-    const {secondColor} = useGomakeTheme();
     return {
         paddingLeft: convertWidthToVW(20),
         paddingRight: convertWidthToVW(20),
@@ -24,6 +22,11 @@ const SecondaryTabs = styled(Tabs)((props: TabsProps) => {
         '& .MuiTabs-indicator': {
             display: 'none',
         },
+        '& .MuiTabs-flexContainer': {
+            flexWrap: 'wrap',
+            maxWidth: '100%'
+        }
+
    
     }
 });
