@@ -13,6 +13,9 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { customerMapFunction } from "@/services/hooks/get-set-customers";
 import { PrimaryTable } from "@/components/tables/primary-table";
 
+
+
+
 export default function Home() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -22,6 +25,7 @@ export default function Home() {
     const mapData = customerMapFunction(customer, getCustomerForEdit, updatedStatus);
     setAllCustomers([...allCustomers, mapData])
   };
+
   return (
     <CustomerAuthLayout>
       <div style={clasess.sameRow}>

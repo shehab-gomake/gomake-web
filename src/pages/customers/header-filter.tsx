@@ -17,7 +17,7 @@ const HeaderFilter = ({ agentsCategores, clientTypesCategores, statuses, onChang
         <div style={clasess.filterContainer}>
             {agentsCategores?.length > 0 ? (
                 <GoMakeAutoComplate
-                    options={null}
+                    options={agentsCategores}
                     style={clasess.dropDownListStyle}
                     placeholder={t("customers.selectAgent")}
                     onChange={onChangeAgent}
@@ -44,7 +44,6 @@ const HeaderFilter = ({ agentsCategores, clientTypesCategores, statuses, onChang
                     onChange={onChangeStatus}
                     value={valStatus}
                     disableClearable={true}
-                    //defaultValue={statuses[0]}
                 />
             ) : (
                 <Skeleton variant="rectangular" width={200} height={40} />

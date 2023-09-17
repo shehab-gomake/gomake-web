@@ -35,18 +35,18 @@ const customerInputs = (state)  => {
             value: state?.buisnessNumber,
             isValid: true,
          },
-        // {
-        //     name: "clientTypeId",
-        //     label: "customers.modal.clientType",
-        //     type: "select",
-        //     placeholder: "customers.modal.clientType",
-        //     required: true,
-        //     parameterKey: "clientTypeId",
-        //     options: [],
-        //     optionsUrl:"/v1/crm-service/clients/get-all-client-types",
-        //     value: state?.clientTypeId,
-        //     isValid: true,
-        // },
+        {
+            name: "clientTypeId",
+            label: "customers.modal.clientType",
+            type: "select",
+            placeholder: "customers.modal.clientType",
+            required: true,
+            parameterKey: "clientTypeId",
+            options: [],
+            optionsUrl:"/v1/clientTypes/get-all-clientTypes",
+            value: state?.clientTypeId,
+            isValid: true,
+        },
         {
             name: "Currency",
             label: "customers.modal.currency",
@@ -59,6 +59,11 @@ const customerInputs = (state)  => {
             value: state?.currency,
             isValid: true,
         },
+    ];
+}
+
+const customerInputs2 = (state)  => {
+    return [
         {
             name: "cpaClientCode",
             label: "customers.modal.CPAcode",
@@ -73,4 +78,4 @@ const customerInputs = (state)  => {
     ];
 }
 
-export {customerInputs};
+export {customerInputs , customerInputs2};

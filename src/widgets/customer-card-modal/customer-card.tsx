@@ -11,22 +11,17 @@ import { useTranslation } from "react-i18next";
 import { Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FONT_FAMILY } from "@/utils/font-family";
-import { useCustomersModal } from "./use-customer-modal";
 import { useAddCustomer } from "@/pages/customers/add-customer/use-add-customer";
 import { useEditCustomer } from "@/pages/customers/edit-customer/use-edit-customer";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { customerInputs } from "./inputs/customer-inputs";
+import { customerInputs, customerInputs2 } from "./inputs/customer-inputs";
 import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general-inputs";
-import { HeaderFilter } from "./header-filter";
-
-
 
 const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
-  const { clientTypesCategores } = useCustomersModal();
   const { t } = useTranslation();
   const theme = createMuiTheme({
     palette: {
@@ -43,17 +38,6 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
       </Col>
     );
   };
-
-  const [clientType, setClientType] = useState([]);
-  const onChangeClientType = useCallback(async (e: any, value: any) => {
-    setClientType(value?.label);
-    setCustomer({ ...customer, clientTypeId: value?.id })
-  }, [customer]);
-
-  useEffect(() => {
-    setClientType(customer && customer.clientTypeId ? clientTypesCategores.find((clientType) => clientType.id == customer?.clientTypeId)?.label : []);
-  }, [customer]);
-
 
   const { clasess } = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
@@ -261,17 +245,20 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
           <Col><span style={clasess.subTitleStyle} >{t("customers.modal.customerInfo")}</span>
           </Col>
         </Row>
+
         <Row style={{ marginTop: '16px', width: "90%", marginBottom: '24px' }}>
           {
             customerInputs(customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
               <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={!!item.readonly} /></Col>)
           }
         </Row>
-        <Row style={{ marginBottom: '24px' }}>
-          <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
-            <h3 style={clasess.headerStyle} >{t("customers.modal.clientType")}</h3>
-            <HeaderFilter style={clasess.autoComplateStyle} setPlaceholder={t("customers.modal.clientType")} setAllOptions={clientTypesCategores} val={clientType} onchange={onChangeClientType}></HeaderFilter>
-          </Col>
+
+        
+        <Row style={{ marginTop: '16px', width: "90%", marginBottom: '24px' }}>
+          {
+            customerInputs2(customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
+              <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+          }
         </Row>
         <ThemeProvider theme={theme}>
           <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary" TabIndicatorProps={{ style: { display: 'none' } }} >
