@@ -1,5 +1,3 @@
-import { AddPlusIcon } from "@/icons";
-
 import { useProductsSettings } from "./use-products-settings";
 import { ProductManagementWidget } from "./widget/product-management";
 import {
@@ -8,8 +6,8 @@ import {
   UsersSettingsTabs,
 } from "../settings-users/tabs";
 import { useStyle } from "./style";
-import { GomakePrimaryButton } from "@/components";
 import { AddProductWidget } from "./widget/add-product";
+import { AddButton } from "@/components/button/add-button";
 
 const ProductsSettingsWidget = () => {
   const { clasess } = useStyle();
@@ -27,24 +25,10 @@ const ProductsSettingsWidget = () => {
             return <UsersSettingsTab label={tab.name} />;
           })}
         </UsersSettingsTabs>
-        <GomakePrimaryButton
-          style={clasess.addProductBtnStyle}
-          leftIcon={<AddPlusIcon stroke="#101020" />}
+        <AddButton
+          label={t("products.productManagement.admin.addProduct")}
           onClick={() => setValue(3)}
-        >
-          <div style={clasess.addProductBtnText}>
-            {t("products.productManagement.admin.addProduct")}
-          </div>
-        </GomakePrimaryButton>
-        {/* <div
-          style={clasess.addProductBtnStyle}
-          onClick={() => navigate("/products/add-product")}
-        >
-          <AddPlusIcon stroke="#101020" />
-          <div style={clasess.addProductBtnText}>
-            {t("products.productManagement.admin.addProduct")}
-          </div>
-        </div> */}
+        />
       </div>
       <CustomTabPanel value={value} index={0}>
         <ProductManagementWidget />

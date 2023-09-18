@@ -21,7 +21,7 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "space-between",
-        alignItems: "center",
+        alignItems: "flex-end",
         width: "100%",
         marginBottom: 16,
       },
