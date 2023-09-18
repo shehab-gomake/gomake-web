@@ -1,6 +1,6 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../../call-api.interface";
-import { MoreMenuWidget } from "@/pages/admin/sales/quote/widget/more-circle";
+import { MoreMenuWidget } from "@/widgets/quote/more-circle";
 
 const getAndSetQuotes = async (
   callApi: ICallApi,
