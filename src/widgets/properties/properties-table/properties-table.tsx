@@ -49,12 +49,10 @@ const StyledTableRow = styled(TableRow)(() => ({
 
 const PropertiesTable = () => {
     const [filter, setFilter] = useState<string>('');
-    const { primaryColor } = useGomakeTheme();
     const { t } = useTranslation();
     const { classes } = useStyle();
-    const { state } = usePrintHouseActions();
-    const {onOpenAddNewModalRule, onCloseAddNewModalRule} = useProperty();
-    const setPropertyState = useSetRecoilState<any>(propertyState);
+    const { state, actionId } = usePrintHouseActions();
+    const [actionPropertyDetails, setActionPropertyDetails] = useState([{ actionId: actionId, propertyId: '', ruleType: 0 }])
     const properties = useCallback(() => {
         if (!!filter) {
             return state
@@ -63,9 +61,8 @@ const PropertiesTable = () => {
         return state
     }, [filter, state])
     useEffect(() => {
-        setPropertyState({
-            onCloseAddNewModalRule,
-            onOpenAddNewModalRule
+        properties().map((property) => {
+           
         })
     })
     return (
@@ -82,7 +79,7 @@ const PropertiesTable = () => {
                     <TableHead>
                         <TableRow>
                             <StyledTableCell align={"center"}>{t("properties.parameter")}</StyledTableCell>
-                            <StyledTableCell style={{ width: "25%" }} align={"center"}>
+                            <StyledTableCell style={{ width: "30%" }} align={"center"}>
                                 {t("properties.rule")}
                             </StyledTableCell>
                             <StyledTableCell align={"center"}>{t("properties.type")}</StyledTableCell>
@@ -90,25 +87,29 @@ const PropertiesTable = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {properties().map((property) => {
+                        {properties().map((property, index) => {
+
                             return (
                                 <StyledTableRow>
                                     <StyledTableCell align={"center"}>
                                         {property.propertyName}
                                     </StyledTableCell>
                                     <StyledTableCell align={"center"}>
-                                        {property.actionRules.map((rule,index)=>{
-                                            return(
-                                                <div className="scrollBlue" style={classes.rowItem}>
-                                                {index+ 1}- {rule.expression}
-                                            </div>
-                                            )
-                                        } )}
+                                        <div className="scrollBlue" style={classes.rowItem}>
+                                            {property.actionRules.map((rule, index) => {
+                                                return (
+                                                    <div style={classes.item}>
+                                                        {index + 1}- {rule.expression}
+                                                    </div>
+
+                                                )
+                                            })}
+                                        </div>
 
                                     </StyledTableCell>
-                                        <StyledTableCell align={"center"}>{property.ruleType == 0? 'Output': 'Input'} </StyledTableCell>
+                                    <StyledTableCell align={"center"}>{property.ruleType == 0 ? 'Output' : 'Input'} </StyledTableCell>
                                     <StyledTableCell align={"center"}>
-                                        <MoreMenuWidget />
+                                        <MoreMenuWidget rules={property.actionRules} actionId={actionId} propertyId={property.propertyId} ruleType={property.ruleType} />
                                     </StyledTableCell>
                                 </StyledTableRow>
                             )

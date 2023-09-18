@@ -7,11 +7,14 @@ const usePrintHouseActions = ()=> {
     const [state,setState] = useState([])
     const router = useRouter();
     const printHouseActionId  = '7db3c073-441a-452b-bea4-29c2804eec5b'//must change to  router.query
+    const [actionId,setActionId] = useState('') 
     const { callApi } = useGomakeAxios();
     useEffect(() => {
             getPrintHouseActionById(printHouseActionId).then(
+                
                 (res) => {
                  setState(res?.data?.data?.data)
+                 setActionId(printHouseActionId)
                 }
             );
     },[printHouseActionId]);
@@ -22,7 +25,8 @@ const usePrintHouseActions = ()=> {
 
     return{
         getPrintHouseActionById,
-        state
+        state,
+        actionId
     }
 }
 

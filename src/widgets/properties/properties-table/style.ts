@@ -26,6 +26,7 @@ const useStyle = () => {
             rowItem: {
                 display: "flex",
                 justifyContent: "center",
+                flexDirection: "column" as "column",
                 alignItems: "center",
                 ...FONT_FAMILY.Lexend(400, 14),
                 lineHeight: "18px",
@@ -37,7 +38,17 @@ const useStyle = () => {
                 overflowX: "hidden" as "hidden",
                 overflowY: "scroll" as "scroll",
                 paddingTop: 6,
+            },
+            item:{
+                ...FONT_FAMILY.Lexend(400, 14),
+                lineHeight: "18px",
+                color: primaryColor(900),
+                marginBottom: 2.5,
+                marginTop: 2.5,
+                textAlign: "center" as "center",
+                maxHeight: 45,
             }
+
         };
     }, [theme]);
     return {

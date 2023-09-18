@@ -3,6 +3,8 @@ import { EditMenuIcon } from "./icons/edit-menu";
 import { useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
 import { propertyState } from "../property";
+import { DuplicateMenuIcon } from "@/pages/admin/sales/quote/widget/more-circle/icons/duplicate-menu";
+import { AddPlusIcon } from "@/icons";
 
 const useMoreCircle = () => {
   const propertyStateValue = useRecoilValue<any>(propertyState);
@@ -20,6 +22,11 @@ const useMoreCircle = () => {
     {
       name: t("properties.editRules"),
       icon: <EditMenuIcon />,
+    },
+    {
+      name: t("properties.addRule"),
+      icon: <AddPlusIcon />,
+      onclick: () => null,
     },
    
   ];

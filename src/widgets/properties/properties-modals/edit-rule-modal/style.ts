@@ -9,7 +9,7 @@ const useStyle = () => {
       insideStyle: {
         width: "30%",
         borderRadius: 5,
-        height: "30%",
+        height: "40%",
       },
       textInputStyle: {
         width: "100%",
@@ -18,16 +18,38 @@ const useStyle = () => {
       },
       btnContainer: {
         display: "flex",
-        flexDirection: "column" as "column",
         justifyContent: "flex-end",
         alignItems: "flex-end",
         width: "100%",
         marginTop: 25,
       },
       sendBtn: {
-        width: "30%",
+        width: "25%",
+        marginLeft: "5%",
         backgroundColor: secondColor(500),
+        height:3
       },
+      cancelBtn: {
+        width: "25%",
+        backgroundColor: "#fff",
+        color: secondColor(500),
+        border: "1px solid rgb(237, 2, 140)",
+        height:3
+      },
+      lineStyle: {
+        width: "100%",
+        backgroundColor: "#EEEEEE",
+        border: "1px",
+        borderRadius: 2,
+        padding:12,
+        marginTop: 4,
+        ...FONT_FAMILY.Lexend(500, 12),
+        display: "flex",
+        justifyContent: 'space-between'
+      },
+      deleteBtn:{
+        cursor: "pointer",
+      }
     };
   }, []);
   return {

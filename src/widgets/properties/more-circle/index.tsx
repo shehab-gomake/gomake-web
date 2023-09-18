@@ -3,15 +3,28 @@ import { MoreCircleIcon } from "@/icons";
 import { GoMakeMenu } from "@/components";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
-import { AddNewItemModal } from "../properties-modals/add-new-rule-modal";
-
-const MoreMenuWidget = () => {
+import { EditRulesModal } from "../properties-modals/edit-rule-modal";
+import { userState } from "@/store";
+import { useState } from "react";
+import { AddNewRuleModal } from "../properties-modals/add-new-rule-modal";
+interface IMoreMenuWidget{
+  rules: [],
+  actionId:string,
+  propertyId:string,
+  ruleType:number
+}
+const MoreMenuWidget = ({rules,actionId, propertyId, ruleType}) => {
   const { clasess } = useStyle();
-  let openRules = false
-
+  const [openRules,setOpenRules] = useState<boolean>(false);
+  const [openAddNewRule,setOpenNewRule] = useState<boolean>(false);
   const { open, anchorEl, menuList, handleClose, handleClick } =
     useMoreCircle();
-  
+  const onCloseModal = ()=> {
+    setOpenRules(false);
+  }
+  const onCloseNewRuleModal = ()=> {
+    setOpenNewRule(false)
+  }
   return (
     <>
       <IconButton onClick={handleClick}>
@@ -24,7 +37,7 @@ const MoreMenuWidget = () => {
               <MenuItem
                 style={clasess.menuItemContainer}
                 key={index}
-                onClick={()=> {openRules = true}}
+                onClick={()=> {if(index == 0) {setOpenRules(true)} else {setOpenNewRule(true)}}}
               >
                 {item?.icon}
                 <div style={clasess.menuTitleStyle}>{item?.name}</div>
@@ -36,7 +49,8 @@ const MoreMenuWidget = () => {
           );
         })}
       </GoMakeMenu>
-      <AddNewItemModal openModal={openRules} />
+      <EditRulesModal openModal={openRules} onClose={onCloseModal} actionRules = {rules} actionId={actionId} propertyId={propertyId} ruleType={ruleType}/>
+      <AddNewRuleModal openModal={openAddNewRule} onClose={onCloseNewRuleModal} actionId={actionId} propertyId={propertyId} ruleType={ruleType}/>
     </>
   );
 };
