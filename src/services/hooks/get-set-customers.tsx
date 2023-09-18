@@ -16,8 +16,7 @@ const getAndSetCustomerById = async (
 };
 
 //helper function
-const customerMapFunction = (customer, onClick, onClickStatus) => {
-  const { t } = useTranslation();
+const customerMapFunction = (customer, onClick, onClickStatus , activeText , inActiveText) => {
   return {
     customerCode: customer.code,
     name: customer.name,
@@ -33,7 +32,7 @@ const customerMapFunction = (customer, onClick, onClickStatus) => {
               color: "#D92C2C",
             }}
           >
-            {t("usersSettings.inactive")}
+            {inActiveText}
           </div>
         ) : (
           <div
@@ -43,7 +42,7 @@ const customerMapFunction = (customer, onClick, onClickStatus) => {
               color: "#40CC4E",
             }}
           >
-            {t("usersSettings.active")}
+            {activeText}
           </div>
         )}
       </div>
@@ -64,7 +63,9 @@ const getAndSetCustomersPagination = async (
   setState?: ISetState,
   data?: any,
   onClick?: any,
-  onClickStatus?: any
+  onClickStatus?: any,
+  activeText? : any,
+  inActiveText? :any,
 ) => {
   const result: any = await callApi(
     "GET",
@@ -73,7 +74,7 @@ const getAndSetCustomersPagination = async (
   );
   const _data = returnResult(result, undefined);
   const mapData = _data.data.map((customer: any) =>
-    customerMapFunction(customer, onClick, onClickStatus)
+    customerMapFunction(customer, onClick, onClickStatus , activeText , inActiveText)
   );
   if (setState) {
     setState(mapData);
