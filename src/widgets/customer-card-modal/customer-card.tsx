@@ -216,6 +216,7 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
       users: filteredUserss
     };
     setCustomer(updatedCustomer);
+    console.log(updatedCustomer);
     editCustomer(updatedCustomer, setCustomer).then(x => {
       getAllCustomers();
       handleClose();
