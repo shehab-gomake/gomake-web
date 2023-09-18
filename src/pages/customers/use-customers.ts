@@ -182,7 +182,7 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
       ClientTypeId,
       agentId,
       isActive,
-    }, getCustomerForEdit, updatedStatus);
+    }, getCustomerForEdit, updatedStatus , t("usersSettings.active") ,t("usersSettings.inactive"));
     setPagesCount(Math.ceil(data / pageSize));
     return data;
   }, [pageNumber, name, ClientTypeId, agentId, isActive]);

@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
-import { GomakePrimaryButton } from "@/components";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../style";
-import { AddPlusIcon } from "@/icons";
 import { AddButton } from "@/components/button/add-button";
 
 const AddCustomerButton = ({ onCustomeradd }: any) => {

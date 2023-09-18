@@ -21,15 +21,17 @@ export default function Home() {
   const { clasess } = useStyle();
   const [pageNumber, setPageNumber] = useState(1);
   const { tabelHeaders, updatedStatus, getCustomersRows,setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers("C", pageNumber, setPageNumber);
+  const activeText = t("usersSettings.active");
+  const inActiveText = t("usersSettings.active");
   const onCustomeradd = (customer) => {
-    const mapData = customerMapFunction(customer, getCustomerForEdit, updatedStatus);
+    const mapData = customerMapFunction(customer, getCustomerForEdit, updatedStatus , activeText , inActiveText);
     setAllCustomers([...allCustomers, mapData])
   };
 
   return (
     <CustomerAuthLayout>
       <div style={clasess.sameRow}>
-        <HeaderTitle title={t("customers.title")} />
+        <HeaderTitle marginBottom="20px" title={t("customers.title")} />
         <AddCustomerButton onCustomeradd={onCustomeradd}></AddCustomerButton>
       </div>
       <HeaderFilter
