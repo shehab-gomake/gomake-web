@@ -63,7 +63,7 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
                         {
                             input.type === 'select' ?
                                 <GoMakeAutoComplate
-                                    style={{minWidth: 200, border: 0}}
+                                    style={{minWidth: 180, border: 0}}
                                     onChange={selectChange}
                                     value={selectedLabel}
                                     error={error}
