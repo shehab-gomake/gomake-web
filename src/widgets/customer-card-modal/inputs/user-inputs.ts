@@ -1,0 +1,67 @@
+
+const userInputs = (state)  => {
+    return [
+        {
+            name: "userName",
+            label: "customers.modal.userName",
+            type: "text",
+            placeholder: "customers.modal.userName",
+            required: true,
+            parameterKey: "username",
+            options: [],
+            value: state?.username,
+            isValid: true,
+            readonly: false,
+        },
+        {
+            name: "password",
+            label: "customers.modal.password",
+            type: "text",
+            placeholder: "customers.modal.password",
+            required: true,
+            parameterKey: "password",
+            options: [],
+            value: state?.password,
+            isValid: true,
+            readonly: false,
+        },
+        {
+            name: "email",
+            label: "customers.modal.email",
+            type: "text",
+            placeholder: "customers.modal.email",
+            required: false,
+            parameterKey: "email",
+            options: [],
+            value: state?.email,
+            isValid: true,
+            readonly: false,
+        },
+        
+        {
+            name: "IPaddress",
+            label: "customers.modal.IPaddress",
+            type: "text",
+            placeholder: "customers.modal.IPaddress",
+            required: false,
+            parameterKey: "userIPAddress",
+            options: [],
+            value: state?.userIPAddress,
+            isValid: true,
+            readonly: false,
+        },
+        {
+            name: "loginUsingEmailCode",
+            label: "customers.modal.loginUsingEmailCode",
+            type: "switch",
+            placeholder: "customers.modal.loginUsingEmailCode",
+            required: false,
+            parameterKey: "isCanLoginWithCode",
+            options: [],
+            value: state?.isCanLoginWithCode,
+            isValid: true,
+        },
+    ];
+}
+
+export {userInputs};

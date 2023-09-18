@@ -1,16 +1,13 @@
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
-import { useCustomer } from "@/hooks/use-customer";
 import { updateTokenStorage } from "@/services/storage-data";
-import { loadgingState } from "@/store/loading";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useSetRecoilState } from "recoil";
-// import { useTranslation } from "react-i18next";
+import {companyProfileState} from "@/store/company-profile";
 
 const useGomakeLogin = () => {
-  // const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
-  const setLoadingState = useSetRecoilState(loadgingState);
+  const setUserProfile = useSetRecoilState(companyProfileState);
   const [state, setState] = useState<any>({});
   const [errors, setErrors] = useState<{ [name: string]: boolean }>({
     username: false,
@@ -53,11 +50,18 @@ const useGomakeLogin = () => {
     ];
   }, []);
 
+  const getUserProfile = async () => {
+    const res = await callApi("GET", '/v1/get-print-house-profile');
+    if (res.success) {
+      setUserProfile(res?.data?.data);
+    }
+  }
   return {
     inputs,
     errors,
     changeState,
     onClickLogin,
+    getUserProfile
   };
 };
 export { useGomakeLogin };

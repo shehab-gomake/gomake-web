@@ -76,7 +76,7 @@ const PackinDrumWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.size")}
+              {t("materials.inputs.speralSize")} (inch)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterSize")}
@@ -93,10 +93,10 @@ const PackinDrumWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.sizeName")}
+              {t("materials.inputs.pitch")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.inputs.enterSizeName")}
+              placeholder={t("materials.inputs.pitch")}
               style={clasess.textInputStyle}
               value={
                 materialPackinDrumStateValue?.updateState[item?.id]?.sizeName
@@ -112,10 +112,10 @@ const PackinDrumWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.drumRingNumber")}
+              {t("materials.inputs.loopsQuantity")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.inputs.enterDrumRingNumber")}
+              placeholder={t("materials.inputs.loopsQuantity")}
               style={clasess.textInputStyle}
               value={
                 materialPackinDrumStateValue?.updateState[item?.id]
@@ -132,7 +132,7 @@ const PackinDrumWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.weight")}
+              {t("materials.inputs.weight")} (kg)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWeight")}
@@ -164,6 +164,26 @@ const PackinDrumWeightsMapping = ({ index, item, selectedItem }) => {
                 materialPackinDrumStateValue?.onChangeUpdateStatePackinDrumSize(
                   item?.id,
                   "defaultPricePerDrum",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.inputs.maxBookThickness")} (cm)
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.inputs.maxBookThickness")}
+              style={clasess.textInputStyle}
+              value={
+                materialPackinDrumStateValue?.updateState[item?.id]
+                  ?.maxBookThickness
+              }
+              onChange={(e: any) => {
+                materialPackinDrumStateValue?.onChangeUpdateStatePackinUnitSize(
+                  item?.id,
+                  "maxBookThickness",
                   e.target.value
                 );
               }}

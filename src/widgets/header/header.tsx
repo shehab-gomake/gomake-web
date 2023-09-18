@@ -26,7 +26,7 @@ const HeaderWidget = () => {
         startAdornment={
           <InputAdornment position="start">
             <div style={clasess.iconStyle}>
-              <SearchIcon />
+              <SearchIcon width={20} height={20} />
             </div>
           </InputAdornment>
         }
@@ -45,7 +45,7 @@ const HeaderWidget = () => {
           <IconButton>
             <ProfileImg />
           </IconButton>
-          <div style={clasess.userNameStyle}>{user?.displayName}</div>
+          {/* <div style={clasess.userNameStyle}>{user?.displayName}</div> */}
         </div>
       </div>
     </div>

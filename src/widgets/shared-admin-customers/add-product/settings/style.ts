@@ -71,7 +71,7 @@ const useStyle = () => {
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
-        boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+        // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
       multiSelectStyle: {
         backgroundColor: "#FFFFFF",
@@ -83,7 +83,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         alignitems: "center",
         justifyContent: "center",
-        boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+        // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
       labelTitleStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -117,6 +117,7 @@ const useStyle = () => {
         color: secondColor(500),
         ...FONT_FAMILY.Lexend(500, 16),
         cursor: "pointer",
+        height: 40,
       },
       addNwBtn: {
         display: "flex",
@@ -128,6 +129,7 @@ const useStyle = () => {
         backgroundColor: secondColor(500),
         ...FONT_FAMILY.Lexend(500, 16),
         cursor: "pointer",
+        height: 40,
       },
     };
   }, [i18next.language, t]);

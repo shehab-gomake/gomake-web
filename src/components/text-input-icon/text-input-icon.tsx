@@ -4,7 +4,7 @@ import InputBase from "@mui/material/InputBase";
 
 const StyledTextField = styled(InputBase)((props: any) => ({
   input: {
-    backgroundColor: "#F8F8F8",
+    // backgroundColor: "#F8F8F8",
     boxSizing: "border-box",
     borderRadius: "10px",
     height: 44,

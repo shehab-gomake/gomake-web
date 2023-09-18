@@ -81,7 +81,6 @@ const SheetSizesWidget = ({
       updateToInActive();
     }
   };
-  console.log("row", row);
   const updatePricePerUnit = useCallback(async () => {
     const res = await callApi("POST", `/v1/packings/size-id-settngs`, {
       categoryName: selectedMaterials?.key,
@@ -119,32 +118,31 @@ const SheetSizesWidget = ({
           row={row}
         />
       </div>
-      <div style={clasess.thiknessContainer}>{row?.weight}</div>
       <div style={clasess.thiknessContainer}>{row?.width}</div>
-      <div style={clasess.costsContainer}>{row?.height}</div>
       <div style={clasess.costsContainer}>{row?.length}</div>
-      <div style={clasess.directionContainer}>
+      <div style={clasess.costsContainer}>{row?.height}</div>
+      <div style={clasess.thiknessContainer}>{row?.weight}</div>
+      <div style={clasess.costsContainer}>
         <GomakeTextInput
           style={clasess.thiknessTextInputStyle}
           value={pricePerUnit}
           onChange={(event: any) => setPricePerUnit(event.target.value)}
           onBlur={updatePricePerUnit}
         />
-        {/* {row?.defaultPricePerUnit} */}
+      </div>
+      <div style={clasess.currencyContainer}>{row?.currency}</div>
+
+      <div style={clasess.stokContainer}>
+        <UpdateStockPackings
+          categoryName={selectedMaterials?.key}
+          volumeId={row?.id}
+          stockValue={row?.stock}
+        />
       </div>
       <div style={clasess.activeContainer}>
         <Switch
           checked={row?.isActive}
           onChange={(e: any) => onChangeActiveState(e.target.checked)}
-        />
-      </div>
-      <div style={clasess.currencyContainer}>{row?.currency}</div>
-      <div style={clasess.stokContainer}>
-        {" "}
-        <UpdateStockPackings
-          categoryName={selectedMaterials?.key}
-          volumeId={row?.id}
-          stockValue={row?.stock}
         />
       </div>
     </div>

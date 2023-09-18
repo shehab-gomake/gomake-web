@@ -11,7 +11,6 @@ const StyledTextField = styled(TextField, {
 })((props: any) => ({
   width: "100%",
   input: {
-    // backgroundColor: "#FDFDFD",
     boxSizing: "border-box",
     borderRadius: props?.style?.borderRadius || 4,
     height: 56,
@@ -22,7 +21,7 @@ const StyledTextField = styled(TextField, {
     lineHeight: "21px",
     display: "flex",
     alignItems: "center",
-    boxShadow: "0px 1px 60px rgba(0, 0, 0, 0.08)",
+    boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
     width: "100%",
     color: props.error
       ? `${props.errorColor(300)}`
@@ -67,6 +66,7 @@ const GomakeTextInput = ({
   onMouseLeave,
   defaultValue,
   onBlur,
+  onClick,
 }: {
   labelText?: string;
   value?: string;
@@ -83,6 +83,7 @@ const GomakeTextInput = ({
   onMouseLeave?: any;
   defaultValue?: any;
   onBlur?: any;
+  onClick?: any;
 }) => {
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
   return (
@@ -105,6 +106,7 @@ const GomakeTextInput = ({
       onMouseLeave={onMouseLeave}
       defaultValue={defaultValue}
       onBlur={onBlur}
+      onClick={onClick}
     />
   );
 };

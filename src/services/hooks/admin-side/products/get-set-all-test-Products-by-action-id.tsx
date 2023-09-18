@@ -1,6 +1,6 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../../call-api.interface";
-import { ProductTestListMoreCircleWidget } from "@/pages/admin/products/profits/widgets/pricing-list/product-list-more-circle";
+import { ProductTestListMoreCircleWidget } from "@/pages/products/profits/widgets/pricing-list/product-list-more-circle";
 
 const getAndSetGetAllTestProductsByActionId = async (
   callApi: ICallApi,
@@ -17,7 +17,8 @@ const getAndSetGetAllTestProductsByActionId = async (
   const result: any = await callApi(
     "GET",
     "/v1/printhouse-config/products/get-test-product-by-action-id",
-    data
+    data,
+    false
   );
   const _data = returnResult(result, undefined);
   const mapData = _data.map((item: any) => {

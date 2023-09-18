@@ -4,6 +4,7 @@ const autoBookCuttingMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.bookThickness',
             parameterKey: 'bookThickness',
             machineInputType: 'multiInput',
+            value: state?.attributes?.bookThickness,
             isValid: !!state?.attributes?.bookThickness?.min &&
                 !!state?.attributes?.bookThickness?.max  ,
             inputs: [
@@ -34,6 +35,7 @@ const autoBookCuttingMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.bookHeight',
             parameterKey: 'bookHeight',
             machineInputType: 'multiInput',
+            value: state?.attributes?.bookHeight,
             isValid: !!state?.attributes?.bookHeight?.min &&
                 !!state?.attributes?.bookHeight?.max  ,
             inputs: [
@@ -64,6 +66,7 @@ const autoBookCuttingMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.bookWidth',
             parameterKey: 'bookWidth',
             machineInputType: 'multiInput',
+            value: state?.attributes?.bookWidth,
             isValid: !!state?.attributes?.bookWidth?.min &&
                 !!state?.attributes?.bookWidth?.max  ,
             inputs: [

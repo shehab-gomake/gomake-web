@@ -155,14 +155,16 @@ const SheetSizesWidget = ({
         />
       </div>
       <div style={clasess.thiknessContainer}>{row?.size}</div>
-      <div style={clasess.costsContainer}>
+      <div style={clasess.thiknessContainer}>{row?.thickness}</div>
+      <div style={clasess.thiknessContainer}>{row?.weightPerSquareMeter}</div>
+      {/* <div style={clasess.costsContainer}>
         <GomakeTextInput
           style={clasess.thiknessTextInputStyle}
           value={pricePerRoll}
           onChange={(event: any) => setPricePerRoll(event.target.value)}
           onBlur={updatePricePerRoll}
         />
-      </div>
+      </div> */}
       <div style={clasess.directionContainer}>
         <GomakeTextInput
           style={clasess.thiknessTextInputStyle}
@@ -171,12 +173,7 @@ const SheetSizesWidget = ({
           onBlur={updatePricePerSquareMeter}
         />
       </div>
-      <div style={clasess.activeContainer}>
-        <Switch
-          checked={row?.isActive}
-          onChange={(e: any) => onChangeActiveState(e.target.checked)}
-        />
-      </div>
+
       <div style={clasess.currencyContainer}>{row?.currency}</div>
       <div style={clasess.stokContainer}>
         <UpdateStockApplication
@@ -184,6 +181,12 @@ const SheetSizesWidget = ({
           sizeId={row?.sizeId}
           stockValue={row?.stock}
           thicknessId={row?.thicknessId}
+        />
+      </div>
+      <div style={clasess.activeContainer}>
+        <Switch
+          checked={row?.isActive}
+          onChange={(e: any) => onChangeActiveState(e.target.checked)}
         />
       </div>
     </div>

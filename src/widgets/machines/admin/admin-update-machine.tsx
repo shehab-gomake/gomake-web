@@ -5,11 +5,11 @@ import {useRecoilValue} from "recoil";
 import {machineCategoriesState} from "@/store/machine-categories";
 import {IStep} from "@/widgets/machines/utils/interface/step";
 import {getSteps} from "@/widgets/machines/utils/steps";
-import {MachineLayout} from "@/widgets/machines/components/layout/machine-layout";
 import {useAdminMachines} from "@/widgets/machines/hooks/use-admin-machines";
 import {useRouter} from "next/router";
 import {machineState} from "@/widgets/machines/state/machine-state";
 import {useAdminAddMachine} from "@/widgets/machines/hooks/use-admin-add-machine";
+import {SideBarContainer} from "@/components/containers/side-bar-container";
 
 const AdminUpdateMachine = () => {
     const router = useRouter();
@@ -18,11 +18,12 @@ const AdminUpdateMachine = () => {
     const categories = useRecoilValue(machineCategoriesState);
     const [categoryName, setCategoryName] = useState<string>();
     const [machineSteps, setMachineSteps] = useState<IStep[]>([]);
-    const {getMachinesList, setMachine} = useAdminMachines();
+    const {getMachinesList, setMachine, getAndSetAdminMachines} = useAdminMachines();
     const {updateMachine} = useAdminAddMachine();
     const selectedMachine = useRecoilValue(machineState);
 
     useEffect(() => {
+        getAndSetAdminMachines().then();
         if (categoryId) {
             const category = categories.find(category => category.id === categoryId)
             setCategoryName(category?.name ? category?.name : '');
@@ -44,15 +45,15 @@ const AdminUpdateMachine = () => {
     }
 
     const Side = () => <SideList list={getMachinesList} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
-                                 title={'Machines'}/>
+                                 title={'Machines'} quickActions={true} isAdmin={true}/>
     return (
-        <MachineLayout side={Side()} header={categoryName} subHeader={ selectedMachine.manufacturer ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.model : ''}>
+        <SideBarContainer side={Side()} header={categoryName} subHeader={ selectedMachine.manufacturer ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.model : ''}>
 
             {!!selectedMachine.id && <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
                                                      nextStep={navigateNext} actionButtonClicked={updateMachine}
                                                      moveToStep={moveToStepByIndex}
                                                      isAddForm={false}/>}
-        </MachineLayout>
+        </SideBarContainer>
     );
 }
 

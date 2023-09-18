@@ -6,12 +6,9 @@ import {flexoPrinting} from "@/widgets/machines/utils/attributes/colors-inputs/f
 import {rollWidePrinting} from "@/widgets/machines/utils/attributes/colors-inputs/roll-wide-printing";
 import {flatbedWidePrinting} from "@/widgets/machines/utils/attributes/colors-inputs/flatbed-wide-printing";
 import {pastingBlocksMachine} from "@/widgets/machines/utils/attributes/colors-inputs/pasting-blocks-machine";
-import {digitalEnhancementMachine} from "@/widgets/machines/utils/attributes/colors-inputs/digital-enhancement-machine";
-import {analogEnhancementMachine} from "@/widgets/machines/utils/attributes/colors-inputs/analog-enhancement-machine";
+import {enhancementMachine} from "@/widgets/machines/utils/attributes/colors-inputs/enhancement-machine";
 import {sideColoringMachine} from "@/widgets/machines/utils/attributes/colors-inputs/side-coloring-machine";
-import {
-    rollAnalogEnhancementMachine
-} from "@/widgets/machines/utils/attributes/colors-inputs/roll-analog-enhancement-machine";
+
 
 const getCategoryColorsInputs = (categoryId: string, state: Record<string, any>) => {
     switch (categoryId) {
@@ -30,15 +27,15 @@ const getCategoryColorsInputs = (categoryId: string, state: Record<string, any>)
         case ECategoryId.PASTING_BLOCKS_MACHINE:
             return pastingBlocksMachine(state);
         case ECategoryId.DIGITAL_ENHANCEMENT_MACHINE:
-            return digitalEnhancementMachine(state);
+            return enhancementMachine(state);
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
-            return analogEnhancementMachine(state);
+            return enhancementMachine(state);
         case ECategoryId.SIDE_COLORING:
             return sideColoringMachine(state);
         case ECategoryId.ROLL_ANALOG_ENHANCEMENT_MACHINE:
-            return rollAnalogEnhancementMachine(state);
+            return enhancementMachine(state);
         case ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE:
-            return rollAnalogEnhancementMachine(state);
+            return enhancementMachine(state);
         default:
             return []
     }

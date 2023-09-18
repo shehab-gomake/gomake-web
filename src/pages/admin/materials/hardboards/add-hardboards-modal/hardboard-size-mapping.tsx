@@ -28,23 +28,6 @@ const HardboardSizesMapping = ({ index }) => {
         <div style={clasess.mainWaightsContainer}>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.height")}
-            </div>
-            <GomakeTextInput
-              placeholder={t("materials.inputs.enterHeight")}
-              style={clasess.textInputStyle}
-              value={materialHardboardsStateValue?.items[index]["height"]}
-              onChange={(e: any) => {
-                materialHardboardsStateValue?.changeItems(
-                  index,
-                  "height",
-                  e.target.value
-                );
-              }}
-            />
-          </div>
-          <div>
-            <div style={clasess.lableTextStyle}>
               {t("materials.inputs.name")}
             </div>
             <GomakeTextInput
@@ -62,7 +45,24 @@ const HardboardSizesMapping = ({ index }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.width")}
+              {t("materials.inputs.height")} (cm)
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.inputs.enterHeight")}
+              style={clasess.textInputStyle}
+              value={materialHardboardsStateValue?.items[index]["height"]}
+              onChange={(e: any) => {
+                materialHardboardsStateValue?.changeItems(
+                  index,
+                  "height",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.inputs.width")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWidth")}

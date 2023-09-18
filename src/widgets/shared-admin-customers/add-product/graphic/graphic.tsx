@@ -3,11 +3,11 @@ import { useStyle } from "./style";
 
 const GraphicWidget = () => {
   const { clasess } = useStyle();
-  const {} = useAddProduct();
+  const {} = useAddProduct({ clasess });
 
   return (
     <div>
-      <div>ddd</div>
+      <div>coming soon</div>
     </div>
   );
 };

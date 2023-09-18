@@ -5,10 +5,15 @@ export interface ISideListProps {
     title: string;
     children?: any;
     quickActions?: boolean;
+    isAdmin?: boolean;
 }
 
 
 export interface IListItem {
     text: string;
-    value: string;
+    value?: string;
+    component?: ()=> JSX.Element;
+    icon?: () => JSX.Element;
+    path?: string;
+    editComponent?: ()=>JSX.Element;
 }

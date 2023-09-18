@@ -14,7 +14,7 @@ const useStyle = ({
   const clasess = useMemo(() => {
     return {
       container: {
-        width: "100vw",
+        width: "100%",
         height: "100vh",
         display: "flex",
         flexDirection: "row" as "row",
@@ -27,8 +27,8 @@ const useStyle = ({
       },
       leftContainer: {
         backgroundColor: primaryColor(500),
-        width: navStatus?.isClosed ? 190 : 280,
-        minWidth: navStatus?.isClosed ? 190 : 280,
+        width: navStatus?.isClosed ? 140 : 280,
+        minWidth: navStatus?.isClosed ? 140 : 280,
         height: "100%",
         display: "flex",
         flexDirection: "column" as "column",
@@ -49,13 +49,13 @@ const useStyle = ({
         overflowY: "scroll" as "scroll",
       },
       rightContainer: {
-        backgroundColor: "#FDFDFD",
         width: "100%",
         display: "flex",
         flexDirection: "column" as "column",
-        padding: convertWidthToVW(20),
-        paddingBottom: convertWidthToVW(0),
-        // marginBottom: 20,
+        padding: 20,
+        paddingTop: 7,
+        // overflowY: "scroll" as "scroll",
+        backgroundColor: "#FFFFFF",
       },
       headerContainer: {
         height: convertHeightToVH(101),

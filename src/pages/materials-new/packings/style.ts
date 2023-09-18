@@ -117,7 +117,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 20,
       },
       thiknessContainer: {
         width: "15%",
@@ -150,7 +149,6 @@ const useStyle = () => {
         color: primaryColor(500),
         width: "100%",
         backgroundColor: "transparent",
-        paddingLeft: 2,
         boxShadow: "none",
       },
       activeContainer: {
@@ -159,7 +157,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 30,
       },
       currencyContainer: {
         width: "16%",
@@ -215,6 +212,11 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "space-between",
+      },
+      noDataStyle: {
+        marginTop: 20,
+        ...FONT_FAMILY.Lexend(600, 22),
+        color: primaryColor(500),
       },
     };
   }, [i18next.language, t]);

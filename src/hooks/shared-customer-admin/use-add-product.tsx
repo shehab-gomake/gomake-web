@@ -1,12 +1,27 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
-
+import { v4 as uuidv4 } from "uuid";
 import { getAndSetProductById } from "@/services/hooks";
 import { useRouter } from "next/router";
-import { GraphicIcon, PrameterIcon, SettingIcon } from "@/widgets";
+import {
+  GraphicIcon,
+  HiddenIcon,
+  NotHiddenIcon,
+  PrameterIcon,
+  SettingIcon,
+} from "@/widgets";
+import {
+  GoMakeAutoComplate,
+  GomakeTextInput,
+  SecondSwitch,
+} from "@/components";
+import { useMaterials } from "../use-materials";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { materialsCategoriesState } from "@/store/material-categories";
+import { digitslPriceState } from "./store";
 
-const useAddProduct = () => {
+const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
 
@@ -75,9 +90,9 @@ const useAddProduct = () => {
   ];
 
   const getProductById = useCallback(async () => {
-    if (router?.query?.productId) {
+    if (router?.query?.id) {
       const data = await getAndSetProductById(callApi, setTemplate, {
-        Id: router?.query?.productId,
+        Id: router?.query?.id,
       });
       setProductState(data);
     }
@@ -85,159 +100,85 @@ const useAddProduct = () => {
 
   useEffect(() => {
     getProductById();
-  }, []);
-
+  }, [router]);
+  const updateProductParameterEndPoint = async (
+    sectionId: string,
+    subSectionId: string,
+    data: any
+  ) => {
+    const res = await callApi(
+      "PUT",
+      `/v1/printhouse-config/products/update-product-parameter`,
+      {
+        productId: router?.query?.id,
+        sectionId: sectionId,
+        subSectionId: subSectionId,
+        productParameterType: 1,
+        ...data,
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+      getProductById();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedfailed"),
+        type: "error",
+      });
+    }
+  };
   const updatedProductParameterHidden = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
-      const res = await callApi(
-        "PUT",
-        `/v1/printhouse-config/products/update-product-parameter`,
-        {
-          productId: router?.query?.productId,
-          sectionId: sectionId,
-          subSectionId: subSectionId,
-          productParameterType: 1,
-          parameter: {
-            id: parameter?.id,
-            name: parameter?.name,
-            defaultValue: parameter?.defaultValue,
-            parameterType: parameter?.parameterType,
-            isHidden: !parameter?.isHidden,
-            isRequired: parameter?.isRequired,
-            valuesConfigs: parameter?.valuesConfigs,
-          },
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        getProductById();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...parameter,
+          isHidden: !parameter?.isHidden,
+        },
+      });
     },
     [router]
   );
 
   const updatedProductParameteRequierd = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
-      const res = await callApi(
-        "PUT",
-        `/v1/printhouse-config/products/update-product-parameter`,
-        {
-          productId: router?.query?.productId,
-          sectionId: sectionId,
-          subSectionId: subSectionId,
-          productParameterType: 1,
-          parameter: {
-            id: parameter?.id,
-            name: parameter?.name,
-            defaultValue: parameter?.defaultValue,
-            parameterType: parameter?.parameterType,
-            isHidden: parameter?.isHidden,
-            isRequired: !parameter?.isRequired,
-            valuesConfigs: parameter?.valuesConfigs,
-          },
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        getProductById();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...parameter,
+          isRequired: !parameter?.isRequired,
+        },
+      });
     },
     [router]
   );
+
   const updatedProductParameteName = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
-      const res = await callApi(
-        "PUT",
-        `/v1/printhouse-config/products/update-product-parameter`,
-        {
-          productId: router?.query?.productId,
-          sectionId: sectionId,
-          subSectionId: subSectionId,
-          productParameterType: 1,
-          parameter: {
-            id: parameter?.id,
-            name: changeName,
-            defaultValue: parameter?.defaultValue,
-            parameterType: parameter?.parameterType,
-            isHidden: parameter?.isHidden,
-            isRequired: parameter?.isRequired,
-            valuesConfigs: parameter?.valuesConfigs,
-          },
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        getProductById();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...parameter,
+          name: changeName?.length ? changeName : parameter.name,
+        },
+      });
+      setChangeName("");
     },
     [router, changeName]
   );
   const updatedProductParameteDefaultValue = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
-      const res = await callApi(
-        "PUT",
-        `/v1/printhouse-config/products/update-product-parameter`,
-        {
-          productId: router?.query?.productId,
-          sectionId: sectionId,
-          subSectionId: subSectionId,
-          productParameterType: 1,
-          parameter: {
-            id: parameter?.id,
-            name: parameter?.name,
-            defaultValue: changeDefaultValue,
-            parameterType: parameter?.parameterType,
-            isHidden: parameter?.isHidden,
-            isRequired: parameter?.isRequired,
-            valuesConfigs: parameter?.valuesConfigs,
-          },
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        getProductById();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...parameter,
+          defaultValue: changeDefaultValue?.length && changeDefaultValue,
+        },
+      });
+      setChangeDefaultValue("");
     },
+
     [router, changeDefaultValue]
   );
   const updatedProductParameteDefaultValueForSwitch = useCallback(
@@ -247,45 +188,23 @@ const useAddProduct = () => {
       parameter: any,
       value: boolean
     ) => {
-      const res = await callApi(
-        "PUT",
-        `/v1/printhouse-config/products/update-product-parameter`,
-        {
-          productId: router?.query?.productId,
-          sectionId: sectionId,
-          subSectionId: subSectionId,
-          productParameterType: 1,
-          parameter: {
-            id: parameter?.id,
-            name: parameter?.name,
-            defaultValue: value.toString(),
-            parameterType: parameter?.parameterType,
-            isHidden: parameter?.isHidden,
-            isRequired: parameter?.isRequired,
-            valuesConfigs: parameter?.valuesConfigs,
-          },
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        getProductById();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...parameter,
+          defaultValue: value.toString(),
+        },
+      });
     },
     [router]
   );
 
   const updatedProductParameterValuesConfigsHidden = useCallback(
-    async (sectionId: string, subSectionId: string, parameter: any, option) => {
+    async (
+      sectionId: string,
+      subSectionId: string,
+      parameter: any,
+      option: any
+    ) => {
       let temp = [...parameter?.valuesConfigs];
 
       let objectIdToUpdate = option?.id;
@@ -296,44 +215,22 @@ const useAddProduct = () => {
         }
         return obj;
       });
-      const res = await callApi(
-        "PUT",
-        `/v1/printhouse-config/products/update-product-parameter`,
-        {
-          productId: router?.query?.productId,
-          sectionId: sectionId,
-          subSectionId: subSectionId,
-          productParameterType: 1,
-          parameter: {
-            id: parameter?.id,
-            name: parameter?.name,
-            defaultValue: parameter?.defaultValue,
-            parameterType: parameter?.parameterType,
-            isHidden: parameter?.isHidden,
-            isRequired: parameter?.isRequired,
-            valuesConfigs: updatedArray,
-          },
-        }
-      );
-      if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        getProductById();
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
-      }
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...parameter,
+          valuesConfigs: updatedArray,
+        },
+      });
     },
     [router]
   );
   const updatedProductParameterValuesConfigsDefault = useCallback(
-    async (sectionId: string, subSectionId: string, parameter: any, option) => {
+    async (
+      sectionId: string,
+      subSectionId: string,
+      parameter: any,
+      option: any
+    ) => {
       let temp = [...parameter?.valuesConfigs];
 
       let objectIdToUpdate = option?.id;
@@ -345,23 +242,184 @@ const useAddProduct = () => {
           return { ...obj, isDefault: false };
         }
       });
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...parameter,
+          valuesConfigs: updatedArray,
+        },
+      });
+    },
+    [router]
+  );
+  const updatedParameterMaterialTypeValuesConfigsDefault = useCallback(
+    async (
+      sectionId: string,
+      subSectionId: string,
+      parameter: any,
+      option: any,
+      subSectionParameters,
+      level: number
+    ) => {
+      let temp = [...parameter?.valuesConfigs];
+      if (temp?.length <= 0) {
+        temp.push({
+          id: uuidv4(),
+          isHidden: false,
+          isDefault: true,
+          isDeleted: false,
+          value: option?.value,
+          materialValueIds: [
+            {
+              path: option?.pathName,
+              valueId: option?.valueId,
+            },
+          ],
+        });
+        await updatedValuesConfigsForParameters(sectionId, subSectionId, {
+          ...parameter,
+          valuesConfigs: temp,
+        });
+      } else {
+        let objectIdToUpdate = option?.valueId;
+        if (
+          temp.findIndex(
+            (item) => item?.materialValueIds[0]?.valueId === objectIdToUpdate
+          ) !== -1
+        ) {
+          const updatedArray = temp.map((obj) => {
+            if (obj.materialValueIds[0]?.valueId === objectIdToUpdate) {
+              return { ...obj, isDefault: true };
+            } else {
+              return { ...obj, isDefault: false };
+            }
+          });
+          await updateProductParameterEndPoint(sectionId, subSectionId, {
+            parameter: {
+              ...parameter,
+              valuesConfigs: updatedArray,
+            },
+          });
+        } else {
+          temp.push({
+            id: uuidv4(),
+            isHidden: false,
+            isDefault: true,
+            isDeleted: false,
+            value: option?.value,
+            materialValueIds: [
+              {
+                path: option?.pathName,
+                valueId: option?.valueId,
+              },
+            ],
+          });
+          const updatedArray = temp.map((obj) => {
+            if (obj.materialValueIds[0]?.valueId === objectIdToUpdate) {
+              return { ...obj, isDefault: true };
+            } else {
+              return { ...obj, isDefault: false };
+            }
+          });
+          await updatedValuesConfigsForParameters(sectionId, subSectionId, {
+            ...parameter,
+            valuesConfigs: updatedArray,
+          });
+        }
+      }
+      if (level === 1) {
+        const lvl2 = subSectionParameters?.find(
+          (item) =>
+            item?.materialPath[0] === parameter?.materialPath[0] &&
+            item.materialPath.length == 2
+        );
+        await updatedValuesConfigsForParameters(sectionId, subSectionId, {
+          ...lvl2,
+          valuesConfigs: [],
+        });
+      } else if (level === 2) {
+      }
+    },
+    [router]
+  );
+
+  const updatedParameterMaterialTypeValuesConfigsHidden = useCallback(
+    async (
+      sectionId: string,
+      subSectionId: string,
+      parameter: any,
+      option: any
+    ) => {
+      let temp = [...parameter?.valuesConfigs];
+      if (temp?.length <= 0) {
+        temp.push({
+          id: uuidv4(),
+          isHidden: true,
+          isDefault: false,
+          isDeleted: false,
+          value: option?.value,
+          materialValueIds: [
+            {
+              path: option?.pathName,
+              valueId: option?.valueId,
+            },
+          ],
+        });
+        await updatedValuesConfigsForParameters(sectionId, subSectionId, {
+          ...parameter,
+          valuesConfigs: temp,
+        });
+      } else {
+        let objectIdToUpdate = option?.valueId;
+        if (
+          temp.findIndex(
+            (item) => item?.materialValueIds[0]?.valueId === objectIdToUpdate
+          ) !== -1
+        ) {
+          const updatedArray = temp.map((obj) => {
+            if (obj?.materialValueIds[0]?.valueId === objectIdToUpdate) {
+              return { ...obj, isHidden: !obj.isHidden };
+            }
+            return obj;
+          });
+          await updatedValuesConfigsForParameters(sectionId, subSectionId, {
+            ...parameter,
+            valuesConfigs: updatedArray,
+          });
+        } else {
+          temp.push({
+            id: uuidv4(),
+            isHidden: true,
+            isDefault: false,
+            isDeleted: false,
+            value: option?.value,
+            materialValueIds: [
+              {
+                path: option?.pathName,
+                valueId: option?.valueId,
+              },
+            ],
+          });
+          await updatedValuesConfigsForParameters(sectionId, subSectionId, {
+            ...parameter,
+            valuesConfigs: temp,
+          });
+        }
+      }
+    },
+    [router]
+  );
+
+  const updatedValuesConfigsForParameters = useCallback(
+    async (sectionId: string, subSectionId: string, data: any) => {
       const res = await callApi(
         "PUT",
         `/v1/printhouse-config/products/update-product-parameter`,
         {
-          productId: router?.query?.productId,
+          productId: router?.query?.id,
           sectionId: sectionId,
           subSectionId: subSectionId,
           productParameterType: 1,
-          parameter: {
-            id: parameter?.id,
-            name: parameter?.name,
-            defaultValue: parameter?.defaultValue,
-            parameterType: parameter?.parameterType,
-            isHidden: parameter?.isHidden,
-            isRequired: parameter?.isRequired,
-            valuesConfigs: updatedArray,
-          },
+          parameter: data,
         }
       );
       if (res?.success) {
@@ -381,7 +439,372 @@ const useAddProduct = () => {
     },
     [router]
   );
+
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedParameter, setSelectedParameter] = useState<any>({});
+
+  const [selectedSectonId, setSelectedSectonId] = useState({});
+  const [selectedSubSection, setSelectedSubSection] = useState({});
+  const onCloseModal = () => {
+    setSelectedParameter({});
+    setOpenModal(false);
+  };
+  const onOpenModal = (parameter, sectionId, subSectionId) => {
+    setSelectedParameter(parameter);
+    setSelectedSectonId(sectionId);
+    setSelectedSubSection(subSectionId);
+    setTimeout(() => {
+      setOpenModal(true);
+    }, 100);
+  };
+  const { allMaterials } = useMaterials();
+  const [digitalPriceData, setDigidatPriceData] =
+    useRecoilState<any>(digitslPriceState);
+  const _renderParameterType = (
+    sectionId,
+    subSectionId,
+    parameter,
+    subSectionParameters
+  ) => {
+    if (parameter?.parameterType === 1) {
+      return (
+        <GomakeTextInput
+          style={clasess.textInputStyle}
+          defaultValue={parameter.defaultValue}
+          placeholder={parameter.name}
+          onChange={(e: any) => setChangeDefaultValue(e.target.value)}
+          onBlur={() =>
+            updatedProductParameteDefaultValue(
+              sectionId,
+              subSectionId,
+              parameter
+            )
+          }
+          type="number"
+        />
+      );
+    } else if (parameter?.parameterType === 2) {
+      return (
+        <GomakeTextInput
+          style={clasess.textInputStyle}
+          defaultValue={parameter.defaultValue}
+          placeholder={parameter.name}
+          type="text"
+          onChange={(e: any) => setChangeDefaultValue(e.target.value)}
+          onBlur={() =>
+            updatedProductParameteDefaultValue(
+              sectionId,
+              subSectionId,
+              parameter
+            )
+          }
+        />
+      );
+    } else if (parameter?.parameterType === 0) {
+      const defaultObject = parameter.valuesConfigs.find(
+        (item) => item.isDefault === true
+      );
+      return (
+        <GoMakeAutoComplate
+          options={parameter?.valuesConfigs}
+          placeholder={parameter.name}
+          style={clasess.dropDownListStyle}
+          getOptionLabel={(option: any) => option.updateName}
+          defaultValue={defaultObject}
+          onChange={(e: any, value: any) => {
+            updatedProductParameterValuesConfigsDefault(
+              sectionId,
+              subSectionId,
+              parameter,
+              value
+            );
+          }}
+          renderOption={(props: any, option: any) => {
+            return (
+              <div style={clasess.optionsContainer}>
+                <div {...props} style={{ width: "100%" }}>
+                  {option.updateName}
+                </div>
+                <div>
+                  {option.isHidden ? (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <HiddenIcon />
+                    </div>
+                  ) : (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <NotHiddenIcon />
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          }}
+        />
+      );
+    } else if (parameter?.parameterType === 3) {
+      return (
+        <SecondSwitch
+          checked={parameter?.defaultValue === "true"}
+          onChange={(a: any, value: any) => {
+            updatedProductParameteDefaultValueForSwitch(
+              sectionId,
+              subSectionId,
+              parameter,
+              value
+            );
+          }}
+        />
+      );
+    } else if (parameter?.parameterType === 6) {
+      const defaultObject = parameter.valuesConfigs.find(
+        (item) => item.isDefault === true
+      );
+      return (
+        <GoMakeAutoComplate
+          options={parameter?.valuesConfigs}
+          placeholder={parameter.name}
+          style={clasess.dropDownListStyle}
+          getOptionLabel={(option: any) => option.updateName}
+          defaultValue={defaultObject}
+          onChange={(e: any, value: any) => {
+            updatedProductParameterValuesConfigsDefault(
+              sectionId,
+              subSectionId,
+              parameter,
+              value
+            );
+          }}
+          renderOption={(props: any, option: any) => {
+            return (
+              <div style={clasess.optionsContainer}>
+                <div {...props} style={{ width: "100%" }}>
+                  {option.updateName}
+                </div>
+                <div>
+                  {option.isHidden ? (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <HiddenIcon />
+                    </div>
+                  ) : (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        updatedProductParameterValuesConfigsHidden(
+                          sectionId,
+                          subSectionId,
+                          parameter,
+                          option
+                        )
+                      }
+                    >
+                      <NotHiddenIcon />
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          }}
+        />
+      );
+    } else if (parameter?.parameterType === 5) {
+      if (allMaterials?.length > 0) {
+        let isDefaultObj = parameter?.valuesConfigs?.find(
+          (item) => item.isDefault === true
+        );
+        let options: any = allMaterials;
+        let defailtObjectValue = {};
+        if (parameter?.materialPath?.length == 3) {
+          options = digitalPriceData?.selectedMaterialLvl2;
+          let x = options?.find(
+            (item: any) =>
+              item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
+          );
+          defailtObjectValue = x;
+        }
+        if (parameter?.materialPath?.length == 2) {
+          let defsultParameters = subSectionParameters?.find((item) =>
+            item.valuesConfigs?.find((item) => item?.isDefault)
+          );
+          let defaultParameter = defsultParameters?.valuesConfigs?.find(
+            (item) => item?.isDefault
+          );
+          let valueIdIsDefault = defaultParameter?.materialValueIds[0]?.valueId;
+
+          options = digitalPriceData?.selectedMaterialLvl1;
+
+          if (!!!options) {
+            let optionsLvl1 = allMaterials
+              ?.find((material) => {
+                return material.pathName === parameter?.materialPath[0];
+              })
+              ?.data?.find((item) => item?.valueId === valueIdIsDefault);
+
+            options = optionsLvl1?.data || [];
+            let x = options?.find(
+              (item: any) =>
+                item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
+            );
+            defailtObjectValue = x;
+          }
+        }
+        if (parameter?.materialPath?.length == 1) {
+          options = allMaterials?.find((material: any) => {
+            return material.pathName === parameter?.materialPath[0];
+          })?.data;
+          let x = options?.find(
+            (item: any) =>
+              item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
+          );
+          defailtObjectValue = x;
+        }
+        return (
+          <GoMakeAutoComplate
+            options={options}
+            placeholder={parameter.name}
+            style={clasess.dropDownListStyle}
+            defaultValue={defailtObjectValue}
+            getOptionLabel={(option: any) => option.value}
+            onChange={(e: any, value: any) => {
+              if (parameter?.materialPath?.length == 3) {
+                updatedParameterMaterialTypeValuesConfigsDefault(
+                  sectionId,
+                  subSectionId,
+                  parameter,
+                  value,
+                  subSectionParameters,
+                  3
+                );
+                setDigidatPriceData({
+                  ...digitalPriceData,
+                  selectedMaterialLvl3: value,
+                  selectedOptionLvl3: value,
+                });
+              }
+              if (parameter?.materialPath?.length == 2) {
+                updatedParameterMaterialTypeValuesConfigsDefault(
+                  sectionId,
+                  subSectionId,
+                  parameter,
+                  value,
+                  subSectionParameters,
+                  2
+                );
+                setDigidatPriceData({
+                  ...digitalPriceData,
+                  selectedMaterialLvl2: value?.data,
+                  selectedOptionLvl2: value,
+                  selectedMaterialLvl3: null,
+                });
+              }
+              if (parameter?.materialPath?.length == 1) {
+                updatedParameterMaterialTypeValuesConfigsDefault(
+                  sectionId,
+                  subSectionId,
+                  parameter,
+                  value,
+                  subSectionParameters,
+
+                  1
+                );
+                setDigidatPriceData({
+                  ...digitalPriceData,
+                  selectedMaterialLvl1: value?.data,
+                  selectedOptionLvl1: value,
+                  selectedMaterialLvl2: null,
+                  selectedMaterialLvl3: null,
+                });
+              }
+            }}
+            renderOption={(props: any, option: any) => {
+              function checkValueIdAndHidden(valueId) {
+                const matchedConfig = parameter?.valuesConfigs.find((config) =>
+                  config.materialValueIds.some((id) => id.valueId === valueId)
+                );
+
+                return matchedConfig && matchedConfig.isHidden === true;
+              }
+              return (
+                <div style={clasess.optionsContainer}>
+                  <div {...props} style={{ width: "100%" }}>
+                    {option.value}
+                  </div>
+                  <div>
+                    {checkValueIdAndHidden(option.valueId) ? (
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          updatedParameterMaterialTypeValuesConfigsHidden(
+                            sectionId,
+                            subSectionId,
+                            parameter,
+                            option
+                          )
+                        }
+                      >
+                        <HiddenIcon />
+                      </div>
+                    ) : (
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          updatedParameterMaterialTypeValuesConfigsHidden(
+                            sectionId,
+                            subSectionId,
+                            parameter,
+                            option
+                          )
+                        }
+                      >
+                        <NotHiddenIcon />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            }}
+          />
+        );
+      }
+    }
+  };
   return {
+    setOpenModal,
+    setSelectedParameter,
+    setSelectedSectonId,
+    setSelectedSubSection,
+    onCloseModal,
+    _renderParameterType,
+    onOpenModal,
     t,
     handleTabClick,
     handleNextClick,
@@ -397,6 +820,7 @@ const useAddProduct = () => {
     updatedProductParameteDefaultValueForSwitch,
     updatedProductParameterValuesConfigsHidden,
     updatedProductParameterValuesConfigsDefault,
+    updatedValuesConfigsForParameters,
     changeDefaultValue,
     changeName,
     productState,
@@ -404,6 +828,10 @@ const useAddProduct = () => {
     template,
     activeTab,
     tabs,
+    selectedSubSection,
+    selectedSectonId,
+    selectedParameter,
+    openModal,
   };
 };
 

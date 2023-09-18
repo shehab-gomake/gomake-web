@@ -26,10 +26,22 @@ const perforationMachine = (state: Record<string, any>) => {
             isValid: !!state?.attributes?.unitDelay,
         },
         {
+            name: "perforationDelay",
+            label: "machineAttributes.perforationDelay",
+            type: "text",
+            placeholder: "machineAttributes.perforationDelay",
+            required: true,
+            parameterKey: "perforationDelay",
+            options: [],
+            value: state?.attributes?.perforationDelay ? state?.attributes?.perforationDelay : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.perforationDelay,
+        },
+        {
             name: 'machineAttributes.speedByMediaWeight',
             parameterKey: 'speedByMediaWeight',
             value: state.attributes?.speedByMediaWeight || [],
-            isValid: state.attributes?.speedByMediaWeight?.length > 0,
+            isValid: true,
             machineInputType: 'multiArrayInput',
             inputs: [
                 {
@@ -39,15 +51,6 @@ const perforationMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.weight",
                     required: true,
                     parameterKey: "weight",
-                    options: []
-                },
-                {
-                    name: "targetWeight",
-                    label: "machineAttributes.targetWeight",
-                    type: "text",
-                    placeholder: "machineAttributes.targetWeight",
-                    required: true,
-                    parameterKey: "targetWeight",
                     options: []
                 },
                 {

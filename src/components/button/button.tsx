@@ -16,7 +16,7 @@ const StyledButton = styled(Button, {
   lineHeight: "1.5px",
   backgroundColor: props.primaryColor(500),
   borderColor: "#FFFFFF",
-  height: 56,
+  height: props.height || 56,
   borderRadius: 4,
   gap: 7,
   color: "#FFFFFF",
@@ -42,6 +42,8 @@ const GomakePrimaryButton = ({ ...props }) => {
           width: "100%",
           justifyContent: "space-between",
           alignItems: "center",
+          flexWrap: "wrap",
+
         }}
       >
         {props.leftIcon && (
@@ -59,6 +61,8 @@ const GomakePrimaryButton = ({ ...props }) => {
         <span
           style={{
             width: props.leftIcon ? "85%" : "100%",
+            flexWrap: "wrap",
+
           }}
         >
           {props.children}

@@ -138,21 +138,15 @@ const SheetSizesWidget = ({
       </div>
       <div style={clasess.thiknessContainer}>{row?.type}</div>
       <div style={clasess.costsContainer}>{row?.size}</div>
+      <div style={clasess.directionContainer}>{row?.thickness}</div>
       <div style={clasess.directionContainer}>{row?.weightPerMeterSquare}</div>
+      <div style={clasess.directionContainer}>{row?.stiffnessFactor}</div>
       <div style={clasess.directionContainer}>
         <GomakeTextInput
           style={clasess.thiknessTextInputStyle}
           value={pricePerMeterSquare}
           onChange={(event: any) => setPricePerMeterSquare(event.target.value)}
           onBlur={updatePricePerMeterSquare}
-        />
-        {/* {row?.pricePerMeterSquare} */}
-      </div>
-      <div style={clasess.directionContainer}>{row?.thickness}</div>
-      <div style={clasess.activeContainer}>
-        <Switch
-          checked={row?.isActive}
-          onChange={(e: any) => onChangeActiveState(e.target.checked)}
         />
       </div>
       <div style={clasess.currencyContainer}>{row?.currency}</div>
@@ -162,6 +156,12 @@ const SheetSizesWidget = ({
           sizeId={row?.sizeId}
           stockValue={row?.stock}
           typeId={row?.typeId}
+        />
+      </div>
+      <div style={clasess.activeContainer}>
+        <Switch
+          checked={row?.isActive}
+          onChange={(e: any) => onChangeActiveState(e.target.checked)}
         />
       </div>
     </div>

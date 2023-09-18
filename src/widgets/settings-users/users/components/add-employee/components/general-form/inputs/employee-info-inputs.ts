@@ -1,0 +1,94 @@
+import {Employee} from "@/widgets/settings-users/users/interface/employee";
+import {emailRegex} from "@/utils/regex";
+
+const employeeInfoInputs = (state: Employee)  => {
+    return [
+        {
+            name: "firstname",
+            label: "usersSettings.firstname",
+            type: "text",
+            placeholder: "usersSettings.firstname",
+            required: true,
+            parameterKey: "firstname",
+            options: [],
+            value: state.firstname,
+            machineInputType: 'input',
+            isValid: !!state.firstname,
+        },
+        {
+            name: "lastName",
+            label: "usersSettings.lastname",
+            type: "text",
+            placeholder: "usersSettings.lastname",
+            required: true,
+            parameterKey: "lastname",
+            options: [],
+            value: state.lastname,
+            machineInputType: 'input',
+            isValid: !!state.lastname,
+        },
+        {
+            name: "phone",
+            label: "usersSettings.phone",
+            type: "text",
+            placeholder: "usersSettings.phone",
+            required: false,
+            parameterKey: "phone",
+            options: [],
+            value: state.phone,
+            machineInputType: 'input',
+            isValid: !!state.phone,
+        },
+        {
+            name: "email",
+            label: "usersSettings.email",
+            type: "text",
+            placeholder: "usersSettings.email",
+            required: false,
+            parameterKey: "email",
+            options: [],
+            value: state.email,
+            machineInputType: 'input',
+            isValid: !!state.email,
+            regex: emailRegex
+        },
+        {
+            name: "PinCodeForLoginWithApplication",
+            label: "usersSettings.PinCodeForLoginWithApplication",
+            type: "text",
+            placeholder: "usersSettings.PinCodeForLoginWithApplication",
+            required: false,
+            parameterKey: "PinCodeForLoginWithApplication",
+            options: [],
+            value: state.pinCodeForLoginWithApplication,
+            machineInputType: 'input',
+            isValid: !!state.pinCodeForLoginWithApplication,
+        },
+        {
+            name: "smsTemplatesGroupId",
+            label: "usersSettings.smsTemplatesGroupId",
+            type: "select",
+            placeholder: "usersSettings.smsTemplatesGroupId",
+            required: false,
+            parameterKey: "smsTemplatesGroupId",
+            value: state.smsTemplatesGroupId,
+            options: [],
+            isValid: true,
+            optionsUrl: '/v1/crm-service/roles/get-all-sms-templates'
+        },
+        {
+            name: "isGraphicArtist",
+            label: "usersSettings.isGraphicArtist",
+            type: "switch",
+            placeholder: "usersSettings.isGraphicArtist",
+            required: false,
+            parameterKey: "isGraphicArtist",
+            value: state.isGraphicArtist,
+            options: [],
+            machineInputType: 'input',
+            isValid: true,
+        },
+    ];
+}
+
+export {employeeInfoInputs};

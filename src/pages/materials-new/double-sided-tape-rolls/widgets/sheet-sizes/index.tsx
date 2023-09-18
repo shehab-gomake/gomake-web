@@ -110,8 +110,8 @@ const SheetSizesWidget = ({
   }, [row, selectedMaterials, selectedSupplier, pricePerUnit]);
   return (
     <div style={index2 % 2 == 0 ? clasess.bodyRow : clasess.secondRow}>
-      <div style={clasess.costsContainer}>{row?.height}</div>
       <div style={clasess.costsContainer}>{row?.width}</div>
+      <div style={clasess.costsContainer}>{row?.height}</div>
       <div style={clasess.costsContainer}>{row?.weightPerSquareMeter}</div>
       <div style={clasess.costsContainer}>
         <GomakeTextInput
@@ -122,16 +122,17 @@ const SheetSizesWidget = ({
         />
       </div>
       <div style={clasess.currencyContainer}>{row?.currency}</div>
-      <div style={clasess.activeContainer}>
-        <Switch
-          checked={row?.isActive}
-          onChange={(e: any) => onChangeActiveState(e.target.checked)}
-        />
-      </div>
+
       <div style={clasess.stokContainer}>
         <UpdateStockdoubleSidedTapeRolls
           stockValue={row?.stock}
           code={selectedMaterials?.code}
+        />
+      </div>
+      <div style={clasess.activeContainer}>
+        <Switch
+          checked={row?.isActive}
+          onChange={(e: any) => onChangeActiveState(e.target.checked)}
         />
       </div>
     </div>

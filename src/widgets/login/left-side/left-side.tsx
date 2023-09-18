@@ -1,18 +1,21 @@
-import { GomakePrimaryButton, GomakeTextInput } from "@/components";
+import { GomakePrimaryButton } from "@/components";
 import Image from "next/image";
 import { useGomakeLogin } from "../use-login";
 import { InputContainer } from "./input";
 import { IInput } from "./interfaces";
 import { useStyle } from "./style";
+import {useRecoilValue} from "recoil";
+import {companyProfileState} from "@/store/company-profile";
 
 const LoginLeftSide = () => {
   const { clasess } = useStyle();
+  const userProfile = useRecoilValue(companyProfileState);
   const { errors, inputs, changeState, onClickLogin } = useGomakeLogin();
   return (
     <div style={clasess.leftContainer}>
       <div style={clasess.logoContainer}>
         <Image
-          src={"https://i.ibb.co/wzpwSq6/Group-1239.png"}
+          src={userProfile?.loginLogo}
           alt="logo"
           width={100}
           height={100}

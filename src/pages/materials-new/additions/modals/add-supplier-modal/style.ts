@@ -1,6 +1,9 @@
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
+  const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       insideStyle: {
@@ -12,6 +15,11 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "space-between",
+      },
+      noDataStyle: {
+        marginTop: 20,
+        ...FONT_FAMILY.Lexend(600, 22),
+        color: primaryColor(500),
       },
     };
   }, []);

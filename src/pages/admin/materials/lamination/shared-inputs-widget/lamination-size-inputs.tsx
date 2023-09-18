@@ -40,7 +40,7 @@ const LaminationWeightsInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.width")}
+            {t("materials.inputs.width")} (cm)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterWidth")}
@@ -57,7 +57,7 @@ const LaminationWeightsInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.height")}
+            {t("materials.inputs.height")} (m)
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterHeight")}
@@ -73,9 +73,9 @@ const LaminationWeightsInputs = ({ index }) => {
           />
         </div>
         <div>
-          <div style={clasess.lableTextStyle}>{t("materials.inputs.name")}</div>
+          <div style={clasess.lableTextStyle}>{t("materials.inputs.type")}</div>
           <GomakeTextInput
-            placeholder={t("materials.inputs.enterName")}
+            placeholder={t("materials.inputs.type")}
             style={clasess.textInputStyle}
             value={materialLaminationStateValue?.items[index]["name"]}
             onChange={(e: any) => {

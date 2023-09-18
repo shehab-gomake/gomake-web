@@ -22,8 +22,8 @@ const LeftSideLayout = () => {
       <div
         style={{
           position: "absolute",
-          left: navStatus.isClosed ? 176 : 265,
-          top: navStatus.isClosed ? 50 : 80,
+          left: navStatus.isClosed ? 127 : 265,
+          top: navStatus.isClosed ? 50 : 60,
           transform: navStatus.isClosed ? "rotate(180deg)" : "rotate(0)",
           // transform: "rotate(90deg)",
           zIndex: 10,

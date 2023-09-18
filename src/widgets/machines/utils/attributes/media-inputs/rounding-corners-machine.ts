@@ -28,6 +28,7 @@ const roundingCornersMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.mediaDimensions',
             parameterKey: 'mediaDimensions',
             machineInputType: 'multiInput',
+            value: state?.attributes?.mediaDimensions,
             isValid: !!state?.attributes?.mediaDimensions?.minWidth &&
                 !!state?.attributes?.mediaDimensions?.minLength &&
                 !!state?.attributes?.mediaDimensions?.maxWidth &&

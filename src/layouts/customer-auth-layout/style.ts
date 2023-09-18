@@ -14,11 +14,10 @@ const useStyle = ({
   const clasess = useMemo(() => {
     return {
       container: {
-        width: "100vw",
+        width: "100%",
         height: "100vh",
         display: "flex",
         flexDirection: "row" as "row",
-        backgroundColor: "#FFFFFF",
       },
       logoContainer: {
         display: "flex",
@@ -26,38 +25,29 @@ const useStyle = ({
       },
       leftContainer: {
         backgroundColor: primaryColor(500),
-        width: navStatus?.isClosed ? 190 : 280,
-        minWidth: navStatus?.isClosed ? 190 : 280,
-        height: "100%",
+        width: navStatus?.isClosed ? 140 : 280,
+        minWidth: navStatus?.isClosed ? 140 : 280,
+        height: "100vh",
         display: "flex",
         flexDirection: "column" as "column",
-        justifyContent: "space-between" as "space-between",
+        justifyContent: "flex-start" as "flex-start",
         alignItems: "center",
-        paddingRight: navStatus?.isClosed
-          ? convertWidthToVW(5)
-          : convertWidthToVW(26),
-        paddingLeft: navStatus?.isClosed
-          ? convertWidthToVW(5)
-          : convertWidthToVW(26),
-        paddingTop: navStatus?.isClosed
-          ? convertHeightToVH(8)
-          : convertWidthToVW(40),
-        paddingBottom: navStatus?.isClosed
-          ? convertHeightToVH(8)
-          : convertWidthToVW(40),
+        paddingRight: navStatus?.isClosed ? 5 : 26,
+        paddingLeft: navStatus?.isClosed ? 5 : 26,
+        paddingTop: navStatus?.isClosed ? 8 : 40,
+        paddingBottom: navStatus?.isClosed ? 8 : 40,
         overflowY: "scroll" as "scroll",
       },
       rightContainer: {
-        // backgroundColor: "#FDFDFD",
         width: "100%",
         display: "flex",
         flexDirection: "column" as "column",
-        padding: convertWidthToVW(20),
-        overflowY: "scroll" as "scroll",
+        padding: 20,
+        paddingTop: 7,
         backgroundColor: "#FFFFFF",
       },
       headerContainer: {
-        height: convertHeightToVH(101),
+        // height: 101,
         display: "flex",
         flexDirection: "column" as "column",
         alignItems: "center",
@@ -66,10 +56,11 @@ const useStyle = ({
         backgroundColor: "#FFFFFF",
       },
       bodyContainer: {
-        height: convertHeightToVH(1024 - 101),
         display: "flex",
         flexDirection: "column" as "column",
         backgroundColor: "#FFFFFF",
+        height: "100%",
+        overflow: "scroll",
       },
       poweredContainer: {
         display: "flex",
@@ -90,10 +81,13 @@ const useStyle = ({
       ///Tab
       tabsContainer: {
         alignSelf: "flex-start",
-        height: "100%",
         width: "100%",
-        marginTop: convertHeightToVH(46),
-        overflow: "scroll" as "scroll",
+        // height: "100%",
+        marginTop: 46,
+      },
+      lastTabsContainer: {
+        alignSelf: "flex-start",
+        width: "100%",
       },
       tabContainer: {
         display: "flex",
@@ -101,7 +95,7 @@ const useStyle = ({
         justifyContent: navStatus?.isClosed ? "center" : "flex-start",
         alignItems: "center",
         gap: convertWidthToVW(8),
-        marginTop: convertHeightToVH(28),
+        marginTop: convertHeightToVH(24),
         cursor: "pointer",
         opacity: isHover ? 0.5 : 1,
       },
@@ -114,8 +108,8 @@ const useStyle = ({
         border: "1px solid #FFFFFF",
         opacity: 0.4,
         width: "90%",
-        marginTop: convertHeightToVH(28),
-        marginBottom: convertHeightToVH(32),
+        marginTop: convertHeightToVH(24),
+        // marginBottom: convertHeightToVH(32),
       },
       lineContainer: {
         width: "100%",

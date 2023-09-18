@@ -4,6 +4,7 @@ const mediaThicknessSettings = (state: Record<string, any>) => {
             name: 'machineAttributes.mediaThickness',
             parameterKey: 'mediaThickness',
             machineInputType: 'multiInput',
+            value: state?.attributes?.mediaThickness,
             isValid: !!state?.attributes?.mediaThickness?.min &&
                 !!state?.attributes?.mediaThickness?.max  ,
             inputs: [

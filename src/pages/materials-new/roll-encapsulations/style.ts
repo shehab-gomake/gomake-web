@@ -119,7 +119,14 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 20,
+      },
+      sizeContainer2: {
+        width: "20%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingLeft: 40,
       },
       thiknessContainer: {
         width: "20%",
@@ -138,7 +145,6 @@ const useStyle = () => {
         color: primaryColor(500),
         width: "100%",
         backgroundColor: "transparent",
-        paddingLeft: 2,
         boxShadow: "none",
       },
       costsContainer: {
@@ -154,7 +160,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 40,
       },
       activeContainer: {
         width: "20%",
@@ -162,7 +167,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 30,
       },
       currencyContainer: {
         width: "20%",
@@ -218,6 +222,11 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "space-between",
+      },
+      noDataStyle: {
+        marginTop: 20,
+        ...FONT_FAMILY.Lexend(600, 22),
+        color: primaryColor(500),
       },
     };
   }, [i18next.language, t]);

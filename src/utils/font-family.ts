@@ -20,6 +20,13 @@ const FONT_FAMILY = {
       fontSize,
     };
   },
+  Heebo: (fontWeight: number, fontSize: number) => {
+    return {
+      fontFamily: "Heebo",
+      fontWeight,
+      fontSize
+    }
+  }
 };
 
 export { FONT_FAMILY };

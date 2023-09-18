@@ -59,24 +59,7 @@ const ApplicationSizesMapping = ({
               }}
             />
           </div>
-          <div>
-            <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.height")}
-            </div>
-            <GomakeTextInput
-              placeholder={t("materials.inputs.enterHeight")}
-              style={clasess.textInputStyle}
-              value={applicationsize[index]["height"]}
-              onChange={(e: any) => {
-                materialApplicationsStateValue?.changeItemsApplicationThickness(
-                  applicationThickness,
-                  index,
-                  "height",
-                  e.target.value
-                );
-              }}
-            />
-          </div>
+
           <div>
             <div style={clasess.lableTextStyle}>
               {t("materials.inputs.name")}
@@ -97,7 +80,7 @@ const ApplicationSizesMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.width")}
+              {t("materials.inputs.width")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWidth")}
@@ -108,6 +91,24 @@ const ApplicationSizesMapping = ({
                   applicationThickness,
                   index,
                   "width",
+                  e.target.value
+                );
+              }}
+            />
+          </div>
+          <div>
+            <div style={clasess.lableTextStyle}>
+              {t("materials.inputs.height")} (m)
+            </div>
+            <GomakeTextInput
+              placeholder={t("materials.inputs.enterHeight")}
+              style={clasess.textInputStyle}
+              value={applicationsize[index]["height"]}
+              onChange={(e: any) => {
+                materialApplicationsStateValue?.changeItemsApplicationThickness(
+                  applicationThickness,
+                  index,
+                  "height",
                   e.target.value
                 );
               }}

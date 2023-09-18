@@ -40,6 +40,7 @@ const flexoPrinting = (state: Record<string, any>) => {
             name: 'machineAttributes.coreDiameter',
             parameterKey: 'coreDiameter',
             machineInputType: 'multiInput',
+            value: state?.attributes?.coreDiameter,
             isValid: !!state?.attributes?.coreDiameter?.standard &&
                 !!state?.attributes?.coreDiameter?.option,
             inputs: [

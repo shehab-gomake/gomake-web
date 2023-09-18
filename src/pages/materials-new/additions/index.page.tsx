@@ -119,86 +119,84 @@ export default function Tubes() {
 
   return (
     <CustomerAuthLayout>
-      <MaterialsLayout header={t("materials.additions.title")} side={Side()}>
-        {renderHeader()}
-        <div style={{ paddingLeft: 0 }}>
-          {isLoader ? (
-            <GomakeLoaderWidget />
-          ) : (
-            <>
-              {allWeightsGrouped.length === 0 ? (
-                <div style={clasess.noData}>
-                  {t("materials.sheetPaper.supplierAddedSheetYet")}
-                  <span
-                    style={clasess.noDataSpan}
-                    onClick={onClickAddNewSupplier}
-                  >
-                    {t("materials.sheetPaper.pleaseAddNow")}
-                  </span>
-                </div>
-              ) : (
-                <>
-                  {["header", ...allWeightsGrouped]?.map(
-                    (row: any, index: number) => {
-                      if (row === "header") {
+      {sheetCategories?.length > 0 ? (
+        <MaterialsLayout header={t("materials.additions.title")} side={Side()}>
+          {renderHeader()}
+          <div style={{ paddingLeft: 0 }}>
+            {isLoader ? (
+              <GomakeLoaderWidget />
+            ) : (
+              <>
+                {sheetStore?.suppliers[0].label === "Add new" ? (
+                  <div style={clasess.noData}>
+                    {t("materials.sheetPaper.supplierAddedSheetYet")}
+                    <span
+                      style={clasess.noDataSpan}
+                      onClick={onClickAddNewSupplier}
+                    >
+                      {t("materials.sheetPaper.pleaseAddNow")}
+                    </span>
+                  </div>
+                ) : (
+                  <>
+                    {["header", ...allWeightsGrouped]?.map(
+                      (row: any, index: number) => {
+                        if (row === "header") {
+                          return <HeaderTableWidget />;
+                        }
                         return (
-                          <HeaderTableWidget
-                            setSheetCheckStore={setSheetCheckStore}
-                            sheetCheckStore={sheetCheckStore}
-                            index={index}
-                          />
+                          <div style={{ ...clasess.bodyRow }}>
+                            <div style={clasess.sheetSizeContainer}>
+                              <SheetSizesWidget
+                                row={row}
+                                selectedMaterials={selectedMaterials}
+                                selectedSupplier={selectedSupplier}
+                                getSheetAllWeights={getSheetAllWeights}
+                                index2={index}
+                              />
+                            </div>
+                          </div>
                         );
                       }
-                      return (
-                        <div style={{ ...clasess.bodyRow }}>
-                          <div style={clasess.sheetSizeContainer}>
-                            <SheetSizesWidget
-                              row={row}
-                              selectedMaterials={selectedMaterials}
-                              selectedSupplier={selectedSupplier}
-                              getSheetAllWeights={getSheetAllWeights}
-                              index2={index}
-                            />
-                          </div>
-                        </div>
-                      );
-                    }
-                  )}
-                </>
-              )}
-            </>
-          )}
-        </div>
-        <AddSupplierModal
-          showSupplierModal={showSupplierModal}
-          setShowSupplierModal={setShowSupplierModal}
-          suppliers={suppliers}
-          onClickAddSupplier={onClickAddSupplier}
-        />
-        <UpdatePricePerTonModal
-          openModal={isUpdatePricePerTon}
-          onClose={onCloseUpdatePricePerTon}
-          modalTitle={modalTitle}
-          onClickBtn={updatePricePetTon}
-          onChangeData={setData}
-        />
-        <UpdateCurrencyModal
-          openModal={isUpdateCurrency}
-          onClose={onCloseUpdateCurrency}
-          onClickBtn={updatePricePetTon}
-          onChangeData={setData}
-        />
-        <SettingsMenuModal
-          anchorEl={anchorEl}
-          open={open}
-          handleClose={handleClose}
-          onOpenUpdatePrice={onOpenUpdatePrice}
-          onOpenAddPercentToPrice={onOpenAddPercentToPrice}
-          updateToActive={updateToActive}
-          updateToInActive={updateToInActive}
-          onOpenUpdateCurrency={onOpenUpdateCurrency}
-        />
-      </MaterialsLayout>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+          </div>
+          <AddSupplierModal
+            showSupplierModal={showSupplierModal}
+            setShowSupplierModal={setShowSupplierModal}
+            suppliers={suppliers}
+            onClickAddSupplier={onClickAddSupplier}
+          />
+          <UpdatePricePerTonModal
+            openModal={isUpdatePricePerTon}
+            onClose={onCloseUpdatePricePerTon}
+            modalTitle={modalTitle}
+            onClickBtn={updatePricePetTon}
+            onChangeData={setData}
+          />
+          <UpdateCurrencyModal
+            openModal={isUpdateCurrency}
+            onClose={onCloseUpdateCurrency}
+            onClickBtn={updatePricePetTon}
+            onChangeData={setData}
+          />
+          <SettingsMenuModal
+            anchorEl={anchorEl}
+            open={open}
+            handleClose={handleClose}
+            onOpenUpdatePrice={onOpenUpdatePrice}
+            onOpenAddPercentToPrice={onOpenAddPercentToPrice}
+            updateToActive={updateToActive}
+            updateToInActive={updateToInActive}
+            onOpenUpdateCurrency={onOpenUpdateCurrency}
+          />
+        </MaterialsLayout>
+      ) : (
+        <div style={clasess.noDataStyle}>{t("materials.inputs.noData")}</div>
+      )}
     </CustomerAuthLayout>
   );
 }

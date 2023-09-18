@@ -4,7 +4,8 @@ const minMaxInput = (state: Record<string, any>, parameterKey: string, label: st
             name: `machineAttributes.${label}`,
             parameterKey: parameterKey,
             machineInputType: 'multiInput',
-            isValid: !!state?.attributes[parameterKey]['min'] &&
+            value: state?.attributes[parameterKey],
+            isValid: state?.attributes && state?.attributes[parameterKey] &&  !!state?.attributes[parameterKey]['min'] &&
                 !!state?.attributes[parameterKey]['max'] ,
             inputs: [
                 {
@@ -15,7 +16,7 @@ const minMaxInput = (state: Record<string, any>, parameterKey: string, label: st
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state?.attributes[parameterKey]['min'] ? state?.attributes[parameterKey]['min'] : ''
+                    value: state?.attributes && state?.attributes[parameterKey] && state?.attributes[parameterKey]['min'] ? state?.attributes[parameterKey]['min'] : ''
                 },
                 {
                     name: "",
@@ -25,7 +26,7 @@ const minMaxInput = (state: Record<string, any>, parameterKey: string, label: st
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state?.attributes[parameterKey]['max'] ? state?.attributes[parameterKey]['max'] : ''
+                    value: state?.attributes && state?.attributes[parameterKey] && state?.attributes[parameterKey]['max'] ? state?.attributes[parameterKey]['max'] : ''
                 },
             ]
         },

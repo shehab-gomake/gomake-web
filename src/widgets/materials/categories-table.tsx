@@ -1,44 +1,11 @@
-import { styled } from "@mui/material/styles";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  tableCellClasses,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
-import { FONT_FAMILY } from "@/utils/font-family";
-import { useRecoilValue } from "recoil";
-import { machineCategoriesState } from "@/store/machine-categories";
 import { EditIcon } from "@/components/icons/edit-icon";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { PrimaryButton } from "@/widgets/machines/components/buttons/primary-button";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeRouter } from "@/hooks";
+import { PrimaryButton } from "@/components/button/primary-button";
+import { PrimaryTable } from "@/components/tables/primary-table";
 
-const StyledTableCell = styled(TableCell)(() => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#EBECFF",
-    color: "#292929",
-    ...FONT_FAMILY.Lexend(500, 14),
-  },
-  [`&.${tableCellClasses.body}`]: {
-    ...FONT_FAMILY.Lexend(500, 14),
-    color: "#2E3092",
-  },
-}));
-
-const StyledTableRow = styled(TableRow)(() => ({
-  "&:nth-of-type(even)": {
-    backgroundColor: "#F6F6F6",
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
 const CategoriesTable = ({ admin = false }) => {
   const { t } = useTranslation();
   const { primaryColor } = useGomakeTheme();
@@ -169,20 +136,10 @@ const CategoriesTable = ({ admin = false }) => {
 
   const categoriesAdminList = useMemo(() => {
     return [
-      // {
-      //   key: "sheetPaper",
-      //   title: t("tabs.sheetPaper"),
-      //   path: "/admin/materials-new/sheets",
-      // },
       {
         key: "sheetPaper",
         title: t("tabs.sheetPaper"),
         path: "/admin/materials/sheets",
-      },
-      {
-        key: "lamination",
-        title: t("tabs.lamination"),
-        path: "/admin/materials/lamination",
       },
       {
         key: "plats",
@@ -210,9 +167,19 @@ const CategoriesTable = ({ admin = false }) => {
         path: "/admin/materials/hardboards",
       },
       {
+        key: "wideFormatMaterial",
+        title: t("tabs.wideFormatMaterial"),
+        path: "/admin/materials/wide-format-material",
+      },
+      {
         key: "profileFrames",
         title: t("tabs.profileFrames"),
         path: "/admin/materials/profile-frame",
+      },
+      {
+        key: "lamination",
+        title: t("tabs.lamination"),
+        path: "/admin/materials/lamination",
       },
       {
         key: "applications",
@@ -225,9 +192,9 @@ const CategoriesTable = ({ admin = false }) => {
         path: "/admin/materials/roll-encapsulation",
       },
       {
-        key: "additions",
-        title: t("tabs.additions"),
-        path: "/admin/materials/additions",
+        key: "frames",
+        title: t("tabs.frames"),
+        path: "/admin/materials/frame",
       },
       {
         key: "canvasFrames",
@@ -235,9 +202,14 @@ const CategoriesTable = ({ admin = false }) => {
         path: "/admin/materials/canvans-frames",
       },
       {
-        key: "frames",
-        title: t("tabs.frames"),
-        path: "/admin/materials/frame",
+        key: "additions",
+        title: t("tabs.additions"),
+        path: "/admin/materials/additions",
+      },
+      {
+        key: "colors",
+        title: t("tabs.colors"),
+        path: "/admin/materials/colors",
       },
       {
         key: "foils",
@@ -245,44 +217,9 @@ const CategoriesTable = ({ admin = false }) => {
         path: "/admin/materials/foil",
       },
       {
-        key: "packinDrums",
-        title: t("tabs.packinDrums"),
-        path: "/admin/materials/packin-drums",
-      },
-      {
-        key: "packinUnits",
-        title: t("tabs.packinUnits"),
-        path: "/admin/materials/packin-units",
-      },
-      {
         key: "sheetEncapsulation",
         title: t("tabs.sheetEncapsulation"),
         path: "/admin/materials/sheet-encapsulation",
-      },
-      // {
-      //   key: "colors",
-      //   title: t("tabs.colors"),
-      //   path: "/admin/materials/colors",
-      // },
-      {
-        key: "doubleSidedTapeRolls",
-        title: t("tabs.doubleSidedTapeRolls"),
-        path: "/admin/materials/double-sided-tape-roll",
-      },
-      // {
-      //   key: "glues",
-      //   title: t("tabs.glues"),
-      //   path: "/admin/materials/glue",
-      // },
-      {
-        key: "magnets",
-        title: t("tabs.magnets"),
-        path: "/admin/materials/magnets",
-      },
-      {
-        key: "packings",
-        title: t("tabs.packings"),
-        path: "/admin/materials/packings",
       },
       {
         key: "varnishs",
@@ -290,9 +227,35 @@ const CategoriesTable = ({ admin = false }) => {
         path: "/admin/materials/varnish",
       },
       {
-        key: "wideFormatMaterial",
-        title: t("tabs.wideFormatMaterial"),
-        path: "/admin/materials/wide-format-material",
+        key: "magnets",
+        title: t("tabs.magnets"),
+        path: "/admin/materials/magnets",
+      },
+
+      {
+        key: "packinUnits",
+        title: t("tabs.packinUnits"),
+        path: "/admin/materials/packin-units",
+      },
+      {
+        key: "packinDrums",
+        title: t("tabs.packinDrums"),
+        path: "/admin/materials/packin-drums",
+      },
+      {
+        key: "glues",
+        title: t("tabs.glues"),
+        path: "/admin/materials/glues",
+      },
+      {
+        key: "doubleSidedTapeRolls",
+        title: t("tabs.doubleSidedTapeRolls"),
+        path: "/admin/materials/double-sided-tape-roll",
+      },
+      {
+        key: "packings",
+        title: t("tabs.packings"),
+        path: "/admin/materials/packings",
       },
     ];
   }, []);
@@ -301,48 +264,25 @@ const CategoriesTable = ({ admin = false }) => {
   const selectList = () => {
     return admin ? categoriesAdminList : categoriesList;
   };
+  const tableHeaders = [
+    t("materials.sheetPaper.category"),
+    t("materials.sheetPaper.viewMaterial"),
+  ];
+  const tableRows = selectList()?.map((category) => [
+    category.title,
+    <PrimaryButton
+      startIcon={<EditIcon color={primaryColor(500)} width={20} height={20} />}
+      onClick={() => {
+        navigate(category.path);
+      }}
+      variant={"text"}
+    >
+      {t("materials.sheetPaper.view")}
+    </PrimaryButton>,
+  ]);
   return (
     <>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell align={"center"}>Category</StyledTableCell>
-              <StyledTableCell align={"center"}>View Material</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {selectList()
-              .filter((item: any) => item?.path)
-              .map((category) => {
-                return (
-                  <StyledTableRow key={category.key}>
-                    <StyledTableCell align={"center"}>
-                      {category.title}
-                    </StyledTableCell>
-                    <StyledTableCell align={"center"}>
-                      <PrimaryButton
-                        startIcon={
-                          <EditIcon
-                            color={primaryColor(500)}
-                            width={20}
-                            height={20}
-                          />
-                        }
-                        onClick={() => {
-                          navigate(category.path);
-                        }}
-                        variant={"text"}
-                      >
-                        View
-                      </PrimaryButton>
-                    </StyledTableCell>
-                  </StyledTableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <PrimaryTable rows={tableRows} headers={tableHeaders} />
     </>
   );
 };

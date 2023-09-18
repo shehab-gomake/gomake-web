@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import {
-  getAllProductsMongoDB,
+  getAllProductsForDropDownList,
   getAndSetAllCustomers,
   getAndSetClientTypes,
 } from "@/services/hooks";
@@ -18,7 +18,6 @@ const useQuoteWidget = () => {
   const [selectedClientType, setSelectedClientType] = useState<any>({});
   const [selectedCustomersList, setSelectedCustomersList] = useState<any>({});
   const [selectedProduct, setSelectedProduct] = useState<any>({});
-
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
       setCanOrder(true);
@@ -27,7 +26,7 @@ const useQuoteWidget = () => {
     }
   };
   const renderOptions = () => {
-    if (canOrder) {
+    if (!!canOrder) {
       return customersListCreateOrder;
     } else return customersListCreateQuote;
   };
@@ -35,7 +34,7 @@ const useQuoteWidget = () => {
     await getAndSetClientTypes(callApi, setClientTypesValues);
   }, []);
   const getAllProducts = useCallback(async () => {
-    await getAllProductsMongoDB(callApi, setProductValues);
+    await getAllProductsForDropDownList(callApi, setProductValues);
   }, []);
   const getAllCustomersCreateQuote = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {

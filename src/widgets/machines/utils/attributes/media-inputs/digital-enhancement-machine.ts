@@ -23,6 +23,7 @@ const digitalEnhancementMachine = (state: Record<string, any>) => {
             name: 'machineAttributes.minMarginWithoutEnhancement',
             parameterKey: 'minMarginWithoutEnhancement',
             machineInputType: 'multiInput',
+            value: state?.attributes?.minMarginWithoutEnhancement,
             isValid: !!state?.attributes?.minMarginWithoutEnhancement?.width &&
                 !!state?.attributes?.minMarginWithoutEnhancement?.length,
             inputs: [

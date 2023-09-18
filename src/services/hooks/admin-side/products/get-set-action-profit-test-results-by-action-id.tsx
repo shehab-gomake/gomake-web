@@ -1,7 +1,7 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../../call-api.interface";
-import { PricingListMenuWidget } from "@/pages/admin/products/profits/widgets/pricing-list/more-circle";
-import { renderProfits } from "@/pages/admin/products/profits/use-profit-action.";
+import { renderProfits } from "@/pages/products/profits/use-profit-action.";
+import { PricingListMenuWidget } from "@/pages/products/profits/widgets/pricing-list/more-circle";
 
 const getAndSetGetActionProfitTestResultsByActionId = async (
   callApi: ICallApi,

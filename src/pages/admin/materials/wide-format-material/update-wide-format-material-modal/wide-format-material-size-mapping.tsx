@@ -88,7 +88,7 @@ const WideFormatMaterialSizeMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.width")}
+              {t("materials.inputs.width")} (cm)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterWidth")}
@@ -108,7 +108,7 @@ const WideFormatMaterialSizeMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.height")}
+              {t("materials.inputs.height")} (m)
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterHeight")}
@@ -128,10 +128,12 @@ const WideFormatMaterialSizeMapping = ({
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.weightPerMeterSquare")}
+              {t("materials.inputs.defaultPricePerMeterSquare")}
             </div>
             <GomakeTextInput
-              placeholder={t("materials.inputs.enterWeightPerMeterSquare")}
+              placeholder={t(
+                "materials.inputs.enterDefaultPricePerMeterSquare"
+              )}
               style={clasess.textInputStyle}
               value={
                 materialWideFormatMaterialStateValue?.updateState[sheetSize?.id]

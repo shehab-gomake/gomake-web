@@ -4,6 +4,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             name: 'machineAttributes.blanketDimensions',
             parameterKey: 'blanketDimensions',
             machineInputType: 'multiInput',
+            value: state?.attributes?.blanketDimensions,
             isValid: !!state?.attributes?.blanketDimensions?.length &&
                 !!state?.attributes?.blanketDimensions?.width &&
                 !!state?.attributes?.blanketDimensions?.thickness,
@@ -46,6 +47,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             name: 'machineAttributes.packingSheet',
             parameterKey: 'packingSheet',
             machineInputType: 'multiInput',
+            value: state?.attributes?.packingSheet,
             isValid: !!state?.attributes?.packingSheet?.length &&
                 !!state?.attributes?.packingSheet?.width,
             inputs: [

@@ -13,6 +13,8 @@ const AddProductSkuModal = ({
   onClose,
   onChangeStateProductSKU,
   createNewProductSKU,
+  errorName,
+  errorCode,
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -24,23 +26,41 @@ const AddProductSkuModal = ({
         onClose={onClose}
         insideStyle={clasess.insideStyle}
       >
-        <div>
-          <div>
+        <div style={{ marginTop: 20, height: "80%" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              height: "100%",
+            }}
+          >
             <div style={clasess.mainInputsContainer}>
-              <GomakeTextInput
-                style={clasess.textInputStyle}
-                placeholder={t("products.addProduct.admin.enterName")}
-                onChange={(e: any) => {
-                  onChangeStateProductSKU("name", e.target.value);
-                }}
-              />
-              <GomakeTextInput
-                style={clasess.textInputStyle}
-                placeholder={t("products.addProduct.admin.enterCode")}
-                onChange={(e: any) => {
-                  onChangeStateProductSKU("code", e.target.value);
-                }}
-              />
+              <div style={{ width: "100%" }}>
+                <GomakeTextInput
+                  style={clasess.textInputStyle}
+                  placeholder={t("products.addProduct.admin.enterName")}
+                  onChange={(e: any) => {
+                    onChangeStateProductSKU("name", e.target.value);
+                  }}
+                />
+                {errorName && (
+                  <div style={clasess.errorlabelStyle}>Field is required</div>
+                )}
+              </div>
+              <div style={{ width: "100%" }}>
+                <GomakeTextInput
+                  style={clasess.textInputStyle}
+                  placeholder={t("products.addProduct.admin.enterCode")}
+                  onChange={(e: any) => {
+                    onChangeStateProductSKU("code", e.target.value);
+                  }}
+                />
+                {errorCode && (
+                  <div style={clasess.errorlabelStyle}>Field is required</div>
+                )}
+              </div>
             </div>
             <div style={clasess.btnContainer}>
               <GomakePrimaryButton

@@ -6,11 +6,11 @@ import { machineCategoriesState } from "@/store/machine-categories";
 import { IStep } from "@/widgets/machines/utils/interface/step";
 import { getSteps } from "@/widgets/machines/utils/steps";
 import { usePrintHouseAddMachine } from "@/widgets/machines/hooks/use-print-house-add-machine";
-import { MachineLayout } from "@/widgets/machines/components/layout/machine-layout";
 import { useAdminMachines } from "@/widgets/machines/hooks/use-admin-machines";
 import { useRouter } from "next/router";
 import { machineState } from "@/widgets/machines/state/machine-state";
 import {GomakePrimaryButton} from "@/components";
+import {SideBarContainer} from "@/components/containers/side-bar-container";
 
 const CustomerAddMachine = () => {
   const router = useRouter();
@@ -19,11 +19,12 @@ const CustomerAddMachine = () => {
   const categories = useRecoilValue(machineCategoriesState);
   const [categoryName, setCategoryName] = useState<string>();
   const [machineSteps, setMachineSteps] = useState<IStep[]>([]);
-  const { getMachinesList, setMachine } = useAdminMachines();
+  const { getMachinesList, setMachine, getAndSetAdminMachines } = useAdminMachines();
   const { addPrintHouseMachine } = usePrintHouseAddMachine();
   const selectedMachine = useRecoilValue(machineState);
 
   useEffect(() => {
+    getAndSetAdminMachines().then()
     if (categoryId) {
       const category = categories.find(
         (category) => category.id === categoryId
@@ -60,7 +61,7 @@ const CustomerAddMachine = () => {
     </SideList>
   );
   return (
-    <MachineLayout
+    <SideBarContainer
       side={Side()}
       header={"Add new " + categoryName + " machine"}
       subHeader={
@@ -79,7 +80,7 @@ const CustomerAddMachine = () => {
           isAddForm={true}
         />
       )}
-    </MachineLayout>
+    </SideBarContainer>
   );
 };
 

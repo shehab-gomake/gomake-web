@@ -5,6 +5,7 @@ const mediaImageSizeSettings = (state: Record<string, any>) => {
             name: 'machineAttributes.imageSize',
             parameterKey: 'imageSize',
             machineInputType: 'multiInput',
+            value: state?.attributes?.imageSize,
             isValid: !!state?.attributes?.imageSize?.imageWidth &&
                 !!state?.attributes?.imageSize?.imageLength  ,
             inputs: [
