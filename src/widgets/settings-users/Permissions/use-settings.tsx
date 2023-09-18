@@ -5,28 +5,29 @@ import {
 } from "@/services/hooks/get-set-permissionRoles";
 import {useEditPermissionRolesRelationShip} from '../Permissions/use-update-permissionsRoles-relationship';
 import {SecondSwitch} from "@/components/switch/second";
+import {
+    IPermission,
+    IPermissionsGroup,
+    IPermissionsResponse,
+    IRole
+} from "@/widgets/settings-users/Permissions/interface";
 
 const useSettings = () => {
     const {callApi} = useGomakeAxios();
-    const [groups, setgroups] = useState([]);
-    const [permissionsRoles, setpermissionsRoles] = useState([]);
-    const [tableHeaders, setTableHeaders] = useState([]);
-    const [permissions, setpermissions] = useState([]);
+    const [groups, setgroups] = useState<IPermissionsGroup[]>([]);
+    const [tableHeaders, setTableHeaders] = useState<IRole[]>([]);
+    const [permissions, setPermissions] = useState<IPermission[]>([]);
     const [table, setTable] = useState([]);
     const [PermissionName, setPermissionName] = useState("");
-    const [selectedTab, setSelectedTab] = useState<{ id: string; title: string }>();
+    const [selectedTab, setSelectedTab] = useState<IPermissionsGroup>();
     const {editPermissionRole} = useEditPermissionRolesRelationShip();
 
     const getAndSetPermissionRolesRelationsByGroupId = useCallback(async (id) => {
-        const data = await getPermissionRolesRelationsByGroupId(callApi, setpermissionsRoles, {id});
+        const data = await getPermissionRolesRelationsByGroupId(callApi, undefined, {id});
         getPermissionsTable(data);
     }, [tableHeaders])
-    useEffect(() => {
 
-        if (!!selectedTab) {
-            getAndSetPermissionRolesRelationsByGroupId(selectedTab.id).then();
-        }
-    }, [selectedTab])
+
 
     const onSelectTab = (index: number) => {
         const newSelectedTab = groups[index];
@@ -36,7 +37,6 @@ const useSettings = () => {
 
     }
 
-    useEffect(() => {console.log(tableHeaders)}, [tableHeaders])
     useEffect(() => {
         if (groups && !selectedTab) {
             setSelectedTab(groups[0])
@@ -61,10 +61,11 @@ const useSettings = () => {
                     } else {
                         permission.rolesPermissionsRelationships.push({
                             permissionId: permissionId,
-                            roleId: roleId
+                            roleId: roleId,
+                            id: ''
                         })
                     }
-                    setpermissions(permissionsList)
+                    setPermissions(permissionsList)
                     getPermissionsTable(permissionsList)
                 }
             }
@@ -73,7 +74,8 @@ const useSettings = () => {
 
     }
 
-    const getPermissionsTable = useCallback((permissions) => {
+    const getPermissionsTable = useCallback(() => {
+        
         const table2 = [];
         permissions.forEach(permission => {
             const row = [];
@@ -94,17 +96,16 @@ const useSettings = () => {
     }, [tableHeaders])
 
     const getPermissionRolesRelations = useCallback(async () => {
-        const data = await getAndSetPermissionsRolesRelation(callApi, setpermissionsRoles);
-        const roles = [{id: "", name: " Permission"}, ...data.roles];
-        // roles.unshift({id: "", name: " Permission"});
-        setTableHeaders(roles);
+        const data = await getAndSetPermissionsRolesRelation(callApi, undefined);
+        setTableHeaders([{id: "", name: "Permission", key: 'permission.permissions'}, ...data.roles]);
         setgroups(data.groups)
-        setpermissions(data.permissions);
+        setPermissions(data.permissions);
         getPermissionsTable(data.permissions);
     }, []);
 
+
     const onChangePermissionSearch = useCallback((value: string) => {
-        var permissionsList = [...permissions];
+        const permissionsList = [...permissions];
         const filteredPermissions = permissionsList.filter(permission => {
             return permission.description.includes(value);
         });
@@ -122,14 +123,12 @@ const useSettings = () => {
     }, []);
     return {
         tableHeaders,
-        permissionsRoles,
         groups,
         permissions,
         table,
         onSelectTab,
         onChangePermissionSearch,
-        PermissionName
-
+        PermissionName,
     };
 };
 

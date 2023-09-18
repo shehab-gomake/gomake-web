@@ -18,7 +18,7 @@ const PermissionsWidget = () => {
         headers.push({name: row.name})
     })
     groups?.forEach((row) => {
-        tabs.push({title: row.name, selectedTab: onSelectTab});
+        tabs.push({title: row.name});
     });
 
     return (
@@ -28,8 +28,8 @@ const PermissionsWidget = () => {
             <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                 <SearchInputComponent onChange={onChangePermissionSearch} value={PermissionName}/>
             </div>
-            <Stack display={'grid'} padding={'5px'} maxHeight={'800px'}>
-                <PrimaryTable stickyFirstCol={true} stickyHeader={true} maxHeight={600}
+            <Stack display={'grid'} padding={'5px'} >
+                <PrimaryTable stickyFirstCol={true} stickyHeader={true} maxHeight={550}
                                     headers={tableHeaders.map(head => head.name)} rows={table}/>
             </Stack>
         </Stack>
