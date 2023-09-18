@@ -7,11 +7,11 @@ import {IFormInput} from "@/components/form-inputs/interfaces";
 
 const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
     const [options, setOptions] = useState([]);
+    const [dataLoaded, setDataLoaded] = useState<boolean>(false);
     const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
     const {callApi} = useGomakeAxios();
     const {t} = useTranslation();
     const {classes} = useStyle();
-
 
     const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
         changeState(input.parameterKey, e.target.value as string);
@@ -33,12 +33,13 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
     }, [options])
 
     useEffect(() => {
-        if (input.optionsUrl) {
+        if (input.optionsUrl && !dataLoaded) {
             callApi('GET', input.optionsUrl).then(
                 (res) => {
                     if (res?.success) {
                         setOptions(res?.data?.data?.data?.map(({value, text}) => ({label: text, value})));
                     }
+                    setDataLoaded(true);
                 }
             )
         } else {
@@ -48,7 +49,8 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
         if (selectedValue) {
             setSelectedLabel(selectedValue.label);
         }
-    }, [])
+    }, [input])
+
     return (
         <>
             {

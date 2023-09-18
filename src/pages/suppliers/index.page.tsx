@@ -1,25 +1,25 @@
 import { HeaderTitle } from "@/widgets";
 import { useTranslation } from "react-i18next";
 import { CustomerAuthLayout } from "@/layouts";
-import { useStyle } from "./style";
-import { HeaderFilter } from "./header-filter";
-import { useCustomers } from "./use-customers";
-import { AddCustomerButton } from "./add-customer";
 import Pagination from '@mui/material/Pagination';
 import { useState } from "react";
 import Stack from '@mui/material/Stack';
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { customerMapFunction } from "@/services/hooks/get-set-customers";
 import { PrimaryTable } from "@/components/tables/primary-table";
+import { useStyle } from "./style";
+import { HeaderFilter } from "../customers/header-filter";
+import { AddCustomerButton } from "../customers/add-customer";
+import { useCustomers } from "../customers/use-customers";
 
 
 
 
 export default function Home() {
   const { t } = useTranslation();
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const [pageNumber, setPageNumber] = useState(1);
-  const { tabelHeaders, updatedStatus, getCustomersRows,setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers("C", pageNumber, setPageNumber);
+  const { tabelHeaders, updatedStatus, getCustomersRows,setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers("S", pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
   const onCustomeradd = (customer) => {
@@ -29,9 +29,9 @@ export default function Home() {
 
   return (
     <CustomerAuthLayout>
-      <div style={clasess.sameRow}>
-        <HeaderTitle marginBottom="20px" title={t("customers.title")} />
-        <AddCustomerButton onCustomeradd={onCustomeradd} typeClient="C"></AddCustomerButton>
+      <div style={classes.headerStyle}>
+        <HeaderTitle marginBottom="20px" title={t("suppliers.title")} />
+        <AddCustomerButton onCustomeradd={onCustomeradd} typeClient="S"></AddCustomerButton>
       </div>
       <HeaderFilter
         agentsCategores={agentsCategores}
@@ -50,7 +50,7 @@ export default function Home() {
       <Stack spacing={3}>
         <PrimaryTable rows={getCustomersRows()} headers={tabelHeaders}></PrimaryTable>
         <CustomerCardWidget
-        typeClient={"C"}
+          typeClient={"S"}
           getAllCustomers={getAllCustomers}
           openModal={showCustomerModal}
           modalTitle={t("customers.modal.editTitle")}

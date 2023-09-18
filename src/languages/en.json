@@ -1725,7 +1725,8 @@
   "suppliers": {
     "buttons": {
       "addSupplier": "Add Supplier",
-      "clean": "Clean"
+      "clean": "Clean",
+      "updateChanges": "Update changes"
     },
     "title": "Suppliers",
     "selectStatus": "Select status",
@@ -1738,7 +1739,9 @@
     "status": "Status",
     "hashtag": "More",
     "addModalTitle": "Add Supplier",
-    "editModalTitle": "Edit Supplier"
+    "editModalTitle": "Edit Supplier",
+    "supplierInfo": "Supplier info"
+
   },
   "employees": {
     "buttons": {

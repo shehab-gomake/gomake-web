@@ -1,22 +1,19 @@
 import { useState } from "react";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { useTranslation } from "react-i18next";
-import { useStyle } from "../style";
 import { AddButton } from "@/components/button/add-button";
 
-const AddCustomerButton = ({ onCustomeradd }: any) => {
+const AddCustomerButton = ({ onCustomeradd , typeClient}: any) => {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
   const [customer, setCustomer] = useState([]);
-  const { clasess } = useStyle();
 
   return (
     <>
-      <CustomerCardWidget onCustomeradd={onCustomeradd} openModal={open} modalTitle={t("customers.modal.addTitle")} onClose={() => setOpen(false)} showAddButton={true} customer={customer} setCustomer={setCustomer} >
+      <CustomerCardWidget onCustomeradd={onCustomeradd} openModal={open} modalTitle={typeClient=="C" ? t("customers.modal.addTitle") : t("suppliers.addModalTitle") } onClose={() => setOpen(false)} showAddButton={true} customer={customer} setCustomer={setCustomer} >
       </CustomerCardWidget>
-      <AddButton onClick={() => setOpen(!open)} label={t("customers.buttons.addCustomer")}></AddButton>
+      <AddButton onClick={() => setOpen(!open)} label={typeClient=="C" ? t("customers.buttons.addCustomer") : t("suppliers.buttons.addSupplier")}></AddButton>
     </>
   );
 };
 export { AddCustomerButton };
-

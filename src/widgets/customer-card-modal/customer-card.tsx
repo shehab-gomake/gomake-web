@@ -1,5 +1,5 @@
 import { Tab, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { GoMakeModal } from "@/components";
 import { TextareaAutosize } from '@mui/base';
@@ -18,7 +18,7 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { customerInputs, customerInputs2 } from "./inputs/customer-inputs";
 import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general-inputs";
 
-const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
+const CustomerCardWidget = ({ typeClient , getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
@@ -243,7 +243,7 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
     >
       <div style={{ position: "sticky", top: 0, zIndex: 1, backgroundColor: "#FFF" }}>
         <Row>
-          <Col><span style={clasess.subTitleStyle} >{t("customers.modal.customerInfo")}</span>
+          <Col><span style={clasess.subTitleStyle} >{typeClient=="C" ? t("customers.modal.customerInfo") : t("suppliers.supplierInfo")}</span>
           </Col>
         </Row>
 
@@ -368,8 +368,8 @@ const CustomerCardWidget = ({ getAllCustomers, onCustomeradd, openModal, modalTi
         }
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <div style={clasess.footerStyle} >
-            {showAddButton && <button style={clasess.autoButtonStyle} onClick={handleAddCustomer} >{t("customers.buttons.addCustomer")}</button>}
-            {showUpdateButton && <button style={clasess.autoButtonStyle} onClick={handleEditCustomer}>{t("customers.buttons.updateChanges")}</button>}
+            {showAddButton && <button style={clasess.autoButtonStyle} onClick={handleAddCustomer} >{ typeClient=="C" ? t("customers.buttons.addCustomer") : t("suppliers.buttons.addSupplier")}</button>}
+            {showUpdateButton && <button style={clasess.autoButtonStyle} onClick={handleEditCustomer}>{typeClient=="C" ? t("customers.buttons.updateChanges") : t("suppliers.buttons.updateChanges")}</button>}
           </div>
         </div>
       </div>
