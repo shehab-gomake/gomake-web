@@ -19,9 +19,9 @@ const UserForm = ({ user, onDelete, setUser }: any) => {
 
     return (
         <div >
-            <Stack direction={'row'} display={'flex'} marginTop={"24px"} alignItems={"center"} justifyContent={"center"} marginBottom={"24px"}>
+            <Stack direction={'row'} display={'flex'} marginTop={"24px"} alignItems={"center"} marginBottom={"24px"} gap="10px">
                 {
-                    userInputs(user).map(item => <Stack direction={'column'} display={"flex"} width="180px" alignItems="flex-start" gap="10px">
+                    userInputs(user).map(item => <Stack direction={'column'} display={"flex"} width="180px" alignItems="flex-start">
                         <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                 }
             </Stack>
