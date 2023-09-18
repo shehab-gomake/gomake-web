@@ -50,8 +50,8 @@ const useSettings = () => {
         }
 
 
-        editPermissionRole(data).then(res => {
-            if (res?.success) {
+        editPermissionRole(data).then(x => {
+            if (x?.success) {
                 const permissionsList = [...permissions];
                 const permission = permissionsList.find(x => x.id == permissionId);
                 if (permission) {
@@ -69,6 +69,8 @@ const useSettings = () => {
                 }
             }
         })
+
+
     }
 
     const getPermissionsTable = useCallback((permissions) => {
@@ -93,13 +95,13 @@ const useSettings = () => {
 
     const getPermissionRolesRelations = useCallback(async () => {
         const data = await getAndSetPermissionsRolesRelation(callApi, setpermissionsRoles);
-        const roles = [...data.roles];
-        roles.unshift({id: "", name: " Permission"});
+        const roles = [{id: "", name: " Permission"}, ...data.roles];
+        // roles.unshift({id: "", name: " Permission"});
         setTableHeaders(roles);
         setgroups(data.groups)
         setpermissions(data.permissions);
         getPermissionsTable(data.permissions);
-    }, [])
+    }, []);
 
     const onChangePermissionSearch = useCallback((value: string) => {
         var permissionsList = [...permissions];
