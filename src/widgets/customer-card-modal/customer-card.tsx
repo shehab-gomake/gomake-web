@@ -92,6 +92,11 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
     debugger;
     var temp = [...contacts];
     temp = temp.filter(x => x.index != index);
+    temp.forEach((contact, i) => {
+      if (contact.index > index) {
+        contact.index -= 1;
+      }
+    });
     setContacts(temp);
   }
 
@@ -133,6 +138,11 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
     debugger;
     var temp = [...addresses];
     temp = temp.filter(x => x.index != index);
+    temp.forEach((address, i) => {
+      if (address.index > index) {
+        address.index -= 1;
+      }
+    });
     setAddresses(temp);
   }
 
@@ -174,6 +184,11 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
     debugger;
     var temp = [...users];
     temp = temp.filter(x => x.index != index);
+    temp.forEach((user, i) => {
+      if (user.index > index) {
+        user.index -= 1;
+      }
+    });
     setUsers(temp);
   }
 
@@ -317,13 +332,13 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
                 )
               }
             </Stack>
+            
             <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
               <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "7px" }} onClick={addEmptyContact} >
                 <AddIcon></AddIcon>
                 <button style={clasess.buttonsStyle} >{t("customers.buttons.addContact")}</button>
               </a>
             </Stack>
-
           </Stack>
         }
         {
