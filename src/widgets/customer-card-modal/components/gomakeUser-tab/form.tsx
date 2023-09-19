@@ -2,8 +2,6 @@ import * as React from "react";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { RemoveIcon } from "@/components/icons/icons";
-import { Col, Row } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { userInputs } from "../../inputs/user-inputs";
@@ -19,24 +17,19 @@ const UserForm = ({ user, onDelete, setUser }: any) => {
 
     return (
         <div >
-            <Stack direction={'row'} display={'flex'} marginTop={"24px"} alignItems={"center"} marginBottom={"24px"} gap="10px">
+            <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap="20px">
                 {
-                    userInputs(user).map(item => <Stack direction={'column'} display={"flex"} width="180px" alignItems="flex-start">
-                        <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
+                    userInputs(user).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
                 }
             </Stack>
-            <Stack direction={'row'} display={'flex'} marginBottom={"24px"} >
-                <Stack direction={'column'}>
-                    <a style={{ display: "flex", justifyContent: 'flex-start' }} onClick={() => onDelete(user.index)} >
-                        <RemoveIcon></RemoveIcon>
-                        <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
-                    </a>
-                </Stack>
+            <Stack direction={'row'} >
+                <a style={{ display: "flex", justifyContent: 'flex-start' }} onClick={() => onDelete(user.index)} >
+                    <RemoveIcon></RemoveIcon>
+                    <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
+                </a>
             </Stack >
         </div>
-
     );
 };
 
 export { UserForm };
-

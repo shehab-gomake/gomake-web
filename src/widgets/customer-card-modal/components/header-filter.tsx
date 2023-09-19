@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate} from "@/components";
 import { Skeleton } from "@mui/material";
 import { useStyle } from "./style";
@@ -9,7 +8,6 @@ const HeaderFilter = ({
     onchange,
     val
   }: any) => {
-    const { t } = useTranslation();
     const { clasess } = useStyle();
 
     return (

@@ -119,5 +119,4 @@ const contactInputs2 = (state)  => {
         
     ];
 }
-
-export {contactInputs1 , contactInputs2};
+export { contactInputs1 , contactInputs2};

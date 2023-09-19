@@ -17,7 +17,7 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
 
   const tabelHeaders = useMemo(
     () => [
-      t("customers.customerCode"),
+      clientType == "C" ? t("customers.customerCode") :t("suppliers.supplierCode"),
       t("customers.name"),
       t("customers.email"),
       t("customers.phone"),

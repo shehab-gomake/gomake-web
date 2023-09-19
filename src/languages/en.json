@@ -1757,8 +1757,9 @@
     "hashtag": "More",
     "addModalTitle": "Add Supplier",
     "editModalTitle": "Edit Supplier",
-    "supplierInfo": "Supplier info"
-
+    "supplierInfo": "Supplier info",
+    "supplierType": "Supplier type",
+    "supplierName": "Supplier name"
   },
   "employees": {
     "buttons": {
