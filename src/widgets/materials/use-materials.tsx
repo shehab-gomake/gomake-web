@@ -2,13 +2,16 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { useGomakeRouter } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EditIcon } from "@/icons";
-import { useMemo } from "react";
+import { matchSorter } from "match-sorter";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const useMaterials = ({ admin }: any) => {
   const { t } = useTranslation();
   const { navigate } = useGomakeRouter();
   const { primaryColor } = useGomakeTheme();
+  const [term, setTerm] = useState("");
+  const [materilasSearched, setMaterilasSearched] = useState([]);
   const categoriesList = useMemo(() => {
     return [
       {
@@ -277,7 +280,20 @@ const useMaterials = ({ admin }: any) => {
       {t("materials.sheetPaper.view")}
     </PrimaryButton>,
   ]);
-  return { tableHeaders, tableRows };
+
+  const filterArray = (array: any, searchText: string) =>
+    array.filter((item) => {
+      const matches = matchSorter([item[0]], searchText);
+      return matches.length > 0;
+    });
+
+  useEffect(() => {
+    if (tableRows?.length) {
+      const temp = filterArray(tableRows, term);
+      setMaterilasSearched(temp);
+    }
+  }, [term]);
+  return { tableHeaders, tableRows, materilasSearched, term, setTerm };
 };
 
 export { useMaterials };

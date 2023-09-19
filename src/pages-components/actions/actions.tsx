@@ -5,14 +5,19 @@ import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 
 const ActionPageWidget = () => {
   const { clasess } = useStyle();
-  const { tableHeaders, allActions, t } = useActions();
+  const { tableHeaders, allActions, materilasSearched, term, setTerm, t } =
+    useActions();
   return (
     <div style={clasess.mainContainer}>
       <HeaderTitleWithSearch
         title={t("products.actions.admin.title")}
-        onChange={(e) => console.log(e)}
+        onChange={(e) => setTerm(e)}
       />
-      <PrimaryTable rows={allActions} headers={tableHeaders} />
+      {term ? (
+        <PrimaryTable rows={materilasSearched} headers={tableHeaders} />
+      ) : (
+        <PrimaryTable rows={allActions} headers={tableHeaders} />
+      )}
     </div>
   );
 };

@@ -5,14 +5,18 @@ import { HeaderTitleWithSearch } from "../header-title-with-search";
 
 const CategoriesTable = ({ admin = false }) => {
   const { clasess } = useStyle();
-  const { tableHeaders, tableRows } = useMaterials({ admin });
+  const { tableHeaders, tableRows, materilasSearched, term, setTerm } =
+    useMaterials({
+      admin,
+    });
   return (
     <div style={clasess.mainConainer}>
-      <HeaderTitleWithSearch
-        title="Materials"
-        onChange={(e) => console.log(e)}
-      />
-      <PrimaryTable rows={tableRows} headers={tableHeaders} />
+      <HeaderTitleWithSearch title="Materials" onChange={(e) => setTerm(e)} />
+      {term ? (
+        <PrimaryTable rows={materilasSearched} headers={tableHeaders} />
+      ) : (
+        <PrimaryTable rows={tableRows} headers={tableHeaders} />
+      )}
     </div>
   );
 };

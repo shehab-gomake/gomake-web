@@ -4,6 +4,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EditIcon } from "@/icons";
 import { getAllPrintHouseActions } from "@/services/hooks";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { matchSorter } from "match-sorter";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -11,6 +12,8 @@ const useActions = () => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { primaryColor } = useGomakeTheme();
+  const [term, setTerm] = useState("");
+  const [materilasSearched, setMaterilasSearched] = useState([]);
   const { t } = useTranslation();
   const [allActions, setAllActions] = useState<any>();
   const getActions = useCallback(async () => {
@@ -66,7 +69,20 @@ const useActions = () => {
     t("products.actions.profit"),
     t("products.actions.properties"),
   ];
-  return { tableHeaders, allActions, t };
+
+  const filterArray = (array: any, searchText: string) =>
+    array.filter((item) => {
+      const matches = matchSorter([item[0]], searchText);
+      return matches.length > 0;
+    });
+
+  useEffect(() => {
+    if (allActions?.length) {
+      const temp = filterArray(allActions, term);
+      setMaterilasSearched(temp);
+    }
+  }, [term]);
+  return { tableHeaders, allActions, materilasSearched, term, setTerm, t };
 };
 
 export { useActions };
