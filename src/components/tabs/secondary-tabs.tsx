@@ -14,8 +14,8 @@ const SecondaryTabs = styled(Tabs)((props: TabsProps) => {
     return {
         paddingLeft: convertWidthToVW(20),
         paddingRight: convertWidthToVW(20),
-        display:"flex",
-        flexWrap:"wrap",
+        display: "flex",
+        flexWrap: "wrap",
         '& .MuiButtonBase-root': {
             textTransform: 'initial',
         },
@@ -27,7 +27,7 @@ const SecondaryTabs = styled(Tabs)((props: TabsProps) => {
             maxWidth: '100%'
         }
 
-   
+
     }
 });
 const SecondaryTab = styled(Tab)((props: TabProps) => {
@@ -45,7 +45,7 @@ const SecondaryTab = styled(Tab)((props: TabProps) => {
             color: secondColor(500),
             borderBottom: `3px solid ${secondColor(500)}`,
         },
-   
+
 
     }
 });
@@ -60,33 +60,37 @@ const SecondaryTabsComponent = ({tabs, children, navigationButtons, onSelectTab}
     };
     return (
         <>
-            <Stack direction={'row'} flexWrap={"wrap"} justifyContent={'space-between'} alignItems={'center'} position={'sticky'} top={0}
+            <Stack direction={'row'} flexWrap={"wrap"} justifyContent={'space-between'} alignItems={'center'}
+                   position={'sticky'} top={0}
                    bgcolor={'#FFF'} zIndex={1}>
-                <SecondaryTabs  
+                <SecondaryTabs
                     value={value}
                     onChange={handleChange}>
                     {
-                        tabs?.map(tab => <SecondaryTab  label={tab.title}/>)
+                        tabs?.map(tab => <SecondaryTab label={tab.title}/>)
                     }
                 </SecondaryTabs>
                 <div>{children}</div>
             </Stack>
-            <div style={{padding: '0 20px'}}>
-                {
-                    tabs?.map((tab, index: number) => <CustomTabPanel key={'tabs' + index} value={value} index={index}>
-                        {tab.component}
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'flex-end' as 'flex-end',
-                            position: 'sticky' as 'sticky',
-                            bottom: 0
-                        }}>
-                            {navigationButtons && index + 1 < tabs.length && <SecondaryButton variant={'contained'}
-                                                                                              onClick={() => setValue(index + 1)}>Next</SecondaryButton>}
-                        </div>
-                    </CustomTabPanel>)
-                }
-            </div>
+            { tabs.some(tab => !!tab.component) &&
+                <div style={{padding: '0 20px'}}>
+                    {
+                        tabs?.filter(tab => !!tab.component).map((tab, index: number) => <CustomTabPanel
+                            key={'tabs' + index} value={value} index={index}>
+                            {tab.component}
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'flex-end' as 'flex-end',
+                                position: 'sticky' as 'sticky',
+                                bottom: 0
+                            }}>
+                                {navigationButtons && index + 1 < tabs.length && <SecondaryButton variant={'contained'}
+                                                                                                  onClick={() => setValue(index + 1)}>Next</SecondaryButton>}
+                            </div>
+                        </CustomTabPanel>)
+                    }
+                </div>
+            }
         </>
     );
 }

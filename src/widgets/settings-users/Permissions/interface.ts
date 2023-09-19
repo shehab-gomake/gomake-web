@@ -14,6 +14,7 @@ export interface IPermission {
 export interface IRole {
     id: string;
     name: string;
+    recordID: string;
 }
 
 export interface IRolesPermissionsRelationships {

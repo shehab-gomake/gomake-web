@@ -12,13 +12,12 @@ const PrimaryTableCell = styled(TableCell)(() => {
         backgroundColor: primaryColor(50),
         color: primaryColor(900),
         ...FONT_FAMILY.Lexend(500, 14),
-        width: 'fit-content'
+        padding: '5px 5px',
     },
     [`&.${tableCellClasses.body}`]: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(500),
-        padding: '2px 20px',
-        width: 'fit-content'
+        padding: '2px 0',
     },
 }});
 
@@ -39,13 +38,13 @@ const PrimaryTable = ({rows, headers, stickyHeader, stickyFirstCol, maxHeight}: 
     const {classes} = useStyle(maxHeight);
     return (
         <TableContainer style={classes.tableContainer}>
-            <Table stickyHeader={stickyHeader}>
+            <Table  stickyHeader={stickyHeader}>
                 <TableHead>
                     <PrimaryTableRow>
                         {
                             headers.map((header, index) => {
-                                if (index === 0) {
-                                    return <PrimaryTableCell align={"center"} style={classes.stickyHeader}>
+                                if (index === 0 && stickyHeader) {
+                                    return <PrimaryTableCell  style={classes.stickyHeader}>
                                         {header}
                                     </PrimaryTableCell>
                                 } else {
@@ -61,7 +60,7 @@ const PrimaryTable = ({rows, headers, stickyHeader, stickyFirstCol, maxHeight}: 
                             {
                                 row.map((cell, index) => {
                                     if (index === 0 && stickyFirstCol) {
-                                        return <PrimaryTableCell align={"center"} style={classes.sticky}>
+                                        return <PrimaryTableCell  style={classes.sticky}>
                                             {cell}
                                         </PrimaryTableCell>
                                     } else {

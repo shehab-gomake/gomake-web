@@ -1,6 +1,6 @@
 export interface ITableProps {
-    rows: any[][];
-    headers: string[];
+    rows: (string | JSX.Element)[][];
+    headers: (string | JSX.Element)[];
     stickyHeader: boolean;
     stickyFirstCol: boolean;
     maxHeight?: number;

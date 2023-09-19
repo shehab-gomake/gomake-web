@@ -12,7 +12,7 @@ const GomakeLoading = () => {
   const { primaryColor } = useGomakeTheme();
 
   return (
-    <Backdrop sx={{ zIndex: 1 }} open={loading}>
+    <Backdrop sx={{ zIndex: 9999999999999999 }} open={loading}>
       <div
         style={{
           position: "absolute",

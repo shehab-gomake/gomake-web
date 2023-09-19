@@ -1545,7 +1545,10 @@
     "AddRole": "Add Role",
     "AddNewRole": "Add new role",
     "Role name": "Role name",
-    "add": "Add"
+    "add": "Add",
+    "update": "Update",
+    "editRole": "Edit role name",
+    "addRole": "Add new role"
   },
   "settings": {
     "settings": "Settings",
