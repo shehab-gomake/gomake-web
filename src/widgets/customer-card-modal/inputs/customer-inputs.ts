@@ -40,7 +40,7 @@ const customerInputs = (state)  => {
             label: "customers.modal.clientType",
             type: "select",
             placeholder: "customers.modal.clientType",
-            required: true,
+            required: false,
             parameterKey: "clientTypeId",
             options: [],
             optionsUrl:"/v1/clientTypes/get-all-clientTypes",
