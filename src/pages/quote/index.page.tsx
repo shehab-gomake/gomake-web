@@ -202,7 +202,6 @@ export default function Quote() {
     getCalculateQuote,
     t,
   ]);
-  console.log("quoteItemValue", quoteItemValue);
   return (
     <CustomerAuthLayout>
       {quoteItemValue && (

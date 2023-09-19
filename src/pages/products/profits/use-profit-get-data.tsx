@@ -39,8 +39,6 @@ const useProfitsGetData = () => {
     useRecoilState<any>(productsState);
   const [machincesStateValue, setMachincesState] =
     useRecoilState<any>(machincesState);
-  console.log("machincesStateValue", machincesStateValue);
-  // const machincesStateValue = useRecoilValue(machineCategoriesState);
   const [actionExceptionProfitRowsVal, setActionExceptionProfitRows] =
     useRecoilState<any>(actionProfitRows);
   const [selectTestDataVal, setSelectTestData] =

@@ -30,9 +30,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const [urgentOrder, setUrgentOrder] = useState(false);
   const [printingNotes, setPrintingNotes] = useState("");
   const [graphicNotes, setGraphicNotes] = useState("");
-
-  console.log("printingNotes", printingNotes);
-  console.log("graphicNotes", graphicNotes);
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let temp = [...isRequiredParameters];
