@@ -27,8 +27,8 @@ const useGomakeAdminLogin = () => {
       userPrincipalName: state.email,
       password: state.password,
     });
-    if (result?.data?.data?.token) {
-      updateTokenStorage(result?.data?.data?.token);
+    if (result?.data?.data?.customer?.token) {
+      updateTokenStorage(result?.data?.data?.customer?.token);
       navigate("/admin");
     }
   }, [state]);
