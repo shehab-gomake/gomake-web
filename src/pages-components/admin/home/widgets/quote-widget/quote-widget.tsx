@@ -11,6 +11,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
   const {
     clientTypesValue,
     productValue,
+    isDisabled,
     setSelectedClientType,
     setSelectedCustomersList,
     setSelectedProduct,
@@ -19,7 +20,6 @@ const QuoteWidget = ({ isAdmin = true }) => {
     onClcikCreateQuote,
     onClcikCreateQuoteForCustomer,
   } = useQuoteWidget();
-
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.autoComplateRowContainer}>
@@ -63,6 +63,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
       <div style={clasess.btnContainer}>
         <GomakePrimaryButton
           onClick={isAdmin ? onClcikCreateQuote : onClcikCreateQuoteForCustomer}
+          disabled={isDisabled}
+          style={clasess.btnStyle}
         >
           {t("home.admin.createQoute")}
         </GomakePrimaryButton>
