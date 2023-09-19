@@ -18,6 +18,22 @@ const useQuoteWidget = () => {
   const [selectedClientType, setSelectedClientType] = useState<any>({});
   const [selectedCustomersList, setSelectedCustomersList] = useState<any>({});
   const [selectedProduct, setSelectedProduct] = useState<any>({});
+  const [isDisabled, setIsDisabled] = useState(true);
+  const checkVariables = (var1, var2, var3) => {
+    if (var1?.id && var2?.id && var3?.id) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+  useEffect(() => {
+    const isDisabled = checkVariables(
+      selectedClientType,
+      selectedCustomersList,
+      selectedProduct
+    );
+    setIsDisabled(isDisabled);
+  }, [selectedClientType, selectedCustomersList, selectedProduct]);
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
       setCanOrder(true);
@@ -25,6 +41,7 @@ const useQuoteWidget = () => {
       setCanOrder(false);
     }
   };
+
   const renderOptions = () => {
     if (!!canOrder) {
       return customersListCreateOrder;
@@ -69,6 +86,7 @@ const useQuoteWidget = () => {
     productValue,
     customersListCreateQuote,
     customersListCreateOrder,
+    isDisabled,
     setSelectedClientType,
     setSelectedCustomersList,
     setSelectedProduct,

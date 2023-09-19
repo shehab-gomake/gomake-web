@@ -49,6 +49,9 @@ const useStyle = () => {
         alignSelf: "center",
         width: "50%",
       },
+      btnStyle: {
+        height: 40,
+      },
     };
   }, []);
   return {
