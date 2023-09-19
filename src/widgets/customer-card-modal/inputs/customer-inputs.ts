@@ -1,12 +1,12 @@
 
-const customerInputs = (state)  => {
+const customerInputs = (typeClient , state)  => {
     return [
         {
             name: "code",
             label: "customers.modal.code",
             type: "text",
             placeholder: "customers.modal.code",
-            required: true,
+            required: false,
             parameterKey: "code",
             options: [],
             value: state?.code,
@@ -15,9 +15,9 @@ const customerInputs = (state)  => {
         },
         {
             name: "name",
-            label: "customers.modal.clientName",
+            label: typeClient==="C" ? "customers.modal.clientName" : "suppliers.supplierName",
             type: "text",
-            placeholder: "customers.modal.clientName",
+            placeholder: typeClient==="C" ? "customers.modal.clientName" : "suppliers.supplierName",
             required: true,
             parameterKey: "name",
             options: [],
@@ -37,10 +37,10 @@ const customerInputs = (state)  => {
          },
         {
             name: "clientTypeId",
-            label: "customers.modal.clientType",
+            label: typeClient==="C" ? "customers.modal.clientType" : "suppliers.supplierType",
             type: "select",
-            placeholder: "customers.modal.clientType",
-            required: false,
+            placeholder: typeClient==="C" ? "customers.modal.clientType" : "suppliers.supplierType",
+            required: true,
             parameterKey: "clientTypeId",
             options: [],
             optionsUrl:"/v1/clientTypes/get-all-clientTypes",

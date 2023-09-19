@@ -1,5 +1,5 @@
 import { Tab, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useStyle } from "./style";
 import { GoMakeModal } from "@/components";
 import { TextareaAutosize } from '@mui/base';
@@ -18,7 +18,7 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { customerInputs, customerInputs2 } from "./inputs/customer-inputs";
 import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general-inputs";
 
-const CustomerCardWidget = ({ typeClient , getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
+const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
@@ -186,7 +186,7 @@ const CustomerCardWidget = ({ typeClient , getAllCustomers, onCustomeradd, openM
     );
   };
 
-  // add customer buttone
+  // add customer button
   const handleAddCustomer = async () => {
     const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
     const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
@@ -198,7 +198,7 @@ const CustomerCardWidget = ({ typeClient , getAllCustomers, onCustomeradd, openM
       contacts: filteredContacts,
       addresses: filteredAddresses,
       users: filteredUserss,
-      CardTypeId: cardTypeId, 
+      CardTypeId: cardTypeId,
     };
     setCustomer(updatedCustomer);
     addNewCustomer(updatedCustomer).then(x => {
@@ -219,6 +219,7 @@ const CustomerCardWidget = ({ typeClient , getAllCustomers, onCustomeradd, openM
       users: filteredUserss,
     };
     setCustomer(updatedCustomer);
+    console.log(updatedCustomer)
     editCustomer(updatedCustomer, setCustomer).then(x => {
       getAllCustomers();
       handleClose();
@@ -236,6 +237,11 @@ const CustomerCardWidget = ({ typeClient , getAllCustomers, onCustomeradd, openM
     return emptyProps;
   };
 
+
+  // const customerInfo = useCallback(() => {
+  //   return customerInputs(customer)
+  //     }, [selectedTab]);
+
   return (
     <GoMakeModal
       openModal={open}
@@ -246,12 +252,12 @@ const CustomerCardWidget = ({ typeClient , getAllCustomers, onCustomeradd, openM
       <div style={{ position: "sticky", top: 0, zIndex: 1, backgroundColor: "#FFF" }}>
         <Row>
           <Col>
-          <span style={clasess.subTitleStyle} >{typeClient=="C" ? t("customers.modal.customerInfo") : t("suppliers.supplierInfo")}</span>
+            <span style={clasess.subTitleStyle} >{typeClient == "C" ? t("customers.modal.customerInfo") : t("suppliers.supplierInfo")}</span>
           </Col>
         </Row>
         <Row style={{ marginTop: '16px', width: "90%", marginBottom: '24px' }}>
           {
-            customerInputs(customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
+            customerInputs(typeClient, customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px" }}>
               <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={!!item.readonly} /></Col>)
           }
         </Row>
@@ -266,7 +272,7 @@ const CustomerCardWidget = ({ typeClient , getAllCustomers, onCustomeradd, openM
             <Tab sx={{ backgroundColor: selectedTab === 0 ? '#ED028C' : '#EBECFF', color: selectedTab === 0 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "82px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.general")} />
             <Tab sx={{ backgroundColor: selectedTab === 1 ? '#ED028C' : '#EBECFF', color: selectedTab === 1 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "90px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.contacts")} />
             <Tab sx={{ backgroundColor: selectedTab === 2 ? '#ED028C' : '#EBECFF', color: selectedTab === 2 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "100px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.addresses")} />
-            <Tab sx={{ backgroundColor: selectedTab === 3 ? '#ED028C' : '#EBECFF', color: selectedTab === 4 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "137px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "7px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.gomakeUsers")} />
+            {typeClient == "C" && <Tab sx={{ backgroundColor: selectedTab === 3 ? '#ED028C' : '#EBECFF', color: selectedTab === 4 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "137px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "7px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.gomakeUsers")} />}
           </Tabs>
         </ThemeProvider>
       </div>
@@ -283,7 +289,7 @@ const CustomerCardWidget = ({ typeClient , getAllCustomers, onCustomeradd, openM
         selectedTab == 0 &&
         <Row style={{ marginTop: '16px', width: "90%", marginBottom: '24px' }}>
           {
-            generalInputs2(customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
+            generalInputs2(typeClient,customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
               <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
           }
         </Row>
@@ -294,7 +300,7 @@ const CustomerCardWidget = ({ typeClient , getAllCustomers, onCustomeradd, openM
           <Row style={{ marginBottom: '24px' }}>
             <span style={{ color: "var(--second-500, #ED028C)", fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 14), lineHeight: "normal" }}>{t("customers.modal.lastOrderDetails")}</span>
           </Row>
-          <Row style={{ marginBottom: '24px', width: "90%" }}>
+          <Row style={{ marginBottom: '24px', width: "72%" }}>
             {
               lastOrderInputs(customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
                 <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
@@ -368,8 +374,8 @@ const CustomerCardWidget = ({ typeClient , getAllCustomers, onCustomeradd, openM
         }
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <div style={clasess.footerStyle} >
-            {showAddButton && <button style={clasess.autoButtonStyle} onClick={handleAddCustomer} >{ typeClient=="C" ? t("customers.buttons.addCustomer") : t("suppliers.buttons.addSupplier")}</button>}
-            {showUpdateButton && <button style={clasess.autoButtonStyle} onClick={handleEditCustomer}>{typeClient=="C" ? t("customers.buttons.updateChanges") : t("suppliers.buttons.updateChanges")}</button>}
+            {showAddButton && <button style={clasess.autoButtonStyle} onClick={handleAddCustomer} >{typeClient == "C" ? t("customers.buttons.addCustomer") : t("suppliers.buttons.addSupplier")}</button>}
+            {showUpdateButton && <button style={clasess.autoButtonStyle} onClick={handleEditCustomer}>{typeClient == "C" ? t("customers.buttons.updateChanges") : t("suppliers.buttons.updateChanges")}</button>}
           </div>
         </div>
       </div>

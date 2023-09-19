@@ -61,7 +61,7 @@ const generalInputs = (state) => {
 }
 
 
-const generalInputs2 = (state) => {
+const generalInputs2 = (typeClient , state) => {
     return [
         {
             name: "mail",
@@ -97,18 +97,6 @@ const generalInputs2 = (state) => {
             value: state?.agentId,
             isValid: true,
         },
-        
-        {
-            name: "isOccasional",
-            label: "customers.modal.anOccasionalCustomer",
-            type: "switch",
-            placeholder: "customers.modal.anOccasionalCustomer",
-            required: false,
-            parameterKey: "isOccasional",
-            options: [],
-            value: state?.isOccasional,
-            isValid: true,
-        },
         {
             name: "isActive",
             label: "customers.modal.active",
@@ -119,6 +107,18 @@ const generalInputs2 = (state) => {
             options: [],
             value: state?.isActive,
             isValid: true,
+        },
+        {
+            name: "isOccasional",
+            label: "customers.modal.anOccasionalCustomer",
+            type: "switch",
+            placeholder: "customers.modal.anOccasionalCustomer",
+            required: false,
+            parameterKey: "isOccasional",
+            options: [],
+            value: state?.isOccasional,
+            isValid: true,
+            disabled: typeClient == "S" ? true : false
         },
 
     ];
@@ -168,17 +168,6 @@ const lastOrderInputs = (state) => {
             parameterKey: "lastOrderContactAddress",
             options: [],
             value: state?.lastOrderContactAddress,
-            isValid: true,
-        },
-        {
-            name: "lastOrderContactPhone",
-            label: "customers.modal.mobile",
-            type: "text",
-            placeholder: "customers.modal.mobile",
-            required: false,
-            parameterKey: "lastOrderContactPhone",
-            options: [],
-            value: state?.lastOrderContactPhone,
             isValid: true,
         },
     ];

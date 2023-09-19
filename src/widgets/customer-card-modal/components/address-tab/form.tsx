@@ -18,13 +18,7 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
     const [cities, setCities] = useState([]);
     const [cityStreets, setCityStreets] = useState([]);
 
-    const onChangeInputs = (key, value) => {
-        if (key === "city") {
-            setAddress({ ...address, city: value, street: value });
-        } else {
-            setAddress({ ...address, [key]: value });
-        }
-    }
+    
 
     useEffect(() => {
         const fetchCities = async () => {
@@ -40,14 +34,25 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
         fetchCities();
     }, []);
 
+    const onChangeInputs = (key, value) => {
+        if (key =="city") {
+           setAddress({ ...address, city: value, street: value });
+        } else {
+            setAddress({ ...address, [key]: value });
+        }
+    }
+
     const addresses = useCallback(() => {
     const selectedCity = address?.city;
     const foundCity = cities.filter(city => city.Name == selectedCity);
     const filteredCityStreets = cityStreets.filter((street) => street.city_code == foundCity[0]?.Code);
-
     return addressInputs1(address , cities , filteredCityStreets)
-      }, [address ,cities , cityStreets]);
 
+      }, [address ,cities , cityStreets ]);
+
+
+
+      
     return (
         <div>
             <Row style={{ marginBottom: '24px', marginTop: '24px' }}>
