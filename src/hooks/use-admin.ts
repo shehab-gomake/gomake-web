@@ -20,7 +20,7 @@ const useAdmin = () => {
   }, []);
 
   const validate = useCallback(async () => {
-    const validate: any = await callApi("GET", "/v1/admin/validate");
+    const validate: any = await callApi("GET", "/v1/auth/validate");
     if (validate?.success) {
       setAdmin(validate?.data?.data?.admin);
       setUserType({ type: "admin" });
