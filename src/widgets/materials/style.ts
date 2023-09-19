@@ -3,12 +3,14 @@ import i18next from "i18next";
 
 import { useTranslation } from "react-i18next";
 
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
 const useStyle = () => {
   const { t } = useTranslation();
-
+  const { primaryColor, secondColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
-      mainContainer: {
+      mainConainer: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
