@@ -8,8 +8,6 @@ import { AddressForm } from "./components/address-tab";
 import { UserForm } from "./components/gomakeUser-tab/form";
 import { AddIcon } from "@/components/icons/icons";
 import { useTranslation } from "react-i18next";
-import { Col, Row } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useAddCustomer } from "@/pages/customers/add-customer/use-add-customer";
 import { useEditCustomer } from "@/pages/customers/edit-customer/use-edit-customer";
@@ -17,6 +15,7 @@ import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { customerInputs, customerInputs2 } from "./inputs/customer-inputs";
 import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general-inputs";
+import { Stack } from "@mui/material";
 
 const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
   const [open, setOpen] = useState(false);
@@ -33,9 +32,9 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
 
   const tabPanelTextArea = (placeHolder = null, value = null, onchange = null) => {
     return (
-      <Col  >
-        <TextareaAutosize style={clasess.textAreaStyle} placeholder={placeHolder} value={value} onChange={onchange}></TextareaAutosize>
-      </Col>
+      <Stack direction={'column'} >
+      <TextareaAutosize style={clasess.textAreaStyle} placeholder={placeHolder} value={value} onChange={onchange}></TextareaAutosize>
+      </Stack>
     );
   };
 
@@ -237,11 +236,6 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
     return emptyProps;
   };
 
-
-  // const customerInfo = useCallback(() => {
-  //   return customerInputs(customer)
-  //     }, [selectedTab]);
-
   return (
     <GoMakeModal
       openModal={open}
@@ -250,23 +244,19 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
       insideStyle={clasess.insideStyle}
     >
       <div style={{ position: "sticky", top: 0, zIndex: 1, backgroundColor: "#FFF" }}>
-        <Row>
-          <Col>
+      <Stack direction={'row'}>
             <span style={clasess.subTitleStyle} >{typeClient == "C" ? t("customers.modal.customerInfo") : t("suppliers.supplierInfo")}</span>
-          </Col>
-        </Row>
-        <Row style={{ marginTop: '16px', width: "90%", marginBottom: '24px' }}>
+        </Stack>
+        <Stack direction={'row'} marginTop={"16px"} marginBottom={"24px"} width={"90%"} gap={"20px"} >
           {
-            customerInputs(typeClient, customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px" }}>
-              <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={!!item.readonly} /></Col>)
+            customerInputs(typeClient, customer).map(item =><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={!!item.readonly} />)
           }
-        </Row>
-        <Row style={{ marginTop: '16px', width: "90%", marginBottom: '24px' }}>
+        </Stack>
+        <Stack direction={'row'} marginBottom={"24px"} width={"90%"} gap={"20px"} >
           {
-            customerInputs2(customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
-              <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+            customerInputs2(customer).map(item =><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
           }
-        </Row>
+        </Stack>
         <ThemeProvider theme={theme}>
           <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary" TabIndicatorProps={{ style: { display: 'none' } }} >
             <Tab sx={{ backgroundColor: selectedTab === 0 ? '#ED028C' : '#EBECFF', color: selectedTab === 0 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "82px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.general")} />
@@ -278,99 +268,101 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
       </div>
       {
         selectedTab == 0 &&
-        <Row style={{ marginTop: '16px', width: "90%", marginBottom: '24px' }}>
+        <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} width={"90%"} gap={"20px"} >
           {
-            generalInputs(customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
-              <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+            generalInputs(customer).map(item =>
+              <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
           }
-        </Row>
+        </Stack>
       }
       {
         selectedTab == 0 &&
-        <Row style={{ marginTop: '16px', width: "90%", marginBottom: '24px' }}>
+        <Stack direction={'row'}  marginBottom={"24px"} width={"90%"} gap={"20px"} >
+
           {
-            generalInputs2(typeClient,customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
-              <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+            generalInputs2(typeClient,customer).map(item => <Stack direction={'column'}  width={"180px"} >
+              <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
           }
-        </Row>
+        </Stack>
       }
       {
         selectedTab == 0 &&
         <div>
-          <Row style={{ marginBottom: '24px' }}>
+        <Stack direction={'row'}  >
             <span style={{ color: "var(--second-500, #ED028C)", fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 14), lineHeight: "normal" }}>{t("customers.modal.lastOrderDetails")}</span>
-          </Row>
-          <Row style={{ marginBottom: '24px', width: "72%" }}>
+          </Stack>
+          <Stack direction={'row'} marginTop={'20px'} marginBottom={'24px'} width={"72%"} gap={"20px"} >
             {
-              lastOrderInputs(customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
-                <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+              lastOrderInputs(customer).map(item => 
+                <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
             }
-          </Row>
-          <Row style={{ marginBottom: '24px', marginTop: '24px', width: "90%", display: "flex", justifyContent: "center", alignItems: "center" }} >
+          </Stack>
+          <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap="20px">
             {tabPanelTextArea(t("customers.modal.generalComment"), customer?.generalNotes, (e) => setCustomer({ ...customer, generalNotes: e.target.value }))}
             {tabPanelTextArea(t("customers.modal.orderOpeningNotes"), customer?.newItemNotes, (e) => setCustomer({ ...customer, newItemNotes: e.target.value }))}
             {tabPanelTextArea(t("customers.modal.orderClosingNotes"), customer?.closeOrderNotes, (e) => setCustomer({ ...customer, closeOrderNotes: e.target.value }))}
-          </Row>
+          </Stack>
         </div>
       }
       <div>
         {
           //contacts info
           selectedTab == 1 &&
-          <Row>
-            <Col md={10} >
+          <Stack direction={'row'} >
+            <Stack direction={'column'}  >
               {
                 //to check before
                 contacts.filter(contact => !contact.isMainContact).map(x =>
                   <ContactForm key={x.index} contact={x} onDelete={deleteContactForm} setContact={(updatedContactData) => updateContact(x.index, updatedContactData)} ></ContactForm>
                 )
               }
-            </Col>
-            <Col style={{ marginTop: "52px", justifyContent: 'flex-end' }}>
+            </Stack>
+            <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
               <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "7px" }} onClick={addEmptyContact} >
                 <AddIcon></AddIcon>
                 <button style={clasess.buttonsStyle} >{t("customers.buttons.addContact")}</button>
               </a>
-            </Col>
-          </Row>
+            </Stack>
+
+          </Stack>
         }
         {
           //address info
           selectedTab == 2 &&
-          <Row>
-            <Col md={10} >
+          <Stack direction={'row'} >
+            <Stack direction={'column'}  >
               {
                 addresses.map(x =>
                   <AddressForm key={x.index} address={x} onDelete={deleteAddressForm} setAddress={(updatedAddressData) => updateAddress(x.index, updatedAddressData)}></AddressForm>
                 )
               }
-            </Col>
-            <Col style={{ marginTop: "52px", justifyContent: 'flex-end' }}>
+            </Stack>
+            <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
               <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "7px" }} onClick={addEmptyAdress} >
                 <AddIcon></AddIcon>
                 <button style={clasess.buttonsStyle} >{t("customers.buttons.newAddress")}</button>
               </a>
-            </Col>
-          </Row>
+            </Stack>
+          </Stack>
         }
         {
           //GOMAKEUSER info
           selectedTab == 3 &&
-          <Row style={{ display: "flex" }}>
-            <Col md={10}>
+          <Stack direction={'row'}>
+            <Stack direction={'column'}  >
               {
                 users?.map(x =>
                   <UserForm key={x.index} user={x} onDelete={deleteClientForm} setUser={(updatedUserData) => updateUser(x.index, updatedUserData)}></UserForm>
                 )
               }
-            </Col>
-            <Col style={{ marginTop: "63px", justifyContent: 'flex-end' }} >
+            </Stack>
+            <Stack direction={'column'}  marginTop={"52px"} marginLeft={"50px"} >
               <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "7px" }} onClick={addEmptyClient} >
                 <AddIcon></AddIcon>
                 <button style={clasess.buttonsStyle} >{t("customers.buttons.addUser")}</button>
               </a>
-            </Col>
-          </Row>
+            </Stack>
+          </Stack>
         }
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <div style={clasess.footerStyle} >

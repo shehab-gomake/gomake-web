@@ -1,15 +1,14 @@
 import { useStyle } from "./style";
 import { RemoveIcon } from "@/components/icons/icons";
 import { t } from "i18next";
-import { Col, Row } from "react-bootstrap";
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 import { fetchS3JsonContent } from "@/utils/S3Content";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { addressInputs1} from "../../inputs/address-inputs";
-import { addressInputs2, addressInputs3} from "../../inputs/address-inputs-second";
+import { addressInputs1 } from "../../inputs/address-inputs";
+import { addressInputs2, addressInputs3 } from "../../inputs/address-inputs-second";
 import { useCallback } from "react";
+import { Stack } from "@mui/material";
 
 
 const AddressForm = ({ address, onDelete, setAddress }: any) => {
@@ -17,8 +16,6 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
     const { clasess } = useStyle();
     const [cities, setCities] = useState([]);
     const [cityStreets, setCityStreets] = useState([]);
-
-    
 
     useEffect(() => {
         const fetchCities = async () => {
@@ -35,57 +32,51 @@ const AddressForm = ({ address, onDelete, setAddress }: any) => {
     }, []);
 
     const onChangeInputs = (key, value) => {
-        if (key =="city") {
-           setAddress({ ...address, city: value, street: value });
+        if (key == "city") {
+            setAddress({ ...address, city: value, street: value });
         } else {
             setAddress({ ...address, [key]: value });
         }
     }
 
     const addresses = useCallback(() => {
-    const selectedCity = address?.city;
-    const foundCity = cities.filter(city => city.Name == selectedCity);
-    const filteredCityStreets = cityStreets.filter((street) => street.city_code == foundCity[0]?.Code);
-    return addressInputs1(address , cities , filteredCityStreets)
-
-      }, [address ,cities , cityStreets ]);
-
+        const selectedCity = address?.city;
+        const foundCity = cities.filter(city => city.Name == selectedCity);
+        const filteredCityStreets = cityStreets.filter((street) => street.city_code == foundCity[0]?.Code);
+        return addressInputs1(address, cities, filteredCityStreets)
+    }, [address, cities, cityStreets]);
 
 
-      
+
+
     return (
         <div>
-            <Row style={{ marginBottom: '24px', marginTop: '24px' }}>
+            <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap="20px">
                 {
-                     (cities && cities.length > 0 && cityStreets && cityStreets.length > 0) &&
-                     addresses().map(item => <Col style={{ display: "flex", width: "220px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                        <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+                    (cities && cities.length > 0 && cityStreets && cityStreets.length > 0) &&
+                    addresses().map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
                 }
-            </Row>
-            <Row style={{ marginBottom: '24px', marginTop: '24px' }}>
+            </Stack>
+            <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap="20px">
                 {
-                    addressInputs2(address).map(item => <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                        <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+                    addressInputs2(address).map(item =>
+                        <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
                 }
-            </Row>
-
-            <Row style={{ marginBottom: '24px', marginTop: '24px' , width: "40%"}}>
+            </Stack>
+            <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap="20px" width={"40%"}>
                 {
-                    addressInputs3(address).map(item => <Col style={{ display: "flex", width: "180px", flexDirection: "column", alignItems: "flex-start", gap: "10px", }} >
-                        <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Col>)
+                    addressInputs3(address).map(item =>
+                        <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
                 }
-            </Row>
-                <Col style={{ display: "flex", marginTop: "24px", justifyContent: 'flex-start' }} >
-                    <a style={{ width: "102px" }} onClick={() => onDelete(address.index)} >
-                        <RemoveIcon></RemoveIcon>
-                        <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
-                    </a>
-                </Col>
-
-
+            </Stack>
+            <Stack direction={'row'}>
+                <a style={{ width: "102px" }} onClick={() => onDelete(address.index)} >
+                    <RemoveIcon></RemoveIcon>
+                    <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
+                </a>
+            </Stack>
         </div>
     );
 };
 
 export { AddressForm };
-
