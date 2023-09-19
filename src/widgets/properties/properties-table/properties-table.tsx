@@ -15,6 +15,7 @@ import { useCallback, useEffect, useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 import { MoreMenuWidget } from "../more-circle";
 import { usePrintHouseActions } from "../hooks/use-print-house-action";
+import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -55,18 +56,15 @@ const PropertiesTable = () => {
     return state;
   }, [filter, state]);
   useEffect(() => {
-    properties()?.map((property) => {});
+    properties()?.map((property) => { });
   });
   return (
     <>
       <div style={classes.headerContainer}>
-        <h1 style={classes.header}>Action pricing properties</h1>
-        <GomakeTextInput
-          placeholder={"search"}
-          onChange={(e) => {
-            setFilter(e.target.value);
-          }}
-          style={classes.searchInput}
+      
+        <HeaderTitleWithSearch
+          title="Action pricing properties"
+          onChange={(e) => setFilter(e)}
         />
       </div>
 
