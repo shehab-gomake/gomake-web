@@ -17,7 +17,7 @@ const getAndSetQuotesByUserId = async (
   const mapData = _data?.priceListItems?.map((item: any, index: number) => {
     return {
       id: index + 1,
-      itemName: item?.subProduct?.name,
+      itemName: item?.productName,
       details: (
         <div style={{ height: 36, overflowY: "scroll" }}>{item?.content}</div>
       ),
