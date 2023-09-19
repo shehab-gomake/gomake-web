@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { HeaderFilter } from "./header-filter";
-import Switch from "../switch-component";
+import { SecondSwitch } from "@/components";
 
 const BookKeepingForm = () => {
 
@@ -31,7 +31,7 @@ const BookKeepingForm = () => {
                     <HeaderFilter setAllOptions={testOptions} style={clasess.autoComplateStyle} setPlaceholder="placeholder"></HeaderFilter>
                 </Col>
                 <Col style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px" , width: "191px" , height: "68px"}}>
-                <Switch checked={false} ></Switch>
+                <SecondSwitch checked={false} ></SecondSwitch>
                     <h3 style={clasess.switchHeaderStyle} >{t("customers.modal.holdingTax")}</h3>
                 </Col>
             </Row>

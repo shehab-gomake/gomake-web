@@ -34,6 +34,7 @@ export default function Home() {
         <AddCustomerButton onCustomeradd={onCustomeradd} typeClient="C"></AddCustomerButton>
       </div>
       <HeaderFilter
+        typeClient={"C"}
         agentsCategores={agentsCategores}
         clientTypesCategores={clientTypesCategores}
         statuses={statuses}
@@ -50,7 +51,7 @@ export default function Home() {
       <Stack spacing={3}>
         <PrimaryTable rows={getCustomersRows()} headers={tabelHeaders}></PrimaryTable>
         <CustomerCardWidget
-        typeClient={"C"}
+          typeClient={"C"}
           getAllCustomers={getAllCustomers}
           openModal={showCustomerModal}
           modalTitle={t("customers.modal.editTitle")}

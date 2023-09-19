@@ -191,11 +191,14 @@ const CustomerCardWidget = ({ typeClient , getAllCustomers, onCustomeradd, openM
     const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
     const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
     const filteredUserss = users.filter(user => !isNameIndexOnly(user));
+    const cardTypeId = typeClient === "S" ? 2 : 1;
+
     const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
       addresses: filteredAddresses,
-      users: filteredUserss
+      users: filteredUserss,
+      CardTypeId: cardTypeId, 
     };
     setCustomer(updatedCustomer);
     addNewCustomer(updatedCustomer).then(x => {
@@ -213,10 +216,9 @@ const CustomerCardWidget = ({ typeClient , getAllCustomers, onCustomeradd, openM
       ...customer,
       contacts: filteredContacts,
       addresses: filteredAddresses,
-      users: filteredUserss
+      users: filteredUserss,
     };
     setCustomer(updatedCustomer);
-    console.log(updatedCustomer);
     editCustomer(updatedCustomer, setCustomer).then(x => {
       getAllCustomers();
       handleClose();
@@ -243,18 +245,16 @@ const CustomerCardWidget = ({ typeClient , getAllCustomers, onCustomeradd, openM
     >
       <div style={{ position: "sticky", top: 0, zIndex: 1, backgroundColor: "#FFF" }}>
         <Row>
-          <Col><span style={clasess.subTitleStyle} >{typeClient=="C" ? t("customers.modal.customerInfo") : t("suppliers.supplierInfo")}</span>
+          <Col>
+          <span style={clasess.subTitleStyle} >{typeClient=="C" ? t("customers.modal.customerInfo") : t("suppliers.supplierInfo")}</span>
           </Col>
         </Row>
-
         <Row style={{ marginTop: '16px', width: "90%", marginBottom: '24px' }}>
           {
             customerInputs(customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>
               <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={!!item.readonly} /></Col>)
           }
         </Row>
-
-        
         <Row style={{ marginTop: '16px', width: "90%", marginBottom: '24px' }}>
           {
             customerInputs2(customer).map(item => <Col style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px", }}>

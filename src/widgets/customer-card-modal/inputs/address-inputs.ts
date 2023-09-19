@@ -1,6 +1,4 @@
-const addressInputs1 = (state, cities, filteredCityStreets)  => {
-    
-
+const addressInputs1 = (state, cities, filteredCityStreets) => {
     return [
         {
             name: "addressId",
@@ -20,9 +18,9 @@ const addressInputs1 = (state, cities, filteredCityStreets)  => {
             placeholder: "customers.modal.city",
             required: false,
             parameterKey: "city",
-            options:  cities.map(city => ({
+            options: cities.map(city => ({
                 value: city.Name,
-                text: city.Name           
+                text: city.Name
             })),
             value: state?.city,
         },
@@ -64,4 +62,4 @@ const addressInputs1 = (state, cities, filteredCityStreets)  => {
     ];
 }
 
-export {addressInputs1  };
+export { addressInputs1 };

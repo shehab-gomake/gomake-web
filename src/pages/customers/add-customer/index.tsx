@@ -10,7 +10,7 @@ const AddCustomerButton = ({ onCustomeradd , typeClient}: any) => {
 
   return (
     <>
-      <CustomerCardWidget onCustomeradd={onCustomeradd} openModal={open} modalTitle={typeClient=="C" ? t("customers.modal.addTitle") : t("suppliers.addModalTitle") } onClose={() => setOpen(false)} showAddButton={true} customer={customer} setCustomer={setCustomer} >
+      <CustomerCardWidget typeClient={typeClient} onCustomeradd={onCustomeradd} openModal={open} modalTitle={typeClient=="C" ? t("customers.modal.addTitle") : t("suppliers.addModalTitle") } onClose={() => setOpen(false)} showAddButton={true} customer={customer} setCustomer={setCustomer} >
       </CustomerCardWidget>
       <AddButton onClick={() => setOpen(!open)} label={typeClient=="C" ? t("customers.buttons.addCustomer") : t("suppliers.buttons.addSupplier")}></AddButton>
     </>

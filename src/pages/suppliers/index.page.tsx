@@ -12,9 +12,6 @@ import { HeaderFilter } from "../customers/header-filter";
 import { AddCustomerButton } from "../customers/add-customer";
 import { useCustomers } from "../customers/use-customers";
 
-
-
-
 export default function Home() {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -34,6 +31,7 @@ export default function Home() {
         <AddCustomerButton onCustomeradd={onCustomeradd} typeClient="S"></AddCustomerButton>
       </div>
       <HeaderFilter
+        typeClient={"S"}
         agentsCategores={agentsCategores}
         clientTypesCategores={clientTypesCategores}
         statuses={statuses}
@@ -53,7 +51,7 @@ export default function Home() {
           typeClient={"S"}
           getAllCustomers={getAllCustomers}
           openModal={showCustomerModal}
-          modalTitle={t("customers.modal.editTitle")}
+          modalTitle={t("suppliers.editModalTitle")}
           onClose={() => setShowCustomerModal(false)}
           customer={customerForEdit}
           setCustomer={setCustomerForEdit}
