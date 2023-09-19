@@ -7,7 +7,7 @@ import { NotRequierdIcon } from "../icons/not-requierd-icon";
 import { useAddProduct } from "@/hooks";
 import { SettingIcon } from "../icons";
 import { ChildParameterModal } from "../child-parameter-modal";
-import { TabsMappingWidget } from "@/pages/products/digital-offset-price/widgets/tabs-mapping";
+import { TabsMappingWidget } from "@/pages-components/products/digital-offset-price/widgets/tabs-mapping";
 
 const ParameterWidget = () => {
   const { clasess } = useStyle();

@@ -38,44 +38,34 @@ const useProductManagement = () => {
 
   const getActions = useCallback(async () => {
     const data = await getAllProductsMongoDB(callApi, setAllProducts);
-    const mapData = data?.map((item: any) => {
-      return {
-        code: item?.code,
-        name: item?.name,
-        details: item?.details,
-        groups: (
-          <div>
-            {item?.groups.map((group) => {
-              return (
-                <div
-                  style={{
-                    marginBottom: 5,
-                  }}
-                >
-                  {group.name}
-                </div>
-              );
-            })}
+    const mapData = data?.map((item) => [
+      item?.code,
+      item?.name,
+      item?.details,
+      <div style={{ display: "inline-flex" }}>
+        {item?.groups.map((group) => {
+          return (
+            <div
+              style={{
+                marginBottom: 5,
+              }}
+            >
+              {group.name}
+            </div>
+          );
+        })}
+      </div>,
+      <div style={{ display: "inline-flex" }}>
+        {item?.status === false ? (
+          <div style={clasess.inActiveTabStyle}>
+            {t("usersSettings.inactive")}
           </div>
-        ),
-
-        status: (
-          <div>
-            {item?.status === false ? (
-              <div style={clasess.inActiveTabStyle}>
-                {t("usersSettings.inactive")}
-              </div>
-            ) : (
-              <div style={clasess.activeTabStyle}>
-                {t("usersSettings.active")}
-              </div>
-            )}
-          </div>
-        ),
-        more: <MoreMenuWidget item={item} updatedProduct={updatedProduct} />,
-        id: item?.id,
-      };
-    });
+        ) : (
+          <div style={clasess.activeTabStyle}>{t("usersSettings.active")}</div>
+        )}
+      </div>,
+      <MoreMenuWidget item={item} updatedProduct={updatedProduct} />,
+    ]);
     setAllProducts(mapData);
   }, []);
   useEffect(() => {
@@ -90,11 +80,14 @@ const useProductManagement = () => {
     t("products.productManagement.admin.status"),
     t("products.productManagement.admin.more"),
   ];
+  const filterArray = (array: any, searchText: string) =>
+    array.filter((item) => {
+      const matches = matchSorter([item[0], item[1]], searchText);
+      return matches.length > 0;
+    });
   useEffect(() => {
     if (allProducts?.length) {
-      const temp = matchSorter(allProducts, term, {
-        keys: ["name", "code", "details"],
-      });
+      const temp = filterArray(allProducts, term);
       setProductSearched(temp);
     }
   }, [term, allProducts]);

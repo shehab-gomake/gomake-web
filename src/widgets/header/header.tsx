@@ -20,7 +20,8 @@ const HeaderWidget = () => {
 
   return (
     <div style={clasess.container}>
-      <GoMakeTextInputIcon
+      <div />
+      {/* <GoMakeTextInputIcon
         style={clasess.searchInputContainer}
         placeholder={t("header.search")}
         startAdornment={
@@ -30,9 +31,9 @@ const HeaderWidget = () => {
             </div>
           </InputAdornment>
         }
-      />
+      /> */}
       <div style={clasess.rightSideContainer}>
-        <IconButton>
+        {/* <IconButton>
           <Statistics />
         </IconButton>
         <IconButton>
@@ -40,7 +41,7 @@ const HeaderWidget = () => {
         </IconButton>
         <IconButton>
           <Notifications />
-        </IconButton>
+        </IconButton> */}
         <div style={clasess.profileContainer}>
           <IconButton>
             <ProfileImg />
