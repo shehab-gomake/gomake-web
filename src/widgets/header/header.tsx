@@ -65,7 +65,13 @@ const HeaderWidget = () => {
             </div>
           </MenuItem>
           <div style={clasess.lineContainer} />
-          <MenuItem style={clasess.logoutContainer}>
+          <MenuItem
+            style={clasess.logoutContainer}
+            onClick={() => {
+              localStorage.removeItem("auth-token");
+              navigate("/login");
+            }}
+          >
             <div style={clasess.logoutContainer}>Log out</div>
           </MenuItem>
         </div>
