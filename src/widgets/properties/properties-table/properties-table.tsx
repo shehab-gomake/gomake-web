@@ -48,14 +48,14 @@ const PropertiesTable = () => {
   ]);
   const properties = useCallback(() => {
     if (!!filter) {
-      return state.filter((property) =>
+      return state?.filter((property) =>
         property.propertyName.toLowerCase().includes(filter.toLowerCase())
       );
     }
     return state;
   }, [filter, state]);
   useEffect(() => {
-    properties().map((property) => {});
+    properties()?.map((property) => {});
   });
   return (
     <>
@@ -89,7 +89,7 @@ const PropertiesTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {properties().map((property, index) => {
+            {properties()?.map((property, index) => {
               return (
                 <StyledTableRow>
                   <StyledTableCell align={"center"}>

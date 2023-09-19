@@ -11,7 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { AddPlusIcon } from "@/icons";
-import { DeleteMenuIcon } from "@/pages/admin/sales/quote/widget/more-circle/icons/delete-menu";
+
 import { usePrintHouseMachines } from "../../hooks/use-print-house-machines";
 import { machine } from "os";
 import { usePrintHouseClientTypes } from "../../hooks/use-print-house-client-types";
@@ -24,6 +24,7 @@ import { useMaterialsCategories } from "../../hooks/use-materials-categories";
 import { useOutputs } from "../../hooks/use-outputs";
 import { useSnackBar } from "@/hooks";
 import { useRule } from "../../hooks/use-rule";
+import { DeleteMenuIcon } from "@/widgets/quote/more-circle/icons/delete-menu";
 
 interface IAddNewModalProps {
   openModal: boolean;

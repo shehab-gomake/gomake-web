@@ -17,8 +17,7 @@ const useActions = () => {
     const data = await getAllPrintHouseActions(callApi, setAllActions);
     const mapData = data?.map((action) => [
       action?.name,
-      `${action?.isInternal ? "Yes" : "No"} / ${
-        action?.isOutsource ? "Yes" : "No"
+      `${action?.isInternal ? "Yes" : "No"} / ${action?.isOutsource ? "Yes" : "No"
       }`,
       action?.isActive ? (
         <div
@@ -52,7 +51,17 @@ const useActions = () => {
       >
         {t("materials.buttons.edit")}
       </PrimaryButton>,
-      <div style={{ cursor: "pointer" }}>{t("materials.buttons.edit")}</div>,
+      <PrimaryButton
+        startIcon={
+          <EditIcon color={primaryColor(500)} width={20} height={20} />
+        }
+        onClick={() =>
+          navigate(`/properties?actionId=${action?.actionId}`)
+        }
+        variant={"text"}
+      >
+        {t("materials.buttons.edit")}
+      </PrimaryButton>,
     ]);
     setAllActions(mapData);
   }, []);

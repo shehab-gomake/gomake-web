@@ -6,21 +6,23 @@ import {useRouter} from "next/router";
 const usePrintHouseActions = ()=> {
     const [state,setState] = useState([])
     const router = useRouter();
-    const printHouseActionId  = '7db3c073-441a-452b-bea4-29c2804eec5b'//must change to  router.query
+  
     const [actionId,setActionId] = useState('') 
     const { callApi } = useGomakeAxios();
     useEffect(() => {
-            getPrintHouseActionById(printHouseActionId).then(
-                
+        if(router.query.actionId){
+            getPrintHouseActionById(router.query.actionId as string).then(
                 (res) => {
                  setState(res?.data?.data?.data)
-                 setActionId(printHouseActionId)
+                 setActionId(router.query.actionId as string)
                 }
             );
-    },[printHouseActionId]);
+        }
+           
+    },[router.query.actionId]);
 
     const getPrintHouseActionById = async (actionId: string) => {
-        return  await callApi('Get', `/v1/printhouse-config/print-house-action/get-properties-by-action-id/${printHouseActionId}`);
+        return  await callApi('Get', `/v1/printhouse-config/print-house-action/get-properties-by-action-id/${router.query.actionId}`);
     };
 
     return{
