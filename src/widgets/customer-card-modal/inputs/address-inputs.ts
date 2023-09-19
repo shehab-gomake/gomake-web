@@ -1,10 +1,4 @@
-const addressInputs1 = (state, cities, cityStreets)  => {
-
-    const selectedCity = state?.city;
-    console.log(selectedCity);
-    const filteredCityStreets = cityStreets.filter((street) => street.city_code == selectedCity);
-    console.log(filteredCityStreets);
-    
+const addressInputs1 = (state, cities, filteredCityStreets) => {
     return [
         {
             name: "addressId",
@@ -12,9 +6,9 @@ const addressInputs1 = (state, cities, cityStreets)  => {
             type: "text",
             placeholder: "customers.modal.addressId",
             required: true,
-            parameterKey: "addressId",
+            parameterKey: "address1",
             options: [],
-            value: state?.addressId,
+            value: state?.address1,
             isValid: true,
         },
         {
@@ -24,9 +18,9 @@ const addressInputs1 = (state, cities, cityStreets)  => {
             placeholder: "customers.modal.city",
             required: false,
             parameterKey: "city",
-            options:  cities.map(city => ({
-                value: city.Code,
-                text: city.Name           
+            options: cities.map(city => ({
+                value: city.Name,
+                text: city.Name
             })),
             value: state?.city,
         },
@@ -38,7 +32,7 @@ const addressInputs1 = (state, cities, cityStreets)  => {
             required: false,
             parameterKey: "street",
             options: filteredCityStreets.map(street => ({
-                value: street.id,
+                value: street.name,
                 text: street.name,
             })),
             value: state?.street,
@@ -68,94 +62,4 @@ const addressInputs1 = (state, cities, cityStreets)  => {
     ];
 }
 
-const addressInputs2 = (state)  => {
-    return [
-        {
-            name: "floor",
-            label: "customers.modal.floor",
-            type: "text",
-            placeholder: "customers.modal.floor",
-            required: false,
-            parameterKey: "floor",
-            options: [],
-            value: state?.floor,
-            isValid: true,
-        },
-        {
-            name: "apartment",
-            label: "customers.modal.apartment",
-            type: "text",
-            placeholder: "customers.modal.apartment",
-            required: false,
-            parameterKey: "apartment",
-            options: [],
-            value: state?.apartment,
-            isValid: true,
-        },
-        {
-            name: "postalCode",
-            label: "customers.modal.postalCode",
-            type: "text",
-            placeholder: "customers.modal.postalCode",
-            required: false,
-            parameterKey: "zipCode",
-            options: [],
-            value: state?.zipCode,
-            isValid: true,
-        },
-        {
-            name: "postbox",
-            label: "customers.modal.po",
-            type: "text",
-            placeholder: "customers.modal.po",
-            required: false,
-            parameterKey: "postbox",
-            options: [],
-            value: state?.postbox,
-            isValid: true,
-        },
-        {
-            name: "country",
-            label: "customers.modal.country",
-            type: "text",
-            placeholder: "customers.modal.country",
-            required: false,
-            parameterKey: "country",
-            options: [],
-            value: state?.country,
-            isValid: true,
-        },
-    ];
-}
-const addressInputs3 = (state)  => {
-    return [
-        {
-            name: "remarks",
-            label: "customers.modal.remarks",
-            type: "text",
-            placeholder: "customers.modal.remarks",
-            required: false,
-            parameterKey: "notes",
-            options: [],
-            value: state?.notes,
-            isValid: true,
-        },
-        {
-            name: "default",
-            label: "customers.modal.default",
-            type: "switch",
-            placeholder: "customers.modal.default",
-            required: false,
-            parameterKey: "isDefault",
-            options: [],
-            value: state?.isDefault,
-            isValid: true,
-        },
-        
-    ];
-}
-
-
-
-
-export {addressInputs1 , addressInputs2 , addressInputs3};
+export { addressInputs1 };

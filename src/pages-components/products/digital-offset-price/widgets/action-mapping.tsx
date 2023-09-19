@@ -76,9 +76,6 @@ const ActionMappingWidget = ({
               )}
               placeholder={t("products.offsetPrice.admin.machine")}
               style={clasess.actoionsSelectContainer}
-              onChange={(e: any, item: any) => {
-                console.log("item", item);
-              }}
             />
           </div>
         ) : null}

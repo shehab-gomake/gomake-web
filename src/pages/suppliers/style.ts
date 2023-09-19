@@ -1,24 +1,21 @@
-import { useMemo } from "react";
 import i18next from "i18next";
-
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 
 const useStyle = () => {
   const { t } = useTranslation();
-
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
-      mainContainer: {
+      headerStyle: {
         display: "flex",
-        flexDirection: "column" as "column",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
-        gap: 20,
-      },
+        justifyContent: "space-between",
+        alignItems: "center",
+      }
     };
   }, [i18next.language, t]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

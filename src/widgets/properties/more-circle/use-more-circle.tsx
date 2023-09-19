@@ -3,7 +3,6 @@ import { EditMenuIcon } from "./icons/edit-menu";
 import { useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
 import { propertyState } from "../property";
-import { DuplicateMenuIcon } from "@/pages/admin/sales/quote/widget/more-circle/icons/duplicate-menu";
 import { AddPlusIcon } from "@/icons";
 
 const useMoreCircle = () => {
@@ -11,7 +10,7 @@ const useMoreCircle = () => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const {t} = useTranslation()
+  const { t } = useTranslation();
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -28,7 +27,6 @@ const useMoreCircle = () => {
       icon: <AddPlusIcon />,
       onclick: () => null,
     },
-   
   ];
 
   return {
