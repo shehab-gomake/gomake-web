@@ -1,5 +1,5 @@
 import { Tab, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { GoMakeModal } from "@/components";
 import { TextareaAutosize } from '@mui/base';
@@ -87,14 +87,7 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
   const addInitContact = () => {
     var temp = [];
     if (customer && customer.contacts) {
-      temp = customer.contacts;
-      if (temp) {
-        let index = 0;
-        temp.forEach(x => {
-          x.index = index;
-          index++;
-        })
-      }
+      temp = [... customer.contacts];
     } else {
       const index = temp.length + 1;
       temp.push({ name: "", index: index });
@@ -133,14 +126,7 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
   const addInitAddress = () => {
     var temp = [];
     if (customer && customer.addresses) {
-      temp = customer.addresses;
-      if (temp) {
-        let index = 0;
-        temp.forEach(x => {
-          x.index = index;
-          index++;
-        })
-      }
+      temp = [...customer.addresses];
     } else {
       const index = temp.length + 1;
       temp.push({ name: "", index: index });
@@ -179,14 +165,7 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
   const addInitUser = () => {
     var temp = [];
     if (customer && customer.users) {
-      temp = customer.users;
-      if (temp) {
-        let index = 0;
-        temp.forEach(x => {
-          x.index = index;
-          index++;
-        })
-      }
+      temp = [...customer.users];
     } else {
       const index = temp.length + 1;
       temp.push({ name: "", index: index });

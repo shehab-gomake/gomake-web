@@ -3,16 +3,15 @@ import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
 import { getAndSetAllCustomers } from "@/services/hooks";
 import {useRecoilState} from "recoil";
-import { agentsCategoresState, clientTypesCategoresState } from "./customer-states";
-import { getAndSetClientTypes } from "@/services/api-service/customers/get-set-clientTypes";
-import { getAndSetEmployees2 } from "@/services/api-service/customers/get-set-employees";
-import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/api-service/customers/get-set-customers";
+import { agentsCategoresState, clientTypesCategoresState, customerForEditState } from "./customer-states";
+import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
+import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
+import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/api-service/customers/customers-api";
 
 const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: Dispatch<SetStateAction<number>>) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [allCustomers, setAllCustomers] = useState([]);
-  const [customerForEdit, setCustomerForEdit] = useState(null);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [pagesCount, setPagesCount] = useState(0);
   const pageSize = 10;
@@ -140,28 +139,41 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
   }, []);
 
   /////////////////////////  data table  //////////////////////////////
+  const [customerForEdit, setCustomerForEdit] = useRecoilState(customerForEditState);
   const getCustomerForEdit = async (id) => {
-    const result = await getAndSetCustomerById(callApi, setCustomerForEdit, {
-      customerId: id,
-    });
-    setCustomerForEdit(result?.data);
-    setShowCustomerModal(true)
+    const callBack = (res) => {
+      if (res.success) {
+        let customer = res.data;
+        debugger;
+        if(customer.contacts && customer.contacts.length > 0){
+          let index = 0;
+          customer.contacts.forEach(x => {
+            x.index = index;
+            index++;
+          });
+        }
+        if(customer.addresses && customer.addresses.length > 0){
+          let index = 0;
+          customer.addresses.forEach(x => {
+            x.index = index;
+            index++;
+          });
+        }
+        if(customer.users && customer.users.length > 0){
+          let index = 0;
+          customer.users.forEach(x => {
+            x.index = index;
+            index++;
+          });
+        }
+        setCustomerForEdit(customer);
+        setShowCustomerModal(true)
+      }
+    }
+    await getAndSetCustomerById(callApi, callBack, { customerId: id })
   }
 
-
-//////////////////////////////
-// const getCustomerForEdit = async (id) => {
-//   const callBack = (res) => {
-//       if (res.success) {
-//         setCustomerForEdit(res.data);
-//       }
-//   }
-//   await getAndSetCustomerById(callApi,callBack,{customerId: id,})
-// }
-//////////////////////////////
-
-
-
+  /////////////////////////  convert to active/inactive  //////////////////////////////
   const updatedStatus = useCallback(async (data: any, filters) => {
     const res: any = await callApi(
       "PUT",

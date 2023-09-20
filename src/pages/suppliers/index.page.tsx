@@ -10,7 +10,7 @@ import { useStyle } from "./style";
 import { HeaderFilter } from "../customers/header-filter";
 import { AddCustomerButton } from "../customers/add-customer";
 import { useCustomers } from "../customers/use-customers";
-import { customerMapFunction } from "@/services/api-service/customers/get-set-customers";
+import { customerMapFunction } from "@/services/api-service/customers/customers-api";
 
 export default function Home() {
   const { t } = useTranslation();

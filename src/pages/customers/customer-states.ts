@@ -9,3 +9,8 @@ export const agentsCategoresState = atom({
     key: 'agentsCategoresState',
     default: [],
 });
+
+export const customerForEditState = atom<any>({
+    key: 'customerForEditState',
+    default: {},
+});

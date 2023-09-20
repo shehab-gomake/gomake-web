@@ -11,7 +11,7 @@ import Stack from '@mui/material/Stack';
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useEffect } from "react";
-import { customerMapFunction } from "@/services/api-service/customers/get-set-customers";
+import { customerMapFunction } from "@/services/api-service/customers/customers-api";
 
 export default function Home() {
   const { t } = useTranslation();

@@ -10,18 +10,10 @@ const GET_CUSTOMER_BY_ID_URL = '/v1/customers/get-customer';
 
 
 
-
-//get by id
-const getAndSetCustomerByIaad = async (callApi: ICallApi,setState?: ISetState ,data?: any) => {
-  const result: any = await callApi("GET", "/v1/customers/get-customer", data);
-  return returnResult(result, setState);
-};
-
 //get by id
 const getAndSetCustomerById: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(callApi, EHttpMethod.GET, GET_CUSTOMER_BY_ID_URL, setState, data); 
 }
-
 
 //helper function
 const customerMapFunction = (customer, onClick, onClickStatus , activeText , inActiveText) => {
