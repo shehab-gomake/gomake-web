@@ -31,7 +31,7 @@ const ProfileAvatar = ({
                     changeInitials && src && <Avatar src={src} sx={classes.avatar}/>
                 }
                 {
-                    changeInitials && !src &&  <Avatar  sx={{...classes.avatar, bgcolor: bgColor}}>{initials}</Avatar>
+                    changeInitials && !src &&  <Avatar  sx={{...classes.avatar, bgcolor: bgColor}}>{initials?.toUpperCase()}</Avatar>
                 }
             </Badge>
             <span style={classes.avatarTitle}>{title}</span>

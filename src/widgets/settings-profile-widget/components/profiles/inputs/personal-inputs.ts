@@ -1,7 +1,10 @@
 import {IUserProfile} from "@/store/user-profile";
+import {useRecoilValue} from "recoil";
+import {languagesState} from "@/store/languages";
 
 
 const personalInputs = (state: IUserProfile)  => {
+    const languages = useRecoilValue(languagesState);
     return [
         {
             name: "firstName",
@@ -14,6 +17,8 @@ const personalInputs = (state: IUserProfile)  => {
             value: state.firstName,
             machineInputType: 'input',
             isValid: !!state.firstName,
+            readonly: false
+
         },
         {
             name: "lastName",
@@ -26,6 +31,8 @@ const personalInputs = (state: IUserProfile)  => {
             value: state.lastName,
             machineInputType: 'input',
             isValid: !!state.lastName,
+            readonly: false
+
         },
         {
             name: "position",
@@ -38,6 +45,19 @@ const personalInputs = (state: IUserProfile)  => {
             value: state.role,
             machineInputType: 'input',
             isValid: !!state.role,
+            readonly: false
+        },
+        {
+            name: "systemLanguage",
+            label: "profileSettings.systemLanguage",
+            type: "select",
+            placeholder: "profileSettings.systemLanguage",
+            required: true,
+            parameterKey: "systemLanguage",
+            options: languages,
+            value: state.systemLanguage,
+            isValid: !!state.systemLanguage,
+            readonly: false
         },
 
     ];

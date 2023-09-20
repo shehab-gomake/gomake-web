@@ -1,19 +1,21 @@
 import {IUserData} from "@/widgets/settings-users/users/interface/employee";
 import {EmployeeActions} from "@/widgets/settings-users/users/enums/employee-actions";
+import {emailRegex} from "@/utils/regex";
 
 const accountInputs = (state: IUserData, action: EmployeeActions)  => {
     return [
         {
-            name: "username",
-            label: "usersSettings.username",
+            name: "email",
+            label: "usersSettings.email",
             type: "text",
-            placeholder: "usersSettings.username",
+            placeholder: "usersSettings.email",
             required: true,
-            parameterKey: "username",
+            parameterKey: "email",
             options: [],
-            value: state.username,
+            value: state.email,
             machineInputType: 'input',
-            isValid: !!state.username,
+            isValid: !!state.email,
+            regex: emailRegex
         },
         {
             name: "password",

@@ -144,17 +144,17 @@ const useEmployee = () => {
     const isValidAddEmployee = () => {
         return !!employee.employee.firstname &&
             !!employee.employee.lastname &&
-            !!employee.username &&
+            !!employee.email &&
             !!employee.password &&
             !!employee.roleID
 
     };
 
-    const validateEmail = () => !!employee.employee.email ? emailRegex.test(employee.employee.email) : true;
+    const validateEmail = () => !!employee.email ? emailRegex.test(employee.email) : true;
     const isValidEditEmployee = () => {
         return !!employee.employee.firstname &&
             !!employee.employee.lastname &&
-            !!employee.username &&
+            !!employee.email &&
             !!employee.roleID
     }
     const updateSearch = (value: string) => {

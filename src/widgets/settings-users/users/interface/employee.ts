@@ -38,4 +38,5 @@ export interface IUserData {
     isCanLoginWithCode: boolean;
     allowedIPs: AllowedIP[];
     employee: Employee;
+    email: string;
 }
