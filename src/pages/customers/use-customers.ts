@@ -1,13 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
 import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/hooks/get-set-customers";
 import { getAndSetClientTypes } from "@/services/hooks/get-set-clientTypes";
 import { getAndSetAllCustomers, getAndSetEmployees2 } from "@/services/hooks";
 
-const useCustomers = (clientType, pageNumber, setPageNumber) => {
+const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: Dispatch<SetStateAction<number>>) => {
   const { callApi } = useGomakeAxios();
-
   const { t } = useTranslation();
   const [allCustomers, setAllCustomers] = useState([]);
   const [customerForEdit, setCustomerForEdit] = useState(null);
@@ -28,7 +27,7 @@ const useCustomers = (clientType, pageNumber, setPageNumber) => {
   );
 
   const getCustomersRows = useCallback(()=> {
-    return allCustomers.map(customer => [customer?.customerCode, customer?.name, customer?.email, customer?.phone, customer?.status, customer?.hashTag])
+    return allCustomers?.map(customer => [customer?.customerCode, customer?.name, customer?.email, customer?.phone, customer?.status, customer?.hashTag])
   }, [allCustomers])
 
   //select agent options

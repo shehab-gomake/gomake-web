@@ -17,7 +17,21 @@ import { customerInputs, customerInputs2 } from "./inputs/customer-inputs";
 import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general-inputs";
 import { Stack } from "@mui/material";
 
-const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: any) => {
+interface IProps {
+  children?: React.ReactNode;
+  typeClient?: string;
+  getAllCustomers?: () => void; 
+  onCustomeradd?: (value: any) => void; 
+  openModal?: boolean; 
+  modalTitle?: string;
+  onClose?: () => void; 
+  customer?: any; 
+  setCustomer?: (customer: any) => void; 
+  showUpdateButton?: boolean;
+  showAddButton?: boolean;
+}
+
+const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();

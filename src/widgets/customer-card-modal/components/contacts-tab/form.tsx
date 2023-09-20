@@ -2,17 +2,28 @@ import * as React from "react";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { RemoveIcon } from "@/components/icons/icons";
-import IContact from "@/types/IContact";
 import { contactInputs1, contactInputs2 } from "../../inputs/contact-inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { Stack } from "@mui/material";
 
-
 interface IProps {
-    contact: IContact,
-    onDelete: any,
-    setContact: any,
+    contact: {
+        id?: string;
+        firstName?: string;
+        lastName?: string;
+        title?: string;
+        position?: string;
+        address?: string;
+        tel1?: number;
+        tel2?: number;
+        phone?: number;
+        fax?: string;
+        mail?: string;
+        index?: number;
+    };
+    onDelete: (value: number) => void;
+    setContact: any;
 }
 
 const ContactForm = ({ contact, onDelete, setContact }: IProps) => {

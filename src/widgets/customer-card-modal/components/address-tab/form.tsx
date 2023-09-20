@@ -11,7 +11,28 @@ import { useCallback } from "react";
 import { Stack } from "@mui/material";
 
 
-const AddressForm = ({ address, onDelete, setAddress }: any) => {
+interface IProps {
+    address: {
+        id?: string;
+        addressID?: string;
+        city?: string;
+        street?: string;
+        home?: string;
+        entrance?: string;
+        floor?: string;
+        apartment?: string;
+        postalcode?: number;
+        po?: string;
+        county?: string;
+        remarks?: string;
+        default?: boolean;
+        index?: number;
+    };
+    onDelete: (value: number) => void;
+    setAddress: any;
+}
+
+const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
 
     const { clasess } = useStyle();
     const [cities, setCities] = useState([]);

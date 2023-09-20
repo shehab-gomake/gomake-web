@@ -58,7 +58,8 @@ export default function Home() {
           onClose={() => setShowCustomerModal(false)}
           customer={customerForEdit}
           setCustomer={setCustomerForEdit}
-          showUpdateButton={true}>
+          showUpdateButton={true}
+          >  
         </CustomerCardWidget>
         <div style={{ marginBottom: "5px" }}>
           <Pagination count={pagesCount} variant="outlined" color="primary" page={pageNumber}

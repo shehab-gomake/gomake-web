@@ -51,9 +51,9 @@ const addressInputs2 = (state)  => {
             type: "text",
             placeholder: "customers.modal.country",
             required: false,
-            parameterKey: "country",
+            parameterKey: "county",
             options: [],
-            value: state?.country,
+            value: state?.county,
             isValid: true,
         },
     ];

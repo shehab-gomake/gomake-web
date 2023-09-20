@@ -3,7 +3,6 @@ import { ICallApi, ISetState } from "./call-api.interface";
 import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { MoreMenuWidget } from "@/widgets/customer-card-modal/more-circle";
-import { useTranslation } from "react-i18next";
 
 //get by id
 const getAndSetCustomerById = async (
@@ -73,7 +72,7 @@ const getAndSetCustomersPagination = async (
     data
   );
   const _data = returnResult(result, undefined);
-  const mapData = _data.data.map((customer: any) =>
+  const mapData = _data.data?.map((customer: any) =>
     customerMapFunction(customer, onClick, onClickStatus , activeText , inActiveText)
   );
   if (setState) {
