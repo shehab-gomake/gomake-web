@@ -7,7 +7,22 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { userInputs } from "../../inputs/user-inputs";
 import { Stack } from "@mui/material";
 
-const UserForm = ({ user, onDelete, setUser }: any) => {
+
+interface IProps {
+    user: {
+        id?: string;
+        username?: string;
+        password?: string;
+        email?: string;
+        userIPAddress?: string;
+        isCanLoginWithCode?: boolean;
+        index?: number;
+    };
+    onDelete: (value: number) => void;
+    setUser: any;
+}
+
+const UserForm = ({ user, onDelete, setUser }: IProps) => {
 
     const { clasess } = useStyle();
     const { t } = useTranslation();

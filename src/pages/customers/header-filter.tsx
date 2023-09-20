@@ -7,10 +7,26 @@ import * as React from 'react';
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { SecondaryButton } from "@/components/button/secondary-button";
 
-const HeaderFilter = ({ typeClient, agentsCategores, clientTypesCategores, statuses, onChangeAgent, onChangeCustomer, onChangeClientType, onChangeStatus, handleClean, cutomerName, agentName, valClientType, valStatus }: any) => {
+interface IProps {
+    typeClient?: string;
+    agentsCategores?: any[];
+    clientTypesCategores?: any[];
+    statuses?: any[];
+    onChangeAgent?: (key: string, value: any) => void;
+    onChangeCustomer?: (value: string) => void;
+    onChangeClientType?: (key: string, value: any) => void;
+    onChangeStatus?: (key: string, value: any) => void;
+    handleClean?: () => void;
+    agentName?: any[];
+    cutomerName?: string;
+    valClientType?: any[];
+    valStatus?: any[];
+  }
+
+
+const HeaderFilter = ({ typeClient, agentsCategores, clientTypesCategores, statuses, onChangeAgent, onChangeCustomer, onChangeClientType, onChangeStatus, handleClean, cutomerName, agentName, valClientType, valStatus }: IProps) => {
     const { t } = useTranslation();
     const { clasess } = useStyle();
-
 
     return (
         <div style={clasess.subHeaderContainer} >

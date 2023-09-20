@@ -1,30 +1,24 @@
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 
 const useStyle = () => {
-  const { secondColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
-
       buttonStyle: {
         width: convertWidthToVW(100),
         height: convertHeightToVH(50),
         marginRight: convertWidthToVW(10),
         backgroundColor: "#F135A3",
       },
-
       insideStyle: { width: "64%", height: "93%", maxWidth: "1240px", maxHeight: "1007px", paddingLeft: "32px", paddingRight: "48px", paddingTop: "27px", paddingBottom: "27px", background: "#FDFDFD" },
-
       subTitleStyle: {
         fontStyle: "normal",
         lineHeight: "normal",
         color: "#ED028C",
         ...FONT_FAMILY.Lexend(600, 16),
       },
-
       colStyle: {
         display: "flex",
         width: "180px",
@@ -33,7 +27,6 @@ const useStyle = () => {
         alignItems: "flex-start",
         gap: "10px",
       },
-
       inputStyle1: {
         width: "180px",
         height: "40px",
@@ -45,7 +38,6 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#8283BE",
       },
-
       inputStyle: {
         border: "none",
         borderBottom: "1px solid black",
@@ -57,14 +49,12 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#8283BE",
       },
-
       headerStyle: {
         color: "var(--primary-900, #090A1D)",
         fontStyle: "normal",
         lineHeight: "normal",
         ...FONT_FAMILY.Lexend(500, 14),
       },
-
       buttonsStyle: {
         color: "var(--primary-500, #2E3092)",
         fontStyle: "normal",
@@ -75,7 +65,6 @@ const useStyle = () => {
         marginLeft: "7px",
         ...FONT_FAMILY.Lexend(500, 14),
       },
-
       tabStyle: {
         width: "62px",
         height: "20px",
@@ -90,7 +79,6 @@ const useStyle = () => {
         background: "#ED028C",
         ...FONT_FAMILY.Lexend(500, 16),
       },
-
       filterStyle: {
         display: "flex",
         width: "50%",
@@ -98,23 +86,19 @@ const useStyle = () => {
         alignItems: "center",
         marginBottom: '7px',
       },
-
       headers3Style: {
         color: "#F135A3",
         ...FONT_FAMILY.Lexend(500, 18),
       },
-
       tableContainer: {
         width: "100%",
       },
-
       switchHeaderStyle: {
         color: "var(--primary-900, #090A1D)",
         fontStyle: "normal",
         lineHeight: "normal",
         ...FONT_FAMILY.Lexend(400, 12),
       },
-
       autoButtonStyle: {
         height: "40px",
         padding: "10px 32px",
@@ -127,7 +111,6 @@ const useStyle = () => {
         border: "none",
         ...FONT_FAMILY.Lexend(500, 16),
       },
-
       autoComplateStyle: {
         width: "180px",
         height: "40px",
