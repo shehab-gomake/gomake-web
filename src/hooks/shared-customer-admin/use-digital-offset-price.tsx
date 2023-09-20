@@ -1,20 +1,22 @@
-import { useGomakeAxios, useGomakeRouter } from "@/hooks";
-import { useTranslation } from "react-i18next";
-import { useCallback, useEffect, useState } from "react";
-import { getAndSetProductById } from "@/services/hooks";
-import { useRouter } from "next/router";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { digitslPriceState } from "./store";
-import { useMaterials } from "../use-materials";
+import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useRouter } from "next/router";
+
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
+import { materialsCategoriesState } from "@/store/material-categories";
+import { useGomakeAxios, useGomakeRouter } from "@/hooks";
+import { getAndSetProductById } from "@/services/hooks";
+import { isLoadgingState } from "@/store";
 import {
   GoMakeAutoComplate,
   GomakePrimaryButton,
   GomakeTextInput,
   SecondSwitch,
 } from "@/components";
-import { materialsCategoriesState } from "@/store/material-categories";
-import { isLoadgingState } from "@/store";
+
+import { useMaterials } from "../use-materials";
+import { digitslPriceState } from "./store";
 
 const useDigitalOffsetPrice = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
@@ -30,6 +32,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const [urgentOrder, setUrgentOrder] = useState(false);
   const [printingNotes, setPrintingNotes] = useState("");
   const [graphicNotes, setGraphicNotes] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let temp = [...isRequiredParameters];
@@ -86,7 +89,9 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                       parameterName: parameter?.name,
                       actionId: parameter?.actionId,
                       parameterType: parameter?.parameterType,
-                      ...(defaultValue?.length > 0 && { value: defaultValue }),
+                      ...(defaultValue?.length > 0 && {
+                        value: defaultValue,
+                      }),
                       sectionId: section?.id,
                       subSectionId: subSection?.id,
                     });
@@ -469,24 +474,12 @@ const useDigitalOffsetPrice = ({ clasess }) => {
                 options={options}
                 placeholder={parameter.name}
                 style={clasess.dropDownListStyle}
-                // defaultValue={defailtObjectValue || { value: "" }}
                 defaultValue={
                   index !== -1
                     ? { value: temp[index].value }
                     : defailtObjectValue
                 }
                 getOptionLabel={(option: any) => option.value}
-                // value={
-                //   index !== -1
-                //     ? {
-                //         //@ts-ignore
-                //         value:
-                //           temp[index].value === "undefined"
-                //             ? { value: "" }
-                //             : temp[index].value,
-                //       }
-                //     : defailtObjectValue
-                // }
                 onChange={(e: any, value: any) => {
                   if (parameter?.materialPath?.length == 3) {
                     onChangeForPrice(
@@ -724,26 +717,22 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
   const addItemForQuotes = useCallback(async () => {
-    const res = await callApi(
-      "POST",
-      `/v1/erp-service/quote/add-item`,
-      {
-        productId: router?.query?.productId,
-        userID: "a42b4834-b34f-48d8-80b1-7780bc6133a2",
-        customerID: router?.query?.customerId,
-        unitPrice:
-          pricingDefaultValue?.workFlows[0]?.totalPrice / quantity?.value,
-        amount: quantity?.value,
-        isNeedGraphics: false,
-        isUrgentWork: urgentOrder,
-        printingNotes,
-        graphicNotes,
-        isNeedExample: false,
-        itemParmetersValues: generalParameters,
-        workFlow: pricingDefaultValue?.workFlows[0],
-      },
-      false
-    );
+    const res = await callApi("POST", `/v1/erp-service/quote/add-item`, {
+      productId: router?.query?.productId,
+      userID: "a42b4834-b34f-48d8-80b1-7780bc6133a2",
+      customerID: router?.query?.customerId,
+      clientTypeId: router?.query?.clientTypeId,
+      unitPrice:
+        pricingDefaultValue?.workFlows[0]?.totalPrice / quantity?.value,
+      amount: quantity?.value,
+      isNeedGraphics: false,
+      isUrgentWork: urgentOrder,
+      printingNotes,
+      graphicNotes,
+      isNeedExample: false,
+      itemParmetersValues: generalParameters,
+      workFlow: pricingDefaultValue?.workFlows[0],
+    });
     if (res?.success) {
       navigate("/quote");
     }
@@ -757,10 +746,16 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     printingNotes,
   ]);
   const navigateForRouter = () => {
-    if (router?.query?.actionId) {
-      createProfitTestCase();
+    let checkParameter = validateParameters(isRequiredParameters);
+    if (!!checkParameter) {
+      setErrorMsg("");
+      if (router?.query?.actionId) {
+        createProfitTestCase();
+      } else {
+        addItemForQuotes();
+      }
     } else {
-      addItemForQuotes();
+      setErrorMsg("Please enter all required parameters");
     }
   };
   return {
@@ -801,6 +796,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     clientTypeDefaultValue,
     clientTypesValue,
     pricingDefaultValue,
+    errorMsg,
   };
 };
 

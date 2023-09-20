@@ -51,6 +51,7 @@ const PriceListPageWidget = () => {
     clientTypeDefaultValue,
     clientTypesValue,
     pricingDefaultValue,
+    errorMsg,
   } = useDigitalOffsetPrice({ clasess });
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
@@ -218,6 +219,7 @@ const PriceListPageWidget = () => {
               >
                 {t("products.offsetPrice.admin.addOrder")}
               </GomakePrimaryButton>
+              <div style={clasess.errorMsgStyle}>{errorMsg}</div>
               <div style={clasess.noVatStyle}>
                 {t("products.offsetPrice.admin.dontVAT")}
               </div>
