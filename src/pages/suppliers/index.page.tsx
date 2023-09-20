@@ -5,12 +5,12 @@ import Pagination from '@mui/material/Pagination';
 import { useState } from "react";
 import Stack from '@mui/material/Stack';
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
-import { customerMapFunction } from "@/services/hooks/get-set-customers";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useStyle } from "./style";
 import { HeaderFilter } from "../customers/header-filter";
 import { AddCustomerButton } from "../customers/add-customer";
 import { useCustomers } from "../customers/use-customers";
+import { customerMapFunction } from "@/services/api-service/customers/get-set-customers";
 
 export default function Home() {
   const { t } = useTranslation();

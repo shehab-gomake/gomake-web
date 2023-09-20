@@ -1,18 +1,27 @@
 import { returnResult } from "@/utils/helpers";
-import { ICallApi, ISetState } from "./call-api.interface";
 import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { MoreMenuWidget } from "@/widgets/customer-card-modal/more-circle";
+import {ICallAndSetData, ICallApi} from "@/services/api-service/interface";
+import {getSetApiData} from "@/services/api-service/get-set-api-data";
+import {EHttpMethod} from "@/services/api-service/enums";
+import { ISetState } from "@/services/hooks/call-api.interface";
+const GET_CUSTOMER_BY_ID_URL = '/v1/customers/get-customer';
+
+
+
 
 //get by id
-const getAndSetCustomerById = async (
-  callApi: ICallApi,
-  setState?: ISetState,
-  data?: any
-) => {
+const getAndSetCustomerByIaad = async (callApi: ICallApi,setState?: ISetState ,data?: any) => {
   const result: any = await callApi("GET", "/v1/customers/get-customer", data);
   return returnResult(result, setState);
 };
+
+//get by id
+const getAndSetCustomerById: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(callApi, EHttpMethod.GET, GET_CUSTOMER_BY_ID_URL, setState, data); 
+}
+
 
 //helper function
 const customerMapFunction = (customer, onClick, onClickStatus , activeText , inActiveText) => {
@@ -80,6 +89,7 @@ const getAndSetCustomersPagination = async (
   }
   return _data.totalItems;
 };
+
 
 export {
   getAndSetCustomerById,

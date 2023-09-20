@@ -1,8 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { GoMakeAutoComplate, GomakePrimaryButton, GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate } from "@/components";
 import { Skeleton } from "@mui/material";
 import { useStyle } from "./style";
-import { useEffect } from "react";
 import * as React from 'react';
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { SecondaryButton } from "@/components/button/secondary-button";
@@ -22,7 +21,6 @@ interface IProps {
     valClientType?: any[];
     valStatus?: any[];
   }
-
 
 const HeaderFilter = ({ typeClient, agentsCategores, clientTypesCategores, statuses, onChangeAgent, onChangeCustomer, onChangeClientType, onChangeStatus, handleClean, cutomerName, agentName, valClientType, valStatus }: IProps) => {
     const { t } = useTranslation();

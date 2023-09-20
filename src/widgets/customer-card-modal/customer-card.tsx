@@ -220,8 +220,7 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
     const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
     const filteredUserss = users.filter(user => !isNameIndexOnly(user));
     const cardTypeId = typeClient === "S" ? 2 : 1;
-
-    const updatedCustomer = {
+    const updatedCustomer ={
       ...customer,
       contacts: filteredContacts,
       addresses: filteredAddresses,

@@ -9,23 +9,26 @@ import Pagination from '@mui/material/Pagination';
 import { useState } from "react";
 import Stack from '@mui/material/Stack';
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
-import { customerMapFunction } from "@/services/hooks/get-set-customers";
 import { PrimaryTable } from "@/components/tables/primary-table";
-
-
-
+import { useEffect } from "react";
+import { customerMapFunction } from "@/services/api-service/customers/get-set-customers";
 
 export default function Home() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const [pageNumber, setPageNumber] = useState(1);
-  const { tabelHeaders, updatedStatus, getCustomersRows,setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers("C", pageNumber, setPageNumber);
+  const { getAgentCategores , tabelHeaders, updatedStatus, getCustomersRows,setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers("C", pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
   const onCustomeradd = (customer) => {
     const mapData = customerMapFunction(customer, getCustomerForEdit, updatedStatus , activeText , inActiveText);
     setAllCustomers([...allCustomers, mapData])
   };
+
+
+  useEffect(() => {
+    getAgentCategores();
+  }, []);
 
   return (
     <CustomerAuthLayout>
