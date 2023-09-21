@@ -5,8 +5,7 @@ import { useEffect, useState } from 'react';
 import { fetchS3JsonContent } from "@/utils/S3Content";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { addressInputs1 } from "../../inputs/address-inputs";
-import { addressInputs2, addressInputs3 } from "../../inputs/address-inputs-second";
+import { addressInputs1  , addressInputs2, addressInputs3  } from "../../inputs/address-inputs";
 import { useCallback } from "react";
 import { Stack } from "@mui/material";
 
@@ -90,7 +89,7 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
                 }
             </Stack>
             <Stack direction={'row'}>
-                <a style={{ width: "102px" }} onClick={() => onDelete(address.index)} >
+                <a style={{ display: "flex", justifyContent: 'flex-start' }} onClick={() => onDelete(address.index)} >
                     <RemoveIcon></RemoveIcon>
                     <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
                 </a>

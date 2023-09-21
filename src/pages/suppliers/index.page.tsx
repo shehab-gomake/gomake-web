@@ -12,18 +12,17 @@ import { AddCustomerButton } from "../customers/add-customer";
 import { useCustomers } from "../customers/use-customers";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
 import { useEffect } from "react";
-
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 export default function Home() {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const [pageNumber, setPageNumber] = useState(1);
-  const { ClientTypeId, agentId, isActive , pageSize ,filters, clientType , tabelHeaders, updatedStatus, getCustomersRows,setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers("S", pageNumber, setPageNumber);
-
+  const { ClientTypeId, agentId, isActive, pageSize, filters, clientType, tabelHeaders, updatedStatus, getCustomersRows, setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers(CLIENT_TYPE.SUPPLIER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
   const onCustomeradd = (customer) => {
-    const mapData = customerMapFunction(customer, getCustomerForEdit, updatedStatus , activeText , inActiveText);
+    const mapData = customerMapFunction(customer, getCustomerForEdit, updatedStatus, activeText, inActiveText);
     setAllCustomers([...allCustomers, mapData])
   };
 
@@ -35,10 +34,10 @@ export default function Home() {
     <CustomerAuthLayout>
       <div style={classes.headerStyle}>
         <HeaderTitle marginBottom="20px" title={t("suppliers.title")} />
-        <AddCustomerButton onCustomeradd={onCustomeradd} typeClient="S"></AddCustomerButton>
+        <AddCustomerButton onCustomeradd={onCustomeradd} typeClient={CLIENT_TYPE.SUPPLIER}></AddCustomerButton>
       </div>
       <HeaderFilter
-        typeClient={"S"}
+        typeClient={CLIENT_TYPE.SUPPLIER}
         agentsCategores={agentsCategores}
         clientTypesCategores={clientTypesCategores}
         statuses={statuses}
@@ -55,7 +54,7 @@ export default function Home() {
       <Stack spacing={3}>
         <PrimaryTable rows={getCustomersRows()} headers={tabelHeaders}></PrimaryTable>
         <CustomerCardWidget
-          typeClient={"S"}
+          typeClient={CLIENT_TYPE.SUPPLIER}
           getAllCustomers={getAllCustomers}
           openModal={showCustomerModal}
           modalTitle={t("suppliers.editModalTitle")}

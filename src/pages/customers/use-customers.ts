@@ -6,6 +6,7 @@ import { agentsCategoresState, clientTypesCategoresState, customerForEditState }
 import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { getAndSetCustomerById, getAndSetCustomersPagination, toggleCustomerStatus } from "@/services/api-service/customers/customers-api";
+import { DEFAULT_VALUES } from "./enums";
 
 const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: Dispatch<SetStateAction<number>>) => {
   const { callApi } = useGomakeAxios();
@@ -13,7 +14,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
   const [allCustomers, setAllCustomers] = useState([]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [pagesCount, setPagesCount] = useState(0);
-  const pageSize = 10;
+  const pageSize = DEFAULT_VALUES.PageSize;
 
   const tabelHeaders =  [
       clientType == "C" ? t("customers.customerCode") :t("suppliers.supplierCode"),
