@@ -64,7 +64,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     if (template?.sections?.length > 0) {
       let sectionData: any = [...template?.sections];
       const newGeneralParameters = [];
-      const newSubProducts = [];
       const typeMap = {};
       sectionData.forEach((section) => {
         section.subSections.forEach((subSection) => {
@@ -163,10 +162,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
               } else {
                 typeMap[subSection.type].parameters.push(...temp);
               }
-              // newSubProducts.push({
-              //   type: subSection.type,
-              //   parameters: [...temp],
-              // });
             }
           } else {
             let temp = [];
@@ -274,111 +269,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
       setSubProducts(newSubProducts2);
     }
   }, [template]);
-
-  // useEffect(() => {
-  //   const updateGeneralParameters = () => {
-  //     if (!template?.sections?.length) return;
-
-  //     const updatedGeneralParameters = [...generalParameters];
-  //     const newSubProducts = [...subProducts];
-
-  //     template.sections.forEach((section) => {
-  //       section.subSections?.forEach((subSection) => {
-  //         subSection.parameters
-  //           ?.filter((param) => !param.isHidden)
-  //           .forEach((parameter) => {
-  //             const index = updatedGeneralParameters.findIndex(
-  //               (item) =>
-  //                 item.parameterId === parameter?.id &&
-  //                 item.sectionId === section?.id &&
-  //                 item.subSectionId === subSection?.id
-  //             );
-
-  //             if (index === -1) {
-  //               if (
-  //                 parameter.parameterType === 1 ||
-  //                 parameter.parameterType === 2 ||
-  //                 parameter.parameterType === 3
-  //               ) {
-  //                 if (parameter.defaultValue?.length > 0) {
-  //                   updatedGeneralParameters.push({
-  //                     parameterId: parameter.id,
-  //                     parameterName: parameter.name,
-  //                     actionId: parameter.actionId,
-  //                     parameterType: parameter.parameterType,
-  //                     ...(parameter.defaultValue.length > 0 && {
-  //                       value: parameter.defaultValue,
-  //                     }),
-  //                     sectionId: section.id,
-  //                     subSectionId: subSection.id,
-  //                   });
-  //                 }
-  //               } else if (parameter.parameterType === 0) {
-  //                 const value = parameter.valuesConfigs?.find(
-  //                   (item) => item?.isDefault === true
-  //                 );
-
-  //                 if (value) {
-  //                   const data = materialsEnumsValues.find(
-  //                     (item) => item.name === parameter.materialPath[0]
-  //                   );
-
-  //                   updatedGeneralParameters.push({
-  //                     parameterId: parameter.id,
-  //                     parameterName: parameter.name,
-  //                     actionId: parameter.actionId,
-  //                     ...(data?.id > 0 && { material: data.id }),
-  //                     parameterType: parameter.parameterType,
-  //                     ...(value && {
-  //                       valueId: value.id,
-  //                       value: value.updateName,
-  //                     }),
-  //                     sectionId: section.id,
-  //                     subSectionId: subSection.id,
-  //                   });
-  //                 }
-  //               } else if (parameter.parameterType === 6) {
-  //                 const defaultObject = parameter.valuesConfigs.find(
-  //                   (item) => item.isDefault === true
-  //                 );
-
-  //                 if (defaultObject) {
-  //                   updatedGeneralParameters.push({
-  //                     parameterId: parameter.id,
-  //                     parameterName: parameter.name,
-  //                     actionId: parameter.actionId,
-  //                     parameterType: parameter.parameterType,
-  //                     ...(defaultObject && {
-  //                       valueId: defaultObject.id,
-  //                       value: defaultObject.updateName,
-  //                     }),
-  //                     sectionId: section.id,
-  //                     subSectionId: subSection.id,
-  //                   });
-
-  //                   parameter.childsParameters.forEach((item) => {
-  //                     updatedGeneralParameters.push({
-  //                       parameterId: item.id,
-  //                       parameterName: item.name,
-  //                       actionId: item.actionId,
-  //                       parameterType: item.parameterType,
-  //                       value: item.defaultValue,
-  //                       sectionId: section.id,
-  //                       subSectionId: subSection.id,
-  //                     });
-  //                   });
-  //                 }
-  //               }
-  //             }
-  //           });
-  //       });
-  //     });
-
-  //     setGeneralParameters(updatedGeneralParameters);
-  //   };
-
-  //   updateGeneralParameters();
-  // }, [template]);
 
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
