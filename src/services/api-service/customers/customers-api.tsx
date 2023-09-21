@@ -1,18 +1,20 @@
 import { returnResult } from "@/utils/helpers";
-import { ICallApi, ISetState } from "./call-api.interface";
 import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { MoreMenuWidget } from "@/widgets/customer-card-modal/more-circle";
+import {ICallAndSetData, ICallApi} from "@/services/api-service/interface";
+import {getSetApiData} from "@/services/api-service/get-set-api-data";
+import {EHttpMethod} from "@/services/api-service/enums";
+import { ISetState } from "@/services/hooks/call-api.interface";
+const GET_CUSTOMER_BY_ID_URL = '/v1/customers/get-customer';
+const TOGGLE_CUSTOMER_STATUS_URL = '/v1/crm-service/customer/update-customer-status/';
+//const ADD_NEW_CUSTOMER_URL = '/v1/customers/add-customer';
+//const UPDATE_CUSTOMER_URL = '';
 
 //get by id
-const getAndSetCustomerById = async (
-  callApi: ICallApi,
-  setState?: ISetState,
-  data?: any
-) => {
-  const result: any = await callApi("GET", "/v1/customers/get-customer", data);
-  return returnResult(result, setState);
-};
+const getAndSetCustomerById: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(callApi, EHttpMethod.GET, GET_CUSTOMER_BY_ID_URL, setState, data); 
+}
 
 //helper function
 const customerMapFunction = (customer, onClick, onClickStatus , activeText , inActiveText) => {
@@ -56,6 +58,7 @@ const customerMapFunction = (customer, onClick, onClickStatus , activeText , inA
   };
 };
 
+
 // data table
 const getAndSetCustomersPagination = async (
   callApi: ICallApi,
@@ -81,8 +84,21 @@ const getAndSetCustomersPagination = async (
   return _data.totalItems;
 };
 
+const toggleCustomerStatus: ICallAndSetData = async (callApi, setState, data ) => {
+  return await getSetApiData(callApi, EHttpMethod.PUT, TOGGLE_CUSTOMER_STATUS_URL , setState , data );
+}
+
+// const addNewCustomerTest: ICallAndSetData = async (callApi, setState, data) => {
+//   return await getSetApiData(callApi, EHttpMethod.POST, ADD_NEW_CUSTOMER_URL, setState, data);
+// }
+
+// const updateCustomer: ICallAndSetData = async (callApi, setState, employee: Employee) => {
+//   return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_CUSTOMER_URL, setState, employee);
+// }
+
 export {
   getAndSetCustomerById,
   getAndSetCustomersPagination,
   customerMapFunction,
+  toggleCustomerStatus
 };

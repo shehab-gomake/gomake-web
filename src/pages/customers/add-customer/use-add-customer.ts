@@ -8,7 +8,28 @@ const useAddCustomer = () => {
   const [state, setState] = useState<any>({});
   const { setSnackbarStateValue } = useSnackBar();
 
+  //addNewCustomer
+//   const addNewCustomer = async (data: any) => {
+//         const callback = (data) => {
+//             if (data.success) {
+//               setSnackbarStateValue({
+//                 state: true,
+//                 message: t("modal.addedSusuccessfully"),
+//                 type: "success",
+//               });
+//             } else {
+//               setSnackbarStateValue({
+//                 state: true,
+//                 message: t("modal.addedfailed"),
+//                 type: "error",
+//               });
+//             }
   
+//         }
+//        await addNewCustomerTest(callApi ,callback , data);
+// }
+
+
   const addNewCustomer = useCallback(
     async (data: any) => {
       return new Promise(async (resolve, reject) => {
@@ -20,7 +41,6 @@ const useAddCustomer = () => {
               message: t("modal.addedSusuccessfully"),
               type: "success",
             });
-            
             resolve(res.data.data.data); 
           } else {
             setSnackbarStateValue({

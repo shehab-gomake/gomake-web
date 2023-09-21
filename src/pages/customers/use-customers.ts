@@ -1,48 +1,43 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useCallback , useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
-import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/hooks/get-set-customers";
-import { getAndSetClientTypes } from "@/services/hooks/get-set-clientTypes";
-import { getAndSetAllCustomers, getAndSetEmployees2 } from "@/services/hooks";
+import {useRecoilState} from "recoil";
+import { agentsCategoresState, clientTypesCategoresState, customerForEditState } from "./customer-states";
+import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
+import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
+import { getAndSetCustomerById, getAndSetCustomersPagination, toggleCustomerStatus } from "@/services/api-service/customers/customers-api";
 
 const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: Dispatch<SetStateAction<number>>) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [allCustomers, setAllCustomers] = useState([]);
-  const [customerForEdit, setCustomerForEdit] = useState(null);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [pagesCount, setPagesCount] = useState(0);
   const pageSize = 10;
 
-  const tabelHeaders = useMemo(
-    () => [
+  const tabelHeaders =  [
       clientType == "C" ? t("customers.customerCode") :t("suppliers.supplierCode"),
       t("customers.name"),
       t("customers.email"),
       t("customers.phone"),
       t("customers.status"),
       t("customers.hashtag"),
-    ],
-    []
-  );
+    ]
+  ;
 
   const getCustomersRows = useCallback(()=> {
     return allCustomers?.map(customer => [customer?.customerCode, customer?.name, customer?.email, customer?.phone, customer?.status, customer?.hashTag])
   }, [allCustomers])
 
   //select agent options
-  const [agentsCategores, setAgentsCategores] = useState([]);
   const [customersCategores, setCustomersCategores] = useState([]);
 
   //select status options
-  const statuses = useMemo(
-    () => [
+  const statuses =  [
       { label: t("customers.active"), value: "true" },
       { label: t("customers.inactive"), value: "false" },
       { label: t("customers.all"), value: "" },
-    ],
-    []
-  );
+  ];
 
   const [name, setCustomerName] = useState("");
   const onChangeCustomer = useCallback((value: string) => {
@@ -86,74 +81,75 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
   });
 
   ///////////////////////// select clientType //////////////////////////////
-  const [clientTypesCategores, setClientTypesCategores] = useState([]);
-  const getClientTypesCategores = useCallback(async () => {
+  const [clientTypesCategores, setClientTypesCategores] = useRecoilState(clientTypesCategoresState);
+  const getClientTypesCategores = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const clientTypes = res.data.map(types => ({
+          label: types.text,
+          id: types.value
+        }));
+        setClientTypesCategores(clientTypes);
+      }
+    }
+    await getAndSetClientTypes(callApi, callBack)
+  }
 
-    const data = await getAndSetClientTypes(
-      callApi,
-      setClientTypesCategores,
-    );
-    const clientTypes = data.map(types => ({
-      label: types.text, 
-      id: types.value    
-    }));
-    setClientTypesCategores(clientTypes);
-  }, []);
-
-  useEffect(() => {
-    getClientTypesCategores();
-  }, []);
+  
 
   ///////////////////////// select agent //////////////////////////////
-
-  const getAgentCategores = useCallback(async () => {
-    const data = await getAndSetEmployees2(
-      callApi,
-      setAgentsCategores,
-      { isAgent: true }
-    );
-    const agentNames = data.map(agent => ({
-      label: agent.text, 
-      id: agent.value    
-    }));
-    setAgentsCategores(agentNames);
-  }, []);
-
-  useEffect(() => {
-    getAgentCategores();
-  }, []);
-
-  ///////////////////////// select customer + get the number of customers //////////////////////////////
-  const getCustomersCategores = useCallback(async () => {
-    const data = await getAndSetAllCustomers(
-      callApi,
-      setCustomersCategores,
-      {
-        ClientType: clientType,
-        onlyCreateOrderClients: false
+  const [agentsCategores, setAgentsCategores] = useRecoilState(agentsCategoresState);
+  const getAgentCategores = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const agentNames = res.data.map(agent => ({
+          label: agent.text,
+          id: agent.value
+        }));
+        setAgentsCategores(agentNames);
       }
-    );
-    const customersNames = data.map(customer => ({
-      label: customer.name,
-      id: customer.id
-    }));
-    setCustomersCategores(customersNames);
-  }, []);
-
-  useEffect(() => {
-    getCustomersCategores();
-  }, []);
+    }
+    await getAndSetEmployees2(callApi, callBack, { isAgent: true })
+  }
 
   /////////////////////////  data table  //////////////////////////////
 
+  const [customerForEdit, setCustomerForEdit] = useRecoilState(customerForEditState);
   const getCustomerForEdit = async (id) => {
-    await getAndSetCustomerById(callApi, setCustomerForEdit, {
-      customerId: id,
-    });
-    setShowCustomerModal(true)
+    const callBack = (res) => {
+      if (res.success) {
+        let customer = res.data;
+        debugger;
+        if(customer.contacts && customer.contacts.length > 0){
+          let index = 0;
+          customer.contacts.forEach(x => {
+            x.index = index;
+            index++;
+          });
+        }
+        if(customer.addresses && customer.addresses.length > 0){
+          let index = 0;
+          customer.addresses.forEach(x => {
+            x.index = index;
+            index++;
+          });
+        }
+        if(customer.users && customer.users.length > 0){
+          let index = 0;
+          customer.users.forEach(x => {
+            x.index = index;
+            index++;
+          });
+        }
+        setCustomerForEdit(customer);
+        setShowCustomerModal(true)
+      }
+    }
+    await getAndSetCustomerById(callApi, callBack, { customerId: id })
   }
 
-  const updatedStatus = useCallback(async (data: any, filters) => {
+  /////////////////////////  convert to active/inactive  //////////////////////////////
+  const updatedStatus = useCallback(async (data: any) => {
     const res: any = await callApi(
       "PUT",
       "/v1/crm-service/customer/update-customer-status",
@@ -172,6 +168,26 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
     }
   }, []);
 
+  // const updatedStatus = async (data: any) => {
+  //   const callBack = (res) => {
+  //     if (res?.success) {
+  //       setFilters((prevFilters) => ({
+  //         ...prevFilters,
+  //       }));  
+  //           return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   }
+  //   await toggleCustomerStatus(callApi, callBack, {
+  //     Id: data.id ,
+  //     status: !data?.isActive,
+  //   })
+  // }
+
+
+
+  /////////////////////////  get All Customers  //////////////////////////////
   const getAllCustomers = useCallback(async () => {
     const data = await getAndSetCustomersPagination(callApi, setAllCustomers, {
       clientType,
@@ -186,9 +202,6 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
     return data;
   }, [pageNumber, name, ClientTypeId, agentId, isActive]);
 
-  useEffect(() => {
-    getAllCustomers();
-  }, [filters, clientType, pageNumber, pageSize, name, ClientTypeId, agentId, isActive]);
 
   const handleClean = useCallback(async () => {
     setCustomerName("");
@@ -202,6 +215,8 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
   }, []);
 
   return {
+    getAgentCategores,
+    getClientTypesCategores,
     tabelHeaders,
     allCustomers,
     agentsCategores,
@@ -225,7 +240,13 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
     getCustomerForEdit,
     getAllCustomers,
     updatedStatus,
-    getCustomersRows
+    getCustomersRows,
+    ClientTypeId,
+    agentId, 
+    isActive ,
+    pageSize ,
+    filters, 
+    clientType
   };
 };
 export { useCustomers };

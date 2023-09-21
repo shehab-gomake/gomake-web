@@ -2,17 +2,19 @@ import { GoMakeAutoComplate} from "@/components";
 import { Skeleton } from "@mui/material";
 import { useStyle } from "./style";
 
-const HeaderFilter = ({
-    setAllOptions,
-    setPlaceholder,
-    onchange,
-    val
-  }: any) => {
+interface IProps {
+    setAllOptions?: any;
+    setPlaceholder?: any;
+    onchange?: () => void;
+    val?: string;
+  }
+
+const HeaderFilter = ({setAllOptions , setPlaceholder , onchange , val }: IProps) => {
     const { clasess } = useStyle();
 
     return (
         <div >
-            {setAllOptions?.length > 0 ? (
+            {setAllOptions?.length > 0 || val!=null ? (
                 <GoMakeAutoComplate
                     options={setAllOptions}
                     style={clasess.autoComplateStyle}
@@ -21,8 +23,8 @@ const HeaderFilter = ({
                     value={val}
                 />
             ) : (
-                <Skeleton variant="rectangular" width={200} height={40} />
-            )}
+                <Skeleton variant="rectangular" width={180} height={40} />
+                )}
         </div>
     );
 };

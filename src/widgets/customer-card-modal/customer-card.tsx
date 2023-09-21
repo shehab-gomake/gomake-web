@@ -1,5 +1,5 @@
 import { Tab, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { GoMakeModal } from "@/components";
 import { TextareaAutosize } from '@mui/base';
@@ -16,6 +16,7 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { customerInputs, customerInputs2 } from "./inputs/customer-inputs";
 import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general-inputs";
 import { Stack } from "@mui/material";
+import { ClientTYPE } from "@/pages/customers/enums";
 
 interface IProps {
   children?: React.ReactNode;
@@ -87,14 +88,7 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
   const addInitContact = () => {
     var temp = [];
     if (customer && customer.contacts) {
-      temp = customer.contacts;
-      if (temp) {
-        let index = 0;
-        temp.forEach(x => {
-          x.index = index;
-          index++;
-        })
-      }
+      temp = [... customer.contacts];
     } else {
       const index = temp.length + 1;
       temp.push({ name: "", index: index });
@@ -133,14 +127,7 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
   const addInitAddress = () => {
     var temp = [];
     if (customer && customer.addresses) {
-      temp = customer.addresses;
-      if (temp) {
-        let index = 0;
-        temp.forEach(x => {
-          x.index = index;
-          index++;
-        })
-      }
+      temp = [...customer.addresses];
     } else {
       const index = temp.length + 1;
       temp.push({ name: "", index: index });
@@ -179,14 +166,7 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
   const addInitUser = () => {
     var temp = [];
     if (customer && customer.users) {
-      temp = customer.users;
-      if (temp) {
-        let index = 0;
-        temp.forEach(x => {
-          x.index = index;
-          index++;
-        })
-      }
+      temp = [...customer.users];
     } else {
       const index = temp.length + 1;
       temp.push({ name: "", index: index });
@@ -219,9 +199,8 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
     const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
     const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
     const filteredUserss = users.filter(user => !isNameIndexOnly(user));
-    const cardTypeId = typeClient === "S" ? 2 : 1;
-
-    const updatedCustomer = {
+    const cardTypeId = typeClient === "C" ? ClientTYPE.CUSTOMER : ClientTYPE.SUPPLIER;
+    const updatedCustomer ={
       ...customer,
       contacts: filteredContacts,
       addresses: filteredAddresses,
