@@ -5,6 +5,7 @@ export const initState: IUserData = {
   username: "",
   password: "",
   roleID: "",
+  email:"",
   isCanLoginWithCode: false,
   allowedIPs: [],
   employee: {
