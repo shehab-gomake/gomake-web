@@ -17,7 +17,7 @@ const PrimaryTableCell = styled(TableCell)(() => {
     [`&.${tableCellClasses.body}`]: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(500),
-        padding: '2px 0',
+        padding: '3px 0',
     },
 }});
 

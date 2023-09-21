@@ -6,9 +6,9 @@ import {useCompanyProfile} from "@/hooks/use-company-profile";
 
 const LoginWidget = () => {
   const { clasess } = useStyle();
-  const {getProfile} = useCompanyProfile();
+  const {getCompanyLogo} = useCompanyProfile();
   useEffect(()=> {
-      getProfile().then();
+      getCompanyLogo().then();
   }, [])
   return (
     <div style={clasess.container}>
