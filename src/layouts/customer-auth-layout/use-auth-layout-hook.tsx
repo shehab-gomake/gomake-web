@@ -11,6 +11,7 @@ import {
 } from "@/icons";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import {CubeIcon} from "@/components/icons/cube-icon";
 
 const useAuthLayoutHook = () => {
   const { t } = useTranslation();
@@ -145,7 +146,7 @@ const useAuthLayoutHook = () => {
         path: "/materials",
         isList: false,
         icon: () => {
-          return <ProductsIcon />;
+          return <CubeIcon width={24} height={24} color={'white'} />;
         },
         isProduction: true,
       },
