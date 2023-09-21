@@ -68,25 +68,25 @@
   },
   "properties": {
     "parameter": "Parameter",
-    "rule":"Rule",
-    "type":"Type",
-    "more":"More",
-    "addNewRule":"add new rule",
+    "rule": "Rule",
+    "type": "Type",
+    "more": "More",
+    "addNewRule": "add new rule",
     "addRule": "add rule",
     "editRules": "edit rules",
     "cancel": "cancel",
-    "create":"create",
-    "statment":"statment",
+    "create": "create",
+    "statment": "statment",
     "condtion": "condtion",
     "category": "category",
-    "condtionBetween":"Condtion between rules"
+    "condtionBetween": "Condtion between rules"
   },
   "modal": {
     "close": "Close",
     "addedSusuccessfully": "Added successfully",
     "addedfailed": "Added failed",
     "updatedSusuccessfully": "Updated successfully",
-    "updatedfailed": "Updated failed",                              
+    "updatedfailed": "Updated failed",
     "deleteSusuccessfully": "Deleted successfully",
     "deletefailed": "Deleted failed",
     "formNotValid": "Form not valid"
@@ -1495,7 +1495,8 @@
       "name": "Name",
       "phone": "Phone",
       "duplicateItemWithDifferentQTY": "Duplicate item with new quantity",
-      "addressName": "Address Name"
+      "addressName": "Address Name",
+      "add": "Add"
     }
   },
   "usersSettings": {
@@ -1854,32 +1855,30 @@
     "convertToActive": "Convert to active",
     "editing": "Editing"
   },
-  "materialsTrans":{
-    "additions":"Additions",
-    "applications":"Applications",
-    "canvasframes":"Canvas Frames",
-    "colors":"Colors",
-    "doublesidedtaperolls":"Double sided tape rolls",
-    "envelopes":"Envelopes",
-    "foils":"Foils",
-    "frames":"Frames",
-    "glues":"Glues",
-    "hardboards":"Hardboards",
-    "laminations":"Laminations",
-    "magnets":"Magnets",
-    "materialrollprintings":"Material roll printings",
-    "packindrums":"Packin Drums",
-    "packings":"Packings",
-    "packinunits":"Packin units",
-    "plats":"Plates",
-    "profileframes":"Profile frames",
+  "materialsTrans": {
+    "additions": "Additions",
+    "applications": "Applications",
+    "canvasframes": "Canvas Frames",
+    "colors": "Colors",
+    "doublesidedtaperolls": "Double sided tape rolls",
+    "envelopes": "Envelopes",
+    "foils": "Foils",
+    "frames": "Frames",
+    "glues": "Glues",
+    "hardboards": "Hardboards",
+    "laminations": "Laminations",
+    "magnets": "Magnets",
+    "materialrollprintings": "Material roll printings",
+    "packindrums": "Packin Drums",
+    "packings": "Packings",
+    "packinunits": "Packin units",
+    "plats": "Plates",
+    "profileframes": "Profile frames",
     "rollencapsulations": "Roll encapsulations",
-    "sheetencapsulations":"Sheet encapsulations",
+    "sheetencapsulations": "Sheet encapsulations",
     "sheets": "Sheets",
-    "tubes":"Tubes",
-    "varnishs":"Varnishs",
-    "wideformatmaterial":"Wide format material"
+    "tubes": "Tubes",
+    "varnishs": "Varnishs",
+    "wideformatmaterial": "Wide format material"
   }
-
-  
 }
