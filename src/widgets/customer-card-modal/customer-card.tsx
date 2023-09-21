@@ -16,6 +16,7 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { customerInputs, customerInputs2 } from "./inputs/customer-inputs";
 import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general-inputs";
 import { Stack } from "@mui/material";
+import { ClientTYPE } from "@/pages/customers/enums";
 
 interface IProps {
   children?: React.ReactNode;
@@ -198,7 +199,7 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
     const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
     const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
     const filteredUserss = users.filter(user => !isNameIndexOnly(user));
-    const cardTypeId = typeClient === "S" ? 2 : 1;
+    const cardTypeId = typeClient === "C" ? ClientTYPE.CUSTOMER : ClientTYPE.SUPPLIER;
     const updatedCustomer ={
       ...customer,
       contacts: filteredContacts,

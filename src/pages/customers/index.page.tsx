@@ -17,7 +17,7 @@ export default function Home() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const [pageNumber, setPageNumber] = useState(1);
-  const { getAgentCategores , tabelHeaders, updatedStatus, getCustomersRows,setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers("C", pageNumber, setPageNumber);
+  const { ClientTypeId, agentId, isActive , pageSize ,filters, clientType , getAgentCategores , getClientTypesCategores, tabelHeaders, updatedStatus, getCustomersRows,setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers("C", pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
   const onCustomeradd = (customer) => {
@@ -25,10 +25,14 @@ export default function Home() {
     setAllCustomers([...allCustomers, mapData])
   };
 
-
   useEffect(() => {
     getAgentCategores();
+    getClientTypesCategores();
   }, []);
+
+  useEffect(() => {
+    getAllCustomers();
+  }, [filters, clientType, pageNumber, pageSize, name, ClientTypeId, agentId, isActive]);
 
   return (
     <CustomerAuthLayout>

@@ -11,18 +11,25 @@ import { HeaderFilter } from "../customers/header-filter";
 import { AddCustomerButton } from "../customers/add-customer";
 import { useCustomers } from "../customers/use-customers";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
+import { useEffect } from "react";
+
 
 export default function Home() {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const [pageNumber, setPageNumber] = useState(1);
-  const { tabelHeaders, updatedStatus, getCustomersRows,setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers("S", pageNumber, setPageNumber);
+  const { ClientTypeId, agentId, isActive , pageSize ,filters, clientType , tabelHeaders, updatedStatus, getCustomersRows,setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers("S", pageNumber, setPageNumber);
+
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
   const onCustomeradd = (customer) => {
     const mapData = customerMapFunction(customer, getCustomerForEdit, updatedStatus , activeText , inActiveText);
     setAllCustomers([...allCustomers, mapData])
   };
+
+  useEffect(() => {
+    getAllCustomers();
+  }, [filters, clientType, pageNumber, pageSize, name, ClientTypeId, agentId, isActive]);
 
   return (
     <CustomerAuthLayout>

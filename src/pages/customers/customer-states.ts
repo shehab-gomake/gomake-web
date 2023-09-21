@@ -14,3 +14,8 @@ export const customerForEditState = atom<any>({
     key: 'customerForEditState',
     default: {},
 });
+
+export const customerState = atom<any>({
+    key: 'customerState',
+    default: [],
+});
