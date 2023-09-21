@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { RemoveIcon } from "@/components/icons/icons";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { userInputs } from "../../inputs/user-inputs";
+import { userInputs, userInputs1 } from "../../inputs/user-inputs";
 import { Stack } from "@mui/material";
 
 
@@ -35,6 +35,11 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
             <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap="20px">
                 {
                     userInputs(user).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
+                }
+            </Stack>
+            <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap="20px">
+                {
+                    userInputs1(user).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
                 }
             </Stack>
             <Stack direction={'row'} >

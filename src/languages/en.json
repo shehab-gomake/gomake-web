@@ -1705,7 +1705,8 @@
       "created": "Created",
       "updated": "Updated",
       "add": "Add",
-      "update": "Update"
+      "update": "Update",
+      "language" : "Language"
     },
     "title": "Customers",
     "selectCustomer": "Select customer",

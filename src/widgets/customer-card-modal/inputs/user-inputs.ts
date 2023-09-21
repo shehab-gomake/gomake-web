@@ -51,6 +51,24 @@ const userInputs = (state)  => {
             readonly: false,
         },
         {
+            name: "language",
+            label: "customers.modal.language",
+            type: "select",
+            placeholder: "customers.modal.language",
+            required: false,
+            parameterKey: "systemLanguage",
+            options: [],
+            optionsUrl:"/v1/enum/get-enums/languages",
+            value: state?.systemLanguage,
+            isValid: true,
+        },
+        
+    ];
+}
+
+const userInputs1 = (state)  => {
+    return [
+        {
             name: "loginUsingEmailCode",
             label: "customers.modal.loginUsingEmailCode",
             type: "switch",
@@ -61,7 +79,7 @@ const userInputs = (state)  => {
             value: state?.isCanLoginWithCode,
             isValid: true,
         },
-    ];
+    ]
 }
 
-export {userInputs};
+export {userInputs , userInputs1};

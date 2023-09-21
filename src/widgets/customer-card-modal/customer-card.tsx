@@ -16,10 +16,11 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { customerInputs, customerInputs2 } from "./inputs/customer-inputs";
 import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general-inputs";
 import { Stack } from "@mui/material";
-import { ClientTYPE } from "@/pages/customers/enums";
+import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 
 interface IProps {
   children?: React.ReactNode;
+  codeFlag?: boolean;
   typeClient?: string;
   getAllCustomers?: () => void; 
   onCustomeradd?: (value: any) => void; 
@@ -32,7 +33,7 @@ interface IProps {
   showAddButton?: boolean;
 }
 
-const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
+const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
@@ -199,7 +200,7 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
     const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
     const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
     const filteredUserss = users.filter(user => !isNameIndexOnly(user));
-    const cardTypeId = typeClient === "C" ? ClientTYPE.CUSTOMER : ClientTYPE.SUPPLIER;
+    const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
     const updatedCustomer ={
       ...customer,
       contacts: filteredContacts,
@@ -257,7 +258,7 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
         </Stack>
         <Stack direction={'row'} marginTop={"16px"} marginBottom={"24px"} width={"90%"} gap={"20px"} >
           {
-            customerInputs(typeClient, customer).map(item =><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={!!item.readonly} />)
+            customerInputs(typeClient, codeFlag, customer).map(item =><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={!!item.readonly} />)
           }
         </Stack>
         <Stack direction={'row'} marginBottom={"24px"} width={"90%"} gap={"20px"} >
@@ -319,15 +320,13 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
           <Stack direction={'row'} >
             <Stack direction={'column'}  >
               {
-                //to check before
                 contacts.filter(contact => !contact.isMainContact).map(x =>
                   <ContactForm key={x.index} contact={x} onDelete={deleteContactForm} setContact={(updatedContactData) => updateContact(x.index, updatedContactData)} ></ContactForm>
                 )
               }
             </Stack>
-            
             <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
-              <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "7px" }} onClick={addEmptyContact} >
+              <a style={{ display: "flex", justifyContent: "center", alignItems: "center"}} onClick={addEmptyContact} >
                 <AddIcon></AddIcon>
                 <button style={clasess.buttonsStyle} >{t("customers.buttons.addContact")}</button>
               </a>
@@ -346,7 +345,7 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
               }
             </Stack>
             <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
-              <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "7px" }} onClick={addEmptyAdress} >
+              <a style={{ display: "flex", justifyContent: "center", alignItems: "center"}} onClick={addEmptyAdress} >
                 <AddIcon></AddIcon>
                 <button style={clasess.buttonsStyle} >{t("customers.buttons.newAddress")}</button>
               </a>
@@ -364,8 +363,8 @@ const CustomerCardWidget = ({ typeClient, getAllCustomers, onCustomeradd, openMo
                 )
               }
             </Stack>
-            <Stack direction={'column'}  marginTop={"52px"} marginLeft={"50px"} >
-              <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "7px" }} onClick={addEmptyClient} >
+            <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
+              <a style={{ display: "flex", justifyContent: "center", alignItems: "center" }} onClick={addEmptyClient} >
                 <AddIcon></AddIcon>
                 <button style={clasess.buttonsStyle} >{t("customers.buttons.addUser")}</button>
               </a>
