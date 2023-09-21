@@ -1,5 +1,4 @@
 import {Employee} from "@/widgets/settings-users/users/interface/employee";
-import {emailRegex} from "@/utils/regex";
 
 const employeeInfoInputs = (state: Employee)  => {
     return [
@@ -38,19 +37,6 @@ const employeeInfoInputs = (state: Employee)  => {
             value: state.phone,
             machineInputType: 'input',
             isValid: !!state.phone,
-        },
-        {
-            name: "email",
-            label: "usersSettings.email",
-            type: "text",
-            placeholder: "usersSettings.email",
-            required: false,
-            parameterKey: "email",
-            options: [],
-            value: state.email,
-            machineInputType: 'input',
-            isValid: !!state.email,
-            regex: emailRegex
         },
         {
             name: "PinCodeForLoginWithApplication",

@@ -1841,7 +1841,8 @@
     "depositor": "The depositor",
     "depositBranch": "Entrusted to the branch",
     "location": "Location",
-    "financial": "Financial"
+    "financial": "Financial",
+    "systemLanguage": "System Language"
   },
   "remainWords": {
     "newQuote": "New quote",

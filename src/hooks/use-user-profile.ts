@@ -11,6 +11,7 @@ import {
     changeProfileImageState,
     changeProfileInitialsState
 } from "@/widgets/settings-profile-widget/state/change-profile-image";
+import {useTranslation} from "react-i18next";
 
 const useUserProfile = () => {
     const [profileState, setProfileState] = useRecoilState<IUserProfile>(userProfileState);
@@ -18,7 +19,7 @@ const useUserProfile = () => {
     const {alertSuccessUpdate, alertFaultUpdate} = useSnackBar();
     const setChangeProfileImage = useSetRecoilState<boolean>(changeProfileImageState);
     const setInitialsModal = useSetRecoilState(changeProfileInitialsState)
-
+    const {i18n} = useTranslation();
 
     const getProfile = async () => {
         const callBack = (res) => {
@@ -32,6 +33,7 @@ const useUserProfile = () => {
     const updateProfile = async () => {
         const callBack = (res) => {
             if (res.success) {
+                i18n.changeLanguage(profileState.systemLanguage);
                 alertSuccessUpdate();
             } else {
                 alertFaultUpdate();
