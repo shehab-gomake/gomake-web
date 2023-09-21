@@ -5,16 +5,16 @@ import {mediaThicknessSettings} from "@/widgets/machines/utils/attributes/media-
 const encapsulationMachine = (state: Record<string, any>) => {
     return [
         {
-            name: "minMarginLamination",
-            label: "machineAttributes.minMarginLamination",
+            name: "minMarginWithoutPrinting",
+            label: "machineAttributes.minMarginWithoutPrinting",
             type: "text",
-            placeholder: "machineAttributes.minMarginLamination",
+            placeholder: "machineAttributes.minMarginWithoutPrinting",
             required: true,
-            parameterKey: "minMarginLamination",
+            parameterKey: "minMarginWithoutPrinting",
             options: [],
-            value: state?.attributes?.minMarginLamination ? state?.attributes?.minMarginLamination : '',
+            value: state?.attributes?.minMarginWithoutPrinting ? state?.attributes?.minMarginWithoutPrinting : '',
             machineInputType: 'input',
-            isValid: !!state?.attributes?.minMarginLamination,
+            isValid: !!state?.attributes?.minMarginWithoutPrinting,
         },
         ...mediaDimensionsSettings(state),
         ...mediaWeightSettings(state),

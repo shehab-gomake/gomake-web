@@ -2,16 +2,16 @@
 const encapsulationMachine = (state: Record<string, any>) => {
     return [
         {
-            name: "speed",
-            label: "machineAttributes.speed",
+            name: "maxSpeed",
+            label: "machineAttributes.maxSpeed",
             type: "text",
-            placeholder: "machineAttributes.speed",
+            placeholder: "machineAttributes.maxSpeed",
             required: true,
-            parameterKey: "speed",
+            parameterKey: "maxSpeed",
             options: [],
-            value: state?.attributes?.speed ? state?.attributes?.speed : '',
+            value: state?.attributes?.maxSpeed ? state?.attributes?.maxSpeed : '',
             machineInputType: 'input',
-            isValid: !!state?.attributes?.speed,
+            isValid: !!state?.attributes?.maxSpeed,
         },
         {
             name: 'machineAttributes.speedByMediaWeight',
