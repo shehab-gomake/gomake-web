@@ -18,10 +18,10 @@ const Row = ({ index, row, width, isSticky }: any) => {
           (index % 2 == 0 ? clasess.bodyRow : clasess.secondRow)
         }
       >
-        {Object.entries(row).map((entry: [string, any], index: number) => {
+        {Object.entries(row).map(([key, value]: [string, any], index: number) => {
           return (
             <div key={`row_table_${index}`} style={clasess.rowItem}>
-              {entry[1]}
+              {value}
             </div>
           );
         })}
