@@ -42,7 +42,7 @@ const PrimaryTable = ({rows, headers, stickyHeader, stickyFirstCol, maxHeight}: 
                 <TableHead>
                     <PrimaryTableRow>
                         {
-                            headers.map((header, index) => {
+                            headers?.map((header, index) => {
                                 if (index === 0 && stickyHeader) {
                                     return <PrimaryTableCell  style={classes.stickyHeader}>
                                         {header}
@@ -55,7 +55,7 @@ const PrimaryTable = ({rows, headers, stickyHeader, stickyFirstCol, maxHeight}: 
                     </PrimaryTableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((row) => (
+                    {rows?.map((row) => (
                         <PrimaryTableRow>
                             {
                                 row.map((cell, index) => {
