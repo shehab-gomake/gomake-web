@@ -22,9 +22,11 @@ import { ICategoriesTableProps } from "./interface";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
+import {useTranslation} from "react-i18next";
 
 const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
   const [filter, setFilter] = useState<string>("");
+  const {t} = useTranslation();
   const { primaryColor } = useGomakeTheme();
   const categoriesList = useRecoilValue(machineCategoriesState);
   const { classes } = useStyle();
@@ -38,15 +40,11 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
   }, [filter, categoriesList]);
 
   const tableHeaders = [
-    "Category",
-    "internal/Out source",
-    "active",
-    "edit machine",
+    t('machineAttributes.category'),
+    t('machineAttributes.editMachine'),
   ];
   const tableRows = categories()?.map((category) => [
     category.name,
-    " ",
-    " ",
     <PrimaryButton
       startIcon={<EditIcon color={primaryColor(500)} width={20} height={20} />}
       href={
@@ -56,13 +54,13 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
       }
       variant={"text"}
     >
-      Edit
+      {t('machineAttributes.edit')}
     </PrimaryButton>,
   ]);
 
   return (
     <div style={classes.mainContainer}>
-      <HeaderTitleWithSearch title="Machines" onChange={(e) => setFilter(e)} />
+      <HeaderTitleWithSearch title={t('machineAttributes.machines')} onChange={(e) => setFilter(e)} />
       {!!isAdmin && (
         <SecondaryButton
           style={classes.addMachineBtn}

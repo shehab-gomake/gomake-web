@@ -425,7 +425,11 @@
     "machineActions": "רשימת פעולות המכונה",
     "materialsList": "רשימת חומרים",
     "machineMaterialsList": "רשימת חומרי המכונה",
-    "coreMaxWidth": "רוחב מרבי לליבה אחת"
+    "coreMaxWidth": "רוחב מרבי לליבה אחת",
+    "category": "קטגוריה",
+    "editMachine": "עריכת מכונה",
+    "edit": "ערוך",
+    "machines": "מכונות"
   },
   "tyingOptions": {
     "cross": "צור ביניהם צורה יציבה (צמיג)",
@@ -748,7 +752,11 @@
     "update": "עדכן",
     "users": "משתמשים",
     "permission": "ניהול הרשאות",
-    "isActive": "פעיל"
+    "isActive": "פעיל",
+    "showInActiveUsers": "הצג משתמשים לא פעילים",
+    "editing": "עריכה"
+
+
   },
   "settings": {
     "settings": "הגדרות",
@@ -1020,7 +1028,12 @@
     "depositor": "שם המפקיד",
     "depositBranch": "שם הסניף",
     "location": "מיקום",
-    "financial": "פיננסי"
+    "financial": "פיננסי",
+    "systemLanguage": "שפת המערכת",
+    "changePass": "שנה סיסמה",
+    "update": "עדכן",
+    "loginLogo": "לוגו התחברות",
+    "companyLogo": "לוגו החברה"
   },
   "remainWords": {
     "newQuote": "ציטוט חדש",
@@ -1063,5 +1076,39 @@
     "tubes":"Tubes",
     "varnishs":"Varnishs",
     "wideformatmaterial":"Wide format material"
+  },
+  "navigationButtons": {
+    "next": "הבא",
+    "back": "קודם",
+    "update": "עדכן",
+    "add": "הוסיף",
+    "remove": "מחיקה",
+    "edit": "עריכה"
+  },
+  "permissionsSettings": {
+    "title": "Management of roles and privileges",
+    "General": "General",
+    "Book keeping": "Book keeping",
+    "Boards": "Boards",
+    "Orders and quotes": "Orders and quotes",
+    "Work order": "Work order",
+    "Users": "Users",
+    "Tenders and fixed price lists": "Tenders and fixed price lists",
+    "Add/update price screen": "Add/update price screen",
+    "editing an order": "editing an order",
+    "Permission": "Permission",
+    "Production manager": "Production manager",
+    "Graphics": "Graphics",
+    "Services and sales": "Services and sales",
+    "Production": "Production",
+    "Service and Sales Manager": "Service and Sales Manager",
+    "Director": "Director",
+    "AddRole": "Add Role",
+    "AddNewRole": "Add new role",
+    "Role name": "Role name",
+    "add": "הוספה",
+    "update": "ערוך",
+    "editRole": "עריכת תפקיד",
+    "addRole": "הוספת תפקיד חדש"
   }
 }

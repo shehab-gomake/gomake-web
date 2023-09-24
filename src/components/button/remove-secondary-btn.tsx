@@ -11,7 +11,7 @@ const RemoveSecondaryBtn = ({onClick}: ButtonProps) => {
   return (
       <SecondaryButton variant={'text'}  onClick={onClick}  style={classes.deleteIcon}
                        startIcon={<DeleteIcon height={20} width={20} color={classes.iconColor}/>}>
-          {t('Remove')}
+          {t('navigationButtons.remove')}
       </SecondaryButton>
   );
 };

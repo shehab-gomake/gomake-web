@@ -1216,7 +1216,12 @@
     "machineActions": "Machine actions list",
     "materialsList": "Materials list",
     "machineMaterialsList": "Machine materials list",
-    "coreMaxWidth": "Max width for one core"
+    "coreMaxWidth": "Max width for one core",
+    "category": "Category",
+    "editMachine": "Edit machine",
+    "edit": "Edit",
+    "machines": "Machines"
+
   },
   "tyingOptions": {
     "cross": "Cross",
@@ -1540,7 +1545,9 @@
     "update": "Update",
     "users": "Users",
     "permission": "Permission management",
-    "isActive": "Active"
+    "isActive": "Active",
+    "showInActiveUsers": "Show inactive employees",
+    "editing": "Editing"
   },
   "permissionsSettings": {
     "title": "Management of roles and privileges",
@@ -1847,7 +1854,11 @@
     "depositBranch": "Entrusted to the branch",
     "location": "Location",
     "financial": "Financial",
-    "systemLanguage": "System Language"
+    "systemLanguage": "System Language",
+    "changePass": "Change password",
+    "update": "Update",
+    "loginLogo": "Login logo",
+    "companyLogo": "Company logo"
   },
   "remainWords": {
     "newQuote": "New quote",
@@ -1880,5 +1891,14 @@
     "tubes": "Tubes",
     "varnishs": "Varnishs",
     "wideformatmaterial": "Wide format material"
+  },
+  "navigationButtons": {
+    "next": "Next",
+    "back": "Back",
+    "update": "Update",
+    "add": "Add",
+    "remove": "Remove",
+    "edit": "Edit"
+
   }
 }

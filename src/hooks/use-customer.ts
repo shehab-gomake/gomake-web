@@ -31,7 +31,7 @@ const useCustomer = () => {
             setUserType({type: "user"});
             setUserProfile(validate?.data?.data?.customer);
             if (validate?.data?.data?.customer?.systemLanguage) {
-
+                localStorage.setItem('systemLanguage', validate?.data?.data?.customer?.systemLanguage)
                 i18n.changeLanguage(validate?.data?.data?.customer?.systemLanguage).then();
             }
             //   setPermissions(validate?.data?.data?.permissions); will  be implemented later

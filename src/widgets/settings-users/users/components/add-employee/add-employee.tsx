@@ -4,12 +4,7 @@ import {useStyle} from "@/widgets/settings-users/users/components/add-employee/s
 import {
     EmployeeGeneralForm
 } from "@/widgets/settings-users/users/components/add-employee/components/general-form/employee-general-form";
-import {
-    WorkingDaysForm
-} from "@/widgets/settings-users/users/components/add-employee/components/working-days-form/working-days-form";
-import {
-    MissionsStationsForm
-} from "@/widgets/settings-users/users/components/add-employee/components/missions-stations-form/missions-stations-form";
+
 import {IAddEmployeeProps} from "@/widgets/settings-users/users/interface/components-props";
 import {EmployeeActions} from "@/widgets/settings-users/users/enums/employee-actions";
 import {ITab} from "@/components/tabs/interface";
@@ -21,16 +16,8 @@ const AddEmployee = ({onClickAdd, action, onClickUpdate}: IAddEmployeeProps) => 
     const tabs: ITab[] = [
         {
             title: t("usersSettings.general"),
-            component: <EmployeeGeneralForm action={action}/>
-        },
-        {
-            title: t("usersSettings.workingDays"),
-            component: <WorkingDaysForm/>
-        },
-        {
-            title: t("usersSettings.missionStations"),
             component: <>
-                <MissionsStationsForm/>
+                <EmployeeGeneralForm action={action}/>
                 <div style={classes.btnContainer}>
                     {
                         action === EmployeeActions.ADD &&
@@ -40,7 +27,8 @@ const AddEmployee = ({onClickAdd, action, onClickUpdate}: IAddEmployeeProps) => 
                     <Button sx={classes.actionBtn} onClick={onClickUpdate}>{t('usersSettings.update')}</Button>
                 }
                 </div>
-            </>},
+            </>
+        },
     ];
     return (
         <div style={classes.container}>

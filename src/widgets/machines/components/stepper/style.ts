@@ -28,6 +28,9 @@ const useStyle = () => {
         padding: 0,
         margin: 0
       },
+      stepLabelText: {
+        margin: '0 2px'
+      }
     };
   }, []);
   return {

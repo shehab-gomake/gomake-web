@@ -67,7 +67,7 @@ const FormArrayInput = ({name, inputs, updateState, parameterKey, value, isValid
                     })
                 }
                 <div style={classes.addColor}>
-                    <SecondaryButton variant={'contained'} onClick={addParameter} style={classes.button}>Add</SecondaryButton>
+                    <SecondaryButton variant={'contained'} onClick={addParameter} style={classes.button}>{t('navigationButtons.add')}</SecondaryButton>
                 </div>
             </div>
             {

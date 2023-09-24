@@ -9,7 +9,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowRight";
 import {IMachineStepperProps} from "@/widgets/machines/components/stepper/interface";
 import {useStyle} from "@/widgets/machines/components/stepper/style";
 import {useTranslation} from "react-i18next";
-
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 const StyledStepLabel = styled(StepLabel)((props: StepLabelProps) => {
     const {secondColor, neutralColor} = useGomakeTheme();
     return {
@@ -45,6 +45,12 @@ const StyledStepLabel = styled(StepLabel)((props: StepLabelProps) => {
     }
 });
 
+const ArrowIconDirection = () => {
+    const {t} = useTranslation();
+    const direction: 'rtl' | 'ltr' = t('direction');
+    return direction === "ltr" ? <KeyboardArrowDownIcon color={'inherit'}/> : <NavigateBeforeIcon/>
+}
+
 const MachineStepper = ({
                             steps,
                             activeStep,
@@ -67,9 +73,9 @@ const MachineStepper = ({
                             onClick={()=> {moveToStep && moveToStep(index)}}
                             style={activeStep === index ? classes.activeStepLabel : {cursor: 'pointer'}} {...labelProps}>
                             <div style={classes.stepLabel}>
-                                <span>{t('machineSteps.' + step.label)}</span>
+                                <span style={classes.stepLabelText}>{t('machineSteps.' + step.label)}</span>
                                 {activeStep === index ? <ExpandMoreIcon color={'inherit'}/> :
-                                    <KeyboardArrowDownIcon color={'inherit'}/>}
+                                    <ArrowIconDirection/>}
                             </div>
                         </StyledStepLabel>
                         <StepContent style={classes.stepContainer}>
