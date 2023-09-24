@@ -4,11 +4,11 @@ import { Row } from "./row";
 import { Plus } from "./icons/plus";
 import { AddExceptionModal } from "../add-exception-modal";
 import { useRecoilValue } from "recoil";
-import { profitsState } from "../../store/profits";
 import { actionExceptionProfitId, actionProfitLists } from "@/store";
 import { UpdateMinPrice } from "./update-min-price";
 import { useTranslation } from "react-i18next";
 import { UpdateExceptionModal } from "../update-exception-modal";
+import { profitsState } from "../../store/profits";
 
 const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
   const { clasess } = useStyle();

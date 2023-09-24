@@ -2,7 +2,7 @@ import { quoteItemState } from "@/store";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
-import { quoteState } from "@/pages/quote/store/quote";
+import { quoteState } from "@/pages-components/quote/store/quote";
 
 const useTotalPriceAndVat = () => {
   const { t } = useTranslation();

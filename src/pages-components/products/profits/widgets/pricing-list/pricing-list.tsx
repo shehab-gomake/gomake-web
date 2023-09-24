@@ -5,7 +5,7 @@ import { Skeleton } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { Header } from "./header";
 import { Row } from "./row";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { actionExceptionProfitId, actionProfitLists } from "@/store";
 import { Plus } from "./icons/plus";
 import { profitsState } from "../../store/profits";

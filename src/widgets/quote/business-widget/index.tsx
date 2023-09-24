@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { PlusIcon } from "@/icons";
 import { useRecoilValue } from "recoil";
 import { agentListsState, businessListsState, quoteItemState } from "@/store";
-import { quoteState } from "@/pages/quote/store/quote";
+import { quoteState } from "@/pages-components/quote/store/quote";
 interface IProps {
   isBusinessCode?: boolean;
   isBusinessName?: boolean;

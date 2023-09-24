@@ -7,7 +7,7 @@ import {
 
 import { useStyle } from "./style";
 import { useRecoilValue } from "recoil";
-import { quoteState } from "@/pages/quote/store/quote";
+import { quoteState } from "@/pages-components/quote/store/quote";
 
 const DuplicateItemModal = () => {
   const { t } = useTranslation();

@@ -6,7 +6,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { clientContactsState } from "@/store";
-import { quoteState } from "@/pages/quote/store/quote";
+import { quoteState } from "@/pages-components/quote/store/quote";
 import { PlusIcon } from "@/icons";
 interface IProps {
   isContactID?: boolean;

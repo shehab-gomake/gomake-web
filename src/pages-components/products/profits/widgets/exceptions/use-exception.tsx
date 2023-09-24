@@ -7,7 +7,7 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
-import { profitsState } from "../../store/profits";
+import { profitsState } from "../../../../../pages-components/products/profits/store/profits";
 
 const useExceptions = ({ tableRows }: any) => {
   const { t } = useTranslation();

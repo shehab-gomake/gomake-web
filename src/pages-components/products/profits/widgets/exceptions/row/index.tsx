@@ -1,8 +1,8 @@
 import { IconButton } from "@mui/material";
 import { useStyle } from "./style";
 import { useRecoilValue } from "recoil";
-import { profitsState } from "../../../store/profits";
 import { EditIcon } from "@/icons";
+import { profitsState } from "../../../store/profits";
 
 const Row = ({ key, row }: any) => {
   const { clasess } = useStyle({ row });
