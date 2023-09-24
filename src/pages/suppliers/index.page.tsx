@@ -52,7 +52,7 @@ export default function Home() {
         valStatus={valStatus}
       />
       <Stack spacing={3}>
-        <PrimaryTable stickyFirstCol={true} stickyHeader={true} rows={getCustomersRows()} headers={tabelHeaders}></PrimaryTable>
+        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={getCustomersRows()} headers={tabelHeaders}></PrimaryTable>
         <CustomerCardWidget
           typeClient={CLIENT_TYPE.SUPPLIER}
           getAllCustomers={getAllCustomers}

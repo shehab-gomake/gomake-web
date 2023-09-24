@@ -73,7 +73,7 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
           Add Machine
         </SecondaryButton>
       )}
-      <PrimaryTable stickyFirstCol={true} stickyHeader={true} rows={tableRows} headers={tableHeaders} />
+      <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={tableRows} headers={tableHeaders} />
     </div>
   );
 };
