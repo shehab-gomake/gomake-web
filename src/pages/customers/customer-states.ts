@@ -1,12 +1,13 @@
 import { atom } from 'recoil';
 
-export const clientTypesCategoresState = atom<[]>({
-    key: 'clientTypesCategoresState',
+
+export const clientTypesCategoriesState = atom<[]>({
+    key: 'clientTypesCategoriesState',
     default: [],
 });
 
-export const agentsCategoresState = atom({
-    key: 'agentsCategoresState',
+export const agentsCategoriesState = atom<[]>({
+    key: 'agentsCategoriesState',
     default: [],
 });
 

@@ -31,7 +31,6 @@ interface IProps {
 }
 
 const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
-
     const { clasess } = useStyle();
     const [cities, setCities] = useState([]);
     const [cityStreets, setCityStreets] = useState([]);
@@ -52,7 +51,7 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
 
     const onChangeInputs = (key, value) => {
         if (key == "city") {
-            setAddress({ ...address, city: value, street: value });
+            setAddress({ ...address, city: value, street: "" });
         } else {
             setAddress({ ...address, [key]: value });
         }
@@ -62,11 +61,8 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
         const selectedCity = address?.city;
         const foundCity = cities.filter(city => city.Name == selectedCity);
         const filteredCityStreets = cityStreets.filter((street) => street.city_code == foundCity[0]?.Code);
-        return addressInputs1(address, cities, filteredCityStreets)
+        return addressInputs1(address, cities, filteredCityStreets.length == 0 ? [] : filteredCityStreets )
     }, [address, cities, cityStreets]);
-
-
-
 
     return (
         <div>

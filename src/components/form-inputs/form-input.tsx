@@ -30,6 +30,9 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
         if (selectedValue) {
             setSelectedLabel(selectedValue.label);
         }
+        else {
+            setSelectedLabel("");
+        }
     }, [options])
 
     useEffect(() => {
@@ -48,6 +51,9 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
         const selectedValue = options?.find(option => option.value === input.value);
         if (selectedValue) {
             setSelectedLabel(selectedValue.label);
+        }
+        else {
+            setSelectedLabel("");
         }
     }, [input])
 
