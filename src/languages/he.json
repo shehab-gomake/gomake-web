@@ -993,6 +993,8 @@
   "profileSettings": {
     "profileTab": "הפרופיל שלי",
     "companyProfile": "פרופיל החברה",
+    "firstName": "שם פרטי",
+    "lastName": "שם משפחה",
     "fullName": "שם מלא",
     "companyName": "שם החברה",
     "position": "תפקיד",
