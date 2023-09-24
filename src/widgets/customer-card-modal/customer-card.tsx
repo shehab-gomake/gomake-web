@@ -49,12 +49,12 @@ const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomer
   const tabPanelTextArea = (placeHolder = null, value = null, onchange = null) => {
     return (
       <Stack direction={'column'} >
-      <TextareaAutosize style={clasess.textAreaStyle} placeholder={placeHolder} value={value} onChange={onchange}></TextareaAutosize>
+      <TextareaAutosize style={classes.textAreaStyle} placeholder={placeHolder} value={value} onChange={onchange}></TextareaAutosize>
       </Stack>
     );
   };
 
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
   const [contacts, setContacts] = useState(customer && customer.contacts ? customer.contacts : []);
   const [addresses, setAddresses] = useState(customer && customer.addresses ? customer.addresses : []);
@@ -250,11 +250,11 @@ const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomer
       openModal={open}
       modalTitle={t(modalTitle)}
       onClose={handleClose}
-      insideStyle={clasess.insideStyle}
+      insideStyle={classes.insideStyle}
     >
       <div style={{ position: "sticky", top: 0, zIndex: 1, backgroundColor: "#FFF" }}>
       <Stack direction={'row'}>
-            <span style={clasess.subTitleStyle} >{typeClient == "C" ? t("customers.modal.customerInfo") : t("suppliers.supplierInfo")}</span>
+            <span style={classes.subTitleStyle} >{typeClient == "C" ? t("customers.modal.customerInfo") : t("suppliers.supplierInfo")}</span>
         </Stack>
         <Stack direction={'row'} marginTop={"16px"} marginBottom={"24px"} width={"90%"} gap={"20px"} >
           {
@@ -328,7 +328,7 @@ const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomer
             <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
               <a style={{ display: "flex", justifyContent: "center", alignItems: "center"}} onClick={addEmptyContact} >
                 <AddIcon></AddIcon>
-                <button style={clasess.buttonsStyle} >{t("customers.buttons.addContact")}</button>
+                <button style={classes.buttonsStyle} >{t("customers.buttons.addContact")}</button>
               </a>
             </Stack>
           </Stack>
@@ -347,7 +347,7 @@ const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomer
             <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
               <a style={{ display: "flex", justifyContent: "center", alignItems: "center"}} onClick={addEmptyAdress} >
                 <AddIcon></AddIcon>
-                <button style={clasess.buttonsStyle} >{t("customers.buttons.newAddress")}</button>
+                <button style={classes.buttonsStyle} >{t("customers.buttons.newAddress")}</button>
               </a>
             </Stack>
           </Stack>
@@ -366,15 +366,15 @@ const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomer
             <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
               <a style={{ display: "flex", justifyContent: "center", alignItems: "center" }} onClick={addEmptyClient} >
                 <AddIcon></AddIcon>
-                <button style={clasess.buttonsStyle} >{t("customers.buttons.addUser")}</button>
+                <button style={classes.buttonsStyle} >{t("customers.buttons.addUser")}</button>
               </a>
             </Stack>
           </Stack>
         }
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <div style={clasess.footerStyle} >
-            {showAddButton && <button style={clasess.autoButtonStyle} onClick={handleAddCustomer} >{typeClient == "C" ? t("customers.buttons.addCustomer") : t("suppliers.buttons.addSupplier")}</button>}
-            {showUpdateButton && <button style={clasess.autoButtonStyle} onClick={handleEditCustomer}>{typeClient == "C" ? t("customers.buttons.updateChanges") : t("suppliers.buttons.updateChanges")}</button>}
+          <div style={classes.footerStyle} >
+            {showAddButton && <button style={classes.autoButtonStyle} onClick={handleAddCustomer} >{typeClient == "C" ? t("customers.buttons.addCustomer") : t("suppliers.buttons.addSupplier")}</button>}
+            {showUpdateButton && <button style={classes.autoButtonStyle} onClick={handleEditCustomer}>{typeClient == "C" ? t("customers.buttons.updateChanges") : t("suppliers.buttons.updateChanges")}</button>}
           </div>
         </div>
       </div>
