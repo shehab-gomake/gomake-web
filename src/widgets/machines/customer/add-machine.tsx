@@ -11,6 +11,7 @@ import {useRouter} from "next/router";
 import {machineState} from "@/widgets/machines/state/machine-state";
 import {GomakePrimaryButton} from "@/components";
 import {SideBarContainer} from "@/components/containers/side-bar-container";
+import {useTranslation} from "react-i18next";
 
 const CustomerAddMachine = () => {
     const router = useRouter();
@@ -22,6 +23,7 @@ const CustomerAddMachine = () => {
     const {getMachinesList, setMachine, getAndSetAdminMachines} = useAdminMachines();
     const {addPrintHouseMachine} = usePrintHouseAddMachine();
     const selectedMachine = useRecoilValue(machineState);
+    const {t} = useTranslation();
 
     useEffect(() => {
         getAndSetAdminMachines().then()
@@ -59,7 +61,7 @@ const CustomerAddMachine = () => {
                 style={{height: 40}}
                 onClick={addPrintHouseMachine}
             >
-                Add Machine
+                {t('navigationButtons.add')}
             </GomakePrimaryButton>
         </SideList>
     );

@@ -60,7 +60,7 @@ const UserProfile = () => {
                 </div>
             </Stack>
             <div style={{position: 'sticky', bottom: 10, display: 'flex', justifyContent: 'flex-end'}}>
-                <SecondaryButton onClick={updateProfile} variant={'contained'}>{t('profileSettings.update')}</SecondaryButton>
+                <SecondaryButton onClick={updateProfile} variant={'contained'}>{t('navigationButtons.update')}</SecondaryButton>
             </div>
             <GoMakeModal
                 insideStyle={{paddingLeft: 0, paddingRight: 0, height: 'fit-content', width: 380}}

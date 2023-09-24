@@ -50,7 +50,7 @@ const UsersTable = ({users, onEditEmployee, onToggleEmployeeStatus}: IUsersTable
                                 <MenuItem onClick={() => onEditEmployee(user.id)}>
                                     <div style={classes.menuBtn}>
                                         <EditIcon {...classes.icon}/>
-                                        <span>{t('editing')}</span>
+                                        <span>{t('usersSettings.editing')}</span>
                                     </div>
                                 </MenuItem>
                                 <Divider/>

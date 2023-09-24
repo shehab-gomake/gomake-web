@@ -32,7 +32,7 @@ const SettingsUsersWidget = () => {
             <PrimaryTabsComponent tabs={tabs} >
                 <div style={{display: "flex", gap: 10}}>
                     <AddButton label={t("usersSettings.addEmployee")} onClick={handleAddEmployeeClick}/>
-                    <AddButton label={t("permissionsSettings.AddRole")}
+                    <AddButton label={t("permissionsSettings.addRole")}
                                onClick={() => setOpenAddRoleModal(true)}/>
                 </div>
 

@@ -11,6 +11,7 @@ import {machineState} from "@/widgets/machines/state/machine-state";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import {usePrintHouseAddMachine} from "@/widgets/machines/hooks/use-print-house-add-machine";
 import {SideBarContainer} from "@/components/containers/side-bar-container";
+import {useTranslation} from "react-i18next";
 
 const CustomerEditMachines = () => {
     const router = useRouter();
@@ -21,7 +22,8 @@ const CustomerEditMachines = () => {
     const [machineSteps, setMachineSteps] = useState<IStep[]>([]);
     const selectedMachine = useRecoilValue(machineState);
     const {getPrintHouseMachinesList, setMachine, getAndSetMachines} = usePrintHouseMachines();
-    const {updateMachine} = usePrintHouseAddMachine()
+    const {updateMachine} = usePrintHouseAddMachine();
+    const {t} = useTranslation();
 
     useEffect(() => {
         getAndSetMachines();
@@ -48,8 +50,7 @@ const CustomerEditMachines = () => {
     const Side = () => {
         return <SideList list={getPrintHouseMachinesList()} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
                          title={'Machines'} quickActions={true}>
-            <SecondaryButton variant={'contained'} style={{width: '100%'}} href={`/machines/add-machine/category/${categoryId}`}> add
-                Machine</SecondaryButton>
+            <SecondaryButton variant={'contained'} style={{width: '100%'}} href={`/machines/add-machine/category/${categoryId}`}>{t('navigationButtons.add')}</SecondaryButton>
         </SideList>
     }
     return (

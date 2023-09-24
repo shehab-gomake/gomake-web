@@ -11,7 +11,7 @@ const TableFilter = ({onChangeShowInActive, onChangeFilter}: ITableFilterProps) 
       <div style={classes.container}>
           <SearchInputComponent onChange={onChangeFilter}/>
           <SecondSwitch onChange={(e) => {onChangeShowInActive(e.target.checked)}}/>
-          <span style={classes.switchLabel}>{t('Show inactive employees')}</span>
+          <span style={classes.switchLabel}>{t('usersSettings.showInActiveUsers')}</span>
       </div>
   );
 }
