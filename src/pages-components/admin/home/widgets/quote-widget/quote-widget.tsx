@@ -4,6 +4,7 @@ import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components";
 import { useQuoteWidget } from "./use-quote-widget";
 
 import { useStyle } from "./style";
+import { Popover } from "@mui/material";
 
 const QuoteWidget = ({ isAdmin = true }) => {
   const { clasess } = useStyle();
@@ -12,6 +13,12 @@ const QuoteWidget = ({ isAdmin = true }) => {
     clientTypesValue,
     productValue,
     isDisabled,
+    id,
+    anchorEl,
+    open,
+    _renderErrorMessage,
+    handleClick,
+    handleClose,
     setSelectedClientType,
     setSelectedCustomersList,
     setSelectedProduct,
@@ -62,13 +69,32 @@ const QuoteWidget = ({ isAdmin = true }) => {
       </div>
       <div style={clasess.btnContainer}>
         <GomakePrimaryButton
-          onClick={isAdmin ? onClcikCreateQuote : onClcikCreateQuoteForCustomer}
-          disabled={isDisabled}
+          // onClick={isAdmin ? onClcikCreateQuote : onClcikCreateQuoteForCustomer}
+          onClick={
+            isDisabled
+              ? handleClick
+              : isAdmin
+              ? onClcikCreateQuote
+              : onClcikCreateQuoteForCustomer
+          }
+          // disabled={isDisabled}
           style={clasess.btnStyle}
         >
           {t("home.admin.createQoute")}
         </GomakePrimaryButton>
       </div>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+      >
+        <div style={clasess.errorMsgStyle}>{_renderErrorMessage()}</div>
+      </Popover>
     </div>
   );
 };
