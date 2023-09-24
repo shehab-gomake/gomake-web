@@ -34,8 +34,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const [errorMsg, setErrorMsg] = useState("");
   const [generalParameters, setGeneralParameters] = useState<any>([]);
   const [subProducts, setSubProducts] = useState<any>([]);
-  console.log("generalParameters", generalParameters);
-  console.log("subProducts", subProducts);
+
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let temp = [...isRequiredParameters];
