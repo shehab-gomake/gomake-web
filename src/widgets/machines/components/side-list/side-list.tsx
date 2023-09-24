@@ -2,11 +2,9 @@ import {ISideListProps} from "@/widgets/machines/components/side-list/interface"
 import {
     Box,
     Divider,
-    IconButton,
     List,
     ListItemButton, ListItemIcon,
     ListItemText,
-    Menu,
     MenuItem,
 } from "@mui/material";
 import {useStyle} from "@/widgets/machines/components/side-list/style";
@@ -14,13 +12,13 @@ import {styled} from "@mui/material/styles";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {SearchInput} from "@/widgets/machines/components/side-list/search-input";
 import {useCallback, useState} from "react";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {usePrintHouseAddMachine} from "@/widgets/machines/hooks/use-print-house-add-machine";
 import {DeleteIcon} from "@/components/icons/delete-icon";
 import {DuplicateIcon} from "@/components/icons/duplicate-icon";
 import {useAdminAddMachine} from "@/widgets/machines/hooks/use-admin-add-machine";
 import {OptionsButton} from "@/components/options-button/options-button";
 import {useTranslation} from "react-i18next";
+import Stack from "@mui/material/Stack";
 
 const ListButton = styled(ListItemButton)(() => {
     const {primaryColor} = useGomakeTheme();
@@ -45,7 +43,6 @@ const SideList = ({
                       children,
                       isAdmin,
                   }: ISideListProps) => {
-    const {primaryColor} = useGomakeTheme();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const {classes} = useStyle();
     const [filter, setFilter] = useState<string>();
@@ -56,9 +53,6 @@ const SideList = ({
         setFilter(event.target.value);
     };
 
-    const handleMoreOptionIconClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
 
     const handleCloseMenu = () => {
         setAnchorEl(null);
@@ -108,27 +102,29 @@ const SideList = ({
                             onClick={() => onSelect(item?.value)}
                         >
                             {!!item.icon && <ListItemIcon sx={{minWidth: 28}}>{item.icon()}</ListItemIcon>}
-                            <ListItemText style={{maxWidth: 'fit-content'}} primary={item.text}/>
-                            {selectedItem === item?.value && quickActions && (
-                                <OptionsButton>
-                                    <MenuItem onClick={onClickDuplicate}>
-                                        <div style={classes.menuItem}>
-                                            <DuplicateIcon height={20} width={20} color={classes.iconColor}/>{" "}
-                                            <span>Duplicate</span>
-                                        </div>
-                                    </MenuItem>
-                                    <Divider/>
-                                    {
-                                        !isAdmin &&
-                                        <MenuItem onClick={onClickDelete}>
+                            <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} width={'100%'}>
+                                <ListItemText style={{maxWidth: 'fit-content'}} primary={item.text}/>
+                                {selectedItem === item?.value && quickActions && (
+                                    <OptionsButton>
+                                        <MenuItem onClick={onClickDuplicate}>
                                             <div style={classes.menuItem}>
-                                                <DeleteIcon color={classes.iconColor} width={20} height={20}/>{" "}
-                                                <span>Delete</span>
+                                                <DuplicateIcon height={20} width={20} color={classes.iconColor}/>{" "}
+                                                <span>Duplicate</span>
                                             </div>
                                         </MenuItem>
-                                    }
-                                </OptionsButton>
-                            )}
+                                        <Divider/>
+                                        {
+                                            !isAdmin &&
+                                            <MenuItem onClick={onClickDelete}>
+                                                <div style={classes.menuItem}>
+                                                    <DeleteIcon color={classes.iconColor} width={20} height={20}/>{" "}
+                                                    <span>Delete</span>
+                                                </div>
+                                            </MenuItem>
+                                        }
+                                    </OptionsButton>
+                                )}
+                            </Stack>
                         </ListButton>
                     ))}
                 </List>
