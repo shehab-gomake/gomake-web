@@ -7,9 +7,9 @@ import {
 } from "@/components";
 
 import { useStyle } from "./style";
-import { profitsState } from "../../store/profits";
 import { useRecoilValue } from "recoil";
 import { useExceptions } from "../exceptions/use-exception";
+import { profitsState } from "../../store/profits";
 
 const AddExceptionModal = () => {
   const { t } = useTranslation();

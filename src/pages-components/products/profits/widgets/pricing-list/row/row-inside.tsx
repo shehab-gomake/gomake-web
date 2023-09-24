@@ -1,7 +1,5 @@
 import { GomakeTextInput } from "@/components";
 import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
-import { editPriceListState } from "../../../store/edit-price-list";
 import { useClickAway } from "@uidotdev/usehooks";
 import Lottie from "lottie-react";
 import * as animationData from "./loading-cal.json";

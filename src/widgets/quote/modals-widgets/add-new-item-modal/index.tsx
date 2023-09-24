@@ -7,7 +7,7 @@ import {
 
 import { useStyle } from "./style";
 import { useRecoilValue } from "recoil";
-import { quoteState } from "@/pages/quote/store/quote";
+import { quoteState } from "@/pages-components/quote/store/quote";
 import { useCallback, useEffect, useState } from "react";
 import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";

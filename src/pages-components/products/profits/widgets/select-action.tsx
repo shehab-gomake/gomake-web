@@ -5,8 +5,8 @@ import { GoMakeAutoComplate } from "@/components";
 
 import { useStyle } from "../style";
 import { Skeleton } from "@mui/material";
-import { profitsState } from "../store/profits";
 import { useEffect, useState } from "react";
+import { profitsState } from "../store/profits";
 
 const SelectAction = () => {
   const { t } = useTranslation();

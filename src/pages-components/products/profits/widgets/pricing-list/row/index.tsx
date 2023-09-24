@@ -1,14 +1,14 @@
 import { useStyle } from "./style";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { editPriceListState } from "../../../store/edit-price-list";
+import { editPriceListState } from "../../../../../../pages-components/products/profits/store/edit-price-list";
 import { IconButton, Tooltip } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { useTranslation } from "react-i18next";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { profitsState } from "../../../store/profits";
 import { actionExceptionProfitId } from "@/store";
 import { useState } from "react";
 import { RowInside } from "./row-inside";
+import { profitsState } from "../../../store/profits";
 
 const Row = ({ row, width, tablePercent }: any) => {
   const [isUpdate, setIsUpdate] = useState(false);

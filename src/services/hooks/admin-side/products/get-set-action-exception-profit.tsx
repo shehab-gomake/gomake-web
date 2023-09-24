@@ -1,7 +1,7 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../../call-api.interface";
-import { renderProfits } from "@/pages/products/profits/use-profit-action.";
-import { PricingListMenuWidget } from "@/pages/products/profits/widgets/pricing-list/more-circle";
+import { PricingListMenuWidget } from "@/pages-components/products/profits/widgets/pricing-list/more-circle";
+import { renderProfits } from "@/pages-components/products/profits/use-profit-action.";
 
 const getAndSetActionExceptionProfitRowByActionExceptionId = async (
   callApi: ICallApi,

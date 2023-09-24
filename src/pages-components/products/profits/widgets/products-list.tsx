@@ -6,9 +6,9 @@ import { AddIcon } from "@/icons";
 import { AddTestProductModal } from "./add-test-product-modal";
 import { profitsState } from "../store/profits";
 
-import { useStyle } from "../style";
 import { productTestState } from "@/store/product-test";
 import { useEffect } from "react";
+import { useStyle } from "../style";
 
 const ProductList = () => {
   const { t } = useTranslation();

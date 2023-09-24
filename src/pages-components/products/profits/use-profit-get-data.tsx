@@ -5,11 +5,9 @@ import {
   getAndSetActionExceptionProfitRowByActionExceptionId,
   getAndSetActionProfitRowByActionId,
   getAndSetActionProfitRowChartData,
-  getAndSetActions,
   getAndSetAllParameters,
   getAndSetClientTypes,
   getAndSetGetAllTestProductsByActionId,
-  getAndSetMachinces,
   getAndSetMachincesNew,
 } from "@/services/hooks";
 import {

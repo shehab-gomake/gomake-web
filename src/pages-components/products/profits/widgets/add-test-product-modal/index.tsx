@@ -6,9 +6,9 @@ import {
 } from "@/components";
 
 import { useStyle } from "./style";
-import { profitsState } from "../../store/profits";
 import { useRecoilValue } from "recoil";
 import { useState } from "react";
+import { profitsState } from "../../store/profits";
 
 const AddTestProductModal = () => {
   const { t } = useTranslation();

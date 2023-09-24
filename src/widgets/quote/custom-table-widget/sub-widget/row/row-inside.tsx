@@ -2,7 +2,7 @@ import { GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
 import { useRecoilValue } from "recoil";
-import { quoteState } from "@/pages/quote/store/quote";
+import { quoteState } from "@/pages-components/quote/store/quote";
 
 const RowInside = ({
   index,
