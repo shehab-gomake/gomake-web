@@ -39,14 +39,10 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
 
   const tableHeaders = [
     "Category",
-    "internal/Out source",
-    "active",
     "edit machine",
   ];
   const tableRows = categories()?.map((category) => [
     category.name,
-    " ",
-    " ",
     <PrimaryButton
       startIcon={<EditIcon color={primaryColor(500)} width={20} height={20} />}
       href={
@@ -73,7 +69,7 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
           Add Machine
         </SecondaryButton>
       )}
-      <PrimaryTable stickyFirstCol={true} stickyHeader={true} rows={tableRows} headers={tableHeaders} />
+      <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={tableRows} headers={tableHeaders} />
     </div>
   );
 };

@@ -45,7 +45,7 @@ const PrimaryTabsComponent = ({tabs, children, navigationButtons}: ITabsProps) =
     return (
         <>
             <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} position={'sticky'} top={0}
-                   bgcolor={'#FFF'} zIndex={1} marginBottom={2}>
+                   bgcolor={'#FFF'} zIndex={9} marginBottom={2}>
                 <PrimaryTabs
                     value={value}
                     onChange={handleChange}

@@ -1847,7 +1847,11 @@
     "depositBranch": "Entrusted to the branch",
     "location": "Location",
     "financial": "Financial",
-    "systemLanguage": "System Language"
+    "systemLanguage": "System Language",
+    "changePass": "Change password",
+    "update": "Update",
+    "loginLogo": "Login logo",
+    "companyLogo": "Company logo"
   },
   "remainWords": {
     "newQuote": "New quote",
