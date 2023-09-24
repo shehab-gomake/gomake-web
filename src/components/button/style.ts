@@ -13,6 +13,9 @@ const useStyle = () => {
                 '&:hover': {
                     backgroundColor: primaryColor(200),
                 },
+                '& .MuiButton-startIcon': {
+                  margin: '0 8px'
+                },
                 textTransform: 'capitalize'
             },
             deleteIcon: {
