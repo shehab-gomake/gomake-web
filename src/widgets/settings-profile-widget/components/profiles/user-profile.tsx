@@ -1,6 +1,6 @@
 import {ProfileAvatar} from "@/widgets/settings-profile-widget/components/avatar/profile-avatar";
 import {GoMakeModal} from "@/components";
-import { useEffect, useMemo, useState} from "react";
+import {useState} from "react";
 import {useTranslation} from "react-i18next";
 import {
     ChangePasswordComponent
@@ -21,21 +21,15 @@ import {useUserProfile} from "@/hooks/use-user-profile";
 const UserProfile = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [state, setState] = useRecoilState(userProfileState);
-    const {updateProfile, getProfile, changeUserProfileImage} = useUserProfile();
+    const {updateProfile, changeUserProfileImage} = useUserProfile();
     const changeState = (key, value) => {
         setState({...state, [key]: value});
     }
     const {t} = useTranslation();
-    const formSections = useMemo(() => {
-        return [
+    const formSections = [
             {inputs: personalInputs(state), title: 'profileSettings.personal'},
             {inputs: contactsInputs(state), title: 'profileSettings.contacts'},
         ];
-    }, [state]);
-
-    useEffect(() => {
-        getProfile().then()
-    }, [])
     return (
         <div style={{paddingBottom: 2, paddingTop: '40px'}}>
             <ProfileAvatar changeInitials={true}
@@ -46,15 +40,17 @@ const UserProfile = () => {
                            title={`${state.firstName} ${state.lastName}`}/>
             <Stack direction={'column'} gap={'32px'} paddingTop={'44px'}>
                 {
-                    formSections.map(section => {
+                    formSections.map((section) => {
                         return (
                             <FormInputsSectionComponent sectionTitle={section.title}>
                                 {
-                                    section.inputs.map(companyInput => <FormInput key={companyInput.parameterKey}
-                                                                                  input={companyInput as IInput}
+                                    section.inputs.map(profileInput => <FormInput key={profileInput.parameterKey}
+                                                                                  input={profileInput as IInput & {readonly: boolean }}
                                                                                   changeState={changeState}
+                                                                                  readonly={profileInput?.readonly}
                                                                                   error={false}/>)
                                 }
+
                             </FormInputsSectionComponent>
                         );
                     })

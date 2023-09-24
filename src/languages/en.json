@@ -63,7 +63,23 @@
     "addProduct": "Add Product",
     "offsetPrice": "Offset price list",
     "parameters": "Parameters",
-    "profits": "profits"
+    "profits": "profits",
+    "properties": "Properties"
+  },
+  "properties": {
+    "parameter": "Parameter",
+    "rule": "Rule",
+    "type": "Type",
+    "more": "More",
+    "addNewRule": "add new rule",
+    "addRule": "add rule",
+    "editRules": "edit rules",
+    "cancel": "cancel",
+    "create": "create",
+    "statment": "statment",
+    "condtion": "condtion",
+    "category": "category",
+    "condtionBetween": "Condtion between rules"
   },
   "modal": {
     "close": "Close",
@@ -72,7 +88,8 @@
     "updatedSusuccessfully": "Updated successfully",
     "updatedfailed": "Updated failed",
     "deleteSusuccessfully": "Deleted successfully",
-    "deletefailed": "Deleted failed"
+    "deletefailed": "Deleted failed",
+    "formNotValid": "Form not valid"
   },
   "home": {
     "admin": {
@@ -1478,7 +1495,8 @@
       "name": "Name",
       "phone": "Phone",
       "duplicateItemWithDifferentQTY": "Duplicate item with new quantity",
-      "addressName": "Address Name"
+      "addressName": "Address Name",
+      "add": "Add"
     }
   },
   "usersSettings": {
@@ -1545,7 +1563,10 @@
     "AddRole": "Add Role",
     "AddNewRole": "Add new role",
     "Role name": "Role name",
-    "add": "Add"
+    "add": "Add",
+    "update": "Update",
+    "editRole": "Edit role name",
+    "addRole": "Add new role"
   },
   "settings": {
     "settings": "Settings",
@@ -1825,12 +1846,39 @@
     "depositor": "The depositor",
     "depositBranch": "Entrusted to the branch",
     "location": "Location",
-    "financial": "Financial"
+    "financial": "Financial",
+    "systemLanguage": "System Language"
   },
   "remainWords": {
     "newQuote": "New quote",
     "convertToInactive": "Convert to inactive",
     "convertToActive": "Convert to active",
     "editing": "Editing"
+  },
+  "materialsTrans": {
+    "additions": "Additions",
+    "applications": "Applications",
+    "canvasframes": "Canvas Frames",
+    "colors": "Colors",
+    "doublesidedtaperolls": "Double sided tape rolls",
+    "envelopes": "Envelopes",
+    "foils": "Foils",
+    "frames": "Frames",
+    "glues": "Glues",
+    "hardboards": "Hardboards",
+    "laminations": "Laminations",
+    "magnets": "Magnets",
+    "materialrollprintings": "Material roll printings",
+    "packindrums": "Packin Drums",
+    "packings": "Packings",
+    "packinunits": "Packin units",
+    "plats": "Plates",
+    "profileframes": "Profile frames",
+    "rollencapsulations": "Roll encapsulations",
+    "sheetencapsulations": "Sheet encapsulations",
+    "sheets": "Sheets",
+    "tubes": "Tubes",
+    "varnishs": "Varnishs",
+    "wideformatmaterial": "Wide format material"
   }
 }

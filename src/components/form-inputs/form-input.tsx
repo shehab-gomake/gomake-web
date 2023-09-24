@@ -1,5 +1,5 @@
 import {GoMakeAutoComplate, GomakeTextInput, SecondSwitch} from "@/components";
-import {ChangeEvent, SyntheticEvent, useEffect, useState} from "react";
+import {ChangeEvent, memo, SyntheticEvent, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useGomakeAxios} from "@/hooks";
 import {useStyle} from "@/components/form-inputs/style";
@@ -42,7 +42,7 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
                     setDataLoaded(true);
                 }
             )
-        } else {
+        } else if(input.options && input.options.length > 0) {
             setOptions(input.options.map(({value, text}) => ({label: text, value})))
         }
         const selectedValue = options?.find(option => option.value === input.value);
@@ -92,4 +92,4 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
         </>
     );
 };
-export {FormInput};
+export {FormInput}

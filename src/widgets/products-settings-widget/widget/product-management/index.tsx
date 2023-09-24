@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { GoMakeAutoComplate } from "@/components";
-import { Row } from "../row";
 import { useProductManagement } from "./use-product-management";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
+import { PrimaryTable } from "@/components/tables/primary-table";
 
 const ProductManagementWidget = () => {
   const { t } = useTranslation();
@@ -52,31 +52,10 @@ const ProductManagementWidget = () => {
           <SearchInputComponent onChange={setTerm} />
         </div>
       </div>
-      <div style={clasess.tableHeaderStyle}>
-        {tableHeaders?.map((item) => {
-          return <div style={clasess.headerNameStyle}>{item}</div>;
-        })}
-      </div>
       {term ? (
-        <div style={clasess.row}>
-          {productSearched?.map((row: any, index: number) => {
-            return (
-              <div key={`body_row${index}`} style={{ width: "100%" }}>
-                <Row row={row} index={index} />
-              </div>
-            );
-          })}
-        </div>
+        <PrimaryTable stickyFirstCol={true} stickyHeader={true} rows={productSearched} headers={tableHeaders} />
       ) : (
-        <div style={clasess.row}>
-          {allProducts?.map((row: any, index: number) => {
-            return (
-              <div key={`body_row${index}`} style={{ width: "100%" }}>
-                <Row row={row} index={index} />
-              </div>
-            );
-          })}
-        </div>
+        <PrimaryTable stickyFirstCol={true} stickyHeader={true} rows={allProducts} headers={tableHeaders} />
       )}
       {/* <div style={clasess.filtersSwichContainer}>
         <div style={clasess.filterSwichContainer}>

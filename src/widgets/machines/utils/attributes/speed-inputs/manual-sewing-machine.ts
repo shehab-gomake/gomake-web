@@ -18,7 +18,7 @@ const manualSewingMachine = (state: Record<string, any>) => {
             type: "text",
             placeholder: "machineAttributes.maxSpeed",
             required: true,
-            parameterKey: "speed",
+            parameterKey: "maxSpeed",
             options: [],
             value: state.attributes?.maxSpeed ? state.attributes?.maxSpeed : '',
             machineInputType: 'input',

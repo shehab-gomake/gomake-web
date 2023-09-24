@@ -14,18 +14,21 @@ const contactsInputs = (state: IUserProfile)  => {
             value: state.email,
             machineInputType: 'input',
             isValid: !!state.email,
+            readonly: true
         },
         {
             name: "phone",
             label: "profileSettings.phone",
             type: "text",
             placeholder: "profileSettings.phone",
-            required: true,
+            required: false,
             parameterKey: "phoneNumber",
             options: [],
             value: state.phoneNumber,
             machineInputType: 'input',
             isValid: !!state.phoneNumber,
+            readonly: true
+
         },
 
     ];

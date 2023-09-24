@@ -5,6 +5,7 @@ import {
   getAndSetClientAddress,
   getAndSetClientContacts,
   getAndSetQuotes,
+  getAndSetQuotesByUserId,
 } from "@/services/hooks";
 import {
   agentListsState,
@@ -47,7 +48,7 @@ const useQuoteGetData = () => {
   }, []);
 
   const getQuote = useCallback(async () => {
-    await getAndSetQuotes(callApi, setQuoteItemValue);
+    await getAndSetQuotesByUserId(callApi, setQuoteItemValue);
   }, []);
 
   const getAllClientContacts = useCallback(async () => {

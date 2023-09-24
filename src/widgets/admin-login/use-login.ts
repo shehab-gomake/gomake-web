@@ -23,12 +23,12 @@ const useGomakeAdminLogin = () => {
     [state]
   );
   const onClickLogin = useCallback(async () => {
-    const result = await callApi("POST", "/v1/admin/login-admin", {
-      email: state.email,
+    const result = await callApi("POST", "/v1/auth/login-customer", {
+      userPrincipalName: state.email,
       password: state.password,
     });
-    if (result?.data?.data?.token) {
-      updateTokenStorage(result?.data?.data?.token);
+    if (result?.data?.data?.customer?.token) {
+      updateTokenStorage(result?.data?.data?.customer?.token);
       navigate("/admin");
     }
   }, [state]);
