@@ -98,11 +98,11 @@ const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomer
   }
 
   const deleteContactForm = (index) => {
-    debugger;
     var temp = [...contacts];
     temp = temp.filter(x => x.index != index);
+  
     temp.forEach((contact, i) => {
-      if (contact.index > index) {
+      if (contact?.index > index ) {
         contact.index -= 1;
       }
     });
@@ -118,7 +118,7 @@ const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomer
   };
 
   // Address info
-  const addEmptyAdress = () => {
+  const addEmptyAddress = () => {
     var temp = [...addresses];
     const index = temp.length + 1;
     temp.push({ name: "", index: index });
@@ -137,7 +137,6 @@ const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomer
   }
 
   const deleteAddressForm = (index) => {
-    debugger;
     var temp = [...addresses];
     temp = temp.filter(x => x.index != index);
     temp.forEach((address, i) => {
@@ -175,8 +174,7 @@ const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomer
     setUsers(temp);
   }
 
-  const deleteClientForm = (index) => {
-    debugger;
+  const deleteUserForm = (index) => {
     var temp = [...users];
     temp = temp.filter(x => x.index != index);
     temp.forEach((user, i) => {
@@ -345,7 +343,7 @@ const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomer
               }
             </Stack>
             <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
-              <a style={{ display: "flex", justifyContent: "center", alignItems: "center"}} onClick={addEmptyAdress} >
+              <a style={{ display: "flex", justifyContent: "center", alignItems: "center"}} onClick={addEmptyAddress} >
                 <AddIcon></AddIcon>
                 <button style={classes.buttonsStyle} >{t("customers.buttons.newAddress")}</button>
               </a>
@@ -359,7 +357,7 @@ const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomer
             <Stack direction={'column'}  >
               {
                 users?.map(x =>
-                  <UserForm key={x.index} user={x} onDelete={deleteClientForm} setUser={(updatedUserData) => updateUser(x.index, updatedUserData)}></UserForm>
+                  <UserForm key={x.index} user={x} onDelete={deleteUserForm} setUser={(updatedUserData) => updateUser(x.index, updatedUserData)}></UserForm>
                 )
               }
             </Stack>

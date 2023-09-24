@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useCallback , useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
 import {useRecoilState} from "recoil";
-import { agentsCategoresState, clientTypesCategoresState, customerForEditState } from "./customer-states";
+import { agentsCategoresState, clientTypesCategoresState, } from "./customer-states";
 import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { getAndSetCustomerById, getAndSetCustomersPagination, toggleCustomerStatus } from "@/services/api-service/customers/customers-api";
@@ -115,12 +115,11 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
 
   /////////////////////////  data table  //////////////////////////////
 
-  const [customerForEdit, setCustomerForEdit] = useRecoilState(customerForEditState);
+  const [customerForEdit, setCustomerForEdit] = useState([]);
   const getCustomerForEdit = async (id) => {
     const callBack = (res) => {
       if (res.success) {
         let customer = res.data;
-        debugger;
         if(customer.contacts && customer.contacts.length > 0){
           let index = 0;
           customer.contacts.forEach(x => {

@@ -10,12 +10,12 @@ export const agentsCategoresState = atom({
     default: [],
 });
 
-export const customerForEditState = atom<any>({
-    key: 'customerForEditState',
-    default: {},
-});
+// export const customerForEditState = atom<any>({
+//     key: 'customerForEditState',
+//     default: {},
+// });
 
-export const customerState = atom<any>({
-    key: 'customerState',
-    default: [],
-});
+// export const customerState = atom<any>({
+//     key: 'customerState',
+//     default: [],
+// });
