@@ -20,6 +20,7 @@ const AddNewItemModal = () => {
   const { clasess } = useStyle();
   const quoteStateValue = useRecoilValue<any>(quoteState);
   const quoteItemValue: any = useRecoilValue(quoteItemState);
+  console.log("quoteItemValue", quoteItemValue?.client?.clientTypeId);
   const [productValue, setProductValues] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState<any>({});
   const getAllProducts = useCallback(async () => {
@@ -30,7 +31,7 @@ const AddNewItemModal = () => {
   }, []);
   const onClcikCreateQuoteForCustomer = () => {
     navigate(
-      `/products/digital-offset-price?clientTypeId=c5f8375b-6e96-42b2-9eb2-4c327b4c03b8&customerId=${quoteItemValue?.customerID}&productId=${selectedProduct?.id}`
+      `/products/digital-offset-price?clientTypeId=${quoteItemValue?.client?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${selectedProduct?.id}`
     );
   };
   return (
