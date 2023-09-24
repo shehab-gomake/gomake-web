@@ -6,8 +6,11 @@ import {
   getAndSetAllCustomers,
   getAndSetClientTypes,
 } from "@/services/hooks";
+import { useTranslation } from "react-i18next";
 
 const useQuoteWidget = () => {
+  const { t } = useTranslation();
+
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const [clientTypesValue, setClientTypesValues] = useState([]);
@@ -19,6 +22,21 @@ const useQuoteWidget = () => {
   const [selectedCustomersList, setSelectedCustomersList] = useState<any>({});
   const [selectedProduct, setSelectedProduct] = useState<any>({});
   const [isDisabled, setIsDisabled] = useState(true);
+
+  //PopOver Btns
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
   const checkVariables = (var1, var2, var3) => {
     if (var1?.id && var2?.id && var3?.id) {
       return false;
@@ -34,6 +52,7 @@ const useQuoteWidget = () => {
     );
     setIsDisabled(isDisabled);
   }, [selectedClientType, selectedCustomersList, selectedProduct]);
+
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
       setCanOrder(true);
@@ -81,12 +100,28 @@ const useQuoteWidget = () => {
       `/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedCustomersList?.id}&productId=${selectedProduct?.id}`
     );
   };
+  const _renderErrorMessage = () => {
+    if (!selectedCustomersList?.id) {
+      return t("home.admin.pleaseSelectCustomer");
+    }
+    if (!selectedClientType?.id) {
+      return t("home.admin.pleaseSelectClientType");
+    }
+    if (!selectedProduct?.id) {
+      return t("home.admin.pleaseSelectProduct");
+    }
+  };
   return {
     clientTypesValue,
     productValue,
     customersListCreateQuote,
     customersListCreateOrder,
     isDisabled,
+    id,
+    open,
+    anchorEl,
+    handleClick,
+    handleClose,
     setSelectedClientType,
     setSelectedCustomersList,
     setSelectedProduct,
@@ -94,6 +129,7 @@ const useQuoteWidget = () => {
     renderOptions,
     onClcikCreateQuote,
     onClcikCreateQuoteForCustomer,
+    _renderErrorMessage,
   };
 };
 

@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-  const { secondColor } = useGomakeTheme();
+  const { errorColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       mainContainer: {
@@ -51,6 +52,11 @@ const useStyle = () => {
       },
       btnStyle: {
         height: 40,
+      },
+      errorMsgStyle: {
+        padding: 10,
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: errorColor(500),
       },
     };
   }, []);
