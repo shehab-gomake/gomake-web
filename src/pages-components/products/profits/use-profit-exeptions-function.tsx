@@ -1,6 +1,6 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useCallback, useMemo, useState } from "react";
-import { editPriceListState } from "./store/edit-price-list";
+import { editPriceListState } from "../../../pages-components/products/profits/store/edit-price-list";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
 import {

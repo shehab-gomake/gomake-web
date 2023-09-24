@@ -7,7 +7,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { clientAddressState } from "@/store";
 import { PlusIcon } from "@/icons";
-import { quoteState } from "@/pages/quote/store/quote";
+import { quoteState } from "@/pages-components/quote/store/quote";
 interface IProps {
   isAddressID?: boolean;
   isCity?: boolean;

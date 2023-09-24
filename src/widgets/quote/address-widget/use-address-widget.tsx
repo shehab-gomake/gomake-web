@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { clientAddressState, quoteItemState } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { quoteState } from "@/pages/quote/store/quote";
+import { quoteState } from "@/pages-components/quote/store/quote";
 
 const useAddressWidget = () => {
   const { t } = useTranslation();

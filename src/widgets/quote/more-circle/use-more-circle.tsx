@@ -6,7 +6,7 @@ import { NegotiateRequestIcon } from "./icons/negotiate-request";
 import { AnalysisIcon } from "./icons/analysis";
 import { DeleteMenuIcon } from "./icons/delete-menu";
 import { useRecoilValue } from "recoil";
-import { quoteState } from "@/pages/quote/store/quote";
+import { quoteState } from "@/pages-components/quote/store/quote";
 
 const useMoreCircle = () => {
   const quoteStateValue = useRecoilValue<any>(quoteState);
