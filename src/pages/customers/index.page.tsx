@@ -12,12 +12,13 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useEffect } from "react";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 export default function Home() {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const [pageNumber, setPageNumber] = useState(1);
-  const { ClientTypeId, agentId, isActive , pageSize ,filters, clientType , getAgentCategores , getClientTypesCategores, tabelHeaders, updatedStatus, getCustomersRows,setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers("C", pageNumber, setPageNumber);
+  const { ClientTypeId, agentId, isActive , pageSize ,filters, clientType , getAgentCategores , getClientTypesCategores, tabelHeaders, updatedStatus, getCustomersRows,setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers(CLIENT_TYPE.CUSTOMER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
   const onCustomeradd = (customer) => {
@@ -38,10 +39,10 @@ export default function Home() {
     <CustomerAuthLayout>
       <div style={clasess.sameRow}>
         <HeaderTitle marginBottom="20px" title={t("customers.title")} />
-        <AddCustomerButton onCustomeradd={onCustomeradd} typeClient="C"></AddCustomerButton>
+        <AddCustomerButton onCustomeradd={onCustomeradd} typeClient={CLIENT_TYPE.CUSTOMER}></AddCustomerButton>
       </div>
       <HeaderFilter
-        typeClient={"C"}
+        typeClient={CLIENT_TYPE.CUSTOMER}
         agentsCategores={agentsCategores}
         clientTypesCategores={clientTypesCategores}
         statuses={statuses}
@@ -56,9 +57,10 @@ export default function Home() {
         valStatus={valStatus}
       />
       <Stack spacing={3}>
-        <PrimaryTable rows={getCustomersRows()} headers={tabelHeaders}></PrimaryTable>
+        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={getCustomersRows()} headers={tabelHeaders}></PrimaryTable>
         <CustomerCardWidget
-          typeClient={"C"}
+          codeFlag={true}
+          typeClient={CLIENT_TYPE.CUSTOMER}
           getAllCustomers={getAllCustomers}
           openModal={showCustomerModal}
           modalTitle={t("customers.modal.editTitle")}

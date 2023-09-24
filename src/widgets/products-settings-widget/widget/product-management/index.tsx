@@ -53,9 +53,9 @@ const ProductManagementWidget = () => {
         </div>
       </div>
       {term ? (
-        <PrimaryTable rows={productSearched} headers={tableHeaders} />
+        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={productSearched} headers={tableHeaders} />
       ) : (
-        <PrimaryTable rows={allProducts} headers={tableHeaders} />
+        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={allProducts} headers={tableHeaders} />
       )}
       {/* <div style={clasess.filtersSwichContainer}>
         <div style={clasess.filterSwichContainer}>

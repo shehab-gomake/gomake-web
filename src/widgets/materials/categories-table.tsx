@@ -13,9 +13,9 @@ const CategoriesTable = ({ admin = false }) => {
     <div style={clasess.mainConainer}>
       <HeaderTitleWithSearch title="Materials" onChange={(e) => setTerm(e)} />
       {term ? (
-        <PrimaryTable rows={materilasSearched} headers={tableHeaders} />
+        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={materilasSearched} headers={tableHeaders} />
       ) : (
-        <PrimaryTable rows={tableRows} headers={tableHeaders} />
+        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={tableRows} headers={tableHeaders} />
       )}
     </div>
   );

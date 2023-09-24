@@ -20,6 +20,7 @@ import {DeleteIcon} from "@/components/icons/delete-icon";
 import {DuplicateIcon} from "@/components/icons/duplicate-icon";
 import {useAdminAddMachine} from "@/widgets/machines/hooks/use-admin-add-machine";
 import {OptionsButton} from "@/components/options-button/options-button";
+import {useTranslation} from "react-i18next";
 
 const ListButton = styled(ListItemButton)(() => {
     const {primaryColor} = useGomakeTheme();
@@ -50,6 +51,7 @@ const SideList = ({
     const [filter, setFilter] = useState<string>();
     const {duplicateMachine, deleteMachine} = usePrintHouseAddMachine();
     const {adminDuplicateMachine} = useAdminAddMachine();
+    const {t} = useTranslation();
     const handleFilterChange = (event) => {
         setFilter(event.target.value);
     };
@@ -91,7 +93,7 @@ const SideList = ({
             <Box style={classes.container}>
                 <h1 style={classes.header}>{title}</h1>
                 <SearchInput
-                    placeholder={"Search"}
+                    placeholder={t('header.search')}
                     onChange={handleFilterChange}
                     value={filter}
                 />
@@ -106,7 +108,7 @@ const SideList = ({
                             onClick={() => onSelect(item?.value)}
                         >
                             {!!item.icon && <ListItemIcon sx={{minWidth: 28}}>{item.icon()}</ListItemIcon>}
-                            <ListItemText primary={item.text}/>
+                            <ListItemText style={{maxWidth: 'fit-content'}} primary={item.text}/>
                             {selectedItem === item?.value && quickActions && (
                                 <OptionsButton>
                                     <MenuItem onClick={onClickDuplicate}>

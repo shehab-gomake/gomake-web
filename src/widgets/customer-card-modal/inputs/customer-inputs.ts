@@ -1,7 +1,6 @@
-
-const customerInputs = (typeClient , state)  => {
+const customerInputs = (typeClient, codeFlag, state) => {
     return [
-        {
+        codeFlag && {
             name: "code",
             label: "customers.modal.code",
             type: "text",
@@ -15,9 +14,9 @@ const customerInputs = (typeClient , state)  => {
         },
         {
             name: "name",
-            label: typeClient==="C" ? "customers.modal.clientName" : "suppliers.supplierName",
+            label: typeClient === "C" ? "customers.modal.clientName" : "suppliers.supplierName",
             type: "text",
-            placeholder: typeClient==="C" ? "customers.modal.clientName" : "suppliers.supplierName",
+            placeholder: typeClient === "C" ? "customers.modal.clientName" : "suppliers.supplierName",
             required: true,
             parameterKey: "name",
             options: [],
@@ -34,16 +33,16 @@ const customerInputs = (typeClient , state)  => {
             options: [],
             value: state?.buisnessNumber,
             isValid: true,
-         },
+        },
         {
             name: "clientTypeId",
-            label: typeClient==="C" ? "customers.modal.clientType" : "suppliers.supplierType",
+            label: typeClient === "C" ? "customers.modal.clientType" : "suppliers.supplierType",
             type: "select",
-            placeholder: typeClient==="C" ? "customers.modal.clientType" : "suppliers.supplierType",
+            placeholder: typeClient === "C" ? "customers.modal.clientType" : "suppliers.supplierType",
             required: true,
             parameterKey: "clientTypeId",
             options: [],
-            optionsUrl:"/v1/clientTypes/get-all-clientTypes",
+            optionsUrl: "/v1/clientTypes/get-all-clientTypes",
             value: state?.clientTypeId,
             isValid: true,
         },
@@ -55,14 +54,14 @@ const customerInputs = (typeClient , state)  => {
             required: false,
             parameterKey: "currency",
             options: [],
-            optionsUrl:"/v1/enum/get-enums/currency",
+            optionsUrl: "/v1/enum/get-enums/currency",
             value: state?.currency,
             isValid: true,
         },
-    ];
+    ].filter(Boolean); // Remove any null/undefined values
 }
 
-const customerInputs2 = (state)  => {
+const customerInputs2 = (state) => {
     return [
         {
             name: "cpaClientCode",
@@ -78,4 +77,4 @@ const customerInputs2 = (state)  => {
     ];
 }
 
-export {customerInputs , customerInputs2};
+export { customerInputs, customerInputs2 };

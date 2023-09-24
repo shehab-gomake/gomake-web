@@ -19,11 +19,13 @@ import {
 import {FormInput} from "@/components/form-inputs/form-input";
 import {FormInputsSectionComponent} from "@/components/form-inputs/form-inputs-section";
 import {useCompanyProfile} from "@/hooks/use-company-profile";
+import {useTranslation} from "react-i18next";
 
 
 
 const CompanyProfileComponent = () => {
     const {getProfile, profileChange, profile, updateProfileChanges, changeCompanyProfileImage, changeCompanyLoginImage} = useCompanyProfile();
+    const {t} = useTranslation();
     useEffect(() => {
         getProfile().then();
     }, [])
@@ -46,10 +48,10 @@ const CompanyProfileComponent = () => {
         <div style={{paddingBottom: 2, paddingTop: '40px', position: 'relative'}}>
             <Stack direction={'row'} gap={'57px'}>
                 <div>
-                    <ProfileAvatar onUploadImage={changeCompanyLoginImage} src={profile.loginLogo} title={'login logo'}/>
+                    <ProfileAvatar onUploadImage={changeCompanyLoginImage} src={profile.loginLogo} title={t('profileSettings.loginLogo')}/>
                 </div>
                 <div>
-                    <ProfileAvatar onUploadImage={changeCompanyProfileImage}  src={profile.logo} title={'company logo'}/>
+                    <ProfileAvatar onUploadImage={changeCompanyProfileImage}  src={profile.logo} title={t('profileSettings.companyLogo')}/>
                 </div>
             </Stack>
             <Stack direction={'column'} gap={'32px'} paddingTop={'44px'}>
@@ -70,7 +72,7 @@ const CompanyProfileComponent = () => {
                 }
             </Stack>
             <div style={{position: 'sticky', bottom: 10, display: 'flex', justifyContent: 'flex-end'}}>
-                <SecondaryButton onClick={updateProfileChanges} variant={'contained'}>update</SecondaryButton>
+                <SecondaryButton onClick={updateProfileChanges} variant={'contained'}>{t('profileSettings.update')}</SecondaryButton>
             </div>
         </div>
 

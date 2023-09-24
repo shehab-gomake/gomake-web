@@ -364,6 +364,12 @@ const useStyle = () => {
         color: primaryColor(200),
         ...FONT_FAMILY.Lexend(400, 10),
       },
+      errorMsgStyle: {
+        ...FONT_FAMILY.Lexend(500, 10),
+        color: errorColor(500),
+        marginTop: 5,
+        marginBottom: 5,
+      },
       addPreviousContainer: {
         display: "flex",
         flexDirection: "row" as "row",
