@@ -19,6 +19,7 @@ import {usePrintHouseAddMachine} from "@/widgets/machines/hooks/use-print-house-
 import {DeleteIcon} from "@/components/icons/delete-icon";
 import {DuplicateIcon} from "@/components/icons/duplicate-icon";
 import {useAdminAddMachine} from "@/widgets/machines/hooks/use-admin-add-machine";
+import {OptionsButton} from "@/components/options-button/options-button";
 import {useTranslation} from "react-i18next";
 
 const ListButton = styled(ListItemButton)(() => {
@@ -109,44 +110,30 @@ const SideList = ({
                             {!!item.icon && <ListItemIcon sx={{minWidth: 28}}>{item.icon()}</ListItemIcon>}
                             <ListItemText style={{maxWidth: 'fit-content'}} primary={item.text}/>
                             {selectedItem === item?.value && quickActions && (
-                                <IconButton
-                                    onClick={handleMoreOptionIconClick}
-                                    sx={{border: "1px solid", color: primaryColor(500)}}
-                                    size={"small"}
-                                >
-                                    <MoreVertIcon sx={{width: 23, height: 23}}>M</MoreVertIcon>
-                                </IconButton>
+                                <OptionsButton>
+                                    <MenuItem onClick={onClickDuplicate}>
+                                        <div style={classes.menuItem}>
+                                            <DuplicateIcon height={20} width={20} color={classes.iconColor}/>{" "}
+                                            <span>Duplicate</span>
+                                        </div>
+                                    </MenuItem>
+                                    <Divider/>
+                                    {
+                                        !isAdmin &&
+                                        <MenuItem onClick={onClickDelete}>
+                                            <div style={classes.menuItem}>
+                                                <DeleteIcon color={classes.iconColor} width={20} height={20}/>{" "}
+                                                <span>Delete</span>
+                                            </div>
+                                        </MenuItem>
+                                    }
+                                </OptionsButton>
                             )}
                         </ListButton>
                     ))}
                 </List>
                 {!!children && <div style={classes.buttonWrapper}>{children}</div>}
             </Box>
-            <Menu
-                open={Boolean(anchorEl)}
-                anchorEl={anchorEl}
-                onClose={handleCloseMenu}
-                PaperProps={classes.menuStyle}
-                transformOrigin={{horizontal: "right", vertical: "top"}}
-                anchorOrigin={{horizontal: "right", vertical: "bottom"}}
-            >
-                <MenuItem onClick={onClickDuplicate}>
-                    <div style={classes.menuItem}>
-                        <DuplicateIcon height={20} width={20} color={classes.iconColor}/>{" "}
-                        <span>Duplicate</span>
-                    </div>
-                </MenuItem>
-                <Divider/>
-                {
-                    !isAdmin &&
-                    <MenuItem onClick={onClickDelete}>
-                        <div style={classes.menuItem}>
-                            <DeleteIcon color={classes.iconColor} width={20} height={20}/>{" "}
-                            <span>Delete</span>
-                        </div>
-                    </MenuItem>
-                }
-            </Menu>
         </>
     );
 };

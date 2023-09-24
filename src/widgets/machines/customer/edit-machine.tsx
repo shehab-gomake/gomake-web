@@ -42,6 +42,9 @@ const CustomerEditMachines = () => {
         setMachine(value);
         setActiveStep(0);
     }
+    const moveToStepByIndex = (stepIndex: number) => {
+        setActiveStep(stepIndex)
+    }
     const Side = () => {
         return <SideList list={getPrintHouseMachinesList()} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
                          title={'Machines'} quickActions={true}>
@@ -54,7 +57,7 @@ const CustomerEditMachines = () => {
                        subHeader={selectedMachine?.manufacturer && selectedMachine?.nickName ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.nickName : ''}>
             {!!selectedMachine?.id &&
                 <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
-                                nextStep={navigateNext} actionButtonClicked={updateMachine}
+                                nextStep={navigateNext} actionButtonClicked={updateMachine} moveToStep={moveToStepByIndex}
                                 isAddForm={false}/>}
         </SideBarContainer>
 

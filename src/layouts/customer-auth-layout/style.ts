@@ -67,7 +67,7 @@ const useStyle = ({
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 53,
+        marginTop: 10,
       },
       poweredByLbl: {
         ...FONT_FAMILY.Lexend(400, 12),
@@ -83,7 +83,7 @@ const useStyle = ({
         alignSelf: "flex-start",
         width: "100%",
         // height: "100%",
-        marginTop: 46,
+        marginTop: '10px',
       },
       lastTabsContainer: {
         alignSelf: "flex-start",

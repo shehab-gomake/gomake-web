@@ -3,6 +3,7 @@ import {companyProfileState, ICompanyProfile} from "@/store/company-profile";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {useSnackBar} from "@/hooks/use-snack-bar";
 import {
+    getCompanyLoginLogo,
     getCompanyProfile,
     updateCompanyLogo,
     updateCompanyProfile
@@ -21,6 +22,15 @@ const useCompanyProfile = () => {
             }
         }
         await getCompanyProfile(callApi, callBack)
+    }
+
+    const getCompanyLogo = async () => {
+        const callBack = (res) => {
+            if (res.success) {
+                setProfile({...profile, loginLogo: res.data});
+            }
+        }
+        await getCompanyLoginLogo(callApi, callBack);
     }
 
     const updateProfileChanges = async () => {
@@ -76,7 +86,8 @@ const useCompanyProfile = () => {
         updateProfileChanges,
         setProfile,
         changeCompanyProfileImage,
-        changeCompanyLoginImage
+        changeCompanyLoginImage,
+        getCompanyLogo
     }
 };
 

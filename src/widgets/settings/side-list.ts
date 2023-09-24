@@ -37,13 +37,6 @@ export const list: IListItem[] = [
   },
   {
     component: EmptyComponent,
-    text: "settings.materials",
-    value: "4",
-    icon: CubeIcon,
-    path: "materials",
-  },
-  {
-    component: EmptyComponent,
     text: "settings.documenting",
     value: "5",
     icon: DocumentIcon,
