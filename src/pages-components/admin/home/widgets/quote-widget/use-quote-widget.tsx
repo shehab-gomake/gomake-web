@@ -97,7 +97,7 @@ const useQuoteWidget = () => {
   };
   const onClcikCreateQuoteForCustomer = () => {
     navigate(
-      `/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedCustomersList?.id}&productId=${selectedProduct?.id}`
+      `/products/create?clientTypeId=${selectedClientType?.id}&customerId=${selectedCustomersList?.id}&productId=${selectedProduct?.id}`
     );
   };
   const _renderErrorMessage = () => {

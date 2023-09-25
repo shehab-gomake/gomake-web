@@ -19,7 +19,7 @@ import {
 } from "@/components";
 import { userProfileState } from "@/store/user-profile";
 
-const useDigitalOffsetPrice = ({ clasess }) => {
+const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();

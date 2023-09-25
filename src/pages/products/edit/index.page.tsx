@@ -4,7 +4,7 @@ import { PriceListPageWidget } from "@/pages-components/products/digital-offset-
 export default function DigitalOffsetPrice() {
   return (
     <CustomerAuthLayout>
-      <PriceListPageWidget />
+      <PriceListPageWidget widgetType="edit" />
     </CustomerAuthLayout>
   );
 }

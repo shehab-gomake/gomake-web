@@ -15,7 +15,7 @@ import {
   MakeShapeModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
 
-const PriceListPageWidget = () => {
+const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
   const {
     t,
@@ -52,7 +52,7 @@ const PriceListPageWidget = () => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
-  } = useDigitalOffsetPrice({ clasess });
+  } = useDigitalOffsetPrice({ clasess, widgetType });
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
   const onChangeCategoryData = (actionId, categoryId, value) => {
