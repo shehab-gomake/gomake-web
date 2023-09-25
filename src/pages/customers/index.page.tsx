@@ -12,7 +12,7 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useEffect } from "react";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
-import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -59,6 +59,7 @@ export default function Home() {
       <Stack spacing={3}>
         <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={getCustomersRows()} headers={tableHeaders}></PrimaryTable>
         <CustomerCardWidget
+          customerAction={CUSTOMER_ACTIONS.Edit}
           codeFlag={true}
           typeClient={CLIENT_TYPE.CUSTOMER}
           getAllCustomers={getAllCustomers}

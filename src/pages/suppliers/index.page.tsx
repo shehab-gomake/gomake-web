@@ -12,7 +12,7 @@ import { AddCustomerButton } from "../customers/add-customer";
 import { useCustomers } from "../customers/use-customers";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
 import { useEffect } from "react";
-import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -54,6 +54,7 @@ export default function Home() {
       <Stack spacing={3}>
         <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={getCustomersRows()} headers={tableHeaders}></PrimaryTable>
         <CustomerCardWidget
+          customerAction={CUSTOMER_ACTIONS.Edit}
           typeClient={CLIENT_TYPE.SUPPLIER}
           getAllCustomers={getAllCustomers}
           openModal={showCustomerModal}

@@ -16,10 +16,10 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { customerInputs, customerInputs2 } from "./inputs/customer-inputs";
 import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general-inputs";
 import { Stack } from "@mui/material";
-import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 
 interface IProps {
-  children?: React.ReactNode;
+  customerAction?: CUSTOMER_ACTIONS; 
   codeFlag?: boolean;
   typeClient?: string;
   getAllCustomers?: () => void; 
@@ -33,7 +33,7 @@ interface IProps {
   showAddButton?: boolean;
 }
 
-const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
+const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
@@ -121,7 +121,7 @@ const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomer
   const addEmptyAddress = () => {
     var temp = [...addresses];
     const index = temp.length + 1;
-    temp.push({ name: "", index: index });
+    temp.push({ name: "", index: index , city: " " , street: " "});
     setAddresses(temp);
   }
 
@@ -131,7 +131,7 @@ const CustomerCardWidget = ({ codeFlag , typeClient, getAllCustomers, onCustomer
       temp = [...customer.addresses];
     } else {
       const index = temp.length + 1;
-      temp.push({ name: "", index: index });
+      temp.push({ name: "", index: index , city: " " , street: " "});
     }
     setAddresses(temp);
   }
