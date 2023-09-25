@@ -86,7 +86,7 @@ const usePermissions = () => {
     const getPermissionRolesRelations = async () => {
         const callBack = (res) => {
             if (res?.success) {
-                setRoles([{id: "", name: "Permission", key: 'permission.permissions'}, ...res?.data.roles]);
+                setRoles([{id: "", name: "Permission", key: 'permissionsSettings.permissions'}, ...res?.data.roles]);
                 setgroups(res?.data.groups)
                 setPermissions(res?.data.permissions);
             }
@@ -100,7 +100,7 @@ const usePermissions = () => {
     }
 
     const tableHeaders = useCallback(() => {
-        return roles.map(role => <TableHeader headerTitle={role.name} roleId={role.id} onClickUpdate={() => {
+        return roles.map(role => <TableHeader headerTitle={role.key ? role.key : role.name} roleId={role.id} onClickUpdate={() => {
             setModalState(true);
             setModalInputValue(role.name);
             setUpdateRoleId(role.id);

@@ -4,6 +4,7 @@ import {FONT_FAMILY} from "@/utils/font-family";
 import {ITableProps} from "@/components/tables/interface";
 import {useStyle} from "@/components/tables/style";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import {useTranslation} from "react-i18next";
 
 const PrimaryTableCell = styled(TableCell)(() => {
     const {primaryColor} = useGomakeTheme();
@@ -35,7 +36,9 @@ const PrimaryTableRow = styled(TableRow)(() => {
 });
 
 const PrimaryTable = ({rows, headers, stickyHeader, stickyFirstCol, maxHeight}: ITableProps) => {
-    const {classes} = useStyle(maxHeight);
+    const {t} = useTranslation();
+    const dir: 'rtl' | 'ltr' = t('direction');
+    const {classes} = useStyle(maxHeight, dir);
     return (
         <TableContainer style={classes.tableContainer}>
             <Table  stickyHeader={stickyHeader}>
@@ -44,7 +47,7 @@ const PrimaryTable = ({rows, headers, stickyHeader, stickyFirstCol, maxHeight}: 
                         {
                             headers?.map((header, index) => {
                                 if (index === 0 && stickyHeader) {
-                                    return <PrimaryTableCell  style={classes.stickyHeader}>
+                                    return <PrimaryTableCell style={classes.stickyHeader}>
                                         {header}
                                     </PrimaryTableCell>
                                 } else {
@@ -60,7 +63,7 @@ const PrimaryTable = ({rows, headers, stickyHeader, stickyFirstCol, maxHeight}: 
                             {
                                 row.map((cell, index) => {
                                     if (index === 0 && stickyFirstCol) {
-                                        return <PrimaryTableCell  style={classes.sticky}>
+                                        return <PrimaryTableCell style={classes.sticky}>
                                             {cell}
                                         </PrimaryTableCell>
                                     } else {

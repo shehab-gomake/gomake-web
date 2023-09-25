@@ -49,22 +49,22 @@ const CameraMenu = ({onUploadImage, changeInitials}: ICameraMenuProps) => {
             >
                 <MenuItem onClick={() => {
                     setState(true);
-                    setModalHeader('Upload file');
+                    setModalHeader(t('usersSettings.uploadFile'));
                     setOpenImageModal(true);
                 }}>
                     <div style={classes.menuBtn}>
-                        <span>{t('Add profile image')}</span>
+                        <span>{t('usersSettings.addProfileImage')}</span>
                     </div>
                 </MenuItem>
                 {
                     changeInitials && <>
                         <Divider/>
                         <MenuItem onClick={() => {
-                            setModalHeader('Edit initials');
+                            setModalHeader(t('usersSettings.editInitials'));
                             setOpenInitialsModal(true);
                         }}>
                             <div style={classes.menuBtn}>
-                                <span>{t('Edit initials')}</span>
+                                <span>{t('usersSettings.editInitials')}</span>
                             </div>
                         </MenuItem>
                     </>

@@ -3,11 +3,13 @@ import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import Autocomplete from "@mui/material/Autocomplete";
 import { ArrowDownIcon } from "@/icons/arrow-down";
-import { userState } from "@/store";
 import { useState } from "react";
+import {useTranslation} from "react-i18next";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
+
   return {
+    direction: 'ltr',
     boxSizing: "border-box",
     borderRadius: "4px",
     height: props?.style?.height || 40,
@@ -24,11 +26,13 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
       : "1px solid rgba(237, 2, 140, 1)",
     boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
     "& .MuiOutlinedInput-root": {
+      paddingRight: "9px!important",
       color: props?.error ? "red" : "",
       height: props?.style?.height || 40,
       fontFamily: "Lexend",
       fontStyle: "normal",
       fontWeight: 300,
+      width: '100%',
       ...props?.style,
       "& fieldset": {
         border: "transparent",
@@ -37,6 +41,7 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
       },
       "& .MuiAutocomplete-input": {
         padding: 0,
+        direction: props?.direction
       },
     },
     "& .MuiAutocomplete-endAdornment": {
@@ -80,10 +85,13 @@ const GoMakeAutoComplate = ({
   onChangeTextField?: any;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
+  const {t} = useTranslation();
+  const dir: 'rtl' | 'ltr' = t('direction');
   return (
     <StyledAutocomplete
       {...(value && { value })}
       {...(selectedOption && { selectedOption })}
+      direction = {dir}
       onChange={(e: any, value: any) => {
         onChange(e, value);
         setSelectedOption(value);
@@ -97,6 +105,15 @@ const GoMakeAutoComplate = ({
           {...params}
           placeholder={!multiple && (defaultValue?.label || placeholder)}
           onChange={onChangeTextField || params.onChange}
+          InputProps={dir === 'rtl' ? {
+            ...params.InputProps,
+            startAdornment: (
+                <div>{params.InputProps.endAdornment.props.children}</div>
+            ),
+            endAdornment: null
+          } : {
+            ...params.InputProps
+          }}
         />
       )}
       defaultValue={defaultValue}

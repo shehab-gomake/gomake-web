@@ -5,7 +5,7 @@ import {useStyle} from "@/components/containers/style";
 const SideBarContainer = ({side, children, subHeader, header}: ISideBarContainer) => {
     const {classes} = useStyle();
     return (
-        <div>
+        <div style={{padding: '0 3px'}}>
             {
                 header && <h1 style={classes.header}>{header}</h1>
             }
