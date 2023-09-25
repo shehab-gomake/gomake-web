@@ -34,8 +34,6 @@ const MoreMenuWidget = () => {
           );
         })}
       </GoMakeMenu>
-      <AddNegotiateRequestModal />
-      <DuplicateItemModal />
     </>
   );
 };
