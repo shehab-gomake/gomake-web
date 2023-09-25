@@ -5,15 +5,21 @@ import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import Button from "@mui/material/Button";
 import {IFileUploadComponentProps} from "@/widgets/settings-profile-widget/components/upload-file/interface";
 import {Avatar} from "@mui/material";
+import {useTranslation} from "react-i18next";
 
 const FileUploadComponent = ({onUpload}: IFileUploadComponentProps) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const inputRef = useRef(null);
-
+    const {t} = useTranslation();
     const handleFileSelect = (e) => {
         const file = e.target.files[0];
-        file?.dataTransfer?.setData('text/plain', '/new-profile-image')
-        setSelectedFile(file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setSelectedFile(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleFileDrop = (e) => {
@@ -68,8 +74,8 @@ const FileUploadComponent = ({onUpload}: IFileUploadComponentProps) => {
                 style={{display: 'none'}}
                 ref={inputRef}
             />
-            <Button variant={"contained"} onClick={() => inputRef.current?.click()}>Select File</Button>
-            <Button color={"success"} variant={"contained"} onClick={handleUpload}>Upload</Button>
+            <Button variant={"contained"} onClick={() => inputRef.current?.click()}>{t('usersSettings.selectFile')}</Button>
+            <Button color={"success"} variant={"contained"} onClick={handleUpload}>{t('usersSettings.uploadFile')}</Button>
         </Stack>
     );
 }

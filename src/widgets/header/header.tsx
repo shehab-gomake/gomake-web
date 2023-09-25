@@ -10,24 +10,19 @@ import { useRecoilValue } from "recoil";
 import { userProfileState } from "@/store/user-profile";
 
 const HeaderWidget = () => {
-  const { clasess } = useStyle();
-  const { t } = useTranslation();
-  const userProfile = useRecoilValue(userProfileState);
-  const { user, open, anchorEl, handleClick, handleClose, navigate } =
-    useHeader();
-  const userAvatar = () => {
-    return !!userProfile.imagePath ? (
-      <Avatar src={userProfile.imagePath} />
-    ) : (
-      <Avatar style={{ backgroundColor: userProfile.avatarBackGroundColor }}>
-        {userProfile.avatarInitials?.toUpperCase()}
-      </Avatar>
-    );
-  };
-  return (
-    <div style={clasess.container}>
-      <div style={{ width: "100%" }} />
-      {/* <GoMakeTextInputIcon
+    const {clasess} = useStyle();
+    const { t } = useTranslation();
+    const userProfile = useRecoilValue(userProfileState);
+    const {user, open, anchorEl, handleClick, handleClose, navigate} =
+        useHeader();
+    const userAvatar = () => {
+        return !!userProfile.imagePath ? <Avatar style={clasess.avatarProps} src={userProfile.imagePath}/> :
+            <Avatar  style={{backgroundColor: userProfile.avatarBackGroundColor, ...clasess.avatarProps}}>{userProfile.avatarInitials?.toUpperCase()}</Avatar>
+    }
+    return (
+        <div style={clasess.container}>
+            <div style={{width: "100%"}}/>
+            {/* <GoMakeTextInputIcon
         style={clasess.searchInputContainer}
         placeholder={t("header.search")}
         startAdornment={

@@ -104,6 +104,11 @@ const useStyle = () => {
         height: 1,
         backgroundColor: "#cccccc",
       },
+      avatarProps: {
+        width: '30px',
+        height: '30px',
+        fontSize: '12px'
+      }
     };
   }, [i18next.language, t]);
   return {
