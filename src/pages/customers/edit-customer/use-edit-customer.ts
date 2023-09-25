@@ -23,6 +23,7 @@ const useEditCustomer = () => {
             });
             resolve(true); 
           } else {
+            console.log("the result : " , res)
             setSnackbarStateValue({
               state: true,
               message: t("modal.updatedfailed"),
