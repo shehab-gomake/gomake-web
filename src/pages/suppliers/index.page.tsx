@@ -12,13 +12,13 @@ import { AddCustomerButton } from "../customers/add-customer";
 import { useCustomers } from "../customers/use-customers";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
 import { useEffect } from "react";
-import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 
 export default function Home() {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const [pageNumber, setPageNumber] = useState(1);
-  const { ClientTypeId, agentId, isActive, pageSize, filters, clientType, tabelHeaders, updatedStatus, getCustomersRows, setAllCustomers, allCustomers, agentsCategores, clientTypesCategores, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers(CLIENT_TYPE.SUPPLIER, pageNumber, setPageNumber);
+  const { ClientTypeId, agentId, isActive, pageSize, filters, clientType, tableHeaders, updatedStatus, getCustomersRows, setAllCustomers, allCustomers, agentsCategories, clientTypesCategories, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers(CLIENT_TYPE.SUPPLIER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
   const onCustomeradd = (customer) => {
@@ -38,22 +38,23 @@ export default function Home() {
       </div>
       <HeaderFilter
         typeClient={CLIENT_TYPE.SUPPLIER}
-        agentsCategores={agentsCategores}
-        clientTypesCategores={clientTypesCategores}
+        agentsCategories={agentsCategories}
+        clientTypesCategories={clientTypesCategories}
         statuses={statuses}
         onChangeAgent={onChangeAgent}
         onChangeCustomer={onChangeCustomer}
         onChangeClientType={onChangeClientType}
         onChangeStatus={onChangeStatus}
         handleClean={handleClean}
-        cutomerName={name}
+        customerName={name}
         agentName={agentName}
         valClientType={valClientType}
         valStatus={valStatus}
       />
       <Stack spacing={3}>
-        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={getCustomersRows()} headers={tabelHeaders}></PrimaryTable>
+        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={getCustomersRows()} headers={tableHeaders}></PrimaryTable>
         <CustomerCardWidget
+          customerAction={CUSTOMER_ACTIONS.Edit}
           typeClient={CLIENT_TYPE.SUPPLIER}
           getAllCustomers={getAllCustomers}
           openModal={showCustomerModal}
@@ -61,8 +62,8 @@ export default function Home() {
           onClose={() => setShowCustomerModal(false)}
           customer={customerForEdit}
           setCustomer={setCustomerForEdit}
-          showUpdateButton={true}>
-        </CustomerCardWidget>
+          showUpdateButton={true} />
+        
         <div style={{ marginBottom: "5px" }}>
           <Pagination count={pagesCount} variant="outlined" color="primary" page={pageNumber}
             onChange={(event, value) => setPageNumber(value)} />
