@@ -8,7 +8,7 @@ import { DeleteMenuIcon } from "./icons/delete-menu";
 import { useRecoilValue } from "recoil";
 import { quoteState } from "@/pages-components/quote/store/quote";
 
-const useMoreCircle = () => {
+const useMoreCircle = ({ quoteItem }) => {
   const quoteStateValue = useRecoilValue<any>(quoteState);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -23,7 +23,7 @@ const useMoreCircle = () => {
     {
       name: "Edits",
       icon: <EditMenuIcon />,
-      onclick: () => null,
+      onclick: () => console.log("quoteItem", quoteItem),
     },
     {
       name: "Duplicate",
