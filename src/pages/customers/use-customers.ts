@@ -5,7 +5,7 @@ import {useRecoilState} from "recoil";
 import { agentsCategoriesState, clientTypesCategoriesState} from "./customer-states";
 import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
-import { getAndSetCustomerById, getAndSetCustomersPagination, toggleCustomerStatus } from "@/services/api-service/customers/customers-api";
+import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/api-service/customers/customers-api";
 import { DEFAULT_VALUES } from "./enums";
 
 const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: Dispatch<SetStateAction<number>>) => {
@@ -222,7 +222,8 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
     isActive ,
     pageSize ,
     filters, 
-    clientType
+    clientType,
+    
   };
 };
 export { useCustomers };

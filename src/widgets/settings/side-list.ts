@@ -11,6 +11,7 @@ import { DollarCircleIcon } from "@/components/icons/dollar-circle-icon";
 import { SettingsUsersWidget } from "@/widgets/settings-users/settings-users-widget";
 import { EditProductWidget } from "../products-settings-widget/widget/edit-product";
 import {SettingsProfileWidget} from "@/widgets/settings-profile-widget/settings-profile-widget";
+import { SettingsDocumentingWidget } from "../settings-documenting/settings-documenting-widget";
 
 export const list: IListItem[] = [
   {
@@ -36,7 +37,7 @@ export const list: IListItem[] = [
     path: "mailing",
   },
   {
-    component: EmptyComponent,
+    component: SettingsDocumentingWidget,
     text: "settings.documenting",
     value: "5",
     icon: DocumentIcon,
