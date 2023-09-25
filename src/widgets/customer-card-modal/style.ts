@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 
 const useStyle = () => {
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       buttonStyle: {
         width: convertWidthToVW(100),
@@ -149,7 +149,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

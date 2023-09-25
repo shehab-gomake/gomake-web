@@ -13,7 +13,6 @@ const AddNegotiateRequestModal = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const quoteStateValue = useRecoilValue<any>(quoteState);
-  //change openModal onClose
   return (
     <>
       <GoMakeModal

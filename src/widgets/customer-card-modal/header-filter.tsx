@@ -10,14 +10,14 @@ interface IProps {
   }
 
 const HeaderFilter = ({setAllOptions , setPlaceholder , onchange , val }: IProps) => {
-    const { clasess } = useStyle();
+    const { classes } = useStyle();
 
     return (
         <div >
             {setAllOptions?.length > 0 || val!=null ? (
                 <GoMakeAutoComplate
                     options={setAllOptions}
-                    style={clasess.autoComplateStyle}
+                    style={classes.autoComplateStyle}
                     placeholder={setPlaceholder}
                     onChange={onchange}
                     value={val}

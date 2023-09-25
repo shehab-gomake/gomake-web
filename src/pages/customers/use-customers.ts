@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useCallback , useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
 import {useRecoilState} from "recoil";
-import { agentsCategoresState, clientTypesCategoresState, customerForEditState } from "./customer-states";
+import { agentsCategoriesState, clientTypesCategoriesState} from "./customer-states";
 import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { getAndSetCustomerById, getAndSetCustomersPagination, toggleCustomerStatus } from "@/services/api-service/customers/customers-api";
@@ -16,7 +16,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
   const [pagesCount, setPagesCount] = useState(0);
   const pageSize = DEFAULT_VALUES.PageSize;
 
-  const tabelHeaders =  [
+  const tableHeaders =  [
       clientType == "C" ? t("customers.customerCode") :t("suppliers.supplierCode"),
       t("customers.name"),
       t("customers.email"),
@@ -29,9 +29,6 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
   const getCustomersRows = useCallback(()=> {
     return allCustomers?.map(customer => [customer?.customerCode, customer?.name, customer?.email, customer?.phone, customer?.status, customer?.hashTag])
   }, [allCustomers])
-
-  //select agent options
-  const [customersCategores, setCustomersCategores] = useState([]);
 
   //select status options
   const statuses =  [
@@ -82,45 +79,42 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
   });
 
   ///////////////////////// select clientType //////////////////////////////
-  const [clientTypesCategores, setClientTypesCategores] = useRecoilState(clientTypesCategoresState);
-  const getClientTypesCategores = async () => {
+  const [clientTypesCategories, setClientTypesCategories] = useRecoilState(clientTypesCategoriesState);
+  const getClientTypesCategories = async () => {
     const callBack = (res) => {
       if (res.success) {
         const clientTypes = res.data.map(types => ({
           label: types.text,
           id: types.value
         }));
-        setClientTypesCategores(clientTypes);
+        setClientTypesCategories(clientTypes);
       }
     }
     await getAndSetClientTypes(callApi, callBack)
   }
 
   
-
   ///////////////////////// select agent //////////////////////////////
-  const [agentsCategores, setAgentsCategores] = useRecoilState(agentsCategoresState);
-  const getAgentCategores = async () => {
+  const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
+  const getAgentCategories = async () => {
     const callBack = (res) => {
       if (res.success) {
         const agentNames = res.data.map(agent => ({
           label: agent.text,
           id: agent.value
         }));
-        setAgentsCategores(agentNames);
+        setAgentsCategories(agentNames);
       }
     }
     await getAndSetEmployees2(callApi, callBack, { isAgent: true })
   }
 
   /////////////////////////  data table  //////////////////////////////
-
-  const [customerForEdit, setCustomerForEdit] = useRecoilState(customerForEditState);
+  const [customerForEdit, setCustomerForEdit] = useState([]);
   const getCustomerForEdit = async (id) => {
     const callBack = (res) => {
       if (res.success) {
         let customer = res.data;
-        debugger;
         if(customer.contacts && customer.contacts.length > 0){
           let index = 0;
           customer.contacts.forEach(x => {
@@ -169,25 +163,6 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
     }
   }, []);
 
-  // const updatedStatus = async (data: any) => {
-  //   const callBack = (res) => {
-  //     if (res?.success) {
-  //       setFilters((prevFilters) => ({
-  //         ...prevFilters,
-  //       }));  
-  //           return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   }
-  //   await toggleCustomerStatus(callApi, callBack, {
-  //     Id: data.id ,
-  //     status: !data?.isActive,
-  //   })
-  // }
-
-
-
   /////////////////////////  get All Customers  //////////////////////////////
   const getAllCustomers = useCallback(async () => {
     const data = await getAndSetCustomersPagination(callApi, setAllCustomers, {
@@ -216,12 +191,12 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
   }, []);
 
   return {
-    getAgentCategores,
-    getClientTypesCategores,
-    tabelHeaders,
+    getAgentCategories,
+    getClientTypesCategories,
+    tableHeaders,
     allCustomers,
-    agentsCategores,
-    clientTypesCategores,
+    agentsCategories,
+    clientTypesCategories,
     statuses,
     onChangeCustomer,
     onChangeAgent,

@@ -5,7 +5,7 @@ import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       filterContainer: {
         display: "flex",
@@ -62,7 +62,7 @@ const useStyle = () => {
     };
   }, [i18next.language, t]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };
