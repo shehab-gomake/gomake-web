@@ -8,32 +8,50 @@ import { materialsCategoriesState } from "@/store/material-categories";
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { getAndSetProductById } from "@/services/hooks";
 import { isLoadgingState } from "@/store";
+import { useMaterials } from "../use-materials";
+import { digitslPriceState } from "./store";
+
 import {
   GoMakeAutoComplate,
   GomakePrimaryButton,
   GomakeTextInput,
   SecondSwitch,
 } from "@/components";
-
-import { useMaterials } from "../use-materials";
-import { digitslPriceState } from "./store";
+import { userProfileState } from "@/store/user-profile";
 
 const useDigitalOffsetPrice = ({ clasess }) => {
-  const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
+  const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
+  const router = useRouter();
+
+  const { clientTypesValue, renderOptions, checkWhatRenderArray } =
+    useQuoteWidget();
+  const { allMaterials } = useMaterials();
+  const userProfile = useRecoilValue(userProfileState);
+
+  const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
+  const [generalParameters, setGeneralParameters] = useState<any>([]);
+  const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
   const [defaultPrice, setDefaultPrice] = useState<any>(30);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
-  const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
   const [template, setTemplate] = useState<any>([]);
-  const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [urgentOrder, setUrgentOrder] = useState(false);
   const [printingNotes, setPrintingNotes] = useState("");
   const [graphicNotes, setGraphicNotes] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const [generalParameters, setGeneralParameters] = useState<any>([]);
   const [subProducts, setSubProducts] = useState<any>([]);
+  const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
+  const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
+  const [expanded, setExpanded] = useState<string | false>("panel_0");
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState("Production");
+  const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
+
+  const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
+  const setLoading = useSetRecoilState(isLoadgingState);
+  const [digitalPriceData, setDigidatPriceData] =
+    useRecoilState<any>(digitslPriceState);
 
   useEffect(() => {
     if (template?.sections?.length > 0) {
@@ -269,15 +287,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     }
   }, [template]);
 
-  const [digitalPriceData, setDigidatPriceData] =
-    useRecoilState<any>(digitslPriceState);
-  const router = useRouter();
-  const [expanded, setExpanded] = useState<string | false>("panel_0");
-  const { allMaterials } = useMaterials();
-  const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
-  const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
-  const { clientTypesValue, renderOptions, checkWhatRenderArray } =
-    useQuoteWidget();
   useEffect(() => {
     if (router?.query?.clientTypeId) {
       setClientTypeDefaultValue(
@@ -303,6 +312,12 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     renderOptions,
   ]);
 
+  useEffect(() => {
+    getProductById();
+  }, [router]);
+  useEffect(() => {
+    calculationProduct();
+  }, [generalParameters]);
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
@@ -1038,7 +1053,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     parameterName: any,
     actionId: any,
     data: any,
-    index
+    index: any
   ) => {
     setGeneralParameters((prev) => {
       let temp = [...prev];
@@ -1072,7 +1087,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     actionId: any,
     data: any,
     subSectionType: any,
-    index
+    index: any
   ) => {
     const targetSubProduct = subProducts.find(
       (item) => item.type === subSectionType
@@ -1143,7 +1158,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const onOpeneChooseShape = () => {
     setChooseShapeOpen(true);
   };
-  const [activeIndex, setActiveIndex] = useState(0);
   const handleTabClick = (index: number) => {
     if (index !== activeIndex) {
       setActiveIndex(index);
@@ -1160,7 +1174,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     }
   };
 
-  const [activeTab, setActiveTab] = useState("Production");
   const onClickProductionTab = () => {
     setActiveTab("Production");
   };
@@ -1184,9 +1197,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     });
   }, [router]);
 
-  useEffect(() => {
-    getProductById();
-  }, [router]);
   const validateParameters = (inputArray) => {
     let isValid = true;
     const allParameters = subProducts.flatMap((item) => item.parameters);
@@ -1201,8 +1211,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     }
     return isValid;
   };
-  const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
-  const setLoading = useSetRecoilState(isLoadgingState);
   const calculationProduct = useCallback(async () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
@@ -1224,9 +1232,6 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     }
   }, [generalParameters, router, isRequiredParameters, validateParameters]);
 
-  useEffect(() => {
-    calculationProduct();
-  }, [generalParameters]);
   const PricingTab = {
     id: "c66465de-95d6-4ea3-bd3f-7efe60f4cb0555",
     name: "Pricing",
@@ -1264,7 +1269,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
   const addItemForQuotes = useCallback(async () => {
     const res = await callApi("POST", `/v1/erp-service/quote/add-item`, {
       productId: router?.query?.productId,
-      userID: "a42b4834-b34f-48d8-80b1-7780bc6133a2",
+      userID: userProfile?.id,
       customerID: router?.query?.customerId,
       clientTypeId: router?.query?.clientTypeId,
       unitPrice:
@@ -1289,6 +1294,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
     urgentOrder,
     graphicNotes,
     printingNotes,
+    userProfile,
   ]);
   const navigateForRouter = () => {
     let checkParameter = validateParameters(isRequiredParameters);
@@ -1303,6 +1309,7 @@ const useDigitalOffsetPrice = ({ clasess }) => {
       setErrorMsg("Please enter all required parameters");
     }
   };
+
   return {
     t,
     handleTabClick,

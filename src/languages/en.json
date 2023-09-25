@@ -97,7 +97,10 @@
       "selectCustomer": "Select customer",
       "selectType": "Select Type",
       "selectProduct": "Select product",
-      "createQoute": "Create qoute"
+      "createQoute": "Create qoute",
+      "pleaseSelectCustomer": "Please select a customer",
+      "pleaseSelectClientType": "Please select a client type",
+      "pleaseSelectProduct": "Please select a product"
     }
   },
   "materials": {
@@ -1222,7 +1225,6 @@
     "editMachine": "Edit machine",
     "edit": "Edit",
     "machines": "Machines"
-
   },
   "tyingOptions": {
     "cross": "Cross",
@@ -1741,7 +1743,7 @@
       "updated": "Updated",
       "add": "Add",
       "update": "Update",
-      "language" : "Language"
+      "language": "Language"
     },
     "title": "Customers",
     "selectCustomer": "Select customer",
@@ -1908,5 +1910,6 @@
     "edit": "Edit",
     "duplicate": "Duplicate",
     "delete": "Delete"
+
   }
 }

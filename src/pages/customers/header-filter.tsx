@@ -8,33 +8,34 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 
 interface IProps {
     typeClient?: string;
-    agentsCategores?: any[];
-    clientTypesCategores?: any[];
+    agentsCategories?: string[];
+    clientTypesCategories?: any[];
     statuses?: any[];
     onChangeAgent?: (key: string, value: any) => void;
     onChangeCustomer?: (value: string) => void;
     onChangeClientType?: (key: string, value: any) => void;
     onChangeStatus?: (key: string, value: any) => void;
     handleClean?: () => void;
-    agentName?: any[];
-    cutomerName?: string;
-    valClientType?: any[];
-    valStatus?: any[];
+    agentName?: string[];
+    customerName?: string;
+    valClientType?: string[];
+    valStatus?: string[];
   }
 
-const HeaderFilter = ({ typeClient, agentsCategores, clientTypesCategores, statuses, onChangeAgent, onChangeCustomer, onChangeClientType, onChangeStatus, handleClean, cutomerName, agentName, valClientType, valStatus }: IProps) => {
+  
+const HeaderFilter = ({ typeClient, agentsCategories, clientTypesCategories, statuses, onChangeAgent, onChangeCustomer, onChangeClientType, onChangeStatus, handleClean, customerName, agentName, valClientType, valStatus }: IProps) => {
     const { t } = useTranslation();
-    const { clasess } = useStyle();
+    const { classes } = useStyle();
 
     return (
-        <div style={clasess.subHeaderContainer} >
-            <div style={clasess.filterContainer}>
+        <div style={classes.subHeaderContainer} >
+            <div style={classes.filterContainer}>
                 {typeClient == "C" ? (
                     <>
-                        {agentsCategores?.length > 0 ? (
+                        {agentsCategories?.length > 0 ? (
                             <GoMakeAutoComplate
-                                options={agentsCategores}
-                                style={clasess.dropDownListStyle}
+                                options={agentsCategories}
+                                style={classes.dropDownListStyle}
                                 placeholder={t("customers.selectAgent")}
                                 onChange={onChangeAgent}
                                 value={agentName}
@@ -42,10 +43,10 @@ const HeaderFilter = ({ typeClient, agentsCategores, clientTypesCategores, statu
                         ) : (
                             <Skeleton variant="rectangular" width={200} height={40} />
                         )}
-                        {clientTypesCategores?.length > 0 ? (
+                        {clientTypesCategories?.length > 0 ? (
                             <GoMakeAutoComplate
-                                options={clientTypesCategores}
-                                style={clasess.dropDownListStyle}
+                                options={clientTypesCategories}
+                                style={classes.dropDownListStyle}
                                 placeholder={t("customers.selectCustomerType")}
                                 onChange={onChangeClientType}
                                 value={valClientType}
@@ -55,7 +56,7 @@ const HeaderFilter = ({ typeClient, agentsCategores, clientTypesCategores, statu
                         {statuses?.length > 0 ? (
                             <GoMakeAutoComplate
                                 options={statuses}
-                                style={clasess.dropDownListStyle}
+                                style={classes.dropDownListStyle}
                                 placeholder={t("customers.selectStatus")}
                                 onChange={onChangeStatus}
                                 value={valStatus}
@@ -70,7 +71,7 @@ const HeaderFilter = ({ typeClient, agentsCategores, clientTypesCategores, statu
                         {statuses?.length > 0 ? (
                             <GoMakeAutoComplate
                                 options={statuses}
-                                style={clasess.dropDownListStyle}
+                                style={classes.dropDownListStyle}
                                 placeholder={t("customers.selectStatus")}
                                 onChange={onChangeStatus}
                                 value={valStatus}
@@ -80,10 +81,10 @@ const HeaderFilter = ({ typeClient, agentsCategores, clientTypesCategores, statu
                             <Skeleton variant="rectangular" width={200} height={40} />
                         )}  </>
                 )}
-                <SecondaryButton style={clasess.cleanBtnStyle} onClick={handleClean} >{t("customers.buttons.clean")}</SecondaryButton>
+                <SecondaryButton style={classes.cleanBtnStyle} onClick={handleClean} >{t("customers.buttons.clean")}</SecondaryButton>
             </div>
             <div>
-                <SearchInputComponent onChange={onChangeCustomer} value={cutomerName}></SearchInputComponent>
+                <SearchInputComponent onChange={onChangeCustomer} value={customerName}></SearchInputComponent>
             </div>
         </div>
     );

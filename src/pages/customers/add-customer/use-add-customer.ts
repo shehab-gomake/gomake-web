@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
@@ -7,28 +7,6 @@ const useAddCustomer = () => {
   const { t } = useTranslation();
   const [state, setState] = useState<any>({});
   const { setSnackbarStateValue } = useSnackBar();
-
-  //addNewCustomer
-//   const addNewCustomer = async (data: any) => {
-//         const callback = (data) => {
-//             if (data.success) {
-//               setSnackbarStateValue({
-//                 state: true,
-//                 message: t("modal.addedSusuccessfully"),
-//                 type: "success",
-//               });
-//             } else {
-//               setSnackbarStateValue({
-//                 state: true,
-//                 message: t("modal.addedfailed"),
-//                 type: "error",
-//               });
-//             }
-  
-//         }
-//        await addNewCustomerTest(callApi ,callback , data);
-// }
-
 
   const addNewCustomer = useCallback(
     async (data: any) => {
