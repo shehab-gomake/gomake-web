@@ -20,7 +20,6 @@ const AddNewItemModal = () => {
   const { clasess } = useStyle();
   const quoteStateValue = useRecoilValue<any>(quoteState);
   const quoteItemValue: any = useRecoilValue(quoteItemState);
-  console.log("quoteItemValue", quoteItemValue?.client?.clientTypeId);
   const [productValue, setProductValues] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState<any>({});
   const getAllProducts = useCallback(async () => {
