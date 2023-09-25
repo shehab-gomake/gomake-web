@@ -20,6 +20,12 @@ const EditInitialsComponent = () => {
         }
         await updateUserInitials({avatarInitials: label, avatarBackGroundColor: selectedColor})
     }
+
+    const onTextChange = (text: string) => {
+        if (text.length < 4) {
+            setLabel(text.toUpperCase());
+        }
+    }
     return (
         <Stack direction={'column'} gap={3} padding={1}>
             <Stack direction={'row'} gap={'20px'} justifyContent={'center'} padding={'20px'}>
@@ -46,12 +52,12 @@ const EditInitialsComponent = () => {
                     </Stack>
                     <Stack direction={'column'} gap={'5px'}>
                         <span>{t('initials')}</span>
-                        <GomakeTextInput value={label} onChange={(e) => setLabel(e.target.value.toUpperCase())}
+                        <GomakeTextInput value={label} onChange={(e) => onTextChange(e.target.value)}
                                          style={{height: '30px'}}/>
                     </Stack>
                 </Stack>
             </Stack>
-            <SecondaryButton onClick={handleClick} sx={{width: '100%'}} variant={'contained'}>update</SecondaryButton>
+            <SecondaryButton onClick={handleClick} sx={{width: '100%'}} variant={'contained'}>{t('navigationButtons.update')}</SecondaryButton>
         </Stack>
     );
 };

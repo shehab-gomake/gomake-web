@@ -87,6 +87,7 @@ const SideList = ({
             <Box style={classes.container}>
                 <h1 style={classes.header}>{title}</h1>
                 <SearchInput
+                    name={'side-list-search'}
                     placeholder={t('header.search')}
                     onChange={handleFilterChange}
                     value={filter}
@@ -109,7 +110,7 @@ const SideList = ({
                                         <MenuItem onClick={onClickDuplicate}>
                                             <div style={classes.menuItem}>
                                                 <DuplicateIcon height={20} width={20} color={classes.iconColor}/>{" "}
-                                                <span>Duplicate</span>
+                                                <span>{t('navigationButtons.duplicate')}</span>
                                             </div>
                                         </MenuItem>
                                         <Divider/>
@@ -118,7 +119,7 @@ const SideList = ({
                                             <MenuItem onClick={onClickDelete}>
                                                 <div style={classes.menuItem}>
                                                     <DeleteIcon color={classes.iconColor} width={20} height={20}/>{" "}
-                                                    <span>Delete</span>
+                                                    <span>{t('navigationButtons.delete')}</span>
                                                 </div>
                                             </MenuItem>
                                         }

@@ -1,4 +1,5 @@
 {
+  "language": "en",
   "direction": "ltr",
   "pageName": {
     "welcome": "welcome"
@@ -1547,7 +1548,12 @@
     "permission": "Permission management",
     "isActive": "Active",
     "showInActiveUsers": "Show inactive employees",
-    "editing": "Editing"
+    "editing": "Editing",
+    "addProfileImage": "Add profile image",
+    "editInitials": "Edit initials",
+    "uploadFile": "Upload file",
+    "selectFile": "Select file"
+
   },
   "permissionsSettings": {
     "title": "Management of roles and privileges",
@@ -1573,7 +1579,8 @@
     "add": "Add",
     "update": "Update",
     "editRole": "Edit role name",
-    "addRole": "Add new role"
+    "addRole": "Add new role",
+    "permissions": "Permissions"
   },
   "settings": {
     "settings": "Settings",
@@ -1898,7 +1905,8 @@
     "update": "Update",
     "add": "Add",
     "remove": "Remove",
-    "edit": "Edit"
-
+    "edit": "Edit",
+    "duplicate": "Duplicate",
+    "delete": "Delete"
   }
 }

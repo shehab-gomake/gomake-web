@@ -1,4 +1,5 @@
 {
+  "language": "he",
   "direction": "rtl",
   "pageName": {
     "welcome": "ברוך הבא"
@@ -754,8 +755,12 @@
     "permission": "ניהול הרשאות",
     "isActive": "פעיל",
     "showInActiveUsers": "הצג משתמשים לא פעילים",
-    "editing": "עריכה"
-
+    "editing": "עריכה",
+    "addProfileImage": "הוספת תמונה",
+    "editInitials": "עריכת ראשי תיבות",
+    "uploadFile": "העלאת קבצים",
+    "upload": "העלאה",
+    "selectFile": "בחר קובץ"
 
   },
   "settings": {
@@ -1085,7 +1090,9 @@
     "update": "עדכן",
     "add": "הוסיף",
     "remove": "מחיקה",
-    "edit": "עריכה"
+    "edit": "עריכה",
+    "duplicate": "שכפול",
+    "delete": "מחיקה"
   },
   "permissionsSettings": {
     "title": "Management of roles and privileges",
@@ -1111,6 +1118,8 @@
     "add": "הוספה",
     "update": "ערוך",
     "editRole": "עריכת תפקיד",
-    "addRole": "הוספת תפקיד חדש"
+    "addRole": "הוספת תפקיד חדש",
+    "permissions": "הרשאות"
+
   }
 }
