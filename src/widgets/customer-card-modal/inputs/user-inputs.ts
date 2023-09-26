@@ -12,7 +12,7 @@ const userInputs = (state)  => {
             options: [],
             value: state?.username,
             isValid: !!state.username,
-            readonly: false,
+            readonly: false ,
            // regex: emailRegex
         },
         {
