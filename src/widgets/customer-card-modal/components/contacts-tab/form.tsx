@@ -47,7 +47,7 @@ const ContactForm = ({ contact, onDelete, setContact }: IProps) => {
                 }
             </Stack>
             <Stack direction={'row'} >
-                <a style={{ display: "flex", justifyContent: 'flex-start' }} onClick={() => onDelete(contact.index)} >
+                <a style={{ display: "flex", justifyContent: 'flex-start', gap: "7px" }} onClick={() => onDelete(contact.index)} >
                     <RemoveIcon></RemoveIcon>
                     <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
                 </a>

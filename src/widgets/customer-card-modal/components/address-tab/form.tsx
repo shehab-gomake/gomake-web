@@ -85,7 +85,7 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
                 }
             </Stack>
             <Stack direction={'row'}>
-                <a style={{ display: "flex", justifyContent: 'flex-start' }} onClick={() => onDelete(address.index)} >
+                <a style={{ display: "flex", justifyContent: 'flex-start' , gap: "7px"}} onClick={() => onDelete(address.index)} >
                     <RemoveIcon></RemoveIcon>
                     <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
                 </a>

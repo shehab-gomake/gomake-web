@@ -285,7 +285,7 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
         <ThemeProvider theme={theme}>
           <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary" TabIndicatorProps={{ style: { display: 'none' } }} >
             <Tab sx={{ backgroundColor: selectedTab === 0 ? '#ED028C' : '#EBECFF', color: selectedTab === 0 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "82px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.general")} />
-            <Tab sx={{ backgroundColor: selectedTab === 1 ? '#ED028C' : '#EBECFF', color: selectedTab === 1 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "90px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.contacts")} />
+            <Tab sx={{ backgroundColor: selectedTab === 1 ? '#ED028C' : '#EBECFF', color: selectedTab === 1 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "90px", maxWidth:"400px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.contacts")} />
             <Tab sx={{ backgroundColor: selectedTab === 2 ? '#ED028C' : '#EBECFF', color: selectedTab === 2 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "100px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.addresses")} />
             {typeClient == "C" && <Tab sx={{ backgroundColor: selectedTab === 3 ? '#ED028C' : '#EBECFF', color: selectedTab === 4 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "137px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "7px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.gomakeUsers")} />}
           </Tabs>
@@ -333,7 +333,7 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
         {
           //contacts info
           selectedTab == 1 &&
-          <Stack direction={'row'} >
+          <Stack direction={'row'} gap={'15px'} >
             <Stack direction={'column'}  >
               {
                 contacts.filter(contact => !contact.isMainContact).map(x =>
@@ -341,8 +341,8 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
                 )
               }
             </Stack>
-            <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
-              <a style={{ display: "flex", justifyContent: "center", alignItems: "center"}} onClick={addEmptyContact} >
+            <Stack direction={'column'}  marginTop={"52px"} >
+              <a style={{ display: "flex", justifyContent: "center", alignItems: "center" , gap: "5px"}} onClick={addEmptyContact} >
                 <AddIcon></AddIcon>
                 <button style={classes.buttonsStyle} >{t("customers.buttons.addContact")}</button>
               </a>
@@ -352,7 +352,7 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
         {
           //address info
           selectedTab == 2 &&
-          <Stack direction={'row'} >
+          <Stack direction={'row'} gap={'15px'}>
             <Stack direction={'column'}  >
               {
                 addresses.map(x =>
@@ -360,8 +360,8 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
                 )
               }
             </Stack>
-            <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
-              <a style={{ display: "flex", justifyContent: "center", alignItems: "center"}} onClick={addEmptyAddress} >
+            <Stack direction={'column'}  marginTop={"52px"}>
+              <a style={{ display: "flex", justifyContent: "center", alignItems: "center" , gap: "3px" }} onClick={addEmptyAddress} >
                 <AddIcon></AddIcon>
                 <button style={classes.buttonsStyle} >{t("customers.buttons.newAddress")}</button>
               </a>
@@ -371,7 +371,7 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
         {
           //GOMAKEUSER info
           selectedTab == 3 &&
-          <Stack direction={'row'}>
+          <Stack direction={'row'} gap={'15px'}>
             <Stack direction={'column'}  >
               {
                 users?.map(x =>
@@ -379,8 +379,8 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
                 )
               }
             </Stack>
-            <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
-              <a style={{ display: "flex", justifyContent: "center", alignItems: "center" }} onClick={addEmptyClient} >
+            <Stack direction={'column'} marginTop={"52px"} >
+              <a style={{ display: "flex", justifyContent: "center", alignItems: "center" , gap: "5px" }} onClick={addEmptyClient} >
                 <AddIcon></AddIcon>
                 <button style={classes.buttonsStyle} >{t("customers.buttons.addUser")}</button>
               </a>
