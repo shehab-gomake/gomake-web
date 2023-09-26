@@ -10,11 +10,9 @@ import {
   ShopingIcon,
 } from "@/icons";
 import { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import {CubeIcon} from "@/components/icons/cube-icon";
 
 const useAuthLayoutHook = () => {
-  const { t } = useTranslation();
   const { isAuth } = useGomakeAuth();
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
@@ -23,7 +21,7 @@ const useAuthLayoutHook = () => {
       {
         isLine: false,
         key: "home",
-        title: t("tabs.home"),
+        title: "tabs.home",
         path: "/home",
         isList: false,
         icon: () => {
@@ -34,7 +32,7 @@ const useAuthLayoutHook = () => {
       {
         isLine: false,
         key: "productFloor",
-        title: t("tabs.productFloor"),
+        title: "tabs.productFloor",
         path: "/product-floor",
         isList: false,
         icon: () => {
@@ -54,18 +52,18 @@ const useAuthLayoutHook = () => {
       {
         isLine: false,
         key: "sales",
-        title: t("tabs.sales"),
+        title: "tabs.sales",
         path: "/product-floor",
         isList: true,
         list: [
           {
             key: "add",
-            title: t("tabs.addSales"),
+            title: "tabs.addSales",
             path: "/sales/add-machine",
           },
           {
             key: "list",
-            title: t("tabs.listSales"),
+            title: "tabs.listSales",
             path: "/sales/list",
           },
         ],
@@ -77,7 +75,7 @@ const useAuthLayoutHook = () => {
       {
         isLine: false,
         key: "properties",
-        title: t("tabs.properties"),
+        title: "tabs.properties",
         path: "/properties",
         isList: false,
         icon: () => {
@@ -88,7 +86,7 @@ const useAuthLayoutHook = () => {
       {
         isLine: false,
         key: "shoping",
-        title: t("tabs.shoping"),
+        title: "tabs.shoping",
         path: "/product-floor",
         isList: true,
         icon: () => {
@@ -99,18 +97,18 @@ const useAuthLayoutHook = () => {
       {
         isLine: false,
         key: "customers",
-        title: t("tabs.customers"),
+        title: "tabs.customers",
         path: "/customers",
         isList: true,
         list: [
           {
             key: "customers",
-            title: t("tabs.customers"),
+            title: "tabs.customers",
             path: "/customers",
           },
           {
             key: "suppliers",
-            title: t("tabs.suppliers"),
+            title: "tabs.suppliers",
             path: "/suppliers",
           },
         ],
@@ -122,7 +120,7 @@ const useAuthLayoutHook = () => {
       {
         isLine: false,
         key: "reports",
-        title: t("tabs.reports"),
+        title: "tabs.reports",
         path: "/product-floor",
         isList: true,
         icon: () => {
@@ -142,7 +140,7 @@ const useAuthLayoutHook = () => {
       {
         isLine: false,
         key: "materials",
-        title: t("tabs.materials"),
+        title: "tabs.materials",
         path: "/materials",
         isList: false,
         icon: () => {
@@ -153,7 +151,7 @@ const useAuthLayoutHook = () => {
       {
         isLine: false,
         key: "machines",
-        title: t("tabs.machines"),
+        title: "tabs.machines",
         path: "/machines",
         isList: false,
         icon: () => {
@@ -164,7 +162,7 @@ const useAuthLayoutHook = () => {
       {
         isLine: false,
         key: "actions",
-        title: t("tabs.actions"),
+        title: "tabs.actions",
         path: "/actions",
         isList: false,
         icon: () => {
@@ -175,7 +173,7 @@ const useAuthLayoutHook = () => {
       {
         isLine: false,
         key: "settings",
-        title: t("tabs.settings"),
+        title: "tabs.settings",
         path: "/settings",
         isList: false,
         icon: () => {
