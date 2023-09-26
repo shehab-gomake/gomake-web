@@ -1,6 +1,7 @@
 import {CSSProperties, useMemo} from "react";
+import {adaptRight} from "@/utils/adapter";
 
-const useStyle = (maxHeight: number) => {
+const useStyle = (maxHeight: number, dir: 'rtl' | 'ltr') => {
     const classes = useMemo((): Record<string, CSSProperties> => {
         return {
             tableContainer: {
@@ -9,13 +10,14 @@ const useStyle = (maxHeight: number) => {
             },
             sticky: {
                 position: "sticky",
-                left: 0,
                 background: "white",
-                zIndex: 1
+                zIndex: 1,
+                ...adaptRight(dir, 0),
+                textAlign: dir === 'rtl' ? 'right' : 'left'
             },
             stickyHeader: {
                 position: "sticky",
-                left: 0,
+                ...adaptRight(dir, 0),
                 zIndex: 999,
                 minWidth: '250px'
             }

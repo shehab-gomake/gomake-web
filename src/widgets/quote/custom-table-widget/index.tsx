@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { HeaderTable } from "./sub-widget/header";
 import { RowCustomTable } from "./sub-widget/row";
 import { useCustomTable } from "./use-custom-table";
+import { AddNegotiateRequestModal } from "../modals-widgets/add-negotiate-request-modal";
+import { DuplicateItemModal } from "../modals-widgets/duplicate-item-modal";
 interface IProps {
   headerTitle?: string;
   tableHeaders?: any;
@@ -29,7 +31,7 @@ const CustomTableWidget = ({
     <div style={clasess.mainContainer}>
       <div style={clasess.tableHeaderContainer}>
         <div style={clasess.headerStyle}>{headerTitle}</div>
-        <div style={clasess.filtersContainer}>
+        {/* <div style={clasess.filtersContainer}>
           <GoMakeAutoComplate
             options={["A", "B", "C", "D", "E", "F"]}
             style={clasess.autoComplateStyle}
@@ -40,7 +42,7 @@ const CustomTableWidget = ({
             style={clasess.autoComplateStyle}
             placeholder={t("sales.quote.discountBy")}
           />
-        </div>
+        </div> */}
       </div>
       <div style={clasess.tableHeadersStyle}>
         {tableHeaders?.map((item: string, index: number) => {
@@ -69,6 +71,8 @@ const CustomTableWidget = ({
           );
         })}
       </div>
+      <AddNegotiateRequestModal />
+      <DuplicateItemModal />
     </div>
   );
 };

@@ -2,7 +2,7 @@ import axios from "axios";
 import config from "@/config";
 import { getUserToken } from "./storage-data";
 // import { clearStorage } from './storage'
-const apiRequest = async (method = "GET", url: string, data: any = {}) => {
+const apiRequest = async (method = "GET", url: string, data: any = {}, language?: string) => {
   try {
     const SERVER = config.api_server;
     // if(safdsa){
@@ -21,7 +21,7 @@ const apiRequest = async (method = "GET", url: string, data: any = {}) => {
         "project-name": "business-dashboard",
         ...(getUserToken() && { "Authorization": "Bearer "+ getUserToken() }),
         ...(data.customAuth && { "auth-token": data.customAuth }),
-        lang: "en",
+        lang: language ? language : 'en',
       },
     };
     if (method === "GET") {

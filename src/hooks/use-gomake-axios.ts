@@ -2,6 +2,7 @@ import apiRequest from "@/services/api-request";
 import { loadgingState } from "@/store/loading";
 import { useCallback } from "react";
 import { useSetRecoilState } from "recoil";
+import {useTranslation} from "react-i18next";
 // import { useRecoilState } from "recoil";
 // import { loadgingState } from "../atoms";
 
@@ -14,12 +15,14 @@ import { useSetRecoilState } from "recoil";
 
 const useGomakeAxios = () => {
   const setLoading = useSetRecoilState(loadgingState);
+  const {t} = useTranslation();
+  const language = t('language');
   const callApi = useCallback(
     async (method: string, url: string, data?: any, lockScreen = true) => {
       if (lockScreen) {
         setLoading(true);
       }
-      const result = await apiRequest(method, url, data);
+      const result = await apiRequest(method, url, data, language);
       if (lockScreen) {
         setTimeout(() => {
           setLoading(false);
