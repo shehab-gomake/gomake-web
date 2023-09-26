@@ -53,22 +53,22 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
 });
 
 const GoMakeAutoComplate = ({
-                                value,
-                                onChange,
-                                style,
-                                error,
-                                options,
-                                autoHighlight,
-                                getOptionLabel,
-                                renderOption,
-                                disableClearable,
-                                placeholder,
-                                defaultValue,
-                                disabled,
-                                multiple = false,
-                                arrowColor,
-                                onChangeTextField,
-                            }: {
+    value,
+    onChange,
+    style,
+    error,
+    options,
+    autoHighlight,
+    getOptionLabel,
+    renderOption,
+    disableClearable,
+    placeholder,
+    defaultValue,
+    disabled,
+    multiple = false,
+    arrowColor,
+    onChangeTextField,
+    }: {
     value?: string | string[];
     onChange?: any;
     style?: any;
