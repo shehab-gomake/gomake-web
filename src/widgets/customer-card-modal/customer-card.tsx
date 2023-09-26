@@ -17,13 +17,16 @@ import { customerInputs, customerInputs2 } from "./inputs/customer-inputs";
 import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general-inputs";
 import { Stack } from "@mui/material";
 import { CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { useSnackBar } from "@/hooks";
 
 interface IProps {
+  isValidCustomerForm?: (value: any , value1:any , value2:any) => boolean;
+  isValidCustomer: (value: any) => boolean;
   customerAction?: CUSTOMER_ACTIONS; 
   codeFlag?: boolean;
   typeClient?: string;
   getAllCustomers?: () => void; 
-  onCustomeradd?: (value: any) => void; 
+  onCustomerAdd?: (value: any) => void; 
   openModal?: boolean; 
   modalTitle?: string;
   onClose?: () => void; 
@@ -33,11 +36,12 @@ interface IProps {
   showAddButton?: boolean;
 }
 
-const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
+const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerAction ,codeFlag , typeClient, getAllCustomers, onCustomerAdd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
-  const { editCustomer } = useEditCustomer();
+  const { editCustomer  } = useEditCustomer();
   const { t } = useTranslation();
+  const {alertRequiredFields} = useSnackBar();
   const theme = createMuiTheme({
     palette: {
       secondary: {
@@ -193,44 +197,58 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
     );
   };
 
+ 
+
+
   // add customer button
   const handleAddCustomer = async () => {
     const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
     const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
-    const filteredUserss = users.filter(user => !isNameIndexOnly(user));
+    const filteredUsers = users.filter(user => !isNameIndexOnly(user));
     const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
     const updatedCustomer ={
       ...customer,
       contacts: filteredContacts,
       addresses: filteredAddresses,
-      users: filteredUserss,
+      users: filteredUsers,
       CardTypeId: cardTypeId,
     };
     setCustomer(updatedCustomer);
+    if (isValidCustomer(updatedCustomer) && isValidCustomerForm(filteredContacts , filteredAddresses , filteredUsers)) {
     addNewCustomer(updatedCustomer).then(x => {
-      onCustomeradd(x);
+      onCustomerAdd(x);
       handleClose();
-    });
+    });}
+    else{
+      alertRequiredFields();
+    }
   };
+
+
+
 
   // edit customer button
   const handleEditCustomer = () => {
     const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
     const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
-    const filteredUserss = users.filter(user => !isNameIndexOnly(user));
+    const filteredUsers = users.filter(user => !isNameIndexOnly(user));
     const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
       addresses: filteredAddresses,
-      users: filteredUserss,
+      users: filteredUsers,
     };
     setCustomer(updatedCustomer);
-    console.log(updatedCustomer)
+    if (isValidCustomer(updatedCustomer) && isValidCustomerForm(filteredContacts , filteredAddresses , filteredUsers)) {
     editCustomer(updatedCustomer, setCustomer).then(x => {
       getAllCustomers();
       handleClose();
-    });
+    });}
+    else{
+      alertRequiredFields();
+    }
   };
+
 
   const onChangeInputs = (key, value) => {
     setCustomer({ ...customer, [key]: value })
@@ -256,7 +274,7 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
         </Stack>
         <Stack direction={'row'} marginTop={"16px"} marginBottom={"24px"} width={"90%"} gap={"20px"} >
           {
-            customerInputs(typeClient, codeFlag, customer).map(item =><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={!!item.readonly} />)
+            customerInputs(typeClient, codeFlag, customer).map(item =><FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={!!item.readonly} />)
           }
         </Stack>
         <Stack direction={'row'} marginBottom={"24px"} width={"90%"} gap={"20px"} >
@@ -380,3 +398,5 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
   );
 };
 export { CustomerCardWidget };
+
+

@@ -34,7 +34,7 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
         <div >
             <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap="20px">
                 {
-                    userInputs(user).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
+                    userInputs(user).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={false} />)
                 }
             </Stack>
             <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap="20px">

@@ -1,3 +1,4 @@
+import {emailRegex} from "@/utils/regex";
 
 const userInputs = (state)  => {
     return [
@@ -10,8 +11,9 @@ const userInputs = (state)  => {
             parameterKey: "username",
             options: [],
             value: state?.username,
-            isValid: true ,
-            readonly: false,
+            isValid: !!state.username,
+            readonly: false ,
+           // regex: emailRegex
         },
         {
             name: "password",
