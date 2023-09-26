@@ -69,7 +69,7 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
             <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap="20px">
                 {
                     (cities && cities.length > 0 && cityStreets && cityStreets.length > 0) &&
-                    addresses().map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
+                    addresses().map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={false} />)
                 }
             </Stack>
             <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap="20px">

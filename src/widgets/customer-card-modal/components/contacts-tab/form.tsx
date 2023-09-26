@@ -38,7 +38,7 @@ const ContactForm = ({ contact, onDelete, setContact }: IProps) => {
         <div >
             <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap={"20px"}  >
                 {
-                    contactInputs1(contact).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
+                    contactInputs1(contact).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={false} />)
                 }
             </Stack>
             <Stack direction={'row'} marginBottom={"24px"} gap={"20px"}>

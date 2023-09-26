@@ -18,11 +18,11 @@ export default function Home() {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const [pageNumber, setPageNumber] = useState(1);
-  const { ClientTypeId, agentId, isActive , pageSize ,filters, clientType , getAgentCategories , getClientTypesCategories, tableHeaders, updatedStatus, getCustomersRows,setAllCustomers, allCustomers, agentsCategories, clientTypesCategories, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers(CLIENT_TYPE.CUSTOMER, pageNumber, setPageNumber);
+  const { isValidCustomerForm , isValidCustomer, ClientTypeId, agentId, isActive, pageSize, filters, clientType, getAgentCategories, getClientTypesCategories, tableHeaders, updatedStatus, getCustomersRows, setAllCustomers, allCustomers, agentsCategories, clientTypesCategories, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers(CLIENT_TYPE.CUSTOMER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
-  const onCustomeradd = (customer) => {
-    const mapData = customerMapFunction(customer, getCustomerForEdit, updatedStatus , activeText , inActiveText);
+  const onCustomerAdd = (customer) => {
+    const mapData = customerMapFunction(customer, getCustomerForEdit, updatedStatus, activeText, inActiveText);
     setAllCustomers([...allCustomers, mapData])
   };
 
@@ -39,7 +39,11 @@ export default function Home() {
     <CustomerAuthLayout>
       <div style={classes.sameRow}>
         <HeaderTitle marginBottom="20px" title={t("customers.title")} />
-        <AddCustomerButton onCustomeradd={onCustomeradd} typeClient={CLIENT_TYPE.CUSTOMER}></AddCustomerButton>
+        <AddCustomerButton
+          isValidCustomerForm={isValidCustomerForm}
+          isValidCustomer={isValidCustomer}
+          onCustomerAdd={onCustomerAdd}
+          typeClient={CLIENT_TYPE.CUSTOMER}></AddCustomerButton>
       </div>
       <HeaderFilter
         typeClient={CLIENT_TYPE.CUSTOMER}
@@ -59,6 +63,8 @@ export default function Home() {
       <Stack spacing={3}>
         <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={getCustomersRows()} headers={tableHeaders}></PrimaryTable>
         <CustomerCardWidget
+         isValidCustomerForm={isValidCustomerForm}
+          isValidCustomer={isValidCustomer}
           customerAction={CUSTOMER_ACTIONS.Edit}
           codeFlag={true}
           typeClient={CLIENT_TYPE.CUSTOMER}
@@ -69,7 +75,7 @@ export default function Home() {
           customer={customerForEdit}
           setCustomer={setCustomerForEdit}
           showUpdateButton={true}
-          />  
+        />
         <div style={{ marginBottom: "5px" }}>
           <Pagination count={pagesCount} variant="outlined" color="primary" page={pageNumber}
             onChange={(event, value) => setPageNumber(value)} />
