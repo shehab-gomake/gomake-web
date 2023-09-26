@@ -14,6 +14,7 @@ import {
   ChooseShapeModal,
   MakeShapeModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
+import { EWidgetProductType } from "./enums";
 
 const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
@@ -213,12 +214,22 @@ const PriceListPageWidget = ({ widgetType }) => {
               </div>
             </div>
             <div style={{ width: 330 }}>
-              <GomakePrimaryButton
-                style={clasess.addOrderBtn}
-                onClick={navigateForRouter}
-              >
-                {t("products.offsetPrice.admin.addOrder")}
-              </GomakePrimaryButton>
+              {widgetType === EWidgetProductType.EDIT ? (
+                <GomakePrimaryButton
+                  style={clasess.addOrderBtn}
+                  onClick={navigateForRouter}
+                >
+                  {t("materials.buttons.edit")}
+                </GomakePrimaryButton>
+              ) : (
+                <GomakePrimaryButton
+                  style={clasess.addOrderBtn}
+                  onClick={navigateForRouter}
+                >
+                  {t("products.offsetPrice.admin.addOrder")}
+                </GomakePrimaryButton>
+              )}
+
               <div style={clasess.errorMsgStyle}>{errorMsg}</div>
               <div style={clasess.noVatStyle}>
                 {t("products.offsetPrice.admin.dontVAT")}

@@ -6,7 +6,10 @@ import { useRouter } from "next/router";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
 import { materialsCategoriesState } from "@/store/material-categories";
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
-import { getAndSetProductById } from "@/services/hooks";
+import {
+  getAndSetProductById,
+  getAndSetgetProductQuoteItemById,
+} from "@/services/hooks";
 import { isLoadgingState } from "@/store";
 import { useMaterials } from "../use-materials";
 import { digitslPriceState } from "./store";
@@ -18,6 +21,7 @@ import {
   SecondSwitch,
 } from "@/components";
 import { userProfileState } from "@/store/user-profile";
+import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -47,12 +51,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("Production");
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
-
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const setLoading = useSetRecoilState(isLoadgingState);
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
-
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let temp = [...isRequiredParameters];
@@ -215,10 +217,74 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         subSectionId: subSection?.id,
                       });
                     }
+                  } else if (parameter?.parameterType === 5) {
+                    const value = parameter?.valuesConfigs?.find(
+                      (item) => item?.isDefault == true
+                    );
+
+                    if (value) {
+                      const data = materialsEnumsValues.find(
+                        (item) => item.name === parameter?.materialPath[0]
+                      );
+                      let options: any = allMaterials;
+                      let selectedObj: any = {};
+                      if (allMaterials?.length > 0) {
+                        if (parameter?.materialPath?.length == 1) {
+                          options = allMaterials?.find((material: any) => {
+                            return (
+                              material.pathName === parameter?.materialPath[0]
+                            );
+                          })?.data;
+
+                          selectedObj = options?.find(
+                            (item: any) =>
+                              item?.valueId ===
+                              value?.materialValueIds[0]?.valueId
+                          );
+                        }
+
+                        if (parameter?.materialPath?.length == 2) {
+                          options = allMaterials?.find((material: any) => {
+                            return (
+                              material.pathName === parameter?.materialPath[0]
+                            );
+                          })?.data;
+                          const mergedDataArray = options.reduce(
+                            (result, obj) => {
+                              if (obj.data && Array.isArray(obj.data)) {
+                                result = result.concat(obj.data);
+                              }
+                              return result;
+                            },
+                            []
+                          );
+                          selectedObj = mergedDataArray?.find(
+                            (item: any) =>
+                              item?.valueId ===
+                              value?.materialValueIds[0]?.valueId
+                          );
+                        }
+                      }
+
+                      temp.push({
+                        parameterId: parameter?.id,
+                        parameterName: parameter?.name,
+                        actionId: parameter?.actionId,
+                        ...(data?.id > 0 && { material: data?.id }),
+                        parameterType: parameter?.parameterType,
+                        ...(value && {
+                          valueId: value?.materialValueIds[0]?.valueId,
+                          value: selectedObj?.value,
+                        }),
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                      });
+                    }
                   } else if (parameter?.parameterType === 0) {
                     const value = parameter?.valuesConfigs?.find(
                       (item) => item?.isDefault == true
                     );
+
                     if (value) {
                       const data = materialsEnumsValues.find(
                         (item) => item.name === parameter?.materialPath[0]
@@ -313,8 +379,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   ]);
 
   useEffect(() => {
-    getProductById();
-  }, [router]);
+    if (widgetType === EWidgetProductType.EDIT) {
+      getProductQuoteItemById();
+    } else {
+      getProductById();
+    }
+  }, [router, widgetType]);
   useEffect(() => {
     calculationProduct();
   }, [generalParameters]);
@@ -534,6 +604,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           const data = materialsEnumsValues.find(
             (item) => item.name === parameter?.materialPath[0]
           );
+
           let valuesConfigs = parameter?.valuesConfigs;
           let isDefaultObj = parameter?.valuesConfigs?.find(
             (item) => item.isDefault === true
@@ -550,6 +621,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             let defaultParameter = defsultParameters?.valuesConfigs?.find(
               (item) => item?.isDefault
             );
+
             let valueIdIsDefault =
               defaultParameter?.materialValueIds[0]?.valueId;
             options = digitalPriceData?.selectedMaterialLvl1;
@@ -878,6 +950,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           const data = materialsEnumsValues.find(
             (item) => item.name === parameter?.materialPath[0]
           );
+
           let valuesConfigs = parameter?.valuesConfigs;
           let isDefaultObj = parameter?.valuesConfigs?.find(
             (item) => item.isDefault === true
@@ -1195,6 +1268,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     await getAndSetProductById(callApi, setTemplate, {
       Id: router?.query?.productId,
     });
+  }, [router, widgetType]);
+
+  const getProductQuoteItemById = useCallback(async () => {
+    await getAndSetgetProductQuoteItemById(callApi, setTemplate, {
+      QuoteItemId: router?.query?.quoteItem,
+    });
   }, [router]);
 
   const validateParameters = (inputArray) => {
@@ -1211,6 +1290,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     return isValid;
   };
+  useEffect(() => {
+    if (widgetType === EWidgetProductType.EDIT) {
+      setPricingDefaultValue(template?.workFlows);
+    }
+  }, [widgetType]);
   const calculationProduct = useCallback(async () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
@@ -1227,8 +1311,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         },
         false
       );
-      setLoading(false);
-      setPricingDefaultValue(res?.data?.data?.data?.result);
+      //Check it is work
+      if (res?.success) {
+        setLoading(false);
+        setPricingDefaultValue(res?.data?.data?.data?.result);
+      }
     }
   }, [generalParameters, router, isRequiredParameters, validateParameters]);
 
@@ -1282,6 +1369,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       isNeedExample: false,
       itemParmetersValues: generalParameters,
       workFlow: pricingDefaultValue?.workFlows[0],
+      actions: pricingDefaultValue?.actions,
     });
     if (res?.success) {
       navigate("/quote");
