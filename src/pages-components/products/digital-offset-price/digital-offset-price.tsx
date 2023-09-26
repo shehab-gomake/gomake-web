@@ -33,6 +33,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     renderOptions,
     checkWhatRenderArray,
     navigateForRouter,
+    updateQuoteItem,
     setUrgentOrder,
     setPrintingNotes,
     setGraphicNotes,
@@ -217,7 +218,7 @@ const PriceListPageWidget = ({ widgetType }) => {
               {widgetType === EWidgetProductType.EDIT ? (
                 <GomakePrimaryButton
                   style={clasess.addOrderBtn}
-                  onClick={navigateForRouter}
+                  onClick={updateQuoteItem}
                 >
                   {t("materials.buttons.edit")}
                 </GomakePrimaryButton>

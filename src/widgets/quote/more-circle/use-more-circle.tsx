@@ -24,8 +24,7 @@ const useMoreCircle = ({ quoteItem }) => {
   };
   const onClickEditQuoteItem = (quoteItem) => {
     navigate(
-      `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}
-      &productId=${quoteItem?.productID}&quoteItem=${quoteItem?.id}`
+      `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&quoteItem=${quoteItem?.id}`
     );
   };
   const menuList = [
