@@ -6,6 +6,7 @@ import { useGomakeRouter } from "@/hooks";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { selectedTabState } from "@/store";
 import { navStatusState } from "@/store/nav-status";
+import {useTranslation} from "react-i18next";
 interface IProps {
   tab: {
     isLine?: boolean;
@@ -24,7 +25,7 @@ const Tab = ({ tab }: IProps) => {
   const [isListOpen, setIsListOpen] = useState(tab?.key === selectedTabValue);
   const [isHover, setIsHover] = useState(false);
   const navStatus = useRecoilValue(navStatusState);
-
+  const {t} = useTranslation();
   const { clasess } = useStyle({ isHover, navStatus });
   const handleMouseEnter = useCallback(() => {
     setIsHover(true);
@@ -74,7 +75,7 @@ const Tab = ({ tab }: IProps) => {
         )}
         <div>{tab?.icon()}</div>
         <div style={clasess.tabTitle}>
-          {!navStatus.isClosed ? tab.title : null}
+          {!navStatus.isClosed ? t(tab.title) : null}
         </div>
       </div>
       <Collapse in={isListOpen}>
