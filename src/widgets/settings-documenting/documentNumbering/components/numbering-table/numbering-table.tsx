@@ -1,18 +1,16 @@
-import {useTranslation} from "react-i18next";
 import { PrimaryTable } from "@/components/tables/primary-table";
+import { useEffect } from "react";
+import { useDocuments } from "../../use-documents-numbers";
+
 const NumberingTable = () => {
-    const {t} = useTranslation();
-    const tableHeaders = [
-        t('documentingSettings.name'),
-        t('documentingSettings.prefix'),
-        t('documentingSettings.value'),
-        t('documentingSettings.details'),
-        t('documentingSettings.more'),
-    ];
+    const { getAllDocumentsNumbers , documentsNumbers , tableHeaders} = useDocuments();
+    useEffect(() => {
+        getAllDocumentsNumbers()
+      }, []);
 
     return (
         <>
-        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={null} headers={tableHeaders}></PrimaryTable>
+        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={documentsNumbers} headers={tableHeaders}></PrimaryTable>
         </>
     );
 }
