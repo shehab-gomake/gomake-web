@@ -237,9 +237,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               material.pathName === parameter?.materialPath[0]
                             );
                           })?.data;
-                          console.log("options", options);
-                          console.log("value", value);
-
                           selectedObj = options?.find(
                             (item: any) =>
                               item?.valueId ===
@@ -1332,9 +1329,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       widgetType === EWidgetProductType.EDIT ||
       widgetType === EWidgetProductType.DUPLICATE
     ) {
-      // setPricingDefaultValue(template?.workFlows);
       setUrgentOrder(!!template?.quoteItem?.isUrgentWork);
       setPrintingNotes(template?.quoteItem?.printingNotes);
+      setGraphicNotes(template?.quoteItem?.graphicNotes);
     }
   }, [widgetType, template]);
   const calculationProduct = useCallback(async () => {
