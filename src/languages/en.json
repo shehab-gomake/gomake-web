@@ -1910,6 +1910,16 @@
     "edit": "Edit",
     "duplicate": "Duplicate",
     "delete": "Delete"
-
+  },
+  "documentingSettings": {
+    "documentNumbering": "Document numbering",
+    "documentDesign": "Document design",
+    "showDeliveryTime": " Show delivery time",
+    "name" : "Name",
+    "prefix": "Prefix",
+    "value": "Value",
+    "details": "Details",
+    "edit": "Edit",
+    "more": "More"
   }
 }
