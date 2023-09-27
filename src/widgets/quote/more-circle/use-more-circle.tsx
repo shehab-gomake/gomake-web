@@ -61,7 +61,7 @@ const useMoreCircle = ({ quoteItem }) => {
     {
       name: "Delete",
       icon: <DeleteMenuIcon />,
-      onclick: () => null,
+      onclick: () => quoteStateValue.onClickDeleteQouteItem(quoteItem),
     },
   ];
 

@@ -49,6 +49,9 @@ const useQuote = () => {
     openNegotiateRequestModal,
     openAddNewItemModal,
     openDuplicateWithDifferentQTYModal,
+    openDeleteItemModal,
+    onCloseDeleteItemModal,
+    onOpenDeleteItemModal,
     onCloseDuplicateWithDifferentQTY,
     onOpenDuplicateWithDifferentQTY,
     onCloseNewItem,
@@ -370,6 +373,32 @@ const useQuote = () => {
       });
     }
   }, [quoteItemValue, addClientAddressState]);
+  const [qouteItemId, setQuateItemId] = useState();
+  const onClickDeleteQouteItem = (quoteItem) => {
+    onOpenDeleteItemModal();
+    setQuateItemId(quoteItem?.id);
+  };
+  const deleteQuoteItem = useCallback(async () => {
+    const res = await callApi(
+      "DELETE",
+      `/v1/erp-service/quote/delete-quote-item?QuoteItemId=${qouteItemId}`
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.deleteSusuccessfully"),
+        type: "sucess",
+      });
+      onCloseDeleteItemModal();
+      getQuote();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.deletefailed"),
+        type: "error",
+      });
+    }
+  }, [qouteItemId]);
   return {
     tableHeaders,
     tableRowPercent,
@@ -389,6 +418,12 @@ const useQuote = () => {
     addClientAddressState,
     openAddNewItemModal,
     openDuplicateWithDifferentQTYModal,
+    openDeleteItemModal,
+    qouteItemId,
+    onClickDeleteQouteItem,
+    deleteQuoteItem,
+    onCloseDeleteItemModal,
+    onOpenDeleteItemModal,
     onCloseDuplicateWithDifferentQTY,
     onOpenDuplicateWithDifferentQTY,
     onCloseNewItem,

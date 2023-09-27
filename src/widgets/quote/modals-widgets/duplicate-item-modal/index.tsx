@@ -26,6 +26,7 @@ const DuplicateItemModal = () => {
             <GomakeTextInput
               style={clasess.textInputStyle}
               placeholder={t("sales.quote.item")}
+              type="number"
             />
           </div>
           <div style={clasess.btnContainer}>
