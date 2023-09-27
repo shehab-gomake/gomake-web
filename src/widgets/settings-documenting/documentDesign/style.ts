@@ -27,6 +27,12 @@ const useStyle = () => {
                 color: "#ED028C",
                 ...FONT_FAMILY.Lexend(600, 16),
               },
+              subTitleSpanStyle: {
+                fontStyle: "normal",
+                lineHeight: "normal",
+                ...FONT_FAMILY.Lexend(600, 11),
+              },
+            
         };
     }, [theme]);
     return {

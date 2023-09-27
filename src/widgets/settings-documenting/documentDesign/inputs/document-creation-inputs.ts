@@ -29,6 +29,42 @@ const creationDocumetInputs = (state)  => {
     ];
 
 };
+const TitleDefinitionInputs = (state)  => {
+    return [
+        {
+            name: "Business name",
+            label: "documentingDesign.TitleDefinition.BusinessName",
+            type: "text",
+            placeholder: "documentingDesign.TitleDefinition.BusinessName",
+            required: false,
+            parameterKey: "BusinessName",
+            value: state?.BusinessName,
+            isValid: true,
+        },
+        {
+            name: "H.P./authorizedDealer",
+            label: "documentingDesign.TitleDefinition.H.P./authorizedDealer",
+            type: "text",
+            placeholder: "documentingDesign.TitleDefinition.H.P./authorizedDealer",
+            required: false,
+            parameterKey: "H.P./authorizedDealer",
+            value: state?.authorizedDealer,
+            isValid: true,
+        },
+        {
+            name: "Logo Upload",
+            label: "documentingDesign.TitleDefinition.LogoUpload",
+            type: "file",
+            placeholder: "documentingDesign.TitleDefinition.LogoUpload",
+            required: false,
+            parameterKey: "LogoUpload",
+            value: state?.authorizedDealer,
+            isValid: true,
+        },
+       
+    ];
+
+};
 
 
-export {creationDocumetInputs };
+export {creationDocumetInputs , TitleDefinitionInputs };

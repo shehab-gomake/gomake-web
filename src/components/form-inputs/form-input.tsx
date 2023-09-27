@@ -4,6 +4,9 @@ import {useTranslation} from "react-i18next";
 import {useGomakeAxios} from "@/hooks";
 import {useStyle} from "@/components/form-inputs/style";
 import {IFormInput} from "@/components/form-inputs/interfaces";
+import { Button } from "@mui/material";
+import React from "react";
+import { GarlleryIcon } from "../icons/gallery-icon";
 
 const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
     const [options, setOptions] = useState([]);
@@ -12,7 +15,13 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
     const {callApi} = useGomakeAxios();
     const {t} = useTranslation();
     const {classes} = useStyle();
+    const fileInputRef = React.createRef<HTMLInputElement>();
 
+    const handleButtonClick = () => {
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    };
     const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
         changeState(input.parameterKey, e.target.value as string);
     };
@@ -24,6 +33,14 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
     const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
         changeState(input.parameterKey, event.target.checked);
     };
+
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files?.[0];
+        if (selectedFile) {
+          // You can access the selected file here and perform further actions.
+          console.log('Selected file:', selectedFile);
+        }
+      };
 
     useEffect(() => {
         const selectedValue = options?.find(option => option.value === input.value);
@@ -69,7 +86,33 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
                     </div>
                     <div style={classes.input}>
                         {
-                            input.type === 'select' ?
+                                input.type === 'file' ? ( 
+                                <div style={classes.inputContainer} key={input.parameterKey}>
+                                  
+                                    <div style={classes.fileInputStyle}>
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleButtonClick}
+                                        style={{ backgroundColor: '#ED028C' }}
+                                     
+                                    > 
+                                    Upload Logo
+                                    </Button>
+                                    <GarlleryIcon/>
+                                        <input
+                                            ref={fileInputRef}
+                                            placeholder="upload"
+                                            onChange={handleInputChange}
+                                            disabled={!!readonly}
+                                            accept=".pdf, .jpg, .png"
+                                            type="file"
+                                            style={{ display: 'none' }}
+                                        />
+
+                                  
+                                    </div>
+                                </div>
+                                ) :   input.type === 'select' ?
                                 <GoMakeAutoComplate
                                     style={{minWidth: 180, border: 0}}
                                     onChange={selectChange}
@@ -89,7 +132,8 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
                                         placeholder={t(input.placeholder)}
                                         disabled={!!readonly}
                                         value={input.value}
-                                    />
+                                    /> 
+                               
                         }
 
                     </div>

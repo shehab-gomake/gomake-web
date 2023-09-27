@@ -5,16 +5,7 @@ import {useTranslation} from "react-i18next";
 import { creationDocumetInputs } from "../../inputs/document-creation-inputs";
 import { useStyle } from "../../style";
 interface IProps {
-    documentCreation:{
-        doument?: {
-            id?: string;
-            documentType:string;
-        };
-        agent?:{
-            id?: string;
-            agentId?:string;
-        };
-    }
+    documentCreation:any;
     setdocumentCreation: any;
 
 }
@@ -29,16 +20,16 @@ const DocumentCreation = ({documentCreation, setdocumentCreation }: IProps) => {
     return (
         <>
             <div>
-            <Stack direction={'row'}  marginTop={"24px"}>
-                    <span style={classes.subTitleStyle} >{t("documentingDesign.documnetCreation.documentinCreation")}</span>
-            </Stack>
-            <Stack direction={'row'}  marginTop={"24px"} width={"90%"} gap={"30px"} >
+                <Stack direction={'row'}  marginTop={"24px"}>
+                        <span style={classes.subTitleStyle} >{t("documentingDesign.documnetCreation.documentinCreation")}</span>
+                </Stack>
+                <Stack direction={'row'}  marginTop={"24px"} width={"90%"} gap={"30px"} >
 
-                {
-                    creationDocumetInputs(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
-                    <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
-                }
-            </Stack>
+                    {
+                        creationDocumetInputs(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
+                        <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
+                    }
+                </Stack>
             </div>
         </>
     );

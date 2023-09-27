@@ -1926,6 +1926,13 @@
     "documnetCreation" : {
       "documentinCreation" : "Document Creation",
       "docmentType" : "DocumentType"
+    },
+    "TitleDefinition":{
+      "TitleDefinition":"Title definition",
+      "defaultFormat":"default format",
+      "BusinessName" : "Business name",
+      "H.P./authorizedDealer" :"H.P./authorized dealer",
+      "LogoUpload":"LogoUpload"
     }
   }
 }
