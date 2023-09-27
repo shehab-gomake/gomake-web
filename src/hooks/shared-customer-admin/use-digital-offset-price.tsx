@@ -364,7 +364,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setGeneralParameters(newGeneralParameters);
       setSubProducts(newSubProducts2);
     }
-  }, [template]);
+  }, [template, materialsEnumsValues, allMaterials]);
 
   useEffect(() => {
     if (router?.query?.clientTypeId) {
