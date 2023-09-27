@@ -16,32 +16,32 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { customerInputs, customerInputs2 } from "./inputs/customer-inputs";
 import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general-inputs";
 import { Stack } from "@mui/material";
-import { CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useSnackBar } from "@/hooks";
 
 interface IProps {
-  isValidCustomerForm?: (value: any , value1:any , value2:any) => boolean;
+  isValidCustomerForm?: (value: any, value1: any, value2: any) => boolean;
   isValidCustomer: (value: any) => boolean;
-  customerAction?: CUSTOMER_ACTIONS; 
+  customerAction?: CUSTOMER_ACTIONS;
   codeFlag?: boolean;
   typeClient?: string;
-  getAllCustomers?: () => void; 
-  onCustomerAdd?: (value: any) => void; 
-  openModal?: boolean; 
+  getAllCustomers?: () => void;
+  onCustomerAdd?: (value: any) => void;
+  openModal?: boolean;
   modalTitle?: string;
-  onClose?: () => void; 
-  customer?: any; 
-  setCustomer?: (customer: any) => void; 
+  onClose?: () => void;
+  customer?: any;
+  setCustomer?: (customer: any) => void;
   showUpdateButton?: boolean;
   showAddButton?: boolean;
 }
 
-const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerAction ,codeFlag , typeClient, getAllCustomers, onCustomerAdd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
+const CustomerCardWidget = ({ isValidCustomerForm, isValidCustomer, customerAction, codeFlag, typeClient, getAllCustomers, onCustomerAdd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
-  const { editCustomer  } = useEditCustomer();
+  const { editCustomer } = useEditCustomer();
   const { t } = useTranslation();
-  const {alertRequiredFields} = useSnackBar();
+  const { alertRequiredFields } = useSnackBar();
   const theme = createMuiTheme({
     palette: {
       secondary: {
@@ -53,7 +53,7 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
   const tabPanelTextArea = (placeHolder = null, value = null, onchange = null) => {
     return (
       <Stack direction={'column'} >
-      <TextareaAutosize style={classes.textAreaStyle} placeholder={placeHolder} value={value} onChange={onchange}></TextareaAutosize>
+        <TextareaAutosize style={classes.textAreaStyle} placeholder={placeHolder} value={value} onChange={onchange}></TextareaAutosize>
       </Stack>
     );
   };
@@ -93,7 +93,7 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
   const addInitContact = () => {
     var temp = [];
     if (customer && customer.contacts) {
-      temp = [... customer.contacts];
+      temp = [...customer.contacts];
     } else {
       const index = temp.length + 1;
       temp.push({ name: "", index: index });
@@ -104,9 +104,9 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
   const deleteContactForm = (index) => {
     var temp = [...contacts];
     temp = temp.filter(x => x.index != index);
-  
+
     temp.forEach((contact, i) => {
-      if (contact?.index > index ) {
+      if (contact?.index > index) {
         contact.index -= 1;
       }
     });
@@ -125,7 +125,7 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
   const addEmptyAddress = () => {
     var temp = [...addresses];
     const index = temp.length + 1;
-    temp.push({ name: "", index: index , city: " " , street: " "});
+    temp.push({ name: "", index: index, city: " ", street: " " });
     setAddresses(temp);
   }
 
@@ -135,7 +135,7 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
       temp = [...customer.addresses];
     } else {
       const index = temp.length + 1;
-      temp.push({ name: "", index: index , city: " " , street: " "});
+      temp.push({ name: "", index: index, city: " ", street: " " });
     }
     setAddresses(temp);
   }
@@ -197,7 +197,7 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
     );
   };
 
- 
+
 
 
   // add customer button
@@ -206,7 +206,7 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
     const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
     const filteredUsers = users.filter(user => !isNameIndexOnly(user));
     const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
-    const updatedCustomer ={
+    const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
       addresses: filteredAddresses,
@@ -214,12 +214,13 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
       CardTypeId: cardTypeId,
     };
     setCustomer(updatedCustomer);
-    if (isValidCustomer(updatedCustomer) && isValidCustomerForm(filteredContacts , filteredAddresses , filteredUsers)) {
-    addNewCustomer(updatedCustomer).then(x => {
-      onCustomerAdd(x);
-      handleClose();
-    });}
-    else{
+    if (isValidCustomer(updatedCustomer) && isValidCustomerForm(filteredContacts, filteredAddresses, filteredUsers)) {
+      addNewCustomer(updatedCustomer).then(x => {
+        onCustomerAdd(x);
+        handleClose();
+      });
+    }
+    else {
       alertRequiredFields();
     }
   };
@@ -239,12 +240,13 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
       users: filteredUsers,
     };
     setCustomer(updatedCustomer);
-    if (isValidCustomer(updatedCustomer) && isValidCustomerForm(filteredContacts , filteredAddresses , filteredUsers)) {
-    editCustomer(updatedCustomer, setCustomer).then(x => {
-      getAllCustomers();
-      handleClose();
-    });}
-    else{
+    if (isValidCustomer(updatedCustomer) && isValidCustomerForm(filteredContacts, filteredAddresses, filteredUsers)) {
+      editCustomer(updatedCustomer, setCustomer).then(x => {
+        getAllCustomers();
+        handleClose();
+      });
+    }
+    else {
       alertRequiredFields();
     }
   };
@@ -260,6 +262,11 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
     const emptyProps = Object.values(otherProps).every(prop => prop === null || prop === "");
     return emptyProps;
   };
+  const tabLabels = [
+    t('customers.modal.general'),
+    t('customers.modal.contacts'),
+    t('customers.modal.addresses'),
+  ];
 
   return (
     <GoMakeModal
@@ -269,25 +276,68 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
       insideStyle={classes.insideStyle}
     >
       <div style={{ position: "sticky", top: 0, zIndex: 1, backgroundColor: "#FFF" }}>
-      <Stack direction={'row'}>
-            <span style={classes.subTitleStyle} >{typeClient == "C" ? t("customers.modal.customerInfo") : t("suppliers.supplierInfo")}</span>
+        <Stack direction={'row'}>
+          <span style={classes.subTitleStyle} >{typeClient == "C" ? t("customers.modal.customerInfo") : t("suppliers.supplierInfo")}</span>
         </Stack>
         <Stack direction={'row'} marginTop={"16px"} marginBottom={"24px"} width={"90%"} gap={"20px"} >
           {
-            customerInputs(typeClient, codeFlag, customer).map(item =><FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={!!item.readonly} />)
+            customerInputs(typeClient, codeFlag, customer).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={!!item.readonly} />)
           }
         </Stack>
         <Stack direction={'row'} marginBottom={"24px"} width={"90%"} gap={"20px"} >
           {
-            customerInputs2(customer).map(item =><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
+            customerInputs2(customer).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
           }
         </Stack>
         <ThemeProvider theme={theme}>
-          <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary" TabIndicatorProps={{ style: { display: 'none' } }} >
-            <Tab sx={{ backgroundColor: selectedTab === 0 ? '#ED028C' : '#EBECFF', color: selectedTab === 0 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "82px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.general")} />
-            <Tab sx={{ backgroundColor: selectedTab === 1 ? '#ED028C' : '#EBECFF', color: selectedTab === 1 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "90px", maxWidth:"400px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.contacts")} />
-            <Tab sx={{ backgroundColor: selectedTab === 2 ? '#ED028C' : '#EBECFF', color: selectedTab === 2 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "100px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.addresses")} />
-            {typeClient == "C" && <Tab sx={{ backgroundColor: selectedTab === 3 ? '#ED028C' : '#EBECFF', color: selectedTab === 4 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "137px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "7px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.gomakeUsers")} />}
+          <Tabs
+            value={selectedTab}
+            onChange={handleTabChange}
+            textColor="secondary"
+            TabIndicatorProps={{ style: { display: 'none' } }}
+          >
+            {tabLabels.map((label, index) => (
+              <Tab
+                key={index}
+                sx={{
+                  backgroundColor: selectedTab === index ? '#ED028C' : '#EBECFF',
+                  color: selectedTab === index ? '#FFF' : '#3F3F3F',
+                  minHeight: '0px',
+                  height: '40px',
+                  borderRadius: '4px',
+                  padding: '10px',
+                  marginRight: '10px',
+                  textTransform: 'none',
+                  fontStyle: 'normal',
+                  ...FONT_FAMILY.Lexend(500, 16),
+                  lineHeight: 'normal',
+                  width: `${Math.min(label.length * 12, 180)}px`,
+                }}
+                label={label}
+                disabled={typeClient === CLIENT_TYPE.CUSTOMER && index === 3}
+
+              />
+            ))}
+            {typeClient === CLIENT_TYPE.CUSTOMER && (
+              <Tab
+                sx={{
+                  backgroundColor: selectedTab === 3 ? '#ED028C' : '#EBECFF',
+                  color: selectedTab === 3 ? '#FFF' : '#3F3F3F',
+                  minWidth: '0px',
+                  minHeight: '0px',
+                  height: '40px',
+                  borderRadius: '4px',
+                  padding: '10px',
+                  marginRight: '10px',
+                  textTransform: 'none',
+                  fontStyle: 'normal',
+                  ...FONT_FAMILY.Lexend(500, 16),
+                  lineHeight: 'normal',
+                  width: `${Math.min(t('customers.modal.gomakeUsers').length * 12, 180)}px`
+                }}
+                label={t('customers.modal.gomakeUsers')}
+              />
+            )}
           </Tabs>
         </ThemeProvider>
       </div>
@@ -302,10 +352,10 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
       }
       {
         selectedTab == 0 &&
-        <Stack direction={'row'}  marginBottom={"24px"} width={"90%"} gap={"20px"} >
+        <Stack direction={'row'} marginBottom={"24px"} width={"90%"} gap={"20px"} >
 
           {
-            generalInputs2(typeClient,customer).map(item => <Stack direction={'column'}  width={"180px"} >
+            generalInputs2(typeClient, customer).map(item => <Stack direction={'column'} width={"180px"} >
               <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
           }
         </Stack>
@@ -313,12 +363,12 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
       {
         selectedTab == 0 &&
         <div>
-        <Stack direction={'row'}  >
+          <Stack direction={'row'}  >
             <span style={{ color: "var(--second-500, #ED028C)", fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 14), lineHeight: "normal" }}>{t("customers.modal.lastOrderDetails")}</span>
           </Stack>
           <Stack direction={'row'} marginTop={'20px'} marginBottom={'24px'} width={"72%"} gap={"20px"} >
             {
-              lastOrderInputs(customer).map(item => 
+              lastOrderInputs(customer).map(item =>
                 <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
             }
           </Stack>
@@ -341,8 +391,8 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
                 )
               }
             </Stack>
-            <Stack direction={'column'}  marginTop={"52px"} >
-              <a style={{ display: "flex", justifyContent: "center", alignItems: "center" , gap: "5px"}} onClick={addEmptyContact} >
+            <Stack direction={'column'} marginTop={"52px"} >
+              <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "5px" }} onClick={addEmptyContact} >
                 <AddIcon></AddIcon>
                 <button style={classes.buttonsStyle} >{t("customers.buttons.addContact")}</button>
               </a>
@@ -360,8 +410,8 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
                 )
               }
             </Stack>
-            <Stack direction={'column'}  marginTop={"52px"}>
-              <a style={{ display: "flex", justifyContent: "center", alignItems: "center" , gap: "3px" }} onClick={addEmptyAddress} >
+            <Stack direction={'column'} marginTop={"52px"}>
+              <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "3px" }} onClick={addEmptyAddress} >
                 <AddIcon></AddIcon>
                 <button style={classes.buttonsStyle} >{t("customers.buttons.newAddress")}</button>
               </a>
@@ -380,7 +430,7 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
               }
             </Stack>
             <Stack direction={'column'} marginTop={"52px"} >
-              <a style={{ display: "flex", justifyContent: "center", alignItems: "center" , gap: "5px" }} onClick={addEmptyClient} >
+              <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "5px" }} onClick={addEmptyClient} >
                 <AddIcon></AddIcon>
                 <button style={classes.buttonsStyle} >{t("customers.buttons.addUser")}</button>
               </a>
@@ -398,5 +448,3 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
   );
 };
 export { CustomerCardWidget };
-
-
