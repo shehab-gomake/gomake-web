@@ -21,8 +21,8 @@ const DuplicateItemModal = () => {
         onClose={() => quoteStateValue?.onCloseDuplicateWithDifferentQTY()}
         insideStyle={clasess.insideStyle}
       >
-        <div>
-          <div style={{ width: "40%", marginTop: 10 }}>
+        <div style={clasess.mainContainer}>
+          <div style={{ width: "40%", marginTop: 15 }}>
             <GomakeTextInput
               style={clasess.textInputStyle}
               placeholder={t("sales.quote.item")}

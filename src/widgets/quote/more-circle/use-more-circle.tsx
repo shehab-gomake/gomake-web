@@ -27,6 +27,11 @@ const useMoreCircle = ({ quoteItem }) => {
       `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&quoteItem=${quoteItem?.id}`
     );
   };
+  const onClickDuplicateQuoteItem = (quoteItem) => {
+    navigate(
+      `/products/duplicate?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&quoteItem=${quoteItem?.id}`
+    );
+  };
   const menuList = [
     {
       name: "Edits",
@@ -36,7 +41,7 @@ const useMoreCircle = ({ quoteItem }) => {
     {
       name: "Duplicate",
       icon: <DuplicateMenuIcon />,
-      onclick: () => null,
+      onclick: () => onClickDuplicateQuoteItem(quoteItem),
     },
     {
       name: "Duplicate with different QTY",

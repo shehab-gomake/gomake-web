@@ -395,7 +395,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   ]);
 
   useEffect(() => {
-    if (widgetType === EWidgetProductType.EDIT) {
+    if (
+      widgetType === EWidgetProductType.EDIT ||
+      widgetType === EWidgetProductType.DUPLICATE
+    ) {
       getProductQuoteItemById();
     } else {
       getProductById();
@@ -1325,10 +1328,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     return isValid;
   };
   useEffect(() => {
-    if (widgetType === EWidgetProductType.EDIT) {
-      setPricingDefaultValue(template?.workFlows);
+    if (
+      widgetType === EWidgetProductType.EDIT ||
+      widgetType === EWidgetProductType.DUPLICATE
+    ) {
+      // setPricingDefaultValue(template?.workFlows);
+      setUrgentOrder(!!template?.quoteItem?.isUrgentWork);
+      setPrintingNotes(template?.quoteItem?.printingNotes);
     }
-  }, [widgetType]);
+  }, [widgetType, template]);
   const calculationProduct = useCallback(async () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
