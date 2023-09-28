@@ -1112,5 +1112,16 @@
     "update": "ערוך",
     "editRole": "עריכת תפקיד",
     "addRole": "הוספת תפקיד חדש"
+  },
+  "documentingSettings": {
+    "documentNumbering": "ספרור מסמכים",
+    "documentDesign": "עיצוב מסמך",
+    "name" : "שם",
+    "prefix": "קידומת",
+    "value": "ערך",
+    "details": "פירוט",
+    "edit": "עריכה",
+    "editDefinition": "עריכת הגדרה",
+    "update": "עדכון"
   }
 }

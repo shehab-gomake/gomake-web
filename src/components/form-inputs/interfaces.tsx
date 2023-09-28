@@ -11,7 +11,7 @@ export interface IInput {
   disabled?: boolean;
   isValid: boolean;
   regex?: RegExp;
-  inputs: IInput[];
+  inputs?: IInput[];
 }
 export interface IFormInput {
   input: IInput;

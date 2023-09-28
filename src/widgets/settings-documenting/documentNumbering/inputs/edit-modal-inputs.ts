@@ -1,8 +1,9 @@
+import { IDocument } from "../interface/document";
 
-const editDocumentInputs = (state: any) => {
+const editDocumentInputs = (state: IDocument) => {
     return [
         {
-            name: "Name",
+            name: "documentName",
             label: "documentingSettings.name",
             type: "text",
             placeholder: "documentingSettings.name",
@@ -14,7 +15,7 @@ const editDocumentInputs = (state: any) => {
             isValid: true,
         },
         {
-            name: "Value",
+            name: "value",
             label: "documentingSettings.value",
             type: "number",
             placeholder: "documentingSettings.value",
@@ -27,7 +28,7 @@ const editDocumentInputs = (state: any) => {
     ]
 }
 
-const editDocumentInputs1 = (state: any) => {
+const editDocumentInputs1 = (state: IDocument) => {
     return [
         {
             name: "Prefix",

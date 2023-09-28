@@ -29,9 +29,9 @@ const useStyle = () => {
                 paddingLeft: 15,
                 paddingTop: 15,
                 paddingRight: 0,
-                width: "24%",
-                height: "36%"
-                , borderRadius: 16
+                width:"460px",
+                height: "384px",
+                borderRadius: 16
             },
         };
     }, [theme]);

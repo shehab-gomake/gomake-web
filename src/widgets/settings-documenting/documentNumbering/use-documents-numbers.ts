@@ -4,14 +4,13 @@ import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation} from "react-i18next";
 import { openModalState ,documentState , documentsArrayState} from "../state/documents-state";
 import { ShowDocumentData } from "./components/show-document-data";
-import { useStyle } from "./style";
 import { useSnackBar } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { IDocument } from "./interface/document";
 
 const useDocumentNumbers = () => {
     const {alertFaultUpdate, alertSuccessUpdate} = useSnackBar();
     const { callApi } = useGomakeAxios();
-    const { classes } = useStyle();
     const {t} = useTranslation();
     const { primaryColor } = useGomakeTheme();
 
@@ -24,7 +23,7 @@ const useDocumentNumbers = () => {
         t('documentingSettings.edit'),
     ];
 
-    const [documentsNumbers, setDocumentsNumbers] = useRecoilState<[]>(documentsArrayState);
+    const [documentsNumbers, setDocumentsNumbers] = useRecoilState<[][]>(documentsArrayState);
     const getAllDocumentsNumbers = () => {
         const callBackFunction = (data) => {
             if (data.success) {
@@ -32,7 +31,7 @@ const useDocumentNumbers = () => {
                     document.documentName,
                     document.prefix,
                     document.value,
-                    document.nextValue,
+                    document.details,
                     ShowDocumentData(document, primaryColor(500), setOpenModal , setDocument , t('documentingSettings.edit')),
                 ]);
                 setDocumentsNumbers(tableRows);
@@ -41,13 +40,12 @@ const useDocumentNumbers = () => {
         getAllDocumentNumbersApi(callApi, callBackFunction).then();
     }
 
-    const [document, setDocument] = useRecoilState<{}>(documentState);
+    const [document, setDocument] = useRecoilState<IDocument>(documentState);
     const onUpdateDocument = async (document) => {
         const callback = (data) => {
             if (data.success) {
                 alertSuccessUpdate();
                 getAllDocumentsNumbers();
-                // not sure 
                 setOpenModal(!openModal)
             } else {
                 alertFaultUpdate();

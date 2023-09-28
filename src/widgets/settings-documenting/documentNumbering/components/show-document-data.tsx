@@ -1,7 +1,8 @@
 import { PrimaryButton } from "@/components/button/primary-button";
 import { EditIcon } from "@/components/icons/edit-icon";
+import { IDocument } from "../interface/document";
 
-const ShowDocumentData = (document, primaryColor, setOpenModal, setDocument, textEdit) => {
+const ShowDocumentData = (document : IDocument , primaryColor : string, setOpenModal : (value: boolean) => void, setDocument :  (document: IDocument) => void, textEdit : string) => {
 
   const handleEditClick = async () => {
     setDocument(document)
@@ -21,4 +22,3 @@ const ShowDocumentData = (document, primaryColor, setOpenModal, setDocument, tex
   );
 };
 export { ShowDocumentData };
-
