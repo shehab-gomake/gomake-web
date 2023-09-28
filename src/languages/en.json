@@ -1911,6 +1911,7 @@
     "value": "Value",
     "details": "Details",
     "edit": "Edit",
-    "editDefinition": "Edit definition"
+    "editDefinition": "Edit definition",
+    "update": "Update"
   }
 }

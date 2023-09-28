@@ -10,8 +10,8 @@ export const documentState = atom<{}>({
   default: {},
 });
 
-export const editOpenModalState = atom<boolean>({
-  key: "editOpenModalState",
+export const openModalState = atom<boolean>({
+  key: "openModalState",
   default: false,
 });
 

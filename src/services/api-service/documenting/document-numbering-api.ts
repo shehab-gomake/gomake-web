@@ -12,4 +12,4 @@ const getAllDocumentNumbersApi: ICallAndSetData = async (callApi, setState) => {
 const updateDocumentNumber: ICallAndSetData = async (callApi, setState, document) => {
     return  await getSetApiData(callApi, EHttpMethod.POST, UPDATE_DOCUMENT_NUMBER_URL, setState, document);
 }
-export {getAllDocumentNumbersApi};
+export {getAllDocumentNumbersApi , updateDocumentNumber};

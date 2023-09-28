@@ -1,9 +1,9 @@
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useEffect } from "react";
-import { useDocuments } from "../../use-documents-numbers";
+import { useDocumentNumbers } from "../../use-documents-numbers";
 
 const NumberingTable = () => {
-    const { getAllDocumentsNumbers , documentsNumbers , tableHeaders} = useDocuments();
+    const { getAllDocumentsNumbers , documentsNumbers , tableHeaders} = useDocumentNumbers();
     useEffect(() => {
         getAllDocumentsNumbers()
       }, []);
