@@ -67,6 +67,13 @@ const useSnackBar = () => {
             type: "success",
         })
     }
+    const alertRequiredFields = () => {
+        setSnackbarStateValue({
+            state: true,
+            message: t("modal.RequiredFields"),
+            type: "error",
+        })
+    }
 
 
     return {
@@ -79,7 +86,8 @@ const useSnackBar = () => {
         alertSuccessUpdate,
         alertSuccessAdded,
         alertSuccessDelete,
-        alertFaultDelete
+        alertFaultDelete,
+        alertRequiredFields
     };
 };
 

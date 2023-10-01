@@ -14,8 +14,9 @@ import {
   ChooseShapeModal,
   MakeShapeModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
+import { EWidgetProductType } from "./enums";
 
-const PriceListPageWidget = () => {
+const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
   const {
     t,
@@ -32,6 +33,7 @@ const PriceListPageWidget = () => {
     renderOptions,
     checkWhatRenderArray,
     navigateForRouter,
+    updateQuoteItem,
     setUrgentOrder,
     setPrintingNotes,
     setGraphicNotes,
@@ -52,7 +54,7 @@ const PriceListPageWidget = () => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
-  } = useDigitalOffsetPrice({ clasess });
+  } = useDigitalOffsetPrice({ clasess, widgetType });
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
   const onChangeCategoryData = (actionId, categoryId, value) => {
@@ -213,12 +215,22 @@ const PriceListPageWidget = () => {
               </div>
             </div>
             <div style={{ width: 330 }}>
-              <GomakePrimaryButton
-                style={clasess.addOrderBtn}
-                onClick={navigateForRouter}
-              >
-                {t("products.offsetPrice.admin.addOrder")}
-              </GomakePrimaryButton>
+              {widgetType === EWidgetProductType.EDIT ? (
+                <GomakePrimaryButton
+                  style={clasess.addOrderBtn}
+                  onClick={updateQuoteItem}
+                >
+                  {t("materials.buttons.edit")}
+                </GomakePrimaryButton>
+              ) : (
+                <GomakePrimaryButton
+                  style={clasess.addOrderBtn}
+                  onClick={navigateForRouter}
+                >
+                  {t("products.offsetPrice.admin.addOrder")}
+                </GomakePrimaryButton>
+              )}
+
               <div style={clasess.errorMsgStyle}>{errorMsg}</div>
               <div style={clasess.noVatStyle}>
                 {t("products.offsetPrice.admin.dontVAT")}

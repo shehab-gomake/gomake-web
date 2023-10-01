@@ -90,7 +90,7 @@ const generalInputs2 = (typeClient , state) => {
             label: "customers.modal.agent",
             type: "select",
             placeholder: "customers.modal.agent",
-            required: true,
+            required: false,
             parameterKey: "agentId",
             options: [],
             optionsUrl: "/v1/employee/get-all-agents",

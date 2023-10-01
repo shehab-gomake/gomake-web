@@ -6,7 +6,7 @@ const contactInputs1 = (state)  => {
             label: "customers.modal.firstName",
             type: "text",
             placeholder: "customers.modal.firstName",
-            required: false,
+            required: true,
             parameterKey: "firstName",
             options: [],
             value: state?.firstName,

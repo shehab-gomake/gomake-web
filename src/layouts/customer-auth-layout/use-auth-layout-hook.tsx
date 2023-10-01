@@ -101,7 +101,7 @@ const useAuthLayoutHook = () => {
         path: "/customers",
         isList: true,
         list: [
-          {
+          { 
             key: "customers",
             title: "tabs.customers",
             path: "/customers",

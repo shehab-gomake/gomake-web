@@ -38,7 +38,7 @@ const ContactForm = ({ contact, onDelete, setContact }: IProps) => {
         <div >
             <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap={"20px"}  >
                 {
-                    contactInputs1(contact).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
+                    contactInputs1(contact).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={false} />)
                 }
             </Stack>
             <Stack direction={'row'} marginBottom={"24px"} gap={"20px"}>
@@ -47,7 +47,7 @@ const ContactForm = ({ contact, onDelete, setContact }: IProps) => {
                 }
             </Stack>
             <Stack direction={'row'} >
-                <a style={{ display: "flex", justifyContent: 'flex-start' }} onClick={() => onDelete(contact.index)} >
+                <a style={{ display: "flex", justifyContent: 'flex-start', gap: "7px" }} onClick={() => onDelete(contact.index)} >
                     <RemoveIcon></RemoveIcon>
                     <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
                 </a>

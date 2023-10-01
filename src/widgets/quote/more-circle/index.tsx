@@ -3,13 +3,12 @@ import { MoreCircleIcon } from "@/icons";
 import { GoMakeMenu } from "@/components";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
-import { AddNegotiateRequestModal } from "../modals-widgets/add-negotiate-request-modal";
-import { DuplicateItemModal } from "../modals-widgets/duplicate-item-modal";
 
-const MoreMenuWidget = () => {
+const MoreMenuWidget = ({ quoteItem }) => {
   const { clasess } = useStyle();
-  const { open, anchorEl, menuList, handleClose, handleClick } =
-    useMoreCircle();
+  const { open, anchorEl, menuList, handleClose, handleClick } = useMoreCircle({
+    quoteItem,
+  });
   return (
     <>
       <IconButton onClick={handleClick}>
