@@ -11,7 +11,6 @@ const useStyle = () => {
         lineHeight: 'normal',
         border: "none",
         background: "#FFF",
-        marginLeft: "7px",
         ...FONT_FAMILY.Lexend(500, 14),
       },
     };

@@ -43,7 +43,7 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
                 }
             </Stack>
             <Stack direction={'row'} >
-                <a style={{ display: "flex", justifyContent: 'flex-start' }} onClick={() => onDelete(user.index)} >
+                <a style={{ display: "flex", justifyContent: 'flex-start', gap: "7px" }} onClick={() => onDelete(user.index)} >
                     <RemoveIcon></RemoveIcon>
                     <button style={clasess.buttonsStyle} >{t("customers.buttons.remove")}</button>
                 </a>
