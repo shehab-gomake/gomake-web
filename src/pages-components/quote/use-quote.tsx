@@ -399,6 +399,39 @@ const useQuote = () => {
       });
     }
   }, [qouteItemId]);
+  const onClickDuplicateWithDifferentQTY = (quoteItem) => {
+    onOpenDuplicateWithDifferentQTY();
+    setQuateItemId(quoteItem?.id);
+  };
+  const [amountVlue,setAmountValue]=useState()
+
+  console.log("qouteItemId",qouteItemId)
+  const duplicateQuoteItemWithAnotherQuantity = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/erp-service/quote/duplicate-quote-with-another-quantity`,
+      {
+        quoteItemId: qouteItemId,
+        amount: parseInt(amountVlue),
+       
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+      onCloseDeleteItemModal();
+      getQuote();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedfailed"),
+        type: "error",
+      });
+    }
+  }, [qouteItemId,amountVlue]);
   return {
     tableHeaders,
     tableRowPercent,
@@ -460,6 +493,9 @@ const useQuote = () => {
     onChangeUpdateClientAddress,
     getCalculateQuoteItem,
     getCalculateQuote,
+    setAmountValue,
+    duplicateQuoteItemWithAnotherQuantity,
+    onClickDuplicateWithDifferentQTY,
     t,
   };
 };

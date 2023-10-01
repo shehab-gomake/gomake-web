@@ -89,6 +89,9 @@ const QuotePageWidget = () => {
     onChangeUpdateClientAddress,
     getCalculateQuoteItem,
     getCalculateQuote,
+    setAmountValue,
+    duplicateQuoteItemWithAnotherQuantity,
+    onClickDuplicateWithDifferentQTY,
     t,
   } = useQuote();
   useEffect(() => {
@@ -153,6 +156,9 @@ const QuotePageWidget = () => {
       onChangeUpdateClientAddress,
       getCalculateQuoteItem,
       getCalculateQuote,
+      setAmountValue,
+      duplicateQuoteItemWithAnotherQuantity,
+      onClickDuplicateWithDifferentQTY,
       t,
     });
   }, [
@@ -216,6 +222,9 @@ const QuotePageWidget = () => {
     onChangeUpdateClientAddress,
     getCalculateQuoteItem,
     getCalculateQuote,
+    setAmountValue,
+    duplicateQuoteItemWithAnotherQuantity,
+    onClickDuplicateWithDifferentQTY,
     t,
   ]);
   return (
