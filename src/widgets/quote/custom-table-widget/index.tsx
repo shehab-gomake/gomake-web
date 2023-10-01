@@ -1,4 +1,4 @@
-import { GoMakeAutoComplate } from "@/components";
+import { GoMakeDeleteModal } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { HeaderTable } from "./sub-widget/header";
@@ -6,6 +6,8 @@ import { RowCustomTable } from "./sub-widget/row";
 import { useCustomTable } from "./use-custom-table";
 import { AddNegotiateRequestModal } from "../modals-widgets/add-negotiate-request-modal";
 import { DuplicateItemModal } from "../modals-widgets/duplicate-item-modal";
+import { useRecoilValue } from "recoil";
+import { quoteState } from "@/pages-components/quote/store/quote";
 interface IProps {
   headerTitle?: string;
   tableHeaders?: any;
@@ -27,6 +29,8 @@ const CustomTableWidget = ({
   const { items, changeItems } = useCustomTable({
     data,
   });
+  const quoteStateValue = useRecoilValue<any>(quoteState);
+
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.tableHeaderContainer}>
@@ -73,6 +77,14 @@ const CustomTableWidget = ({
       </div>
       <AddNegotiateRequestModal />
       <DuplicateItemModal />
+      <GoMakeDeleteModal
+        title="Delete Item"
+        yesBtn={t("materials.buttons.delete")}
+        openModal={quoteStateValue.openDeleteItemModal}
+        onClose={quoteStateValue.onCloseDeleteItemModal}
+        subTitle="Are you sure to delete this item?"
+        onClickDelete={quoteStateValue.deleteQuoteItem}
+      />
     </div>
   );
 };

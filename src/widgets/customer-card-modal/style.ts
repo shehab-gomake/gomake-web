@@ -62,7 +62,6 @@ const useStyle = () => {
         letterSpacing: "-0.14px",
         border: "none",
         background: "#FFF",
-        marginLeft: "7px",
         ...FONT_FAMILY.Lexend(500, 14),
       },
       tabStyle: {

@@ -26,6 +26,8 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
     ]
   ;
 
+
+
   const getCustomersRows = useCallback(()=> {
     return allCustomers?.map(customer => [customer?.customerCode, customer?.name, customer?.email, customer?.phone, customer?.status, customer?.hashTag])
   }, [allCustomers])
@@ -190,6 +192,29 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
     setPageNumber(1);
   }, []);
 
+const isValidCustomer = (customer ,  filteredContacts , filteredAddresses , filteredUsers) => {
+  if (!(customer && customer.name && customer.clientTypeId)) {
+    return false;
+  }
+
+  for (const contact of filteredContacts) {
+    if (!contact.firstName) {
+      return false;
+    }
+  }
+  for (const address of filteredAddresses) {
+    if (!address.address1 ) {
+      return false;
+    }
+  }
+  for (const user of filteredUsers) {
+    if (!user.userName && !user.password ) {
+      return false;
+    }
+  }
+  return true;
+};
+
   return {
     getAgentCategories,
     getClientTypesCategories,
@@ -222,7 +247,8 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
     isActive ,
     pageSize ,
     filters, 
-    clientType
+    clientType,
+    isValidCustomer
   };
 };
 export { useCustomers };
