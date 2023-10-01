@@ -783,6 +783,7 @@
       "clean": "נקה",
       "delete": "מחק",
       "addContact": "הוסף איש קשר חדש",
+      "addUser": "הוסף משתמש חדש",
       "newAddress": "הוסף כתובת חדשה",
       "newBudget": "הוסף תקציב חדש",
       "newClient": "לקוח חדש",
@@ -800,13 +801,14 @@
       "editTitle": "ערוך לקוח",
       "customerInfo": "פרטי לקוח",
       "code": "קוד*",
-      "CPAcode": "קוד CPA",
+      "CPAcode": "קוד הנה\"ח",
       "clientName": "שם לקוח",
-      "vatNO": "מספר ער\"ט",
+      "vatNO": "מספר עסק",
       "amountBalance": "יתרה כספית",
       "shippingCertificate": "תעודת משלוח",
       "openInvitations": "הזמנות פתוחות",
       "currency": "מטבע",
+      "clientType": "סוג לקוח",
       "categories": "קטגוריות",
       "general": "כללי",
       "contacts": "אנשי קשר",
@@ -824,8 +826,7 @@
       "email": "דוא\"ל",
       "fax": "פקס",
       "active": "פעיל",
-      "anOccasionalCustomer": "לקוח אוקזסיונלי",
-      "sendingPreparedmail": "שלח מייל מוכן",
+      "anOccasionalCustomer": "לקוח מזדמן",
       "typeOfDelivery": "סוג המשלוח",
       "responsibleGraphicArtist": "גרפיקאי מאחראי",
       "closingOrder": "סגירת הזמנה",
@@ -840,7 +841,7 @@
       "orderClosingNotes": "הערות לסגירת הזמנה",
       "firstName": "שם פרטי",
       "lastName": "שם משפחה",
-      "title": "תפקיד",
+      "title": "כותרת",
       "role": "תפקיד",
       "defaultInDocument": "ברירת מחדל במסמך",
       "addressId": "מזהה כתובת",
@@ -919,7 +920,8 @@
       "created": "נוצר",
       "updated": "עודכן",
       "add": "הוסף",
-      "update": "עדכן"
+      "update": "עדכן",
+      "language": "שפת המערכת"
     },
     "title": "לקוחות",
     "selectCustomer": "בחר לקוח",
@@ -939,7 +941,8 @@
   "suppliers": {
     "buttons": {
       "addSupplier": "הוסף ספק",
-      "clean": "נקה"
+      "clean": "נקה",
+      "updateChanges": "עדכן שינויים"
     },
     "title": "ספקים",
     "selectStatus": "בחר סטטוס",
@@ -952,7 +955,10 @@
     "status": "סטטוס",
     "hashtag": "עוד",
     "addModalTitle": "הוסף ספק",
-    "editModalTitle": "ערוך ספק"
+    "editModalTitle": "ערוך ספק",
+    "supplierInfo": "פרטי ספק",
+    "supplierType": "סוג ספק",
+    "supplierName": "שם ספק"
   },
   "employees": {
     "buttons": {
