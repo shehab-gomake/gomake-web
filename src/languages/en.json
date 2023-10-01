@@ -90,7 +90,8 @@
     "updatedfailed": "Updated failed",
     "deleteSusuccessfully": "Deleted successfully",
     "deletefailed": "Deleted failed",
-    "formNotValid": "Form not valid"
+    "formNotValid": "Form not valid",
+    "RequiredFields": "Missing required fields"
   },
   "home": {
     "admin": {
