@@ -18,7 +18,7 @@ export default function Home() {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const [pageNumber, setPageNumber] = useState(1);
-  const { isValidCustomerForm , isValidCustomer, ClientTypeId, agentId, isActive, pageSize, filters, clientType, getAgentCategories, getClientTypesCategories, tableHeaders, updatedStatus, getCustomersRows, setAllCustomers, allCustomers, agentsCategories, clientTypesCategories, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers(CLIENT_TYPE.CUSTOMER, pageNumber, setPageNumber);
+  const { isValidCustomer , ClientTypeId, agentId, isActive, pageSize, filters, clientType, getAgentCategories, getClientTypesCategories, tableHeaders, updatedStatus, getCustomersRows, setAllCustomers, allCustomers, agentsCategories, clientTypesCategories, statuses, onChangeCustomer, onChangeAgent, onChangeClientType, onChangeStatus, handleClean, name, agentName, valClientType, valStatus, pagesCount, customerForEdit, setCustomerForEdit, showCustomerModal, setShowCustomerModal, getCustomerForEdit, getAllCustomers } = useCustomers(CLIENT_TYPE.CUSTOMER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
   const onCustomerAdd = (customer) => {
@@ -40,7 +40,6 @@ export default function Home() {
       <div style={classes.sameRow}>
         <HeaderTitle marginBottom="20px" title={t("customers.title")} />
         <AddCustomerButton
-          isValidCustomerForm={isValidCustomerForm}
           isValidCustomer={isValidCustomer}
           onCustomerAdd={onCustomerAdd}
           typeClient={CLIENT_TYPE.CUSTOMER}></AddCustomerButton>
@@ -63,8 +62,7 @@ export default function Home() {
       <Stack spacing={3}>
         <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={getCustomersRows()} headers={tableHeaders}></PrimaryTable>
         <CustomerCardWidget
-         isValidCustomerForm={isValidCustomerForm}
-          isValidCustomer={isValidCustomer}
+         isValidCustomer={isValidCustomer}
           customerAction={CUSTOMER_ACTIONS.Edit}
           codeFlag={true}
           typeClient={CLIENT_TYPE.CUSTOMER}
