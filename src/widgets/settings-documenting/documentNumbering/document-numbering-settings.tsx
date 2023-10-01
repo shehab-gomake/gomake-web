@@ -41,7 +41,7 @@ const DocumentNumbering = () => {
                             }
                         </Stack>
                         <Stack direction={'row'} display={"Flex"} justifyContent={"flex-end"} paddingTop={7}>
-                            <SecondaryButton onClick={() => onUpdateDocument(document)} variant="contained">{t('documentingSettings.update')}</SecondaryButton>
+                            <SecondaryButton style={classes.btnStyle} onClick={() => onUpdateDocument(document)} variant="contained">{t('documentingSettings.update')}</SecondaryButton>
                         </Stack>
                     </Stack>
                 </GoMakeModal>

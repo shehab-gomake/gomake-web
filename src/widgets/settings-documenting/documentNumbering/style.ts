@@ -33,6 +33,10 @@ const useStyle = () => {
                 height: "384px",
                 borderRadius: 16
             },
+            btnStyle: {
+                display: "flex",
+                position:"fixed" as "fixed",
+              },
         };
     }, [theme]);
     return {
