@@ -213,7 +213,7 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
       CardTypeId: cardTypeId,
     };
     setCustomer(updatedCustomer);
-    if (isValidCustomer(updatedCustomer) && isValidCustomerForm(filteredContacts , filteredAddresses , filteredUsers)) {
+    if (isValidCustomer(updatedCustomer,filteredContacts , filteredAddresses , filteredUsers)) {
     addNewCustomer(updatedCustomer).then(x => {
       onCustomerAdd(x);
       handleClose();
@@ -238,7 +238,7 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
       users: filteredUsers,
     };
     setCustomer(updatedCustomer);
-    if (isValidCustomer(updatedCustomer) && isValidCustomerForm(filteredContacts , filteredAddresses , filteredUsers)) {
+    if (isValidCustomer(updatedCustomer,filteredContacts , filteredAddresses , filteredUsers)) {
     editCustomer(updatedCustomer, setCustomer).then(x => {
       getAllCustomers();
       handleClose();
