@@ -20,9 +20,8 @@ import { CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useSnackBar } from "@/hooks";
 
 interface IProps {
-  isValidCustomerForm?: (value: any , value1:any , value2:any) => boolean;
-  isValidCustomer: (value: any) => boolean;
-  customerAction?: CUSTOMER_ACTIONS; 
+  isValidCustomer?: (value: any , value1: any, value2: any, value3: any) => boolean;
+  customerAction?: CUSTOMER_ACTIONS;
   codeFlag?: boolean;
   typeClient?: string;
   getAllCustomers?: () => void; 
@@ -36,7 +35,7 @@ interface IProps {
   showAddButton?: boolean;
 }
 
-const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerAction ,codeFlag , typeClient, getAllCustomers, onCustomerAdd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
+const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCustomers, onCustomerAdd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer  } = useEditCustomer();
@@ -214,12 +213,13 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
       CardTypeId: cardTypeId,
     };
     setCustomer(updatedCustomer);
-    if (isValidCustomer(updatedCustomer) && isValidCustomerForm(filteredContacts , filteredAddresses , filteredUsers)) {
-    addNewCustomer(updatedCustomer).then(x => {
-      onCustomerAdd(x);
-      handleClose();
-    });}
-    else{
+    if (isValidCustomer(updatedCustomer , filteredContacts, filteredAddresses, filteredUsers)) {
+      addNewCustomer(updatedCustomer).then(x => {
+        onCustomerAdd(x);
+        handleClose();
+      });
+    }
+    else {
       alertRequiredFields();
     }
   };
@@ -239,12 +239,13 @@ const CustomerCardWidget = ({ isValidCustomerForm ,isValidCustomer ,customerActi
       users: filteredUsers,
     };
     setCustomer(updatedCustomer);
-    if (isValidCustomer(updatedCustomer) && isValidCustomerForm(filteredContacts , filteredAddresses , filteredUsers)) {
-    editCustomer(updatedCustomer, setCustomer).then(x => {
-      getAllCustomers();
-      handleClose();
-    });}
-    else{
+    if (isValidCustomer(updatedCustomer , filteredContacts, filteredAddresses, filteredUsers)) {
+      editCustomer(updatedCustomer, setCustomer).then(x => {
+        getAllCustomers();
+        handleClose();
+      });
+    }
+    else {
       alertRequiredFields();
     }
   };

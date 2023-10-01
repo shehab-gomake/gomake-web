@@ -5,21 +5,19 @@ import { AddButton } from "@/components/button/add-button";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "../enums";
 
 interface IProps {
-  isValidCustomerForm?: (value: any , value1:any , value2:any) => boolean;
-  isValidCustomer: (value: any) => boolean;
+  isValidCustomer?: ( value: any , value1:any , value2:any , value3:any) => boolean;
   onCustomerAdd: (customer: any) => void;
   typeClient: CLIENT_TYPE;
 } 
 
-const AddCustomerButton = ({ isValidCustomerForm , isValidCustomer ,onCustomerAdd , typeClient}: IProps) => {
+const AddCustomerButton = ({ isValidCustomer ,onCustomerAdd , typeClient}: IProps) => {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
   const [customer, setCustomer] = useState([]);
 
   return (
     <>
-      <CustomerCardWidget isValidCustomerForm={isValidCustomerForm} isValidCustomer={isValidCustomer} customerAction={CUSTOMER_ACTIONS.Add} codeFlag={false} typeClient={typeClient} onCustomerAdd={onCustomerAdd} openModal={open} modalTitle={typeClient=="C" ? t("customers.modal.addTitle") : t("suppliers.addModalTitle") } onClose={() => setOpen(false)} showAddButton={true} customer={customer} setCustomer={setCustomer} />
-      
+      <CustomerCardWidget isValidCustomer={isValidCustomer}  customerAction={CUSTOMER_ACTIONS.Add} codeFlag={false} typeClient={typeClient} onCustomerAdd={onCustomerAdd} openModal={open} modalTitle={typeClient=="C" ? t("customers.modal.addTitle") : t("suppliers.addModalTitle") } onClose={() => setOpen(false)} showAddButton={true} customer={customer} setCustomer={setCustomer} /> 
       <AddButton onClick={() => setOpen(!open)} label={typeClient=="C" ? t("customers.buttons.addCustomer") : t("suppliers.buttons.addSupplier")}></AddButton>
     </>
   );

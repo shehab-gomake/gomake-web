@@ -192,13 +192,11 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
     setPageNumber(1);
   }, []);
 
+const isValidCustomer = (customer ,  filteredContacts , filteredAddresses , filteredUsers) => {
+  if (!(customer && customer.name && customer.clientTypeId)) {
+    return false;
+  }
 
-  const isValidCustomer = (customer) => {
-    return !!customer.name && !!customer.clientTypeId
-
-};
-
-const isValidCustomerForm = (filteredContacts , filteredAddresses , filteredUsers) => {
   for (const contact of filteredContacts) {
     if (!contact.firstName) {
       return false;
@@ -250,8 +248,7 @@ const isValidCustomerForm = (filteredContacts , filteredAddresses , filteredUser
     pageSize ,
     filters, 
     clientType,
-    isValidCustomer,
-    isValidCustomerForm
+    isValidCustomer
   };
 };
 export { useCustomers };
