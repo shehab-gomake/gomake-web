@@ -51,7 +51,7 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
 
   const tabPanelTextArea = (placeHolder = null, value = null, onchange = null) => {
     return (
-      <Stack direction={'column'} >
+      <Stack direction={'column'} width={"33.33%"} >
         <TextareaAutosize style={classes.textAreaStyle} placeholder={placeHolder} value={value} onChange={onchange}></TextareaAutosize>
       </Stack>
     );

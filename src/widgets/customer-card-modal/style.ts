@@ -99,7 +99,6 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(400, 12),
       },
       autoButtonStyle: {
-        height: "40px",
         padding: "10px 32px",
         borderRadius: "4px",
         background: "var(--second-500, #ED028C)",
@@ -127,7 +126,6 @@ const useStyle = () => {
       },
       textAreaStyle: {
         display: "flex",
-        width: "308px",
         height: "80px",
         padding: "5px 7px",
         alignItems: "flex-start",
