@@ -256,7 +256,7 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
   // in order to avoid sending an empty object that include just name & index
   const isNameIndexOnly = (dataObject) => {
     const { name, index, ...otherProps } = dataObject;
-    const emptyProps = Object.values(otherProps).every(prop => prop === null || prop === "");
+    const emptyProps = Object.values(otherProps).every(prop => prop === null || prop === "" || prop === " ");
     return emptyProps;
   };
   const tabLabels = [
