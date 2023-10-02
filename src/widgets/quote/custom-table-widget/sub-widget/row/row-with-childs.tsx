@@ -1,8 +1,9 @@
 import { RowInside } from "./row-inside";
+import { RowInsideWithChilds } from "./row-inside-with-childs";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 
-const RowCustomTable = ({
+const RowWithChildsTable = ({
   row,
   tablePercent,
   isCheckbox,
@@ -17,7 +18,7 @@ const RowCustomTable = ({
         if (entry[0] !== "quoteItemId" && entry[0] !== "recordID" && entry[0] !== "childsQuoteItems") {
           return (
             <>
-            <RowInside
+            <RowInsideWithChilds
               index={index}
               tablePercent={tablePercent}
               clasess={clasess}
@@ -27,6 +28,7 @@ const RowCustomTable = ({
               changeItems={changeItems}
               indexTable={indexTable}
             />
+           
             
             </>
           );
@@ -36,4 +38,4 @@ const RowCustomTable = ({
   );
 };
 
-export { RowCustomTable };
+export { RowWithChildsTable };

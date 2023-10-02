@@ -8,6 +8,7 @@ import { AddNegotiateRequestModal } from "../modals-widgets/add-negotiate-reques
 import { DuplicateItemModal } from "../modals-widgets/duplicate-item-modal";
 import { useRecoilValue } from "recoil";
 import { quoteState } from "@/pages-components/quote/store/quote";
+import { RowWithChildsTable } from "./sub-widget/row/row-with-childs";
 interface IProps {
   headerTitle?: string;
   tableHeaders?: any;
@@ -61,8 +62,23 @@ const CustomTableWidget = ({
       </div>
       <div style={clasess.row}>
         {items?.map((row: any, index: number) => {
+          console?.log("rowrowrow",row)
           return (
-            <div key={`body_row${index}`} style={{ width: "100%" }}>
+            <>
+            {
+              row?.childsQuoteItems!= null && row?.childsQuoteItems.length > 0?
+              <div key={`body_row${index}`} style={{ width: "100%" }}>
+              <RowWithChildsTable
+                row={row}
+                tablePercent={tableRowPercent}
+                isCheckbox={isCheckbox}
+                changeItems={changeItems}
+                indexTable={index}
+              />
+              {index != items?.length - 1 ? <div style={clasess.line} /> : null}
+            </div> 
+            :
+              <div key={`body_row${index}`} style={{ width: "100%" }}>
               <RowCustomTable
                 row={row}
                 tablePercent={tableRowPercent}
@@ -71,7 +87,12 @@ const CustomTableWidget = ({
                 indexTable={index}
               />
               {index != items?.length - 1 ? <div style={clasess.line} /> : null}
-            </div>
+            </div> 
+            }
+            
+            </>
+           
+          
           );
         })}
       </div>

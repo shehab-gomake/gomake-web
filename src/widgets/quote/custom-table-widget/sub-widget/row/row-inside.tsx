@@ -42,7 +42,7 @@ const RowInside = ({
         <div key={`row_table_${index}`} style={clasess.rowItem}>
           <GomakeTextInput
             style={clasess.textInputWithoutStyle}
-            value={entry[1]}
+            value={entry[1].toFixed(2)}
             onChange={(e: any) => {
               changeItems(indexTable, entry[0], e.target.value);
             }}
