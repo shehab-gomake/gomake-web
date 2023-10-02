@@ -13,6 +13,10 @@ const useStyle = () => {
         background: "#FFF",
         ...FONT_FAMILY.Lexend(500, 14),
       },
+      changePassBtnStyle: {
+        width: "180px",
+        height: "40px"
+      },
     };
   }, []);
   return {

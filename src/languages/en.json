@@ -1616,7 +1616,8 @@
       "edit": "Edit",
       "duplicate": "Duplicate",
       "addAndCreate": "Add budget and create invoice",
-      "addBudget": "Add budget"
+      "addBudget": "Add budget",
+      "changePass" : "Change password"
     },
     "modal": {
       "addTitle": "Add new customer",
