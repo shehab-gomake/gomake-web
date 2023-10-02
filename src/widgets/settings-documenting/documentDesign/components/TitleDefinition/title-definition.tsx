@@ -24,20 +24,17 @@ const TitleDefinition = ({documentCreation, setdocumentCreation }: IProps) => {
                 <Stack direction={'row'} marginBottom={"24px"} marginTop={"24px"}>
                     <span style={classes.subTitleStyle} >{t("documentingDesign.TitleDefinition.TitleDefinition")}</span>
                 </Stack>
-                <Stack direction={'row'} marginBottom={"24px"} marginTop={"24px"}>
-                    <span style={classes.subTitleSpanStyle} >{t("documentingDesign.TitleDefinition.defaultFormat")}</span>
-                </Stack>
-                <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"30px"} >
+                <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"}  >
                 {
-                    TitleDefinitionInputs(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
-                    <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
+                    TitleDefinitionInputs(documentCreation).map(item => <FormInput  input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
                     
                 }
                 </Stack>
-                <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"30px"} >
+                
+                <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
                     TitleDefinitionCustomLogoInputs(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
-                    <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
+                    <FormInput  input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }
                 </Stack>

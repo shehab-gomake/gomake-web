@@ -3,13 +3,13 @@ import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { ITab } from "@/components/tabs/interface";
 import { DocumentNumbering } from "./documentNumbering/document-numbering-settings";
 import { EmptyComponent } from "@/widgets/settings/empty-component";
-import { DocumentDesign } from "./documentDesign/document-design-settings";
+import { DocumentDesignSetting } from "./documentDesign/document-design-settings";
 
 const SettingsDocumentingWidget = () => {
     const { t } = useTranslation();
     const tabs: ITab[] = [
         { title: t("documentingSettings.documentNumbering"), component: <DocumentNumbering/> },
-        { title: t("documentingSettings.documentDesign"), component: <DocumentDesign/> }
+        { title: t("documentingSettings.documentDesign"), component: <DocumentDesignSetting /> }
     ];
     return (
         <div>

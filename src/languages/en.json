@@ -1975,6 +1975,10 @@
       "DisplayaninitialQRCode" : "Display an initial QR Code for the entire order within the production PDF",
       "displayall":"display all types with equal amounts in the PDF of the PACA",
       "ShowStarted":"Show started and finished QRs in the production PDF"
+    },
+    "IframeDocument":{
+      "Document" : "Document"
+
     }
   }
 }

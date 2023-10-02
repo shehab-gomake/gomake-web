@@ -53,7 +53,6 @@ const TitleDefinitionInputs = (state)  => {
         },
         {
             name: "Logo Upload",
-            label: "documentingDesign.TitleDefinition.LogoUpload",
             type: "file",
             placeholder: "documentingDesign.TitleDefinition.LogoUpload",
             required: false,
@@ -150,7 +149,7 @@ const AdditionalOptionsInputs = (state)  => {
         {
             name: "View salesperson",
             label: "documentingDesign.Additional.Viewsalesperson",
-            type: "switch2",
+            type: "switch",
             placeholder: "documentingDesign.Additional.Viewsalesperson",
             required: false,
             parameterKey: "Viewsalesperson",
@@ -160,7 +159,7 @@ const AdditionalOptionsInputs = (state)  => {
         {
             name: "View doc producer",
             label: "documentingDesign.Additional.Viewdocproducer",
-            type: "switch2",
+            type: "switch",
             placeholder: "documentingDesign.Additional.Viewdocproducer",
             required: false,
             parameterKey: "Viewdocproducer",
@@ -170,7 +169,7 @@ const AdditionalOptionsInputs = (state)  => {
         {
             name: "Show payment date",
             label: "documentingDesign.Additional.Showpaymentdate",
-            type: "switch2",
+            type: "switch",
             placeholder: "documentingDesign.Additional.Showpaymentdate",
             required: false,
             parameterKey: "Showpaymentdate",
@@ -180,7 +179,7 @@ const AdditionalOptionsInputs = (state)  => {
         {
             name: "Show customer type",
             label: "documentingDesign.Additional.Showcustomertype",
-            type: "switch2",
+            type: "switch",
             placeholder: "documentingDesign.Additional.Showcustomertype",
             required: false,
             parameterKey: "Showcustomertype",
@@ -200,7 +199,7 @@ const AdditionalOptionsInputs2 = (state)  => {
         {
             name: "Show customer code",
             label: "documentingDesign.Additional.Showcustomercode",
-            type: "switch2",
+            type: "switch",
             placeholder: "documentingDesign.Additional.Showcustomercode",
             required: false,
             parameterKey: "Showcustomercode",
@@ -210,7 +209,7 @@ const AdditionalOptionsInputs2 = (state)  => {
         {
             name: "View customer balance",
             label: "documentingDesign.Additional.Viewcustomerbalance",
-            type: "switch2",
+            type: "switch",
             placeholder: "documentingDesign.Additional.Viewcustomerbalance",
             required: false,
             parameterKey: "Viewcustomerbalance",
@@ -220,7 +219,7 @@ const AdditionalOptionsInputs2 = (state)  => {
         {
             name: "Show payment terms",
             label: "documentingDesign.Additional.Showpaymentterms",
-            type: "switch2",
+            type: "switch",
             placeholder: "documentingDesign.Additional.Showpaymentterms",
             required: false,
             parameterKey: "Showpaymentterms",
@@ -230,7 +229,7 @@ const AdditionalOptionsInputs2 = (state)  => {
         {
             name: "Show tax payable",
             label: "documentingDesign.Additional.Showtaxpayable",
-            type: "switch2",
+            type: "switch",
             placeholder: "documentingDesign.Additional.Showtaxpayable",
             required: false,
             parameterKey: "Showtaxpayable",
@@ -298,24 +297,25 @@ const FooterInputs2 = (state)  => {
 const QRCodesInputs1 = (state)  => {
     return [
     
-        {
-            name: "PDF production - QrCodes",
-            label: "documentingDesign.QRCodes.PDFproductionQrCodes",
-            type: "switch2",
-            placeholder: "documentingDesign.QRCodes.PDFproductionQrCodes",
-            required: false,
-            parameterKey: "PDFproductionQrCodes",
-            value: state?.PDFproductionQrCodes,
-            isValid: true,
-        },
+   
         {
             name: "Display QR codes in a work order document",
             label: "documentingDesign.QRCodes.DisplayQRcodesinaworkorderdocument",
-            type: "switch2",
+            type: "switch",
             placeholder: "documentingDesign.Additional.DisplayQRcodesinaworkorderdocument",
             required: false,
             parameterKey: "DisplayQRcodesinaworkorderdocument",
             value: state?.DisplayQRcodesinaworkorderdocument,
+            isValid: true,
+        },
+        {
+            name: "PDF production - QrCodes",
+            label: "documentingDesign.QRCodes.PDFproductionQrCodes",
+            type: "switch",
+            placeholder: "documentingDesign.QRCodes.PDFproductionQrCodes",
+            required: false,
+            parameterKey: "PDFproductionQrCodes",
+            value: state?.PDFproductionQrCodes,
             isValid: true,
         },
       
@@ -323,26 +323,27 @@ const QRCodesInputs1 = (state)  => {
 };
 const QRCodesInputs2 = (state)=>{
     return [
-        {
-            name: "Show payment date",
-            label: "documentingDesign.Additional.Showpaymentdate",
-            type: "switch2",
-            placeholder: "documentingDesign.Additional.Showpaymentdate",
-            required: false,
-            parameterKey: "Showpaymentdate",
-            value: state?.Showpaymentdate,
-            isValid: true,
-        },
+   
         {
             name: "Display an initial QR Code for the entire order within the production PDF",
             label: "documentingDesign.QRCodes.DisplayaninitialQRCode",
-            type: "switch2",
+            type: "switch",
             placeholder: "documentingDesign.QRCodes.DisplayaninitialQRCode",
             required: false,
             parameterKey: "DisplayaninitialQRCode",
             value: state?.DisplayaninitialQRCode,
             isValid: true,
-        },    
+        },   
+        {
+            name: "Show payment date",
+            label: "documentingDesign.Additional.Showpaymentdate",
+            type: "switch",
+            placeholder: "documentingDesign.Additional.Showpaymentdate",
+            required: false,
+            parameterKey: "Showpaymentdate",
+            value: state?.Showpaymentdate,
+            isValid: true,
+        }, 
     ];
 
 };
@@ -352,7 +353,7 @@ const QRCodesInputs3 = (state) =>{
         {
             name: "display all types with equal amounts in the PDF of the PACA",
             label: "documentingDesign.QRCodes.displayall",
-            type: "switch2",
+            type: "switch",
             placeholder: "documentingDesign.QRCodes.displayall",
             required: false,
             parameterKey: "displayall",
@@ -362,7 +363,7 @@ const QRCodesInputs3 = (state) =>{
         {
             name: "Show started and finished QRs in the production PDF",
             label: "documentingDesign.QRCodes.ShowStarted",
-            type: "switch2",
+            type: "switch",
             placeholder: "documentingDesign.QRCodes.ShowStarted",
             required: false,
             parameterKey: "ShowStarted",

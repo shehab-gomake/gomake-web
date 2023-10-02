@@ -37,15 +37,15 @@ const Additional = ({documentCreation, setdocumentCreation }: IProps) => {
                 </Stack>
                 <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"30px"} >
                 {
-                    AdditionalOptionsInputs(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
+                    AdditionalOptionsInputs(documentCreation).map(item => <Stack direction={'column'}  width={"200px"} >
                     <FormInput input={item as IInput}  changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }
                 </Stack>
                 <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"30px"} >
                 {
-                    AdditionalOptionsInputs2(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
-                    <FormInput input={item as IInput}  changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
+                    AdditionalOptionsInputs2(documentCreation).map(item => <Stack direction={'column'}  width={"200px"} >
+                    <FormInput  input={item as IInput}  changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }
                 </Stack>

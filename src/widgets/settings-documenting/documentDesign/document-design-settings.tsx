@@ -1,51 +1,26 @@
 
-
 import { useStyle } from "./style";
-import {DocumentCreation} from "./components/document-creation/document-creation";
-import { useState } from "react";
-import { TitleDefinition } from "./components/TitleDefinition/title-definition";
-import { TableSetting } from "./components/table-setting/table-setting";
-import { Additional } from "./components/additional/additional";
-import { Footer } from "./components/footer/footer";
-import { QRCodes } from "./components/QRCodes/QR-codes";
 import { useTranslation } from "react-i18next";
-import Button from "@mui/material/Button";
-import { SecondaryButton } from "@/components/button/secondary-button";
+import { DocumentDesign } from "./components/document-design-setting/document-design";
+import { IframeDocumentDesign } from "./components/document-design-setting/iframe-document-desgin";
 
-const DocumentDesign = () => {
+const DocumentDesignSetting = () => {
     const {classes} = useStyle();
     const { t } = useTranslation();
-    const [documentCreation , setdocumentCreation] = useState([]);
     return (
-        <div style={classes.container}>
-            <div >
-                <DocumentCreation documentCreation={documentCreation} setdocumentCreation={undefined}    />
-            </div>
-            <div>
-                <TitleDefinition documentCreation={undefined} setdocumentCreation={undefined}/>
-            </div>
-            <div>
-                <TableSetting documentCreation={undefined} setdocumentCreation={undefined}/>
-            </div>
-            <div>
-                <Additional documentCreation={undefined} setdocumentCreation={undefined}/>
-            </div>
-            <div>
-                <Footer documentCreation={undefined} setdocumentCreation={undefined}/>
-            </div>
-            <div>
-                <QRCodes documentCreation={undefined} setdocumentCreation={undefined}/>
-            </div>
-            <div style={{ position: "fixed", bottom: 0, right: "30%", padding: "10px", zIndex: 999}}>
-                <div style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
-                    <SecondaryButton variant="outlined" >{t("documentingDesign.Reset")}</SecondaryButton>
-                    <SecondaryButton variant="contained">{t('documentingDesign.Save')}</SecondaryButton>
-
+        <div style={{ ...classes.container, overflow: "hidden" }}>
+            <div> 
+                <div  style={{ borderRadius: 10, overflowY: "scroll", marginBottom: 25}}>
+                    <DocumentDesign/>
                 </div>
             </div>
+           
+           <div>
+                <IframeDocumentDesign src={"https://qa.gomake.co.il/Invoices/ExportToPDF/2491?key=2147b767-2c7f-43d7-909f-da2c9f41c036"} width={"90%"} height={"740px"}/>
+           </div>
             
         </div>
     );
 };
 
-export {DocumentDesign};
+export {DocumentDesignSetting};

@@ -23,24 +23,24 @@ const QRCodes = ({documentCreation, setdocumentCreation }: IProps) => {
                 <Stack direction={'row'}  marginTop={"24px"}>
                         <span style={classes.subTitleStyle} >{t("documentingDesign.QRCodes.QRCodes")}</span>
                 </Stack>
-                <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"30px"} >
+                <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
-                    QRCodesInputs1(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
-                    <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
+                    QRCodesInputs1(documentCreation).map(item => <Stack direction={'column'}   width={460}>
+                    <FormInput  input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }
                 </Stack>
-                <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"30px"} >
+                <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
-                    QRCodesInputs2(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
-                    <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
+                    QRCodesInputs2(documentCreation).map(item => <Stack direction={'column'}   width={460}>
+                    <FormInput  input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }
                 </Stack>
-                <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"30px"} >
+                <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
-                    QRCodesInputs3(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
-                    <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
+                    QRCodesInputs3(documentCreation).map(item => <Stack direction={'column'} width={460} >
+                    <FormInput  input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }
                 </Stack>

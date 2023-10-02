@@ -8,11 +8,30 @@ const useStyle = () => {
     const classes = useMemo(() => {
         return {
             container: {
-                position: "relative" as "relative",
-                display: "flex",
-                flexDirection: 'column' as 'column',
-                gap: "16px",
-                width:"50%"
+              position: "relative" as "relative",
+              display: "flex",
+              
+        
+            },
+            containerIframeComponent :{
+                display:"flex",
+                flexDirection:'column' as  'column',
+                width:"600px",
+                height:"657",
+                borderRadius:"4px",
+                borderShadow:'0px 1px 10px rgba(0, 0, 0, 0.08)',
+    
+            },
+            scrollbar:{
+                marginLeft: '30px',
+                height: '300px',
+                width: '65px',
+                background: '#F5F5F5',
+                overflowY: 'scroll' as 'scroll',
+                marginBottom: '25px',
+            },
+            forceOverflow:{
+                minHeight: '450px',
             },
             header: {
                 position: 'sticky' as 'sticky',

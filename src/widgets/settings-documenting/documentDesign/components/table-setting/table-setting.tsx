@@ -28,14 +28,14 @@ const TableSetting = ({documentCreation, setdocumentCreation }: IProps) => {
                 <Stack direction={'row'} marginBottom={"24px"} marginTop={"24px"}>
                     <span style={classes.subTitleSpanStyle} >{t("documentingDesign.TableSetting.defaultFormat")}</span>
                 </Stack>
-                <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"30px"} >
+                <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
                     TableSettingInputs(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
                     <FormInput input={item as IInput}  changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }
                 </Stack>
-                <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"30px"} >
+                <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
                     TableSettingInputs2(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
                     <FormInput input={item as IInput}  changeState={onChangeInputs} error={false} readonly={false} /></Stack>)

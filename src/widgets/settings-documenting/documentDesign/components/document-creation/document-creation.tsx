@@ -23,10 +23,10 @@ const DocumentCreation = ({documentCreation, setdocumentCreation }: IProps) => {
                 <Stack direction={'row'}  marginTop={"24px"}>
                         <span style={classes.subTitleStyle} >{t("documentingDesign.documnetCreation.documentinCreation")}</span>
                 </Stack>
-                <Stack direction={'row'}  marginTop={"24px"} width={"90%"} gap={"30px"} >
+                <Stack direction={'row'}  marginTop={"24px"} width={"90%"} gap={"16px"} >
 
                     {
-                        creationDocumetInputs(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
+                        creationDocumetInputs(documentCreation).map(item => <Stack direction={'column'}  key={item.name} width={"180px"} >
                         <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     }
                 </Stack>
