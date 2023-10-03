@@ -18,13 +18,14 @@ import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general
 import { Stack } from "@mui/material";
 import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useSnackBar } from "@/hooks";
-import { ChangePasswordComponent } from "./change-password/change-password-component";
 import { useRecoilState } from "recoil";
-import { resetPassModalState } from "./change-password/state";
 import { gomakeUserState } from "./components/gomakeUser-tab/gomakeUserState";
+import { useUserProfile } from "@/hooks/use-user-profile";
+import { resetPassModalState } from "./state";
+import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
 
 interface IProps {
-  isValidCustomer?: (value: any , value1: any, value2: any, value3: any) => boolean;
+  isValidCustomer?: (value: any, value1: any, value2: any, value3: any) => boolean;
   customerAction?: CUSTOMER_ACTIONS;
   codeFlag?: boolean;
   typeClient?: string;
@@ -39,14 +40,15 @@ interface IProps {
   showAddButton?: boolean;
 }
 
-const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCustomers, onCustomerAdd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
+const CustomerCardWidget = ({ isValidCustomer, codeFlag, typeClient, getAllCustomers, onCustomerAdd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
+  const { updateUserPassword } = useUserProfile();
   const { t } = useTranslation();
   const { alertRequiredFields } = useSnackBar();
   const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
-  const [gomakeUser, setGomakeUser] = useRecoilState<{}>(gomakeUserState);
+  const [gomakeUser, setGomakeUser] = useRecoilState<any>(gomakeUserState);
 
 
   const theme = createMuiTheme({
@@ -219,12 +221,13 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
       CardTypeId: cardTypeId,
     };
     setCustomer(updatedCustomer);
-    if (isValidCustomer(updatedCustomer,filteredContacts , filteredAddresses , filteredUsers)) {
-    addNewCustomer(updatedCustomer).then(x => {
-      onCustomerAdd(x);
-      handleClose();
-    });}
-    else{
+    if (isValidCustomer(updatedCustomer, filteredContacts, filteredAddresses, filteredUsers)) {
+      addNewCustomer(updatedCustomer).then(x => {
+        onCustomerAdd(x);
+        handleClose();
+      });
+    }
+    else {
       alertRequiredFields();
     }
   };
@@ -241,12 +244,13 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
       users: filteredUsers,
     };
     setCustomer(updatedCustomer);
-    if (isValidCustomer(updatedCustomer,filteredContacts , filteredAddresses , filteredUsers)) {
-    editCustomer(updatedCustomer, setCustomer).then(x => {
-      getAllCustomers();
-      handleClose();
-    });}
-    else{
+    if (isValidCustomer(updatedCustomer, filteredContacts, filteredAddresses, filteredUsers)) {
+      editCustomer(updatedCustomer, setCustomer).then(x => {
+        getAllCustomers();
+        handleClose();
+      });
+    }
+    else {
       alertRequiredFields();
     }
   };
@@ -254,6 +258,12 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
 
   const onChangeInputs = (key, value) => {
     setCustomer({ ...customer, [key]: value })
+  }
+
+
+  const onUpdatePass = async (currentPass: any, newPass: any, confirmPass: any) => {
+    const res = await updateUserPassword(currentPass, newPass, confirmPass, gomakeUser?.id)
+    setResetPassModalModal(!res)
   }
 
   // in order to avoid sending an empty object that include just name & index
@@ -444,17 +454,15 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
           </div>
         </div>
       </div>
-
       <GoMakeModal
-                  insideStyle={{ paddingLeft: 0, paddingRight: 0, height: 'fit-content', width: 380 }}
-                  headerPadding={20}
-                  openModal={resetPassModal}
-                  onClose={() => setResetPassModalModal(false)}
-                  modalTitle={t('customers.buttons.changePass')}>
-                  <ChangePasswordComponent user={gomakeUser} />
-              </GoMakeModal>
+        insideStyle={classes.secondInsideStyle}
+        headerPadding={20}
+        openModal={resetPassModal}
+        onClose={() => setResetPassModalModal(false)}
+        modalTitle={t('customers.buttons.changePassword')}>
+        <ChangePasswordComponent onChangePassword={onUpdatePass}/>
+      </GoMakeModal>
     </GoMakeModal>
-    
   );
 };
 export { CustomerCardWidget };

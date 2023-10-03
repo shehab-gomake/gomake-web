@@ -7,9 +7,9 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { userInputs, userInputs1 } from "../../inputs/user-inputs";
 import { Button, Stack } from "@mui/material";
 import { useRecoilState } from "recoil";
-import { resetPassModalState } from "../../change-password/state";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { gomakeUserState } from "./gomakeUserState";
+import { resetPassModalState } from "../../state";
 
 interface IProps {
     user: {
@@ -50,7 +50,7 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
                 }
 
                 {showPassFiled && <Stack direction={'column'} gap={"10px"} width={"180px"}>
-                    <span style={classes.inputLbl}>{t("Password")}</span>
+                    <span style={classes.inputLbl}>{t("customers.modal.password")}</span>
                     {/* <SecondaryButton  style={{width:"180px"}} onClick={() => {setGomakeUser(user); setOpenModal(true);} } variant={'outlined'}>{t("customers.buttons.reset")}</SecondaryButton> */}
                     <Button onClick={() => {setGomakeUser(user); setOpenModal(true);}} variant={'contained'}>{t("customers.buttons.changePass")}</Button>
                     </Stack>
