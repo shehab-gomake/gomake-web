@@ -2,15 +2,17 @@ import Stack from "@mui/material/Stack";
 import {GomakeTextInput} from "@/components";
 import {useTranslation} from "react-i18next";
 import {SecondaryButton} from "@/components/button/secondary-button";
-import {useUserProfile} from "@/hooks/use-user-profile";
 import {useState} from "react";
 
-const ChangePasswordComponent = () => {
+interface IChangePasswordProps {
+    onChangePassword: (currentPass, newPass, confirmPass) => void;
+}
+const ChangePasswordComponent = ({onChangePassword}: IChangePasswordProps) => {
    const {t} = useTranslation();
    const [currentPassword, setCurrentPassword] = useState<string>('');
    const [newPassword, setNewPassword] = useState<string>('');
    const [confirmPassword, setConfirmPassword] = useState<string>('');
-   const {updateUserPassword} = useUserProfile();
+   // const {updateUserPassword} = useUserProfile();
    const handleClick = () => {
        if (!currentPassword || !newPassword || !confirmPassword) {
            return;
@@ -18,11 +20,12 @@ const ChangePasswordComponent = () => {
        if (newPassword !== confirmPassword) {
            return;
        }
-        updateUserPassword({
-            currentPassword,
-            newPassword,
-            confirmPassword,
-        }).then();
+       onChangePassword(currentPassword, newPassword, confirmPassword);
+        // updateUserPassword({
+        //     currentPassword,
+        //     newPassword,
+        //     confirmPassword,
+        // }).then();
    }
     return (
         <div>

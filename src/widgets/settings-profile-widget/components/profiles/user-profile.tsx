@@ -21,7 +21,7 @@ import {useUserProfile} from "@/hooks/use-user-profile";
 const UserProfile = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [state, setState] = useRecoilState(userProfileState);
-    const {updateProfile, changeUserProfileImage} = useUserProfile();
+    const {updateProfile, changeUserProfileImage, updateUserPassword} = useUserProfile();
     const changeState = (key, value) => {
         setState({...state, [key]: value});
     }
@@ -69,7 +69,7 @@ const UserProfile = () => {
                 onClose={() => setOpenModal(false)}
                 modalTitle={t('profileSettings.changePassword')}
             >
-                <ChangePasswordComponent/>
+                <ChangePasswordComponent onChangePassword={updateUserPassword}/>
             </GoMakeModal>
         </div>
 
