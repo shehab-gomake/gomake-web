@@ -1,4 +1,4 @@
-const userInputs = (state , showPass)  => {
+const userInputs = (state, showPass) => {
     return [
         {
             name: "email",
@@ -22,22 +22,26 @@ const userInputs = (state , showPass)  => {
             options: [],
             value: state?.username,
             isValid: !!state.username,
-            readonly: false ,
+            readonly: false,
             disabled: true,
         },
         {
             name: "password",
             label: "customers.modal.password",
-            type: "text",
+            type: "password",
             placeholder: "customers.modal.password",
-            required: true ,
+            required: true,
             parameterKey: "password",
             options: [],
             value: state?.password,
             isValid: true,
             disabled: showPass,
-            readonly: false,
-        }, 
+        },
+    ];
+}
+
+const userInputs1 = (state) => {
+    return [
         {
             name: "IPaddress",
             label: "customers.modal.IPaddress",
@@ -51,6 +55,18 @@ const userInputs = (state , showPass)  => {
             readonly: false,
         },
         {
+            name: "language",
+            label: "customers.modal.language",
+            type: "select",
+            placeholder: "customers.modal.language",
+            required: false,
+            parameterKey: "systemLanguage",
+            options: [],
+            optionsUrl: "/v1/enum/get-enums/languages",
+            value: state?.systemLanguage,
+            isValid: true,
+        },
+        {
             name: "loginUsingEmailCode",
             label: "customers.modal.loginUsingEmailCode",
             type: "switch",
@@ -60,36 +76,8 @@ const userInputs = (state , showPass)  => {
             options: [],
             value: state?.isCanLoginWithCode,
             isValid: true,
-        },
-        {
-            name: "language",
-            label: "customers.modal.language",
-            type: "select",
-            placeholder: "customers.modal.language",
-            required: false,
-            parameterKey: "systemLanguage",
-            options: [],
-            optionsUrl:"/v1/enum/get-enums/languages",
-            value: state?.systemLanguage,
-            isValid: true,
-        },
-    ];
+        }
+    ]
 }
 
-// const userInputs1 = (state)  => {
-//     return [
-//         {
-//             name: "loginUsingEmailCode",
-//             label: "customers.modal.loginUsingEmailCode",
-//             type: "switch",
-//             placeholder: "customers.modal.loginUsingEmailCode",
-//             required: false,
-//             parameterKey: "isCanLoginWithCode",
-//             options: [],
-//             value: state?.isCanLoginWithCode,
-//             isValid: true,
-//         },
-//     ]
-// }
-
-export {userInputs};
+export { userInputs, userInputs1 };

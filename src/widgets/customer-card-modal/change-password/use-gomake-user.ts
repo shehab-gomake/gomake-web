@@ -6,7 +6,6 @@ import { resetPassModalState } from "./state";
 
 const useGomakeUser = () => {
   const { callApi } = useGomakeAxios();
-
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const [openModal, setOpenModal] = useRecoilState<boolean>(resetPassModalState);
 

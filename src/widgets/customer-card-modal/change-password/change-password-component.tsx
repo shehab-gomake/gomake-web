@@ -6,10 +6,10 @@ import {useState} from "react";
 import { useGomakeUser } from "./use-gomake-user";
 
 interface IProps {
-    userId: string;
+    user: any;
   }
 
-const ChangePasswordComponent = ({userId} : IProps) => {
+const ChangePasswordComponent = ({user} : IProps) => {
    const {t} = useTranslation();
    const [currentPassword, setCurrentPassword] = useState<string>('');
    const [newPassword, setNewPassword] = useState<string>('');
@@ -26,25 +26,25 @@ const ChangePasswordComponent = ({userId} : IProps) => {
             currentPassword,
             newPassword,
             confirmPassword,
-        }, userId).then();
+        }, user?.id).then();
    }
     return (
         <div>
             <Stack direction={'column'} gap={'20px'} padding={'20px'}>
                 <Stack direction={'column'} gap={'13px'}>
-                    <span>{t('profileSettings.currentPassword')}</span>
+                    <span>{t('customers.buttons.currentPassword')}</span>
                     <GomakeTextInput onChange={(e) => setCurrentPassword(e.target.value)} type={'password'} style={{height: 40}}/>
                 </Stack>
                 <Stack direction={'column'} gap={'13px'}>
-                    <span>{t('profileSettings.newPassword')}</span>
+                    <span>{t('customers.buttons.newPassword')}</span>
                     <GomakeTextInput onChange={(e) => setNewPassword(e.target.value)} type={'password'} style={{height: 40}}/>
                 </Stack>
                 <Stack direction={'column'} gap={'13px'}>
-                    <span>{t('profileSettings.confirmNewPassword')}</span>
+                    <span>{t('customers.buttons.confirmNewPassword')}</span>
                     <GomakeTextInput onChange={(e) => setConfirmPassword(e.target.value)} type={'password'} style={{height: 40}}/>
                 </Stack>
                 <Stack direction={'row'} justifyContent={'flex-end'}>
-                    <SecondaryButton onClick={handleClick} variant={'contained'}>change</SecondaryButton>
+                    <SecondaryButton onClick={handleClick} variant={'contained'}>{t("customers.buttons.change")}</SecondaryButton>
                 </Stack>
             </Stack>
         </div>

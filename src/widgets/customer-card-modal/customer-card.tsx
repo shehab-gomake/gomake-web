@@ -18,6 +18,10 @@ import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general
 import { Stack } from "@mui/material";
 import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useSnackBar } from "@/hooks";
+import { ChangePasswordComponent } from "./change-password/change-password-component";
+import { useRecoilState } from "recoil";
+import { resetPassModalState } from "./change-password/state";
+import { gomakeUserState } from "./components/gomakeUser-tab/gomakeUserState";
 
 interface IProps {
   isValidCustomer?: (value: any , value1: any, value2: any, value3: any) => boolean;
@@ -41,6 +45,10 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
   const { editCustomer } = useEditCustomer();
   const { t } = useTranslation();
   const { alertRequiredFields } = useSnackBar();
+  const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
+  const [gomakeUser, setGomakeUser] = useRecoilState<{}>(gomakeUserState);
+
+
   const theme = createMuiTheme({
     palette: {
       secondary: {
@@ -197,8 +205,6 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
   };
 
 
-
-
   // add customer button
   const handleAddCustomer = async () => {
     const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
@@ -222,9 +228,6 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
       alertRequiredFields();
     }
   };
-
-
-
 
   // edit customer button
   const handleEditCustomer = () => {
@@ -441,7 +444,17 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
           </div>
         </div>
       </div>
+
+      <GoMakeModal
+                  insideStyle={{ paddingLeft: 0, paddingRight: 0, height: 'fit-content', width: 380 }}
+                  headerPadding={20}
+                  openModal={resetPassModal}
+                  onClose={() => setResetPassModalModal(false)}
+                  modalTitle={t('customers.buttons.changePass')}>
+                  <ChangePasswordComponent user={gomakeUser} />
+              </GoMakeModal>
     </GoMakeModal>
+    
   );
 };
 export { CustomerCardWidget };
