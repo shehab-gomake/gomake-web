@@ -1,10 +1,11 @@
-import { GomakeTextInput } from "@/components";
+import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { useTotalPriceAndVat } from "./use-total-price-and-vat";
+import { Box, Fade } from "@mui/material";
 
 const TotalPriceAndVatWidit = () => {
   const { clasess } = useStyle();
-  const { btnTabs, quoteItems, changeItems, quoteStateValue } =
+  const { btnTabs, quoteItems, changeItems, quoteStateValue, checked } =
     useTotalPriceAndVat();
   return (
     <div style={clasess.mainContainer}>
@@ -16,7 +17,40 @@ const TotalPriceAndVatWidit = () => {
         />
         <div style={clasess.btnsContainer}>
           {btnTabs?.map((item) => {
-            return <div style={clasess.btnStyle}>{item?.name}</div>;
+            return (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                }}
+              >
+                <GomakePrimaryButton
+                  style={clasess.btnStyle}
+                  onClick={item?.onclick()}
+                >
+                  {item?.name}
+                </GomakePrimaryButton>
+                {item?.name === "Cancel" && checked && (
+                  <Fade in={checked}>
+                    <Box sx={{ display: "flex", flexDirection: "column" }}>
+                      <GomakePrimaryButton style={clasess.btnStyle2}>
+                        Irrelevant
+                      </GomakePrimaryButton>
+                      <GomakePrimaryButton style={clasess.btnStyle2}>
+                        price
+                      </GomakePrimaryButton>
+                      <GomakePrimaryButton style={clasess.btnStyle2}>
+                        Delivery time
+                      </GomakePrimaryButton>
+                      <GomakePrimaryButton style={clasess.btnStyle2}>
+                        Other
+                      </GomakePrimaryButton>
+                    </Box>
+                  </Fade>
+                )}
+              </div>
+            );
           })}
         </div>
       </div>
@@ -33,10 +67,11 @@ const TotalPriceAndVatWidit = () => {
             <div style={clasess.numbersStyle}>
               <GomakeTextInput
                 style={clasess.textInputWithoutStyle}
-                value={quoteItems?.discount}
+                value={Number(quoteItems?.discount).toFixed(2)}
                 onChange={(e: any) => {
                   changeItems("discount", e.target.value);
                 }}
+                type="number"
                 onBlur={() =>
                   quoteStateValue?.getCalculateQuote(0, quoteItems?.discount)
                 }
@@ -45,7 +80,7 @@ const TotalPriceAndVatWidit = () => {
             <div style={clasess.numbersStyle}>
               <GomakeTextInput
                 style={clasess.textInputWithoutStyle}
-                value={quoteItems?.discountAmount}
+                value={Number(quoteItems?.discountAmount).toFixed(2)}
                 onChange={(e: any) => {
                   changeItems("discountAmount", e.target.value);
                 }}
@@ -97,8 +132,12 @@ const TotalPriceAndVatWidit = () => {
           </div>
         </div>
         <div style={clasess.rightSideBtnsContainer}>
-          <div style={clasess.orderNowBtn}>order now</div>
-          <div style={clasess.sendMessageBtn}>Send to sales manager</div>
+          <GomakePrimaryButton style={clasess.orderNowBtn}>
+            order now
+          </GomakePrimaryButton>
+          <GomakePrimaryButton style={clasess.sendMessageBtn}>
+            Send to sales manager
+          </GomakePrimaryButton>
         </div>
       </div>
     </div>

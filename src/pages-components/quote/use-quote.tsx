@@ -1,9 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { useQuoteGetData } from "./use-quote-get-data";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useQuoteModals } from "./use-quote-modals";
 import { useClickAway } from "@uidotdev/usehooks";
+import { EHttpMethod } from "@/services/api-service/enums";
 
 const useQuote = () => {
   const { t } = useTranslation();
@@ -433,7 +434,7 @@ const useQuote = () => {
   }, [qouteItemId, amountVlue]);
   const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
   const updateDueDate = useCallback(async () => {
-    const res = await callApi("POST", `/v1/erp-service/quote/update-due-date`, {
+    const res = await callApi("PUT", `/v1/erp-service/quote/update-due-date`, {
       quoteId: quoteItemValue?.id,
       dueDate: selectDate,
     });
@@ -452,18 +453,22 @@ const useQuote = () => {
       });
     }
   }, [quoteItemValue, selectDate]);
-
+  const dateRef = useRef(null);
   const [activeClickAway, setActiveClickAway] = useState(false);
-  const ref = useClickAway(() => {
-    setActiveClickAway((prev) => {
-      if (prev) {
-        console.log("AAA");
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dateRef.current && !dateRef.current.contains(event.target)) {
+        if (activeClickAway) {
+          updateDueDate();
+          setActiveClickAway(false);
+        }
       }
-      return prev;
-    });
-    setActiveClickAway(false);
-  }, [setActiveClickAway]);
-
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
   return {
     tableHeaders,
     tableRowPercent,
@@ -486,7 +491,7 @@ const useQuote = () => {
     openDeleteItemModal,
     qouteItemId,
     selectDate,
-    ref,
+    dateRef,
     setActiveClickAway,
     setSelectDate,
     onClickDeleteQouteItem,

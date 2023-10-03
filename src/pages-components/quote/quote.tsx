@@ -7,7 +7,7 @@ import { AddPlusIcon, UploadIcon } from "@/icons";
 
 import { quoteState } from "./store/quote";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import { quoteItemState } from "@/store";
 import { BusinessWidget } from "@/widgets/quote/business-widget";
@@ -20,7 +20,7 @@ const QuotePageWidget = () => {
   const { clasess } = useStyle();
   const setQuoteState = useSetRecoilState<any>(quoteState);
   const quoteItemValue: any = useRecoilValue(quoteItemState);
-  const dateRef = useRef(null);
+
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
@@ -47,7 +47,7 @@ const QuotePageWidget = () => {
     openDeleteItemModal,
     qouteItemId,
     selectDate,
-    ref,
+    dateRef,
     setActiveClickAway,
     setSelectDate,
     onClickDeleteQouteItem,
@@ -118,7 +118,7 @@ const QuotePageWidget = () => {
       openDeleteItemModal,
       qouteItemId,
       selectDate,
-      ref,
+      dateRef,
       setActiveClickAway,
       setSelectDate,
       onClickDeleteQouteItem,
@@ -188,7 +188,7 @@ const QuotePageWidget = () => {
     openDeleteItemModal,
     qouteItemId,
     selectDate,
-    ref,
+    dateRef,
     setActiveClickAway,
     setSelectDate,
     onClickDeleteQouteItem,
@@ -240,6 +240,7 @@ const QuotePageWidget = () => {
   useEffect(() => {
     setSelectDate(quoteItemValue?.dueDate);
   }, [quoteItemValue]);
+
   return (
     <>
       {quoteItemValue && (
@@ -260,7 +261,6 @@ const QuotePageWidget = () => {
                 <div
                   style={clasess.deleverdDate}
                   onClick={handleClickSelectDate}
-                  ref={ref}
                 >
                   {t("sales.quote.deliverOn")}{" "}
                   {selectDate
@@ -271,7 +271,7 @@ const QuotePageWidget = () => {
                       type="datetime-local"
                       onChange={(e) => {
                         setSelectDate(e.target.value);
-                        console.log("AASSS");
+                        console.log("e.target.value", e.target.value);
                         setActiveClickAway(true);
                       }}
                       ref={dateRef}

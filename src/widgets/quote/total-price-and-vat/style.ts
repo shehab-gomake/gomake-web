@@ -41,7 +41,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
-        // gap: 16,
+        gap:10
       },
       btnStyle: {
         display: "flex",
@@ -56,8 +56,27 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         color: secondColor(500),
         cursor: "pointer",
-        width: "23%",
+        width: "100%",
         height: 40,
+        backgroundColor:"#FFF"
+      },
+      btnStyle2: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        border: "1px solid #ED028C",
+        borderRadius: 4,
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingLeft: 20,
+        paddingRight: 20,
+        ...FONT_FAMILY.Lexend(500, 13),
+        color: secondColor(500),
+        cursor: "pointer",
+        width: "100%",
+        height: 40,
+        marginTop: 10,
+        backgroundColor:"#FFF"
       },
       rightSideContainer: {
         display: "flex",
@@ -157,6 +176,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         width: "50%",
         height: 40,
+        backgroundColor:"#FFF"
       },
       textInputWithoutStyle: {
         width: "100%",

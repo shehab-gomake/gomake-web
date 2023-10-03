@@ -9,7 +9,12 @@ const useTotalPriceAndVat = () => {
   const quoteItemValue: any = useRecoilValue(quoteItemState);
   const quoteStateValue = useRecoilValue<any>(quoteState);
   const [quoteItems, setquoteItems] = useState<any>([]);
+  const [checked, setChecked] = useState(false);
 
+  const handleChange = () => {
+    console.log("GGGGGG");
+    setChecked((prev) => !prev);
+  };
   const changeItems = useCallback(
     (filedName: string, value: any) => {
       setquoteItems((prev) => {
@@ -41,7 +46,7 @@ const useTotalPriceAndVat = () => {
     },
     {
       name: "Cancel",
-      onclick: () => null,
+      onclick: () => handleChange,
     },
   ];
   return {
@@ -49,6 +54,7 @@ const useTotalPriceAndVat = () => {
     quoteItemValue,
     quoteItems,
     quoteStateValue,
+    checked,
     changeItems,
     t,
   };
