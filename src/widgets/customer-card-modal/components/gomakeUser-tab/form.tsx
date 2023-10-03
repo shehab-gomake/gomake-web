@@ -33,7 +33,7 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
     const { clasess } = useStyle();
     const { t } = useTranslation();
 
-    const showPass= user.id? true : false ; 
+    const showPassFiled= user.id? true : false ; 
 
     const onChangeInputs = (key, value) => {
         if (key == "email") {
@@ -47,11 +47,11 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
         <div >
             <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap="20px">
                 {
-                    userInputs(user , showPass).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={false} />)
+                    userInputs(user , showPassFiled).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={false} />)
                 }
             </Stack>
             <Stack direction={'row'} marginTop={"24px"} marginBottom={"24px"} gap="55px">
-                {showPass && <Button style={clasess.changePassBtnStyle} onClick={() => setOpenModal(true)} variant={'contained'}>{t('customers.buttons.changePass')}</Button>}
+                {showPassFiled &&  <Button style={clasess.changePassBtnStyle} onClick={() => setOpenModal(true)} variant={'contained'}>{t('customers.buttons.changePass')}</Button>}
             </Stack>
             <Stack direction={'row'} >
                 <a style={{ display: "flex", justifyContent: 'flex-start', gap: "7px" }} onClick={() => onDelete(user.index)} >
@@ -64,8 +64,7 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
                 headerPadding={20}
                 openModal={openModal}
                 onClose={() => setOpenModal(false)}
-                modalTitle={t('customers.buttons.changePass')}
-            >
+                modalTitle={t('customers.buttons.changePass')}>
                 <ChangePasswordComponent userId={user.id} />
             </GoMakeModal>
         </div>
