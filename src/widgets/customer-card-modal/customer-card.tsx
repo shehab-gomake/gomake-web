@@ -18,9 +18,14 @@ import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general
 import { Stack } from "@mui/material";
 import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useSnackBar } from "@/hooks";
+import { useRecoilState } from "recoil";
+import { gomakeUserState } from "./components/gomakeUser-tab/gomakeUserState";
+import { useUserProfile } from "@/hooks/use-user-profile";
+import { resetPassModalState } from "./state";
+import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
 
 interface IProps {
-  isValidCustomer?: (value: any , value1: any, value2: any, value3: any) => boolean;
+  isValidCustomer?: (value: any, value1: any, value2: any, value3: any) => boolean;
   customerAction?: CUSTOMER_ACTIONS;
   codeFlag?: boolean;
   typeClient?: string;
@@ -35,12 +40,17 @@ interface IProps {
   showAddButton?: boolean;
 }
 
-const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCustomers, onCustomerAdd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
+const CustomerCardWidget = ({ isValidCustomer, codeFlag, typeClient, getAllCustomers, onCustomerAdd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
+  const { updateUserPassword } = useUserProfile();
   const { t } = useTranslation();
   const { alertRequiredFields } = useSnackBar();
+  const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
+  const [gomakeUser, setGomakeUser] = useRecoilState<any>(gomakeUserState);
+
+
   const theme = createMuiTheme({
     palette: {
       secondary: {
@@ -51,7 +61,7 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
 
   const tabPanelTextArea = (placeHolder = null, value = null, onchange = null) => {
     return (
-      <Stack direction={'column'} >
+      <Stack direction={'column'} width={"33.33%"} >
         <TextareaAutosize style={classes.textAreaStyle} placeholder={placeHolder} value={value} onChange={onchange}></TextareaAutosize>
       </Stack>
     );
@@ -197,8 +207,6 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
   };
 
 
-
-
   // add customer button
   const handleAddCustomer = async () => {
     const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
@@ -213,18 +221,16 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
       CardTypeId: cardTypeId,
     };
     setCustomer(updatedCustomer);
-    if (isValidCustomer(updatedCustomer,filteredContacts , filteredAddresses , filteredUsers)) {
-    addNewCustomer(updatedCustomer).then(x => {
-      onCustomerAdd(x);
-      handleClose();
-    });}
-    else{
+    if (isValidCustomer(updatedCustomer, filteredContacts, filteredAddresses, filteredUsers)) {
+      addNewCustomer(updatedCustomer).then(x => {
+        onCustomerAdd(x);
+        handleClose();
+      });
+    }
+    else {
       alertRequiredFields();
     }
   };
-
-
-
 
   // edit customer button
   const handleEditCustomer = () => {
@@ -238,12 +244,13 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
       users: filteredUsers,
     };
     setCustomer(updatedCustomer);
-    if (isValidCustomer(updatedCustomer,filteredContacts , filteredAddresses , filteredUsers)) {
-    editCustomer(updatedCustomer, setCustomer).then(x => {
-      getAllCustomers();
-      handleClose();
-    });}
-    else{
+    if (isValidCustomer(updatedCustomer, filteredContacts, filteredAddresses, filteredUsers)) {
+      editCustomer(updatedCustomer, setCustomer).then(x => {
+        getAllCustomers();
+        handleClose();
+      });
+    }
+    else {
       alertRequiredFields();
     }
   };
@@ -253,10 +260,16 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
     setCustomer({ ...customer, [key]: value })
   }
 
+
+  const onUpdatePass = async (currentPass: any, newPass: any, confirmPass: any) => {
+    const res = await updateUserPassword(currentPass, newPass, confirmPass, gomakeUser?.id)
+    setResetPassModalModal(!res)
+  }
+
   // in order to avoid sending an empty object that include just name & index
   const isNameIndexOnly = (dataObject) => {
     const { name, index, ...otherProps } = dataObject;
-    const emptyProps = Object.values(otherProps).every(prop => prop === null || prop === "");
+    const emptyProps = Object.values(otherProps).every(prop => prop === null || prop === "" || prop === " ");
     return emptyProps;
   };
   const tabLabels = [
@@ -441,6 +454,14 @@ const CustomerCardWidget = ({ isValidCustomer , codeFlag, typeClient, getAllCust
           </div>
         </div>
       </div>
+      <GoMakeModal
+        insideStyle={classes.secondInsideStyle}
+        headerPadding={20}
+        openModal={resetPassModal}
+        onClose={() => setResetPassModalModal(false)}
+        modalTitle={t('customers.buttons.changePassword')}>
+        <ChangePasswordComponent onChangePassword={onUpdatePass}/>
+      </GoMakeModal>
     </GoMakeModal>
   );
 };
