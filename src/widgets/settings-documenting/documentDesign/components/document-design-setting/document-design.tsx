@@ -14,12 +14,12 @@ import { useState } from "react";
 const DocumentDesign = () => {
     const {classes} = useStyle();
     const { t } = useTranslation();
-    const [documentCreation , setdocumentCreation] = useState([]);
+    const [documentCreation , setdocumentCreation] = useState();
     return (
         <div style={classes.container}>
            <div>
                 <div >
-                        <DocumentCreation documentCreation={documentCreation} setdocumentCreation={undefined}    />
+                        <DocumentCreation documentCreation={documentCreation} setdocumentCreation={setdocumentCreation}    />
                     </div>
                     <div>
                         <TitleDefinition documentCreation={undefined} setdocumentCreation={undefined}/>

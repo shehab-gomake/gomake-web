@@ -1,5 +1,8 @@
+import { useRecoilState } from "recoil";
+import { documentTypeState } from "../../state/documents-state";
 
 const creationDocumetInputs = (state)  => {
+    const [documentTypes, setdocumentTypes] = useRecoilState(documentTypeState);
     return [
         {
             name: "documentType",
@@ -7,9 +10,8 @@ const creationDocumetInputs = (state)  => {
             type: "select",
             placeholder: "documentingDesign.documnetCreation.docmentType",
             required: true,
-            parameterKey: "docmentId",
-            options: [],
-            optionsUrl: "",
+            parameterKey: "DocType",
+            options: documentTypes,
             value: state?.documentType,
             isValid: true,
         },

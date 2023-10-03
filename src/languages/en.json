@@ -1980,5 +1980,26 @@
       "Document" : "Document"
 
     }
+  },
+  "documentType":{
+    "Order" :"Order",
+    "Invoice":"Invoice",
+    "DeliveryNotes":"DeliveryNotes",
+    "Purchase":"Purchase",
+    "InvoiceRefund":"InvoiceRefund",
+    "Receipt":"Receipt",
+    "JournalEntry":"JournalEntry",
+    "PurchaseInvoice":"PurchaseInvoice",
+    "PurchaseInvoiceRefund":"PurchaseInvoiceRefund",
+    "ForeignJournalEntry":"ForeignJournalEntry",
+    "DeliveryNoteRefund":"DeliveryNoteRefund",
+    "Quote":"Quote",
+    "ExternalInvoice":"ExternalInvoice",
+    "All":"All",
+    "ExternalPayment":"ExternalPayment",
+    "BoardMission":"BoardMission",
+    "AgingReport":"AgingReport",
+    "LedgerReport":"LedgerReport",
+    "SalesReport":"SalesReport"
   }
 }

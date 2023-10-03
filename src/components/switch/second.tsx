@@ -13,7 +13,6 @@ const SecondSwitchStyled = styled(Switch)<any>(({ colorX }: any) => ({
 
 const SecondSwitch = ({   ...props } ,   ) => {
   const { secondColor } = useGomakeTheme();
-  debugger
    
       return <SecondSwitchStyled {...props} colorX={secondColor(500)} />;
    

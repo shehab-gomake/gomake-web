@@ -4,19 +4,40 @@ import Stack from "@mui/material/Stack";
 import {useTranslation} from "react-i18next";
 import { creationDocumetInputs } from "../../inputs/document-creation-inputs";
 import { useStyle } from "../../style";
-interface IProps {
-    documentCreation:any;
-    setdocumentCreation: any;
+import { useEffect } from "react";
+import { UseDocumentDesign } from "@/widgets/settings-documenting/use-document-design";
+import { useRecoilState } from "recoil";
+import { documentDesignState } from "@/widgets/settings-documenting/state/documents-state";
 
+interface IProps {
+    documentCreation:{
+        agentId:  string,
+        documentId: string,
+      
+    };
+    setdocumentCreation?: (documentCreation: any) => void;
 }
+
+
 
 const DocumentCreation = ({documentCreation, setdocumentCreation }: IProps) => {
     const {t} = useTranslation();
     const {classes} = useStyle();
+    const {getDocumentTypes , getDocumentDesignByCreationDoc} = UseDocumentDesign();
+    const [documentDesign, setdocumentDesign] = useRecoilState(documentDesignState);
     const onChangeInputs = (key, value) => {
         setdocumentCreation({ ...documentCreation, [key]: value })
+     
     }
-  
+
+    useEffect(() =>{
+        getDocumentDesignByCreationDoc(documentCreation);
+        console.log(documentDesign);
+    },[documentCreation])
+    useEffect(() => {
+        getDocumentTypes();
+        
+      }, []);
     return (
         <>
             <div>
@@ -36,3 +57,5 @@ const DocumentCreation = ({documentCreation, setdocumentCreation }: IProps) => {
 }
 
 export {DocumentCreation}
+
+
