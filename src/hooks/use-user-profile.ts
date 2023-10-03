@@ -71,11 +71,11 @@ const useUserProfile = () => {
         await resetUserInitials(callApi, callBack, {...data, id: profileState.id});
     }
 
-    const updateUserPassword = async (data: {
+    const updateUserPassword = async (
         currentPassword: string,
         newPassword: string,
         confirmPassword: string
-    }) => {
+    ) => {
 
         const callBack = (res) => {
             if (res.success) {
@@ -84,7 +84,7 @@ const useUserProfile = () => {
                 alertFaultUpdate();
             }
         }
-        await resetUserPassword(callApi, callBack, {id: profileState.id, ...data})
+        await resetUserPassword(callApi, callBack, {id: profileState.id, currentPassword, newPassword, confirmPassword})
     }
     return {
         updateProfile,
