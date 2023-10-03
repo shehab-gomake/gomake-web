@@ -794,8 +794,17 @@
       "edit": "ערוך",
       "duplicate": "שכפול",
       "addAndCreate": "הוסף תקציב וצור חשבונית",
-      "addBudget": "הוסף תקציב"
-    },
+      "addBudget": "הוסף תקציב",
+      "changePass": "שינוי סיסמה",
+
+
+      "changePassword": "שינוי סיסמה",
+      "currentPassword": "סיסמה נוכחית",
+      "newPassword": "סיסמה חדשה",
+      "confirmNewPassword": "אימות סיסמה חדשה",
+      "change": "עדכן",
+      "reset": "עדן סיסמה"
+        },
     "modal": {
       "addTitle": "הוסף לקוח חדש",
       "editTitle": "ערוך לקוח",
@@ -1020,6 +1029,7 @@
     "currentPassword": "סיסמה נוכחית",
     "newPassword": "סיסמה חדשה",
     "confirmNewPassword": "אימות סיסמה חדשה",
+    "change": "עדכן",
     "company": "חברה",
     "businessName": "שם העסק",
     "dashboardCode": "קוד לדשבורד",
@@ -1043,7 +1053,7 @@
     "location": "מיקום",
     "financial": "פיננסי",
     "systemLanguage": "שפת המערכת",
-    "changePass": "שנה סיסמה",
+    "changePass": "עדכן סיסמה",
     "update": "עדכן",
     "loginLogo": "לוגו התחברות",
     "companyLogo": "לוגו החברה"

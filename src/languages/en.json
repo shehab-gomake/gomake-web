@@ -1556,7 +1556,6 @@
     "editInitials": "Edit initials",
     "uploadFile": "Upload file",
     "selectFile": "Select file"
-
   },
   "permissionsSettings": {
     "title": "Management of roles and privileges",
@@ -1616,7 +1615,14 @@
       "edit": "Edit",
       "duplicate": "Duplicate",
       "addAndCreate": "Add budget and create invoice",
-      "addBudget": "Add budget"
+      "addBudget": "Add budget",
+      "changePassword": "Change password",
+      "changePass": "Change password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmNewPassword": "Confirm new password",
+      "reset": "reset",
+      "change": "change"
     },
     "modal": {
       "addTitle": "Add new customer",
@@ -1841,6 +1847,7 @@
     "currentPassword": "Current password",
     "newPassword": "New password",
     "confirmNewPassword": "Confirm new password",
+    "change": "change",
     "company": "Company",
     "businessName": "Business name",
     "dashboardCode": "Dashboard code",
@@ -1910,6 +1917,5 @@
     "edit": "Edit",
     "duplicate": "Duplicate",
     "delete": "Delete"
-
   }
 }
