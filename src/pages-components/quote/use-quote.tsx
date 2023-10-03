@@ -3,6 +3,7 @@ import { useQuoteGetData } from "./use-quote-get-data";
 import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useQuoteModals } from "./use-quote-modals";
+import { useClickAway } from "@uidotdev/usehooks";
 
 const useQuote = () => {
   const { t } = useTranslation();
@@ -403,9 +404,8 @@ const useQuote = () => {
     onOpenDuplicateWithDifferentQTY();
     setQuateItemId(quoteItem?.id);
   };
-  const [amountVlue,setAmountValue]=useState()
+  const [amountVlue, setAmountValue] = useState();
 
-  console.log("qouteItemId",qouteItemId)
   const duplicateQuoteItemWithAnotherQuantity = useCallback(async () => {
     const res = await callApi(
       "POST",
@@ -413,7 +413,6 @@ const useQuote = () => {
       {
         quoteItemId: qouteItemId,
         amount: parseInt(amountVlue),
-       
       }
     );
     if (res?.success) {
@@ -422,7 +421,7 @@ const useQuote = () => {
         message: t("modal.addedSusuccessfully"),
         type: "sucess",
       });
-      onCloseDeleteItemModal();
+      onCloseDuplicateWithDifferentQTY();
       getQuote();
     } else {
       setSnackbarStateValue({
@@ -431,7 +430,40 @@ const useQuote = () => {
         type: "error",
       });
     }
-  }, [qouteItemId,amountVlue]);
+  }, [qouteItemId, amountVlue]);
+  const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
+  const updateDueDate = useCallback(async () => {
+    const res = await callApi("POST", `/v1/erp-service/quote/update-due-date`, {
+      quoteId: quoteItemValue?.id,
+      dueDate: selectDate,
+    });
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+      getQuote();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedfailed"),
+        type: "error",
+      });
+    }
+  }, [quoteItemValue, selectDate]);
+
+  const [activeClickAway, setActiveClickAway] = useState(false);
+  const ref = useClickAway(() => {
+    setActiveClickAway((prev) => {
+      if (prev) {
+        console.log("AAA");
+      }
+      return prev;
+    });
+    setActiveClickAway(false);
+  }, [setActiveClickAway]);
+
   return {
     tableHeaders,
     tableRowPercent,
@@ -453,6 +485,10 @@ const useQuote = () => {
     openDuplicateWithDifferentQTYModal,
     openDeleteItemModal,
     qouteItemId,
+    selectDate,
+    ref,
+    setActiveClickAway,
+    setSelectDate,
     onClickDeleteQouteItem,
     deleteQuoteItem,
     onCloseDeleteItemModal,

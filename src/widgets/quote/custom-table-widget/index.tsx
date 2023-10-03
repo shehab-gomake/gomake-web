@@ -62,37 +62,37 @@ const CustomTableWidget = ({
       </div>
       <div style={clasess.row}>
         {items?.map((row: any, index: number) => {
-          console?.log("rowrowrow",row)
           return (
             <>
-            {
-              row?.childsQuoteItems!= null && row?.childsQuoteItems.length > 0?
-              <div key={`body_row${index}`} style={{ width: "100%" }}>
-              <RowWithChildsTable
-                row={row}
-                tablePercent={tableRowPercent}
-                isCheckbox={isCheckbox}
-                changeItems={changeItems}
-                indexTable={index}
-              />
-              {index != items?.length - 1 ? <div style={clasess.line} /> : null}
-            </div> 
-            :
-              <div key={`body_row${index}`} style={{ width: "100%" }}>
-              <RowCustomTable
-                row={row}
-                tablePercent={tableRowPercent}
-                isCheckbox={isCheckbox}
-                changeItems={changeItems}
-                indexTable={index}
-              />
-              {index != items?.length - 1 ? <div style={clasess.line} /> : null}
-            </div> 
-            }
-            
+              {row?.childsQuoteItems != null &&
+              row?.childsQuoteItems.length > 0 ? (
+                <div key={`body_row${index}`} style={{ width: "100%" }}>
+                  <RowWithChildsTable
+                    row={row}
+                    tablePercent={tableRowPercent}
+                    isCheckbox={isCheckbox}
+                    changeItems={changeItems}
+                    indexTable={index}
+                  />
+                  {index != items?.length - 1 ? (
+                    <div style={clasess.line} />
+                  ) : null}
+                </div>
+              ) : (
+                <div key={`body_row${index}`} style={{ width: "100%" }}>
+                  <RowCustomTable
+                    row={row}
+                    tablePercent={tableRowPercent}
+                    isCheckbox={isCheckbox}
+                    changeItems={changeItems}
+                    indexTable={index}
+                  />
+                  {index != items?.length - 1 ? (
+                    <div style={clasess.line} />
+                  ) : null}
+                </div>
+              )}
             </>
-           
-          
           );
         })}
       </div>

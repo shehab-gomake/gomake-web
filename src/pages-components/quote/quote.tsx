@@ -7,7 +7,7 @@ import { AddPlusIcon, UploadIcon } from "@/icons";
 
 import { quoteState } from "./store/quote";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import { quoteItemState } from "@/store";
 import { BusinessWidget } from "@/widgets/quote/business-widget";
@@ -20,14 +20,11 @@ const QuotePageWidget = () => {
   const { clasess } = useStyle();
   const setQuoteState = useSetRecoilState<any>(quoteState);
   const quoteItemValue: any = useRecoilValue(quoteItemState);
-  const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
   const dateRef = useRef(null);
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
-  useEffect(() => {
-    setSelectDate(quoteItemValue?.dueDate);
-  }, [quoteItemValue]);
+
   const {
     tableHeaders,
     tableRowPercent,
@@ -49,6 +46,10 @@ const QuotePageWidget = () => {
     openDuplicateWithDifferentQTYModal,
     openDeleteItemModal,
     qouteItemId,
+    selectDate,
+    ref,
+    setActiveClickAway,
+    setSelectDate,
     onClickDeleteQouteItem,
     deleteQuoteItem,
     onCloseDeleteItemModal,
@@ -116,6 +117,10 @@ const QuotePageWidget = () => {
       openDuplicateWithDifferentQTYModal,
       openDeleteItemModal,
       qouteItemId,
+      selectDate,
+      ref,
+      setActiveClickAway,
+      setSelectDate,
       onClickDeleteQouteItem,
       deleteQuoteItem,
       onCloseDeleteItemModal,
@@ -182,6 +187,10 @@ const QuotePageWidget = () => {
     openDuplicateWithDifferentQTYModal,
     openDeleteItemModal,
     qouteItemId,
+    selectDate,
+    ref,
+    setActiveClickAway,
+    setSelectDate,
     onClickDeleteQouteItem,
     deleteQuoteItem,
     onCloseDeleteItemModal,
@@ -227,6 +236,10 @@ const QuotePageWidget = () => {
     onClickDuplicateWithDifferentQTY,
     t,
   ]);
+
+  useEffect(() => {
+    setSelectDate(quoteItemValue?.dueDate);
+  }, [quoteItemValue]);
   return (
     <>
       {quoteItemValue && (
@@ -247,6 +260,7 @@ const QuotePageWidget = () => {
                 <div
                   style={clasess.deleverdDate}
                   onClick={handleClickSelectDate}
+                  ref={ref}
                 >
                   {t("sales.quote.deliverOn")}{" "}
                   {selectDate
@@ -255,7 +269,11 @@ const QuotePageWidget = () => {
                   <div style={clasess.datePickerContainer}>
                     <input
                       type="datetime-local"
-                      onChange={(e) => setSelectDate(e.target.value)}
+                      onChange={(e) => {
+                        setSelectDate(e.target.value);
+                        console.log("AASSS");
+                        setActiveClickAway(true);
+                      }}
                       ref={dateRef}
                     />
                   </div>

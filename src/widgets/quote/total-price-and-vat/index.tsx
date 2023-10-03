@@ -24,7 +24,9 @@ const TotalPriceAndVatWidit = () => {
         <div style={clasess.totalBeforeVAT}>
           <div style={clasess.totalBefore}>
             <div style={clasess.lableStyle}>Total before VAT</div>
-            <div style={clasess.numbersStyle}>{quoteItems?.totalPrice}</div>
+            <div style={clasess.numbersStyle}>
+              {quoteItems?.totalPrice?.toFixed(2)}
+            </div>
           </div>
           <div style={clasess.discountBefore}>
             <div style={clasess.lableStyle}>Discount</div>
@@ -61,7 +63,7 @@ const TotalPriceAndVatWidit = () => {
           <div style={clasess.totalBefore}>
             <div style={clasess.lableStyle}>Total after discount</div>
             <div style={clasess.numbersStyle}>
-              {quoteItems?.totalPriceAfterDiscount}
+              {quoteItems?.totalPriceAfterDiscount?.toFixed(2)}
             </div>
           </div>
           <div style={clasess.discountBefore}>
