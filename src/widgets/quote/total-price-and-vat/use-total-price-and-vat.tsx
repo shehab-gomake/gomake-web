@@ -12,7 +12,6 @@ const useTotalPriceAndVat = () => {
   const [checked, setChecked] = useState(false);
 
   const handleChange = () => {
-    console.log("GGGGGG");
     setChecked((prev) => !prev);
   };
   const changeItems = useCallback(

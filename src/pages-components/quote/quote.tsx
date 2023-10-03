@@ -271,7 +271,6 @@ const QuotePageWidget = () => {
                       type="datetime-local"
                       onChange={(e) => {
                         setSelectDate(e.target.value);
-                        console.log("e.target.value", e.target.value);
                         setActiveClickAway(true);
                       }}
                       ref={dateRef}
