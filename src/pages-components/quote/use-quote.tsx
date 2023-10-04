@@ -110,7 +110,7 @@ const useQuote = () => {
 
   const onClickDeleteContact = useCallback(async (item: any) => {
     const res = await callApi(
-      "DELETE",
+      EHttpMethod.DELETE,
       `/v1/erp-service/quote/delete-quote-contact?quoteContactId=${item?.id}`
     );
     if (res?.success) {
@@ -131,7 +131,7 @@ const useQuote = () => {
   }, []);
   const onClickAddNewContact = useCallback(async () => {
     const res = await callApi(
-      "POST",
+      EHttpMethod.POST,
       `/v1/erp-service/quote/add-quote-contact`,
       {
         contactID: selectedContactById?.id,
@@ -159,7 +159,7 @@ const useQuote = () => {
   }, [selectedContactById, quoteItemValue]);
   const onClickDeleteAddress = useCallback(async (item: any) => {
     const res = await callApi(
-      "DELETE",
+      EHttpMethod.DELETE,
       `/v1/erp-service/quote/delete-quote-address?quoteAddressId=${item?.id}`
     );
     if (res?.success) {
@@ -180,7 +180,7 @@ const useQuote = () => {
   }, []);
   const onClickAddNewAddress = useCallback(async () => {
     const res = await callApi(
-      "POST",
+      EHttpMethod.POST,
       `/v1/erp-service/quote/add-quote-address`,
       {
         addressID: selectedAddressById?.id,
@@ -211,11 +211,15 @@ const useQuote = () => {
 
   const onChangeSelectBusiness = useCallback(
     async (item: any) => {
-      const res = await callApi("PUT", `/v1/erp-service/quote/change-client`, {
-        quoteID: quoteItemValue?.id,
-        clientId: item?.id,
-        userId: quoteItemValue?.userID,
-      });
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/erp-service/quote/change-client`,
+        {
+          quoteID: quoteItemValue?.id,
+          clientId: item?.id,
+          userId: quoteItemValue?.userID,
+        }
+      );
       if (res?.success) {
         setSnackbarStateValue({
           state: true,
@@ -237,7 +241,7 @@ const useQuote = () => {
   const getCalculateQuote = useCallback(
     async (calculationType: number, data: number) => {
       const res = await callApi(
-        "GET",
+        EHttpMethod.GET,
         `/v1/erp-service/quote/get-calculate-quote`,
         {
           QuoteId: quoteItemValue?.id,
@@ -266,7 +270,7 @@ const useQuote = () => {
   const getCalculateQuoteItem = useCallback(
     async (quoteItemId: string, calculationType: number, data: number) => {
       const res = await callApi(
-        "GET",
+        EHttpMethod.GET,
         `/v1/erp-service/quote/get-calculate-quote-item`,
         {
           QuoteItemId: quoteItemId,
@@ -307,7 +311,7 @@ const useQuote = () => {
   );
   const addNewClientContact = useCallback(async () => {
     const res = await callApi(
-      "POST",
+      EHttpMethod.POST,
       `/v1/crm-service/customer/create-contact`,
       {
         contactName: addClientContactState?.contactName,
@@ -348,7 +352,7 @@ const useQuote = () => {
 
   const addNewClientAddress = useCallback(async () => {
     const res = await callApi(
-      "POST",
+      EHttpMethod.POST,
       `/v1/crm-service/customer/create-address`,
       {
         address1: addClientAddressState?.addressName,
@@ -382,7 +386,7 @@ const useQuote = () => {
   };
   const deleteQuoteItem = useCallback(async () => {
     const res = await callApi(
-      "DELETE",
+      EHttpMethod.DELETE,
       `/v1/erp-service/quote/delete-quote-item?QuoteItemId=${qouteItemId}`
     );
     if (res?.success) {
@@ -409,7 +413,7 @@ const useQuote = () => {
 
   const duplicateQuoteItemWithAnotherQuantity = useCallback(async () => {
     const res = await callApi(
-      "POST",
+      EHttpMethod.POST,
       `/v1/erp-service/quote/duplicate-quote-with-another-quantity`,
       {
         quoteItemId: qouteItemId,
@@ -434,10 +438,14 @@ const useQuote = () => {
   }, [qouteItemId, amountVlue]);
   const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
   const updateDueDate = useCallback(async () => {
-    const res = await callApi("PUT", `/v1/erp-service/quote/update-due-date`, {
-      quoteId: quoteItemValue?.id,
-      dueDate: selectDate,
-    });
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/erp-service/quote/update-due-date`,
+      {
+        quoteId: quoteItemValue?.id,
+        dueDate: selectDate,
+      }
+    );
     if (res?.success) {
       setSnackbarStateValue({
         state: true,
@@ -453,22 +461,7 @@ const useQuote = () => {
       });
     }
   }, [quoteItemValue, selectDate]);
-  const dateRef = useRef(null);
-  const [activeClickAway, setActiveClickAway] = useState(false);
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dateRef.current && !dateRef.current.contains(event.target)) {
-        if (activeClickAway) {
-          updateDueDate();
-          setActiveClickAway(false);
-        }
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
+
   return {
     tableHeaders,
     tableRowPercent,
@@ -491,8 +484,9 @@ const useQuote = () => {
     openDeleteItemModal,
     qouteItemId,
     selectDate,
-    dateRef,
-    setActiveClickAway,
+    // dateRef,
+    // setActiveClickAway,
+    updateDueDate,
     setSelectDate,
     onClickDeleteQouteItem,
     deleteQuoteItem,

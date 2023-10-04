@@ -14,9 +14,19 @@ const ActionPageWidget = () => {
         onChange={(e) => setTerm(e)}
       />
       {term ? (
-        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={materilasSearched} headers={tableHeaders} />
+        <PrimaryTable
+          stickyFirstCol={false}
+          stickyHeader={false}
+          rows={materilasSearched}
+          headers={tableHeaders}
+        />
       ) : (
-        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={allActions} headers={tableHeaders} />
+        <PrimaryTable
+          stickyFirstCol={false}
+          stickyHeader={false}
+          rows={allActions}
+          headers={tableHeaders}
+        />
       )}
     </div>
   );

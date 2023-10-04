@@ -1522,7 +1522,13 @@
       "total":"Total",
       "usd":"USD",
       "orderNow":"order now",
-      "sendToSalesManager":"Send to sales manager"
+      "sendToSalesManager":"Send to sales manager",
+      "reasonForCancellation":"Reason for cancellation",
+      "cancelOffer":"Cancel Offer",
+      "print":"print",
+      "saveQoute":"save qoute",
+      "sendQuote":"sendQuote",
+      "cancel":"Cancel"
     }
   },
   "usersSettings": {

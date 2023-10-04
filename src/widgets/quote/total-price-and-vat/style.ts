@@ -73,7 +73,8 @@ const useStyle = () => {
         width: "100%",
         height: 40,
         marginTop: 10,
-        backgroundColor:"#FFF"
+        backgroundColor:"#FFF",
+        minWidth:123
       },
       rightSideContainer: {
         display: "flex",

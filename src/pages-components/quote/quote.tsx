@@ -7,7 +7,7 @@ import { AddPlusIcon, UploadIcon } from "@/icons";
 
 import { quoteState } from "./store/quote";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import { quoteItemState } from "@/store";
 import { BusinessWidget } from "@/widgets/quote/business-widget";
@@ -20,10 +20,6 @@ const QuotePageWidget = () => {
   const { clasess } = useStyle();
   const setQuoteState = useSetRecoilState<any>(quoteState);
   const quoteItemValue: any = useRecoilValue(quoteItemState);
-
-  const handleClickSelectDate = () => {
-    dateRef?.current?.showPicker();
-  };
 
   const {
     tableHeaders,
@@ -47,8 +43,9 @@ const QuotePageWidget = () => {
     openDeleteItemModal,
     qouteItemId,
     selectDate,
-    dateRef,
-    setActiveClickAway,
+    // dateRef,
+    // setActiveClickAway,
+    updateDueDate,
     setSelectDate,
     onClickDeleteQouteItem,
     deleteQuoteItem,
@@ -118,8 +115,8 @@ const QuotePageWidget = () => {
       openDeleteItemModal,
       qouteItemId,
       selectDate,
-      dateRef,
-      setActiveClickAway,
+      // dateRef,
+      // setActiveClickAway,
       setSelectDate,
       onClickDeleteQouteItem,
       deleteQuoteItem,
@@ -188,8 +185,8 @@ const QuotePageWidget = () => {
     openDeleteItemModal,
     qouteItemId,
     selectDate,
-    dateRef,
-    setActiveClickAway,
+    // dateRef,
+    // setActiveClickAway,
     setSelectDate,
     onClickDeleteQouteItem,
     deleteQuoteItem,
@@ -237,6 +234,25 @@ const QuotePageWidget = () => {
     t,
   ]);
 
+  const dateRef = useRef(null);
+  const [activeClickAway, setActiveClickAway] = useState(false);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dateRef.current && !dateRef.current.contains(event.target)) {
+        if (activeClickAway) {
+          updateDueDate();
+          setActiveClickAway(false);
+        }
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
+  const handleClickSelectDate = () => {
+    dateRef?.current?.showPicker();
+  };
   useEffect(() => {
     setSelectDate(quoteItemValue?.dueDate);
   }, [quoteItemValue]);

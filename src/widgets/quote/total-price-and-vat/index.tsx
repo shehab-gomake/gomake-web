@@ -3,12 +3,26 @@ import { useStyle } from "./style";
 import { useTotalPriceAndVat } from "./use-total-price-and-vat";
 import { Box, Fade } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { OtherReasonModal } from "./other-reason-modal";
+import { QuoteStatuses } from "./enums";
 
 const TotalPriceAndVatWidit = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const { btnTabs, quoteItems, changeItems, quoteStateValue, checked } =
-    useTotalPriceAndVat();
+  const {
+    btnTabs,
+    quoteItems,
+    quoteStateValue,
+    checked,
+    openOtherReasonModal,
+    reasonText,
+    changeItems,
+    onClcikOpenModal,
+    onClcikCloseModal,
+    updateCancelQuote,
+    setReasonText,
+    onClickCancelOffer,
+  } = useTotalPriceAndVat();
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.leftSideContainer}>
@@ -36,16 +50,36 @@ const TotalPriceAndVatWidit = () => {
                 {item?.name === "Cancel" && checked && (
                   <Fade in={checked}>
                     <Box sx={{ display: "flex", flexDirection: "column" }}>
-                      <GomakePrimaryButton style={clasess.btnStyle2}>
+                      <GomakePrimaryButton
+                        style={clasess.btnStyle2}
+                        onClick={() =>
+                          updateCancelQuote(QuoteStatuses.CANCELED_IRRELEVANT)
+                        }
+                      >
                         {t("sales.quote.irrelevant")}
                       </GomakePrimaryButton>
-                      <GomakePrimaryButton style={clasess.btnStyle2}>
+                      <GomakePrimaryButton
+                        style={clasess.btnStyle2}
+                        onClick={() =>
+                          updateCancelQuote(QuoteStatuses.CANCELED_PRICE)
+                        }
+                      >
                         {t("sales.quote.price")}
                       </GomakePrimaryButton>
-                      <GomakePrimaryButton style={clasess.btnStyle2}>
+                      <GomakePrimaryButton
+                        style={clasess.btnStyle2}
+                        onClick={() =>
+                          updateCancelQuote(
+                            QuoteStatuses.CANCELED_DELIVERY_TIME
+                          )
+                        }
+                      >
                         {t("sales.quote.deliveryTime")}
                       </GomakePrimaryButton>
-                      <GomakePrimaryButton style={clasess.btnStyle2}>
+                      <GomakePrimaryButton
+                        style={clasess.btnStyle2}
+                        onClick={onClcikOpenModal}
+                      >
                         {t("sales.quote.other")}
                       </GomakePrimaryButton>
                     </Box>
@@ -146,6 +180,12 @@ const TotalPriceAndVatWidit = () => {
           </GomakePrimaryButton>
         </div>
       </div>
+      <OtherReasonModal
+        openModal={openOtherReasonModal}
+        onClose={onClcikCloseModal}
+        setReasonText={setReasonText}
+        onClickCancelOffer={onClickCancelOffer}
+      />
     </div>
   );
 };
