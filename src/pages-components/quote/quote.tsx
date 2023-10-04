@@ -7,7 +7,7 @@ import { AddPlusIcon, UploadIcon } from "@/icons";
 
 import { quoteState } from "./store/quote";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import { quoteItemState } from "@/store";
 import { BusinessWidget } from "@/widgets/quote/business-widget";
@@ -293,7 +293,7 @@ const QuotePageWidget = () => {
             <AddressWidget />
             <div style={clasess.tableContainer}>
               <CustomTableWidget
-                headerTitle={"Order review"}
+                headerTitle={t("sales.quote.orderReview")}
                 tableHeaders={tableHeaders}
                 headerWidth={tableRowPercent}
                 tableRowPercent={tableRowPercent}
@@ -305,16 +305,18 @@ const QuotePageWidget = () => {
             <div style={clasess.btnContainer}>
               <AddPlusIcon />
               <div style={clasess.btnTitle} onClick={() => onOpenNewItem()}>
-                add new item
+                {t("sales.quote.addNewItems")}
               </div>
             </div>
             <div style={clasess.btnContainer}>
               <AddPlusIcon />
-              <div style={clasess.btnTitle}>add exist item</div>
+              <div style={clasess.btnTitle}>
+                {t("sales.quote.addExistItem")}
+              </div>
             </div>
             <div style={clasess.btnContainer}>
               <AddPlusIcon />
-              <div style={clasess.btnTitle}>add delivery</div>
+              <div style={clasess.btnTitle}>{t("sales.quote.addDelivery")}</div>
             </div>
           </div>
           <TotalPriceAndVatWidit />

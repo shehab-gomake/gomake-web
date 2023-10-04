@@ -2,8 +2,10 @@ import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { useTotalPriceAndVat } from "./use-total-price-and-vat";
 import { Box, Fade } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 const TotalPriceAndVatWidit = () => {
+  const { t } = useTranslation();
   const { clasess } = useStyle();
   const { btnTabs, quoteItems, changeItems, quoteStateValue, checked } =
     useTotalPriceAndVat();
@@ -13,7 +15,7 @@ const TotalPriceAndVatWidit = () => {
         <GomakeTextInput
           multiline={6}
           style={clasess.textInputStyle}
-          placeholder={"order comments"}
+          placeholder={t("sales.quote.orderComments")}
         />
         <div style={clasess.btnsContainer}>
           {btnTabs?.map((item) => {
@@ -35,16 +37,16 @@ const TotalPriceAndVatWidit = () => {
                   <Fade in={checked}>
                     <Box sx={{ display: "flex", flexDirection: "column" }}>
                       <GomakePrimaryButton style={clasess.btnStyle2}>
-                        Irrelevant
+                        {t("sales.quote.irrelevant")}
                       </GomakePrimaryButton>
                       <GomakePrimaryButton style={clasess.btnStyle2}>
-                        price
+                        {t("sales.quote.price")}
                       </GomakePrimaryButton>
                       <GomakePrimaryButton style={clasess.btnStyle2}>
-                        Delivery time
+                        {t("sales.quote.deliveryTime")}
                       </GomakePrimaryButton>
                       <GomakePrimaryButton style={clasess.btnStyle2}>
-                        Other
+                        {t("sales.quote.other")}
                       </GomakePrimaryButton>
                     </Box>
                   </Fade>
@@ -57,13 +59,15 @@ const TotalPriceAndVatWidit = () => {
       <div style={clasess.rightSideContainer}>
         <div style={clasess.totalBeforeVAT}>
           <div style={clasess.totalBefore}>
-            <div style={clasess.lableStyle}>Total before VAT</div>
+            <div style={clasess.lableStyle}>
+              {t("sales.quote.totalBeforeVAT")}
+            </div>
             <div style={clasess.numbersStyle}>
               {quoteItems?.totalPrice?.toFixed(2)}
             </div>
           </div>
           <div style={clasess.discountBefore}>
-            <div style={clasess.lableStyle}>Discount</div>
+            <div style={clasess.lableStyle}>{t("sales.quote.discount")}</div>
             <div style={clasess.numbersStyle}>
               <GomakeTextInput
                 style={clasess.textInputWithoutStyle}
@@ -96,13 +100,15 @@ const TotalPriceAndVatWidit = () => {
         </div>
         <div style={clasess.totalBeforeVAT}>
           <div style={clasess.totalBefore}>
-            <div style={clasess.lableStyle}>Total after discount</div>
+            <div style={clasess.lableStyle}>
+              {t("sales.quote.totalAfterDiscount")}
+            </div>
             <div style={clasess.numbersStyle}>
               {quoteItems?.totalPriceAfterDiscount?.toFixed(2)}
             </div>
           </div>
           <div style={clasess.discountBefore}>
-            <div style={clasess.lableStyle}>VAT</div>
+            <div style={clasess.lableStyle}>{t("sales.quote.vat")}</div>
             <div style={clasess.priceContainer}>
               <div style={clasess.numbersStyle}>{quoteItems?.vat}%</div>
             </div>
@@ -114,7 +120,7 @@ const TotalPriceAndVatWidit = () => {
           </div>
         </div>
         <div style={clasess.totlaPriceContainer}>
-          <div>Total</div>
+          <div>{t("sales.quote.total")}</div>
 
           <div style={clasess.totalContainer}>
             <GomakeTextInput
@@ -128,15 +134,15 @@ const TotalPriceAndVatWidit = () => {
                 quoteStateValue?.getCalculateQuote(2, quoteItems?.totalPayment)
               }
             />
-            <div style={clasess.lableTotal}>USD</div>
+            <div style={clasess.lableTotal}>{t("sales.quote.usd")}</div>
           </div>
         </div>
         <div style={clasess.rightSideBtnsContainer}>
           <GomakePrimaryButton style={clasess.orderNowBtn}>
-            order now
+            {t("sales.quote.orderNow")}
           </GomakePrimaryButton>
           <GomakePrimaryButton style={clasess.sendMessageBtn}>
-            Send to sales manager
+            {t("sales.quote.sendToSalesManager")}
           </GomakePrimaryButton>
         </div>
       </div>

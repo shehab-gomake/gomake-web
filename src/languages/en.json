@@ -1505,7 +1505,24 @@
       "phone": "Phone",
       "duplicateItemWithDifferentQTY": "Duplicate item with new quantity",
       "addressName": "Address Name",
-      "add": "Add"
+      "add": "Add",
+      "orderReview":"Order review",
+      "addNewItems":"add new item",
+      "addExistItem":"add exist item",
+      "addDelivery":"add delivery",
+      "orderComments":"order comments",
+      "irrelevant":"Irrelevant",
+      "price":"Price",
+      "deliveryTime":"Delivery time",
+      "other":"Other",
+      "totalBeforeVAT":"Total before VAT",
+      "discount":"Discount",
+      "totalAfterDiscount":"Total after discount",
+      "vat":"VAT",
+      "total":"Total",
+      "usd":"USD",
+      "orderNow":"order now",
+      "sendToSalesManager":"Send to sales manager"
     }
   },
   "usersSettings": {
