@@ -15,7 +15,7 @@ const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const fileInputRef = React.createRef<HTMLInputElement>();
-  const [color, setColor] = React.useState('#2E3092')
+  const [color, setColor] = React.useState(input.value)
 
   const handleChange = (color) => {
     setColor(color)
@@ -83,7 +83,7 @@ const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
           </div>
           <div style={classes.input}>
             {input.type === "file" ? (
-              <GoMakeFileFiled/>
+              <GoMakeFileFiled selectedNameFile={input.value} />
             ) : input.type === "select" ? (
               <GoMakeAutoComplate
                 style={{ minWidth: 180, border: 0 }}

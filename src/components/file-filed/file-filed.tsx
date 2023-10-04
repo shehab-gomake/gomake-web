@@ -3,9 +3,9 @@ import { GarlleryIcon } from "../icons/gallery-icon";
 import { useStyle } from "./style";
 import React, { ChangeEvent, useState } from "react";
 
-export const GoMakeFileFiled = () => {
+export const GoMakeFileFiled = ({selectedNameFile}) => {
     const fileInputRef = React.createRef<HTMLInputElement>();
-    const [selectedFileName, setSelectedFileName] = useState("");
+    const [selectedFileName, setSelectedFileName] = useState(selectedNameFile);
     const handleButtonClick = () => {
       if (fileInputRef.current) {
         fileInputRef.current.click();
@@ -18,7 +18,6 @@ export const GoMakeFileFiled = () => {
         const reader = new FileReader();
         reader.onloadend = () => {
           const base64Data = reader.result as string;
-          console.log("Base64 representation:", base64Data);
         };
   
         reader.readAsDataURL(selectedFile);

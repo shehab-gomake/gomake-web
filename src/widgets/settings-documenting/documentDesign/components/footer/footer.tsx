@@ -4,17 +4,13 @@ import Stack from "@mui/material/Stack";
 import {FooterInputs1, FooterInputs2 } from "../../inputs/document-creation-inputs";
 import {useTranslation} from "react-i18next";
 import { useStyle } from "../../style";
-interface IProps {
-    documentCreation:any;
-    setdocumentCreation: any;
+import { IDocumentDesign, IDocumentDesignProps } from "../../interface";
 
-}
-
-const Footer = ({documentCreation, setdocumentCreation }: IProps) => {
+const Footer = ({documentDesign, setdocumentDesign }: IDocumentDesignProps) => {
     const {t} = useTranslation();
     const {classes} = useStyle();
     const onChangeInputs = (key, value) => {
-        setdocumentCreation({ ...documentCreation, [key]: value })
+        setdocumentDesign({ ...documentDesign, [key]: value })
     }
   
     return (
@@ -28,14 +24,14 @@ const Footer = ({documentCreation, setdocumentCreation }: IProps) => {
                 </Stack>
                 <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
-                    FooterInputs1(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
+                    FooterInputs1(documentDesign).map(item => <Stack direction={'column'}  width={"180px"} >
                     <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }
                 </Stack>
                 <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
-                    FooterInputs2(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
+                    FooterInputs2(documentDesign).map(item => <Stack direction={'column'}  width={"180px"} >
                     <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }

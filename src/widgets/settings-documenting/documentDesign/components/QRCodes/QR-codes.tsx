@@ -4,17 +4,14 @@ import Stack from "@mui/material/Stack";
 import {FooterInputs1, FooterInputs2, QRCodesInputs1, QRCodesInputs2, QRCodesInputs3 } from "../../inputs/document-creation-inputs";
 import {useTranslation} from "react-i18next";
 import { useStyle } from "../../style";
-interface IProps {
-    documentCreation:any;
-    setdocumentCreation: any;
+import { IDocumentDesign, IDocumentDesignProps } from "../../interface";
 
-}
 
-const QRCodes = ({documentCreation, setdocumentCreation }: IProps) => {
+const QRCodes = ({documentDesign, setdocumentDesign }: IDocumentDesignProps) => {
     const {t} = useTranslation();
     const {classes} = useStyle();
     const onChangeInputs = (key, value) => {
-        setdocumentCreation({ ...documentCreation, [key]: value })
+        setdocumentDesign({ ...documentDesign, [key]: value })
     }
   
     return (
@@ -25,21 +22,21 @@ const QRCodes = ({documentCreation, setdocumentCreation }: IProps) => {
                 </Stack>
                 <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
-                    QRCodesInputs1(documentCreation).map(item => <Stack direction={'column'}   width={460}>
+                    QRCodesInputs1(documentDesign).map(item => <Stack direction={'column'}   width={460}>
                     <FormInput  input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }
                 </Stack>
                 <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
-                    QRCodesInputs2(documentCreation).map(item => <Stack direction={'column'}   width={460}>
+                    QRCodesInputs2(documentDesign).map(item => <Stack direction={'column'}   width={460}>
                     <FormInput  input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }
                 </Stack>
                 <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
-                    QRCodesInputs3(documentCreation).map(item => <Stack direction={'column'} width={460} >
+                    QRCodesInputs3(documentDesign).map(item => <Stack direction={'column'} width={460} >
                     <FormInput  input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }

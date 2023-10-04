@@ -1,8 +1,9 @@
 import { useRecoilState } from "recoil";
-import { documentTypeState } from "../../state/documents-state";
+import { documentDesignState, documentTypeState } from "../../state/documents-state";
 
 const creationDocumetInputs = (state)  => {
     const [documentTypes, setdocumentTypes] = useRecoilState(documentTypeState);
+
     return [
         {
             name: "documentType",
@@ -12,7 +13,7 @@ const creationDocumetInputs = (state)  => {
             required: true,
             parameterKey: "DocType",
             options: documentTypes,
-            value: state?.documentType,
+            value: state?.DocType,
             isValid: true,
         },
         {
@@ -40,7 +41,7 @@ const TitleDefinitionInputs = (state)  => {
             placeholder: "documentingDesign.TitleDefinition.BusinessName",
             required: false,
             parameterKey: "BusinessName",
-            value: state?.BusinessName,
+            value: state?.businessName,
             isValid: true,
         },
         {
@@ -59,7 +60,7 @@ const TitleDefinitionInputs = (state)  => {
             placeholder: "documentingDesign.TitleDefinition.LogoUpload",
             required: false,
             parameterKey: "LogoUpload",
-            value: state?.authorizedDealer,
+            value: state?.pdfHeader,
             isValid: true,
         },
         
@@ -77,7 +78,7 @@ const TitleDefinitionCustomLogoInputs = (state)  => {
                 placeholder: "documentingDesign.TitleDefinition.CustomLogo",
                 required: false,
                 parameterKey: "CustomLogo",
-                value: state?.CustomLogo,
+                value: state?.pdfLogo,
                 isValid: true,
             },
         ];
@@ -92,7 +93,7 @@ const TableSettingInputs = (state)  => {
             placeholder: "documentingDesign.TableSetting.TableHeaderbgcolor",
             required: false,
             parameterKey: "TableHeaderbgcolor",
-            value: state?.TableHeaderbgcolor,
+            value: state?.pdfColor,
             isValid: true,
         },
         {
@@ -102,7 +103,7 @@ const TableSettingInputs = (state)  => {
             placeholder: "documentingDesign.TableSetting.Tabletextcolor",
             required: false,
             parameterKey: "Tabletextcolor",
-            value: state?.Tabletextcolor,
+            value: state?.pdfColorText,
             isValid: true,
         },
         {
@@ -112,7 +113,7 @@ const TableSettingInputs = (state)  => {
             placeholder: "documentingDesign.TableSetting.Verticalbordercolor",
             required: false,
             parameterKey: "Verticalbordercolor",
-            value: state?.Verticalbordercolor,
+            value: state?.boarderVerticalColor,
             isValid: true,
         },
         {
@@ -122,7 +123,7 @@ const TableSettingInputs = (state)  => {
             placeholder: "documentingDesign.TableSetting.Horizontalbordercolor",
             required: false,
             parameterKey: "Horizontalbordercolor",
-            value: state?.Horizontalbordercolor,
+            value: state?.boarderHorzintoalColor,
             isValid: true,
         },
     ];
@@ -155,7 +156,7 @@ const AdditionalOptionsInputs = (state)  => {
             placeholder: "documentingDesign.Additional.Viewsalesperson",
             required: false,
             parameterKey: "Viewsalesperson",
-            value: state?.Viewsalesperson,
+            value: state?.showAgentName,
             isValid: true,
         },
         {
@@ -165,7 +166,7 @@ const AdditionalOptionsInputs = (state)  => {
             placeholder: "documentingDesign.Additional.Viewdocproducer",
             required: false,
             parameterKey: "Viewdocproducer",
-            value: state?.Viewdocproducer,
+            value: state?.showDocProduserName,
             isValid: true,
         },
         {
@@ -185,7 +186,7 @@ const AdditionalOptionsInputs = (state)  => {
             placeholder: "documentingDesign.Additional.Showcustomertype",
             required: false,
             parameterKey: "Showcustomertype",
-            value: state?.Showcustomertype,
+            value: state?.showClientType,
             isValid: true,
         },
         
@@ -205,7 +206,7 @@ const AdditionalOptionsInputs2 = (state)  => {
             placeholder: "documentingDesign.Additional.Showcustomercode",
             required: false,
             parameterKey: "Showcustomercode",
-            value: state?.Showcustomercode,
+            value: state?.showClientCode,
             isValid: true,
         },
         {
@@ -225,7 +226,7 @@ const AdditionalOptionsInputs2 = (state)  => {
             placeholder: "documentingDesign.Additional.Showpaymentterms",
             required: false,
             parameterKey: "Showpaymentterms",
-            value: state?.Showpaymentterms,
+            value: state?.showPaymentTerms,
             isValid: true,
         },
         {
@@ -235,7 +236,7 @@ const AdditionalOptionsInputs2 = (state)  => {
             placeholder: "documentingDesign.Additional.Showtaxpayable",
             required: false,
             parameterKey: "Showtaxpayable",
-            value: state?.Showtaxpayable,
+            value: state?.showWithholdingTaxPayable,
             isValid: true,
         },     
 
@@ -253,7 +254,7 @@ const FooterInputs1 = (state)  => {
             placeholder: "documentingDesign.Footer.Email",
             required: false,
             parameterKey: "Email",
-            value: state?.Email,
+            value: state?.email,
             isValid: true,
         },
         {
@@ -263,7 +264,7 @@ const FooterInputs1 = (state)  => {
             placeholder: "documentingDesign.Footer.Phone",
             required: false,
             parameterKey: "Phone",
-            value: state?.Phone,
+            value: state?.mobileNumber,
             isValid: true,
         },
         {
@@ -273,7 +274,7 @@ const FooterInputs1 = (state)  => {
             placeholder: "documentingDesign.Footer.Address",
             required: false,
             parameterKey: "Address",
-            value: state?.Address,
+            value: state?.address,
             isValid: true,
         },
          
@@ -290,7 +291,7 @@ const FooterInputs2 = (state)  => {
             placeholder: "documentingDesign.Footer.FooterImage",
             required: false,
             parameterKey: "FooterImage",
-            value: state?.FooterImage,
+            value: state?.pdfFooter,
             isValid: true,
         },
     ];

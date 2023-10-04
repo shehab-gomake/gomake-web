@@ -4,17 +4,14 @@ import { useStyle } from "../../style";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { TableSettingInputs, TableSettingInputs2 } from "../../inputs/document-creation-inputs";
-interface IProps {
-    documentCreation:any;
-    setdocumentCreation: any;
+import { IDocumentDesign, IDocumentDesignProps } from "../../interface";
 
-}
 
-const TableSetting = ({documentCreation, setdocumentCreation }: IProps) => {
+const TableSetting = ({documentDesign, setdocumentDesign }: IDocumentDesignProps) => {
     const {t} = useTranslation();
     const {classes} = useStyle();
     const onChangeInputs = (key, value) => {
-        setdocumentCreation({ ...documentCreation, [key]: value })
+        setdocumentDesign({ ...documentDesign, [key]: value })
     }
   
   
@@ -30,14 +27,14 @@ const TableSetting = ({documentCreation, setdocumentCreation }: IProps) => {
                 </Stack>
                 <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
-                    TableSettingInputs(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
+                    TableSettingInputs(documentDesign).map(item => <Stack direction={'column'}  width={"180px"} >
                     <FormInput input={item as IInput}  changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }
                 </Stack>
                 <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
-                    TableSettingInputs2(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
+                    TableSettingInputs2(documentDesign).map(item => <Stack direction={'column'}  width={"180px"} >
                     <FormInput input={item as IInput}  changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }

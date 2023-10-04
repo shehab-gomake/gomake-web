@@ -6,38 +6,27 @@ import { creationDocumetInputs } from "../../inputs/document-creation-inputs";
 import { useStyle } from "../../style";
 import { useEffect } from "react";
 import { UseDocumentDesign } from "@/widgets/settings-documenting/use-document-design";
-import { useRecoilState } from "recoil";
-import { documentDesignState } from "@/widgets/settings-documenting/state/documents-state";
-
-interface IProps {
-    documentCreation:{
-        agentId:  string,
-        documentId: string,
-      
-    };
-    setdocumentCreation?: (documentCreation: any) => void;
-}
+import { IDocumentDesign, IDocumentDesignProps } from "../../interface";
 
 
 
-const DocumentCreation = ({documentCreation, setdocumentCreation }: IProps) => {
+const DocumentCreation = ({documentDesign ,setdocumentDesign}: IDocumentDesignProps) => {
     const {t} = useTranslation();
     const {classes} = useStyle();
     const {getDocumentTypes , getDocumentDesignByCreationDoc} = UseDocumentDesign();
-    const [documentDesign, setdocumentDesign] = useRecoilState(documentDesignState);
     const onChangeInputs = (key, value) => {
-        setdocumentCreation({ ...documentCreation, [key]: value })
-     
-    }
+        setdocumentDesign({ ...documentDesign, [key]: value })
 
-    useEffect(() =>{
-        getDocumentDesignByCreationDoc(documentCreation);
-        console.log(documentDesign);
-    },[documentCreation])
+    }
+  
     useEffect(() => {
         getDocumentTypes();
         
       }, []);
+      
+    useEffect(() =>{
+        getDocumentDesignByCreationDoc(documentDesign);
+    },[documentDesign]);
     return (
         <>
             <div>
@@ -47,7 +36,7 @@ const DocumentCreation = ({documentCreation, setdocumentCreation }: IProps) => {
                 <Stack direction={'row'}  marginTop={"24px"} width={"90%"} gap={"16px"} >
 
                     {
-                        creationDocumetInputs(documentCreation).map(item => <Stack direction={'column'}  key={item.name} width={"180px"} >
+                        creationDocumetInputs(documentDesign).map(item => <Stack direction={'column'}  key={item.name} width={"180px"} >
                         <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     }
                 </Stack>

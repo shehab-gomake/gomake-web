@@ -5,16 +5,13 @@ import { useStyle } from "../../style";
 import { TitleDefinitionCustomLogoInputs, TitleDefinitionInputs } from "../../inputs/document-creation-inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-interface IProps {
-    documentCreation:any;
-    setdocumentCreation: any;
+import { IDocumentDesign, IDocumentDesignProps } from "../../interface";
 
-}
-const TitleDefinition = ({documentCreation, setdocumentCreation }: IProps) => {
+const TitleDefinition = ({documentDesign, setdocumentDesign }: IDocumentDesignProps) => {
     const {t} = useTranslation();
     const {classes} = useStyle();
     const onChangeInputs = (key, value) => {
-        setdocumentCreation({ ...documentCreation, [key]: value })
+        setdocumentDesign({ ...documentDesign, [key]: value })
     }
   
   
@@ -26,14 +23,14 @@ const TitleDefinition = ({documentCreation, setdocumentCreation }: IProps) => {
                 </Stack>
                 <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"}  >
                 {
-                    TitleDefinitionInputs(documentCreation).map(item => <FormInput  input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
+                    TitleDefinitionInputs(documentDesign).map(item => <FormInput  input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
                     
                 }
                 </Stack>
                 
                 <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
-                    TitleDefinitionCustomLogoInputs(documentCreation).map(item => <Stack direction={'column'}  width={"180px"} >
+                    TitleDefinitionCustomLogoInputs(documentDesign).map(item => <Stack direction={'column'}  width={"180px"} >
                     <FormInput  input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }
