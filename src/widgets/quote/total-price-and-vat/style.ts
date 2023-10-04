@@ -13,9 +13,9 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
-        paddingLeft: 33,
-        paddingRight: 33,
-        gap: 65,
+        // paddingLeft: 33,
+        // paddingRight: 33,
+        gap: 30,
         marginTop: 25,
         backgroundColor: "#FFFFFF",
       },
@@ -49,16 +49,13 @@ const useStyle = () => {
         alignItems: "center",
         border: "1px solid #ED028C",
         borderRadius: 4,
-        paddingTop: 10,
-        paddingBottom: 10,
-        paddingLeft: 20,
-        paddingRight: 20,
         ...FONT_FAMILY.Lexend(500, 16),
         color: secondColor(500),
         cursor: "pointer",
         width: "100%",
         height: 40,
-        backgroundColor:"#FFF"
+        backgroundColor:"#FFF",
+        minWidth:116
       },
       btnStyle2: {
         display: "flex",
@@ -107,6 +104,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "50%",
+        
       },
       priceContainer: {
         display: "flex",
@@ -120,6 +118,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(400, 16),
         color: "#000000",
         width: "40%",
+        minWidth:"fit-content",
       },
       numbersStyle: {
         ...FONT_FAMILY.Lexend(400, 16),
