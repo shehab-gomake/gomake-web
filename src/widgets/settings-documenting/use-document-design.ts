@@ -9,6 +9,7 @@ const UseDocumentDesign = () => {
     const { t } = useTranslation();
     const [documentTypes, setdocumentTypes] = useRecoilState(documentTypeState);
     const [documentDesign, setdocumentDesign] = useRecoilState(documentDesignState);
+    
 
     const getDocumentTypes = async () => {
         const callBack = (res) => {
@@ -30,17 +31,16 @@ const UseDocumentDesign = () => {
             }
         }
 
-        console.log(documentDesign);
         await getDocumentDesignByCreationDocingApi(callApi, callBack,docmentCreation)
     }
 
     const AddOrUpdateDocumentDesign = async (documentDesign) =>{
-        console.log("AddOrUpdateDocumentDesign function is : " + JSON.stringify(documentDesign))
+      
         const callBack = (res) => {
             if (res.success) {
-                console.log("succ")
-                setdocumentDesign(res);
+                setdocumentDesign(res.result);
             }
+            console.log( "this is the ressult of update document design" + res.result)
         }
         await AddOrUpdateDocumentDesignDocingApi(callApi, callBack,documentDesign)
 

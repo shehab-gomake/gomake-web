@@ -176,7 +176,7 @@ const AdditionalOptionsInputs = (state)  => {
             placeholder: "documentingDesign.Additional.Showpaymentdate",
             required: false,
             parameterKey: "Showpaymentdate",
-            value: state?.Showpaymentdate,
+            value: state?.ShowToPayUntil,
             isValid: true,
         },
         {
@@ -216,7 +216,7 @@ const AdditionalOptionsInputs2 = (state)  => {
             placeholder: "documentingDesign.Additional.Viewcustomerbalance",
             required: false,
             parameterKey: "Viewcustomerbalance",
-            value: state?.Viewcustomerbalance,
+            value: state?.IsShowBalance,
             isValid: true,
         },
         {
