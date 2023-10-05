@@ -1,10 +1,15 @@
-import { GomakePrimaryButton, GomakeTextInput } from "@/components";
+import {
+  GoMakeDeleteModal,
+  GomakePrimaryButton,
+  GomakeTextInput,
+} from "@/components";
 import { useStyle } from "./style";
 import { useTotalPriceAndVat } from "./use-total-price-and-vat";
 import { Box, Fade } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { OtherReasonModal } from "./other-reason-modal";
 import { QuoteStatuses } from "./enums";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 const TotalPriceAndVatWidit = () => {
   const { t } = useTranslation();
@@ -15,6 +20,15 @@ const TotalPriceAndVatWidit = () => {
     quoteStateValue,
     checked,
     openOtherReasonModal,
+    openIrreleventCancelModal,
+    openPriceCancelModal,
+    openDeliveryTimeCancelModal,
+    onClcikOpenIrreleventModal,
+    onClcikCloseIrreleventModal,
+    onClcikOpenPriceModal,
+    onClcikClosePriceModal,
+    onClcikOpenDeliveryTimeModal,
+    onClcikCloseDeliveryTimeModal,
     changeItems,
     onClcikOpenModal,
     onClcikCloseModal,
@@ -54,27 +68,19 @@ const TotalPriceAndVatWidit = () => {
                     <Box sx={{ display: "flex", flexDirection: "column" }}>
                       <GomakePrimaryButton
                         style={clasess.btnStyle2}
-                        onClick={() =>
-                          updateCancelQuote(QuoteStatuses.CANCELED_IRRELEVANT)
-                        }
+                        onClick={onClcikOpenIrreleventModal}
                       >
                         {t("sales.quote.irrelevant")}
                       </GomakePrimaryButton>
                       <GomakePrimaryButton
                         style={clasess.btnStyle2}
-                        onClick={() =>
-                          updateCancelQuote(QuoteStatuses.CANCELED_PRICE)
-                        }
+                        onClick={onClcikOpenPriceModal}
                       >
                         {t("sales.quote.price")}
                       </GomakePrimaryButton>
                       <GomakePrimaryButton
                         style={clasess.btnStyle2}
-                        onClick={() =>
-                          updateCancelQuote(
-                            QuoteStatuses.CANCELED_DELIVERY_TIME
-                          )
-                        }
+                        onClick={onClcikOpenDeliveryTimeModal}
                       >
                         {t("sales.quote.deliveryTime")}
                       </GomakePrimaryButton>
@@ -187,6 +193,46 @@ const TotalPriceAndVatWidit = () => {
         onClose={onClcikCloseModal}
         setReasonText={setReasonText}
         onClickCancelOffer={onClickCancelOffer}
+      />
+      <GoMakeDeleteModal
+        icon={
+          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        }
+        title={t("sales.quote.titleCancelModal")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openIrreleventCancelModal}
+        onClose={onClcikCloseIrreleventModal}
+        subTitle={t("sales.quote.subTitleCancelModal")}
+        cancelBtn={t("sales.quote.cancelBtn")}
+        onClickDelete={() =>
+          updateCancelQuote(QuoteStatuses.CANCELED_IRRELEVANT)
+        }
+      />
+      <GoMakeDeleteModal
+        icon={
+          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        }
+        title={t("sales.quote.titleCancelModal")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openPriceCancelModal}
+        onClose={onClcikClosePriceModal}
+        subTitle={t("sales.quote.subTitleCancelModal")}
+        cancelBtn={t("sales.quote.cancelBtn")}
+        onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
+      />
+      <GoMakeDeleteModal
+        icon={
+          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        }
+        title={t("sales.quote.titleCancelModal")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openDeliveryTimeCancelModal}
+        onClose={onClcikCloseDeliveryTimeModal}
+        subTitle={t("sales.quote.subTitleCancelModal")}
+        cancelBtn={t("sales.quote.cancelBtn")}
+        onClickDelete={() =>
+          updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)
+        }
       />
     </div>
   );

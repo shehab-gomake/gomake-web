@@ -18,11 +18,37 @@ const useTotalPriceAndVat = () => {
   const [checked, setChecked] = useState(false);
   const [reasonText, setReasonText] = useState("");
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
+  const [openIrreleventCancelModal, setOpenIrreleventCancelModal] =
+    useState(false);
+  const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
+  const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] =
+    useState(false);
   const onClcikOpenModal = () => {
     setOpenOtherReasonModal(true);
   };
   const onClcikCloseModal = () => {
     setOpenOtherReasonModal(false);
+  };
+
+  const onClcikOpenIrreleventModal = () => {
+    setOpenIrreleventCancelModal(true);
+  };
+  const onClcikCloseIrreleventModal = () => {
+    setOpenIrreleventCancelModal(false);
+  };
+
+  const onClcikOpenPriceModal = () => {
+    setOpenPriceCancelModal(true);
+  };
+  const onClcikClosePriceModal = () => {
+    setOpenPriceCancelModal(false);
+  };
+
+  const onClcikOpenDeliveryTimeModal = () => {
+    setOpenDeliveryTimeCancelModal(true);
+  };
+  const onClcikCloseDeliveryTimeModal = () => {
+    setOpenDeliveryTimeCancelModal(false);
   };
 
   const handleChange = () => {
@@ -147,6 +173,15 @@ const useTotalPriceAndVat = () => {
     checked,
     openOtherReasonModal,
     reasonText,
+    openIrreleventCancelModal,
+    openPriceCancelModal,
+    openDeliveryTimeCancelModal,
+    onClcikOpenIrreleventModal,
+    onClcikCloseIrreleventModal,
+    onClcikOpenPriceModal,
+    onClcikClosePriceModal,
+    onClcikOpenDeliveryTimeModal,
+    onClcikCloseDeliveryTimeModal,
     changeItems,
     onClcikOpenModal,
     onClcikCloseModal,

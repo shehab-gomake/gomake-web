@@ -1528,7 +1528,11 @@
       "print":"print",
       "saveQoute":"save qoute",
       "sendQuote":"send quote",
-      "cancel":"Cancel"
+      "cancel":"Cancel",
+      "yesBtn": "Yes",
+      "subTitleCancelModal": "Are you sure you want to cancel this offer?",
+      "cancelBtn": "cancelation",
+      "titleCancelModal":"Confirm Cancel"
     }
   },
   "usersSettings": {
