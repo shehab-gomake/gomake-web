@@ -39,7 +39,7 @@ const useMessageTemplate = () => {
     getAllTemplatesApi(callApi, callBackFunction).then();
   }
 
-  // data table 
+  // select options 
   const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(allSMSTemplateGroupsState);
   const getSMSTemplateGroups = () => {
     const callBackFunction = (data) => {
