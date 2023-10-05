@@ -1,16 +1,16 @@
 
-import { getAllTemplatesApi, addNewSmsTemplateGroup } from "@/services/api-service/mailing/mailing-api";
+import { getAllTemplatesApi, addNewSmsTemplateGroup , getAllGroupTemplatesApi } from "@/services/api-service/mailing/mailing-api";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useRecoilState } from "recoil";
 import { useSnackBar } from "@/hooks";
-import { groupModalState, templateGroupState } from "../states/state";
+import { allSMSTemplateGroupsState, groupModalState, templateGroupState } from "../states/state";
 
 const useMessageTemplate = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+  const { alertFaultAdded , alertSuccessAdded } = useSnackBar();
   const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
 
   const tableHeaders = [
@@ -29,7 +29,9 @@ const useMessageTemplate = () => {
         const tableRows = data.data?.map((document) => [
           document.type,
           document.subject,
-          document.body
+          document.body,
+          // input with type file
+          // More circle
         ]);
         setAllTemplates(tableRows);
       }
@@ -37,27 +39,37 @@ const useMessageTemplate = () => {
     getAllTemplatesApi(callApi, callBackFunction).then();
   }
 
+  // data table 
+  const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(allSMSTemplateGroupsState);
+  const getSMSTemplateGroups = () => {
+    const callBackFunction = (data) => {
+      if (data.success) {
+        setAllSMSTemplateGroups(data.data);
+      }
+    }
+    getAllGroupTemplatesApi(callApi, callBackFunction).then();
+  }
 
   // add new group
   const onAddDocument = async (templateGroup) => {
     const callback = (data) => {
       if (data.success) {
-        alertSuccessUpdate();
-        getAllTemplates();
-        setOpenModal(!openModal)
+        alertSuccessAdded();
+        setOpenModal(!openModal);
+        getSMSTemplateGroups();
       } else {
-        alertFaultUpdate();
+        alertFaultAdded();
       }
     }
     await addNewSmsTemplateGroup(callApi, callback, templateGroup);
   }
 
-
   return {
     tableHeaders,
     getAllTemplates,
     allTemplates,
-    onAddDocument
+    onAddDocument,
+    getSMSTemplateGroups
   };
 };
 

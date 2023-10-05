@@ -8,7 +8,11 @@ import { SMSTemplateGroup } from "../../interfaces/interface";
 import { templateGroupState } from "@/widgets/settings-mailing/states/state";
 import { SecondaryButton } from "@/components/button/secondary-button";
 
-const AddNewSMSTemplateGroup = ({ onClickAdd }: any) => {
+interface IProps {
+    onClickAdd: (value : any) => void;
+}
+
+const AddNewSMSTemplateGroup = ({ onClickAdd }: IProps) => {
     const { t } = useTranslation();
     const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupState);
     const onChangeInputs = (key, value) => {
@@ -17,13 +21,12 @@ const AddNewSMSTemplateGroup = ({ onClickAdd }: any) => {
 
     return (
         <Stack direction={'column'} gap={"16px"}> 
-
             <Stack direction={'row'}>
                 {
                     groupNameInput(templateGroup).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
                 }
             </Stack>
-            <SecondaryButton onClick={onClickAdd} variant={"contained"}>{t("mailingSettings.add")}</SecondaryButton>
+            <SecondaryButton onClick={()=>onClickAdd(templateGroup)} variant={"contained"}>{t("mailingSettings.add")}</SecondaryButton>
         </Stack>
     );
 }

@@ -1,4 +1,8 @@
-const filterInput = (state: any)  => {
+import { allSMSTemplateGroupsState } from "@/widgets/settings-mailing/states/state";
+import { useRecoilState } from "recoil";
+
+const filterInput = (state: any) => {
+    const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(allSMSTemplateGroupsState);
     return [
         {
             name: "SMSgroup",
@@ -8,12 +12,13 @@ const filterInput = (state: any)  => {
             required: false,
             parameterKey: "name",
             value: state?.name,
-            optionsUrl: "/v1/crm-service/roles/get-all-sms-templates"
+            //  optionsUrl: "/v1/crm-service/roles/get-all-sms-templates"
+            options: allSMSTemplateGroups
         }
     ];
 }
 
-const switchInputs = (state: any)  => {
+const switchInputs = (state: any) => {
     return [
         {
             name: "",
@@ -40,4 +45,4 @@ const switchInputs = (state: any)  => {
     ];
 }
 
-export {filterInput , switchInputs};
+export { filterInput, switchInputs };

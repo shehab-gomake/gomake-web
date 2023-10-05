@@ -9,3 +9,8 @@ export const groupModalState = atom<boolean>({
   key: "groupModalState",
   default: false,
 });
+
+export const allSMSTemplateGroupsState = atom<any>({
+  key: "allSMSTemplateGroupsState",
+  default: [],
+});
