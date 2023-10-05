@@ -3,6 +3,7 @@ import { AddOrUpdateDocumentDesignDocingApi, ResetDocumentDesigningApi, getAllDo
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import { documentDesignState, documentTypeState } from "./state/documents-state";
+import { createNamedExports } from "typescript";
 
 const UseDocumentDesign = () => {
     const { callApi } = useGomakeAxios();
@@ -24,12 +25,14 @@ const UseDocumentDesign = () => {
         await getAllDocumentDesigningApi(callApi, callBack)
     }
     const getDocumentDesignByCreationDoc = async (docmentCreationDocType,docmentCreationAgentId) =>{
-        console.log(docmentCreationDocType + " " + docmentCreationAgentId)
+  
         const callBack = (res) => {
             if (res.success) {
-                setdocumentDesign(res.data);
+                setdocumentDesign(res.data);               
             }
+           
         }
+       
 
         await getDocumentDesignByCreationDocingApi(callApi, callBack,{docType : docmentCreationDocType ,agentId : docmentCreationAgentId})
     }
@@ -38,8 +41,8 @@ const UseDocumentDesign = () => {
         console.log("add or update function document design in : " + JSON.stringify(documentDesign));
         const callBack = (res) => {
             if (res.success) {
-                console.log( "res result preivewUrl" + JSON.stringify(res))
-              //  setdocumentDesign(res);
+                console.log( "res result preivewUrl" + JSON.stringify(res.data))
+                setdocumentDesign(res);
             }
       
         }

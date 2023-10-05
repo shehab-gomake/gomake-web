@@ -35,9 +35,6 @@ const TitleDefinition = ({documentDesign, setdocumentDesign }: IDocumentDesignPr
                     
                 }
                 </Stack>
-                
-            
-                
 
             </div>
             

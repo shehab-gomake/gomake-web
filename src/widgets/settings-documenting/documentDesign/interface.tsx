@@ -5,8 +5,8 @@ export interface IDocumentDesign {
         address?:string,
         boarderHorzintoalColor?:string;
         boarderVerticalColor?:string;
-        businessName?:string;
-        businessNumber?:string;
+        businessName:string | null;
+        businessNumber:string | null;
         email?:string;
         footerState?:string;
         isShowBalance?:string;

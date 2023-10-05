@@ -15,20 +15,17 @@ const DocumentCreation = ({documentDesign ,setdocumentDesign}: IDocumentDesignPr
     const {classes} = useStyle();
     const {getDocumentTypes , getDocumentDesignByCreationDoc} = UseDocumentDesign();
     const onChangeInputs = (key, value) => {
-        console.log("key " + key + " value :" + value)
         setdocumentDesign({ ...documentDesign, [key]: value })
 
     }
   
     useEffect(() => {
         getDocumentTypes();
-        
       }, []);
       
-    useEffect(() =>{
-        
-        getDocumentDesignByCreationDoc(documentDesign.docType , documentDesign.agentId);
-    },[documentDesign.docType , documentDesign.agentId]);
+    useEffect(() =>{   
+        getDocumentDesignByCreationDoc(documentDesign?.docType , documentDesign?.agentId);
+    },[documentDesign?.docType , documentDesign?.agentId]);
     return (
         <>
             <div>

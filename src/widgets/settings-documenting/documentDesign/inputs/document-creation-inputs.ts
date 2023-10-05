@@ -41,7 +41,7 @@ const TitleDefinitionInputs = (state)  => {
             placeholder: "documentingDesign.TitleDefinition.BusinessName",
             required: false,
             parameterKey: "businessName",
-            value: state?.businessName,
+            value: state?.businessName ? state.businessName : "",
             isValid: false,
         },
         {
@@ -51,7 +51,7 @@ const TitleDefinitionInputs = (state)  => {
             placeholder: "documentingDesign.TitleDefinition.H.P./authorizedDealer",
             required: false,
             parameterKey: "authorizedDealer",
-            value: state?.authorizedDealer,
+            value: state?.authorizedDealer ? state.authorizedDealer : "",
             isValid: true,
         },
         {
@@ -60,7 +60,7 @@ const TitleDefinitionInputs = (state)  => {
             placeholder: "documentingDesign.TitleDefinition.LogoUpload",
             required: false,
             parameterKey: "pdfHeader",
-            value: state?.pdfHeader,
+            value: state?.pdfHeader ? state.pdfHeader : "",
             isValid: true,
         },
         
@@ -78,7 +78,7 @@ const TitleDefinitionCustomLogoInputs = (state)  => {
                 placeholder: "documentingDesign.TitleDefinition.CustomLogo",
                 required: false,
                 parameterKey: "pdfLogo",
-                value: state?.pdfLogo,
+                value: state?.pdfLogo ? state?.pdfLogo : "",
                 isValid: true,
             },
         ];
@@ -93,7 +93,7 @@ const TableSettingInputs = (state)  => {
             placeholder: "documentingDesign.TableSetting.TableHeaderbgcolor",
             required: false,
             parameterKey: "pdfColor",
-            value: state?.pdfColor,
+            value: state?.pdfColor ? state?.pdfColor : "",
             isValid: true,
         },
         {
@@ -103,7 +103,7 @@ const TableSettingInputs = (state)  => {
             placeholder: "documentingDesign.TableSetting.Tabletextcolor",
             required: false,
             parameterKey: "pdfColorText",
-            value: state?.pdfColorText,
+            value: state?.pdfColorText ? state?.pdfColorText : "",
             isValid: true,
         },
         {
@@ -113,7 +113,7 @@ const TableSettingInputs = (state)  => {
             placeholder: "documentingDesign.TableSetting.Verticalbordercolor",
             required: false,
             parameterKey: "boarderVerticalColor",
-            value: state?.boarderVerticalColor,
+            value: state?.boarderVerticalColor ? state?.boarderVerticalColor : "",
             isValid: true,
         },
         {
@@ -123,7 +123,7 @@ const TableSettingInputs = (state)  => {
             placeholder: "documentingDesign.TableSetting.Horizontalbordercolor",
             required: false,
             parameterKey: "boarderHorzintoalColor",
-            value: state?.boarderHorzintoalColor,
+            value: state?.boarderHorzintoalColor ? state?.boarderHorzintoalColor : "",
             isValid: true,
         },
     ];
@@ -140,7 +140,7 @@ const TableSettingInputs2 = (state)  => {
             options: [],
             optionsUrl: "",
             parameterKey: "Placementoftext",
-            value: state?.Placementoftext,
+            value: state?.Placementoftext ? state?.Placementoftext : "",
             isValid: true,
         },
     
@@ -166,7 +166,7 @@ const AdditionalOptionsInputs = (state)  => {
             placeholder: "documentingDesign.Additional.Viewdocproducer",
             required: false,
             parameterKey: "showDocProduserName",
-            value: state?.showDocProduserName,
+            value: state?.showDocProduserName ? state?.showDocProduserName : "",
             isValid: true,
         },
         {
@@ -176,7 +176,7 @@ const AdditionalOptionsInputs = (state)  => {
             placeholder: "documentingDesign.Additional.Showpaymentdate",
             required: false,
             parameterKey: "ShowToPayUntil",
-            value: state?.ShowToPayUntil,
+            value: state?.ShowToPayUntil ? state?.shShowToPayUntil : "",
             isValid: true,
         },
         {
