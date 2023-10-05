@@ -15,7 +15,6 @@ const TotalPriceAndVatWidit = () => {
     quoteStateValue,
     checked,
     openOtherReasonModal,
-    reasonText,
     changeItems,
     onClcikOpenModal,
     onClcikCloseModal,
@@ -38,15 +37,18 @@ const TotalPriceAndVatWidit = () => {
                 style={{
                   display: "flex",
                   flexDirection: "column",
-                  width: "100%",
+                  width: "23%",
+                  minWidth: 120,
                 }}
               >
-                <GomakePrimaryButton
-                  style={clasess.btnStyle}
-                  onClick={item?.onclick()}
-                >
-                  {item?.name}
-                </GomakePrimaryButton>
+                <div>
+                  <GomakePrimaryButton
+                    style={clasess.btnStyle}
+                    onClick={item?.onclick()}
+                  >
+                    {item?.name}
+                  </GomakePrimaryButton>
+                </div>
                 {item?.name === "Cancel" && checked && (
                   <Fade in={checked}>
                     <Box sx={{ display: "flex", flexDirection: "column" }}>

@@ -15,7 +15,7 @@ const useStyle = () => {
         width: "100%",
         // paddingLeft: 33,
         // paddingRight: 33,
-        gap: 30,
+        // gap: 30,
         marginTop: 25,
         backgroundColor: "#FFFFFF",
       },
@@ -25,7 +25,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
         gap: 16,
-        width: "47%",
+        width: "48%",
         height: "100%",
       },
       textInputStyle: {
@@ -41,7 +41,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
-        gap:10
+        flexWrap: "wrap" as "wrap",
       },
       btnStyle: {
         display: "flex",
@@ -82,7 +82,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 18,
-        width: "53%",
+        width: "48%",
       },
       totalBeforeVAT: {
         display: "flex",
