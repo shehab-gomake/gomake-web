@@ -23,15 +23,15 @@ const UseDocumentDesign = () => {
         }
         await getAllDocumentDesigningApi(callApi, callBack)
     }
-    const getDocumentDesignByCreationDoc = async (docmentCreation) =>{
-      
+    const getDocumentDesignByCreationDoc = async (docmentCreationDocType,docmentCreationAgentId) =>{
+        console.log(docmentCreationDocType + " " + docmentCreationAgentId)
         const callBack = (res) => {
             if (res.success) {
                 setdocumentDesign(res.data);
             }
         }
 
-        await getDocumentDesignByCreationDocingApi(callApi, callBack,docmentCreation)
+        await getDocumentDesignByCreationDocingApi(callApi, callBack,{docType : docmentCreationDocType ,agentId : docmentCreationAgentId})
     }
 
     const AddOrUpdateDocumentDesign = async (documentDesign) =>{

@@ -11,9 +11,9 @@ const creationDocumetInputs = (state)  => {
             type: "select",
             placeholder: "documentingDesign.documnetCreation.docmentType",
             required: true,
-            parameterKey: "DocType",
+            parameterKey: "docType",
             options: documentTypes,
-            value: state?.DocType,
+            value: state?.docType,
             isValid: true,
         },
         {

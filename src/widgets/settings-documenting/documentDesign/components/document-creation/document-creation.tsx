@@ -15,6 +15,7 @@ const DocumentCreation = ({documentDesign ,setdocumentDesign}: IDocumentDesignPr
     const {classes} = useStyle();
     const {getDocumentTypes , getDocumentDesignByCreationDoc} = UseDocumentDesign();
     const onChangeInputs = (key, value) => {
+        console.log("key " + key + " value :" + value)
         setdocumentDesign({ ...documentDesign, [key]: value })
 
     }
@@ -25,8 +26,9 @@ const DocumentCreation = ({documentDesign ,setdocumentDesign}: IDocumentDesignPr
       }, []);
       
     useEffect(() =>{
-        getDocumentDesignByCreationDoc(documentDesign);
-    },[documentDesign]);
+        
+        getDocumentDesignByCreationDoc(documentDesign.docType , documentDesign.agentId);
+    },[documentDesign.docType , documentDesign.agentId]);
     return (
         <>
             <div>
