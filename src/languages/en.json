@@ -1917,5 +1917,22 @@
     "edit": "Edit",
     "duplicate": "Duplicate",
     "delete": "Delete"
+  },
+  "mailingSettings": {
+    "emailSetting": "Email setting",
+    "messageTemplates": "Message templates",
+    "whatsappSetting": "Whatsapp setting",
+    "type": "Type",
+    "sendViaSms": "Send update message via SMS",
+    "sendThroughTwilio": "Send an sms message through twilio",
+    "subject": "Subject",
+    "body": "Body",
+    "attachment": "Attachments",
+    "more": "More",
+    "addNew": "Add new",
+    "group" : "SMS groups",
+    "groupName": "group name",
+    "addNewGroup": "Add new group",
+    "add": "Add"
   }
 }
