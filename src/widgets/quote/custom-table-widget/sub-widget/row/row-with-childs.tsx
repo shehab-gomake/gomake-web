@@ -9,27 +9,31 @@ const RowWithChildsTable = ({
   isCheckbox,
   changeItems,
   indexTable,
+  changeItemsChilds,
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   return (
     <div style={clasess.bodyRow}>
       {Object.entries(row).map((entry: [string, any], index) => {
-        if (entry[0] !== "quoteItemId" && entry[0] !== "recordID" && entry[0] !== "childsQuoteItems") {
+        if (
+          entry[0] !== "quoteItemId" &&
+          entry[0] !== "recordID" &&
+          entry[0] !== "childsQuoteItems"
+        ) {
           return (
             <>
-            <RowInsideWithChilds
-              index={index}
-              tablePercent={tablePercent}
-              clasess={clasess}
-              entry={entry}
-              isCheckbox={isCheckbox}
-              row={row}
-              changeItems={changeItems}
-              indexTable={indexTable}
-            />
-           
-            
+              <RowInsideWithChilds
+                index={index}
+                tablePercent={tablePercent}
+                clasess={clasess}
+                entry={entry}
+                isCheckbox={isCheckbox}
+                row={row}
+                changeItems={changeItems}
+                changeItemsChilds={changeItemsChilds}
+                indexTable={indexTable}
+              />
             </>
           );
         }

@@ -13,6 +13,7 @@ const RowInsideWithChilds = ({
   isCheckbox = true,
   changeItems,
   indexTable,
+  changeItemsChilds,
 }: any) => {
   const quoteStateValue = useRecoilValue<any>(quoteState);
   return (
@@ -57,7 +58,6 @@ const RowInsideWithChilds = ({
           >
             {entry[1]}
           </div>
-          {/* <div style={clasess.detailsLine} /> */}
         </>
       ) : entry[0] === "amount" ||
         entry[0] === "unitPrice" ||
@@ -89,22 +89,99 @@ const RowInsideWithChilds = ({
                 >
                   {entry[0] === "amount" ? (
                     <div style={{ padding: 16 }}>
-                      {item?.amount?.toFixed(2)}
+                      {/* {item?.amount?.toFixed(2)} */}
+                      <GomakeTextInput
+                        style={clasess.textInputWithoutStyle}
+                        value={Number(item?.amount).toFixed(2)}
+                        // placeholder={Number(item?.amount).toFixed(2)}
+                        onChange={(e: any) => {
+                          changeItemsChilds(
+                            indexTable,
+                            index2,
+                            entry[0],
+                            e.target.value
+                          );
+                        }}
+                        onBlur={() =>
+                          quoteStateValue?.getCalculateQuoteItem(
+                            item?.quoteItemId,
+                            0,
+                            item?.amount
+                          )
+                        }
+                      />
                     </div>
                   ) : null}
                   {entry[0] === "unitPrice" ? (
                     <div style={{ padding: 16 }}>
-                      {item?.unitPrice?.toFixed(2)}
+                      {/* {item?.unitPrice?.toFixed(2)} */}
+                      <GomakeTextInput
+                        style={clasess.textInputWithoutStyle}
+                        value={Number(item?.unitPrice).toFixed(2)}
+                        onChange={(e: any) => {
+                          changeItemsChilds(
+                            indexTable,
+                            index2,
+                            entry[0],
+                            e.target.value
+                          );
+                        }}
+                        onBlur={() =>
+                          quoteStateValue?.getCalculateQuoteItem(
+                            item?.quoteItemId,
+                            1,
+                            item?.unitPrice
+                          )
+                        }
+                      />
                     </div>
                   ) : null}
                   {entry[0] === "discount" ? (
                     <div style={{ padding: 16 }}>
-                      {item?.discount == null ? 0 : item?.discount}
+                      {/* {item?.discount == null ? 0 : item?.discount} */}
+                      <GomakeTextInput
+                        style={clasess.textInputWithoutStyle}
+                        value={Number(item?.discount).toFixed(2)}
+                        onChange={(e: any) => {
+                          changeItemsChilds(
+                            indexTable,
+                            index2,
+                            entry[0],
+                            e.target.value
+                          );
+                        }}
+                        onBlur={() =>
+                          quoteStateValue?.getCalculateQuoteItem(
+                            item?.quoteItemId,
+                            2,
+                            item?.discount
+                          )
+                        }
+                      />
                     </div>
                   ) : null}
                   {entry[0] === "finalPrice" ? (
                     <div style={{ padding: 16 }}>
-                      {item?.finalPrice?.toFixed(2)}
+                      {/* {item?.finalPrice?.toFixed(2)} */}
+                      <GomakeTextInput
+                        style={clasess.textInputWithoutStyle}
+                        value={Number(item?.finalPrice).toFixed(2)}
+                        onChange={(e: any) => {
+                          changeItemsChilds(
+                            indexTable,
+                            index2,
+                            entry[0],
+                            e.target.value
+                          );
+                        }}
+                        onBlur={() =>
+                          quoteStateValue?.getCalculateQuoteItem(
+                            item?.quoteItemId,
+                            3,
+                            item?.finalPrice
+                          )
+                        }
+                      />
                     </div>
                   ) : null}
                   {entry[0] === "more" ? (

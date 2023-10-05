@@ -27,9 +27,11 @@ const CustomTableWidget = ({
 }: IProps) => {
   const { clasess } = useStyle({ headerWidth });
   const { t } = useTranslation();
-  const { items, changeItems } = useCustomTable({
-    data,
-  });
+  const { items, changeItems, changeItemsChilds, itemsChilds } = useCustomTable(
+    {
+      data,
+    }
+  );
   const quoteStateValue = useRecoilValue<any>(quoteState);
 
   return (
@@ -72,6 +74,7 @@ const CustomTableWidget = ({
                     tablePercent={tableRowPercent}
                     isCheckbox={isCheckbox}
                     changeItems={changeItems}
+                    changeItemsChilds={changeItemsChilds}
                     indexTable={index}
                   />
                   {index != items?.length - 1 ? (
