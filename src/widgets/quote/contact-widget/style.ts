@@ -29,9 +29,12 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 16,
+        height:20
       },
       plusIconContainer: {
         cursor: "pointer",
+        width:16,
+        height:20
       },
       labelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
