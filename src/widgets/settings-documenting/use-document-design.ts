@@ -1,5 +1,5 @@
 import { useGomakeAxios } from "@/hooks";
-import { AddOrUpdateDocumentDesignDocingApi, getAllDocumentDesigningApi, getDocumentDesignByCreationDocingApi } from "@/services/api-service/documenting/document-design";
+import { AddOrUpdateDocumentDesignDocingApi, ResetDocumentDesigningApi, getAllDocumentDesigningApi, getDocumentDesignByCreationDocingApi } from "@/services/api-service/documenting/document-design";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import { documentDesignState, documentTypeState } from "./state/documents-state";
@@ -35,20 +35,32 @@ const UseDocumentDesign = () => {
     }
 
     const AddOrUpdateDocumentDesign = async (documentDesign) =>{
+        console.log("add or update function document design in : " + JSON.stringify(documentDesign));
+        const callBack = (res) => {
+            if (res.success) {
+                setdocumentDesign(res.result);
+            }
+      
+        }
+        await AddOrUpdateDocumentDesignDocingApi(callApi, callBack,documentDesign)
+
+    };
+    const ResetDocumentDesign = async (documentDesign) =>{
       
         const callBack = (res) => {
             if (res.success) {
                 setdocumentDesign(res.result);
             }
-            console.log( "this is the ressult of update document design" + res.result)
+          
         }
-        await AddOrUpdateDocumentDesignDocingApi(callApi, callBack,documentDesign)
+        await ResetDocumentDesigningApi(callApi, callBack,documentDesign)
 
     };
     return {
         getDocumentTypes,
         getDocumentDesignByCreationDoc,
-        AddOrUpdateDocumentDesign
+        AddOrUpdateDocumentDesign,
+        ResetDocumentDesign
     };
 
 };

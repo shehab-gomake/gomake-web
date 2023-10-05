@@ -15,15 +15,19 @@ import { UseDocumentDesign } from "@/widgets/settings-documenting/use-document-d
 const DocumentDesign = ({documentDesign , setdocumentDesign}: IDocumentDesignProps) => {
     const {classes} = useStyle();
     const { t } = useTranslation();
-    const {  AddOrUpdateDocumentDesign} = UseDocumentDesign();
+    const {  AddOrUpdateDocumentDesign , ResetDocumentDesign} = UseDocumentDesign();
     const addDocumentDesign = async () => {
+        console.log("documentDesign is in save button " + JSON.stringify(documentDesign))
         await AddOrUpdateDocumentDesign(documentDesign);
+    };
+    const ResetDeafultDocumentDesign = async () =>{
+        await ResetDocumentDesign(documentDesign);
     };
     return (
         <div style={classes.container}>
            <div>
-                <div>
-                        <DocumentCreation documentDesign={documentDesign}   setdocumentDesign={setdocumentDesign}  />
+                    <div>
+                       <DocumentCreation documentDesign={documentDesign}   setdocumentDesign={setdocumentDesign}  />
                     </div>
                     <div>
                         <TitleDefinition documentDesign={documentDesign}  setdocumentDesign={setdocumentDesign} />
@@ -42,7 +46,7 @@ const DocumentDesign = ({documentDesign , setdocumentDesign}: IDocumentDesignPro
                     </div>
                     <div style={{ position: "fixed", bottom: 0,width:"11%", right: "30%", padding: "10px", zIndex: 999}}>
                         <div style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
-                            <SecondaryButton variant="outlined" >{t("documentingDesign.Reset")}</SecondaryButton>
+                            <SecondaryButton onClick={ResetDeafultDocumentDesign} variant="outlined" >{t("documentingDesign.Reset")}</SecondaryButton>
                             <SecondaryButton onClick={addDocumentDesign} variant="contained">{t('documentingDesign.Save')}</SecondaryButton>
 
                         </div>

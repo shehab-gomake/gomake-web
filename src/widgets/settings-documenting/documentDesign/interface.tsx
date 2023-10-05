@@ -1,7 +1,7 @@
 
 export interface IDocumentDesign {
         agentId?:  string,
-        DocType?: string,
+        docType?: string,
         address?:string,
         boarderHorzintoalColor?:string;
         boarderVerticalColor?:string;
