@@ -42,6 +42,7 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         flexWrap: "wrap" as "wrap",
+        gap:10
       },
       btnStyle: {
         display: "flex",
@@ -55,7 +56,9 @@ const useStyle = () => {
         width: "100%",
         height: 40,
         backgroundColor:"#FFF",
-        minWidth:116
+        minWidth:116,
+
+        
       },
       btnStyle2: {
         display: "flex",
@@ -91,6 +94,7 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         marginTop: 5,
+        flexWrap: "wrap" as "wrap",
       },
       totalBefore: {
         display: "flex",
@@ -98,6 +102,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "50%",
+        minWidth:300
       },
       discountBefore: {
         display: "flex",
@@ -105,6 +110,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "50%",
+        minWidth:300
         
       },
       priceContainer: {
