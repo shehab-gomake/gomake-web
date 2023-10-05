@@ -20,14 +20,17 @@ const AddNewSMSTemplateGroup = ({ onClickAdd }: IProps) => {
     }
 
     return (
-        <Stack direction={'column'} gap={"16px"}> 
+        <Stack direction={'column'} gap={"40px"}> 
             <Stack direction={'row'}>
                 {
                     groupNameInput(templateGroup).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
                 }
             </Stack>
+            <Stack direction={'row'}  justifyContent={"flex-end"}>
             <SecondaryButton onClick={()=>onClickAdd(templateGroup)} variant={"contained"}>{t("mailingSettings.add")}</SecondaryButton>
         </Stack>
+        </Stack>
+
     );
 }
 

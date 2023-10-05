@@ -35,7 +35,6 @@ const SettingsMailingWidget = () => {
             </PrimaryTabsComponent>
             <GoMakeModal
                 insideStyle={{ paddingLeft: 20, padding: 20, width: "518px", height: "214px" }}
-                headerPadding={20}
                 openModal={openModal}
                 onClose={() => {setOpenModal(false) , setTemplateGroup(null)}}
                 modalTitle={t("mailingSettings.addNewGroup")}>
