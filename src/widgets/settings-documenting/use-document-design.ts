@@ -38,7 +38,8 @@ const UseDocumentDesign = () => {
         console.log("add or update function document design in : " + JSON.stringify(documentDesign));
         const callBack = (res) => {
             if (res.success) {
-                setdocumentDesign(res.result);
+                console.log( "res result preivewUrl" + JSON.stringify(res))
+              //  setdocumentDesign(res);
             }
       
         }

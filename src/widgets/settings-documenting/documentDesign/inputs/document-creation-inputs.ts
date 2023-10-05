@@ -13,7 +13,7 @@ const creationDocumetInputs = (state)  => {
             required: true,
             parameterKey: "DocType",
             options: documentTypes,
-            value: state?.docType,
+            value: state?.DocType,
             isValid: true,
         },
         {

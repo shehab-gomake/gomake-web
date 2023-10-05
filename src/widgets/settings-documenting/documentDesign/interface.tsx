@@ -1,7 +1,7 @@
 
 export interface IDocumentDesign {
         agentId?:  string,
-        docType?: string,
+        DocType?: string,
         address?:string,
         boarderHorzintoalColor?:string;
         boarderVerticalColor?:string;
@@ -27,7 +27,8 @@ export interface IDocumentDesign {
         showToPayUntil?:string;
         showWithholdingTaxPayable?:string;
         textVerticalAligen?:string;
-      
+        recordID:string;
+
 }
 export interface IDocumentDesignProps {
     documentDesign : IDocumentDesign;
