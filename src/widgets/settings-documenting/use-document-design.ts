@@ -41,9 +41,10 @@ const UseDocumentDesign = () => {
         console.log("add or update function document design in : " + JSON.stringify(documentDesign));
         const callBack = (res) => {
             if (res.success) {
-                console.log( "res result preivewUrl" + JSON.stringify(res.data))
-                setdocumentDesign(res);
+                setdocumentDesign(res.data);
             }
+
+            console.log(documentDesign);
       
         }
         await AddOrUpdateDocumentDesignDocingApi(callApi, callBack,documentDesign)
@@ -53,7 +54,7 @@ const UseDocumentDesign = () => {
       
         const callBack = (res) => {
             if (res.success) {
-                setdocumentDesign(res.result);
+                setdocumentDesign(res.data);
             }
           
         }
