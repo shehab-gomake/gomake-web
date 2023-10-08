@@ -11,10 +11,11 @@ import { hoverStatusState } from "@/store";
 import LockIcon from "@mui/icons-material/Lock";
 const LeftSideLayout = () => {
   const { t } = useTranslation();
-  const { tabs1, tabs2, tabs3 } = useAuthLayoutHook();
+  const { tabs1, tabs2, tabs3, profile } = useAuthLayoutHook();
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
 
+  console.log("profile", profile);
   const { clasess } = useStyle({ navStatus });
   return (
     <div
@@ -50,10 +51,15 @@ const LeftSideLayout = () => {
 
       <div style={clasess.logoContainer}>
         <Image
-          src={"https://i.ibb.co/wzpwSq6/Group-1239.png"}
+          // src={"https://i.ibb.co/wzpwSq6/Group-1239.png"}
+          src={
+            profile.logo
+              ? profile.logo
+              : "https://i.ibb.co/wzpwSq6/Group-1239.png"
+          }
           alt="logo"
-          width={100}
-          height={100}
+          width={80}
+          height={80}
         />
       </div>
 
