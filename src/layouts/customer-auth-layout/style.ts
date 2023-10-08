@@ -25,8 +25,9 @@ const useStyle = ({
       },
       leftContainer: {
         backgroundColor: primaryColor(500),
-        width: navStatus?.isClosed ? 140 : 280,
-        minWidth: navStatus?.isClosed ? 140 : 280,
+        width: navStatus?.isClosed ? 125 : 245,
+        minWidth: navStatus?.isClosed ? 125 : 245,
+        transitionDuration:"0.4s",
         height: "100vh",
         display: "flex",
         flexDirection: "column" as "column",
@@ -37,6 +38,7 @@ const useStyle = ({
         paddingTop: navStatus?.isClosed ? 8 : 40,
         paddingBottom: navStatus?.isClosed ? 8 : 40,
         overflowY: "scroll" as "scroll",
+        position: "relative" as "relative"
       },
       rightContainer: {
         width: "100%",
@@ -103,6 +105,7 @@ const useStyle = ({
         ...FONT_FAMILY.Inter(400, 16),
         color: "#FFF",
         cursor: "pointer",
+        minWidth:"fit-content"
       },
       line: {
         border: "1px solid #FFFFFF",
@@ -122,6 +125,7 @@ const useStyle = ({
         paddingTop: convertWidthToVW(15),
         paddingLeft: convertWidthToVW(40),
         paddingRight: convertWidthToVW(40),
+       
       },
       rotate90: {
         "-webkit-animation": "rotate90 0.5s forwards ",
