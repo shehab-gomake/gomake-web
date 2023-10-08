@@ -1445,6 +1445,7 @@
         "title": "Product management",
         "addProduct": "Add product",
         "selectProduct": "Select product",
+        "selectProductSKU": "Select product SKU",
         "cleanUp": "Clean up",
         "search": "Search",
         "productCode": "Product code",
@@ -1455,7 +1456,8 @@
         "type": "Type",
         "board": "Board",
         "status": "Status",
-        "more": "More"
+        "more": "More",
+        "goBack": "Go Back"
       }
     }
   },

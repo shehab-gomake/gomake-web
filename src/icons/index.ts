@@ -26,3 +26,4 @@ export * from "./remove-icon";
 export * from "./admin-panel";
 export * from "./setting";
 export * from "./re-order-icon";
+export * from "./left-arrow-icon"
