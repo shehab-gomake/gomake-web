@@ -15,7 +15,6 @@ const LeftSideLayout = () => {
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
 
-  console.log("profile", profile);
   const { clasess } = useStyle({ navStatus });
   return (
     <div

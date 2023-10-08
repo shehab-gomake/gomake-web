@@ -40,7 +40,6 @@ const HeaderFilter = ({
 }: IProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
-  console.log("statuses", statuses);
   return (
     <div style={classes.subHeaderContainer}>
       <div style={classes.filterContainer}>

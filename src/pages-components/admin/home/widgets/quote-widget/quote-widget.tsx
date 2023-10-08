@@ -58,7 +58,6 @@ const QuoteWidget = ({ isAdmin = true }) => {
             style={clasess.selectTypeContainer}
             getOptionLabel={(option: any) => (option?.name ? option.name : "")}
             onChange={(e: any, value: any) => {
-              console.log("value", value);
               setSelectedClientType(value);
             }}
             value={

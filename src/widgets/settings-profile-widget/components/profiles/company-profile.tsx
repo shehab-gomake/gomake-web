@@ -26,7 +26,6 @@ const CompanyProfileComponent = () => {
   useEffect(() => {
     getProfile().then();
   }, []);
-  console.log("profile", profile);
   const changeState = (key, value) => {
     profileChange({
       ...profile,

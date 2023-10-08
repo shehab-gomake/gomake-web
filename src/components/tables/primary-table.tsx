@@ -51,7 +51,6 @@ const PrimaryTable = ({
   stickyFirstCol,
   maxHeight,
 }: ITableProps) => {
-  console.log("rows", rows);
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { classes } = useStyle(maxHeight, dir);

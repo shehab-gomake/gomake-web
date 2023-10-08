@@ -38,7 +38,6 @@ const useProductManagement = () => {
 
   const getActions = useCallback(async () => {
     const data = await getAllProductsMongoDB(callApi, setAllProducts);
-    console.log("data", data);
     const mapData = data?.result?.map((item) => [
       item?.code,
       item?.name,
