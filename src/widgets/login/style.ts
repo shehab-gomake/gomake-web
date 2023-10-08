@@ -1,5 +1,4 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
@@ -8,14 +7,12 @@ const useStyle = () => {
     return {
       container: {
         backgroundColor: "#FFFFFF",
-        // flex: 1,
         display: "flex",
         flexDirection: "row" as "row",
         alignItems: "center",
         justifyContent: "space-between" as "space-between",
-        // minHeight: "100%",
-        // height: "100%",
-        // ...FONT_FAMILY.Lexend(600),
+        width: "100%",
+        
       },
     };
   }, [theme]);

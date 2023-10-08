@@ -26,6 +26,25 @@ export const adaptLeft = (dir: string, size: number) => {
       };
 };
 
+export const adaptPaddingRight = (dir: string, size: number) => {
+  return dir === "rtl"
+    ? {
+      paddingRight: size,
+      }
+    : {
+      paddingLeft: size,
+      };
+};
+export const adaptPaddingLeft = (dir: string, size: number) => {
+  return dir === "rtl"
+    ? {
+        paddingLeft: size,
+      }
+    : {
+        paddingRight: size,
+      };
+};
+
 export const DateFormatterDDMMYYYY = (date: string) => {
   if (date) {
     let myDate = date?.split("T")[0];
