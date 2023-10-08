@@ -20,14 +20,7 @@ const QuotePageWidget = () => {
   const { clasess } = useStyle();
   const setQuoteState = useSetRecoilState<any>(quoteState);
   const quoteItemValue: any = useRecoilValue(quoteItemState);
-  const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
-  const dateRef = useRef(null);
-  const handleClickSelectDate = () => {
-    dateRef?.current?.showPicker();
-  };
-  useEffect(() => {
-    setSelectDate(quoteItemValue?.dueDate);
-  }, [quoteItemValue]);
+
   const {
     tableHeaders,
     tableRowPercent,
@@ -49,6 +42,11 @@ const QuotePageWidget = () => {
     openDuplicateWithDifferentQTYModal,
     openDeleteItemModal,
     qouteItemId,
+    selectDate,
+    // dateRef,
+    // setActiveClickAway,
+    updateDueDate,
+    setSelectDate,
     onClickDeleteQouteItem,
     deleteQuoteItem,
     onCloseDeleteItemModal,
@@ -89,6 +87,9 @@ const QuotePageWidget = () => {
     onChangeUpdateClientAddress,
     getCalculateQuoteItem,
     getCalculateQuote,
+    setAmountValue,
+    duplicateQuoteItemWithAnotherQuantity,
+    onClickDuplicateWithDifferentQTY,
     t,
   } = useQuote();
   useEffect(() => {
@@ -113,6 +114,10 @@ const QuotePageWidget = () => {
       openDuplicateWithDifferentQTYModal,
       openDeleteItemModal,
       qouteItemId,
+      selectDate,
+      // dateRef,
+      // setActiveClickAway,
+      setSelectDate,
       onClickDeleteQouteItem,
       deleteQuoteItem,
       onCloseDeleteItemModal,
@@ -153,6 +158,9 @@ const QuotePageWidget = () => {
       onChangeUpdateClientAddress,
       getCalculateQuoteItem,
       getCalculateQuote,
+      setAmountValue,
+      duplicateQuoteItemWithAnotherQuantity,
+      onClickDuplicateWithDifferentQTY,
       t,
     });
   }, [
@@ -176,6 +184,10 @@ const QuotePageWidget = () => {
     openDuplicateWithDifferentQTYModal,
     openDeleteItemModal,
     qouteItemId,
+    selectDate,
+    // dateRef,
+    // setActiveClickAway,
+    setSelectDate,
     onClickDeleteQouteItem,
     deleteQuoteItem,
     onCloseDeleteItemModal,
@@ -216,8 +228,35 @@ const QuotePageWidget = () => {
     onChangeUpdateClientAddress,
     getCalculateQuoteItem,
     getCalculateQuote,
+    setAmountValue,
+    duplicateQuoteItemWithAnotherQuantity,
+    onClickDuplicateWithDifferentQTY,
     t,
   ]);
+
+  const dateRef = useRef(null);
+  const [activeClickAway, setActiveClickAway] = useState(false);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dateRef.current && !dateRef.current.contains(event.target)) {
+        if (activeClickAway) {
+          updateDueDate();
+          setActiveClickAway(false);
+        }
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
+  const handleClickSelectDate = () => {
+    dateRef?.current?.showPicker();
+  };
+  useEffect(() => {
+    setSelectDate(quoteItemValue?.dueDate);
+  }, [quoteItemValue]);
+
   return (
     <>
       {quoteItemValue && (
@@ -246,7 +285,10 @@ const QuotePageWidget = () => {
                   <div style={clasess.datePickerContainer}>
                     <input
                       type="datetime-local"
-                      onChange={(e) => setSelectDate(e.target.value)}
+                      onChange={(e) => {
+                        setSelectDate(e.target.value);
+                        setActiveClickAway(true);
+                      }}
                       ref={dateRef}
                     />
                   </div>
@@ -267,7 +309,7 @@ const QuotePageWidget = () => {
             <AddressWidget />
             <div style={clasess.tableContainer}>
               <CustomTableWidget
-                headerTitle={"Order review"}
+                headerTitle={t("sales.quote.orderReview")}
                 tableHeaders={tableHeaders}
                 headerWidth={tableRowPercent}
                 tableRowPercent={tableRowPercent}
@@ -279,16 +321,18 @@ const QuotePageWidget = () => {
             <div style={clasess.btnContainer}>
               <AddPlusIcon />
               <div style={clasess.btnTitle} onClick={() => onOpenNewItem()}>
-                add new item
+                {t("sales.quote.addNewItems")}
               </div>
             </div>
             <div style={clasess.btnContainer}>
               <AddPlusIcon />
-              <div style={clasess.btnTitle}>add exist item</div>
+              <div style={clasess.btnTitle}>
+                {t("sales.quote.addExistItem")}
+              </div>
             </div>
             <div style={clasess.btnContainer}>
               <AddPlusIcon />
-              <div style={clasess.btnTitle}>add delivery</div>
+              <div style={clasess.btnTitle}>{t("sales.quote.addDelivery")}</div>
             </div>
           </div>
           <TotalPriceAndVatWidit />

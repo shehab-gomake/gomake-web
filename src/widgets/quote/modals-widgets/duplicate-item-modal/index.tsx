@@ -27,10 +27,11 @@ const DuplicateItemModal = () => {
               style={clasess.textInputStyle}
               placeholder={t("sales.quote.item")}
               type="number"
+              onChange={(e: any) => quoteStateValue.setAmountValue(e.target.value)}
             />
           </div>
           <div style={clasess.btnContainer}>
-            <GomakePrimaryButton style={clasess.sendBtn}>
+            <GomakePrimaryButton style={clasess.sendBtn} onClick={()=>quoteStateValue.duplicateQuoteItemWithAnotherQuantity()}>
               {t("sales.quote.duplicate")}
             </GomakePrimaryButton>
           </div>

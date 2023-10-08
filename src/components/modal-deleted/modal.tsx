@@ -16,7 +16,6 @@ const GoMakeDeleteModal = ({
   hideIcon = false,
   title = "Confirm Delete",
   yesBtn = "Delete",
-
   ...props
 }: any) => {
   const { clasess } = useStyle();
@@ -35,9 +34,7 @@ const GoMakeDeleteModal = ({
       <div style={clasess.container}>
         <div style={clasess.content}>
           {!hideIcon && (
-            <div style={clasess.icon}>
-              <Wastebasket />
-            </div>
+            <div style={clasess.icon}>{props.icon || <Wastebasket />}</div>
           )}
           <div style={clasess.title}>{title}</div>
           <div style={clasess.subTitle}>{subTitle}</div>
@@ -49,7 +46,7 @@ const GoMakeDeleteModal = ({
               {yesBtn}
             </GomakePrimaryButton>{" "}
             <GomakePrimaryButton style={clasess.cancelBtn} onClick={onClose}>
-              {t("materials.buttons.cancel")}
+              {props?.cancelBtn || t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           </div>
         </div>

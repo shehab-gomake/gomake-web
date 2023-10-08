@@ -1352,7 +1352,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
       //Check it is work
       if (res?.success) {
-        setPricingDefaultValue(res?.data?.data?.data?.result);
+        setPricingDefaultValue(res?.data?.data?.data);
       }
       setLoading(false);
     }

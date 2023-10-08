@@ -1,8 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { useQuoteGetData } from "./use-quote-get-data";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useQuoteModals } from "./use-quote-modals";
+import { useClickAway } from "@uidotdev/usehooks";
+import { EHttpMethod } from "@/services/api-service/enums";
 
 const useQuote = () => {
   const { t } = useTranslation();
@@ -108,7 +110,7 @@ const useQuote = () => {
 
   const onClickDeleteContact = useCallback(async (item: any) => {
     const res = await callApi(
-      "DELETE",
+      EHttpMethod.DELETE,
       `/v1/erp-service/quote/delete-quote-contact?quoteContactId=${item?.id}`
     );
     if (res?.success) {
@@ -129,7 +131,7 @@ const useQuote = () => {
   }, []);
   const onClickAddNewContact = useCallback(async () => {
     const res = await callApi(
-      "POST",
+      EHttpMethod.POST,
       `/v1/erp-service/quote/add-quote-contact`,
       {
         contactID: selectedContactById?.id,
@@ -157,7 +159,7 @@ const useQuote = () => {
   }, [selectedContactById, quoteItemValue]);
   const onClickDeleteAddress = useCallback(async (item: any) => {
     const res = await callApi(
-      "DELETE",
+      EHttpMethod.DELETE,
       `/v1/erp-service/quote/delete-quote-address?quoteAddressId=${item?.id}`
     );
     if (res?.success) {
@@ -178,7 +180,7 @@ const useQuote = () => {
   }, []);
   const onClickAddNewAddress = useCallback(async () => {
     const res = await callApi(
-      "POST",
+      EHttpMethod.POST,
       `/v1/erp-service/quote/add-quote-address`,
       {
         addressID: selectedAddressById?.id,
@@ -209,11 +211,15 @@ const useQuote = () => {
 
   const onChangeSelectBusiness = useCallback(
     async (item: any) => {
-      const res = await callApi("PUT", `/v1/erp-service/quote/change-client`, {
-        quoteID: quoteItemValue?.id,
-        clientId: item?.id,
-        userId: quoteItemValue?.userID,
-      });
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/erp-service/quote/change-client`,
+        {
+          quoteID: quoteItemValue?.id,
+          clientId: item?.id,
+          userId: quoteItemValue?.userID,
+        }
+      );
       if (res?.success) {
         setSnackbarStateValue({
           state: true,
@@ -235,7 +241,7 @@ const useQuote = () => {
   const getCalculateQuote = useCallback(
     async (calculationType: number, data: number) => {
       const res = await callApi(
-        "GET",
+        EHttpMethod.GET,
         `/v1/erp-service/quote/get-calculate-quote`,
         {
           QuoteId: quoteItemValue?.id,
@@ -264,7 +270,7 @@ const useQuote = () => {
   const getCalculateQuoteItem = useCallback(
     async (quoteItemId: string, calculationType: number, data: number) => {
       const res = await callApi(
-        "GET",
+        EHttpMethod.GET,
         `/v1/erp-service/quote/get-calculate-quote-item`,
         {
           QuoteItemId: quoteItemId,
@@ -305,7 +311,7 @@ const useQuote = () => {
   );
   const addNewClientContact = useCallback(async () => {
     const res = await callApi(
-      "POST",
+      EHttpMethod.POST,
       `/v1/crm-service/customer/create-contact`,
       {
         contactName: addClientContactState?.contactName,
@@ -346,7 +352,7 @@ const useQuote = () => {
 
   const addNewClientAddress = useCallback(async () => {
     const res = await callApi(
-      "POST",
+      EHttpMethod.POST,
       `/v1/crm-service/customer/create-address`,
       {
         address1: addClientAddressState?.addressName,
@@ -380,7 +386,7 @@ const useQuote = () => {
   };
   const deleteQuoteItem = useCallback(async () => {
     const res = await callApi(
-      "DELETE",
+      EHttpMethod.DELETE,
       `/v1/erp-service/quote/delete-quote-item?QuoteItemId=${qouteItemId}`
     );
     if (res?.success) {
@@ -399,6 +405,63 @@ const useQuote = () => {
       });
     }
   }, [qouteItemId]);
+  const onClickDuplicateWithDifferentQTY = (quoteItem) => {
+    onOpenDuplicateWithDifferentQTY();
+    setQuateItemId(quoteItem?.id);
+  };
+  const [amountVlue, setAmountValue] = useState();
+
+  const duplicateQuoteItemWithAnotherQuantity = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/quote/duplicate-quote-with-another-quantity`,
+      {
+        quoteItemId: qouteItemId,
+        amount: parseInt(amountVlue),
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+      onCloseDuplicateWithDifferentQTY();
+      getQuote();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedfailed"),
+        type: "error",
+      });
+    }
+  }, [qouteItemId, amountVlue]);
+  const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
+  const updateDueDate = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/erp-service/quote/update-due-date`,
+      {
+        quoteId: quoteItemValue?.id,
+        dueDate: selectDate,
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+      getQuote();
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedfailed"),
+        type: "error",
+      });
+    }
+  }, [quoteItemValue, selectDate]);
+
   return {
     tableHeaders,
     tableRowPercent,
@@ -420,6 +483,11 @@ const useQuote = () => {
     openDuplicateWithDifferentQTYModal,
     openDeleteItemModal,
     qouteItemId,
+    selectDate,
+    // dateRef,
+    // setActiveClickAway,
+    updateDueDate,
+    setSelectDate,
     onClickDeleteQouteItem,
     deleteQuoteItem,
     onCloseDeleteItemModal,
@@ -460,6 +528,9 @@ const useQuote = () => {
     onChangeUpdateClientAddress,
     getCalculateQuoteItem,
     getCalculateQuote,
+    setAmountValue,
+    duplicateQuoteItemWithAnotherQuantity,
+    onClickDuplicateWithDifferentQTY,
     t,
   };
 };
