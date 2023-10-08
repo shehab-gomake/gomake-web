@@ -2,7 +2,7 @@ import { useGomakeAxios } from "@/hooks";
 import { AddOrUpdateDocumentDesignDocingApi, ResetDocumentDesigningApi, getAllDocumentDesigningApi, getDocumentDesignByCreationDocingApi } from "@/services/api-service/documenting/document-design";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
-import { documentDesignState, documentTypeState } from "./state/documents-state";
+import { documentDesignState, documentDesignURLState, documentTypeState } from "./state/documents-state";
 import { createNamedExports } from "typescript";
 
 const UseDocumentDesign = () => {
@@ -10,6 +10,8 @@ const UseDocumentDesign = () => {
     const { t } = useTranslation();
     const [documentTypes, setdocumentTypes] = useRecoilState(documentTypeState);
     const [documentDesign, setdocumentDesign] = useRecoilState(documentDesignState);
+    const [documentDesignURL, setdocumentDesignURL] = useRecoilState(documentDesignURLState);
+    
     
 
     const getDocumentTypes = async () => {
@@ -28,7 +30,8 @@ const UseDocumentDesign = () => {
   
         const callBack = (res) => {
             if (res.success) {
-                setdocumentDesign(res.data);               
+                setdocumentDesign(res.data);      
+                setdocumentDesignURL(res.data.previewUrl);
             }
            
         }
@@ -38,13 +41,12 @@ const UseDocumentDesign = () => {
     }
 
     const AddOrUpdateDocumentDesign = async (documentDesign) =>{
-        console.log("add or update function document design in : " + JSON.stringify(documentDesign));
+    
         const callBack = (res) => {
             if (res.success) {
-                setdocumentDesign(res.data);
+                setdocumentDesignURL(res.data.previewUrl);
             }
 
-            console.log(documentDesign);
       
         }
         await AddOrUpdateDocumentDesignDocingApi(callApi, callBack,documentDesign)

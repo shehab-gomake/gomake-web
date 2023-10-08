@@ -12,3 +12,7 @@ export const documentDesignState = atom<IDocumentDesign>({
   key: 'documentDesignState',
   default: {} as IDocumentDesign,
 });
+export const documentDesignURLState = atom({
+  key: 'documentDesignURLState',
+  default: "" ,
+});

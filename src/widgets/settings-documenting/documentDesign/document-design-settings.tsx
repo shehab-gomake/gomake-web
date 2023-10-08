@@ -3,7 +3,7 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { DocumentDesign } from "./components/document-design-setting/document-design";
 import { IframeDocumentDesign } from "./components/document-design-setting/iframe-document-desgin";
-import { documentDesignState } from "../state/documents-state";
+import { documentDesignState, documentDesignURLState } from "../state/documents-state";
 import { useRecoilState } from "recoil";
 import { useState } from "react";
 import { IDocumentDesign } from "./interface";
@@ -12,9 +12,12 @@ const DocumentDesignSetting = () => {
     const {classes} = useStyle();
     const { t } = useTranslation();
     const [documentdesign , setDocumentDesign] = useRecoilState(documentDesignState);
+    const [documentDesignURL, setdocumentDesignURL] = useRecoilState(documentDesignURLState);
+    
     const setdocumentDesign = (documentdesign : IDocumentDesign) =>{
         setDocumentDesign(documentdesign);
     }
+    console.log("document url is the index page is  : " , documentDesignURL);
     return (
         <div style={{ ...classes.container, overflow: "hidden" }}>
             <div> 
@@ -25,7 +28,7 @@ const DocumentDesignSetting = () => {
 
            
            <div>
-                <IframeDocumentDesign src={documentdesign?.previewUrl} width={"90%"} height={"740px"}/>
+                <IframeDocumentDesign src={`${documentDesignURL}`} width={"90%"} height={"740px"}/>
            </div>
             
         </div>

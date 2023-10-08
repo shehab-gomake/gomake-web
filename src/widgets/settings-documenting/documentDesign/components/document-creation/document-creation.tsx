@@ -10,10 +10,12 @@ import { IDocumentDesign, IDocumentDesignProps } from "../../interface";
 
 
 
+
 const DocumentCreation = ({documentDesign ,setdocumentDesign}: IDocumentDesignProps) => {
     const {t} = useTranslation();
     const {classes} = useStyle();
     const {getDocumentTypes , getDocumentDesignByCreationDoc} = UseDocumentDesign();
+  
     const onChangeInputs = (key, value) => {
         setdocumentDesign({ ...documentDesign, [key]: value })
 
@@ -21,6 +23,7 @@ const DocumentCreation = ({documentDesign ,setdocumentDesign}: IDocumentDesignPr
   
     useEffect(() => {
         getDocumentTypes();
+        
       }, []);
       
     useEffect(() =>{   
