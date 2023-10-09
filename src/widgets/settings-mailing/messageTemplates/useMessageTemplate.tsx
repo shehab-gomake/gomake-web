@@ -6,6 +6,11 @@ import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useRecoilState } from "recoil";
 import { useSnackBar } from "@/hooks";
 import { allSMSTemplateGroupsState, groupModalState, templateGroupState } from "../states/state";
+import { MoreMenuWidget } from "./components/more-circle/index";
+import { UploadFileInput } from "./components/upload-file/upload-file";
+
+
+
 
 const useMessageTemplate = () => {
   const { t } = useTranslation();
@@ -26,19 +31,21 @@ const useMessageTemplate = () => {
   const getAllTemplates = () => {
     const callBackFunction = (data) => {
       if (data.success) {
+        console.log(data.data);
         const tableRows = data.data?.map((document) => [
           document.type,
           document.subject,
           document.body,
-          // input with type file
-          // More circle
+         <UploadFileInput/>,
+          <MoreMenuWidget/>
         ]);
         setAllTemplates(tableRows);
       }
     }
     getAllTemplatesApi(callApi, callBackFunction).then();
   }
-
+  
+ 
   // select options 
   const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(allSMSTemplateGroupsState);
   const getSMSTemplateGroups = () => {

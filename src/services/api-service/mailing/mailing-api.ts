@@ -3,7 +3,7 @@ import {EHttpMethod} from "@/services/api-service/enums";
 import {ICallAndSetData} from "@/services/api-service/interface";
 import { SMSTemplateGroup } from "@/widgets/settings-mailing/messageTemplates/interfaces/interface";
 //need api fo data table
-const GET_ALL_TEMPLATES_URL = '';
+const GET_ALL_TEMPLATES_URL = '/v1/crm-service/roles/get-all-mailing';
 const ADD_NEW_SMS_TEMPLATE_GROUP_URL = '/v1/crm-service/sms-templates-groups/add-SMSTemplatesGroup';
 const GET_ALL_SMS_TEMPLATES_GROUPS_URL = '/v1/crm-service/roles/get-all-sms-templates';
 

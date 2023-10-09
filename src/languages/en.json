@@ -1933,6 +1933,9 @@
     "group" : "SMS groups",
     "groupName": "group name",
     "addNewGroup": "Add new group",
-    "add": "Add"
+    "add": "Add",
+    "Edit":"Edit",
+    "Duplicate":"Duplication",
+    "Delete":"Delete"
   }
 }
