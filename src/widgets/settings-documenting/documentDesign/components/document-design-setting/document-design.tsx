@@ -1,61 +1,110 @@
 
 import { useTranslation } from "react-i18next";
-import Button from "@mui/material/Button";
-import { SecondaryButton } from "@/components/button/secondary-button";
-import { TitleDefinition } from "../TitleDefinition/title-definition";
-import { TableSetting } from "../table-setting/table-setting";
-import { Additional } from "../additional/additional";
-import { Footer } from "../footer/footer";
-import { QRCodes } from "../QRCodes/QR-codes";
 import { useStyle } from "../../style";
 import { IDocumentDesign, IDocumentDesignProps } from "../../interface";
-import { DocumentCreation } from "../document-creation/document-creation";
 import { UseDocumentDesign } from "@/widgets/settings-documenting/use-document-design";
+import { SecondaryButton } from "@/components/button/secondary-button";
+import { useEffect } from "react";
+import { Stack, TextareaAutosize } from "@mui/material";
+import { FormInputsSectionComponent } from "@/components/form-inputs/form-inputs-section";
+import { FormInput } from "@/components/form-inputs/form-input";
+import { IInput } from "@/components/form-inputs/interfaces";
+import { AdditionalOptionsInputs, AdditionalOptionsInputs2, FooterInputs1, FooterInputs2, QRCodesInputs1, QRCodesInputs2, QRCodesInputs3, TableSettingInputs, TableSettingInputs2, TitleDefinitionCustomLogoInputs, TitleDefinitionInputs, creationDocumetInputs } from "../../inputs/document-creation-inputs";
 
-const DocumentDesign = ({documentDesign , setdocumentDesign}: IDocumentDesignProps) => {
+const DocumentDesign = () => {
     const {classes} = useStyle();
     const { t } = useTranslation();
-    const {  AddOrUpdateDocumentDesign , ResetDocumentDesign} = UseDocumentDesign();
+    const {  AddOrUpdateDocumentDesign , ResetDocumentDesign,getDocumentTypes , documentDesign, documentDesignChange ,getDocumentDesignByCreationDoc} = UseDocumentDesign();
     const addDocumentDesign = async () => {
-        console.log("documentDesign is in save button " + JSON.stringify(documentDesign))
         await AddOrUpdateDocumentDesign(documentDesign);
     };
     const ResetDeafultDocumentDesign = async () =>{
         await ResetDocumentDesign(documentDesign);
     };
+    
+    const onChangeInputs = (key, value) => {
+        documentDesignChange({ ...documentDesign, [key]: value })
+
+    }
+  
+    useEffect(() => {
+        getDocumentTypes();
+        
+      }, []);
+      
+    useEffect(() =>{   
+        getDocumentDesignByCreationDoc(documentDesign?.docType , documentDesign?.agentId);
+    },[documentDesign?.docType , documentDesign?.agentId]);
+    const DocumentDesignSection1: { inputs: any[], title: string }[] = [
+        {inputs: creationDocumetInputs(documentDesign), title: 'documentingDesign.documnetCreation.documentinCreation'},
+        {inputs: TitleDefinitionInputs(documentDesign), title: 'documentingDesign.TitleDefinition.TitleDefinition'},
+        {inputs: TitleDefinitionCustomLogoInputs(documentDesign), title: ''},
+        {inputs: TableSettingInputs(documentDesign), title: 'documentingDesign.TableSetting.TableSetting'},
+        {inputs: TableSettingInputs2(documentDesign), title: ''},
+    ];
+    const DocumentDesignSection2: { inputs: any[], title: string }[] = [
+        {inputs: AdditionalOptionsInputs(documentDesign), title: 'documentingDesign.Additional.Options'},
+        {inputs: AdditionalOptionsInputs2(documentDesign), title: ''},
+        {inputs: FooterInputs1(documentDesign), title: 'documentingDesign.Footer.Footer'},
+        {inputs: FooterInputs2(documentDesign), title: ''},
+        {inputs: QRCodesInputs1(documentDesign), title: 'documentingDesign.QRCodes.QRCodes'},
+        {inputs: QRCodesInputs2(documentDesign), title: ''},
+        {inputs: QRCodesInputs3(documentDesign), title: ''},
+    ];
     return (
         <div style={classes.container}>
-           <div>
-                    <div>
-                       <DocumentCreation documentDesign={documentDesign}   setdocumentDesign={setdocumentDesign}  />
-                    </div>
-                    <div>
-                        <TitleDefinition documentDesign={documentDesign}  setdocumentDesign={setdocumentDesign} />
-                    </div>
-                    <div>
-                        <TableSetting documentDesign={documentDesign}  setdocumentDesign={setdocumentDesign}/>
-                    </div>
-                    <div>
-                        <Additional documentDesign={documentDesign}  setdocumentDesign={setdocumentDesign}/>
-                    </div>
-                    <div>
-                        <Footer documentDesign={documentDesign}  setdocumentDesign={setdocumentDesign}/>
-                    </div>
-                    <div>
-                        <QRCodes documentDesign={documentDesign}  setdocumentDesign={setdocumentDesign} />
-                    </div>
-                    <div style={{ position: "fixed", bottom: 0,width:"11%", right: "30%", padding: "10px", zIndex: 999}}>
-                        <div style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
-                            <SecondaryButton onClick={ResetDeafultDocumentDesign} variant="outlined" >{t("documentingDesign.Reset")}</SecondaryButton>
-                            <SecondaryButton onClick={addDocumentDesign} variant="contained">{t('documentingDesign.Save')}</SecondaryButton>
+            <div>
+            <div>
+                <Stack direction={'column'} gap={'32px'} paddingTop={'44px'}>
+                {
+                    DocumentDesignSection1.map(section => {
+                        return (
+                            <FormInputsSectionComponent sectionTitle={section.title}>
 
-                        </div>
-                    </div>
-           </div>
-           <div>
-                
-           </div>
-            
+                                {
+                                    section.inputs.map(companyInput => <FormInput key={companyInput.parameterKey}
+                                                                                input={companyInput as IInput}
+                                                                                changeState={onChangeInputs}
+                                                                                error={false}/>)
+                                }
+                            </FormInputsSectionComponent>
+                        );
+                    })
+                }
+            </Stack>
+            <Stack direction={'row'}  marginTop={"24px"}>
+                    <span style={classes.subTitleStyle} >{t("documentingDesign.Additional.Additional")}</span>
+            </Stack>
+            <Stack direction={'row'} marginBottom={"24px"} marginTop={"24px"}>
+                <span style={classes.subTitleSpanStyle} >{t("documentingDesign.Additional.Remarks")}</span>
+            </Stack>
+            <Stack direction={'row'} marginBottom={"24px"} marginTop={"24px"}>
+                    <TextareaAutosize style={classes.textAreaStyle}></TextareaAutosize>
+            </Stack>
+            <Stack direction={'column'} gap={'32px'} paddingTop={'44px'}>
+                {
+                    DocumentDesignSection2.map(section => {
+                        return (
+                            <FormInputsSectionComponent sectionTitle={section.title}>
+
+                                {
+                                    section.inputs.map(companyInput => <FormInput key={companyInput.parameterKey}
+                                                                                input={companyInput as IInput}
+                                                                                changeState={onChangeInputs}
+                                                                                error={false}/>)
+                                }
+                            </FormInputsSectionComponent>
+                        );
+                    })
+                }
+            </Stack>
+            </div>  
+            <div style={{display:"flex",flexDirection:"row",justifyContent:"flex-end",gap:16}}>
+                        <SecondaryButton onClick={ResetDeafultDocumentDesign} variant="outlined" >{t("documentingDesign.Reset")}</SecondaryButton>
+                        <SecondaryButton onClick={addDocumentDesign} variant="contained">{t('documentingDesign.Save')}</SecondaryButton>
+            </div>
+            </div>
+         
         </div>
     );
 };

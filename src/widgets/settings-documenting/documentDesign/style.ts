@@ -8,7 +8,6 @@ const useStyle = () => {
     const classes = useMemo(() => {
         return {
             container: {
-             position: "relative" as "relative",
               display: "flex",
             },
             containerIframeComponent :{

@@ -28,23 +28,23 @@ export const GoMakeFileFiled = ({selectedNameFile}) => {
         reader.readAsDataURL(selectedFile);
       }
     };
-    console.log("selectedFileNameinGomakeFiled value : " , selectedFileNameinGomakeFiled);
+  
     const { classes } = useStyle();
     return (
-        <div style={{ width: "330px" }}>
+       
             <div style={classes.inputContainer} >
                 <div style={classes.fileInputStyle}>
-                    <GarlleryIcon />
-                    <label style={{color:"#9695C7"}}>
-                    {selectedFileNameinGomakeFiled || "Upload here"} 
+                  { selectedFileNameinGomakeFiled ? "" :   <GarlleryIcon /> }
+                    <label style={{color:"#9695C7",overflow:"hidden"}}>
+                        {selectedFileNameinGomakeFiled || "Upload here"} 
                     </label>
                     <input
-                    ref={fileInputRef}
-                    placeholder={"upload"}
-                    onChange={handleInputChange}
-                    accept=".pdf, .jpg, .png"
-                    type="file"
-                    style={{ display: "none" }}
+                        ref={fileInputRef}
+                        placeholder={"upload"}
+                        onChange={handleInputChange}
+                        accept=".pdf, .jpg, .png"
+                        type="file"
+                        style={{ display: "none" }}
                     />
                     <Button
                     variant="contained"
@@ -54,7 +54,7 @@ export const GoMakeFileFiled = ({selectedNameFile}) => {
                     Upload Logo
                     </Button>
                 </div>
-            </div>
+           
        </div>
     )
   };

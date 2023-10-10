@@ -18,7 +18,7 @@ const UseDocumentDesign = () => {
     const documentDesignChange = (documentdesign: IDocumentDesign) => {
         setdocumentDesign(documentdesign);
     }
-
+    
     const getDocumentTypes = async () => {
         const callBack = (res) => {
             if (res.success) {
