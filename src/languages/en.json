@@ -13,7 +13,10 @@
     "login": "Login",
     "username": "Username",
     "email": "Email",
-    "password": "Password"
+    "password": "Password",
+    "emailIsRequired":"Email is required",
+    "passwordIsRequired":"Password is required",
+    "invalidCredentialToken":"Invalid Credential Token"
   },
   "header": {
     "search": "Search"

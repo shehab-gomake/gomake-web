@@ -3,8 +3,10 @@ import { updateTokenStorage } from "@/services/storage-data";
 import { useCallback, useMemo, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {companyProfileState} from "@/store/company-profile";
+import { useTranslation } from "react-i18next";
 
 const useGomakeLogin = () => {
+  const {t}=useTranslation()
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const setUserProfile = useSetRecoilState(companyProfileState);
@@ -24,11 +26,11 @@ const useGomakeLogin = () => {
   const onClickLogin = useCallback(async () => {
     if(state?.username?.length <= 0) {
       setErrors({username:true,password:false});
-      setErrorMsg("Email is required")
+      setErrorMsg(t("login.emailIsRequired"))
     }
     else if(state?.password?.length <= 0) {
       setErrors({username:false,password:true});
-      setErrorMsg("Password is required")
+      setErrorMsg(t("login.passwordIsRequired"))
 
     }
     else{
@@ -41,7 +43,7 @@ const useGomakeLogin = () => {
         navigate("/");
       }
       else{
-        setErrorMsg("Invalid Credential Token")
+        setErrorMsg(t("login.invalidCredentialToken"))
       }
     }
    
