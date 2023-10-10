@@ -79,7 +79,8 @@
     "offsetPrice": "Offset price list",
     "parameters": "Parameters",
     "profits": "profits",
-    "properties": "Properties"
+    "properties": "Properties",
+    "quotes":"Quotes"
   },
   "properties": {
     "parameter": "Parameter",

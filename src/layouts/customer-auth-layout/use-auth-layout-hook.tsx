@@ -61,12 +61,17 @@ const useAuthLayoutHook = () => {
           {
             key: "add",
             title: "tabs.addSales",
-            path: "/sales/add-machine",
+            path: "/sales/add",
           },
           {
             key: "list",
             title: "tabs.listSales",
             path: "/sales/list",
+          },
+          {
+            key: "quotes",
+            title: "tabs.quotes",
+            path: "/quotes",
           },
         ],
         icon: () => {
