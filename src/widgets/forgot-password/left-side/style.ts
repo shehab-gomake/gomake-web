@@ -1,5 +1,5 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import {  adaptPaddingRight } from "@/utils/adapter";
+import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -37,32 +37,32 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         gap: 16,
-        marginTop: 25,
+        marginTop: 40,
       },
       inputLbl: {
         color: primaryColor(900),
         ...FONT_FAMILY.Lexend(600, 20),
       },
       input: {
-        width: "87%",
+        width: "85%",
       },
       btnContainer: {
-        width: "53%",
-        marginTop: 62,
+        width: "50%",
+        display: "flex",
+        justifyContent: "flex-end",
+        alignItems: "flex-end",
+        alignSelf: "flex-end",
+        marginTop: 30,
       },
       forgotStyle:{
         display: "flex",
-        // alignItems: "flex-end",
-        // alignSelf: "flex-end",
-        // justifyContent: "flex-end",
        marginTop:10,
-       marginBottom:10,
        cursor:"pointer",
-       width:"87%"
       },
       errorMsgStyle:{
         ...FONT_FAMILY.Lexend(500,12),
-        color:errorColor(500)
+        color:errorColor(500),
+        marginTop:10,
       }
     };
   }, [theme,t ]);

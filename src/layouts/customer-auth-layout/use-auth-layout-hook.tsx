@@ -1,4 +1,4 @@
-import { useGomakeAuth, useGomakeRouter } from "@/hooks";
+import { useGomakeAuth, useGomakeAxios, useGomakeRouter } from "@/hooks";
 import {
   CustomersIcon,
   HomeIcon,
@@ -10,7 +10,9 @@ import {
   ShopingIcon,
 } from "@/icons";
 import { useEffect, useMemo, useState } from "react";
-import {CubeIcon} from "@/components/icons/cube-icon";
+import { CubeIcon } from "@/components/icons/cube-icon";
+import { useRecoilState } from "recoil";
+import { ICompanyProfile, companyProfileState } from "@/store/company-profile";
 
 const useAuthLayoutHook = () => {
   const { isAuth } = useGomakeAuth();
@@ -101,7 +103,7 @@ const useAuthLayoutHook = () => {
         path: "/customers",
         isList: true,
         list: [
-          { 
+          {
             key: "customers",
             title: "tabs.customers",
             path: "/customers",
@@ -144,7 +146,7 @@ const useAuthLayoutHook = () => {
         path: "/materials",
         isList: false,
         icon: () => {
-          return <CubeIcon width={24} height={24} color={'white'} />;
+          return <CubeIcon width={24} height={24} color={"white"} />;
         },
         isProduction: true,
       },
@@ -189,12 +191,25 @@ const useAuthLayoutHook = () => {
       setCanAccess(isAuth);
     }
   }, [isAuth]);
+  const { callApi } = useGomakeAxios();
+  const [profile, setProfile] =
+    useRecoilState<ICompanyProfile>(companyProfileState);
+  const getUserProfile = async () => {
+    const res = await callApi("GET", "/v1/get-print-house-profile");
+    if (res.success) {
+      setProfile(res?.data?.data?.data);
+    }
+  };
+  useEffect(() => {
+    getUserProfile();
+  }, []);
 
   return {
     tabs1,
     tabs2,
     tabs3,
     canAccess,
+    profile,
     navigate,
   };
 };

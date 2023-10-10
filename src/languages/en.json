@@ -13,7 +13,18 @@
     "login": "Login",
     "username": "Username",
     "email": "Email",
-    "password": "Password"
+    "password": "Password",
+    "emailIsRequired":"Email is required",
+    "passwordIsRequired":"Password is required",
+    "invalidCredentialToken":"Invalid Credential Token",
+    "thisFieldRequired":"This field is required",
+    "forgotPassword":"Forgot password",
+    "enterYourEmail":"Enter your Email",
+    "send":"Send",
+    "resetPassword":"Reset Password",
+    "newPassword":"New password",
+    "confirmPassword":"Confirm password",
+    "notMach":"passwords don't match"
   },
   "header": {
     "search": "Search"
@@ -1445,6 +1456,7 @@
         "title": "Product management",
         "addProduct": "Add product",
         "selectProduct": "Select product",
+        "selectProductSKU": "Select product SKU",
         "cleanUp": "Clean up",
         "search": "Search",
         "productCode": "Product code",
@@ -1455,7 +1467,8 @@
         "type": "Type",
         "board": "Board",
         "status": "Status",
-        "more": "More"
+        "more": "More",
+        "goBack": "Go Back"
       }
     }
   },
