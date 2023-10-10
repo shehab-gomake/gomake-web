@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
-  const { theme, primaryColor } = useGomakeTheme();
+  const { theme, primaryColor,errorColor } = useGomakeTheme();
   const { t } = useTranslation();
   const clasess = useMemo(() => {
     return {
@@ -47,14 +47,22 @@ const useStyle = () => {
         width: "87%",
       },
       btnContainer: {
-        width: "53%",
-        marginTop: 62,
+        width: "50%",
+        display: "flex",
+        justifyContent: "flex-end",
+        alignItems: "flex-end",
+        alignSelf: "flex-end",
+        marginTop: 30,
       },
       forgotStyle:{
         display: "flex",
        marginTop:10,
        cursor:"pointer",
-       
+      },
+      errorMsgStyle:{
+        ...FONT_FAMILY.Lexend(500,12),
+        color:errorColor(500),
+        marginTop:10,
       }
     };
   }, [theme,t ]);

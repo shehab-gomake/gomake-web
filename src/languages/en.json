@@ -16,7 +16,8 @@
     "password": "Password",
     "emailIsRequired":"Email is required",
     "passwordIsRequired":"Password is required",
-    "invalidCredentialToken":"Invalid Credential Token"
+    "invalidCredentialToken":"Invalid Credential Token",
+    "thisFieldRequired":"This field is required"
   },
   "header": {
     "search": "Search"

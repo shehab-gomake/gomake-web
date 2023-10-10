@@ -1,4 +1,4 @@
-import { LoginLeftSide } from "./left-side/left-side";
+import { ForgotPasswordLeftSide } from "./left-side/left-side";
 import { useStyle } from "./style";
 import { useEffect } from "react";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
@@ -12,7 +12,7 @@ const ForgotPasswordWidget = () => {
   }, []);
   return (
     <div style={clasess.container}>
-      <LoginLeftSide />
+      <ForgotPasswordLeftSide />
       <LoginRightSide />
     </div>
   );
