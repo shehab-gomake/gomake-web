@@ -8,7 +8,10 @@ import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-
 import { getAndSetCustomerById, getAndSetCustomersPagination, toggleCustomerStatus } from "@/services/api-service/customers/customers-api";
 import { DEFAULT_VALUES } from "./enums";
 import { useSnackBar } from "@/hooks";
-
+export interface IStatus {
+  label: string;
+  value: string;
+}
 const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: Dispatch<SetStateAction<number>>) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -55,7 +58,8 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
   }, []);
 
   const [isActive, setStatus] = useState(true);
-  const [valStatus, setValStatus] = useState([]);
+  const [valStatus, setValStatus] = useState<IStatus>({ label: t("customers.active"), value: "true" });  
+  
   const onChangeStatus = useCallback(async (e: any, value: any) => {
     setPageNumber(1);
     setStatus(value?.value);
@@ -187,7 +191,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
     setAgentId(null);
     setAgentName(null);
     setStatus(true);
-    setValStatus(null);
+    setValStatus({ label: t("customers.active"), value: "true" });
     setClientTypeId(null);
     setValClientType(null);
     setPageNumber(1);

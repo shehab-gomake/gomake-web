@@ -68,7 +68,7 @@ const GoMakeAutoComplate = ({
   arrowColor,
   onChangeTextField,
 }: {
-  value?: string | string[];
+  value?: any;
   onChange?: any;
   style?: any;
   error?: any;
@@ -87,6 +87,13 @@ const GoMakeAutoComplate = ({
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
+  React.useEffect(() => {
+    if (value?.name) {
+      setSelectedOption(value);
+    } else {
+      setSelectedOption(null);
+    }
+  }, [value]);
   return (
     <StyledAutocomplete
       {...(value && { value })}
