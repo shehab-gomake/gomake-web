@@ -26,6 +26,9 @@ const StyledTextField = styled(TextField, {
     color: props.error
       ? `${props.errorColor(300)}`
       : `${props.primaryColor(300)}`,
+    borderBottom: props.error
+      ? `2px solid ${props.errorColor(300)}`
+      : `0px solid #FFFFFF`,
     ...props.style,
   },
 
@@ -85,6 +88,7 @@ const GomakeTextInput = ({
   onBlur?: any;
   onClick?: any;
 }) => {
+  console.log("errorerror", error);
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
   return (
     <StyledTextField

@@ -9,13 +9,10 @@ const useGomakeLogin = () => {
   const { navigate } = useGomakeRouter();
   const setUserProfile = useSetRecoilState(companyProfileState);
   const [state, setState] = useState<any>({});
-
-  const [errorMsg,setErrorMsg]=useState("")
   const [errors, setErrors] = useState<{ [name: string]: boolean }>({
     username: false,
     password: false,
   });
-  console.log("state",state?.username?.length<= 0)
   const changeState = useCallback(
     (key: string, value: any) => {
       setState({ ...state, [key]: value });
@@ -23,29 +20,14 @@ const useGomakeLogin = () => {
     [state]
   );
   const onClickLogin = useCallback(async () => {
-    if(state?.username?.length <= 0) {
-      setErrors({username:true,password:false});
-      setErrorMsg("Email is required")
+    const result = await callApi("POST", "/v1/auth/login-customer", {
+      userPrincipalName: state.username,
+      password: state.password,
+    });
+    if (result?.data?.data?.customer?.token) {
+      updateTokenStorage(result?.data?.data?.customer?.token);
+      navigate("/");
     }
-    else if(state?.password?.length <= 0) {
-      setErrors({username:false,password:true});
-      setErrorMsg("Password is required")
-
-    }
-    else{
-      const result = await callApi("POST", "/v1/auth/login-customer", {
-        userPrincipalName: state.username,
-        password: state.password,
-      });
-      if (result?.data?.data?.customer?.token) {
-        updateTokenStorage(result?.data?.data?.customer?.token);
-        navigate("/");
-      }
-      else{
-        setErrorMsg("Invalid Credential Token")
-      }
-    }
-   
   }, [state]);
   const inputs = useMemo(() => {
     return [
@@ -77,7 +59,6 @@ const useGomakeLogin = () => {
   return {
     inputs,
     errors,
-    errorMsg,
     changeState,
     onClickLogin,
     getUserProfile
