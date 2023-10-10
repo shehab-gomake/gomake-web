@@ -31,12 +31,11 @@ const useMessageTemplate = () => {
   const getAllTemplates = () => {
     const callBackFunction = (data) => {
       if (data.success) {
-        console.log(data.data);
         const tableRows = data.data?.map((document) => [
           document.type,
           document.subject,
           document.body,
-         <UploadFileInput/>,
+         <UploadFileInput selectedNameFile={"order summary.pdf"}/>,
           <MoreMenuWidget/>
         ]);
         setAllTemplates(tableRows);
