@@ -20,7 +20,11 @@
     "thisFieldRequired":"This field is required",
     "forgotPassword":"Forgot password",
     "enterYourEmail":"Enter your Email",
-    "send":"Send"
+    "send":"Send",
+    "resetPassword":"Reset Password",
+    "newPassword":"New password",
+    "confirmPassword":"Confirm password",
+    "notMach":"passwords don't match"
   },
   "header": {
     "search": "Search"

@@ -7,3 +7,4 @@ export * from "./header-title";
 export * from "./delete-material-modal";
 export * from "./shared-admin-customers";
 export * from "./forgot-password"
+export * from "./reset-password"
