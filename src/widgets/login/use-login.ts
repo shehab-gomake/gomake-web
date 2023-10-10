@@ -15,7 +15,6 @@ const useGomakeLogin = () => {
     username: false,
     password: false,
   });
-  console.log("state",state?.username?.length<= 0)
   const changeState = useCallback(
     (key: string, value: any) => {
       setState({ ...state, [key]: value });

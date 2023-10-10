@@ -5,7 +5,6 @@ import { IInputContainer } from "./interfaces";
 import { useStyle } from "./style";
 
 const InputContainer = ({ input, error, changeState }: IInputContainer) => {
-  console.log("error", error);
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {

@@ -88,7 +88,6 @@ const GomakeTextInput = ({
   onBlur?: any;
   onClick?: any;
 }) => {
-  console.log("errorerror", error);
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
   return (
     <StyledTextField
