@@ -24,7 +24,10 @@
     "resetPassword":"Reset Password",
     "newPassword":"New password",
     "confirmPassword":"Confirm password",
-    "notMach":"passwords don't match"
+    "notMach":"passwords don't match",
+    "receiveCode":"you will receive the code in the email",
+    "code":"Code"
+
   },
   "header": {
     "search": "Search"
