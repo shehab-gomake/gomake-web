@@ -42,7 +42,7 @@ const LoginByCodeLeftSide = () => {
         <div style={clasess.errorMsgStyle}>{errorMsg}</div>
         <div style={clasess.btnContainer}>
           <GomakePrimaryButton onClick={onClickSendEmail}>
-            {t("login.send")}
+            {t("login.login")}
           </GomakePrimaryButton>
         </div>
       </div>
