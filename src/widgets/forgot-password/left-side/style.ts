@@ -44,7 +44,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(600, 20),
       },
       input: {
-        width: "87%",
+        width: "85%",
       },
       btnContainer: {
         width: "50%",

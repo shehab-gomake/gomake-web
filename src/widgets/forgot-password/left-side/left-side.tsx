@@ -1,6 +1,6 @@
 import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const ForgotPasswordLeftSide = () => {
@@ -21,12 +21,12 @@ const ForgotPasswordLeftSide = () => {
   return (
     <div style={clasess.leftContainer}>
       <div style={clasess.loginContainer}>
-        <div style={clasess.loginLbl}>Forgot password</div>
+        <div style={clasess.loginLbl}>{t("login.forgotPassword")}</div>
         <div style={clasess.inputContainer}>
-          <div style={clasess.inputLbl}>Email</div>
+          <div style={clasess.inputLbl}>{t("login.email")}</div>
           <div style={clasess.input}>
             <GomakeTextInput
-              placeholder="Enter your Email"
+              placeholder={t("login.enterYourEmail")}
               onChange={(e) => setEmail(e.target.value)}
               error={error}
             />
@@ -35,7 +35,7 @@ const ForgotPasswordLeftSide = () => {
         <div style={clasess.errorMsgStyle}>{errorMsg}</div>
         <div style={clasess.btnContainer}>
           <GomakePrimaryButton onClick={onClickSendEmail}>
-            Send
+            {t("login.send")}
           </GomakePrimaryButton>
         </div>
       </div>
