@@ -8,18 +8,13 @@ const useStyle = () => {
     const classes = useMemo(() => {
         return {
             container: {
-              position: "relative" as "relative",
+             position: "relative" as "relative",
               display: "flex",
-              
-        
             },
             containerIframeComponent :{
-                display:"flex",
-                flexDirection:'column' as  'column',
-                width:"100%",
-                minHeight:"657px",
-                borderRadius:"4px",
-                borderShadow:'0px 4px 40px 0px rgba(0, 0, 0, 0.08)',
+                 flex:4,
+                 backgroundColor: "red",
+                borderShadow:'4px 4px 40px 4px rgba(0, 0, 0, 0.08)',
             },
             scrollbar:{
                 marginLeft: '30px',

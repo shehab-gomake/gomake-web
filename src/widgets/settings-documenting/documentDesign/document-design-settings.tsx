@@ -11,26 +11,17 @@ import { IDocumentDesign } from "./interface";
 const DocumentDesignSetting = () => {
     const {classes} = useStyle();
     const { t } = useTranslation();
-    const [documentdesign , setDocumentDesign] = useRecoilState(documentDesignState);
     const [documentDesignURL, setdocumentDesignURL] = useRecoilState(documentDesignURLState);
-  
-    
-    const setdocumentDesign = (documentdesign : IDocumentDesign) =>{
-        setDocumentDesign(documentdesign);
-    }
-    console.log("document url is the index page is  : " , documentDesignURL);
     return (
-        <div style={{ ...classes.container, overflow: "hidden" }}>
-            <div> 
-                <div  style={{ borderRadius: 10, overflowY: "scroll", marginBottom: 25}}>
-                    <DocumentDesign documentDesign={documentdesign} setdocumentDesign={setdocumentDesign} />
+        <div style={{ ...classes.container , height: "100%"  }}>
+                <div   style={{ flex: 6 }}>
+                    <DocumentDesign />
                 </div>
-            </div>
-
-           
-           <div style={classes.containerIframeComponent}>
-                <IframeDocumentDesign src={`${documentDesignURL}`} />
-           </div>
+                <div style={{ flex: 4 }}>
+                     <IframeDocumentDesign src={`${documentDesignURL}`} />
+                </div>
+              
+          
             
         </div>
     );

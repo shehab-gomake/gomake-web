@@ -5,6 +5,7 @@ import { useRecoilState } from "recoil";
 import { documentDesignState, documentDesignURLState, documentTypeState } from "./state/documents-state";
 import { createNamedExports } from "typescript";
 import { useState } from "react";
+import { IDocumentDesign } from "./documentDesign/interface";
 
 const UseDocumentDesign = () => {
     const { callApi } = useGomakeAxios();
@@ -13,6 +14,10 @@ const UseDocumentDesign = () => {
     const [documentDesign, setdocumentDesign] = useRecoilState(documentDesignState);
     const [documentDesignURL, setdocumentDesignURL] = useRecoilState(documentDesignURLState);
     
+
+    const documentDesignChange = (documentdesign: IDocumentDesign) => {
+        setdocumentDesign(documentdesign);
+    }
 
     const getDocumentTypes = async () => {
         const callBack = (res) => {
@@ -68,7 +73,9 @@ const UseDocumentDesign = () => {
         getDocumentTypes,
         getDocumentDesignByCreationDoc,
         AddOrUpdateDocumentDesign,
-        ResetDocumentDesign
+        ResetDocumentDesign,
+        documentDesign,
+        documentDesignChange
     };
 
 };

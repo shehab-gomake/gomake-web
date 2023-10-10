@@ -54,15 +54,7 @@ const TitleDefinitionInputs = (state)  => {
             value: state?.authorizedDealer ? state.authorizedDealer : "",
             isValid: true,
         },
-        {
-            name: "Logo Upload",
-            type: "file",
-            placeholder: "documentingDesign.TitleDefinition.LogoUpload",
-            required: false,
-            parameterKey: "pdfHeader",
-            value: state?.pdfHeader ? state.pdfHeader : "",
-            isValid: true,
-        },
+      
         
        
        
@@ -78,12 +70,24 @@ const TitleDefinitionCustomLogoInputs = (state)  => {
                 placeholder: "documentingDesign.TitleDefinition.CustomLogo",
                 required: false,
                 parameterKey: "pdfLogo",
-                value: state?.pdfLogo ? state?.pdfLogo : "",
+                value: state?.pdfLogo,
                 isValid: true,
             },
+            {
+                name: "Logo Upload",
+                label:"documentingDesign.TitleDefinition.LogoUpload",
+                type: "file",
+                placeholder: "documentingDesign.TitleDefinition.LogoUpload",
+                required: false,
+                parameterKey: "pdfHeader",
+                value: state?.pdfHeader,
+                isValid: true,
+            },
+         
         ];
 };
 const TableSettingInputs = (state)  => {
+
     return [
     
         {

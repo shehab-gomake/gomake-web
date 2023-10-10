@@ -15,12 +15,14 @@ const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const fileInputRef = React.createRef<HTMLInputElement>();
-  const [color, setColor] = React.useState(input.value)
-
-  const handleChange = (color) => {
-    setColor(color)
-  }
-
+  const [color, setColor] = useState<string>(input.value);
+  const [selectedNameFile, setselectedNameFile] = useState<string>(input.value);
+  
+  
+  const handleChange = (value: string ) => {
+    setColor(value);
+    changeState(input.parameterKey,  value);
+  };
 
   const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
     changeState(input.parameterKey, e.target.value as string);
@@ -68,7 +70,17 @@ const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
     } else {
       setSelectedLabel("");
     }
+    if(input.type === "color")
+    {
+        setColor(input.value);
+    }
+    if(input.type === "file")
+    {
+      setselectedNameFile(input.value);
+    }
   }, [input]);
+
+
 
   return (
     <>
@@ -83,7 +95,7 @@ const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
           </div>
           <div style={classes.input}>
             {input.type === "file" ? (
-              <GoMakeFileFiled selectedNameFile={input.value} />
+              <GoMakeFileFiled selectedNameFile={selectedNameFile} />
             ) : input.type === "select" ? (
               <GoMakeAutoComplate
                 style={{ minWidth: 180, border: 0 }}
@@ -99,7 +111,7 @@ const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
             ) 
             : input.type === "color" ? ( 
             <div style={classes.fileInputStyle}>
-                    <MuiColorInput value={color} onChange={handleChange} format="hex"/>
+                 <MuiColorInput value={color} onChange={handleChange} format="hex" />
             </div>
             ) : (
               <GomakeTextInput

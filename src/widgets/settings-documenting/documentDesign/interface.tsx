@@ -12,12 +12,12 @@ export interface IDocumentDesign {
         isShowBalance?:string;
         mobileNumber?:string;
         notes?:string;
-        pdfColor?:string;
-        pdfColorText?:string;
-        pdfFooter?:string;
-        pdfHeader?:string;
+        pdfColor?:string | null;
+        pdfColorText?:string | null;
+        pdfFooter?:string | null;
+        pdfHeader?:string | null;
         previewUrl?:string;
-        pdfLogo?:string;
+        pdfLogo?:string | null;
         showAgentName?:string;
         showClientCode?:string;
         showClientType?:string;

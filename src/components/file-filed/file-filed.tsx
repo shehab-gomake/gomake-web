@@ -1,19 +1,24 @@
 import { Button } from "@mui/material";
 import { GarlleryIcon } from "../icons/gallery-icon";
 import { useStyle } from "./style";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 
 export const GoMakeFileFiled = ({selectedNameFile}) => {
+    console.log("selectedNameFile in GoMakeFileFiled component : " + selectedNameFile);
+
     const fileInputRef = React.createRef<HTMLInputElement>();
-    const [selectedFileName, setSelectedFileName] = useState(selectedNameFile);
+    const [selectedFileNameinGomakeFiled, setselectedFileNameinGomakeFiled] = useState(selectedNameFile);
     const handleButtonClick = () => {
       if (fileInputRef.current) {
         fileInputRef.current.click();
       }
     };
+    useEffect(() => {
+      setselectedFileNameinGomakeFiled(selectedNameFile || "");
+    }, [selectedNameFile]);
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
       const selectedFile = event.target.files?.[0];
-      setSelectedFileName(selectedFile.name);
+      setselectedFileNameinGomakeFiled(selectedFile.name);
       if (selectedFile) {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -23,7 +28,7 @@ export const GoMakeFileFiled = ({selectedNameFile}) => {
         reader.readAsDataURL(selectedFile);
       }
     };
-    
+    console.log("selectedFileNameinGomakeFiled value : " , selectedFileNameinGomakeFiled);
     const { classes } = useStyle();
     return (
         <div style={{ width: "330px" }}>
@@ -31,8 +36,7 @@ export const GoMakeFileFiled = ({selectedNameFile}) => {
                 <div style={classes.fileInputStyle}>
                     <GarlleryIcon />
                     <label style={{color:"#9695C7"}}>
-                    {selectedFileName || "Upload here"} {/* Display selected file name or default text */}
-
+                    {selectedFileNameinGomakeFiled || "Upload here"} 
                     </label>
                     <input
                     ref={fileInputRef}
