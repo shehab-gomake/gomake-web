@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import { documentDesignState, documentDesignURLState, documentTypeState } from "./state/documents-state";
 import { createNamedExports } from "typescript";
+import { useState } from "react";
 
 const UseDocumentDesign = () => {
     const { callApi } = useGomakeAxios();
@@ -11,7 +12,6 @@ const UseDocumentDesign = () => {
     const [documentTypes, setdocumentTypes] = useRecoilState(documentTypeState);
     const [documentDesign, setdocumentDesign] = useRecoilState(documentDesignState);
     const [documentDesignURL, setdocumentDesignURL] = useRecoilState(documentDesignURLState);
-    
     
 
     const getDocumentTypes = async () => {
@@ -32,6 +32,7 @@ const UseDocumentDesign = () => {
             if (res.success) {
                 setdocumentDesign(res.data);      
                 setdocumentDesignURL(res.data.previewUrl);
+                
             }
            
         }

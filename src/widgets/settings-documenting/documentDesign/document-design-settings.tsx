@@ -13,6 +13,7 @@ const DocumentDesignSetting = () => {
     const { t } = useTranslation();
     const [documentdesign , setDocumentDesign] = useRecoilState(documentDesignState);
     const [documentDesignURL, setdocumentDesignURL] = useRecoilState(documentDesignURLState);
+  
     
     const setdocumentDesign = (documentdesign : IDocumentDesign) =>{
         setDocumentDesign(documentdesign);
@@ -27,8 +28,8 @@ const DocumentDesignSetting = () => {
             </div>
 
            
-           <div>
-                <IframeDocumentDesign src={`${documentDesignURL}`} width={"90%"} height={"740px"}/>
+           <div style={classes.containerIframeComponent}>
+                <IframeDocumentDesign src={`${documentDesignURL}`} />
            </div>
             
         </div>

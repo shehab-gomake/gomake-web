@@ -16,11 +16,10 @@ const useStyle = () => {
             containerIframeComponent :{
                 display:"flex",
                 flexDirection:'column' as  'column',
-                width:"600px",
-                height:"657",
+                width:"100%",
+                minHeight:"657px",
                 borderRadius:"4px",
-                borderShadow:'0px 1px 10px rgba(0, 0, 0, 0.08)',
-    
+                borderShadow:'0px 4px 40px 0px rgba(0, 0, 0, 0.08)',
             },
             scrollbar:{
                 marginLeft: '30px',
@@ -45,7 +44,7 @@ const useStyle = () => {
             subTitleStyle: {
                 fontStyle: "normal",
                 lineHeight: "normal",
-                color: "#ED028C",
+                color: "#2E3092",
                 ...FONT_FAMILY.Lexend(600, 16),
               },
               subTitleSpanStyle: {
