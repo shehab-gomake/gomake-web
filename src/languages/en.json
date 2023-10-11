@@ -1557,8 +1557,10 @@
       "totalPrice":"Total Price",
       "notes":"Notes",
       "status":"Status",
+      "customer":"Customer",
       "more":"More",
       "create":"Create",
+      "createdBy":"Created by {{name}}",
       "open":"Open",
       "closed":"Closed",
       "canceled":"Canceled",
@@ -1571,7 +1573,10 @@
       "approvedByManager":"Approved By Management",
       "rejectedByManager":"Rejected By Management", 
       "partialClosed": "Partial Closed",
-      "waitForPrintHouseConfirm":"Wait For Print House Confirm"
+      "waitForPrintHouseConfirm":"Wait For Print House Confirm",
+      "chooseStatus":"Select a status",
+      "chooseCustomer":"Select a customer",
+      "ChooseAgent":"Choose an agent"
     }
   },
   "usersSettings": {

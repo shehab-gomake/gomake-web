@@ -5,11 +5,17 @@ import { useTranslation } from "react-i18next";
 import { QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAndSetAllCustomers } from "@/services/hooks";
+import { useRecoilState } from "recoil";
+import { agentsCategoriesState } from "@/pages/customers/customer-states";
+import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
+import { useDebounce } from "@/utils/use-debounce";
 
 const useQuotes = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const [patternSearch, setPatternSearch] = useState("");
+  const [finalPatternSearch, setFinalPatternSearch] = useState("");
+  const debounce = useDebounce(patternSearch, 500);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
   const [statusId, setStatusId] = useState();
@@ -20,6 +26,24 @@ const useQuotes = () => {
   const [allQuotes, setAllQuotes] = useState();
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
+  const [agentsCategories, setAgentsCategories] = useRecoilState(
+    agentsCategoriesState
+  );
+  useEffect(() => {
+    setFinalPatternSearch(debounce);
+  }, [debounce]);
+  const getAgentCategories = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const agentNames = res.data.map((agent) => ({
+          label: agent.text,
+          id: agent.value,
+        }));
+        setAgentsCategories(agentNames);
+      }
+    };
+    await getAndSetEmployees2(callApi, callBack, { isAgent: true });
+  };
   const renderOptions = () => {
     if (!!canOrder) {
       return customersListCreateOrder;
@@ -44,9 +68,9 @@ const useQuotes = () => {
       setCanOrder(false);
     }
   };
-  const _renderQuoteStatus = (status: number) => {
+  const _renderQuoteStatus = (status: number, quote: any) => {
     if (status === QUOTE_STATUSES.Create) {
-      return t("sales.quote.create");
+      return t("sales.quote.createdBy", { name: quote?.userName });
     }
     if (status === QUOTE_STATUSES.Open) {
       return t("sales.quote.open");
@@ -98,7 +122,7 @@ const useQuotes = () => {
           pageSize: limit,
         },
         statusId,
-        patternSearch,
+        patternSearch: finalPatternSearch,
         customerId,
         dateRange,
         agentId,
@@ -113,14 +137,30 @@ const useQuotes = () => {
       quote?.worksNames,
       quote?.totalPrice,
       quote?.notes,
-      _renderQuoteStatus(quote?.statusID),
+      _renderQuoteStatus(quote?.statusID, quote),
       <MoreMenuWidget quote={quote} />,
     ]);
     setAllQuotes(mapData);
-  }, [page, limit, statusId, patternSearch, customerId, dateRange, agentId]);
+  }, [
+    page,
+    limit,
+    statusId,
+    customerId,
+    dateRange,
+    agentId,
+    finalPatternSearch,
+  ]);
   useEffect(() => {
     getAllQuotes();
-  }, [page, limit, statusId, patternSearch, customerId, dateRange, agentId]);
+  }, [
+    page,
+    limit,
+    statusId,
+    finalPatternSearch,
+    customerId,
+    dateRange,
+    agentId,
+  ]);
   const tableHeaders = [
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
@@ -192,12 +232,14 @@ const useQuotes = () => {
   useEffect(() => {
     getAllCustomersCreateQuote();
     getAllCustomersCreateOrder();
+    getAgentCategories();
   }, []);
   return {
     patternSearch,
     tableHeaders,
     allQuotes,
     quoteStatuses,
+    agentsCategories,
     setPatternSearch,
     setStatusId,
     setCustomerId,

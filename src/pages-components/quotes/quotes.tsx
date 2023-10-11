@@ -3,62 +3,70 @@ import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useQuotes } from "./use-quote";
 import { GoMakeAutoComplate } from "@/components";
-// import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
-// import { SingleInputDateRangeField } from '@mui/x-date-pickers-pro/SingleInputDateRangeField';
+import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 const QuotesListPageWidget = () => {
   const { clasess } = useStyle();
   const {
     tableHeaders,
     allQuotes,
     quoteStatuses,
+    agentsCategories,
     setPatternSearch,
     setStatusId,
     setCustomerId,
+    setAgentId,
     renderOptions,
     checkWhatRenderArray,
     t,
   } = useQuotes();
   return (
     <>
-      <HeaderTitleWithSearch
-        title="Qoute List"
-        onChange={(e) => setPatternSearch(e)}
-      />
       <div style={clasess.mainContainer}>
         <div style={clasess.filtersContainer}>
-          <div style={clasess.statusFilterContainer}>
-            <GoMakeAutoComplate
-              options={quoteStatuses}
-              style={clasess.textInputStyle}
-              placeholder={"filter by status"}
-              onChange={(e: any, value: any) => {
-                setStatusId(value?.value);
-              }}
-            />
+          <div style={clasess.selectedFilterContainer}>
+            <div style={clasess.statusFilterContainer}>
+              <div style={clasess.filterLabelStyle}>
+                {t("sales.quote.status")}
+              </div>
+              <GoMakeAutoComplate
+                options={quoteStatuses}
+                style={clasess.textInputStyle}
+                placeholder={t("sales.quote.chooseStatus")}
+                onChange={(e: any, value: any) => {
+                  setStatusId(value?.value);
+                }}
+              />
+            </div>
+            <div style={clasess.statusFilterContainer}>
+              <div style={clasess.filterLabelStyle}>
+                {t("sales.quote.customer")}
+              </div>
+              <GoMakeAutoComplate
+                options={renderOptions()}
+                getOptionLabel={(option: any) => `${option.name}`}
+                onChangeTextField={checkWhatRenderArray}
+                style={clasess.textInputStyle}
+                placeholder={t("sales.quote.chooseCustomer")}
+                onChange={(e: any, value: any) => {
+                  setCustomerId(value?.id);
+                }}
+              />
+            </div>
+            <div style={clasess.statusFilterContainer}>
+              <div style={clasess.filterLabelStyle}>
+                {t("sales.quote.agent")}
+              </div>
+              <GoMakeAutoComplate
+                options={agentsCategories}
+                style={clasess.textInputStyle}
+                placeholder={t("sales.quote.ChooseAgent")}
+                onChange={(e: any, value: any) => {
+                  setAgentId(value?.id);
+                }}
+              />
+            </div>
           </div>
-          <div style={clasess.statusFilterContainer}>
-            <GoMakeAutoComplate
-              options={renderOptions()}
-              getOptionLabel={(option: any) => `${option.name}`}
-              onChangeTextField={checkWhatRenderArray}
-              style={clasess.textInputStyle}
-              placeholder={"filter by customer"}
-              onChange={(e: any, value: any) => {
-                setCustomerId(value?.id);
-              }}
-            />
-          </div>
-          <div style={clasess.statusFilterContainer}>
-            <GoMakeAutoComplate
-              options={quoteStatuses}
-              style={clasess.textInputStyle}
-              placeholder={"filter by status"}
-              onChange={(e: any, value: any) => {
-                setStatusId(value?.value);
-              }}
-            />
-          </div>
-          {/* <DateRangePicker slots={{ field: SingleInputDateRangeField }} /> */}
+          <SearchInputComponent onChange={(e) => setPatternSearch(e)} />
         </div>
         <PrimaryTable
           stickyFirstCol={false}

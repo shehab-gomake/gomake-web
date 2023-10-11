@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import i18next from "i18next";
 
 import { useTranslation } from "react-i18next";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
   const { t } = useTranslation();
@@ -19,13 +20,29 @@ const useStyle = () => {
       filtersContainer:{
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "flex-start",
-        alignItems: "center",
+        justifyContent: "space-between",
+        alignItems: "flex-end",
         gap:20,
         width:"100%"
       },
+      selectedFilterContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap:20,
+        width:"70%"
+      },
       statusFilterContainer:{
-        width:"15%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap:10,
+        width:"25%",
+      },
+      filterLabelStyle:{
+        ...FONT_FAMILY.Lexend(500,14)
       },
       textInputStyle:{
         width:"100%"
