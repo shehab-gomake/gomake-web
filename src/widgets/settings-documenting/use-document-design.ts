@@ -1,4 +1,4 @@
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { AddOrUpdateDocumentDesignDocingApi, ResetDocumentDesigningApi, getAllDocumentDesigningApi, getDocumentDesignByCreationDocingApi } from "@/services/api-service/documenting/document-design";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
@@ -13,7 +13,7 @@ const UseDocumentDesign = () => {
     const [documentTypes, setdocumentTypes] = useRecoilState(documentTypeState);
     const [documentDesign, setdocumentDesign] = useRecoilState(documentDesignState);
     const [documentDesignURL, setdocumentDesignURL] = useRecoilState(documentDesignURLState);
-    
+    const {alertFaultUpdate, alertSuccessUpdate} = useSnackBar();
 
     const documentDesignChange = (documentdesign: IDocumentDesign) => {
         setdocumentDesign(documentdesign);
@@ -51,6 +51,9 @@ const UseDocumentDesign = () => {
         const callBack = (res) => {
             if (res.success) {
                 setdocumentDesignURL(res.data.previewUrl);
+                alertSuccessUpdate();
+            }else{
+                alertFaultUpdate();
             }
 
       
@@ -63,6 +66,9 @@ const UseDocumentDesign = () => {
         const callBack = (res) => {
             if (res.success) {
                 setdocumentDesign(res.data);
+                alertSuccessUpdate();
+            }else{
+                alertFaultUpdate();
             }
           
         }
