@@ -9,12 +9,27 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
       mainContainer: {
-        display: "flex",
-        flexDirection: "column" as "column",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
-        width: "100%",
+          display: "flex",
+          flexDirection: "column" as "column",
+          alignItems: "flex-start",
+          justifyContent: "flex-start",
+          gap:20,
+          marginTop:20
       },
+      filtersContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap:20,
+        width:"100%"
+      },
+      statusFilterContainer:{
+        width:"15%",
+      },
+      textInputStyle:{
+        width:"100%"
+      }
   
     };
   }, [i18next.language, t]);
