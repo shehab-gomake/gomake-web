@@ -38,7 +38,7 @@ const useStyle = () => {
             subTitleStyle: {
                 fontStyle: "normal",
                 lineHeight: "normal",
-                color: "#2E3092",
+                color: "#ED028C",
                 ...FONT_FAMILY.Lexend(600, 16),
               },
               subTitleSpanStyle: {
