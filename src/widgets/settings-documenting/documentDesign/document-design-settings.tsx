@@ -20,7 +20,7 @@ const DocumentDesignSetting = () => {
                 </div>
                 <div style={{ flex: 5 , height: "100%" , backgroundColor:"#FFFFFF" ,boxShadow:"0px 4px 40px 0px rgba(0, 0, 0, 0.08)", position:"relative" , padding:20,minHeight:"690px"}}>
                     <Stack direction={'row'} marginBottom={"24px"} marginTop={"24px"}>
-                        <span style={classes.subTitleStyle} >{t("documentingDesign.IframeDocument.Document")}</span> <span  style={classes.subTitleStyle} >  - Document Type </span>
+                        <span style={classes.subTitleStyleDocumentType} >{t("documentingDesign.IframeDocument.Document")}</span> <span  style={classes.subTitleStyleDocumentType} >  - Document Type </span>
                     </Stack>
                     <div style={{position:"relative",height:"100%"}}>
                          <IframeDocumentDesign src={`${documentDesignURL}`} />

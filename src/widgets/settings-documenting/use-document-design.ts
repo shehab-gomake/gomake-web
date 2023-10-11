@@ -13,7 +13,7 @@ const UseDocumentDesign = () => {
     const [documentTypes, setdocumentTypes] = useRecoilState(documentTypeState);
     const [documentDesign, setdocumentDesign] = useRecoilState(documentDesignState);
     const [documentDesignURL, setdocumentDesignURL] = useRecoilState(documentDesignURLState);
-    const [documentDesignTypeValue, setdocumentDesignTypeValue] = useRecoilState(documentDesignTypeTextState);
+   
     
     const {alertFaultUpdate, alertSuccessUpdate} = useSnackBar();
 
