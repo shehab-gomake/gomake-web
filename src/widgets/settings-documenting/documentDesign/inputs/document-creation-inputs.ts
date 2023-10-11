@@ -1,8 +1,21 @@
 import { useRecoilState } from "recoil";
-import { documentDesignState, documentTypeState } from "../../state/documents-state";
+import { documentDesignTypeTextState, documentTypeState } from "../../state/documents-state";
+import { TextVerticalAligen } from "../const/textVerticalAligen";
+import {DocumentType} from "../interface";
+import { useTranslation } from "react-i18next";
 
 const creationDocumetInputs = (state)  => {
-    const [documentTypes, setdocumentTypes] = useRecoilState(documentTypeState);
+  const [documentTypes , setdocumentTypes] = useRecoilState<DocumentType[]>(documentTypeState);
+ 
+   const [documentTypeText, setdocumentTypeText] = useRecoilState(documentDesignTypeTextState);
+   if (Array.isArray(documentTypes)) 
+   {
+        const selectedDocumentType = documentTypes.find(item => item.value === state?.docType);
+        if (selectedDocumentType) {
+        setdocumentTypeText(selectedDocumentType.text);
+        }
+   }
+   
 
     return [
         {
@@ -133,6 +146,7 @@ const TableSettingInputs = (state)  => {
     ];
 };
 const TableSettingInputs2 = (state)  => {
+    const { t } = useTranslation();
     return [
     
         {
@@ -141,10 +155,12 @@ const TableSettingInputs2 = (state)  => {
             type: "select",
             placeholder: "documentingDesign.TableSetting.Placementoftext",
             required: false,
-            options: [],
-            optionsUrl: "",
-            parameterKey: "Placementoftext",
-            value: state?.Placementoftext ? state?.Placementoftext : "",
+            options: TextVerticalAligen.map((item) => ({
+                value: item.value,
+                text: t(`documentingDesign.${item.text}`)
+            })),
+            parameterKey: "textVerticalAligen",
+            value: state?.textVerticalAligen ? state?.textVerticalAligen : " ",
             isValid: true,
         },
     
@@ -246,7 +262,6 @@ const AdditionalOptionsInputs2 = (state)  => {
 
     ];
 };
-
 
 const FooterInputs1 = (state)  => {
     return [

@@ -9,7 +9,7 @@ import { Stack, TextareaAutosize } from "@mui/material";
 import { FormInputsSectionComponent } from "@/components/form-inputs/form-inputs-section";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { AdditionalOptionsInputs, AdditionalOptionsInputs2, FooterInputs1, FooterInputs2, QRCodesInputs1, QRCodesInputs2, QRCodesInputs3, TableSettingInputs, TableSettingInputs2, TitleDefinitionCustomLogoInputs, TitleDefinitionInputs, creationDocumetInputs } from "../../inputs/document-creation-inputs";
+import { AdditionalOptionsInputs, AdditionalOptionsInputs2, FooterInputs1, FooterInputs2, TableSettingInputs, TableSettingInputs2, TitleDefinitionCustomLogoInputs, TitleDefinitionInputs, creationDocumetInputs } from "../../inputs/document-creation-inputs";
 import { QRCodes } from "./QRCodes/QRCodes";
 
 const DocumentDesign = () => {
@@ -30,11 +30,11 @@ const DocumentDesign = () => {
   
     useEffect(() => {
         getDocumentTypes();
-        
       }, []);
       
     useEffect(() =>{   
         getDocumentDesignByCreationDoc(documentDesign?.docType , documentDesign?.agentId);
+    
     },[documentDesign?.docType , documentDesign?.agentId]);
     const DocumentDesignSection1: { inputs: any[], title: string }[] = [
         {inputs: creationDocumetInputs(documentDesign), title: 'documentingDesign.documnetCreation.documentinCreation'},

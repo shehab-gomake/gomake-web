@@ -1,12 +1,12 @@
 import { atom } from "recoil";
-import { IDocumentDesign } from "../documentDesign/interface";
+import { IDocumentDesign , DocumentType  } from "../documentDesign/interface";
 export const documentsArrayState = atom<[]>({
   key: "documentsArrayState",
   default: [],
 });
-export const documentTypeState = atom<[]>({
+export const documentTypeState = atom<DocumentType[]>({
   key: 'documentTypeState',
-  default: [],
+  default: {}  as DocumentType[],
 });
 export const documentDesignState = atom<IDocumentDesign>({
   key: 'documentDesignState',

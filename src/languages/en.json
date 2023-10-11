@@ -1925,6 +1925,8 @@
   "documentingDesign" : {
     "Save":"Save",
     "Reset":"Reset",
+    "Middle":"Middle",
+    "Upper":"Upper",
     "documnetCreation" : {
       "documentinCreation" : "Document Creation",
       "docmentType" : "DocumentType"

@@ -26,10 +26,15 @@ export interface IDocumentDesign {
         showTitleInfo?:string;
         showToPayUntil?:string;
         showWithholdingTaxPayable?:string;
-        textVerticalAligen?:string;
+        textVerticalAligen?:string | null;
         recordID:string;
 
 }
+export interface DocumentType {
+    value:string;
+    text:string;
+}
+
 export interface IDocumentDesignProps {
     documentDesign : IDocumentDesign;
     setdocumentDesign?: (documentDesign : IDocumentDesign) => void;

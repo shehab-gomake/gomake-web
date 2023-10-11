@@ -64,12 +64,7 @@ const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
         input.options.map(({ value, text }) => ({ label: text, value }))
       );
     }
-    const selectedValue = options?.find((option) => option.value === input.value);
-    if (selectedValue) {
-      setSelectedLabel(selectedValue.label);
-    } else {
-      setSelectedLabel("");
-    }
+  
     if(input.type === "color")
     {
         setColor(input.value);
@@ -80,7 +75,18 @@ const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
     }
   }, [input]);
 
-
+  useEffect(()=>{
+    if(input.type === "select")
+    {
+      const selectedValue = options?.find((option) => option.value === input.value);
+      if (selectedValue) {
+        setSelectedLabel(selectedValue.label);
+      } else {
+        setSelectedLabel("");
+      }
+    }
+  
+  },[selectedLabel]);
 
   return (
     <>

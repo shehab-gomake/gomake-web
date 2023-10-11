@@ -1121,26 +1121,87 @@
     "addRole": "הוספת תפקיד חדש",
     "permissions": "הרשאות"
   },
+  "documentingDesign" : {
+    "Save":"שמירה",
+    "Reset":"איפוס",
+    "Middle":"אמצע",
+    "Upper":"עליון",
+    "documnetCreation" : {
+      "documentinCreation" : "יצירת מסמכים",
+      "docmentType" : "סוג מסמך"
+    },
+    "TitleDefinition":{
+      "TitleDefinition":"הגדרת כותרת",
+      "defaultFormat":"ברירת מחדל",
+      "BusinessName" : "שם עסק ",
+      "H.P./authorizedDealer" :"סוחר מורשה",
+      "LogoUpload":"העלאת לוגו",
+      "CustomLogo":"לוגו מותאם אישית"
+    },
+    "TableSetting":{
+        "TableSetting":"הגדרות טבלה",
+        "defaultFormat":"ברירת מחדל",
+        "TableHeaderbgcolor":"צבע רקע כותרת הטבלה:",
+        "Tabletextcolor":"צבע טקסט הטבלה:",
+        "Verticalbordercolor":"צבע גבול אנכי בטבלה:",
+        "Horizontalbordercolor":"צבע גבול אופקי בטבלה:",
+        "Placementoftext":"מיקום טקסט בטבלה:"
+    },
+    "Additional":{
+      "Additional":"נוסף",
+      "Remarks":"הערות",
+      "Options":"אפשרויות",
+      "Viewsalesperson":"הצג איש מכירות",
+      "Viewdocproducer" : "הצג מפיק מסמך",
+      "Showpaymentdate" : "הצג תאריך תשלום",
+      "Showcustomertype" : "הצג סוג לקוח",
+      "Showcustomercode":"הצג קוד לקוח",
+      "Viewcustomerbalance" : "הצג יתרת לקוח",
+      "Showpaymentterms" : "הצג תנאי תשלום",
+      "Showtaxpayable" : "הצג אם חייב בניכוי במקור"
+    },
+    "Footer":{
+      "Footer":"הגדרות כותרת תחתונה",
+      "Manualfooter" : "כותרת תחתונה ידנית",
+      "Email":"דוא''ל:",
+      "Phone":"טלפון:",
+      "Address":"כתובת:",
+      "FooterImage":"כותרת תחתונה: תמונה "
+    },
+    "QRCodes":{
+      "QRCodes":"קודי QR",
+      "PDFproductionQrCodes":"הפקת PDF - קודי QR",
+      "DisplayQRcodesinaworkorderdocument" : "הצג קודי QR במסמך הזמנת עבודה",
+      "Showpaymentdate":"הצג את תאריך התשלום",
+      "DisplayaninitialQRCode" : "הצג קוד QR ראשוני עבור כל ההזמנה בתוך PD הייצורF",
+      "displayall":"להציג את כל הסוגים בכמויות שוות ב-PDF של PACA",
+      "ShowStarted":"הצג QRs התחילו והסתיימו ב-PDF להפקה"
+    },
+    "IframeDocument":{
+      "Document" : "מסמך"
+
+    }
+  },
   "documentType":{
-    "Order" :"Order",
-    "Invoice":"Invoice",
-    "DeliveryNotes":"DeliveryNotes",
-    "Purchase":"Purchase",
-    "InvoiceRefund":"InvoiceRefund",
-    "Receipt":"Receipt",
-    "JournalEntry":"JournalEntry",
-    "PurchaseInvoice":"PurchaseInvoice",
-    "PurchaseInvoiceRefund":"PurchaseInvoiceRefund",
-    "ForeignJournalEntry":"ForeignJournalEntry",
-    "DeliveryNoteRefund":"DeliveryNoteRefund",
-    "Quote":"Quote",
-    "ExternalInvoice":"ExternalInvoice",
-    "All":"All",
-    "ExternalPayment":"ExternalPayment",
-    "BoardMission":"BoardMission",
-    "AgingReport":"AgingReport",
-    "LedgerReport":"LedgerReport",
-    "SalesReport":"SalesReport"
+    "Order" :"הזזמנה",
+    "Invoice":"חשבונית",
+    "DeliveryNotes":"תעודת משלוח",
+    "Purchase":"הזמנת רכש",
+    "InvoiceRefund":"חשבונית זיכוי",
+    "Receipt":"קבלה",
+    "JournalEntry":"ערך יומן",
+    "PurchaseInvoice":"חשבונית ספק",
+    "PurchaseInvoiceRefund":"חשבונית ספק זיכוי",
+    "ForeignJournalEntry":"ערך יומן זר",
+    "DeliveryNoteRefund":"החזר תעודת משלוח",
+    "Quote":"הצעה",
+    "ExternalInvoice":"חשבונית חיצונית",
+    "All":"הכל",
+    "ExternalPayment":"תשלום חיצוני",
+    "BoardMission":"פקודות עבודה",
+    "AgingReport":"דוח הזדקנות",
+    "LedgerReport":"דוח חשבונות",
+    "SalesReport":"דווח מכירות"
   }
 
 }
