@@ -2,7 +2,7 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { AddOrUpdateDocumentDesignDocingApi, ResetDocumentDesigningApi, getAllDocumentDesigningApi, getDocumentDesignByCreationDocingApi } from "@/services/api-service/documenting/document-design";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
-import { documentDesignState, documentDesignURLState, documentTypeState } from "./state/documents-state";
+import { documentDesignState, documentDesignTypeTextState, documentDesignURLState, documentTypeState } from "./state/documents-state";
 import { createNamedExports } from "typescript";
 import { useState } from "react";
 import { IDocumentDesign } from "./documentDesign/interface";
@@ -13,6 +13,8 @@ const UseDocumentDesign = () => {
     const [documentTypes, setdocumentTypes] = useRecoilState(documentTypeState);
     const [documentDesign, setdocumentDesign] = useRecoilState(documentDesignState);
     const [documentDesignURL, setdocumentDesignURL] = useRecoilState(documentDesignURLState);
+    const [documentDesignTypeValue, setdocumentDesignTypeValue] = useRecoilState(documentDesignTypeTextState);
+    
     const {alertFaultUpdate, alertSuccessUpdate} = useSnackBar();
 
     const documentDesignChange = (documentdesign: IDocumentDesign) => {
@@ -37,12 +39,9 @@ const UseDocumentDesign = () => {
             if (res.success) {
                 setdocumentDesign(res.data);      
                 setdocumentDesignURL(res.data.previewUrl);
-                
             }
            
         }
-       
-
         await getDocumentDesignByCreationDocingApi(callApi, callBack,{docType : docmentCreationDocType ,agentId : docmentCreationAgentId})
     }
 

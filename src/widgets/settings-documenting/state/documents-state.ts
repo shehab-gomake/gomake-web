@@ -16,3 +16,7 @@ export const documentDesignURLState = atom({
   key: 'documentDesignURLState',
   default: "" ,
 });
+export const documentDesignTypeTextState = atom({
+  key: 'documentDesignTypeTextState',
+  default: "" ,
+});

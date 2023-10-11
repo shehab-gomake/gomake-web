@@ -30,12 +30,12 @@ export const GoMakeFileFiled = ({ selectedNameFile }) => {
 
       reader.onloadend = () => {
         const base64Data = reader.result as string;
-        setImagePreview(base64Data); // Set the image preview
+        setImagePreview(base64Data);
       };
 
       reader.readAsDataURL(selectedFile);
     } else {
-      setImagePreview(''); // Clear the image preview
+      setImagePreview(''); 
     }
   };
 
@@ -44,8 +44,6 @@ export const GoMakeFileFiled = ({ selectedNameFile }) => {
   return (
     <div style={classes.inputContainer}>
       <div style={classes.fileInputStyle}>
-     
-     
         {imagePreview ||  selectedFileNameinGomakeFiled ? (
           <img src={imagePreview}  style={{ maxWidth: '100px', maxHeight: '100px' , display:"flex", alignItems:"center"}} />
         ) : (

@@ -10,6 +10,7 @@ import { FormInputsSectionComponent } from "@/components/form-inputs/form-inputs
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { AdditionalOptionsInputs, AdditionalOptionsInputs2, FooterInputs1, FooterInputs2, QRCodesInputs1, QRCodesInputs2, QRCodesInputs3, TableSettingInputs, TableSettingInputs2, TitleDefinitionCustomLogoInputs, TitleDefinitionInputs, creationDocumetInputs } from "../../inputs/document-creation-inputs";
+import { QRCodes } from "./QRCodes/QRCodes";
 
 const DocumentDesign = () => {
     const {classes} = useStyle();
@@ -47,13 +48,10 @@ const DocumentDesign = () => {
         {inputs: AdditionalOptionsInputs2(documentDesign), title: ''},
         {inputs: FooterInputs1(documentDesign), title: 'documentingDesign.Footer.Footer'},
         {inputs: FooterInputs2(documentDesign), title: ''},
-        {inputs: QRCodesInputs1(documentDesign), title: 'documentingDesign.QRCodes.QRCodes'},
-        {inputs: QRCodesInputs2(documentDesign), title: ''},
-        {inputs: QRCodesInputs3(documentDesign), title: ''},
+    
     ];
     return (
-        <div style={classes.container}>
-            <div>
+        <div style={{...classes.container,  position: 'relative'}}>
             <div>
                 <Stack direction={'column'} gap={'32px'} paddingTop={'44px'}>
                 {
@@ -71,17 +69,17 @@ const DocumentDesign = () => {
                         );
                     })
                 }
-            </Stack>
-            <Stack direction={'row'}  marginTop={"24px"}>
-                    <span style={classes.subTitleStyle} >{t("documentingDesign.Additional.Additional")}</span>
-            </Stack>
-            <Stack direction={'row'} marginBottom={"24px"} marginTop={"24px"}>
-                <span style={classes.subTitleSpanStyle} >{t("documentingDesign.Additional.Remarks")}</span>
-            </Stack>
-            <Stack direction={'row'} marginBottom={"24px"} marginTop={"24px"}>
-                    <TextareaAutosize style={classes.textAreaStyle}></TextareaAutosize>
-            </Stack>
-            <Stack direction={'column'} gap={'32px'} paddingTop={'44px'}>
+                </Stack>
+                <Stack direction={'row'}  marginTop={"24px"}>
+                        <span style={classes.subTitleStyle} >{t("documentingDesign.Additional.Additional")}</span>
+                </Stack>
+                <Stack direction={'row'} marginBottom={"24px"} marginTop={"24px"}>
+                    <span style={classes.subTitleSpanStyle} >{t("documentingDesign.Additional.Remarks")}</span>
+                </Stack>
+                <Stack direction={'row'} marginBottom={"24px"} marginTop={"24px"}>
+                        <TextareaAutosize style={classes.textAreaStyle}></TextareaAutosize>
+                </Stack>
+                <Stack direction={'column'} gap={'32px'} paddingTop={'44px'}>
                 {
                     DocumentDesignSection2.map(section => {
                         return (
@@ -97,14 +95,18 @@ const DocumentDesign = () => {
                         );
                     })
                 }
-            </Stack>
-            </div>  
-            <div style={{display:"flex",flexDirection:"row",justifyContent:"flex-end",gap:16}}>
-                        <SecondaryButton onClick={ResetDeafultDocumentDesign} variant="outlined" >{t("documentingDesign.Reset")}</SecondaryButton>
-                        <SecondaryButton onClick={addDocumentDesign} variant="contained">{t('documentingDesign.Save')}</SecondaryButton>
-            </div>
-            </div>
-         
+                </Stack>
+                <QRCodes/>
+               
+                    <div style={{ position: 'sticky', bottom: '0', left: '0',backgroundColor:"white", right: '0', padding: '16px'}}>
+                        <div style={{  display:"flex",flexDirection:"row",justifyContent:"flex-end",gap:16}}>
+                                <SecondaryButton onClick={ResetDeafultDocumentDesign} variant="outlined" >{t("documentingDesign.Reset")}</SecondaryButton>
+                                <SecondaryButton onClick={addDocumentDesign} variant="contained">{t('documentingDesign.Save')}</SecondaryButton>
+                        </div>
+                    </div> 
+              
+               
+            </div> 
         </div>
     );
 };
