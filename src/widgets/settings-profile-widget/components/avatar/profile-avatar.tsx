@@ -28,10 +28,10 @@ const ProfileAvatar = ({
                 badgeContent={<CameraMenu onUploadImage={onUploadImage} changeInitials={changeInitials}
                                           onChangeInitials={onChangeInitials}/>}>
                 {
-                  !changeInitials && <Avatar src={src} sx={classes.avatar}/>
+                  !changeInitials && <Avatar src={`${src}?${new Date().toString()}`} sx={classes.avatar}/>
                 }
                 {
-                    changeInitials && src && <Avatar src={src} sx={classes.avatar}/>
+                    changeInitials && src && <Avatar src={`${src}?${new Date().toString()}`} sx={classes.avatar}/>
                 }
                 {
                     changeInitials && !src &&  <Avatar  sx={{...classes.avatar, bgcolor: bgColor}}>{initials?.toUpperCase()}</Avatar>
