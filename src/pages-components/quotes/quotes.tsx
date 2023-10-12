@@ -1,4 +1,3 @@
-import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useQuotes } from "./use-quote";
