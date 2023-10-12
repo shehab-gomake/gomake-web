@@ -58,7 +58,6 @@ const useCompanyProfile = () => {
                 setChangeProfileImage(false);
             }
         }
-        setProfile({...profile, logo: ''});
         const res = await updateCompanyLogo(callApi, callBack, {fileBase64: file, printHouseLogoType: 1})
 
         return res.success
@@ -73,7 +72,6 @@ const useCompanyProfile = () => {
                 setChangeProfileImage(false);
             }
         }
-        setProfile({...profile, loginLogo: ''});
         const res = await updateCompanyLogo(callApi, callBack, {fileBase64: file, printHouseLogoType: 2})
 
         return res.success

@@ -1,6 +1,6 @@
 import {Divider, IconButton, Menu, MenuItem} from "@mui/material";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useStyle} from "@/widgets/settings-profile-widget/components/avatar/style";
 import {useTranslation} from "react-i18next";
 import {GoMakeModal} from "@/components";
@@ -29,6 +29,11 @@ const CameraMenu = ({onUploadImage, changeInitials}: ICameraMenuProps) => {
     const handleCloseMenu = () => {
         setAnchorEl(null);
     };
+    useEffect(() => {
+        if (!openImageModal) {
+            setState(openImageModal)
+        }
+    }, [openImageModal])
     return (
         <>
             <IconButton
@@ -77,6 +82,7 @@ const CameraMenu = ({onUploadImage, changeInitials}: ICameraMenuProps) => {
                 onClose={() => {
                     setModalHeader('');
                     setOpenImageModal(false);
+                    setState(false)
                 }}
                 modalTitle={modalHeader}
             >
