@@ -1137,5 +1137,12 @@
     "addRole": "הוספת תפקיד חדש",
     "permissions": "הרשאות"
 
+  },
+  "datepicker": {
+    "today": "היום",
+    "thisMonth": "החודש",
+    "choose": "בחר",
+    "datepicker": "בחירת תאריך"
+
   }
 }

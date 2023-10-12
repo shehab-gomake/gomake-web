@@ -136,3 +136,10 @@ input::placeholder {
 .MuiAccordionDetails-root{
   padding-top: 12px !important;
 }
+
+.rdrCalendarWrapper {
+  direction: ltr;
+}
+.rdrStaticRangeLabel{
+  text-align: unset!important;
+}

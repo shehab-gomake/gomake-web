@@ -9,6 +9,8 @@ import he from "@/languages/he.json";
 import { ThemeProvider } from "@/providers";
 import { GomakeLoading } from "@/widgets";
 import { GoMakeSnackBar } from "@/components";
+import {DndProvider} from "react-dnd";
+import {HTML5Backend} from "react-dnd-html5-backend";
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
@@ -44,7 +46,9 @@ export default function App({ Component, pageProps }: AppProps) {
   const { t } = useTranslation();
 
   return (
-    <RecoilRoot>
+      <DndProvider backend={HTML5Backend}>
+
+      <RecoilRoot>
       <ThemeProvider />
       <style jsx global>{`
         html {
@@ -55,5 +59,6 @@ export default function App({ Component, pageProps }: AppProps) {
       <GoMakeSnackBar />
       <GomakeLoading />
     </RecoilRoot>
+      </DndProvider>
   );
 }
