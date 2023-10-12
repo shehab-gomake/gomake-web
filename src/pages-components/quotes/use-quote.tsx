@@ -1,4 +1,4 @@
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,10 +9,14 @@ import { useRecoilState } from "recoil";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useQuotes = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
+  const { setSnackbarStateValue } = useSnackBar();
+  const { navigate } = useGomakeRouter();
+  const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const debounce = useDebounce(patternSearch, 500);
@@ -26,6 +30,15 @@ const useQuotes = () => {
   const [allQuotes, setAllQuotes] = useState();
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedQuote, setSelectedQuote] = useState<any>();
+  const onClcikCloseModal = () => {
+    setOpenModal(false);
+  };
+  const onClcikOpenModal = (quote: any) => {
+    setSelectedQuote(quote);
+    setOpenModal(true);
+  };
   const [agentsCategories, setAgentsCategories] = useRecoilState(
     agentsCategoriesState
   );
@@ -138,7 +151,7 @@ const useQuotes = () => {
       quote?.totalPrice,
       quote?.notes,
       _renderQuoteStatus(quote?.statusID, quote),
-      <MoreMenuWidget quote={quote} />,
+      <MoreMenuWidget quote={quote} onClcikOpenModal={onClcikOpenModal} />,
     ]);
     setAllQuotes(mapData);
   }, [
@@ -234,12 +247,39 @@ const useQuotes = () => {
     getAllCustomersCreateOrder();
     getAgentCategories();
   }, []);
+
+  const updateQuoteStatus = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/erp-service/quote/update-quote`,
+      {
+        quoteId: selectedQuote?.id,
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedSusuccessfully"),
+        type: "sucess",
+      });
+      navigate("/quote");
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedfailed"),
+        type: "error",
+      });
+    }
+  }, []);
   return {
     patternSearch,
     tableHeaders,
     allQuotes,
     quoteStatuses,
     agentsCategories,
+    openModal,
+    errorColor,
+    onClcikCloseModal,
     setPatternSearch,
     setStatusId,
     setCustomerId,
@@ -247,6 +287,7 @@ const useQuotes = () => {
     setAgentId,
     renderOptions,
     checkWhatRenderArray,
+    updateQuoteStatus,
     t,
   };
 };
