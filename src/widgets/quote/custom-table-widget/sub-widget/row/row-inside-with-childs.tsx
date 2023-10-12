@@ -88,7 +88,7 @@ const RowInsideWithChilds = ({
                   style={{ ...clasess.rowItem, borderTop: "1px solid #ccc" }}
                 >
                   {entry[0] === "amount" ? (
-                    <div style={{ padding: 16 }}>
+                    <div>
                       {/* {item?.amount?.toFixed(2)} */}
                       <GomakeTextInput
                         style={clasess.textInputWithoutStyle}
@@ -113,7 +113,7 @@ const RowInsideWithChilds = ({
                     </div>
                   ) : null}
                   {entry[0] === "unitPrice" ? (
-                    <div style={{ padding: 16 }}>
+                    <div>
                       {/* {item?.unitPrice?.toFixed(2)} */}
                       <GomakeTextInput
                         style={clasess.textInputWithoutStyle}
@@ -137,7 +137,7 @@ const RowInsideWithChilds = ({
                     </div>
                   ) : null}
                   {entry[0] === "discount" ? (
-                    <div style={{ padding: 16 }}>
+                    <div>
                       {/* {item?.discount == null ? 0 : item?.discount} */}
                       <GomakeTextInput
                         style={clasess.textInputWithoutStyle}
@@ -161,7 +161,7 @@ const RowInsideWithChilds = ({
                     </div>
                   ) : null}
                   {entry[0] === "finalPrice" ? (
-                    <div style={{ padding: 16 }}>
+                    <div>
                       {/* {item?.finalPrice?.toFixed(2)} */}
                       <GomakeTextInput
                         style={clasess.textInputWithoutStyle}
@@ -184,9 +184,7 @@ const RowInsideWithChilds = ({
                       />
                     </div>
                   ) : null}
-                  {entry[0] === "more" ? (
-                    <div style={{ padding: 16 }}>{item?.more}</div>
-                  ) : null}
+                  {entry[0] === "more" ? <div>{item?.more}</div> : null}
                 </div>
               );
             })}
@@ -210,7 +208,7 @@ const RowInsideWithChilds = ({
                   style={{
                     ...clasess.rowItemChilds,
                     borderTop: "1px solid #ccc",
-                    height: 54,
+                    height: 49,
                   }}
                 >
                   {item?.more}

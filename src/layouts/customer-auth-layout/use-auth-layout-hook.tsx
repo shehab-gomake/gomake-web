@@ -73,6 +73,11 @@ const useAuthLayoutHook = () => {
             title: "tabs.quotes",
             path: "/quotes",
           },
+          {
+            key: "orders",
+            title: "tabs.orders",
+            path: "/orders",
+          },
         ],
         icon: () => {
           return <SalesIcon />;

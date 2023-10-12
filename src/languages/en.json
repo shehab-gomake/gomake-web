@@ -80,7 +80,8 @@
     "parameters": "Parameters",
     "profits": "profits",
     "properties": "Properties",
-    "quotes":"Quotes"
+    "quotes":"Quotes",
+    "orders":"Orders"
   },
   "properties": {
     "parameter": "Parameter",
