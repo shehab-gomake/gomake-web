@@ -2,7 +2,11 @@ import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useQuotes } from "./use-quote";
-import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+  GomakePrimaryButton,
+} from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
@@ -23,6 +27,7 @@ const QuotesListPageWidget = () => {
     renderOptions,
     checkWhatRenderArray,
     updateQuoteStatus,
+    onClickSearchFilter,
     t,
   } = useQuotes();
   return (
@@ -75,6 +80,24 @@ const QuotesListPageWidget = () => {
                   setAgentId(value?.id);
                 }}
               />
+            </div>
+            <div style={clasess.statusFilterContainer}>
+              <div style={clasess.filterLabelStyle} />
+              <GomakePrimaryButton
+                style={clasess.searchBtnStyle}
+                onClick={onClickSearchFilter}
+              >
+                {t("sales.quote.search")}
+              </GomakePrimaryButton>
+            </div>
+            <div style={clasess.statusFilterContainer}>
+              <div style={clasess.filterLabelStyle} />
+              <GomakePrimaryButton
+                style={clasess.clearBtnStyle}
+                // onClick={onClcikClearFilter}
+              >
+                {t("sales.quote.clear")}
+              </GomakePrimaryButton>
             </div>
           </div>
           <SearchInputComponent onChange={(e) => setPatternSearch(e)} />

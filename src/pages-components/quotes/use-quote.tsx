@@ -165,15 +165,11 @@ const useQuotes = () => {
   ]);
   useEffect(() => {
     getAllQuotes();
-  }, [
-    page,
-    limit,
-    statusId,
-    finalPatternSearch,
-    customerId,
-    dateRange,
-    agentId,
-  ]);
+  }, []);
+  const onClickSearchFilter = () => {
+    getAllQuotes();
+  };
+
   const tableHeaders = [
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
@@ -288,6 +284,9 @@ const useQuotes = () => {
     renderOptions,
     checkWhatRenderArray,
     updateQuoteStatus,
+    onClickSearchFilter,
+    getAllQuotes,
+
     t,
   };
 };

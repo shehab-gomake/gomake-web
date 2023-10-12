@@ -3,10 +3,11 @@ import i18next from "i18next";
 
 import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
   const { t } = useTranslation();
-
+  const {theme,secondColor}=useGomakeTheme()
   const clasess = useMemo(() => {
     return {
       mainContainer: {
@@ -42,14 +43,27 @@ const useStyle = () => {
         width:"25%",
       },
       filterLabelStyle:{
-        ...FONT_FAMILY.Lexend(500,14)
+        ...FONT_FAMILY.Lexend(500,14),
+        height:21
       },
       textInputStyle:{
         width:"100%"
+      },
+      searchBtnStyle:{
+        height:40,
+        backgroundColor:secondColor(500),
+        
+      },
+      clearBtnStyle:{
+        height:40,
+        backgroundColor:"#FFF",
+        border:`1px solid ${secondColor(500)}`,
+        color:secondColor(500),
+        width:"50%",
       }
   
     };
-  }, [i18next.language, t]);
+  }, [i18next.language, t,theme]);
   return {
     clasess,
   };
