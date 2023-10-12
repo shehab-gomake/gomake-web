@@ -16,7 +16,7 @@ const HeaderWidget = () => {
     const {user, open, anchorEl, handleClick, handleClose, navigate} =
         useHeader();
     const userAvatar = () => {
-        return !!userProfile.imagePath ? <Avatar style={clasess.avatarProps} src={userProfile.imagePath}/> :
+        return !!userProfile.imagePath ? <Avatar style={clasess.avatarProps} src={`${userProfile.imagePath}?${new Date()}`}/> :
             <Avatar  style={{backgroundColor: userProfile.avatarBackGroundColor, ...clasess.avatarProps}}>{userProfile.avatarInitials?.toUpperCase()}</Avatar>
     }
     return (
