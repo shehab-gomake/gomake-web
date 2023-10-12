@@ -15,7 +15,6 @@ const CustomerAuthLayout = ({ children }: IAuthLayout) => {
 
   return (
     <div style={clasess.container}>
-      {canAccess && (
         <>
           <LeftSideLayout />
           <div
@@ -27,10 +26,9 @@ const CustomerAuthLayout = ({ children }: IAuthLayout) => {
             }}
           >
             <HeaderWidget />
-            <div style={clasess.bodyContainer}>{children}</div>
+            {canAccess && <div style={clasess.bodyContainer}>{children}</div>}
           </div>
         </>
-      )}
     </div>
   );
 };
