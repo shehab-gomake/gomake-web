@@ -3,6 +3,7 @@ import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
 import { useRecoilValue } from "recoil";
 import { quoteState } from "@/pages-components/quote/store/quote";
+import { useState } from "react";
 
 const RowInsideWithChilds = ({
   index,
@@ -16,6 +17,7 @@ const RowInsideWithChilds = ({
   changeItemsChilds,
 }: any) => {
   const quoteStateValue = useRecoilValue<any>(quoteState);
+  const [initialValue, setInitialValue] = useState(entry[1]);
   return (
     <div
       key={`row_table_${index}`}
@@ -69,15 +71,16 @@ const RowInsideWithChilds = ({
               style={clasess.textInputWithoutStyle}
               value={Number(entry[1]).toFixed(2)}
               onChange={(e: any) => {
-                changeItems(indexTable, entry[0], e.target.value);
+                const newValue = e.target.value;
+                changeItems(indexTable, entry[0], newValue);
+                if (newValue !== initialValue) {
+                  quoteStateValue?.getCalculateQuoteItem(
+                    row?.quoteItemId,
+                    index - 3,
+                    newValue
+                  );
+                }
               }}
-              onBlur={() =>
-                quoteStateValue?.getCalculateQuoteItem(
-                  row?.quoteItemId,
-                  index - 3,
-                  entry[1]
-                )
-              }
             />
           </div>
           <div>
@@ -89,98 +92,91 @@ const RowInsideWithChilds = ({
                 >
                   {entry[0] === "amount" ? (
                     <div>
-                      {/* {item?.amount?.toFixed(2)} */}
                       <GomakeTextInput
                         style={clasess.textInputWithoutStyle}
                         value={Number(item?.amount).toFixed(2)}
-                        // placeholder={Number(item?.amount).toFixed(2)}
                         onChange={(e: any) => {
+                          const newValue = e.target.value;
                           changeItemsChilds(
                             indexTable,
                             index2,
                             entry[0],
-                            e.target.value
+                            newValue
                           );
+                          if (newValue !== initialValue) {
+                            quoteStateValue?.getCalculateQuoteItem(
+                              item?.quoteItemId,
+                              0,
+                              newValue
+                            );
+                          }
                         }}
-                        onBlur={() =>
-                          quoteStateValue?.getCalculateQuoteItem(
-                            item?.quoteItemId,
-                            0,
-                            item?.amount
-                          )
-                        }
                       />
                     </div>
                   ) : null}
                   {entry[0] === "unitPrice" ? (
                     <div>
-                      {/* {item?.unitPrice?.toFixed(2)} */}
                       <GomakeTextInput
                         style={clasess.textInputWithoutStyle}
                         value={Number(item?.unitPrice).toFixed(2)}
                         onChange={(e: any) => {
+                          const newValue = e.target.value;
                           changeItemsChilds(
                             indexTable,
                             index2,
                             entry[0],
-                            e.target.value
+                            newValue
                           );
+                          if (newValue !== initialValue) {
+                            quoteStateValue?.getCalculateQuoteItem(
+                              item?.quoteItemId,
+                              1,
+                              newValue
+                            );
+                          }
                         }}
-                        onBlur={() =>
-                          quoteStateValue?.getCalculateQuoteItem(
-                            item?.quoteItemId,
-                            1,
-                            item?.unitPrice
-                          )
-                        }
                       />
                     </div>
                   ) : null}
                   {entry[0] === "discount" ? (
                     <div>
-                      {/* {item?.discount == null ? 0 : item?.discount} */}
                       <GomakeTextInput
                         style={clasess.textInputWithoutStyle}
                         value={Number(item?.discount).toFixed(2)}
                         onChange={(e: any) => {
+                          const newValue = e.target.value;
                           changeItemsChilds(
                             indexTable,
                             index2,
                             entry[0],
-                            e.target.value
+                            newValue
                           );
+                          if (newValue !== initialValue) {
+                            quoteStateValue?.getCalculateQuoteItem(
+                              item?.quoteItemId,
+                              2,
+                              newValue
+                            );
+                          }
                         }}
-                        onBlur={() =>
-                          quoteStateValue?.getCalculateQuoteItem(
-                            item?.quoteItemId,
-                            2,
-                            item?.discount
-                          )
-                        }
                       />
                     </div>
                   ) : null}
                   {entry[0] === "finalPrice" ? (
                     <div>
-                      {/* {item?.finalPrice?.toFixed(2)} */}
                       <GomakeTextInput
                         style={clasess.textInputWithoutStyle}
                         value={Number(item?.finalPrice).toFixed(2)}
                         onChange={(e: any) => {
-                          changeItemsChilds(
-                            indexTable,
-                            index2,
-                            entry[0],
-                            e.target.value
-                          );
+                          const newValue = e.target.value;
+                          if (newValue !== initialValue) {
+                            quoteStateValue?.getCalculateQuoteItem(
+                              item?.quoteItemId,
+                              3,
+                              newValue
+                            );
+                          }
                         }}
-                        onBlur={() =>
-                          quoteStateValue?.getCalculateQuoteItem(
-                            item?.quoteItemId,
-                            3,
-                            item?.finalPrice
-                          )
-                        }
                       />
                     </div>
                   ) : null}
