@@ -42,9 +42,11 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
         var data = [...boardsMissions];
         if(selectedStatusFilter){
             data.forEach(x=>{
-                x.splittedBoards = x.splittedBoards.filter(y=>y.status == selectedStatusFilter)
+                if(x.splittedBoards){
+                    x.splittedBoards = x.splittedBoards.filter(y=>y.status === selectedStatusFilter)
+                }
             })
-            data = data.filter(board => board.status === selectedStatusFilter);
+            data = data.filter(board => board.status === selectedStatusFilter || (board.splittedBoards && board.splittedBoards.length > 0));
         }
         
         return data;
