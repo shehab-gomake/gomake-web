@@ -21,12 +21,14 @@ const QuotesListPageWidget = () => {
     onClcikCloseModal,
     setPatternSearch,
     setStatusId,
+    statusId,
     setCustomerId,
     setAgentId,
     renderOptions,
     checkWhatRenderArray,
     updateQuoteStatus,
     onClickSearchFilter,
+    onClcikClearFilter,
     t,
   } = useQuotes();
   return (
@@ -50,6 +52,7 @@ const QuotesListPageWidget = () => {
                 onChange={(e: any, value: any) => {
                   setStatusId(value?.value);
                 }}
+                // value={statusId}
               />
             </div>
             <div style={clasess.statusFilterContainer}>

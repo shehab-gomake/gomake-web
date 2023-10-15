@@ -170,6 +170,12 @@ const useQuotes = () => {
     getAllQuotes();
   };
 
+  const onClcikClearFilter = () => {
+    setStatusId(null);
+    setAgentId(null);
+    setCustomerId(null);
+  };
+
   const tableHeaders = [
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
@@ -274,6 +280,7 @@ const useQuotes = () => {
     quoteStatuses,
     agentsCategories,
     openModal,
+    statusId,
     errorColor,
     onClcikCloseModal,
     setPatternSearch,
@@ -286,7 +293,7 @@ const useQuotes = () => {
     updateQuoteStatus,
     onClickSearchFilter,
     getAllQuotes,
-
+    onClcikClearFilter,
     t,
   };
 };
