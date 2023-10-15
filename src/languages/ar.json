@@ -1591,7 +1591,10 @@
       "confirmWithNotification": "تأكيد مع الإشعار",
       "warningMsg": "تأكد من أن تفاصيل الاتصال ورقم الجوال والبريد الإلكتروني صحيحة",
       "orderNowTitle": "اطلب الآن!",
-      "orders":"طلباتي"
+      "orders":"طلباتي",
+      "createdBy": "تم الإنشاء بواسطة {{name}}",
+      "customer": "العميل"
+
     }
   },
   "usersSettings": {

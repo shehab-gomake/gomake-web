@@ -1590,7 +1590,9 @@
       "confirmWithoutNotification":"confirm without notification",
       "confirmWithNotification":"confirm with notification",
       "warningMsg":"Make sure that the contact details, mobile number and e-mail are correct",
-      "orderNowTitle":"Order Now!"
+      "orderNowTitle":"Order Now!",
+      "createdBy":"Created by {{name}}",
+      "customer":"Customer"
     }
   },
   "usersSettings": {
