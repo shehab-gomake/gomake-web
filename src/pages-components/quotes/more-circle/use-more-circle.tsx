@@ -1,38 +1,12 @@
-import {
-  useCustomer,
-  useGomakeAxios,
-  useGomakeRouter,
-  useSnackBar,
-} from "@/hooks";
-import { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useCustomer, useGomakeRouter } from "@/hooks";
 
 const useMoreCircle = () => {
-  const { callApi } = useGomakeAxios();
-
-  const { t } = useTranslation();
   const { user } = useCustomer();
-  const { setSnackbarStateValue } = useSnackBar();
   const { navigate } = useGomakeRouter();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   return {
-    open,
-    anchorEl,
     user,
-    handleClose,
-    handleClick,
-    t,
-    setSnackbarStateValue,
     navigate,
-    callApi,
   };
 };
 
