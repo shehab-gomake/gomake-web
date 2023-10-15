@@ -1586,7 +1586,12 @@
       "subTitleModal":" Do you want to change the status?",
       "changeStatus":"Change status",
       "search":"Search",
-      "clear":"Clear"
+      "clear":"Clear",
+      "confirmWithoutNotification":"confirm without notification",
+      "confirmWithNotification":"confirm with notification",
+      "warningMsg":"Make sure that the contact details, mobile number and e-mail are correct",
+      "orderNowTitle":"Order Now!"
+      
       
     }
   },

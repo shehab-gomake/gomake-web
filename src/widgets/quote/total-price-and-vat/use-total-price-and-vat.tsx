@@ -18,6 +18,7 @@ const useTotalPriceAndVat = () => {
   const [checked, setChecked] = useState(false);
   const [reasonText, setReasonText] = useState("");
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
+  const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
   const [openIrreleventCancelModal, setOpenIrreleventCancelModal] =
     useState(false);
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
@@ -28,6 +29,13 @@ const useTotalPriceAndVat = () => {
   };
   const onClcikCloseModal = () => {
     setOpenOtherReasonModal(false);
+  };
+
+  const onClcikOpenOrderNowModal = () => {
+    setOpenOrderNowModal(true);
+  };
+  const onClcikCloseOrderNowModal = () => {
+    setOpenOrderNowModal(false);
   };
 
   const onClcikOpenIrreleventModal = () => {
@@ -165,6 +173,54 @@ const useTotalPriceAndVat = () => {
       });
     }
   }, [quoteItemValue, reasonText]);
+
+  const onClickConfirmWithoutNotification = useCallback(async () => {
+    // const res = await callApi(
+    //   EHttpMethod.POST,
+    //   `/v1/erp-service/quote/save-qoute`,
+    //   {
+    //     quoteId: quoteItemValue?.id,
+    //   }
+    // );
+    // if (res?.success) {
+    //   setSnackbarStateValue({
+    //     state: true,
+    //     message: t("modal.updatedSusuccessfully"),
+    //     type: "sucess",
+    //   });
+    //   navigate("/home");
+    // } else {
+    //   setSnackbarStateValue({
+    //     state: true,
+    //     message: t("modal.updatedfailed"),
+    //     type: "error",
+    //   });
+    // }
+  }, []);
+  const onClickConfirmWithNotification = useCallback(async () => {
+    // const res = await callApi(
+    //   EHttpMethod.POST,
+    //   `/v1/erp-service/quote/save-qoute`,
+    //   {
+    //     quoteId: quoteItemValue?.id,
+    //   }
+    // );
+    // if (res?.success) {
+    //   setSnackbarStateValue({
+    //     state: true,
+    //     message: t("modal.updatedSusuccessfully"),
+    //     type: "sucess",
+    //   });
+    //   navigate("/home");
+    // } else {
+    //   setSnackbarStateValue({
+    //     state: true,
+    //     message: t("modal.updatedfailed"),
+    //     type: "error",
+    //   });
+    // }
+  }, []);
+
   return {
     btnTabs,
     quoteItemValue,
@@ -176,6 +232,11 @@ const useTotalPriceAndVat = () => {
     openIrreleventCancelModal,
     openPriceCancelModal,
     openDeliveryTimeCancelModal,
+    openOrderNowModal,
+    onClickConfirmWithoutNotification,
+    onClickConfirmWithNotification,
+    onClcikOpenOrderNowModal,
+    onClcikCloseOrderNowModal,
     onClcikOpenIrreleventModal,
     onClcikCloseIrreleventModal,
     onClcikOpenPriceModal,
