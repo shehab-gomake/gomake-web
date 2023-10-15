@@ -8,16 +8,19 @@ import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
 import { DeleteIcon } from "./icons/delete";
 
-const MoreMenuWidget = ({ item, updatedStatus, onClickEdit }: any) => {
-  const { clasess } = useStyle();
+const MoreMenuWidget = ({ item,  onClickEdit , onClickDuplicate , onClickDelete }: any) => {
+  const { classes } = useStyle();
   const { t } = useTranslation();
-  const { open, anchorEl, handleClose, handleClick, updatedCustomerStatus } =
-    useMoreCircle({
-      updatedStatus,
-    });
+  const { open, anchorEl, handleClose, handleClick } = useMoreCircle();
 
   const handleEditClick = async () => {
     onClickEdit(item.id);
+  };
+  const handleDuplicateClick = async () => {
+    onClickDuplicate(item.id);
+  };
+  const handleDeleteClick = async () => {
+    onClickDelete(item.id);
   };
 
   return (
@@ -26,24 +29,24 @@ const MoreMenuWidget = ({ item, updatedStatus, onClickEdit }: any) => {
         <MoreCircleIcon />
       </IconButton>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        <MenuItem onClick={handleEditClick}>
-          <div style={clasess.menuRowStyle}>
+        <MenuItem onClick={() => alert("edit")}>
+          <div style={classes.menuRowStyle}>
             <EditingIcon />
-            <div style={clasess.rowTextStyle}>{t("mailingSettings.Edit")}</div>
+            <div style={classes.rowTextStyle}>{t("mailingSettings.Edit")}</div>
           </div>
         </MenuItem>
-        <MenuItem onClick={() => updatedCustomerStatus(item)}>
-          <div style={clasess.menuRowStyle}>
+        <MenuItem onClick={() => alert("duplicate")}>
+          <div style={classes.menuRowStyle}>
             <DuplicateIcon />
-            <div style={clasess.rowTextStyle}>
+            <div style={classes.rowTextStyle}>
                {t("mailingSettings.Duplicate")} 
             </div>
           </div>
         </MenuItem>
-        <MenuItem onClick={() => updatedCustomerStatus(item)}>
-          <div style={clasess.menuRowStyle}>
+        <MenuItem onClick={() => alert("delete")}>
+          <div style={classes.menuRowStyle}>
             <DeleteIcon />
-            <div style={clasess.rowTextStyle}>
+            <div style={classes.rowTextStyle}>
                {t("mailingSettings.Delete")} 
             </div>
           </div>

@@ -1,3 +1,5 @@
+import { CSSProperties } from "react";
+
 export interface IInput {
   name: string;
   label: string;
@@ -18,6 +20,7 @@ export interface IFormInput {
   changeState: (key: string, value: any) => void;
   error: boolean;
   readonly?: boolean;
+  switchStyle?: CSSProperties | undefined;
 }
 
 export interface IFormArrayInputsProps {

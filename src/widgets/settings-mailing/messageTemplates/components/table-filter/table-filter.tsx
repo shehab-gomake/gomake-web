@@ -25,14 +25,13 @@ const TableFilter = () => {
     }
 
     return (
-
         <Stack direction={'row'} style={classes.header}>
             {
                 filterInput(templateGroup).map(item => <FormInput input={item as IInput} changeState={onChangeInputs2} error={false} readonly={false} />)
             }
             <Stack direction={'row'} gap={"16px"}>
                 {
-                    switchInputs(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
+                    switchInputs(state).map(item => <FormInput switchStyle={classes.switchStyle} input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
                 }
             </Stack>
         </Stack>

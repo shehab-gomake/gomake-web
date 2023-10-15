@@ -1,10 +1,8 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
-  const { theme, primaryColor } = useGomakeTheme();
-  const { t } = useTranslation();
+  const { theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       header: {
@@ -18,6 +16,12 @@ const useStyle = () => {
         paddingBottom: '12px',
         justifyContent: 'space-between'
       },
+      switchStyle: {
+        display: "flex",
+        alignItems: 'center',
+        flexDirection: 'row-reverse' as 'row-reverse' ,
+        gap: 8,
+      }
     };
   }, [theme]);
   return {

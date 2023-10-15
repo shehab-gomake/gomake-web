@@ -9,9 +9,6 @@ import { allSMSTemplateGroupsState, groupModalState, templateGroupState } from "
 import { MoreMenuWidget } from "./components/more-circle/index";
 import { UploadFileInput } from "./components/upload-file/upload-file";
 
-
-
-
 const useMessageTemplate = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
@@ -35,16 +32,16 @@ const useMessageTemplate = () => {
           document.type,
           document.subject,
           document.body,
-         <UploadFileInput selectedNameFile={"order summary.pdf"}/>,
-          <MoreMenuWidget/>
+        // <UploadFileInput selectedNameFile={"order summary.pdf"}/>,
+          <UploadFileInput/>,
+          <MoreMenuWidget item={document} />
         ]);
         setAllTemplates(tableRows);
       }
     }
     getAllTemplatesApi(callApi, callBackFunction).then();
   }
-  
- 
+
   // select options 
   const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(allSMSTemplateGroupsState);
   const getSMSTemplateGroups = () => {

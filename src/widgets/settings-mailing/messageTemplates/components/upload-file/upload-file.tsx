@@ -1,57 +1,44 @@
-import { Stack } from "@mui/material";
-import { ChangeEvent, useState } from "react";
-import React from "react";
-import { PDFIcon } from "../icons/PDFicon";
-import { PictureAsPdfOutlined } from "@mui/icons-material";
+import React, { useRef, useState } from 'react';
+import { PdfIcon } from '@/components/icons/pdf-icon';
+import { IconButton } from '@mui/material';
+import { useStyle } from './style';
 
+const UploadFileInput = () => {
+    const { classes } = useStyle();
+    const inputRef = useRef(null);
+    const [selectedFileName, setSelectedFileName] = useState('order summary.pdf');
 
-const UploadFileInput = ({selectedNameFile}) => {
-    const fileInputRef = React.createRef<HTMLInputElement>();
-    const [selectedFileName, setSelectedFileName] = useState(selectedNameFile);
-    const handleButtonClick = () => {
-      if (fileInputRef.current) {
-        fileInputRef.current.click();
-      }
+    const handleFileSelect = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedFileName(file.name);
+        } else {
+            setSelectedFileName('order summary.pdf');
+        }
     };
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-      const selectedFile = event.target.files?.[0];
-      setSelectedFileName(selectedFile.name);
-      if (selectedFile) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64Data = reader.result as string;
-        };
-  
-        reader.readAsDataURL(selectedFile);
-      }
-    };
-    
-  
 
-    return (   
-            <Stack style={{
-                borderRadius: "4px",
-                height:" 40px",
-                display: "flex",
-                alignItems: "center",
-                boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
-                color:" #8283BE",backgroundColor:"#FFFFFF",padding:10}} direction={'row'}>
-                <PictureAsPdfOutlined style={{marginLeft:10}} />
-                    <label style={{color:"#9695C7",marginLeft:30}}>
-                    {selectedFileName || "Upload here"}
-                    </label>
-                    <input
-                    ref={fileInputRef}
-                    placeholder={"upload"}
-                    onChange={handleInputChange}
-                    accept=".pdf, .jpg, .png"
-                    type="file"
-                    style={{ display: "none" }}
-                    />
-            </Stack>
-      
+    const openFileSelector = () => {
+        inputRef.current.click();
+    };
+
+    return (
+        <div style={classes.pdfCellStyle}>
+
+            <IconButton onClick={openFileSelector}>
+                <PdfIcon height={19.66} width={16} />
+            </IconButton>
+            <label style={classes.pdfLabelStyle}>
+                {selectedFileName}
+            </label>
+            <input
+                type="file"
+                accept=".pdf"
+                onChange={handleFileSelect}
+                style={{ display: 'none' }}
+                ref={inputRef}
+            />
+        </div>
     );
 };
 
-export {UploadFileInput };
-  
+export { UploadFileInput };
