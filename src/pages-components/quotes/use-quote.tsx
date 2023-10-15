@@ -42,7 +42,6 @@ const useQuotes = () => {
   const [agentsCategories, setAgentsCategories] = useRecoilState(
     agentsCategoriesState
   );
-  console.log("agentsCategories", agentsCategories);
   useEffect(() => {
     setFinalPatternSearch(debounce);
   }, [debounce]);

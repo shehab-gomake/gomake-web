@@ -175,7 +175,6 @@ const useTotalPriceAndVat = () => {
   }, [quoteItemValue, reasonText]);
 
   const onClickConfirmWithoutNotification = useCallback(async () => {
-    console.log("onClickConfirmWithoutNotification");
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/order/create-new-order`,
@@ -199,7 +198,6 @@ const useTotalPriceAndVat = () => {
     }
   }, [quoteItemValue]);
   const onClickConfirmWithNotification = useCallback(async () => {
-    console.log("onClickConfirmWithNotification");
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/order/create-new-order`,
