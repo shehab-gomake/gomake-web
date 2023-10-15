@@ -11,7 +11,7 @@ import { Link } from "@mui/material";
 const LoginLeftSide = () => {
   const { clasess } = useStyle();
   const userProfile = useRecoilValue(companyProfileState);
-  const { errors, inputs, errorMsg, changeState, onClickLogin } =
+  const { errors, inputs, errorMsg, changeState, onClickLogin, t } =
     useGomakeLogin();
   return (
     <div style={clasess.leftContainer}>
@@ -24,13 +24,14 @@ const LoginLeftSide = () => {
         />
       </div>
       <div style={clasess.loginContainer}>
-        <div style={clasess.loginLbl}>Login</div>
+        <div style={clasess.loginLbl}>{t("login.login")}</div>
         {inputs.map((input: IInput) => (
           <InputContainer
             key={input.key}
             input={input}
             changeState={changeState}
             error={errors[input.key]}
+            placeholder={t(input.placeholder)}
           />
         ))}
         <Link
@@ -38,12 +39,14 @@ const LoginLeftSide = () => {
           style={clasess.forgotStyle}
           href="/forgot-password"
         >
-          Forgot password?
+          {t("login.forgotPassword")}
         </Link>
         <div style={clasess.errorMsgStyle}>{errorMsg}</div>
       </div>
       <div style={clasess.btnContainer}>
-        <GomakePrimaryButton onClick={onClickLogin}>Login</GomakePrimaryButton>
+        <GomakePrimaryButton onClick={onClickLogin}>
+          {t("login.login")}
+        </GomakePrimaryButton>
       </div>
     </div>
   );
