@@ -10,4 +10,5 @@ export interface IInputContainer {
   input: IInput;
   changeState: (key: string, value: any) => void;
   error: boolean;
+  placeholder?: string;
 }

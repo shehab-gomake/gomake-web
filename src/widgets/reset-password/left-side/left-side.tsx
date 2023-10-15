@@ -2,6 +2,7 @@ import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import Image from "next/image";
 
 const ResetPasswordLeftSide = () => {
   const { t } = useTranslation();
@@ -30,6 +31,12 @@ const ResetPasswordLeftSide = () => {
   const { clasess } = useStyle();
   return (
     <div style={clasess.leftContainer}>
+      <Image
+        alt="logo"
+        src={"https://i.ibb.co/wzpwSq6/Group-1239.png"}
+        width={180}
+        height={180}
+      />
       <div style={clasess.loginContainer}>
         <div style={clasess.loginLbl}>{t("login.resetPassword")}</div>
         <div style={clasess.inputContainer}>

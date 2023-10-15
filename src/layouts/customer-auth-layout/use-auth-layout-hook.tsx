@@ -59,14 +59,14 @@ const useAuthLayoutHook = () => {
         isList: true,
         list: [
           {
-            key: "add",
-            title: "tabs.addSales",
-            path: "/sales/add-machine",
+            key: "quotes",
+            title: "tabs.quotes",
+            path: "/quotes",
           },
           {
-            key: "list",
-            title: "tabs.listSales",
-            path: "/sales/list",
+            key: "orders",
+            title: "tabs.orders",
+            path: "/orders",
           },
         ],
         icon: () => {
@@ -74,17 +74,17 @@ const useAuthLayoutHook = () => {
         },
         isProduction: true,
       },
-      {
-        isLine: false,
-        key: "properties",
-        title: "tabs.properties",
-        path: "/properties",
-        isList: false,
-        icon: () => {
-          return <ProductsIcon />;
-        },
-        isProduction: true,
-      },
+      // {
+      //   isLine: false,
+      //   key: "properties",
+      //   title: "tabs.properties",
+      //   path: "/properties",
+      //   isList: false,
+      //   icon: () => {
+      //     return <ProductsIcon />;
+      //   },
+      //   isProduction: true,
+      // },
       {
         isLine: false,
         key: "shoping",

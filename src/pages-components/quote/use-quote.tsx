@@ -3,7 +3,6 @@ import { useQuoteGetData } from "./use-quote-get-data";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useQuoteModals } from "./use-quote-modals";
-import { useClickAway } from "@uidotdev/usehooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 
 const useQuote = () => {

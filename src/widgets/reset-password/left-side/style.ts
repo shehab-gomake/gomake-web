@@ -25,7 +25,7 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         ...adaptPaddingRight(t("direction"), 48),
-
+        marginTop:40
         // paddingLeft: 48,
       },
       loginLbl: {

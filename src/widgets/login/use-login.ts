@@ -54,7 +54,7 @@ const useGomakeLogin = () => {
         name: "username",
         label: "login.username",
         type: "text",
-        placeholder: "Username",
+        placeholder: "login.username",
         required: true,
         key: "username",
       },
@@ -81,7 +81,8 @@ const useGomakeLogin = () => {
     errorMsg,
     changeState,
     onClickLogin,
-    getUserProfile
+    getUserProfile,
+    t
   };
 };
 export { useGomakeLogin };
