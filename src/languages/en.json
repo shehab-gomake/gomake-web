@@ -1936,6 +1936,8 @@
     "add": "Add",
     "Edit":"Edit",
     "Duplicate":"Duplication",
-    "Delete":"Delete"
+    "Delete":"Delete",
+    "save" : "Save",
+    "reset" : "Reset"
   }
 }

@@ -23,7 +23,6 @@ const UploadFileInput = () => {
 
     return (
         <div style={classes.pdfCellStyle}>
-
             <IconButton onClick={openFileSelector}>
                 <PdfIcon height={19.66} width={16} />
             </IconButton>

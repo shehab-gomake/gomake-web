@@ -10,15 +10,18 @@ import { useRecoilState } from "recoil";
 import { groupModalState, templateGroupState } from "./states/state";
 import { useMessageTemplate } from "./messageTemplates/useMessageTemplate";
 import { SMSTemplateGroup } from "./messageTemplates/interfaces/interface";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { EmailSettings } from "./emailSetting/email-setting";
 
 const SettingsMailingWidget = () => {
     const { t } = useTranslation();
-    const {onAddDocument , getSMSTemplateGroups } = useMessageTemplate();
+    const { onAddDocument, getSMSTemplateGroups } = useMessageTemplate();
     const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
     const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupState);
+    const [selectedTab, setSelectTab] = useState(0);
 
     const tabs: ITab[] = [
+        { title: t("mailingSettings.emailSetting"), component: <EmailSettings /> },
         { title: t("mailingSettings.messageTemplates"), component: <TemplateSettings /> },
         { title: t("mailingSettings.whatsappSetting"), component: <EmptyComponent /> }
     ];
@@ -30,15 +33,18 @@ const SettingsMailingWidget = () => {
 
     return (
         <div>
-            <PrimaryTabsComponent tabs={tabs} >
-                <AddButton label={t("mailingSettings.addNew")} onClick={() => setOpenModal(true)} />
+            <PrimaryTabsComponent tabs={tabs} onSelectTab={(newIndex) => setSelectTab(newIndex)}>
+                {
+                    selectedTab === 0 && <AddButton label={t("mailingSettings.addNew")} onClick={() => setOpenModal(true)} />
+
+                }
             </PrimaryTabsComponent>
             <GoMakeModal
                 insideStyle={{ paddingLeft: 20, padding: 20, width: "518px", height: "214px" }}
                 openModal={openModal}
-                onClose={() => {setOpenModal(false) , setTemplateGroup(null)}}
+                onClose={() => { setOpenModal(false), setTemplateGroup(null) }}
                 modalTitle={t("mailingSettings.addNewGroup")}>
-                <AddNewSMSTemplateGroup onClickAdd={onAddDocument}/>
+                <AddNewSMSTemplateGroup onClickAdd={onAddDocument} />
             </GoMakeModal>
         </div>
 
