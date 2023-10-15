@@ -175,51 +175,53 @@ const useTotalPriceAndVat = () => {
   }, [quoteItemValue, reasonText]);
 
   const onClickConfirmWithoutNotification = useCallback(async () => {
-    // const res = await callApi(
-    //   EHttpMethod.POST,
-    //   `/v1/erp-service/quote/save-qoute`,
-    //   {
-    //     quoteId: quoteItemValue?.id,
-    //   }
-    // );
-    // if (res?.success) {
-    //   setSnackbarStateValue({
-    //     state: true,
-    //     message: t("modal.updatedSusuccessfully"),
-    //     type: "sucess",
-    //   });
-    //   navigate("/home");
-    // } else {
-    //   setSnackbarStateValue({
-    //     state: true,
-    //     message: t("modal.updatedfailed"),
-    //     type: "error",
-    //   });
-    // }
-  }, []);
+    console.log("onClickConfirmWithoutNotification");
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/order/create-new-order`,
+      {
+        quoteId: quoteItemValue?.id,
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedSusuccessfully"),
+        type: "sucess",
+      });
+      navigate("/orders");
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedfailed"),
+        type: "error",
+      });
+    }
+  }, [quoteItemValue]);
   const onClickConfirmWithNotification = useCallback(async () => {
-    // const res = await callApi(
-    //   EHttpMethod.POST,
-    //   `/v1/erp-service/quote/save-qoute`,
-    //   {
-    //     quoteId: quoteItemValue?.id,
-    //   }
-    // );
-    // if (res?.success) {
-    //   setSnackbarStateValue({
-    //     state: true,
-    //     message: t("modal.updatedSusuccessfully"),
-    //     type: "sucess",
-    //   });
-    //   navigate("/home");
-    // } else {
-    //   setSnackbarStateValue({
-    //     state: true,
-    //     message: t("modal.updatedfailed"),
-    //     type: "error",
-    //   });
-    // }
-  }, []);
+    console.log("onClickConfirmWithNotification");
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/order/create-new-order`,
+      {
+        quoteId: quoteItemValue?.id,
+      }
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedSusuccessfully"),
+        type: "sucess",
+      });
+      navigate("/orders");
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.updatedfailed"),
+        type: "error",
+      });
+    }
+  }, [quoteItemValue]);
 
   return {
     btnTabs,
