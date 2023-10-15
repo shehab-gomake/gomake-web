@@ -26,7 +26,10 @@
     "confirmPassword": "אימות סיסמה",
     "notMach": "הסיסמאות לא תואמות",
     "receiveCode": "תקבל את הקוד באימייל",
-    "code": "קוד"
+    "code": "קוד",
+    "account": "חשבון",
+    "manageAccount": "ניהול חשבון",
+    "logOut": "התנתקות"
   },
   "header": {
     "search": "חיפוש"

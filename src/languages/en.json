@@ -26,7 +26,10 @@
     "confirmPassword": "Confirm password",
     "notMach": "passwords don't match",
     "receiveCode": "you will receive the code in the email",
-    "code": "Code"
+    "code": "Code",
+    "account":"ACCOUNT",
+    "manageAccount":"Manage Account",
+    "logOut":"Log out"
   },
   "header": {
     "search": "Search"
