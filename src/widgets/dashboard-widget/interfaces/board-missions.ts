@@ -11,6 +11,7 @@ export interface IBoardMissions {
     currentStation: IBoardMissionsCurrentStation;
     boardId: string;
     orderNumber: string;
+    productName:string;
     clientId: string;
     clientName?: string;
     splittedBoards: IBoardMissions[];

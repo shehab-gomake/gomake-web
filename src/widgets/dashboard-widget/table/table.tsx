@@ -38,8 +38,19 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                 return 5;
         }
     }
+    const getFilteredBoardMissions = (selectedStatusFilter:EStatus | null)=>{
+        var data = [...boardsMissions];
+        if(selectedStatusFilter){
+            data.forEach(x=>{
+                x.splittedBoards = x.splittedBoards.filter(y=>y.status == selectedStatusFilter)
+            })
+            data = data.filter(board => board.status === selectedStatusFilter);
+        }
+        
+        return data;
+    }
     const boards = useCallback(() => {
-        let boards = selectedStatusFilter ? [...boardsMissions.filter(board => board.status === selectedStatusFilter)] : [...boardsMissions];
+        let boards = getFilteredBoardMissions(selectedStatusFilter) //littedBoards = x.splittedBoards.filter(y=>y.status == selectedStatusFilter) ).filter()] : [...boardsMissions];
         if (orderByMachine) {
             boards = boards.sort((board1: IBoardMissions, board2: IBoardMissions) => {
                 return hasMachine(board1) - hasMachine(board2)
@@ -66,6 +77,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                 <div style={{width: '5%'}}></div>
                                 <div style={{width: '30%'}}>{t('dashboard-widget.client')}</div>
                                 <div style={{width: '25%'}}>{t('dashboard-widget.task')}</div>
+                                <div style={{width: '20%'}}>{t('dashboard-widget.product')}</div>
                                 <div style={{width: '35%'}}>{t('dashboard-widget.status')}</div>
                             </div>
                         </th>
@@ -112,6 +124,11 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                             <div style={{width: '25%', height: '100%'}}>
                                                                 <div style={classes.tdRows}>
                                                                     <div><span>{board.code}</span></div>
+                                                                </div>
+                                                            </div>
+                                                            <div style={{width: '20%', height: '100%'}}>
+                                                                <div style={classes.tdRows}>
+                                                                    <span>{board?.productName && board?.productName?.length > 8 ? board.productName?.slice(0, 7) + '..' : board?.productName}</span>
                                                                 </div>
                                                             </div>
                                                             <div style={classes.splitBoardsStatuses}>
@@ -169,6 +186,11 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                     <div style={classes.tdRows}>
                                                         <div><Link href={boardLink(board)} target="_blank"
                                                                    rel="noopener">{board.code}</Link></div>
+                                                    </div>
+                                                </div>
+                                                <div style={{width: '20%', height: '100%'}}>
+                                                    <div style={classes.tdRows}>
+                                                        <span>{board?.productName && board?.productName?.length > 8 ? board.productName?.slice(0, 7) + '..' : board?.productName}</span>
                                                     </div>
                                                 </div>
                                                 <div style={{width: '35%'}}>
