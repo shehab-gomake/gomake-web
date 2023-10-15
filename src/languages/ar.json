@@ -1593,7 +1593,8 @@
       "orderNowTitle": "اطلب الآن!",
       "orders":"طلباتي",
       "createdBy": "تم الإنشاء بواسطة {{name}}",
-      "customer": "العميل"
+      "customer": "العميل",
+      "orderList": "قائمة الطلبات"
 
     }
   },

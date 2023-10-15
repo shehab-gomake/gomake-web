@@ -1592,7 +1592,8 @@
       "warningMsg":"Make sure that the contact details, mobile number and e-mail are correct",
       "orderNowTitle":"Order Now!",
       "createdBy":"Created by {{name}}",
-      "customer":"Customer"
+      "customer":"Customer",
+      "orderList":"Order List"
     }
   },
   "usersSettings": {
@@ -1643,6 +1644,7 @@
     "editInitials": "Edit initials",
     "uploadFile": "Upload file",
     "selectFile": "Select file"
+   
   },
   "permissionsSettings": {
     "title": "Management of roles and privileges",

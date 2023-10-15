@@ -1592,7 +1592,8 @@
       "warningMsg": "ודא שפרטי היצירה, מספר הטלפון הנייד והאימייל נכונים",
       "orderNowTitle": "הזמן עכשיו!",
       "createdBy": "נוצר על ידי {{name}}",
-      "customer": "לקוח"
+      "customer": "לקוח",
+      "orderList": "רשימת הזמנות"
     }
   },
   "usersSettings": {

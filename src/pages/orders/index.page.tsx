@@ -1,11 +1,10 @@
 import { CustomerAuthLayout } from "@/layouts";
-import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
+import { OrdersListPageWidget } from "@/pages-components/orders/orders";
 
 export default function Orders() {
   return (
     <CustomerAuthLayout>
-      {/* <QuotesListPageWidget /> */}
-      qqq
+      <OrdersListPageWidget />
     </CustomerAuthLayout>
   );
 }
