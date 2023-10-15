@@ -17,11 +17,13 @@ const QuotesListPageWidget = () => {
     quoteStatuses,
     agentsCategories,
     openModal,
+    statusId,
+    customerId,
+    agentId,
     errorColor,
     onClcikCloseModal,
     setPatternSearch,
     setStatusId,
-    statusId,
     setCustomerId,
     setAgentId,
     renderOptions,
@@ -46,13 +48,15 @@ const QuotesListPageWidget = () => {
                 {t("sales.quote.status")}
               </div>
               <GoMakeAutoComplate
+                key={statusId?.value}
                 options={quoteStatuses}
                 style={clasess.textInputStyle}
+                getOptionLabel={(option: any) => option.label}
                 placeholder={t("sales.quote.chooseStatus")}
                 onChange={(e: any, value: any) => {
-                  setStatusId(value?.value);
+                  setStatusId(value);
                 }}
-                // value={statusId}
+                value={statusId}
               />
             </div>
             <div style={clasess.statusFilterContainer}>
@@ -60,14 +64,16 @@ const QuotesListPageWidget = () => {
                 {t("sales.quote.customer")}
               </div>
               <GoMakeAutoComplate
+                key={customerId?.id}
                 options={renderOptions()}
                 getOptionLabel={(option: any) => `${option.name}`}
                 onChangeTextField={checkWhatRenderArray}
                 style={clasess.textInputStyle}
                 placeholder={t("sales.quote.chooseCustomer")}
                 onChange={(e: any, value: any) => {
-                  setCustomerId(value?.id);
+                  setCustomerId(value);
                 }}
+                value={customerId}
               />
             </div>
             <div style={clasess.statusFilterContainer}>
@@ -75,12 +81,15 @@ const QuotesListPageWidget = () => {
                 {t("sales.quote.agent")}
               </div>
               <GoMakeAutoComplate
+                key={agentId?.id}
                 options={agentsCategories}
                 style={clasess.textInputStyle}
+                getOptionLabel={(option: any) => option.label}
                 placeholder={t("sales.quote.ChooseAgent")}
                 onChange={(e: any, value: any) => {
-                  setAgentId(value?.id);
+                  setAgentId(value);
                 }}
+                value={agentId}
               />
             </div>
             <div style={clasess.statusFilterContainer}>
@@ -96,7 +105,7 @@ const QuotesListPageWidget = () => {
               <div style={clasess.filterLabelStyle} />
               <GomakePrimaryButton
                 style={clasess.clearBtnStyle}
-                // onClick={onClcikClearFilter}
+                onClick={onClcikClearFilter}
               >
                 {t("sales.quote.clear")}
               </GomakePrimaryButton>

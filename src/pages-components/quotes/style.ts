@@ -47,7 +47,8 @@ const useStyle = () => {
         height:21
       },
       textInputStyle:{
-        width:"100%"
+        width:"100%",
+        border: "none"
       },
       searchBtnStyle:{
         height:40,

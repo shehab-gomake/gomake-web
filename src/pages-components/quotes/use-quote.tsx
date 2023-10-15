@@ -22,10 +22,10 @@ const useQuotes = () => {
   const debounce = useDebounce(patternSearch, 500);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
-  const [statusId, setStatusId] = useState();
-  const [customerId, setCustomerId] = useState();
-  const [dateRange, setDateRange] = useState();
-  const [agentId, setAgentId] = useState();
+  const [statusId, setStatusId] = useState<any>();
+  const [customerId, setCustomerId] = useState<any>();
+  const [dateRange, setDateRange] = useState<any>();
+  const [agentId, setAgentId] = useState<any>();
   const [canOrder, setCanOrder] = useState(false);
   const [allQuotes, setAllQuotes] = useState();
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
@@ -42,6 +42,7 @@ const useQuotes = () => {
   const [agentsCategories, setAgentsCategories] = useRecoilState(
     agentsCategoriesState
   );
+  console.log("agentsCategories", agentsCategories);
   useEffect(() => {
     setFinalPatternSearch(debounce);
   }, [debounce]);
@@ -134,11 +135,11 @@ const useQuotes = () => {
           pageNumber: page,
           pageSize: limit,
         },
-        statusId,
+        statusId: statusId?.value,
         patternSearch: finalPatternSearch,
-        customerId,
+        customerId: customerId?.id,
         dateRange,
-        agentId,
+        agentId: agentId?.id,
       }
     );
     const data = res?.data?.data?.result;
@@ -163,6 +164,31 @@ const useQuotes = () => {
     agentId,
     finalPatternSearch,
   ]);
+  const getAllQuotesInitial = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/quote/get-all-quotes`,
+      {
+        model: {
+          pageNumber: page,
+          pageSize: limit,
+        },
+      }
+    );
+    const data = res?.data?.data?.result;
+    const totalItems = res?.data?.data?.totalItems;
+    const mapData = data?.map((quote: any) => [
+      quote?.createdDate,
+      quote?.customerName,
+      quote?.orderNumber,
+      quote?.worksNames,
+      quote?.totalPrice,
+      quote?.notes,
+      _renderQuoteStatus(quote?.statusID, quote),
+      <MoreMenuWidget quote={quote} onClcikOpenModal={onClcikOpenModal} />,
+    ]);
+    setAllQuotes(mapData);
+  }, [page, limit]);
   useEffect(() => {
     getAllQuotes();
   }, []);
@@ -174,6 +200,7 @@ const useQuotes = () => {
     setStatusId(null);
     setAgentId(null);
     setCustomerId(null);
+    getAllQuotesInitial();
   };
 
   const tableHeaders = [
@@ -281,6 +308,8 @@ const useQuotes = () => {
     agentsCategories,
     openModal,
     statusId,
+    customerId,
+    agentId,
     errorColor,
     onClcikCloseModal,
     setPatternSearch,
