@@ -9,7 +9,8 @@ const getAndSetClientContacts = async (
   const result: any = await callApi(
     "GET",
     "/v1/crm-service/customer/get-client-contacts",
-    data
+    data,
+    false
   );
   return returnResult(result, setState);
 };

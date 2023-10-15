@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { OtherReasonModal } from "./other-reason-modal";
 import { QuoteStatuses } from "./enums";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { OrderNowModal } from "./order-now-modal";
 
 const TotalPriceAndVatWidit = () => {
   const { t } = useTranslation();
@@ -23,6 +24,11 @@ const TotalPriceAndVatWidit = () => {
     openIrreleventCancelModal,
     openPriceCancelModal,
     openDeliveryTimeCancelModal,
+    openOrderNowModal,
+    onClickConfirmWithoutNotification,
+    onClickConfirmWithNotification,
+    onClcikOpenOrderNowModal,
+    onClcikCloseOrderNowModal,
     onClcikOpenIrreleventModal,
     onClcikCloseIrreleventModal,
     onClcikOpenPriceModal,
@@ -180,7 +186,10 @@ const TotalPriceAndVatWidit = () => {
           </div>
         </div>
         <div style={clasess.rightSideBtnsContainer}>
-          <GomakePrimaryButton style={clasess.orderNowBtn}>
+          <GomakePrimaryButton
+            style={clasess.orderNowBtn}
+            onClick={onClcikOpenOrderNowModal}
+          >
             {t("sales.quote.orderNow")}
           </GomakePrimaryButton>
           <GomakePrimaryButton style={clasess.sendMessageBtn}>
@@ -233,6 +242,12 @@ const TotalPriceAndVatWidit = () => {
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)
         }
+      />
+      <OrderNowModal
+        openModal={openOrderNowModal}
+        onClose={onClcikCloseOrderNowModal}
+        confirmWithoutNotification={onClickConfirmWithoutNotification}
+        confirmWithNotification={onClickConfirmWithNotification}
       />
     </div>
   );
