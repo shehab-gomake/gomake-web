@@ -2059,5 +2059,130 @@
     "rollDigitalEnhancement": "Roll digital enhancement machine",
     "autoBookCutting": "Auto book cutting",
     "rollAnalogEnhancement": "Roll analog enhancement machine"
+  },
+  "PermissionManagment":{
+    "PermissionGroup":{
+      "Clients":"Clients",
+      "Suppliers":"Suppliers",
+      "Quotes":"Quotes",
+      "Materials":"Materials",
+      "Machines":"Machines",
+      "Actions":"Actions",
+      "Settings":"Settings",
+      "MainSideBar":"Main Side Bar",
+      "Orders":"Orders",
+      "ProductionFloor":"Production Floor"
+    },
+    "Permissions":{
+      "Clients":{
+        "EditClient":"Edit Client",
+        "ShowCustomers":"Show Customers",
+        "ShowClient":"Show Client",
+        "ShowMoreCircle":"Show More Circle",
+        "ConvertToinactive":"Convert To inactive",
+        "AddClient":"Add Client",
+        "ShowSideBarCustomersMenu":"Show Side Bar Customers Menu"
+
+      },
+      "Suppliers":{
+        "ShowMoreCircle":"Show More Circle",
+        "EditSupplier":"Edit Supplier",
+        "Show Supplier":"Show Supplier",
+        "ConvertToinactive":"Convert To inactive",
+        "AddSupplier":"Add Supplier"
+
+      },
+      "Quotes":{
+        "EditQuotes":"Edit Quotes",
+        "CreateQuote":"Create Quote",
+        "DuplicateQuotes":"Duplicate Quotes",
+        "ShowMoreCircle":"Show More Circle"
+      },
+      "Materials":{
+        "UpdatepricePerTon":"Update price Per Ton",
+        "AddNewSupplierInMaterialCategory" :"Add New Supplier In Material Category",
+        "AddPercentToprice":"Add Percent To price",
+        "UpdateCurrency":"Update Currency",
+        "UpdateSettings":"Update Settings",
+        "EditMaterial":"Edit Material",
+        "UpdateUnitPrice":"Update Unit Price",
+        "ChangeToinactive":"Change To inactive",
+        "ChangetoActive":"Change to Active"
+      },
+      "Machines":{
+        "EditMachines":"Edit Machines",
+        "AddMachine":"Add Machine"
+      },
+      "Actions":{
+        "EditRule":"Edit Rule",
+        "EditPropertiesInActions":"Edit Properties In Actions",
+        "DeleteCase":"Delete Case",
+        "AddRule":"Add Rule",
+        "EditProfitInActions":"Edit Profit In Actions",
+        "ShowMoreCircle":"Show More Circle",
+        "AddNewException":"Add New Exception",
+        "AddNewCase":"Add New Case",
+        "AddNewQuantity":"Add New Quantity"
+      },
+      "Settings":{
+        "UpdateProfile":"Update Profile",
+        "ShowSettinginMainSideBar":"Show Setting in Main Side Bar",
+        "UpdateCompanyProfile":"Update Company Profile",
+        "ShowProfile":"Show Profile",
+        "ShowMailingSettings":"Show Mailing Settings",
+        "AddNewRole":"Add New Role",
+        "ShowDocumnetNumbering":"Show Documnet Numbering",
+        "ShowProductManagmentTab":"Show Product Managment Tab",
+        "AddEmployee":"Add Employee",
+        "ShowProduct":"Show Product",
+        "EditMailingTemplate":"Edit Mailing Template",
+        "ShowFinance":"Show Finance",
+        "EditDocumentNumbering":"Edit Document Numbering",
+        "ShowWhatsAppSetting":"Show WhatsApp Setting",
+        "InactiveUser":"Inactive User",
+        "ShowMessageTemplatesTab":"Show Message Templates Tab",
+        "EditMessageTemplateinMessageTemplates":"Edit Message Template in Message Templates",
+        "SaveAccountingChangeinFinance":"Save Accounting Change in Finance",
+        "ShowAccountant settingsinFinance":"Show Accountant settings in Finance",
+        "ResetAccountingChangeinFinance":"Reset Accounting Change in Finance",
+        "SaveStatusofMonthinFinance":"Save Status of Month in Finance",
+        "ShowFinancePeriod":"Show Finance Period",
+        "ShowDocumentDesign":"Show Document Design",
+        "DownloadaccountingFilesinFinance":"Download accounting Files in Finance",
+        "SaveAsTemplateMailing":"Save As Template Mailing",
+        "EditRole":"Edit Role",
+        "Edit Product":"Edit Product",
+        "ShowMoreCircleProducts":"Show More Circle Products",
+        "ShowMailingSettingTab":"Show Mailing Setting Tab",
+        "AddNewTamplateinMessageTemplates":"Add New Tamplate in Message Templates",
+        "SaveDocumentDesign":"Save Document Design",
+        "ShowDocumneting":"Show Documneting",
+        "EditEmployee":"Edit Employee",
+        "ConvertToinactiveProduct":"Convert To inactive Product",
+        "ResetDocumentDesign":"Reset DocumentDesign"
+      },
+      "MainSideBar":{
+        "ShowMaterials":"Show Materials",
+        "ShowProductionFloor":"Show Production Floor",
+        "ShowMachines":"Show Machines",
+        "ShowSales":"Show Sales",
+        "Show Reports":"Show Reports",
+        "ShowOrders":"Show Orders",
+        "Show Quotes":"ShowQuotes",
+        "ShowActions":"Show Actions"
+      },
+      "Orders":{
+        "ShowMoreCircle":"Show More Circle",
+        "EditOrders":"Edit Orders",
+        "DuplicateOrders":"Duplicate Orders"
+      },
+      "ProductionFloor":{
+        "ShowKanban":"Show Kanban",
+        "ShowMainTable":"Show Main Table",
+        "EditBoardMission":"Edit Board Mission"
+      }
+     
+
+    }
   }
 }
