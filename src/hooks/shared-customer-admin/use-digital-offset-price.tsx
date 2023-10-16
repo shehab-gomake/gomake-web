@@ -1408,14 +1408,22 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const quantity = generalParameters?.find(
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
+  // const [defaultPrice, setDefaultPrice] = useState<any>();
+  console.log("unitPrice", defaultPrice);
+  // useEffect(() => {
+  //   if (pricingDefaultValue?.workFlows !== null) {
+  //     setUnitPrice(
+  //       pricingDefaultValue?.workFlows[0]?.totalPrice / quantity?.value
+  //     );
+  //   }
+  // }, [pricingDefaultValue, quantity]);
   const addItemForQuotes = useCallback(async () => {
     const res = await callApi("POST", `/v1/erp-service/quote/add-item`, {
       productId: router?.query?.productId,
       userID: userProfile?.id,
       customerID: router?.query?.customerId,
       clientTypeId: router?.query?.clientTypeId,
-      unitPrice:
-        pricingDefaultValue?.workFlows[0]?.totalPrice / quantity?.value,
+      unitPrice: defaultPrice / quantity?.value,
       amount: quantity?.value,
       isNeedGraphics: false,
       isUrgentWork: urgentOrder,
@@ -1439,6 +1447,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     printingNotes,
     userProfile,
     itemParmetersValues,
+    defaultPrice,
   ]);
   const updateQuoteItem = useCallback(async () => {
     const res = await callApi(
@@ -1531,6 +1540,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
+    generalParameters,
   };
 };
 

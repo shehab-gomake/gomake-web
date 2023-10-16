@@ -54,6 +54,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
+    generalParameters,
   } = useDigitalOffsetPrice({ clasess, widgetType });
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
@@ -168,6 +169,7 @@ const PriceListPageWidget = ({ widgetType }) => {
               setGraphicNotes={setGraphicNotes}
               graphicNotes={graphicNotes}
               printingNotes={printingNotes}
+              generalParameters={generalParameters}
             />
           </div>
           <MakeShapeModal

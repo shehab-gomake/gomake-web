@@ -1,8 +1,4 @@
-import {
-  GoMakeAutoComplate,
-  GomakePrimaryButton,
-  GomakeTextInput,
-} from "@/components";
+import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { isLoadgingState } from "@/store";
 import { Checkbox, CircularProgress, Slider } from "@mui/material";
@@ -17,6 +13,8 @@ const RightSideWidget = ({
   checkWhatRenderArray,
   clientTypeDefaultValue,
   clientTypesValue,
+  defaultPrice,
+  setDefaultPrice,
   template,
   tabs,
   activeTab,
@@ -28,17 +26,26 @@ const RightSideWidget = ({
   setGraphicNotes,
   printingNotes,
   graphicNotes,
+  generalParameters,
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
-  const [defaultPrice, setDefaultPrice] = useState<any>();
 
+  const quantity = generalParameters?.find(
+    (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+  );
+  const [sliderPrice, setSliderPrice] = useState<number>(0);
+  const handleChange = (event: Event, newValue: number | number[]) => {
+    setSliderPrice(newValue as number);
+  };
   useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0) {
-      setDefaultPrice(pricingDefaultValue?.workFlows[0]?.totalPrice.toFixed(2));
+      setDefaultPrice(
+        pricingDefaultValue?.workFlows[0]?.totalPrice.toFixed(2) - sliderPrice
+      );
     } else {
       setDefaultPrice("----");
     }
-  }, [pricingDefaultValue]);
+  }, [pricingDefaultValue, sliderPrice]);
   const { t } = useTranslation();
   return (
     <div style={clasess.rightSideMainContainer}>
@@ -81,7 +88,12 @@ const RightSideWidget = ({
           <div style={clasess.flyerText}>
             {t("products.offsetPrice.admin.flyerPoster")}
           </div>
-          <div style={clasess.flyerText}>2.00 USD</div>
+          <div style={clasess.flyerText}>
+            {isNaN(defaultPrice / quantity?.value)
+              ? 0
+              : (defaultPrice / quantity?.value).toFixed(2)}{" "}
+            USD
+          </div>
         </div>
         <div style={clasess.imgProductContainer}>
           <img
@@ -112,12 +124,21 @@ const RightSideWidget = ({
         </div>
         <div style={clasess.orderContainer}>
           {t("products.offsetPrice.admin.orderToral", {
-            pieceNum: "15",
-            price: "2.00",
+            pieceNum: quantity?.value,
+            price: isNaN(defaultPrice / quantity?.value)
+              ? 0
+              : (defaultPrice / quantity?.value).toFixed(2),
           })}
         </div>
         <div style={clasess.progress}>
-          <Slider defaultValue={50} aria-label="Default" />
+          <Slider
+            defaultValue={0}
+            aria-label="Default"
+            style={{ width: "93%", marginLeft: 10 }}
+            min={10}
+            max={100}
+            onChange={handleChange}
+          />
         </div>
         <div style={clasess.labelBrogressContainer}>
           <div style={clasess.labelStyle}>10.00</div>

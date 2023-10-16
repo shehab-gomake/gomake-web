@@ -303,7 +303,7 @@ const useStyle = () => {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 24),
         height: 28,
-        width: "100px",
+        width: "105px",
         boxShadow: "none",
       },
       priceRecoveryContainer: {
@@ -490,7 +490,6 @@ const useStyle = () => {
         width: "100%",
         flexWrap: "wrap" as "wrap",
         textAlign: "center" as "center",
-        paddingTop: 14,
         backgroundColor: "rgba(246, 246, 246, 1)",
       },
       cellsContainerStyle2: {
@@ -501,7 +500,6 @@ const useStyle = () => {
         width: "100%",
         flexWrap: "wrap" as "wrap",
         textAlign: "center" as "center",
-        paddingTop: 14,
         backgroundColor: "#FFF",
       },
       cellContainerMod: {
