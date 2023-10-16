@@ -1951,6 +1951,10 @@
     "quoteLink": "quote link",
     "firstWorkName": "first work name",
     "workName": "work name",
-    "variable": "insert variable"
+    "variable": "insert variable",
+    "fromAgentMail" : "Send from the agent's email",
+    "sendCopyToAgentMail": "Send a copy to the agent's email",
+    "sendCopyToMainMail": "Send a copy to the primary email",
+    "returnMail" : "Email returns to the agent's email if an email is set for him"
   }
 }

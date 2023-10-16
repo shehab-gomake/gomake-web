@@ -21,12 +21,21 @@ const useEmailSetting = () => {
 
   const [text, setText] = useState("<p><b>GoMake</b> template</p>");
   const [value, setValue] = useState([]);
-
   const handleInsertVariable = (e: any, value: any) => {
       const newText = text?.endsWith('<p><br></p>') ? text?.slice(0, -8) : text?.slice(0, -4);
       value &&  setText(text? newText + " " +value?.id + " </p>" : "<p>" + value?.id + " </p>");
       setValue(value?.label);
   };
+
+
+  const [state, setState] = useState([]);
+    const onChangeInputs = (key, value) => {
+        if (key == "variable") {
+            const newText = text?.endsWith('<p><br></p>') ? text?.slice(0, -8) : text?.slice(0, -4);
+            value && setText(text ? newText + " " + value + " </p>" : "<p>" + value + " </p>");
+        }
+        setState({ ...state, [key]: value })
+    }
 
   return {
     variables,
@@ -34,7 +43,8 @@ const useEmailSetting = () => {
     setText,
     value,
     setValue,
-    handleInsertVariable
+    handleInsertVariable,
+    state, setState, onChangeInputs
   };
 };
 
