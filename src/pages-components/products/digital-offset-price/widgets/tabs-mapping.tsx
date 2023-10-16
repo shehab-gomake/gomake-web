@@ -45,7 +45,11 @@ const TabsMappingWidget = ({
           {item.name}
         </div>
       </div>
-      {index === activeIndex && <div style={clasess.selectedTabLine} />}
+      {index === activeIndex ? (
+        <div style={clasess.selectedTabLine} />
+      ) : (
+        <div style={clasess.selectedTabNotLine} />
+      )}
     </div>
   );
 };

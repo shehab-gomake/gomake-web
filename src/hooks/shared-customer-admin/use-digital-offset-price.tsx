@@ -116,6 +116,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
                   );
+
                   if (value) {
                     const data = materialsEnumsValues.find(
                       (item) => item.name === parameter?.materialPath[0]
@@ -123,7 +124,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     temp.push({
                       parameterId: parameter?.id,
                       parameterName: parameter?.name,
-                      actionId: parameter?.actionId,
+                      actionId:
+                        value?.activateAction === true
+                          ? parameter?.actionId
+                          : null,
                       ...(data?.id > 0 && { material: data?.id }),
                       parameterType: parameter?.parameterType,
                       ...(value && {
@@ -207,6 +211,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   ) {
                     if (parameter?.defaultValue?.length > 0) {
                       const defaultValue = parameter?.defaultValue;
+
                       temp.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
@@ -305,7 +310,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       temp.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
-                        actionId: parameter?.actionId,
+
+                        actionId:
+                          value?.activateAction === true
+                            ? parameter?.actionId
+                            : null,
                         ...(data?.id > 0 && { material: data?.id }),
                         parameterType: parameter?.parameterType,
                         ...(value && {
@@ -515,6 +524,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const defaultObject = parameter.valuesConfigs.find(
           (item) => item.isDefault === true
         );
+
         return (
           <GoMakeAutoComplate
             options={parameter?.valuesConfigs?.filter(
@@ -882,8 +892,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 section?.id,
                 parameter?.parameterType,
                 parameter?.name,
-                parameter?.actionId,
-                { valueId: value?.id, value: value?.updateName },
+                value?.activateAction === true ? parameter?.actionId : null,
+                {
+                  valueId: value?.id,
+                  value: value?.updateName,
+                  actionId:
+                    value?.activateAction === true ? parameter?.actionId : null,
+                },
                 index
               );
             }}
@@ -1162,9 +1177,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     data: any,
     index: any
   ) => {
+    console.log("actionId", actionId);
     setGeneralParameters((prev) => {
       let temp = [...prev];
-
+      console.log("temp", temp);
       if (index !== -1) {
         temp[index] = {
           ...temp[index],

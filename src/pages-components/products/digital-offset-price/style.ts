@@ -83,7 +83,12 @@ const useStyle = () => {
         width: "100%",
         height: 1,
         backgroundColor: secondColor(500),
-        borderBottom: `1px solid ${secondColor(500)}`,
+        marginTop: 10,
+      },
+      selectedTabNotLine: {
+        display: "flex",
+        width: "100%",
+        height: 1,
         marginTop: 10,
       },
       sectionsContainer: {
