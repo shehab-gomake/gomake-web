@@ -7,14 +7,18 @@ import { DuplicateIcon } from "@/components/icons/icons";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
 import { DeleteIcon } from "./icons/delete";
+import { useRecoilState } from "recoil";
+import { selectedTabState } from "@/components/tabs/state";
 
 const MoreMenuWidget = ({ item,  onClickEdit , onClickDuplicate , onClickDelete }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle();
+  const [selectedTab, setSelectTab] = useRecoilState<number>(selectedTabState);
 
   const handleEditClick = async () => {
-    onClickEdit(item.id);
+   // onClickEdit(item.id);
+      setSelectTab(0);
   };
   const handleDuplicateClick = async () => {
     onClickDuplicate(item.id);
@@ -29,18 +33,10 @@ const MoreMenuWidget = ({ item,  onClickEdit , onClickDuplicate , onClickDelete 
         <MoreCircleIcon />
       </IconButton>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        <MenuItem onClick={() => alert("edit")}>
+        <MenuItem onClick={handleEditClick}>
           <div style={classes.menuRowStyle}>
             <EditingIcon />
             <div style={classes.rowTextStyle}>{t("mailingSettings.Edit")}</div>
-          </div>
-        </MenuItem>
-        <MenuItem onClick={() => alert("duplicate")}>
-          <div style={classes.menuRowStyle}>
-            <DuplicateIcon />
-            <div style={classes.rowTextStyle}>
-               {t("mailingSettings.Duplicate")} 
-            </div>
           </div>
         </MenuItem>
         <MenuItem onClick={() => alert("delete")}>

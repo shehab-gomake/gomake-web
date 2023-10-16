@@ -23,7 +23,6 @@ const SettingsMailingWidget = () => {
     const tabs: ITab[] = [
         { title: t("mailingSettings.emailSetting"), component: <EmailSettings /> },
         { title: t("mailingSettings.messageTemplates"), component: <TemplateSettings /> },
-        { title: t("mailingSettings.whatsappSetting"), component: <EmptyComponent /> }
     ];
 
     useEffect(() => {
@@ -35,7 +34,7 @@ const SettingsMailingWidget = () => {
         <div>
             <PrimaryTabsComponent tabs={tabs} onSelectTab={(newIndex) => setSelectTab(newIndex)}>
                 {
-                    selectedTab === 0 && <AddButton label={t("mailingSettings.addNew")} onClick={() => setOpenModal(true)} />
+                    selectedTab === 1 && <AddButton label={t("mailingSettings.addNew")} onClick={() => setOpenModal(true)} />
 
                 }
             </PrimaryTabsComponent>

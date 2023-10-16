@@ -15,12 +15,6 @@ const useStyle = () => {
         paddingTop: 0,
         paddingBottom: '12px',
         justifyContent: 'space-between'
-      },
-      switchStyle: {
-        display: "flex",
-        alignItems: 'center',
-        flexDirection: 'row-reverse' as 'row-reverse' ,
-        gap: 8,
       }
     };
   }, [theme]);

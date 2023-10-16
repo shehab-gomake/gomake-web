@@ -10,6 +10,14 @@ const useStyle = () => {
                 color: secondColor(300),
                 background :primaryColor(300),
             },
+            dropDownListStyle: {
+                width: "170px",
+                borderRadius: 4,
+                height: 40,
+                backgroundColor: "#FFF",
+                border: "0px",
+                boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+              },
         };
     }, []);
     return {

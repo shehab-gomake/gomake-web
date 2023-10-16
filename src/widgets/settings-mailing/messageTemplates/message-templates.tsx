@@ -1,4 +1,3 @@
-import {useEffect} from "react";
 import { TableFilter } from "./components/table-filter/table-filter";
 import { TemplateTable } from "./components/template-table/template-table";
 

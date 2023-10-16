@@ -14,13 +14,13 @@ export interface IInput {
   isValid: boolean;
   regex?: RegExp;
   inputs: IInput[];
+  direction?: string;
 }
 export interface IFormInput {
   input: IInput;
   changeState: (key: string, value: any) => void;
   error: boolean;
   readonly?: boolean;
-  switchStyle?: CSSProperties | undefined;
 }
 
 export interface IFormArrayInputsProps {

@@ -30,6 +30,7 @@ const switchInputs = (state: any) => {
             options: [],
             value: state?.isSendViaSms,
             isValid: true,
+            direction: "row",
         },
         {
             name: "default",
@@ -41,6 +42,7 @@ const switchInputs = (state: any) => {
             options: [],
             value: state?.isSendThroughTwilio,
             isValid: true,
+            direction: "row",
         }
     ];
 }

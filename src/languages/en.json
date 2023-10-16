@@ -1938,6 +1938,19 @@
     "Duplicate":"Duplication",
     "Delete":"Delete",
     "save" : "Save",
-    "reset" : "Reset"
+    "reset" : "Reset",
+    "clientName"  :"client name",
+    "phoneNumber" : "phone number",
+    "email" : "e-mail" , 
+    "orderNumber" : "order number",
+    "orderNote": "order note",
+    "approveLink": "approve link",
+    "missionTitle": "mission title",
+    "missionStatus": "mission status",
+    "quoteNumber": "quote number",
+    "quoteLink": "quote link",
+    "firstWorkName": "first work name",
+    "workName": "work name",
+    "variable": "insert variable"
   }
 }
