@@ -27,6 +27,7 @@ const RightSideWidget = ({
   printingNotes,
   graphicNotes,
   generalParameters,
+  workFlowSelected,
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
 
@@ -39,13 +40,11 @@ const RightSideWidget = ({
   };
   useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0) {
-      setDefaultPrice(
-        pricingDefaultValue?.workFlows[0]?.totalPrice.toFixed(2) - sliderPrice
-      );
+      setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2) - sliderPrice);
     } else {
       setDefaultPrice("----");
     }
-  }, [pricingDefaultValue, sliderPrice]);
+  }, [pricingDefaultValue, sliderPrice, workFlowSelected]);
   const { t } = useTranslation();
   return (
     <div style={clasess.rightSideMainContainer}>

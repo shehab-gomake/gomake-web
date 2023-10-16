@@ -25,7 +25,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
-        marginBottom: 55,
+        marginBottom: 35,
       },
       leftSideContainer: {
         display: "flex",

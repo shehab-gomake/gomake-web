@@ -53,10 +53,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("Production");
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
+  const [workFlowSelected, setWorkFlowSelected] = useState<any>();
+  console.log("workFlowSelected", workFlowSelected);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const setLoading = useSetRecoilState(isLoadgingState);
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
+
+  useEffect(() => {
+    if (pricingDefaultValue?.workFlows?.length > 0) {
+      const workFlowSelect = pricingDefaultValue?.workFlows?.find(
+        (workFlow) => workFlow?.selected === true
+      );
+      setWorkFlowSelected(workFlowSelect);
+    }
+  }, [pricingDefaultValue]);
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let temp = [...isRequiredParameters];
@@ -1177,10 +1188,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     data: any,
     index: any
   ) => {
-    console.log("actionId", actionId);
     setGeneralParameters((prev) => {
       let temp = [...prev];
-      console.log("temp", temp);
       if (index !== -1) {
         temp[index] = {
           ...temp[index],
@@ -1394,7 +1403,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           productId: router?.query?.productId,
           details: pricingDefaultValue?.jobDetails,
           itemParmetersValues: itemParmetersValues,
-          workFlow: pricingDefaultValue?.workFlows[0],
+          workFlow: workFlowSelected,
         },
         actionId: router?.query?.actionId,
         actionProductId: router?.query?.actionProductId,
@@ -1404,19 +1413,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (res?.success) {
       navigate(`/products/profits?actionId=${router?.query?.actionId}`);
     }
-  }, [generalParameters, router, pricingDefaultValue, itemParmetersValues]);
+  }, [
+    generalParameters,
+    router,
+    pricingDefaultValue,
+    itemParmetersValues,
+    workFlowSelected,
+  ]);
   const quantity = generalParameters?.find(
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
-  // const [defaultPrice, setDefaultPrice] = useState<any>();
-  console.log("unitPrice", defaultPrice);
-  // useEffect(() => {
-  //   if (pricingDefaultValue?.workFlows !== null) {
-  //     setUnitPrice(
-  //       pricingDefaultValue?.workFlows[0]?.totalPrice / quantity?.value
-  //     );
-  //   }
-  // }, [pricingDefaultValue, quantity]);
   const addItemForQuotes = useCallback(async () => {
     const res = await callApi("POST", `/v1/erp-service/quote/add-item`, {
       productId: router?.query?.productId,
@@ -1432,7 +1438,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       isNeedExample: false,
       jobDetails: pricingDefaultValue?.jobDetails,
       itemParmetersValues: itemParmetersValues,
-      workFlow: pricingDefaultValue?.workFlows[0],
+      workFlow: workFlowSelected,
       actions: pricingDefaultValue?.actions,
     });
     if (res?.success) {
@@ -1448,6 +1454,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     userProfile,
     itemParmetersValues,
     defaultPrice,
+    workFlowSelected,
   ]);
   const updateQuoteItem = useCallback(async () => {
     const res = await callApi(
@@ -1459,8 +1466,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         userID: userProfile?.id,
         customerID: router?.query?.customerId,
         clientTypeId: router?.query?.clientTypeId,
-        unitPrice:
-          pricingDefaultValue?.workFlows[0]?.totalPrice / quantity?.value,
+        unitPrice: workFlowSelected?.totalPrice / quantity?.value,
         amount: quantity?.value,
         isNeedGraphics: false,
         isUrgentWork: urgentOrder,
@@ -1469,7 +1475,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         isNeedExample: false,
         jobDetails: pricingDefaultValue?.jobDetails,
         itemParmetersValues: itemParmetersValues,
-        workFlow: pricingDefaultValue?.workFlows[0],
+        workFlow: workFlowSelected,
         actions: pricingDefaultValue?.actions,
       }
     );
@@ -1485,6 +1491,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     graphicNotes,
     printingNotes,
     userProfile,
+    workFlowSelected,
   ]);
   const navigateForRouter = () => {
     let checkParameter = validateParameters(isRequiredParameters);
@@ -1541,6 +1548,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     pricingDefaultValue,
     errorMsg,
     generalParameters,
+    workFlowSelected,
   };
 };
 

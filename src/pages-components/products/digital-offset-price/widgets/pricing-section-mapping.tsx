@@ -8,6 +8,7 @@ const PricingSectionMappingWidget = ({
   onChangeCategoryData,
   section,
   pricingDefaultValue,
+  workFlowSelected,
 }: any) => {
   const { t } = useTranslation();
   return (
@@ -33,9 +34,9 @@ const PricingSectionMappingWidget = ({
                 ]}
                 tableRows={[
                   {
-                    totalCost: `${pricingDefaultValue?.workFlows[0]?.totalCost} USD`,
-                    totalProductionTime: `${pricingDefaultValue?.workFlows[0]?.totalProductionTime}`,
-                    finalPrice: `${pricingDefaultValue?.workFlows[0]?.totalPrice} USD`,
+                    totalCost: `${workFlowSelected?.totalCost} USD`,
+                    totalProductionTime: `${workFlowSelected?.totalProductionTime}`,
+                    finalPrice: `${workFlowSelected?.totalPrice} USD`,
                   },
                 ]}
                 styleContainer={{ marginTop: 20 }}
@@ -49,7 +50,7 @@ const PricingSectionMappingWidget = ({
           <div style={clasess.actionsStyleContainer}>
             {t("products.offsetPrice.admin.actions")}
           </div>
-          {pricingDefaultValue?.workFlows[0]?.actions?.map((flow: any) => {
+          {workFlowSelected?.actions?.map((flow: any) => {
             const actionData = section.actions.find(
               (item: any) => item.actionId === flow.actionId
             );
@@ -66,13 +67,6 @@ const PricingSectionMappingWidget = ({
                 onChangeCategoryData={onChangeCategoryData}
                 machinesArray={machinesArray}
               />
-              // <FlowsMappingWidget
-              //   clasess={clasess}
-              //   flow={flow}
-              //   machineCategories={machineCategories}
-              //   onChangeCategoryData={onChangeCategoryData}
-              //   section={section}
-              // />
             );
           })}
         </>

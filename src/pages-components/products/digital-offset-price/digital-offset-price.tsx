@@ -55,6 +55,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     pricingDefaultValue,
     errorMsg,
     generalParameters,
+    workFlowSelected,
   } = useDigitalOffsetPrice({ clasess, widgetType });
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
@@ -109,6 +110,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                               onChangeCategoryData={onChangeCategoryData}
                               section={section}
                               pricingDefaultValue={pricingDefaultValue}
+                              workFlowSelected={workFlowSelected}
                             />
                           );
                         } else {
@@ -170,6 +172,7 @@ const PriceListPageWidget = ({ widgetType }) => {
               graphicNotes={graphicNotes}
               printingNotes={printingNotes}
               generalParameters={generalParameters}
+              workFlowSelected={workFlowSelected}
             />
           </div>
           <MakeShapeModal
