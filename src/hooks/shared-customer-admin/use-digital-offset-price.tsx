@@ -54,7 +54,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [activeTab, setActiveTab] = useState("Production");
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
   const [workFlowSelected, setWorkFlowSelected] = useState<any>();
-  console.log("workFlowSelected", workFlowSelected);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const setLoading = useSetRecoilState(isLoadgingState);
   const [digitalPriceData, setDigidatPriceData] =
