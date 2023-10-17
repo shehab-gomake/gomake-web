@@ -8,6 +8,7 @@ import {
     updatePermissionApi, updateRoleNameApi
 } from "@/services/api-service/users/permissions";
 import {TableHeader} from "@/widgets/settings-users/Permissions/components/table-header";
+import { useTranslation } from "react-i18next";
 
 const usePermissions = () => {
     const {callApi} = useGomakeAxios();
@@ -21,6 +22,7 @@ const usePermissions = () => {
     const [modalState, setModalState] = useState<boolean>(false);
     const [modalInputValue, setModalInputValue] = useState<string>('');
     const [updateRoleId, setUpdateRoleId] = useState<string>('');
+    const {t} = useTranslation();
     const getAndSetPermissionRolesRelationsByGroupId = async (id) => {
         const callBack = (res) => {
             if (res.success) {
@@ -78,7 +80,8 @@ const usePermissions = () => {
                 const relation = permission.rolesPermissionsRelationships.find(relation => relation.roleId === role.id)
                 return <SecondSwitch checked={!!relation} onChange={() => UpdatePermission(role.id, permission.id)}/>
             });
-            return [permission.description, ...tableRow]
+            const translatedDescription = t(`PermissionManagment.Permissions.${permission.description}`);
+            return [translatedDescription, ...tableRow]
         })
         setTable(permissionsTable);
     }, [roles, permissions])
@@ -87,7 +90,12 @@ const usePermissions = () => {
         const callBack = (res) => {
             if (res?.success) {
                 setRoles([{id: "", name: "Permission", key: 'permissionsSettings.permissions'}, ...res?.data.roles]);
-                setgroups(res?.data.groups)
+                const groups = res?.data.groups;
+                const translatedGroups = groups.map((item) => ({
+                    ...item,
+                    name: t(`PermissionManagment.PermissionGroup.${item.name}`),
+                  }));
+                 setgroups(translatedGroups);
                 setPermissions(res?.data.permissions);
             }
         }

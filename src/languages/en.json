@@ -2068,37 +2068,26 @@
       "Materials":"Materials",
       "Machines":"Machines",
       "Actions":"Actions",
-      "Settings":"Settings",
+      "Setting":"Settings",
       "MainSideBar":"Main Side Bar",
       "Orders":"Orders",
       "ProductionFloor":"Production Floor"
     },
     "Permissions":{
-      "Clients":{
         "EditClient":"Edit Client",
         "ShowCustomers":"Show Customers",
         "ShowClient":"Show Client",
         "ShowMoreCircle":"Show More Circle",
-        "ConvertToinactive":"Convert To inactive",
+        "ConvertToinactiveToClient":"Convert To inactive",
         "AddClient":"Add Client",
-        "ShowSideBarCustomersMenu":"Show Side Bar Customers Menu"
-
-      },
-      "Suppliers":{
-        "ShowMoreCircle":"Show More Circle",
+        "ShowSideBarCustomersMenu":"Show Side Bar Customers Menu",
         "EditSupplier":"Edit Supplier",
-        "Show Supplier":"Show Supplier",
+        "ShowSuppliers":"Show Supplier",
         "ConvertToinactive":"Convert To inactive",
-        "AddSupplier":"Add Supplier"
-
-      },
-      "Quotes":{
+        "AddSupplier":"Add Supplier",
         "EditQuotes":"Edit Quotes",
         "CreateQuote":"Create Quote",
         "DuplicateQuotes":"Duplicate Quotes",
-        "ShowMoreCircle":"Show More Circle"
-      },
-      "Materials":{
         "UpdatepricePerTon":"Update price Per Ton",
         "AddNewSupplierInMaterialCategory" :"Add New Supplier In Material Category",
         "AddPercentToprice":"Add Percent To price",
@@ -2107,24 +2096,17 @@
         "EditMaterial":"Edit Material",
         "UpdateUnitPrice":"Update Unit Price",
         "ChangeToinactive":"Change To inactive",
-        "ChangetoActive":"Change to Active"
-      },
-      "Machines":{
+        "ChangetoActive":"Change to Active",
         "EditMachines":"Edit Machines",
-        "AddMachine":"Add Machine"
-      },
-      "Actions":{
+        "AddMachine":"Add Machine",
         "EditRule":"Edit Rule",
         "EditPropertiesInActions":"Edit Properties In Actions",
         "DeleteCase":"Delete Case",
         "AddRule":"Add Rule",
         "EditProfitInActions":"Edit Profit In Actions",
-        "ShowMoreCircle":"Show More Circle",
         "AddNewException":"Add New Exception",
         "AddNewCase":"Add New Case",
-        "AddNewQuantity":"Add New Quantity"
-      },
-      "Settings":{
+        "AddNewQuantity":"Add New Quantity",
         "UpdateProfile":"Update Profile",
         "ShowSettinginMainSideBar":"Show Setting in Main Side Bar",
         "UpdateCompanyProfile":"Update Company Profile",
@@ -2159,28 +2141,21 @@
         "ShowDocumneting":"Show Documneting",
         "EditEmployee":"Edit Employee",
         "ConvertToinactiveProduct":"Convert To inactive Product",
-        "ResetDocumentDesign":"Reset DocumentDesign"
-      },
-      "MainSideBar":{
+        "ResetDocumentDesign":"Reset DocumentDesign",
         "ShowMaterials":"Show Materials",
         "ShowProductionFloor":"Show Production Floor",
         "ShowMachines":"Show Machines",
         "ShowSales":"Show Sales",
-        "Show Reports":"Show Reports",
+        "ShowReports":"Show Reports",
         "ShowOrders":"Show Orders",
-        "Show Quotes":"ShowQuotes",
-        "ShowActions":"Show Actions"
-      },
-      "Orders":{
-        "ShowMoreCircle":"Show More Circle",
+        "ShowQuotes":"ShowQuotes",
+        "ShowActions":"Show Actions",
         "EditOrders":"Edit Orders",
-        "DuplicateOrders":"Duplicate Orders"
-      },
-      "ProductionFloor":{
+        "DuplicateOrders":"Duplicate Orders",
         "ShowKanban":"Show Kanban",
         "ShowMainTable":"Show Main Table",
         "EditBoardMission":"Edit Board Mission"
-      }
+      
      
 
     }
