@@ -16,24 +16,6 @@ const useMoreCircle = () => {
     setAnchorEl(null);
   };
 
-  // const updatedCustomerStatus = useCallback(async (customer: any) => {
-  //   const res: any = await updatedStatus(customer);
-  //   if (res) {
-  //     setSnackbarStateValue({
-  //       state: true,
-  //       message: t("modal.updatedSusuccessfully"),
-  //       type: "sucess",
-  //     });
-  //     handleClose();
-  //   } else {
-  //     setSnackbarStateValue({
-  //       state: true,
-  //       message: t("modal.updatedfailed"),
-  //       type: "error",
-  //     });
-  //   }
-  // }, []);
-
   return {
     open,
     anchorEl,

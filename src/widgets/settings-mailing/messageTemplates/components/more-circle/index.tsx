@@ -9,22 +9,26 @@ import { useStyle } from "./style";
 import { DeleteIcon } from "./icons/delete";
 import { useRecoilState } from "recoil";
 import { selectedTabState } from "@/components/tabs/state";
+import { documentState, editModalState, textState } from "@/widgets/settings-mailing/states/state";
 
-const MoreMenuWidget = ({ item,  onClickEdit , onClickDuplicate , onClickDelete }: any) => {
+const MoreMenuWidget = ({ item , onClickDelete}: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle();
   const [selectedTab, setSelectTab] = useRecoilState<number>(selectedTabState);
+  const [text, setText]= useRecoilState<any>(textState);
+  const [state, setState]= useRecoilState<any>(documentState);
+  const [openModal, setOpenModal] = useRecoilState<boolean>(editModalState);
 
   const handleEditClick = async () => {
-   // onClickEdit(item.id);
-      setSelectTab(0);
+    //setState(item);
+     setText(item?.type);
+    //setSelectTab(0);
+     setOpenModal(true)
   };
-  const handleDuplicateClick = async () => {
-    onClickDuplicate(item.id);
-  };
+
   const handleDeleteClick = async () => {
-    onClickDelete(item.id);
+    onClickDelete(item);
   };
 
   return (
@@ -39,7 +43,7 @@ const MoreMenuWidget = ({ item,  onClickEdit , onClickDuplicate , onClickDelete 
             <div style={classes.rowTextStyle}>{t("mailingSettings.Edit")}</div>
           </div>
         </MenuItem>
-        <MenuItem onClick={() => alert("delete")}>
+        <MenuItem onClick={handleDeleteClick}>
           <div style={classes.menuRowStyle}>
             <DeleteIcon />
             <div style={classes.rowTextStyle}>
