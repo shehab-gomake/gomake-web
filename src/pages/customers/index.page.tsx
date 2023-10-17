@@ -85,7 +85,7 @@ export default function Home() {
   ]);
 
   return (
-    <CustomerAuthLayout>
+    <CustomerAuthLayout permission={"ShowCustomer"}>
       <div style={classes.sameRow}>
         <HeaderTitle marginBottom="20px" title={t("customers.title")} />
         <AddCustomerButton

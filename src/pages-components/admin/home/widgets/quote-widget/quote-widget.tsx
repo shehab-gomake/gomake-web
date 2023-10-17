@@ -1,10 +1,12 @@
 import { useTranslation } from "react-i18next";
 
-import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components";
+import { GoMakeAutoComplate, GomakePrimaryButton  } from "@/components";
 import { useQuoteWidget } from "./use-quote-widget";
 
 import { useStyle } from "./style";
 import { Popover } from "@mui/material";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+
 
 const QuoteWidget = ({ isAdmin = true }) => {
   const { clasess } = useStyle();
@@ -82,20 +84,23 @@ const QuoteWidget = ({ isAdmin = true }) => {
         </div>
       </div>
       <div style={clasess.btnContainer}>
+      <PermissionCheck userPermission={"CreateQuote"} >
         <GomakePrimaryButton
-          // onClick={isAdmin ? onClcikCreateQuote : onClcikCreateQuoteForCustomer}
-          onClick={
-            isDisabled
-              ? handleClick
-              : isAdmin
-              ? onClcikCreateQuote
-              : onClcikCreateQuoteForCustomer
-          }
-          // disabled={isDisabled}
-          style={clasess.btnStyle}
-        >
-          {t("home.admin.createQoute")}
-        </GomakePrimaryButton>
+            // onClick={isAdmin ? onClcikCreateQuote : onClcikCreateQuoteForCustomer}
+            onClick={
+              isDisabled
+                ? handleClick
+                : isAdmin
+                ? onClcikCreateQuote
+                : onClcikCreateQuoteForCustomer
+            }
+            // disabled={isDisabled}
+            style={clasess.btnStyle}
+          >
+            {t("home.admin.createQoute")}
+          </GomakePrimaryButton>
+      </PermissionCheck>
+     
       </div>
       <Popover
         id={id}

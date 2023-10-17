@@ -9,7 +9,8 @@ import {userTypeState} from "@/store/user-type";
 import {userProfileState} from "@/store/user-profile";
 import {useTranslation} from "react-i18next";
 
-const useCustomer = () => {
+const useCustomer = (Permission) => {
+    console.log("useCustomer" , Permission)
     const {callApi} = useGomakeAxios();
     const [user, setUser] = useRecoilState<any>(userState);
     const setUserProfile = useSetRecoilState(userProfileState);
@@ -34,7 +35,24 @@ const useCustomer = () => {
                 localStorage.setItem('systemLanguage', validate?.data?.data?.customer?.systemLanguage)
                 i18n.changeLanguage(validate?.data?.data?.customer?.systemLanguage).then();
             }
-            //   setPermissions(validate?.data?.data?.permissions); will  be implemented later
+              setPermissions(validate?.data?.data?.permissions); 
+              if(Permission !== null && Permission !== undefined)
+              {
+                if (permissions) {
+                    if (permissions.includes(Permission)) {
+                      // Permission exists in the permissions array
+                      console.log('Permission exists');
+                    } else {
+                      // Permission does not exist in the permissions array
+                      console.log('Permission does not exist');
+                    }
+                }else{
+                    console.log('Permission does not exist');
+                }
+                    //  const isExist = permissions?.some((item)=>item.permission === Permission);
+              }else{
+                console.log('Permission does not exist');
+              }
             return true;
         }
         clearStorage();

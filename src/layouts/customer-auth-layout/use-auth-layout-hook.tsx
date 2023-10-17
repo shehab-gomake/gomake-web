@@ -14,10 +14,12 @@ import { CubeIcon } from "@/components/icons/cube-icon";
 import { useRecoilState } from "recoil";
 import { ICompanyProfile, companyProfileState } from "@/store/company-profile";
 
-const useAuthLayoutHook = () => {
-  const { isAuth } = useGomakeAuth();
+const useAuthLayoutHook = (permission) => {
+  const { isAuth } = useGomakeAuth(permission);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
+ 
+ 
   const tabs1: any = useMemo(() => {
     return [
       {

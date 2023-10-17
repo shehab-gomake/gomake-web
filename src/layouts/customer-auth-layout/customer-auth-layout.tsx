@@ -6,13 +6,15 @@ import { useAuthLayoutHook } from "./use-auth-layout-hook";
 import { HeaderWidget } from "@/widgets/header";
 import { navStatusState } from "@/store/nav-status";
 import { hoverStatusState } from "@/store";
+import { useEffect } from "react";
 
-const CustomerAuthLayout = ({ children }: IAuthLayout) => {
-  const { canAccess } = useAuthLayoutHook();
+const CustomerAuthLayout = ({ children , permission }: IAuthLayout) => {
+  const { canAccess  } = useAuthLayoutHook(permission);
   const { clasess } = useStyle({ isHover: false, navStatus: null });
   const setNavStatus = useSetRecoilState(navStatusState);
   const isHover = useRecoilValue(hoverStatusState);
 
+  
   return (
     <div style={clasess.container}>
         <>
