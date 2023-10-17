@@ -29,6 +29,8 @@ const RightSideWidget = ({
   generalParameters,
   workFlowSelected,
   widgetType,
+  setPriceRecovery,
+  priceRecovery,
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
 
@@ -36,6 +38,8 @@ const RightSideWidget = ({
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
   const [sliderPrice, setSliderPrice] = useState<number>(0);
+  const [changePrice, setChangePrice] = useState<number>(0);
+  console.log("changePrice", changePrice);
   const handleChange = (event: Event, newValue: number | number[]) => {
     setSliderPrice(newValue as number);
   };
@@ -54,11 +58,6 @@ const RightSideWidget = ({
     widgetType,
     quantity,
   ]);
-  // useEffect(() => {
-  //  else if (widgetType === EWidgetProductType.EDIT) {
-  //  setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.value);
-  //}
-  // }, [template, widgetType]);
   const { t } = useTranslation();
   return (
     <div style={clasess.rightSideMainContainer}>
@@ -167,7 +166,11 @@ const RightSideWidget = ({
             ) : (
               <GomakeTextInput
                 value={defaultPrice}
-                onChange={(e: any) => setDefaultPrice(e.target.value)}
+                onChange={(e: any) => {
+                  setPriceRecovery(false);
+                  setDefaultPrice(e.target.value);
+                  setChangePrice(e.target.value);
+                }}
                 style={clasess.inputPriceStyle}
               />
             )}{" "}
@@ -179,6 +182,17 @@ const RightSideWidget = ({
             <Checkbox
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon />}
+              onChange={() => {
+                setPriceRecovery(!priceRecovery);
+                if (priceRecovery) {
+                  setDefaultPrice(changePrice);
+                } else {
+                  setDefaultPrice(
+                    workFlowSelected?.totalPrice.toFixed(2) - sliderPrice
+                  );
+                }
+              }}
+              checked={priceRecovery}
             />
             <div style={clasess.secondText}>
               {t("products.offsetPrice.admin.priceRecovery")}

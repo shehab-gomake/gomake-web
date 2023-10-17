@@ -40,7 +40,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [defaultPrice, setDefaultPrice] = useState<any>(30);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
   const [template, setTemplate] = useState<any>([]);
-  console.log("template", template);
   const [urgentOrder, setUrgentOrder] = useState(false);
   const [printingNotes, setPrintingNotes] = useState("");
   const [graphicNotes, setGraphicNotes] = useState("");
@@ -60,6 +59,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setLoading = useSetRecoilState(isLoadgingState);
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
+  const [priceRecovery, setPriceRecovery] = useState(true);
 
   useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0) {
@@ -1421,7 +1421,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       userID: userProfile?.id,
       customerID: router?.query?.customerId,
       clientTypeId: router?.query?.clientTypeId,
-      unitPrice: defaultPrice?.toFixed(2) / quantity?.value,
+      unitPrice: defaultPrice / quantity?.value,
       amount: quantity?.value,
       isNeedGraphics: false,
       isUrgentWork: urgentOrder,
@@ -1534,6 +1534,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setUrgentOrder,
     setPrintingNotes,
     setGraphicNotes,
+    setPriceRecovery,
+    priceRecovery,
     graphicNotes,
     printingNotes,
     urgentOrder,

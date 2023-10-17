@@ -37,6 +37,8 @@ const PriceListPageWidget = ({ widgetType }) => {
     setUrgentOrder,
     setPrintingNotes,
     setGraphicNotes,
+    setPriceRecovery,
+    priceRecovery,
     graphicNotes,
     printingNotes,
     urgentOrder,
@@ -174,6 +176,8 @@ const PriceListPageWidget = ({ widgetType }) => {
               generalParameters={generalParameters}
               workFlowSelected={workFlowSelected}
               widgetType={widgetType}
+              setPriceRecovery={setPriceRecovery}
+              priceRecovery={priceRecovery}
             />
           </div>
           <MakeShapeModal
