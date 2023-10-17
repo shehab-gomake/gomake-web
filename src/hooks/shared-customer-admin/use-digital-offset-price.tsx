@@ -40,6 +40,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [defaultPrice, setDefaultPrice] = useState<any>(30);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
   const [template, setTemplate] = useState<any>([]);
+  console.log("template", template);
   const [urgentOrder, setUrgentOrder] = useState(false);
   const [printingNotes, setPrintingNotes] = useState("");
   const [graphicNotes, setGraphicNotes] = useState("");
@@ -53,6 +54,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("Production");
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
+  console.log("pricingDefaultValue", pricingDefaultValue);
   const [workFlowSelected, setWorkFlowSelected] = useState<any>();
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const setLoading = useSetRecoilState(isLoadgingState);
@@ -1348,16 +1350,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     return isValid;
   };
-  useEffect(() => {
-    if (
-      widgetType === EWidgetProductType.EDIT ||
-      widgetType === EWidgetProductType.DUPLICATE
-    ) {
-      setUrgentOrder(!!template?.quoteItem?.isUrgentWork);
-      setPrintingNotes(template?.quoteItem?.printingNotes);
-      setGraphicNotes(template?.quoteItem?.graphicNotes);
-    }
-  }, [widgetType, template]);
+
   const calculationProduct = useCallback(async () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
@@ -1428,7 +1421,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       userID: userProfile?.id,
       customerID: router?.query?.customerId,
       clientTypeId: router?.query?.clientTypeId,
-      unitPrice: defaultPrice / quantity?.value,
+      unitPrice: defaultPrice?.toFixed(2) / quantity?.value,
       amount: quantity?.value,
       isNeedGraphics: false,
       isUrgentWork: urgentOrder,
@@ -1437,7 +1430,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       isNeedExample: false,
       jobDetails: pricingDefaultValue?.jobDetails,
       itemParmetersValues: itemParmetersValues,
-      workFlow: workFlowSelected,
+      workFlow: pricingDefaultValue?.workFlows,
       actions: pricingDefaultValue?.actions,
     });
     if (res?.success) {
@@ -1455,6 +1448,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     defaultPrice,
     workFlowSelected,
   ]);
+  useEffect(() => {
+    if (
+      widgetType === EWidgetProductType.EDIT ||
+      widgetType === EWidgetProductType.DUPLICATE
+    ) {
+      setUrgentOrder(!!template?.quoteItem?.isUrgentWork);
+      setPrintingNotes(template?.quoteItem?.printingNotes);
+      setGraphicNotes(template?.quoteItem?.graphicNotes);
+      setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.value);
+    }
+  }, [widgetType, template, quantity]);
   const updateQuoteItem = useCallback(async () => {
     const res = await callApi(
       "PUT",
@@ -1465,7 +1469,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         userID: userProfile?.id,
         customerID: router?.query?.customerId,
         clientTypeId: router?.query?.clientTypeId,
-        unitPrice: workFlowSelected?.totalPrice / quantity?.value,
+        unitPrice: defaultPrice?.toFixed(2) / quantity?.value,
         amount: quantity?.value,
         isNeedGraphics: false,
         isUrgentWork: urgentOrder,
@@ -1491,6 +1495,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     printingNotes,
     userProfile,
     workFlowSelected,
+    defaultPrice,
   ]);
   const navigateForRouter = () => {
     let checkParameter = validateParameters(isRequiredParameters);

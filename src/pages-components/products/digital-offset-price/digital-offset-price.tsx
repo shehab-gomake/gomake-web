@@ -173,6 +173,7 @@ const PriceListPageWidget = ({ widgetType }) => {
               printingNotes={printingNotes}
               generalParameters={generalParameters}
               workFlowSelected={workFlowSelected}
+              widgetType={widgetType}
             />
           </div>
           <MakeShapeModal

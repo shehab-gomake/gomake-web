@@ -5,6 +5,7 @@ import { Checkbox, CircularProgress, Slider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
+import { EWidgetProductType } from "../enums";
 
 const RightSideWidget = ({
   clasess,
@@ -18,7 +19,6 @@ const RightSideWidget = ({
   template,
   tabs,
   activeTab,
-  onOpeneMakeShape,
   pricingDefaultValue,
   setUrgentOrder,
   urgentOrder,
@@ -28,6 +28,7 @@ const RightSideWidget = ({
   graphicNotes,
   generalParameters,
   workFlowSelected,
+  widgetType,
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
 
@@ -39,12 +40,25 @@ const RightSideWidget = ({
     setSliderPrice(newValue as number);
   };
   useEffect(() => {
-    if (pricingDefaultValue?.workFlows?.length > 0) {
+    if (workFlowSelected) {
       setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2) - sliderPrice);
+    } else if (widgetType === EWidgetProductType.EDIT) {
+      setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.value);
     } else {
       setDefaultPrice("----");
     }
-  }, [pricingDefaultValue, sliderPrice, workFlowSelected]);
+  }, [
+    pricingDefaultValue,
+    sliderPrice,
+    workFlowSelected,
+    widgetType,
+    quantity,
+  ]);
+  // useEffect(() => {
+  //  else if (widgetType === EWidgetProductType.EDIT) {
+  //  setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.value);
+  //}
+  // }, [template, widgetType]);
   const { t } = useTranslation();
   return (
     <div style={clasess.rightSideMainContainer}>
@@ -160,15 +174,17 @@ const RightSideWidget = ({
             USD
           </div>
         </div>
-        <div style={clasess.priceRecoveryContainer}>
-          <Checkbox
-            icon={<CheckboxIcon />}
-            checkedIcon={<CheckboxCheckedIcon />}
-          />
-          <div style={clasess.secondText}>
-            {t("products.offsetPrice.admin.priceRecovery")}
+        {widgetType === EWidgetProductType.EDIT ? (
+          <div style={clasess.priceRecoveryContainer}>
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+            />
+            <div style={clasess.secondText}>
+              {t("products.offsetPrice.admin.priceRecovery")}
+            </div>
           </div>
-        </div>
+        ) : null}
 
         <div style={clasess.switchAdditionsContainer}>
           <div style={clasess.tabsTypesContainer}>
