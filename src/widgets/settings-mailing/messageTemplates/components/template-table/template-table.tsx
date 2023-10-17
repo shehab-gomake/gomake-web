@@ -1,5 +1,5 @@
 import { PrimaryTable } from "@/components/tables/primary-table";
-import { useMessageTemplate } from "../../useMessageTemplate";
+import { useMessageTemplate } from "../../../useMessageTemplate";
 import { useEffect } from "react";
 
 

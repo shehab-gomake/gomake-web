@@ -24,9 +24,9 @@ const toolBarInputs = (state) => {
             type: "switch",
             placeholder: "mailingSettings.fromAgentMail",
             required: false,
-            parameterKey: "fromAgentMail",
+            parameterKey: "isChecked",
             options: [],
-            value: state?.fromAgentMail,
+            value: state?.isChecked,
             isValid: true,
             direction : "row"
         },

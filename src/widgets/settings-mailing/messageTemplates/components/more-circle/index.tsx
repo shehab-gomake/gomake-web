@@ -3,28 +3,27 @@ import { MoreCircleIcon } from "@/icons";
 import { GoMakeMenu } from "@/components";
 import { useTranslation } from "react-i18next";
 import { EditingIcon } from "./icons/edit";
-import { DuplicateIcon } from "@/components/icons/icons";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
 import { DeleteIcon } from "./icons/delete";
 import { useRecoilState } from "recoil";
-import { selectedTabState } from "@/components/tabs/state";
-import { documentState, editModalState, textState } from "@/widgets/settings-mailing/states/state";
+import { smsTemplateState, editModalState, textState } from "@/widgets/settings-mailing/states/state";
+import { useEffect } from "react";
 
-const MoreMenuWidget = ({ item , onClickDelete}: any) => {
+const MoreMenuWidget = ({ item, onClickDelete }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle();
-  const [selectedTab, setSelectTab] = useRecoilState<number>(selectedTabState);
-  const [text, setText]= useRecoilState<any>(textState);
-  const [state, setState]= useRecoilState<any>(documentState);
+  const [text, setText] = useRecoilState<any>(textState);
   const [openModal, setOpenModal] = useRecoilState<boolean>(editModalState);
-
+  const [state, setState] = useRecoilState<any>(smsTemplateState);
+  
   const handleEditClick = async () => {
-    //setState(item);
-     setText(item?.type);
-    //setSelectTab(0);
-     setOpenModal(true)
+    await setState(item);
+// console.log(state);
+// setText(state?.type);
+    setText(item?.type);
+    setOpenModal(true);
   };
 
   const handleDeleteClick = async () => {
@@ -47,7 +46,7 @@ const MoreMenuWidget = ({ item , onClickDelete}: any) => {
           <div style={classes.menuRowStyle}>
             <DeleteIcon />
             <div style={classes.rowTextStyle}>
-               {t("mailingSettings.Delete")} 
+              {t("mailingSettings.Delete")}
             </div>
           </div>
         </MenuItem>

@@ -1,7 +1,7 @@
 import { TableFilter } from "./components/table-filter/table-filter";
 import { TemplateTable } from "./components/template-table/template-table";
 
-const TemplateSettings = () => {
+const MessageTemplates = () => {
 
     return (
         <div style={{position: "relative" , gap: "70px"}}>
@@ -11,4 +11,4 @@ const TemplateSettings = () => {
     );
 };
 
-export {TemplateSettings};
+export {MessageTemplates};

@@ -5,9 +5,9 @@ import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useRecoilState } from "recoil";
 import { useSnackBar } from "@/hooks";
-import { allSMSTemplateGroupsState, editModalState, groupModalState, templateGroupState } from "../states/state";
-import { MoreMenuWidget } from "./components/more-circle/index";
-import { UploadFileInput } from "./components/upload-file/upload-file";
+import { allSMSTemplateGroupsState, editModalState, groupModalState, templateGroupState } from "./states/state";
+import { MoreMenuWidget } from "./messageTemplates/components/more-circle/index";
+import { UploadFileInput } from "./messageTemplates/components/upload-file/upload-file";
 
 const useMessageTemplate = () => {
   const { t } = useTranslation();
@@ -43,7 +43,6 @@ const useMessageTemplate = () => {
     }
     getAllTemplatesApi(callApi, callBackFunction).then();
   }
-
 
 
   // onDeleteFunction

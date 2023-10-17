@@ -5,7 +5,7 @@ import { Stack } from "@mui/material";
 import { toolBarInputs } from "./inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { documentState, textState } from "@/widgets/settings-mailing/states/state";
+import { smsTemplateState, textState } from "@/widgets/settings-mailing/states/state";
 
 const useEmailSetting = () => {
   const { t } = useTranslation();
@@ -25,6 +25,7 @@ const useEmailSetting = () => {
     { label: t("mailingSettings.workName"), id: "{{workNames}}" },
   ];
 
+  const [state, setState] = useRecoilState<any>(smsTemplateState);
   const renderHeader = () => {
     return (
         <div style={{ width: "100%" }}>
@@ -51,18 +52,8 @@ const useEmailSetting = () => {
     );
 };
 
-  //const [text, setText] = useState("<p><b>GoMake</b> template</p>");
-  //const [state, setState] = useState([]);
-  // const handleInsertVariable = (e: any, value: any) => {
-  //     const newText = text?.endsWith('<p><br></p>') ? text?.slice(0, -8) : text?.slice(0, -4);
-  //     value &&  setText(text? newText + " " +value?.id + " </p>" : "<p>" + value?.id + " </p>");
-  //     setValue(value?.label);
-  // };
-
   const [text, setText]= useRecoilState<string>(textState);
   const [value, setValue] = useState([]);
-  const [state, setState]= useRecoilState<any>(documentState);
-
     const onChangeInputs = (key, value) => {
         if (key == "variable") {
             const newText = text?.endsWith('<p><br></p>') ? text?.slice(0, -8) : text?.slice(0, -4);
