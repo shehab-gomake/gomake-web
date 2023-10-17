@@ -8,7 +8,6 @@ import { useStyle } from "./style";
 import { DeleteIcon } from "./icons/delete";
 import { useRecoilState } from "recoil";
 import { smsTemplateState, editModalState, textState } from "@/widgets/settings-mailing/states/state";
-import { useEffect } from "react";
 
 const MoreMenuWidget = ({ item, onClickDelete }: any) => {
   const { classes } = useStyle();
@@ -18,10 +17,8 @@ const MoreMenuWidget = ({ item, onClickDelete }: any) => {
   const [openModal, setOpenModal] = useRecoilState<boolean>(editModalState);
   const [state, setState] = useRecoilState<any>(smsTemplateState);
   
-  const handleEditClick = async () => {
-    await setState(item);
-// console.log(state);
-// setText(state?.type);
+  const handleEditClick =  () => {
+    setState(item);
     setText(item?.type);
     setOpenModal(true);
   };
