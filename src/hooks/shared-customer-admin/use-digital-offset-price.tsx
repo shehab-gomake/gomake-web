@@ -53,10 +53,22 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("Production");
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
+  const [workFlowSelected, setWorkFlowSelected] = useState<any>();
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const setLoading = useSetRecoilState(isLoadgingState);
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
+  const [priceRecovery, setPriceRecovery] = useState(true);
+  const [canCalculation, setCanCalculation] = useState(true);
+
+  useEffect(() => {
+    if (pricingDefaultValue?.workFlows?.length > 0) {
+      const workFlowSelect = pricingDefaultValue?.workFlows?.find(
+        (workFlow) => workFlow?.selected === true
+      );
+      setWorkFlowSelected(workFlowSelect);
+    }
+  }, [pricingDefaultValue]);
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let temp = [...isRequiredParameters];
@@ -116,6 +128,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
                   );
+
                   if (value) {
                     const data = materialsEnumsValues.find(
                       (item) => item.name === parameter?.materialPath[0]
@@ -123,7 +136,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     temp.push({
                       parameterId: parameter?.id,
                       parameterName: parameter?.name,
-                      actionId: parameter?.actionId,
+                      actionId:
+                        value?.activateAction === true
+                          ? parameter?.actionId
+                          : null,
                       ...(data?.id > 0 && { material: data?.id }),
                       parameterType: parameter?.parameterType,
                       ...(value && {
@@ -207,6 +223,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   ) {
                     if (parameter?.defaultValue?.length > 0) {
                       const defaultValue = parameter?.defaultValue;
+
                       temp.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
@@ -305,7 +322,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       temp.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
-                        actionId: parameter?.actionId,
+
+                        actionId:
+                          value?.activateAction === true
+                            ? parameter?.actionId
+                            : null,
                         ...(data?.id > 0 && { material: data?.id }),
                         parameterType: parameter?.parameterType,
                         ...(value && {
@@ -402,8 +423,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [router, widgetType]);
   useEffect(() => {
-    calculationProduct();
-  }, [generalParameters]);
+    if (canCalculation) {
+      calculationProduct();
+    }
+  }, [generalParameters, canCalculation]);
 
   useEffect(() => {
     let temp = [...subProducts];
@@ -515,6 +538,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const defaultObject = parameter.valuesConfigs.find(
           (item) => item.isDefault === true
         );
+
         return (
           <GoMakeAutoComplate
             options={parameter?.valuesConfigs?.filter(
@@ -882,8 +906,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 section?.id,
                 parameter?.parameterType,
                 parameter?.name,
-                parameter?.actionId,
-                { valueId: value?.id, value: value?.updateName },
+                value?.activateAction === true ? parameter?.actionId : null,
+                {
+                  valueId: value?.id,
+                  value: value?.updateName,
+                  actionId:
+                    value?.activateAction === true ? parameter?.actionId : null,
+                },
                 index
               );
             }}
@@ -1162,9 +1191,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     data: any,
     index: any
   ) => {
+    setCanCalculation(true);
     setGeneralParameters((prev) => {
       let temp = [...prev];
-
       if (index !== -1) {
         temp[index] = {
           ...temp[index],
@@ -1196,6 +1225,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     subSectionType: any,
     index: any
   ) => {
+    setCanCalculation(true);
     const targetSubProduct = subProducts.find(
       (item) => item.type === subSectionType
     );
@@ -1324,16 +1354,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     return isValid;
   };
-  useEffect(() => {
-    if (
-      widgetType === EWidgetProductType.EDIT ||
-      widgetType === EWidgetProductType.DUPLICATE
-    ) {
-      setUrgentOrder(!!template?.quoteItem?.isUrgentWork);
-      setPrintingNotes(template?.quoteItem?.printingNotes);
-      setGraphicNotes(template?.quoteItem?.graphicNotes);
-    }
-  }, [widgetType, template]);
+
   const calculationProduct = useCallback(async () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
@@ -1361,7 +1382,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const PricingTab = {
     id: "c66465de-95d6-4ea3-bd3f-7efe60f4cb0555",
     name: "Pricing",
-    icon: "https://gomake-dev.s3.eu-west-3.amazonaws.com/25fa024c-0586-49aa-a654-ff19c59e0ff7",
+    icon: "pricing",
     jobDetails: pricingDefaultValue?.jobDetails,
     actions: pricingDefaultValue?.actions,
     flows: pricingDefaultValue?.workFlows,
@@ -1378,7 +1399,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           productId: router?.query?.productId,
           details: pricingDefaultValue?.jobDetails,
           itemParmetersValues: itemParmetersValues,
-          workFlow: pricingDefaultValue?.workFlows[0],
+          workFlow: workFlowSelected,
         },
         actionId: router?.query?.actionId,
         actionProductId: router?.query?.actionProductId,
@@ -1388,7 +1409,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (res?.success) {
       navigate(`/products/profits?actionId=${router?.query?.actionId}`);
     }
-  }, [generalParameters, router, pricingDefaultValue, itemParmetersValues]);
+  }, [
+    generalParameters,
+    router,
+    pricingDefaultValue,
+    itemParmetersValues,
+    workFlowSelected,
+  ]);
   const quantity = generalParameters?.find(
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
@@ -1398,8 +1425,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       userID: userProfile?.id,
       customerID: router?.query?.customerId,
       clientTypeId: router?.query?.clientTypeId,
-      unitPrice:
-        pricingDefaultValue?.workFlows[0]?.totalPrice / quantity?.value,
+      unitPrice: defaultPrice / quantity?.value,
       amount: quantity?.value,
       isNeedGraphics: false,
       isUrgentWork: urgentOrder,
@@ -1408,7 +1434,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       isNeedExample: false,
       jobDetails: pricingDefaultValue?.jobDetails,
       itemParmetersValues: itemParmetersValues,
-      workFlow: pricingDefaultValue?.workFlows[0],
+      workFlow: pricingDefaultValue?.workFlows,
       actions: pricingDefaultValue?.actions,
     });
     if (res?.success) {
@@ -1423,7 +1449,25 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     printingNotes,
     userProfile,
     itemParmetersValues,
+    defaultPrice,
+    workFlowSelected,
   ]);
+  useEffect(() => {
+    if (
+      widgetType === EWidgetProductType.EDIT ||
+      widgetType === EWidgetProductType.DUPLICATE
+    ) {
+      setUrgentOrder(!!template?.quoteItem?.isUrgentWork);
+      setPrintingNotes(template?.quoteItem?.printingNotes);
+      setGraphicNotes(template?.quoteItem?.graphicNotes);
+      setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.value);
+      setCanCalculation(false);
+      const workFlowSelect = template?.workFlows?.find(
+        (workFlow) => workFlow?.selected === true
+      );
+      setWorkFlowSelected(workFlowSelect);
+    }
+  }, [widgetType, template, quantity]);
   const updateQuoteItem = useCallback(async () => {
     const res = await callApi(
       "PUT",
@@ -1434,8 +1478,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         userID: userProfile?.id,
         customerID: router?.query?.customerId,
         clientTypeId: router?.query?.clientTypeId,
-        unitPrice:
-          pricingDefaultValue?.workFlows[0]?.totalPrice / quantity?.value,
+        unitPrice: defaultPrice?.toFixed(2) / quantity?.value,
         amount: quantity?.value,
         isNeedGraphics: false,
         isUrgentWork: urgentOrder,
@@ -1444,7 +1487,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         isNeedExample: false,
         jobDetails: pricingDefaultValue?.jobDetails,
         itemParmetersValues: itemParmetersValues,
-        workFlow: pricingDefaultValue?.workFlows[0],
+        workFlow: workFlowSelected,
         actions: pricingDefaultValue?.actions,
       }
     );
@@ -1460,6 +1503,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     graphicNotes,
     printingNotes,
     userProfile,
+    workFlowSelected,
+    defaultPrice,
   ]);
   const navigateForRouter = () => {
     let checkParameter = validateParameters(isRequiredParameters);
@@ -1498,6 +1543,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setUrgentOrder,
     setPrintingNotes,
     setGraphicNotes,
+    setPriceRecovery,
+    priceRecovery,
     graphicNotes,
     printingNotes,
     urgentOrder,
@@ -1515,6 +1562,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
+    generalParameters,
+    workFlowSelected,
   };
 };
 

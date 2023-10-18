@@ -146,8 +146,10 @@ const useOrders = () => {
     const mapData = data?.map((quote: any) => [
       quote?.createdDate,
       quote?.customerName,
+      quote?.boardMissionsNumbers?.length,
       quote?.orderNumber,
       quote?.worksNames,
+      quote?.cost,
       quote?.totalPrice,
       quote?.notes,
       _renderQuoteStatus(quote?.statusID, quote),
@@ -179,8 +181,10 @@ const useOrders = () => {
     const mapData = data?.map((quote: any) => [
       quote?.createdDate,
       quote?.customerName,
+      quote?.boardMissionsNumbers?.length,
       quote?.orderNumber,
       quote?.worksNames,
+      quote?.cost,
       quote?.totalPrice,
       quote?.notes,
       _renderQuoteStatus(quote?.statusID, quote),
@@ -205,8 +209,10 @@ const useOrders = () => {
   const tableHeaders = [
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
+    "Pak'am",
     t("sales.quote.orderNumber"),
     t("sales.quote.worksName"),
+    "cost",
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
     t("sales.quote.status"),
