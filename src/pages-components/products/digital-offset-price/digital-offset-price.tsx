@@ -37,6 +37,8 @@ const PriceListPageWidget = ({ widgetType }) => {
     setUrgentOrder,
     setPrintingNotes,
     setGraphicNotes,
+    setPriceRecovery,
+    priceRecovery,
     graphicNotes,
     printingNotes,
     urgentOrder,
@@ -54,6 +56,8 @@ const PriceListPageWidget = ({ widgetType }) => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
+    generalParameters,
+    workFlowSelected,
   } = useDigitalOffsetPrice({ clasess, widgetType });
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
@@ -75,7 +79,7 @@ const PriceListPageWidget = ({ widgetType }) => {
       {template?.sections?.length > 0 && (
         <div style={clasess.mainContainer}>
           <HeaderTitle
-            title={t("products.offsetPrice.admin.title2")}
+            title={template?.name}
             marginTop={24}
             marginBottom={24}
           />
@@ -108,6 +112,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                               onChangeCategoryData={onChangeCategoryData}
                               section={section}
                               pricingDefaultValue={pricingDefaultValue}
+                              workFlowSelected={workFlowSelected}
                             />
                           );
                         } else {
@@ -168,6 +173,11 @@ const PriceListPageWidget = ({ widgetType }) => {
               setGraphicNotes={setGraphicNotes}
               graphicNotes={graphicNotes}
               printingNotes={printingNotes}
+              generalParameters={generalParameters}
+              workFlowSelected={workFlowSelected}
+              widgetType={widgetType}
+              setPriceRecovery={setPriceRecovery}
+              priceRecovery={priceRecovery}
             />
           </div>
           <MakeShapeModal
