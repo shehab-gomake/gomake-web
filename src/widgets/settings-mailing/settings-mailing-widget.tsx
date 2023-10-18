@@ -53,7 +53,7 @@ const SettingsMailingWidget = () => {
                 insideStyle={{paddingLeft: 20, paddingRight: 20}}
                 openModal={openEditModal}
                 onClose={() => {setOpenEditModal(false); setState(null)}}
-                modalTitle={t("mailingSettings.emailSetting")}>
+                modalTitle={t("mailingSettings.emailType") + " " + (state?.type || "")}>
                 <EmailSettings onClickSave={onUpdateSmsTemplate}/>
             </GoMakeModal>
         </div>

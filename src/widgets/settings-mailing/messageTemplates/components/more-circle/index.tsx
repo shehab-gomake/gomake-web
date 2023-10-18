@@ -19,7 +19,7 @@ const MoreMenuWidget = ({ item, onClickDelete }: any) => {
   
   const handleEditClick =  () => {
     setState(item);
-    setText(item?.type);
+    setText(item?.subject);
     setOpenModal(true);
   };
 

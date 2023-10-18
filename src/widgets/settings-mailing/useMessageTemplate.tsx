@@ -16,7 +16,6 @@ const useMessageTemplate = () => {
   const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
   const [openEditorModal, setOpenEditorModal] = useRecoilState<boolean>(editModalState);
 
-
   const tableHeaders = [
     t("mailingSettings.type"),
     t("mailingSettings.subject"),
@@ -44,7 +43,6 @@ const useMessageTemplate = () => {
     getAllTemplatesApi(callApi, callBackFunction).then();
   }
 
-
   // onDeleteFunction
   const onDeleteDocument = async (smsTemplate) => {
     const callback = (data) => {
@@ -57,8 +55,6 @@ const useMessageTemplate = () => {
     }
     await deleteSmsTemplateApi(callApi, callback, smsTemplate);
   }
-
-
 
   // select options 
   const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(allSMSTemplateGroupsState);
@@ -85,8 +81,7 @@ const useMessageTemplate = () => {
     await addNewSmsTemplateGroup(callApi, callback, templateGroup);
   }
 
-
-  // save button or edit template
+  // save changes
   const onUpdateSmsTemplate = async (smsTemplate) => {
     const callback = (data) => {
       if (data.success) {

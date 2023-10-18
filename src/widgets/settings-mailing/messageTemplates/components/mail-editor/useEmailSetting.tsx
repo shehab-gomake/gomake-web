@@ -6,9 +6,12 @@ import { toolBarInputs } from "./inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { smsTemplateState, textState } from "@/widgets/settings-mailing/states/state";
+import { useStyle } from "./style";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 const useEmailSetting = () => {
   const { t } = useTranslation();
+  const { classes } = useStyle();
 
   const variables = [
     { label: t("mailingSettings.clientName"), id: " {{customerName}}" },
@@ -28,47 +31,42 @@ const useEmailSetting = () => {
   const [state, setState] = useRecoilState<any>(smsTemplateState);
   const renderHeader = () => {
     return (
-        <div style={{ width: "100%" }}>
-            <span className="ql-formats" >
-            <Stack direction={'row'}  >
-                <select className="ql-header" data-pc-section="header"></select>
-                <select className="ql-font" data-pc-section="font"></select>
-                <button className="ql-bold" aria-label="Bold"></button>
-                <button className="ql-italic" aria-label="Italic"></button>
-                <button className="ql-underline" aria-label="Underline"></button>
-                <select className="ql-color" data-pc-section="color"></select>
-                <select className="ql-background" data-pc-section="background"></select>
-                <select className="ql-align" data-pc-section="select"></select>
-                <button className="ql-image" aria-label="Insert Image" data-pc-section="image"></button>
-                <button className="ql-code-block ql-active" aria-label="Insert Code Block" data-pc-section="codeblock"></button>
-                </Stack>
-                <Stack direction={'row'}  gap={"10px"}>
-                    {
-                        toolBarInputs(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
-                    }
-                </Stack>
-            </span>
-        </div>
-    );
-};
 
-  const [text, setText]= useRecoilState<string>(textState);
+        <span className="ql-formats"  >
+          <Stack direction={'row'} gap={"2px"} >
+            <select className="ql-header" data-pc-section="header"></select>
+            <select className="ql-font" data-pc-section="font"></select>
+            <button className="ql-bold" aria-label="Bold"></button>
+            <button className="ql-italic" aria-label="Italic"></button>
+            <button className="ql-underline" aria-label="Underline"></button>
+            <select className="ql-color" data-pc-section="color"></select>
+            <select className="ql-background" data-pc-section="background"></select>
+            <select className="ql-align" data-pc-section="select"></select>
+            <button className="ql-image" aria-label="Insert Image" data-pc-section="image"></button>
+            <button className="ql-code-block ql-active" aria-label="Insert Code Block" data-pc-section="codeblock"></button>
+            {/* {toolBarInputs(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)} */}
+          </Stack>
+        </span>
+    );
+  };
+
+  const [text, setText] = useRecoilState<string>(textState);
   const [value, setValue] = useState([]);
-    const onChangeInputs = (key, value) => {
-        if (key == "variable") {
-            const newText = text?.endsWith('<p><br></p>') ? text?.slice(0, -8) : text?.slice(0, -4);
-            value && setText(text ? newText + " " + value + " </p>" : "<p>" + value + " </p>");
-        }
-        setState({ ...state, [key]: value })
+  const onChangeInputs = (key, value) => {
+    if (key == "variable") {
+      const newText = text?.endsWith('<p><br></p>') ? text?.slice(0, -8) : text?.slice(0, -4);
+      value && setText(text ? newText + " " + value + " </p>" : "<p>" + value + " </p>");
     }
-  
+    setState({ ...state, [key]: value })
+  }
+
   return {
     variables,
     text,
     setText,
     value,
     setValue,
-    state, setState, onChangeInputs , renderHeader
+    state, setState, onChangeInputs, renderHeader
   };
 };
 
