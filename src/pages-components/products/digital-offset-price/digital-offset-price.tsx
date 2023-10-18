@@ -79,7 +79,7 @@ const PriceListPageWidget = ({ widgetType }) => {
       {template?.sections?.length > 0 && (
         <div style={clasess.mainContainer}>
           <HeaderTitle
-            title={t("products.offsetPrice.admin.title2")}
+            title={template?.name}
             marginTop={24}
             marginBottom={24}
           />

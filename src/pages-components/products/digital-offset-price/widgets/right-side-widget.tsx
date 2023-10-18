@@ -113,7 +113,7 @@ const RightSideWidget = ({
         <div style={clasess.urgentEstimateContainer}>
           <div style={clasess.secondText}>
             {t("products.offsetPrice.admin.takeEstimate", {
-              data: "5 days",
+              data: `${template?.deliveryTime} days`,
             })}
           </div>
           <div style={clasess.urgentContainer}>
