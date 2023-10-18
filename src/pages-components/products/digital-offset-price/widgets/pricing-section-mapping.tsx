@@ -10,6 +10,8 @@ const PricingSectionMappingWidget = ({
   pricingDefaultValue,
   workFlowSelected,
 }: any) => {
+  console.log("pricingDefaultValue", pricingDefaultValue);
+  console.log("workFlowSelected", workFlowSelected);
   const { t } = useTranslation();
   return (
     <div style={clasess.pricingSectionContainer}>
@@ -23,7 +25,7 @@ const PricingSectionMappingWidget = ({
           </div>
           <div style={clasess.jobDetails}>{section.jobDetails}</div>
         </div>
-        {pricingDefaultValue?.workFlows?.length > 0 && (
+        {workFlowSelected && (
           <>
             <div style={{ width: "100%" }}>
               <Table
@@ -45,7 +47,7 @@ const PricingSectionMappingWidget = ({
           </>
         )}
       </div>
-      {pricingDefaultValue?.workFlows?.length > 0 && (
+      {workFlowSelected && (
         <>
           <div style={clasess.actionsStyleContainer}>
             {t("products.offsetPrice.admin.actions")}

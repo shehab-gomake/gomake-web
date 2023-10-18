@@ -6,7 +6,7 @@ export const _renderActiveIcon = (icon) => {
     return <PrintingDetailsIcon />;
   }
   if (icon === ETabsIcon.FINISHING) {
-    return "<FinishingIcon />";
+    return <FinishingIcon />;
   }
   if (icon === ETabsIcon.PRICING) {
     return <PricingIcon />;

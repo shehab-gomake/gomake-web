@@ -59,6 +59,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
   const [priceRecovery, setPriceRecovery] = useState(true);
+  const [canCalculation, setCanCalculation] = useState(true);
 
   useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0) {
@@ -422,8 +423,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [router, widgetType]);
   useEffect(() => {
-    calculationProduct();
-  }, [generalParameters]);
+    if (canCalculation) {
+      calculationProduct();
+    }
+  }, [generalParameters, canCalculation]);
 
   useEffect(() => {
     let temp = [...subProducts];
@@ -1188,6 +1191,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     data: any,
     index: any
   ) => {
+    setCanCalculation(true);
     setGeneralParameters((prev) => {
       let temp = [...prev];
       if (index !== -1) {
@@ -1221,6 +1225,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     subSectionType: any,
     index: any
   ) => {
+    setCanCalculation(true);
     const targetSubProduct = subProducts.find(
       (item) => item.type === subSectionType
     );
@@ -1456,6 +1461,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setPrintingNotes(template?.quoteItem?.printingNotes);
       setGraphicNotes(template?.quoteItem?.graphicNotes);
       setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.value);
+      setCanCalculation(false);
+      const workFlowSelect = template?.workFlows?.find(
+        (workFlow) => workFlow?.selected === true
+      );
+      setWorkFlowSelected(workFlowSelect);
     }
   }, [widgetType, template, quantity]);
   const updateQuoteItem = useCallback(async () => {
