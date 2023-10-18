@@ -27,9 +27,9 @@
     "notMach": "passwords don't match",
     "receiveCode": "you will receive the code in the email",
     "code": "Code",
-    "account":"ACCOUNT",
-    "manageAccount":"Manage Account",
-    "logOut":"Log out"
+    "account": "ACCOUNT",
+    "manageAccount": "Manage Account",
+    "logOut": "Log out"
   },
   "header": {
     "search": "Search"
@@ -83,7 +83,7 @@
     "profits": "profits",
     "properties": "Properties",
     "quotes": "Quotes",
-    "orders":"Orders"
+    "orders": "Orders"
   },
   "properties": {
     "parameter": "Parameter",
@@ -1575,25 +1575,25 @@
       "rejectedByManager": "Rejected By Management",
       "partialClosed": "Partial Closed",
       "waitForPrintHouseConfirm": "Wait For Print House Confirm",
-      "chooseStatus":"Select a status",
-      "chooseCustomer":"Select a customer",
-      "ChooseAgent":"Choose an agent",
-      "loggers":"Loggers",
-      "pdf":"PDF",
-      "edit":"Edit",
-      "quoteList":"Quote List",
-      "titleModal":"There are limitations due to the status.",
-      "subTitleModal":" Do you want to change the status?",
-      "changeStatus":"Change status",
-      "search":"Search",
-      "clear":"Clear",
-      "confirmWithoutNotification":"confirm without notification",
-      "confirmWithNotification":"confirm with notification",
-      "warningMsg":"Make sure that the contact details, mobile number and e-mail are correct",
-      "orderNowTitle":"Order Now!",
-      "createdBy":"Created by {{name}}",
-      "customer":"Customer",
-      "orderList":"Order List"
+      "chooseStatus": "Select a status",
+      "chooseCustomer": "Select a customer",
+      "ChooseAgent": "Choose an agent",
+      "loggers": "Loggers",
+      "pdf": "PDF",
+      "edit": "Edit",
+      "quoteList": "Quote List",
+      "titleModal": "There are limitations due to the status.",
+      "subTitleModal": " Do you want to change the status?",
+      "changeStatus": "Change status",
+      "search": "Search",
+      "clear": "Clear",
+      "confirmWithoutNotification": "confirm without notification",
+      "confirmWithNotification": "confirm with notification",
+      "warningMsg": "Make sure that the contact details, mobile number and e-mail are correct",
+      "orderNowTitle": "Order Now!",
+      "createdBy": "Created by {{name}}",
+      "customer": "Customer",
+      "orderList": "Order List"
     }
   },
   "usersSettings": {
@@ -1644,7 +1644,6 @@
     "editInitials": "Edit initials",
     "uploadFile": "Upload file",
     "selectFile": "Select file"
-   
   },
   "permissionsSettings": {
     "title": "Management of roles and privileges",
