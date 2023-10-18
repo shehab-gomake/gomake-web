@@ -1,3 +1,5 @@
+import { FinishingIcon, PricingIcon, PrintingDetailsIcon } from "@/icons";
+import { _renderActiveIcon, _renderUnActiveIcon } from "@/utils/constants";
 import { DoneIcon } from "@/widgets";
 
 const TabsMappingWidget = ({
@@ -16,21 +18,9 @@ const TabsMappingWidget = ({
       >
         <div style={{ height: 24, minWidth: 24 }}>
           {index === activeIndex ? (
-            <img
-              src={item.icon}
-              style={{
-                width: 24,
-                height: 24,
-              }}
-            />
+            _renderActiveIcon(item.icon)
           ) : index >= activeIndex ? (
-            <img
-              src={item.icon}
-              style={{
-                width: 24,
-                height: 24,
-              }}
-            />
+            _renderUnActiveIcon(item.icon)
           ) : (
             <DoneIcon />
           )}
