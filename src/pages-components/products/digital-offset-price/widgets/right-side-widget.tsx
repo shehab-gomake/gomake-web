@@ -108,11 +108,7 @@ const RightSideWidget = ({
           </div>
         </div>
         <div style={clasess.imgProductContainer}>
-          <img
-            src={template.img}
-            alt="gomake"
-            style={{ width: "100%", height: 170, borderRadius: 16 }}
-          />
+          <img src={template.img} alt="gomake" style={{ width: "100%" }} />
         </div>
         <div style={clasess.urgentEstimateContainer}>
           <div style={clasess.secondText}>

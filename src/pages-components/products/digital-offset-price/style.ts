@@ -242,6 +242,9 @@ const useStyle = () => {
       },
       imgProductContainer: {
         width: "100%",
+        height: 170,
+        borderRadius: 16,
+        overflow: "hidden",
       },
       secondText: {
         color: primaryColor(200),
