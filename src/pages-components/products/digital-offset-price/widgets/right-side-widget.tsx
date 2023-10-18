@@ -39,7 +39,6 @@ const RightSideWidget = ({
   );
   const [sliderPrice, setSliderPrice] = useState<number>(0);
   const [changePrice, setChangePrice] = useState<number>(0);
-  console.log("changePrice", changePrice);
   const handleChange = (event: Event, newValue: number | number[]) => {
     setSliderPrice(newValue as number);
   };
