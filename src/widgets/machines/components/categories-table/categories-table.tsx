@@ -14,13 +14,14 @@ import {useTranslation} from "react-i18next";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import {Permissions} from "@/components/CheckPermission/enum";
 import { permissionsState } from "@/store/permissions";
+import { usePermission } from "@/hooks/use-permission";
 
 const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
   const [filter, setFilter] = useState<string>("");
   const {t} = useTranslation();
   const { primaryColor } = useGomakeTheme();
-  const categoriesList = useRecoilValue(machineCategoriesState);
-  const [permissions, setPermissions] = useRecoilState(permissionsState);
+  const categoriesList = useRecoilValue(machineCategoriesState); 
+  const { CheckPermission } = usePermission();
   const { classes } = useStyle();
   const categories = useCallback(() => {
     if (!!filter) {
@@ -33,7 +34,7 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
 
   const tableHeaders = [
     t('machineAttributes.category'),
-    permissions && permissions[Permissions.EDIT_MACHINE] ? t('machineAttributes.editMachine') : null,
+    CheckPermission(Permissions.EDIT_MACHINE) ? t('machineAttributes.editMachine') : null,
   ];
   const tableRows = categories()?.map((category) => [
     <>{t(category.name)}</>,

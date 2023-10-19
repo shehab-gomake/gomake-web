@@ -5,13 +5,13 @@ import {CompanyProfileComponent} from "@/widgets/settings-profile-widget/compone
 import {ITab} from "@/components/tabs/interface";
 import {PrimaryTabsComponent} from "@/components/tabs/primary-tabs";
 import { useRecoilState } from "recoil";
-import { permissionsState } from "@/store/permissions";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { usePermission } from "@/hooks/use-permission";
 
 
 const SettingsProfileWidget = () => {
     const {t} = useTranslation();
-    const [permissions, setPermissions] = useRecoilState(permissionsState);
+    const { CheckPermission } = usePermission();
     const {
         openModal,
         setOpenModal,
@@ -19,7 +19,7 @@ const SettingsProfileWidget = () => {
 
     const tabs: ITab[] = [
         {title: t("profileSettings.profileTab"), component: <UserProfile/>},
-        permissions && permissions[Permissions.SHOW_PROFILE_COMPANY] &&  {title: t("profileSettings.companyProfile"), component: <CompanyProfileComponent/>}
+        CheckPermission(Permissions.SHOW_PROFILE_COMPANY) &&  {title: t("profileSettings.companyProfile"), component: <CompanyProfileComponent/>}
     ];
     return (
         <PrimaryTabsComponent tabs={tabs}/>

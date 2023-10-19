@@ -7,14 +7,16 @@ import { useRecoilState } from "recoil";
 import { navStatusState } from "@/store/nav-status";
 import { BackNavIcon } from "@/icons/back-nav";
 import { adaptRight } from "@/utils/adapter";
-import { hoverStatusState } from "@/store";
+import { hoverStatusState, permissionsState } from "@/store";
 import LockIcon from "@mui/icons-material/Lock";
 const LeftSideLayout = () => {
   const { t } = useTranslation();
-  const { tabs1, tabs2, tabs3, profile } = useAuthLayoutHook();
+  const [permissions, setPermissions] = useRecoilState(permissionsState);
+  const { tabs1, tabs2, tabs3, profile } = useAuthLayoutHook(permissions);
+
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
-
+  console.log("tabs2  is " , tabs2)
   const { clasess } = useStyle({ navStatus });
   return (
     <div
@@ -83,7 +85,7 @@ const LeftSideLayout = () => {
           alignSelf: "flex-start",
         }}
       >
-        {[...tabs2, ...tabs3].map((tab) => {
+        {[...tabs2 || [] , ...tabs3 ].map((tab) => {
           if (tab.isLine) {
             return (
               <div style={clasess.lineContainer}>

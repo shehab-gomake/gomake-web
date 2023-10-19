@@ -20,6 +20,7 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useRecoilState } from "recoil";
 import { permissionsState } from "@/store/permissions";
+import { usePermission } from "@/hooks/use-permission";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -48,7 +49,7 @@ const PropertiesTable = () => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { state, actionId } = usePrintHouseActions();
-  const [permissions, setPermissions] = useRecoilState(permissionsState);
+  const { CheckPermission } = usePermission();
   const [actionPropertyDetails, setActionPropertyDetails] = useState([
     { actionId: actionId, propertyId: "", ruleType: 0 },
   ]);
@@ -87,7 +88,7 @@ const PropertiesTable = () => {
                 {t("properties.type")}
               </StyledTableCell>
               <StyledTableCell align={"center"}>
-                {permissions && permissions[Permissions.EDIT_PROPERITES_PRICING_ACTIONS] ? t("properties.more") : null }
+                {CheckPermission(Permissions.EDIT_PROPERITES_PRICING_ACTIONS) ? t("properties.more") : null }
               </StyledTableCell>
             </TableRow>
           </TableHead>

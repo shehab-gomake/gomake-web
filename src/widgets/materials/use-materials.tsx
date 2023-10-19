@@ -3,6 +3,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useGomakeRouter } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { usePermission } from "@/hooks/use-permission";
 import { EditIcon } from "@/icons";
 import { permissionsState } from "@/store/permissions";
 import { matchSorter } from "match-sorter";
@@ -15,7 +16,7 @@ const useMaterials = ({ admin }: any) => {
   const { navigate } = useGomakeRouter();
   const { primaryColor } = useGomakeTheme();
   const [term, setTerm] = useState("");
-  const [permissions, setPermissions] = useRecoilState(permissionsState);
+  const { CheckPermission } = usePermission();
   const [materilasSearched, setMaterilasSearched] = useState([]);
   const categoriesList = useMemo(() => {
     return [
@@ -271,7 +272,7 @@ const useMaterials = ({ admin }: any) => {
   };
   const tableHeaders = [
     t("materials.sheetPaper.category"),
-    permissions && permissions[Permissions.EDIT_MATERIAL] ? t("materials.sheetPaper.viewMaterial") : null,
+    CheckPermission(Permissions.EDIT_MATERIAL) ? t("materials.sheetPaper.viewMaterial") : null,
   ];
   const tableRows = selectList()?.map((category) => [
     category.title,

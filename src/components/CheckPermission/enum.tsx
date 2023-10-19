@@ -20,6 +20,9 @@ export  enum Permissions {
     SHOW_PRODUCT_MANAGMENT="ShowProductManagment",
     SHOW_SHIPMENT="ShowShipmentsSetting",
     SHOW_PRICING="ShowpricingSetting",
-    SHOW_PRODUCTS_SETTINGS = "ShowProductsSettings"
+    SHOW_PRODUCTS_SETTINGS = "ShowProductsSettings",
+    SHOW_QUOTES="ShowQuotes",
+    SHOW_ORDERS="ShowOrders",
+    EDIT_PROPERTIES = "EditProperties"
 }
 

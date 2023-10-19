@@ -14,11 +14,12 @@ import { CubeIcon } from "@/components/icons/cube-icon";
 import { useRecoilState } from "recoil";
 import { ICompanyProfile, companyProfileState } from "@/store/company-profile";
 
+
 const useAuthLayoutHook = (permission) => {
   const { isAuth } = useGomakeAuth(permission);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
- 
+
  
   const tabs1: any = useMemo(() => {
     return [
@@ -52,7 +53,8 @@ const useAuthLayoutHook = (permission) => {
     ];
   }, []);
   const tabs2: any = useMemo(() => {
-    return [
+   
+   return [
       {
         isLine: false,
         key: "sales",
@@ -60,17 +62,19 @@ const useAuthLayoutHook = (permission) => {
         path: "/product-floor",
         isList: true,
         list: [
+          permission &&
           {
             key: "quotes",
             title: "tabs.quotes",
             path: "/quotes",
           },
+          permission &&
           {
             key: "orders",
             title: "tabs.orders",
             path: "/orders",
           },
-        ],
+        ].filter(Boolean),
         icon: () => {
           return <SalesIcon />;
         },
@@ -132,6 +136,7 @@ const useAuthLayoutHook = (permission) => {
         },
         isProduction: true,
       },
+      
     ];
   }, []);
   const tabs3: any = useMemo(() => {

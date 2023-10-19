@@ -9,6 +9,7 @@ import {userTypeState} from "@/store/user-type";
 import {userProfileState} from "@/store/user-profile";
 import {useTranslation} from "react-i18next";
 
+
 const useCustomer = (Permission) => {
     console.log("useCustomer" , Permission)
     const {callApi} = useGomakeAxios();
@@ -18,6 +19,7 @@ const useCustomer = (Permission) => {
     const [adminsAutoComplate, setAdminsAutoComplate] = useState([]);
     const [permissions, setPermissions] = useRecoilState<any>(permissionsState);
     const {navigate} = useGomakeRouter();
+
     const {i18n} = useTranslation();
     const logOut = useCallback(() => {
         setUser({});
@@ -35,22 +37,21 @@ const useCustomer = (Permission) => {
                 localStorage.setItem('systemLanguage', validate?.data?.data?.customer?.systemLanguage)
                 i18n.changeLanguage(validate?.data?.data?.customer?.systemLanguage).then();
             }
-              setPermissions(validate?.data?.data?.permissions); 
+             // setPermissions(validate?.data?.data?.permissions); 
               if(Permission !== null && Permission !== undefined)
               {
-            
-                if (permissions) {
-                    if (permissions?.includes(Permission)) {
-                     return true;
+                if (validate?.data?.data?.permissions) {
+                    if (validate?.data?.data?.permissions?.includes(Permission)) {
+                    // return true;
                    
                     } else {
-                     return false;
+                   //  return false;
                     }
                 }else{
-                   return false;
+                  // return false;
                 }
               }else{
-              return false;
+          //    return false;
               }
             return true;
         }

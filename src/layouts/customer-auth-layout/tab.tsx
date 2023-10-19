@@ -82,12 +82,12 @@ const Tab = ({ tab }: IProps) => {
         {!navStatus.isClosed &&
           tab.list?.map((list: any) => {
             return (
-              <div style={clasess.tabList} key={list.key}>
+              <div style={clasess.tabList} key={list?.key}>
                 <div
                   onClick={() => changeRoute(list?.path)}
                   style={clasess.tabTitle}
                 >
-                  {t(list.title)}
+                  {t(list?.title)}
                 </div>
               </div>
             );
