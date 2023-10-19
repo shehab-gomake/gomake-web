@@ -13,14 +13,14 @@ import { useEffect, useMemo, useState } from "react";
 import { CubeIcon } from "@/components/icons/cube-icon";
 import { useRecoilState } from "recoil";
 import { ICompanyProfile, companyProfileState } from "@/store/company-profile";
+import { usePermission } from "@/hooks/use-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 
 const useAuthLayoutHook = (permission) => {
   const { isAuth } = useGomakeAuth(permission);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
-
- 
   const tabs1: any = useMemo(() => {
     return [
       {
@@ -61,20 +61,21 @@ const useAuthLayoutHook = (permission) => {
         title: "tabs.sales",
         path: "/product-floor",
         isList: true,
+        Permission:Permissions.SHOW_SALES,
         list: [
-          permission &&
           {
             key: "quotes",
             title: "tabs.quotes",
             path: "/quotes",
+            Permission:Permissions.SHOW_QUOTES
           },
-          permission &&
           {
             key: "orders",
             title: "tabs.orders",
             path: "/orders",
+            Permission:Permissions.SHOW_ORDERS
           },
-        ].filter(Boolean),
+        ],
         icon: () => {
           return <SalesIcon />;
         },
@@ -97,6 +98,7 @@ const useAuthLayoutHook = (permission) => {
         title: "tabs.shoping",
         path: "/product-floor",
         isList: true,
+        Permission:Permissions.SHOW_SHOPPING,
         icon: () => {
           return <ShopingIcon />;
         },
@@ -107,17 +109,20 @@ const useAuthLayoutHook = (permission) => {
         key: "customers",
         title: "tabs.customers",
         path: "/customers",
+        Permission:Permissions.SHOW_CUSTOMERS,
         isList: true,
         list: [
           {
             key: "customers",
             title: "tabs.customers",
             path: "/customers",
+            Permission:Permissions.SHOW_CLIENT,
           },
           {
             key: "suppliers",
             title: "tabs.suppliers",
             path: "/suppliers",
+            Permission:Permissions.SHOW_SUPPLIER,
           },
         ],
         icon: () => {
@@ -130,6 +135,7 @@ const useAuthLayoutHook = (permission) => {
         key: "reports",
         title: "tabs.reports",
         path: "/product-floor",
+        Permission:Permissions.SHOW_REPORTS,
         isList: true,
         icon: () => {
           return <ReportsIcon />;
@@ -150,6 +156,7 @@ const useAuthLayoutHook = (permission) => {
         isLine: false,
         key: "materials",
         title: "tabs.materials",
+        Permission:Permissions.SHOW_MATERIALS,
         path: "/materials",
         isList: false,
         icon: () => {
@@ -162,6 +169,7 @@ const useAuthLayoutHook = (permission) => {
         key: "machines",
         title: "tabs.machines",
         path: "/machines",
+        Permission:Permissions.SHOW_MACHINES,
         isList: false,
         icon: () => {
           return <ProductsIcon />;
@@ -173,6 +181,7 @@ const useAuthLayoutHook = (permission) => {
         key: "actions",
         title: "tabs.actions",
         path: "/actions",
+        Permission:Permissions.SHOW_ACTIONS,
         isList: false,
         icon: () => {
           return <ProductsIcon />;
@@ -184,6 +193,7 @@ const useAuthLayoutHook = (permission) => {
         key: "settings",
         title: "tabs.settings",
         path: "/settings",
+        Permission:Permissions.SHOW_SETTINGS,
         isList: false,
         icon: () => {
           return <SettingNavBar />;

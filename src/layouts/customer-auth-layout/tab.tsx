@@ -73,7 +73,7 @@ const Tab = ({ tab }: IProps) => {
         ) : (
           <div style={{ marginLeft: 5 }} />
         )}
-        <div>{tab?.icon()}</div>
+        <div>{tab && tab?.icon()}</div>
         <div style={clasess.tabTitle}>
           {!navStatus.isClosed ? t(tab.title) : null}
         </div>
