@@ -87,25 +87,14 @@ const LeftSideLayout = () => {
           alignSelf: "flex-start",
         }}
       >
-         {/* {[...tabs2  , ...tabs3 ].map((tab) => {
-          if (tab.isLine) {
-            return (
-              <div style={clasess.lineContainer}>
-                <div key={tab.key} style={clasess.line} />
-              </div>
-            );
-          } else {
-            if(tab.Permission !== null && CheckPermission(tab.Permission) === true)
-              return <Tab key={tab.key} tab={tab} />;
-          }
-        })} */}
+  
         {tabs2.every(tab => tab.Permission === false) ? (
-            // Render the line
+      
             <div style={clasess.lineContainer}>
               <div style={clasess.line} />
             </div>
           ) : (
-            // Render the tabs
+           
             tabs2.map(tab => {
               if (tab.isLine) {
                 return (
@@ -116,7 +105,7 @@ const LeftSideLayout = () => {
               } else if (tab.Permission !== null && CheckPermission(tab.Permission) === true) {
                 return <Tab key={tab.key} tab={tab} />;
               } else {
-                return null; // Skip rendering the tab
+                return null; 
               }
             })
           )}
