@@ -38,20 +38,19 @@ const useCustomer = (Permission) => {
               setPermissions(validate?.data?.data?.permissions); 
               if(Permission !== null && Permission !== undefined)
               {
+            
                 if (permissions) {
-                    if (permissions.includes(Permission)) {
-                      // Permission exists in the permissions array
-                      console.log('Permission exists');
+                    if (permissions?.includes(Permission)) {
+                     return true;
+                   
                     } else {
-                      // Permission does not exist in the permissions array
-                      console.log('Permission does not exist');
+                     return false;
                     }
                 }else{
-                    console.log('Permission does not exist');
+                   return false;
                 }
-                    //  const isExist = permissions?.some((item)=>item.permission === Permission);
               }else{
-                console.log('Permission does not exist');
+              return false;
               }
             return true;
         }

@@ -13,6 +13,8 @@ import { useCustomers } from "../customers/use-customers";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
 import { useEffect } from "react";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import {Permissions} from '../../components/CheckPermission/enum';
 
 export default function Home() {
   const { t } = useTranslation();
@@ -34,7 +36,10 @@ export default function Home() {
     <CustomerAuthLayout>
       <div style={classes.headerStyle}>
         <HeaderTitle marginBottom="20px" title={t("suppliers.title")} />
-        <AddCustomerButton isValidCustomer={isValidCustomer} onCustomerAdd={onCustomerAdd} typeClient={CLIENT_TYPE.SUPPLIER}></AddCustomerButton>
+        <PermissionCheck userPermission={Permissions.EDIT_SUPPLIER} >
+            <AddCustomerButton isValidCustomer={isValidCustomer} onCustomerAdd={onCustomerAdd} typeClient={CLIENT_TYPE.SUPPLIER}></AddCustomerButton>
+        </PermissionCheck>
+     
       </div>
       <HeaderFilter
         typeClient={CLIENT_TYPE.SUPPLIER}

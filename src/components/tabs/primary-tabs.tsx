@@ -51,7 +51,7 @@ const PrimaryTabsComponent = ({tabs, children, navigationButtons}: ITabsProps) =
                     onChange={handleChange}
                     aria-label="tabs example">
                     {
-                        tabs?.map(tab => <PrimaryTab label={tab.title}/>)
+                        tabs?.map(tab => <PrimaryTab label={tab?.title}/>)
                     }
                 </PrimaryTabs>
                    
@@ -61,7 +61,7 @@ const PrimaryTabsComponent = ({tabs, children, navigationButtons}: ITabsProps) =
             </Stack>
             {
                 tabs?.map((tab, index: number) => <CustomTabPanel key={'tabs' + index} value={value} index={index}>
-                    {tab.component}
+                    {tab?.component}
                     <div style={{
                         display: 'flex',
                         justifyContent: 'flex-end' as 'flex-end',

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import { AddIcon } from "@/icons";
 
@@ -9,12 +9,16 @@ import { profitsState } from "../store/profits";
 import { productTestState } from "@/store/product-test";
 import { useEffect } from "react";
 import { useStyle } from "../style";
+import { permissionsState } from "@/store/permissions";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { PermissionCheck } from "@/components/CheckPermission";
 
 const ProductList = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
   const productTest = useRecoilValue<any>(productTestState);
+  const [permissions, setPermissions] = useRecoilState(permissionsState);
 
   useEffect(() => {
     if (!productTest && profitsStateValue?.testProductsState?.length > 0) {
@@ -75,28 +79,35 @@ const ProductList = () => {
               })}
             </>
           </div>
-          <div
-            style={clasess.addNewProductContainer2}
-            onClick={() => profitsStateValue.setOpenAddTestProductModal(true)}
-          >
-            <AddIcon />
-            <div style={clasess.addProductStyle}>
-              {t("products.profits.addNewProduct")}
-            </div>
-          </div>
+          <PermissionCheck userPermission={Permissions.ADD_NEW_CASE}>
+              <div
+                style={clasess.addNewProductContainer2}
+                onClick={() => profitsStateValue.setOpenAddTestProductModal(true)}
+              >
+                <AddIcon />
+                <div style={clasess.addProductStyle}>
+                  {permissions && permissions[Permissions.ADD_NEW_CASE] ? t("products.profits.addNewProduct") : null}
+                </div>
+              </div>
+          </PermissionCheck>
+        
         </div>
       ) : (
-        <div style={clasess.noDataContainer}>
-          <div
-            style={clasess.addNewProductContainer}
-            onClick={() => profitsStateValue.setOpenAddTestProductModal(true)}
-          >
-            <AddIcon />
-            <div style={clasess.addProductStyle}>
-              {t("products.profits.addNewProduct")}
-            </div>
-          </div>
-        </div>
+       
+           <PermissionCheck userPermission={Permissions.ADD_NEW_CASE}>
+                <div style={clasess.noDataContainer}></div>
+                  <div
+                    style={clasess.addNewProductContainer}
+                    onClick={() => profitsStateValue.setOpenAddTestProductModal(true)}
+                  >
+                    <AddIcon />
+                    <div style={clasess.addProductStyle}>
+                    {permissions && permissions[Permissions.ADD_NEW_CASE] ? t("products.profits.addNewProduct") : null}
+                    </div>
+                  </div>
+           </PermissionCheck>
+       
+       
       )}
 
       <AddTestProductModal />

@@ -12,6 +12,8 @@ import {SecondaryButton} from "@/components/button/secondary-button";
 import {usePrintHouseAddMachine} from "@/widgets/machines/hooks/use-print-house-add-machine";
 import {SideBarContainer} from "@/components/containers/side-bar-container";
 import {useTranslation} from "react-i18next";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const CustomerEditMachines = () => {
     const router = useRouter();
@@ -50,7 +52,9 @@ const CustomerEditMachines = () => {
     const Side = () => {
         return <SideList list={getPrintHouseMachinesList()} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
                          title={'Machines'} quickActions={true}>
-            <SecondaryButton variant={'contained'} style={{width: '100%'}} href={`/machines/add-machine/category/${categoryId}`}>{t('navigationButtons.add')}</SecondaryButton>
+                            <PermissionCheck userPermission={Permissions.ADD_MACHINE} >
+                                         <SecondaryButton variant={'contained'} style={{width: '100%'}} href={`/machines/add-machine/category/${categoryId}`}>{t('navigationButtons.add')}</SecondaryButton>
+                            </PermissionCheck>
         </SideList>
     }
     return (

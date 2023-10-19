@@ -6,7 +6,7 @@ import { useQuoteWidget } from "./use-quote-widget";
 import { useStyle } from "./style";
 import { Popover } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
-
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const QuoteWidget = ({ isAdmin = true }) => {
   const { clasess } = useStyle();
@@ -84,7 +84,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
         </div>
       </div>
       <div style={clasess.btnContainer}>
-      <PermissionCheck userPermission={"CreateQuote"} >
+      <PermissionCheck userPermission={Permissions.CREATE_QUOTES} >
         <GomakePrimaryButton
             // onClick={isAdmin ? onClcikCreateQuote : onClcikCreateQuoteForCustomer}
             onClick={

@@ -1,16 +1,21 @@
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useGomakeRouter } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EditIcon } from "@/icons";
+import { permissionsState } from "@/store/permissions";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilState } from "recoil";
 
 const useMaterials = ({ admin }: any) => {
   const { t } = useTranslation();
   const { navigate } = useGomakeRouter();
   const { primaryColor } = useGomakeTheme();
   const [term, setTerm] = useState("");
+  const [permissions, setPermissions] = useRecoilState(permissionsState);
   const [materilasSearched, setMaterilasSearched] = useState([]);
   const categoriesList = useMemo(() => {
     return [
@@ -266,19 +271,22 @@ const useMaterials = ({ admin }: any) => {
   };
   const tableHeaders = [
     t("materials.sheetPaper.category"),
-    t("materials.sheetPaper.viewMaterial"),
+    permissions && permissions[Permissions.EDIT_MATERIAL] ? t("materials.sheetPaper.viewMaterial") : null,
   ];
   const tableRows = selectList()?.map((category) => [
     category.title,
-    <PrimaryButton
-      startIcon={<EditIcon color={primaryColor(500)} width={20} height={20} />}
-      onClick={() => {
-        navigate(category.path);
-      }}
-      variant={"text"}
-    >
-      {t("materials.sheetPaper.view")}
-    </PrimaryButton>,
+    <PermissionCheck userPermission={Permissions.EDIT_MATERIAL} >
+           <PrimaryButton
+              startIcon={<EditIcon color={primaryColor(500)} width={20} height={20} />}
+              onClick={() => {
+                navigate(category.path);
+              }}
+              variant={"text"}
+            >
+              {t("materials.sheetPaper.view")}
+            </PrimaryButton>
+    </PermissionCheck>
+ ,
   ]);
 
   const filterArray = (array: any, searchText: string) =>

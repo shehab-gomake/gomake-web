@@ -13,6 +13,8 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { useEffect } from "react";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -88,11 +90,14 @@ export default function Home() {
     <CustomerAuthLayout permission={"ShowCustomer"}>
       <div style={classes.sameRow}>
         <HeaderTitle marginBottom="20px" title={t("customers.title")} />
-        <AddCustomerButton
-          isValidCustomer={isValidCustomer}
-          onCustomerAdd={onCustomerAdd}
-          typeClient={CLIENT_TYPE.CUSTOMER}
-        />
+        <PermissionCheck userPermission={Permissions.ADD_CLIENT} >
+          <AddCustomerButton
+            isValidCustomer={isValidCustomer}
+            onCustomerAdd={onCustomerAdd}
+            typeClient={CLIENT_TYPE.CUSTOMER}
+          />
+        </PermissionCheck>
+    
       </div>
       <HeaderFilter
         typeClient={CLIENT_TYPE.CUSTOMER}

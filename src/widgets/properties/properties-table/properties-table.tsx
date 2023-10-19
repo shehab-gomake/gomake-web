@@ -16,6 +16,10 @@ import { useTranslation } from "react-i18next";
 import { MoreMenuWidget } from "../more-circle";
 import { usePrintHouseActions } from "../hooks/use-print-house-action";
 import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { useRecoilState } from "recoil";
+import { permissionsState } from "@/store/permissions";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -44,6 +48,7 @@ const PropertiesTable = () => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { state, actionId } = usePrintHouseActions();
+  const [permissions, setPermissions] = useRecoilState(permissionsState);
   const [actionPropertyDetails, setActionPropertyDetails] = useState([
     { actionId: actionId, propertyId: "", ruleType: 0 },
   ]);
@@ -82,7 +87,7 @@ const PropertiesTable = () => {
                 {t("properties.type")}
               </StyledTableCell>
               <StyledTableCell align={"center"}>
-                {t("properties.more")}
+                {permissions && permissions[Permissions.EDIT_PROPERITES_PRICING_ACTIONS] ? t("properties.more") : null }
               </StyledTableCell>
             </TableRow>
           </TableHead>
@@ -108,12 +113,15 @@ const PropertiesTable = () => {
                     {property.ruleType == 0 ? "Output" : "Input"}{" "}
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>
-                    <MoreMenuWidget
-                      rules={property.actionRules}
-                      actionId={actionId}
-                      propertyId={property.propertyId}
-                      ruleType={property.ruleType}
-                    />
+                    <PermissionCheck userPermission={Permissions.EDIT_PROPERITES_PRICING_ACTIONS} >
+                        <MoreMenuWidget
+                          rules={property.actionRules}
+                          actionId={actionId}
+                          propertyId={property.propertyId}
+                          ruleType={property.ruleType}
+                        />
+                    </PermissionCheck>
+                  
                   </StyledTableCell>
                 </StyledTableRow>
               );

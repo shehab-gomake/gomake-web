@@ -1,5 +1,25 @@
 export  enum Permissions {
     SHOW_CLIENT = "ShowClient",
-    CREATE_QUOTES = "CreateQuote"
+    CREATE_QUOTES = "CreateQuote",
+    ADD_CLIENT = "AddClient",
+    EDIT_CLIENT="EditClient",
+    EDIT_SUPPLIER="EditSupplier",
+    EDIT_MATERIAL="EditMaterial",
+    ADD_MACHINE="AddMachine",
+    EDIT_MACHINE="EditMachine",
+    ADD_NEW_CASE = "AddNewCase",
+    EDIT_PROPERITES_PRICING_ACTIONS="EditPricingProperties",
+    EDIT_COMPANY_PROFILE="UpdateCompanyProfile",
+    ADD_PRODUCT = "AddProduct",
+    EDIT_PRODUCT="EditProduct",
+    ADD_EMPLOYEE="AddEmployee",
+    ADD_ROLE="AddRole",
+    SHOW_USERS="ShowUsers",
+    SHOW_PERMISSION_MANAGMENT="ShowPermissionManagment",
+    SHOW_PROFILE_COMPANY="ShowCompanyProfile",
+    SHOW_PRODUCT_MANAGMENT="ShowProductManagment",
+    SHOW_SHIPMENT="ShowShipmentsSetting",
+    SHOW_PRICING="ShowpricingSetting",
+    SHOW_PRODUCTS_SETTINGS = "ShowProductsSettings"
 }
 
