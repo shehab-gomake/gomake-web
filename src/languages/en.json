@@ -1957,5 +1957,5 @@
     "sendCopyToMainMail": "Send a copy to the primary email",
     "returnMail" : "Email returns to the agent's email if an email is set for him",
     "emailType" : "Email type /"
-  }
+    }
 }

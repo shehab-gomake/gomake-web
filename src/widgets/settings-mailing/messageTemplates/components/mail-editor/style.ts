@@ -32,22 +32,16 @@ const useStyle = () => {
                 lineHeight: "20px",
             },
             editorStyle1: {
-                backgroundColor: "#FFFFFF",
                 height: convertHeightToVH(150),
                 borderRadius: "0px 0px 12px 12px",
-                borderColor : "#9695C7",
-                borderWidth :"2px"
+                borderColor: "#9695C7"                
               },
+
               editorStyle2: {
-                backgroundColor: "#FFFFFF",
                 height: convertHeightToVH(300),
                 borderRadius: "0px 0px 12px 12px",
-                borderColor : "#9695C7",
+                borderColor: "#9695C7"        
               },
-            editorToolbarStyle: {
-                backgroundColor: primaryColor(50),
-                borderRadius: "12px",
-              }
         };
     }, []);
     return {

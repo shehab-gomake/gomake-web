@@ -7,7 +7,7 @@ import { useRecoilState } from "recoil";
 import { useSnackBar } from "@/hooks";
 import { allSMSTemplateGroupsState, editModalState, groupModalState, templateGroupState } from "./states/state";
 import { MoreMenuWidget } from "./messageTemplates/components/more-circle/index";
-import { UploadFileInput } from "./messageTemplates/components/upload-file/upload-file";
+import { PdfUploadComponent } from "./messageTemplates/components/upload-file/upload-file";
 
 const useMessageTemplate = () => {
   const { t } = useTranslation();
@@ -34,7 +34,7 @@ const useMessageTemplate = () => {
           document.subject,
           document.body,
           // <UploadFileInput selectedNameFile={document.file}/>,
-          <UploadFileInput />,
+          <PdfUploadComponent />,
           <MoreMenuWidget item={document} onClickDelete={onDeleteDocument} />
         ]);
         setAllTemplates(tableRows);

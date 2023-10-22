@@ -1,34 +1,38 @@
 import React, { useRef, useState } from 'react';
-import { PdfIcon } from '@/components/icons/pdf-icon';
-import { IconButton } from '@mui/material';
+import Stack from "@mui/material/Stack";
+import { IconButton } from "@mui/material";
 import { useStyle } from './style';
+import { PdfIcon } from '@/components/icons/pdf-icon';
 
-const UploadFileInput = () => {
-    const { classes } = useStyle();
-    const inputRef = useRef(null);
+const PdfUploadComponent = ({ onUpload  }: any) => {
+    const [selectedFile, setSelectedFile] = useState(null);
     const [selectedFileName, setSelectedFileName] = useState('order summary.pdf');
+    const inputRef = useRef(null);
+    const { classes } = useStyle();
 
     const handleFileSelect = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setSelectedFileName(file.name);
-        } else {
-            setSelectedFileName('order summary.pdf');
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setSelectedFile(e.target.result);
+                setSelectedFileName(file.name);
+
+            };
+            reader.readAsDataURL(file);
         }
     };
 
-    const openFileSelector = () => {
-        inputRef.current.click();
-    };
-
     return (
-        <div style={classes.pdfCellStyle}>
-            <IconButton onClick={openFileSelector}>
-                <PdfIcon height={19.66} width={16} />
-            </IconButton>
-            <label style={classes.pdfLabelStyle}>
-                {selectedFileName}
-            </label>
+        <Stack direction={"column"} alignItems={'center'} justifyContent={'center'} gap={'10px'}>
+            <div style={{ display: "flex", width: "180px", height: "40px", background:  "#EBECFF", borderRadius: "4px", justifyContent: "center", alignItems: "center" }}>
+                <IconButton onClick={() => inputRef.current?.click()}>
+                    <PdfIcon height={19.66} width={16} />
+                </IconButton>
+                <label style={classes.labelStyle}>
+                    {selectedFileName}
+                </label>
+            </div>
             <input
                 type="file"
                 accept=".pdf"
@@ -36,8 +40,9 @@ const UploadFileInput = () => {
                 style={{ display: 'none' }}
                 ref={inputRef}
             />
-        </div>
+        </Stack>
     );
-};
+}
 
-export { UploadFileInput };
+
+export { PdfUploadComponent };

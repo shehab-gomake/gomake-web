@@ -16,7 +16,13 @@ const useStyle = () => {
                 gap: "10px",
                 alignItems: "center",
                 justifyContent : "flex-start",
-            }
+            },
+            labelStyle :{
+                ...FONT_FAMILY.Lexend(400, 12),
+                color: primaryColor(300),
+
+            },
+
         };
     }, []);
     return {

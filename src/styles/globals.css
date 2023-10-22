@@ -136,3 +136,16 @@ input::placeholder {
 .MuiAccordionDetails-root{
   padding-top: 12px !important;
 }
+
+.ql-toolbar.ql-snow {
+  background-color: #EBECFF;
+  border-radius: 12px 12px 0px 0px;
+  border-color: #9695C7 !important;
+}
+.ql-toolbar.ql-snow .ql-bold {
+  /* Customize the "Bold" button */
+  color: white;             /* Change the text color */
+  border-radius: 3px;       /* Add border radius */
+  margin-right: 5px;        /* Add some spacing */
+  border-color: red;
+}
