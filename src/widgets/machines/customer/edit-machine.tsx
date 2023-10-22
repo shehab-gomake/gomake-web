@@ -52,7 +52,7 @@ const CustomerEditMachines = () => {
     const Side = () => {
         return <SideList list={getPrintHouseMachinesList()} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
                          title={'Machines'} quickActions={true}>
-                            <PermissionCheck userPermission={Permissions.ADD_MACHINE} >
+                            <PermissionCheck userPermission={Permissions.EDIT_MACHINE} >
                                          <SecondaryButton variant={'contained'} style={{width: '100%'}} href={`/machines/add-machine/category/${categoryId}`}>{t('navigationButtons.add')}</SecondaryButton>
                             </PermissionCheck>
         </SideList>

@@ -12,12 +12,14 @@ import LockIcon from "@mui/icons-material/Lock";
 import { usePermission } from "@/hooks/use-permission";
 const LeftSideLayout = () => {
   const { t } = useTranslation();
-  const [permissions, setPermissions] = useRecoilState(permissionsState);
-  const { tabs1, tabs2, tabs3, profile } = useAuthLayoutHook(permissions);
+
+  const { tabs1, tabs2, tabs3, profile } = useAuthLayoutHook();
+ 
+
+
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
   const { CheckPermission } = usePermission();
-  console.log("tabs2.length : " , tabs2.length)
   const { clasess } = useStyle({ navStatus });
   return (
     <div
@@ -74,8 +76,7 @@ const LeftSideLayout = () => {
               </div>
             );
           } else {
-           
-                   return <Tab key={tab.key} tab={tab} />;
+               return <Tab key={tab.key} tab={tab} />;
           }
         })}
       </div>
@@ -95,7 +96,8 @@ const LeftSideLayout = () => {
             </div>
           ) : (
            
-            tabs2.map(tab => {
+            [...tabs2, ...tabs3].map(tab => {
+    
               if (tab.isLine) {
                 return (
                   <div style={clasess.lineContainer} key={tab.key}>
@@ -104,9 +106,8 @@ const LeftSideLayout = () => {
                 );
               } else if (tab.Permission !== null && CheckPermission(tab.Permission) === true) {
                 return <Tab key={tab.key} tab={tab} />;
-              } else {
-                return null; 
               }
+             
             })
           )}
        

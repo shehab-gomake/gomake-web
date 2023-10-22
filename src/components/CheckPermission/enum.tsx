@@ -6,7 +6,7 @@ export  enum Permissions {
     EDIT_SUPPLIER="EditSupplier",
     EDIT_MATERIAL="EditMaterial",
     ADD_MACHINE="AddMachine",
-    EDIT_MACHINE="EditMachine",
+    EDIT_MACHINE="EditMachines",
     ADD_NEW_CASE = "AddNewCase",
     EDIT_PROPERITES_PRICING_ACTIONS="EditPricingProperties",
     EDIT_COMPANY_PROFILE="UpdateCompanyProfile",
@@ -27,11 +27,14 @@ export  enum Permissions {
     SHOW_SHOPPING="ShowShopping",
     SHOW_CUSTOMERS="ShowCustomers",
     SHOW_REPORTS="ShowReports",
-    SHOW_MATERIALS="ShowMaterial",
+    SHOW_MATERIALS="Show Material",
     SHOW_MACHINES="ShowMachines",
     SHOW_ACTIONS="ShowActions",
-    SHOW_SETTINGS="ShowSettings",
+    SHOW_SETTINGS="ShowSetting",
     SHOW_SUPPLIER="ShowSupplier",
-    SHOW_SALES="ShowSales"
+    SHOW_SALES="ShowSales",
+    EDIT_PRICE_QUOTE="EditPriceQuote",
+    SHOW_LOGGERS_QUOTE="ShowLoggersQuote",
+    SHOW_LOGGERS_ORDER="ShowLoggersOrders"
 }
 

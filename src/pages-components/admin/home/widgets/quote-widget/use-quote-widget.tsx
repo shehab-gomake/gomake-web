@@ -9,6 +9,8 @@ import {
 import { useTranslation } from "react-i18next";
 
 const useQuoteWidget = () => {
+
+  console.log("useQuoteWidget page")
   const { t } = useTranslation();
 
   const { callApi } = useGomakeAxios();

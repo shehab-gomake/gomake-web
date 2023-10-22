@@ -10,8 +10,8 @@ import {userProfileState} from "@/store/user-profile";
 import {useTranslation} from "react-i18next";
 
 
-const useCustomer = (Permission) => {
-    console.log("useCustomer" , Permission)
+const useCustomer = (permissionEnumValue) => {
+  
     const {callApi} = useGomakeAxios();
     const [user, setUser] = useRecoilState<any>(userState);
     const setUserProfile = useSetRecoilState(userProfileState);
@@ -37,21 +37,23 @@ const useCustomer = (Permission) => {
                 localStorage.setItem('systemLanguage', validate?.data?.data?.customer?.systemLanguage)
                 i18n.changeLanguage(validate?.data?.data?.customer?.systemLanguage).then();
             }
-             // setPermissions(validate?.data?.data?.permissions); 
-              if(Permission !== null && Permission !== undefined)
+
+         
+              setPermissions(validate?.data?.data?.customer?.permissions); 
+              if(permissionEnumValue !== null && permissionEnumValue !== undefined)
               {
-                if (validate?.data?.data?.permissions) {
-                    if (validate?.data?.data?.permissions?.includes(Permission)) {
-                    // return true;
+             
+                if (validate?.data?.data?.customer?.permissions) {
+                 
+                    if (validate?.data?.data?.customer?.permissions?.includes(permissionEnumValue)) {
+                     return true;
                    
                     } else {
-                   //  return false;
+                     return false;
                     }
                 }else{
-                  // return false;
+                   return false;
                 }
-              }else{
-          //    return false;
               }
             return true;
         }

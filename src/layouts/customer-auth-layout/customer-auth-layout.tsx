@@ -8,8 +8,9 @@ import { navStatusState } from "@/store/nav-status";
 import { hoverStatusState } from "@/store";
 import { useEffect } from "react";
 
-const CustomerAuthLayout = ({ children , permission }: IAuthLayout) => {
-  const { canAccess  } = useAuthLayoutHook(permission);
+const CustomerAuthLayout = ({ children , permissionEnumValue }: IAuthLayout) => {
+
+  const { canAccess  } = useAuthLayoutHook(permissionEnumValue);
   const { clasess } = useStyle({ isHover: false, navStatus: null });
   const setNavStatus = useSetRecoilState(navStatusState);
   const isHover = useRecoilValue(hoverStatusState);

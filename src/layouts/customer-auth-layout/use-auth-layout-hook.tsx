@@ -13,12 +13,12 @@ import { useEffect, useMemo, useState } from "react";
 import { CubeIcon } from "@/components/icons/cube-icon";
 import { useRecoilState } from "recoil";
 import { ICompanyProfile, companyProfileState } from "@/store/company-profile";
-import { usePermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 
 
-const useAuthLayoutHook = (permission) => {
-  const { isAuth } = useGomakeAuth(permission);
+const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
+
+  const { isAuth } = useGomakeAuth(permissionEnumValue);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
   const tabs1: any = useMemo(() => {
@@ -221,7 +221,11 @@ const useAuthLayoutHook = (permission) => {
     getUserProfile();
   }, []);
 
+  const permissionsofTabs = [tabs1, tabs2, tabs3];
+  
+
   return {
+    permissionsofTabs,
     tabs1,
     tabs2,
     tabs3,

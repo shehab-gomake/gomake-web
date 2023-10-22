@@ -10,10 +10,10 @@ interface PermissionCheckProps {
 
 const PermissionCheck: React.FC<PermissionCheckProps> = ({ userPermission, children }) => {
   const [permissions, setPermissions] = useRecoilState(permissionsState);
-
  
   if(permissions){
-    if (permissions[userPermission]) {
+    const res = permissions.includes(userPermission);
+    if (res) {
       return children;
     } else {
       return null;

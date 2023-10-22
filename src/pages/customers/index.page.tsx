@@ -87,7 +87,7 @@ export default function Home() {
   ]);
 
   return (
-    <CustomerAuthLayout permission={"ShowCustomer"}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_CUSTOMERS}>
       <div style={classes.sameRow}>
         <HeaderTitle marginBottom="20px" title={t("customers.title")} />
         <PermissionCheck userPermission={Permissions.ADD_CLIENT} >

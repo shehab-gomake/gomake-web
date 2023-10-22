@@ -3,6 +3,8 @@ import {
   GomakePrimaryButton,
   GomakeTextInput,
 } from "@/components";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { isLoadgingState } from "@/store";
 import { Checkbox, CircularProgress, Slider } from "@mui/material";
@@ -117,7 +119,10 @@ const RightSideWidget = ({
           })}
         </div>
         <div style={clasess.progress}>
-          <Slider defaultValue={50} aria-label="Default" />
+          <PermissionCheck userPermission={Permissions.EDIT_PRICE_QUOTE}>
+               <Slider defaultValue={50} aria-label="Default" />
+          </PermissionCheck>
+      
         </div>
         <div style={clasess.labelBrogressContainer}>
           <div style={clasess.labelStyle}>10.00</div>
@@ -129,7 +134,8 @@ const RightSideWidget = ({
           </div>
           <div style={clasess.totalStyle}>
             {isLoading ? (
-              <CircularProgress size={25} style={{ marginRight: 40 }} />
+               <CircularProgress size={25} style={{ marginRight: 40 }} />
+             
             ) : (
               <GomakeTextInput
                 value={defaultPrice}
