@@ -20,9 +20,7 @@ const useStyle = () => {
             labelStyle :{
                 ...FONT_FAMILY.Lexend(400, 12),
                 color: primaryColor(300),
-
             },
-
         };
     }, []);
     return {

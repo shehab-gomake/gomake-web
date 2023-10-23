@@ -1,5 +1,5 @@
 
-import { getAllTemplatesApi, addNewSmsTemplateGroup, getAllGroupTemplatesApi, deleteSmsTemplateApi, updateSmsTemplateApi } from "@/services/api-service/mailing/mailing-api";
+import { getAllTemplatesApi, addNewSmsTemplateGroup, getAllGroupTemplatesApi, updateSMSTemplateApi } from "@/services/api-service/mailing/mailing-api";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
@@ -35,7 +35,7 @@ const useMessageTemplate = () => {
           document.body,
           // <UploadFileInput selectedNameFile={document.file}/>,
           <PdfUploadComponent />,
-          <MoreMenuWidget item={document} onClickDelete={onDeleteDocument} />
+          <MoreMenuWidget item={document} onClickDelete={null} />
         ]);
         setAllTemplates(tableRows);
       }
@@ -43,19 +43,7 @@ const useMessageTemplate = () => {
     getAllTemplatesApi(callApi, callBackFunction).then();
   }
 
-  // onDeleteFunction
-  const onDeleteDocument = async (smsTemplate) => {
-    const callback = (data) => {
-      if (data.success) {
-        alertSuccessDelete();
-        getAllTemplates();
-      } else {
-        alertFaultDelete();
-      }
-    }
-    await deleteSmsTemplateApi(callApi, callback, smsTemplate);
-  }
-
+ 
   // select options 
   const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(allSMSTemplateGroupsState);
   const getSMSTemplateGroups = () => {
@@ -92,7 +80,7 @@ const useMessageTemplate = () => {
         alertFaultUpdate();
       }
     }
-    await updateSmsTemplateApi(callApi, callback, smsTemplate);
+    await updateSMSTemplateApi(callApi, callback, smsTemplate);
   }
 
   return {

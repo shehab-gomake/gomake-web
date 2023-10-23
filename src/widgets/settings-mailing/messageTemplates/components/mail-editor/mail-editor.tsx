@@ -14,16 +14,13 @@ export interface IProps {
 const EmailSettings = ({ onClickSave }: IProps) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
-    const { text, setText,  text1, setText1 , state, renderHeader } = useEmailSetting();
+    const { text, setText,  text1, setText1 , state, renderHeader  } = useEmailSetting();
 
     const handleResetClick = () => {
         setText(null);
         setText1(null);
     };
 
-
-
-    
 
     return (
 
@@ -34,7 +31,7 @@ const EmailSettings = ({ onClickSave }: IProps) => {
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 <h5 style={classes.headerStyle}>{t("mailingSettings.body")}</h5>
-                <Editor value={text1} onTextChange={(e) => setText1(e.htmlValue)} style={classes.editorStyle2} headerTemplate={renderHeader()} />
+                <Editor value={text1} onTextChange={(e) => setText1(e.htmlValue)} style={classes.editorStyle2} headerTemplate={renderHeader()} /> 
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "flex-start" }}>
                 <h5 style={classes.headerStyle}>{t("mailingSettings.attachment")}</h5>

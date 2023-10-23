@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
-import { Stack } from "@mui/material";
+import { Stack, Tooltip } from "@mui/material";
 import { smsTemplateState, textState } from "@/widgets/settings-mailing/states/state";
 import { useStyle } from "./style";
 import { toolBarInputs } from "./inputs";
@@ -38,11 +38,10 @@ const useEmailSetting = () => {
     { label: t("mailingSettings.approveLink"), value: "{{approveLink}}" },
 
 
-
   ];
 
   const handleOptionClick = (option) => {
-    const newText = text1?.endsWith('<p><br></p>') ? text?.slice(0, -8) : text?.slice(0, -4);
+    const newText = text1?.endsWith('<p><br></p>') ? text1?.slice(0, -8) : text1?.slice(0, -4);
     option.value && setText1(text1 ? newText + " " + option.value + " </p>" : "<p>" + option.value + " </p>");
   };
 
@@ -61,7 +60,6 @@ const useEmailSetting = () => {
   const [state, setState] = useRecoilState<any>(smsTemplateState);
   const renderHeader = () => {
     return (
-
       <span className="ql-formats"  >
         <Stack direction={'row'} gap={"2px"} >
           <select className="ql-header" data-pc-section="header"></select>
@@ -74,36 +72,52 @@ const useEmailSetting = () => {
           <select className="ql-align" data-pc-section="select"></select>
           <button className="ql-image" aria-label="Insert Image" data-pc-section="image"></button>
           <button className="ql-code-block ql-active" aria-label="Insert Code Block" data-pc-section="codeblock"></button>
-          {toolBarInputs(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)}
-          <PdfUploadComponent onUpload={(value) => alert(value)} ></PdfUploadComponent>
+          {/* {toolBarInputs(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)}
+          <PdfUploadComponent onUpload={(value) => alert(value)} ></PdfUploadComponent> */}
         </Stack>
 
-        <div className="options-container" ref={containerRef}>
-            <Stack className="options" direction={'row'} gap={'20px'} padding={'20px'} >
-              <button onClick={scrollLeft}>&#9664;</button>
-              {options.map((option) => (
-                <div
-                  key={option.value}
-                  className={`option ${selectedOption === option ? 'selected' : ''}`}
-                  onClick={() => handleOptionClick(option)}
-                >
-                  {option.label}
-                </div>
-              ))}
-              <button onClick={scrollRight}>&#9654;</button>
-            </Stack>
-          </div>
+        <div className="options-container" >
+          <Stack className="options" display={"flex"} direction={'row'} gap={'8px'} padding={'20px'} >
+            {options.map((option) => (
+              <div style={classes.variableStyle}
+                key={option.value}
+                className={`option ${selectedOption === option ? 'selected' : ''}`}
+                onClick={() => handleOptionClick(option)}
+              >
+                {option.label}
+              </div>
+            ))}
+          </Stack>
+        </div>
         
-
       </span>
     );
   };
 
+
+
+
+
+//   <div className="options-container" 
+//   style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
+//   <div className="scroll-button left" onClick={scrollLeft}>{"<ffff"}</div>
+//   <Stack className="options" display={"flex"} direction={'row'} gap={'8px'} padding={'20px'} >
+//     {options.map((option) => (
+//       <div style={classes.variableStyle}
+//         key={option.value}
+//         className={`option ${selectedOption === option ? 'selected' : ''}`}
+//         onClick={() => handleOptionClick(option)}
+//       >
+//         {option.label}
+//       </div>
+//     ))}
+//   </Stack>
+//   <div className="scroll-button right" onClick={scrollRight}>{"ddddd>"}</div>
+// </div>
   const [text, setText] = useRecoilState<string>(textState);
   const [text1, setText1] = useState<string>(state?.body);
-
-
   const [value, setValue] = useState([]);
+
   const onChangeInputs = (key, value) => {
     if (key == "variable") {
       const newText = text?.endsWith('<p><br></p>') ? text?.slice(0, -8) : text?.slice(0, -4);
@@ -115,11 +129,12 @@ const useEmailSetting = () => {
   return {
     variables,
     text,
-    setText, 
-    text1, setText1, 
+    setText,
+    text1, setText1,
     value,
     setValue,
-    state, setState, onChangeInputs, renderHeader
+    state,
+    setState, onChangeInputs, renderHeader
   };
 };
 
