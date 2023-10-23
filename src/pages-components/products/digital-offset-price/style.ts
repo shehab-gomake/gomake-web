@@ -135,7 +135,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        gap: 16,
+        gap: 10,
         paddingBottom: 24,
       },
       parameterLabelStyle: {
@@ -155,7 +155,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        gap: 20,
+        gap: 10,
         width: "fit-content",
         minWidth: 180,
       },

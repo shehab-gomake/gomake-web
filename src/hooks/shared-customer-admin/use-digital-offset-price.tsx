@@ -60,7 +60,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     useRecoilState<any>(digitslPriceState);
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(true);
-
+  console.log("generalParameters", generalParameters);
   useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0) {
       const workFlowSelect = pricingDefaultValue?.workFlows?.find(
@@ -93,11 +93,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setIsRequiredParameters(temp);
     }
   }, [template]);
+  const [relatedParameters, setRelatedParameters] = useState([]);
+  console.log("relatedParameters111", relatedParameters);
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let sectionData: any = [...template?.sections];
       const newGeneralParameters = [];
       const typeMap = {};
+      let relatedParametersArray = [];
       sectionData.forEach((section) => {
         section.subSections.forEach((subSection) => {
           if (subSection.type) {
@@ -105,6 +108,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subSection.parameters
               .filter((parameter) => !parameter.isHidden)
               .forEach((parameter) => {
+                relatedParametersArray.push(...parameter.relatedParameters);
                 if (
                   parameter?.parameterType === 1 ||
                   parameter?.parameterType === 2 ||
@@ -211,6 +215,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     item.sectionId === section?.id &&
                     item.subSectionId === subSection?.id
                 );
+                relatedParametersArray.push(...parameter.relatedParameters);
+
                 if (index !== -1) {
                   temp[index] = {
                     ...temp[index],
@@ -384,6 +390,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const newSubProducts2 = Object.values(typeMap);
       setGeneralParameters(newGeneralParameters);
       setSubProducts(newSubProducts2);
+      setRelatedParameters(relatedParametersArray);
     }
   }, [template, materialsEnumsValues, allMaterials]);
 
@@ -477,8 +484,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     parameter: any,
     subSection: any,
     section: any,
-    subSectionParameters
+    subSectionParameters,
+    value,
+    list
   ) => {
+    let Comp;
     if (subSection?.type) {
       const allParameters = subProducts.flatMap((item) => item.parameters);
       let temp = [...allParameters];
@@ -488,8 +498,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           item.sectionId === section?.id &&
           item.subSectionId === subSection?.id
       );
+
       if (parameter?.parameterType === 1) {
-        return (
+        Comp = (
           <GomakeTextInput
             style={clasess.textInputStyle}
             defaultValue={parameter.defaultValue}
@@ -512,7 +523,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           />
         );
       } else if (parameter?.parameterType === 2) {
-        return (
+        Comp = (
           <GomakeTextInput
             style={clasess.textInputStyle}
             defaultValue={parameter.defaultValue}
@@ -539,7 +550,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           (item) => item.isDefault === true
         );
 
-        return (
+        Comp = (
           <GoMakeAutoComplate
             options={parameter?.valuesConfigs?.filter(
               (value) => !value.isHidden
@@ -569,7 +580,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const defaultObject = parameter.valuesConfigs.find(
           (item) => item.isDefault === true
         );
-        return (
+        Comp = (
           <GoMakeAutoComplate
             options={parameter?.valuesConfigs?.filter(
               (value) => !value.isHidden
@@ -621,13 +632,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   }
                 });
 
-                return temp;
+                Comp = temp;
               });
             }}
           />
         );
       } else if (parameter?.parameterType === 3) {
-        return (
+        Comp = (
           <SecondSwitch
             defaultChecked={parameter?.defaultValue === "true"}
             checked={
@@ -649,7 +660,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           />
         );
       } else if (parameter?.parameterType === 4) {
-        return (
+        Comp = (
           <GomakePrimaryButton
             style={clasess.dynamicBtn}
             onClick={onOpeneChooseShape}
@@ -742,7 +753,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               defailtObjectValue = selectedObj;
             }
           }
-          return (
+          Comp = (
             <>
               {options?.length > 0 && (
                 <GoMakeAutoComplate
@@ -841,7 +852,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           item.subSectionId === subSection?.id
       );
       if (parameter?.parameterType === 1) {
-        return (
+        Comp = (
           <GomakeTextInput
             style={clasess.textInputStyle}
             defaultValue={parameter.defaultValue}
@@ -863,7 +874,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           />
         );
       } else if (parameter?.parameterType === 2) {
-        return (
+        Comp = (
           <GomakeTextInput
             style={clasess.textInputStyle}
             defaultValue={parameter.defaultValue}
@@ -888,7 +899,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const defaultObject = parameter.valuesConfigs.find(
           (item) => item.isDefault === true
         );
-        return (
+        Comp = (
           <GoMakeAutoComplate
             options={parameter?.valuesConfigs?.filter(
               (value) => !value.isHidden
@@ -922,7 +933,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const defaultObject = parameter.valuesConfigs.find(
           (item) => item.isDefault === true
         );
-        return (
+        Comp = (
           <GoMakeAutoComplate
             options={parameter?.valuesConfigs?.filter(
               (value) => !value.isHidden
@@ -979,7 +990,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           />
         );
       } else if (parameter?.parameterType === 3) {
-        return (
+        Comp = (
           <SecondSwitch
             defaultChecked={parameter?.defaultValue === "true"}
             checked={
@@ -1000,7 +1011,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           />
         );
       } else if (parameter?.parameterType === 4) {
-        return (
+        Comp = (
           <GomakePrimaryButton
             style={clasess.dynamicBtn}
             onClick={onOpeneChooseShape}
@@ -1092,7 +1103,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               defailtObjectValue = selectedObj;
             }
           }
-          return (
+          Comp = (
             <>
               {options?.length > 0 && (
                 <GoMakeAutoComplate
@@ -1180,6 +1191,76 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
       }
     }
+
+    return (
+      <div style={{ display: "flex" }}>
+        <div style={clasess.parameterContainer}>
+          <div
+            style={
+              value?.value === "true"
+                ? clasess.parameterType3ActiveLabelStyle
+                : clasess.parameterLabelStyle
+            }
+          >
+            {parameter?.name}
+            {parameter?.isRequired ? (
+              <span style={clasess.spanRequierd}> *</span>
+            ) : null}
+          </div>
+          <div style={clasess.renderParameterTypeContainer}>{Comp}</div>
+        </div>
+
+        {parameter.relatedParameters?.length > 0 && (
+          <>
+            {parameter.relatedParameters.map((relatedParameter) => {
+              const parm = generalParameters.find(
+                (param) => param.parameterId === parameter.id
+              );
+              const myParameter = list.find(
+                (p) => p.id === relatedParameter.parameterId
+              );
+              console.log("myParameter", myParameter);
+              if (relatedParameter.activateByAllValues && parm?.value) {
+                return (
+                  <div style={clasess.parameterContainer}>
+                    <div style={clasess.renderParameterTypeContainer}>
+                      {_renderParameterType(
+                        myParameter,
+                        subSection,
+                        section,
+                        subSection?.parameters,
+                        myParameter.value,
+                        list
+                      )}
+                    </div>
+                  </div>
+                );
+              } else {
+                const valueInArray = relatedParameter.selectedValueIds.find(
+                  (c) => c == parm?.valueId
+                );
+                if (valueInArray) {
+                  return (
+                    <div style={clasess.parameterContainer}>
+                      <div style={clasess.renderParameterTypeContainer}>
+                        {_renderParameterType(
+                          myParameter,
+                          subSection,
+                          section,
+                          subSection?.parameters,
+                          myParameter.value,
+                          list
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
+              }
+            })}
+          </>
+        )}
+      </div>
+    );
   };
   const onChangeForPrice = (
     parameterId: any,
@@ -1564,6 +1645,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     errorMsg,
     generalParameters,
     workFlowSelected,
+    relatedParameters,
   };
 };
 

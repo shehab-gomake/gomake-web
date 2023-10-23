@@ -58,6 +58,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     errorMsg,
     generalParameters,
     workFlowSelected,
+    relatedParameters,
   } = useDigitalOffsetPrice({ clasess, widgetType });
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
@@ -140,6 +141,8 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     section={section}
                                     _renderParameterType={_renderParameterType}
                                     _getParameter={_getParameter}
+                                    relatedParameters={relatedParameters}
+                                    generalParameters={generalParameters}
                                   />
                                 );
                               }
