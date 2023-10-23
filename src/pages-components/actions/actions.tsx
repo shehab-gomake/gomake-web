@@ -26,6 +26,7 @@ const ActionPageWidget = () => {
           stickyHeader={false}
           rows={allActions}
           headers={tableHeaders}
+          
         />
       )}
     </div>

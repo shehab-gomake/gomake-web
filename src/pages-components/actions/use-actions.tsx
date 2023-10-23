@@ -66,14 +66,21 @@ const useActions = () => {
         {t("materials.buttons.edit")}
       </PrimaryButton>,
     ]);
-    setAllActions(mapData);
+  
+  
+    const filteredArray = mapData.map(subArray => [
+      subArray[0],
+      ...subArray.slice(2)
+    ]);
+    setAllActions(filteredArray);
+    console.log("allActions is a mapData is , " , filteredArray);
   }, []);
   useEffect(() => {
     getActions();
   }, []);
   const tableHeaders = [
     t("products.actions.actionName"),
-    t("products.actions.internalSource"),
+    //t("products.actions.internalSource"),
     t("products.actions.active"),
     t("products.actions.profit"),
     t("products.actions.properties"),
@@ -85,7 +92,7 @@ const useActions = () => {
       return matches.length > 0;
     });
 
-  useEffect(() => {
+  useEffect(() => { 
     if (allActions?.length) {
       const temp = filterArray(allActions, term);
       setMaterilasSearched(temp);
