@@ -218,6 +218,7 @@ const useQuotes = () => {
     t("sales.quote.status"),
     t("sales.quote.more"),
   ];
+
   const quoteStatuses = [
     {
       label: t("sales.quote.create"),

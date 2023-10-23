@@ -6,7 +6,8 @@ const useFormatedDate = () => {
 
     const SetFormateDate = (date : Date) =>{
        const utcDate  =  moment.utc(date).tz("UTC");
-       return   utcDate.local();
+       console.log(" utcDate is "  , utcDate.local().format())
+       //return   utcDate.local();
     }
   return {
     SetFormateDate
