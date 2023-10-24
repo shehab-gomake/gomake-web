@@ -43,12 +43,19 @@ const RightSideWidget = ({
     setSliderPrice(newValue as number);
   };
   useEffect(() => {
-    if (workFlowSelected) {
-      setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2) - sliderPrice);
-    } else if (widgetType === EWidgetProductType.EDIT) {
-      setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.value);
+    if (
+      widgetType === EWidgetProductType.EDIT ||
+      widgetType === EWidgetProductType.DUPLICATE
+    ) {
+      setDefaultPrice(
+        template?.quoteItem?.unitPrice * quantity?.value - sliderPrice
+      );
     } else {
-      setDefaultPrice("----");
+      if (!isNaN(workFlowSelected?.totalPrice)) {
+        setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2) - sliderPrice);
+      } else {
+        setDefaultPrice("------");
+      }
     }
   }, [
     pricingDefaultValue,
@@ -57,6 +64,7 @@ const RightSideWidget = ({
     widgetType,
     quantity,
   ]);
+
   const { t } = useTranslation();
   return (
     <div style={clasess.rightSideMainContainer}>

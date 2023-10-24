@@ -73,6 +73,11 @@ const HeaderWidget = () => {
           <MenuItem
             style={{ width: "100%", minWidth: 200 }}
             onClick={() => navigate("/settings/profile")}
+            onMouseDown={(e) => {
+              if (e.button === 1) {
+                window.open("/settings/profile", "_blank");
+              }
+            }}
           >
             <div style={clasess.manageAccountStyle}>
               <div style={clasess.manageAccountTextStyle}>

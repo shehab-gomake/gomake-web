@@ -37,7 +37,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [generalParameters, setGeneralParameters] = useState<any>([]);
   const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
-  const [defaultPrice, setDefaultPrice] = useState<any>(30);
+  const [defaultPrice, setDefaultPrice] = useState<any>("-----");
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
   const [template, setTemplate] = useState<any>([]);
   const [urgentOrder, setUrgentOrder] = useState(false);
@@ -1566,7 +1566,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         isNeedExample: false,
         jobDetails: pricingDefaultValue?.jobDetails,
         itemParmetersValues: itemParmetersValues,
-        workFlow: workFlowSelected,
+        workFlow: pricingDefaultValue?.workFlows,
         actions: pricingDefaultValue?.actions,
       }
     );
