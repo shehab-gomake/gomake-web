@@ -26,6 +26,7 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         marginBottom: 35,
+
       },
       leftSideContainer: {
         display: "flex",
@@ -33,6 +34,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "68%",
+
       },
       rightSideMainContainer: {
         display: "flex",
@@ -44,14 +46,13 @@ const useStyle = () => {
         maxWidth: 330,
         backgroundColor: "white",
         padding: 15,
-        marginTop: -87,
+        marginTop: -77,
         boxShadow: "0px 4px 40px 0px rgba(129, 129, 129, 0.12)",
         borderRadius: 5,
-        // height: 720,
       },
       rightSideContainer: {
-        height: "100%",
-        overflow: "scroll",
+        // height: "100%",
+        // overflow: "scroll",
         width: "100%",
       },
       tabsContainer: {
