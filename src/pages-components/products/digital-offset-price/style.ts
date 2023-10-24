@@ -174,6 +174,8 @@ const useStyle = () => {
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
+        ...FONT_FAMILY.Lexend(500,14),
+        color:"#000"
       },
       dropDownListStyle: {
         width: "100%",
@@ -181,6 +183,7 @@ const useStyle = () => {
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
+        ...FONT_FAMILY.Lexend(500,14)
         // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
       renderParameterTypeContainer: {
@@ -188,6 +191,7 @@ const useStyle = () => {
         width: "95%",
         backgroundColor: "#FFF",
         borderRadius: 4,
+        // backgroundColor:"red"
       },
 
       switchStyle: {
@@ -225,7 +229,7 @@ const useStyle = () => {
         width: "62%",
       },
       labelTextStyle: {
-        ...FONT_FAMILY.Lexend(500, 12),
+        ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
         marginBottom: 10,
       },

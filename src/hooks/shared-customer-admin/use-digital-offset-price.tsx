@@ -900,34 +900,38 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           (item) => item.isDefault === true
         );
         Comp = (
-          <GoMakeAutoComplate
-            options={parameter?.valuesConfigs?.filter(
-              (value) => !value.isHidden
-            )}
-            placeholder={parameter.name}
-            style={clasess.dropDownListStyle}
-            getOptionLabel={(option: any) => option.updateName}
-            defaultValue={
-              index !== -1 ? { updateName: temp[index].value } : defaultObject
-            }
-            onChange={(e: any, value: any) => {
-              onChangeForPrice(
-                parameter?.id,
-                subSection?.id,
-                section?.id,
-                parameter?.parameterType,
-                parameter?.name,
-                value?.activateAction === true ? parameter?.actionId : null,
-                {
-                  valueId: value?.id,
-                  value: value?.updateName,
-                  actionId:
-                    value?.activateAction === true ? parameter?.actionId : null,
-                },
-                index
-              );
-            }}
-          />
+          <div style={{ width: 220 }}>
+            <GoMakeAutoComplate
+              options={parameter?.valuesConfigs?.filter(
+                (value) => !value.isHidden
+              )}
+              placeholder={parameter.name}
+              style={clasess.dropDownListStyle}
+              getOptionLabel={(option: any) => option.updateName}
+              defaultValue={
+                index !== -1 ? { updateName: temp[index].value } : defaultObject
+              }
+              onChange={(e: any, value: any) => {
+                onChangeForPrice(
+                  parameter?.id,
+                  subSection?.id,
+                  section?.id,
+                  parameter?.parameterType,
+                  parameter?.name,
+                  value?.activateAction === true ? parameter?.actionId : null,
+                  {
+                    valueId: value?.id,
+                    value: value?.updateName,
+                    actionId:
+                      value?.activateAction === true
+                        ? parameter?.actionId
+                        : null,
+                  },
+                  index
+                );
+              }}
+            />
+          </div>
         );
       } else if (parameter?.parameterType === 6) {
         const defaultObject = parameter.valuesConfigs.find(
@@ -1221,38 +1225,26 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               );
               console.log("myParameter", myParameter);
               if (relatedParameter.activateByAllValues && parm?.value) {
-                return (
-                  <div style={clasess.parameterContainer}>
-                    <div style={clasess.renderParameterTypeContainer}>
-                      {_renderParameterType(
-                        myParameter,
-                        subSection,
-                        section,
-                        subSection?.parameters,
-                        myParameter.value,
-                        list
-                      )}
-                    </div>
-                  </div>
+                return _renderParameterType(
+                  myParameter,
+                  subSection,
+                  section,
+                  subSection?.parameters,
+                  myParameter.value,
+                  list
                 );
               } else {
                 const valueInArray = relatedParameter.selectedValueIds.find(
                   (c) => c == parm?.valueId
                 );
                 if (valueInArray) {
-                  return (
-                    <div style={clasess.parameterContainer}>
-                      <div style={clasess.renderParameterTypeContainer}>
-                        {_renderParameterType(
-                          myParameter,
-                          subSection,
-                          section,
-                          subSection?.parameters,
-                          myParameter.value,
-                          list
-                        )}
-                      </div>
-                    </div>
+                  return _renderParameterType(
+                    myParameter,
+                    subSection,
+                    section,
+                    subSection?.parameters,
+                    myParameter.value,
+                    list
                   );
                 }
               }
