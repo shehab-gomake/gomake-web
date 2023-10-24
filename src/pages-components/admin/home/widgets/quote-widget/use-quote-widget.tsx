@@ -6,6 +6,7 @@ import {
   getAndSetAllCustomers,
   getAndSetClientTypes,
   getAndSetExistQuotes,
+  saveQuote,
 } from "@/services/hooks";
 import { useTranslation } from "react-i18next";
 
@@ -20,6 +21,7 @@ const useQuoteWidget = () => {
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
   const [QuoteExist, setQuoteExist] = useState<any>([]);
   const [canOrder, setCanOrder] = useState(false);
+  const [state,setState]=useState();
   const [selectedClientType, setSelectedClientType] = useState<any>({});
   const [selectedCustomersList, setSelectedCustomersList] = useState<any>({});
   const [selectedProduct, setSelectedProduct] = useState<any>({});
@@ -36,8 +38,8 @@ const useQuoteWidget = () => {
     setAnchorEl(null);
   };
 
-  const onClickSaveQuote = async () =>{
-    await getAndSetExistQuotes(callApi, );
+  const onClickSaveQuote = async (QuoteId) =>{
+    await saveQuote(callApi,QuoteId);
   };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;

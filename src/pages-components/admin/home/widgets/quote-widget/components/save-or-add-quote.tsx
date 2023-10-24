@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useQuoteWidget } from "../use-quote-widget";
 import { SecondaryButton } from "@/components/button/secondary-button";
 
-const SaveOrAddQuote =  ({ isAdmin = true }) =>{
+const SaveOrAddQuote =  ({ QuoteId , isAdmin = true }) =>{
     const { clasess } = useStyle();
     const { t } = useTranslation();
     const { isDisabled ,  handleClick , onClcikCreateQuote , onClcikCreateQuoteForCustomer , onClickSaveQuote}  = useQuoteWidget();
@@ -31,7 +31,7 @@ const SaveOrAddQuote =  ({ isAdmin = true }) =>{
                       <SecondaryButton
                             variant="contained"
                             style={{width:"100%",height:40}}
-                            onClick={onClickSaveQuote}
+                            onClick={()=> onClickSaveQuote(QuoteId)}
                             >
                             {t("home.admin.SaveQuote")}
                             </SecondaryButton>

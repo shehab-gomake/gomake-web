@@ -5,11 +5,12 @@ import { useQuoteWidget } from "./use-quote-widget";
 
 import { useStyle } from "./style";
 import { Popover } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SaveOrAddQuote } from "./components/save-or-add-quote";
 
 const QuoteWidget = ({ isAdmin = true }) => {
   const { clasess } = useStyle();
+  const [QuoteId ,  setQuoteId] = useState("");
   const { t } = useTranslation();
   const {
     clientTypesValue,
@@ -34,12 +35,11 @@ const QuoteWidget = ({ isAdmin = true }) => {
 
   const selectedOption = renderOptions().find(
     (item) => item.id == QuoteExist?.result?.clientId
-    
-    
   );
     useEffect(()=>{
       if(selectedOption)
       {
+        setQuoteId(QuoteExist?.result?.id);
           const client = clientTypesValue.find(
             (c) => c.id == selectedOption?.clientTypeId
           );
@@ -107,7 +107,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
         </div>
       </div>
           <div style={{width:"100%", display:"flex", justifyContent:"center"}}>
-             <SaveOrAddQuote/>
+             <SaveOrAddQuote QuoteId={QuoteId}/>
           </div>
           
       

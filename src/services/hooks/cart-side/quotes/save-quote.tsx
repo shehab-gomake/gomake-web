@@ -3,7 +3,6 @@ import { ICallApi, ISetState } from "../../call-api.interface";
 
 const saveQuote = async (
   callApi: ICallApi,
-  setState?: ISetState,
   data?
 ) => {
   const result: any = await callApi(
@@ -14,11 +13,9 @@ const saveQuote = async (
     }
   );
 
-  if (setState) {
-    setState(result);
-  }
+ 
   
-  return returnResult(result, setState);
+  return result
 };
 
 export { saveQuote };
