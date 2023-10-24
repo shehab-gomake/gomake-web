@@ -60,7 +60,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     useRecoilState<any>(digitslPriceState);
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(true);
-  console.log("generalParameters", generalParameters);
   useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0) {
       const workFlowSelect = pricingDefaultValue?.workFlows?.find(
@@ -94,7 +93,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [template]);
   const [relatedParameters, setRelatedParameters] = useState([]);
-  console.log("relatedParameters111", relatedParameters);
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let sectionData: any = [...template?.sections];
@@ -1223,7 +1221,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               const myParameter = list.find(
                 (p) => p.id === relatedParameter.parameterId
               );
-              console.log("myParameter", myParameter);
               if (relatedParameter.activateByAllValues && parm?.value) {
                 return _renderParameterType(
                   myParameter,
@@ -1283,7 +1280,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           ...data,
         });
       }
-
+      if (data?.valueId === undefined && data?.value === undefined) {
+        temp.splice(index, 1);
+      }
       return temp;
     });
   };
@@ -1346,6 +1345,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           actionId: actionId,
           ...data,
         });
+      }
+      if (data?.valueId === undefined && data?.value === undefined) {
+        temp.splice(index, 1);
       }
       setSubProducts([
         ...subProducts,
