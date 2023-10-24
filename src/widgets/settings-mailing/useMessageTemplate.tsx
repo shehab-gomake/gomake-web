@@ -1,11 +1,11 @@
 
-import { getAllTemplatesApi, addNewSmsTemplateGroup, getAllGroupTemplatesApi, updateSMSTemplateApi } from "@/services/api-service/mailing/mailing-api";
+import { getAllSMSTemplatesApi,  updateSMSTemplateApi, addSMSTemplateGroup, getAllSMSTemplatesGroupsApi } from "@/services/api-service/mailing/mailing-api";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useRecoilState } from "recoil";
 import { useSnackBar } from "@/hooks";
-import { allSMSTemplateGroupsState, editModalState, groupModalState, templateGroupState } from "./states/state";
+import { allSMSTemplateGroupsState, editModalState, groupIdState, groupModalState, templateGroupState } from "./states/state";
 import { MoreMenuWidget } from "./messageTemplates/components/more-circle/index";
 import { PdfUploadComponent } from "./messageTemplates/components/upload-file/upload-file";
 
@@ -15,6 +15,7 @@ const useMessageTemplate = () => {
   const { alertFaultAdded, alertSuccessAdded, alertFaultDelete, alertSuccessDelete, alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
   const [openEditorModal, setOpenEditorModal] = useRecoilState<boolean>(editModalState);
+  const [smsTemplatesGroupId, setSmsTemplatesGroupId] = useRecoilState<any>(groupIdState)
 
   const tableHeaders = [
     t("mailingSettings.type"),
@@ -24,26 +25,25 @@ const useMessageTemplate = () => {
     t("mailingSettings.more"),
   ];
 
-  // data table 
-  const [allTemplates, setAllTemplates] = useState<any>();
-  const getAllTemplates = () => {
+  // data table need fix
+  const [allSmsTemplates, setAllSmsTemplates] = useState<any>();
+  const getAllSmsTemplates = () => {
     const callBackFunction = (data) => {
       if (data.success) {
-        const tableRows = data.data?.map((document) => [
-          document.type,
-          document.subject,
-          document.body,
+        const tableRows = data.data?.map((template) => [
+          template.templateTypeId,
+          template.title,
+          template.text,
           // <UploadFileInput selectedNameFile={document.file}/>,
           <PdfUploadComponent />,
-          <MoreMenuWidget item={document} onClickDelete={null} />
+          <MoreMenuWidget item={template} onClickDelete={null} />
         ]);
-        setAllTemplates(tableRows);
+        setAllSmsTemplates(tableRows);
       }
     }
-    getAllTemplatesApi(callApi, callBackFunction).then();
+    getAllSMSTemplatesApi(callApi, callBackFunction , { SMSTemplatesGroupId: smsTemplatesGroupId}).then();
   }
 
- 
   // select options 
   const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(allSMSTemplateGroupsState);
   const getSMSTemplateGroups = () => {
@@ -52,22 +52,23 @@ const useMessageTemplate = () => {
         setAllSMSTemplateGroups(data.data);
       }
     }
-    getAllGroupTemplatesApi(callApi, callBackFunction).then();
+    getAllSMSTemplatesGroupsApi(callApi, callBackFunction).then();
   }
 
   // add new group
-  const onAddSmsTemplateGroup = async (templateGroup) => {
-    const callback = (data) => {
-      if (data.success) {
-        alertSuccessAdded();
-        setOpenModal(!openModal);
-        getSMSTemplateGroups();
-      } else {
-        alertFaultAdded();
-      }
+ const onAddSMSTemplateGroup = async (templateGroup) => {
+  const callback = (data) => {
+    if (data.success) {
+      alertSuccessAdded();
+      setOpenModal(!openModal);
+      getSMSTemplateGroups();
+    } else {
+      alertFaultAdded();
     }
-    await addNewSmsTemplateGroup(callApi, callback, templateGroup);
   }
+  await addSMSTemplateGroup(callApi, callback, templateGroup);
+}
+
 
   // save changes
   const onUpdateSmsTemplate = async (smsTemplate) => {
@@ -75,7 +76,7 @@ const useMessageTemplate = () => {
       if (data.success) {
         alertSuccessUpdate();
         setOpenModal(!openModal);
-        getSMSTemplateGroups();
+       // getAllSmsTemplates();
       } else {
         alertFaultUpdate();
       }
@@ -85,11 +86,11 @@ const useMessageTemplate = () => {
 
   return {
     tableHeaders,
-    getAllTemplates,
-    allTemplates,
-    onAddSmsTemplateGroup,
-    getSMSTemplateGroups,
-    onUpdateSmsTemplate
+    onAddSMSTemplateGroup,
+    onUpdateSmsTemplate,
+    getAllSmsTemplates,
+    allSmsTemplates,
+    getSMSTemplateGroups
   };
 };
 

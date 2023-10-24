@@ -8,7 +8,7 @@ import { filterInput, switchInputs } from "./inputs";
 import { useStyle } from "./style";
 import { useRecoilState } from "recoil";
 import { SMSTemplateGroup } from "../../interfaces/interface";
-import { templateGroupState } from "@/widgets/settings-mailing/states/state";
+import { groupIdState, templateGroupState } from "@/widgets/settings-mailing/states/state";
 
 const TableFilter = () => {
     const { classes } = useStyle();
@@ -17,10 +17,14 @@ const TableFilter = () => {
     const [state, setState] = useState(null);
     const onChangeInputs = (key, value) => {
         setState({ ...state, [key]: value })
-    }
 
+    }
+    const [groupId, setGroupId] = useRecoilState<any>(groupIdState)
     const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupState);
     const onChangeInputs2 = (key, value) => {
+        if(key=="groupName"){
+            setGroupId(value);
+        }
         setTemplateGroup({ ...state, [key]: value })
     }
 

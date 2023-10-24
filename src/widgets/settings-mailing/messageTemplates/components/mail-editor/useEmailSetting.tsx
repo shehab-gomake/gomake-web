@@ -115,7 +115,7 @@ const useEmailSetting = () => {
 //   <div className="scroll-button right" onClick={scrollRight}>{"ddddd>"}</div>
 // </div>
   const [text, setText] = useRecoilState<string>(textState);
-  const [text1, setText1] = useState<string>(state?.body);
+  const [text1, setText1] = useState<string>(state?.text);
   const [value, setValue] = useState([]);
 
   const onChangeInputs = (key, value) => {

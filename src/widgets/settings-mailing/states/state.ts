@@ -31,6 +31,11 @@ export const textState = atom<string>({
 });
 
 
+export const groupIdState = atom<any>({
+  key: "groupIdState",
+  default:  [], 
+});
+
 // export const initState: ISmsTemplate = {
 //   type: "",
 //   subject: "",

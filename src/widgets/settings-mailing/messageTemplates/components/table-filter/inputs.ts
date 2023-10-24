@@ -3,6 +3,7 @@ import { useRecoilState } from "recoil";
 
 const filterInput = (state: any) => {
     const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(allSMSTemplateGroupsState);
+    
     return [
         {
             name: "SMSgroup",
@@ -10,9 +11,9 @@ const filterInput = (state: any) => {
             type: "select",
             placeholder: "mailingSettings.group",
             required: false,
-            parameterKey: "name",
-            value: state?.name,
-            //  optionsUrl: "/v1/crm-service/roles/get-all-sms-templates"
+            parameterKey: "groupName",
+            value: state?.groupName,
+          //  optionsUrl: "/v1/communication-service/sms-templates-groups/get-all-smsTemplates-groups",
             options: allSMSTemplateGroups
         }
     ];

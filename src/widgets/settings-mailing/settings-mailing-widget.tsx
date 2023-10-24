@@ -10,22 +10,16 @@ import { useRecoilState } from "recoil";
 import { editModalState, groupModalState, smsTemplateState, templateGroupState } from "./states/state";
 import { useMessageTemplate } from "./useMessageTemplate";
 import { SMSTemplateGroup } from "./messageTemplates/interfaces/interface";
-import { useEffect, useState } from "react";
+import { useEffect  } from "react";
 import { EmailSettings } from "./messageTemplates/components/mail-editor/mail-editor";
 
 const SettingsMailingWidget = () => {
     const { t } = useTranslation();
-    const { onAddSmsTemplateGroup, getSMSTemplateGroups , onUpdateSmsTemplate } = useMessageTemplate();
+    const {onAddSMSTemplateGroup , onUpdateSmsTemplate , getSMSTemplateGroups } = useMessageTemplate();
     const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
     const [openEditModal, setOpenEditModal] = useRecoilState<boolean>(editModalState);
     const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupState);
     const [state, setState] = useRecoilState<any>(smsTemplateState);
-
-
-    // should try
-    // const [smsTemplate, setSmsTemplate] = useRecoilState<SMSTemplateGroup>(smsTemplateState);
-    // <EmailSettings onClickSave={(smsTempale)=>onUpdateSmsTemplate}/>
-
 
     const tabs: ITab[] = [
         { title: t("mailingSettings.messageTemplates"), component: <MessageTemplates/> },
@@ -46,14 +40,14 @@ const SettingsMailingWidget = () => {
                 openModal={openModal}
                 onClose={() => {setOpenModal(false), setTemplateGroup(null)}}
                 modalTitle={t("mailingSettings.addNewGroup")}>
-                <AddNewSMSTemplateGroup onClickAdd={onAddSmsTemplateGroup} />
+                <AddNewSMSTemplateGroup onClickAdd={onAddSMSTemplateGroup} />
             </GoMakeModal>
 
             <GoMakeModal
                 insideStyle={{paddingLeft: 20, paddingRight: 20}}
                 openModal={openEditModal}
                 onClose={() => {setOpenEditModal(false); setState(null)}}
-                modalTitle={t("mailingSettings.emailType") + " " + (state?.type || "")}>
+                modalTitle={t("mailingSettings.emailType") + " " + (state?.templateTypeId || "")}>
                 <EmailSettings onClickSave={onUpdateSmsTemplate}/>
             </GoMakeModal>
         </div>
