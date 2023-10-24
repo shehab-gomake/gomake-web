@@ -10,8 +10,6 @@ const PricingSectionMappingWidget = ({
   pricingDefaultValue,
   workFlowSelected,
 }: any) => {
-  console.log("pricingDefaultValue", pricingDefaultValue);
-  console.log("workFlowSelected", workFlowSelected);
   const { t } = useTranslation();
   return (
     <div style={clasess.pricingSectionContainer}>
