@@ -5,6 +5,8 @@ import { useQuoteWidget } from "./use-quote-widget";
 
 import { useStyle } from "./style";
 import { Popover } from "@mui/material";
+import { useEffect } from "react";
+import { SaveOrAddQuote } from "./components/save-or-add-quote";
 
 const QuoteWidget = ({ isAdmin = true }) => {
   const { clasess } = useStyle();
@@ -16,6 +18,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
     id,
     anchorEl,
     open,
+    QuoteExist,
     selectedClientType,
     _renderErrorMessage,
     handleClick,
@@ -28,6 +31,26 @@ const QuoteWidget = ({ isAdmin = true }) => {
     onClcikCreateQuote,
     onClcikCreateQuoteForCustomer,
   } = useQuoteWidget();
+
+  const selectedOption = renderOptions().find(
+    (item) => item.id == QuoteExist?.result?.clientId
+    
+    
+  );
+    useEffect(()=>{
+      if(selectedOption)
+      {
+          const client = clientTypesValue.find(
+            (c) => c.id == selectedOption?.clientTypeId
+          );
+          if (client) {
+            setSelectedClientType(client);
+          } else {
+            setSelectedClientType({});
+          }
+      }
+    
+    })
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.autoComplateRowContainer}>
@@ -38,6 +61,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
             style={clasess.selectCustomerContainer}
             getOptionLabel={(option: any) => `${option.name}-${option.code}`}
             onChangeTextField={checkWhatRenderArray}
+            key={selectedOption}
+            value={selectedOption}
             onChange={(e: any, value: any) => {
               setSelectedCustomersList(value);
               const client = clientTypesValue.find(
@@ -81,22 +106,11 @@ const QuoteWidget = ({ isAdmin = true }) => {
           />
         </div>
       </div>
-      <div style={clasess.btnContainer}>
-        <GomakePrimaryButton
-          // onClick={isAdmin ? onClcikCreateQuote : onClcikCreateQuoteForCustomer}
-          onClick={
-            isDisabled
-              ? handleClick
-              : isAdmin
-              ? onClcikCreateQuote
-              : onClcikCreateQuoteForCustomer
-          }
-          // disabled={isDisabled}
-          style={clasess.btnStyle}
-        >
-          {t("home.admin.createQoute")}
-        </GomakePrimaryButton>
-      </div>
+          <div style={{width:"100%", display:"flex", justifyContent:"center"}}>
+             <SaveOrAddQuote/>
+          </div>
+          
+      
       <Popover
         id={id}
         open={open}

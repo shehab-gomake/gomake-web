@@ -5,6 +5,7 @@ import {
   getAllProductsForDropDownList,
   getAndSetAllCustomers,
   getAndSetClientTypes,
+  getAndSetExistQuotes,
 } from "@/services/hooks";
 import { useTranslation } from "react-i18next";
 
@@ -17,6 +18,7 @@ const useQuoteWidget = () => {
   const [productValue, setProductValues] = useState([]);
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
+  const [QuoteExist, setQuoteExist] = useState<any>([]);
   const [canOrder, setCanOrder] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
   const [selectedCustomersList, setSelectedCustomersList] = useState<any>({});
@@ -34,6 +36,9 @@ const useQuoteWidget = () => {
     setAnchorEl(null);
   };
 
+  const onClickSaveQuote = async () =>{
+    await getAndSetExistQuotes(callApi, );
+  };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
@@ -84,11 +89,19 @@ const useQuoteWidget = () => {
       onlyCreateOrderClients: true,
     });
   }, []);
+
+  const getAndSetExistQuote = useCallback(async () => {
+     await getAndSetExistQuotes(callApi, setQuoteExist);
+  },[]);
+
+
+
   useEffect(() => {
     getAllClientTypes();
     getAllProducts();
     getAllCustomersCreateQuote();
     getAllCustomersCreateOrder();
+    getAndSetExistQuote();
   }, []);
   const onClcikCreateQuote = () => {
     navigate(
@@ -111,6 +124,8 @@ const useQuoteWidget = () => {
       return t("home.admin.pleaseSelectProduct");
     }
   };
+
+ 
   return {
     clientTypesValue,
     productValue,
@@ -118,6 +133,7 @@ const useQuoteWidget = () => {
     customersListCreateOrder,
     isDisabled,
     id,
+    QuoteExist,
     open,
     anchorEl,
     selectedClientType,
@@ -131,6 +147,7 @@ const useQuoteWidget = () => {
     onClcikCreateQuote,
     onClcikCreateQuoteForCustomer,
     _renderErrorMessage,
+    onClickSaveQuote,
   };
 };
 
