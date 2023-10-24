@@ -25,8 +25,8 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        marginTop: 24,
-        marginBottom: 7,
+        marginTop: 5,
+        marginBottom: 4,
       },
       titleQuateContainer: {
         display: "flex",

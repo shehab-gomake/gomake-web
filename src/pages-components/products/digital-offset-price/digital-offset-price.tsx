@@ -15,10 +15,8 @@ import {
   MakeShapeModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
 import { EWidgetProductType } from "./enums";
-import { navStatusState } from "@/store/nav-status";
 
 const PriceListPageWidget = ({ widgetType }) => {
-  const navStatus = useRecoilValue(navStatusState);
   const { clasess } = useStyle();
   const {
     t,
