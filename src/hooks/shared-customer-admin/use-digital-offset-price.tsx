@@ -58,6 +58,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setLoading = useSetRecoilState(isLoadgingState);
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
+  console.log("subProducts", subProducts);
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(true);
   useEffect(() => {
@@ -490,11 +491,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (subSection?.type) {
       const allParameters = subProducts.flatMap((item) => item.parameters);
       let temp = [...allParameters];
+      console.log("parameter", {
+        parameter,
+        temp,
+        allParameters,
+        subProducts,
+      });
       const index = temp.findIndex(
         (item) =>
-          item.parameterId === parameter?.id &&
-          item.sectionId === section?.id &&
-          item.subSectionId === subSection?.id
+          item?.parameterId === parameter?.id &&
+          item?.sectionId === section?.id &&
+          item?.subSectionId === subSection?.id
       );
 
       if (parameter?.parameterType === 1) {
@@ -1303,9 +1310,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     );
     if (targetSubProduct) {
       let temp = [...targetSubProduct.parameters];
-      if (index !== -1) {
-        temp[index] = {
-          ...temp[index],
+
+      const findIndex = temp.findIndex(
+        (item) => item.parameterId === parameterId
+      );
+      if (findIndex !== -1) {
+        temp[findIndex] = {
+          ...temp[findIndex],
           ...data,
         };
       } else {
