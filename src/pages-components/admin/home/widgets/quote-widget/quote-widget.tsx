@@ -1,45 +1,57 @@
 import { useTranslation } from "react-i18next";
 
-import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
 import { useQuoteWidget } from "./use-quote-widget";
-
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useStyle } from "./style";
-import { Popover } from "@mui/material";
+import { Popover, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { SaveOrAddQuote } from "./components/save-or-add-quote";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
-const QuoteWidget = ({ isAdmin = true }) => {
+const QuoteWidget = ({ isAdmin = true , updateQuoteExist }) => {
   const { clasess } = useStyle();
   const [QuoteId ,  setQuoteId] = useState("");
+  const [OldselectedOption, setOldselectedOption] = useState<any>();
   const { t } = useTranslation();
   const {
     clientTypesValue,
     productValue,
-    isDisabled,
     id,
     anchorEl,
+    isDisabled ,  handleClick , onClcikCreateQuote , onClcikCreateQuoteForCustomer,
     open,
+    openModal,
+    onClickSaveQuote,
     QuoteExist,
+    errorColor,
     selectedClientType,
+    onClcikCloseModal,
     _renderErrorMessage,
-    handleClick,
     handleClose,
     setSelectedClientType,
+    setQuoteExist,
     setSelectedCustomersList,
     setSelectedProduct,
     checkWhatRenderArray,
+    setOpenModal,
     renderOptions,
-    onClcikCreateQuote,
-    onClcikCreateQuoteForCustomer,
   } = useQuoteWidget();
-
+  
   const selectedOption = renderOptions().find(
     (item) => item.id == QuoteExist?.result?.clientId
   );
+ 
+    
     useEffect(()=>{
+      if (QuoteExist.result == null) {
+        setSelectedClientType(null);
+      }
       if(selectedOption)
       {
         setQuoteId(QuoteExist?.result?.id);
+        setSelectedCustomersList(selectedOption);
+        setOldselectedOption(selectedOption)
           const client = clientTypesValue.find(
             (c) => c.id == selectedOption?.clientTypeId
           );
@@ -50,7 +62,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
           }
       }
     
-    })
+    },[QuoteExist,selectedOption])
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.autoComplateRowContainer}>
@@ -64,15 +76,25 @@ const QuoteWidget = ({ isAdmin = true }) => {
             key={selectedOption}
             value={selectedOption}
             onChange={(e: any, value: any) => {
+              console.log("value is " , value)
               setSelectedCustomersList(value);
               const client = clientTypesValue.find(
                 (c) => c.id == value?.clientTypeId
               );
+              if(QuoteExist?.result?.clientId != null && value?.id != null)
+              {
+                if(QuoteExist?.result?.clientId != value?.id )
+                {
+                  setOpenModal(true);
+                }
+              
+              }
               if (client) {
                 setSelectedClientType(client);
               } else {
                 setSelectedClientType({});
               }
+            
             }}
           />
         </div>
@@ -101,15 +123,71 @@ const QuoteWidget = ({ isAdmin = true }) => {
             style={clasess.selectTypeContainer}
             getOptionLabel={(option: any) => option.name}
             onChange={(e: any, value: any) => {
+
               setSelectedProduct(value);
             }}
           />
         </div>
       </div>
-          <div style={{width:"100%", display:"flex", justifyContent:"center"}}>
-             <SaveOrAddQuote QuoteId={QuoteId}/>
-          </div>
-          
+       
+            {
+              QuoteExist.result != null ?
+              <Stack direction={'row'} gap={'13px'}>
+              <div>
+                    <GomakePrimaryButton
+                    onClick={
+                        isDisabled
+                        ? handleClick
+                        : isAdmin
+                        ? onClcikCreateQuote
+                        : onClcikCreateQuoteForCustomer
+                    }
+                    variant="contained"
+                    style={{width:"100%",height:40}}
+    
+                    
+                    >
+                    {t("home.admin.AddItemToQuote")}
+                    
+                    </GomakePrimaryButton>
+                    
+                    </div>
+                    <div>
+                          <SecondaryButton
+                          variant="contained"
+                          style={{width:"100%",height:40}}
+                          onClick={() => {
+                              onClickSaveQuote(QuoteId)
+                                  .then(() => updateQuoteExist())
+                                  .catch((error) => console.error("Error:", error));
+                              }}
+                          >
+                          {t("home.admin.SaveQuote")}
+                          </SecondaryButton>
+                    </div>    
+              
+              </Stack> 
+              : <div>
+                        <GomakePrimaryButton
+                        onClick={
+                            isDisabled
+                            ? handleClick
+                            : isAdmin
+                            ? onClcikCreateQuote
+                            : onClcikCreateQuoteForCustomer
+                        }
+                        variant="contained"
+                        style={{width:"100%",height:40}}
+
+                        
+                        >
+                        {t("home.admin.createQoute")}
+                        
+                        </GomakePrimaryButton>
+              
+                 </div>
+       
+            } 
       
       <Popover
         id={id}
@@ -123,7 +201,25 @@ const QuoteWidget = ({ isAdmin = true }) => {
       >
         <div style={clasess.errorMsgStyle}>{_renderErrorMessage()}</div>
       </Popover>
+      <GoMakeDeleteModal
+         icon={
+          <WarningAmberIcon
+            style={{ width: 120, height: 120, color: errorColor(300) }}
+          />
+        }
+        title={t("sales.quote.titleModal")}
+        yesBtn={t("sales.quote.changeStatus")}
+        openModal={openModal}
+        onClose={()=> onClcikCloseModal(OldselectedOption)}
+        subTitle={t("sales.quote.subTitleModal")}
+        onClickDelete={() => {
+          onClickSaveQuote(QuoteId)
+              .then(() => updateQuoteExist())
+              .catch((error) => console.error("Error:", error));
+          }}
+      />
     </div>
+    
   );
 };
 

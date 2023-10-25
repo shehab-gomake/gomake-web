@@ -9,10 +9,11 @@ import {
   saveQuote,
 } from "@/services/hooks";
 import { useTranslation } from "react-i18next";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useQuoteWidget = () => {
   const { t } = useTranslation();
-
+  const { errorColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const [clientTypesValue, setClientTypesValues] = useState([]);
@@ -22,14 +23,20 @@ const useQuoteWidget = () => {
   const [QuoteExist, setQuoteExist] = useState<any>([]);
   const [canOrder, setCanOrder] = useState(false);
   const [state,setState]=useState();
+  const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
   const [selectedCustomersList, setSelectedCustomersList] = useState<any>({});
   const [selectedProduct, setSelectedProduct] = useState<any>({});
   const [isDisabled, setIsDisabled] = useState(true);
-
+  const onClcikOpenModal = (quoteId: any) => {
+    setOpenModal(true);
+  };
   //PopOver Btns
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-
+  const onClcikCloseModal = async (OldselectedOption) => {
+    setOpenModal(false);
+    
+  };
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -38,9 +45,6 @@ const useQuoteWidget = () => {
     setAnchorEl(null);
   };
 
-  const onClickSaveQuote = async (QuoteId) =>{
-    await saveQuote(callApi,QuoteId);
-  };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
@@ -98,6 +102,8 @@ const useQuoteWidget = () => {
 
 
 
+
+
   useEffect(() => {
     getAllClientTypes();
     getAllProducts();
@@ -105,7 +111,13 @@ const useQuoteWidget = () => {
     getAllCustomersCreateOrder();
     getAndSetExistQuote();
   }, []);
+
+  const onClickSaveQuote = useCallback(async (QuoteId) => {
+    await saveQuote(callApi,setQuoteExist, QuoteId);
+  }, []);
+  
   const onClcikCreateQuote = () => {
+    console.log("heeeeeeeeeey")
     navigate(
       `/admin/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedCustomersList?.id}&productId=${selectedProduct?.id}`
     );
@@ -135,15 +147,22 @@ const useQuoteWidget = () => {
     customersListCreateOrder,
     isDisabled,
     id,
+    openModal,
+    getAndSetExistQuote,
     QuoteExist,
     open,
+    errorColor,
     anchorEl,
     selectedClientType,
     handleClick,
+    onClcikOpenModal,
     handleClose,
+    onClcikCloseModal,
     setSelectedClientType,
     setSelectedCustomersList,
     setSelectedProduct,
+    setOpenModal,
+    setQuoteExist,
     checkWhatRenderArray,
     renderOptions,
     onClcikCreateQuote,

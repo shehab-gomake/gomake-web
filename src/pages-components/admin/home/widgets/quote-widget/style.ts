@@ -43,9 +43,7 @@ const useStyle = () => {
         width: "100%",
         // border: `1px solid ${secondColor(300)}`,
       },
-      btnContainer: {
-        width: "48%",
-      },
+    
       btnStyle: {
         height: 40,
       },

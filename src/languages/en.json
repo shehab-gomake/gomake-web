@@ -118,6 +118,7 @@
       "selectProduct": "Select product",
       "createQoute": "Create qoute",
       "SaveQuote":"Save Quote",
+      "AddItemToQuote":"Add Item to Quote",
       "pleaseSelectCustomer": "Please select a customer",
       "pleaseSelectClientType": "Please select a client type",
       "pleaseSelectProduct": "Please select a product"

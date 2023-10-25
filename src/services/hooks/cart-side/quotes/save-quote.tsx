@@ -3,8 +3,10 @@ import { ICallApi, ISetState } from "../../call-api.interface";
 
 const saveQuote = async (
   callApi: ICallApi,
+  setState?: ISetState,
   data?
 ) => {
+  console.log("data is , " , data)
   const result: any = await callApi(
     "POST",
     "/v1/erp-service/quote/save-quote",
@@ -12,10 +14,11 @@ const saveQuote = async (
         quoteId : data,
     }
   );
-
- 
+  if (setState) {
+    setState([]);
+  }
   
-  return result
+  return returnResult(result, setState);
 };
 
 export { saveQuote };
