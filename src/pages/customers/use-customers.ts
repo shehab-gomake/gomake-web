@@ -105,7 +105,9 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
   const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
   const getAgentCategories = async () => {
     const callBack = (res) => {
+      console.log("res",res)
       if (res.success) {
+        
         const agentNames = res.data.map(agent => ({
           label: agent.text,
           id: agent.value
@@ -115,7 +117,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
     }
     await getAndSetEmployees2(callApi, callBack, { isAgent: true })
   }
-
+  console.log("agentsCategories",agentsCategories)
   /////////////////////////  data table  //////////////////////////////
   const [customerForEdit, setCustomerForEdit] = useState([]);
   const getCustomerForEdit = async (id) => {

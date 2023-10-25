@@ -5,12 +5,15 @@ import { PlusIcon } from "@/icons";
 import { useRecoilValue } from "recoil";
 import { agentListsState, businessListsState, quoteItemState } from "@/store";
 import { quoteState } from "@/pages-components/quote/store/quote";
+import { useEffect, useState } from "react";
 interface IProps {
   isBusinessCode?: boolean;
   isBusinessName?: boolean;
   isPurchaseNumber?: boolean;
   isAgent?: boolean;
 }
+// updateAgent,
+// setSelectedAgnet,
 const BusinessWidget = ({
   isBusinessCode = true,
   isBusinessName = true,
@@ -21,6 +24,15 @@ const BusinessWidget = ({
   const quoteItemValue: any = useRecoilValue(quoteItemState);
   const customersListValue = useRecoilValue<any>(businessListsState);
   const agentListValue = useRecoilValue<any>(agentListsState);
+  const [selectedAgent, setSelectedAgent] = useState();
+  useEffect(() => {
+    if (agentListValue?.length > 0) {
+      const selectedAgent1 = agentListValue.find(
+        (agent) => agent.value === quoteItemValue?.agentId
+      );
+      setSelectedAgent(selectedAgent1);
+    }
+  }, [agentListValue, quoteItemValue]);
 
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -36,6 +48,7 @@ const BusinessWidget = ({
               <GomakeTextInput
                 placeholder={t("sales.quote.businessCode")}
                 style={clasess.textInputStyle}
+                key={quoteStateValue.selectBusiness?.code}
                 value={quoteStateValue.selectBusiness?.code}
               />
             </div>
@@ -53,6 +66,8 @@ const BusinessWidget = ({
               <GoMakeAutoComplate
                 options={customersListValue}
                 style={clasess.autoComplateStyle}
+                key={quoteStateValue.selectBusiness?.name}
+                value={quoteStateValue.selectBusiness}
                 placeholder={
                   quoteStateValue.selectBusiness
                     ? quoteStateValue.selectBusiness?.name
@@ -84,8 +99,13 @@ const BusinessWidget = ({
               <GoMakeAutoComplate
                 options={agentListValue}
                 style={clasess.autoComplateStyle}
-                getOptionLabel={(item) => item?.firstname}
+                value={selectedAgent}
+                key={selectedAgent}
+                getOptionLabel={(item) => item?.text}
                 placeholder={t("sales.quote.agent")}
+                onChange={(e: any, item: any) => {
+                  quoteStateValue.updateAgent(item);
+                }}
               />
             </div>
           )}

@@ -460,7 +460,33 @@ const useQuote = () => {
       });
     }
   }, [quoteItemValue, selectDate]);
-
+  const updateAgent = useCallback(
+    async (item: any) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/erp-service/quote/update-agent`,
+        {
+          quoteId: quoteItemValue?.id,
+          agentId: item?.value,
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        getQuote();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
+    },
+    [quoteItemValue]
+  );
   return {
     tableHeaders,
     tableRowPercent,
@@ -485,6 +511,7 @@ const useQuote = () => {
     selectDate,
     // dateRef,
     // setActiveClickAway,
+    updateAgent,
     updateDueDate,
     setSelectDate,
     onClickDeleteQouteItem,
