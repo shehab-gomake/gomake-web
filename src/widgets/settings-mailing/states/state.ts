@@ -25,15 +25,15 @@ export const smsTemplateState = atom<any>({
   default: {},
 });
 
-export const textState = atom<string>({
-  key: "textState",
+export const subjectTextState = atom<string>({
+  key: "subjectTextState",
   default: "<p><b>GoMake</b> template</p>" , 
 });
 
 
-export const groupIdState = atom<any>({
-  key: "groupIdState",
-  default:  [], 
+export const templateVariablesState = atom<any>({
+  key: "templateVariablesState",
+  default: {},
 });
 
 // export const initState: ISmsTemplate = {

@@ -15,7 +15,7 @@ import { EmailSettings } from "./messageTemplates/components/mail-editor/mail-ed
 
 const SettingsMailingWidget = () => {
     const { t } = useTranslation();
-    const {onAddSMSTemplateGroup , onUpdateSmsTemplate , getSMSTemplateGroups } = useMessageTemplate();
+    const {onAddSMSTemplateGroup , onUpdateSmsTemplate , getSMSTemplateGroups , getTemplateVariables} = useMessageTemplate();
     const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
     const [openEditModal, setOpenEditModal] = useRecoilState<boolean>(editModalState);
     const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupState);
@@ -27,7 +27,10 @@ const SettingsMailingWidget = () => {
 
     useEffect(() => {
         // SMS Group select
+        setTemplateGroup(null);
         getSMSTemplateGroups();
+        getTemplateVariables();
+
     }, [])
 
     return (
@@ -42,7 +45,6 @@ const SettingsMailingWidget = () => {
                 modalTitle={t("mailingSettings.addNewGroup")}>
                 <AddNewSMSTemplateGroup onClickAdd={onAddSMSTemplateGroup} />
             </GoMakeModal>
-
             <GoMakeModal
                 insideStyle={{paddingLeft: 20, paddingRight: 20}}
                 openModal={openEditModal}

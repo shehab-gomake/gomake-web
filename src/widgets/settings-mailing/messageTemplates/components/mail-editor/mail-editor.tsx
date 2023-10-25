@@ -4,9 +4,8 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { useTranslation } from "react-i18next";
 import { useEmailSetting } from "./useEmailSetting";
 import * as React from "react";
-import { useState } from 'react';
 import { PdfUploadComponent } from '../upload-file/upload-file';
-import { Select, Stack } from '@mui/material';
+import { EditorTYPE } from '../../enums/enum';
 
 export interface IProps {
     onClickSave: (value: any) => void;
@@ -14,24 +13,23 @@ export interface IProps {
 const EmailSettings = ({ onClickSave }: IProps) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
-    const { text, setText,  text1, setText1 , state, renderHeader  } = useEmailSetting();
+    const { subjectText, setSubjectText,  bodyText, setBodyText , state, renderHeader  } = useEmailSetting();
 
     const handleResetClick = () => {
-        setText(null);
-        setText1(null);
+        setSubjectText(null);
+        setBodyText(null);
     };
-
 
     return (
 
         <div className="card" style={classes.containerStyle}>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 <h5 style={classes.headerStyle}>{t("mailingSettings.subject")}</h5>
-                <Editor value={text} onTextChange={(e) => setText(e.htmlValue)} style={classes.editorStyle1} headerTemplate={renderHeader()} />
+                <Editor value={subjectText} onTextChange={(e) => setSubjectText(e.htmlValue)} style={classes.editorStyle1} headerTemplate={renderHeader(EditorTYPE.SUBJECT)} />
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 <h5 style={classes.headerStyle}>{t("mailingSettings.body")}</h5>
-                <Editor value={text1} onTextChange={(e) => setText1(e.htmlValue)} style={classes.editorStyle2} headerTemplate={renderHeader()} /> 
+                <Editor value={bodyText} onTextChange={(e) => setBodyText(e.htmlValue)} style={classes.editorStyle2} headerTemplate={renderHeader(EditorTYPE.BODY)} /> 
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "flex-start" }}>
                 <h5 style={classes.headerStyle}>{t("mailingSettings.attachment")}</h5>

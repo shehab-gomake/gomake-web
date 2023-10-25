@@ -6,7 +6,7 @@ const useStyle = () => {
     const { theme } = useGomakeTheme();
     const classes = useMemo(() => {
         return {
-            Headercontainer: {
+            headerContainer: {
                 display: "flex",
                 flexDirection: "row" as "row",
                 justifyContent: "space-between",

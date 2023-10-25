@@ -11,8 +11,8 @@ const filterInput = (state: any) => {
             type: "select",
             placeholder: "mailingSettings.group",
             required: false,
-            parameterKey: "groupName",
-            value: state?.groupName,
+            parameterKey: "id",
+            value: state?.id,
           //  optionsUrl: "/v1/communication-service/sms-templates-groups/get-all-smsTemplates-groups",
             options: allSMSTemplateGroups
         }
