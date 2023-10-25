@@ -11,7 +11,7 @@ import {
 } from "@/icons";
 import { useEffect, useMemo, useState } from "react";
 import { CubeIcon } from "@/components/icons/cube-icon";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { ICompanyProfile, companyProfileState } from "@/store/company-profile";
 
 const useAuthLayoutHook = () => {
@@ -192,17 +192,16 @@ const useAuthLayoutHook = () => {
     }
   }, [isAuth]);
   const { callApi } = useGomakeAxios();
-  const [profile, setProfile] =
-    useRecoilState<ICompanyProfile>(companyProfileState);
-  const getUserProfile = async () => {
-    const res = await callApi("GET", "/v1/get-print-house-profile");
-    if (res.success) {
-      setProfile(res?.data?.data?.data);
-    }
-  };
-  useEffect(() => {
-    getUserProfile();
-  }, []);
+  const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
+  // const getUserProfile = async () => {
+  //   const res = await callApi("GET", "/v1/get-print-house-profile");
+  //   if (res.success) {
+  //     setProfile(res?.data?.data?.data);
+  //   }
+  // };
+  // useEffect(() => {
+  //   getUserProfile();
+  // }, []);
 
   return {
     tabs1,
