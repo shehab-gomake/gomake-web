@@ -2,7 +2,7 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { isLoadgingState } from "@/store";
 import { Checkbox, CircularProgress, Slider } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { EWidgetProductType } from "../enums";
@@ -19,7 +19,6 @@ const RightSideWidget = ({
   template,
   tabs,
   activeTab,
-  pricingDefaultValue,
   setUrgentOrder,
   urgentOrder,
   setPrintingNotes,

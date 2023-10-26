@@ -60,7 +60,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     useRecoilState<any>(digitslPriceState);
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(true);
-  console.log("pricingDefaultValue", pricingDefaultValue);
   useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0 && canCalculation) {
       const workFlowSelect = pricingDefaultValue?.workFlows?.find(
@@ -1533,7 +1532,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     defaultPrice,
     workFlowSelected,
   ]);
-  console.log("template", template);
   useEffect(() => {
     if (
       widgetType === EWidgetProductType.EDIT ||
