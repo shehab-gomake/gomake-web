@@ -40,14 +40,11 @@ const QuoteWidget = ({ isAdmin = true   }) => {
   const selectedOptionInQuoteExist = renderOptions().find(
     (item) => item.id == QuoteExist?.result?.clientId
   );
-
-  //setselectedOption(selectedOptionInQuoteExist);
  
   console.log(selectedOptionInQuoteExist);
     
     useEffect(()=>{
       if(selectedOptionInQuoteExist){
-        console.log("selectedOptionInQuoteExist is " , selectedOptionInQuoteExist)
         setselectedOption(selectedOptionInQuoteExist);
       }
       if (QuoteExist.result == null) {
