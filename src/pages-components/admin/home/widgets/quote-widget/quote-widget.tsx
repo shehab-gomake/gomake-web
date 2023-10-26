@@ -8,10 +8,10 @@ import { Popover, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { SecondaryButton } from "@/components/button/secondary-button";
 
-const QuoteWidget = ({ isAdmin = true , updateQuoteExist  }) => {
+const QuoteWidget = ({ isAdmin = true   }) => {
   const { clasess } = useStyle();
   const [QuoteId ,  setQuoteId] = useState("");
-  const [OldselectedOption, setOldselectedOption] = useState<any>();
+  const [selectedOption, setselectedOption] = useState<any>();
   const { t } = useTranslation();
   const {
     clientTypesValue,
@@ -28,8 +28,8 @@ const QuoteWidget = ({ isAdmin = true , updateQuoteExist  }) => {
     onClcikCloseModal,
     _renderErrorMessage,
     handleClose,
+    updateQuoteExist,
     setSelectedClientType,
-    setQuoteExist,
     setSelectedCustomersList,
     setSelectedProduct,
     checkWhatRenderArray,
@@ -37,20 +37,35 @@ const QuoteWidget = ({ isAdmin = true , updateQuoteExist  }) => {
     renderOptions,
   } = useQuoteWidget();
   
-  const selectedOption = renderOptions().find(
+  const selectedOptionInQuoteExist = renderOptions().find(
     (item) => item.id == QuoteExist?.result?.clientId
   );
+
+  //setselectedOption(selectedOptionInQuoteExist);
  
+  console.log(selectedOptionInQuoteExist);
     
     useEffect(()=>{
+      if(selectedOptionInQuoteExist){
+        console.log("selectedOptionInQuoteExist is " , selectedOptionInQuoteExist)
+        setselectedOption(selectedOptionInQuoteExist);
+      }
       if (QuoteExist.result == null) {
         setSelectedClientType(null);
+      }else{
+        if(!selectedOption && QuoteExist.result != null)
+        {
+            const updatedSelection = renderOptions().find(
+              (item) => item.id == QuoteExist?.result?.clientId
+            );
+          
+          setselectedOption(updatedSelection);
+        }
       }
       if(selectedOption)
       {
         setQuoteId(QuoteExist?.result?.id);
         setSelectedCustomersList(selectedOption);
-        setOldselectedOption(selectedOption)
           const client = clientTypesValue.find(
             (c) => c.id == selectedOption?.clientTypeId
           );
@@ -61,7 +76,7 @@ const QuoteWidget = ({ isAdmin = true , updateQuoteExist  }) => {
           }
       }
     
-    },[QuoteExist,selectedOption])
+    },[QuoteExist,selectedOption , selectedOptionInQuoteExist])
   return (
   
     <div style={clasess.mainContainer}>
@@ -217,7 +232,7 @@ const QuoteWidget = ({ isAdmin = true , updateQuoteExist  }) => {
         subTitle={t("sales.quote.MessageForClient")}
         onClickDelete={() => {
           onClickSaveQuote(QuoteId)
-              .then(() => updateQuoteExist())
+              .then(() => onClcikCloseModal())
               .catch((error) => console.error("Error:", error));
           }}
       />

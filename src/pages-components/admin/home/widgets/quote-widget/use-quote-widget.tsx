@@ -36,7 +36,7 @@ const useQuoteWidget = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const onClcikCloseModal = async () => {
     setOpenModal(false);
-    window.location.reload();
+  //  window.location.reload();
   };
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -102,7 +102,11 @@ const useQuoteWidget = () => {
   },[]);
 
 
+  const updateQuoteExist = useCallback(async () =>{
+   await getAndSetExistQuote();
+  },[]);
 
+  
 
 
   useEffect(() => {
@@ -118,7 +122,6 @@ const useQuoteWidget = () => {
   }, []);
   
   const onClcikCreateQuote = () => {
-    console.log("heeeeeeeeeey")
     navigate(
       `/admin/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedCustomersList?.id}&productId=${selectedProduct?.id}`
     );
@@ -156,6 +159,7 @@ const useQuoteWidget = () => {
     anchorEl,
     selectedClientType,
     handleClick,
+    updateQuoteExist,
     onClcikOpenModal,
     handleClose,
     onClcikCloseModal,
