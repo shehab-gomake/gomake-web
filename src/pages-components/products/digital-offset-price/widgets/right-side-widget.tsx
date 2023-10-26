@@ -168,7 +168,16 @@ const RightSideWidget = ({
                 if (priceRecovery) {
                   setDefaultPrice(changePrice);
                 } else {
-                  setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2));
+                  if (
+                    widgetType === EWidgetProductType.EDIT ||
+                    widgetType === EWidgetProductType.DUPLICATE
+                  ) {
+                    setDefaultPrice(
+                      template?.quoteItem?.unitPrice * quantity?.value
+                    );
+                  } else {
+                    setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2));
+                  }
                 }
               }}
               checked={priceRecovery}

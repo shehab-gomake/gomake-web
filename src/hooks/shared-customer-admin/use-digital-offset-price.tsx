@@ -62,14 +62,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [canCalculation, setCanCalculation] = useState(true);
   console.log("pricingDefaultValue", pricingDefaultValue);
   useEffect(() => {
-    if (pricingDefaultValue?.workFlows?.length > 0) {
+    if (pricingDefaultValue?.workFlows?.length > 0 && canCalculation) {
       const workFlowSelect = pricingDefaultValue?.workFlows?.find(
         (workFlow) => workFlow?.selected === true
       );
       setWorkFlowSelected(workFlowSelect);
       setDefaultPrice(workFlowSelect?.totalPrice);
     }
-  }, [pricingDefaultValue]);
+  }, [pricingDefaultValue, canCalculation]);
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let temp = [...isRequiredParameters];
