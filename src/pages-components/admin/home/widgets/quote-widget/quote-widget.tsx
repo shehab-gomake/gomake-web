@@ -16,6 +16,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
     id,
     anchorEl,
     open,
+    selectedClientType,
     _renderErrorMessage,
     handleClick,
     handleClose,
@@ -39,6 +40,14 @@ const QuoteWidget = ({ isAdmin = true }) => {
             onChangeTextField={checkWhatRenderArray}
             onChange={(e: any, value: any) => {
               setSelectedCustomersList(value);
+              const client = clientTypesValue.find(
+                (c) => c.id == value?.clientTypeId
+              );
+              if (client) {
+                setSelectedClientType(client);
+              } else {
+                setSelectedClientType({});
+              }
             }}
           />
         </div>
@@ -47,10 +56,15 @@ const QuoteWidget = ({ isAdmin = true }) => {
             options={clientTypesValue}
             placeholder={t("home.admin.selectType")}
             style={clasess.selectTypeContainer}
-            getOptionLabel={(option: any) => option.name}
+            getOptionLabel={(option: any) => (option?.name ? option.name : "")}
             onChange={(e: any, value: any) => {
               setSelectedClientType(value);
             }}
+            value={
+              typeof selectedClientType != "undefined"
+                ? selectedClientType
+                : null
+            }
           />
         </div>
       </div>

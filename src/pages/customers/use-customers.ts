@@ -1,42 +1,46 @@
-import { Dispatch, SetStateAction, useCallback , useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
-import {useRecoilState} from "recoil";
-import { agentsCategoriesState, clientTypesCategoriesState} from "./customer-states";
+import { useRecoilState } from "recoil";
+import { agentsCategoriesState, clientTypesCategoriesState } from "./customer-states";
 import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { getAndSetCustomerById, getAndSetCustomersPagination, toggleCustomerStatus } from "@/services/api-service/customers/customers-api";
 import { DEFAULT_VALUES } from "./enums";
-
-const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: Dispatch<SetStateAction<number>>) => {
+import { useSnackBar } from "@/hooks";
+export interface IStatus {
+  label: string;
+  value: string;
+}
+const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: Dispatch<SetStateAction<number>>) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [allCustomers, setAllCustomers] = useState([]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [pagesCount, setPagesCount] = useState(0);
   const pageSize = DEFAULT_VALUES.PageSize;
+  const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
 
-  const tableHeaders =  [
-      clientType == "C" ? t("customers.customerCode") :t("suppliers.supplierCode"),
-      t("customers.name"),
-      t("customers.email"),
-      t("customers.phone"),
-      t("customers.status"),
-      t("customers.hashtag"),
-    ]
-  ;
+  const tableHeaders = [
+    clientType == "C" ? t("customers.customerCode") : t("suppliers.supplierCode"),
+    t("customers.name"),
+    t("customers.email"),
+    t("customers.phone"),
+    t("customers.status"),
+    t("customers.hashtag"),
+  ]
+    ;
 
 
-
-  const getCustomersRows = useCallback(()=> {
+  const getCustomersRows = useCallback(() => {
     return allCustomers?.map(customer => [customer?.customerCode, customer?.name, customer?.email, customer?.phone, customer?.status, customer?.hashTag])
   }, [allCustomers])
 
   //select status options
-  const statuses =  [
-      { label: t("customers.active"), value: "true" },
-      { label: t("customers.inactive"), value: "false" },
-      { label: t("customers.all"), value: "" },
+  const statuses = [
+    { label: t("customers.active"), value: "true" },
+    { label: t("customers.inactive"), value: "false" },
+    { label: t("customers.all"), value: "" },
   ];
 
   const [name, setCustomerName] = useState("");
@@ -54,7 +58,8 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
   }, []);
 
   const [isActive, setStatus] = useState(true);
-  const [valStatus, setValStatus] = useState([]);
+  const [valStatus, setValStatus] = useState<IStatus>({ label: t("customers.active"), value: "true" });  
+  
   const onChangeStatus = useCallback(async (e: any, value: any) => {
     setPageNumber(1);
     setStatus(value?.value);
@@ -95,7 +100,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
     await getAndSetClientTypes(callApi, callBack)
   }
 
-  
+
   ///////////////////////// select agent //////////////////////////////
   const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
   const getAgentCategories = async () => {
@@ -117,21 +122,21 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
     const callBack = (res) => {
       if (res.success) {
         let customer = res.data;
-        if(customer.contacts && customer.contacts.length > 0){
+        if (customer.contacts && customer.contacts.length > 0) {
           let index = 0;
           customer.contacts.forEach(x => {
             x.index = index;
             index++;
           });
         }
-        if(customer.addresses && customer.addresses.length > 0){
+        if (customer.addresses && customer.addresses.length > 0) {
           let index = 0;
           customer.addresses.forEach(x => {
             x.index = index;
             index++;
           });
         }
-        if(customer.users && customer.users.length > 0){
+        if (customer.users && customer.users.length > 0) {
           let index = 0;
           customer.users.forEach(x => {
             x.index = index;
@@ -158,8 +163,8 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
     if (res?.success) {
       setFilters((prevFilters) => ({
         ...prevFilters,
-      }));  
-          return true;
+      }));
+      return true;
     } else {
       return false;
     }
@@ -175,7 +180,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
       ClientTypeId,
       agentId,
       isActive,
-    }, getCustomerForEdit, updatedStatus , t("usersSettings.active") ,t("usersSettings.inactive"));
+    }, getCustomerForEdit, updatedStatus, t("usersSettings.active"), t("usersSettings.inactive"));
     setPagesCount(Math.ceil(data / pageSize));
     return data;
   }, [pageNumber, name, ClientTypeId, agentId, isActive]);
@@ -186,34 +191,39 @@ const useCustomers = (clientType: "C" | "S", pageNumber:number, setPageNumber: D
     setAgentId(null);
     setAgentName(null);
     setStatus(true);
-    setValStatus(null);
+    setValStatus({ label: t("customers.active"), value: "true" });
     setClientTypeId(null);
     setValClientType(null);
     setPageNumber(1);
   }, []);
 
-const isValidCustomer = (customer ,  filteredContacts , filteredAddresses , filteredUsers) => {
-  if (!(customer && customer.name && customer.clientTypeId)) {
-    return false;
-  }
-
-  for (const contact of filteredContacts) {
-    if (!contact.firstName) {
+  const isValidCustomer = (customer, filteredContacts, filteredAddresses, filteredUsers) => {
+    if (!(customer && customer.name && customer.clientTypeId)) {
       return false;
     }
-  }
-  for (const address of filteredAddresses) {
-    if (!address.address1 ) {
-      return false;
+    for (const contact of filteredContacts) {
+      if (!contact.firstName) {
+        return false;
+      }
     }
-  }
-  for (const user of filteredUsers) {
-    if (!user.userName && !user.password ) {
-      return false;
+    for (const address of filteredAddresses) {
+      if (!address.address1) {
+        return false;
+      }
     }
-  }
-  return true;
-};
+    for (const user of filteredUsers) {
+      if (!user.email ) {
+        return false;
+      }
+    }
+    //new users
+    for (const user of filteredUsers.filter(user => !user.id)) {
+      if (!user.password) {
+        return false;
+      }
+    }
+    return true;
+  };
 
   return {
     getAgentCategories,
@@ -243,12 +253,12 @@ const isValidCustomer = (customer ,  filteredContacts , filteredAddresses , filt
     updatedStatus,
     getCustomersRows,
     ClientTypeId,
-    agentId, 
-    isActive ,
-    pageSize ,
-    filters, 
+    agentId,
+    isActive,
+    pageSize,
+    filters,
     clientType,
-    isValidCustomer
+    isValidCustomer,
   };
 };
 export { useCustomers };

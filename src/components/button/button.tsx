@@ -21,7 +21,7 @@ const StyledButton = styled(Button, {
   gap: 7,
   color: "#FFFFFF",
   "&:hover": {
-    letterSpacing: "0.1em",
+    // letterSpacing: "0.1em",
     backgroundColor: props.primaryColor(500),
   },
   transition: "0.25s",
@@ -43,7 +43,6 @@ const GomakePrimaryButton = ({ ...props }) => {
           justifyContent: "space-between",
           alignItems: "center",
           flexWrap: "wrap",
-
         }}
       >
         {props.leftIcon && (
@@ -62,7 +61,6 @@ const GomakePrimaryButton = ({ ...props }) => {
           style={{
             width: props.leftIcon ? "85%" : "100%",
             flexWrap: "wrap",
-
           }}
         >
           {props.children}

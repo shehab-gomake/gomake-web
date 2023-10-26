@@ -20,12 +20,12 @@ const useStyle = () => {
       },
       main: {
         width: "100%",
-        // overflow: "auto",
+        overflow: "scroll",
       },
       header: {
         ...FONT_FAMILY.Lexend(700, 20),
         color: primaryColor(500),
-        padding: "16px 0 20px 0",
+        // padding: "16px 0 20px 0",
       },
       subHeader: {
         ...FONT_FAMILY.Lexend(500, 24),
