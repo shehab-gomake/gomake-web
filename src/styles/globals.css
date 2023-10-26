@@ -141,11 +141,17 @@ input::placeholder {
   background-color: #EBECFF;
   border-radius: 12px 12px 0px 0px;
   border-color: #9695C7 !important;
+  
 }
-.ql-toolbar.ql-snow .ql-bold {
-  /* Customize the "Bold" button */
-  color: white;             /* Change the text color */
-  border-radius: 3px;       /* Add border radius */
-  margin-right: 5px;        /* Add some spacing */
-  border-color: red;
+
+.ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options{
+  /* background-color: #EBECFF; */
+    background-color: #FFFFFF;
+ }
+
+.scroll-container {
+  overflow-x: scroll;
+  white-space: nowrap; /* Prevent text from wrapping */
+  padding: 10px; 
+  display: flex; 
 }

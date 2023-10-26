@@ -30,11 +30,11 @@ export const subjectTextState = atom<string>({
   default: "<p><b>GoMake</b> template</p>" , 
 });
 
-
 export const templateVariablesState = atom<any>({
   key: "templateVariablesState",
   default: {},
 });
+
 
 // export const initState: ISmsTemplate = {
 //   type: "",

@@ -24,6 +24,7 @@ const useEmailSetting = () => {
 
   };
 
+
   const renderHeader = (flag) => {
     return (
       <span className="ql-formats"  >
@@ -41,19 +42,16 @@ const useEmailSetting = () => {
           {/* {toolBarInputs(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)}
           <PdfUploadComponent onUpload={(value) => alert(value)} ></PdfUploadComponent> */}
         </Stack>
-        <div className="options-container" >
-          <Stack display={"flex"} direction={'row'} gap={'8px'} padding={'20px'} >
-            {templateVariables?.map((option) => (
-              <div style={classes.variableStyle}
-                key={option.value}
-                onClick={() => flag ? handleBodyOptionClick(option) : handleSubjectOptionClick(option)}
-              >
-                {option.label}
-              </div>
-            ))}
-          </Stack>
-        </div>
-
+        <Stack display={"flex"} direction={'row'} gap={'8px'} className="scroll-container" >
+          {templateVariables?.map((option) => (
+            < button style={classes.variableStyle}
+              key={option.value}
+              onClick={() => flag ? handleBodyOptionClick(option) : handleSubjectOptionClick(option)}
+            >
+            {option.label}
+            </button>
+          ))}
+        </Stack>
       </span>
     );
   };

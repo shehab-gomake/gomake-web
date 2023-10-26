@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { ITab } from "@/components/tabs/interface";
-import { EmptyComponent } from "../settings/empty-component";
 import { MessageTemplates } from "./messageTemplates/message-templates";
 import { AddButton } from "@/components/button/add-button";
 import { GoMakeModal } from "@/components";
@@ -15,29 +14,33 @@ import { EmailSettings } from "./messageTemplates/components/mail-editor/mail-ed
 
 const SettingsMailingWidget = () => {
     const { t } = useTranslation();
-    const {onAddSMSTemplateGroup , onUpdateSmsTemplate , getSMSTemplateGroups , getTemplateVariables} = useMessageTemplate();
+    const {onAddSMSTemplateGroup , onUpdateSmsTemplate , getSMSTemplateGroups , getTemplateVariables , setTemplateGroup , types , getSMSTemplateTypes } = useMessageTemplate();
     const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
     const [openEditModal, setOpenEditModal] = useRecoilState<boolean>(editModalState);
-    const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupState);
     const [state, setState] = useRecoilState<any>(smsTemplateState);
 
     const tabs: ITab[] = [
         { title: t("mailingSettings.messageTemplates"), component: <MessageTemplates/> },
     ];
 
-    useEffect(() => {
+    useEffect( () => {
         // SMS Group select
         setTemplateGroup(null);
         getSMSTemplateGroups();
         getTemplateVariables();
-
+        getSMSTemplateTypes();
     }, [])
+
+    const templateTitle = types.find((option) => option.value == state?.templateType)?.text || " ";
+
 
     return (
         <div>
+            
             <PrimaryTabsComponent tabs={tabs} >
                      <AddButton label={t("mailingSettings.addNew")} onClick={() => setOpenModal(true)} />
             </PrimaryTabsComponent>
+
             <GoMakeModal
                 insideStyle={{ paddingLeft: 20, padding: 20, width: "518px", height: "214px" }}
                 openModal={openModal}
@@ -45,13 +48,15 @@ const SettingsMailingWidget = () => {
                 modalTitle={t("mailingSettings.addNewGroup")}>
                 <AddNewSMSTemplateGroup onClickAdd={onAddSMSTemplateGroup} />
             </GoMakeModal>
+
             <GoMakeModal
                 insideStyle={{paddingLeft: 20, paddingRight: 20}}
                 openModal={openEditModal}
                 onClose={() => {setOpenEditModal(false); setState(null)}}
-                modalTitle={t("mailingSettings.emailType") + " " + (state?.templateTypeId || "")}>
+                modalTitle={t("mailingSettings.emailType") + " " + templateTitle}>
                 <EmailSettings onClickSave={onUpdateSmsTemplate}/>
             </GoMakeModal>
+
         </div>
 
     );

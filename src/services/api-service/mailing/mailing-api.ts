@@ -11,6 +11,7 @@ const UPDATE_SMS_TEMPLATE_URL = '/v1/communication-service/sms-templates/update-
 const ADD_SMS_TEMPLATES_GROUP_URL = '/v1/communication-service/sms-templates-groups/add-smsTemplates-group';
 const GET_ALL_SMS_TEMPLATES_GROUPS_URL = '/v1/communication-service/sms-templates-groups/get-all-smsTemplates-groups';
 const GET_ALL_TEMPLATE_VARIABLES_URL = '/v1/communication-service/template-variables/get-all-template-variables';
+const GET_ALL_TEMPLATE_TYPES_URL = '/v1/enum/get-enums/SMSTemplate';
 
 
 const getAllSMSTemplatesApi: ICallAndSetData = async (callApi, setState, data) => {
@@ -37,4 +38,9 @@ const getAllTemplateVariablesApi: ICallAndSetData = async (callApi, setState) =>
     return  await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_TEMPLATE_VARIABLES_URL, setState)
 }
 
-export { updateSMSTemplateApi , getAllSMSTemplatesApi , addSMSTemplateGroup  , getAllSMSTemplatesGroupsApi , getAllTemplateVariablesApi};
+
+const getAllTemplateTypesApi: ICallAndSetData = async (callApi, setState) => {
+    return  await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_TEMPLATE_TYPES_URL, setState)
+}
+
+export { updateSMSTemplateApi , getAllSMSTemplatesApi , addSMSTemplateGroup  , getAllSMSTemplatesGroupsApi , getAllTemplateVariablesApi , getAllTemplateTypesApi};

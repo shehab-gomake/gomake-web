@@ -13,7 +13,7 @@ export interface IProps {
 const EmailSettings = ({ onClickSave }: IProps) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
-    const { subjectText, setSubjectText,  bodyText, setBodyText , state, renderHeader  } = useEmailSetting();
+    const { subjectText, setSubjectText, bodyText, setBodyText , renderHeader  } = useEmailSetting();
 
     const handleResetClick = () => {
         setSubjectText(null);
@@ -21,15 +21,14 @@ const EmailSettings = ({ onClickSave }: IProps) => {
     };
 
     return (
-
         <div className="card" style={classes.containerStyle}>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 <h5 style={classes.headerStyle}>{t("mailingSettings.subject")}</h5>
-                <Editor value={subjectText} onTextChange={(e) => setSubjectText(e.htmlValue)} style={classes.editorStyle1} headerTemplate={renderHeader(EditorTYPE.SUBJECT)} />
+                <Editor value={subjectText} onChange={(e)=>setSubjectText(e.target.nodeValue)}  style={classes.editorStyle1} headerTemplate={renderHeader(EditorTYPE.SUBJECT)} />
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 <h5 style={classes.headerStyle}>{t("mailingSettings.body")}</h5>
-                <Editor value={bodyText} onTextChange={(e) => setBodyText(e.htmlValue)} style={classes.editorStyle2} headerTemplate={renderHeader(EditorTYPE.BODY)} /> 
+                <Editor value={bodyText} onChange={(e) => setBodyText(e.target.nodeValue)} style={classes.editorStyle2} headerTemplate={renderHeader(EditorTYPE.BODY)} /> 
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "flex-start" }}>
                 <h5 style={classes.headerStyle}>{t("mailingSettings.attachment")}</h5>
@@ -39,8 +38,6 @@ const EmailSettings = ({ onClickSave }: IProps) => {
                 <SecondaryButton onClick={onClickSave} variant={"contained"}>{t("mailingSettings.save")}</SecondaryButton>
                 <SecondaryButton onClick={handleResetClick} variant={"outlined"}>{t("mailingSettings.reset")}</SecondaryButton>
             </div>
-
-
         </div>
     );
 };

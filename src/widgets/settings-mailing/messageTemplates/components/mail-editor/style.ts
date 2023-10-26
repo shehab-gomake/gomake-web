@@ -34,13 +34,18 @@ const useStyle = () => {
             editorStyle1: {
                 height: convertHeightToVH(150),
                 borderRadius: "0px 0px 12px 12px",
-                borderColor: "#9695C7"
+                borderColor: "#9695C7",
+                ...FONT_FAMILY.Lexend(400, 16),
+                lineHeight: "20px",
+                color: primaryColor(900),
             },
-
             editorStyle2: {
                 height: convertHeightToVH(300),
                 borderRadius: "0px 0px 12px 12px",
-                borderColor: "#9695C7"
+                borderColor: "#9695C7",
+                ...FONT_FAMILY.Lexend(400, 16),
+                lineHeight: "20px",
+                color: primaryColor(900),
             },
             variableStyle: {
                 ...FONT_FAMILY.Lexend(400, 13),

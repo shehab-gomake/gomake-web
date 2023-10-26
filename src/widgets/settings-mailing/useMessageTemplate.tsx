@@ -1,21 +1,22 @@
 
-import { getAllSMSTemplatesApi, updateSMSTemplateApi, addSMSTemplateGroup, getAllSMSTemplatesGroupsApi, getAllTemplateVariablesApi } from "@/services/api-service/mailing/mailing-api";
+import { getAllSMSTemplatesApi, updateSMSTemplateApi, addSMSTemplateGroup, getAllSMSTemplatesGroupsApi, getAllTemplateVariablesApi, getAllTemplateTypesApi } from "@/services/api-service/mailing/mailing-api";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useRecoilState } from "recoil";
 import { useSnackBar } from "@/hooks";
-import { allSMSTemplateGroupsState, groupModalState, templateGroupState, templateVariablesState } from "./states/state";
+import { allSMSTemplateGroupsState, groupModalState, templateGroupState , templateVariablesState } from "./states/state";
 import { MoreMenuWidget } from "./messageTemplates/components/more-circle/index";
 import { PdfUploadComponent } from "./messageTemplates/components/upload-file/upload-file";
 import { SMSTemplateGroup } from "./messageTemplates/interfaces/interface";
-import { SMSTemplatesEnum } from "./messageTemplates/enums/enum";
+
 
 const useMessageTemplate = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertFaultAdded, alertSuccessAdded, alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
+  const [types, setTypes] = useState([]);
   const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupState);
 
   const tableHeaders = [
@@ -26,18 +27,29 @@ const useMessageTemplate = () => {
     t("mailingSettings.more"),
   ];
 
+  useEffect(() => {
+    if (types && types.length > 0) {
+      getAllSmsTemplates();
+    }
+  }, [types , templateGroup]);
 
+  const getSMSTemplateTypes = async () => {
+    const callBackFunction = (data) => {
+      if (data.success) {
+        setTypes(data.data);
+      }
+    }
+    return await getAllTemplateTypesApi(callApi, callBackFunction);
+  }
 
-  // data table need fix
   const [allSmsTemplates, setAllSmsTemplates] = useState<any>();
   const getAllSmsTemplates = () => {
     const callBackFunction = (data) => {
       if (data.success) {
         const tableRows = data.data?.map((template) => [
-          SMSTemplatesEnum[template.templateTypeId],
+          types.find((option) => option.value == template.templateType)?.text || "Unknown",
           template.title,
           template.text,
-          // <UploadFileInput selectedNameFile={document.file}/>,
           <PdfUploadComponent />,
           <MoreMenuWidget item={template} onClickDelete={null} />
         ]);
@@ -47,7 +59,7 @@ const useMessageTemplate = () => {
     getAllSMSTemplatesApi(callApi, callBackFunction, { SMSTemplatesGroupId: templateGroup?.id }).then();
   }
 
-  // select options 
+  // select group 
   const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(allSMSTemplateGroupsState);
   const getSMSTemplateGroups = () => {
     const callBackFunction = (data) => {
@@ -70,7 +82,6 @@ const useMessageTemplate = () => {
     getAllTemplateVariablesApi(callApi, callBackFunction).then();
   }
 
-
   // add new group
   const onAddSMSTemplateGroup = async (templateGroup) => {
     const callback = (data) => {
@@ -85,14 +96,13 @@ const useMessageTemplate = () => {
     await addSMSTemplateGroup(callApi, callback, templateGroup);
   }
 
-
   // save changes
   const onUpdateSmsTemplate = async (smsTemplate) => {
     const callback = (data) => {
       if (data.success) {
         alertSuccessUpdate();
         setOpenModal(!openModal);
-        // getAllSmsTemplates();
+        getAllSmsTemplates();
       } else {
         alertFaultUpdate();
       }
@@ -107,10 +117,12 @@ const useMessageTemplate = () => {
     getAllSmsTemplates,
     allSmsTemplates,
     getSMSTemplateGroups,
-
-
     getTemplateVariables,
-    templateVariables
+    templateVariables,
+    getSMSTemplateTypes,
+    templateGroup,
+    setTemplateGroup,
+    types
   };
 };
 
