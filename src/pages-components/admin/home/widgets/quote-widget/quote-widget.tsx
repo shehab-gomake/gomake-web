@@ -26,6 +26,7 @@ const QuoteWidget = ({ isAdmin = true   }) => {
     openModal,
     onClickSaveQuote,
     QuoteExist,
+    updateCustomerList,
     errorColor,
     customersListCreateOrder,
     selectedClientType,
@@ -43,35 +44,41 @@ const QuoteWidget = ({ isAdmin = true   }) => {
     renderOptions,
   } = useQuoteWidget();
   
-  const selectedOptionInQuoteExist = renderOptions().find(
+  const selectedOptionInQuoteExist = renderOptions()?.find(
     (item) => item.id == QuoteExist?.result?.clientId
   );
 
-  const customersListCreateOrderList = customersListCreateOrder.find(
+  const customersListCreateOrderList = customersListCreateOrder?.find(
     (item) => item.id == QuoteExist?.result?.clientId
   );
   
- 
-
     
     useEffect(()=>{
+    
         if(!selectedOptionInQuoteExist && QuoteExist.result == null && Object?.keys(selectedCustomersList).length === 0 )
         {
           setselectedOption(null)
           setSelectedClientType(null)
         }else{
-         
-          if(!selectedOptionInQuoteExist && QuoteExist.result != null)
-          {
-           setselectedOption(customersListCreateOrderList)
-          }else{
-            setselectedOption(null)
-          }
           if(!selectedOptionInQuoteExist && !customersListCreateOrderList && QuoteExist.result == null && Object?.keys(selectedCustomersList).length !== 0)
           {
+           
             setselectedOption(selectedCustomersList);
+          }else{
+            if(!selectedOptionInQuoteExist && QuoteExist.result == null)
+            {
+               setselectedOption(null)
+              setSelectedClientType(null)
+            }else{
+              if(!selectedOptionInQuoteExist && QuoteExist.result != null){
+                setselectedOption(customersListCreateOrderList)
+              }
+              
+            }
+
           }
-        
+       
+         
       }
      
       if(selectedOptionInQuoteExist){
@@ -96,7 +103,7 @@ const QuoteWidget = ({ isAdmin = true   }) => {
           }
       }
     
-    },[QuoteExist,selectedOption , selectedOptionInQuoteExist])
+    },[QuoteExist,selectedOption , selectedOptionInQuoteExist , customersListCreateOrderList])
   return (
   
     <div style={clasess.mainContainer}>
@@ -165,8 +172,8 @@ const QuoteWidget = ({ isAdmin = true   }) => {
        
             {
               QuoteExist.result != null ?
-              <Stack direction={'row'} gap={'13px'}>
-              <div>
+              <Stack direction={'row'} gap={'13px'} width={'100%'}>
+              <div  style={{width:"50%"}}>
                     <GomakePrimaryButton
                     onClick={
                         isDisabled
@@ -185,7 +192,7 @@ const QuoteWidget = ({ isAdmin = true   }) => {
                     </GomakePrimaryButton>
                     
                     </div>
-                    <div>
+                    <div style={{width:"50%"}}>
                           <SecondaryButton
                           variant="contained"
                           style={{width:"100%",height:40}}
@@ -193,6 +200,7 @@ const QuoteWidget = ({ isAdmin = true   }) => {
                               onClickSaveQuote(QuoteId)
                               .then(() => onClcikCloseModal())
                               .then(()=>updateSelections())
+                              .then(()=>updateCustomerList())
                               .catch((error) => console.error("Error:", error));
 
                               }}
@@ -202,7 +210,7 @@ const QuoteWidget = ({ isAdmin = true   }) => {
                     </div>    
               
               </Stack> 
-              : <div>
+              : <div style={{width:"50%"}}>
                         <GomakePrimaryButton
                         onClick={
                             isDisabled
@@ -254,6 +262,8 @@ const QuoteWidget = ({ isAdmin = true   }) => {
         onClickDelete={() => {
           onClickSaveQuote(QuoteId)
               .then(() => onClcikCloseModal())
+              .then(() => updateQuoteExist())
+              .then(()=>updateCustomerList())
               .catch((error) => console.error("Error:", error));
           }}
       />

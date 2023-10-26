@@ -111,6 +111,9 @@ const useQuoteWidget = () => {
       await   setQuoteExist([]);
   },[]);
   
+  const updateCustomerList = useCallback (async ()=>{
+    setCustomersListCreateQuote(null);
+  },[]);
 
 
   useEffect(() => {
@@ -147,6 +150,9 @@ const useQuoteWidget = () => {
     }
   };
 
+
+  console.log("selectedCustomersList in use " , selectedCustomersList)
+
  
   return {
     clientTypesValue,
@@ -155,6 +161,7 @@ const useQuoteWidget = () => {
     customersListCreateOrder,
     isDisabled,
     id,
+    updateCustomerList,
     openModal,
     getAndSetExistQuote,
     QuoteExist,
