@@ -31,9 +31,9 @@ const useRule = () => {
     }, []);
 
     const addRule = useCallback(async(actionId: string,propertyId: string,ruleType: number, rule: any)=> {
-        const res = await callApi("POST",`/v1/printhouse-config/print-house-action/add-rule/${actionId}/${propertyId}/${ruleType}`,{
+        const res = await callApi("POST",`/v1/printhouse-config/print-house-action/add-rule/${actionId}/${propertyId}/${ruleType}`,
             rule
-        });
+         );
         if (res?.success) {
             setSnackbarStateValue({
                 state: true,

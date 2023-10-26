@@ -1346,7 +1346,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           clientTypeId: router?.query?.clientTypeId,
           productId: router?.query?.productId,
           generalParameters: generalParameters,
-          subProducts: subProducts,
+          subProducts,
         },
         false
       );

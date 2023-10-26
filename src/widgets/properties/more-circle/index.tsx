@@ -7,6 +7,8 @@ import { EditRulesModal } from "../properties-modals/edit-rule-modal";
 import { userState } from "@/store";
 import { useState } from "react";
 import { AddNewRuleModal } from "../properties-modals/add-new-rule-modal";
+import { useRecoilState } from "recoil";
+import { addRuleState } from "@/store/add-rule";
 interface IMoreMenuWidget{
   rules: [],
   actionId:string,
@@ -16,7 +18,8 @@ interface IMoreMenuWidget{
 const MoreMenuWidget = ({rules,actionId, propertyId, ruleType}) => {
   const { clasess } = useStyle();
   const [openRules,setOpenRules] = useState<boolean>(false);
-  const [openAddNewRule,setOpenNewRule] = useState<boolean>(false);
+  const [openAddNewRule,setOpenNewRule] = useRecoilState<boolean>(addRuleState);
+
   const { open, anchorEl, menuList, handleClose, handleClick } =
     useMoreCircle();
   const onCloseModal = ()=> {
@@ -49,9 +52,7 @@ const MoreMenuWidget = ({rules,actionId, propertyId, ruleType}) => {
           );
         })}
       </GoMakeMenu>
-      <EditRulesModal openModal={openRules} onClose={onCloseModal} actionRules = {rules} actionId={actionId} propertyId={propertyId} ruleType={ruleType}/>
-      <AddNewRuleModal openModal={openAddNewRule} onClose={onCloseNewRuleModal} actionId={actionId} propertyId={propertyId} ruleType={ruleType}/>
-    </>
+      </>
   );
 };
 export { MoreMenuWidget };

@@ -9,33 +9,29 @@ const useStyle = () => {
       insideStyle: {
         width: "30%",
         borderRadius: 5,
-        height: "40%",
+        height: "auto"
       },
       textInputStyle: {
         width: "100%",
         border: "1px solid #2E3092",
         borderRadius: 4,
       },
-      btnContainer: {
+     
+      addBtnStyle: {
         display: "flex",
         justifyContent: "flex-end",
         alignItems: "flex-end",
-        width: "100%",
-        marginTop: 25,
+         width: "100%",
+         marginTop:10
+         
       },
-      sendBtn: {
-        width: "25%",
-        marginLeft: "5%",
+      btnStyle: {
+        borderRadius: 4,
         backgroundColor: secondColor(500),
-        height:3
+        height: 30,
+        width: 120
       },
-      cancelBtn: {
-        width: "25%",
-        backgroundColor: "#fff",
-        color: secondColor(500),
-        border: "1px solid rgb(237, 2, 140)",
-        height:3
-      },
+     
       lineStyle: {
         width: "100%",
         backgroundColor: "#EEEEEE",

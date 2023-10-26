@@ -24,6 +24,7 @@ import { useOutputs } from "../../hooks/use-outputs";
 import { useSnackBar } from "@/hooks";
 import { useRule } from "../../hooks/use-rule";
 import { DeleteMenuIcon } from "@/widgets/quote/more-circle/icons/delete-menu";
+import { First } from "react-bootstrap/esm/PageItem";
 
 interface IAddNewModalProps {
   openModal: boolean;
@@ -35,6 +36,8 @@ class ActionRule {
   id: string;
   ruleName: string;
   priority: number;
+  ruleConditionStatements: RuleConditionStatements[];
+  //rule value
   successEvent: string;
   errorMessage?: string;
   errorType?: string;
@@ -42,7 +45,19 @@ class ActionRule {
   expression: string;
   isDeleted: boolean;
   isActive: boolean;
+  valueId: string;
+  hasID: boolean
 }
+
+class RuleConditionStatements {
+  category: string;
+  firstPart: string;
+  value: string;
+  valueId: string;
+  hasId: boolean;
+}
+
+
 
 const AddNewRuleModal = ({
   openModal,
@@ -74,6 +89,8 @@ const AddNewRuleModal = ({
       firstPart: "",
       condition: "",
       secondPart: "",
+      valueId: "",
+      hasID: false
     },
   ]);
   const [fieldsStates, setFieldsStates] = useState([
@@ -160,8 +177,9 @@ const AddNewRuleModal = ({
     } else if (fieldNameId == 4) {
       data[index].condition = value?.id;
     } else if (fieldNameId == 5) {
-      data[index].secondPart =
-        value?.name == undefined ? value?.label : value?.name;
+      data[index].secondPart = (!value?.name) ? value?.name: value?.label;
+      data[index].valueId = value?.id;
+      data[index].hasID = true;
     }
     setFields(data);
   };
@@ -216,11 +234,24 @@ const AddNewRuleModal = ({
         secondPart[index].isInputField = false;
         break;
       case "Property output":
-        secondPart[index].isInputField = true;
+        fields[index].firstPart = value.name;
+        let output = Outputs.find(res => res.id == value.id)
+        secondPart[index].isInputField = false;
+        if (output?.valueType == 3) {
+          secondPart[index].isInputField = true;
+        } else if (output?.valueType == 2) {
+          fields[index].secondPart = materialsDropdown
+        } else if (output?.valueType == 1) {
+          fields[index].secondPart = machines.map((m) => {
+            return {
+              label: m?.name,
+              id: m?.id,
+            };
+          });
+        }
         break;
       case "Property input":
         secondPart[index].isInputField = false;
-
         break;
     }
     setFieldsStates([...fields]);
@@ -232,6 +263,7 @@ const AddNewRuleModal = ({
     if (fieldNameId == 5) {
       data = [...fields];
       data[index].secondPart = event.target.value.replace(/\D/g, "");
+      data[index].hasID = false;
       setFields(data);
     } else if (fieldNameId == 6) {
       data = event.target.value.replace(/\D/g, "");
@@ -250,6 +282,8 @@ const AddNewRuleModal = ({
       firstPart: "",
       condition: "",
       secondPart: "",
+      valueId: "",
+      hasID: false
     };
     let newFieldState = { firstPart: [], secondPart: [] };
     let newFirstStatementValue = { defultValue: null, isDisabled: false };
@@ -275,6 +309,8 @@ const AddNewRuleModal = ({
         firstPart: "",
         condition: "",
         secondPart: "",
+        valueId: "",
+        hasID: false
       });
       dynameicFieldState.push({ firstPart: [], secondPart: [] });
       firstPartState.push({ defultValue: null, isDisabled: false });
@@ -314,22 +350,13 @@ const AddNewRuleModal = ({
     var values = validateForm();
     if (values?.length != 0) {
       let ruleName = "";
+      let obj = new ActionRule();
       let val = "(";
       values?.map((m, index) => {
-        val +=
-          " " +
-          m.linkCondition +
-          " " +
-          m.firstPart +
-          " " +
-          m.condition +
-          " " +
-          m.secondPart +
-          " ";
-        ruleName = m.category;
+        val += " " + m.linkCondition + " " + m.firstPart + " " + m.condition + " " + m.secondPart + " "; ruleName = m.category;
+        obj.ruleConditionStatements.push({ category: m.Category, firstPart: m.firstPart, hasId: m.hasID, value: m.secondPart, valueId: m.valueId })
       });
       val += ")";
-      let obj = new ActionRule();
       obj.priority = 1;
       obj.expression = val;
       obj.successEvent = value;
@@ -339,10 +366,10 @@ const AddNewRuleModal = ({
       obj.ruleExpressionType = "LambdaExpression";
       obj.errorMessage = "One or more adjust rules failed";
       obj.errorType = "LambdaExpression";
+      debugger
       try {
-        debugger;
         await addRule(actionId, propertyId, ruleType, obj);
-      } catch (error) {}
+      } catch (error) { }
       setExpression(val);
     } else {
       let val = "";
@@ -387,6 +414,8 @@ const AddNewRuleModal = ({
                 firstPart: "",
                 condition: "",
                 secondPart: "",
+                valueId: "",
+                hasID: false
               },
             ]);
         }}

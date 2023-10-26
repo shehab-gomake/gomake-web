@@ -16,6 +16,8 @@ import { useTranslation } from "react-i18next";
 import { MoreMenuWidget } from "../more-circle";
 import { usePrintHouseActions } from "../hooks/use-print-house-action";
 import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
+import { EditRulesModal } from "../properties-modals/edit-rule-modal";
+import { AddNewRuleModal } from "../properties-modals/add-new-rule-modal";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -94,6 +96,7 @@ const PropertiesTable = () => {
                     {property.propertyName}
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>
+                    {property.actionRules != 0 &&
                     <div className="scrollBlue" style={classes.rowItem}>
                       {property.actionRules.map((rule, index) => {
                         return (
@@ -102,7 +105,7 @@ const PropertiesTable = () => {
                           </div>
                         );
                       })}
-                    </div>
+                    </div>}
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>
                     {property.ruleType == 0 ? "Output" : "Input"}{" "}
@@ -114,6 +117,7 @@ const PropertiesTable = () => {
                       propertyId={property.propertyId}
                       ruleType={property.ruleType}
                     />
+
                   </StyledTableCell>
                 </StyledTableRow>
               );
@@ -121,6 +125,9 @@ const PropertiesTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      {/* <EditRulesModal openModal={openRules} onClose={onCloseModal} actionRules = {rules} actionId={actionId} propertyId={propertyId} ruleType={ruleType}/>
+      <AddNewRuleModal openModal={openAddNewRule} onClose={onCloseNewRuleModal} actionId={actionId} propertyId={propertyId} ruleType={ruleType}/>
+    */}
     </>
   );
 };

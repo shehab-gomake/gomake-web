@@ -13,8 +13,8 @@ const useMaterials = () => {
     useEffect(() => {
         getMaterials().then(
             (res) => {
-                let response = res?.data?.data?.data
-                let tempMaterials = response.map((m) => {
+                let response : any[]= res?.data?.data?.data
+                let tempMaterials = response?.map((m) => {
                     return {
                         label: t(m.pathName),
                         id: m.pathName
