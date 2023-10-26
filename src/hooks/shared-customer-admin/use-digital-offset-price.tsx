@@ -1574,8 +1574,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         isNeedExample: false,
         jobDetails: pricingDefaultValue?.jobDetails,
         itemParmetersValues: itemParmetersValues,
-        workFlow: pricingDefaultValue?.workFlows,
-        actions: pricingDefaultValue?.actions,
+        workFlow:
+          pricingDefaultValue?.workFlows != null
+            ? pricingDefaultValue?.workFlows
+            : template?.workFlows,
+        actions:
+          pricingDefaultValue?.actions?.length > 0
+            ? pricingDefaultValue?.actions
+            : template?.actions,
       }
     );
     if (res?.success) {
@@ -1592,6 +1598,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     userProfile,
     workFlowSelected,
     defaultPrice,
+    template,
   ]);
   const navigateForRouter = () => {
     let checkParameter = validateParameters(isRequiredParameters);
