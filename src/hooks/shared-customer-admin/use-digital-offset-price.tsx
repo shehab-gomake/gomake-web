@@ -60,12 +60,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     useRecoilState<any>(digitslPriceState);
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(true);
+  console.log("pricingDefaultValue", pricingDefaultValue);
   useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0) {
       const workFlowSelect = pricingDefaultValue?.workFlows?.find(
         (workFlow) => workFlow?.selected === true
       );
       setWorkFlowSelected(workFlowSelect);
+      setDefaultPrice(workFlowSelect?.totalPrice);
     }
   }, [pricingDefaultValue]);
   useEffect(() => {
@@ -1531,6 +1533,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     defaultPrice,
     workFlowSelected,
   ]);
+  console.log("template", template);
   useEffect(() => {
     if (
       widgetType === EWidgetProductType.EDIT ||
@@ -1539,6 +1542,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setUrgentOrder(!!template?.quoteItem?.isUrgentWork);
       setPrintingNotes(template?.quoteItem?.printingNotes);
       setGraphicNotes(template?.quoteItem?.graphicNotes);
+      setPricingDefaultValue({
+        actions: template?.actions,
+        jobDetails: template?.jobDetails,
+        workFlows: template?.workFlows,
+      });
       setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.value);
       setCanCalculation(false);
       const workFlowSelect = template?.workFlows?.find(
@@ -1557,7 +1565,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         userID: userProfile?.id,
         customerID: router?.query?.customerId,
         clientTypeId: router?.query?.clientTypeId,
-        unitPrice: defaultPrice?.toFixed(2) / quantity?.value,
+        unitPrice: defaultPrice / quantity?.value,
         amount: quantity?.value,
         isNeedGraphics: false,
         isUrgentWork: urgentOrder,

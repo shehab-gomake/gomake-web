@@ -37,33 +37,10 @@ const RightSideWidget = ({
   const quantity = generalParameters?.find(
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
-  const [sliderPrice, setSliderPrice] = useState<number>(0);
   const [changePrice, setChangePrice] = useState<number>(0);
   const handleChange = (event: Event, newValue: number | number[]) => {
-    setSliderPrice(newValue as number);
+    setDefaultPrice(newValue as number);
   };
-  useEffect(() => {
-    if (
-      widgetType === EWidgetProductType.EDIT ||
-      widgetType === EWidgetProductType.DUPLICATE
-    ) {
-      setDefaultPrice(
-        template?.quoteItem?.unitPrice * quantity?.value - sliderPrice
-      );
-    } else {
-      if (!isNaN(workFlowSelected?.totalPrice)) {
-        setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2) - sliderPrice);
-      } else {
-        setDefaultPrice("------");
-      }
-    }
-  }, [
-    pricingDefaultValue,
-    sliderPrice,
-    workFlowSelected,
-    widgetType,
-    quantity,
-  ]);
 
   const { t } = useTranslation();
   return (
@@ -147,7 +124,8 @@ const RightSideWidget = ({
         </div>
         <div style={clasess.progress}>
           <Slider
-            defaultValue={0}
+            defaultValue={defaultPrice}
+            value={defaultPrice}
             aria-label="Default"
             style={{ width: "93%", marginLeft: 10 }}
             min={10}
@@ -190,9 +168,7 @@ const RightSideWidget = ({
                 if (priceRecovery) {
                   setDefaultPrice(changePrice);
                 } else {
-                  setDefaultPrice(
-                    workFlowSelected?.totalPrice.toFixed(2) - sliderPrice
-                  );
+                  setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2));
                 }
               }}
               checked={priceRecovery}
