@@ -39,7 +39,9 @@ const RightSideWidget = ({
   );
   const [changePrice, setChangePrice] = useState<number>(0);
   const handleChange = (event: Event, newValue: number | number[]) => {
+    setPriceRecovery(false);
     setDefaultPrice(newValue as number);
+    setChangePrice(newValue as number);
   };
 
   const { t } = useTranslation();
