@@ -531,7 +531,7 @@ const AddNewRuleModal = ({
                     >
                       <DeleteMenuIcon />
                     </div>
-                  </div>
+                  </div> 
                 </div>
               );
             })}
