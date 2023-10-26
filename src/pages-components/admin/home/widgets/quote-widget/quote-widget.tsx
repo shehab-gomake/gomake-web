@@ -7,11 +7,14 @@ import { useStyle } from "./style";
 import { Popover, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import { useRecoilState } from "recoil";
+import { QuoteNumberState } from "@/pages-components/quote/store/quote";
 
 const QuoteWidget = ({ isAdmin = true   }) => {
   const { clasess } = useStyle();
   const [QuoteId ,  setQuoteId] = useState("");
   const [selectedOption, setselectedOption] = useState<any>();
+  const [quoteNumber, setquoteNumber] = useRecoilState<any>(QuoteNumberState);
   const { t } = useTranslation();
   const {
     clientTypesValue,
@@ -24,8 +27,11 @@ const QuoteWidget = ({ isAdmin = true   }) => {
     onClickSaveQuote,
     QuoteExist,
     errorColor,
+    customersListCreateOrder,
     selectedClientType,
     onClcikCloseModal,
+    updateSelections,
+    selectedCustomersList,
     _renderErrorMessage,
     handleClose,
     updateQuoteExist,
@@ -40,28 +46,45 @@ const QuoteWidget = ({ isAdmin = true   }) => {
   const selectedOptionInQuoteExist = renderOptions().find(
     (item) => item.id == QuoteExist?.result?.clientId
   );
+
+  const customersListCreateOrderList = customersListCreateOrder.find(
+    (item) => item.id == QuoteExist?.result?.clientId
+  );
+  
  
-  console.log(selectedOptionInQuoteExist);
+
     
     useEffect(()=>{
+        if(!selectedOptionInQuoteExist && QuoteExist.result == null && Object?.keys(selectedCustomersList).length === 0 )
+        {
+          setselectedOption(null)
+          setSelectedClientType(null)
+        }else{
+         
+          if(!selectedOptionInQuoteExist && QuoteExist.result != null)
+          {
+           setselectedOption(customersListCreateOrderList)
+          }else{
+            setselectedOption(null)
+          }
+          if(!selectedOptionInQuoteExist && !customersListCreateOrderList && QuoteExist.result == null && Object?.keys(selectedCustomersList).length !== 0)
+          {
+            setselectedOption(selectedCustomersList);
+          }
+        
+      }
+     
       if(selectedOptionInQuoteExist){
         setselectedOption(selectedOptionInQuoteExist);
       }
       if (QuoteExist.result == null) {
+       
         setSelectedClientType(null);
-      }else{
-        if(!selectedOption && QuoteExist.result != null)
-        {
-            const updatedSelection = renderOptions().find(
-              (item) => item.id == QuoteExist?.result?.clientId
-            );
-          
-          setselectedOption(updatedSelection);
-        }
       }
       if(selectedOption)
       {
         setQuoteId(QuoteExist?.result?.id);
+        setquoteNumber(QuoteExist?.result?.number)
         setSelectedCustomersList(selectedOption);
           const client = clientTypesValue.find(
             (c) => c.id == selectedOption?.clientTypeId
@@ -134,7 +157,6 @@ const QuoteWidget = ({ isAdmin = true   }) => {
             style={clasess.selectTypeContainer}
             getOptionLabel={(option: any) => option.name}
             onChange={(e: any, value: any) => {
-
               setSelectedProduct(value);
             }}
           />
@@ -169,8 +191,10 @@ const QuoteWidget = ({ isAdmin = true   }) => {
                           style={{width:"100%",height:40}}
                           onClick={() => {
                               onClickSaveQuote(QuoteId)
-                                  .then(() => updateQuoteExist())
-                                  .catch((error) => console.error("Error:", error));
+                              .then(() => onClcikCloseModal())
+                              .then(()=>updateSelections())
+                              .catch((error) => console.error("Error:", error));
+
                               }}
                           >
                           {t("home.admin.SaveQuote")}

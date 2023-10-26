@@ -6,3 +6,9 @@ export const quoteState = atom({
     openAddAdditionsModal: false,
   },
 });
+
+
+export const QuoteNumberState = atom({
+  key: "QuoteNumberState",
+  default: "",
+});

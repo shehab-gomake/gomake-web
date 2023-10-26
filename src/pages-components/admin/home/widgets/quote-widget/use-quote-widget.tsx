@@ -10,6 +10,7 @@ import {
 } from "@/services/hooks";
 import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import S from "@/pages/settings/index.page";
 
 const useQuoteWidget = () => {
   const { t } = useTranslation();
@@ -34,10 +35,10 @@ const useQuoteWidget = () => {
   };
   //PopOver Btns
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const onClcikCloseModal = async () => {
+  const onClcikCloseModal =  async () => {
     setOpenModal(false);
-  //  window.location.reload();
   };
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -72,11 +73,11 @@ const useQuoteWidget = () => {
       setCanOrder(false);
     }
   };
-
   const renderOptions = () => {
     if (!!canOrder) {
       return customersListCreateOrder;
     } else return customersListCreateQuote;
+  
   };
   const getAllClientTypes = useCallback(async () => {
     await getAndSetClientTypes(callApi, setClientTypesValues);
@@ -106,6 +107,9 @@ const useQuoteWidget = () => {
    await getAndSetExistQuote();
   },[]);
 
+  const updateSelections = useCallback(async ()=>{
+      await   setQuoteExist([]);
+  },[]);
   
 
 
@@ -156,6 +160,7 @@ const useQuoteWidget = () => {
     QuoteExist,
     open,
     errorColor,
+    updateSelections,
     anchorEl,
     selectedClientType,
     handleClick,
@@ -165,6 +170,7 @@ const useQuoteWidget = () => {
     onClcikCloseModal,
     setSelectedClientType,
     setSelectedCustomersList,
+    selectedCustomersList,
     setSelectedProduct,
     setOpenModal,
     setQuoteExist,
