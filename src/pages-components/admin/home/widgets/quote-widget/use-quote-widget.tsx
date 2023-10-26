@@ -27,15 +27,16 @@ const useQuoteWidget = () => {
   const [selectedClientType, setSelectedClientType] = useState<any>({});
   const [selectedCustomersList, setSelectedCustomersList] = useState<any>({});
   const [selectedProduct, setSelectedProduct] = useState<any>({});
+
   const [isDisabled, setIsDisabled] = useState(true);
   const onClcikOpenModal = (quoteId: any) => {
-    setOpenModal(true);
+    setOpenModal(true); 
   };
   //PopOver Btns
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const onClcikCloseModal = async (OldselectedOption) => {
+  const onClcikCloseModal = async () => {
     setOpenModal(false);
-    
+    window.location.reload();
   };
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);

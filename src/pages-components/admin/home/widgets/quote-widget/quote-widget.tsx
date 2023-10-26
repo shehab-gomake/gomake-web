@@ -6,10 +6,9 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useStyle } from "./style";
 import { Popover, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
-import { SaveOrAddQuote } from "./components/save-or-add-quote";
 import { SecondaryButton } from "@/components/button/secondary-button";
 
-const QuoteWidget = ({ isAdmin = true , updateQuoteExist }) => {
+const QuoteWidget = ({ isAdmin = true , updateQuoteExist  }) => {
   const { clasess } = useStyle();
   const [QuoteId ,  setQuoteId] = useState("");
   const [OldselectedOption, setOldselectedOption] = useState<any>();
@@ -64,6 +63,7 @@ const QuoteWidget = ({ isAdmin = true , updateQuoteExist }) => {
     
     },[QuoteExist,selectedOption])
   return (
+  
     <div style={clasess.mainContainer}>
       <div style={clasess.autoComplateRowContainer}>
         <div style={{ width: "65%" }}>
@@ -76,7 +76,6 @@ const QuoteWidget = ({ isAdmin = true , updateQuoteExist }) => {
             key={selectedOption}
             value={selectedOption}
             onChange={(e: any, value: any) => {
-              console.log("value is " , value)
               setSelectedCustomersList(value);
               const client = clientTypesValue.find(
                 (c) => c.id == value?.clientTypeId
@@ -207,11 +206,15 @@ const QuoteWidget = ({ isAdmin = true , updateQuoteExist }) => {
             style={{ width: 120, height: 120, color: errorColor(300) }}
           />
         }
-        title={t("sales.quote.titleModal")}
-        yesBtn={t("sales.quote.changeStatus")}
+        title={t("sales.quote.titleMessage")}
+        yesBtn={t("sales.quote.Confirm")}
         openModal={openModal}
-        onClose={()=> onClcikCloseModal(OldselectedOption)}
-        subTitle={t("sales.quote.subTitleModal")}
+        onClose={()=> {
+          onClcikCloseModal()
+          .then(() => updateQuoteExist())
+          .catch((error) => console.error("Error:", error));
+        }}
+        subTitle={t("sales.quote.MessageForClient")}
         onClickDelete={() => {
           onClickSaveQuote(QuoteId)
               .then(() => updateQuoteExist())
