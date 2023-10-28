@@ -3,12 +3,16 @@ import { updateTokenStorage } from "@/services/storage-data";
 import { useCallback, useMemo, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {companyProfileState} from "@/store/company-profile";
+import { useTranslation } from "react-i18next";
 
 const useGomakeLogin = () => {
+  const {t}=useTranslation()
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const setUserProfile = useSetRecoilState(companyProfileState);
   const [state, setState] = useState<any>({});
+
+  const [errorMsg,setErrorMsg]=useState("")
   const [errors, setErrors] = useState<{ [name: string]: boolean }>({
     username: false,
     password: false,
@@ -20,14 +24,29 @@ const useGomakeLogin = () => {
     [state]
   );
   const onClickLogin = useCallback(async () => {
-    const result = await callApi("POST", "/v1/auth/login-customer", {
-      userPrincipalName: state.username,
-      password: state.password,
-    });
-    if (result?.data?.data?.customer?.token) {
-      updateTokenStorage(result?.data?.data?.customer?.token);
-      navigate("/");
+    if(state?.username?.length <= 0) {
+      setErrors({username:true,password:false});
+      setErrorMsg(t("login.emailIsRequired"))
     }
+    else if(state?.password?.length <= 0) {
+      setErrors({username:false,password:true});
+      setErrorMsg(t("login.passwordIsRequired"))
+
+    }
+    else{
+      const result = await callApi("POST", "/v1/auth/login-customer", {
+        userPrincipalName: state.username,
+        password: state.password,
+      });
+      if (result?.data?.data?.customer?.token) {
+        updateTokenStorage(result?.data?.data?.customer?.token);
+        navigate("/");
+      }
+      else{
+        setErrorMsg(t("login.invalidCredentialToken"))
+      }
+    }
+   
   }, [state]);
   const inputs = useMemo(() => {
     return [
@@ -35,7 +54,7 @@ const useGomakeLogin = () => {
         name: "username",
         label: "login.username",
         type: "text",
-        placeholder: "Username",
+        placeholder: "login.username",
         required: true,
         key: "username",
       },
@@ -59,9 +78,11 @@ const useGomakeLogin = () => {
   return {
     inputs,
     errors,
+    errorMsg,
     changeState,
     onClickLogin,
-    getUserProfile
+    getUserProfile,
+    t
   };
 };
 export { useGomakeLogin };

@@ -9,7 +9,8 @@ const getAndSetClientAddress = async (
   const result: any = await callApi(
     "GET",
     "/v1/crm-service/customer/get-client-address",
-    data
+    data,
+    false
   );
   return returnResult(result, setState);
 };

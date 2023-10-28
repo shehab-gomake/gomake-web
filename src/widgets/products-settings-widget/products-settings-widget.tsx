@@ -8,11 +8,13 @@ import {
 import { useStyle } from "./style";
 import { AddProductWidget } from "./widget/add-product";
 import { AddButton } from "@/components/button/add-button";
+import { GomakePrimaryButton } from "@/components";
+import { LeftArrowIcon } from "@/icons";
+import { EWidgetProductSettingsTabs } from "./enums";
 
 const ProductsSettingsWidget = () => {
   const { clasess } = useStyle();
-  const { tabs, value, navigate, handleChange, setValue, t } =
-    useProductsSettings();
+  const { tabs, value, handleChange, setValue, t } = useProductsSettings();
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.mainHeadecontainer}>
@@ -25,21 +27,45 @@ const ProductsSettingsWidget = () => {
             return <UsersSettingsTab label={tab.name} />;
           })}
         </UsersSettingsTabs>
-        <AddButton
-          label={t("products.productManagement.admin.addProduct")}
-          onClick={() => setValue(3)}
-        />
+        {value === 3 ? (
+          <GomakePrimaryButton
+            style={clasess.gobackBtnStyle}
+            leftIcon={<LeftArrowIcon />}
+            onClick={() =>
+              setValue(EWidgetProductSettingsTabs.PRODUCT_MANAGMENT)
+            }
+          >
+            {t("products.productManagement.admin.goBack")}
+          </GomakePrimaryButton>
+        ) : (
+          <AddButton
+            label={t("products.productManagement.admin.addProduct")}
+            onClick={() => setValue(EWidgetProductSettingsTabs.ADD_PRODUCT)}
+          />
+        )}
       </div>
-      <CustomTabPanel value={value} index={0}>
+      <CustomTabPanel
+        value={value}
+        index={EWidgetProductSettingsTabs.PRODUCT_MANAGMENT}
+      >
         <ProductManagementWidget />
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
+      <CustomTabPanel
+        value={value}
+        index={EWidgetProductSettingsTabs.SHIPMENTS_SETTING}
+      >
         "coming soon"
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
+      <CustomTabPanel
+        value={value}
+        index={EWidgetProductSettingsTabs.PRICING_SETTING}
+      >
         coming soon
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={3}>
+      <CustomTabPanel
+        value={value}
+        index={EWidgetProductSettingsTabs.ADD_PRODUCT}
+      >
         <AddProductWidget />
       </CustomTabPanel>
     </div>

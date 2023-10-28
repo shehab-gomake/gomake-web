@@ -13,6 +13,7 @@ const useStyle = () => {
         backgroundColor: "#F135A3",
       },
       insideStyle: { width: "64%", height: "93%", maxWidth: "1240px", maxHeight: "1007px", paddingLeft: "32px", paddingRight: "48px", paddingTop: "27px", paddingBottom: "27px", background: "#FDFDFD" },
+      secondInsideStyle: { paddingLeft: 0, paddingRight: 0, height: 'fit-content', width: 380},
       subTitleStyle: {
         fontStyle: "normal",
         lineHeight: "normal",
@@ -99,7 +100,6 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(400, 12),
       },
       autoButtonStyle: {
-        height: "40px",
         padding: "10px 32px",
         borderRadius: "4px",
         background: "var(--second-500, #ED028C)",
@@ -127,7 +127,6 @@ const useStyle = () => {
       },
       textAreaStyle: {
         display: "flex",
-        width: "308px",
         height: "80px",
         padding: "5px 7px",
         alignItems: "flex-start",

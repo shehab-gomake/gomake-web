@@ -120,6 +120,7 @@ const useQuoteWidget = () => {
     id,
     open,
     anchorEl,
+    selectedClientType,
     handleClick,
     handleClose,
     setSelectedClientType,
