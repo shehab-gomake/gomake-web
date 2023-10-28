@@ -11,6 +11,7 @@ const SettingsDocumentingWidget = () => {
         { title: t("documentingSettings.documentNumbering"), component: <DocumentNumbering/> },
         { title: t("documentingSettings.documentDesign"), component: <DocumentDesignSetting /> }
     ];
+
     return (
         <div>
             <PrimaryTabsComponent tabs={tabs} />

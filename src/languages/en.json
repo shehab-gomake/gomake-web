@@ -2068,6 +2068,18 @@
     "value": "Value",
     "details": "Details",
     "edit": "Edit",
+    "editDefinition": "Edit definition",
+    "update": "Update"
+  },
+  "documentingSettings": {
+    "documentNumbering": "Document numbering",
+    "documentDesign": "Document design",
+    "showDeliveryTime": " Show delivery time",
+    "name" : "Name",
+    "prefix": "Prefix",
+    "value": "Value",
+    "details": "Details",
+    "edit": "Edit",
     "more": "More"
   },
   "documentingDesign" : {

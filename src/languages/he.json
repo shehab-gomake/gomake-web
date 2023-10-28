@@ -2059,6 +2059,7 @@
     "rollDigitalEnhancement": "מכונת שיפור דיגיטלי על גליל",
     "autoBookCutting": "מכונת חיתוך ספרים אוטומטית",
     "rollAnalogEnhancement": "מכונת שיפור אנלוגית על גליל"
+  },
   "permissionsSettings": {
     "title": "Management of roles and privileges",
     "General": "General",
