@@ -13,9 +13,9 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
-        paddingLeft: 33,
-        paddingRight: 33,
-        gap: 65,
+        // paddingLeft: 33,
+        // paddingRight: 33,
+        // gap: 30,
         marginTop: 25,
         backgroundColor: "#FFFFFF",
       },
@@ -25,7 +25,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
         gap: 16,
-        width: "47%",
+        width: "48%",
         height: "100%",
       },
       textInputStyle: {
@@ -41,9 +41,26 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
-        // gap: 16,
+        flexWrap: "wrap" as "wrap",
+        gap:10
       },
       btnStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        border: "1px solid #ED028C",
+        borderRadius: 4,
+        ...FONT_FAMILY.Lexend(500, 16),
+        color: secondColor(500),
+        cursor: "pointer",
+        width: "100%",
+        height: 40,
+        backgroundColor:"#FFF",
+        minWidth:116,
+
+        
+      },
+      btnStyle2: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -53,11 +70,14 @@ const useStyle = () => {
         paddingBottom: 10,
         paddingLeft: 20,
         paddingRight: 20,
-        ...FONT_FAMILY.Lexend(500, 16),
+        ...FONT_FAMILY.Lexend(500, 13),
         color: secondColor(500),
         cursor: "pointer",
-        width: "23%",
+        width: "100%",
         height: 40,
+        marginTop: 10,
+        backgroundColor:"#FFF",
+        minWidth:123
       },
       rightSideContainer: {
         display: "flex",
@@ -65,7 +85,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 18,
-        width: "53%",
+        width: "48%",
       },
       totalBeforeVAT: {
         display: "flex",
@@ -74,6 +94,7 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         marginTop: 5,
+        flexWrap: "wrap" as "wrap",
       },
       totalBefore: {
         display: "flex",
@@ -81,6 +102,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "50%",
+        minWidth:300
       },
       discountBefore: {
         display: "flex",
@@ -88,6 +110,8 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "50%",
+        minWidth:300
+        
       },
       priceContainer: {
         display: "flex",
@@ -101,6 +125,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(400, 16),
         color: "#000000",
         width: "40%",
+        minWidth:"fit-content",
       },
       numbersStyle: {
         ...FONT_FAMILY.Lexend(400, 16),
@@ -157,6 +182,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         width: "50%",
         height: 40,
+        backgroundColor:"#FFF"
       },
       textInputWithoutStyle: {
         width: "100%",

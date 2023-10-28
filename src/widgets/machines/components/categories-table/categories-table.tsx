@@ -1,20 +1,8 @@
-import { styled } from "@mui/material/styles";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  tableCellClasses,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
-import { FONT_FAMILY } from "@/utils/font-family";
 import { useRecoilValue } from "recoil";
 import { machineCategoriesState } from "@/store/machine-categories";
 import { EditIcon } from "@/components/icons/edit-icon";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useStyle } from "@/widgets/machines/components/categories-table/style";
-import { GomakeTextInput } from "@/components";
 import { useCallback, useState } from "react";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import AddIcon from "@mui/icons-material/Add";
@@ -44,7 +32,7 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
     t('machineAttributes.editMachine'),
   ];
   const tableRows = categories()?.map((category) => [
-    category.name,
+    <>{t(category.name)}</>,
     <PrimaryButton
       startIcon={<EditIcon color={primaryColor(500)} width={20} height={20} />}
       href={

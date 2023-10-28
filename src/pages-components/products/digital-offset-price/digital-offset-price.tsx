@@ -14,8 +14,9 @@ import {
   ChooseShapeModal,
   MakeShapeModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
+import { EWidgetProductType } from "./enums";
 
-const PriceListPageWidget = () => {
+const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
   const {
     t,
@@ -32,9 +33,12 @@ const PriceListPageWidget = () => {
     renderOptions,
     checkWhatRenderArray,
     navigateForRouter,
+    updateQuoteItem,
     setUrgentOrder,
     setPrintingNotes,
     setGraphicNotes,
+    setPriceRecovery,
+    priceRecovery,
     graphicNotes,
     printingNotes,
     urgentOrder,
@@ -52,7 +56,9 @@ const PriceListPageWidget = () => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
-  } = useDigitalOffsetPrice({ clasess });
+    generalParameters,
+    workFlowSelected,
+  } = useDigitalOffsetPrice({ clasess, widgetType });
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
   const onChangeCategoryData = (actionId, categoryId, value) => {
@@ -73,7 +79,7 @@ const PriceListPageWidget = () => {
       {template?.sections?.length > 0 && (
         <div style={clasess.mainContainer}>
           <HeaderTitle
-            title={t("products.offsetPrice.admin.title2")}
+            title={template?.name}
             marginTop={24}
             marginBottom={24}
           />
@@ -106,6 +112,7 @@ const PriceListPageWidget = () => {
                               onChangeCategoryData={onChangeCategoryData}
                               section={section}
                               pricingDefaultValue={pricingDefaultValue}
+                              workFlowSelected={workFlowSelected}
                             />
                           );
                         } else {
@@ -166,6 +173,11 @@ const PriceListPageWidget = () => {
               setGraphicNotes={setGraphicNotes}
               graphicNotes={graphicNotes}
               printingNotes={printingNotes}
+              generalParameters={generalParameters}
+              workFlowSelected={workFlowSelected}
+              widgetType={widgetType}
+              setPriceRecovery={setPriceRecovery}
+              priceRecovery={priceRecovery}
             />
           </div>
           <MakeShapeModal
@@ -213,12 +225,22 @@ const PriceListPageWidget = () => {
               </div>
             </div>
             <div style={{ width: 330 }}>
-              <GomakePrimaryButton
-                style={clasess.addOrderBtn}
-                onClick={navigateForRouter}
-              >
-                {t("products.offsetPrice.admin.addOrder")}
-              </GomakePrimaryButton>
+              {widgetType === EWidgetProductType.EDIT ? (
+                <GomakePrimaryButton
+                  style={clasess.addOrderBtn}
+                  onClick={updateQuoteItem}
+                >
+                  {t("materials.buttons.edit")}
+                </GomakePrimaryButton>
+              ) : (
+                <GomakePrimaryButton
+                  style={clasess.addOrderBtn}
+                  onClick={navigateForRouter}
+                >
+                  {t("products.offsetPrice.admin.addOrder")}
+                </GomakePrimaryButton>
+              )}
+
               <div style={clasess.errorMsgStyle}>{errorMsg}</div>
               <div style={clasess.noVatStyle}>
                 {t("products.offsetPrice.admin.dontVAT")}

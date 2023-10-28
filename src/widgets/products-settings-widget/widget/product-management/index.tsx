@@ -22,7 +22,7 @@ const ProductManagementWidget = () => {
         <div style={clasess.subHeaderLeftSide}>
           <div style={clasess.selectProductContainer}>
             <div style={clasess.selectProductTextStyle}>
-              {t("products.productManagement.admin.selectProduct")}
+              {t("products.productManagement.admin.selectProductSKU")}
             </div>
             <div style={{ width: "100%" }}>
               <GoMakeAutoComplate
@@ -53,9 +53,19 @@ const ProductManagementWidget = () => {
         </div>
       </div>
       {term ? (
-        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={productSearched} headers={tableHeaders} />
+        <PrimaryTable
+          stickyFirstCol={false}
+          stickyHeader={false}
+          rows={productSearched}
+          headers={tableHeaders}
+        />
       ) : (
-        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={allProducts} headers={tableHeaders} />
+        <PrimaryTable
+          stickyFirstCol={false}
+          stickyHeader={false}
+          rows={allProducts}
+          headers={tableHeaders}
+        />
       )}
       {/* <div style={clasess.filtersSwichContainer}>
         <div style={clasess.filterSwichContainer}>

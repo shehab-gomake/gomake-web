@@ -30,7 +30,7 @@ const AddNewItemModal = () => {
   }, []);
   const onClcikCreateQuoteForCustomer = () => {
     navigate(
-      `/products/digital-offset-price?clientTypeId=${quoteItemValue?.client?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${selectedProduct?.id}`
+      `/products/create?clientTypeId=${quoteItemValue?.client?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${selectedProduct?.id}`
     );
   };
   return (

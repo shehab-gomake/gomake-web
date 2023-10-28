@@ -272,6 +272,7 @@ const useAddProduct = ({ clasess }) => {
             {
               path: option?.pathName,
               valueId: option?.valueId,
+              value: option?.value,
             },
           ],
         });
@@ -310,6 +311,7 @@ const useAddProduct = ({ clasess }) => {
               {
                 path: option?.pathName,
                 valueId: option?.valueId,
+                value: option?.value,
               },
             ],
           });
@@ -361,6 +363,7 @@ const useAddProduct = ({ clasess }) => {
             {
               path: option?.pathName,
               valueId: option?.valueId,
+              value: option?.value,
             },
           ],
         });
@@ -396,6 +399,7 @@ const useAddProduct = ({ clasess }) => {
               {
                 path: option?.pathName,
                 valueId: option?.valueId,
+                value: option?.value,
               },
             ],
           });

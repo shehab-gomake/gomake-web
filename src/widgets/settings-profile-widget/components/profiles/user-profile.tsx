@@ -2,9 +2,7 @@ import {ProfileAvatar} from "@/widgets/settings-profile-widget/components/avatar
 import {GoMakeModal} from "@/components";
 import {useState} from "react";
 import {useTranslation} from "react-i18next";
-import {
-    ChangePasswordComponent
-} from "@/widgets/settings-profile-widget/components/change-password/change-password-component";
+
 import Stack from "@mui/material/Stack";
 import {IInput} from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
 import {personalInputs} from "@/widgets/settings-profile-widget/components/profiles/inputs/personal-inputs";
@@ -16,12 +14,13 @@ import {FormInputsSectionComponent} from "@/components/form-inputs/form-inputs-s
 import {useRecoilState} from "recoil";
 import {userProfileState} from "@/store/user-profile";
 import {useUserProfile} from "@/hooks/use-user-profile";
+import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
 
 
 const UserProfile = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [state, setState] = useRecoilState(userProfileState);
-    const {updateProfile, changeUserProfileImage} = useUserProfile();
+    const {updateProfile, changeUserProfileImage, updateUserPassword} = useUserProfile();
     const changeState = (key, value) => {
         setState({...state, [key]: value});
     }
@@ -69,7 +68,7 @@ const UserProfile = () => {
                 onClose={() => setOpenModal(false)}
                 modalTitle={t('profileSettings.changePassword')}
             >
-                <ChangePasswordComponent/>
+                <ChangePasswordComponent onChangePassword={updateUserPassword}/>
             </GoMakeModal>
         </div>
 

@@ -85,9 +85,8 @@ const useStyle = () => {
         color: secondColor(500),
       },
       searchInput: {
-        maxWidth: 335,
         height: 40,
-        width: convertWidthToVW(375),
+        minWidth:convertWidthToVW(200),
         backgroundColor: "#F8F8F8",
         borderRadius: 10,
       },

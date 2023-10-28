@@ -8,7 +8,10 @@ const PricingSectionMappingWidget = ({
   onChangeCategoryData,
   section,
   pricingDefaultValue,
+  workFlowSelected,
 }: any) => {
+  console.log("pricingDefaultValue", pricingDefaultValue);
+  console.log("workFlowSelected", workFlowSelected);
   const { t } = useTranslation();
   return (
     <div style={clasess.pricingSectionContainer}>
@@ -22,7 +25,7 @@ const PricingSectionMappingWidget = ({
           </div>
           <div style={clasess.jobDetails}>{section.jobDetails}</div>
         </div>
-        {pricingDefaultValue?.workFlows?.length > 0 && (
+        {workFlowSelected && (
           <>
             <div style={{ width: "100%" }}>
               <Table
@@ -33,9 +36,9 @@ const PricingSectionMappingWidget = ({
                 ]}
                 tableRows={[
                   {
-                    totalCost: `${pricingDefaultValue?.workFlows[0]?.totalCost} USD`,
-                    totalProductionTime: `${pricingDefaultValue?.workFlows[0]?.totalProductionTime}`,
-                    finalPrice: `${pricingDefaultValue?.workFlows[0]?.totalPrice} USD`,
+                    totalCost: `${workFlowSelected?.totalCost} USD`,
+                    totalProductionTime: `${workFlowSelected?.totalProductionTime}`,
+                    finalPrice: `${workFlowSelected?.totalPrice} USD`,
                   },
                 ]}
                 styleContainer={{ marginTop: 20 }}
@@ -44,12 +47,12 @@ const PricingSectionMappingWidget = ({
           </>
         )}
       </div>
-      {pricingDefaultValue?.workFlows?.length > 0 && (
+      {workFlowSelected && (
         <>
           <div style={clasess.actionsStyleContainer}>
             {t("products.offsetPrice.admin.actions")}
           </div>
-          {pricingDefaultValue?.workFlows[0]?.actions?.map((flow: any) => {
+          {workFlowSelected?.actions?.map((flow: any) => {
             const actionData = section.actions.find(
               (item: any) => item.actionId === flow.actionId
             );
@@ -66,13 +69,6 @@ const PricingSectionMappingWidget = ({
                 onChangeCategoryData={onChangeCategoryData}
                 machinesArray={machinesArray}
               />
-              // <FlowsMappingWidget
-              //   clasess={clasess}
-              //   flow={flow}
-              //   machineCategories={machineCategories}
-              //   onChangeCategoryData={onChangeCategoryData}
-              //   section={section}
-              // />
             );
           })}
         </>

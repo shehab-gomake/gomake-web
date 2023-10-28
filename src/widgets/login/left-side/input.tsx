@@ -4,7 +4,12 @@ import { useTranslation } from "react-i18next";
 import { IInputContainer } from "./interfaces";
 import { useStyle } from "./style";
 
-const InputContainer = ({ input, error, changeState }: IInputContainer) => {
+const InputContainer = ({
+  input,
+  error,
+  changeState,
+  placeholder,
+}: IInputContainer) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
@@ -18,6 +23,7 @@ const InputContainer = ({ input, error, changeState }: IInputContainer) => {
           onChange={onChangeState}
           type={input.type}
           error={error}
+          placeholder={placeholder}
         />
       </div>
     </div>

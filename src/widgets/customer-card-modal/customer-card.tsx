@@ -16,28 +16,41 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { customerInputs, customerInputs2 } from "./inputs/customer-inputs";
 import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general-inputs";
 import { Stack } from "@mui/material";
-import { CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { useSnackBar } from "@/hooks";
+import { useRecoilState } from "recoil";
+import { gomakeUserState } from "./components/gomakeUser-tab/gomakeUserState";
+import { useUserProfile } from "@/hooks/use-user-profile";
+import { resetPassModalState } from "./state";
+import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
 
 interface IProps {
-  customerAction?: CUSTOMER_ACTIONS; 
+  isValidCustomer?: (value: any, value1: any, value2: any, value3: any) => boolean;
+  customerAction?: CUSTOMER_ACTIONS;
   codeFlag?: boolean;
   typeClient?: string;
-  getAllCustomers?: () => void; 
-  onCustomeradd?: (value: any) => void; 
-  openModal?: boolean; 
+  getAllCustomers?: () => void;
+  onCustomerAdd?: (value: any) => void;
+  openModal?: boolean;
   modalTitle?: string;
-  onClose?: () => void; 
-  customer?: any; 
-  setCustomer?: (customer: any) => void; 
+  onClose?: () => void;
+  customer?: any;
+  setCustomer?: (customer: any) => void;
   showUpdateButton?: boolean;
   showAddButton?: boolean;
 }
 
-const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCustomers, onCustomeradd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
+const CustomerCardWidget = ({ isValidCustomer, codeFlag, typeClient, getAllCustomers, onCustomerAdd, openModal, modalTitle, onClose, customer, setCustomer, showUpdateButton, showAddButton }: IProps) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
+  const { updateUserPassword } = useUserProfile();
   const { t } = useTranslation();
+  const { alertRequiredFields } = useSnackBar();
+  const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
+  const [gomakeUser, setGomakeUser] = useRecoilState<any>(gomakeUserState);
+
+
   const theme = createMuiTheme({
     palette: {
       secondary: {
@@ -48,8 +61,8 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
 
   const tabPanelTextArea = (placeHolder = null, value = null, onchange = null) => {
     return (
-      <Stack direction={'column'} >
-      <TextareaAutosize style={classes.textAreaStyle} placeholder={placeHolder} value={value} onChange={onchange}></TextareaAutosize>
+      <Stack direction={'column'} width={"33.33%"} >
+        <TextareaAutosize style={classes.textAreaStyle} placeholder={placeHolder} value={value} onChange={onchange}></TextareaAutosize>
       </Stack>
     );
   };
@@ -89,7 +102,7 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
   const addInitContact = () => {
     var temp = [];
     if (customer && customer.contacts) {
-      temp = [... customer.contacts];
+      temp = [...customer.contacts];
     } else {
       const index = temp.length + 1;
       temp.push({ name: "", index: index });
@@ -100,9 +113,9 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
   const deleteContactForm = (index) => {
     var temp = [...contacts];
     temp = temp.filter(x => x.index != index);
-  
+
     temp.forEach((contact, i) => {
-      if (contact?.index > index ) {
+      if (contact?.index > index) {
         contact.index -= 1;
       }
     });
@@ -121,7 +134,7 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
   const addEmptyAddress = () => {
     var temp = [...addresses];
     const index = temp.length + 1;
-    temp.push({ name: "", index: index , city: " " , street: " "});
+    temp.push({ name: "", index: index, city: " ", street: " " });
     setAddresses(temp);
   }
 
@@ -131,7 +144,7 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
       temp = [...customer.addresses];
     } else {
       const index = temp.length + 1;
-      temp.push({ name: "", index: index , city: " " , street: " "});
+      temp.push({ name: "", index: index, city: " ", street: " " });
     }
     setAddresses(temp);
   }
@@ -193,55 +206,77 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
     );
   };
 
+
   // add customer button
   const handleAddCustomer = async () => {
     const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
     const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
-    const filteredUserss = users.filter(user => !isNameIndexOnly(user));
+    const filteredUsers = users.filter(user => !isNameIndexOnly(user));
     const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
-    const updatedCustomer ={
+    const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
       addresses: filteredAddresses,
-      users: filteredUserss,
+      users: filteredUsers,
       CardTypeId: cardTypeId,
     };
     setCustomer(updatedCustomer);
-    addNewCustomer(updatedCustomer).then(x => {
-      onCustomeradd(x);
-      handleClose();
-    });
+    if (isValidCustomer(updatedCustomer, filteredContacts, filteredAddresses, filteredUsers)) {
+      addNewCustomer(updatedCustomer).then(x => {
+        onCustomerAdd(x);
+        handleClose();
+      });
+    }
+    else {
+      alertRequiredFields();
+    }
   };
 
   // edit customer button
   const handleEditCustomer = () => {
     const filteredContacts = contacts.filter(contact => !isNameIndexOnly(contact));
     const filteredAddresses = addresses.filter(address => !isNameIndexOnly(address));
-    const filteredUserss = users.filter(user => !isNameIndexOnly(user));
+    const filteredUsers = users.filter(user => !isNameIndexOnly(user));
     const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
       addresses: filteredAddresses,
-      users: filteredUserss,
+      users: filteredUsers,
     };
     setCustomer(updatedCustomer);
-    console.log(updatedCustomer)
-    editCustomer(updatedCustomer, setCustomer).then(x => {
-      getAllCustomers();
-      handleClose();
-    });
+    if (isValidCustomer(updatedCustomer, filteredContacts, filteredAddresses, filteredUsers)) {
+      editCustomer(updatedCustomer, setCustomer).then(x => {
+        getAllCustomers();
+        handleClose();
+      });
+    }
+    else {
+      alertRequiredFields();
+    }
   };
+
 
   const onChangeInputs = (key, value) => {
     setCustomer({ ...customer, [key]: value })
   }
 
+
+  const onUpdatePass = async (currentPass: any, newPass: any, confirmPass: any) => {
+    const res = await updateUserPassword(currentPass, newPass, confirmPass, gomakeUser?.id)
+    setResetPassModalModal(!res)
+  }
+
   // in order to avoid sending an empty object that include just name & index
   const isNameIndexOnly = (dataObject) => {
     const { name, index, ...otherProps } = dataObject;
-    const emptyProps = Object.values(otherProps).every(prop => prop === null || prop === "");
+    const emptyProps = Object.values(otherProps).every(prop => prop === null || prop === "" || prop === " ");
     return emptyProps;
   };
+  const tabLabels = [
+    t('customers.modal.general'),
+    t('customers.modal.contacts'),
+    t('customers.modal.addresses'),
+  ];
 
   return (
     <GoMakeModal
@@ -251,25 +286,68 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
       insideStyle={classes.insideStyle}
     >
       <div style={{ position: "sticky", top: 0, zIndex: 1, backgroundColor: "#FFF" }}>
-      <Stack direction={'row'}>
-            <span style={classes.subTitleStyle} >{typeClient == "C" ? t("customers.modal.customerInfo") : t("suppliers.supplierInfo")}</span>
+        <Stack direction={'row'}>
+          <span style={classes.subTitleStyle} >{typeClient == "C" ? t("customers.modal.customerInfo") : t("suppliers.supplierInfo")}</span>
         </Stack>
         <Stack direction={'row'} marginTop={"16px"} marginBottom={"24px"} width={"90%"} gap={"20px"} >
           {
-            customerInputs(typeClient, codeFlag, customer).map(item =><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={!!item.readonly} />)
+            customerInputs(typeClient, codeFlag, customer).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={!!item.readonly} />)
           }
         </Stack>
         <Stack direction={'row'} marginBottom={"24px"} width={"90%"} gap={"20px"} >
           {
-            customerInputs2(customer).map(item =><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
+            customerInputs2(customer).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
           }
         </Stack>
         <ThemeProvider theme={theme}>
-          <Tabs sx={{ minHeight: 'unset', minWidth: 'unset' }} value={selectedTab} onChange={handleTabChange} textColor="secondary" TabIndicatorProps={{ style: { display: 'none' } }} >
-            <Tab sx={{ backgroundColor: selectedTab === 0 ? '#ED028C' : '#EBECFF', color: selectedTab === 0 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "82px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.general")} />
-            <Tab sx={{ backgroundColor: selectedTab === 1 ? '#ED028C' : '#EBECFF', color: selectedTab === 1 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "90px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.contacts")} />
-            <Tab sx={{ backgroundColor: selectedTab === 2 ? '#ED028C' : '#EBECFF', color: selectedTab === 2 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "100px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "10px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.addresses")} />
-            {typeClient == "C" && <Tab sx={{ backgroundColor: selectedTab === 3 ? '#ED028C' : '#EBECFF', color: selectedTab === 4 ? '#FFF' : '#3F3F3F', minWidth: '0px', width: "137px", minHeight: '0px', height: '40px', borderRadius: "4px", padding: "7px", marginRight: "10px", textTransform: 'none', fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 16), lineHeight: "normal", }} label={t("customers.modal.gomakeUsers")} />}
+          <Tabs
+            value={selectedTab}
+            onChange={handleTabChange}
+            textColor="secondary"
+            TabIndicatorProps={{ style: { display: 'none' } }}
+          >
+            {tabLabels.map((label, index) => (
+              <Tab
+                key={index}
+                sx={{
+                  backgroundColor: selectedTab === index ? '#ED028C' : '#EBECFF',
+                  color: selectedTab === index ? '#FFF' : '#3F3F3F',
+                  minHeight: '0px',
+                  height: '40px',
+                  borderRadius: '4px',
+                  padding: '10px',
+                  marginRight: '10px',
+                  textTransform: 'none',
+                  fontStyle: 'normal',
+                  ...FONT_FAMILY.Lexend(500, 16),
+                  lineHeight: 'normal',
+                  width: `${Math.min(label.length * 12, 180)}px`,
+                }}
+                label={label}
+                disabled={typeClient === CLIENT_TYPE.CUSTOMER && index === 3}
+
+              />
+            ))}
+            {typeClient === CLIENT_TYPE.CUSTOMER && (
+              <Tab
+                sx={{
+                  backgroundColor: selectedTab === 3 ? '#ED028C' : '#EBECFF',
+                  color: selectedTab === 3 ? '#FFF' : '#3F3F3F',
+                  minWidth: '0px',
+                  minHeight: '0px',
+                  height: '40px',
+                  borderRadius: '4px',
+                  padding: '10px',
+                  marginRight: '10px',
+                  textTransform: 'none',
+                  fontStyle: 'normal',
+                  ...FONT_FAMILY.Lexend(500, 16),
+                  lineHeight: 'normal',
+                  width: `${Math.min(t('customers.modal.gomakeUsers').length * 12, 180)}px`
+                }}
+                label={t('customers.modal.gomakeUsers')}
+              />
+            )}
           </Tabs>
         </ThemeProvider>
       </div>
@@ -284,10 +362,10 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
       }
       {
         selectedTab == 0 &&
-        <Stack direction={'row'}  marginBottom={"24px"} width={"90%"} gap={"20px"} >
+        <Stack direction={'row'} marginBottom={"24px"} width={"90%"} gap={"20px"} >
 
           {
-            generalInputs2(typeClient,customer).map(item => <Stack direction={'column'}  width={"180px"} >
+            generalInputs2(typeClient, customer).map(item => <Stack direction={'column'} width={"180px"} >
               <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
           }
         </Stack>
@@ -295,12 +373,12 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
       {
         selectedTab == 0 &&
         <div>
-        <Stack direction={'row'}  >
+          <Stack direction={'row'}  >
             <span style={{ color: "var(--second-500, #ED028C)", fontStyle: "normal", ...FONT_FAMILY.Lexend(500, 14), lineHeight: "normal" }}>{t("customers.modal.lastOrderDetails")}</span>
           </Stack>
           <Stack direction={'row'} marginTop={'20px'} marginBottom={'24px'} width={"72%"} gap={"20px"} >
             {
-              lastOrderInputs(customer).map(item => 
+              lastOrderInputs(customer).map(item =>
                 <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
             }
           </Stack>
@@ -315,7 +393,7 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
         {
           //contacts info
           selectedTab == 1 &&
-          <Stack direction={'row'} >
+          <Stack direction={'row'} gap={'15px'} >
             <Stack direction={'column'}  >
               {
                 contacts.filter(contact => !contact.isMainContact).map(x =>
@@ -323,8 +401,8 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
                 )
               }
             </Stack>
-            <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
-              <a style={{ display: "flex", justifyContent: "center", alignItems: "center"}} onClick={addEmptyContact} >
+            <Stack direction={'column'} marginTop={"52px"} >
+              <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "5px" }} onClick={addEmptyContact} >
                 <AddIcon></AddIcon>
                 <button style={classes.buttonsStyle} >{t("customers.buttons.addContact")}</button>
               </a>
@@ -334,7 +412,7 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
         {
           //address info
           selectedTab == 2 &&
-          <Stack direction={'row'} >
+          <Stack direction={'row'} gap={'15px'}>
             <Stack direction={'column'}  >
               {
                 addresses.map(x =>
@@ -342,8 +420,8 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
                 )
               }
             </Stack>
-            <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
-              <a style={{ display: "flex", justifyContent: "center", alignItems: "center"}} onClick={addEmptyAddress} >
+            <Stack direction={'column'} marginTop={"52px"}>
+              <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "3px" }} onClick={addEmptyAddress} >
                 <AddIcon></AddIcon>
                 <button style={classes.buttonsStyle} >{t("customers.buttons.newAddress")}</button>
               </a>
@@ -353,7 +431,7 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
         {
           //GOMAKEUSER info
           selectedTab == 3 &&
-          <Stack direction={'row'}>
+          <Stack direction={'row'} gap={'15px'}>
             <Stack direction={'column'}  >
               {
                 users?.map(x =>
@@ -361,8 +439,8 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
                 )
               }
             </Stack>
-            <Stack direction={'column'}  marginTop={"52px"} marginLeft={"20px"} >
-              <a style={{ display: "flex", justifyContent: "center", alignItems: "center" }} onClick={addEmptyClient} >
+            <Stack direction={'column'} marginTop={"52px"} >
+              <a style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "5px" }} onClick={addEmptyClient} >
                 <AddIcon></AddIcon>
                 <button style={classes.buttonsStyle} >{t("customers.buttons.addUser")}</button>
               </a>
@@ -376,6 +454,14 @@ const CustomerCardWidget = ({  customerAction ,codeFlag , typeClient, getAllCust
           </div>
         </div>
       </div>
+      <GoMakeModal
+        insideStyle={classes.secondInsideStyle}
+        headerPadding={20}
+        openModal={resetPassModal}
+        onClose={() => setResetPassModalModal(false)}
+        modalTitle={t('customers.buttons.changePassword')}>
+        <ChangePasswordComponent onChangePassword={onUpdatePass}/>
+      </GoMakeModal>
     </GoMakeModal>
   );
 };

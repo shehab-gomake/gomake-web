@@ -50,7 +50,6 @@ const RowInside = ({
     >
       {isUpdate ? (
         <div
-          ref={ref}
           style={{
             display: "flex",
             flexDirection: "row",

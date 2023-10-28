@@ -25,7 +25,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
-        marginBottom: 55,
+        marginBottom: 35,
       },
       leftSideContainer: {
         display: "flex",
@@ -83,7 +83,12 @@ const useStyle = () => {
         width: "100%",
         height: 1,
         backgroundColor: secondColor(500),
-        borderBottom: `1px solid ${secondColor(500)}`,
+        marginTop: 10,
+      },
+      selectedTabNotLine: {
+        display: "flex",
+        width: "100%",
+        height: 1,
         marginTop: 10,
       },
       sectionsContainer: {
@@ -237,6 +242,9 @@ const useStyle = () => {
       },
       imgProductContainer: {
         width: "100%",
+        height: 170,
+        borderRadius: 16,
+        overflow: "hidden",
       },
       secondText: {
         color: primaryColor(200),
@@ -298,7 +306,7 @@ const useStyle = () => {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 24),
         height: 28,
-        width: "100px",
+        width: "150px",
         boxShadow: "none",
       },
       priceRecoveryContainer: {
@@ -485,7 +493,6 @@ const useStyle = () => {
         width: "100%",
         flexWrap: "wrap" as "wrap",
         textAlign: "center" as "center",
-        paddingTop: 14,
         backgroundColor: "rgba(246, 246, 246, 1)",
       },
       cellsContainerStyle2: {
@@ -496,7 +503,6 @@ const useStyle = () => {
         width: "100%",
         flexWrap: "wrap" as "wrap",
         textAlign: "center" as "center",
-        paddingTop: 14,
         backgroundColor: "#FFF",
       },
       cellContainerMod: {
