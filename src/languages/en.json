@@ -2058,5 +2058,110 @@
     "rollDigitalEnhancement": "Roll digital enhancement machine",
     "autoBookCutting": "Auto book cutting",
     "rollAnalogEnhancement": "Roll analog enhancement machine"
+  },
+  "documentingSettings": {
+    "documentNumbering": "Document numbering",
+    "documentDesign": "Document design",
+    "showDeliveryTime": " Show delivery time",
+    "name" : "Name",
+    "prefix": "Prefix",
+    "value": "Value",
+    "details": "Details",
+    "edit": "Edit",
+    "editDefinition": "Edit definition",
+    "update": "Update"
+  },
+  "documentingSettings": {
+    "documentNumbering": "Document numbering",
+    "documentDesign": "Document design",
+    "showDeliveryTime": " Show delivery time",
+    "name" : "Name",
+    "prefix": "Prefix",
+    "value": "Value",
+    "details": "Details",
+    "edit": "Edit",
+    "more": "More"
+  },
+  "documentingDesign" : {
+    "Save":"Save",
+    "Reset":"Reset",
+    "Middle":"Middle",
+    "Upper":"Upper",
+    "documnetCreation" : {
+      "documentinCreation" : "Document Creation",
+      "docmentType" : "DocumentType"
+    },
+    "TitleDefinition":{
+      "TitleDefinition":"Title definition",
+      "defaultFormat":"default format",
+      "BusinessName" : "Business name",
+      "H.P./authorizedDealer" :"H.P./authorized dealer",
+      "LogoUpload":"Logo Upload",
+      "CustomLogo":"Custom logo"
+    },
+    "TableSetting":{
+        "TableSetting":"Table Setting",
+        "defaultFormat":"default Format",
+        "TableHeaderbgcolor":"Table header bg color",
+        "Tabletextcolor":"Table text color",
+        "Verticalbordercolor":"Vertical border color",
+        "Horizontalbordercolor":"Horizontal border color",
+        "Placementoftext":"Placement of text"
+    },
+    "Additional":{
+      "Additional":"Additional",
+      "Remarks":"Remarks",
+      "Options":"Options",
+      "Viewsalesperson":"View salesperson",
+      "Viewdocproducer" : "View doc producer",
+      "Showpaymentdate" : "Show payment date",
+      "Showcustomertype" : "Show customer type",
+      "Showcustomercode":"Show customer code",
+      "Viewcustomerbalance" : "View customer balance",
+      "Showpaymentterms" : "Show payment terms",
+      "Showtaxpayable" : "Show tax payable"
+    },
+    "Footer":{
+      "Footer":"Footer",
+      "Manualfooter" : "Manual footer",
+      "Email":"Email",
+      "Phone":"Phone",
+      "Address":"Address",
+      "FooterImage":"Footer image"
+    },
+    "QRCodes":{
+      "QRCodes":"QRCodes",
+      "PDFproductionQrCodes":"PDF production - QrCodes",
+      "DisplayQRcodesinaworkorderdocument" : "Display QR codes in a work order document",
+      "Showpaymentdate":"Show payment date",
+      "DisplayaninitialQRCode" : "Display an initial QR Code for the entire order within the production PDF",
+      "displayall":"display all types with equal amounts in the PDF of the PACA",
+      "ShowStarted":"Show started and finished QRs in the production PDF"
+    },
+    "IframeDocument":{
+      "Document" : "Document"
+
+    }
+  },
+  "documentType":{
+    "Order" :"Order",
+    "Invoice":"Invoice",
+    "DeliveryNotes":"DeliveryNotes",
+    "Purchase":"Purchase",
+    "InvoiceRefund":"InvoiceRefund",
+    "Receipt":"Receipt",
+    "JournalEntry":"JournalEntry",
+    "PurchaseInvoice":"PurchaseInvoice",
+    "PurchaseInvoiceRefund":"PurchaseInvoiceRefund",
+    "ForeignJournalEntry":"ForeignJournalEntry",
+    "DeliveryNoteRefund":"DeliveryNoteRefund",
+    "Quote":"Quote",
+    "ExternalInvoice":"ExternalInvoice",
+    "All":"All",
+    "ExternalPayment":"ExternalPayment",
+    "BoardMission":"BoardMission",
+    "AgingReport":"AgingReport",
+    "LedgerReport":"LedgerReport",
+    "SalesReport":"SalesReport"
   }
 }

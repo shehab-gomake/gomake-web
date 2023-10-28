@@ -11,13 +11,14 @@ export interface IInput {
   disabled?: boolean;
   isValid: boolean;
   regex?: RegExp;
-  inputs: IInput[];
+  inputs?: IInput[];
 }
 export interface IFormInput {
   input: IInput;
   changeState: (key: string, value: any) => void;
   error: boolean;
   readonly?: boolean;
+
 }
 
 export interface IFormArrayInputsProps {
