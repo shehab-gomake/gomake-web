@@ -2058,5 +2058,17 @@
     "rollDigitalEnhancement": "Roll digital enhancement machine",
     "autoBookCutting": "Auto book cutting",
     "rollAnalogEnhancement": "Roll analog enhancement machine"
+  },
+  "documentingSettings": {
+    "documentNumbering": "Document numbering",
+    "documentDesign": "Document design",
+    "showDeliveryTime": " Show delivery time",
+    "name" : "Name",
+    "prefix": "Prefix",
+    "value": "Value",
+    "details": "Details",
+    "edit": "Edit",
+    "editDefinition": "Edit definition",
+    "update": "Update"
   }
 }

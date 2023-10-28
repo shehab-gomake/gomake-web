@@ -5,7 +5,7 @@ import { useRecoilState } from "recoil";
 import { agentsCategoriesState, clientTypesCategoriesState } from "./customer-states";
 import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
-import { getAndSetCustomerById, getAndSetCustomersPagination, toggleCustomerStatus } from "@/services/api-service/customers/customers-api";
+import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/api-service/customers/customers-api";
 import { DEFAULT_VALUES } from "./enums";
 import { useSnackBar } from "@/hooks";
 export interface IStatus {
