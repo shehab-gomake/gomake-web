@@ -1,16 +1,10 @@
-import {
-  GoMakeModal,
-  GomakePrimaryButton,
-  GomakeTextInput,
-} from "@/components";
+import { GoMakeModal, GomakePrimaryButton } from "@/components";
+import { Select } from "@mui/material";
+
+import { ChildrenMapping } from "./children-mapping";
+import { HeaderMapping } from "./header-mapping";
 
 import { useStyle } from "./style";
-import { Checkbox, Select } from "@mui/material";
-import { CheckboxIcon } from "../icons";
-import { CheckboxCheckedIcon } from "@/icons";
-import { FONT_FAMILY } from "@/utils/font-family";
-import { HeaderMapping } from "./header-mapping";
-import { ChildrenMapping } from "./children-mapping";
 
 const MultiParameterModal = ({ openModal, onClose, modalTitle }) => {
   const { clasess } = useStyle();
