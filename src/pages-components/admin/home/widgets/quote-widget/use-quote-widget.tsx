@@ -11,7 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useRecoilState } from "recoil";
-import { QuoteNumberState } from "@/pages-components/quote/store/quote";
+import { QuoteIfExistState, QuoteNumberState } from "@/pages-components/quote/store/quote";
 
 
 const useQuoteWidget = () => {
@@ -27,6 +27,7 @@ const useQuoteWidget = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
   const [selectedCustomersList, setSelectedCustomersList] = useState<any>({});
+  const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
   const [quoteNumber, setquoteNumber] = useRecoilState<any>(QuoteNumberState);
   
   const [selectedProduct, setSelectedProduct] = useState<any>({});
@@ -132,17 +133,8 @@ const useQuoteWidget = () => {
     setSelectedClientType(null);
   },[]);
   const updateCustomerListSelectedAfterConfirm = useCallback(async (selectedCustomersList)=>{
-
-    console.log("selectedCustomersList is ", selectedCustomersList)
      setSelectedCustomersList(selectedCustomersList);
-    // const client = clientTypesValue.find(
-    //   (c) => c.id == selectedCustomersList?.clientTypeId
-    // );
-    // if (client) {
-    //   setSelectedClientType(client);
-    // } else {
-    //   setSelectedClientType({});
-    // }
+  
   },[])
 
   useEffect(() => {
@@ -155,6 +147,8 @@ const useQuoteWidget = () => {
 
   const onClickSaveQuote = useCallback(async (QuoteId) => {
     setquoteNumber("");
+    setQuoteIfExist("");
+    
     await saveQuote(callApi,setQuoteExist, QuoteId);
   }, []);
   

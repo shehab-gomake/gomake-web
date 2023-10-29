@@ -50,14 +50,9 @@ const QuoteWidget = ({ isAdmin = true   }) => {
     (item) => item.id == QuoteExist?.result?.clientId
   );
 
-  console.log("selectedCustomersList in quote page : " ,  selectedCustomersList)
-  
-
-    
-    
     useEffect(()=>{
     
-        if(!selectedOptionInQuoteExist && QuoteExist?.result == null && !selectedCustomersList )
+        if(!selectedOptionInQuoteExist && QuoteExist?.result == null && !selectedCustomersList && Object?.keys(selectedCustomersList).length === 0)
         {
          
           setSelectedCustomersList(null)
@@ -103,7 +98,7 @@ const QuoteWidget = ({ isAdmin = true   }) => {
             getOptionLabel={(option: any) => `${option.name}-${option.code}`}
             onChangeTextField={checkWhatRenderArray}
             key={selectedCustomersList}
-            value={selectedCustomersList != null ? selectedCustomersList : null}
+            value={Object?.keys(selectedCustomersList).length !== 0 ? selectedCustomersList : null}
             onChange={(e: any, value: any) => {
               handleClicktoSelectedCustomer(QuoteExist?.result?.clientId,value)
             }}
