@@ -10,7 +10,9 @@ import {
 } from "@/services/hooks";
 import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import S from "@/pages/settings/index.page";
+import { useRecoilState } from "recoil";
+import { QuoteNumberState } from "@/pages-components/quote/store/quote";
+
 
 const useQuoteWidget = () => {
   const { t } = useTranslation();
@@ -20,13 +22,13 @@ const useQuoteWidget = () => {
   const [clientTypesValue, setClientTypesValues] = useState([]);
   const [productValue, setProductValues] = useState([]);
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
-  const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
   const [QuoteExist, setQuoteExist] = useState<any>([]);
   const [canOrder, setCanOrder] = useState(false);
-  const [state,setState]=useState();
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
   const [selectedCustomersList, setSelectedCustomersList] = useState<any>({});
+  const [quoteNumber, setquoteNumber] = useRecoilState<any>(QuoteNumberState);
+  
   const [selectedProduct, setSelectedProduct] = useState<any>({});
 
   const [isDisabled, setIsDisabled] = useState(true);
@@ -68,16 +70,11 @@ const useQuoteWidget = () => {
 
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
-      setCanOrder(true);
-    } else {
-      setCanOrder(false);
-    }
+      getAllCustomersCreateQuote(e.target.value)
+    } 
   };
   const renderOptions = () => {
-    if (!!canOrder) {
-      return customersListCreateOrder;
-    } else return customersListCreateQuote;
-  
+      return customersListCreateQuote;
   };
   const getAllClientTypes = useCallback(async () => {
     await getAndSetClientTypes(callApi, setClientTypesValues);
@@ -85,18 +82,39 @@ const useQuoteWidget = () => {
   const getAllProducts = useCallback(async () => {
     await getAllProductsForDropDownList(callApi, setProductValues);
   }, []);
-  const getAllCustomersCreateQuote = useCallback(async () => {
+  const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       ClientType: "C",
-      onlyCreateOrderClients: false,
+      onlyCreateOrderClients:  false,
+      searchTerm:SearchTerm,
     });
   }, []);
-  const getAllCustomersCreateOrder = useCallback(async () => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateOrder, {
-      ClientType: "C",
-      onlyCreateOrderClients: true,
-    });
-  }, []);
+
+  const handleClicktoSelectedCustomer = useCallback(async (clientIdifExist,value) =>{
+    setSelectedCustomersList(value);
+
+    const client = clientTypesValue.find(
+      (c) => c.id == value?.clientTypeId
+    );
+
+  
+    if(clientIdifExist != null && value?.id != null)
+    {
+      if(clientIdifExist != value?.id )
+      {
+        setOpenModal(true);
+      }
+    
+    }
+
+    if (client) {
+      setSelectedClientType(client);
+    } else {
+      setSelectedClientType({});
+    }
+  
+  },[clientTypesValue]);
+
 
   const getAndSetExistQuote = useCallback(async () => {
      await getAndSetExistQuotes(callApi, setQuoteExist);
@@ -107,24 +125,36 @@ const useQuoteWidget = () => {
    await getAndSetExistQuote();
   },[]);
 
-  const updateSelections = useCallback(async ()=>{
-      await   setQuoteExist([]);
-  },[]);
+
   
   const updateCustomerList = useCallback (async ()=>{
-    setCustomersListCreateQuote(null);
+    setSelectedCustomersList(null);
+    setSelectedClientType(null);
   },[]);
+  const updateCustomerListSelectedAfterConfirm = useCallback(async (selectedCustomersList)=>{
 
+    console.log("selectedCustomersList is ", selectedCustomersList)
+     setSelectedCustomersList(selectedCustomersList);
+    // const client = clientTypesValue.find(
+    //   (c) => c.id == selectedCustomersList?.clientTypeId
+    // );
+    // if (client) {
+    //   setSelectedClientType(client);
+    // } else {
+    //   setSelectedClientType({});
+    // }
+  },[])
 
   useEffect(() => {
     getAllClientTypes();
     getAllProducts();
-    getAllCustomersCreateQuote();
-    getAllCustomersCreateOrder();
     getAndSetExistQuote();
   }, []);
 
+
+
   const onClickSaveQuote = useCallback(async (QuoteId) => {
+    setquoteNumber("");
     await saveQuote(callApi,setQuoteExist, QuoteId);
   }, []);
   
@@ -150,15 +180,16 @@ const useQuoteWidget = () => {
     }
   };
 
+  useEffect(()=>{
+      QuoteExist?.result ?  getAllCustomersCreateQuote(QuoteExist?.result?.clientName) : getAllCustomersCreateQuote();
+  },[QuoteExist])
 
-  console.log("selectedCustomersList in use " , selectedCustomersList)
 
  
   return {
     clientTypesValue,
     productValue,
     customersListCreateQuote,
-    customersListCreateOrder,
     isDisabled,
     id,
     updateCustomerList,
@@ -167,7 +198,6 @@ const useQuoteWidget = () => {
     QuoteExist,
     open,
     errorColor,
-    updateSelections,
     anchorEl,
     selectedClientType,
     handleClick,
@@ -180,8 +210,10 @@ const useQuoteWidget = () => {
     setSelectedCustomersList,
     selectedCustomersList,
     setSelectedProduct,
+    updateCustomerListSelectedAfterConfirm,
     setOpenModal,
     setQuoteExist,
+    handleClicktoSelectedCustomer,
     checkWhatRenderArray,
     renderOptions,
     onClcikCreateQuote,

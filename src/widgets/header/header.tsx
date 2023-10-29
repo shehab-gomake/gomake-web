@@ -16,7 +16,6 @@ const HeaderWidget = () => {
   const { t } = useTranslation();
   const userProfile = useRecoilValue(userProfileState);
   const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
-  console.log("QuoteIfExist in header tsx : " , QuoteIfExist)
   const { user, open, anchorEl, handleClick, handleClose, navigate , handleClickQuoteExist} =
     useHeader();
   const userAvatar = () => {

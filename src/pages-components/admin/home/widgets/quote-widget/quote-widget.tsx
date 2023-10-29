@@ -30,74 +30,58 @@ const QuoteWidget = ({ isAdmin = true   }) => {
     QuoteExist,
     updateCustomerList,
     errorColor,
-    customersListCreateOrder,
     selectedClientType,
     onClcikCloseModal,
-    updateSelections,
     selectedCustomersList,
     _renderErrorMessage,
     handleClose,
     updateQuoteExist,
-    selectedProduct,
     setSelectedClientType,
     setSelectedCustomersList,
     setSelectedProduct,
+    updateCustomerListSelectedAfterConfirm,
     checkWhatRenderArray,
-    setOpenModal,
+    handleClicktoSelectedCustomer,
     renderOptions,
   } = useQuoteWidget();
   
+
   const selectedOptionInQuoteExist = renderOptions()?.find(
     (item) => item.id == QuoteExist?.result?.clientId
   );
 
-  const customersListCreateOrderList = customersListCreateOrder?.find(
-    (item) => item.id == QuoteExist?.result?.clientId
-  );
+  console.log("selectedCustomersList in quote page : " ,  selectedCustomersList)
   
+
+    
     
     useEffect(()=>{
     
-        if(!selectedOptionInQuoteExist && QuoteExist.result == null && Object?.keys(selectedCustomersList).length === 0 )
+        if(!selectedOptionInQuoteExist && QuoteExist?.result == null && !selectedCustomersList )
         {
-          setselectedOption(null)
+         
+          setSelectedCustomersList(null)
           setSelectedClientType(null)
         }else{
-          if(!selectedOptionInQuoteExist && !customersListCreateOrderList && QuoteExist.result == null && Object?.keys(selectedCustomersList).length !== 0)
-          {
-           
-            setselectedOption(selectedCustomersList);
-          }else{
-            if(!selectedOptionInQuoteExist && QuoteExist.result == null)
-            {
-               setselectedOption(null)
-              setSelectedClientType(null)
-            }else{
-              if(!selectedOptionInQuoteExist && QuoteExist.result != null){
-                setselectedOption(customersListCreateOrderList)
-              }
-              
-            }
-
-          }
-       
          
+          if( QuoteExist?.result != null)
+          {
+          
+            setQuoteIfExist(QuoteExist?.result);
+            setSelectedCustomersList(selectedOptionInQuoteExist);
+          }else{
+           
+            setSelectedCustomersList(selectedCustomersList);
+          }
+          
       }
      
-      if(selectedOptionInQuoteExist){
-        setselectedOption(selectedOptionInQuoteExist);
-      }
-      if (QuoteExist.result == null) {
-       
-        setSelectedClientType(null);
-      }
-      if(selectedOption)
+      if(selectedOptionInQuoteExist)
       {
         setQuoteId(QuoteExist?.result?.id);
         setquoteNumber(QuoteExist?.result?.number)
-        setSelectedCustomersList(selectedOption);
           const client = clientTypesValue.find(
-            (c) => c.id == selectedOption?.clientTypeId
+            (c) => c.id == selectedOptionInQuoteExist?.clientTypeId
           );
           if (client) {
             setSelectedClientType(client);
@@ -105,45 +89,23 @@ const QuoteWidget = ({ isAdmin = true   }) => {
             setSelectedClientType({});
           }
       }
-      if(QuoteExist?.result != null)
-      {
-        setQuoteIfExist(QuoteExist?.result);
-      }
-
     
-    },[QuoteExist,selectedOption , selectedOptionInQuoteExist , customersListCreateOrderList])
+    },[QuoteExist,selectedOptionInQuoteExist])
   return (
   
     <div style={clasess.mainContainer}>
       <div style={clasess.autoComplateRowContainer}>
         <div style={{ width: "65%" }}>
           <GoMakeAutoComplate
-            options={renderOptions()}
+            options={renderOptions() ? renderOptions() : []}
             placeholder={t("home.admin.selectCustomer")}
             style={clasess.selectCustomerContainer}
             getOptionLabel={(option: any) => `${option.name}-${option.code}`}
             onChangeTextField={checkWhatRenderArray}
-            key={selectedOption}
-            value={selectedOption}
+            key={selectedCustomersList}
+            value={selectedCustomersList != null ? selectedCustomersList : null}
             onChange={(e: any, value: any) => {
-              setSelectedCustomersList(value);
-              const client = clientTypesValue.find(
-                (c) => c.id == value?.clientTypeId
-              );
-              if(QuoteExist?.result?.clientId != null && value?.id != null)
-              {
-                if(QuoteExist?.result?.clientId != value?.id )
-                {
-                  setOpenModal(true);
-                }
-              
-              }
-              if (client) {
-                setSelectedClientType(client);
-              } else {
-                setSelectedClientType({});
-              }
-            
+              handleClicktoSelectedCustomer(QuoteExist?.result?.clientId,value)
             }}
           />
         </div>
@@ -206,11 +168,8 @@ const QuoteWidget = ({ isAdmin = true   }) => {
                           style={{width:"100%",height:40}}
                           onClick={() => {
                               onClickSaveQuote(QuoteId)
-                              .then(() => onClcikCloseModal())
-                              .then(()=>updateSelections())
                               .then(()=>updateCustomerList())
                               .catch((error) => console.error("Error:", error));
-
                               }}
                           >
                           {t("home.admin.SaveQuote")}
@@ -270,8 +229,7 @@ const QuoteWidget = ({ isAdmin = true   }) => {
         onClickDelete={() => {
           onClickSaveQuote(QuoteId)
               .then(() => onClcikCloseModal())
-              .then(() => updateQuoteExist())
-              .then(()=>updateCustomerList())
+              .then(() => updateCustomerListSelectedAfterConfirm(selectedCustomersList))
               .catch((error) => console.error("Error:", error));
           }}
       />

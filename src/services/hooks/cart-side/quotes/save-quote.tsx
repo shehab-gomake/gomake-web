@@ -6,7 +6,7 @@ const saveQuote = async (
   setState?: ISetState,
   data?
 ) => {
-  console.log("data is , " , data)
+  
   const result: any = await callApi(
     "POST",
     "/v1/erp-service/quote/save-quote",
