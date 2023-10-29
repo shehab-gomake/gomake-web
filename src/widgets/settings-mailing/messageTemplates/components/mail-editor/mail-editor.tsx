@@ -6,29 +6,41 @@ import { useEmailSetting } from "./useEmailSetting";
 import * as React from "react";
 import { PdfUploadComponent } from '../upload-file/upload-file';
 import { EditorTYPE } from '../../enums/enum';
+import { useRecoilState } from 'recoil';
+import { smsTemplateState } from '@/widgets/settings-mailing/states/state';
+import debounce from 'lodash.debounce';
+import { ISMSTemplate } from '../../interfaces/interface';
 
 export interface IProps {
-    onClickSave: (value: any) => void;
+    onClickSave: () => void;
 }
 const EmailSettings = ({ onClickSave }: IProps) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
-    const { subjectText, setSubjectText, bodyText, setBodyText , renderHeader  } = useEmailSetting();
+    const { renderHeader } = useEmailSetting();
+    const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
+
+    const handleTitleChange = debounce((htmlValue) => {
+        setState({ ...state, title: htmlValue })
+    }, 300);
+
+    const handleTextChange = debounce((htmlValue) => {
+        setState({ ...state, text: htmlValue })
+    }, 300);
 
     const handleResetClick = () => {
-        setSubjectText(null);
-        setBodyText(null);
+        setState({ ...state, title: null, text: null });
     };
 
     return (
         <div className="card" style={classes.containerStyle}>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 <h5 style={classes.headerStyle}>{t("mailingSettings.subject")}</h5>
-                <Editor value={subjectText} onChange={(e)=>setSubjectText(e.target.nodeValue)}  style={classes.editorStyle1} headerTemplate={renderHeader(EditorTYPE.SUBJECT)} />
+                <Editor value={state?.title} onTextChange={(e) => handleTitleChange(e.htmlValue)} style={classes.editorStyle1} headerTemplate={renderHeader(EditorTYPE.SUBJECT)} />
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 <h5 style={classes.headerStyle}>{t("mailingSettings.body")}</h5>
-                <Editor value={bodyText} onChange={(e) => setBodyText(e.target.nodeValue)} style={classes.editorStyle2} headerTemplate={renderHeader(EditorTYPE.BODY)} /> 
+                <Editor value={state?.text} onTextChange={(e) => handleTextChange(e.htmlValue)} style={classes.editorStyle2} headerTemplate={renderHeader(EditorTYPE.BODY)} />
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "flex-start" }}>
                 <h5 style={classes.headerStyle}>{t("mailingSettings.attachment")}</h5>

@@ -1,14 +1,14 @@
 
-import { getAllSMSTemplatesApi, updateSMSTemplateApi, addSMSTemplateGroup, getAllSMSTemplatesGroupsApi, getAllTemplateVariablesApi, getAllTemplateTypesApi } from "@/services/api-service/mailing/mailing-api";
+import { getAllSMSTemplatesApi, updateSMSTemplateApi, addSMSTemplateGroup, getAllSMSTemplatesGroupsApi, getAllTemplateVariablesApi, getAllTemplateTypesApi, getSMSTemplateApi } from "@/services/api-service/mailing/mailing-api";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useRecoilState } from "recoil";
 import { useSnackBar } from "@/hooks";
-import { allSMSTemplateGroupsState, groupModalState, templateGroupState , templateVariablesState } from "./states/state";
+import { allSMSTemplateGroupsState, editModalState, groupModalState, smsTemplateState, templateGroupState, templateVariablesState } from "./states/state";
 import { MoreMenuWidget } from "./messageTemplates/components/more-circle/index";
 import { PdfUploadComponent } from "./messageTemplates/components/upload-file/upload-file";
-import { SMSTemplateGroup } from "./messageTemplates/interfaces/interface";
+import { ISMSTemplate, SMSTemplateGroup } from "./messageTemplates/interfaces/interface";
 
 
 const useMessageTemplate = () => {
@@ -16,8 +16,10 @@ const useMessageTemplate = () => {
   const { callApi } = useGomakeAxios();
   const { alertFaultAdded, alertSuccessAdded, alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
-  const [types, setTypes] = useState([]);
+  const [editModal, setEditModal] = useRecoilState<boolean>(editModalState);
   const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupState);
+  const [SMSTemplate, setSMSTemplate] = useRecoilState<ISMSTemplate>(smsTemplateState);
+  const [types, setTypes] = useState([]);
 
   const tableHeaders = [
     t("mailingSettings.type"),
@@ -31,7 +33,7 @@ const useMessageTemplate = () => {
     if (types && types.length > 0) {
       getAllSmsTemplates();
     }
-  }, [types , templateGroup]);
+  }, [types, templateGroup]);
 
   const getSMSTemplateTypes = async () => {
     const callBackFunction = (data) => {
@@ -48,10 +50,10 @@ const useMessageTemplate = () => {
       if (data.success) {
         const tableRows = data.data?.map((template) => [
           types.find((option) => option.value == template.templateType)?.text || "Unknown",
-          template.title,
-          template.text,
+          template.title ? new DOMParser().parseFromString(template.title, 'text/html').body.textContent : "",
+          template.text ? new DOMParser().parseFromString(template.text, 'text/html').body.textContent : "",
           <PdfUploadComponent />,
-          <MoreMenuWidget item={template} onClickDelete={null} />
+          <MoreMenuWidget id={template.id} />
         ]);
         setAllSmsTemplates(tableRows);
       }
@@ -97,17 +99,32 @@ const useMessageTemplate = () => {
   }
 
   // save changes
-  const onUpdateSmsTemplate = async (smsTemplate) => {
-    const callback = (data) => {
+  const onUpdateSmsTemplate = async () => {
+    const callBack = (data) => {
       if (data.success) {
         alertSuccessUpdate();
-        setOpenModal(!openModal);
+        setEditModal(!editModal);
+        //  setSMSTemplate(initState);
         getAllSmsTemplates();
+        console.log("test test" ,SMSTemplate)
       } else {
         alertFaultUpdate();
       }
     }
-    await updateSMSTemplateApi(callApi, callback, smsTemplate);
+
+    await updateSMSTemplateApi(callApi, callBack, SMSTemplate)
+
+  }
+
+
+  // get by id
+  const getSmsTemplateById = async (id) => {
+    const callBack = (res) => {
+      if (res.success) {
+        setSMSTemplate(res.data);
+      }
+    }
+    await getSMSTemplateApi(callApi, callBack, { templateId: id })
   }
 
   return {
@@ -122,7 +139,8 @@ const useMessageTemplate = () => {
     getSMSTemplateTypes,
     templateGroup,
     setTemplateGroup,
-    types
+    types,
+    getSmsTemplateById
   };
 };
 

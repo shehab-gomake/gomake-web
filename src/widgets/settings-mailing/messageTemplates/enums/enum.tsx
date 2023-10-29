@@ -1,6 +1,6 @@
 export enum SMSTemplatesEnum
  {
-     ComfirmArtwork = 1,
+     ConfirmArtwork = 1,
      Quote,
      OrderAccepted,
      OrderCompleted,

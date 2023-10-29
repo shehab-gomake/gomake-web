@@ -6,25 +6,24 @@ import { AddButton } from "@/components/button/add-button";
 import { GoMakeModal } from "@/components";
 import { AddNewSMSTemplateGroup } from "./messageTemplates/components/add-new/add-new";
 import { useRecoilState } from "recoil";
-import { editModalState, groupModalState, smsTemplateState, templateGroupState } from "./states/state";
+import { editModalState, groupModalState, smsTemplateState } from "./states/state";
 import { useMessageTemplate } from "./useMessageTemplate";
-import { SMSTemplateGroup } from "./messageTemplates/interfaces/interface";
 import { useEffect  } from "react";
 import { EmailSettings } from "./messageTemplates/components/mail-editor/mail-editor";
+import { ISMSTemplate } from "./messageTemplates/interfaces/interface";
 
 const SettingsMailingWidget = () => {
     const { t } = useTranslation();
     const {onAddSMSTemplateGroup , onUpdateSmsTemplate , getSMSTemplateGroups , getTemplateVariables , setTemplateGroup , types , getSMSTemplateTypes } = useMessageTemplate();
     const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
     const [openEditModal, setOpenEditModal] = useRecoilState<boolean>(editModalState);
-    const [state, setState] = useRecoilState<any>(smsTemplateState);
+    const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
 
     const tabs: ITab[] = [
         { title: t("mailingSettings.messageTemplates"), component: <MessageTemplates/> },
     ];
 
     useEffect( () => {
-        // SMS Group select
         setTemplateGroup(null);
         getSMSTemplateGroups();
         getTemplateVariables();

@@ -1,29 +1,34 @@
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { Stack } from "@mui/material";
-import { smsTemplateState, subjectTextState } from "@/widgets/settings-mailing/states/state";
+import { smsTemplateState } from "@/widgets/settings-mailing/states/state";
 import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplate";
 import { useStyle } from "./style";
+import { ISMSTemplate } from "../../interfaces/interface";
 
 const useEmailSetting = () => {
   const { classes } = useStyle();
   const { templateVariables } = useMessageTemplate();
-  const [state, setState] = useRecoilState<any>(smsTemplateState);
-  const [subjectText, setSubjectText] = useRecoilState<string>(subjectTextState);
-  const [bodyText, setBodyText] = useState<string>(state?.text);
+  const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
   const [value, setValue] = useState([]);
 
+
+  // title or subject
+  // const handleSubjectOptionClick = (option) => {
+  //   const newText = state?.title?.endsWith('<p><br></p>') ? state?.title?.slice(0, -8) : state?.title?.slice(0, -4);
+  //   option.value && setState({ ...state, title :  (state?.title ? newText + " {{" + option.label + "}} </p>" : "<p>{{" + option.label + "}} </p>")});
+  // };
+
   const handleSubjectOptionClick = (option) => {
-    const newText = subjectText?.endsWith('<p><br></p>') ? subjectText?.slice(0, -8) : subjectText?.slice(0, -4);
-    option.value && setSubjectText(subjectText ? newText + " {{" + option.label + "}} </p>" : "<p>{{" + option.label + "}} </p>");
+   // const newText = state?.title?.endsWith('<p><br></p>') ? state?.title?.slice(0, -8) : state?.title?.slice(0, -4);
+    option.value && setState({ ...state, title :  (state?.title + " {{" + option.label + "}}" ) });
   };
 
+  // text or body
   const handleBodyOptionClick = (option) => {
-    const newText = bodyText?.endsWith('<p><br></p>') ? bodyText?.slice(0, -8) : bodyText?.slice(0, -4);
-    option.value && setBodyText(bodyText ? newText + " {{" + option.label + "}} </p>" : "<p>{{" + option.label + "}} </p>");
-
+    const newText = state?.text?.endsWith('<p><br></p>') ? state?.text?.slice(0, -8) : state?.text?.slice(0, -4);
+    option.value && setState({ ...state, text :  (state?.text ? newText + " {{" + option.label + "}} </p>" : "<p>{{" + option.label + "}} </p>")});
   };
-
 
   const renderHeader = (flag) => {
     return (
@@ -57,10 +62,6 @@ const useEmailSetting = () => {
   };
 
   return {
-    subjectText,
-    setSubjectText,
-    bodyText,
-    setBodyText,
     value,
     setValue,
     state,

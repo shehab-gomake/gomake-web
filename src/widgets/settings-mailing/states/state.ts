@@ -1,4 +1,26 @@
 import { atom } from "recoil";
+import { ISMSTemplate } from "../messageTemplates/interfaces/interface";
+
+export const initState: ISMSTemplate = {
+  title: "<p>hello world!</p>",
+  text: "",
+  smsTemplatesGroupId: null,
+  templateTypeId: null,
+  templateType: "",
+  attachment: null,
+  sendFromAgent: false,
+  mailReturnToAgent: false,
+  sendFrom: "",
+  emailPassword: "",
+  sendMailCopy: false,
+  sendMailCopyToAgent: false,
+  bccMail: "",
+};
+
+export const smsTemplateState = atom<ISMSTemplate>({
+  key: "smsTemplateState",
+  default: initState,
+});
 
 export const templateGroupState = atom<any>({
   key: "templateGroupState",
@@ -20,30 +42,8 @@ export const allSMSTemplateGroupsState = atom<any>({
   default: [],
 });
 
-export const smsTemplateState = atom<any>({
-  key: "smsTemplateState",
-  default: {},
-});
-
-export const subjectTextState = atom<string>({
-  key: "subjectTextState",
-  default: "<p><b>GoMake</b> template</p>" , 
-});
-
 export const templateVariablesState = atom<any>({
   key: "templateVariablesState",
   default: {},
 });
 
-
-// export const initState: ISmsTemplate = {
-//   type: "",
-//   subject: "",
-//   body: "",
-//   attachment:"",
-//   variables: [],
-// };
-// export const smsTemplateState = atom<ISmsTemplate>({
-//   key: "smsTemplateState",
-//   default: initState,
-// });
