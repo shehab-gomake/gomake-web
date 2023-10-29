@@ -2,7 +2,7 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { isLoadgingState } from "@/store";
 import { Checkbox, CircularProgress, Slider } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { EWidgetProductType } from "../enums";
@@ -19,7 +19,6 @@ const RightSideWidget = ({
   template,
   tabs,
   activeTab,
-  pricingDefaultValue,
   setUrgentOrder,
   urgentOrder,
   setPrintingNotes,
@@ -37,26 +36,13 @@ const RightSideWidget = ({
   const quantity = generalParameters?.find(
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
-  const [sliderPrice, setSliderPrice] = useState<number>(0);
   const [changePrice, setChangePrice] = useState<number>(0);
   const handleChange = (event: Event, newValue: number | number[]) => {
-    setSliderPrice(newValue as number);
+    setPriceRecovery(false);
+    setDefaultPrice(newValue as number);
+    setChangePrice(newValue as number);
   };
-  useEffect(() => {
-    if (workFlowSelected) {
-      setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2) - sliderPrice);
-    } else if (widgetType === EWidgetProductType.EDIT) {
-      setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.value);
-    } else {
-      setDefaultPrice("----");
-    }
-  }, [
-    pricingDefaultValue,
-    sliderPrice,
-    workFlowSelected,
-    widgetType,
-    quantity,
-  ]);
+
   const { t } = useTranslation();
   return (
     <div style={clasess.rightSideMainContainer}>
@@ -139,7 +125,8 @@ const RightSideWidget = ({
         </div>
         <div style={clasess.progress}>
           <Slider
-            defaultValue={0}
+            defaultValue={defaultPrice}
+            value={defaultPrice}
             aria-label="Default"
             style={{ width: "93%", marginLeft: 10 }}
             min={10}
@@ -182,9 +169,16 @@ const RightSideWidget = ({
                 if (priceRecovery) {
                   setDefaultPrice(changePrice);
                 } else {
-                  setDefaultPrice(
-                    workFlowSelected?.totalPrice.toFixed(2) - sliderPrice
-                  );
+                  if (
+                    widgetType === EWidgetProductType.EDIT ||
+                    widgetType === EWidgetProductType.DUPLICATE
+                  ) {
+                    setDefaultPrice(
+                      template?.quoteItem?.unitPrice * quantity?.value
+                    );
+                  } else {
+                    setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2));
+                  }
                 }
               }}
               checked={priceRecovery}
