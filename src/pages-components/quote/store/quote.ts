@@ -12,3 +12,7 @@ export const QuoteNumberState = atom({
   key: "QuoteNumberState",
   default: "",
 });
+export const QuoteIfExistState = atom({
+  key: "QuoteIfExistState",
+  default: {},
+});

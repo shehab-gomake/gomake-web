@@ -38,7 +38,7 @@ const useStyle = () => {
       },
       profileContainer: {
         display: "flex",
-        flexDirection: "column" as "column",
+        flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
       },

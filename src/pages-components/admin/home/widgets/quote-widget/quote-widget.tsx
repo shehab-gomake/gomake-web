@@ -8,13 +8,15 @@ import { Popover, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useRecoilState } from "recoil";
-import { QuoteNumberState } from "@/pages-components/quote/store/quote";
+import { QuoteIfExistState, QuoteNumberState } from "@/pages-components/quote/store/quote";
 
 const QuoteWidget = ({ isAdmin = true   }) => {
   const { clasess } = useStyle();
   const [QuoteId ,  setQuoteId] = useState("");
   const [selectedOption, setselectedOption] = useState<any>();
   const [quoteNumber, setquoteNumber] = useRecoilState<any>(QuoteNumberState);
+  const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
+
   const { t } = useTranslation();
   const {
     clientTypesValue,
@@ -36,6 +38,7 @@ const QuoteWidget = ({ isAdmin = true   }) => {
     _renderErrorMessage,
     handleClose,
     updateQuoteExist,
+    selectedProduct,
     setSelectedClientType,
     setSelectedCustomersList,
     setSelectedProduct,
@@ -102,6 +105,11 @@ const QuoteWidget = ({ isAdmin = true   }) => {
             setSelectedClientType({});
           }
       }
+      if(QuoteExist?.result != null)
+      {
+        setQuoteIfExist(QuoteExist?.result);
+      }
+
     
     },[QuoteExist,selectedOption , selectedOptionInQuoteExist , customersListCreateOrderList])
   return (

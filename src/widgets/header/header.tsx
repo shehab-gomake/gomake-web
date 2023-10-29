@@ -6,14 +6,18 @@ import { EditIcon } from "@/icons";
 import { useStyle } from "./style";
 import { useHeader } from "./use-header";
 import { GoMakeMenu } from "@/components";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userProfileState } from "@/store/user-profile";
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import { QuoteIfExistState } from "@/pages-components/quote/store/quote";
 
 const HeaderWidget = () => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const userProfile = useRecoilValue(userProfileState);
-  const { user, open, anchorEl, handleClick, handleClose, navigate } =
+  const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
+  console.log("QuoteIfExist in header tsx : " , QuoteIfExist)
+  const { user, open, anchorEl, handleClick, handleClose, navigate , handleClickQuoteExist} =
     useHeader();
   const userAvatar = () => {
     return !!userProfile.imagePath ? (
@@ -31,6 +35,7 @@ const HeaderWidget = () => {
   };
   return (
     <div style={clasess.container}>
+    
       <div style={{ width: "100%" }} />
       {/* <GoMakeTextInputIcon
         style={clasess.searchInputContainer}
@@ -54,12 +59,24 @@ const HeaderWidget = () => {
           <Notifications />
         </IconButton> */}
         <div style={clasess.profileContainer}>
-          <IconButton onClick={handleClick}>{userAvatar()}</IconButton>
+          <div>
+            <IconButton onClick={handleClick}>{userAvatar()}</IconButton>
+          </div>
           {/* <div style={clasess.userNameStyle}>{user?.displayName}</div> */}
+         { Object?.keys(QuoteIfExist).length !== 0 && 
+         
+            <div>
+              <AddShoppingCartIcon onClick={handleClickQuoteExist} sx={{ color: "#2e3092",fontSize:28}}/>
+            </div>
+         
+         } 
         </div>
+       
       </div>
+     
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
         <div style={clasess.mainMenuContainer}>
+         
           <div style={clasess.accountTextStyle}>{t("login.account")}</div>
           <div style={clasess.imgNameContainer}>
             {userAvatar()}
@@ -93,7 +110,9 @@ const HeaderWidget = () => {
           </MenuItem>
         </div>
       </GoMakeMenu>
+   
     </div>
+    
   );
 };
 export { HeaderWidget };

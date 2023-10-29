@@ -173,6 +173,7 @@ const useQuoteWidget = () => {
     handleClick,
     updateQuoteExist,
     onClcikOpenModal,
+    selectedProduct,
     handleClose,
     onClcikCloseModal,
     setSelectedClientType,
