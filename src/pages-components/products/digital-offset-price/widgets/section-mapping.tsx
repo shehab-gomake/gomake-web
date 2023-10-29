@@ -1,3 +1,6 @@
+import { SettingNavBar } from "@/icons";
+import { SettingsIcon } from "@/icons/settings";
+
 const SectionMappingWidget = ({
   clasess,
   index,

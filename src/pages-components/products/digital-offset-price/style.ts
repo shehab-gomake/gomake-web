@@ -532,6 +532,14 @@ const useStyle = () => {
         boxShadow: "none",
         height: 36,
       },
+      dropDownListWithSettingIcon:{
+        width: 244,
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 4,
+      }
     };
   }, [i18next.language, t]);
   return {

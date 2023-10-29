@@ -22,6 +22,7 @@ import {
 } from "@/components";
 import { userProfileState } from "@/store/user-profile";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
+import { SettingsIcon } from "@/icons/settings";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -37,6 +38,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [generalParameters, setGeneralParameters] = useState<any>([]);
   const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
+  const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [defaultPrice, setDefaultPrice] = useState<any>("-----");
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
   const [template, setTemplate] = useState<any>([]);
@@ -899,7 +901,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           (item) => item.isDefault === true
         );
         Comp = (
-          <div style={{ width: 220 }}>
+          <div style={clasess.dropDownListWithSettingIcon}>
             <GoMakeAutoComplate
               options={parameter?.valuesConfigs?.filter(
                 (value) => !value.isHidden
@@ -930,6 +932,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 );
               }}
             />
+            {!parameter?.setSettingIcon && (
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={onOpeneMultiParameterModal}
+              >
+                <SettingsIcon
+                  stroke={"rgba(237, 2, 140, 1)"}
+                  width={24}
+                  height={24}
+                />
+              </div>
+            )}
           </div>
         );
       } else if (parameter?.parameterType === 6) {
@@ -1109,85 +1123,96 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           Comp = (
             <>
               {options?.length > 0 && (
-                <GoMakeAutoComplate
-                  options={options}
-                  placeholder={parameter.name}
-                  style={clasess.dropDownListStyle}
-                  defaultValue={
-                    index !== -1
-                      ? { value: temp[index].value }
-                      : defailtObjectValue
-                  }
-                  getOptionLabel={(option: any) => option.value}
-                  onChange={(e: any, value: any) => {
-                    if (parameter?.materialPath?.length == 3) {
-                      onChangeForPrice(
-                        parameter?.id,
-                        subSection?.id,
-                        section?.id,
-                        parameter?.parameterType,
-                        parameter?.name,
-                        parameter?.actionId,
-                        {
-                          valueId: value?.valueId,
-                          value: value?.value,
-                          ...(data?.id > 0 && { material: data?.id }),
-                        },
-                        index
-                      );
-                      setDigidatPriceData({
-                        ...digitalPriceData,
-                        selectedMaterialLvl3: value,
-                        selectedOptionLvl3: value,
-                      });
+                <div style={clasess.dropDownListWithSettingIcon}>
+                  <GoMakeAutoComplate
+                    options={options}
+                    placeholder={parameter.name}
+                    style={clasess.dropDownListStyle}
+                    defaultValue={
+                      index !== -1
+                        ? { value: temp[index].value }
+                        : defailtObjectValue
                     }
-                    if (parameter?.materialPath?.length == 2) {
-                      onChangeForPrice(
-                        parameter?.id,
-                        subSection?.id,
-                        section?.id,
-                        parameter?.parameterType,
-                        parameter?.name,
-                        parameter?.actionId,
-                        {
-                          valueId: value?.valueId,
-                          value: value?.value,
-                          ...(data?.id > 0 && { material: data?.id }),
-                        },
-                        index
-                      );
-                      setDigidatPriceData({
-                        ...digitalPriceData,
-                        selectedMaterialLvl2: value?.data,
-                        selectedOptionLvl2: value,
-                        selectedMaterialLvl3: null,
-                      });
-                    }
-                    if (parameter?.materialPath?.length == 1) {
-                      onChangeForPrice(
-                        parameter?.id,
-                        subSection?.id,
-                        section?.id,
-                        parameter?.parameterType,
-                        parameter?.name,
-                        parameter?.actionId,
-                        {
-                          valueId: value?.valueId,
-                          value: value?.value,
-                          ...(data?.id > 0 && { material: data?.id }),
-                        },
-                        index
-                      );
-                      setDigidatPriceData({
-                        ...digitalPriceData,
-                        selectedMaterialLvl1: value?.data,
-                        selectedOptionLvl1: value,
-                        selectedMaterialLvl2: { value: "" },
-                        selectedMaterialLvl3: { value: "" },
-                      });
-                    }
-                  }}
-                />
+                    getOptionLabel={(option: any) => option.value}
+                    onChange={(e: any, value: any) => {
+                      if (parameter?.materialPath?.length == 3) {
+                        onChangeForPrice(
+                          parameter?.id,
+                          subSection?.id,
+                          section?.id,
+                          parameter?.parameterType,
+                          parameter?.name,
+                          parameter?.actionId,
+                          {
+                            valueId: value?.valueId,
+                            value: value?.value,
+                            ...(data?.id > 0 && { material: data?.id }),
+                          },
+                          index
+                        );
+                        setDigidatPriceData({
+                          ...digitalPriceData,
+                          selectedMaterialLvl3: value,
+                          selectedOptionLvl3: value,
+                        });
+                      }
+                      if (parameter?.materialPath?.length == 2) {
+                        onChangeForPrice(
+                          parameter?.id,
+                          subSection?.id,
+                          section?.id,
+                          parameter?.parameterType,
+                          parameter?.name,
+                          parameter?.actionId,
+                          {
+                            valueId: value?.valueId,
+                            value: value?.value,
+                            ...(data?.id > 0 && { material: data?.id }),
+                          },
+                          index
+                        );
+                        setDigidatPriceData({
+                          ...digitalPriceData,
+                          selectedMaterialLvl2: value?.data,
+                          selectedOptionLvl2: value,
+                          selectedMaterialLvl3: null,
+                        });
+                      }
+                      if (parameter?.materialPath?.length == 1) {
+                        onChangeForPrice(
+                          parameter?.id,
+                          subSection?.id,
+                          section?.id,
+                          parameter?.parameterType,
+                          parameter?.name,
+                          parameter?.actionId,
+                          {
+                            valueId: value?.valueId,
+                            value: value?.value,
+                            ...(data?.id > 0 && { material: data?.id }),
+                          },
+                          index
+                        );
+                        setDigidatPriceData({
+                          ...digitalPriceData,
+                          selectedMaterialLvl1: value?.data,
+                          selectedOptionLvl1: value,
+                          selectedMaterialLvl2: { value: "" },
+                          selectedMaterialLvl3: { value: "" },
+                        });
+                      }
+                    }}
+                  />
+                  {!parameter?.setSettingIcon && (
+                    <div style={{ cursor: "pointer" }}>
+                      <SettingsIcon
+                        stroke={"rgba(237, 2, 140, 1)"}
+                        width={24}
+                        height={24}
+                      />
+                    </div>
+                  )}
+                </div>
               )}
             </>
           );
@@ -1375,6 +1400,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const onOpeneChooseShape = () => {
     setChooseShapeOpen(true);
   };
+  const onOpeneMultiParameterModal = () => {
+    setMultiParameterModal(true);
+  };
+  const onCloseMultiParameterModal = () => {
+    setMultiParameterModal(false);
+  };
+
   const handleTabClick = (index: number) => {
     if (index !== activeIndex) {
       setActiveIndex(index);
@@ -1636,6 +1668,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setPrintingNotes,
     setGraphicNotes,
     setPriceRecovery,
+    onOpeneMultiParameterModal,
+    onCloseMultiParameterModal,
+    multiParameterModal,
     priceRecovery,
     graphicNotes,
     printingNotes,

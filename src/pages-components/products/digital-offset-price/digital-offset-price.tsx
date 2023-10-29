@@ -13,6 +13,7 @@ import { RightSideWidget } from "./widgets/right-side-widget";
 import {
   ChooseShapeModal,
   MakeShapeModal,
+  MultiParameterModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
 import { EWidgetProductType } from "./enums";
 
@@ -38,6 +39,9 @@ const PriceListPageWidget = ({ widgetType }) => {
     setPrintingNotes,
     setGraphicNotes,
     setPriceRecovery,
+    onOpeneMultiParameterModal,
+    onCloseMultiParameterModal,
+    multiParameterModal,
     priceRecovery,
     graphicNotes,
     printingNotes,
@@ -249,6 +253,11 @@ const PriceListPageWidget = ({ widgetType }) => {
         openModal={chooseShapeOpen}
         onClose={onCloseChooseShape}
         modalTitle={t("products.offsetPrice.admin.chooseShape")}
+      />
+      <MultiParameterModal
+        openModal={multiParameterModal}
+        onClose={onCloseMultiParameterModal}
+        modalTitle={""}
       />
     </div>
   );
