@@ -6,7 +6,7 @@ import { AddButton } from "@/components/button/add-button";
 import { GoMakeModal } from "@/components";
 import { AddNewSMSTemplateGroup } from "./messageTemplates/components/add-new/add-new";
 import { useRecoilState } from "recoil";
-import { editModalState, groupModalState, smsTemplateState } from "./states/state";
+import { editModalState, groupModalState, smsBodyState, smsSubjectState, smsTemplateState } from "./states/state";
 import { useMessageTemplate } from "./useMessageTemplate";
 import { useEffect  } from "react";
 import { EmailSettings } from "./messageTemplates/components/mail-editor/mail-editor";
@@ -18,6 +18,8 @@ const SettingsMailingWidget = () => {
     const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
     const [openEditModal, setOpenEditModal] = useRecoilState<boolean>(editModalState);
     const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
+    const [subject, setSubject] = useRecoilState<string>(smsSubjectState);
+    const [body, setBody] = useRecoilState<string>(smsBodyState);
 
     const tabs: ITab[] = [
         { title: t("mailingSettings.messageTemplates"), component: <MessageTemplates/> },
@@ -51,7 +53,7 @@ const SettingsMailingWidget = () => {
             <GoMakeModal
                 insideStyle={{paddingLeft: 20, paddingRight: 20}}
                 openModal={openEditModal}
-                onClose={() => {setOpenEditModal(false); setState(null)}}
+                onClose={() => {setOpenEditModal(false); setState(null); setSubject(""); setBody("")}}
                 modalTitle={t("mailingSettings.emailType") + " " + templateTitle}>
                 <EmailSettings onClickSave={onUpdateSmsTemplate}/>
             </GoMakeModal>

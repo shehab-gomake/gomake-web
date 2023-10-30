@@ -6,25 +6,29 @@ import { EditingIcon } from "./icons/edit";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
 import { useRecoilState } from "recoil";
-import { editModalState } from "@/widgets/settings-mailing/states/state";
+import { editModalState, smsBodyState, smsSubjectState, smsTemplateState } from "@/widgets/settings-mailing/states/state";
 import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplate";
 
 interface IProps {
   id: any;
+  item: any;
 }
 
-const MoreMenuWidget = ({ id }: IProps) => {
+const MoreMenuWidget = ({ id, item }: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle();
   const [openModal, setOpenModal] = useRecoilState<boolean>(editModalState);
-  const {getSmsTemplateById } = useMessageTemplate();
+  const { getSmsTemplateById } = useMessageTemplate();
+  const [subject, setSubject] = useRecoilState<string>(smsSubjectState);
+  const [body, setBody] = useRecoilState<string>(smsBodyState);
 
-  const handleEditClick =  async () => {
+  const handleEditClick = async () => {
     await getSmsTemplateById(id);
-     setOpenModal(true);
+    setBody(item?.text);
+    setSubject(item?.title);
+    setOpenModal(true);
   };
-
 
   return (
     <>

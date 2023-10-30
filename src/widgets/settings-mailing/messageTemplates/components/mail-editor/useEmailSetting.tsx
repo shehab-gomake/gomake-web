@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { Stack } from "@mui/material";
-import { smsTemplateState } from "@/widgets/settings-mailing/states/state";
+import { smsBodyState, smsSubjectState, smsTemplateState } from "@/widgets/settings-mailing/states/state";
 import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplate";
 import { useStyle } from "./style";
 import { ISMSTemplate } from "../../interfaces/interface";
@@ -11,24 +11,55 @@ const useEmailSetting = () => {
   const { templateVariables } = useMessageTemplate();
   const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
   const [value, setValue] = useState([]);
-
+  const [subject, setSubject] = useRecoilState<string>(smsSubjectState);
+  const [body, setBody] = useRecoilState<string>(smsBodyState);
 
   // title or subject
-  // const handleSubjectOptionClick = (option) => {
-  //   const newText = state?.title?.endsWith('<p><br></p>') ? state?.title?.slice(0, -8) : state?.title?.slice(0, -4);
-  //   option.value && setState({ ...state, title :  (state?.title ? newText + " {{" + option.label + "}} </p>" : "<p>{{" + option.label + "}} </p>")});
-  // };
-
   const handleSubjectOptionClick = (option) => {
-   // const newText = state?.title?.endsWith('<p><br></p>') ? state?.title?.slice(0, -8) : state?.title?.slice(0, -4);
-    option.value && setState({ ...state, title :  (state?.title + " {{" + option.label + "}}" ) });
+    if (state && state.title) {
+    //  let newTitle = state.title;
+      let newTitle = subject;
+
+      if (newTitle.endsWith('<p><br></p>')) {
+        newTitle = newTitle.slice(0, -12); // Remove the entire string
+        newTitle += '<br><p>';
+      } else if (newTitle.endsWith('<p></p>')) {
+        newTitle = newTitle.slice(0, -8); // Remove the last "<p></p>"
+      } else {
+        newTitle = newTitle.slice(0, -4);
+      }
+      if (option.value) {
+        newTitle += ` {{${option.label}}}</p>`;
+      }
+
+      setSubject (newTitle);
+      setState({ ...state, title: newTitle });
+    }
   };
 
   // text or body
   const handleBodyOptionClick = (option) => {
-    const newText = state?.text?.endsWith('<p><br></p>') ? state?.text?.slice(0, -8) : state?.text?.slice(0, -4);
-    option.value && setState({ ...state, text :  (state?.text ? newText + " {{" + option.label + "}} </p>" : "<p>{{" + option.label + "}} </p>")});
+    if (state && state.text) {
+      //let newText = state.text;
+      let newText = body;
+
+      if (newText.endsWith('<p><br></p>')) {
+        newText = newText.slice(0, -12); // Remove the entire string
+        newText += '<br><p>';
+      } else if (newText.endsWith('<p></p>')) {
+        newText = newText.slice(0, -8); // Remove the last "<p></p>"
+      } else {
+        newText = newText.slice(0, -4);
+      }
+      if (option.value) {
+        newText += ` {{${option.label}}}</p>`;
+      }
+
+      setBody(newText)
+      setState({ ...state, text: newText });
+    }
   };
+
 
   const renderHeader = (flag) => {
     return (
@@ -46,7 +77,7 @@ const useEmailSetting = () => {
           <button className="ql-code-block ql-active" aria-label="Insert Code Block" data-pc-section="codeblock"></button>
           {/* {toolBarInputs(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)}
           <PdfUploadComponent onUpload={(value) => alert(value)} ></PdfUploadComponent> */}
-        </Stack>
+        </Stack> 
         <Stack display={"flex"} direction={'row'} gap={'8px'} className="scroll-container" >
           {templateVariables?.map((option) => (
             < button style={classes.variableStyle}

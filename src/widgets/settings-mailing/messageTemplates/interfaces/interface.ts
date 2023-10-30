@@ -12,7 +12,7 @@ export interface ISMSTemplate {
     smsTemplatesGroupId: string,
     templateTypeId: SMSTemplatesEnum,
     templateType: string,
-    attachment: string,
+    attachment: string ,
     sendFromAgent: boolean,
     mailReturnToAgent: boolean,
     sendFrom: string,
@@ -20,5 +20,6 @@ export interface ISMSTemplate {
     sendMailCopy: boolean,
     sendMailCopyToAgent: boolean,
     bccMail: string,
+    fileBase64: string | ArrayBuffer
 }
 

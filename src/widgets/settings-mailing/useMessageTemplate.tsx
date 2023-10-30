@@ -10,7 +10,6 @@ import { MoreMenuWidget } from "./messageTemplates/components/more-circle/index"
 import { PdfUploadComponent } from "./messageTemplates/components/upload-file/upload-file";
 import { ISMSTemplate, SMSTemplateGroup } from "./messageTemplates/interfaces/interface";
 
-
 const useMessageTemplate = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
@@ -52,8 +51,8 @@ const useMessageTemplate = () => {
           types.find((option) => option.value == template.templateType)?.text || "Unknown",
           template.title ? new DOMParser().parseFromString(template.title, 'text/html').body.textContent : "",
           template.text ? new DOMParser().parseFromString(template.text, 'text/html').body.textContent : "",
-          <PdfUploadComponent />,
-          <MoreMenuWidget id={template.id} />
+          <PdfUploadComponent onUpload={false} />,
+          <MoreMenuWidget id={template.id} item={template} />
         ]);
         setAllSmsTemplates(tableRows);
       }
@@ -99,21 +98,18 @@ const useMessageTemplate = () => {
   }
 
   // save changes
-  const onUpdateSmsTemplate = async () => {
+  const onUpdateSmsTemplate = async (updatedSMSTemplate) => {
     const callBack = (data) => {
       if (data.success) {
         alertSuccessUpdate();
         setEditModal(!editModal);
-        //  setSMSTemplate(initState);
         getAllSmsTemplates();
-        console.log("test test" ,SMSTemplate)
       } else {
         alertFaultUpdate();
       }
     }
 
-    await updateSMSTemplateApi(callApi, callBack, SMSTemplate)
-
+    await updateSMSTemplateApi(callApi, callBack, updatedSMSTemplate)
   }
 
 

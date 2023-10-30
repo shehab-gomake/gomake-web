@@ -15,6 +15,7 @@ export const initState: ISMSTemplate = {
   sendMailCopy: false,
   sendMailCopyToAgent: false,
   bccMail: "",
+  fileBase64: null,
 };
 
 export const smsTemplateState = atom<ISMSTemplate>({
@@ -45,5 +46,15 @@ export const allSMSTemplateGroupsState = atom<any>({
 export const templateVariablesState = atom<any>({
   key: "templateVariablesState",
   default: {},
+});
+
+export const smsSubjectState = atom<string>({
+  key: "smsSubjectState",
+  default: "",
+});
+
+export const smsBodyState = atom<string>({
+  key: "smsBodyState",
+  default: "",
 });
 
