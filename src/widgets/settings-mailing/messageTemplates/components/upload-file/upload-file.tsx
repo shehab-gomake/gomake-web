@@ -9,12 +9,12 @@ import { ISMSTemplate } from '../../interfaces/interface';
 
 interface IProps {
     onUpload: boolean;
+    fileName?: string;
 }
-const PdfUploadComponent = ({ onUpload }: IProps) => {
-    const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
-    //const [selectedFile, setSelectedFile] = useState(null);
-    const [selectedFileName, setSelectedFileName] = useState(state?.attachment ? state?.attachment : 'order summary.pdf');
 
+const PdfUploadComponent = ({ onUpload , fileName="order summary.pdf" }: IProps) => {
+    const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
+    const [selectedFileName, setSelectedFileName] = useState(state?.attachment );
     const inputRef = useRef(null);
     const { classes } = useStyle();
 
@@ -23,10 +23,8 @@ const PdfUploadComponent = ({ onUpload }: IProps) => {
         if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                // setSelectedFile(e.target.result);
                 setSelectedFileName(file.name);
                 setState({ ...state, fileBase64: e.target.result });
-
             };
             reader.readAsDataURL(file);
         }
@@ -34,16 +32,16 @@ const PdfUploadComponent = ({ onUpload }: IProps) => {
 
     return (
         <Stack direction={"column"} alignItems={'center'} justifyContent={'center'} gap={'10px'}>
-            <div style={{ display: "flex", width: "180px", height: "40px", borderRadius: "4px", alignItems: "center" }}>
+            <div style={{ display: "flex", width: "180px", overflow: "hidden", height: "40px", borderRadius: "4px", alignItems: "center" }}>
                 {onUpload ? (
                     <IconButton onClick={() => inputRef.current?.click()}>
-                        <PdfIcon height={19.66} width={16} />
+                        <PdfIcon />
                     </IconButton>
                 ) : <span style={{ margin: "10px" }} >
-                    <PdfIcon height={19.66} width={16} />
+                    <PdfIcon />
                 </span>}
                 <label style={classes.labelStyle}>
-                    {selectedFileName}
+                    {selectedFileName && selectedFileName!="" ? selectedFileName : fileName}
                 </label>
                 <input
                     type="file"

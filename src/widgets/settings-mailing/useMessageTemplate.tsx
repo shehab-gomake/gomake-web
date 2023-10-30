@@ -51,7 +51,7 @@ const useMessageTemplate = () => {
           types.find((option) => option.value == template.templateType)?.text || "Unknown",
           template.title ? new DOMParser().parseFromString(template.title, 'text/html').body.textContent : "",
           template.text ? new DOMParser().parseFromString(template.text, 'text/html').body.textContent : "",
-          <PdfUploadComponent onUpload={false} />,
+          <PdfUploadComponent onUpload={false} fileName={template.attachment ? template.attachment : "order summary.pdf" }/>,
           <MoreMenuWidget id={template.id} item={template} />
         ]);
         setAllSmsTemplates(tableRows);
