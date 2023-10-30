@@ -1,7 +1,8 @@
 import { GomakeTextInput } from "@/components";
-import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
 import { SubChildrenMapping } from "./sub-children-mapping";
+import { CheckboxCheckedIcon } from "./icons/checkbox-checked-icon";
+import { CheckboxIcon } from "./icons/checkbox-icon";
 
 const ChildrenMapping = ({ paameters, item, index, clasess }) => {
   return (
@@ -16,7 +17,7 @@ const ChildrenMapping = ({ paameters, item, index, clasess }) => {
         <>
           <div style={clasess.childRowContainer}>
             {item?.parameterName === paameters[0].parameterName && (
-              <div style={{ paddingLeft: 9 }}>
+              <div style={{ paddingLeft: 13 }}>
                 <Checkbox
                   icon={<CheckboxIcon />}
                   checkedIcon={<CheckboxCheckedIcon />}

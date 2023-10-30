@@ -3,7 +3,6 @@ import { Select } from "@mui/material";
 
 import { ChildrenMapping } from "./children-mapping";
 import { HeaderMapping } from "./header-mapping";
-
 import { useStyle } from "./style";
 
 const MultiParameterModal = ({ openModal, onClose, modalTitle }) => {
