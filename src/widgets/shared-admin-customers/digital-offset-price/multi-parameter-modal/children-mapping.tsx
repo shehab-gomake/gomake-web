@@ -1,10 +1,30 @@
 import { GomakeTextInput } from "@/components";
-import { Checkbox } from "@mui/material";
+import {
+  Checkbox,
+  FormControl,
+  FormHelperText,
+  OutlinedInput,
+  useFormControl,
+} from "@mui/material";
 import { SubChildrenMapping } from "./sub-children-mapping";
 import { CheckboxCheckedIcon } from "./icons/checkbox-checked-icon";
 import { CheckboxIcon } from "./icons/checkbox-icon";
+import { useMemo } from "react";
 
-const ChildrenMapping = ({ paameters, item, index, clasess }) => {
+const ChildrenMapping = ({ paameters, item, index, clasess, setFocused }) => {
+  function MyFormHelperText() {
+    const { focused } = useFormControl() || {};
+    setFocused(focused);
+    const helperText = useMemo(() => {
+      if (focused) {
+        return "This field is being focused";
+      }
+
+      return "Helper text";
+    }, [focused]);
+
+    return <FormHelperText>{helperText}</FormHelperText>;
+  }
   return (
     <div
       style={{
@@ -29,12 +49,13 @@ const ChildrenMapping = ({ paameters, item, index, clasess }) => {
               {item?.parameterType === 0 ? (
                 value?.label
               ) : (
-                <GomakeTextInput
-                  placeholder={value?.label}
-                  defaultValue={value?.value}
-                  style={clasess.textInputStyle}
-                  type="number"
-                />
+                <FormControl>
+                  <GomakeTextInput
+                    placeholder={value?.label}
+                    defaultValue={value?.value}
+                    style={clasess.textInputStyle}
+                  />
+                </FormControl>
               )}
             </div>
           </div>

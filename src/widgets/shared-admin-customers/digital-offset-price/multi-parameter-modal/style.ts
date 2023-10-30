@@ -10,7 +10,7 @@ const useStyle = () => {
         width: 444,
         borderRadius: 12,
         height: 747,
-        backgroundColor: "#f7f7f7",
+        backgroundColor: "#FFFFFF",
         padding:20
       },
       mainContainer:{
@@ -80,11 +80,13 @@ const useStyle = () => {
         backgroundColor:secondColor(500)
       },
       textInputStyle:{
-        width: 80,
-        height: 40,
+        width: 90,
+        height: 34,
         boxShadow: "none",
         color: "black",
         ...FONT_FAMILY.Lexend(500, 14),
+        // border: "1px solid rgba(237, 2, 140, 1)",
+        borderRadius:4
       },
       childRowContainer:{
         display: "flex",

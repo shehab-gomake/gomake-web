@@ -932,10 +932,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 );
               }}
             />
-            {!parameter?.setSettingIcon && (
+            {parameter?.setSettingIcon && (
               <div
                 style={{ cursor: "pointer" }}
-                onClick={onOpeneMultiParameterModal}
+                onClick={() => onOpeneMultiParameterModal(parameter)}
               >
                 <SettingsIcon
                   stroke={"rgba(237, 2, 140, 1)"}
@@ -1203,7 +1203,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       }
                     }}
                   />
-                  {!parameter?.setSettingIcon && (
+                  {parameter?.setSettingIcon && (
                     <div style={{ cursor: "pointer" }}>
                       <SettingsIcon
                         stroke={"rgba(237, 2, 140, 1)"}
@@ -1400,8 +1400,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const onOpeneChooseShape = () => {
     setChooseShapeOpen(true);
   };
-  const onOpeneMultiParameterModal = () => {
+  const [settingParameters, setSettingParameters] = useState();
+  const onOpeneMultiParameterModal = (paameters) => {
     setMultiParameterModal(true);
+    setSettingParameters(paameters);
   };
   const onCloseMultiParameterModal = () => {
     setMultiParameterModal(false);
@@ -1671,6 +1673,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     onOpeneMultiParameterModal,
     onCloseMultiParameterModal,
     multiParameterModal,
+    settingParameters,
     priceRecovery,
     graphicNotes,
     printingNotes,

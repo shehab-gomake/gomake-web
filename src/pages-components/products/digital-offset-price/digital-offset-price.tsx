@@ -42,6 +42,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     onOpeneMultiParameterModal,
     onCloseMultiParameterModal,
     multiParameterModal,
+    settingParameters,
     priceRecovery,
     graphicNotes,
     printingNotes,
@@ -258,6 +259,7 @@ const PriceListPageWidget = ({ widgetType }) => {
         openModal={multiParameterModal}
         onClose={onCloseMultiParameterModal}
         modalTitle={""}
+        settingParameters={settingParameters}
       />
     </div>
   );

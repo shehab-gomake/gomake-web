@@ -23,7 +23,6 @@ const SubChildrenMapping = ({ paameters, item, value, clasess }) => {
             placeholder={value?.label}
             defaultValue={value?.value}
             style={clasess.textInputStyle}
-            type="number"
           />
         )}
       </div>

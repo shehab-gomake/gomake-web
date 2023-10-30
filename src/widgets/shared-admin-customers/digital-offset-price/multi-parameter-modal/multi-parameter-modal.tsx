@@ -4,8 +4,15 @@ import { Select } from "@mui/material";
 import { ChildrenMapping } from "./children-mapping";
 import { HeaderMapping } from "./header-mapping";
 import { useStyle } from "./style";
+import { useState } from "react";
 
-const MultiParameterModal = ({ openModal, onClose, modalTitle }) => {
+const MultiParameterModal = ({
+  openModal,
+  onClose,
+  modalTitle,
+  settingParameters,
+}) => {
+  const [focused, setFocused] = useState();
   const { clasess } = useStyle();
   const paameters = [
     {
@@ -189,6 +196,7 @@ const MultiParameterModal = ({ openModal, onClose, modalTitle }) => {
       ],
     },
   ];
+  console.log("settingParameters", settingParameters);
   return (
     <>
       <GoMakeModal
@@ -225,6 +233,7 @@ const MultiParameterModal = ({ openModal, onClose, modalTitle }) => {
                       item={item}
                       index={index}
                       clasess={clasess}
+                      setFocused={setFocused}
                     />
                   );
                 })}
