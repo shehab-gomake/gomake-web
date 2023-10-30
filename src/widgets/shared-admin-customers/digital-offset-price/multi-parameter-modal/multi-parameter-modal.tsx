@@ -196,8 +196,6 @@ const MultiParameterModal = ({
     },
   ];
 
-  console.log("settingParameters", settingParameters);
-
   return (
     <>
       <GoMakeModal
