@@ -10,6 +10,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { userProfileState } from "@/store/user-profile";
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { QuoteIfExistState } from "@/pages-components/quote/store/quote";
+import { CartIcon } from "@/icons/cart-icon";
 
 const HeaderWidget = () => {
   const { clasess } = useStyle();
@@ -58,20 +59,27 @@ const HeaderWidget = () => {
           <Notifications />
         </IconButton> */}
         <div style={clasess.profileContainer}>
-          <div>
+          {
+             Object?.keys(QuoteIfExist).length !== 0 && 
+             <div style={{borderRight:"1px solid #D0D5DD"}}>
+                <IconButton style={{backgroundColor:"#F135A3",marginRight:20 , width:30 , height : 30}}>
+                    <CartIcon/>
+                </IconButton>
+             </div>
+
+          }
+        
+          <div style={{marginLeft : 14}}>
             <IconButton onClick={handleClick}>{userAvatar()}</IconButton>
           </div>
           {/* <div style={clasess.userNameStyle}>{user?.displayName}</div> */}
-         { Object?.keys(QuoteIfExist).length !== 0 && 
          
-            <div>
-              <AddShoppingCartIcon onClick={handleClickQuoteExist} sx={{ color: "#2e3092",fontSize:28}}/>
-            </div>
-         
-         } 
-        </div>
        
+      
+        </div>
+    
       </div>
+   
      
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
         <div style={clasess.mainMenuContainer}>
@@ -109,6 +117,7 @@ const HeaderWidget = () => {
           </MenuItem>
         </div>
       </GoMakeMenu>
+ 
    
     </div>
     
