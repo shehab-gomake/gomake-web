@@ -114,6 +114,33 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(500),
       },
+      HeaderConfirmPage : {
+        backgroundColor: "#F4F1F6",
+        width:"100%",
+        height:"80px",
+      },
+      GomakeIconStyle:{
+        marginTop:22,
+        marginLeft:80
+      },
+      MainContainerInConfirmPage:{
+          width:"1,360px",
+          height:"788px",
+          marginLeft:"280px",
+          marginTop:"120px"
+      },
+      mainTitleStyle:{
+        ...FONT_FAMILY.Lexend(600, 16),
+        color: secondColor(500),
+      },
+      subTitleStyle:{
+        ...FONT_FAMILY.Lexend(400, 16),
+        color:"#667085",
+      },
+      subTitleStyle2:{
+        ...FONT_FAMILY.Lexend(400, 16),
+        color:"black",
+      }
     };
   }, [i18next.language, t]);
   return {
