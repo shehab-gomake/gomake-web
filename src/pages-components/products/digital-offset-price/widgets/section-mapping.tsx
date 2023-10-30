@@ -1,6 +1,3 @@
-import { SettingNavBar } from "@/icons";
-import { SettingsIcon } from "@/icons/settings";
-
 const SectionMappingWidget = ({
   clasess,
   index,
@@ -32,7 +29,8 @@ const SectionMappingWidget = ({
                   section,
                   subSection?.parameters,
                   value,
-                  subSection?.parameters
+                  subSection?.parameters,
+                  true
                 )}
               </div>
             );

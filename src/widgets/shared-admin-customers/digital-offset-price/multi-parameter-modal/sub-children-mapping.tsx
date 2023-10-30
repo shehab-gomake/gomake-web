@@ -2,8 +2,10 @@ import { GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon } from "./icons/checkbox-checked-icon";
 import { CheckboxIcon } from "./icons/checkbox-icon";
 import { Checkbox } from "@mui/material";
+import { useState } from "react";
 
 const SubChildrenMapping = ({ paameters, item, value, clasess }) => {
+  const [isFocused, setIsFocused] = useState(false);
   return (
     <div style={clasess.childRowContainer}>
       {item?.parameterName === paameters[0].parameterName && (
@@ -22,7 +24,12 @@ const SubChildrenMapping = ({ paameters, item, value, clasess }) => {
           <GomakeTextInput
             placeholder={value?.label}
             defaultValue={value?.value}
-            style={clasess.textInputStyle}
+            style={{
+              ...clasess.textInputStyle,
+              border: isFocused ? "1px solid rgba(237, 2, 140, 1)" : "",
+            }}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
           />
         )}
       </div>

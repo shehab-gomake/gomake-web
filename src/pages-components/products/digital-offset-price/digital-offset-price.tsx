@@ -260,6 +260,7 @@ const PriceListPageWidget = ({ widgetType }) => {
         onClose={onCloseMultiParameterModal}
         modalTitle={""}
         settingParameters={settingParameters}
+        _renderParameterType={_renderParameterType}
       />
     </div>
   );

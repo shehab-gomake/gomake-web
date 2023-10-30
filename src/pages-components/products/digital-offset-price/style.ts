@@ -157,7 +157,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        width: "fit-content",
+        width: "100%",
         minWidth: 180,
       },
       parameterType3Container: {
@@ -185,14 +185,12 @@ const useStyle = () => {
         backgroundColor: "#FFF",
         border: "0px",
         ...FONT_FAMILY.Lexend(500,14)
-        // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
       renderParameterTypeContainer: {
         display: "flex",
-        width: "95%",
+        width: "100%",
         backgroundColor: "#FFF",
-        borderRadius: 4,
-        // backgroundColor:"red"
+        borderRadius: 4, 
       },
 
       switchStyle: {
@@ -533,7 +531,7 @@ const useStyle = () => {
         height: 36,
       },
       dropDownListWithSettingIcon:{
-        width: 244,
+        width: "100%",
         display: "flex",
         flexDirection: "row",
         justifyContent: "flex-start",

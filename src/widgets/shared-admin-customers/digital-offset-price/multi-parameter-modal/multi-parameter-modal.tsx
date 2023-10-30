@@ -1,5 +1,4 @@
 import { GoMakeModal, GomakePrimaryButton } from "@/components";
-import { Select } from "@mui/material";
 
 import { ChildrenMapping } from "./children-mapping";
 import { HeaderMapping } from "./header-mapping";
@@ -11,8 +10,8 @@ const MultiParameterModal = ({
   onClose,
   modalTitle,
   settingParameters,
+  _renderParameterType,
 }) => {
-  const [focused, setFocused] = useState();
   const { clasess } = useStyle();
   const paameters = [
     {
@@ -196,7 +195,9 @@ const MultiParameterModal = ({
       ],
     },
   ];
+
   console.log("settingParameters", settingParameters);
+
   return (
     <>
       <GoMakeModal
@@ -207,9 +208,16 @@ const MultiParameterModal = ({
         withClose={false}
       >
         <div style={clasess.mainContainer}>
-          <div style={clasess.titleStyle}>Color Settings</div>
           <div style={clasess.multiSelectMainContainer}>
-            <Select multiple style={clasess.multiSelectContainer} />
+            {_renderParameterType(
+              settingParameters?.parameter,
+              settingParameters?.subSection,
+              settingParameters?.section,
+              settingParameters?.parameter,
+              settingParameters?.value,
+              settingParameters?.list,
+              false
+            )}
           </div>
           <div style={clasess.tableContainer}>
             <div style={clasess.headerTableContainer}>
@@ -233,7 +241,6 @@ const MultiParameterModal = ({
                       item={item}
                       index={index}
                       clasess={clasess}
-                      setFocused={setFocused}
                     />
                   );
                 })}

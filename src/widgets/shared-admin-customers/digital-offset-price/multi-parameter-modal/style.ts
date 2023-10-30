@@ -32,7 +32,7 @@ const useStyle = () => {
         width: "100%",
         height: 44,
       },
-      multiSelectMainContainer:{ width: "100%", height: 44, marginBottom: 16 },
+      multiSelectMainContainer:{ width: "100%",  marginBottom: 16 },
       tableContainer:{
         border: "1px solid rgba(208, 213, 221, 1)",
         borderRadius:8,
@@ -86,7 +86,8 @@ const useStyle = () => {
         color: "black",
         ...FONT_FAMILY.Lexend(500, 14),
         // border: "1px solid rgba(237, 2, 140, 1)",
-        borderRadius:4
+        borderRadius:4,
+      
       },
       childRowContainer:{
         display: "flex",

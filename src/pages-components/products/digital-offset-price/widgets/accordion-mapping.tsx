@@ -56,7 +56,8 @@ const AccordionMappingWidget = ({
                   section,
                   subSection?.parameters,
                   value,
-                  subSection?.parameters
+                  subSection?.parameters,
+                  true
                 )}
               </div>
             );

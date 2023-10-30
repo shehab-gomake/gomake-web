@@ -57,6 +57,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
   const [workFlowSelected, setWorkFlowSelected] = useState<any>();
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
+  console.log("generalParameters", generalParameters);
   const setLoading = useSetRecoilState(isLoadgingState);
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
@@ -487,7 +488,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     section: any,
     subSectionParameters,
     value,
-    list
+    list,
+    inModal: any
   ) => {
     let Comp;
     if (subSection?.type) {
@@ -932,10 +934,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 );
               }}
             />
-            {parameter?.setSettingIcon && (
+            {parameter?.setSettingIcon && inModal && (
               <div
                 style={{ cursor: "pointer" }}
-                onClick={() => onOpeneMultiParameterModal(parameter)}
+                onClick={() =>
+                  onOpeneMultiParameterModal(
+                    parameter,
+                    subSection,
+                    section,
+                    subSectionParameters,
+                    list
+                  )
+                }
               >
                 <SettingsIcon
                   stroke={"rgba(237, 2, 140, 1)"}
@@ -1203,7 +1213,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       }
                     }}
                   />
-                  {parameter?.setSettingIcon && (
+                  {parameter?.setSettingIcon && inModal && (
                     <div style={{ cursor: "pointer" }}>
                       <SettingsIcon
                         stroke={"rgba(237, 2, 140, 1)"}
@@ -1237,8 +1247,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           </div>
           <div style={clasess.renderParameterTypeContainer}>{Comp}</div>
         </div>
-
-        {parameter.relatedParameters?.length > 0 && (
+        {parameter?.relatedParameters?.length > 0 && inModal && (
           <>
             {parameter.relatedParameters.map((relatedParameter) => {
               const parm = generalParameters.find(
@@ -1248,26 +1257,36 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 (p) => p.id === relatedParameter.parameterId
               );
               if (relatedParameter.activateByAllValues && parm?.value) {
-                return _renderParameterType(
-                  myParameter,
-                  subSection,
-                  section,
-                  subSection?.parameters,
-                  myParameter.value,
-                  list
+                return (
+                  <div style={{ marginLeft: 10 }}>
+                    {_renderParameterType(
+                      myParameter,
+                      subSection,
+                      section,
+                      subSection?.parameters,
+                      myParameter.value,
+                      list,
+                      true
+                    )}
+                  </div>
                 );
               } else {
                 const valueInArray = relatedParameter.selectedValueIds.find(
                   (c) => c == parm?.valueId
                 );
                 if (valueInArray) {
-                  return _renderParameterType(
-                    myParameter,
-                    subSection,
-                    section,
-                    subSection?.parameters,
-                    myParameter.value,
-                    list
+                  return (
+                    <div style={{ marginLeft: 10 }}>
+                      {_renderParameterType(
+                        myParameter,
+                        subSection,
+                        section,
+                        subSection?.parameters,
+                        myParameter.value,
+                        list,
+                        true
+                      )}
+                    </div>
                   );
                 }
               }
@@ -1400,10 +1419,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const onOpeneChooseShape = () => {
     setChooseShapeOpen(true);
   };
-  const [settingParameters, setSettingParameters] = useState();
-  const onOpeneMultiParameterModal = (paameters) => {
+  const [settingParameters, setSettingParameters] = useState({});
+  const onOpeneMultiParameterModal = (
+    paameters,
+    subSection,
+    section,
+    subSectionParameters,
+    list
+  ) => {
     setMultiParameterModal(true);
-    setSettingParameters(paameters);
+    const value = _getParameter(paameters, subSection, section);
+    setSettingParameters({
+      parameter: paameters,
+      subSection: subSection,
+      section: section,
+      subSectionParameters: subSectionParameters,
+      value: value,
+      list: list,
+    });
   };
   const onCloseMultiParameterModal = () => {
     setMultiParameterModal(false);
