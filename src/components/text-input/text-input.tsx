@@ -73,7 +73,7 @@ const GomakeTextInput = ({
   onFocus,
 }: {
   labelText?: string;
-  value?: string;
+  value?: any;
   onChange?: any;
   style?: any;
   error?: any;

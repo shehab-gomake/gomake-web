@@ -10,7 +10,7 @@ const HeaderMapping = ({ item, index }) => {
         ...FONT_FAMILY.Lexend(500, 12),
       }}
     >
-      {item?.parameterName}
+      {item?.name}
     </div>
   );
 };

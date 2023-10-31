@@ -73,6 +73,7 @@ const useStyle = () => {
       },
       childLabelStyle:{
         ...FONT_FAMILY.Lexend(500,14),
+        position: "relative" as "relative",
       },
       saveBtnContainerStyle:{
         marginTop:16,
@@ -96,6 +97,21 @@ const useStyle = () => {
         alignItems: "center",
         height: 40,
         borderBottom: "1px solid rgba(208, 213, 221, 1)",
+      },
+      iconsContainer:{
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 2,
+        position: "absolute",
+        top: 2,
+        right: 15,
+      },
+      iconContainer:{
+        width: 12,
+        height: 12,
+        cursor: "pointer"
       }
     };
   }, []);

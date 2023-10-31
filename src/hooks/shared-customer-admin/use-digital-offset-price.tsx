@@ -23,6 +23,7 @@ import {
 import { userProfileState } from "@/store/user-profile";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { SettingsIcon } from "@/icons/settings";
+import { compareStrings } from "@/utils/constants";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -135,9 +136,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   );
 
                   if (value) {
-                    const data = materialsEnumsValues.find(
-                      (item) => item.name === parameter?.materialPath[0]
-                    );
+                    const data = materialsEnumsValues.find((item) => {
+                      return compareStrings(
+                        item.name,
+                        parameter?.materialPath[0]
+                      );
+                    });
                     temp.push({
                       parameterId: parameter?.id,
                       parameterName: parameter?.name,
@@ -249,16 +253,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     );
 
                     if (value) {
-                      const data = materialsEnumsValues.find(
-                        (item) => item.name === parameter?.materialPath[0]
-                      );
+                      const data = materialsEnumsValues.find((item) => {
+                        console.log("item.name", {
+                          xx: item.name,
+                          tt: parameter?.materialPath[0],
+                        });
+                        return compareStrings(
+                          item.name,
+                          parameter?.materialPath[0]
+                        );
+                      });
                       let options: any = allMaterials;
                       let selectedObj: any = {};
                       if (allMaterials?.length > 0) {
                         if (parameter?.materialPath?.length == 1) {
                           options = allMaterials?.find((material: any) => {
-                            return (
-                              material.pathName === parameter?.materialPath[0]
+                            return compareStrings(
+                              material.pathName,
+                              parameter?.materialPath[0]
                             );
                           })?.data;
                           selectedObj = options?.find(
@@ -283,8 +295,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
                         if (parameter?.materialPath?.length == 2) {
                           options = allMaterials?.find((material: any) => {
-                            return (
-                              material.pathName === parameter?.materialPath[0]
+                            return compareStrings(
+                              material.pathName,
+                              parameter?.materialPath[0]
                             );
                           })?.data;
                           const mergedDataArray = options.reduce(
@@ -323,9 +336,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     );
 
                     if (value) {
-                      const data = materialsEnumsValues.find(
-                        (item) => item.name === parameter?.materialPath[0]
-                      );
+                      const data = materialsEnumsValues.find((item) => {
+                        console.log("item.name", {
+                          xx: item.name,
+                          tt: parameter?.materialPath[0],
+                        });
+                        return compareStrings(
+                          item.name,
+                          parameter?.materialPath[0]
+                        );
+                      });
                       temp.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
@@ -672,9 +692,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         );
       } else if (parameter?.parameterType === 5) {
         if (allMaterials?.length > 0) {
-          const data = materialsEnumsValues.find(
-            (item) => item.name === parameter?.materialPath[0]
-          );
+          const data = materialsEnumsValues.find((item) => {
+            console.log("item.name", {
+              xx: item.name,
+              tt: parameter?.materialPath[0],
+            });
+            return compareStrings(item.name, parameter?.materialPath[0]);
+          });
 
           let valuesConfigs = parameter?.valuesConfigs;
           let isDefaultObj = parameter?.valuesConfigs?.find(
@@ -711,9 +735,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             if (!!!options) {
               let optionsLvl1 = allMaterials
                 ?.find((material) => {
-                  return material.pathName === parameter?.materialPath[0];
+                  return compareStrings(
+                    material.pathName,
+                    parameter?.materialPath[0]
+                  );
                 })
                 ?.data?.find((item) => item?.valueId === valueIdIsDefault);
+
               options = optionsLvl1?.data || [];
               const hiddenValueIds = valuesConfigs
                 .filter((config) => config.isHidden === true)
@@ -740,7 +768,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 config.materialValueIds.map((id) => id.valueId)
               );
             options = allMaterials?.find((material: any) => {
-              return material.pathName === parameter?.materialPath[0];
+              return compareStrings(
+                material.pathName,
+                parameter?.materialPath[0]
+              );
             })?.data;
 
             const filteredOptions = options?.filter(
@@ -1047,9 +1078,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         );
       } else if (parameter?.parameterType === 5) {
         if (allMaterials?.length > 0) {
-          const data = materialsEnumsValues.find(
-            (item) => item.name === parameter?.materialPath[0]
-          );
+          const data = materialsEnumsValues.find((item) => {
+            console.log("item.name", {
+              xx: item.name,
+              tt: parameter?.materialPath[0],
+            });
+            return compareStrings(item.name, parameter?.materialPath[0]);
+          });
 
           let valuesConfigs = parameter?.valuesConfigs;
           let isDefaultObj = parameter?.valuesConfigs?.find(
@@ -1085,7 +1120,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             if (!!!options) {
               let optionsLvl1 = allMaterials
                 ?.find((material) => {
-                  return material.pathName === parameter?.materialPath[0];
+                  return compareStrings(
+                    material.pathName,
+                    parameter?.materialPath[0]
+                  );
                 })
                 ?.data?.find((item) => item?.valueId === valueIdIsDefault);
               options = optionsLvl1?.data || [];
@@ -1114,7 +1152,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 config.materialValueIds.map((id) => id.valueId)
               );
             options = allMaterials?.find((material: any) => {
-              return material.pathName === parameter?.materialPath[0];
+              return compareStrings(
+                material.pathName,
+                parameter?.materialPath[0]
+              );
             })?.data;
 
             const filteredOptions = options?.filter(

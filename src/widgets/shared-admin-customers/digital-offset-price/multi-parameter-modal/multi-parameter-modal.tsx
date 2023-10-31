@@ -3,7 +3,6 @@ import { GoMakeModal, GomakePrimaryButton } from "@/components";
 import { ChildrenMapping } from "./children-mapping";
 import { HeaderMapping } from "./header-mapping";
 import { useStyle } from "./style";
-import { useState } from "react";
 
 const MultiParameterModal = ({
   openModal,
@@ -195,6 +194,8 @@ const MultiParameterModal = ({
       ],
     },
   ];
+  const parameterLists = settingParameters?.parameter?.settingParameters;
+  console.log("parameterLists", parameterLists);
 
   return (
     <>
@@ -219,7 +220,7 @@ const MultiParameterModal = ({
           </div>
           <div style={clasess.tableContainer}>
             <div style={clasess.headerTableContainer}>
-              {paameters.map((item, index) => {
+              {parameterLists?.map((item, index: number) => {
                 return (
                   <HeaderMapping
                     key={`header_${index}`}
@@ -231,7 +232,7 @@ const MultiParameterModal = ({
             </div>
             <div style={clasess.childernTableContainer}>
               <div style={clasess.childernTableRowContainer}>
-                {paameters?.map((item, index) => {
+                {parameterLists?.map((item, index: number) => {
                   return (
                     <ChildrenMapping
                       key={`child_${index}`}

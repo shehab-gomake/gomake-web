@@ -5,7 +5,8 @@ import { Checkbox } from "@mui/material";
 import { useState } from "react";
 
 const SubChildrenMapping = ({ paameters, item, value, clasess }) => {
-  const [isFocused, setIsFocused] = useState(false);
+  const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [valueState, setValueState] = useState<number>(0);
   return (
     <div style={clasess.childRowContainer}>
       {item?.parameterName === paameters[0].parameterName && (
@@ -30,6 +31,10 @@ const SubChildrenMapping = ({ paameters, item, value, clasess }) => {
             }}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValueState(parseFloat(e.target.value) || 0)
+            }
+            value={valueState}
           />
         )}
       </div>

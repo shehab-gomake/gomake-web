@@ -9,14 +9,14 @@ const ChildrenMapping = ({ paameters, item, index, clasess }) => {
         textAlign: "left",
       }}
     >
-      {item?.values.map((value) => (
+      {/* {item?.values.map((value) => (
         <ChildrenValuesMapping
           paameters={paameters}
           item={item}
           value={value}
           clasess={clasess}
         />
-      ))}
+      ))} */}
     </div>
   );
 };

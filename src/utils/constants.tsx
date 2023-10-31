@@ -25,5 +25,5 @@ export const _renderUnActiveIcon = (icon) => {
 };
 
 export const compareStrings = (string1, string2) => {
-  return string1.toLowerCase() === string2.toLowerCase();
+  return string1?.toLowerCase() === string2?.toLowerCase();
 };
