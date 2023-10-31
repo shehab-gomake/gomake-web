@@ -109,7 +109,8 @@
     "deleteSusuccessfully": "Deleted successfully",
     "deletefailed": "Deleted failed",
     "formNotValid": "Form not valid",
-    "RequiredFields": "Missing required fields"
+    "RequiredFields": "Missing required fields",
+    "noMaterialsSelected": "Please select materials"
   },
   "home": {
     "admin": {
@@ -2058,5 +2059,19 @@
     "rollDigitalEnhancement": "Roll digital enhancement machine",
     "autoBookCutting": "Auto book cutting",
     "rollAnalogEnhancement": "Roll analog enhancement machine"
+  },
+  "materialsActions": {
+    "UpdateCurrency": "Update currency",
+    "ChangeToActive": "Update to active",
+    "ChangeToInActive": "Update to Inactive",
+    "UpdatePricePerTon": "Update price per ton",
+    "UpdateUnitPrice": "Update price per unit",
+    "AddPercentToPricePerTon": "Update price per ton percents",
+    "AddPercentToUnitPrice": "Update price per unit percents"
+  },
+  "materialsStatus": {
+    "all": "All",
+    "active": "Active",
+    "inactive": "Inactive"
   }
 }

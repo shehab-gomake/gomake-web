@@ -33,7 +33,7 @@ const PackinDrumSizeInputs = ({ index }) => {
         </div>
         <div>
           <div style={clasess.lableTextStyle}>
-            {t("materials.inputs.material")}
+            {t("materials.inputs.materials")}
           </div>
           <GomakeTextInput
             placeholder={t("materials.inputs.enterMaterial")}
