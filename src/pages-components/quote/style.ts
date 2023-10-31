@@ -118,16 +118,29 @@ const useStyle = () => {
         backgroundColor: "#F4F1F6",
         width:"100%",
         height:"80px",
+        position:"fixed" as "fixed",
+        padding:0,
+        margin:0,
+        top:0
       },
       GomakeIconStyle:{
         marginTop:22,
         marginLeft:80
       },
       MainContainerInConfirmPage:{
-          width:"1,360px",
-          height:"788px",
-          marginLeft:"280px",
-          marginTop:"120px"
+        ...FONT_FAMILY.Lexend(600, 16),
+        width:"1360px",
+        height:"788px",
+        marginLeft:'280px',
+        gap:"24px",
+        marginTop:"120px"
+      },
+    
+      '.css-rorn0c-MuiTableContainer-root':{
+        borderRadius:"10px"
+      },
+      '.css-rqglhn-MuiTable-root' :  {
+        borderCollapse: 'unset',
       },
       mainTitleStyle:{
         ...FONT_FAMILY.Lexend(600, 16),
@@ -137,6 +150,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(400, 16),
         color:"#667085",
       },
+        height: 42,
       subTitleStyle2:{
         ...FONT_FAMILY.Lexend(400, 16),
         color:"black",

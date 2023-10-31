@@ -27,14 +27,15 @@ const PrimaryTableRow = styled(TableRow)(() => {
   return {};
 });
 
+
 const SeconderyPrimaryTableRow = ({ rows, headers, maxHeight }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { classes } = useStyle(maxHeight, dir);
 
   return (
-        <TableContainer style={classes.tableContainer}>
-             <Table>
+        <TableContainer sx={{borderRadius:"10px",border:"1px solid #EAECF0"}} style={classes.tableContainer}>
+             <Table >
                 <TableHead>
                         <PrimaryTableRow style={classes.HeaderTable}>
                         {headers?.map((header) => {
@@ -48,7 +49,7 @@ const SeconderyPrimaryTableRow = ({ rows, headers, maxHeight }: ITableProps) => 
                 <TableBody>
                     {rows?.map((row , rowIndex) => {
                         return (
-                            <PrimaryTableRow style={{ background: rowIndex % 2 === 0 ? "#EAECF0" : "#F9FAFB"}}>
+                            <PrimaryTableRow style={{ background: rowIndex % 2 === 0 ? "#ffffff" : "#F9FAFB"}}>
                             {row.map((cell) => {
                                 return (
                                     <PrimaryTableCell style={classes.TableRowCell}  align={"center"}>{cell}</PrimaryTableCell>    
@@ -61,7 +62,6 @@ const SeconderyPrimaryTableRow = ({ rows, headers, maxHeight }: ITableProps) => 
                 </TableBody>
              </Table>
         </TableContainer>
-
   );
 };
 

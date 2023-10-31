@@ -19,7 +19,8 @@ const useStyle = (maxHeight: number, dir: 'rtl' | 'ltr') => {
                 borderCollapse: "separate"         
             },
             TableRowCell:{
-                height:"72px"
+                height:"72px",
+                borderBottom:"1px solid #EAECF0",
             }   
         };
     }, []);
