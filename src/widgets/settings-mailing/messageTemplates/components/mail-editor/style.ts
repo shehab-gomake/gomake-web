@@ -30,7 +30,7 @@ const useStyle = () => {
                 display: "flex",
                 flexDirection: 'column' as 'column',
                 gap: "20px",
-                alignItems: "flex-start"
+                alignItems: "flex-start",
             },
             subSectionHeader: {
                 ...FONT_FAMILY.Lexend(400, 16),
@@ -44,6 +44,8 @@ const useStyle = () => {
                 ...FONT_FAMILY.Lexend(400, 16),
                 lineHeight: "20px",
                 color: primaryColor(900),
+                width:"810px"
+
             },
             editorStyle2: {
                 height: convertHeightToVH(300),
@@ -52,6 +54,8 @@ const useStyle = () => {
                 ...FONT_FAMILY.Lexend(400, 16),
                 lineHeight: "20px",
                 color: primaryColor(900),
+                width:"810px"
+
             },
             variableStyle: {
                 ...FONT_FAMILY.Lexend(400, 13),
@@ -63,19 +67,17 @@ const useStyle = () => {
                 color: "#2E3092",
                 justifyContent: "center",
                 padding: "2px",
+                margin: "5px"
             },
             variablesContainer: {
-                display: 'flex',
-                gap: '10px',
                 padding: "8px",
-                flexWrap: "wrap" as "wrap",
+                width: "700px"
             },
             footerStyle: {
                 display: "flex",
                 alignSelf: "flex-end",
                 gap: "10px"
             },
-
         };
     }, []);
     return {

@@ -40,7 +40,7 @@ const PdfUploadComponent = ({ onUpload, fileName = "order summary.pdf" }: IProps
                     <FileIcon></FileIcon>
                 </IconButton>
                 <label style={classes.labelStyle}>
-                    {selectedFileName && selectedFileName != "" ? selectedFileName : fileName}
+                    {fileName}
                 </label>
                 </Stack>
             <input

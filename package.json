@@ -44,6 +44,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
+    "react-horizontal-scrolling-menu": "^4.1.1",
     "react-i18next": "^12.2.0",
     "react-icons": "^4.9.0",
     "react-test-renderer": "^18.2.0",

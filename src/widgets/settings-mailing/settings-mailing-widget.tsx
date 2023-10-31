@@ -48,7 +48,7 @@ const SettingsMailingWidget = () => {
                 <AddNewSMSTemplateGroup onClickAdd={onAddSMSTemplateGroup} />
             </GoMakeModal>
             <GoMakeModal
-                insideStyle={{paddingLeft: 20, paddingRight: 20}}
+                insideStyle={{paddingLeft: 20, paddingRight: 20 , width: "852px"}}
                 openModal={openEditModal}
                 onClose={() => {setOpenEditModal(false); setState(null); setSubject(""); setBody("")}}
                 modalTitle={t("mailingSettings.emailType") + " " + templateTitle}>

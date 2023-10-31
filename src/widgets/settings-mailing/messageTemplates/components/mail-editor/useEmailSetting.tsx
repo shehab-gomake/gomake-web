@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useRecoilState } from "recoil";
-import { Stack } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import { smsBodyState, smsSubjectState, smsTemplateState } from "@/widgets/settings-mailing/states/state";
 import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplate";
 import { useStyle } from "./style";
 import { ISMSTemplate } from "../../interfaces/interface";
+import 'react-horizontal-scrolling-menu/dist/styles.css';
+import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
+import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined';
+import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 
 const useEmailSetting = () => {
   const { classes } = useStyle();
@@ -71,20 +75,60 @@ const useEmailSetting = () => {
           <button className="ql-code-block ql-active" aria-label="Insert Code Block" data-pc-section="codeblock"></button>
         </Stack>
         <div style={classes.variablesContainer}>
+        <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} >
           {templateVariables?.map((option) => (
             <button style={classes.variableStyle}
-              key={option.value}
               onClick={() => (flag ? handleBodyOptionClick(option) : handleSubjectOptionClick(option))}
             >
-              {option.label}
+              {option?.label}
             </button>
           ))}
+        </ScrollMenu>
         </div>
       </span>
-      
+
     );
   };
 
+
+  function LeftArrow() {
+    const { scrollPrev } = useContext(VisibilityContext);
+    return (
+      <IconButton >
+        <ArrowCircleLeftOutlinedIcon onClick={() => scrollPrev()} />
+      </IconButton>
+
+    );
+  }
+
+  function RightArrow() {
+    const { scrollNext } = useContext(VisibilityContext);
+    return (
+      <IconButton >
+        <ArrowCircleRightOutlinedIcon onClick={() => scrollNext()} />
+      </IconButton>
+
+    );
+  }
+
+
+  const renderHeaderr = (flag) => {
+    return (
+      <span className="ql-formats" style={{ width: "900px" }}>
+        <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} >
+          {templateVariables?.map((option) => (
+            <button style={classes.variableStyle}
+              onClick={() => (flag ? handleBodyOptionClick(option) : handleSubjectOptionClick(option))}
+            >
+              {option?.label}
+            </button>
+          ))}
+        </ScrollMenu>
+
+      </span>
+
+    );
+  };
 
   return {
     value,
