@@ -1,18 +1,20 @@
-const toolBarInputs = (state) => {
-
+const mailInputs1 = (state) => {
     return [
         {
-            name: "fromAgentMail",
-            label: "mailingSettings.fromAgentMail",
-            type: "switch",
-            placeholder: "mailingSettings.fromAgentMail",
+            name: "sendFrom",
+            label: "mailingSettings.sendFrom",
+            type: "text",
             required: false,
-            parameterKey: "sendFromAgent",
+            parameterKey: "sendFrom",
             options: [],
-            value: state?.sendFromAgent,
+            value: state?.sendFrom,
             isValid: true,
-            direction : "row"
         },
+    ]
+}
+
+const mailInputs2 = (state) => {
+    return [
         {
             name: "sendCopyToMainMail",
             label: "mailingSettings.sendCopyToMainMail",
@@ -23,7 +25,34 @@ const toolBarInputs = (state) => {
             options: [],
             value: state?.sendMailCopy,
             isValid: true,
-            direction : "row"
+            direction: "row"
+        },
+        {
+            name: "fromAgentMail",
+            label: "mailingSettings.fromAgentMail",
+            type: "switch",
+            placeholder: "mailingSettings.fromAgentMail",
+            required: false,
+            parameterKey: "sendFromAgent",
+            options: [],
+            value: state?.sendFromAgent,
+            isValid: true,
+            direction: "row",
+
+        },
+    ]
+}
+const mailInputs3 = (state) => {
+    return [
+        {
+            name: "bccMail",
+            type: "text",
+            required: false,
+            parameterKey: "bccMail",
+            options: [],
+            value: state?.bccMail,
+            isValid: true,
+            disabled: !state?.sendMailCopy
         },
         {
             name: "sendCopyToAgentMail",
@@ -35,9 +64,11 @@ const toolBarInputs = (state) => {
             options: [],
             value: state?.sendMailCopyToAgent,
             isValid: true,
-            direction : "row"
+            direction: "row",
+            disabled: !state?.sendMailCopy
+
         },
     ]
 }
 
-export { toolBarInputs };
+export { mailInputs1, mailInputs2, mailInputs3 };

@@ -5,7 +5,7 @@ import { convertHeightToVH } from "@/utils/adapter";
 
 
 const useStyle = () => {
-    const { primaryColor, secondColor } = useGomakeTheme();
+    const { primaryColor, secondColor, neutralColor } = useGomakeTheme();
     const classes = useMemo(() => {
         return {
             iconStyle: {
@@ -22,13 +22,19 @@ const useStyle = () => {
             },
             containerStyle: {
                 display: "flex",
-                gap: "20px",
+                gap: "24px",
                 flexDirection: "column" as "column",
                 marginTop: "10px"
             },
-            headerStyle: {
+            subSection: {
+                display: "flex",
+                flexDirection: 'column' as 'column',
+                gap: "20px",
+                alignItems: "flex-start"
+            },
+            subSectionHeader: {
                 ...FONT_FAMILY.Lexend(400, 16),
-                color: "#7E7E7E",
+                color: neutralColor(600),
                 lineHeight: "20px",
             },
             editorStyle1: {
@@ -49,7 +55,7 @@ const useStyle = () => {
             },
             variableStyle: {
                 ...FONT_FAMILY.Lexend(400, 13),
-                display : "flex",
+                display: "flex",
                 width: "121px",
                 height: "24px",
                 borderRadius: "4px",
@@ -57,8 +63,19 @@ const useStyle = () => {
                 color: "#2E3092",
                 justifyContent: "center",
                 padding: "2px",
-                //background: primaryColor(50)
             },
+            variablesContainer: {
+                display: 'flex',
+                gap: '10px',
+                padding: "8px",
+                flexWrap: "wrap" as "wrap",
+            },
+            footerStyle: {
+                display: "flex",
+                alignSelf: "flex-end",
+                gap: "10px"
+            },
+
         };
     }, []);
     return {

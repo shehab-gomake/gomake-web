@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { Stack } from "@mui/material";
 import { smsBodyState, smsSubjectState, smsTemplateState } from "@/widgets/settings-mailing/states/state";
@@ -55,31 +55,10 @@ const useEmailSetting = () => {
     }
   };
 
-  //   const scrollContainerRef = useRef(null);
-
-  //   const handleScrollLeft = () => {
-  //     if (scrollContainerRef.current) {
-  //       scrollContainerRef.current.scrollLeft -= 100; // Adjust the scroll distance as needed
-  //     }
-  //   };
-
-  //   const handleScrollRight = () => {
-  //     if (scrollContainerRef.current) {
-  //       scrollContainerRef.current.scrollLeft += 100; // Adjust the scroll distance as needed
-  //     }
-  //   };
-
-  //   <button className="scroll-button" onClick={handleScrollLeft}>
-  //   &lt; {/* Left arrow */}
-  // </button>
-  // <button className="scroll-button" onClick={handleScrollRight}>
-  //   &gt; {/* Right arrow */}
-  // </button>
-
   const renderHeader = (flag) => {
     return (
       <span className="ql-formats">
-        <Stack direction={'row'} gap={"2px"} >
+        <Stack direction={'row'} gap={"2px"}  >
           <select className="ql-header" data-pc-section="header"></select>
           <select className="ql-font" data-pc-section="font"></select>
           <button className="ql-bold" aria-label="Bold"></button>
@@ -91,7 +70,7 @@ const useEmailSetting = () => {
           <button className="ql-image" aria-label="Insert Image" data-pc-section="image"></button>
           <button className="ql-code-block ql-active" aria-label="Insert Code Block" data-pc-section="codeblock"></button>
         </Stack>
-        <div style={{ display: 'flex', gap: '10px', padding: "8px", flexWrap: "wrap" }}>
+        <div style={classes.variablesContainer}>
           {templateVariables?.map((option) => (
             <button style={classes.variableStyle}
               key={option.value}

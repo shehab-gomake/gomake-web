@@ -10,13 +10,13 @@ import { useRecoilState } from 'recoil';
 import { smsBodyState, smsSubjectState, smsTemplateState } from '@/widgets/settings-mailing/states/state';
 import debounce from 'lodash.debounce';
 import { ISMSTemplate } from '../../interfaces/interface';
-import { toolBarInputs } from './inputs';
+import { mailInputs1 , mailInputs2 , mailInputs3 } from './inputs';
 import { FormInput } from '@/components/form-inputs/form-input';
 import { IInput } from '@/components/form-inputs/interfaces';
 import { Stack } from '@mui/material';
 
 export interface IProps {
-    onClickSave: (value:any) => void;
+    onClickSave: (value: any) => void;
 }
 const EmailSettings = ({ onClickSave }: IProps) => {
     const { t } = useTranslation();
@@ -25,7 +25,7 @@ const EmailSettings = ({ onClickSave }: IProps) => {
     const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
     const [subject, setSubject] = useRecoilState<string>(smsSubjectState);
     const [body, setBody] = useRecoilState<string>(smsBodyState);
- 
+
     const handleTitleChange = debounce((htmlValue) => {
         setSubject(htmlValue);
     }, 300);
@@ -39,41 +39,56 @@ const EmailSettings = ({ onClickSave }: IProps) => {
             ...state,
             title: subject,
             text: body,
-          };
-          onClickSave(updatedTemplate);
-       };
+        };
+        console.log("after update:", updatedTemplate);
+
+        onClickSave(updatedTemplate);
+    };
 
     const handleResetClick = () => {
-     setState({ ...state, title: null, text: null });
+        setSubject(null);
+        setBody(null);
     };
 
     const onChangeInputs = (key, value) => {
         setState({ ...state, [key]: value })
-      }
- 
+    }
+
     return (
-        <div className="card" style={classes.containerStyle}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                <h5 style={classes.headerStyle}>{t("mailingSettings.subject")}</h5>
-                <Editor  value={subject}  onTextChange={(e) => handleTitleChange(e.htmlValue)} style={classes.editorStyle1} headerTemplate={renderHeader(EditorTYPE.SUBJECT)} />
+        <div style={classes.containerStyle}>
+            <div style={classes.subSection}>
+                <h3 style={classes.subSectionHeader}>{t("mailingSettings.subject")}</h3>
+                <Editor value={subject} onTextChange={(e) => handleTitleChange(e.htmlValue)} style={classes.editorStyle1} headerTemplate={renderHeader(EditorTYPE.SUBJECT)} />
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                <h5 style={classes.headerStyle}>{t("mailingSettings.body")}</h5>
-                <Editor  value={body} onTextChange={(e) => handleTextChange(e.htmlValue)} style={classes.editorStyle2} headerTemplate={renderHeader(EditorTYPE.BODY)} />
+            <div style={classes.subSection}>
+                <h3 style={classes.subSectionHeader}>{t("mailingSettings.body")}</h3>
+                <Editor value={body} onTextChange={(e) => handleTextChange(e.htmlValue)} style={classes.editorStyle2} headerTemplate={renderHeader(EditorTYPE.BODY)} />
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "flex-start" }}>
-                <h5 style={classes.headerStyle}>{t("mailingSettings.attachment")}</h5>
+            <div style={classes.subSection}>
+                <h3 style={classes.subSectionHeader}>{t("mailingSettings.attachment")}</h3>
                 <PdfUploadComponent onUpload={true} ></PdfUploadComponent>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "flex-start" }}>
-                <h5 style={classes.headerStyle}>{t("mailingSettings.mails")}</h5>
-                <Stack direction={'row'} marginBottom={"24px"} width={"90%"} gap={"20px"} >
-          {
-            toolBarInputs(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
-          }
-        </Stack>
+            <div style={classes.subSection}>
+                <h3 style={classes.subSectionHeader}>{t("mailingSettings.mails")}</h3>
+                <Stack direction={'column'} gap={"18px"}>
+                    <Stack direction={'row'} width={"180px"} alignItems={"flex-start"} >
+                        {
+                            mailInputs1(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
+                        }
+                    </Stack>
+                    <Stack direction={'row'} gap={"12px"} alignItems={"flex-start"} >
+                        {
+                            mailInputs2(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
+                        }
+                    </Stack>
+                    <Stack direction={'column'} gap={"12px"} alignItems={"center"} width={"60%"}>
+                        {
+                            mailInputs3(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
+                        }
+                    </Stack>
+                </Stack>
             </div>
-            <div style={{ display: "flex", alignSelf: "flex-end", gap: "10px" }}>
+            <div style={classes.footerStyle}>
                 <SecondaryButton onClick={handleUpdateClick} variant={"contained"}>{t("mailingSettings.save")}</SecondaryButton>
                 <SecondaryButton onClick={handleResetClick} variant={"outlined"}>{t("mailingSettings.reset")}</SecondaryButton>
             </div>

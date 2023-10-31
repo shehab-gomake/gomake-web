@@ -21,8 +21,13 @@ const useStyle = () => {
                 ...FONT_FAMILY.Lexend(400, 12),
                 color: primaryColor(300),
                 overflow: "hidden",
-                width: "70%"
             },
+            IconButtonStyle:{
+                background: primaryColor(100),
+                width: "24px",
+                height: "24px"
+
+            }
         };
     }, []);
     return {

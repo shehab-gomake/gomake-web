@@ -13,7 +13,6 @@ const filterInput = (state: any) => {
             required: false,
             parameterKey: "id",
             value: state?.id,
-          //  optionsUrl: "/v1/communication-service/sms-templates-groups/get-all-smsTemplates-groups",
             options: allSMSTemplateGroups
         }
     ];

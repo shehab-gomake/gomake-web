@@ -37,11 +37,9 @@ const SettingsMailingWidget = () => {
 
     return (
         <div>
-            
             <PrimaryTabsComponent tabs={tabs} >
                      <AddButton label={t("mailingSettings.addNew")} onClick={() => setOpenModal(true)} />
             </PrimaryTabsComponent>
-
             <GoMakeModal
                 insideStyle={{ paddingLeft: 20, padding: 20, width: "518px", height: "214px" }}
                 openModal={openModal}
@@ -49,7 +47,6 @@ const SettingsMailingWidget = () => {
                 modalTitle={t("mailingSettings.addNewGroup")}>
                 <AddNewSMSTemplateGroup onClickAdd={onAddSMSTemplateGroup} />
             </GoMakeModal>
-
             <GoMakeModal
                 insideStyle={{paddingLeft: 20, paddingRight: 20}}
                 openModal={openEditModal}
@@ -57,7 +54,6 @@ const SettingsMailingWidget = () => {
                 modalTitle={t("mailingSettings.emailType") + " " + templateTitle}>
                 <EmailSettings onClickSave={onUpdateSmsTemplate}/>
             </GoMakeModal>
-
         </div>
 
     );
