@@ -254,10 +254,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
                     if (value) {
                       const data = materialsEnumsValues.find((item) => {
-                        console.log("item.name", {
-                          xx: item.name,
-                          tt: parameter?.materialPath[0],
-                        });
                         return compareStrings(
                           item.name,
                           parameter?.materialPath[0]
@@ -337,10 +333,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
                     if (value) {
                       const data = materialsEnumsValues.find((item) => {
-                        console.log("item.name", {
-                          xx: item.name,
-                          tt: parameter?.materialPath[0],
-                        });
                         return compareStrings(
                           item.name,
                           parameter?.materialPath[0]
@@ -693,10 +685,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       } else if (parameter?.parameterType === 5) {
         if (allMaterials?.length > 0) {
           const data = materialsEnumsValues.find((item) => {
-            console.log("item.name", {
-              xx: item.name,
-              tt: parameter?.materialPath[0],
-            });
             return compareStrings(item.name, parameter?.materialPath[0]);
           });
 
@@ -1079,10 +1067,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       } else if (parameter?.parameterType === 5) {
         if (allMaterials?.length > 0) {
           const data = materialsEnumsValues.find((item) => {
-            console.log("item.name", {
-              xx: item.name,
-              tt: parameter?.materialPath[0],
-            });
             return compareStrings(item.name, parameter?.materialPath[0]);
           });
 
