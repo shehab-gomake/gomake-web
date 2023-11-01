@@ -1,8 +1,9 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { ChildrenValuesMapping } from "./children-values-mapping";
 import { materialsState } from "@/store";
 import { compareStrings } from "@/utils/constants";
 import { useEffect, useState } from "react";
+import { maltiParameterState } from "./store/multi-param-atom";
 
 const ChildrenMapping = ({
   parameters,
@@ -12,23 +13,8 @@ const ChildrenMapping = ({
   settingParameters,
 }) => {
   const allMaterials = useRecoilValue<any>(materialsState);
-  const [generalParameters, setGeneralParameters] = useState([]);
-
-  useEffect(() => {
-    console.log("IAM HEREEEE");
-    const temp = parameters.map((item) => ({
-      parameterId: item.id,
-      sectionId: settingParameters?.section?.id,
-      subSectionId: settingParameters?.subSection?.id,
-      parameterType: item.parameterType,
-      parameterName: item.name,
-      actionId: item.actionId,
-      valueId: [],
-      value: [],
-    }));
-    console.log("IAM HEREEEE2", temp);
-    setGeneralParameters(temp);
-  }, [settingParameters]);
+  const [generalParameters, setGeneralParameters] =
+    useRecoilState(maltiParameterState);
   const foundMaterial = allMaterials.find((material) => {
     return parameters.some(
       (parameter) =>
@@ -36,6 +22,21 @@ const ChildrenMapping = ({
         compareStrings(parameter.materialPath[0], material.pathName)
     );
   });
+  useEffect(() => {
+    if (generalParameters?.length == 0) {
+      const temp = parameters.map((item: any) => ({
+        parameterId: item.id,
+        sectionId: settingParameters?.section?.id,
+        subSectionId: settingParameters?.subSection?.id,
+        parameterType: item.parameterType,
+        parameterName: item.name,
+        actionId: item.actionId,
+        valueId: [],
+        value: [],
+      }));
+      setGeneralParameters(temp);
+    }
+  }, [settingParameters]);
   return (
     <div
       style={{
@@ -53,7 +54,7 @@ const ChildrenMapping = ({
             clasess={clasess}
             index={index}
             index2={index2}
-            generalParameters={generalParameters}
+            key={`abc_${index}_${index2}`}
           />
         ))}
     </div>
