@@ -71,6 +71,7 @@ const GomakeTextInput = ({
   onBlur,
   onClick,
   onFocus,
+  id,
 }: {
   labelText?: string;
   value?: any;
@@ -89,6 +90,7 @@ const GomakeTextInput = ({
   onBlur?: any;
   onClick?: any;
   onFocus?: any;
+  id?: any;
 }) => {
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
   return (
@@ -113,6 +115,7 @@ const GomakeTextInput = ({
       onBlur={onBlur}
       onClick={onClick}
       onFocus={onFocus}
+      id={id}
     />
   );
 };
