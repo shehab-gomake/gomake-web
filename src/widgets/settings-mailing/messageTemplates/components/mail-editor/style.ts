@@ -29,7 +29,7 @@ const useStyle = () => {
             subSection: {
                 display: "flex",
                 flexDirection: 'column' as 'column',
-                gap: "20px",
+                gap: "10px",
                 alignItems: "flex-start",
             },
             subSectionHeader: {
@@ -44,7 +44,7 @@ const useStyle = () => {
                 ...FONT_FAMILY.Lexend(400, 16),
                 lineHeight: "20px",
                 color: primaryColor(900),
-                width:"810px"
+                width: "810px"
 
             },
             editorStyle2: {
@@ -54,30 +54,50 @@ const useStyle = () => {
                 ...FONT_FAMILY.Lexend(400, 16),
                 lineHeight: "20px",
                 color: primaryColor(900),
-                width:"810px"
+                width: "810px"
 
             },
             variableStyle: {
                 ...FONT_FAMILY.Lexend(400, 13),
                 display: "flex",
-                width: "121px",
+                width: "110px",
                 height: "24px",
                 borderRadius: "4px",
                 background: "#FFFFFF",
                 color: "#2E3092",
                 justifyContent: "center",
-                padding: "2px",
-                margin: "5px"
+                padding: "1px",
+                margin: "5px",
+                border: "1px solid rgb(130, 131, 190)",
             },
             variablesContainer: {
-                padding: "8px",
-                width: "700px"
+                paddingTop: "6px",
+                width: "775px",
             },
             footerStyle: {
                 display: "flex",
                 alignSelf: "flex-end",
-                gap: "10px"
+                gap: "10px",
+                // position: "fixed" as "fixed",
+                // bottom: "10px",
             },
+
+            switchStyle: {
+                display: "flex",
+                flexDirection: "row" as "row",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                padding: "2px",
+                width: "36px",
+                height: "20px",
+                background: primaryColor(600),
+                borderRadius: "12px",
+                flex: "none",
+                order: 0,
+                flexGrow: 0,
+                 boxShadow: "0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06)",
+            }
+
         };
     }, []);
     return {

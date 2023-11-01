@@ -5,10 +5,10 @@ import { smsBodyState, smsSubjectState, smsTemplateState } from "@/widgets/setti
 import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplate";
 import { useStyle } from "./style";
 import { ISMSTemplate } from "../../interfaces/interface";
-import 'react-horizontal-scrolling-menu/dist/styles.css';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
-import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined';
-import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
+import 'react-horizontal-scrolling-menu/dist/styles.css';
+import { LeftArrowIcon } from "@/components/icons/left-arrow-icon";
+import { RightArrowIcon } from "@/components/icons/right-arrow-icon";
 
 const useEmailSetting = () => {
   const { classes } = useStyle();
@@ -31,7 +31,7 @@ const useEmailSetting = () => {
         newTitle = newTitle.slice(0, -4);
       }
       if (option.value) {
-        newTitle += ` {{${option.label}}}</p>`;
+        newTitle += ` {{${option?.value}}}</p>`;
       }
 
       setSubject(newTitle);
@@ -52,7 +52,7 @@ const useEmailSetting = () => {
         newText = newText.slice(0, -4);
       }
       if (option.value) {
-        newText += ` {{${option.label}}}</p>`;
+        newText += ` {{${option?.value}}}</p>`;
       }
       setBody(newText)
       setState({ ...state, text: newText });
@@ -74,61 +74,40 @@ const useEmailSetting = () => {
           <button className="ql-image" aria-label="Insert Image" data-pc-section="image"></button>
           <button className="ql-code-block ql-active" aria-label="Insert Code Block" data-pc-section="codeblock"></button>
         </Stack>
-        <div style={classes.variablesContainer}>
-        <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} >
-          {templateVariables?.map((option) => (
-            <button style={classes.variableStyle}
-              onClick={() => (flag ? handleBodyOptionClick(option) : handleSubjectOptionClick(option))}
-            >
-              {option?.label}
-            </button>
-          ))}
-        </ScrollMenu>
-        </div>
+        <Stack direction={'column'} gap={"2px"} style={classes.variablesContainer}  >
+          <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} >
+            {templateVariables?.map((option) => (
+              <button style={classes.variableStyle}
+                onClick={() => (flag ? handleBodyOptionClick(option) : handleSubjectOptionClick(option))}
+              >
+                {option?.label}
+              </button>
+              ))}
+          </ScrollMenu>
+        </Stack>
+
       </span>
 
     );
   };
 
-
   function LeftArrow() {
     const { scrollPrev } = useContext(VisibilityContext);
     return (
-      <IconButton >
-        <ArrowCircleLeftOutlinedIcon onClick={() => scrollPrev()} />
+      <IconButton disabled={false} onClick={() => scrollPrev()} style={{ display: "flex" }} >
+        <LeftArrowIcon/>
       </IconButton>
-
     );
   }
 
   function RightArrow() {
     const { scrollNext } = useContext(VisibilityContext);
     return (
-      <IconButton >
-        <ArrowCircleRightOutlinedIcon onClick={() => scrollNext()} />
+      <IconButton disabled={false} onClick={() => scrollNext()} style={{ display: "flex" }}>
+        <RightArrowIcon/>
       </IconButton>
-
     );
   }
-
-
-  const renderHeaderr = (flag) => {
-    return (
-      <span className="ql-formats" style={{ width: "900px" }}>
-        <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} >
-          {templateVariables?.map((option) => (
-            <button style={classes.variableStyle}
-              onClick={() => (flag ? handleBodyOptionClick(option) : handleSubjectOptionClick(option))}
-            >
-              {option?.label}
-            </button>
-          ))}
-        </ScrollMenu>
-
-      </span>
-
-    );
-  };
 
   return {
     value,

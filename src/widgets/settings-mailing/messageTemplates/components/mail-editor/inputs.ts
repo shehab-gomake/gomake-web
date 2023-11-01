@@ -18,7 +18,7 @@ const mailInputs2 = (state) => {
         {
             name: "sendCopyToMainMail",
             label: "mailingSettings.sendCopyToMainMail",
-            type: "switch",
+            type: "primeSwitch",
             placeholder: "mailingSettings.sendCopyToMainMail",
             required: false,
             parameterKey: "sendMailCopy",
@@ -30,7 +30,7 @@ const mailInputs2 = (state) => {
         {
             name: "fromAgentMail",
             label: "mailingSettings.fromAgentMail",
-            type: "switch",
+            type: "primeSwitch",
             placeholder: "mailingSettings.fromAgentMail",
             required: false,
             parameterKey: "sendFromAgent",
@@ -38,7 +38,6 @@ const mailInputs2 = (state) => {
             value: state?.sendFromAgent,
             isValid: true,
             direction: "row",
-
         },
     ]
 }
@@ -57,7 +56,7 @@ const mailInputs3 = (state) => {
         {
             name: "sendCopyToAgentMail",
             label: "mailingSettings.sendCopyToAgentMail",
-            type: "switch",
+            type: "primeSwitch",
             placeholder: "mailingSettings.sendCopyToAgentMail",
             required: false,
             parameterKey: "sendMailCopyToAgent",

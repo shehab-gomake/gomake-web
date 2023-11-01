@@ -1,4 +1,4 @@
-import { GoMakeAutoComplate, GomakeTextInput, SecondSwitch } from "@/components";
+import { GoMakeAutoComplate, GomakeTextInput, SecondSwitch , PrimarySwitch } from "@/components";
 import { ChangeEvent, memo, SyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks";
@@ -78,20 +78,20 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
                                     disabled={!!readonly}
                                     placeholder={t(input.placeholder)}
                                     options={options} /> :
-                                input.type === 'switch' ?
+                                input.type === 'switch' ? (
                                     <SecondSwitch checked={!!input.value} onChange={handleSwitchCheck} />
-                                    :
-                                    <GomakeTextInput
-                                        style={{ height: '40px' }}
-                                        onChange={onChangeState}
-                                        type={input.type}
-                                        error={error || (input.value && input.regex && !input.regex.test(input.value))}
-                                        placeholder={t(input.placeholder)}
-                                        disabled={!!readonly}
-                                        value={input.value}
-                                    />
+                                  ) : input.type === 'primeSwitch' ? (
+                                    <PrimarySwitch checked={!!input.value} onChange={handleSwitchCheck} />
+                                  ) : <GomakeTextInput
+                                  style={{ height: '40px' }}
+                                  onChange={onChangeState}
+                                  type={input.type}
+                                  error={error || (input.value && input.regex && !input.regex.test(input.value))}
+                                  placeholder={t(input.placeholder)}
+                                  disabled={!!readonly}
+                                  value={input.value}
+                                />
                         }
-
                     </div>
                 </div>
 

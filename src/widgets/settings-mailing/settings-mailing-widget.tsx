@@ -34,7 +34,6 @@ const SettingsMailingWidget = () => {
 
     const templateTitle = types.find((option) => option.value == state?.templateType)?.text || " ";
 
-
     return (
         <div>
             <PrimaryTabsComponent tabs={tabs} >
@@ -48,7 +47,7 @@ const SettingsMailingWidget = () => {
                 <AddNewSMSTemplateGroup onClickAdd={onAddSMSTemplateGroup} />
             </GoMakeModal>
             <GoMakeModal
-                insideStyle={{paddingLeft: 20, paddingRight: 20 , width: "852px"}}
+                insideStyle={{paddingLeft: 20, padding: 20, gap: "15px" ,width: "852px"}}
                 openModal={openEditModal}
                 onClose={() => {setOpenEditModal(false); setState(null); setSubject(""); setBody("")}}
                 modalTitle={t("mailingSettings.emailType") + " " + templateTitle}>

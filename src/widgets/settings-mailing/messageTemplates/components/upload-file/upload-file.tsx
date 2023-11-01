@@ -14,7 +14,7 @@ interface IProps {
     fileName?: string;
 }
 
-const PdfUploadComponent = ({ onUpload, fileName = "order summary.pdf" }: IProps) => {
+const PdfUploadComponent = ({ onUpload, fileName = "Example file.pdf" }: IProps) => {
     const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
     const [selectedFileName, setSelectedFileName] = useState(state?.attachment);
     const inputRef = useRef(null);

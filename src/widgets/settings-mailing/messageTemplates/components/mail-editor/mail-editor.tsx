@@ -81,14 +81,14 @@ const EmailSettings = ({ onClickSave }: IProps) => {
                             mailInputs2(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
                         }
                     </Stack>
-                    <Stack direction={'column'} gap={"12px"} alignItems={"center"} width={"60%"}>
+                    <Stack direction={'column'} gap={"8px"} alignItems={"center"} width={"68%"}>
                         {
                             mailInputs3(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
                         }
                     </Stack>
                 </Stack>
             </div>
-            <div style={classes.footerStyle}>
+            <div style={classes.footerStyle} >
                 <SecondaryButton onClick={handleUpdateClick} variant={"contained"}>{t("mailingSettings.save")}</SecondaryButton>
                 <SecondaryButton onClick={handleResetClick} variant={"outlined"}>{t("mailingSettings.reset")}</SecondaryButton>
             </div>
