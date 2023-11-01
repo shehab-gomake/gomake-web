@@ -47,11 +47,6 @@ export const activeFilterState = atom<EMaterialActiveFilter>({
     default: EMaterialActiveFilter.ACTIVE
 });
 
-export const isUserUpdatingDataState = atom<boolean>({
-    key: 'isUserUpdatingDataState',
-    default: false
-});
-
 export const filterState = atom<{key: string; value: string} | null>({
     key: 'filterState',
     default: null

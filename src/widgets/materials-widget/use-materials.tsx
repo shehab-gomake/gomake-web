@@ -59,7 +59,11 @@ const useMaterials = () => {
                 setMaterialCategoryData(res.data?.map(row => ({...row, checked: false})));
             }
         }
-        await getMaterialCategoryDataApi(callApi, callBack, {materialKey: materialType, categoryKey: materialCategory, supplierId})
+        await getMaterialCategoryDataApi(callApi, callBack, {
+            materialKey: materialType,
+            categoryKey: materialCategory,
+            supplierId
+        })
     }
     const materialsCategoriesList = useCallback(() => {
         return materialCategories.map(category => ({text: category.categoryName, value: category.categoryKey}))
@@ -75,13 +79,27 @@ const useMaterials = () => {
         }
         await getMaterialTableHeadersApi(callApi, callBack, materialType)
     }
+
     const isAllSelected = useCallback(() => {
-        return materialCategoryData.every(row => !!row.checked)
+        return getFilteredMaterials().every(row => row.checked)
     }, [materialCategoryData])
-    const onChangeHeaderCheckBox = () => {
-        const checked = materialCategoryData.every(row => row.checked);
-        setMaterialCategoryData(materialCategoryData.map(row => ({...row, checked: !checked})))
-    }
+
+
+    const getFilteredMaterials = useCallback(() => {
+        const FAMaterials = activeFilter === EMaterialActiveFilter.ALL ? materialCategoryData : materialCategoryData
+            ?.filter((material) => activeFilter === EMaterialActiveFilter.ACTIVE ? material.isActive : !material.isActive);
+        return materialFilter === null ? FAMaterials : FAMaterials?.filter(material => material.rowData[materialFilter.key].value === materialFilter.value)
+    }, [activeFilter, materialCategoryData, materialFilter])
+
+
+    const onChangeHeaderCheckBox = useCallback(() => {
+        const checked = isAllSelected();
+        const materialsIds = getFilteredMaterials().map(material => material.id);
+        setMaterialCategoryData(materialCategoryData.map(row => materialsIds.includes(row.id) ? {
+            ...row,
+            checked: !checked
+        } : {...row, checked: false}))
+    }, [materialCategoryData, getFilteredMaterials(), isAllSelected()])
 
     const onChangeRowCheckBox = (id: string) => {
         setMaterialCategoryData(materialCategoryData.map(row => id === row.id ? {...row, checked: !row.checked} : row))
@@ -92,11 +110,6 @@ const useMaterials = () => {
                           checked={isAllSelected()}/>, ...materialHeaders.map(header => header.value)];
     }, [materialHeaders, materialCategoryData])
 
-    const getFilteredMaterials = useCallback(() => {
-        const FAMaterials = activeFilter === EMaterialActiveFilter.ALL ? materialCategoryData : materialCategoryData
-            ?.filter((material) => activeFilter === EMaterialActiveFilter.ACTIVE ? material.isActive : !material.isActive);
-        return materialFilter === null ? FAMaterials : FAMaterials?.filter(material => material.rowData[materialFilter.key].value === materialFilter.value)
-    }, [activeFilter, materialCategoryData, materialFilter])
 
     const tableRows = useMemo(() => {
         return getFilteredMaterials().map((dataRow) => {

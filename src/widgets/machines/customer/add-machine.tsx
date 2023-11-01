@@ -68,7 +68,7 @@ const CustomerAddMachine = () => {
     return (
         <SideBarContainer
             side={Side()}
-            header={"Add new " + categoryName + " machine"}
+            header={"Add new " + t(categoryName) + " machine"}
             subHeader={
                 selectedMachine.manufacturer && selectedMachine.nickName
                     ? selectedMachine.manufacturer + " - " + selectedMachine.nickName
