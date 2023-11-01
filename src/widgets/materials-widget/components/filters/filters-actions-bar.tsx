@@ -1,13 +1,15 @@
 import {GoMakeAutoComplate, SecondSwitch} from "@/components";
 import {ActionMenu} from "@/widgets/materials-widget/components/actions-menu/action-menu";
 import Stack from "@mui/material/Stack";
-import React  from "react";
+import React, { useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useMaterialFilters} from "@/widgets/materials-widget/components/filters/use-material-filters";
 import Button from "@mui/material/Button";
-import {Paper} from "@mui/material";
-import {useSetRecoilState} from "recoil";
-import {openAddSupplierModalState} from "@/widgets/materials-widget/state";
+import { Paper} from "@mui/material";
+import { useSetRecoilState} from "recoil";
+import {
+    openAddSupplierModalState,
+} from "@/widgets/materials-widget/state";
 import {FONT_FAMILY} from "@/utils/font-family";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 
@@ -16,15 +18,35 @@ const FiltersActionsBar = () => {
     const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
     const {primaryColor, secondColor} = useGomakeTheme();
 
-    const {onActiveFilterChange, activeFilterLabel, activeFilterOptions, materialSuppliers, supplierId, onSelectSupplier, onSetDefaultSupplier, getFilters, onChange} = useMaterialFilters();
+    const {
+        onActiveFilterChange,
+        activeFilterLabel,
+        activeFilterOptions,
+        materialSuppliers,
+        supplierId,
+        onSelectSupplier,
+        onSetDefaultSupplier,
+        getFilters,
+        onChange
+    } = useMaterialFilters();
+    const [supplierName, setSupplierName] = useState< {value: string, label: string, isDefault: boolean}>({value: '', label: '', isDefault: false} );
+
+    useEffect(() => {
+        const index = materialSuppliers.map(s => s.value).indexOf(supplierId);
+        if (index !== -1) {
+            setSupplierName(materialSuppliers[index]);
+        }
+    }, [supplierId, materialSuppliers])
+
     return (
         <Stack direction={'row'} gap={2} alignItems={'center'}>
             {
                 getFilters().map(({key, options}) => {
-                    return <GoMakeAutoComplate onChange={(e, v) => onChange(v?.value ? {value: v.value, key: key} : null)}
-                                               style={{width: '200px'}}
-                                               options={options}
-                                               placeholder={key}
+                    return <GoMakeAutoComplate
+                        onChange={(e, v) => onChange(v?.value ? {value: v.value, key: key} : null)}
+                        style={{width: '200px'}}
+                        options={options}
+                        placeholder={key}
                     />
                 })
             }
@@ -42,11 +64,11 @@ const FiltersActionsBar = () => {
                 onChange={(e: any, value: any) => {
                     onSelectSupplier(value.value);
                 }}
-                value={supplierId}
+                value={supplierName}
                 disableClearable={true}
                 renderOption={(props: any, option: any) => {
                     return (
-                       <Stack direction={'row'}>
+                        <Stack direction={'row'}>
                             <div {...props} style={{ width: "100%" }}>
                                 {option.label}
                             </div>

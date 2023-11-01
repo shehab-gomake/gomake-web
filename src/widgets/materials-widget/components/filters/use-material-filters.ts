@@ -44,7 +44,6 @@ const useMaterialFilters = () => {
     }
 
     const onSetDefaultSupplier = async (supplierId: string) => {
-        alert(supplierId)
         const callBack = (res) => {
             if (res.success)  {
                 alertSuccessUpdate();

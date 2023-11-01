@@ -60,8 +60,11 @@ const MaterialsWidget = () => {
 
     useEffect(() => {
         if (!!materialType && !!materialCategory) {
-            getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(), supplierId).then()
-            getPrintHouseMaterialCategorySuppliers(materialType?.toString(), materialCategory?.toString()).then();
+            if (supplierId) {
+                getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(), supplierId).then()
+            } else {
+                getPrintHouseMaterialCategorySuppliers(materialType?.toString(), materialCategory?.toString()).then();
+            }
         }
     }, [materialType, materialCategory, supplierId])
 
@@ -78,7 +81,7 @@ const MaterialsWidget = () => {
                     {
                         materialCategoryData.length > 0 ?
                             <PrimaryTable rows={tableRows} headers={tableHeaders()}/> :
-                            <div style={classes.noData}>
+                           !supplierId && <div style={classes.noData}>
                                 {t("materials.sheetPaper.supplierAddedSheetYet")}
                                 <span
                                     style={classes.noDataSpan}

@@ -43,7 +43,7 @@ const useAddMaterialSupplier = () => {
                 alertSuccessAdded();
                 setOpenModal(false)
                 setMaterialSuppliers([...materialSuppliers, newSupplier])
-                setSelectedSupplier(newSupplier.label);
+                setSelectedSupplier(newSupplier.value);
             } else {
                 alertFaultAdded();
             }

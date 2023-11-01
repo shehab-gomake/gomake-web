@@ -54,7 +54,7 @@ const CustomerEditMachines = () => {
         </SideList>
     }
     return (
-        <SideBarContainer side={Side()} header={categoryName}
+        <SideBarContainer side={Side()} header={t(categoryName)}
                        subHeader={selectedMachine?.manufacturer && selectedMachine?.nickName ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.nickName : ''}>
             {!!selectedMachine?.id &&
                 <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
