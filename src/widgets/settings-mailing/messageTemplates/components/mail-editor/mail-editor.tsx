@@ -89,11 +89,11 @@ const EmailSettings = ({ onClickSave }: IProps) => {
                 </Stack>
             </div>
             <div style={classes.footerStyle} >
-                <SecondaryButton onClick={handleUpdateClick} variant={"contained"}>{t("mailingSettings.save")}</SecondaryButton>
                 <SecondaryButton onClick={handleResetClick} variant={"outlined"}>{t("mailingSettings.reset")}</SecondaryButton>
+                <SecondaryButton onClick={handleUpdateClick} variant={"contained"}>{t("mailingSettings.save")}</SecondaryButton>
             </div>
         </div>
     );
 };
-
+ 
 export { EmailSettings };

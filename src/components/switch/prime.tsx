@@ -44,8 +44,6 @@ const PrimarySwitch = styled(Switch)((props: SwitchProps & { colorX?: string, di
         '& .MuiSwitch-track': {
             borderRadius: 24 / 2,
             backgroundColor: '#E9E9EA',
-           // backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
-
             opacity: 1,
         },
     }
