@@ -35,6 +35,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     useQuoteWidget();
   const { allMaterials } = useMaterials();
   const userProfile = useRecoilValue(userProfileState);
+  const [selectedValueConfig, setSelectedValueConfig] = useState();
 
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [generalParameters, setGeneralParameters] = useState<any>([]);
@@ -927,6 +928,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               options={parameter?.valuesConfigs?.filter(
                 (value) => !value.isHidden
               )}
+              key={selectedValueConfig}
               placeholder={parameter.name}
               style={clasess.dropDownListStyle}
               getOptionLabel={(option: any) => option.updateName}
@@ -934,6 +936,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 index !== -1 ? { updateName: temp[index].value } : defaultObject
               }
               onChange={(e: any, value: any) => {
+                setSelectedValueConfig(value);
                 onChangeForPrice(
                   parameter?.id,
                   subSection?.id,
@@ -1730,6 +1733,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setPriceRecovery,
     onOpeneMultiParameterModal,
     onCloseMultiParameterModal,
+    selectedValueConfig,
     multiParameterModal,
     settingParameters,
     priceRecovery,

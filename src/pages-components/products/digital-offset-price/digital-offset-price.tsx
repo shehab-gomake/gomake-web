@@ -41,6 +41,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     setPriceRecovery,
     onOpeneMultiParameterModal,
     onCloseMultiParameterModal,
+    selectedValueConfig,
     multiParameterModal,
     settingParameters,
     priceRecovery,
@@ -261,6 +262,7 @@ const PriceListPageWidget = ({ widgetType }) => {
         modalTitle={""}
         settingParameters={settingParameters}
         _renderParameterType={_renderParameterType}
+        selectedValueConfig={selectedValueConfig}
       />
     </div>
   );

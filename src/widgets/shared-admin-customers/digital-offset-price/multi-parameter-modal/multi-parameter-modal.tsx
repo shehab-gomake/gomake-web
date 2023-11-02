@@ -3,6 +3,7 @@ import { GoMakeModal, GomakePrimaryButton } from "@/components";
 import { ChildrenMapping } from "./children-mapping";
 import { HeaderMapping } from "./header-mapping";
 import { useStyle } from "./style";
+import { useEffect, useState } from "react";
 
 const MultiParameterModal = ({
   openModal,
@@ -10,9 +11,12 @@ const MultiParameterModal = ({
   modalTitle,
   settingParameters,
   _renderParameterType,
+  selectedValueConfig,
 }) => {
   const { clasess } = useStyle();
   const parameterLists = settingParameters?.parameter?.settingParameters;
+
+  console.log("selectedValueConfig", selectedValueConfig);
 
   return (
     <>

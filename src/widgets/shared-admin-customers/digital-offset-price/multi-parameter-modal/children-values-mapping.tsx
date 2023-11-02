@@ -3,7 +3,7 @@ import { Checkbox } from "@mui/material";
 import { SubChildrenMapping } from "./sub-children-mapping";
 import { CheckboxCheckedIcon } from "./icons/checkbox-checked-icon";
 import { CheckboxIcon } from "./icons/checkbox-icon";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PlusIcon } from "./icons/plus";
 import { MinusIcon } from "./icons/minus";
 import { useClickAway } from "@uidotdev/usehooks";
@@ -19,13 +19,12 @@ const ChildrenValuesMapping = ({
   index,
   index2,
 }) => {
-  console.log("value", value);
   const [generalParameters, setGeneralParameters] =
     useRecoilState(maltiParameterState);
   const [isFocused, setIsFocused] = useState(false);
   const [valueState, setValueState] = useState<any>(0);
   const [forceChange, setForceChange] = useState(false);
-
+  const [parentValue, setParentValue] = useState(0);
   const updateValue = (increment: boolean) => {
     let temp = lodashClonedeep(generalParameters);
     const indexOfName = temp[0].value.findIndex((p) => p === value?.value);
@@ -49,32 +48,11 @@ const ChildrenValuesMapping = ({
     setIsFocused(false);
   });
   const onChangeCheckBox = (e) => {
-    // let temp = lodashClonedeep(generalParameters);
     if (e.target.checked) {
       setForceChange(true);
-
-      // temp[0].value.push(value?.value);
-      // const pValues = Array.from({ length: temp.length - 1 }, (_, index) => {
-      //   const inputElement = document.getElementById(
-      //     `p${index + 1}_${index2}`
-      //   ) as HTMLInputElement;
-      //   return parseFloat(inputElement.value);
-      // });
-      // pValues.forEach((pValue, index) => {
-      //   temp[index + 1].value.push(pValue);
-      // });
     } else {
       setForceChange(false);
-      // const index = temp[0].value.findIndex((p) => p === value?.value);
-      // if (index !== -1) {
-      //   temp[0].value.splice(index, 1);
-      //   for (let i = 1; i < temp.length; i++) {
-      //     temp[i].value.splice(index, 1);
-      //   }
-      // }
     }
-
-    // setGeneralParameters(temp);
   };
   const onChangeText = (e) => {
     let temp = lodashClonedeep(generalParameters);
@@ -87,6 +65,7 @@ const ChildrenValuesMapping = ({
       setGeneralParameters(temp);
     }
     setValueState(parseFloat(e.target.value) || 0);
+    setParentValue(parseFloat(e.target.value) || 0);
   };
   const paddingLeft = value?.valueId?.length === 0 ? 13 : 38;
   return (
@@ -151,6 +130,7 @@ const ChildrenValuesMapping = ({
                 index3={index3}
                 forceChange={forceChange}
                 paddingLeft={paddingLeft}
+                parentValue={parentValue}
               />
             );
           })}

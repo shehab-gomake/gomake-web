@@ -20,15 +20,16 @@ const SubChildrenMapping = ({
   index3,
   forceChange,
   paddingLeft,
+  parentValue,
 }) => {
   const [checked, setChecked] = useState(false);
   const [generalParameters, setGeneralParameters] =
     useRecoilState(maltiParameterState);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [valueState, setValueState] = useState<number>(0);
-  useEffect(() => {
-    console.log("generalParameters", generalParameters);
-  }, [generalParameters]);
+  // useEffect(() => {
+  //   console.log("generalParameters", generalParameters);
+  // }, [generalParameters]);
   useEffect(() => {
     setChecked(forceChange);
     onChangeCheckBox({
@@ -37,6 +38,14 @@ const SubChildrenMapping = ({
       },
     });
   }, [forceChange]);
+  useEffect(() => {
+    // setValueState(parentValue);
+    onChangeText({
+      target: {
+        value: parentValue,
+      },
+    });
+  }, [parentValue]);
   const updateValue = (increment: boolean) => {
     let temp = lodashClonedeep(generalParameters);
     const indexOfName = temp[0].value.findIndex((p) => p === value?.value);
@@ -66,6 +75,7 @@ const SubChildrenMapping = ({
 
       if (e.target.checked) {
         temp[0].value.push(value?.value);
+        temp[0].valueId.push(value?.valueId);
         for (let i = 1; i < numProperties; i++) {
           const propertyValue = parseFloat(
             (
@@ -78,8 +88,10 @@ const SubChildrenMapping = ({
         }
       } else {
         const index = temp[0].value.findIndex((p) => p === value?.value);
+        const index2 = temp[0].valueId.findIndex((p) => p === value?.valueId);
         if (index !== -1) {
           temp[0].value.splice(index, 1);
+          temp[0].valueId.splice(index2, 1);
           for (let i = 1; i < numProperties; i++) {
             temp[i].value.splice(index, 1);
           }
@@ -91,19 +103,20 @@ const SubChildrenMapping = ({
     });
   };
   const onChangeText = (e) => {
-    let temp = lodashClonedeep(generalParameters);
-    const indexOfName = temp[0].value.findIndex((p) => {
-      return p == value?.value;
-    });
-    if (indexOfName !== -1) {
-      temp[0].value[indexOfName] = value?.value;
-      temp[index].value[indexOfName] = parseFloat(e.target.value) || 0;
-      setGeneralParameters(temp);
-    }
+    setGeneralParameters((prev) => {
+      let temp = lodashClonedeep(prev);
+      const indexOfName = temp[0].value.findIndex((p) => {
+        return p == value?.value;
+      });
+      if (indexOfName !== -1) {
+        temp[0].value[indexOfName] = value?.value;
+        temp[index].value[indexOfName] = parseFloat(e.target.value) || 0;
+      }
+      setValueState(parseFloat(e.target.value) || 0);
 
-    setValueState(parseFloat(e.target.value) || 0);
+      return temp;
+    });
   };
-  console.log("value", value);
   return (
     <div style={clasess.childRowContainer}>
       {item?.name === parameters[0].name && (
