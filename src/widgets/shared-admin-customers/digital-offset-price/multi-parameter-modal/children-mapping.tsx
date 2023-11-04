@@ -2,7 +2,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { ChildrenValuesMapping } from "./children-values-mapping";
 import { materialsState } from "@/store";
 import { compareStrings } from "@/utils/constants";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { maltiParameterState } from "./store/multi-param-atom";
 
 const ChildrenMapping = ({
@@ -11,7 +11,10 @@ const ChildrenMapping = ({
   index,
   clasess,
   settingParameters,
+  selectedValueConfig,
 }) => {
+  console.log("selectedValueConfig", selectedValueConfig);
+
   const allMaterials = useRecoilValue<any>(materialsState);
   const [generalParameters, setGeneralParameters] =
     useRecoilState(maltiParameterState);
@@ -55,6 +58,7 @@ const ChildrenMapping = ({
             index={index}
             index2={index2}
             key={`abc_${index}_${index2}`}
+            selectedValueConfig={selectedValueConfig}
           />
         ))}
     </div>

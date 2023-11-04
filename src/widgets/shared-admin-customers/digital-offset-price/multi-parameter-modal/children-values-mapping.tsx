@@ -18,10 +18,12 @@ const ChildrenValuesMapping = ({
   clasess,
   index,
   index2,
+  selectedValueConfig,
 }) => {
   const [generalParameters, setGeneralParameters] =
     useRecoilState(maltiParameterState);
   const [isFocused, setIsFocused] = useState(false);
+  const [checked, setChecked] = useState(false);
   const [valueState, setValueState] = useState<any>(0);
   const [forceChange, setForceChange] = useState(false);
   const [parentValue, setParentValue] = useState(0);
@@ -49,9 +51,11 @@ const ChildrenValuesMapping = ({
   });
   const onChangeCheckBox = (e) => {
     if (e.target.checked) {
+      setChecked(true);
       setForceChange(true);
     } else {
       setForceChange(false);
+      setChecked(false);
     }
   };
   const onChangeText = (e) => {
@@ -79,6 +83,8 @@ const ChildrenValuesMapping = ({
                 checkedIcon={<CheckboxCheckedIcon />}
                 onChange={(e) => onChangeCheckBox(e)}
                 id={`c${index}_${index2}`}
+                checked={checked}
+                value={checked}
               />
             </div>
           )}
@@ -117,13 +123,13 @@ const ChildrenValuesMapping = ({
 
       {value?.data?.length > 0 && (
         <div>
-          {value?.data?.map((value, index3) => {
+          {value?.data?.map((value2, index3) => {
             return (
               <SubChildrenMapping
                 key={`subChild_${index3}`}
                 parameters={parameters}
                 item={item}
-                value={value}
+                value={value2}
                 clasess={clasess}
                 index={index}
                 index2={index2}
@@ -131,6 +137,8 @@ const ChildrenValuesMapping = ({
                 forceChange={forceChange}
                 paddingLeft={paddingLeft}
                 parentValue={parentValue}
+                selectedValueConfig={selectedValueConfig}
+                lenghtData={value?.data?.length}
               />
             );
           })}

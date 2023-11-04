@@ -73,7 +73,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setDefaultPrice(workFlowSelect?.totalPrice);
     }
   }, [pricingDefaultValue, canCalculation]);
-  console.log("generalParameters", generalParameters);
   useEffect(() => {
     if (template?.sections?.length > 0) {
       let temp = [...isRequiredParameters];

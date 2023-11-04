@@ -21,15 +21,17 @@ const SubChildrenMapping = ({
   forceChange,
   paddingLeft,
   parentValue,
+  selectedValueConfig,
+  lenghtData,
 }) => {
   const [checked, setChecked] = useState(false);
   const [generalParameters, setGeneralParameters] =
     useRecoilState(maltiParameterState);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [valueState, setValueState] = useState<number>(0);
-  // useEffect(() => {
-  //   console.log("generalParameters", generalParameters);
-  // }, [generalParameters]);
+  useEffect(() => {
+    console.log("generalParameters", generalParameters);
+  }, [generalParameters]);
   useEffect(() => {
     setChecked(forceChange);
     onChangeCheckBox({
