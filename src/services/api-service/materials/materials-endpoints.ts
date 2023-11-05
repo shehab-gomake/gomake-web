@@ -8,6 +8,8 @@ const GET_MATERIALS_TYPES_URL = '/v1/materials/getMaterialsTypes';
 const GET_MATERIAL_TABLE_HEADERS_URL = '/v1/materials/GetMaterialTypeTableHeader';
 const UPDATE_MATERIAL_PROPS_URL = '/v1/materials/updatePrintHouseMaterial';
 const UPDATE_MATERIALS_PROPS_URL = '/v1/materials/updatePrintHouseMaterials';
+const DOWNLOAD_MATERIAL_EXCEL_FILE = '/v1/materials/download-material-excel'
+const UPLOAD_MATERIAL_EXCEL_FILE = '/v1/materials/upload-material-excel-file';
 const getMaterialCategoryDataApi: ICallAndSetData = async (callApi, setState, material: { materialKey: string, categoryKey: string, supplierId: string}) => {
     return await getSetApiData(callApi,
         EHttpMethod.GET,
@@ -51,11 +53,28 @@ const updateMaterialsPropApi: ICallAndSetData = async (callApi, callBack, data) 
         callBack,
         data)
 }
+
+const getMaterialExcelFileApi: ICallAndSetData = async (callApi, setState, material: string) => {
+    return await getSetApiData(callApi,
+        EHttpMethod.GET,
+        `${DOWNLOAD_MATERIAL_EXCEL_FILE}?materialKey=${material}`,
+        setState);
+}
+
+const uploadMaterialExcelFileApi: ICallAndSetData = async (callApi, callBack, data: {key: string, base64: string}) => {
+    return await getSetApiData(callApi,
+        EHttpMethod.POST,
+        UPLOAD_MATERIAL_EXCEL_FILE,
+        callBack,
+        data)
+}
 export {
     getMaterialCategoryDataApi,
     getMaterialCategoriesApi,
     getMaterialsTypesApi,
     getMaterialTableHeadersApi,
     updateMaterialPropApi,
-    updateMaterialsPropApi
+    updateMaterialsPropApi,
+    getMaterialExcelFileApi,
+    uploadMaterialExcelFileApi
 }

@@ -3,8 +3,8 @@ import {useCallback, useMemo} from "react";
 import {useGomakeAxios} from "@/hooks";
 import {
     getMaterialCategoriesApi,
-    getMaterialCategoryDataApi,
-    getMaterialTableHeadersApi
+    getMaterialCategoryDataApi, getMaterialExcelFileApi,
+    getMaterialTableHeadersApi, uploadMaterialExcelFileApi
 } from "@/services/api-service/materials/materials-endpoints";
 import {IMaterialCategoryRow} from "@/widgets/materials-widget/interface";
 import {TableCellData} from "@/widgets/materials-widget/components/table-cell-data/table-cell";
@@ -20,7 +20,7 @@ import {
     materialHeadersState, selectedSupplierIdState
 } from "@/widgets/materials-widget/state";
 import {getMaterialSuppliersApi} from "@/services/api-service/materials/materials-suppliers-endpoints";
-import {EMaterialActiveFilter} from "@/widgets/materials-widget/enums";
+import {useFilteredMaterials} from "@/widgets/materials-widget/use-filtered-materials";
 
 const useMaterials = () => {
     const {query, push, replace} = useRouter();
@@ -34,9 +34,11 @@ const useMaterials = () => {
     const activeFilter = useRecoilValue(activeFilterState);
     const materialFilter = useRecoilValue(filterState);
     const {callApi} = useGomakeAxios();
-    const setCurrencies = useSetRecoilState(currenciesState)
+    const setCurrencies = useSetRecoilState(currenciesState);
+    const {getFilteredMaterials} = useFilteredMaterials()
 
     const onSelectCategory = (category: string) => {
+        setDefaultSupplier('')
         push(`/materials/${materialType}?materialCategory=${category}`)
     }
     const getMaterialCategories = async (material) => {
@@ -83,13 +85,6 @@ const useMaterials = () => {
     const isAllSelected = useCallback(() => {
         return getFilteredMaterials().every(row => row.checked)
     }, [materialCategoryData])
-
-
-    const getFilteredMaterials = useCallback(() => {
-        const FAMaterials = activeFilter === EMaterialActiveFilter.ALL ? materialCategoryData : materialCategoryData
-            ?.filter((material) => activeFilter === EMaterialActiveFilter.ACTIVE ? material.isActive : !material.isActive);
-        return materialFilter === null ? FAMaterials : FAMaterials?.filter(material => material.rowData[materialFilter.key].value === materialFilter.value)
-    }, [activeFilter, materialCategoryData, materialFilter])
 
 
     const onChangeHeaderCheckBox = useCallback(() => {
@@ -145,6 +140,36 @@ const useMaterials = () => {
         }
         await getMaterialSuppliersApi(callApi, callBack, {key: materialType, categoryName: materialCategory})
     }
+
+    const downloadExcelFile = async () => {
+        const callBack = (res) => {
+            if (res.success) {
+                const downloadLink = document.createElement('a');
+                downloadLink.href = res.data; // Use the provided file URL
+                downloadLink.download = materialType + '.xlsx'; // Replace with the desired file name
+                downloadLink.click();
+            }
+        }
+        await getMaterialExcelFileApi(callApi, callBack, materialType)
+    }
+
+    const uploadExcelFile = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const arrayBuffer = event.target.result;
+                const data = new Uint8Array(arrayBuffer as ArrayBuffer);
+
+                // Convert data to a Base64 string
+                const base64String = btoa(String.fromCharCode.apply(null, data));
+                uploadMaterialExcelFileApi(callApi, () => {
+                }, {key: materialType.toString(), base64: base64String})
+            };
+            reader.readAsArrayBuffer(file)
+        }
+    }
+
     return {
         materialCategory,
         materialType,
@@ -159,7 +184,9 @@ const useMaterials = () => {
         getPrintHouseMaterialCategorySuppliers,
         materialCategoryData,
         materialCategories,
-        replace
+        replace,
+        downloadExcelFile,
+        uploadExcelFile
     }
 }
 
