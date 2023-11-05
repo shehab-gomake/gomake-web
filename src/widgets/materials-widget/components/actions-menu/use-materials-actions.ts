@@ -1,12 +1,13 @@
 import {useRecoilState} from "recoil";
 import {IMaterialCategoryRow} from "@/widgets/materials-widget/interface";
 import {materialCategoryDataState} from "@/widgets/materials-widget/state";
-import {useCallback, useState} from "react";
+import {useState} from "react";
 import {EMaterialsActions} from "@/widgets/materials-widget/enums";
 import {updateMaterialsPropApi} from "@/services/api-service/materials/materials-endpoints";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {useRouter} from "next/router";
 import {useTranslation} from "react-i18next";
+import {useFilteredMaterials} from "@/widgets/materials-widget/use-filtered-materials";
 
 const useMaterialsActions = () => {
     const {callApi} = useGomakeAxios();
@@ -17,9 +18,9 @@ const useMaterialsActions = () => {
     const [updatedValue, setUpdatedValue] = useState<string>('');
     const {setSnackbarStateValue} = useSnackBar();
     const {t} = useTranslation();
-    const getSelectedMaterialsIds = useCallback(() => {
-        return materialCategoryData.filter(row => row.checked).map(row => row.id);
-    }, [materialCategoryData])
+    const {getFilteredMaterials} = useFilteredMaterials();
+
+    const getSelectedMaterialsIds = () => getFilteredMaterials().filter(row => row.checked).map(row => row.id);
     const onChooseAction = async (action: { action: EMaterialsActions, key: string } | null) => {
         if (getSelectedMaterialsIds().length === 0) {
             setSnackbarStateValue({
