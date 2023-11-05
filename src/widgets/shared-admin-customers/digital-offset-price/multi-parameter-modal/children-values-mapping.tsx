@@ -50,13 +50,21 @@ const ChildrenValuesMapping = ({
     setIsFocused(false);
   });
   const onChangeCheckBox = (e) => {
-    if (e.target.checked) {
-      setChecked(true);
-      setForceChange(true);
-    } else {
-      setForceChange(false);
-      setChecked(false);
-    }
+    setGeneralParameters((prev) => {
+      let temp = lodashClonedeep(prev);
+
+      if (e.target.checked) {
+        setChecked(true);
+        setForceChange(true);
+      } else {
+        setForceChange(false);
+        setChecked(false);
+      }
+      console.log("temp", temp[0]);
+
+      setChecked(e.target.checked);
+      return temp;
+    });
   };
   const onChangeText = (e) => {
     let temp = lodashClonedeep(generalParameters);

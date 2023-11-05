@@ -13,8 +13,6 @@ const ChildrenMapping = ({
   settingParameters,
   selectedValueConfig,
 }) => {
-  console.log("selectedValueConfig", selectedValueConfig);
-
   const allMaterials = useRecoilValue<any>(materialsState);
   const [generalParameters, setGeneralParameters] =
     useRecoilState(maltiParameterState);

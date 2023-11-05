@@ -29,9 +29,10 @@ const SubChildrenMapping = ({
     useRecoilState(maltiParameterState);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [valueState, setValueState] = useState<number>(0);
-  useEffect(() => {
-    console.log("generalParameters", generalParameters);
-  }, [generalParameters]);
+  // useEffect(() => {
+  //   console.log("generalParameters", generalParameters[0]?.value?.length);
+  // }, [generalParameters]);
+
   useEffect(() => {
     setChecked(forceChange);
     onChangeCheckBox({
@@ -41,7 +42,6 @@ const SubChildrenMapping = ({
     });
   }, [forceChange]);
   useEffect(() => {
-    // setValueState(parentValue);
     onChangeText({
       target: {
         value: parentValue,
@@ -69,7 +69,10 @@ const SubChildrenMapping = ({
   const ref = useClickAway(() => {
     setIsFocused(false);
   });
-
+  // if (
+  //   selectedValueConfig?.selectedParameterValues[0]?.selectValuesCount >
+  //   temp[0]?.value?.length
+  // )
   const onChangeCheckBox = (e) => {
     setGeneralParameters((prev) => {
       let temp = lodashClonedeep(prev);
@@ -99,8 +102,8 @@ const SubChildrenMapping = ({
           }
         }
       }
-      setChecked(e.target.checked);
 
+      setChecked(e.target.checked);
       return temp;
     });
   };
