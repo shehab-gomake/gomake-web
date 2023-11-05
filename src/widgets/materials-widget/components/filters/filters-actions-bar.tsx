@@ -29,13 +29,11 @@ const FiltersActionsBar = () => {
         getFilters,
         onChange
     } = useMaterialFilters();
-    const [supplierName, setSupplierName] = useState< {value: string, label: string, isDefault: boolean}>({value: '', label: '', isDefault: false} );
+    const [supplierName, setSupplierName] = useState< {value: string, label: string, isDefault: boolean} | null>({value: '', label: '', isDefault: false} );
 
     useEffect(() => {
         const index = materialSuppliers.map(s => s.value).indexOf(supplierId);
-        if (index !== -1) {
-            setSupplierName(materialSuppliers[index]);
-        }
+            setSupplierName(index !== -1 ? materialSuppliers[index] : null);
     }, [supplierId, materialSuppliers])
 
     return (
@@ -64,7 +62,7 @@ const FiltersActionsBar = () => {
                 onChange={(e: any, value: any) => {
                     onSelectSupplier(value.value);
                 }}
-                value={supplierName}
+                value={supplierName ? supplierName : ''}
                 disableClearable={true}
                 renderOption={(props: any, option: any) => {
                     return (
