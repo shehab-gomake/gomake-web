@@ -3,13 +3,14 @@ import { Checkbox } from "@mui/material";
 import { SubChildrenMapping } from "./sub-children-mapping";
 import { CheckboxCheckedIcon } from "./icons/checkbox-checked-icon";
 import { CheckboxIcon } from "./icons/checkbox-icon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlusIcon } from "./icons/plus";
 import { MinusIcon } from "./icons/minus";
 import { useClickAway } from "@uidotdev/usehooks";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { maltiParameterState } from "./store/multi-param-atom";
 import lodashClonedeep from "lodash.clonedeep";
+import { selectColorValueState } from "./store/selecte-color-value";
 
 const ChildrenValuesMapping = ({
   parameters,
@@ -18,8 +19,10 @@ const ChildrenValuesMapping = ({
   clasess,
   index,
   index2,
-  selectedValueConfig,
+  settingParameters,
 }) => {
+  const paddingLeft = value?.valueId?.length === 0 ? 13 : 38;
+  const selectColorValue = useRecoilValue<any>(selectColorValueState);
   const [generalParameters, setGeneralParameters] =
     useRecoilState(maltiParameterState);
   const [isFocused, setIsFocused] = useState(false);
@@ -50,21 +53,21 @@ const ChildrenValuesMapping = ({
     setIsFocused(false);
   });
   const onChangeCheckBox = (e) => {
-    setGeneralParameters((prev) => {
-      let temp = lodashClonedeep(prev);
+    if (selectColorValue) {
+      setGeneralParameters((prev) => {
+        let temp = lodashClonedeep(prev);
 
-      if (e.target.checked) {
-        setChecked(true);
-        setForceChange(true);
-      } else {
-        setForceChange(false);
-        setChecked(false);
-      }
-      console.log("temp", temp[0]);
-
-      setChecked(e.target.checked);
-      return temp;
-    });
+        if (e.target.checked) {
+          setChecked(true);
+          setForceChange(true);
+        } else {
+          setForceChange(false);
+          setChecked(false);
+        }
+        setChecked(e.target.checked);
+        return temp;
+      });
+    }
   };
   const onChangeText = (e) => {
     let temp = lodashClonedeep(generalParameters);
@@ -79,7 +82,33 @@ const ChildrenValuesMapping = ({
     setValueState(parseFloat(e.target.value) || 0);
     setParentValue(parseFloat(e.target.value) || 0);
   };
-  const paddingLeft = value?.valueId?.length === 0 ? 13 : 38;
+  const isDisabled = () => {
+    let isDisabled = false;
+    if (typeof selectColorValue === "undefined") {
+      isDisabled = true;
+    }
+    if (
+      selectColorValue?.selectedParameterValues[0]?.selectValuesCount <
+      generalParameters[0]?.value?.length + value?.valueId?.length
+    ) {
+      isDisabled = true;
+    }
+    return isDisabled;
+  };
+  useEffect(() => {
+    const temp = parameters.map((item: any) => ({
+      parameterId: item.id,
+      sectionId: settingParameters?.section?.id,
+      subSectionId: settingParameters?.subSection?.id,
+      parameterType: item.parameterType,
+      parameterName: item.name,
+      actionId: item.actionId,
+      valueId: [],
+      value: [],
+    }));
+    setGeneralParameters(temp);
+    setChecked(false);
+  }, [selectColorValue]);
   return (
     <>
       {value?.valueId?.length != 0 && (
@@ -91,8 +120,10 @@ const ChildrenValuesMapping = ({
                 checkedIcon={<CheckboxCheckedIcon />}
                 onChange={(e) => onChangeCheckBox(e)}
                 id={`c${index}_${index2}`}
+                key={`c${index}_${selectColorValue}`}
                 checked={checked}
                 value={checked}
+                disabled={isDisabled() && !checked}
               />
             </div>
           )}
@@ -145,8 +176,7 @@ const ChildrenValuesMapping = ({
                 forceChange={forceChange}
                 paddingLeft={paddingLeft}
                 parentValue={parentValue}
-                selectedValueConfig={selectedValueConfig}
-                lenghtData={value?.data?.length}
+                settingParameters={settingParameters}
               />
             );
           })}

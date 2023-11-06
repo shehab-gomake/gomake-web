@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
 import { PlusIcon } from "./icons/plus";
 import { MinusIcon } from "./icons/minus";
 import { useClickAway } from "@uidotdev/usehooks";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { maltiParameterState } from "./store/multi-param-atom";
 import lodashClonedeep from "lodash.clonedeep";
+import { selectColorValueState } from "./store/selecte-color-value";
 
 const SubChildrenMapping = ({
   parameters,
@@ -21,18 +22,15 @@ const SubChildrenMapping = ({
   forceChange,
   paddingLeft,
   parentValue,
-  selectedValueConfig,
-  lenghtData,
+  settingParameters,
 }) => {
   const [checked, setChecked] = useState(false);
   const [generalParameters, setGeneralParameters] =
     useRecoilState(maltiParameterState);
+  const selectColorValue = useRecoilValue<any>(selectColorValueState);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [valueState, setValueState] = useState<number>(0);
-  // useEffect(() => {
-  //   console.log("generalParameters", generalParameters[0]?.value?.length);
-  // }, [generalParameters]);
-
+  console.log("generalParameters", generalParameters);
   useEffect(() => {
     setChecked(forceChange);
     onChangeCheckBox({
@@ -48,6 +46,37 @@ const SubChildrenMapping = ({
       },
     });
   }, [parentValue]);
+  useEffect(() => {
+    const temp = parameters.map((item: any) => ({
+      parameterId: item.id,
+      sectionId: settingParameters?.section?.id,
+      subSectionId: settingParameters?.subSection?.id,
+      parameterType: item.parameterType,
+      parameterName: item.name,
+      actionId: item.actionId,
+      valueId: [],
+      value: [],
+    }));
+    setGeneralParameters(temp);
+    setChecked(false);
+  }, [selectColorValue]);
+
+  useEffect(() => {
+    if (selectColorValue?.selectedParameterValues[0]?.valueIds?.length > 0) {
+      const index =
+        selectColorValue?.selectedParameterValues[0]?.valueIds?.findIndex(
+          (elem) => elem === value?.value
+        );
+      if (index !== -1) {
+        onChangeCheckBox({
+          target: {
+            checked: true,
+          },
+        });
+      }
+    }
+  }, [selectColorValue]);
+
   const updateValue = (increment: boolean) => {
     let temp = lodashClonedeep(generalParameters);
     const indexOfName = temp[0].value.findIndex((p) => p === value?.value);
@@ -69,10 +98,6 @@ const SubChildrenMapping = ({
   const ref = useClickAway(() => {
     setIsFocused(false);
   });
-  // if (
-  //   selectedValueConfig?.selectedParameterValues[0]?.selectValuesCount >
-  //   temp[0]?.value?.length
-  // )
   const onChangeCheckBox = (e) => {
     setGeneralParameters((prev) => {
       let temp = lodashClonedeep(prev);
@@ -104,6 +129,7 @@ const SubChildrenMapping = ({
       }
 
       setChecked(e.target.checked);
+      console.log("temp", temp);
       return temp;
     });
   };
@@ -122,6 +148,30 @@ const SubChildrenMapping = ({
       return temp;
     });
   };
+
+  const isDisabled = () => {
+    let isDisabled = false;
+    if (typeof selectColorValue === "undefined") {
+      isDisabled = true;
+    }
+    if (
+      generalParameters[0].value.length >=
+      selectColorValue?.selectedParameterValues[0]?.selectValuesCount
+    ) {
+      isDisabled = true;
+    }
+
+    if (selectColorValue?.selectedParameterValues[0]?.valueIds?.length > 0) {
+      const index =
+        selectColorValue?.selectedParameterValues[0]?.valueIds?.findIndex(
+          (e) => e === value?.value
+        );
+      if (index === -1) {
+        isDisabled = true;
+      }
+    }
+    return isDisabled;
+  };
   return (
     <div style={clasess.childRowContainer}>
       {item?.name === parameters[0].name && (
@@ -132,7 +182,8 @@ const SubChildrenMapping = ({
             onChange={onChangeCheckBox}
             checked={checked}
             value={checked}
-            key={`c${index}_${checked}`}
+            key={`c${index}_${selectColorValue}`}
+            disabled={isDisabled() && !checked}
           />
         </div>
       )}

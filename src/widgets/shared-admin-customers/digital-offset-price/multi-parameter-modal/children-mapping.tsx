@@ -11,7 +11,6 @@ const ChildrenMapping = ({
   index,
   clasess,
   settingParameters,
-  selectedValueConfig,
 }) => {
   const allMaterials = useRecoilValue<any>(materialsState);
   const [generalParameters, setGeneralParameters] =
@@ -56,7 +55,7 @@ const ChildrenMapping = ({
             index={index}
             index2={index2}
             key={`abc_${index}_${index2}`}
-            selectedValueConfig={selectedValueConfig}
+            settingParameters={settingParameters}
           />
         ))}
     </div>

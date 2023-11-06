@@ -3,6 +3,10 @@ import { GoMakeModal, GomakePrimaryButton } from "@/components";
 import { ChildrenMapping } from "./children-mapping";
 import { HeaderMapping } from "./header-mapping";
 import { useStyle } from "./style";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { selectedValueConfigState } from "@/store";
+import { useEffect } from "react";
+import { selectColorValueState } from "./store/selecte-color-value";
 
 const MultiParameterModal = ({
   openModal,
@@ -10,11 +14,26 @@ const MultiParameterModal = ({
   modalTitle,
   settingParameters,
   _renderParameterType,
-  selectedValueConfig,
+  generalParameters,
 }) => {
   const { clasess } = useStyle();
   const parameterLists = settingParameters?.parameter?.settingParameters;
-
+  const selectedValueConfig = useRecoilValue(selectedValueConfigState);
+  const setSelectColorValue = useSetRecoilState(selectColorValueState);
+  function getObjectById() {
+    for (const config of selectedValueConfig) {
+      const foundParameter = generalParameters.find(
+        (param) => param.valueId === config.id
+      );
+      if (foundParameter) {
+        return config;
+      }
+    }
+  }
+  useEffect(() => {
+    const result = getObjectById();
+    setSelectColorValue(result);
+  }, [generalParameters, selectedValueConfig]);
   return (
     <>
       <GoMakeModal
@@ -59,7 +78,6 @@ const MultiParameterModal = ({
                       index={index}
                       clasess={clasess}
                       settingParameters={settingParameters}
-                      selectedValueConfig={selectedValueConfig}
                     />
                   );
                 })}

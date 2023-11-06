@@ -10,7 +10,7 @@ import {
   getAndSetProductById,
   getAndSetgetProductQuoteItemById,
 } from "@/services/hooks";
-import { isLoadgingState } from "@/store";
+import { isLoadgingState, selectedValueConfigState } from "@/store";
 import { useMaterials } from "../use-materials";
 import { digitslPriceState } from "./store";
 
@@ -35,7 +35,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     useQuoteWidget();
   const { allMaterials } = useMaterials();
   const userProfile = useRecoilValue(userProfileState);
-  const [selectedValueConfig, setSelectedValueConfig] = useState();
+  const [selectedValueConfig, setSelectedValueConfig] = useRecoilState(
+    selectedValueConfigState
+  );
 
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [generalParameters, setGeneralParameters] = useState<any>([]);
@@ -927,6 +929,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               options={parameter?.valuesConfigs?.filter(
                 (value) => !value.isHidden
               )}
+              // @ts-ignore
               key={selectedValueConfig}
               placeholder={parameter.name}
               style={clasess.dropDownListStyle}
@@ -935,7 +938,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 index !== -1 ? { updateName: temp[index].value } : defaultObject
               }
               onChange={(e: any, value: any) => {
-                setSelectedValueConfig(value);
+                // setSelectedValueConfig(value);
                 onChangeForPrice(
                   parameter?.id,
                   subSection?.id,
@@ -958,15 +961,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             {parameter?.setSettingIcon && inModal && (
               <div
                 style={{ cursor: "pointer" }}
-                onClick={() =>
+                onClick={() => {
+                  setSelectedValueConfig(parameter?.valuesConfigs);
                   onOpeneMultiParameterModal(
                     parameter,
                     subSection,
                     section,
                     subSectionParameters,
                     list
-                  )
-                }
+                  );
+                }}
               >
                 <SettingsIcon
                   stroke={"rgba(237, 2, 140, 1)"}
@@ -1276,48 +1280,143 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         </div>
         {parameter?.relatedParameters?.length > 0 && inModal && (
           <>
-            {parameter.relatedParameters.map((relatedParameter) => {
-              const parm = generalParameters.find(
-                (param) => param.parameterId === parameter.id
-              );
-              const myParameter = list.find(
-                (p) => p.id === relatedParameter.parameterId
-              );
-              if (relatedParameter.activateByAllValues && parm?.value) {
-                return (
-                  <div style={{ marginLeft: 10 }}>
-                    {_renderParameterType(
-                      myParameter,
-                      subSection,
-                      section,
-                      subSection?.parameters,
-                      myParameter.value,
-                      list,
-                      true
-                    )}
-                  </div>
-                );
-              } else {
-                const valueInArray = relatedParameter.selectedValueIds.find(
-                  (c) => c == parm?.valueId
-                );
-                if (valueInArray) {
-                  return (
-                    <div style={{ marginLeft: 10 }}>
-                      {_renderParameterType(
-                        myParameter,
-                        subSection,
-                        section,
-                        subSection?.parameters,
-                        myParameter.value,
-                        list,
-                        true
-                      )}
-                    </div>
+            {subSection?.type
+              ? parameter.relatedParameters.map((relatedParameter) => {
+                  const parm = subProductsWithType.find(
+                    (param) => param.parameterId === parameter.id
                   );
-                }
-              }
-            })}
+
+                  const myParameter = list.find(
+                    (p) => p.id === relatedParameter.parameterId
+                  );
+                  if (relatedParameter.activateByAllValues && parm?.value) {
+                    return (
+                      <div style={{ marginLeft: 10 }}>
+                        {_renderParameterType(
+                          myParameter,
+                          subSection,
+                          section,
+                          subSection?.parameters,
+                          myParameter.value,
+                          list,
+                          true
+                        )}
+                      </div>
+                    );
+                  } else {
+                    if (parameter?.parameterType === 0) {
+                      const valueInArray =
+                        relatedParameter.selectedValueIds.find(
+                          (c) => c == parm?.valueId
+                        );
+
+                      if (valueInArray) {
+                        return (
+                          <div style={{ marginLeft: 10 }}>
+                            {_renderParameterType(
+                              myParameter,
+                              subSection,
+                              section,
+                              subSection?.parameters,
+                              myParameter.value,
+                              list,
+                              true
+                            )}
+                          </div>
+                        );
+                      }
+                    } else {
+                      const valueInArray =
+                        relatedParameter.selectedValueIds.find(
+                          (c) => c == parm?.value
+                        );
+
+                      if (valueInArray) {
+                        return (
+                          <div style={{ marginLeft: 10 }}>
+                            {_renderParameterType(
+                              myParameter,
+                              subSection,
+                              section,
+                              subSection?.parameters,
+                              myParameter.value,
+                              list,
+                              true
+                            )}
+                          </div>
+                        );
+                      }
+                    }
+                  }
+                })
+              : parameter.relatedParameters.map((relatedParameter) => {
+                  const parm = generalParameters.find(
+                    (param) => param.parameterId === parameter.id
+                  );
+
+                  const myParameter = list.find(
+                    (p) => p.id === relatedParameter.parameterId
+                  );
+                  if (relatedParameter.activateByAllValues && parm?.value) {
+                    return (
+                      <div style={{ marginLeft: 10 }}>
+                        {_renderParameterType(
+                          myParameter,
+                          subSection,
+                          section,
+                          subSection?.parameters,
+                          myParameter.value,
+                          list,
+                          true
+                        )}
+                      </div>
+                    );
+                  } else {
+                    if (parameter?.parameterType === 0) {
+                      const valueInArray =
+                        relatedParameter.selectedValueIds.find(
+                          (c) => c == parm?.valueId
+                        );
+
+                      if (valueInArray) {
+                        return (
+                          <div style={{ marginLeft: 10 }}>
+                            {_renderParameterType(
+                              myParameter,
+                              subSection,
+                              section,
+                              subSection?.parameters,
+                              myParameter.value,
+                              list,
+                              true
+                            )}
+                          </div>
+                        );
+                      }
+                    } else {
+                      const valueInArray =
+                        relatedParameter.selectedValueIds.find(
+                          (c) => c == parm?.value
+                        );
+
+                      if (valueInArray) {
+                        return (
+                          <div style={{ marginLeft: 10 }}>
+                            {_renderParameterType(
+                              myParameter,
+                              subSection,
+                              section,
+                              subSection?.parameters,
+                              myParameter.value,
+                              list,
+                              true
+                            )}
+                          </div>
+                        );
+                      }
+                    }
+                  }
+                })}
           </>
         )}
       </div>
@@ -1732,7 +1831,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setPriceRecovery,
     onOpeneMultiParameterModal,
     onCloseMultiParameterModal,
-    selectedValueConfig,
     multiParameterModal,
     settingParameters,
     priceRecovery,
