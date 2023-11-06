@@ -10,7 +10,7 @@ import {SideBarContainer} from "@/components/containers/side-bar-container";
 const AdminAddMachine = () => {
     const {categoryList, categoryName} = useMachinesCategories();
     const [selectedCategory, setSelectedCategory] = useState<string>();
-    const [activeStep, setActiveStep] = useState<number>(0);
+    const [activeStep, setActiveStep] = useState<number>(-1);
     const {adminAddMachine, initMachineStateCategory} = useAdminAddMachine()
 
     const getCategorySteps = useCallback(() => {

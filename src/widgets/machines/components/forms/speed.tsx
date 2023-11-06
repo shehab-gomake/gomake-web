@@ -37,9 +37,10 @@ const SpeedComponent = ({navigateNext, navigateBack, hasNext, hasBack, canUpdate
                     ))
                 }
             </div>
-            <NavigationButtons canAddMachine={canAddMachine} canUpdate={canUpdate} onClickAddMachine={handleAddMachine}
-                               onClickUpdate={handleUpdate} onClickNext={onClickNext} onClickBack={onClickBack}
-                               hasBack={hasBack} hasNext={hasNext}/>        </div>
+            {/*<NavigationButtons canAddMachine={canAddMachine} canUpdate={canUpdate} onClickAddMachine={handleAddMachine}*/}
+            {/*                   onClickUpdate={handleUpdate} onClickNext={onClickNext} onClickBack={onClickBack}*/}
+            {/*                   hasBack={hasBack} hasNext={hasNext}/>    */}
+        </div>
     );
 }
 
