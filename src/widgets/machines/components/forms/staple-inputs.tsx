@@ -1,5 +1,4 @@
 import {useStyle} from "@/widgets/machines/components/forms/style";
-import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
 import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
 import {InputContainer} from "@/widgets/machines/components/inputs/input-container";
 import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attributes";
@@ -7,28 +6,6 @@ import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attribu
 const StapleInputsComponent = ({navigateBack, navigateNext, hasBack, hasNext, canAddMachine, canUpdate, onClickAdd, onClickUpdate}: IStepFormProps) => {
     const {classes} = useStyle();
     const {machineStapleAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
-    const onClickBack = () => {
-       navigateBack();
-    }
-    const onClickNext = () => {
-        const validStep = isValidStep(machineStapleAttributes());
-        if (validStep) {
-            navigateNext();
-        }
-    }
-
-    const handleUpdate = () => {
-        const validStep = isValidStep(machineStapleAttributes());
-        if (validStep) {
-            onClickUpdate();
-        }
-    };
-    const handleAddMachine = () => {
-        const validStep = isValidStep(machineStapleAttributes());
-        if (validStep) {
-            onClickAdd();
-        }
-    };
 
     return (
         <div style={classes.container}>
@@ -40,9 +17,7 @@ const StapleInputsComponent = ({navigateBack, navigateNext, hasBack, hasNext, ca
                     ))
                 }
             </div>
-            <NavigationButtons canAddMachine={canAddMachine} canUpdate={canUpdate} onClickAddMachine={handleAddMachine}
-                               onClickUpdate={handleUpdate} onClickNext={onClickNext} onClickBack={onClickBack}
-                               hasBack={hasBack} hasNext={hasNext}/>        </div>
+        </div>
     );
 }
 

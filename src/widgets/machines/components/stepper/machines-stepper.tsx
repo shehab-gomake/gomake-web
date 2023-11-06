@@ -10,6 +10,8 @@ import {IMachineStepperProps} from "@/widgets/machines/components/stepper/interf
 import {useStyle} from "@/widgets/machines/components/stepper/style";
 import {useTranslation} from "react-i18next";
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
+
 const StyledStepLabel = styled(StepLabel)((props: StepLabelProps) => {
     const {secondColor, neutralColor} = useGomakeTheme();
     return {
@@ -63,35 +65,43 @@ const MachineStepper = ({
     const {classes} = useStyle();
     const {t} = useTranslation();
     return (
-        <Stepper connector={null} activeStep={activeStep} orientation="vertical">
-            {steps.map((step: IStep, index: number) => {
-                const stepProps: { completed?: boolean } = {};
-                const labelProps: { optional?: ReactNode; } = {};
-                return (
-                    <Step  key={step.label} {...stepProps}>
-                        <StyledStepLabel
-                            onClick={()=> {moveToStep && moveToStep(index)}}
-                            style={activeStep === index ? classes.activeStepLabel : {cursor: 'pointer'}} {...labelProps}>
-                            <div style={classes.stepLabel}>
-                                <span style={classes.stepLabelText}>{t('machineSteps.' + step.label)}</span>
-                                {activeStep === index ? <ExpandMoreIcon color={'inherit'}/> :
-                                    <ArrowIconDirection/>}
-                            </div>
-                        </StyledStepLabel>
-                        <StepContent style={classes.stepContainer}>
-                            <step.component navigateBack={previousStep}
-                                            navigateNext={nextStep}
-                                            canAddMachine={isAddForm ? activeStep + 1 === steps.length : false}
-                                            canUpdate={!isAddForm}
-                                            onClickAdd={actionButtonClicked}
-                                            onClickUpdate={actionButtonClicked}
-                                            hasBack={index > 0}
-                                            hasNext={index + 1 < steps.length}/>
-                        </StepContent>
-                    </Step>
-                )
-            })}
-        </Stepper>
+        <>
+            <Stepper connector={null} activeStep={activeStep} orientation="vertical">
+                {steps.map((step: IStep, index: number) => {
+                    const stepProps: { completed?: boolean } = {};
+                    const labelProps: { optional?: ReactNode; } = {};
+                    return (
+                        <Step key={step.label} {...stepProps}>
+                            <StyledStepLabel
+                                onClick={() => {
+                                    moveToStep && moveToStep(index === activeStep ? -1 : index)
+                                }}
+                                style={activeStep === index ? classes.activeStepLabel : {cursor: 'pointer'}} {...labelProps}>
+                                <div style={classes.stepLabel}>
+                                    <span style={classes.stepLabelText}>{t('machineSteps.' + step.label)}</span>
+                                    {activeStep === index ? <ExpandMoreIcon color={'inherit'}/> :
+                                        <ArrowIconDirection/>}
+                                </div>
+                            </StyledStepLabel>
+                            <StepContent style={classes.stepContainer}>
+                                <step.component navigateBack={previousStep}
+                                                navigateNext={nextStep}
+                                                canAddMachine={isAddForm ? activeStep + 1 === steps.length : false}
+                                                canUpdate={!isAddForm}
+                                                onClickAdd={actionButtonClicked}
+                                                onClickUpdate={actionButtonClicked}
+                                                hasBack={index > 0}
+                                                hasNext={index + 1 < steps.length}/>
+                            </StepContent>
+                        </Step>
+                    )
+                })}
+            </Stepper>
+
+            <NavigationButtons canAddMachine={isAddForm ? activeStep + 1 === steps.length : false} canUpdate={!isAddForm} onClickAddMachine={actionButtonClicked}
+                               onClickUpdate={actionButtonClicked} onClickNext={nextStep} onClickBack={previousStep}
+                               hasBack={activeStep > 0} hasNext={activeStep + 1 < steps.length}/>
+        </>
     );
 }
 
