@@ -187,3 +187,9 @@ input::placeholder {
   justify-content: center;
   align-items: center;
 }
+
+/* new editor*/
+.ql-container.ql-snow{
+  border-radius: 0px 0px 12px 12px;
+
+}
