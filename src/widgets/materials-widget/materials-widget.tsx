@@ -49,16 +49,16 @@ const MaterialsWidget = () => {
         </Stack>
     </SideList>
 
-    useEffect(() => {
-        if (materialType && materialCategories.length > 0) {
-            if (!materialCategory || !materialCategories.some(category => category.categoryKey === materialCategory)) {
-                replace({
-                    pathname: materialType.toString(),
-                    query: {materialCategory: materialCategories[0].categoryKey}
-                })
-            }
-        }
-    }, [materialCategories, materialCategory, materialType])
+    // useEffect(() => {
+    //     if (materialType && materialCategories.length > 0) {
+    //         if (!materialCategory || !materialCategories.some(category => category.categoryKey === materialCategory)) {
+    //             replace({
+    //                 pathname: materialType.toString(),
+    //                 query: {materialCategory: materialCategories[0].categoryKey}
+    //             })
+    //         }
+    //     }
+    // }, [materialCategories, materialCategory, materialType])
 
 
     useEffect(() => {

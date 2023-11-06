@@ -44,10 +44,10 @@ const useMaterials = () => {
     const getMaterialCategories = async (material) => {
         const callBack = (res) => {
             if (res?.success) {
-                if (res.data.length === 0) {
-                    push('/materials');
-                    return;
-                }
+                // if (res.data.length === 0) {
+                //     push('/materials');
+                //     return;
+                // }
                 setMaterialCategories(res?.data);
             } else {
                 push('/materials');
