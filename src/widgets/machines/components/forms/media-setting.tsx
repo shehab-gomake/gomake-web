@@ -1,34 +1,11 @@
 import {useStyle} from "@/widgets/machines/components/forms/style";
 import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
-import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
 import {InputContainer} from "@/widgets/machines/components/inputs/input-container";
 import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attributes";
 
-const MediaSettingComponent = ({navigateNext, navigateBack, hasBack, hasNext, onClickUpdate, canUpdate, canAddMachine, onClickAdd}: IStepFormProps) => {
+const MediaSettingComponent = ({}: IStepFormProps) => {
     const {classes} = useStyle();
-    const {machineMediaAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
-    const onClickNext = () => {
-        const validStep = isValidStep(machineMediaAttributes());
-        if (validStep) {
-            navigateNext();
-        }
-    };
-
-    const onClickBack = () => {
-        navigateBack();
-    };
-    const handleUpdate = () => {
-        const validStep = isValidStep(machineMediaAttributes());
-        if (validStep) {
-            onClickUpdate();
-        }
-    };
-    const handleAddMachine = () => {
-        const validStep = isValidStep(machineMediaAttributes());
-        if (validStep) {
-            onClickAdd();
-        }
-    };
+    const {machineMediaAttributes, changeMachineAttributes, errors} = useMachineAttributes();
     return (
         <div style={classes.container}>
             <div style={classes.inputsContainer}>
@@ -38,9 +15,6 @@ const MediaSettingComponent = ({navigateNext, navigateBack, hasBack, hasNext, on
                     ))
                 }
             </div>
-            {/*<NavigationButtons canAddMachine={canAddMachine} canUpdate={canUpdate} onClickAddMachine={handleAddMachine}*/}
-            {/*                   onClickUpdate={handleUpdate} onClickNext={onClickNext} onClickBack={onClickBack}*/}
-            {/*                   hasBack={hasBack} hasNext={hasNext}/>      */}
         </div>
     );
 };

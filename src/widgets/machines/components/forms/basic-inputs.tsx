@@ -1,11 +1,9 @@
 import {useStyle} from "@/widgets/machines/components/forms/style";
-import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
 import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
 import {InputContainer} from "@/widgets/machines/components/inputs/input-container";
 import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attributes";
 
-const BasicInputsComponent = ({
-                              }: IStepFormProps) => {
+const BasicInputsComponent = ({}: IStepFormProps) => {
     const {classes} = useStyle();
     const {
         machineGeneralAttributes,

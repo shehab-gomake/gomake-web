@@ -16,7 +16,7 @@ import {useTranslation} from "react-i18next";
 const CustomerAddMachine = () => {
     const router = useRouter();
     const {categoryId} = router.query;
-    const [activeStep, setActiveStep] = useState<number>(0);
+    const [activeStep, setActiveStep] = useState<number>(-1);
     const categories = useRecoilValue(machineCategoriesState);
     const [categoryName, setCategoryName] = useState<string>();
     const [machineSteps, setMachineSteps] = useState<IStep[]>([]);
@@ -43,7 +43,7 @@ const CustomerAddMachine = () => {
     };
     const onSelectMachine = (value: string) => {
         setMachine(value);
-        setActiveStep(0);
+        setActiveStep(-1);
     };
     const moveToStepByIndex = (stepIndex: number) => {
         setActiveStep(stepIndex)
