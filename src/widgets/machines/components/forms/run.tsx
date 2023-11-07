@@ -5,7 +5,7 @@ import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attribu
 
 const MachineRunComponent = ({}: IStepFormProps) => {
     const {classes} = useStyle();
-    const {machineFoldingAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
+    const {machineFoldingAttributes, changeMachineAttributes, errors} = useMachineAttributes();
 
     return (
         <div style={classes.container}>

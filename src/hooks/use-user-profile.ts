@@ -33,7 +33,7 @@ const useUserProfile = () => {
     const updateProfile = async () => {
         const callBack = (res) => {
             if (res.success) {
-                i18n.changeLanguage(profileState.systemLanguage);
+                i18n.changeLanguage(profileState.systemLang);
                 alertSuccessUpdate();
             } else {
                 alertFaultUpdate();

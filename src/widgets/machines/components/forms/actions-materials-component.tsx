@@ -1,5 +1,4 @@
 import {useStyle} from "@/widgets/machines/components/forms/style";
-import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
 import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
 import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attributes";
 import {useEffect, useState} from "react";
@@ -12,16 +11,7 @@ import {useRecoilValue} from "recoil";
 import {machineState as STATE} from "@/widgets/machines/state/machine-state";
 
 
-const ActionsMaterialsComponent = ({
-                                       navigateBack,
-                                       navigateNext,
-                                       hasBack,
-                                       hasNext,
-                                       canAddMachine,
-                                       canUpdate,
-                                       onClickAdd,
-                                       onClickUpdate
-                                   }: IStepFormProps) => {
+const ActionsMaterialsComponent = ({}: IStepFormProps) => {
     const {classes} = useStyle();
     const machineState = useRecoilValue(STATE);
     const {changeMachineAttributes} = useMachineAttributes();
@@ -59,7 +49,7 @@ const ActionsMaterialsComponent = ({
                         setMaterials(apiMaterials.filter(material => !machineState?.attributes?.materials.includes(material.id)));
                         setMachineMaterials(apiMaterials.filter(material => machineState?.attributes?.materials.includes(material.id)));
                     } else {
-                    setMaterials(apiMaterials);
+                        setMaterials(apiMaterials);
                     }
                 }
             }
@@ -71,20 +61,9 @@ const ActionsMaterialsComponent = ({
     useEffect(() => {
         changeMachineAttributes('materials', machineMaterials.map(material => material.id));
     }, [machineMaterials])
-    const onClickBack = () => {
-        navigateBack();
-    }
     const onClickNext = () => {
         onClickNext()
     }
-
-    const handleUpdate = () => {
-        onClickUpdate()
-    };
-    const handleAddMachine = () => {
-        onClickAdd();
-    };
-
     const handleCheckAction = (id: string) => {
         const updatedActions = actions.map(action => {
             if (action.id === id) {
@@ -142,7 +121,10 @@ const ActionsMaterialsComponent = ({
     };
 
     const moveCheckedActionsToRelatedActions = () => {
-        setMachineActions(machineActions.concat(actions.filter(a => a.checked)).map(item => ({...item, checked: false})));
+        setMachineActions(machineActions.concat(actions.filter(a => a.checked)).map(item => ({
+            ...item,
+            checked: false
+        })));
         setActions(actions.filter(a => !a.checked));
     }
 
@@ -151,12 +133,18 @@ const ActionsMaterialsComponent = ({
         setMachineActions(machineActions.filter(a => !a.checked).map(item => ({...item, checked: false})));
     }
     const moveCheckedMaterialsToMachineMaterials = () => {
-        setMachineMaterials(machineMaterials.concat(materials.filter(m => m.checked)).map(item => ({...item, checked: false})));
+        setMachineMaterials(machineMaterials.concat(materials.filter(m => m.checked)).map(item => ({
+            ...item,
+            checked: false
+        })));
         setMaterials(materials.filter(m => !m.checked).map(item => ({...item, checked: false})));
     }
 
     const moveCheckedMachineMaterialsToMaterials = () => {
-        setMaterials(materials.concat(machineMaterials.filter(m => m.checked)).map(item => ({...item, checked: false})));
+        setMaterials(materials.concat(machineMaterials.filter(m => m.checked)).map(item => ({
+            ...item,
+            checked: false
+        })));
         setMachineMaterials(machineMaterials.filter(m => !m.checked).map(item => ({...item, checked: false})));
     }
 
@@ -226,9 +214,7 @@ const ActionsMaterialsComponent = ({
                     </Grid>
                 </Grid>
             </div>
-            <NavigationButtons canAddMachine={canAddMachine} canUpdate={canUpdate} onClickAddMachine={handleAddMachine}
-                               onClickUpdate={handleUpdate} onClickNext={onClickNext} onClickBack={onClickBack}
-                               hasBack={hasBack} hasNext={hasNext}/></div>
+        </div>
     );
 }
 

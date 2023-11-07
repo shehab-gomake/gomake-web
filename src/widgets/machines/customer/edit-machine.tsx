@@ -12,7 +12,6 @@ import {SecondaryButton} from "@/components/button/secondary-button";
 import {usePrintHouseAddMachine} from "@/widgets/machines/hooks/use-print-house-add-machine";
 import {SideBarContainer} from "@/components/containers/side-bar-container";
 import {useTranslation} from "react-i18next";
-
 const CustomerEditMachines = () => {
     const router = useRouter();
     const {categoryId} = router.query;
@@ -59,7 +58,8 @@ const CustomerEditMachines = () => {
             {!!selectedMachine?.id &&
                 <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
                                 nextStep={navigateNext} actionButtonClicked={updateMachine} moveToStep={moveToStepByIndex}
-                                isAddForm={false}/>}
+                                isAddForm={false}/>
+            }
         </SideBarContainer>
 
     );

@@ -3,9 +3,9 @@ import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
 import {InputContainer} from "@/widgets/machines/components/inputs/input-container";
 import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attributes";
 
-const BeatsInputsComponent = ({navigateNext, navigateBack, hasNext, hasBack, canUpdate, canAddMachine, onClickAdd, onClickUpdate}: IStepFormProps) => {
+const BeatsInputsComponent = ({}: IStepFormProps) => {
     const {classes} = useStyle();
-    const {machineBeatsAttributes, changeMachineAttributes, errors, isValidStep} = useMachineAttributes();
+    const {machineBeatsAttributes, changeMachineAttributes, errors} = useMachineAttributes();
 
     return (
         <div style={classes.container}>

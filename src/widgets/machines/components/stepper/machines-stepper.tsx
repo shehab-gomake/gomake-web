@@ -11,7 +11,7 @@ import {useStyle} from "@/widgets/machines/components/stepper/style";
 import {useTranslation} from "react-i18next";
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
-
+import Stack from "@mui/material/Stack";
 const StyledStepLabel = styled(StepLabel)((props: StepLabelProps) => {
     const {secondColor, neutralColor} = useGomakeTheme();
     return {
@@ -65,7 +65,7 @@ const MachineStepper = ({
     const {classes} = useStyle();
     const {t} = useTranslation();
     return (
-        <>
+        <Stack>
             <Stepper connector={null} activeStep={activeStep} orientation="vertical">
                 {steps.map((step: IStep, index: number) => {
                     const stepProps: { completed?: boolean } = {};
@@ -97,11 +97,12 @@ const MachineStepper = ({
                     )
                 })}
             </Stepper>
-
-            <NavigationButtons canAddMachine={isAddForm ? activeStep + 1 === steps.length : false} canUpdate={!isAddForm} onClickAddMachine={actionButtonClicked}
+            {activeStep >= 0 && <NavigationButtons canAddMachine={isAddForm ? activeStep + 1 === steps.length : false}
+                               canUpdate={!isAddForm} onClickAddMachine={actionButtonClicked}
                                onClickUpdate={actionButtonClicked} onClickNext={nextStep} onClickBack={previousStep}
-                               hasBack={activeStep > 0} hasNext={activeStep + 1 < steps.length}/>
-        </>
+                               hasBack={activeStep > 0} hasNext={activeStep + 1 < steps.length}/>}
+        </Stack>
+
     );
 }
 

@@ -1,6 +1,7 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import {convertHeightToVH} from "@/utils/adapter";
 
 const useStyle = () => {
   const { theme, primaryColor, secondColor } = useGomakeTheme();
@@ -9,18 +10,17 @@ const useStyle = () => {
       container: {
         display: "flex",
         gap: 26,
-        // padding: "14px 20px",
-        // paddingRight: 0,
         paddingTop: 20,
         minHeight: "100%",
-        maxHeight: "89vh",
+        maxHeight: convertHeightToVH(750),
+        position: 'relative' as 'relative'
       },
       sideList: {
         minWidth: 264,
       },
       main: {
         width: "100%",
-        // overflow: "auto",
+
       },
       header: {
         ...FONT_FAMILY.Lexend(700, 20),
