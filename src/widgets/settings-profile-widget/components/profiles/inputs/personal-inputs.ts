@@ -53,7 +53,7 @@ const personalInputs = (state: IUserProfile)  => {
             type: "select",
             placeholder: "profileSettings.systemLanguage",
             required: true,
-            parameterKey: "systemLanguage",
+            parameterKey: "systemLang",
             options: languages,
             value: state.systemLang,
             isValid: !!state.systemLang,
