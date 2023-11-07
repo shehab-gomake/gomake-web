@@ -6,7 +6,7 @@ import { useGomakeRouter } from "@/hooks";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { selectedTabState } from "@/store";
 import { navStatusState } from "@/store/nav-status";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 interface IProps {
   tab: {
     isLine?: boolean;
@@ -25,7 +25,7 @@ const Tab = ({ tab }: IProps) => {
   const [isListOpen, setIsListOpen] = useState(tab?.key === selectedTabValue);
   const [isHover, setIsHover] = useState(false);
   const navStatus = useRecoilValue(navStatusState);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const { clasess } = useStyle({ isHover, navStatus });
   const handleMouseEnter = useCallback(() => {
     setIsHover(true);
@@ -59,6 +59,11 @@ const Tab = ({ tab }: IProps) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={onClickTab}
+        onMouseDown={(e) => {
+          if (e.button === 1) {
+            window.open(tab.path, "_blank");
+          }
+        }}
       >
         {tab.isList ? (
           <div>
@@ -79,18 +84,24 @@ const Tab = ({ tab }: IProps) => {
         </div>
       </div>
       <Collapse in={isListOpen}>
-        {tab.list?.map((list: any) => {
-          return (
-            <div style={clasess.tabList} key={list.key}>
-              <div
-                onClick={() => changeRoute(list?.path)}
-                style={clasess.tabTitle}
-              >
-                {list.title}
+        {!navStatus.isClosed &&
+          tab.list?.map((list: any) => {
+            return (
+              <div style={clasess.tabList} key={list.key}>
+                <div
+                  onClick={() => changeRoute(list?.path)}
+                  onMouseDown={(e) => {
+                    if (e.button === 1) {
+                      window.open(list?.path, "_blank");
+                    }
+                  }}
+                  style={clasess.tabTitle}
+                >
+                  {t(list.title)}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </Collapse>
     </>
   );

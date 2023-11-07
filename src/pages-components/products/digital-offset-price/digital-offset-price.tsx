@@ -37,6 +37,8 @@ const PriceListPageWidget = ({ widgetType }) => {
     setUrgentOrder,
     setPrintingNotes,
     setGraphicNotes,
+    setPriceRecovery,
+    priceRecovery,
     graphicNotes,
     printingNotes,
     urgentOrder,
@@ -54,6 +56,9 @@ const PriceListPageWidget = ({ widgetType }) => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
+    generalParameters,
+    workFlowSelected,
+    relatedParameters,
   } = useDigitalOffsetPrice({ clasess, widgetType });
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
@@ -65,17 +70,11 @@ const PriceListPageWidget = ({ widgetType }) => {
     });
   };
   return (
-    <div
-      style={{
-        height: "100%",
-        minHeight: "100%",
-        maxHeight: "100%",
-      }}
-    >
+    <div style={{ height: "85vh" }}>
       {template?.sections?.length > 0 && (
         <div style={clasess.mainContainer}>
           <HeaderTitle
-            title={t("products.offsetPrice.admin.title2")}
+            title={template?.name}
             marginTop={24}
             marginBottom={24}
           />
@@ -95,7 +94,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                   );
                 })}
               </div>
-              <div style={{ height: 700, overflow: "scroll", width: "100%" }}>
+              <div style={{ height: 666, overflow: "scroll", width: "100%" }}>
                 <div style={clasess.sectionsContainer}>
                   {[...template?.sections, PricingTab]?.map(
                     (section: any, index: number) => {
@@ -108,6 +107,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                               onChangeCategoryData={onChangeCategoryData}
                               section={section}
                               pricingDefaultValue={pricingDefaultValue}
+                              workFlowSelected={workFlowSelected}
                             />
                           );
                         } else {
@@ -135,6 +135,8 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     section={section}
                                     _renderParameterType={_renderParameterType}
                                     _getParameter={_getParameter}
+                                    relatedParameters={relatedParameters}
+                                    generalParameters={generalParameters}
                                   />
                                 );
                               }
@@ -147,7 +149,6 @@ const PriceListPageWidget = ({ widgetType }) => {
                 </div>
               </div>
             </div>
-
             <RightSideWidget
               clasess={clasess}
               clientDefaultValue={clientDefaultValue}
@@ -168,18 +169,14 @@ const PriceListPageWidget = ({ widgetType }) => {
               setGraphicNotes={setGraphicNotes}
               graphicNotes={graphicNotes}
               printingNotes={printingNotes}
+              generalParameters={generalParameters}
+              workFlowSelected={workFlowSelected}
+              widgetType={widgetType}
+              setPriceRecovery={setPriceRecovery}
+              priceRecovery={priceRecovery}
             />
           </div>
-          <MakeShapeModal
-            openModal={makeShapeOpen}
-            onClose={onCloseMakeShape}
-            modalTitle={t("products.offsetPrice.admin.makeShape")}
-          />
-          <ChooseShapeModal
-            openModal={chooseShapeOpen}
-            onClose={onCloseChooseShape}
-            modalTitle={t("products.offsetPrice.admin.chooseShape")}
-          />
+
           <div
             style={{
               width: "100%",
@@ -187,10 +184,13 @@ const PriceListPageWidget = ({ widgetType }) => {
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "flex-start",
-              position: "absolute",
+              position: "fixed",
+              paddingTop: "8px",
               gap: 20,
               bottom: 0,
               right: 20,
+              boxShadow: "0px 1px 20px rgba(0, 0, 0, 0.08)",
+              background: "#FFF",
             }}
           >
             <div style={{ width: "68%" }}>
@@ -239,6 +239,17 @@ const PriceListPageWidget = ({ widgetType }) => {
           </div>
         </div>
       )}
+
+      <MakeShapeModal
+        openModal={makeShapeOpen}
+        onClose={onCloseMakeShape}
+        modalTitle={t("products.offsetPrice.admin.makeShape")}
+      />
+      <ChooseShapeModal
+        openModal={chooseShapeOpen}
+        onClose={onCloseChooseShape}
+        modalTitle={t("products.offsetPrice.admin.chooseShape")}
+      />
     </div>
   );
 };

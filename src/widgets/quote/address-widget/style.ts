@@ -42,6 +42,7 @@ const useStyle = () => {
       },
       plusIconContainer: {
         cursor: "pointer",
+        width:16,height:20,
       },
       textInputStyle: {
         background: "#FFFFFF",

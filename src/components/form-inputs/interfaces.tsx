@@ -13,7 +13,7 @@ export interface IInput {
   disabled?: boolean;
   isValid: boolean;
   regex?: RegExp;
-  inputs: IInput[];
+  inputs?: IInput[];
   direction?: string;
 }
 export interface IFormInput {
@@ -21,6 +21,7 @@ export interface IFormInput {
   changeState: (key: string, value: any) => void;
   error: boolean;
   readonly?: boolean;
+
 }
 
 export interface IFormArrayInputsProps {

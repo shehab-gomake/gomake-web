@@ -5,10 +5,13 @@ import { useRecoilState } from "recoil";
 import { agentsCategoriesState, clientTypesCategoriesState } from "./customer-states";
 import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
-import { getAndSetCustomerById, getAndSetCustomersPagination, toggleCustomerStatus } from "@/services/api-service/customers/customers-api";
+import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/api-service/customers/customers-api";
 import { DEFAULT_VALUES } from "./enums";
 import { useSnackBar } from "@/hooks";
-
+export interface IStatus {
+  label: string;
+  value: string;
+}
 const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: Dispatch<SetStateAction<number>>) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -55,7 +58,8 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
   }, []);
 
   const [isActive, setStatus] = useState(true);
-  const [valStatus, setValStatus] = useState([]);
+  const [valStatus, setValStatus] = useState<IStatus>({ label: t("customers.active"), value: "true" });  
+  
   const onChangeStatus = useCallback(async (e: any, value: any) => {
     setPageNumber(1);
     setStatus(value?.value);
@@ -102,6 +106,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
   const getAgentCategories = async () => {
     const callBack = (res) => {
       if (res.success) {
+        
         const agentNames = res.data.map(agent => ({
           label: agent.text,
           id: agent.value
@@ -111,8 +116,6 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
     }
     await getAndSetEmployees2(callApi, callBack, { isAgent: true })
   }
-
-  /////////////////////////  data table  //////////////////////////////
   const [customerForEdit, setCustomerForEdit] = useState([]);
   const getCustomerForEdit = async (id) => {
     const callBack = (res) => {
@@ -187,7 +190,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
     setAgentId(null);
     setAgentName(null);
     setStatus(true);
-    setValStatus(null);
+    setValStatus({ label: t("customers.active"), value: "true" });
     setClientTypeId(null);
     setValClientType(null);
     setPageNumber(1);

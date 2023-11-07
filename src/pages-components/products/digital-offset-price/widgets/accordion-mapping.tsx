@@ -47,56 +47,19 @@ const AccordionMappingWidget = ({
       <AccordionDetails>
         <div style={clasess.parametersContainer}>
           {subSection?.parameters?.map((parameter, index) => {
-            if (parameter?.parameterType === 3) {
-              const value = _getParameter(parameter, subSection, section);
-              return (
-                <div key={index}>
-                  <div style={clasess.parameterType3Container}>
-                    <div
-                      style={
-                        value?.value === "true"
-                          ? clasess.parameterType3ActiveLabelStyle
-                          : clasess.parameterLabelStyle
-                      }
-                    >
-                      {parameter?.name}
-                      {parameter?.isRequired ? (
-                        <span style={clasess.spanRequierd}> *</span>
-                      ) : null}
-                    </div>
-                    <div style={{ marginTop: -9 }}>
-                      {_renderParameterType(
-                        parameter,
-                        subSection,
-                        section,
-                        subSection?.parameters
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            } else {
-              return (
-                <div key={index}>
-                  <div style={clasess.parameterContainer}>
-                    <div style={clasess.parameterLabelStyle}>
-                      {parameter?.name}
-                      {parameter?.isRequired ? (
-                        <span style={clasess.spanRequierd}> *</span>
-                      ) : null}
-                    </div>
-                    <div style={clasess.renderParameterTypeContainer}>
-                      {_renderParameterType(
-                        parameter,
-                        subSection,
-                        section,
-                        subSection?.parameters
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            }
+            const value = _getParameter(parameter, subSection, section);
+            return (
+              <div key={index}>
+                {_renderParameterType(
+                  parameter,
+                  subSection,
+                  section,
+                  subSection?.parameters,
+                  value,
+                  subSection?.parameters
+                )}
+              </div>
+            );
           })}
         </div>
       </AccordionDetails>

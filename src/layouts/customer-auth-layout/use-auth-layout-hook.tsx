@@ -1,4 +1,4 @@
-import { useGomakeAuth, useGomakeRouter } from "@/hooks";
+import { useGomakeAuth, useGomakeAxios, useGomakeRouter } from "@/hooks";
 import {
   CustomersIcon,
   HomeIcon,
@@ -10,7 +10,9 @@ import {
   ShopingIcon,
 } from "@/icons";
 import { useEffect, useMemo, useState } from "react";
-import {CubeIcon} from "@/components/icons/cube-icon";
+import { CubeIcon } from "@/components/icons/cube-icon";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { ICompanyProfile, companyProfileState } from "@/store/company-profile";
 
 const useAuthLayoutHook = () => {
   const { isAuth } = useGomakeAuth();
@@ -53,18 +55,18 @@ const useAuthLayoutHook = () => {
         isLine: false,
         key: "sales",
         title: "tabs.sales",
-        path: "/product-floor",
+        path: "/",
         isList: true,
         list: [
           {
-            key: "add",
-            title: "tabs.addSales",
-            path: "/sales/add-machine",
+            key: "quotes",
+            title: "tabs.quotes",
+            path: "/quotes",
           },
           {
-            key: "list",
-            title: "tabs.listSales",
-            path: "/sales/list",
+            key: "orders",
+            title: "tabs.orders",
+            path: "/orders",
           },
         ],
         icon: () => {
@@ -72,22 +74,22 @@ const useAuthLayoutHook = () => {
         },
         isProduction: true,
       },
-      {
-        isLine: false,
-        key: "properties",
-        title: "tabs.properties",
-        path: "/properties",
-        isList: false,
-        icon: () => {
-          return <ProductsIcon />;
-        },
-        isProduction: true,
-      },
+      // {
+      //   isLine: false,
+      //   key: "properties",
+      //   title: "tabs.properties",
+      //   path: "/properties",
+      //   isList: false,
+      //   icon: () => {
+      //     return <ProductsIcon />;
+      //   },
+      //   isProduction: true,
+      // },
       {
         isLine: false,
         key: "shoping",
         title: "tabs.shoping",
-        path: "/product-floor",
+        path: "/",
         isList: true,
         icon: () => {
           return <ShopingIcon />;
@@ -98,10 +100,10 @@ const useAuthLayoutHook = () => {
         isLine: false,
         key: "customers",
         title: "tabs.customers",
-        path: "/customers",
+        path: "/",
         isList: true,
         list: [
-          { 
+          {
             key: "customers",
             title: "tabs.customers",
             path: "/customers",
@@ -121,7 +123,7 @@ const useAuthLayoutHook = () => {
         isLine: false,
         key: "reports",
         title: "tabs.reports",
-        path: "/product-floor",
+        path: "/",
         isList: true,
         icon: () => {
           return <ReportsIcon />;
@@ -144,7 +146,7 @@ const useAuthLayoutHook = () => {
         path: "/materials",
         isList: false,
         icon: () => {
-          return <CubeIcon width={24} height={24} color={'white'} />;
+          return <CubeIcon width={24} height={24} color={"white"} />;
         },
         isProduction: true,
       },
@@ -189,12 +191,24 @@ const useAuthLayoutHook = () => {
       setCanAccess(isAuth);
     }
   }, [isAuth]);
+  const { callApi } = useGomakeAxios();
+  const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
+  // const getUserProfile = async () => {
+  //   const res = await callApi("GET", "/v1/get-print-house-profile");
+  //   if (res.success) {
+  //     setProfile(res?.data?.data?.data);
+  //   }
+  // };
+  // useEffect(() => {
+  //   getUserProfile();
+  // }, []);
 
   return {
     tabs1,
     tabs2,
     tabs3,
     canAccess,
+    profile,
     navigate,
   };
 };

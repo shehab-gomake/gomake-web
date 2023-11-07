@@ -8,9 +8,8 @@ import {useTranslation} from "react-i18next";
 import Stack from "@mui/material/Stack";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
-
     return {
-        direction: 'ltr',
+        direction: "ltr",
         boxSizing: "border-box",
         borderRadius: "4px",
         height: props?.style?.height || 40,
@@ -22,9 +21,9 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
         display: "flex",
         alignItems: "center",
         color: props?.error ? "red" : "#B9B9D9",
-        border: props?.selectedOption
-            ? "1px solid #43c3e8"
-            : "1px solid rgba(237, 2, 140, 1)",
+        borderBottom: props?.selectedOption
+            ? "2px solid rgb(67,195,232)"
+            : "2px solid rgb(237, 2, 140)",
         boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
         "& .MuiOutlinedInput-root": {
             paddingRight: "9px!important",
@@ -33,7 +32,7 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
             fontFamily: "Lexend",
             fontStyle: "normal",
             fontWeight: 300,
-            width: '100%',
+            width: "100%",
             ...props?.style,
             "& fieldset": {
                 border: "transparent",
@@ -42,7 +41,7 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
             },
             "& .MuiAutocomplete-input": {
                 padding: 0,
-                direction: props?.direction
+                direction: props?.direction,
             },
         },
         "& .MuiAutocomplete-endAdornment": {
@@ -53,23 +52,24 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
 });
 
 const GoMakeAutoComplate = ({
-    value,
-    onChange,
-    style,
-    error,
-    options,
-    autoHighlight,
-    getOptionLabel,
-    renderOption,
-    disableClearable,
-    placeholder,
-    defaultValue,
-    disabled,
-    multiple = false,
-    arrowColor,
-    onChangeTextField,
-    }: {
-    value?: string | string[];
+                                value,
+                                onChange,
+                                style,
+                                error,
+                                options,
+                                autoHighlight,
+                                getOptionLabel,
+                                renderOption,
+                                disableClearable,
+                                placeholder,
+                                defaultValue,
+                                disabled,
+                                multiple = false,
+                                arrowColor,
+                                onChangeTextField,
+                                PaperComponent
+                            }: {
+    value?: any;
     onChange?: any;
     style?: any;
     error?: any;
@@ -84,10 +84,18 @@ const GoMakeAutoComplate = ({
     disabled?: any;
     arrowColor?: any;
     onChangeTextField?: any;
+    PaperComponent?: any;
 }) => {
     const [selectedOption, setSelectedOption] = useState<any>();
     const {t} = useTranslation();
-    const dir: 'rtl' | 'ltr' = t('direction');
+    const dir: "rtl" | "ltr" = t("direction");
+    React.useEffect(() => {
+        if (value?.name) {
+            setSelectedOption(value);
+        } else {
+            setSelectedOption(null);
+        }
+    }, [value]);
     return (
         <StyledAutocomplete
             {...(value && {value})}
@@ -106,19 +114,25 @@ const GoMakeAutoComplate = ({
                     {...params}
                     placeholder={!multiple && (defaultValue?.label || placeholder)}
                     onChange={onChangeTextField || params.onChange}
-                    InputProps={dir === 'rtl' ? {
-                        ...params.InputProps,
-                        startAdornment: (
-                            <Stack display={'flex'}
-                                   gap={'1px'}
-                                   flexDirection={'row-reverse'}>
-                              {params.InputProps.endAdornment.props.children}
-                            </Stack>
-                        ),
-                        endAdornment: null
-                    } : {
-                        ...params.InputProps
-                    }}
+                    InputProps={
+                        dir === "rtl"
+                            ? {
+                                ...params.InputProps,
+                                startAdornment: (
+                                    <Stack
+                                        display={"flex"}
+                                        gap={"1px"}
+                                        flexDirection={"row-reverse"}
+                                    >
+                                        {params.InputProps.endAdornment.props.children}
+                                    </Stack>
+                                ),
+                                endAdornment: null,
+                            }
+                            : {
+                                ...params.InputProps,
+                            }
+                    }
                 />
             )}
             defaultValue={defaultValue}
@@ -135,6 +149,8 @@ const GoMakeAutoComplate = ({
             getOptionSelected={(option: any, value: any) => {
                 return option?.id === value?.id;
             }}
+            PaperComponent={PaperComponent}
+
         />
     );
 };

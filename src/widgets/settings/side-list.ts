@@ -12,6 +12,7 @@ import { SettingsUsersWidget } from "@/widgets/settings-users/settings-users-wid
 import { EditProductWidget } from "../products-settings-widget/widget/edit-product";
 import {SettingsProfileWidget} from "@/widgets/settings-profile-widget/settings-profile-widget";
 import { SettingsMailingWidget } from "../settings-mailing/settings-mailing-widget";
+import { SettingsDocumentingWidget } from "../settings-documenting/settings-documenting-widget";
 
 export const list: IListItem[] = [
   {
@@ -37,7 +38,7 @@ export const list: IListItem[] = [
     path: "mailing",
   },
   {
-    component: EmptyComponent,
+    component: SettingsDocumentingWidget,
     text: "settings.documenting",
     value: "5",
     icon: DocumentIcon,

@@ -1,0 +1,21 @@
+export enum ERPDocumentsTypesEnum {
+    Order = 1,
+    Invoice,
+    DeliveryNotes,
+    Purchase,
+    InvoiceRefund,
+    Receipt,
+    JournalEntry,
+    PurchaseInvoice,
+    PurchaseInvoiceRefund,
+    ForeignJournalEntry,
+    DeliveryNoteRefund,
+    Quote,
+    ExternalInvoice,
+    All,
+    ExternalPayment,
+    BoardMission,
+    AgingReport,
+    LedgerReport,
+    SalesReport
+}

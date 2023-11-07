@@ -10,19 +10,29 @@ import { useRecoilValue } from "recoil";
 import { userProfileState } from "@/store/user-profile";
 
 const HeaderWidget = () => {
-    const {clasess} = useStyle();
-    const { t } = useTranslation();
-    const userProfile = useRecoilValue(userProfileState);
-    const {user, open, anchorEl, handleClick, handleClose, navigate} =
-        useHeader();
-    const userAvatar = () => {
-        return !!userProfile.imagePath ? <Avatar style={clasess.avatarProps} src={userProfile.imagePath}/> :
-            <Avatar  style={{backgroundColor: userProfile.avatarBackGroundColor, ...clasess.avatarProps}}>{userProfile.avatarInitials?.toUpperCase()}</Avatar>
-    }
-    return (
-        <div style={clasess.container}>
-            <div style={{width: "100%"}}/>
-            {/* <GoMakeTextInputIcon
+  const { clasess } = useStyle();
+  const { t } = useTranslation();
+  const userProfile = useRecoilValue(userProfileState);
+  const { user, open, anchorEl, handleClick, handleClose, navigate } =
+    useHeader();
+  const userAvatar = () => {
+    return !!userProfile.imagePath ? (
+      <Avatar style={clasess.avatarProps} src={userProfile.imagePath} />
+    ) : (
+      <Avatar
+        style={{
+          backgroundColor: userProfile.avatarBackGroundColor,
+          ...clasess.avatarProps,
+        }}
+      >
+        {userProfile.avatarInitials?.toUpperCase()}
+      </Avatar>
+    );
+  };
+  return (
+    <div style={clasess.container}>
+      <div style={{ width: "100%" }} />
+      {/* <GoMakeTextInputIcon
         style={clasess.searchInputContainer}
         placeholder={t("header.search")}
         startAdornment={
@@ -50,7 +60,7 @@ const HeaderWidget = () => {
       </div>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
         <div style={clasess.mainMenuContainer}>
-          <div style={clasess.accountTextStyle}>ACCOUNT</div>
+          <div style={clasess.accountTextStyle}>{t("login.account")}</div>
           <div style={clasess.imgNameContainer}>
             {userAvatar()}
             <div>
@@ -63,9 +73,16 @@ const HeaderWidget = () => {
           <MenuItem
             style={{ width: "100%", minWidth: 200 }}
             onClick={() => navigate("/settings/profile")}
+            onMouseDown={(e) => {
+              if (e.button === 1) {
+                window.open("/settings/profile", "_blank");
+              }
+            }}
           >
             <div style={clasess.manageAccountStyle}>
-              <div style={clasess.manageAccountTextStyle}>Manage Account</div>
+              <div style={clasess.manageAccountTextStyle}>
+                {t("login.manageAccount")}
+              </div>
               <EditIcon />
             </div>
           </MenuItem>
@@ -77,7 +94,7 @@ const HeaderWidget = () => {
               navigate("/login");
             }}
           >
-            <div style={clasess.logoutContainer}>Log out</div>
+            <div style={clasess.logoutContainer}>{t("login.logOut")}</div>
           </MenuItem>
         </div>
       </GoMakeMenu>

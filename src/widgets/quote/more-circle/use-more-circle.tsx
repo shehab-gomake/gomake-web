@@ -46,7 +46,7 @@ const useMoreCircle = ({ quoteItem }) => {
     {
       name: "Duplicate with different QTY",
       icon: <DuplicateWithDifferentMenuIcon />,
-      onclick: () => quoteStateValue.onOpenDuplicateWithDifferentQTY(),
+      onclick: () => quoteStateValue.onClickDuplicateWithDifferentQTY(quoteItem),
     },
     {
       name: "Negotiate request",

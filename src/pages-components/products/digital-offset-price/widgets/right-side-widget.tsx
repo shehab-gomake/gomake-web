@@ -1,14 +1,11 @@
-import {
-  GoMakeAutoComplate,
-  GomakePrimaryButton,
-  GomakeTextInput,
-} from "@/components";
+import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { isLoadgingState } from "@/store";
 import { Checkbox, CircularProgress, Slider } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
+import { EWidgetProductType } from "../enums";
 
 const RightSideWidget = ({
   clasess,
@@ -17,28 +14,35 @@ const RightSideWidget = ({
   checkWhatRenderArray,
   clientTypeDefaultValue,
   clientTypesValue,
+  defaultPrice,
+  setDefaultPrice,
   template,
   tabs,
   activeTab,
-  onOpeneMakeShape,
-  pricingDefaultValue,
   setUrgentOrder,
   urgentOrder,
   setPrintingNotes,
   setGraphicNotes,
   printingNotes,
   graphicNotes,
+  generalParameters,
+  workFlowSelected,
+  widgetType,
+  setPriceRecovery,
+  priceRecovery,
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
-  const [defaultPrice, setDefaultPrice] = useState<any>();
 
-  useEffect(() => {
-    if (pricingDefaultValue?.workFlows?.length > 0) {
-      setDefaultPrice(pricingDefaultValue?.workFlows[0]?.totalPrice.toFixed(2));
-    } else {
-      setDefaultPrice("----");
-    }
-  }, [pricingDefaultValue]);
+  const quantity = generalParameters?.find(
+    (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+  );
+  const [changePrice, setChangePrice] = useState<number>(0);
+  const handleChange = (event: Event, newValue: number | number[]) => {
+    setPriceRecovery(false);
+    setDefaultPrice(newValue as number);
+    setChangePrice(newValue as number);
+  };
+
   const { t } = useTranslation();
   return (
     <div style={clasess.rightSideMainContainer}>
@@ -81,19 +85,20 @@ const RightSideWidget = ({
           <div style={clasess.flyerText}>
             {t("products.offsetPrice.admin.flyerPoster")}
           </div>
-          <div style={clasess.flyerText}>2.00 USD</div>
+          <div style={clasess.flyerText}>
+            {isNaN(defaultPrice / quantity?.value)
+              ? 0
+              : (defaultPrice / quantity?.value).toFixed(2)}{" "}
+            USD
+          </div>
         </div>
         <div style={clasess.imgProductContainer}>
-          <img
-            src={template.img}
-            alt="gomake"
-            style={{ width: "100%", height: 170, borderRadius: 16 }}
-          />
+          <img src={template.img} alt="gomake" style={{ width: "100%" }} />
         </div>
         <div style={clasess.urgentEstimateContainer}>
           <div style={clasess.secondText}>
             {t("products.offsetPrice.admin.takeEstimate", {
-              data: "5 days",
+              data: `${template?.deliveryTime} days`,
             })}
           </div>
           <div style={clasess.urgentContainer}>
@@ -112,12 +117,22 @@ const RightSideWidget = ({
         </div>
         <div style={clasess.orderContainer}>
           {t("products.offsetPrice.admin.orderToral", {
-            pieceNum: "15",
-            price: "2.00",
+            pieceNum: quantity?.value,
+            price: isNaN(defaultPrice / quantity?.value)
+              ? 0
+              : (defaultPrice / quantity?.value).toFixed(2),
           })}
         </div>
         <div style={clasess.progress}>
-          <Slider defaultValue={50} aria-label="Default" />
+          <Slider
+            defaultValue={defaultPrice}
+            value={defaultPrice}
+            aria-label="Default"
+            style={{ width: "93%", marginLeft: 10 }}
+            min={10}
+            max={100}
+            onChange={handleChange}
+          />
         </div>
         <div style={clasess.labelBrogressContainer}>
           <div style={clasess.labelStyle}>10.00</div>
@@ -133,22 +148,46 @@ const RightSideWidget = ({
             ) : (
               <GomakeTextInput
                 value={defaultPrice}
-                onChange={(e: any) => setDefaultPrice(e.target.value)}
+                onChange={(e: any) => {
+                  setPriceRecovery(false);
+                  setDefaultPrice(e.target.value);
+                  setChangePrice(e.target.value);
+                }}
                 style={clasess.inputPriceStyle}
               />
             )}{" "}
             USD
           </div>
         </div>
-        <div style={clasess.priceRecoveryContainer}>
-          <Checkbox
-            icon={<CheckboxIcon />}
-            checkedIcon={<CheckboxCheckedIcon />}
-          />
-          <div style={clasess.secondText}>
-            {t("products.offsetPrice.admin.priceRecovery")}
+        {widgetType === EWidgetProductType.EDIT ? (
+          <div style={clasess.priceRecoveryContainer}>
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+              onChange={() => {
+                setPriceRecovery(!priceRecovery);
+                if (priceRecovery) {
+                  setDefaultPrice(changePrice);
+                } else {
+                  if (
+                    widgetType === EWidgetProductType.EDIT ||
+                    widgetType === EWidgetProductType.DUPLICATE
+                  ) {
+                    setDefaultPrice(
+                      template?.quoteItem?.unitPrice * quantity?.value
+                    );
+                  } else {
+                    setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2));
+                  }
+                }
+              }}
+              checked={priceRecovery}
+            />
+            <div style={clasess.secondText}>
+              {t("products.offsetPrice.admin.priceRecovery")}
+            </div>
           </div>
-        </div>
+        ) : null}
 
         <div style={clasess.switchAdditionsContainer}>
           <div style={clasess.tabsTypesContainer}>
