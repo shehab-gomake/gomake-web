@@ -30,7 +30,6 @@ const SubChildrenMapping = ({
   const selectColorValue = useRecoilValue<any>(selectColorValueState);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [valueState, setValueState] = useState<number>(0);
-  console.log("generalParameters", generalParameters);
   useEffect(() => {
     setChecked(forceChange);
     onChangeCheckBox({
@@ -129,7 +128,6 @@ const SubChildrenMapping = ({
       }
 
       setChecked(e.target.checked);
-      console.log("temp", temp);
       return temp;
     });
   };

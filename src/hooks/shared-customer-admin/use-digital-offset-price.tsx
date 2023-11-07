@@ -41,7 +41,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [generalParameters, setGeneralParameters] = useState<any>([]);
-  console.log("generalParameters", generalParameters);
   const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [defaultPrice, setDefaultPrice] = useState<any>("-----");
@@ -53,8 +52,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [errorMsg, setErrorMsg] = useState("");
   const [subProducts, setSubProducts] = useState<any>([]);
   const [subProductsWithType, setSubProductsWithType] = useState<any>([]);
-  console.log("subProductsWithType", subProductsWithType);
-
   const [itemParmetersValues, setItemParmetersValues] = useState<any>([]);
   const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
   const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
