@@ -1634,7 +1634,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const allParameters = subProducts.flatMap((item) => item.parameters);
     for (const item of inputArray) {
       const index = [...generalParameters, ...allParameters].findIndex(
-        (par) => par.parameterId === item.id && par?.values?.length
+        (par) => par.parameterId === item.id && par?.values[0]?.length
       );
       if (index == -1) {
         isValid = false;
