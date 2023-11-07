@@ -41,6 +41,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [generalParameters, setGeneralParameters] = useState<any>([]);
+  console.log("generalParameters", generalParameters);
   const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [defaultPrice, setDefaultPrice] = useState<any>("-----");
@@ -52,6 +53,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [errorMsg, setErrorMsg] = useState("");
   const [subProducts, setSubProducts] = useState<any>([]);
   const [subProductsWithType, setSubProductsWithType] = useState<any>([]);
+  console.log("subProductsWithType", subProductsWithType);
+
   const [itemParmetersValues, setItemParmetersValues] = useState<any>([]);
   const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
   const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
@@ -127,7 +130,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       actionId: parameter?.actionId,
                       parameterType: parameter?.parameterType,
                       ...(defaultValue?.length > 0 && {
-                        value: defaultValue,
+                        values: [defaultValue],
                       }),
                       sectionId: section?.id,
                       subSectionId: subSection?.id,
@@ -155,8 +158,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       ...(data?.id > 0 && { material: data?.id }),
                       parameterType: parameter?.parameterType,
                       ...(value && {
-                        valueId: value?.id,
-                        value: value?.updateName,
+                        valueIds: [value?.id],
+                        values: [value?.updateName],
                       }),
                       sectionId: section?.id,
                       subSectionId: subSection?.id,
@@ -180,8 +183,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       actionId: parameter?.actionId,
                       parameterType: parameter?.parameterType,
                       ...(defaultObject && {
-                        valueId: defaultObject?.id,
-                        value: defaultObject?.updateName,
+                        valueIds: [defaultObject?.id],
+                        values: [defaultObject?.updateName],
                       }),
 
                       sectionId: section?.id,
@@ -193,7 +196,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         parameterName: item?.name,
                         actionId: item?.actionId,
                         parameterType: item?.parameterType,
-                        value: item?.defaultValue,
+                        values: [item?.defaultValue],
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                       });
@@ -237,14 +240,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   ) {
                     if (parameter?.defaultValue?.length > 0) {
                       const defaultValue = parameter?.defaultValue;
-
                       temp.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
                         actionId: parameter?.actionId,
                         parameterType: parameter?.parameterType,
                         ...(defaultValue?.length > 0 && {
-                          value: defaultValue,
+                          values: [defaultValue],
                         }),
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
@@ -284,8 +286,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             ...(data?.id > 0 && { material: data?.id }),
                             parameterType: parameter?.parameterType,
                             ...(value && {
-                              valueId: value?.materialValueIds[0]?.valueId,
-                              value: selectedObj?.value,
+                              valueIds: [value?.materialValueIds[0]?.valueId],
+                              values: [selectedObj?.value],
                             }),
                             sectionId: section?.id,
                             subSectionId: subSection?.id,
@@ -310,7 +312,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           );
                           selectedObj = mergedDataArray?.find(
                             (item: any) =>
-                              item?.valueId ===
+                              item?.valueIds[0] ===
                               value?.materialValueIds[0]?.valueId
                           );
                           temp.push({
@@ -320,8 +322,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             ...(data?.id > 0 && { material: data?.id }),
                             parameterType: parameter?.parameterType,
                             ...(value && {
-                              valueId: value?.materialValueIds[0]?.valueId,
-                              value: selectedObj?.value,
+                              valueIds: [value?.materialValueIds[0]?.valueId],
+                              values: [selectedObj?.value],
                             }),
                             sectionId: section?.id,
                             subSectionId: subSection?.id,
@@ -352,8 +354,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         ...(data?.id > 0 && { material: data?.id }),
                         parameterType: parameter?.parameterType,
                         ...(value && {
-                          valueId: value?.id,
-                          value: value?.updateName,
+                          valueIds: [value?.id],
+                          values: [value?.updateName],
                         }),
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
@@ -377,8 +379,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         actionId: parameter?.actionId,
                         parameterType: parameter?.parameterType,
                         ...(defaultObject && {
-                          valueId: defaultObject?.id,
-                          value: defaultObject?.updateName,
+                          valueIds: [defaultObject?.id],
+                          values: [defaultObject?.updateName],
                         }),
 
                         sectionId: section?.id,
@@ -390,7 +392,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           parameterName: item?.name,
                           actionId: item?.actionId,
                           parameterType: item?.parameterType,
-                          value: item?.defaultValue,
+                          values: [item?.defaultValue],
                           sectionId: section?.id,
                           subSectionId: subSection?.id,
                         });
@@ -522,7 +524,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             style={clasess.textInputStyle}
             defaultValue={parameter.defaultValue}
             placeholder={parameter.name}
-            value={index !== -1 ? temp[index].value : ""}
+            value={index !== -1 ? temp[index].values : ""}
             onChange={(e: any, item: any) =>
               onChangeSubProductsForPrice(
                 parameter?.id,
@@ -531,7 +533,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.parameterType,
                 parameter?.name,
                 parameter?.actionId,
-                { value: e.target.value },
+                { values: e.target.value },
                 subSection?.type,
                 index
               )
@@ -553,12 +555,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.parameterType,
                 parameter?.name,
                 parameter?.actionId,
-                { value: e.target.value },
+                { values: e.target.value },
                 subSection?.type,
                 index
               )
             }
-            value={index !== -1 ? temp[index].value : ""}
+            value={index !== -1 ? temp[index].values : ""}
             type="text"
           />
         );
@@ -576,7 +578,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             style={clasess.dropDownListStyle}
             getOptionLabel={(option: any) => option.updateName}
             defaultValue={
-              index !== -1 ? { updateName: temp[index].value } : defaultObject
+              index !== -1 ? { updateName: temp[index].values } : defaultObject
             }
             onChange={(e: any, value: any) => {
               onChangeSubProductsForPrice(
@@ -586,7 +588,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.parameterType,
                 parameter?.name,
                 parameter?.actionId,
-                { valueId: value?.id, value: value?.updateName },
+                { valueIds: value?.id, values: value?.updateName },
                 subSection?.type,
                 index
               );
@@ -606,7 +608,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             style={clasess.dropDownListStyle}
             getOptionLabel={(option: any) => option.updateName}
             defaultValue={
-              index !== -1 ? { updateName: temp[index].value } : defaultObject
+              index !== -1 ? { updateName: temp[index].values } : defaultObject
             }
             onChange={(e: any, value: any) => {
               onChangeSubProductsForPrice(
@@ -616,7 +618,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.parameterType,
                 parameter?.name,
                 parameter?.actionId,
-                { valueId: value?.id, value: value?.updateName },
+                { valueIds: value?.id, values: value?.updateName },
                 subSection?.type,
                 index
               );
@@ -635,7 +637,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     if (index !== -1) {
                       temp[index] = {
                         ...temp[index],
-                        value: value?.values[parameterId],
+                        values: [value?.values[parameterId]],
                       };
                     } else {
                       temp.push({
@@ -643,7 +645,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         ParameterType: parameter?.parameterType,
-                        value: value?.values[parameterId],
+                        values: [value?.values[parameterId]],
                       });
                     }
                   }
@@ -659,7 +661,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           <SecondSwitch
             defaultChecked={parameter?.defaultValue === "true"}
             checked={
-              index !== -1 ? (temp[index].value === "true" ? true : false) : ""
+              index !== -1
+                ? temp[index].values[0] === "true"
+                  ? true
+                  : false
+                : ""
             }
             onChange={(e: any, value: any) =>
               onChangeSubProductsForPrice(
@@ -669,7 +675,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.parameterType,
                 parameter?.name,
                 parameter?.actionId,
-                { value: value?.toString() },
+                { values: value?.toString() },
                 subSection?.type,
                 index
               )
@@ -786,7 +792,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   style={clasess.dropDownListStyle}
                   defaultValue={
                     index !== -1
-                      ? { value: temp[index].value }
+                      ? { value: temp[index].values }
                       : defailtObjectValue
                   }
                   getOptionLabel={(option: any) => option.value}
@@ -800,8 +806,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         parameter?.name,
                         parameter?.actionId,
                         {
-                          valueId: value?.valueId,
-                          value: value?.value,
+                          valueIds: value?.valueId,
+                          values: value?.value,
                           ...(data?.id > 0 && { material: data?.id }),
                         },
                         subSection?.type,
@@ -822,8 +828,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         parameter?.name,
                         parameter?.actionId,
                         {
-                          valueId: value?.valueId,
-                          value: value?.value,
+                          valueIds: value?.valueId,
+                          values: value?.value,
                           ...(data?.id > 0 && { material: data?.id }),
                         },
                         subSection?.type,
@@ -845,8 +851,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         parameter?.name,
                         parameter?.actionId,
                         {
-                          valueId: value?.valueId,
-                          value: value?.value,
+                          valueIds: value?.valueId,
+                          values: value?.value,
                           ...(data?.id > 0 && { material: data?.id }),
                         },
                         subSection?.type,
@@ -881,7 +887,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             style={clasess.textInputStyle}
             defaultValue={parameter.defaultValue}
             placeholder={parameter.name}
-            value={index !== -1 ? temp[index].value : ""}
+            value={index !== -1 ? temp[index].values : ""}
             onChange={(e: any, item: any) =>
               onChangeForPrice(
                 parameter?.id,
@@ -890,7 +896,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.parameterType,
                 parameter?.name,
                 parameter?.actionId,
-                { value: e.target.value },
+                { values: e.target.value },
                 index
               )
             }
@@ -911,11 +917,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.parameterType,
                 parameter?.name,
                 parameter?.actionId,
-                { value: e.target.value },
+                { values: e.target.value },
                 index
               )
             }
-            value={index !== -1 ? temp[index].value : ""}
+            value={index !== -1 ? temp[index].values : ""}
             type="text"
           />
         );
@@ -935,7 +941,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               style={clasess.dropDownListStyle}
               getOptionLabel={(option: any) => option.updateName}
               defaultValue={
-                index !== -1 ? { updateName: temp[index].value } : defaultObject
+                index !== -1
+                  ? { updateName: temp[index].values }
+                  : defaultObject
               }
               onChange={(e: any, value: any) => {
                 // setSelectedValueConfig(value);
@@ -947,8 +955,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   parameter?.name,
                   value?.activateAction === true ? parameter?.actionId : null,
                   {
-                    valueId: value?.id,
-                    value: value?.updateName,
+                    valueIds: value?.id,
+                    values: value?.updateName,
                     actionId:
                       value?.activateAction === true
                         ? parameter?.actionId
@@ -994,7 +1002,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             style={clasess.dropDownListStyle}
             getOptionLabel={(option: any) => option.updateName}
             defaultValue={
-              index !== -1 ? { updateName: temp[index].value } : defaultObject
+              index !== -1 ? { updateName: temp[index].values } : defaultObject
             }
             onChange={(e: any, value: any) => {
               onChangeForPrice(
@@ -1004,7 +1012,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.parameterType,
                 parameter?.name,
                 parameter?.actionId,
-                { valueId: value?.id, value: value?.updateName },
+                { valueIds: value?.id, values: value?.updateName },
                 index
               );
               setGeneralParameters((prev) => {
@@ -1022,7 +1030,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     if (index !== -1) {
                       temp[index] = {
                         ...temp[index],
-                        value: value?.values[parameterId],
+                        values: [value?.values[parameterId]],
                       };
                     } else {
                       temp.push({
@@ -1030,7 +1038,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         ParameterType: parameter?.parameterType,
-                        value: value?.values[parameterId],
+                        values: [value?.values[parameterId]],
                       });
                     }
                   }
@@ -1046,7 +1054,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           <SecondSwitch
             defaultChecked={parameter?.defaultValue === "true"}
             checked={
-              index !== -1 ? (temp[index].value === "true" ? true : false) : ""
+              index !== -1
+                ? temp[index].values[0] === "true"
+                  ? true
+                  : false
+                : ""
             }
             onChange={(e: any, value: any) =>
               onChangeForPrice(
@@ -1056,7 +1068,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.parameterType,
                 parameter?.name,
                 parameter?.actionId,
-                { value: value?.toString() },
+                { values: value?.toString() },
                 index
               )
             }
@@ -1171,7 +1183,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     style={clasess.dropDownListStyle}
                     defaultValue={
                       index !== -1
-                        ? { value: temp[index].value }
+                        ? { value: temp[index].values }
                         : defailtObjectValue
                     }
                     getOptionLabel={(option: any) => option.value}
@@ -1185,8 +1197,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           parameter?.name,
                           parameter?.actionId,
                           {
-                            valueId: value?.valueId,
-                            value: value?.value,
+                            valueIds: value?.valueId,
+                            values: value?.value,
                             ...(data?.id > 0 && { material: data?.id }),
                           },
                           index
@@ -1206,8 +1218,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           parameter?.name,
                           parameter?.actionId,
                           {
-                            valueId: value?.valueId,
-                            value: value?.value,
+                            valueIds: value?.valueId,
+                            values: value?.value,
                             ...(data?.id > 0 && { material: data?.id }),
                           },
                           index
@@ -1228,8 +1240,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           parameter?.name,
                           parameter?.actionId,
                           {
-                            valueId: value?.valueId,
-                            value: value?.value,
+                            valueIds: value?.valueId,
+                            values: value?.value,
                             ...(data?.id > 0 && { material: data?.id }),
                           },
                           index
@@ -1266,7 +1278,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         <div style={clasess.parameterContainer}>
           <div
             style={
-              value?.value === "true"
+              value?.values[0] === "true"
                 ? clasess.parameterType3ActiveLabelStyle
                 : clasess.parameterLabelStyle
             }
@@ -1289,7 +1301,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   const myParameter = list.find(
                     (p) => p.id === relatedParameter.parameterId
                   );
-                  if (relatedParameter.activateByAllValues && parm?.value) {
+
+                  if (relatedParameter.activateByAllValues && parm?.values) {
                     return (
                       <div style={{ marginLeft: 10 }}>
                         {_renderParameterType(
@@ -1307,7 +1320,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     if (parameter?.parameterType === 0) {
                       const valueInArray =
                         relatedParameter.selectedValueIds.find(
-                          (c) => c == parm?.valueId
+                          (c) => c == parm?.valueIds
                         );
 
                       if (valueInArray) {
@@ -1328,7 +1341,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     } else {
                       const valueInArray =
                         relatedParameter.selectedValueIds.find(
-                          (c) => c == parm?.value
+                          (c) => c == parm?.values
                         );
 
                       if (valueInArray) {
@@ -1357,7 +1370,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   const myParameter = list.find(
                     (p) => p.id === relatedParameter.parameterId
                   );
-                  if (relatedParameter.activateByAllValues && parm?.value) {
+                  if (relatedParameter.activateByAllValues && parm?.values) {
                     return (
                       <div style={{ marginLeft: 10 }}>
                         {_renderParameterType(
@@ -1375,7 +1388,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     if (parameter?.parameterType === 0) {
                       const valueInArray =
                         relatedParameter.selectedValueIds.find(
-                          (c) => c == parm?.valueId
+                          (c) => c == parm?.valueIds
                         );
 
                       if (valueInArray) {
@@ -1396,7 +1409,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     } else {
                       const valueInArray =
                         relatedParameter.selectedValueIds.find(
-                          (c) => c == parm?.value
+                          (c) => c == parm?.values
                         );
 
                       if (valueInArray) {
@@ -1438,7 +1451,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (index !== -1) {
         temp[index] = {
           ...temp[index],
-          ...data,
+          values: [data.values],
+          valueIds: [data.valueIds],
         };
       } else {
         temp.push({
@@ -1448,10 +1462,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           ParameterType: ParameterType,
           parameterName: parameterName,
           actionId: actionId,
-          ...data,
+          values: [data.values],
+          valueIds: [data.valueIds],
         });
       }
-      if (data?.valueId === undefined && data?.value === undefined) {
+      if (data?.valueIds === undefined && data?.values === undefined) {
         temp.splice(index, 1);
       }
       return temp;
@@ -1481,7 +1496,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (findIndex !== -1) {
         temp[findIndex] = {
           ...temp[findIndex],
-          ...data,
+          values: [data.values],
+          valueIds: [data.valueIds],
         };
       } else {
         temp.push({
@@ -1491,7 +1507,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           ParameterType: ParameterType,
           parameterName: parameterName,
           actionId: actionId,
-          ...data,
+          values: [data.values],
+          valueIds: [data.valueIds],
         });
       }
       let temp2 = [...subProducts];
@@ -1508,7 +1525,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (index !== -1) {
         temp[index] = {
           ...temp[index],
-          ...data,
+          values: [data.values],
+          valueIds: [data.valueIds],
         };
       } else {
         temp.push({
@@ -1518,7 +1536,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           ParameterType: ParameterType,
           parameterName: parameterName,
           actionId: actionId,
-          ...data,
+          values: [data.values],
+          valueIds: [data.valueIds],
         });
       }
       if (data?.valueId === undefined && data?.value === undefined) {
@@ -1618,7 +1637,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const allParameters = subProducts.flatMap((item) => item.parameters);
     for (const item of inputArray) {
       const index = [...generalParameters, ...allParameters].findIndex(
-        (par) => par.parameterId === item.id && par?.value?.length
+        (par) => par.parameterId === item.id && par?.values?.length
       );
       if (index == -1) {
         isValid = false;
