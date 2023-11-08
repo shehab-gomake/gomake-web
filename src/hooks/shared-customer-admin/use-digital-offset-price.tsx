@@ -24,6 +24,7 @@ import { userProfileState } from "@/store/user-profile";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { SettingsIcon } from "@/icons/settings";
 import { compareStrings } from "@/utils/constants";
+import { EParameterTypes } from "@/enums";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -115,9 +116,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               .forEach((parameter) => {
                 relatedParametersArray.push(...parameter.relatedParameters);
                 if (
-                  parameter?.parameterType === 1 ||
-                  parameter?.parameterType === 2 ||
-                  parameter?.parameterType === 3
+                  parameter?.parameterType === EParameterTypes.INPUT_NUMBER ||
+                  parameter?.parameterType === EParameterTypes.INPUT_TEXT ||
+                  parameter?.parameterType === EParameterTypes.SWITCH
                 ) {
                   if (parameter?.defaultValue?.length > 0) {
                     const defaultValue = parameter?.defaultValue;
@@ -133,7 +134,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       subSectionId: subSection?.id,
                     });
                   }
-                } else if (parameter?.parameterType === 0) {
+                } else if (
+                  parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST
+                ) {
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
                   );
@@ -162,7 +165,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       subSectionId: subSection?.id,
                     });
                   }
-                } else if (parameter?.parameterType === 6) {
+                } else if (
+                  parameter?.parameterType ===
+                  EParameterTypes.SELECT_CHILDS_PARAMETERS
+                ) {
                   const defaultObject = parameter.valuesConfigs.find(
                     (item) => item.isDefault === true
                   );
@@ -231,9 +237,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   };
                 } else {
                   if (
-                    parameter?.parameterType === 1 ||
-                    parameter?.parameterType === 2 ||
-                    parameter?.parameterType === 3
+                    parameter?.parameterType === EParameterTypes.INPUT_NUMBER ||
+                    parameter?.parameterType === EParameterTypes.INPUT_TEXT ||
+                    parameter?.parameterType === EParameterTypes.SWITCH
                   ) {
                     if (parameter?.defaultValue?.length > 0) {
                       const defaultValue = parameter?.defaultValue;
@@ -249,7 +255,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         subSectionId: subSection?.id,
                       });
                     }
-                  } else if (parameter?.parameterType === 5) {
+                  } else if (
+                    parameter?.parameterType ===
+                    EParameterTypes.SELECT_MATERIALS
+                  ) {
                     const value = parameter?.valuesConfigs?.find(
                       (item) => item?.isDefault == true
                     );
@@ -328,7 +337,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         }
                       }
                     }
-                  } else if (parameter?.parameterType === 0) {
+                  } else if (
+                    parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST
+                  ) {
                     const value = parameter?.valuesConfigs?.find(
                       (item) => item?.isDefault == true
                     );
@@ -358,7 +369,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         subSectionId: subSection?.id,
                       });
                     }
-                  } else if (parameter?.parameterType === 6) {
+                  } else if (
+                    parameter?.parameterType ===
+                    EParameterTypes.SELECT_CHILDS_PARAMETERS
+                  ) {
                     const defaultObject = parameter.valuesConfigs.find(
                       (item) => item.isDefault === true
                     );
@@ -515,7 +529,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           item?.subSectionId === subSection?.id
       );
 
-      if (parameter?.parameterType === 1) {
+      if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
         Comp = (
           <GomakeTextInput
             style={clasess.textInputStyle}
@@ -538,7 +552,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             type="number"
           />
         );
-      } else if (parameter?.parameterType === 2) {
+      } else if (parameter?.parameterType === EParameterTypes.INPUT_TEXT) {
         Comp = (
           <GomakeTextInput
             style={clasess.textInputStyle}
@@ -561,7 +575,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             type="text"
           />
         );
-      } else if (parameter?.parameterType === 0) {
+      } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
         const defaultObject = parameter.valuesConfigs.find(
           (item) => item.isDefault === true
         );
@@ -592,7 +606,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }}
           />
         );
-      } else if (parameter?.parameterType === 6) {
+      } else if (
+        parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS
+      ) {
         const defaultObject = parameter.valuesConfigs.find(
           (item) => item.isDefault === true
         );
@@ -653,7 +669,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }}
           />
         );
-      } else if (parameter?.parameterType === 3) {
+      } else if (parameter?.parameterType === EParameterTypes.SWITCH) {
         Comp = (
           <SecondSwitch
             defaultChecked={parameter?.defaultValue === "true"}
@@ -679,7 +695,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           />
         );
-      } else if (parameter?.parameterType === 4) {
+      } else if (parameter?.parameterType === EParameterTypes.BUTTON) {
         Comp = (
           <GomakePrimaryButton
             style={clasess.dynamicBtn}
@@ -688,7 +704,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             {parameter?.name}
           </GomakePrimaryButton>
         );
-      } else if (parameter?.parameterType === 5) {
+      } else if (
+        parameter?.parameterType === EParameterTypes.SELECT_MATERIALS
+      ) {
         if (allMaterials?.length > 0) {
           const data = materialsEnumsValues.find((item) => {
             return compareStrings(item.name, parameter?.materialPath[0]);
@@ -878,7 +896,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           item.sectionId === section?.id &&
           item.subSectionId === subSection?.id
       );
-      if (parameter?.parameterType === 1) {
+      if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
         Comp = (
           <GomakeTextInput
             style={clasess.textInputStyle}
@@ -900,7 +918,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             type="number"
           />
         );
-      } else if (parameter?.parameterType === 2) {
+      } else if (parameter?.parameterType === EParameterTypes.INPUT_TEXT) {
         Comp = (
           <GomakeTextInput
             style={clasess.textInputStyle}
@@ -922,7 +940,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             type="text"
           />
         );
-      } else if (parameter?.parameterType === 0) {
+      } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
         const defaultObject = parameter.valuesConfigs.find(
           (item) => item.isDefault === true
         );
@@ -986,7 +1004,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             )}
           </div>
         );
-      } else if (parameter?.parameterType === 6) {
+      } else if (
+        parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS
+      ) {
         const defaultObject = parameter.valuesConfigs.find(
           (item) => item.isDefault === true
         );
@@ -1046,7 +1066,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }}
           />
         );
-      } else if (parameter?.parameterType === 3) {
+      } else if (parameter?.parameterType === EParameterTypes.SWITCH) {
         Comp = (
           <SecondSwitch
             defaultChecked={parameter?.defaultValue === "true"}
@@ -1071,7 +1091,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           />
         );
-      } else if (parameter?.parameterType === 4) {
+      } else if (parameter?.parameterType === EParameterTypes.BUTTON) {
         Comp = (
           <GomakePrimaryButton
             style={clasess.dynamicBtn}
@@ -1080,7 +1100,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             {parameter?.name}
           </GomakePrimaryButton>
         );
-      } else if (parameter?.parameterType === 5) {
+      } else if (
+        parameter?.parameterType === EParameterTypes.SELECT_MATERIALS
+      ) {
         if (allMaterials?.length > 0) {
           const data = materialsEnumsValues.find((item) => {
             return compareStrings(item.name, parameter?.materialPath[0]);
@@ -1314,7 +1336,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       </div>
                     );
                   } else {
-                    if (parameter?.parameterType === 0) {
+                    if (
+                      parameter?.parameterType ===
+                      EParameterTypes.DROP_DOWN_LIST
+                    ) {
                       const valueInArray =
                         relatedParameter.selectedValueIds.find(
                           (c) => c == parm?.valueIds
@@ -1382,7 +1407,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       </div>
                     );
                   } else {
-                    if (parameter?.parameterType === 0) {
+                    if (
+                      parameter?.parameterType ===
+                      EParameterTypes.DROP_DOWN_LIST
+                    ) {
                       const valueInArray =
                         relatedParameter.selectedValueIds.find(
                           (c) => c == parm?.valueIds
