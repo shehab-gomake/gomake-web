@@ -54,7 +54,7 @@ const EmailSettings = ({ onClickSave }: IProps) => {
             </div>
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.attachment")}</h3>
-                <PdfUploadComponent onUpload={true} ></PdfUploadComponent>
+                <PdfUploadComponent onUpload={true} fileName={state?.attachment}></PdfUploadComponent>
             </div>
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.mails")}</h3>

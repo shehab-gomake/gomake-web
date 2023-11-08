@@ -40,7 +40,7 @@ const PdfUploadComponent = ({ onUpload, fileName}: IProps) => {
                     <FileIcon></FileIcon>
                 </IconButton>
                 <label style={classes.labelStyle}>
-                    {fileName!=null ?  "attachment.pdf" : selectedFileName}
+                    {fileName !=null ?  "attachment.pdf" : selectedFileName}
                 </label>
                 </Stack>
             <input
