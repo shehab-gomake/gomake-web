@@ -1,12 +1,13 @@
-import { GoMakeModal, GomakePrimaryButton } from "@/components";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useEffect } from "react";
 
+import { GoMakeModal, GomakePrimaryButton } from "@/components";
+import { selectedValueConfigState } from "@/store";
+
+import { selectColorValueState } from "./store/selecte-color-value";
 import { ChildrenMapping } from "./children-mapping";
 import { HeaderMapping } from "./header-mapping";
 import { useStyle } from "./style";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { selectedValueConfigState } from "@/store";
-import { useEffect } from "react";
-import { selectColorValueState } from "./store/selecte-color-value";
 
 const MultiParameterModal = ({
   openModal,
@@ -23,7 +24,7 @@ const MultiParameterModal = ({
   function getObjectById() {
     for (const config of selectedValueConfig) {
       const foundParameter = generalParameters.find(
-        (param) => param.valueId === config.id
+        (param) => param && param.valueIds && param.valueIds[0] === config.id
       );
       if (foundParameter) {
         return config;

@@ -1,16 +1,18 @@
+import { useRecoilState, useRecoilValue } from "recoil";
+import { useEffect, useState } from "react";
+import lodashClonedeep from "lodash.clonedeep";
+
+import { useClickAway } from "@uidotdev/usehooks";
 import { GomakeTextInput } from "@/components";
 import { Checkbox } from "@mui/material";
-import { SubChildrenMapping } from "./sub-children-mapping";
+
 import { CheckboxCheckedIcon } from "./icons/checkbox-checked-icon";
-import { CheckboxIcon } from "./icons/checkbox-icon";
-import { useEffect, useState } from "react";
-import { PlusIcon } from "./icons/plus";
-import { MinusIcon } from "./icons/minus";
-import { useClickAway } from "@uidotdev/usehooks";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { maltiParameterState } from "./store/multi-param-atom";
-import lodashClonedeep from "lodash.clonedeep";
 import { selectColorValueState } from "./store/selecte-color-value";
+import { maltiParameterState } from "./store/multi-param-atom";
+import { SubChildrenMapping } from "./sub-children-mapping";
+import { CheckboxIcon } from "./icons/checkbox-icon";
+import { MinusIcon } from "./icons/minus";
+import { PlusIcon } from "./icons/plus";
 
 const ChildrenValuesMapping = ({
   parameters,
@@ -34,8 +36,8 @@ const ChildrenValuesMapping = ({
     let temp = lodashClonedeep(generalParameters);
     const indexOfName = temp[0].value.findIndex((p) => p === value?.value);
     if (indexOfName !== -1) {
-      temp[0].value[indexOfName] = value?.value;
-      temp[index].value[indexOfName] = +valueState + (increment ? 1 : -1) || 0;
+      temp[0].values[indexOfName] = value?.value;
+      temp[index].values[indexOfName] = +valueState + (increment ? 1 : -1) || 0;
       setGeneralParameters(temp);
     }
     setValueState(+valueState + (increment ? 1 : -1));
@@ -71,12 +73,12 @@ const ChildrenValuesMapping = ({
   };
   const onChangeText = (e) => {
     let temp = lodashClonedeep(generalParameters);
-    const indexOfName = temp[0].value.findIndex((p) => {
+    const indexOfName = temp[0].values.findIndex((p) => {
       return p == value?.value;
     });
     if (indexOfName !== -1) {
-      temp[0].value[indexOfName] = value?.value;
-      temp[index].value[indexOfName] = parseFloat(e.target.value) || 0;
+      temp[0].values[indexOfName] = value?.value;
+      temp[index].values[indexOfName] = parseFloat(e.target.value) || 0;
       setGeneralParameters(temp);
     }
     setValueState(parseFloat(e.target.value) || 0);
@@ -89,7 +91,7 @@ const ChildrenValuesMapping = ({
     }
     if (
       selectColorValue?.selectedParameterValues[0]?.selectValuesCount <
-      generalParameters[0]?.value?.length + value?.valueId?.length
+      generalParameters[0]?.values?.length + value?.valueId?.length
     ) {
       isDisabled = true;
     }
@@ -103,8 +105,8 @@ const ChildrenValuesMapping = ({
       parameterType: item.parameterType,
       parameterName: item.name,
       actionId: item.actionId,
-      valueId: [],
-      value: [],
+      valueIds: [],
+      values: [],
     }));
     setGeneralParameters(temp);
     setChecked(false);

@@ -1,15 +1,17 @@
-import { GomakeTextInput } from "@/components";
-import { CheckboxCheckedIcon } from "./icons/checkbox-checked-icon";
-import { CheckboxIcon } from "./icons/checkbox-icon";
-import { Checkbox } from "@mui/material";
-import { useEffect, useState } from "react";
-import { PlusIcon } from "./icons/plus";
-import { MinusIcon } from "./icons/minus";
-import { useClickAway } from "@uidotdev/usehooks";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { maltiParameterState } from "./store/multi-param-atom";
+import { useEffect, useState } from "react";
 import lodashClonedeep from "lodash.clonedeep";
+
+import { useClickAway } from "@uidotdev/usehooks";
+import { GomakeTextInput } from "@/components";
+import { Checkbox } from "@mui/material";
+
 import { selectColorValueState } from "./store/selecte-color-value";
+import { CheckboxCheckedIcon } from "./icons/checkbox-checked-icon";
+import { maltiParameterState } from "./store/multi-param-atom";
+import { CheckboxIcon } from "./icons/checkbox-icon";
+import { MinusIcon } from "./icons/minus";
+import { PlusIcon } from "./icons/plus";
 
 const SubChildrenMapping = ({
   parameters,
@@ -27,6 +29,7 @@ const SubChildrenMapping = ({
   const [checked, setChecked] = useState(false);
   const [generalParameters, setGeneralParameters] =
     useRecoilState(maltiParameterState);
+  console.log("generalParameters", generalParameters);
   const selectColorValue = useRecoilValue<any>(selectColorValueState);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [valueState, setValueState] = useState<number>(0);
@@ -53,8 +56,8 @@ const SubChildrenMapping = ({
       parameterType: item.parameterType,
       parameterName: item.name,
       actionId: item.actionId,
-      valueId: [],
-      value: [],
+      valueIds: [],
+      values: [],
     }));
     setGeneralParameters(temp);
     setChecked(false);
@@ -78,10 +81,10 @@ const SubChildrenMapping = ({
 
   const updateValue = (increment: boolean) => {
     let temp = lodashClonedeep(generalParameters);
-    const indexOfName = temp[0].value.findIndex((p) => p === value?.value);
+    const indexOfName = temp[0].values.findIndex((p) => p === value?.value);
     if (indexOfName !== -1) {
-      temp[0].value[indexOfName] = value?.value;
-      temp[index].value[indexOfName] = +valueState + (increment ? 1 : -1) || 0;
+      temp[0].valuse[indexOfName] = value?.value;
+      temp[index].values[indexOfName] = +valueState + (increment ? 1 : -1) || 0;
       setGeneralParameters(temp);
     }
     setValueState(+valueState + (increment ? 1 : -1));
@@ -103,8 +106,8 @@ const SubChildrenMapping = ({
       const numProperties = temp.length;
 
       if (e.target.checked) {
-        temp[0].value.push(value?.value);
-        temp[0].valueId.push(value?.valueId);
+        temp[0].values.push(value?.value);
+        temp[0].valueIds.push(value?.valueId);
         for (let i = 1; i < numProperties; i++) {
           const propertyValue = parseFloat(
             (
@@ -113,16 +116,16 @@ const SubChildrenMapping = ({
               ) as HTMLInputElement
             ).value
           );
-          temp[i].value.push(propertyValue);
+          temp[i].values.push(propertyValue);
         }
       } else {
-        const index = temp[0].value.findIndex((p) => p === value?.value);
-        const index2 = temp[0].valueId.findIndex((p) => p === value?.valueId);
+        const index = temp[0].values.findIndex((p) => p === value?.value);
+        const index2 = temp[0].valueIds.findIndex((p) => p === value?.valueId);
         if (index !== -1) {
-          temp[0].value.splice(index, 1);
-          temp[0].valueId.splice(index2, 1);
+          temp[0].values.splice(index, 1);
+          temp[0].valueIds.splice(index2, 1);
           for (let i = 1; i < numProperties; i++) {
-            temp[i].value.splice(index, 1);
+            temp[i].values.splice(index, 1);
           }
         }
       }
@@ -134,12 +137,12 @@ const SubChildrenMapping = ({
   const onChangeText = (e) => {
     setGeneralParameters((prev) => {
       let temp = lodashClonedeep(prev);
-      const indexOfName = temp[0].value.findIndex((p) => {
+      const indexOfName = temp[0].values.findIndex((p) => {
         return p == value?.value;
       });
       if (indexOfName !== -1) {
-        temp[0].value[indexOfName] = value?.value;
-        temp[index].value[indexOfName] = parseFloat(e.target.value) || 0;
+        temp[0].values[indexOfName] = value?.value;
+        temp[index].values[indexOfName] = parseFloat(e.target.value) || 0;
       }
       setValueState(parseFloat(e.target.value) || 0);
 
@@ -153,7 +156,7 @@ const SubChildrenMapping = ({
       isDisabled = true;
     }
     if (
-      generalParameters[0].value.length >=
+      generalParameters[0].values.length >=
       selectColorValue?.selectedParameterValues[0]?.selectValuesCount
     ) {
       isDisabled = true;
