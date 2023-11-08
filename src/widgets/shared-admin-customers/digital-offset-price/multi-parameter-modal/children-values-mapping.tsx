@@ -51,7 +51,7 @@ const ChildrenValuesMapping = ({
                 icon={<CheckboxIcon />}
                 checkedIcon={<CheckboxCheckedIcon />}
                 onChange={(e) => onChangeCheckBox(e)}
-                id={`c${index}_${index2}`}
+                // id={`c${index}_${index2}`}
                 key={`c${index}_${selectColorValue}`}
                 checked={checked}
                 value={checked}

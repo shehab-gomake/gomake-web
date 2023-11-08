@@ -7,20 +7,23 @@ import { useClickAway } from "@uidotdev/usehooks";
 
 const useSubChildMapping = ({
   forceChange,
-  parentValue,
   parameters,
   settingParameters,
   value,
   index,
-  index2,
-  index3,
 }) => {
   const [checked, setChecked] = useState(false);
   const [generalParameters, setGeneralParameters] =
     useRecoilState(maltiParameterState);
   const selectColorValue = useRecoilValue<any>(selectColorValueState);
   const [isFocused, setIsFocused] = useState<boolean>(false);
-  const [valueState, setValueState] = useState<number>(0);
+  const [valueState, setValueState] = useState<number>(
+    parameters[index].defaultValue
+  );
+  useEffect(() => {
+    setValueState(parameters[index].defaultValue);
+  }, [parameters]);
+
   useEffect(() => {
     setChecked(forceChange);
     onChangeCheckBox({
@@ -29,13 +32,6 @@ const useSubChildMapping = ({
       },
     });
   }, [forceChange]);
-  useEffect(() => {
-    onChangeText({
-      target: {
-        value: parentValue,
-      },
-    });
-  }, [parentValue]);
   useEffect(() => {
     const temp = parameters.map((item: any) => ({
       parameterId: item.id,
@@ -96,16 +92,6 @@ const useSubChildMapping = ({
       if (e.target.checked) {
         temp[0].values.push(value?.value);
         temp[0].valueIds.push(value?.valueId);
-        for (let i = 1; i < numProperties; i++) {
-          const propertyValue = parseFloat(
-            (
-              document.getElementById(
-                `p${i}_${index2}_${index3}`
-              ) as HTMLInputElement
-            ).value
-          );
-          temp[i].values.push(propertyValue);
-        }
       } else {
         const index = temp[0].values.findIndex((p) => p === value?.value);
         const index2 = temp[0].valueIds.findIndex((p) => p === value?.valueId);
@@ -123,19 +109,7 @@ const useSubChildMapping = ({
     });
   };
   const onChangeText = (e) => {
-    setGeneralParameters((prev) => {
-      let temp = lodashClonedeep(prev);
-      const indexOfName = temp[0].values.findIndex((p) => {
-        return p == value?.value;
-      });
-      if (indexOfName !== -1) {
-        temp[0].values[indexOfName] = value?.value;
-        temp[index].values[indexOfName] = parseFloat(e.target.value) || 0;
-      }
-      setValueState(parseFloat(e.target.value) || 0);
-
-      return temp;
-    });
+    setValueState(e.target.value);
   };
 
   const isDisabled = () => {
@@ -162,6 +136,7 @@ const useSubChildMapping = ({
     return isDisabled;
   };
   return {
+    generalParameters,
     checked,
     selectColorValue,
     ref,

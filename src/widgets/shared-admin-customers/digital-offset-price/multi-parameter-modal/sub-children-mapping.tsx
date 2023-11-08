@@ -34,13 +34,10 @@ const SubChildrenMapping = ({
     onChangeText,
   } = useSubChildMapping({
     forceChange,
-    parentValue,
     parameters,
     settingParameters,
     value,
     index,
-    index2,
-    index3,
   });
   return (
     <div style={clasess.childRowContainer}>
@@ -54,6 +51,7 @@ const SubChildrenMapping = ({
             value={checked}
             key={`c${index}_${selectColorValue}`}
             disabled={isDisabled() && !checked}
+            id={`check_${index}_${index2}_${index3}`}
           />
         </div>
       )}
@@ -64,8 +62,6 @@ const SubChildrenMapping = ({
         ) : (
           <div ref={ref}>
             <GomakeTextInput
-              placeholder={value?.value}
-              defaultValue={value?.value}
               style={{
                 ...clasess.textInputStyle,
                 border: isFocused ? "1px solid rgba(237, 2, 140, 1)" : "",
@@ -73,7 +69,7 @@ const SubChildrenMapping = ({
               onFocus={() => setIsFocused(true)}
               onChange={onChangeText}
               value={valueState}
-              id={`p${index}_${index2}_${index3}`}
+              id={`input_${index}_${index2}_${index3}`}
             />
             {isFocused && (
               <div style={clasess.iconsContainer}>

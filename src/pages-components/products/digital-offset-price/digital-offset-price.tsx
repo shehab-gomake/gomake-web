@@ -41,6 +41,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     setPriceRecovery,
     onOpeneMultiParameterModal,
     onCloseMultiParameterModal,
+    setGeneralParameters,
     multiParameterModal,
     settingParameters,
     priceRecovery,
@@ -263,6 +264,7 @@ const PriceListPageWidget = ({ widgetType }) => {
         settingParameters={settingParameters}
         _renderParameterType={_renderParameterType}
         generalParameters={generalParameters}
+        setGeneralParameters={setGeneralParameters}
       />
     </div>
   );

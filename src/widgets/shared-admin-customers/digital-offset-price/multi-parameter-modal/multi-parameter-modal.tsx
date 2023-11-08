@@ -4,6 +4,8 @@ import { ChildrenMapping } from "./children-mapping";
 import { HeaderMapping } from "./header-mapping";
 import { useStyle } from "./style";
 import { useMultiParameterModal } from "./use-multi-parameter-modal";
+import { IconButton, Tooltip } from "@mui/material";
+import { CloseIcon } from "@/components/modal/icon/close";
 
 const MultiParameterModal = ({
   openModal,
@@ -12,23 +14,32 @@ const MultiParameterModal = ({
   settingParameters,
   _renderParameterType,
   generalParameters,
+  setGeneralParameters,
 }) => {
   const { clasess } = useStyle();
   const { parameterLists, onClickSaveParameter, t } = useMultiParameterModal({
     settingParameters,
     generalParameters,
+    setGeneralParameters,
     onClose,
   });
+
   return (
     <>
       <GoMakeModal
         openModal={openModal}
         modalTitle={modalTitle}
-        onClose={onClose}
         insideStyle={clasess.insideStyle}
         withClose={false}
       >
         <div style={clasess.mainContainer}>
+          <div style={clasess.closeIcon} onClick={onClose}>
+            <Tooltip title={t("modal.close")}>
+              <IconButton>
+                <CloseIcon />
+              </IconButton>
+            </Tooltip>
+          </div>
           <div style={clasess.multiSelectMainContainer}>
             {_renderParameterType(
               settingParameters?.parameter,

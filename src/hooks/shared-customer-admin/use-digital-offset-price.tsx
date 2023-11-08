@@ -1847,6 +1847,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setPriceRecovery,
     onOpeneMultiParameterModal,
     onCloseMultiParameterModal,
+    setGeneralParameters,
     multiParameterModal,
     settingParameters,
     priceRecovery,
