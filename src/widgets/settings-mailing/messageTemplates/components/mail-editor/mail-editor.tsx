@@ -34,8 +34,8 @@ const EmailSettings = ({ onClickSave }: IProps) => {
     };
 
     const handleResetClick = () => {
-        setSubject("<p>hello</p");
-        setBody("<p>bye</p");
+        setSubject(null);
+        setBody(null);
     };
 
     const onChangeInputs = (key, value) => {

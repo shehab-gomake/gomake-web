@@ -35,7 +35,7 @@ const SettingsMailingWidget = () => {
     const templateTitle = types.find((option) => option.value == state?.templateType)?.text || " ";
 
     return (
-        <div>
+        <div >
             <PrimaryTabsComponent tabs={tabs} >
                      <AddButton label={t("mailingSettings.addNew")} onClick={() => setOpenModal(true)} />
             </PrimaryTabsComponent>

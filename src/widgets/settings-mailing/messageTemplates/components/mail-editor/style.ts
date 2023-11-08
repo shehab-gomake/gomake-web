@@ -2,10 +2,12 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { convertHeightToVH } from "@/utils/adapter";
+import { useTranslation } from "react-i18next";
 
 
 const useStyle = () => {
     const { primaryColor, secondColor, neutralColor } = useGomakeTheme();
+
     const classes = useMemo(() => {
         return {
             iconStyle: {
@@ -44,8 +46,7 @@ const useStyle = () => {
                 ...FONT_FAMILY.Lexend(400, 16),
                 lineHeight: "20px",
                 color: primaryColor(900),
-                width: "810px"
-
+                width: "810px",
             },
             editorStyle2: {
                 height: convertHeightToVH(300),
@@ -89,7 +90,7 @@ const useStyle = () => {
                 border: "1px solid rgb(130, 131, 190)",
             },
             variablesContainer: {
-                paddingTop: "6px",
+            paddingTop: "3px",
                 width: "780px",
             },
             footerStyle: {
@@ -113,7 +114,7 @@ const useStyle = () => {
                 flex: "none",
                 order: 0,
                 flexGrow: 0,
-                 boxShadow: "0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06)",
+                boxShadow: "0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06)",
             }
 
         };

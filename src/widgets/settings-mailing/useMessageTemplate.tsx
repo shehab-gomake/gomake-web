@@ -26,6 +26,7 @@ const useMessageTemplate = () => {
     t("mailingSettings.body"),
     t("mailingSettings.attachment"),
     t("mailingSettings.more"),
+ 
   ];
 
   useEffect(() => {
@@ -51,8 +52,9 @@ const useMessageTemplate = () => {
           types.find((option) => option.value == template.templateType)?.text || "Unknown",
           template.title ? new DOMParser().parseFromString(template.title, 'text/html').body.textContent : "",
           template.text ? new DOMParser().parseFromString(template.text, 'text/html').body.textContent : "",
-          <PdfUploadComponent onUpload={false} fileName={"Example file.pdf" }/>,
-          <MoreMenuWidget id={template.id} item={template} />
+          <PdfUploadComponent onUpload={false} fileName={template.attachment}/>,
+          <MoreMenuWidget id={template.id} item={template} />,
+          
         ]);
         setAllSmsTemplates(tableRows);
       }

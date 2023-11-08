@@ -103,8 +103,6 @@ const MyEditor = ({ headerEditor }: IProps) => {
     }, 300), [setSubject]);
 
 
-
-
     function LeftArrow() {
         const { scrollPrev } = useContext(VisibilityContext);
         return (
@@ -123,13 +121,24 @@ const MyEditor = ({ headerEditor }: IProps) => {
         );
     }
 
+    const modules = {
+        toolbar: {
+            container: [
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'header': '1' }, { 'header': '2' } , { 'font': [] }],
+                ['link', 'image'],
+                // ['clean'],
+            ],
+        },
+    };
+
     return (
-        <div>
+        <div dir={dir} className='editorDiv'>
             <Suspense>
-                <ReactQuill style={headerEditor ? classes.myEditorBody : classes.myEditorSubject} value={headerEditor ? body : subject} onChange={headerEditor ? handleChangeBody : handleChangeSubject} ref={editorRef} id='editor' />
+                <ReactQuill modules={modules}  style={headerEditor ? classes.myEditorBody : classes.myEditorSubject} value={headerEditor ? body : subject} onChange={headerEditor ? handleChangeBody : handleChangeSubject} ref={editorRef} id='editor' />
             </Suspense>
             <Stack direction={'column'} style={classes.variablesContainer}   >
-                <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} apiRef={apiRef}
+                <ScrollMenu  LeftArrow={LeftArrow} RightArrow={RightArrow} apiRef={apiRef}
                     RTL={RTL}>
                     {templateVariables?.map((option) => (
                         <button style={classes.variableStyle}

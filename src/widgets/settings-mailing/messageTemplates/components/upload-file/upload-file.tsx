@@ -14,9 +14,9 @@ interface IProps {
     fileName?: string;
 }
 
-const PdfUploadComponent = ({ onUpload, fileName = "Example file.pdf" }: IProps) => {
+const PdfUploadComponent = ({ onUpload, fileName}: IProps) => {
     const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
-    const [selectedFileName, setSelectedFileName] = useState(state?.attachment);
+    const [selectedFileName, setSelectedFileName] = useState("no attachment");
     const inputRef = useRef(null);
     const { classes } = useStyle();
     const { t } = useTranslation();
@@ -26,7 +26,7 @@ const PdfUploadComponent = ({ onUpload, fileName = "Example file.pdf" }: IProps)
         if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                setSelectedFileName(file.name);
+                setSelectedFileName("attachment.pdf");
                 setState({ ...state, fileBase64: e.target.result });
             };
             reader.readAsDataURL(file);
@@ -40,7 +40,7 @@ const PdfUploadComponent = ({ onUpload, fileName = "Example file.pdf" }: IProps)
                     <FileIcon></FileIcon>
                 </IconButton>
                 <label style={classes.labelStyle}>
-                    {fileName}
+                    {fileName!=null ?  "attachment.pdf" : selectedFileName}
                 </label>
                 </Stack>
             <input

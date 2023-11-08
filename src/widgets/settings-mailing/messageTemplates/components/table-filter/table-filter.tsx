@@ -15,12 +15,6 @@ const TableFilter = () => {
 
     }
  
-    //should be fix
-    // const [state, setState] = useState(null);
-    // const onChangeInputs2 = (key, value) => {
-    //     setState({ ...state, [key]: value })
-    // }
-
     return (
         <Stack direction={'row'} style={classes.header}>
             {

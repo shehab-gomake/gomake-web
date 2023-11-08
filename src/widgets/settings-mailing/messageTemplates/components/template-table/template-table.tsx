@@ -11,7 +11,9 @@ const TemplateTable = () => {
     }, [])
 
     return (
+        <div style={{width:"100%"}}>
         <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={allSmsTemplates} headers={tableHeaders}></PrimaryTable>
+        </div>
     );
 }
 

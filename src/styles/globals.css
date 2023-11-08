@@ -192,7 +192,14 @@ input::placeholder {
 .ql-container.ql-snow{
   border-radius: 0px 0px 12px 12px;
 }
-
 .badgeVariable{
   background-color: rgb(235, 236, 255);
+}
+.editorDiv[dir=rtl] .ql-toolbar.ql-snow .ql-picker-label{
+  display: flex;
+  flex-direction: row-reverse;
+}
+.react-horizontal-scrolling-menu--inner-wrapper{
+  display: flex;
+  align-items: center;
 }

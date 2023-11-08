@@ -4,9 +4,9 @@ import { TemplateTable } from "./components/template-table/template-table";
 const MessageTemplates = () => {
 
     return (
-        <div style={{position: "relative" , gap: "70px"}}>
+        <div style={{position: "relative"}}>
           <TableFilter/>
-          <TemplateTable/>
+          <TemplateTable />
         </div>
     );
 };
