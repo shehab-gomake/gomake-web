@@ -17,10 +17,17 @@ const useChildValuesMapping = ({
     useRecoilState(maltiParameterState);
   const [isFocused, setIsFocused] = useState(false);
   const [checked, setChecked] = useState(false);
-  const [valueState, setValueState] = useState<any>(0);
   const [forceChange, setForceChange] = useState(false);
-  const [parentValue, setParentValue] = useState(0);
+  const [valueState, setValueState] = useState<any>(
+    parameters[index].defaultValue
+  );
+  const [parentValue, setParentValue] = useState(
+    parameters[index].defaultValue
+  );
 
+  useEffect(() => {
+    setValueState(parameters[index].defaultValue);
+  }, [parameters]);
   const updateValue = (increment: boolean) => {
     let temp = lodashClonedeep(generalParameters);
     const indexOfName = temp[0].value.findIndex((p) => p === value?.value);
@@ -61,17 +68,8 @@ const useChildValuesMapping = ({
     }
   };
   const onChangeText = (e) => {
-    let temp = lodashClonedeep(generalParameters);
-    const indexOfName = temp[0].values.findIndex((p) => {
-      return p == value?.value;
-    });
-    if (indexOfName !== -1) {
-      temp[0].values[indexOfName] = value?.value;
-      temp[index].values[indexOfName] = parseFloat(e.target.value) || 0;
-      setGeneralParameters(temp);
-    }
-    setValueState(parseFloat(e.target.value) || 0);
-    setParentValue(parseFloat(e.target.value) || 0);
+    setValueState(parseFloat(e.target.value));
+    setParentValue(parseFloat(e.target.value));
   };
   const isDisabled = () => {
     let isDisabled = false;

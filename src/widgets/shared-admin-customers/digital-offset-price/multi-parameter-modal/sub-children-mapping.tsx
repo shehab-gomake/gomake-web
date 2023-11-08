@@ -38,6 +38,7 @@ const SubChildrenMapping = ({
     settingParameters,
     value,
     index,
+    parentValue,
   });
   return (
     <div style={clasess.childRowContainer}>

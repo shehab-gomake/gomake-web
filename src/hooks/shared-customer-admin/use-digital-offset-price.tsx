@@ -42,6 +42,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [generalParameters, setGeneralParameters] = useState<any>([]);
+  console.log("generalParameters", generalParameters);
   const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [defaultPrice, setDefaultPrice] = useState<any>("-----");

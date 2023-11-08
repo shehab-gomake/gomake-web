@@ -11,6 +11,7 @@ const useSubChildMapping = ({
   settingParameters,
   value,
   index,
+  parentValue,
 }) => {
   const [checked, setChecked] = useState(false);
   const [generalParameters, setGeneralParameters] =
@@ -21,8 +22,8 @@ const useSubChildMapping = ({
     parameters[index].defaultValue
   );
   useEffect(() => {
-    setValueState(parameters[index].defaultValue);
-  }, [parameters]);
+    setValueState(parentValue);
+  }, [parameters, parentValue]);
 
   useEffect(() => {
     setChecked(forceChange);
