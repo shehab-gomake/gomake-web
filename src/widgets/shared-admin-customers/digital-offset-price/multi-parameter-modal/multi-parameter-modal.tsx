@@ -1,13 +1,9 @@
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { useEffect } from "react";
-
 import { GoMakeModal, GomakePrimaryButton } from "@/components";
-import { selectedValueConfigState } from "@/store";
 
-import { selectColorValueState } from "./store/selecte-color-value";
 import { ChildrenMapping } from "./children-mapping";
 import { HeaderMapping } from "./header-mapping";
 import { useStyle } from "./style";
+import { useMultiParameterModal } from "./use-multi-parameter-modal";
 
 const MultiParameterModal = ({
   openModal,
@@ -18,23 +14,11 @@ const MultiParameterModal = ({
   generalParameters,
 }) => {
   const { clasess } = useStyle();
-  const parameterLists = settingParameters?.parameter?.settingParameters;
-  const selectedValueConfig = useRecoilValue(selectedValueConfigState);
-  const setSelectColorValue = useSetRecoilState(selectColorValueState);
-  function getObjectById() {
-    for (const config of selectedValueConfig) {
-      const foundParameter = generalParameters.find(
-        (param) => param && param.valueIds && param.valueIds[0] === config.id
-      );
-      if (foundParameter) {
-        return config;
-      }
-    }
-  }
-  useEffect(() => {
-    const result = getObjectById();
-    setSelectColorValue(result);
-  }, [generalParameters, selectedValueConfig]);
+  const { parameterLists, onClickSaveParameter, t } = useMultiParameterModal({
+    settingParameters,
+    generalParameters,
+    onClose,
+  });
   return (
     <>
       <GoMakeModal
@@ -85,8 +69,11 @@ const MultiParameterModal = ({
               </div>
             </div>
           </div>
-          <GomakePrimaryButton style={clasess.saveBtnContainerStyle}>
-            Save
+          <GomakePrimaryButton
+            style={clasess.saveBtnContainerStyle}
+            onClick={onClickSaveParameter}
+          >
+            {t("materials.buttons.save")}
           </GomakePrimaryButton>
         </div>
       </GoMakeModal>

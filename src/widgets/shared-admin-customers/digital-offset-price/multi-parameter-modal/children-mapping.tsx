@@ -1,11 +1,5 @@
-import { useRecoilState, useRecoilValue } from "recoil";
-import { useEffect } from "react";
-
-import { compareStrings } from "@/utils/constants";
-import { materialsState } from "@/store";
-
 import { ChildrenValuesMapping } from "./children-values-mapping";
-import { maltiParameterState } from "./store/multi-param-atom";
+import { useChildMapping } from "./use-children-mapping-modal";
 
 const ChildrenMapping = ({
   parameters,
@@ -14,31 +8,10 @@ const ChildrenMapping = ({
   clasess,
   settingParameters,
 }) => {
-  const allMaterials = useRecoilValue<any>(materialsState);
-  const [generalParameters, setGeneralParameters] =
-    useRecoilState(maltiParameterState);
-  const foundMaterial = allMaterials?.find((material) => {
-    return parameters.some(
-      (parameter) =>
-        parameter.parameterType === 5 &&
-        compareStrings(parameter.materialPath[0], material.pathName)
-    );
+  const { generalParameters, foundMaterial } = useChildMapping({
+    parameters,
+    settingParameters,
   });
-  useEffect(() => {
-    if (generalParameters?.length == 0) {
-      const temp = parameters.map((item: any) => ({
-        parameterId: item.id,
-        sectionId: settingParameters?.section?.id,
-        subSectionId: settingParameters?.subSection?.id,
-        parameterType: item.parameterType,
-        parameterName: item.name,
-        actionId: item.actionId,
-        valueIds: [],
-        values: [],
-      }));
-      setGeneralParameters(temp);
-    }
-  }, [settingParameters]);
   return (
     <div
       style={{
