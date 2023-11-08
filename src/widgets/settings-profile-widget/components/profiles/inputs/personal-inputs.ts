@@ -48,12 +48,12 @@ const personalInputs = (state: IUserProfile)  => {
             readonly: false
         },
         {
-            name: "systemLanguage",
+            name: "systemLang",
             label: "profileSettings.systemLanguage",
             type: "select",
             placeholder: "profileSettings.systemLanguage",
             required: true,
-            parameterKey: "systemLanguage",
+            parameterKey: "systemLang",
             options: languages,
             value: state.systemLang,
             isValid: !!state.systemLang,
