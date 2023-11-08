@@ -5,9 +5,9 @@ import { useTranslation } from "react-i18next";
 import { EditingIcon } from "./icons/edit";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
-import { useRecoilState } from "recoil";
 import { editModalState, smsBodyState, smsSubjectState, smsTemplateState } from "@/widgets/settings-mailing/states/state";
 import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplate";
+import { useRecoilState } from "recoil";
 
 interface IProps {
   id: any;

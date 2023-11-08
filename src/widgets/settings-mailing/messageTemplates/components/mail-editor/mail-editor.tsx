@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import * as React from "react";
 import { PdfUploadComponent } from '../upload-file/upload-file';
 import { EditorTYPE } from '../../enums/enum';
-import { useRecoilState } from 'recoil';
 import { smsBodyState, smsSubjectState, smsTemplateState } from '@/widgets/settings-mailing/states/state';
 import { ISMSTemplate } from '../../interfaces/interface';
 import { mailInputs1, mailInputs2, mailInputs3 } from './inputs';
@@ -12,6 +11,7 @@ import { FormInput } from '@/components/form-inputs/form-input';
 import { IInput } from '@/components/form-inputs/interfaces';
 import { Stack } from '@mui/material';
 import { MyEditor } from './myEditor';
+import { useRecoilState } from "recoil";
 
 export interface IProps {
     onClickSave: (value: any) => void;
@@ -34,8 +34,8 @@ const EmailSettings = ({ onClickSave }: IProps) => {
     };
 
     const handleResetClick = () => {
-        setSubject(null);
-        setBody(null);
+        setSubject("<p>hello</p");
+        setBody("<p>bye</p");
     };
 
     const onChangeInputs = (key, value) => {

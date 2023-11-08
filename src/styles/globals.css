@@ -191,5 +191,8 @@ input::placeholder {
 /* new editor*/
 .ql-container.ql-snow{
   border-radius: 0px 0px 12px 12px;
+}
 
+.badgeVariable{
+  background-color: rgb(235, 236, 255);
 }

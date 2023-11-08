@@ -5,12 +5,12 @@ import { MessageTemplates } from "./messageTemplates/message-templates";
 import { AddButton } from "@/components/button/add-button";
 import { GoMakeModal } from "@/components";
 import { AddNewSMSTemplateGroup } from "./messageTemplates/components/add-new/add-new";
-import { useRecoilState } from "recoil";
 import { editModalState, groupModalState, smsBodyState, smsSubjectState, smsTemplateState } from "./states/state";
 import { useMessageTemplate } from "./useMessageTemplate";
 import { useEffect  } from "react";
 import { EmailSettings } from "./messageTemplates/components/mail-editor/mail-editor";
 import { ISMSTemplate } from "./messageTemplates/interfaces/interface";
+import { useRecoilState } from "recoil";
 
 const SettingsMailingWidget = () => {
     const { t } = useTranslation();

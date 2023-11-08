@@ -3,12 +3,12 @@ import { getAllSMSTemplatesApi, updateSMSTemplateApi, addSMSTemplateGroup, getAl
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
-import { useRecoilState } from "recoil";
 import { useSnackBar } from "@/hooks";
 import { allSMSTemplateGroupsState, editModalState, groupModalState, smsTemplateState, templateGroupState, templateVariablesState } from "./states/state";
 import { MoreMenuWidget } from "./messageTemplates/components/more-circle/index";
 import { PdfUploadComponent } from "./messageTemplates/components/upload-file/upload-file";
 import { ISMSTemplate, SMSTemplateGroup } from "./messageTemplates/interfaces/interface";
+import { useRecoilState } from "recoil";
 
 const useMessageTemplate = () => {
   const { t } = useTranslation();

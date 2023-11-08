@@ -45,12 +45,10 @@ const MyEditor = ({ headerEditor }: IProps) => {
             static create(value) {
                 let node = super.create(value);
 
-                node.setAttribute('class', 'badge badge-' + value.colour);
+                node.setAttribute('class', 'badgeVariable');
                 node.setAttribute('data-marker', value.marker);
-                node.setAttribute('data-title', value.titleKet);
-                node.setAttribute('style', 'background-color' + ":rgb(235, 236, 255);");
+                node.setAttribute('data-title', value.title);
                 node.innerHTML = value.title;
-
                 return node;
             }
 
@@ -69,7 +67,6 @@ const MyEditor = ({ headerEditor }: IProps) => {
             'formats/TemplateMarker': TemplateMarker
         });
 
-
     }, [])
 
     const AddVariable = (value) => {
@@ -78,41 +75,32 @@ const MyEditor = ({ headerEditor }: IProps) => {
             return;
         }
         let range = quill.getSelection(true);
+
         quill.insertEmbed(
             range.index,
-
             'TemplateMarker',
             {
-                colour: '', // Set the color to red
-                marker: '',
+                color: 'rgb(235, 236, 255)',
+                marker: value?.value,
                 title: value?.label,
-                titleKet: value?.value,
-
             },
         );
 
         quill.insertText(range.index + 1, ' ');
-        //Add a space after the marker
-
         quill.setSelection(range.index + 2, 2);
-        //Take the cursor to the end of the inserted TemplateMarker
 
     }
 
     const [body, setBody] = useRecoilState<string>(smsBodyState);
-
     const handleChangeBody = useMemo(() => debounce(value => {
         setBody(value);
     }, 300), [setBody]);
 
 
     const [subject, setSubject] = useRecoilState<string>(smsSubjectState);
-
-
     const handleChangeSubject = useMemo(() => debounce(value => {
         setSubject(value);
     }, 300), [setSubject]);
-
 
 
 
