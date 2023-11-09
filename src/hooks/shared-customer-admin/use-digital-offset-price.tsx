@@ -69,6 +69,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(true);
   const [generalParametersLocal, setGeneralParametersLocal] = useState([]);
+  const [sampleType, setSamlleType] = useState();
+  console.log("sampleType", sampleType);
   const [selectedValueForSettings, setSelectedValueForSettings] =
     useState<any>();
   const [selectedValueConfigForSettings, setSelectedValueConfigForSettings] =
@@ -1945,6 +1947,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     onOpeneMultiParameterModal,
     onCloseMultiParameterModal,
     setGeneralParameters,
+    setSamlleType,
     multiParameterModal,
     settingParameters,
     priceRecovery,

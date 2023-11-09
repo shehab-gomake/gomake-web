@@ -42,6 +42,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     onOpeneMultiParameterModal,
     onCloseMultiParameterModal,
     setGeneralParameters,
+    setSamlleType,
     multiParameterModal,
     settingParameters,
     priceRecovery,
@@ -181,6 +182,7 @@ const PriceListPageWidget = ({ widgetType }) => {
               widgetType={widgetType}
               setPriceRecovery={setPriceRecovery}
               priceRecovery={priceRecovery}
+              setSamlleType={setSamlleType}
             />
           </div>
 
