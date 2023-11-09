@@ -33,7 +33,6 @@ const ChildrenValuesMapping = ({
     isDisabled,
     setIsFocused,
   } = useChildValuesMapping({ value, index, parameters, settingParameters });
-
   return (
     <>
       {value?.valueId?.length != 0 && (

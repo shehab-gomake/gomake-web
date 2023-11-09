@@ -13,6 +13,8 @@ const useChildValuesMapping = ({
 }) => {
   const paddingLeft = value?.valueId?.length === 0 ? 13 : 38;
   const selectColorValue = useRecoilValue<any>(selectColorValueState);
+  console.log("value", value);
+  console.log("selectColorValue", selectColorValue);
   const [generalParameters, setGeneralParameters] =
     useRecoilState(maltiParameterState);
   const [isFocused, setIsFocused] = useState(false);
@@ -50,6 +52,15 @@ const useChildValuesMapping = ({
   const ref = useClickAway(() => {
     setIsFocused(false);
   });
+  useEffect(() => {
+    if (
+      selectColorValue?.selectedParameterValues[0]?.selectValuesCount ===
+        value?.data?.length &&
+      selectColorValue?.selectedParameterValues[0]?.valueIds?.length > 0
+    ) {
+      setChecked(true);
+    }
+  }, [selectColorValue, value, generalParameters]);
   const onChangeCheckBox = (e) => {
     if (selectColorValue) {
       setGeneralParameters((prev) => {
