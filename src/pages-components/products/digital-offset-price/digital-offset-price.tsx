@@ -144,7 +144,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     _renderParameterType={_renderParameterType}
                                     _getParameter={_getParameter}
                                     relatedParameters={relatedParameters}
-                                    generalParameters={generalParameters}
+                                    isAccordion={false}
                                   />
                                 );
                               }

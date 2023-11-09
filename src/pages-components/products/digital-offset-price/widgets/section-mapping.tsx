@@ -6,11 +6,13 @@ const SectionMappingWidget = ({
   _renderParameterType,
   _getParameter,
   relatedParameters,
-  generalParameters,
+  isAccordion,
 }: any) => {
   return (
     <div key={index} style={clasess.subSectionContainer}>
-      <div style={clasess.subSectionTitleStyle}>{subSection.name}</div>
+      {!isAccordion && (
+        <div style={clasess.subSectionTitleStyle}>{subSection.name}</div>
+      )}
       <div style={clasess.parametersContainer}>
         {subSection?.parameters
           ?.filter((param: any) => !param.isHidden)
