@@ -1,5 +1,5 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 
@@ -25,6 +25,7 @@ import { EWidgetProductType } from "@/pages-components/products/digital-offset-p
 import { SettingsIcon } from "@/icons/settings";
 import { compareStrings } from "@/utils/constants";
 import { EParameterTypes } from "@/enums";
+import lodashClonedeep from "lodash.clonedeep";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -68,6 +69,67 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     useRecoilState<any>(digitslPriceState);
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(true);
+  const [generalParametersLocal, setGeneralParametersLocal] = useState([]);
+  const [selectedValueForSettings, setSelectedValueForSettings] =
+    useState<any>();
+  const [selectedValueConfigForSettings, setSelectedValueConfigForSettings] =
+    useState<any>();
+  useEffect(() => {
+    if (
+      generalParametersLocal?.length == 0 &&
+      selectedValueForSettings?.parameter?.settingParameters?.length
+    ) {
+      const temp = selectedValueForSettings?.parameter?.settingParameters.map(
+        (item: any) => ({
+          parameterId: item.id,
+          sectionId: selectedValueForSettings?.section?.id,
+          subSectionId: selectedValueForSettings?.subSection?.id,
+          parameterType: item.parameterType,
+          parameterName: item.name,
+          actionId: item.actionId,
+          valueIds: [],
+          values: [],
+        })
+      );
+      setGeneralParametersLocal(temp);
+    }
+  }, [selectedValueForSettings, generalParametersLocal]);
+  useEffect(() => {
+    if (
+      selectedValueForSettings?.parameter?.id?.length &&
+      selectedValueConfigForSettings?.id?.length &&
+      generalParametersLocal?.length > 0
+    ) {
+      let temp = lodashClonedeep(generalParametersLocal);
+
+      for (const selectedParam of selectedValueConfigForSettings?.selectedParameterValues) {
+        const paramIndex = temp.findIndex(
+          (param) => param.parameterId === selectedParam.parameterId
+        );
+        if (paramIndex !== -1) {
+          temp[paramIndex].valueIds = selectedParam.valueIds;
+          temp[paramIndex].values = selectedParam.valueIds;
+        }
+      }
+      temp.forEach((tempObject) => {
+        const index = generalParameters.findIndex(
+          (param) => param.parameterId === tempObject.parameterId
+        );
+        if (index !== -1) {
+          generalParameters[index] = tempObject;
+        } else {
+          generalParameters.push(tempObject);
+        }
+      });
+      setGeneralParameters(generalParameters);
+    }
+  }, [
+    selectedValueForSettings,
+    selectedValueConfigForSettings,
+    generalParameters,
+    generalParametersLocal,
+  ]);
+
   useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0 && canCalculation) {
       const workFlowSelect = pricingDefaultValue?.workFlows?.find(
@@ -962,7 +1024,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   : defaultObject
               }
               onChange={(e: any, value: any) => {
-                // setSelectedValueConfig(value);
+                if (parameter?.setSettingIcon) {
+                  setSelectedValueForSettings({
+                    parameter,
+                    subSection,
+                    section,
+                  });
+                  setSelectedValueConfigForSettings(value);
+                }
                 onChangeForPrice(
                   parameter?.id,
                   subSection?.id,
