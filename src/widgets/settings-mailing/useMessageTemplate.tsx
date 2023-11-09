@@ -8,7 +8,7 @@ import { allSMSTemplateGroupsState, allSmsTemplateState, editModalState, groupMo
 import { MoreMenuWidget } from "./messageTemplates/components/more-circle/index";
 import { PdfUploadComponent } from "./messageTemplates/components/upload-file/upload-file";
 import { ISMSTemplate, SMSTemplateGroup } from "./messageTemplates/interfaces/interface";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 const useMessageTemplate = () => {
   const { t } = useTranslation();
@@ -17,7 +17,7 @@ const useMessageTemplate = () => {
   const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
   const [editModal, setEditModal] = useRecoilState<boolean>(editModalState);
   const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupState);
-  const [SMSTemplate, setSMSTemplate] = useRecoilState<ISMSTemplate>(smsTemplateState);
+  const setSMSTemplate = useSetRecoilState<ISMSTemplate>(smsTemplateState);
   const [types, setTypes] = useState([]);
 
   const tableHeaders = [
@@ -62,7 +62,7 @@ const useMessageTemplate = () => {
   }
 
   // select group 
-  const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(allSMSTemplateGroupsState);
+  const setAllSMSTemplateGroups = useSetRecoilState<any>(allSMSTemplateGroupsState);
   const getSMSTemplateGroups = () => {
     const callBackFunction = (data) => {
       if (data.success) {

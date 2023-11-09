@@ -97,8 +97,6 @@ const useStyle = () => {
                 display: "flex",
                 alignSelf: "flex-end",
                 gap: "10px",
-                // position: "fixed" as "fixed",
-                // bottom: "10px",
             },
 
             switchStyle: {

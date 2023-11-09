@@ -8,6 +8,7 @@ import Stack from "@mui/material/Stack";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import { useRecoilState } from "recoil";
 import { selectedTabState } from "./state";
+import { useEffect } from "react";
 
 const PrimaryTabs = styled(Tabs)((props: TabsProps) => {
     const {primaryColor} = useGomakeTheme();
@@ -40,6 +41,11 @@ const PrimaryTab = styled(Tab)((props: TabProps) => {
 
 const PrimaryTabsComponent = ({tabs, children, navigationButtons , onSelectTab }: ITabsProps) => {
     const [value, setValue] = useRecoilState<number>(selectedTabState);
+    
+    useEffect(() => {
+        setValue(0);
+    }, []);
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
 

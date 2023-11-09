@@ -26,7 +26,6 @@ const useStyle = () => {
                 background: primaryColor(100),
                 width: "24px",
                 height: "24px"
-
             }
         };
     }, []);

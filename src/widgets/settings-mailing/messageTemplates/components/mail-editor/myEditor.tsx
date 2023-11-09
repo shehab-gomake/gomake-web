@@ -127,7 +127,6 @@ const MyEditor = ({ headerEditor }: IProps) => {
                 ['bold', 'italic', 'underline', 'strike'],
                 [{ 'header': '1' }, { 'header': '2' } , { 'font': [] }],
                 ['link', 'image'],
-                // ['clean'],
             ],
         },
     };

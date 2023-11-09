@@ -10,7 +10,7 @@ import { useMessageTemplate } from "./useMessageTemplate";
 import { useEffect  } from "react";
 import { EmailSettings } from "./messageTemplates/components/mail-editor/mail-editor";
 import { ISMSTemplate } from "./messageTemplates/interfaces/interface";
-import { useRecoilState } from "recoil";
+import { useRecoilState , useSetRecoilState} from "recoil";
 
 const SettingsMailingWidget = () => {
     const { t } = useTranslation();
@@ -18,8 +18,8 @@ const SettingsMailingWidget = () => {
     const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
     const [openEditModal, setOpenEditModal] = useRecoilState<boolean>(editModalState);
     const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
-    const [subject, setSubject] = useRecoilState<string>(smsSubjectState);
-    const [body, setBody] = useRecoilState<string>(smsBodyState);
+    const setSubject = useSetRecoilState<string>(smsSubjectState);
+    const setBody = useSetRecoilState<string>(smsBodyState)
 
     const tabs: ITab[] = [
         { title: t("mailingSettings.messageTemplates"), component: <MessageTemplates/> },
