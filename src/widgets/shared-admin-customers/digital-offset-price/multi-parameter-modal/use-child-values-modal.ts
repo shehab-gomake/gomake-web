@@ -13,8 +13,6 @@ const useChildValuesMapping = ({
 }) => {
   const paddingLeft = value?.valueId?.length === 0 ? 13 : 38;
   const selectColorValue = useRecoilValue<any>(selectColorValueState);
-  console.log("value", value);
-  console.log("selectColorValue", selectColorValue);
   const [generalParameters, setGeneralParameters] =
     useRecoilState(maltiParameterState);
   const [isFocused, setIsFocused] = useState(false);
