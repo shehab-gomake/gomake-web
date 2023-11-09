@@ -58,3 +58,7 @@ export const smsBodyState = atom<string>({
   default: "",
 });
 
+export const allSmsTemplateState = atom<string[][]>({
+  key: "allSmsTemplateState",
+  default: [],
+});

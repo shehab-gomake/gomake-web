@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks";
-import { allSMSTemplateGroupsState, editModalState, groupModalState, smsTemplateState, templateGroupState, templateVariablesState } from "./states/state";
+import { allSMSTemplateGroupsState, allSmsTemplateState, editModalState, groupModalState, smsTemplateState, templateGroupState, templateVariablesState } from "./states/state";
 import { MoreMenuWidget } from "./messageTemplates/components/more-circle/index";
 import { PdfUploadComponent } from "./messageTemplates/components/upload-file/upload-file";
 import { ISMSTemplate, SMSTemplateGroup } from "./messageTemplates/interfaces/interface";
@@ -26,7 +26,7 @@ const useMessageTemplate = () => {
     t("mailingSettings.body"),
     t("mailingSettings.attachment"),
     t("mailingSettings.more"),
- 
+
   ];
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const useMessageTemplate = () => {
     return await getAllTemplateTypesApi(callApi, callBackFunction);
   }
 
-  const [allSmsTemplates, setAllSmsTemplates] = useState<any>();
+  const [allSmsTemplates, setAllSmsTemplates] = useRecoilState<string[][]>(allSmsTemplateState)
   const getAllSmsTemplates = () => {
     const callBackFunction = (data) => {
       if (data.success) {
@@ -52,9 +52,8 @@ const useMessageTemplate = () => {
           types.find((option) => option.value == template.templateType)?.text || "Unknown",
           template.title ? new DOMParser().parseFromString(template.title, 'text/html').body.textContent : "",
           template.text ? new DOMParser().parseFromString(template.text, 'text/html').body.textContent : "",
-          <PdfUploadComponent onUpload={false} fileName={template.attachment}/>,
+          <PdfUploadComponent onUpload={false} fileName={template.attachment} />,
           <MoreMenuWidget id={template.id} item={template} />,
-          
         ]);
         setAllSmsTemplates(tableRows);
       }

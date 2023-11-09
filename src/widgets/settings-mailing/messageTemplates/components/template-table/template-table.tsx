@@ -1,10 +1,13 @@
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useMessageTemplate } from "../../../useMessageTemplate";
 import { useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { allSmsTemplateState } from "@/widgets/settings-mailing/states/state";
 
 const TemplateTable = () => {
 
-    const { tableHeaders, getSMSTemplateTypes, allSmsTemplates} = useMessageTemplate();
+    const { tableHeaders, getSMSTemplateTypes} = useMessageTemplate();
+    const [allSmsTemplates, setAllSmsTemplates] = useRecoilState<string[][]>(allSmsTemplateState)
 
     useEffect(() => {
         getSMSTemplateTypes();
