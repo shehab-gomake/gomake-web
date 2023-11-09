@@ -1,3 +1,5 @@
+import { CSSProperties } from "react";
+
 export interface IInput {
   name: string;
   label: string;
@@ -12,6 +14,7 @@ export interface IInput {
   isValid: boolean;
   regex?: RegExp;
   inputs?: IInput[];
+  direction?: string;
 }
 export interface IFormInput {
   input: IInput;

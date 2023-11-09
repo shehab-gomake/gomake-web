@@ -18,6 +18,17 @@ const useStyle = () => {
                 },
                 textTransform: 'capitalize'
             },
+            addNewBtn: {
+                ...FONT_FAMILY.Lexend(500, 14),
+                color: primaryColor(500),
+                '&:hover': {
+                    backgroundColor: primaryColor(200),
+                },
+                '& .MuiButton-startIcon': {
+                  margin: '0 8px'
+                },
+                textTransform: 'lowercase' // Set to 'lowercase'
+            },
             deleteIcon: {
                 cursor: 'pointer',
                 alignSelf: 'flex-end'

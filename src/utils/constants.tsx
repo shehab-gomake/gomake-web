@@ -23,3 +23,7 @@ export const _renderUnActiveIcon = (icon) => {
     return <PricingIcon stroke="#1C1D58" />;
   }
 };
+
+export const compareStrings = (string1, string2) => {
+  return string1?.toLowerCase() === string2?.toLowerCase();
+};

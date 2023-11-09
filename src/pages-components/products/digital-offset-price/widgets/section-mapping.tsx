@@ -29,7 +29,8 @@ const SectionMappingWidget = ({
                   section,
                   subSection?.parameters,
                   value,
-                  subSection?.parameters
+                  subSection?.parameters,
+                  true
                 )}
               </div>
             );

@@ -11,6 +11,7 @@ const AccordionMappingWidget = ({
   section,
   _renderParameterType,
   _getParameter,
+  relatedParameters,
 }: any) => {
   const { t } = useTranslation();
   return (
@@ -46,21 +47,29 @@ const AccordionMappingWidget = ({
       </AccordionSummary>
       <AccordionDetails>
         <div style={clasess.parametersContainer}>
-          {subSection?.parameters?.map((parameter, index) => {
-            const value = _getParameter(parameter, subSection, section);
-            return (
-              <div key={index}>
-                {_renderParameterType(
-                  parameter,
-                  subSection,
-                  section,
-                  subSection?.parameters,
-                  value,
-                  subSection?.parameters
-                )}
-              </div>
-            );
-          })}
+          {subSection?.parameters
+            ?.filter((param: any) => !param.isHidden)
+            ?.filter((param: any) => {
+              return !relatedParameters.some(
+                (relatedParam) => relatedParam.parameterId === param.id
+              );
+            })
+            ?.map((parameter: any, index: number) => {
+              const value = _getParameter(parameter, subSection, section);
+              return (
+                <div key={index} style={{ display: "flex" }}>
+                  {_renderParameterType(
+                    parameter,
+                    subSection,
+                    section,
+                    subSection?.parameters,
+                    value,
+                    subSection?.parameters,
+                    true
+                  )}
+                </div>
+              );
+            })}
         </div>
       </AccordionDetails>
     </Accordion>

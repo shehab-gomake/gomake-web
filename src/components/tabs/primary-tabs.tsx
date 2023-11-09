@@ -3,10 +3,11 @@ import {Tab, TabProps, Tabs, TabsProps} from "@mui/material";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {FONT_FAMILY} from "@/utils/font-family";
 import {CustomTabPanel} from "@/components/tabs/tab-panel";
-import {useState} from "react";
 import {ITabsProps} from "@/components/tabs/interface";
 import Stack from "@mui/material/Stack";
 import {SecondaryButton} from "@/components/button/secondary-button";
+import { useRecoilState } from "recoil";
+import { selectedTabState } from "./state";
 
 const PrimaryTabs = styled(Tabs)((props: TabsProps) => {
     const {primaryColor} = useGomakeTheme();
@@ -37,11 +38,17 @@ const PrimaryTab = styled(Tab)((props: TabProps) => {
 });
 
 
-const PrimaryTabsComponent = ({tabs, children, navigationButtons}: ITabsProps) => {
-    const [value, setValue] = useState(0);
+const PrimaryTabsComponent = ({tabs, children, navigationButtons , onSelectTab }: ITabsProps) => {
+    const [value, setValue] = useRecoilState<number>(selectedTabState);
     const handleChange = (event, newValue) => {
         setValue(newValue);
+
+        if (!!onSelectTab) {
+            onSelectTab(newValue);
+        }
     };
+
+    
     return (
         <>
             <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} position={'sticky'} top={0}

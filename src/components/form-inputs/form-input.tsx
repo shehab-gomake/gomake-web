@@ -1,9 +1,9 @@
-import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
+import React, { ChangeEvent,memo, SyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks";
 import { useStyle } from "@/components/form-inputs/style";
 import { IFormInput } from "@/components/form-inputs/interfaces";
-import { GoMakeAutoComplate, GomakeTextInput, SecondSwitch } from "@/components";
+import { GoMakeAutoComplate, GomakeTextInput, SecondSwitch , PrimarySwitch } from "@/components";
 import { MuiColorInput } from 'mui-color-input';
 import { GoMakeFileFiled } from "../file-filed/file-filed";
 
@@ -91,7 +91,7 @@ const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
   return (
     <>
       {!input.disabled && (
-        <div style={classes.inputContainer} key={input.parameterKey}>
+        <div  style={input.direction == "row" ? classes.inputContainerRow : classes.inputContainer} key={input.parameterKey}>
           <div style={classes.inputLbl}>
             {
                <span>{t(input.label)}</span> 
@@ -114,7 +114,10 @@ const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
               />
             ) : input.type === "switch" ? (
               <SecondSwitch  checked={!!input.value} onChange={handleSwitchCheck} />
-            ) 
+            )
+              :  input.type === 'primeSwitch' ? (
+                        <PrimarySwitch checked={!!input.value} onChange={handleSwitchCheck} />
+                    )
             : input.type === "color" ? ( 
             <div style={classes.fileInputStyle}>
                  <MuiColorInput value={color} onChange={handleChange} format="hex" />
