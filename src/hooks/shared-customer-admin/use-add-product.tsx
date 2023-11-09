@@ -20,6 +20,7 @@ import { useMaterials } from "../use-materials";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { materialsCategoriesState } from "@/store/material-categories";
 import { digitslPriceState } from "./store";
+import { compareStrings } from "@/utils/constants";
 
 const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
@@ -669,7 +670,10 @@ const useAddProduct = ({ clasess }) => {
           if (!!!options) {
             let optionsLvl1 = allMaterials
               ?.find((material) => {
-                return material.pathName === parameter?.materialPath[0];
+                return compareStrings(
+                  material.pathName,
+                  parameter?.materialPath[0]
+                );
               })
               ?.data?.find((item) => item?.valueId === valueIdIsDefault);
 
@@ -683,7 +687,10 @@ const useAddProduct = ({ clasess }) => {
         }
         if (parameter?.materialPath?.length == 1) {
           options = allMaterials?.find((material: any) => {
-            return material.pathName === parameter?.materialPath[0];
+            return compareStrings(
+              material.pathName,
+              parameter?.materialPath[0]
+            );
           })?.data;
           let x = options?.find(
             (item: any) =>

@@ -65,9 +65,11 @@ html * {
 .MuiOutlinedInput-root fieldset {
   border: none !important;
 }
-
-.Mui-expanded {
-  margin: 0px !important;
+.MuiTextField-root input{
+  border:none !important;
+}
+.Mui-expanded{
+margin: 0px !important;
 }
 
 .MuiAccordion-root {
