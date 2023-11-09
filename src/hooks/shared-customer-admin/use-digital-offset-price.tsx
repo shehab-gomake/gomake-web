@@ -26,6 +26,7 @@ import { SettingsIcon } from "@/icons/settings";
 import { compareStrings } from "@/utils/constants";
 import { EParameterTypes } from "@/enums";
 import lodashClonedeep from "lodash.clonedeep";
+import { maltiParameterState } from "@/widgets/shared-admin-customers/digital-offset-price/multi-parameter-modal/store/multi-param-atom";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -68,9 +69,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     useRecoilState<any>(digitslPriceState);
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(true);
-  const [generalParametersLocal, setGeneralParametersLocal] = useState([]);
+  const [generalParametersLocal, setGeneralParametersLocal] =
+    useRecoilState(maltiParameterState);
   const [sampleType, setSamlleType] = useState();
-  console.log("sampleType", sampleType);
+  console.log("generalParameters", generalParameters);
   const [selectedValueForSettings, setSelectedValueForSettings] =
     useState<any>();
   const [selectedValueConfigForSettings, setSelectedValueConfigForSettings] =
@@ -196,6 +198,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       }),
                       sectionId: section?.id,
                       subSectionId: subSection?.id,
+                      actionIndex: parameter?.actionIndex,
                     });
                   }
                 } else if (
@@ -227,6 +230,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       }),
                       sectionId: section?.id,
                       subSectionId: subSection?.id,
+                      actionIndex: parameter?.actionIndex,
                     });
                   }
                 } else if (
@@ -253,9 +257,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         valueIds: [defaultObject?.id],
                         values: [defaultObject?.updateName],
                       }),
-
                       sectionId: section?.id,
                       subSectionId: subSection?.id,
+                      actionIndex: parameter?.actionIndex,
                     });
                     parameter?.childsParameters?.map((item) => {
                       temp.push({
@@ -266,6 +270,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         values: [item?.defaultValue],
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
                       });
                     });
                   }
@@ -291,7 +296,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   (item) =>
                     item.parameterId === parameter?.id &&
                     item.sectionId === section?.id &&
-                    item.subSectionId === subSection?.id
+                    item.subSectionId === subSection?.id &&
+                    item?.actionIndex === parameter?.actionIndex
                 );
                 relatedParametersArray.push(...parameter.relatedParameters);
 
@@ -317,6 +323,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         }),
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
                       });
                     }
                   } else if (
@@ -361,6 +368,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             }),
                             sectionId: section?.id,
                             subSectionId: subSection?.id,
+                            actionIndex: parameter?.actionIndex,
                           });
                         }
 
@@ -397,6 +405,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             }),
                             sectionId: section?.id,
                             subSectionId: subSection?.id,
+                            actionIndex: parameter?.actionIndex,
                           });
                         }
                       }
@@ -431,6 +440,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         }),
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
                       });
                     }
                   } else if (
@@ -457,9 +467,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           valueIds: [defaultObject?.id],
                           values: [defaultObject?.updateName],
                         }),
-
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
                       });
                       parameter?.childsParameters?.map((item) => {
                         temp.push({
@@ -470,6 +480,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           values: [item?.defaultValue],
                           sectionId: section?.id,
                           subSectionId: subSection?.id,
+                          actionIndex: parameter?.actionIndex,
                         });
                       });
                     }
@@ -557,7 +568,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         (item) =>
           item?.parameterId === parameter?.id &&
           item?.sectionId === section?.id &&
-          item?.subSectionId === subSection?.id
+          item?.subSectionId === subSection?.id &&
+          item?.actionIndex === parameter?.actionIndex
       );
 
       return temp[index];
@@ -567,9 +579,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         (item) =>
           item.parameterId === parameter?.id &&
           item.sectionId === section?.id &&
-          item.subSectionId === subSection?.id
+          item.subSectionId === subSection?.id &&
+          item?.actionIndex === parameter?.actionIndex
       );
-
       return temp[index];
     }
   };
@@ -590,7 +602,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         (item) =>
           item?.parameterId === parameter?.id &&
           item?.sectionId === section?.id &&
-          item?.subSectionId === subSection?.id
+          item?.subSectionId === subSection?.id &&
+          item?.actionIndex === parameter?.actionIndex
       );
 
       if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
@@ -610,7 +623,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.actionId,
                 { values: e.target.value },
                 subSection?.type,
-                index
+                index,
+                parameter?.actionIndex
               )
             }
             type="number"
@@ -632,7 +646,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.actionId,
                 { values: e.target.value },
                 subSection?.type,
-                index
+                index,
+                parameter?.actionIndex
               )
             }
             value={index !== -1 ? temp[index].values : ""}
@@ -665,7 +680,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.actionId,
                 { valueIds: value?.id, values: value?.updateName },
                 subSection?.type,
-                index
+                index,
+                parameter?.actionIndex
               );
             }}
           />
@@ -697,7 +713,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.actionId,
                 { valueIds: value?.id, values: value?.updateName },
                 subSection?.type,
-                index
+                index,
+                parameter?.actionIndex
               );
               setGeneralParameters((prev) => {
                 let temp = [...prev];
@@ -708,7 +725,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       (item) =>
                         item.parameterId === parameter?.id &&
                         item.sectionId === section?.id &&
-                        item.subSectionId === subSection?.id
+                        item.subSectionId === subSection?.id &&
+                        item?.actionIndex === parameter?.actionIndex
                     );
 
                     if (index !== -1) {
@@ -754,7 +772,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.actionId,
                 { values: value?.toString() },
                 subSection?.type,
-                index
+                index,
+                parameter?.actionIndex
               )
             }
           />
@@ -890,7 +909,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           ...(data?.id > 0 && { material: data?.id }),
                         },
                         subSection?.type,
-                        index
+                        index,
+                        parameter?.actionIndex
                       );
                       setDigidatPriceData({
                         ...digitalPriceData,
@@ -912,7 +932,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           ...(data?.id > 0 && { material: data?.id }),
                         },
                         subSection?.type,
-                        index
+                        index,
+                        parameter?.actionIndex
                       );
                       setDigidatPriceData({
                         ...digitalPriceData,
@@ -935,7 +956,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           ...(data?.id > 0 && { material: data?.id }),
                         },
                         subSection?.type,
-                        index
+                        index,
+                        parameter?.actionIndex
                       );
                       setDigidatPriceData({
                         ...digitalPriceData,
@@ -958,7 +980,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         (item) =>
           item.parameterId === parameter?.id &&
           item.sectionId === section?.id &&
-          item.subSectionId === subSection?.id
+          item.subSectionId === subSection?.id &&
+          item?.actionIndex === parameter?.actionIndex
       );
       if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
         Comp = (
@@ -976,7 +999,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.name,
                 parameter?.actionId,
                 { values: e.target.value },
-                index
+                index,
+                parameter?.actionIndex
               )
             }
             type="number"
@@ -997,7 +1021,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.name,
                 parameter?.actionId,
                 { values: e.target.value },
-                index
+                index,
+                parameter?.actionIndex
               )
             }
             value={index !== -1 ? temp[index].values : ""}
@@ -1048,7 +1073,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         ? parameter?.actionId
                         : null,
                   },
-                  index
+                  index,
+                  parameter?.actionIndex
                 );
               }}
             />
@@ -1101,7 +1127,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.name,
                 parameter?.actionId,
                 { valueIds: value?.id, values: value?.updateName },
-                index
+                index,
+                parameter?.actionIndex
               );
               setGeneralParameters((prev) => {
                 let temp = [...prev];
@@ -1112,7 +1139,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       (item) =>
                         item.parameterId === parameter?.id &&
                         item.sectionId === section?.id &&
-                        item.subSectionId === subSection?.id
+                        item.subSectionId === subSection?.id &&
+                        item?.actionIndex === parameter?.actionIndex
                     );
 
                     if (index !== -1) {
@@ -1157,7 +1185,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter?.name,
                 parameter?.actionId,
                 { values: value?.toString() },
-                index
+                index,
+                parameter?.actionIndex
               )
             }
           />
@@ -1291,7 +1320,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             values: value?.value,
                             ...(data?.id > 0 && { material: data?.id }),
                           },
-                          index
+                          index,
+                          parameter?.actionIndex
                         );
                         setDigidatPriceData({
                           ...digitalPriceData,
@@ -1312,7 +1342,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             values: value?.value,
                             ...(data?.id > 0 && { material: data?.id }),
                           },
-                          index
+                          index,
+                          parameter?.actionIndex
                         );
                         setDigidatPriceData({
                           ...digitalPriceData,
@@ -1334,7 +1365,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             values: value?.value,
                             ...(data?.id > 0 && { material: data?.id }),
                           },
-                          index
+                          index,
+                          parameter?.actionIndex
                         );
                         setDigidatPriceData({
                           ...digitalPriceData,
@@ -1539,7 +1571,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     parameterName: any,
     actionId: any,
     data: any,
-    index: any
+    index: any,
+    actionIndex: number
   ) => {
     setCanCalculation(true);
     setGeneralParameters((prev) => {
@@ -1560,6 +1593,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           actionId: actionId,
           values: [data.values],
           valueIds: [data.valueIds],
+          actionIndex,
         });
       }
       if (data?.valueIds === undefined && data?.values === undefined) {
@@ -1577,7 +1611,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     actionId: any,
     data: any,
     subSectionType: any,
-    index: any
+    index: any,
+    actionIndex: number
   ) => {
     setCanCalculation(true);
     const targetSubProduct = subProducts.find(
@@ -1605,6 +1640,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           actionId: actionId,
           values: [data.values],
           valueIds: [data.valueIds],
+          actionIndex,
         });
       }
       let temp2 = [...subProducts];
@@ -1634,6 +1670,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           actionId: actionId,
           values: [data.values],
           valueIds: [data.valueIds],
+          actionIndex,
         });
       }
       if (data?.valueId === undefined && data?.value === undefined) {

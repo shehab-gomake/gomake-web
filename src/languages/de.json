@@ -242,7 +242,8 @@
       "edit": "Bearbeiten",
       "save": "Speichern",
       "saveModifications": "Änderungen speichern",
-      "duplicate": "Duplizieren"
+      "duplicate": "Duplizieren",
+      "orderList": "Bestellliste"
     },
     "modals": {
       "subTitleDeleteModal": "Sind Sie sicher, {{name}} zu löschen?"

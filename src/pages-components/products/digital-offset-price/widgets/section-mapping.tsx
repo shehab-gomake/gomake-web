@@ -1,3 +1,8 @@
+import { GomakePrimaryButton } from "@/components";
+import { AddNewIcon } from "@/icons";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { useTranslation } from "react-i18next";
+
 const SectionMappingWidget = ({
   clasess,
   index,
@@ -8,6 +13,7 @@ const SectionMappingWidget = ({
   relatedParameters,
   isAccordion,
 }: any) => {
+  const { t } = useTranslation();
   return (
     <div key={index} style={clasess.subSectionContainer}>
       {!isAccordion && (
@@ -38,6 +44,14 @@ const SectionMappingWidget = ({
             );
           })}
       </div>
+      {subSection?.optionToDuplicateContent && (
+        <GomakePrimaryButton
+          style={clasess.duplicateSubSectionBtn}
+          leftIcon={<AddNewIcon />}
+        >
+          {t("materials.buttons.addNew")} {subSection.name}
+        </GomakePrimaryButton>
+      )}
     </div>
   );
 };

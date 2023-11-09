@@ -243,7 +243,8 @@
       "edit": "Edit",
       "save": "Save",
       "saveModifications": "Save modifications",
-      "duplicate": "Duplicate"
+      "duplicate": "Duplicate",
+      "addNew":"Add New"
     },
     "modals": {
       "subTitleDeleteModal": "Are you sure to delete {{name}}"

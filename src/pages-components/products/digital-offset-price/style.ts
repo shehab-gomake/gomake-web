@@ -26,7 +26,6 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         marginBottom: 60,
-
       },
       leftSideContainer: {
         display: "flex",
@@ -34,7 +33,6 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "68%",
-
       },
       rightSideMainContainer: {
         display: "flex",
@@ -175,8 +173,8 @@ const useStyle = () => {
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
-        ...FONT_FAMILY.Lexend(500,14),
-        color:"#000"
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: "#000",
       },
       dropDownListStyle: {
         width: "100%",
@@ -184,13 +182,13 @@ const useStyle = () => {
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
-        ...FONT_FAMILY.Lexend(500,14)
+        ...FONT_FAMILY.Lexend(500, 14),
       },
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
         backgroundColor: "#FFF",
-        borderRadius: 4, 
+        borderRadius: 4,
       },
 
       switchStyle: {
@@ -530,14 +528,24 @@ const useStyle = () => {
         boxShadow: "none",
         height: 36,
       },
-      dropDownListWithSettingIcon:{
+      dropDownListWithSettingIcon: {
         width: "100%",
         display: "flex",
         flexDirection: "row",
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 4,
-      }
+      },
+      duplicateSubSectionBtn: {
+        backgroundColor: "#FFFF",
+        border: "1px solid  rgba(208, 213, 221, 1)",
+        color: "rgba(52, 64, 84, 1)",
+        borderRadius: 8,
+        height: 36,
+        padding: "8px 14px",
+        ...FONT_FAMILY.Inter(600, 14),
+        width: "fit-content",
+      },
     };
   }, [i18next.language, t]);
   return {
