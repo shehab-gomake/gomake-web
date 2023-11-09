@@ -3,12 +3,15 @@ import {getPrintHouseSuppliersListApi} from "@/services/api-service/suppliers/su
 import {useState} from "react";
 import {addMaterialSupplier} from "@/services/api-service/materials/materials-suppliers-endpoints";
 import {useRouter} from "next/router";
-import {useRecoilState, useSetRecoilState} from "recoil";
+import {useRecoilState, useSetRecoilState } from "recoil";
 import {
+    activeFilterState,
     materialCategorySuppliersState,
     openAddSupplierModalState,
     selectedSupplierIdState
 } from "@/widgets/materials-widget/state";
+import { EMaterialActiveFilter } from "../../enums";
+import { Alert } from "react-bootstrap";
 
 const useAddMaterialSupplier = () => {
     const {callApi} = useGomakeAxios();
@@ -20,6 +23,7 @@ const useAddMaterialSupplier = () => {
     const [openModal, setOpenModal] = useRecoilState(openAddSupplierModalState);
     const setSelectedSupplier = useSetRecoilState(selectedSupplierIdState);
     const [materialSuppliers, setMaterialSuppliers] = useRecoilState(materialCategorySuppliersState);
+    const setActiveFilter = useSetRecoilState(activeFilterState);
 
     const getPrintHouseSuppliersList = async () => {
         const callBack = (res) => {
@@ -44,6 +48,7 @@ const useAddMaterialSupplier = () => {
                 setOpenModal(false)
                 setMaterialSuppliers([...materialSuppliers, newSupplier])
                 setSelectedSupplier(newSupplier.value);
+                setActiveFilter(EMaterialActiveFilter.ALL);
             } else {
                 alertFaultAdded();
             }

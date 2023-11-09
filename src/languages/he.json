@@ -242,7 +242,8 @@
       "edit": "עריכה",
       "save": "שמירה",
       "saveModifications": "שמור שינויים",
-      "duplicate": "שכפול"
+      "duplicate": "שכפול",
+      "back": "חזרה"
     },
     "modals": {
       "subTitleDeleteModal": "האם אתה בטוח שברצונך למחוק את {{name}}"

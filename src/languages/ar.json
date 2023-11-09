@@ -242,7 +242,8 @@
       "edit": "تعديل",
       "save": "حفظ",
       "saveModifications": "حفظ التعديلات",
-      "duplicate": "نسخ"
+      "duplicate": "نسخ",
+      "back": "رجوع"
     },
     "modals": {
       "subTitleDeleteModal": "هل أنت متأكد من حذف {{name}}"
