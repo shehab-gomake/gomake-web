@@ -40,31 +40,6 @@ const useMultiParameterModal = ({
     setSelectColorValue(result);
   }, [generalParameters, selectedValueConfig]);
 
-  console.log("parameterLists", parameterLists);
-  // useEffect(() => {
-  //   console.log("HHHHH");
-  //   let temp = lodashClonedeep(generalParametersLocal);
-  //   const numProperties = temp.length;
-  //   for (let index = 0; index < 1; index++) {
-  //     for (let index2 = 0; index2 < foundMaterial?.data.length; index2++) {
-  //       for (
-  //         let index3 = 0;
-  //         index3 < foundMaterial?.data[index2].data.length;
-  //         index3++
-  //       ) {
-  //         for (let i = 1; i < numProperties; i++) {
-  //           (
-  //             document.getElementById(
-  //               `input_${i}_${index2}_${index3}`
-  //             ) as HTMLInputElement
-  //           ).value = "100";
-
-  //           console.log("AAAAA");
-  //         }
-  //       }
-  //     }
-  //   }
-  // }, [generalParametersLocal, foundMaterial]);
   const onClickSaveParameter = () => {
     let temp = lodashClonedeep(generalParametersLocal);
     const numProperties = temp.length;

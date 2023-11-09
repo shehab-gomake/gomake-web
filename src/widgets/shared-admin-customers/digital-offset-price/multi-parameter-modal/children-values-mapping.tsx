@@ -1,14 +1,7 @@
-import { useRecoilState, useRecoilValue } from "recoil";
-import { useEffect, useState } from "react";
-import lodashClonedeep from "lodash.clonedeep";
-
-import { useClickAway } from "@uidotdev/usehooks";
 import { GomakeTextInput } from "@/components";
 import { Checkbox } from "@mui/material";
 
 import { CheckboxCheckedIcon } from "./icons/checkbox-checked-icon";
-import { selectColorValueState } from "./store/selecte-color-value";
-import { maltiParameterState } from "./store/multi-param-atom";
 import { SubChildrenMapping } from "./sub-children-mapping";
 import { CheckboxIcon } from "./icons/checkbox-icon";
 import { MinusIcon } from "./icons/minus";
