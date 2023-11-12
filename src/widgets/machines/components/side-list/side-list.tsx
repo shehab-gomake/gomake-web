@@ -42,6 +42,7 @@ const SideList = ({
                       quickActions = false,
                       children,
                       isAdmin,
+                      isHaveDeleteIcon
                   }: ISideListProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const {classes} = useStyle();
@@ -101,8 +102,9 @@ const SideList = ({
                         <ListButton
                             selected={item?.value === selectedItem}
                             onClick={() => onSelect(item?.value)}
+                            style={isHaveDeleteIcon && classes.deleteButtonDirection}
                         >
-                            {!!item.icon && <ListItemIcon sx={{minWidth: 28}}>{item.icon()}</ListItemIcon>}
+                            {!!item.icon && <ListItemIcon sx={{minWidth: 28 }}>{item.icon()}</ListItemIcon>}
                             <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} width={'100%'}>
                                 <ListItemText style={{maxWidth: 'fit-content'}} primary={item.text}/>
                                 {selectedItem === item?.value && quickActions && (

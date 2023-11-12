@@ -17,7 +17,6 @@ const useAddMaterialCategory = () => {
     const [newCategory, setNewCategory] = useState<string>(null);
     const setActiveFilter = useSetRecoilState(activeFilterState);
 
-
     const onSetCategory = (e) => {
         setNewCategory(e.target.value);
     }
@@ -44,6 +43,7 @@ const useAddMaterialCategory = () => {
         setOpenModal,
         onAddCategory,
         onSetCategory,
+        
     }
 }
 

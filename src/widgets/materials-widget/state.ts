@@ -19,7 +19,7 @@ export const materialActionState = atom<{ key: string; action: EMaterialsActions
     key: "materialActionState",
     default: [],
 });
-export const materialCategoriesState = atom<{ categoryKey: string, categoryName: string }[]>({
+export const materialCategoriesState = atom<{ categoryKey: string, categoryName: string , isAddedByPrintHouse : boolean  }[]>({
     key: "materialCategoriesState",
     default: [],
 });

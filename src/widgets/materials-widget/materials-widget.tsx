@@ -49,7 +49,7 @@ const MaterialsWidget = () => {
     <Stack  gap={'10px'} direction={'column'} >
     <SecondaryButton variant={'text'} onClick={()=>navigate("/materials")} startIcon={ dir === 'ltr' ?  <ArrowBackIcon/> : <ArrowForwardIcon/> } style={{gap:5}} >{t("materials.buttons.back")}
       </SecondaryButton>
-    <SideList list={materialsCategoriesList()} selectedItem={materialCategory?.toString()} onSelect={onSelectCategory} title={'choose category'}>
+    <SideList list={materialsCategoriesList()} selectedItem={materialCategory?.toString()} onSelect={onSelectCategory} title={'choose category'} isHaveDeleteIcon={true} >
         {/* <Stack gap={'10px'} direction={'row'} justifyContent={'space-between'}>
             <PrimaryButton onClick={downloadExcelFile} variant={'contained'}>Download</PrimaryButton>
             <input ref={elementRef} onChange={uploadExcelFile} type="file" accept=".xlsx"  hidden={true} />

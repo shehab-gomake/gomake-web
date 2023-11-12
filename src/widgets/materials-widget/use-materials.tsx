@@ -1,14 +1,15 @@
 import {useRouter} from "next/router";
-import {useCallback, useEffect, useMemo} from "react";
-import {useGomakeAxios} from "@/hooks";
+import {useCallback , useMemo} from "react";
+import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {
+    deleteMaterialCategoryApi,
     getMaterialCategoriesApi,
     getMaterialCategoryDataApi, getMaterialExcelFileApi,
     getMaterialTableHeadersApi, uploadMaterialExcelFileApi
 } from "@/services/api-service/materials/materials-endpoints";
 import {IMaterialCategoryRow} from "@/widgets/materials-widget/interface";
 import {TableCellData} from "@/widgets/materials-widget/components/table-cell-data/table-cell";
-import {Checkbox} from "@mui/material";
+import {Checkbox, IconButton} from "@mui/material";
 import {getCurrencies} from "@/services/api-service/general/enums";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import {
@@ -22,12 +23,14 @@ import {
 import {getMaterialSuppliersApi} from "@/services/api-service/materials/materials-suppliers-endpoints";
 import {useFilteredMaterials} from "@/widgets/materials-widget/use-filtered-materials";
 import { EMaterialActiveFilter } from "./enums";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useMaterials = () => {
     const {query, push, replace} = useRouter();
     const {materialType, materialCategory} = query;
     const [materialHeaders, setMaterialHeaders] = useRecoilState<{ key: string, value: string }[]>(materialHeadersState);
-    const [materialCategories, setMaterialCategories] = useRecoilState<{ categoryKey: string, categoryName: string }[]>(materialCategoriesState)
+    const [materialCategories, setMaterialCategories] = useRecoilState<{ categoryKey: string, categoryName: string , isAddedByPrintHouse : boolean }[]>(materialCategoriesState)
     const [materialCategoryData, setMaterialCategoryData] = useRecoilState<IMaterialCategoryRow[]>(materialCategoryDataState)
     const setMaterialCategorySuppliers = useSetRecoilState(materialCategorySuppliersState);
     const setMaterialActions = useSetRecoilState(materialActionState);
@@ -35,14 +38,30 @@ const useMaterials = () => {
     const activeFilter = useRecoilValue(activeFilterState);
     const materialFilter = useRecoilValue(filterState);
     const {callApi} = useGomakeAxios();
+    const {alertSuccessDelete , alertFaultDelete} = useSnackBar();
     const setCurrencies = useSetRecoilState(currenciesState);
     const {getFilteredMaterials} = useFilteredMaterials()
     const setActiveFilter = useSetRecoilState(activeFilterState);
+    const { errorColor } = useGomakeTheme();
 
     const onSelectCategory = (category: string) => {
         //setDefaultSupplier('')
         push(`/materials/${materialType}?materialCategory=${category}`)
-    //    materialCategoryData.every(row => !row.isActive) ? setActiveFilter(EMaterialActiveFilter.ALL) :setActiveFilter(EMaterialActiveFilter.ACTIVE);
+    }
+
+    const onDeleteCategory = async (categoryKey) => {
+        const callBack = (res) => {
+            if (res.success) {
+                alertSuccessDelete();
+                getMaterialCategories(materialType).then();
+            } else {
+                alertFaultDelete();
+            }
+        }
+        await deleteMaterialCategoryApi(callApi, callBack, {
+            materialTypeKey: materialType.toString(),
+            categoryKey: categoryKey,
+        })
     }
 
     const getMaterialCategories = async (material) => {
@@ -70,7 +89,9 @@ const useMaterials = () => {
     }
 
     const materialsCategoriesList = useCallback(() => {
-        return materialCategories.map(category => ({text: category.categoryName, value: category.categoryKey}))
+        return materialCategories.map(category => ({text: category.categoryName, value: category.categoryKey , icon: category.isAddedByPrintHouse ? ()=> <IconButton onClick={()=>onDeleteCategory(category?.categoryKey)}>
+            <DeleteOutlineIcon style={{color: errorColor(500)}} />
+          </IconButton> : null}))
     }, [materialCategories])
 
 
