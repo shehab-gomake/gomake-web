@@ -1,5 +1,5 @@
 import {useRouter} from "next/router";
-import {useCallback, useMemo} from "react";
+import {useCallback, useEffect, useMemo} from "react";
 import {useGomakeAxios} from "@/hooks";
 import {
     getMaterialCategoriesApi,
@@ -21,6 +21,7 @@ import {
 } from "@/widgets/materials-widget/state";
 import {getMaterialSuppliersApi} from "@/services/api-service/materials/materials-suppliers-endpoints";
 import {useFilteredMaterials} from "@/widgets/materials-widget/use-filtered-materials";
+import { EMaterialActiveFilter } from "./enums";
 
 const useMaterials = () => {
     const {query, push, replace} = useRouter();
@@ -36,18 +37,17 @@ const useMaterials = () => {
     const {callApi} = useGomakeAxios();
     const setCurrencies = useSetRecoilState(currenciesState);
     const {getFilteredMaterials} = useFilteredMaterials()
+    const setActiveFilter = useSetRecoilState(activeFilterState);
 
     const onSelectCategory = (category: string) => {
-        setDefaultSupplier('')
+        //setDefaultSupplier('')
         push(`/materials/${materialType}?materialCategory=${category}`)
+    //    materialCategoryData.every(row => !row.isActive) ? setActiveFilter(EMaterialActiveFilter.ALL) :setActiveFilter(EMaterialActiveFilter.ACTIVE);
     }
+
     const getMaterialCategories = async (material) => {
         const callBack = (res) => {
             if (res?.success) {
-                // if (res.data.length === 0) {
-                //     push('/materials');
-                //     return;
-                // }
                 setMaterialCategories(res?.data);
             } else {
                 push('/materials');
@@ -58,7 +58,8 @@ const useMaterials = () => {
     const getMaterialCategoryData = async (materialType: string, materialCategory: string, supplierId: string) => {
         const callBack = (res) => {
             if (res.success) {
-                setMaterialCategoryData(res.data?.map(row => ({...row, checked: false})));
+               setMaterialCategoryData(res.data?.map(row => ({...row, checked: false})));
+               res.data?.every(row => !row.isActive) ? setActiveFilter(EMaterialActiveFilter.ALL) :setActiveFilter(EMaterialActiveFilter.ACTIVE) 
             }
         }
         await getMaterialCategoryDataApi(callApi, callBack, {
@@ -67,6 +68,7 @@ const useMaterials = () => {
             supplierId
         })
     }
+
     const materialsCategoriesList = useCallback(() => {
         return materialCategories.map(category => ({text: category.categoryName, value: category.categoryKey}))
     }, [materialCategories])
@@ -113,6 +115,7 @@ const useMaterials = () => {
                 <TableCellData {...dataRow.rowData[header.key]} id={dataRow.id} parameterKey={header.key}/>)]
         })
     }, [materialHeaders, materialCategoryData, activeFilter, materialFilter])
+
 
     const getCurrenciesApi = async () => {
         const callBack = (res) => {
