@@ -14,12 +14,13 @@ interface IProps {
     fileName?: string;
 }
 
+
 const PdfUploadComponent = ({ onUpload, fileName}: IProps) => {
+    const { t } = useTranslation();
     const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
-    const [selectedFileName, setSelectedFileName] = useState("no attachment");
+    const [selectedFileName, setSelectedFileName] = useState(t("mailingSettings.noAttachment"));
     const inputRef = useRef(null);
     const { classes } = useStyle();
-    const { t } = useTranslation();
 
     const handleFileSelect = (e) => {
         const file = e.target.files[0];

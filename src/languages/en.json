@@ -243,7 +243,8 @@
       "edit": "Edit",
       "save": "Save",
       "saveModifications": "Save modifications",
-      "duplicate": "Duplicate"
+      "duplicate": "Duplicate",
+      "back":"back"
     },
     "modals": {
       "subTitleDeleteModal": "Are you sure to delete {{name}}"
@@ -2206,9 +2207,10 @@
     "sendCopyToAgentMail": "Send a copy to agent",
     "sendCopyToMainMail": "Send a copy to the primary email",
     "returnMail" : "Email returns to the agent's email if an email is set for him",
-    "emailType" : "Email type /",
+    "emailType" : "Email type",
     "mails" : "Mailing",
     "addNewAttachment" :"add new attachment",
-    "sendFrom": "Send From Email"
+    "sendFrom": "Send From Email",
+    "noAttachment": "No Attachment"
   }
 }

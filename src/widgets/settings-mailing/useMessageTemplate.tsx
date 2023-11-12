@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks";
-import { allSMSTemplateGroupsState, allSmsTemplateState, editModalState, groupModalState, smsTemplateState, templateGroupState, templateVariablesState } from "./states/state";
+import { allSMSTemplateGroupsState, allSmsTemplateState, editModalState, groupModalState, smsTemplateState, templateGroupState, templateGroupStateNew, templateVariablesState } from "./states/state";
 import { MoreMenuWidget } from "./messageTemplates/components/more-circle/index";
 import { PdfUploadComponent } from "./messageTemplates/components/upload-file/upload-file";
 import { ISMSTemplate, SMSTemplateGroup } from "./messageTemplates/interfaces/interface";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 const useMessageTemplate = () => {
   const { t } = useTranslation();
@@ -17,7 +17,11 @@ const useMessageTemplate = () => {
   const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
   const [editModal, setEditModal] = useRecoilState<boolean>(editModalState);
   const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupState);
-  const [SMSTemplate, setSMSTemplate] = useRecoilState<ISMSTemplate>(smsTemplateState);
+
+  const setSMSTemplate = useSetRecoilState<ISMSTemplate>(smsTemplateState);
+
+  const setNewTemplateGroup = useSetRecoilState<SMSTemplateGroup>(templateGroupStateNew);
+
   const [types, setTypes] = useState([]);
 
   const tableHeaders = [
@@ -26,7 +30,6 @@ const useMessageTemplate = () => {
     t("mailingSettings.body"),
     t("mailingSettings.attachment"),
     t("mailingSettings.more"),
-
   ];
 
   useEffect(() => {
@@ -61,8 +64,8 @@ const useMessageTemplate = () => {
     getAllSMSTemplatesApi(callApi, callBackFunction, { SMSTemplatesGroupId: templateGroup?.id }).then();
   }
 
-  // select group 
-  const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(allSMSTemplateGroupsState);
+  // group select 
+  const setAllSMSTemplateGroups = useSetRecoilState<any>(allSMSTemplateGroupsState);
   const getSMSTemplateGroups = () => {
     const callBackFunction = (data) => {
       if (data.success) {
@@ -77,7 +80,6 @@ const useMessageTemplate = () => {
   const getTemplateVariables = () => {
     const callBackFunction = (data) => {
       if (data.success) {
-
         setAllTemplateVariables(data.data);
       }
     }
@@ -85,17 +87,18 @@ const useMessageTemplate = () => {
   }
 
   // add new group
-  const onAddSMSTemplateGroup = async (templateGroup) => {
+  const onAddSMSTemplateGroup = async (templateGroupNew) => {
     const callback = (data) => {
       if (data.success) {
         alertSuccessAdded();
         setOpenModal(!openModal);
+        setNewTemplateGroup(null);
         getSMSTemplateGroups();
       } else {
         alertFaultAdded();
       }
     }
-    await addSMSTemplateGroup(callApi, callback, templateGroup);
+    await addSMSTemplateGroup(callApi, callback, templateGroupNew);
   }
 
   // save changes

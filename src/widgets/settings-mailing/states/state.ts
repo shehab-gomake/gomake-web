@@ -28,6 +28,11 @@ export const templateGroupState = atom<any>({
   default: null,
 });
 
+export const templateGroupStateNew = atom<any>({
+  key: "templateGroupStateNew",
+  default: null,
+});
+
 export const groupModalState = atom<boolean>({
   key: "groupModalState",
   default: false,
