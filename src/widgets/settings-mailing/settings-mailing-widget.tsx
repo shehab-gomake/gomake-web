@@ -5,11 +5,11 @@ import { MessageTemplates } from "./messageTemplates/message-templates";
 import { AddButton } from "@/components/button/add-button";
 import { GoMakeModal } from "@/components";
 import { AddNewSMSTemplateGroup } from "./messageTemplates/components/add-new/add-new";
-import { editModalState, groupModalState, smsBodyState, smsSubjectState, smsTemplateState } from "./states/state";
+import { editModalState, groupModalState, smsBodyState, smsSubjectState, smsTemplateState, templateGroupStateNew } from "./states/state";
 import { useMessageTemplate } from "./useMessageTemplate";
 import { useEffect  } from "react";
 import { EmailSettings } from "./messageTemplates/components/mail-editor/mail-editor";
-import { ISMSTemplate } from "./messageTemplates/interfaces/interface";
+import { ISMSTemplate, SMSTemplateGroup } from "./messageTemplates/interfaces/interface";
 import { useRecoilState , useSetRecoilState} from "recoil";
 
 const SettingsMailingWidget = () => {
@@ -20,6 +20,7 @@ const SettingsMailingWidget = () => {
     const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
     const setSubject = useSetRecoilState<string>(smsSubjectState);
     const setBody = useSetRecoilState<string>(smsBodyState)
+    const setNewTemplateGroup = useSetRecoilState<SMSTemplateGroup>(templateGroupStateNew);
 
     const tabs: ITab[] = [
         { title: t("mailingSettings.messageTemplates"), component: <MessageTemplates/> },
@@ -42,7 +43,7 @@ const SettingsMailingWidget = () => {
             <GoMakeModal
                 insideStyle={{ paddingLeft: 20, padding: 20, width: "518px", height: "214px" }}
                 openModal={openModal}
-                onClose={() => {setOpenModal(false), setTemplateGroup(null)}}
+                onClose={() => {setOpenModal(false), setNewTemplateGroup(null)}}
                 modalTitle={t("mailingSettings.addNewGroup")}>
                 <AddNewSMSTemplateGroup onClickAdd={onAddSMSTemplateGroup} />
             </GoMakeModal>
@@ -50,7 +51,7 @@ const SettingsMailingWidget = () => {
                 insideStyle={{paddingLeft: 20, padding: 20, gap: "15px" ,width: "852px"}}
                 openModal={openEditModal}
                 onClose={() => {setOpenEditModal(false); setState(null); setSubject(""); setBody("")}}
-                modalTitle={t("mailingSettings.emailType") + " " + templateTitle}>
+                modalTitle={t("mailingSettings.emailType") + " / " + templateTitle}>
                 <EmailSettings onClickSave={onUpdateSmsTemplate}/>
             </GoMakeModal>
         </div>
