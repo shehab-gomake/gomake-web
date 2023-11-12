@@ -27,8 +27,14 @@ export const materialCategoryDataState = atom<IMaterialCategoryRow[]>({
     key: "materialCategoryDataState",
     default: [],
 });
+
 export const openAddSupplierModalState = atom<boolean>({
     key: "openAddSupplierModalState",
+    default: false,
+});
+
+export const openAddCategoryModalState = atom<boolean>({
+    key: "openAddCategoryModalState",
     default: false,
 });
 

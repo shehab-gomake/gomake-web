@@ -10,6 +10,8 @@ const UPDATE_MATERIAL_PROPS_URL = '/v1/materials/updatePrintHouseMaterial';
 const UPDATE_MATERIALS_PROPS_URL = '/v1/materials/updatePrintHouseMaterials';
 const DOWNLOAD_MATERIAL_EXCEL_FILE = '/v1/materials/download-material-excel'
 const UPLOAD_MATERIAL_EXCEL_FILE = '/v1/materials/upload-material-excel-file';
+const ADD_MATERIAL_CATEGORY_URL = '/v1/materials/add-material-category';
+
 const getMaterialCategoryDataApi: ICallAndSetData = async (callApi, setState, material: { materialKey: string, categoryKey: string, supplierId: string}) => {
     return await getSetApiData(callApi,
         EHttpMethod.GET,
@@ -68,6 +70,16 @@ const uploadMaterialExcelFileApi: ICallAndSetData = async (callApi, callBack, da
         callBack,
         data)
 }
+
+
+const addMaterialCategoryApi: ICallAndSetData = async (callApi, callBack, category: { materialTypeKey: string, categoryKey: string }) => {
+    return await getSetApiData(callApi,
+        EHttpMethod.POST,
+        ADD_MATERIAL_CATEGORY_URL,
+        callBack,
+        category)
+}
+
 export {
     getMaterialCategoryDataApi,
     getMaterialCategoriesApi,
@@ -76,5 +88,6 @@ export {
     updateMaterialPropApi,
     updateMaterialsPropApi,
     getMaterialExcelFileApi,
-    uploadMaterialExcelFileApi
+    uploadMaterialExcelFileApi,
+    addMaterialCategoryApi
 }

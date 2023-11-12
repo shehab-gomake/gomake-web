@@ -235,16 +235,19 @@
       "maxBookThickness": "Max book thickness",
       "loopsQuantity": "loops quantity",
       "speralSize": "Speral size",
-      "noData": "No Data"
+      "noData": "No Data",
+      "addCategory": "add category"
     },
     "buttons": {
       "cancel": "Cancel",
       "delete": "Delete",
+      "add": "Add",
       "edit": "Edit",
       "save": "Save",
       "saveModifications": "Save modifications",
       "duplicate": "Duplicate",
-      "back":"back"
+      "back":"back",
+      "addNew" : "Add new category"
     },
     "modals": {
       "subTitleDeleteModal": "Are you sure to delete {{name}}"

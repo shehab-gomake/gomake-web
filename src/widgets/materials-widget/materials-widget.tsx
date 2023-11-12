@@ -2,26 +2,27 @@ import {SideBarContainer} from "@/components/containers/side-bar-container";
 import {SideList} from "@/widgets/machines/components/side-list/side-list";
 import {PrimaryTable} from "@/components/tables/primary-table";
 import {useMaterials} from "@/widgets/materials-widget/use-materials";
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Stack from "@mui/material/Stack";
 import {useTranslation} from "react-i18next";
 import {useStyle} from "@/widgets/materials-widget/style";
 import {FiltersActionsBar} from "@/widgets/materials-widget/components/filters/filters-actions-bar";
 import {useRecoilValue, useSetRecoilState} from "recoil";
-import {openAddSupplierModalState, selectedSupplierIdState} from "@/widgets/materials-widget/state";
+import {openAddCategoryModalState, openAddSupplierModalState, selectedSupplierIdState} from "@/widgets/materials-widget/state";
 import {AddSupplierModal} from "@/widgets/materials-widget/components/add-supplier/add-supplier-modal";
 import {PrimaryButton} from "@/components/button/primary-button";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useGomakeRouter } from "@/hooks/use-gomake-router";
-
+import { AddCategoryModal } from "./components/add-category/add-category-modal";
 
 const MaterialsWidget = () => {
     const {t} = useTranslation();
     const {classes} = useStyle();
     const dir: 'rtl' | 'ltr' = t('direction');
     const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
+    const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
     const supplierId = useRecoilValue(selectedSupplierIdState)
     const elementRef = useRef(null);
     const { navigate } = useGomakeRouter();
@@ -48,13 +49,14 @@ const MaterialsWidget = () => {
     <Stack  gap={'10px'} direction={'column'} >
     <SecondaryButton variant={'text'} onClick={()=>navigate("/materials")} startIcon={ dir === 'ltr' ?  <ArrowBackIcon/> : <ArrowForwardIcon/> } style={{gap:5}} >{t("materials.buttons.back")}
       </SecondaryButton>
-    <SideList list={materialsCategoriesList()} selectedItem={materialCategory?.toString()}
-                                 onSelect={onSelectCategory}
-                                 title={'choose category'}>
-        <Stack gap={'10px'} direction={'row'} justifyContent={'space-between'}>
+    <SideList list={materialsCategoriesList()} selectedItem={materialCategory?.toString()} onSelect={onSelectCategory} title={'choose category'}>
+        {/* <Stack gap={'10px'} direction={'row'} justifyContent={'space-between'}>
             <PrimaryButton onClick={downloadExcelFile} variant={'contained'}>Download</PrimaryButton>
             <input ref={elementRef} onChange={uploadExcelFile} type="file" accept=".xlsx"  hidden={true} />
             <SecondaryButton onClick={() => elementRef && elementRef.current.click()} variant={'contained'}>Upload</SecondaryButton>
+        </Stack> */}
+         <Stack gap={'10px'} direction={'row'} justifyContent={'space-between'}>
+            <PrimaryButton onClick={()=>setOpenAddCategoryModal(true)} variant={'contained'}>{t("materials.buttons.addNew")}</PrimaryButton>
         </Stack>
     </SideList>
     </Stack>
@@ -115,7 +117,8 @@ const MaterialsWidget = () => {
                     }
                 </Stack>}
                 <AddSupplierModal/>
-            </SideBarContainer>
+                <AddCategoryModal/>
+            </SideBarContainer>            
         </>
     );
 }
