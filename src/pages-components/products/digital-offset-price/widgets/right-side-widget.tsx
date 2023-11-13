@@ -86,9 +86,9 @@ const RightSideWidget = ({
             {t("products.offsetPrice.admin.flyerPoster")}
           </div>
           <div style={clasess.flyerText}>
-            {isNaN(defaultPrice / quantity?.value)
+            {isNaN(defaultPrice / quantity?.values[0])
               ? 0
-              : (defaultPrice / quantity?.value).toFixed(2)}{" "}
+              : (defaultPrice / quantity?.values[0]).toFixed(2)}{" "}
             USD
           </div>
         </div>
@@ -117,10 +117,10 @@ const RightSideWidget = ({
         </div>
         <div style={clasess.orderContainer}>
           {t("products.offsetPrice.admin.orderToral", {
-            pieceNum: quantity?.value,
-            price: isNaN(defaultPrice / quantity?.value)
+            pieceNum: quantity?.values[0],
+            price: isNaN(defaultPrice / quantity?.values[0])
               ? 0
-              : (defaultPrice / quantity?.value).toFixed(2),
+              : (defaultPrice / quantity?.values[0]).toFixed(2),
           })}
         </div>
         <div style={clasess.progress}>
@@ -174,7 +174,7 @@ const RightSideWidget = ({
                     widgetType === EWidgetProductType.DUPLICATE
                   ) {
                     setDefaultPrice(
-                      template?.quoteItem?.unitPrice * quantity?.value
+                      template?.quoteItem?.unitPrice * quantity?.values[0]
                     );
                   } else {
                     setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2));
