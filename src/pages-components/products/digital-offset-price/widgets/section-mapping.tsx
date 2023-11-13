@@ -17,7 +17,10 @@ const SectionMappingWidget = ({
   duplicateParameters,
   template,
   setTemplate,
+  generalParameters,
+  setGeneralParameters,
 }: any) => {
+  console.log("generalParameters", generalParameters);
   const { t } = useTranslation();
   const [groupedParameters, setGroupedParameters] = useState<any>();
   const [groupedParametersArray, setGroupedParametersArray] = useState<any>();
@@ -44,12 +47,21 @@ const SectionMappingWidget = ({
       setGroupedParametersArray(Object?.values(groupedParameters));
     }
   }, [groupedParameters]);
-  const deleteDuplicateSection = (index) => {
+  const deleteDuplicateSection = (mySectionId, mySubSectionId, index) => {
     let temp = cloneDeep(template);
     const myId = subSection?.id;
     let temp2 = cloneDeep(groupedParametersArray);
     temp2.splice(index, 1);
     setGroupedParametersArray(temp2);
+    let myGeneralParameter = cloneDeep(generalParameters);
+    const newArray = myGeneralParameter.filter(
+      (item) =>
+        !(
+          item.sectionId === mySectionId?.id &&
+          item.subSectionId === mySubSectionId?.id &&
+          item.actionIndex === index
+        )
+    );
     let flattenedArray = [].concat(...temp2);
     const updatedArray = flattenedArray.map((param) => {
       if (param.actionIndex > index) {
@@ -65,6 +77,7 @@ const SectionMappingWidget = ({
       });
     });
     setTemplate(temp);
+    setGeneralParameters(newArray);
   };
   return (
     <>
@@ -103,7 +116,9 @@ const SectionMappingWidget = ({
                       <div style={{ width: "100%", height: 21 }} />
                       <div
                         style={{ cursor: "pointer" }}
-                        onClick={() => deleteDuplicateSection(index)}
+                        onClick={() =>
+                          deleteDuplicateSection(section, subSection, index)
+                        }
                       >
                         <WastebasketNew />
                       </div>

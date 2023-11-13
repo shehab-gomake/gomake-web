@@ -97,7 +97,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const duplicateParameters = (mySubSection: any) => {
     const temp = cloneDeep(template);
     const myId = mySubSection?.id;
-    console.log("mySubSection.parameters", mySubSection.parameters);
     const largestIndex = findLargestActionIndex(mySubSection.parameters);
     const duplicatedParameters = mySubSection.parameters.map((parameter) => {
       const duplicatedParameter = { ...parameter };

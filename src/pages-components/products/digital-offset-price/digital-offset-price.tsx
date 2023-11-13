@@ -138,6 +138,8 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     duplicateParameters={duplicateParameters}
                                     template={template}
                                     setTemplate={setTemplate}
+                                    generalParameters={generalParameters}
+                                    setGeneralParameters={setGeneralParameters}
                                   />
                                 );
                               } else {
@@ -155,6 +157,8 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     duplicateParameters={duplicateParameters}
                                     template={template}
                                     setTemplate={setTemplate}
+                                    generalParameters={generalParameters}
+                                    setGeneralParameters={setGeneralParameters}
                                   />
                                 );
                               }
