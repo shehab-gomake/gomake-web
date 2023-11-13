@@ -73,7 +73,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [generalParametersLocal, setGeneralParametersLocal] =
     useRecoilState(maltiParameterState);
   const [sampleType, setSamlleType] = useState();
-  console.log("generalParameters", generalParameters);
   const [selectedValueForSettings, setSelectedValueForSettings] =
     useState<any>();
   const [selectedValueConfigForSettings, setSelectedValueConfigForSettings] =
@@ -99,7 +98,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const temp = cloneDeep(template);
     const myId = mySubSection?.id;
     const largestIndex = findLargestActionIndex(mySubSection.parameters);
-
     const duplicatedParameters = mySubSection.parameters.map((parameter) => {
       const duplicatedParameter = { ...parameter };
       duplicatedParameter.actionIndex = largestIndex + 1;
@@ -2025,6 +2023,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setGeneralParameters,
     setSamlleType,
     duplicateParameters,
+    setTemplate,
     multiParameterModal,
     settingParameters,
     priceRecovery,

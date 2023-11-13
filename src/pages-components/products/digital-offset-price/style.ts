@@ -158,6 +158,15 @@ const useStyle = () => {
         width: "100%",
         minWidth: 180,
       },
+      WastebasketNewStyle: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        width: "180px",
+        gap: 10,
+        minWidth: 180,
+      },
       parameterType3Container: {
         display: "flex",
         flexDirection: "row" as "row",

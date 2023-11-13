@@ -14,6 +14,8 @@ const AccordionMappingWidget = ({
   _getParameter,
   relatedParameters,
   duplicateParameters,
+  template,
+  setTemplate,
 }: any) => {
   const { t } = useTranslation();
   return (
@@ -58,6 +60,8 @@ const AccordionMappingWidget = ({
           relatedParameters={relatedParameters}
           isAccordion={true}
           duplicateParameters={duplicateParameters}
+          template={template}
+          setTemplate={setTemplate}
         />
       </AccordionDetails>
     </Accordion>

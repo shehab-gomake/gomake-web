@@ -44,6 +44,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     setGeneralParameters,
     setSamlleType,
     duplicateParameters,
+    setTemplate,
     multiParameterModal,
     settingParameters,
     priceRecovery,
@@ -135,6 +136,8 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     _getParameter={_getParameter}
                                     relatedParameters={relatedParameters}
                                     duplicateParameters={duplicateParameters}
+                                    template={template}
+                                    setTemplate={setTemplate}
                                   />
                                 );
                               } else {
@@ -150,6 +153,8 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     relatedParameters={relatedParameters}
                                     isAccordion={false}
                                     duplicateParameters={duplicateParameters}
+                                    template={template}
+                                    setTemplate={setTemplate}
                                   />
                                 );
                               }
