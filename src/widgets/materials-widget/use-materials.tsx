@@ -1,5 +1,5 @@
 import {useRouter} from "next/router";
-import {useCallback , useMemo} from "react";
+import {useCallback , useMemo, useState} from "react";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {
     deleteMaterialCategoryApi,
@@ -14,7 +14,7 @@ import {getCurrencies} from "@/services/api-service/general/enums";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import {
     activeFilterState,
-    currenciesState, filterState, materialActionState,
+    currenciesState, filterState, flagState, materialActionState,
     materialCategoriesState,
     materialCategoryDataState,
     materialCategorySuppliersState,
@@ -42,13 +42,16 @@ const useMaterials = () => {
     const setCurrencies = useSetRecoilState(currenciesState);
     const {getFilteredMaterials} = useFilteredMaterials()
     const setActiveFilter = useSetRecoilState(activeFilterState);
+    const setFlagState = useSetRecoilState(flagState);
     const { errorColor } = useGomakeTheme();
 
     const onSelectCategory = (category: string) => {
         //setDefaultSupplier('')
         push(`/materials/${materialType}?materialCategory=${category}`)
+        setFlagState(false);
     }
 
+    // delete category which is added by PrintHouse
     const onDeleteCategory = async (categoryKey) => {
         const callBack = (res) => {
             if (res.success) {
@@ -74,6 +77,7 @@ const useMaterials = () => {
         }
         await getMaterialCategoriesApi(callApi, callBack, material)
     }
+
     const getMaterialCategoryData = async (materialType: string, materialCategory: string, supplierId: string) => {
         const callBack = (res) => {
             if (res.success) {
@@ -137,6 +141,132 @@ const useMaterials = () => {
         })
     }, [materialHeaders, materialCategoryData, activeFilter, materialFilter])
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+const [dataRow2, setDataRow] = useState([]);
+
+// const addEmptyRow = () =>{
+//     var temp = [...dataRow2];
+//     const newIndex = temp.length + 1;
+//     const newId = `row_${newIndex}`;
+//     const rowData=  {
+//         "manufacturer": {
+//           "value": null,
+//           "isEditable": true,
+//           "type": 0
+//         },
+//         "volume (Liter)": {
+//           "value": null,
+//           "isEditable": true,
+//           "type": 1
+//         },
+//         "literInSquareMeter": {
+//           "value": null,
+//           "isEditable": true,
+//           "type": 0
+//         },
+//         "pricePerSquareMeter": {
+//           "value": [
+//             null,
+//             null
+//           ],
+//           "isEditable": true,
+//           "type": 3
+//         },
+//         "currency": {
+//           "value": "usd",
+//           "isEditable": true,
+//           "type": 5
+//         },
+//         "stock": {
+//           "value": null,
+//           "isEditable": true,
+//           "type": 1
+//         },
+//         "Active": {
+//           "value": false,
+//           "isEditable": true,
+//           "type": 2
+//         }}
+//     temp.push({ 
+//         index: newIndex,
+//         id: newId,
+//         checked: false,
+//         rowData:rowData
+//     });
+//     setDataRow(temp);
+//     console.log(temp)
+// }
+
+
+// const deleteRow = (index) => {
+//     var temp = [...dataRow2];
+//     temp = temp.filter(x => x.index != index);
+//     temp.forEach((user, i) => {
+//       if (user.index > index) {
+//         user.index -= 1;
+//       }
+//     });
+//     setDataRow(temp);
+//     console.log(temp)
+//   }
+    // const dataRow1 = [{
+    //     index:0,
+    //     id: "emptyRow",
+    //     checked: false,
+    //     rowData: {
+    //         "manufacturer": {
+    //           "value": null,
+    //           "isEditable": true,
+    //           "type": 0
+    //         },
+    //         "volume (Liter)": {
+    //           "value": null,
+    //           "isEditable": true,
+    //           "type": 1
+    //         },
+    //         "literInSquareMeter": {
+    //           "value": null,
+    //           "isEditable": true,
+    //           "type": 0
+    //         },
+    //         "pricePerSquareMeter": {
+    //           "value": [
+    //             null,
+    //             null
+    //           ],
+    //           "isEditable": true,
+    //           "type": 3
+    //         },
+    //         "currency": {
+    //           "value": "usd",
+    //           "isEditable": true,
+    //           "type": 5
+    //         },
+    //         "stock": {
+    //           "value": null,
+    //           "isEditable": true,
+    //           "type": 1
+    //         },
+    //         "Active": {
+    //           "value": false,
+    //           "isEditable": true,
+    //           "type": 2
+    //         }
+    //       },
+    // }];
+
+
+
+    const tableRowsTest = useMemo(() => {
+        return dataRow2?.map((dataRow) => {
+            return [<Checkbox onChange={() => onChangeRowCheckBox(dataRow.id)}
+                              checked={dataRow.checked}/>, ...materialHeaders.map(header =>
+                <TableCellData {...dataRow.rowData[header.key]} id={dataRow.id} parameterKey={header.key}/>)]
+        })
+    }, [materialHeaders, materialCategoryData, activeFilter, materialFilter , dataRow2])
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     const getCurrenciesApi = async () => {
         const callBack = (res) => {
@@ -184,7 +314,6 @@ const useMaterials = () => {
             reader.onload = (event) => {
                 const arrayBuffer = event.target.result;
                 const data = new Uint8Array(arrayBuffer as ArrayBuffer);
-
                 // Convert data to a Base64 string
                 const base64String = btoa(String.fromCharCode.apply(null, data));
                 uploadMaterialExcelFileApi(callApi, () => {
@@ -210,7 +339,9 @@ const useMaterials = () => {
         materialCategories,
         replace,
         downloadExcelFile,
-        uploadExcelFile
+        uploadExcelFile,
+        tableRowsTest,
+        dataRow2
     }
 }
 

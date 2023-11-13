@@ -11,6 +11,7 @@ export const materialHeadersState = atom<{
     value: string;
     filterType: EFilterType
     isFilter: boolean
+    inputType: number
 }[]>({
     key: "materialHeadersState",
     default: [],
@@ -58,5 +59,13 @@ export const filterState = atom<{key: string; value: string} | null>({
     default: null
 })
 
+export const flagState = atom<boolean>({
+    key: 'flagState',
+    default: false
+})
 
 
+export const openAddRowModalState = atom<boolean>({
+    key: 'openAddRowModalState',
+    default: false
+})
