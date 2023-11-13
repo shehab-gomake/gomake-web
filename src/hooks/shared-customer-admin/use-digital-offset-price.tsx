@@ -1,5 +1,5 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 
@@ -27,6 +27,7 @@ import { compareStrings } from "@/utils/constants";
 import { EParameterTypes } from "@/enums";
 import lodashClonedeep from "lodash.clonedeep";
 import { maltiParameterState } from "@/widgets/shared-admin-customers/digital-offset-price/multi-parameter-modal/store/multi-param-atom";
+import cloneDeep from "lodash.clonedeep";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -77,6 +78,45 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     useState<any>();
   const [selectedValueConfigForSettings, setSelectedValueConfigForSettings] =
     useState<any>();
+
+  const findLargestActionIndex = (params) => {
+    return params.reduce(
+      (maxIndex, param) => Math.max(maxIndex, param.actionIndex),
+      -1
+    );
+  };
+  function removeDuplicates(arr) {
+    const uniqueIds = new Set();
+    return arr.filter((param) => {
+      if (!uniqueIds.has(param.id)) {
+        uniqueIds.add(param.id);
+        return true;
+      }
+      return false;
+    });
+  }
+  const duplicateParameters = (mySubSection: any) => {
+    const temp = cloneDeep(template);
+    const myId = mySubSection?.id;
+    const largestIndex = findLargestActionIndex(mySubSection.parameters);
+
+    const duplicatedParameters = mySubSection.parameters.map((parameter) => {
+      const duplicatedParameter = { ...parameter };
+      duplicatedParameter.actionIndex = largestIndex + 1;
+      return duplicatedParameter;
+    });
+    const uniqueParameters = removeDuplicates(duplicatedParameters);
+    temp.sections.forEach((section) => {
+      section.subSections.forEach((subSection) => {
+        if (subSection.id === myId) {
+          subSection.parameters =
+            subSection.parameters.concat(uniqueParameters);
+        }
+      });
+    });
+    console.log("temp", temp);
+    setTemplate(temp);
+  };
   useEffect(() => {
     if (
       generalParametersLocal?.length == 0 &&
@@ -1985,6 +2025,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     onCloseMultiParameterModal,
     setGeneralParameters,
     setSamlleType,
+    duplicateParameters,
     multiParameterModal,
     settingParameters,
     priceRecovery,

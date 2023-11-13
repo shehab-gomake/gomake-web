@@ -43,6 +43,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     onCloseMultiParameterModal,
     setGeneralParameters,
     setSamlleType,
+    duplicateParameters,
     multiParameterModal,
     settingParameters,
     priceRecovery,
@@ -123,6 +124,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                               if (subSection?.isAccordion) {
                                 return (
                                   <AccordionMappingWidget
+                                    key={index}
                                     clasess={clasess}
                                     expanded={expanded}
                                     index={index}
@@ -132,11 +134,13 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     _renderParameterType={_renderParameterType}
                                     _getParameter={_getParameter}
                                     relatedParameters={relatedParameters}
+                                    duplicateParameters={duplicateParameters}
                                   />
                                 );
                               } else {
                                 return (
                                   <SectionMappingWidget
+                                    key={index}
                                     clasess={clasess}
                                     index={index}
                                     subSection={subSection}
@@ -145,6 +149,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     _getParameter={_getParameter}
                                     relatedParameters={relatedParameters}
                                     isAccordion={false}
+                                    duplicateParameters={duplicateParameters}
                                   />
                                 );
                               }
