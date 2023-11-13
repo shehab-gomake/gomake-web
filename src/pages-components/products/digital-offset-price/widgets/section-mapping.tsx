@@ -51,10 +51,16 @@ const SectionMappingWidget = ({
     temp2.splice(index, 1);
     setGroupedParametersArray(temp2);
     let flattenedArray = [].concat(...temp2);
+    const updatedArray = flattenedArray.map((param) => {
+      if (param.actionIndex > index) {
+        return { ...param, actionIndex: param.actionIndex - 1 };
+      }
+      return param;
+    });
     temp.sections.forEach((section) => {
       section.subSections.forEach((subSection) => {
         if (subSection.id === myId) {
-          subSection.parameters = flattenedArray;
+          subSection.parameters = updatedArray;
         }
       });
     });
