@@ -43,9 +43,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [generalParameters, setGeneralParameters] = useState<any>([]);
+  console.log("generalParameters", generalParameters);
   const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [defaultPrice, setDefaultPrice] = useState<any>("-----");
+  console.log("defaultPrice", defaultPrice);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
   const [template, setTemplate] = useState<any>([]);
   const [urgentOrder, setUrgentOrder] = useState(false);
@@ -1805,14 +1807,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const quantity = generalParameters?.find(
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
+  console.log("quantity", quantity);
   const addItemForQuotes = useCallback(async () => {
     const res = await callApi("POST", `/v1/erp-service/quote/add-item`, {
       productId: router?.query?.productId,
       userID: userProfile?.id,
       customerID: router?.query?.customerId,
       clientTypeId: router?.query?.clientTypeId,
-      unitPrice: defaultPrice / quantity?.value,
-      amount: quantity?.value,
+      unitPrice: defaultPrice / quantity?.values[0],
+      amount: quantity?.values[0],
       isNeedGraphics: false,
       isUrgentWork: urgentOrder,
       printingNotes,
@@ -1851,7 +1854,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         jobDetails: template?.jobDetails,
         workFlows: template?.workFlows,
       });
-      setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.value);
+      setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.values[0]);
       setCanCalculation(false);
       const workFlowSelect = template?.workFlows?.find(
         (workFlow) => workFlow?.selected === true
@@ -1869,8 +1872,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         userID: userProfile?.id,
         customerID: router?.query?.customerId,
         clientTypeId: router?.query?.clientTypeId,
-        unitPrice: defaultPrice / quantity?.value,
-        amount: quantity?.value,
+        unitPrice: defaultPrice / quantity?.values[0],
+        amount: quantity?.values[0],
         isNeedGraphics: false,
         isUrgentWork: urgentOrder,
         printingNotes,
