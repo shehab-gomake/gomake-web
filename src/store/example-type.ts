@@ -6,7 +6,6 @@ const exampleTypeSelector = selector({
   get: async ({ get }) => {
     const { callApi } = useGomakeAxios();
     const res = await callApi("Get", "/v1/enum/get-enums/ExampleType");
-    console.log("result", res);
     return res?.data?.data?.data;
   },
 });

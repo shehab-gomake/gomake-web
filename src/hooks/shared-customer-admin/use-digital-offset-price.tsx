@@ -114,7 +114,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
       });
     });
-    console.log("temp", temp);
     setTemplate(temp);
   };
   useEffect(() => {
