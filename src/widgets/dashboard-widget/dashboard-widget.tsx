@@ -19,12 +19,15 @@ import Button from "@mui/material/Button";
 import {useDashboardLogout} from "@/hooks/use-dashboard-logout";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {DashboardActions} from "@/store";
+import {AgentsList} from "@/widgets/agents/agents-list";
+import {selectedAgentIdState} from "@/widgets/agents/state/selected-agent-id";
 
 const DashboardWidget = ({}: IDashboardWidget) => {
     const INTERVAL_TIMEOUT = 2 * 60 * 1000;
     const {machines, addMachineProgress, getCheckedMachines} = useGomakeMachines();
     const [tasksFilter, setTasksFilter] = useState<string>('');
     const selectedClient = useRecoilValue(selectedClientIdState);
+    const selectedAgent = useRecoilValue(selectedAgentIdState);
     const clients = useRecoilValue(clientsState);
     const {classes} = useStyle();
     const {dates, action} = useGomakeDateRange();
@@ -102,13 +105,16 @@ const DashboardWidget = ({}: IDashboardWidget) => {
         if (selectedClient) {
             tasksArray = tasksArray.filter(board => board.clientId === selectedClient);
         }
+        if (selectedAgent) {
+            tasksArray = tasksArray.filter(board => board.agentId === selectedAgent);
+        }
         return tasksFilter ?
             tasksArray.filter((boardsMissions: IBoardMissions) => {
                 return boardsMissions.code.toLowerCase().includes(tasksFilter.toLowerCase()) ||
                     boardsMissions.orderNumber.toLowerCase().includes(tasksFilter.toLowerCase())
             })
             : tasksArray;
-    }, [tasksFilter, getFilteredBoardsMissions(), selectedClient])
+    }, [tasksFilter, getFilteredBoardsMissions(), selectedClient,selectedAgent])
     return (
         <div style={classes.container}>
             <Cards data={statistics ? statistics : {} as IDashboardStatistic}/>
@@ -121,6 +127,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
                     </Box>
 
                     <ClientsList/>
+                    <AgentsList/>
                 </div>
             </DashboardDates>
             <div>

@@ -13,6 +13,7 @@ export interface IBoardMissions {
     orderNumber: string;
     productName:string;
     clientId: string;
+    agentId: string;
     clientName?: string;
     splittedBoards: IBoardMissions[];
     isLate: boolean;

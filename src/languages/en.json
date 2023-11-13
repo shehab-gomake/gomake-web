@@ -48,7 +48,8 @@
     "lateMissions": "Late",
     "client": "Client",
     "logout": "Logout",
-    "allTasks": "All tasks"
+    "allTasks": "All tasks",
+    "agents": "agents"
   },
   "datepicker-component": {
     "chooseDate": "Choose Date",

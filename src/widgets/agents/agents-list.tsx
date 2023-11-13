@@ -1,14 +1,14 @@
 import {useCallback, useEffect} from "react";
 import {useGomakeAxios} from "@/hooks";
 import {useRecoilValue, useSetRecoilState} from "recoil";
-import {clientsState} from "@/store/clients-state";
 import {Autocomplete, Box} from "@mui/material";
 import TextField from "@mui/material/TextField";
-import {selectedClientIdState} from "@/widgets/clients/state/selected-client-id";
 import {useTranslation} from "react-i18next";
 import {styled} from "@mui/material/styles";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import { AccountCircle } from "@mui/icons-material";
+import {selectedAgentIdState} from "@/widgets/agents/state/selected-agent-id";
+import {agentsState} from "@/store/agents-state";
 
 
 
@@ -62,27 +62,27 @@ const AutoSearch = styled(Autocomplete)(() => {
         }
     }
 });
-const ClientsList = () => {
+const AgentsList = () => {
     const {t} = useTranslation();
     const {callApi} = useGomakeAxios();
-    const setClients = useSetRecoilState(clientsState);
-    const clients = useRecoilValue(clientsState);
-    const setSelectedClientId = useSetRecoilState(selectedClientIdState);
+    const setAgents = useSetRecoilState(agentsState);
+    const agents = useRecoilValue(agentsState);
+    const setSelectedAgentId = useSetRecoilState(selectedAgentIdState);
 
     useEffect(() => {
-        callApi('GET', '/clients', {}, true, true).then((res) => {
+        callApi('GET', '/agents', {}, true, true).then((res) => {
             if (res && res.success) {
-                setClients(res.data);
+                setAgents(res.data);
             }
         })
     }, [])
 
     const getClientsList = useCallback(() => {
-        return clients.map(client => ({label: client.code + ' - ' + client.name, id: client.id}))
-    }, [clients]);
+        return agents.map(agent => ({label: agent.name, id: agent.id}))
+    }, [agents]);
 
     const handleChange = (event: object, value: any) => {
-        setSelectedClientId(value?.id);
+        setSelectedAgentId(value?.id);
     }
     return (
         <div>
@@ -91,7 +91,7 @@ const ClientsList = () => {
                 forcePopupIcon={false}
                 onChange={handleChange}
                 renderInput={(params) => <Box sx={{ position: 'relative' }}>
-                    <Input {...params} placeholder={t('dashboard-widget.clients') as string}/>
+                    <Input {...params} placeholder={t('dashboard-widget.agents') as string}/>
                     <AccountCircle sx={{ position: 'absolute', left: '5px', top: '8px', color: 'action.active'}} />
                 </Box>}
                 options={getClientsList()}/>
@@ -99,6 +99,6 @@ const ClientsList = () => {
     );
 };
 
-export {ClientsList}
+export {AgentsList}
 
 

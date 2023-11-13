@@ -49,7 +49,8 @@
     "lateMissions": "באיחור",
     "client": "לקוח",
     "logout": "התנתק",
-    "allTasks": "כל המשימות"
+    "allTasks": "כל המשימות",
+    "agents": "סוכן"
   },
   "datepicker-component": {
     "chooseDate": "בחר תאריך",
