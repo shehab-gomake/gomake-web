@@ -7,9 +7,9 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
       insideStyle: {
-        width: "80%",
+        width: 1150,
         borderRadius: 5,
-        height: "90%",
+        height: 900,
         backgroundColor: "#f7f7f7",
       },
       mainContainer: {
