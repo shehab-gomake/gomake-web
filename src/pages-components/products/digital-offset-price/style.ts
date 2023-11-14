@@ -208,8 +208,10 @@ const useStyle = () => {
       dynamicBtn: {
         height: 40,
         backgroundColor: "white",
-        border: `1px solid ${secondColor(500)}`,
-        color: secondColor(500),
+        border: `1px solid rgba(208, 213, 221, 1)`,
+        color: "rgba(52, 64, 84, 1)",
+        borderRadius: 8,
+        padding: "8px 14px",
       },
       headerRightSide: {
         display: "flex",

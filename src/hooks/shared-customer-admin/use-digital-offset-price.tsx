@@ -209,145 +209,22 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [template]);
   const [relatedParameters, setRelatedParameters] = useState([]);
+  const [isSetTemplete, setIsSetTemplete] = useState(false);
   useEffect(() => {
-    if (template?.sections?.length > 0) {
-      let sectionData: any = cloneDeep(template?.sections);
-      const newGeneralParameters = [];
-      const typeMap = {};
-      let relatedParametersArray = [];
-      sectionData.forEach((section) => {
-        section.subSections.forEach((subSection) => {
-          if (subSection.type) {
-            let temp = [];
-            subSection.parameters
-              .filter((parameter) => !parameter.isHidden)
-              .forEach((parameter) => {
-                relatedParametersArray.push(...parameter.relatedParameters);
-                if (
-                  parameter?.parameterType === EParameterTypes.INPUT_NUMBER ||
-                  parameter?.parameterType === EParameterTypes.INPUT_TEXT ||
-                  parameter?.parameterType === EParameterTypes.SWITCH
-                ) {
-                  if (parameter?.defaultValue?.length > 0) {
-                    const defaultValue = parameter?.defaultValue;
-                    temp.push({
-                      parameterId: parameter?.id,
-                      parameterName: parameter?.name,
-                      actionId: parameter?.actionId,
-                      parameterType: parameter?.parameterType,
-                      ...(defaultValue?.length > 0 && {
-                        values: [defaultValue],
-                      }),
-                      sectionId: section?.id,
-                      subSectionId: subSection?.id,
-                      actionIndex: parameter?.actionIndex,
-                    });
-                  }
-                } else if (
-                  parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST
-                ) {
-                  const value = parameter?.valuesConfigs?.find(
-                    (item) => item?.isDefault == true
-                  );
-
-                  if (value) {
-                    const data = materialsEnumsValues.find((item) => {
-                      return compareStrings(
-                        item.name,
-                        parameter?.materialPath[0]
-                      );
-                    });
-                    temp.push({
-                      parameterId: parameter?.id,
-                      parameterName: parameter?.name,
-                      actionId:
-                        value?.activateAction === true
-                          ? parameter?.actionId
-                          : null,
-                      ...(data?.id > 0 && { material: data?.id }),
-                      parameterType: parameter?.parameterType,
-                      ...(value && {
-                        valueIds: [value?.id],
-                        values: [value?.updateName],
-                      }),
-                      sectionId: section?.id,
-                      subSectionId: subSection?.id,
-                      actionIndex: parameter?.actionIndex,
-                    });
-                  }
-                } else if (
-                  parameter?.parameterType ===
-                  EParameterTypes.SELECT_CHILDS_PARAMETERS
-                ) {
-                  const defaultObject = parameter.valuesConfigs.find(
-                    (item) => item.isDefault === true
-                  );
-                  parameter?.childsParameters.forEach((parameter) => {
-                    const parameterId = parameter.id;
-                    if (defaultObject?.values.hasOwnProperty(parameterId)) {
-                      parameter.defaultValue =
-                        defaultObject?.values[parameterId];
-                    }
-                  });
-                  if (defaultObject) {
-                    temp.push({
-                      parameterId: parameter?.id,
-                      parameterName: parameter?.name,
-                      actionId: parameter?.actionId,
-                      parameterType: parameter?.parameterType,
-                      ...(defaultObject && {
-                        valueIds: [defaultObject?.id],
-                        values: [defaultObject?.updateName],
-                      }),
-                      sectionId: section?.id,
-                      subSectionId: subSection?.id,
-                      actionIndex: parameter?.actionIndex,
-                    });
-                    parameter?.childsParameters?.map((item) => {
-                      temp.push({
-                        parameterId: item?.id,
-                        parameterName: item?.name,
-                        actionId: item?.actionId,
-                        parameterType: item?.parameterType,
-                        values: [item?.defaultValue],
-                        sectionId: section?.id,
-                        subSectionId: subSection?.id,
-                        actionIndex: parameter?.actionIndex,
-                      });
-                    });
-                  }
-                }
-              });
-
-            if (temp.length > 0) {
-              if (!typeMap[subSection.type]) {
-                typeMap[subSection.type] = {
-                  type: subSection.type,
-                  parameters: temp,
-                };
-              } else {
-                typeMap[subSection.type].parameters.push(...temp);
-              }
-            }
-          } else {
-            let temp = [];
-            subSection.parameters
-              .filter((parameter) => !parameter.isHidden)
-              .map((parameter, i) => {
-                const index = temp.findIndex(
-                  (item) =>
-                    item.parameterId === parameter?.id &&
-                    item.sectionId === section?.id &&
-                    item.subSectionId === subSection?.id &&
-                    item?.actionIndex === parameter?.actionIndex
-                );
-                relatedParametersArray.push(...parameter.relatedParameters);
-
-                if (index !== -1) {
-                  temp[index] = {
-                    ...temp[index],
-                  };
-                } else {
+    if (!isSetTemplete) {
+      if (template?.sections?.length > 0) {
+        let sectionData: any = cloneDeep(template?.sections);
+        const newGeneralParameters = [];
+        const typeMap = {};
+        let relatedParametersArray = [];
+        sectionData.forEach((section) => {
+          section.subSections.forEach((subSection) => {
+            if (subSection.type) {
+              let temp = [];
+              subSection.parameters
+                .filter((parameter) => !parameter.isHidden)
+                .forEach((parameter) => {
+                  relatedParametersArray.push(...parameter.relatedParameters);
                   if (
                     parameter?.parameterType === EParameterTypes.INPUT_NUMBER ||
                     parameter?.parameterType === EParameterTypes.INPUT_TEXT ||
@@ -369,90 +246,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       });
                     }
                   } else if (
-                    parameter?.parameterType ===
-                    EParameterTypes.SELECT_MATERIALS
-                  ) {
-                    const value = parameter?.valuesConfigs?.find(
-                      (item) => item?.isDefault == true
-                    );
-
-                    if (value) {
-                      const data = materialsEnumsValues.find((item) => {
-                        return compareStrings(
-                          item.name,
-                          parameter?.materialPath[0]
-                        );
-                      });
-                      let options: any = allMaterials;
-                      let selectedObj: any = {};
-                      if (allMaterials?.length > 0) {
-                        if (parameter?.materialPath?.length == 1) {
-                          options = allMaterials?.find((material: any) => {
-                            return compareStrings(
-                              material.pathName,
-                              parameter?.materialPath[0]
-                            );
-                          })?.data;
-                          selectedObj = options?.find(
-                            (item: any) =>
-                              item?.valueId ===
-                              value?.materialValueIds[0]?.valueId
-                          );
-                          temp.push({
-                            parameterId: parameter?.id,
-                            parameterName: parameter?.name,
-                            actionId: parameter?.actionId,
-                            ...(data?.id > 0 && { material: data?.id }),
-                            parameterType: parameter?.parameterType,
-                            ...(value && {
-                              valueIds: [value?.materialValueIds[0]?.valueId],
-                              values: [selectedObj?.value],
-                            }),
-                            sectionId: section?.id,
-                            subSectionId: subSection?.id,
-                            actionIndex: parameter?.actionIndex,
-                          });
-                        }
-
-                        if (parameter?.materialPath?.length == 2) {
-                          options = allMaterials?.find((material: any) => {
-                            return compareStrings(
-                              material.pathName,
-                              parameter?.materialPath[0]
-                            );
-                          })?.data;
-                          const mergedDataArray = options.reduce(
-                            (result, obj) => {
-                              if (obj.data && Array.isArray(obj.data)) {
-                                result = result.concat(obj.data);
-                              }
-                              return result;
-                            },
-                            []
-                          );
-                          selectedObj = mergedDataArray?.find(
-                            (item: any) =>
-                              item?.valueIds[0] ===
-                              value?.materialValueIds[0]?.valueId
-                          );
-                          temp.push({
-                            parameterId: parameter?.id,
-                            parameterName: parameter?.name,
-                            actionId: parameter?.actionId,
-                            ...(data?.id > 0 && { material: data?.id }),
-                            parameterType: parameter?.parameterType,
-                            ...(value && {
-                              valueIds: [value?.materialValueIds[0]?.valueId],
-                              values: [selectedObj?.value],
-                            }),
-                            sectionId: section?.id,
-                            subSectionId: subSection?.id,
-                            actionIndex: parameter?.actionIndex,
-                          });
-                        }
-                      }
-                    }
-                  } else if (
                     parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST
                   ) {
                     const value = parameter?.valuesConfigs?.find(
@@ -469,7 +262,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       temp.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
-
                         actionId:
                           value?.activateAction === true
                             ? parameter?.actionId
@@ -527,16 +319,230 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       });
                     }
                   }
+                });
+
+              if (temp.length > 0) {
+                if (!typeMap[subSection.type]) {
+                  typeMap[subSection.type] = {
+                    type: subSection.type,
+                    parameters: temp,
+                  };
+                } else {
+                  typeMap[subSection.type].parameters.push(...temp);
                 }
-              });
-            newGeneralParameters.push(...temp);
-          }
+              }
+            } else {
+              let temp = [];
+              subSection.parameters
+                .filter((parameter) => !parameter.isHidden)
+                .map((parameter, i) => {
+                  const index = temp.findIndex(
+                    (item) =>
+                      item.parameterId === parameter?.id &&
+                      item.sectionId === section?.id &&
+                      item.subSectionId === subSection?.id &&
+                      item?.actionIndex === parameter?.actionIndex
+                  );
+                  relatedParametersArray.push(...parameter.relatedParameters);
+
+                  if (index !== -1) {
+                    temp[index] = {
+                      ...temp[index],
+                    };
+                  } else {
+                    if (
+                      parameter?.parameterType ===
+                        EParameterTypes.INPUT_NUMBER ||
+                      parameter?.parameterType === EParameterTypes.INPUT_TEXT ||
+                      parameter?.parameterType === EParameterTypes.SWITCH
+                    ) {
+                      if (parameter?.defaultValue?.length > 0) {
+                        const defaultValue = parameter?.defaultValue;
+                        temp.push({
+                          parameterId: parameter?.id,
+                          parameterName: parameter?.name,
+                          actionId: parameter?.actionId,
+                          parameterType: parameter?.parameterType,
+                          ...(defaultValue?.length > 0 && {
+                            values: [defaultValue],
+                          }),
+                          sectionId: section?.id,
+                          subSectionId: subSection?.id,
+                          actionIndex: parameter?.actionIndex,
+                        });
+                      }
+                    } else if (
+                      parameter?.parameterType ===
+                      EParameterTypes.SELECT_MATERIALS
+                    ) {
+                      const value = parameter?.valuesConfigs?.find(
+                        (item) => item?.isDefault == true
+                      );
+
+                      if (value) {
+                        const data = materialsEnumsValues.find((item) => {
+                          return compareStrings(
+                            item.name,
+                            parameter?.materialPath[0]
+                          );
+                        });
+                        let options: any = allMaterials;
+                        let selectedObj: any = {};
+                        if (allMaterials?.length > 0) {
+                          if (parameter?.materialPath?.length == 1) {
+                            options = allMaterials?.find((material: any) => {
+                              return compareStrings(
+                                material.pathName,
+                                parameter?.materialPath[0]
+                              );
+                            })?.data;
+                            selectedObj = options?.find(
+                              (item: any) =>
+                                item?.valueId ===
+                                value?.materialValueIds[0]?.valueId
+                            );
+                            temp.push({
+                              parameterId: parameter?.id,
+                              parameterName: parameter?.name,
+                              actionId: parameter?.actionId,
+                              ...(data?.id > 0 && { material: data?.id }),
+                              parameterType: parameter?.parameterType,
+                              ...(value && {
+                                valueIds: [value?.materialValueIds[0]?.valueId],
+                                values: [selectedObj?.value],
+                              }),
+                              sectionId: section?.id,
+                              subSectionId: subSection?.id,
+                              actionIndex: parameter?.actionIndex,
+                            });
+                          }
+
+                          if (parameter?.materialPath?.length == 2) {
+                            options = allMaterials?.find((material: any) => {
+                              return compareStrings(
+                                material.pathName,
+                                parameter?.materialPath[0]
+                              );
+                            })?.data;
+                            const mergedDataArray = options.reduce(
+                              (result, obj) => {
+                                if (obj.data && Array.isArray(obj.data)) {
+                                  result = result.concat(obj.data);
+                                }
+                                return result;
+                              },
+                              []
+                            );
+                            selectedObj = mergedDataArray?.find(
+                              (item: any) =>
+                                item?.valueIds[0] ===
+                                value?.materialValueIds[0]?.valueId
+                            );
+                            temp.push({
+                              parameterId: parameter?.id,
+                              parameterName: parameter?.name,
+                              actionId: parameter?.actionId,
+                              ...(data?.id > 0 && { material: data?.id }),
+                              parameterType: parameter?.parameterType,
+                              ...(value && {
+                                valueIds: [value?.materialValueIds[0]?.valueId],
+                                values: [selectedObj?.value],
+                              }),
+                              sectionId: section?.id,
+                              subSectionId: subSection?.id,
+                              actionIndex: parameter?.actionIndex,
+                            });
+                          }
+                        }
+                      }
+                    } else if (
+                      parameter?.parameterType ===
+                      EParameterTypes.DROP_DOWN_LIST
+                    ) {
+                      const value = parameter?.valuesConfigs?.find(
+                        (item) => item?.isDefault == true
+                      );
+
+                      if (value) {
+                        const data = materialsEnumsValues.find((item) => {
+                          return compareStrings(
+                            item.name,
+                            parameter?.materialPath[0]
+                          );
+                        });
+                        temp.push({
+                          parameterId: parameter?.id,
+                          parameterName: parameter?.name,
+
+                          actionId:
+                            value?.activateAction === true
+                              ? parameter?.actionId
+                              : null,
+                          ...(data?.id > 0 && { material: data?.id }),
+                          parameterType: parameter?.parameterType,
+                          ...(value && {
+                            valueIds: [value?.id],
+                            values: [value?.updateName],
+                          }),
+                          sectionId: section?.id,
+                          subSectionId: subSection?.id,
+                          actionIndex: parameter?.actionIndex,
+                        });
+                      }
+                    } else if (
+                      parameter?.parameterType ===
+                      EParameterTypes.SELECT_CHILDS_PARAMETERS
+                    ) {
+                      const defaultObject = parameter.valuesConfigs.find(
+                        (item) => item.isDefault === true
+                      );
+                      parameter?.childsParameters.forEach((parameter) => {
+                        const parameterId = parameter.id;
+                        if (defaultObject?.values.hasOwnProperty(parameterId)) {
+                          parameter.defaultValue =
+                            defaultObject?.values[parameterId];
+                        }
+                      });
+                      if (defaultObject) {
+                        temp.push({
+                          parameterId: parameter?.id,
+                          parameterName: parameter?.name,
+                          actionId: parameter?.actionId,
+                          parameterType: parameter?.parameterType,
+                          ...(defaultObject && {
+                            valueIds: [defaultObject?.id],
+                            values: [defaultObject?.updateName],
+                          }),
+                          sectionId: section?.id,
+                          subSectionId: subSection?.id,
+                          actionIndex: parameter?.actionIndex,
+                        });
+                        parameter?.childsParameters?.map((item) => {
+                          temp.push({
+                            parameterId: item?.id,
+                            parameterName: item?.name,
+                            actionId: item?.actionId,
+                            parameterType: item?.parameterType,
+                            values: [item?.defaultValue],
+                            sectionId: section?.id,
+                            subSectionId: subSection?.id,
+                            actionIndex: parameter?.actionIndex,
+                          });
+                        });
+                      }
+                    }
+                  }
+                });
+              newGeneralParameters.push(...temp);
+            }
+          });
         });
-      });
-      const newSubProducts2 = Object.values(typeMap);
-      setGeneralParameters(newGeneralParameters);
-      setSubProducts(newSubProducts2);
-      setRelatedParameters(relatedParametersArray);
+        const newSubProducts2 = Object.values(typeMap);
+        setGeneralParameters(newGeneralParameters);
+        setSubProducts(newSubProducts2);
+        setRelatedParameters(relatedParametersArray);
+        setIsSetTemplete(true);
+      }
     }
   }, [materialsEnumsValues, allMaterials, template]);
 
@@ -1843,7 +1849,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
       setLoading(false);
     }
-  }, [generalParameters, router, isRequiredParameters, validateParameters]);
+  }, [
+    generalParameters,
+    subProducts,
+    router,
+    isRequiredParameters,
+    validateParameters,
+  ]);
 
   const PricingTab = {
     id: "c66465de-95d6-4ea3-bd3f-7efe60f4cb0555",
