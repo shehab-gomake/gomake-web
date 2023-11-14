@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { isLoadgingState } from "@/store";
+import { generalParametersState, isLoadgingState } from "@/store";
 import { Checkbox, CircularProgress, Slider } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -26,7 +26,6 @@ const RightSideWidget = ({
   setGraphicNotes,
   printingNotes,
   graphicNotes,
-  generalParameters,
   workFlowSelected,
   widgetType,
   setPriceRecovery,
@@ -34,7 +33,7 @@ const RightSideWidget = ({
   setSamlleType,
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
-
+  const generalParameters = useRecoilValue<any>(generalParametersState);
   const quantity = generalParameters?.find(
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );

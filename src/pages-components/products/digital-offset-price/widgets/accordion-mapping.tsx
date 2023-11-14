@@ -3,6 +3,8 @@ import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { SectionMappingWidget } from "./section-mapping";
+import { useRecoilState } from "recoil";
+import { generalParametersState } from "@/store";
 const AccordionMappingWidget = ({
   clasess,
   expanded,
@@ -16,10 +18,9 @@ const AccordionMappingWidget = ({
   duplicateParameters,
   template,
   setTemplate,
-  generalParameters,
-  setGeneralParameters,
 }: any) => {
   const { t } = useTranslation();
+
   return (
     <Accordion
       expanded={expanded === `panel_${index}`}
@@ -64,8 +65,6 @@ const AccordionMappingWidget = ({
           duplicateParameters={duplicateParameters}
           template={template}
           setTemplate={setTemplate}
-          generalParameters={generalParameters}
-          setGeneralParameters={setGeneralParameters}
         />
       </AccordionDetails>
     </Accordion>

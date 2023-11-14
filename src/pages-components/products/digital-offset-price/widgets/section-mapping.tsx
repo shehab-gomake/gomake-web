@@ -1,9 +1,11 @@
 import { GomakePrimaryButton } from "@/components";
 import { AddNewIcon } from "@/icons";
 import { WastebasketNew } from "@/icons/wastebasket-new";
+import { generalParametersState } from "@/store";
 import cloneDeep from "lodash.clonedeep";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilState } from "recoil";
 
 const SectionMappingWidget = ({
   clasess,
@@ -17,10 +19,11 @@ const SectionMappingWidget = ({
   duplicateParameters,
   template,
   setTemplate,
-  generalParameters,
-  setGeneralParameters,
 }: any) => {
   const { t } = useTranslation();
+  const [generalParameters, setGeneralParameters] = useRecoilState<any>(
+    generalParametersState
+  );
   const [groupedParameters, setGroupedParameters] = useState<any>();
   const [groupedParametersArray, setGroupedParametersArray] = useState<any>();
   useEffect(() => {

@@ -39,9 +39,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     setPrintingNotes,
     setGraphicNotes,
     setPriceRecovery,
-    onOpeneMultiParameterModal,
     onCloseMultiParameterModal,
-    setGeneralParameters,
     setSamlleType,
     duplicateParameters,
     setTemplate,
@@ -65,7 +63,6 @@ const PriceListPageWidget = ({ widgetType }) => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
-    generalParameters,
     workFlowSelected,
     relatedParameters,
   } = useDigitalOffsetPrice({ clasess, widgetType });
@@ -138,8 +135,6 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     duplicateParameters={duplicateParameters}
                                     template={template}
                                     setTemplate={setTemplate}
-                                    generalParameters={generalParameters}
-                                    setGeneralParameters={setGeneralParameters}
                                   />
                                 );
                               } else {
@@ -157,8 +152,6 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     duplicateParameters={duplicateParameters}
                                     template={template}
                                     setTemplate={setTemplate}
-                                    generalParameters={generalParameters}
-                                    setGeneralParameters={setGeneralParameters}
                                   />
                                 );
                               }
@@ -191,7 +184,6 @@ const PriceListPageWidget = ({ widgetType }) => {
               setGraphicNotes={setGraphicNotes}
               graphicNotes={graphicNotes}
               printingNotes={printingNotes}
-              generalParameters={generalParameters}
               workFlowSelected={workFlowSelected}
               widgetType={widgetType}
               setPriceRecovery={setPriceRecovery}
@@ -279,8 +271,6 @@ const PriceListPageWidget = ({ widgetType }) => {
         modalTitle={""}
         settingParameters={settingParameters}
         _renderParameterType={_renderParameterType}
-        generalParameters={generalParameters}
-        setGeneralParameters={setGeneralParameters}
       />
     </div>
   );

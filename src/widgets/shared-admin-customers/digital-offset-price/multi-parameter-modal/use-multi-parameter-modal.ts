@@ -1,7 +1,7 @@
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useEffect } from "react";
 
-import { selectedValueConfigState } from "@/store";
+import { generalParametersState, selectedValueConfigState } from "@/store";
 
 import { selectColorValueState } from "./store/selecte-color-value";
 import { useTranslation } from "react-i18next";
@@ -9,12 +9,10 @@ import { useChildMapping } from "./use-children-mapping-modal";
 import { maltiParameterState } from "./store/multi-param-atom";
 import lodashClonedeep from "lodash.clonedeep";
 
-const useMultiParameterModal = ({
-  settingParameters,
-  generalParameters,
-  setGeneralParameters,
-  onClose,
-}) => {
+const useMultiParameterModal = ({ settingParameters, onClose }) => {
+  const [generalParameters, setGeneralParameters] = useRecoilState<any>(
+    generalParametersState
+  );
   const { t } = useTranslation();
   const generalParametersLocal = useRecoilValue(maltiParameterState);
   const parameterLists = settingParameters?.parameter?.settingParameters;
@@ -42,6 +40,7 @@ const useMultiParameterModal = ({
 
   const onClickSaveParameter = () => {
     let temp = lodashClonedeep(generalParametersLocal);
+    let temp1 = lodashClonedeep(generalParameters);
     const numProperties = temp.length;
     temp[0].values = [];
     temp[0].valueIds = [];
@@ -78,16 +77,16 @@ const useMultiParameterModal = ({
       }
     }
     temp.forEach((tempObject) => {
-      const index = generalParameters.findIndex(
+      const index = temp1.findIndex(
         (param) => param.parameterId === tempObject.parameterId
       );
       if (index !== -1) {
-        generalParameters[index] = tempObject;
+        temp1[index] = tempObject;
       } else {
-        generalParameters.push(tempObject);
+        temp1.push(tempObject);
       }
     });
-    setGeneralParameters(generalParameters);
+    setGeneralParameters(temp1);
     onClose();
   };
   return {

@@ -10,7 +10,11 @@ import {
   getAndSetProductById,
   getAndSetgetProductQuoteItemById,
 } from "@/services/hooks";
-import { isLoadgingState, selectedValueConfigState } from "@/store";
+import {
+  generalParametersState,
+  isLoadgingState,
+  selectedValueConfigState,
+} from "@/store";
 import { useMaterials } from "../use-materials";
 import { digitslPriceState } from "./store";
 
@@ -44,7 +48,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
 
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
-  const [generalParameters, setGeneralParameters] = useState<any>([]);
+  const [generalParameters, setGeneralParameters] = useRecoilState<any>(
+    generalParametersState
+  );
   const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [defaultPrice, setDefaultPrice] = useState<any>("-----");
@@ -140,13 +146,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [selectedValueForSettings, generalParametersLocal]);
   useEffect(() => {
+    let temp = lodashClonedeep(generalParametersLocal);
+    let temp1 = [...generalParameters];
     if (
       selectedValueForSettings?.parameter?.id?.length &&
       selectedValueConfigForSettings?.id?.length &&
       generalParametersLocal?.length > 0
     ) {
-      let temp = lodashClonedeep(generalParametersLocal);
-
       for (const selectedParam of selectedValueConfigForSettings?.selectedParameterValues) {
         const paramIndex = temp.findIndex(
           (param) => param.parameterId === selectedParam.parameterId
@@ -157,21 +163,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
       }
       temp.forEach((tempObject) => {
-        const index = generalParameters.findIndex(
+        const index = temp1.findIndex(
           (param) => param.parameterId === tempObject.parameterId
         );
         if (index !== -1) {
-          generalParameters[index] = tempObject;
+          temp1[index] = tempObject;
         } else {
-          generalParameters.push(tempObject);
+          temp1?.push(tempObject);
         }
       });
-      setGeneralParameters(generalParameters);
+
+      setGeneralParameters(temp1);
     }
   }, [
     selectedValueForSettings,
     selectedValueConfigForSettings,
-    generalParameters,
     generalParametersLocal,
   ]);
 
@@ -338,9 +344,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 .map((parameter, i) => {
                   const index = temp.findIndex(
                     (item) =>
-                      item.parameterId === parameter?.id &&
-                      item.sectionId === section?.id &&
-                      item.subSectionId === subSection?.id &&
+                      item?.parameterId === parameter?.id &&
+                      item?.sectionId === section?.id &&
+                      item?.subSectionId === subSection?.id &&
                       item?.actionIndex === parameter?.actionIndex
                   );
                   relatedParametersArray.push(...parameter.relatedParameters);
@@ -625,9 +631,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       let temp = [...generalParameters];
       const index = temp.findIndex(
         (item) =>
-          item.parameterId === parameter?.id &&
-          item.sectionId === section?.id &&
-          item.subSectionId === subSection?.id &&
+          item?.parameterId === parameter?.id &&
+          item?.sectionId === section?.id &&
+          item?.subSectionId === subSection?.id &&
           item?.actionIndex === parameter?.actionIndex
       );
       return temp[index];
@@ -771,9 +777,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   if (value?.values.hasOwnProperty(parameterId)) {
                     const index = temp.findIndex(
                       (item) =>
-                        item.parameterId === parameter?.id &&
-                        item.sectionId === section?.id &&
-                        item.subSectionId === subSection?.id &&
+                        item?.parameterId === parameter?.id &&
+                        item?.sectionId === section?.id &&
+                        item?.subSectionId === subSection?.id &&
                         item?.actionIndex === parameter?.actionIndex
                     );
 
@@ -2036,7 +2042,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setPriceRecovery,
     onOpeneMultiParameterModal,
     onCloseMultiParameterModal,
-    setGeneralParameters,
     setSamlleType,
     duplicateParameters,
     setTemplate,
@@ -2060,7 +2065,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
-    generalParameters,
     workFlowSelected,
     relatedParameters,
   };
