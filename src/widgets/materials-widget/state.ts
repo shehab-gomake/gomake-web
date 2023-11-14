@@ -64,7 +64,6 @@ export const flagState = atom<boolean>({
     default: false
 })
 
-
 export const openAddRowModalState = atom<boolean>({
     key: 'openAddRowModalState',
     default: false

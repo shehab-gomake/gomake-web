@@ -1,49 +1,53 @@
-import {useRouter} from "next/router";
-import {useCallback , useMemo, useState} from "react";
-import {useGomakeAxios, useSnackBar} from "@/hooks";
+import { useRouter } from "next/router";
+import { useCallback, useMemo, useState } from "react";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
     deleteMaterialCategoryApi,
     getMaterialCategoriesApi,
     getMaterialCategoryDataApi, getMaterialExcelFileApi,
     getMaterialTableHeadersApi, uploadMaterialExcelFileApi
 } from "@/services/api-service/materials/materials-endpoints";
-import {IMaterialCategoryRow} from "@/widgets/materials-widget/interface";
-import {TableCellData} from "@/widgets/materials-widget/components/table-cell-data/table-cell";
-import {Checkbox, IconButton} from "@mui/material";
-import {getCurrencies} from "@/services/api-service/general/enums";
-import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
+import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
+import { TableCellData } from "@/widgets/materials-widget/components/table-cell-data/table-cell";
+import { Checkbox, IconButton, Tooltip } from "@mui/material";
+import { getCurrencies } from "@/services/api-service/general/enums";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
     activeFilterState,
     currenciesState, filterState, flagState, materialActionState,
     materialCategoriesState,
     materialCategoryDataState,
     materialCategorySuppliersState,
-    materialHeadersState, selectedSupplierIdState
+    materialHeadersState, openAddRowModalState, selectedSupplierIdState
 } from "@/widgets/materials-widget/state";
-import {getMaterialSuppliersApi} from "@/services/api-service/materials/materials-suppliers-endpoints";
-import {useFilteredMaterials} from "@/widgets/materials-widget/use-filtered-materials";
+import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
+import { useFilteredMaterials } from "@/widgets/materials-widget/use-filtered-materials";
 import { EMaterialActiveFilter } from "./enums";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
+import { useTranslation } from "react-i18next";
 
 const useMaterials = () => {
-    const {query, push, replace} = useRouter();
-    const {materialType, materialCategory} = query;
+    const { query, push, replace } = useRouter();
+    const { materialType, materialCategory } = query;
     const [materialHeaders, setMaterialHeaders] = useRecoilState<{ key: string, value: string }[]>(materialHeadersState);
-    const [materialCategories, setMaterialCategories] = useRecoilState<{ categoryKey: string, categoryName: string , isAddedByPrintHouse : boolean }[]>(materialCategoriesState)
+    const [materialCategories, setMaterialCategories] = useRecoilState<{ categoryKey: string, categoryName: string, isAddedByPrintHouse: boolean }[]>(materialCategoriesState)
     const [materialCategoryData, setMaterialCategoryData] = useRecoilState<IMaterialCategoryRow[]>(materialCategoryDataState)
     const setMaterialCategorySuppliers = useSetRecoilState(materialCategorySuppliersState);
     const setMaterialActions = useSetRecoilState(materialActionState);
     const setDefaultSupplier = useSetRecoilState(selectedSupplierIdState);
     const activeFilter = useRecoilValue(activeFilterState);
     const materialFilter = useRecoilValue(filterState);
-    const {callApi} = useGomakeAxios();
-    const {alertSuccessDelete , alertFaultDelete} = useSnackBar();
+    const { callApi } = useGomakeAxios();
+    const { alertSuccessDelete, alertFaultDelete } = useSnackBar();
     const setCurrencies = useSetRecoilState(currenciesState);
-    const {getFilteredMaterials} = useFilteredMaterials()
+    const setOpenModal = useSetRecoilState<any>(openAddRowModalState);
+    const { getFilteredMaterials } = useFilteredMaterials()
     const setActiveFilter = useSetRecoilState(activeFilterState);
     const setFlagState = useSetRecoilState(flagState);
-    const { errorColor } = useGomakeTheme();
+    const { errorColor, primaryColor } = useGomakeTheme();
+    const { t } = useTranslation();
 
     const onSelectCategory = (category: string) => {
         //setDefaultSupplier('')
@@ -81,8 +85,8 @@ const useMaterials = () => {
     const getMaterialCategoryData = async (materialType: string, materialCategory: string, supplierId: string) => {
         const callBack = (res) => {
             if (res.success) {
-               setMaterialCategoryData(res.data?.map(row => ({...row, checked: false})));
-               res.data?.every(row => !row.isActive) ? setActiveFilter(EMaterialActiveFilter.ALL) :setActiveFilter(EMaterialActiveFilter.ACTIVE) 
+                setMaterialCategoryData(res.data?.map(row => ({ ...row, checked: false })));
+                res.data?.every(row => !row.isActive) ? setActiveFilter(EMaterialActiveFilter.ALL) : setActiveFilter(EMaterialActiveFilter.ACTIVE)
             }
         }
         await getMaterialCategoryDataApi(callApi, callBack, {
@@ -93,9 +97,11 @@ const useMaterials = () => {
     }
 
     const materialsCategoriesList = useCallback(() => {
-        return materialCategories.map(category => ({text: category.categoryName, value: category.categoryKey , icon: category.isAddedByPrintHouse ? ()=> <IconButton onClick={()=>onDeleteCategory(category?.categoryKey)}>
-            <DeleteOutlineIcon style={{color: errorColor(500)}} />
-          </IconButton> : null}))
+        return materialCategories.map(category => ({
+            text: category.categoryName, value: category.categoryKey, icon: category.isAddedByPrintHouse ? () => <IconButton onClick={() => onDeleteCategory(category?.categoryKey)}>
+                <DeleteOutlineIcon style={{ color: errorColor(500) }} />
+            </IconButton> : null
+        }))
     }, [materialCategories])
 
 
@@ -120,158 +126,60 @@ const useMaterials = () => {
         setMaterialCategoryData(materialCategoryData.map(row => materialsIds.includes(row.id) ? {
             ...row,
             checked: !checked
-        } : {...row, checked: false}))
+        } : { ...row, checked: false }))
     }, [materialCategoryData, getFilteredMaterials(), isAllSelected()])
 
     const onChangeRowCheckBox = (id: string) => {
-        setMaterialCategoryData(materialCategoryData.map(row => id === row.id ? {...row, checked: !row.checked} : row))
+        setMaterialCategoryData(materialCategoryData.map(row => id === row.id ? { ...row, checked: !row.checked } : row))
     }
 
     const tableHeaders = useCallback(() => {
         return [<Checkbox onChange={onChangeHeaderCheckBox}
-                          checked={isAllSelected()}/>, ...materialHeaders.map(header => header.value)];
+            checked={isAllSelected()} />, ...materialHeaders.map(header => header.value)];
     }, [materialHeaders, materialCategoryData])
 
 
     const tableRows = useMemo(() => {
         return getFilteredMaterials().map((dataRow) => {
             return [<Checkbox onChange={() => onChangeRowCheckBox(dataRow.id)}
-                              checked={dataRow.checked}/>, ...materialHeaders.map(header =>
-                <TableCellData {...dataRow.rowData[header.key]} id={dataRow.id} parameterKey={header.key}/>)]
+                checked={dataRow.checked} />, ...materialHeaders.map(header =>
+                    <TableCellData {...dataRow.rowData[header.key]} id={dataRow.id} parameterKey={header.key} />)]
         })
     }, [materialHeaders, materialCategoryData, activeFilter, materialFilter])
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-const [dataRow2, setDataRow] = useState([]);
-
-// const addEmptyRow = () =>{
-//     var temp = [...dataRow2];
-//     const newIndex = temp.length + 1;
-//     const newId = `row_${newIndex}`;
-//     const rowData=  {
-//         "manufacturer": {
-//           "value": null,
-//           "isEditable": true,
-//           "type": 0
-//         },
-//         "volume (Liter)": {
-//           "value": null,
-//           "isEditable": true,
-//           "type": 1
-//         },
-//         "literInSquareMeter": {
-//           "value": null,
-//           "isEditable": true,
-//           "type": 0
-//         },
-//         "pricePerSquareMeter": {
-//           "value": [
-//             null,
-//             null
-//           ],
-//           "isEditable": true,
-//           "type": 3
-//         },
-//         "currency": {
-//           "value": "usd",
-//           "isEditable": true,
-//           "type": 5
-//         },
-//         "stock": {
-//           "value": null,
-//           "isEditable": true,
-//           "type": 1
-//         },
-//         "Active": {
-//           "value": false,
-//           "isEditable": true,
-//           "type": 2
-//         }}
-//     temp.push({ 
-//         index: newIndex,
-//         id: newId,
-//         checked: false,
-//         rowData:rowData
-//     });
-//     setDataRow(temp);
-//     console.log(temp)
-// }
+    ////////////////////////////////////////////lama/////////////////////////////////////////////////////////
+    const onDeleteRow = (id: string) => {
+        setMaterialCategoryData(materialCategoryData.map(row => id === row.id ? { ...row, checked: !row.checked } : row))
+    }
+    const tableHeadersNew = useCallback(() => {
+        return [<Checkbox onChange={onChangeHeaderCheckBox}
+            checked={isAllSelected()} />, ...materialHeaders.map(header => header.value), <Tooltip title={t("materials.buttons.addRow")}>
+            <IconButton type="button" onClick={() => { setOpenModal(true) }}>
+                <AddBoxOutlinedIcon style={{ color: primaryColor(500) }} />
+            </IconButton>
+        </Tooltip>];
+    }, [materialHeaders, materialCategoryData])
 
 
-// const deleteRow = (index) => {
-//     var temp = [...dataRow2];
-//     temp = temp.filter(x => x.index != index);
-//     temp.forEach((user, i) => {
-//       if (user.index > index) {
-//         user.index -= 1;
-//       }
-//     });
-//     setDataRow(temp);
-//     console.log(temp)
-//   }
-    // const dataRow1 = [{
-    //     index:0,
-    //     id: "emptyRow",
-    //     checked: false,
-    //     rowData: {
-    //         "manufacturer": {
-    //           "value": null,
-    //           "isEditable": true,
-    //           "type": 0
-    //         },
-    //         "volume (Liter)": {
-    //           "value": null,
-    //           "isEditable": true,
-    //           "type": 1
-    //         },
-    //         "literInSquareMeter": {
-    //           "value": null,
-    //           "isEditable": true,
-    //           "type": 0
-    //         },
-    //         "pricePerSquareMeter": {
-    //           "value": [
-    //             null,
-    //             null
-    //           ],
-    //           "isEditable": true,
-    //           "type": 3
-    //         },
-    //         "currency": {
-    //           "value": "usd",
-    //           "isEditable": true,
-    //           "type": 5
-    //         },
-    //         "stock": {
-    //           "value": null,
-    //           "isEditable": true,
-    //           "type": 1
-    //         },
-    //         "Active": {
-    //           "value": false,
-    //           "isEditable": true,
-    //           "type": 2
-    //         }
-    //       },
-    // }];
-
-
-
-    const tableRowsTest = useMemo(() => {
-        return dataRow2?.map((dataRow) => {
+    const tableRowsNew = useMemo(() => {
+        return getFilteredMaterials().map((dataRow) => {
             return [<Checkbox onChange={() => onChangeRowCheckBox(dataRow.id)}
-                              checked={dataRow.checked}/>, ...materialHeaders.map(header =>
-                <TableCellData {...dataRow.rowData[header.key]} id={dataRow.id} parameterKey={header.key}/>)]
+                checked={dataRow.checked} />, ...materialHeaders.map(header =>
+                    <TableCellData {...dataRow.rowData[header.key]} id={dataRow.id} parameterKey={header.key} />,
+                    <IconButton onClick={() => alert("delete row")}>
+                        <DeleteOutlineIcon style={{ color: errorColor(500) }} />
+                    </IconButton>
+                )]
         })
-    }, [materialHeaders, materialCategoryData, activeFilter, materialFilter , dataRow2])
+    }, [materialHeaders, materialCategoryData, activeFilter, materialFilter])
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////lama///////////////////////////////////////////////////////////////////
 
 
     const getCurrenciesApi = async () => {
         const callBack = (res) => {
             if (res.success) {
-                setCurrencies(res.data.map(({value, text}) => ({label: text, value})))
+                setCurrencies(res.data.map(({ value, text }) => ({ label: text, value })))
             }
         }
         await getCurrencies(callApi, callBack)
@@ -292,7 +200,7 @@ const [dataRow2, setDataRow] = useState([]);
                 }));
             }
         }
-        await getMaterialSuppliersApi(callApi, callBack, {key: materialType, categoryName: materialCategory})
+        await getMaterialSuppliersApi(callApi, callBack, { key: materialType, categoryName: materialCategory })
     }
 
     const downloadExcelFile = async () => {
@@ -317,7 +225,7 @@ const [dataRow2, setDataRow] = useState([]);
                 // Convert data to a Base64 string
                 const base64String = btoa(String.fromCharCode.apply(null, data));
                 uploadMaterialExcelFileApi(callApi, () => {
-                }, {key: materialType.toString(), base64: base64String})
+                }, { key: materialType.toString(), base64: base64String })
             };
             reader.readAsArrayBuffer(file)
         }
@@ -340,9 +248,10 @@ const [dataRow2, setDataRow] = useState([]);
         replace,
         downloadExcelFile,
         uploadExcelFile,
-        tableRowsTest,
-        dataRow2
+
+
+        tableHeadersNew
     }
 }
 
-export {useMaterials}
+export { useMaterials }

@@ -247,7 +247,8 @@
       "saveModifications": "Save modifications",
       "duplicate": "Duplicate",
       "back":"back",
-      "addNew" : "Add new category"
+      "addNew" : "Add new category",
+      "addRow": "add row"
     },
     "modals": {
       "subTitleDeleteModal": "Are you sure to delete {{name}}"

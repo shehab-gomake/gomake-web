@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { flagState , openAddRowModalState, openAddCategoryModalState, openAddSupplierModalState, selectedSupplierIdState } from "@/widgets/materials-widget/state";
+import { flagState, openAddRowModalState, openAddCategoryModalState, openAddSupplierModalState, selectedSupplierIdState } from "@/widgets/materials-widget/state";
 import { AddSupplierModal } from "@/widgets/materials-widget/components/add-supplier/add-supplier-modal";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { SecondaryButton } from "@/components/button/secondary-button";
@@ -17,7 +17,9 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useGomakeRouter } from "@/hooks/use-gomake-router";
 import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
-
+import { IconButton, Tooltip } from "@mui/material";
+import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const MaterialsWidget = () => {
     const { t } = useTranslation();
     const { classes } = useStyle();
@@ -25,8 +27,7 @@ const MaterialsWidget = () => {
     const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
     const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
     const supplierId = useRecoilValue(selectedSupplierIdState)
-    const setOpenModal = useSetRecoilState<any>(openAddRowModalState);
-
+    const { primaryColor } = useGomakeTheme()
     const flag = useRecoilValue(flagState)
     const elementRef = useRef(null);
     const { navigate } = useGomakeRouter();
@@ -47,6 +48,10 @@ const MaterialsWidget = () => {
         materialCategories,
         downloadExcelFile,
         uploadExcelFile,
+
+
+
+        tableHeadersNew
     } = useMaterials();
 
     const Side = () =>
@@ -107,10 +112,7 @@ const MaterialsWidget = () => {
                     {materialCategoryData.length > 0 ?
                         <PrimaryTable rows={tableRows} headers={tableHeaders()} /> :
                         ((flag && materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ?
-                            <Stack direction={'column'} >
-                                <PrimaryButton variant={"text"} onClick={() => { setOpenModal(true) }}  >add row</PrimaryButton>
-                                <PrimaryTable rows={tableRows} headers={tableHeaders()} />
-                            </Stack>
+                            <PrimaryTable rows={tableRows} headers={tableHeadersNew()} />
                             :
                             <div style={classes.noData}>
                                 {t("materials.sheetPaper.supplierAddedSheetYet")}
@@ -118,8 +120,7 @@ const MaterialsWidget = () => {
                                     style={classes.noDataSpan}
                                     onClick={() => {
                                         setOpenAddSupplierModal(true)
-                                    }}
-                                >
+                                    }}>
                                     {t("materials.sheetPaper.pleaseAddNow")}
                                 </span>
                             </div>)}
