@@ -20,7 +20,6 @@ const SectionMappingWidget = ({
   generalParameters,
   setGeneralParameters,
 }: any) => {
-  console.log("generalParameters", generalParameters);
   const { t } = useTranslation();
   const [groupedParameters, setGroupedParameters] = useState<any>();
   const [groupedParametersArray, setGroupedParametersArray] = useState<any>();
@@ -76,6 +75,7 @@ const SectionMappingWidget = ({
         }
       });
     });
+
     setTemplate(temp);
     setGeneralParameters(newArray);
   };

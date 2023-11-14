@@ -77,6 +77,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     useState<any>();
   const [selectedValueConfigForSettings, setSelectedValueConfigForSettings] =
     useState<any>();
+  console.log("generalParameters", generalParameters);
 
   const findLargestActionIndex = (params) => {
     return params.reduce(
@@ -95,24 +96,28 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
   }
   const duplicateParameters = (mySubSection: any) => {
-    const temp = cloneDeep(template);
-    const myId = mySubSection?.id;
-    const largestIndex = findLargestActionIndex(mySubSection.parameters);
-    const duplicatedParameters = mySubSection.parameters.map((parameter) => {
-      const duplicatedParameter = { ...parameter };
-      duplicatedParameter.actionIndex = largestIndex + 1;
-      return duplicatedParameter;
-    });
-    const uniqueParameters = removeDuplicates(duplicatedParameters);
-    temp.sections.forEach((section) => {
-      section.subSections.forEach((subSection) => {
-        if (subSection.id === myId) {
-          subSection.parameters =
-            subSection.parameters.concat(uniqueParameters);
-        }
+    setTemplate((prev) => {
+      let temp = cloneDeep(prev);
+
+      let myId = mySubSection?.id;
+      let largestIndex = findLargestActionIndex(mySubSection.parameters);
+      const duplicatedParameters = mySubSection.parameters.map((parameter) => {
+        const duplicatedParameter = { ...parameter };
+        duplicatedParameter.actionIndex = largestIndex + 1;
+        return duplicatedParameter;
       });
+      const uniqueParameters = removeDuplicates(duplicatedParameters);
+      temp.sections.forEach((section) => {
+        section.subSections.forEach((subSection) => {
+          if (subSection.id === myId) {
+            subSection.parameters =
+              subSection.parameters.concat(uniqueParameters);
+          }
+        });
+      });
+
+      return temp;
     });
-    setTemplate(temp);
   };
   useEffect(() => {
     if (
@@ -206,7 +211,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [relatedParameters, setRelatedParameters] = useState([]);
   useEffect(() => {
     if (template?.sections?.length > 0) {
-      let sectionData: any = [...template?.sections];
+      let sectionData: any = cloneDeep(template?.sections);
       const newGeneralParameters = [];
       const typeMap = {};
       let relatedParametersArray = [];
@@ -533,7 +538,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setSubProducts(newSubProducts2);
       setRelatedParameters(relatedParametersArray);
     }
-  }, [template, materialsEnumsValues, allMaterials]);
+  }, [materialsEnumsValues, allMaterials, template]);
 
   useEffect(() => {
     if (router?.query?.clientTypeId) {
@@ -1460,7 +1465,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   const myParameter = list.find(
                     (p) => p.id === relatedParameter.parameterId
                   );
-
                   if (relatedParameter.activateByAllValues && parm?.values) {
                     return (
                       <div style={{ marginLeft: 10 }}>
@@ -1506,7 +1510,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           (c) => c == parm?.values
                         );
 
-                      if (valueInArray) {
+                      if (valueInArray && myParameter) {
                         return (
                           <div style={{ marginLeft: 10 }}>
                             {_renderParameterType(
