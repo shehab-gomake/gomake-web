@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { flagState, openAddRowModalState, openAddCategoryModalState, openAddSupplierModalState, selectedSupplierIdState } from "@/widgets/materials-widget/state";
+import { flagState , openAddCategoryModalState, openAddSupplierModalState, selectedSupplierIdState } from "@/widgets/materials-widget/state";
 import { AddSupplierModal } from "@/widgets/materials-widget/components/add-supplier/add-supplier-modal";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { SecondaryButton } from "@/components/button/secondary-button";
@@ -17,9 +17,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useGomakeRouter } from "@/hooks/use-gomake-router";
 import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
-import { IconButton, Tooltip } from "@mui/material";
-import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
 const MaterialsWidget = () => {
     const { t } = useTranslation();
     const { classes } = useStyle();
@@ -27,7 +25,6 @@ const MaterialsWidget = () => {
     const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
     const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
     const supplierId = useRecoilValue(selectedSupplierIdState)
-    const { primaryColor } = useGomakeTheme()
     const flag = useRecoilValue(flagState)
     const elementRef = useRef(null);
     const { navigate } = useGomakeRouter();

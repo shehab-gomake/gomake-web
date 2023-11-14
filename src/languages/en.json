@@ -236,7 +236,8 @@
       "loopsQuantity": "loops quantity",
       "speralSize": "Speral size",
       "noData": "No Data",
-      "addCategory": "add category"
+      "addCategory": "add category",
+      "unitPrice": "Unit Price"
     },
     "buttons": {
       "cancel": "Cancel",
@@ -248,7 +249,9 @@
       "duplicate": "Duplicate",
       "back":"back",
       "addNew" : "Add new category",
-      "addRow": "add row"
+      "addRow": "add row",
+      "addNewRow": "Add new row"
+
     },
     "modals": {
       "subTitleDeleteModal": "Are you sure to delete {{name}}"

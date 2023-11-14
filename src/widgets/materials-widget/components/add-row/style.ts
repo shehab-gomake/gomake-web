@@ -5,13 +5,16 @@ const useStyle = () => {
     return {
       insideStyle: {
         width: 400, 
-        height: 600,
+        height: "70%",
+       // height: 700,
         padding: 20,
         //position: "relative" as "relative",
       },
       addBtnStyle: {
         display : "flex",
-        alignSelf: 'flex-end'
+        alignSelf: 'flex-end',
+        position: "fixed" as "fixed",
+        bottom: "10px",
       },
     };
   }, []);

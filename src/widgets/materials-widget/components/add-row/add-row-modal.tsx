@@ -20,7 +20,7 @@ const AddRowModal = () => {
     const {onAddCategoryRow} = useAddCategoryRow();
 
     const onChangeInputs = (key, value) => {
-        setRowData({ ...rowData, [key]: value })
+        setRowData({ ...rowData, [key]: value }) 
     }
 
     return (
@@ -28,7 +28,7 @@ const AddRowModal = () => {
             insideStyle={classes.insideStyle}
             openModal={openModal}
             onClose={() => setOpenModal(false)}
-            modalTitle={t("Add row")}>
+            modalTitle={t("materials.buttons.addNewRow")}>
             <Stack direction={'column'} marginBottom={"15px"} marginTop={"15px"} gap={"20px"} >
                 {
                     rowInputs(rowData).map(item => <Stack direction={'row'} width={"180px"} > <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
