@@ -28,6 +28,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import { useTranslation } from "react-i18next";
 import { useAddCategoryRow } from "./components/add-row/use-add-row";
+import { RemoveIcon } from "@/icons/remove-icon";
 
 const useMaterials = () => {
     const { query, push, replace } = useRouter();
@@ -87,7 +88,7 @@ const useMaterials = () => {
     const materialsCategoriesList = useCallback(() => {
         return materialCategories.map(category => ({
             text: category.categoryName, value: category.categoryKey, icon: category.isAddedByPrintHouse ? () => <IconButton onClick={() => onDeleteCategory(category?.categoryKey)}>
-                <DeleteOutlineIcon style={{ color: errorColor(500) }} />
+               <RemoveIcon />
             </IconButton> : null
         }))
     }, [materialCategories])
@@ -161,7 +162,7 @@ const useMaterials = () => {
                     />
                 )),
                 <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
-                    <DeleteOutlineIcon style={{ color: errorColor(500) }} />
+                    <RemoveIcon />
                 </IconButton>,
             ];
         })

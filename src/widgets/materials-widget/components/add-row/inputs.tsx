@@ -2,7 +2,7 @@ import { useRecoilValue } from "recoil";
 import { materialHeadersState } from "../../state";
 import { EDataTypeEnum } from "@/widgets/materials-widget/components/table-cell-data/data-type-enum";
 
-const rowInputs = (state) => {
+const rowInputs = (state,currencies) => {
     const materialHeaders = useRecoilValue<{ key: string, value: string, inputType: number }[]>(materialHeadersState);
 
     return materialHeaders.map((header) => (
@@ -14,8 +14,10 @@ const rowInputs = (state) => {
             placeholder: "materials.inputs.currency",
             required: false,
             parameterKey: "currency",
-            options: [],
-            optionsUrl: "/v1/enum/get-enums/currency",
+            options: currencies.map(currency => ({
+                value: currency.value,
+                text: currency.label
+            })),
             value: state?.currency,
             isValid: true,
 
@@ -41,7 +43,6 @@ const rowInputs = (state) => {
             options: [],
             value: EDataTypeEnum[header?.inputType] == "BOOLEAN" ? state[header?.key] : state?.header?.key,
             isValid: true,
-            //direction: EDataTypeEnum[header?.inputType] == "BOOLEAN" && "row"
         }
     ));
 };
