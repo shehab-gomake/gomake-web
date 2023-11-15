@@ -39,7 +39,9 @@ const MaterialsWidget = () => {
         getPrintHouseMaterialCategorySuppliers,
         materialCategoryData,
         downloadExcelFile,
-        uploadExcelFile
+        uploadExcelFile,
+        materialCategories,
+        replace
     } = useMaterials();
 
     const Side = () => 
