@@ -30,7 +30,6 @@ const useCustomer = (permissionEnumValue) => {
     const validate = useCallback(async () => {
         const validate: any = await callApi("GET", "/v1/auth/validate");
         if (validate?.success) {
-            debugger;
             const user = validate?.data?.data?.customer;
             const userPermissions = [...user.permissions];
             user.permissions = null;
