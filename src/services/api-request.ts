@@ -9,7 +9,7 @@ export const apiRequest = async (method = "GET", url: string, data: any = {}, se
         // //     trh
         // // }
         // const SERVER = 'http://localhost:3010';
-        const SERVER2 = 'http://localhost:6001';
+        const SERVER2 = 'https://production-service-prod.gomake.co.il';
         const reqUrl = secondServer ? SERVER2 + url : SERVER + url;
         const options: any = {
             method,
@@ -84,7 +84,7 @@ export const deleteApiRequest = async (url: string, data: any = {}) => {
 
 export const goMakeClientPrintHouseId = async (method = "GET", code: string, data: any = {}) => {
     try {
-        const reqUrl = 'https://api-central-prd.gomake.co.il/api/printhouses/DashBoardLogin?code=' + code;
+        const reqUrl = 'https://api-central-prod.gomake.co.il/api/printhouses/DashBoardLogin?code=' + code;
         const options: any = {
             method,
             url: reqUrl,
