@@ -24,11 +24,11 @@ const useQuoteWidget = () => {
   const [clientTypesValue, setClientTypesValues] = useState([]);
   const [productValue, setProductValues] = useState([]);
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
-  const [QuoteExist, setQuoteExist] = useState<any>([]);
+  const [userQuote, setUserQuote] = useState<any>(null);
   const [canOrder, setCanOrder] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
-  const [selectedCustomersList, setSelectedCustomersList] = useState<any>({});
+  const [selectedClient, setSelectedClient] = useState<any>(null);
   const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
   const [quoteNumber, setquoteNumber] = useRecoilState<any>(QuoteNumberState);
   
@@ -65,11 +65,11 @@ const useQuoteWidget = () => {
   useEffect(() => {
     const isDisabled = checkVariables(
       selectedClientType,
-      selectedCustomersList,
+      selectedClient,
       selectedProduct
     );
     setIsDisabled(isDisabled);
-  }, [selectedClientType, selectedCustomersList, selectedProduct]);
+  }, [selectedClientType, selectedClient, selectedProduct]);
 
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
@@ -94,11 +94,10 @@ const useQuoteWidget = () => {
   }, []);
 
   const handleClicktoSelectedCustomer = useCallback(async (clientIdifExist,value) =>{
-    setSelectedCustomersList(value);
+    debugger;
+    setSelectedClient(value);
 
-    const client = clientTypesValue.find(
-      (c) => c.id == value?.clientTypeId
-    );
+    const clientType = clientTypesValue.find((c) => c.id == value?.clientTypeId);
 
   
     if(clientIdifExist != null && value?.id != null)
@@ -110,8 +109,8 @@ const useQuoteWidget = () => {
     
     }
 
-    if (client) {
-      setSelectedClientType(client);
+    if (clientType) {
+      setSelectedClientType(clientType);
     } else {
       setSelectedClientType({});
     }
@@ -120,7 +119,7 @@ const useQuoteWidget = () => {
 
 
   const getAndSetExistQuote = useCallback(async () => {
-     await getAndSetExistQuotes(callApi, setQuoteExist);
+     await getAndSetExistQuotes(callApi, setUserQuote);
   },[]);
 
 
@@ -131,11 +130,11 @@ const useQuoteWidget = () => {
 
   
   const updateCustomerList = useCallback (async ()=>{
-    setSelectedCustomersList(null);
+    setSelectedClient(null);
     setSelectedClientType(null);
   },[]);
   const updateCustomerListSelectedAfterConfirm = useCallback(async (selectedCustomersList)=>{
-     setSelectedCustomersList(selectedCustomersList);
+     setSelectedClient(selectedCustomersList);
   
   },[])
 
@@ -144,28 +143,27 @@ const useQuoteWidget = () => {
     getAllProducts();
     getAndSetExistQuote();
   }, []);
-
-
-
-  const onClickSaveQuote = useCallback(async (QuoteId) => {
-    setquoteNumber("");
-    setQuoteIfExist("");
-    
-    await saveQuote(callApi,setQuoteExist, QuoteId);
-  }, []);
   
+  const onClickSaveQuote = async (quoteId)=>{
+    
+    await saveQuote(callApi,setUserQuote, quoteId);
+    setquoteNumber(null);
+    setQuoteIfExist(false);
+    //setSelectedClient(null);
+    setUserQuote(null);
+  }
   const onClcikCreateQuote = () => {
     navigate(
-      `/admin/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedCustomersList?.id}&productId=${selectedProduct?.id}`
+      `/admin/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&productId=${selectedProduct?.id}`
     );
   };
   const onClcikCreateQuoteForCustomer = () => {
     navigate(
-      `/products/create?clientTypeId=${selectedClientType?.id}&customerId=${selectedCustomersList?.id}&productId=${selectedProduct?.id}`
+      `/products/create?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&productId=${selectedProduct?.id}`
     );
   };
   const _renderErrorMessage = () => {
-    if (!selectedCustomersList?.id) {
+    if (!selectedClient?.id) {
       return t("home.admin.pleaseSelectCustomer");
     }
     if (!selectedClientType?.id) {
@@ -177,8 +175,8 @@ const useQuoteWidget = () => {
   };
 
   useEffect(()=>{
-      QuoteExist?.result ?  getAllCustomersCreateQuote(QuoteExist?.result?.clientName) : getAllCustomersCreateQuote();
-  },[QuoteExist])
+      userQuote?.result ?  getAllCustomersCreateQuote(userQuote?.result?.clientName) : getAllCustomersCreateQuote();
+  },[userQuote])
 
 
  
@@ -191,7 +189,7 @@ const useQuoteWidget = () => {
     updateCustomerList,
     openModal,
     getAndSetExistQuote,
-    QuoteExist,
+    userQuote,
     open,
     errorColor,
     anchorEl,
@@ -203,12 +201,12 @@ const useQuoteWidget = () => {
     handleClose,
     onClcikCloseModal,
     setSelectedClientType,
-    setSelectedCustomersList,
-    selectedCustomersList,
+    setSelectedClient,
+    selectedClient,
     setSelectedProduct,
     updateCustomerListSelectedAfterConfirm,
     setOpenModal,
-    setQuoteExist,
+    setUserQuote,
     handleClicktoSelectedCustomer,
     checkWhatRenderArray,
     renderOptions,

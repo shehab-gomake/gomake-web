@@ -44,7 +44,13 @@ const useStyle = () => {
         width: "100%",
         // border: `1px solid ${secondColor(300)}`,
       },
-    
+      btnContainer: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        alignSelf: "center",
+        width: "50%",
+      },
       btnStyle: {
         height: 40,
       },
