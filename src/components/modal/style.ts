@@ -38,7 +38,6 @@ const useStyle = ({ insideStyle, headerPadding }: any) => {
         display: "flex",
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(500, 24),
-
       },
       boxContainer: {
         height: "100%",

@@ -242,7 +242,8 @@
       "edit": "עריכה",
       "save": "שמירה",
       "saveModifications": "שמור שינויים",
-      "duplicate": "שכפול"
+      "duplicate": "שכפול",
+      "back": "חזרה"
     },
     "modals": {
       "subTitleDeleteModal": "האם אתה בטוח שברצונך למחוק את {{name}}"
@@ -2168,6 +2169,49 @@
     "AgingReport":"דוח הזדקנות",
     "LedgerReport":"דוח חשבונות",
     "SalesReport":"דווח מכירות"
+  },
+  "mailingSettings": {
+    "emailSetting": "הגדרות דואר אלקטרוני",
+    "messageTemplates": "תבניות הודעות",
+    "whatsappSetting": "הגדרות WhatsApp",
+    "type": "סוג",
+    "sendViaSms": "שלח הודעת עדכון באמצעות SMS",
+    "sendThroughTwilio": "שלח הודעת SMS דרך Twilio",
+    "subject": "נושא",
+    "body": "גוף",
+    "attachment": "קבצים מצורפים",
+    "more": "עוד",
+    "addNew": "הוסף חדש",
+    "group": "קבוצות SMS",
+    "groupName": "שם הקבוצה",
+    "addNewGroup": "הוסף קבוצה חדשה",
+    "add": "הוסף",
+    "Edit": "ערוך",
+    "Duplicate": "שכפול",
+    "Delete": "מחק",
+    "save": "שמור",
+    "reset": "אפס",
+    "clientName": "שם לקוח",
+    "phoneNumber": "מספר טלפון",
+    "email": "כתובת דואר אלקטרוני",
+    "orderNumber": "מספר הזמנה",
+    "orderNote": "הערת הזמנה",
+    "approveLink": "קישור לאישור",
+    "missionTitle": "כותרת משימה",
+    "missionStatus": "מצב משימה",
+    "quoteNumber": "מספר הצעת מחיר",
+    "quoteLink": "קישור להצעת מחיר",
+    "firstWorkName": "שם עבודה ראשונית",
+    "workName": "שם העבודה",
+    "variable": "הוסף משתנה",
+    "fromAgentMail": "שלח מדואר של הסוכן",
+    "sendCopyToAgentMail": "שלח העתק לדואר של הסוכן",
+    "sendCopyToMainMail": "שלח העתק לדואר הראשי",
+    "returnMail": "הדואר יחזור לדואר האלקטרוני של הסוכן אם הוגדר לו דואר",
+    "emailType": "סוג דואר",
+    "mails": "משלוחי דואר",
+    "addNewAttachment": "הוסף קובץ מצורף חדש",
+    "sendFrom": "שלח מהדואר האלקטרוני",
+    "noAttachment": "אין קובץ מצורף"
   }
-
 }

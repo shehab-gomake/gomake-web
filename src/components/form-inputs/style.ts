@@ -55,6 +55,11 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         gap: 10,
       },
+      inputContainerRow: {
+        display: "flex",
+        alignItems: 'center',
+        flexDirection: 'row-reverse' as 'row-reverse' ,
+      },
       inputLbl: {
         color: primaryColor(900),
         ...FONT_FAMILY.Lexend(600, 14),

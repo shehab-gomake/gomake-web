@@ -108,7 +108,7 @@ const GoMakeAutoComplate = ({
             style={style}
             options={options}
             disabled={disabled}
-            popupIcon={<ArrowDownIcon fill={arrowColor}/>}
+            popupIcon={""}
             renderInput={(params: any) => (
                 <TextField
                     {...params}
