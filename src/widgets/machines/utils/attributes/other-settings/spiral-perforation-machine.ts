@@ -18,9 +18,9 @@ const spiralPerforationMachine = (state: Record<string, any>) => {
                 },
                 {
                     name: "material",
-                    label: "machineAttributes.material",
+                    label: "machineAttributes.materials",
                     type: "text",
-                    placeholder: "machineAttributes.material",
+                    placeholder: "machineAttributes.materials",
                     required: true,
                     parameterKey: "material",
                     options: []

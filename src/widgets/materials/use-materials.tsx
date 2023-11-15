@@ -53,7 +53,7 @@ const useMaterials = ({ admin }: any) => {
       {
         key: "wideFormatMaterial",
         title: t("tabs.wideFormatMaterial"),
-        path: "/materials-new/wide-format-material",
+        path: "/materials-new/wide-format-materials",
       },
       {
         key: "profileFrames",
@@ -167,7 +167,7 @@ const useMaterials = ({ admin }: any) => {
       {
         key: "printingMaterialsForRolls",
         title: t("tabs.printingMaterialsForRolls"),
-        path: "/admin/materials/material-roll-printing",
+        path: "/admin/materials/materials-roll-printing",
       },
       {
         key: "hardboards",
@@ -177,7 +177,7 @@ const useMaterials = ({ admin }: any) => {
       {
         key: "wideFormatMaterial",
         title: t("tabs.wideFormatMaterial"),
-        path: "/admin/materials/wide-format-material",
+        path: "/admin/materials/wide-format-materials",
       },
       {
         key: "profileFrames",

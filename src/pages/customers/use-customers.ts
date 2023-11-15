@@ -5,7 +5,7 @@ import { useRecoilState } from "recoil";
 import { agentsCategoriesState, clientTypesCategoriesState } from "./customer-states";
 import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
-import { getAndSetCustomerById, getAndSetCustomersPagination, toggleCustomerStatus } from "@/services/api-service/customers/customers-api";
+import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/api-service/customers/customers-api";
 import { DEFAULT_VALUES } from "./enums";
 import { useSnackBar } from "@/hooks";
 import { permissionsState } from "@/store/permissions";
@@ -110,6 +110,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
   const getAgentCategories = async () => {
     const callBack = (res) => {
       if (res.success) {
+        
         const agentNames = res.data.map(agent => ({
           label: agent.text,
           id: agent.value
@@ -119,8 +120,6 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
     }
     await getAndSetEmployees2(callApi, callBack, { isAgent: true })
   }
-
-  /////////////////////////  data table  //////////////////////////////
   const [customerForEdit, setCustomerForEdit] = useState([]);
   const getCustomerForEdit = async (id) => {
     const callBack = (res) => {

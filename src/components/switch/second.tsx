@@ -11,8 +11,11 @@ const SecondSwitchStyled = styled(Switch)<any>(({ colorX }: any) => ({
   },
 }));
 
-export const SecondSwitch = ({ ...props }) => {
+const SecondSwitch = ({   ...props } ,   ) => {
   const { secondColor } = useGomakeTheme();
+   
+      return <SecondSwitchStyled {...props} colorX={secondColor(500)} />;
+   
 
-  return <SecondSwitchStyled {...props} colorX={secondColor(500)} />;
 };
+export {SecondSwitch};

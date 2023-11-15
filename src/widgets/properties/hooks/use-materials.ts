@@ -30,7 +30,7 @@ const useMaterials = () => {
     const getMaterials = async () => {
         return await callApi(
             "GET",
-            "/v1/printhouse-config/materials/get-all-materials"
+            "/v1/materials/get-all-print-house-materials"
         );
     }
 

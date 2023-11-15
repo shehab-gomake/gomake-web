@@ -59,6 +59,11 @@ const Tab = ({ tab }: IProps) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={onClickTab}
+        onMouseDown={(e) => {
+          if (e.button === 1) {
+            window.open(tab.path, "_blank");
+          }
+        }}
       >
         {tab.isList ? (
           <div>
@@ -85,6 +90,11 @@ const Tab = ({ tab }: IProps) => {
               <div style={clasess.tabList} key={list?.key}>
                 <div
                   onClick={() => changeRoute(list?.path)}
+                  onMouseDown={(e) => {
+                    if (e.button === 1) {
+                      window.open(list?.path, "_blank");
+                    }
+                  }}
                   style={clasess.tabTitle}
                 >
                   {t(list?.title)}

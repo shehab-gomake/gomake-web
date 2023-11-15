@@ -17,18 +17,6 @@ const generalPrintingSettings = (state: Record<string, any>) => {
             optionsUrl: '/v1/enum/get-enums/resolution'
 
         },
-        {
-            name: "printingSides",
-            label: "machineAttributes.printingSides",
-            type: "text",
-            placeholder: "machineAttributes.printingSides",
-            required: true,
-            parameterKey: "printingSides",
-            options: [],
-            value: state.attributes?.printingSides ? state.attributes?.printingSides : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.printingSides,
-        },
     ];
 }
 

@@ -1,3 +1,4 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const marginWithoutPrintingSettings = (state: Record<string, any>) => {
     return [
@@ -16,6 +17,7 @@ const marginWithoutPrintingSettings = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.width",
                     required: true,
                     parameterKey: "width",
+                    unit: EMeasurementUnits.MM,
                     options: [],
                     value: state.attributes?.minMarginWithoutPrinting?.width ? state.attributes?.minMarginWithoutPrinting?.width : ''
 
@@ -25,6 +27,7 @@ const marginWithoutPrintingSettings = (state: Record<string, any>) => {
                     label: "machineAttributes.length",
                     type: "text",
                     placeholder: "machineAttributes.length",
+                    unit: EMeasurementUnits.MM,
                     required: true,
                     parameterKey: "length",
                     options: [],

@@ -1,8 +1,7 @@
-import { IListItem } from "@/widgets/machines/components/side-list/interface";
+import { IListItem } from "@/components/containers/interface";
 import { ProductsSettingsWidget } from "@/widgets/products-settings-widget/products-settings-widget";
 import { EmptyComponent } from "@/widgets/settings/empty-component";
 import { ProfileIcon } from "@/components/icons/profile-icon";
-import { CubeIcon } from "@/components/icons/cube-icon";
 import { SmsIcon } from "@/components/icons/sms-icon";
 import { ProductsSettingsIcon } from "@/components/icons/products-settings-icon";
 import { DocumentIcon } from "@/components/icons/document-icon";
@@ -11,6 +10,8 @@ import { DollarCircleIcon } from "@/components/icons/dollar-circle-icon";
 import { SettingsUsersWidget } from "@/widgets/settings-users/settings-users-widget";
 import { EditProductWidget } from "../products-settings-widget/widget/edit-product";
 import {SettingsProfileWidget} from "@/widgets/settings-profile-widget/settings-profile-widget";
+import { SettingsMailingWidget } from "../settings-mailing/settings-mailing-widget";
+import { SettingsDocumentingWidget } from "../settings-documenting/settings-documenting-widget";
 
 export const list: IListItem[] = [
   {
@@ -29,14 +30,14 @@ export const list: IListItem[] = [
     editComponent: EditProductWidget,
   },
   {
-    component: EmptyComponent,
+    component: SettingsMailingWidget,
     text: "settings.mailing",
     value: "3",
     icon: SmsIcon,
     path: "mailing",
   },
   {
-    component: EmptyComponent,
+    component: SettingsDocumentingWidget,
     text: "settings.documenting",
     value: "5",
     icon: DocumentIcon,

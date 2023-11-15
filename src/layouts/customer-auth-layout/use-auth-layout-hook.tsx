@@ -11,7 +11,7 @@ import {
 } from "@/icons";
 import { useEffect, useMemo, useState } from "react";
 import { CubeIcon } from "@/components/icons/cube-icon";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { ICompanyProfile, companyProfileState } from "@/store/company-profile";
 import { Permissions } from "@/components/CheckPermission/enum";
 
@@ -59,7 +59,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         isLine: false,
         key: "sales",
         title: "tabs.sales",
-        path: "/product-floor",
+        path: "/",
         isList: true,
         Permission:Permissions.SHOW_SALES,
         list: [
@@ -96,7 +96,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         isLine: false,
         key: "shoping",
         title: "tabs.shoping",
-        path: "/product-floor",
+        path: "/",
         isList: true,
         Permission:Permissions.SHOW_SHOPPING,
         icon: () => {
@@ -108,7 +108,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         isLine: false,
         key: "customers",
         title: "tabs.customers",
-        path: "/customers",
+        path: "/",
         Permission:Permissions.SHOW_CUSTOMERS,
         isList: true,
         list: [
@@ -134,7 +134,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         isLine: false,
         key: "reports",
         title: "tabs.reports",
-        path: "/product-floor",
+        path: "/",
         Permission:Permissions.SHOW_REPORTS,
         isList: true,
         icon: () => {
@@ -209,17 +209,16 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
     }
   }, [isAuth]);
   const { callApi } = useGomakeAxios();
-  const [profile, setProfile] =
-    useRecoilState<ICompanyProfile>(companyProfileState);
-  const getUserProfile = async () => {
-    const res = await callApi("GET", "/v1/get-print-house-profile");
-    if (res.success) {
-      setProfile(res?.data?.data?.data);
-    }
-  };
-  useEffect(() => {
-    getUserProfile();
-  }, []);
+  const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
+  // const getUserProfile = async () => {
+  //   const res = await callApi("GET", "/v1/get-print-house-profile");
+  //   if (res.success) {
+  //     setProfile(res?.data?.data?.data);
+  //   }
+  // };
+  // useEffect(() => {
+  //   getUserProfile();
+  // }, []);
 
   const permissionsofTabs = [tabs1, tabs2, tabs3];
   
