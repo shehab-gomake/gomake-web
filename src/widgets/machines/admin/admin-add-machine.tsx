@@ -1,16 +1,16 @@
-import {SideList} from "@/widgets/machines/components/side-list/side-list";
 import {useCallback, useState} from "react";
 import {MachineStepper} from "@/widgets/machines/components/stepper/machines-stepper";
 import {useMachinesCategories} from "@/widgets/machines/hooks/use-machines-categories";
 import {getSteps} from "@/widgets/machines/utils/steps";
 import {ECategoryId} from "@/widgets/machines/enums/category-id";
 import {useAdminAddMachine} from "@/widgets/machines/hooks/use-admin-add-machine";
-import {SideBarContainer} from "@/components/containers/side-bar-container";
+import {SideBarContainer} from "@/components/containers/side-container/side-bar-container";
+import {MachinesSideList} from "@/components/containers/machines-container/side-list/machines-side-list";
 
 const AdminAddMachine = () => {
     const {categoryList, categoryName} = useMachinesCategories();
     const [selectedCategory, setSelectedCategory] = useState<string>();
-    const [activeStep, setActiveStep] = useState<number>(0);
+    const [activeStep, setActiveStep] = useState<number>(-1);
     const {adminAddMachine, initMachineStateCategory} = useAdminAddMachine()
 
     const getCategorySteps = useCallback(() => {
@@ -30,7 +30,7 @@ const AdminAddMachine = () => {
     const moveToStepByIndex = (stepIndex: number) => {
         setActiveStep(stepIndex)
     }
-    const Side = () => <SideList list={categoryList} selectedItem={selectedCategory} onSelect={onSelectCategory}
+    const Side = () => <MachinesSideList list={categoryList} selectedItem={selectedCategory} onSelect={onSelectCategory}
                                  title={'Categories'}/>
   return (
       <SideBarContainer side={Side()} header={categoryName(selectedCategory)} subHeader={'Add Machine'}>

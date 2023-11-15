@@ -305,7 +305,7 @@ const useQuotes = () => {
         type: "error",
       });
     }
-  }, []);
+  }, [selectedQuote]);
   return {
     patternSearch,
     tableHeaders,

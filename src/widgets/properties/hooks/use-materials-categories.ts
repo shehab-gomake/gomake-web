@@ -15,7 +15,7 @@ const useMaterialsCategories = () => {
         getMaterialsCategories().then(
             (res) => {
                 let response = res?.data?.data?.data;
-                let materialsCategores = response.map((c) => {
+                let materialsCategores = response?.map((c) => {
                     return{
                         label:materialsDropdown[c.material -1]?.label + "-" + c.name,
                         id: c.id

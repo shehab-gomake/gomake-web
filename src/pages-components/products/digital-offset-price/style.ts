@@ -25,7 +25,8 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
-        marginBottom: 35,
+        marginBottom: 60,
+
       },
       leftSideContainer: {
         display: "flex",
@@ -33,6 +34,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "68%",
+
       },
       rightSideMainContainer: {
         display: "flex",
@@ -44,14 +46,13 @@ const useStyle = () => {
         maxWidth: 330,
         backgroundColor: "white",
         padding: 15,
-        marginTop: -87,
+        marginTop: -77,
         boxShadow: "0px 4px 40px 0px rgba(129, 129, 129, 0.12)",
         borderRadius: 5,
-        // height: 720,
       },
       rightSideContainer: {
-        height: "100%",
-        overflow: "scroll",
+        // height: "100%",
+        // overflow: "scroll",
         width: "100%",
       },
       tabsContainer: {
@@ -135,7 +136,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        gap: 16,
+        gap: 10,
         paddingBottom: 24,
       },
       parameterLabelStyle: {
@@ -155,8 +156,8 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        gap: 20,
-        width: "fit-content",
+        gap: 10,
+        width: "100%",
         minWidth: 180,
       },
       parameterType3Container: {
@@ -174,6 +175,8 @@ const useStyle = () => {
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
+        ...FONT_FAMILY.Lexend(500,14),
+        color:"#000"
       },
       dropDownListStyle: {
         width: "100%",
@@ -181,13 +184,13 @@ const useStyle = () => {
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
-        // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+        ...FONT_FAMILY.Lexend(500,14)
       },
       renderParameterTypeContainer: {
         display: "flex",
-        width: "95%",
+        width: "100%",
         backgroundColor: "#FFF",
-        borderRadius: 4,
+        borderRadius: 4, 
       },
 
       switchStyle: {
@@ -225,7 +228,7 @@ const useStyle = () => {
         width: "62%",
       },
       labelTextStyle: {
-        ...FONT_FAMILY.Lexend(500, 12),
+        ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
         marginBottom: 10,
       },
@@ -527,6 +530,14 @@ const useStyle = () => {
         boxShadow: "none",
         height: 36,
       },
+      dropDownListWithSettingIcon:{
+        width: "100%",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 4,
+      }
     };
   }, [i18next.language, t]);
   return {

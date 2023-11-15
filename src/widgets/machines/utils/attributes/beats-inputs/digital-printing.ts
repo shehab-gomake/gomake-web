@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const digitalPrinting = (state: Record<string, any>) => {
     return [
         {
@@ -34,16 +36,8 @@ const digitalPrinting = (state: Record<string, any>) => {
                     type: "text",
                     placeholder: "machineAttributes.mediaLength",
                     required: true,
+                    unit: EMeasurementUnits.CM,
                     parameterKey: "mediaLength",
-                    options: []
-                },
-                {
-                    name: "",
-                    label: "machineAttributes.mediaWidth",
-                    type: "text",
-                    placeholder: "machineAttributes.mediaWidth",
-                    required: true,
-                    parameterKey: "mediaWidth",
                     options: []
                 },
                 {

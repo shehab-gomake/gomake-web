@@ -27,3 +27,4 @@ export * from "./client-address";
 export * from "./all-materials-state";
 export * from "./is-loading";
 export * from "./hover-status"
+export * from "./selected-value-config"

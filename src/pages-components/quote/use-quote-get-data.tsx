@@ -42,8 +42,7 @@ const useQuoteGetData = () => {
   }, []);
   const getAllEmployees = useCallback(async () => {
     await getAndSetAllEmployees(callApi, setAgentListValue, {
-      IsAgent: true,
-      Name: "",
+      isAgent: true,
     });
   }, []);
 

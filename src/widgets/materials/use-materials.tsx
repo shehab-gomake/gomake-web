@@ -1,16 +1,22 @@
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useGomakeRouter } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { usePermission } from "@/hooks/use-permission";
 import { EditIcon } from "@/icons";
+import { permissionsState } from "@/store/permissions";
 import { matchSorter } from "match-sorter";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilState } from "recoil";
 
 const useMaterials = ({ admin }: any) => {
   const { t } = useTranslation();
   const { navigate } = useGomakeRouter();
   const { primaryColor } = useGomakeTheme();
   const [term, setTerm] = useState("");
+  const { CheckPermission } = usePermission();
   const [materilasSearched, setMaterilasSearched] = useState([]);
   const categoriesList = useMemo(() => {
     return [
@@ -47,7 +53,7 @@ const useMaterials = ({ admin }: any) => {
       {
         key: "wideFormatMaterial",
         title: t("tabs.wideFormatMaterial"),
-        path: "/materials-new/wide-format-material",
+        path: "/materials-new/wide-format-materials",
       },
       {
         key: "profileFrames",
@@ -161,7 +167,7 @@ const useMaterials = ({ admin }: any) => {
       {
         key: "printingMaterialsForRolls",
         title: t("tabs.printingMaterialsForRolls"),
-        path: "/admin/materials/material-roll-printing",
+        path: "/admin/materials/materials-roll-printing",
       },
       {
         key: "hardboards",
@@ -171,7 +177,7 @@ const useMaterials = ({ admin }: any) => {
       {
         key: "wideFormatMaterial",
         title: t("tabs.wideFormatMaterial"),
-        path: "/admin/materials/wide-format-material",
+        path: "/admin/materials/wide-format-materials",
       },
       {
         key: "profileFrames",
@@ -266,19 +272,22 @@ const useMaterials = ({ admin }: any) => {
   };
   const tableHeaders = [
     t("materials.sheetPaper.category"),
-    t("materials.sheetPaper.viewMaterial"),
+    CheckPermission(Permissions.EDIT_MATERIAL) ? t("materials.sheetPaper.viewMaterial") : null,
   ];
   const tableRows = selectList()?.map((category) => [
     category.title,
-    <PrimaryButton
-      startIcon={<EditIcon color={primaryColor(500)} width={20} height={20} />}
-      onClick={() => {
-        navigate(category.path);
-      }}
-      variant={"text"}
-    >
-      {t("materials.sheetPaper.view")}
-    </PrimaryButton>,
+    <PermissionCheck userPermission={Permissions.EDIT_MATERIAL} >
+           <PrimaryButton
+              startIcon={<EditIcon color={primaryColor(500)} width={20} height={20} />}
+              onClick={() => {
+                navigate(category.path);
+              }}
+              variant={"text"}
+            >
+              {t("materials.sheetPaper.view")}
+            </PrimaryButton>
+    </PermissionCheck>
+ ,
   ]);
 
   const filterArray = (array: any, searchText: string) =>

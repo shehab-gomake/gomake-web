@@ -41,6 +41,7 @@ export interface IMachineMultiInput {
   machineInputType?: string;
   value?: any
   isValid: boolean;
+  disabled?: boolean
 }
 
 export interface IMachineInputContainer {

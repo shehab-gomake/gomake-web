@@ -18,6 +18,7 @@ const useStyle = ({
         height: "100vh",
         display: "flex",
         flexDirection: "row" as "row",
+        gap: 20
       },
       logoContainer: {
         display: "flex",
@@ -41,14 +42,13 @@ const useStyle = ({
         paddingTop: navStatus?.isClosed ? 8 : 40,
         paddingBottom: navStatus?.isClosed ? 8 : 40,
         overflowY: "scroll" as "scroll",
-        position: "relative" as "relative"
+        position: "relative" as "relative",
+        zIndex:100000
       },
       rightContainer: {
         width: "100%",
         display: "flex",
         flexDirection: "column" as "column",
-        padding: 20,
-        paddingTop: 7,
         backgroundColor: "#FFFFFF",
       },
       headerContainer: {

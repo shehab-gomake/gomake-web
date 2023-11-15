@@ -1,6 +1,9 @@
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { usePermission } from "@/hooks/use-permission";
 import { EditIcon } from "@/icons";
 import { getAllPrintHouseActions } from "@/services/hooks";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -15,6 +18,7 @@ const useActions = () => {
   const [term, setTerm] = useState("");
   const [materilasSearched, setMaterilasSearched] = useState([]);
   const { t } = useTranslation();
+  const { CheckPermission } = usePermission();
   const [allActions, setAllActions] = useState<any>();
   const getActions = useCallback(async () => {
     const data = await getAllPrintHouseActions(callApi, setAllActions);
@@ -43,18 +47,22 @@ const useActions = () => {
           {t("usersSettings.inactive")}
         </div>
       ),
-      <PrimaryButton
-        startIcon={
-          <EditIcon color={primaryColor(500)} width={20} height={20} />
-        }
-        onClick={() =>
-          navigate(`/products/profits?actionId=${action?.actionId}`)
-        }
-        variant={"text"}
-      >
-        {t("materials.buttons.edit")}
-      </PrimaryButton>,
-      <PrimaryButton
+      <PermissionCheck userPermission={Permissions.EDIT_MACHINE} >
+             <PrimaryButton
+              startIcon={
+                <EditIcon color={primaryColor(500)} width={20} height={20} />
+              }
+              onClick={() =>
+                navigate(`/products/profits?actionId=${action?.actionId}`)
+              }
+              variant={"text"}
+            >
+              {t("materials.buttons.edit")}
+            </PrimaryButton>
+      </PermissionCheck>    
+   ,
+   <PermissionCheck userPermission={Permissions.EDIT_PROPERTIES} >
+          <PrimaryButton
         startIcon={
           <EditIcon color={primaryColor(500)} width={20} height={20} />
         }
@@ -64,7 +72,9 @@ const useActions = () => {
         variant={"text"}
       >
         {t("materials.buttons.edit")}
-      </PrimaryButton>,
+      </PrimaryButton>
+   </PermissionCheck>
+  ,
     ]);
     setAllActions(mapData);
   }, []);
@@ -75,8 +85,8 @@ const useActions = () => {
     t("products.actions.actionName"),
     t("products.actions.internalSource"),
     t("products.actions.active"),
-    t("products.actions.profit"),
-    t("products.actions.properties"),
+    CheckPermission(Permissions.EDIT_MACHINE) &&  t("products.actions.profit"),
+    CheckPermission(Permissions.EDIT_PROPERTIES) &&  t("products.actions.properties"),
   ];
 
   const filterArray = (array: any, searchText: string) =>

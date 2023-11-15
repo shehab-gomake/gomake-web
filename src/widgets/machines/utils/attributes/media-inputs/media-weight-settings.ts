@@ -1,3 +1,4 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const mediaWeightSettings = (state: Record<string, any>) => {
     return [
@@ -15,6 +16,7 @@ const mediaWeightSettings = (state: Record<string, any>) => {
                     type: "text",
                     placeholder: "machineAttributes.min",
                     required: true,
+                    unit: EMeasurementUnits.GRAM,
                     parameterKey: "min",
                     options: [],
                     value: state.attributes?.mediaWeight?.min ? state.attributes?.mediaWeight?.min : ''
@@ -24,6 +26,7 @@ const mediaWeightSettings = (state: Record<string, any>) => {
                     label: "machineAttributes.max",
                     type: "text",
                     placeholder: "machineAttributes.max",
+                    unit: EMeasurementUnits.GRAM,
                     required: true,
                     parameterKey: "max",
                     options: [],

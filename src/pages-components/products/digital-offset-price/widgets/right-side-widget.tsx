@@ -2,11 +2,12 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { isLoadgingState } from "@/store";
 import { Checkbox, CircularProgress, Slider } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { EWidgetProductType } from "../enums";
-
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
 const RightSideWidget = ({
   clasess,
   clientDefaultValue,
@@ -19,7 +20,6 @@ const RightSideWidget = ({
   template,
   tabs,
   activeTab,
-  pricingDefaultValue,
   setUrgentOrder,
   urgentOrder,
   setPrintingNotes,
@@ -37,26 +37,13 @@ const RightSideWidget = ({
   const quantity = generalParameters?.find(
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
-  const [sliderPrice, setSliderPrice] = useState<number>(0);
   const [changePrice, setChangePrice] = useState<number>(0);
   const handleChange = (event: Event, newValue: number | number[]) => {
-    setSliderPrice(newValue as number);
+    setPriceRecovery(false);
+    setDefaultPrice(newValue as number);
+    setChangePrice(newValue as number);
   };
-  useEffect(() => {
-    if (workFlowSelected) {
-      setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2) - sliderPrice);
-    } else if (widgetType === EWidgetProductType.EDIT) {
-      setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.value);
-    } else {
-      setDefaultPrice("----");
-    }
-  }, [
-    pricingDefaultValue,
-    sliderPrice,
-    workFlowSelected,
-    widgetType,
-    quantity,
-  ]);
+
   const { t } = useTranslation();
   return (
     <div style={clasess.rightSideMainContainer}>
@@ -100,9 +87,9 @@ const RightSideWidget = ({
             {t("products.offsetPrice.admin.flyerPoster")}
           </div>
           <div style={clasess.flyerText}>
-            {isNaN(defaultPrice / quantity?.value)
+            {isNaN(defaultPrice / quantity?.values[0])
               ? 0
-              : (defaultPrice / quantity?.value).toFixed(2)}{" "}
+              : (defaultPrice / quantity?.values[0]).toFixed(2)}{" "}
             USD
           </div>
         </div>
@@ -131,21 +118,25 @@ const RightSideWidget = ({
         </div>
         <div style={clasess.orderContainer}>
           {t("products.offsetPrice.admin.orderToral", {
-            pieceNum: quantity?.value,
-            price: isNaN(defaultPrice / quantity?.value)
+            pieceNum: quantity?.values[0],
+            price: isNaN(defaultPrice / quantity?.values[0])
               ? 0
-              : (defaultPrice / quantity?.value).toFixed(2),
+              : (defaultPrice / quantity?.values[0]).toFixed(2),
           })}
         </div>
         <div style={clasess.progress}>
-          <Slider
-            defaultValue={0}
-            aria-label="Default"
-            style={{ width: "93%", marginLeft: 10 }}
-            min={10}
-            max={100}
-            onChange={handleChange}
-          />
+          <PermissionCheck userPermission={Permissions.EDIT_PRICE_QUOTE}>
+            <Slider
+                defaultValue={defaultPrice}
+                value={defaultPrice}
+                aria-label="Default"
+                style={{ width: "93%", marginLeft: 10 }}
+                min={10}
+                max={100}
+                onChange={handleChange}
+            />
+          </PermissionCheck>
+          
         </div>
         <div style={clasess.labelBrogressContainer}>
           <div style={clasess.labelStyle}>10.00</div>
@@ -182,9 +173,16 @@ const RightSideWidget = ({
                 if (priceRecovery) {
                   setDefaultPrice(changePrice);
                 } else {
-                  setDefaultPrice(
-                    workFlowSelected?.totalPrice.toFixed(2) - sliderPrice
-                  );
+                  if (
+                    widgetType === EWidgetProductType.EDIT ||
+                    widgetType === EWidgetProductType.DUPLICATE
+                  ) {
+                    setDefaultPrice(
+                      template?.quoteItem?.unitPrice * quantity?.values[0]
+                    );
+                  } else {
+                    setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2));
+                  }
                 }
               }}
               checked={priceRecovery}

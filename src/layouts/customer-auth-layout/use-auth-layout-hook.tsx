@@ -11,11 +11,14 @@ import {
 } from "@/icons";
 import { useEffect, useMemo, useState } from "react";
 import { CubeIcon } from "@/components/icons/cube-icon";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { ICompanyProfile, companyProfileState } from "@/store/company-profile";
+import { Permissions } from "@/components/CheckPermission/enum";
 
-const useAuthLayoutHook = () => {
-  const { isAuth } = useGomakeAuth();
+
+const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
+
+  const { isAuth } = useGomakeAuth(permissionEnumValue);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
   const tabs1: any = useMemo(() => {
@@ -50,23 +53,27 @@ const useAuthLayoutHook = () => {
     ];
   }, []);
   const tabs2: any = useMemo(() => {
-    return [
+   
+   return [
       {
         isLine: false,
         key: "sales",
         title: "tabs.sales",
-        path: "/product-floor",
+        path: "/",
         isList: true,
+        Permission:Permissions.SHOW_SALES,
         list: [
           {
             key: "quotes",
             title: "tabs.quotes",
             path: "/quotes",
+            Permission:Permissions.SHOW_QUOTES
           },
           {
             key: "orders",
             title: "tabs.orders",
             path: "/orders",
+            Permission:Permissions.SHOW_ORDERS
           },
         ],
         icon: () => {
@@ -89,8 +96,9 @@ const useAuthLayoutHook = () => {
         isLine: false,
         key: "shoping",
         title: "tabs.shoping",
-        path: "/product-floor",
+        path: "/",
         isList: true,
+        Permission:Permissions.SHOW_SHOPPING,
         icon: () => {
           return <ShopingIcon />;
         },
@@ -100,18 +108,21 @@ const useAuthLayoutHook = () => {
         isLine: false,
         key: "customers",
         title: "tabs.customers",
-        path: "/customers",
+        path: "/",
+        Permission:Permissions.SHOW_CUSTOMERS,
         isList: true,
         list: [
           {
             key: "customers",
             title: "tabs.customers",
             path: "/customers",
+            Permission:Permissions.SHOW_CLIENT,
           },
           {
             key: "suppliers",
             title: "tabs.suppliers",
             path: "/suppliers",
+            Permission:Permissions.SHOW_SUPPLIER,
           },
         ],
         icon: () => {
@@ -123,13 +134,15 @@ const useAuthLayoutHook = () => {
         isLine: false,
         key: "reports",
         title: "tabs.reports",
-        path: "/product-floor",
+        path: "/",
+        Permission:Permissions.SHOW_REPORTS,
         isList: true,
         icon: () => {
           return <ReportsIcon />;
         },
         isProduction: true,
       },
+      
     ];
   }, []);
   const tabs3: any = useMemo(() => {
@@ -143,6 +156,7 @@ const useAuthLayoutHook = () => {
         isLine: false,
         key: "materials",
         title: "tabs.materials",
+        Permission:Permissions.SHOW_MATERIALS,
         path: "/materials",
         isList: false,
         icon: () => {
@@ -155,6 +169,7 @@ const useAuthLayoutHook = () => {
         key: "machines",
         title: "tabs.machines",
         path: "/machines",
+        Permission:Permissions.SHOW_MACHINES,
         isList: false,
         icon: () => {
           return <ProductsIcon />;
@@ -166,6 +181,7 @@ const useAuthLayoutHook = () => {
         key: "actions",
         title: "tabs.actions",
         path: "/actions",
+        Permission:Permissions.SHOW_ACTIONS,
         isList: false,
         icon: () => {
           return <ProductsIcon />;
@@ -177,6 +193,7 @@ const useAuthLayoutHook = () => {
         key: "settings",
         title: "tabs.settings",
         path: "/settings",
+        Permission:Permissions.SHOW_SETTINGS,
         isList: false,
         icon: () => {
           return <SettingNavBar />;
@@ -192,19 +209,22 @@ const useAuthLayoutHook = () => {
     }
   }, [isAuth]);
   const { callApi } = useGomakeAxios();
-  const [profile, setProfile] =
-    useRecoilState<ICompanyProfile>(companyProfileState);
-  const getUserProfile = async () => {
-    const res = await callApi("GET", "/v1/get-print-house-profile");
-    if (res.success) {
-      setProfile(res?.data?.data?.data);
-    }
-  };
-  useEffect(() => {
-    getUserProfile();
-  }, []);
+  const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
+  // const getUserProfile = async () => {
+  //   const res = await callApi("GET", "/v1/get-print-house-profile");
+  //   if (res.success) {
+  //     setProfile(res?.data?.data?.data);
+  //   }
+  // };
+  // useEffect(() => {
+  //   getUserProfile();
+  // }, []);
+
+  const permissionsofTabs = [tabs1, tabs2, tabs3];
+  
 
   return {
+    permissionsofTabs,
     tabs1,
     tabs2,
     tabs3,
