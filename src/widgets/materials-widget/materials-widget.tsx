@@ -14,7 +14,6 @@ import {PrimaryButton} from "@/components/button/primary-button";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { useGomakeRouter } from "@/hooks/use-gomake-router";
 
 
 const MaterialsWidget = () => {
@@ -24,7 +23,6 @@ const MaterialsWidget = () => {
     const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
     const supplierId = useRecoilValue(selectedSupplierIdState)
     const elementRef = useRef(null);
-    const { navigate } = useGomakeRouter();
     const {
         materialCategory,
         materialType,
@@ -46,7 +44,7 @@ const MaterialsWidget = () => {
 
     const Side = () => 
     <Stack  gap={'10px'} direction={'column'} >
-    <SecondaryButton variant={'text'} onClick={()=>navigate("/materials")} startIcon={ dir === 'ltr' ?  <ArrowBackIcon/> : <ArrowForwardIcon/> } style={{gap:5}} >{t("materials.buttons.back")}
+    <SecondaryButton variant={'text'} href={'/materials'}  startIcon={ dir === 'ltr' ?  <ArrowBackIcon/> : <ArrowForwardIcon/> } style={{gap:5}} >{t("materials.buttons.back")}
       </SecondaryButton>
     <SideList list={materialsCategoriesList()} selectedItem={materialCategory?.toString()}
                                  onSelect={onSelectCategory}
