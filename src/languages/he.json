@@ -117,6 +117,8 @@
       "selectType": "בחר סוג",
       "selectProduct": "בחר מוצר",
       "createQoute": "צור הצעה",
+      "SaveQuote":"שמור הצעה",
+      "AddItemToQuote":"הוסף פריט להצעה",
       "pleaseSelectCustomer": "בחר לקוח בבקשה",
       "pleaseSelectClientType": "בחר סוג לקוח בבקשה",
       "pleaseSelectProduct": "בחר מוצר בבקשה"
@@ -1522,6 +1524,9 @@
       "duplicate": "שכפל",
       "item": "פריט",
       "addNewContacts": "הוסף אנשי קשר חדשים",
+      "titleMessage":"יש הצעת מחיר בהקמה",
+      "Confirm":"אישור",
+      "MessageForClient":"יש הצעת מחיר בהקמה! פעולה זו תביא לשמירת ההצעה בהתקנה ולפתיחת מסמך חדש עבור לקוח חדש.",
       "name": "שם",
       "phone": "טלפון",
       "duplicateItemWithDifferentQTY": "שכפל פריט עם כמות חדשה",
