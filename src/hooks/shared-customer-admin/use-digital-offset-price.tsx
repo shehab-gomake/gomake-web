@@ -13,6 +13,7 @@ import {
 import {
   generalParametersState,
   isLoadgingState,
+  selectParameterButtonState,
   selectedValueConfigState,
 } from "@/store";
 import { useMaterials } from "../use-materials";
@@ -28,7 +29,7 @@ import { userProfileState } from "@/store/user-profile";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { SettingsIcon } from "@/icons/settings";
 import { compareStrings } from "@/utils/constants";
-import { EParameterTypes } from "@/enums";
+import { EButtonTypes, EParameterTypes } from "@/enums";
 import lodashClonedeep from "lodash.clonedeep";
 import { maltiParameterState } from "@/widgets/shared-admin-customers/digital-offset-price/multi-parameter-modal/store/multi-param-atom";
 import cloneDeep from "lodash.clonedeep";
@@ -51,7 +52,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [generalParameters, setGeneralParameters] = useRecoilState<any>(
     generalParametersState
   );
-  const [chooseShapeOpen, setChooseShapeOpen] = useState(false);
+  const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [defaultPrice, setDefaultPrice] = useState<any>("-----");
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
@@ -84,7 +85,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [selectedValueConfigForSettings, setSelectedValueConfigForSettings] =
     useState<any>();
   console.log("generalParameters", generalParameters);
-
+  const setSelectParameterButton = useSetRecoilState(
+    selectParameterButtonState
+  );
+  const selectBtnTypeToAction = (parameter, sectionId, subSectionId) => {
+    if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
+      setSelectParameterButton({ parameter, sectionId, subSectionId });
+      onOpeneGalleryModal();
+    }
+  };
   const findLargestActionIndex = (params) => {
     return params.reduce(
       (maxIndex, param) => Math.max(maxIndex, param.actionIndex),
@@ -836,7 +845,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         Comp = (
           <GomakePrimaryButton
             style={clasess.dynamicBtn}
-            onClick={onOpeneChooseShape}
+            onClick={() =>
+              selectBtnTypeToAction(parameter, section?.id, subSection?.id)
+            }
           >
             {parameter?.name}
           </GomakePrimaryButton>
@@ -1249,7 +1260,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         Comp = (
           <GomakePrimaryButton
             style={clasess.dynamicBtn}
-            onClick={onOpeneChooseShape}
+            onClick={() =>
+              selectBtnTypeToAction(parameter, section?.id, subSection?.id)
+            }
           >
             {parameter?.name}
           </GomakePrimaryButton>
@@ -1741,14 +1754,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const onCloseMakeShape = () => {
     setMakeShapeOpen(false);
   };
-  const onCloseChooseShape = () => {
-    setChooseShapeOpen(false);
+  const onCloseGalleryModal = () => {
+    setGalleryModalOpen(false);
   };
   const onOpeneMakeShape = () => {
     setMakeShapeOpen(true);
   };
-  const onOpeneChooseShape = () => {
-    setChooseShapeOpen(true);
+  const onOpeneGalleryModal = () => {
+    setGalleryModalOpen(true);
   };
   const [settingParameters, setSettingParameters] = useState({});
   const onOpeneMultiParameterModal = (
@@ -2021,9 +2034,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     handleTabClick,
     handleNextClick,
     handlePreviousClick,
-    onOpeneChooseShape,
     onOpeneMakeShape,
-    onCloseChooseShape,
+    onCloseGalleryModal,
     onCloseMakeShape,
     setDefaultPrice,
     onChangeForPrice,
@@ -2053,7 +2065,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     urgentOrder,
     defaultPrice,
     makeShapeOpen,
-    chooseShapeOpen,
+    GalleryModalOpen,
     activeIndex,
     template,
     tabs,

@@ -11,7 +11,7 @@ import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
 import { RightSideWidget } from "./widgets/right-side-widget";
 import {
-  ChooseShapeModal,
+  GalleryModal,
   MakeShapeModal,
   MultiParameterModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
@@ -25,7 +25,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     handleNextClick,
     handlePreviousClick,
     onOpeneMakeShape,
-    onCloseChooseShape,
+    onCloseGalleryModal,
     onCloseMakeShape,
     setDefaultPrice,
     handleChange,
@@ -51,7 +51,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     urgentOrder,
     defaultPrice,
     makeShapeOpen,
-    chooseShapeOpen,
+    GalleryModalOpen,
     activeIndex,
     template,
     tabs,
@@ -260,9 +260,9 @@ const PriceListPageWidget = ({ widgetType }) => {
         onClose={onCloseMakeShape}
         modalTitle={t("products.offsetPrice.admin.makeShape")}
       />
-      <ChooseShapeModal
-        openModal={chooseShapeOpen}
-        onClose={onCloseChooseShape}
+      <GalleryModal
+        openModal={GalleryModalOpen}
+        onClose={onCloseGalleryModal}
         modalTitle={t("products.offsetPrice.admin.chooseShape")}
       />
       <MultiParameterModal

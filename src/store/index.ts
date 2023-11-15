@@ -29,3 +29,4 @@ export * from "./is-loading";
 export * from "./hover-status";
 export * from "./selected-value-config";
 export * from "./general-parameters-state";
+export * from "./select-parameter-button";

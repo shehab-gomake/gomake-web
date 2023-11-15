@@ -7,3 +7,7 @@ export enum EParameterTypes {
   SELECT_MATERIALS = 5,
   SELECT_CHILDS_PARAMETERS = 6,
 }
+
+export enum EButtonTypes {
+  GALLERY_MODAL = "GalleryModel",
+}

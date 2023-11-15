@@ -9,8 +9,10 @@ const useStyle = () => {
       insideStyle: {
         width: 1150,
         borderRadius: 5,
-        height: 900,
-        backgroundColor: "#f7f7f7",
+        height: "auto",
+        maxHeight: 900,
+        backgroundColor: "#FFFFFF",
+        padding: 45,
       },
       mainContainer: {
         display: "flex",
@@ -20,6 +22,7 @@ const useStyle = () => {
         flexWrap: "wrap" as "wrap",
         width: "100%",
         gap: 16,
+        marginTop: 24,
       },
       shapeContainer: {
         display: "flex",
@@ -61,7 +64,7 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         gap: 16,
-        marginBottom: 20,
+        marginTop: 8,
       },
       customizeBtnStyle: {
         width: "15%",
