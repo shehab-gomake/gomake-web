@@ -3,6 +3,7 @@ import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
 import { useRecoilValue } from "recoil";
 import { quoteState } from "@/pages-components/quote/store/quote";
+import { useState } from "react";
 
 const RowInside = ({
   index,
@@ -15,6 +16,7 @@ const RowInside = ({
   indexTable,
 }: any) => {
   const quoteStateValue = useRecoilValue<any>(quoteState);
+  const [initialValue, setInitialValue] = useState(entry[1]);
   return (
     <div
       key={`row_table_${index}`}
@@ -43,17 +45,17 @@ const RowInside = ({
           <GomakeTextInput
             style={clasess.textInputWithoutStyle}
             value={Number(entry[1]).toFixed(2)}
-            // value={entry[1]}
             onChange={(e: any) => {
-              changeItems(indexTable, entry[0], e.target.value);
+              const newValue = e.target.value;
+              changeItems(indexTable, entry[0], newValue);
+              if (newValue !== initialValue) {
+                quoteStateValue?.getCalculateQuoteItem(
+                  row?.quoteItemId,
+                  index - 3,
+                  newValue
+                );
+              }
             }}
-            onBlur={() =>
-              quoteStateValue?.getCalculateQuoteItem(
-                row?.quoteItemId,
-                index - 3,
-                entry[1]
-              )
-            }
           />
         </div>
       ) : (

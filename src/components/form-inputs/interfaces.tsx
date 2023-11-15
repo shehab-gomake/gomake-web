@@ -1,3 +1,6 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import { CSSProperties } from "react";
+
 export interface IInput {
   name: string;
   label: string;
@@ -11,13 +14,16 @@ export interface IInput {
   disabled?: boolean;
   isValid: boolean;
   regex?: RegExp;
-  inputs: IInput[];
+  inputs?: IInput[];
+  unit?: EMeasurementUnits;
+  direction?: string;
 }
 export interface IFormInput {
   input: IInput;
   changeState: (key: string, value: any) => void;
   error: boolean;
   readonly?: boolean;
+
 }
 
 export interface IFormArrayInputsProps {

@@ -3,8 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useCustomer } from "./use-customer";
 
-const useGomakeAuth = () => {
-  const { user, validate } = useCustomer();
+const useGomakeAuth = (permissionEnumValue) => {
+
+  const { user, validate } = useCustomer(permissionEnumValue);
   const [, setCanAccessvalue] = useRecoilState(canAccessState);
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
   const check = useCallback(async () => {

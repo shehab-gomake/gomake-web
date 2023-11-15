@@ -1,6 +1,19 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const ofssetPrinting = (state: Record<string, any>) => {
     return [
+        {
+            name: "coatingUnit",
+            label: "machineAttributes.coatingUnit",
+            type: "switch",
+            placeholder: "machineAttributes.coatingUnit",
+            required: true,
+            parameterKey: "coatingUnit",
+            value: state?.attributes?.coatingUnit,
+            options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
+            machineInputType: 'input',
+            isValid: true,
+        },
         {
             name: "coatingUnitNumber",
             label: "machineAttributes.coatingUnit",
@@ -11,7 +24,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
             options: [],
             machineInputType: 'input',
             value: state?.attributes?.coatingUnitNumber ? state?.attributes?.coatingUnitNumber : '',
-            isValid: !!state?.attributes?.coatingUnitNumber
+            isValid: !!state?.attributes?.coatingUnitNumber,
+            disabled: !state?.attributes?.coatingUnit
         },
         {
             name: "coatingCost",
@@ -23,7 +37,39 @@ const ofssetPrinting = (state: Record<string, any>) => {
             options: [],
             machineInputType: 'input',
             value: state?.attributes?.coatingCost ? state?.attributes?.coatingCost : '',
-            isValid: !!state?.attributes?.coatingCost
+            isValid: !!state?.attributes?.coatingCost,
+            disabled: !state?.attributes?.coatingUnit
+
+        },
+        {
+            name: "machineAttributes.cylinderUndercut",
+            label: "machineAttributes.cylinderUndercut",
+            type: "text",
+            placeholder: "machineAttributes.cylinderUndercut",
+            required: true,
+            parameterKey: "coatingCylinderUndercut",
+            unit: EMeasurementUnits.CM,
+            options: [],
+            machineInputType: 'input',
+            value: state?.attributes?.coatingCylinderUndercut ? state?.attributes?.coatingCylinderUndercut : '',
+            isValid: !!state?.attributes?.coatingCylinderUndercut,
+            disabled: !state?.attributes?.coatingUnit,
+
+        },
+        {
+            name: "Distance from lead edge",
+            label: "machineAttributes.coatingDistance",
+            type: "text",
+            placeholder: "machineAttributes.coatingDistance",
+            required: true,
+            parameterKey: "coatingDistance",
+            unit: EMeasurementUnits.CM,
+            options: [],
+            machineInputType: 'input',
+            value: state?.attributes?.coatingDistance ? state?.attributes?.coatingDistance : '',
+            isValid: !!state?.attributes?.coatingDistance,
+            disabled: !state?.attributes?.coatingUnit,
+
         },
         {
             name: 'machineAttributes.coatingBlanket',
@@ -32,6 +78,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             value: state?.attributes?.coatingBlanket,
             isValid: !!state?.attributes?.coatingBlanket?.length &&
                 !!state?.attributes?.coatingBlanket?.width ,
+            disabled: !state?.attributes?.coatingUnit,
             inputs: [
                 {
                     name: "",
@@ -64,6 +111,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             value: state?.attributes?.coatingPlate,
             isValid: !!state?.attributes?.coatingPlate?.length &&
                 !!state?.attributes?.coatingPlate?.width ,
+            disabled: !state?.attributes?.coatingUnit,
             inputs: [
                 {
                     name: "",
@@ -96,6 +144,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             value: state?.attributes?.maxCoatingArea,
             isValid: !!state?.attributes?.maxCoatingArea?.length &&
                 !!state?.attributes?.maxCoatingArea?.width ,
+            disabled: !state?.attributes?.coatingUnit,
             inputs: [
                 {
                     name: "",
@@ -121,30 +170,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
                 },
             ]
         },
-        {
-            name: "machineAttributes.cylinderUndercut",
-            label: "machineAttributes.cylinderUndercut",
-            type: "text",
-            placeholder: "machineAttributes.cylinderUndercut",
-            required: true,
-            parameterKey: "coatingCylinderUndercut",
-            options: [],
-            machineInputType: 'input',
-            value: state?.attributes?.coatingCylinderUndercut ? state?.attributes?.coatingCylinderUndercut : '',
-            isValid: !!state?.attributes?.coatingCylinderUndercut
-        },
-        {
-            name: "Distance from lead edge",
-            label: "machineAttributes.coatingDistance",
-            type: "text",
-            placeholder: "machineAttributes.coatingDistance",
-            required: true,
-            parameterKey: "coatingDistance",
-            options: [],
-            machineInputType: 'input',
-            value: state?.attributes?.coatingDistance ? state?.attributes?.coatingDistance : '',
-            isValid: !!state?.attributes?.coatingDistance
-        },
+
     ]
 };
 

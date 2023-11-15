@@ -10,7 +10,7 @@ export interface IUserProfile {
     employeeId: string,
     firstName: string,
     lastName: string,
-    systemLanguage: string,
+    systemLang: string,
     role: string,
     email: string,
     phoneNumber: string,

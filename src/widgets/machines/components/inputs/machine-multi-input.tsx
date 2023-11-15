@@ -4,7 +4,7 @@ import {useStyle} from "@/widgets/machines/components/inputs/style";
 import {useTranslation} from "react-i18next";
 import {FormInput} from "@/components/form-inputs/form-input";
 
-const MachineMultiInput = ({parameterKey, inputs, name, updateState, value}: IMachineMultiInput) => {
+const MachineMultiInput = ({parameterKey, inputs, name, updateState, value, disabled}: IMachineMultiInput) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
     const [state, setState] = useState<Record<string, any>>();
@@ -27,7 +27,7 @@ const MachineMultiInput = ({parameterKey, inputs, name, updateState, value}: IMa
     }, [state])
 
     return (
-        <div style={classes.multiInputContainer}>
+       !disabled && <div style={classes.multiInputContainer}>
             <h3 style={classes.multiInputLabel}>{t(name)}</h3>
             <div style={classes.inputsRow}>
                 {

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 
-import { convertWidthToVW, leftRightAdapter } from "@/utils/adapter";
+import {convertHeightToVH, convertWidthToVW, leftRightAdapter} from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
@@ -17,7 +17,9 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        marginBottom: 7,
+        paddingBottom: 7,
+        height: convertHeightToVH(50),
+        maxHeight: convertHeightToVH(50)
       },
       searchInputContainer: {
         width: convertWidthToVW(375),

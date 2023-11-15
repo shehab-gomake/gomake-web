@@ -15,6 +15,8 @@ import { QuoteIfExistState, QuoteNumberState } from "@/pages-components/quote/st
 
 
 const useQuoteWidget = () => {
+
+  console.log("useQuoteWidget page")
   const { t } = useTranslation();
   const { errorColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();

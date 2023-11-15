@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const ofssetPrinting = (state: Record<string, any>) => {
     return [
         {
@@ -7,6 +9,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             placeholder: "machineAttributes.feederHeight",
             required: true,
             parameterKey: "feederHeight",
+            unit: EMeasurementUnits.CM,
             options: [],
             value: state.attributes?.feederHeight ? state.attributes?.feederHeight : '',
             machineInputType: 'input',
@@ -19,6 +22,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             placeholder: "machineAttributes.stackerHeight",
             required: true,
             parameterKey: "stackerHeight",
+            unit: EMeasurementUnits.CM,
             options: [],
             value: state.attributes?.stackerHeight ? state.attributes?.stackerHeight : '',
             machineInputType: 'input',

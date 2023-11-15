@@ -42,20 +42,20 @@ const useStyle = () => {
       textInputStyle: {
         background: "#FFFFFF",
         filter: "drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.08))",
-        // boxShadow: "0px 4px 60px rgba(0, 0, 0, 0.08)",
         borderRadius: 4,
         border: "1px solid #FFFFFF",
         height: 40,
         width: "100%",
+        ...FONT_FAMILY.Lexend(500,14)
       },
       autoComplateStyle: {
         background: "#FFFFFF",
         filter: "drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.08))",
-        // boxShadow: "0px 4px 60px rgba(0, 0, 0, 0.08)",
         borderRadius: 4,
         border: "1px solid #FFFFFF",
         height: 40,
         width: "100%",
+        ...FONT_FAMILY.Lexend(500,14)
       },
     };
   }, []);

@@ -4,11 +4,14 @@ import { GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton } from "@/co
 import { useQuoteWidget } from "./use-quote-widget";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useStyle } from "./style";
-import { Popover, Stack } from "@mui/material";
+import { Popover } from "@mui/material";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 import { useEffect, useState } from "react";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useRecoilState } from "recoil";
 import { QuoteIfExistState, QuoteNumberState } from "@/pages-components/quote/store/quote";
+import Stack from "@mui/material/Stack";
 
 const QuoteWidget = ({ isAdmin = true   }) => {
   const { clasess } = useStyle();
@@ -138,23 +141,26 @@ const QuoteWidget = ({ isAdmin = true   }) => {
             {
               QuoteExist.result != null ?
               <Stack direction={'row'} gap={'13px'} width={'100%'}>
-              <div  style={{width:"50%"}}>
-                    <GomakePrimaryButton
-                    onClick={
-                        isDisabled
-                        ? handleClick
-                        : isAdmin
-                        ? onClcikCreateQuote
-                        : onClcikCreateQuoteForCustomer
-                    }
-                    variant="contained"
-                    style={{width:"100%",height:40}}
-    
+              <div  style={clasess.btnContainer}>
+                  <PermissionCheck userPermission={Permissions.CREATE_QUOTES} >
+                      <GomakePrimaryButton
+                          onClick={
+                              isDisabled
+                                  ? handleClick
+                                  : isAdmin
+                                      ? onClcikCreateQuote
+                                      : onClcikCreateQuoteForCustomer
+                          }
+                          variant="contained"
+                          style={{width:"100%",height:40}}
+
+
+                      >
+                          {t("home.admin.AddItemToQuote")}
+
+                      </GomakePrimaryButton>
+                  </PermissionCheck>
                     
-                    >
-                    {t("home.admin.AddItemToQuote")}
-                    
-                    </GomakePrimaryButton>
                     
                     </div>
                     <div style={{width:"50%"}}>
