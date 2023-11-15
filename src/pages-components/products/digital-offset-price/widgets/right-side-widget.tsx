@@ -6,7 +6,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { EWidgetProductType } from "../enums";
-
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
 const RightSideWidget = ({
   clasess,
   clientDefaultValue,
@@ -124,15 +125,18 @@ const RightSideWidget = ({
           })}
         </div>
         <div style={clasess.progress}>
-          <Slider
-            defaultValue={defaultPrice}
-            value={defaultPrice}
-            aria-label="Default"
-            style={{ width: "93%", marginLeft: 10 }}
-            min={10}
-            max={100}
-            onChange={handleChange}
-          />
+          <PermissionCheck userPermission={Permissions.EDIT_PRICE_QUOTE}>
+            <Slider
+                defaultValue={defaultPrice}
+                value={defaultPrice}
+                aria-label="Default"
+                style={{ width: "93%", marginLeft: 10 }}
+                min={10}
+                max={100}
+                onChange={handleChange}
+            />
+          </PermissionCheck>
+          
         </div>
         <div style={clasess.labelBrogressContainer}>
           <div style={clasess.labelStyle}>10.00</div>
