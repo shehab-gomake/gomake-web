@@ -12,6 +12,7 @@ const InputContainer = ({attribute, updateState, error}: IMachineInputContainer)
                 return <MachineMultiInput name={attribute.name} parameterKey={attribute.parameterKey}
                                           updateState={updateState}
                                           value={attribute.value}
+                                          disabled={attribute.disabled}
                                           inputs={attribute.inputs} isValid/>
             default:
                 return <FormInput

@@ -13,19 +13,19 @@ const mediaCoatingSettings = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: true,
         },
-        {
-            name: "coatingUnitCost",
-            label: "machineAttributes.coatingUnitCost",
-            type: "text",
-            placeholder: "machineAttributes.coatingUnitCost",
-            required: state?.coatingUnitCost,
-            parameterKey: "coatingUnitCost",
-            options: [],
-            disabled: !state?.attributes?.coatingUnit,
-            value: state?.attributes?.coatingUnit && state?.attributes?.coatingUnitCost ? state?.attributes?.coatingUnitCost : '',
-            machineInputType: 'input',
-            isValid: true,
-        },
+        // {
+        //     name: "coatingUnitCost",
+        //     label: "machineAttributes.coatingUnitCost",
+        //     type: "text",
+        //     placeholder: "machineAttributes.coatingUnitCost",
+        //     required: state?.coatingUnitCost,
+        //     parameterKey: "coatingUnitCost",
+        //     options: [],
+        //     disabled: !state?.attributes?.coatingUnit,
+        //     value: state?.attributes?.coatingUnit && state?.attributes?.coatingUnitCost ? state?.attributes?.coatingUnitCost : '',
+        //     machineInputType: 'input',
+        //     isValid: true,
+        // },
     ]
 }
 

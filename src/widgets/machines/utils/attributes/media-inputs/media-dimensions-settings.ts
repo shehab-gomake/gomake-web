@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const mediaDimensionsSettings = (state: Record<string, any>) => {
     return [
         {
@@ -17,6 +19,7 @@ const mediaDimensionsSettings = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.minWidth",
                     required: true,
                     parameterKey: "minWidth",
+                    unit: EMeasurementUnits.CM,
                     options: [],
                     value: state.attributes?.mediaDimensions?.minWidth ? state.attributes?.mediaDimensions?.minWidth : ''
                 },
@@ -26,6 +29,7 @@ const mediaDimensionsSettings = (state: Record<string, any>) => {
                     type: "text",
                     placeholder: "machineAttributes.minLength",
                     required: true,
+                    unit: EMeasurementUnits.CM,
                     parameterKey: "minLength",
                     options: [],
                     value: state.attributes?.mediaDimensions?.minLength ? state.attributes?.mediaDimensions?.minLength : ''
@@ -34,6 +38,7 @@ const mediaDimensionsSettings = (state: Record<string, any>) => {
                 {
                     name: "",
                     label: "machineAttributes.maxWidth",
+                    unit: EMeasurementUnits.CM,
                     type: "text",
                     placeholder: "machineAttributes.maxWidth",
                     required: true,
@@ -48,6 +53,7 @@ const mediaDimensionsSettings = (state: Record<string, any>) => {
                     type: "text",
                     placeholder: "machineAttributes.maxLength",
                     required: true,
+                    unit: EMeasurementUnits.CM,
                     parameterKey: "maxLength",
                     options: [],
                     value: state.attributes?.mediaDimensions?.maxLength ? state.attributes?.mediaDimensions?.maxLength : ''

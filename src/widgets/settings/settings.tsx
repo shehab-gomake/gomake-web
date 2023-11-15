@@ -1,10 +1,10 @@
 import {useTranslation} from "react-i18next";
-import {SideList} from "@/widgets/machines/components/side-list/side-list";
+import {SideList} from "@/components/containers/side-container/side-list/side-list";
 import {list} from "@/widgets/settings/side-list";
 import {useEffect, useState} from "react";
-import {IListItem} from "@/widgets/machines/components/side-list/interface";
+import {IListItem} from "@/components/containers/side-container/side-list/interface";
 import {useRouter} from "next/router";
-import {SideBarContainer} from "@/components/containers/side-bar-container";
+import {SideBarContainer} from "@/components/containers/side-container/side-bar-container";
 
 
 const SettingsWidget = () => {

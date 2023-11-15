@@ -1,11 +1,11 @@
 import {ISideBarContainer} from "@/components/containers/interface";
-import {useStyle} from "@/components/containers/style";
+import {useStyle} from "@/components/containers/side-container/style";
 
 
 const SideBarContainer = ({side, children, subHeader, header}: ISideBarContainer) => {
     const {classes} = useStyle();
     return (
-        <div style={{padding: '0 3px'}}>
+        <div style={classes.mainContainer}>
             {
                 header && <h1 style={classes.header}>{header}</h1>
             }
