@@ -8,9 +8,10 @@ import {useGomakeRouter} from "./use-gomake-router";
 import {userTypeState} from "@/store/user-type";
 import {userProfileState} from "@/store/user-profile";
 import {useTranslation} from "react-i18next";
+import {Permissions} from "@/components/CheckPermission/enum";
 
 
-const useCustomer = (permissionEnumValue) => {
+const useCustomer = (permissionEnumValue?:Permissions) => {
 
     const {callApi} = useGomakeAxios();
     const [user, setUser] = useRecoilState<any>(userState);
