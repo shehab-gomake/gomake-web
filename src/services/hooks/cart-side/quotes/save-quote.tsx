@@ -1,19 +1,24 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../../call-api.interface";
 
-const getAndSetAllCustomers = async (
+const saveQuote = async (
   callApi: ICallApi,
   setState?: ISetState,
-  data?: any
-
+  data?
 ) => {
- 
+  
   const result: any = await callApi(
-    "GET",
-    "/v1/crm-service/customer/get-all-customers",
-    data
+    "POST",
+    "/v1/erp-service/quote/save-quote",
+    {
+        quoteId : data,
+    }
   );
+  if (setState) {
+    setState([]);
+  }
+  
   return returnResult(result, setState);
 };
 
-export { getAndSetAllCustomers };
+export { saveQuote };
