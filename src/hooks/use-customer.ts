@@ -11,7 +11,7 @@ import {useTranslation} from "react-i18next";
 
 
 const useCustomer = (permissionEnumValue) => {
-  
+
     const {callApi} = useGomakeAxios();
     const [user, setUser] = useRecoilState<any>(userState);
     const setUserProfile = useSetRecoilState(userProfileState);
@@ -30,7 +30,11 @@ const useCustomer = (permissionEnumValue) => {
     const validate = useCallback(async () => {
         const validate: any = await callApi("GET", "/v1/auth/validate");
         if (validate?.success) {
-            setUser({...validate?.data?.data?.customer, type: "user"});
+            debugger;
+            const user = validate?.data?.data?.customer;
+            const userPermissions = [...user.permissions];
+            user.permissions = null;
+            setUser({...user, type: "user"});
             setUserType({type: "user"});
             setUserProfile(validate?.data?.data?.customer);
             if (validate?.data?.data?.customer?.systemLang) {
@@ -38,23 +42,17 @@ const useCustomer = (permissionEnumValue) => {
                 i18n.changeLanguage(validate?.data?.data?.customer?.systemLang).then();
             }
 
-         
-              setPermissions(validate?.data?.data?.customer?.permissions); 
-              if(permissionEnumValue !== null && permissionEnumValue !== undefined)
-              {
-             
-                if (validate?.data?.data?.customer?.permissions) {
+
+            setPermissions(userPermissions);
+            if (permissionEnumValue !== null && permissionEnumValue !== undefined) {
+
+                if (userPermissions) {
                  
-                    if (validate?.data?.data?.customer?.permissions?.includes(permissionEnumValue)) {
-                     return true;
-                   
-                    } else {
-                     return false;
-                    }
-                }else{
-                   return false;
+                    return !!userPermissions?.includes(permissionEnumValue);
+                } else {
+                    return false;
                 }
-              }
+            }
             return true;
         }
         clearStorage();
