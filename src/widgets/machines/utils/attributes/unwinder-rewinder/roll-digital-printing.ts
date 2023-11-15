@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const rollDigitalPrinting = (state: Record<string, any>) => {
     return [
         {
@@ -8,6 +10,7 @@ const rollDigitalPrinting = (state: Record<string, any>) => {
             required: true,
             parameterKey: "maxRewinderOutput",
             options: [],
+            unit: EMeasurementUnits.CM,
             value: state?.attributes?.maxRewinderOutput ? state?.attributes?.maxRewinderOutput : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxRewinderOutput,
@@ -19,6 +22,7 @@ const rollDigitalPrinting = (state: Record<string, any>) => {
             placeholder: "machineAttributes.maxUnwinderInput",
             required: true,
             parameterKey: "maxUnwinderInput",
+            unit: EMeasurementUnits.CM,
             options: [],
             value: state?.attributes?.maxUnwinderInput ? state?.attributes?.maxUnwinderInput : '',
             machineInputType: 'input',
@@ -31,6 +35,7 @@ const rollDigitalPrinting = (state: Record<string, any>) => {
             placeholder: "machineAttributes.maxUnwinderRollWeight",
             required: true,
             parameterKey: "maxUnwinderRollWeight",
+            unit: EMeasurementUnits.KG,
             options: [],
             value: state?.attributes?.maxUnwinderRollWeight ? state?.attributes?.maxUnwinderRollWeight : '',
             machineInputType: 'input',
@@ -51,6 +56,7 @@ const rollDigitalPrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.standard",
                     required: true,
                     parameterKey: "standard",
+                    unit: EMeasurementUnits.INCH,
                     options: [],
                     value: state.attributes?.coreDiameter?.standard ? state.attributes?.coreDiameter?.standard : ''
                 },
@@ -61,6 +67,7 @@ const rollDigitalPrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.option",
                     required: true,
                     parameterKey: "option",
+                    unit: EMeasurementUnits.INCH,
                     options: [],
                     value: state.attributes?.coreDiameter?.option ? state.attributes?.coreDiameter?.option : ''
 

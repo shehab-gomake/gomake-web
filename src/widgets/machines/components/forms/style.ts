@@ -24,7 +24,6 @@ const useStyle = () => {
         position: 'sticky' as 'sticky',
         bottom: 0,
         width: '100%',
-        backgroundColor: '#FFF',
         marginTop: '5px'
       },
       actionButton: {

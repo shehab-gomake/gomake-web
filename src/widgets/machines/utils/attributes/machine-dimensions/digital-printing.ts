@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const digitalPrinting = (state: Record<string, any>) => {
     return [
         {
@@ -18,6 +20,7 @@ const digitalPrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.height",
                     required: true,
                     parameterKey: "height",
+                    unit: EMeasurementUnits.CM,
                     options: [],
                     value: state.attributes?.machineDimensions?.height ? state.attributes?.machineDimensions?.height : ''
 
@@ -29,6 +32,7 @@ const digitalPrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.length",
                     required: true,
                     parameterKey: "length",
+                    unit: EMeasurementUnits.CM,
                     options: [],
                     value: state.attributes?.machineDimensions?.length ? state.attributes?.machineDimensions?.length : ''
 
@@ -40,6 +44,7 @@ const digitalPrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.width",
                     required: true,
                     parameterKey: "width",
+                    unit: EMeasurementUnits.CM,
                     options: [],
                     value: state.attributes?.machineDimensions?.width ? state.attributes?.machineDimensions?.width : ''
 
@@ -51,6 +56,7 @@ const digitalPrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.weight",
                     required: true,
                     parameterKey: "weight",
+                    unit: EMeasurementUnits.KG,
                     options: [],
                     value: state.attributes?.machineDimensions?.weight ? state.attributes?.machineDimensions?.weight : ''
                 },

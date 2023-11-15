@@ -1,4 +1,3 @@
-import {SideList} from "@/widgets/machines/components/side-list/side-list";
 import {MachineStepper} from "@/widgets/machines/components/stepper/machines-stepper";
 import {useEffect, useState} from "react";
 import {useRecoilValue} from "recoil";
@@ -10,8 +9,10 @@ import {useAdminMachines} from "@/widgets/machines/hooks/use-admin-machines";
 import {useRouter} from "next/router";
 import {machineState} from "@/widgets/machines/state/machine-state";
 import {GomakePrimaryButton} from "@/components";
-import {SideBarContainer} from "@/components/containers/side-bar-container";
 import {useTranslation} from "react-i18next";
+import {MachinesContainer} from "@/components/containers/machines-container/machines-container";
+import {MachinesSideList} from "@/components/containers/machines-container/side-list/machines-side-list";
+import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
 
 const CustomerAddMachine = () => {
     const router = useRouter();
@@ -49,26 +50,33 @@ const CustomerAddMachine = () => {
         setActiveStep(stepIndex)
     }
 
+    const ActionsFooter = () => {
+        return activeStep >= 0 &&
+            <NavigationButtons canAddMachine={true}
+                               canUpdate={false} onClickAddMachine={addPrintHouseMachine}
+                               onClickUpdate={() => {}} onClickNext={navigateNext} onClickBack={navigateBack}
+                               hasBack={activeStep > 0} hasNext={activeStep + 1 < machineSteps.length}/>
+    }
     const Side = () => (
-        <SideList
+        <MachinesSideList
             list={getMachinesList}
             selectedItem={selectedMachine.id}
             onSelect={onSelectMachine}
             title={"Choose machines"}
-        >
-            <GomakePrimaryButton
+        />
+    );
+    return (
+        <MachinesContainer
+            side={Side()}
+            actions={ActionsFooter()}
+            header={"Add new " + t(categoryName) + " machine"}
+            sideAction={<GomakePrimaryButton
                 disabled={!selectedMachine.id}
-                style={{height: 40}}
+                style={{width: '80%', margin: 'auto', height: 40}}
                 onClick={addPrintHouseMachine}
             >
                 {t('navigationButtons.add')}
-            </GomakePrimaryButton>
-        </SideList>
-    );
-    return (
-        <SideBarContainer
-            side={Side()}
-            header={"Add new " + t(categoryName) + " machine"}
+            </GomakePrimaryButton>}
             subHeader={
                 selectedMachine.manufacturer && selectedMachine.nickName
                     ? selectedMachine.manufacturer + " - " + selectedMachine.nickName
@@ -86,7 +94,7 @@ const CustomerAddMachine = () => {
                     moveToStep={moveToStepByIndex}
                 />
             )}
-        </SideBarContainer>
+        </MachinesContainer>
     );
 };
 

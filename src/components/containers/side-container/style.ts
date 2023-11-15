@@ -7,6 +7,10 @@ const useStyle = () => {
   const { theme, primaryColor, secondColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
+      mainContainer: {
+        padding: '0 3px', maxHeight: convertHeightToVH(1080 - 50),
+        height: convertHeightToVH(1080 - 50),
+      },
       container: {
         display: "flex",
         gap: 26,

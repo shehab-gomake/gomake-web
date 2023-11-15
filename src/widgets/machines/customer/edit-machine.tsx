@@ -1,4 +1,3 @@
-import {SideList} from "@/widgets/machines/components/side-list/side-list";
 import {MachineStepper} from "@/widgets/machines/components/stepper/machines-stepper";
 import {useEffect, useState} from "react";
 import {useRecoilValue} from "recoil";
@@ -10,8 +9,11 @@ import {usePrintHouseMachines} from "@/widgets/machines/hooks/use-print-house-ma
 import {machineState} from "@/widgets/machines/state/machine-state";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import {usePrintHouseAddMachine} from "@/widgets/machines/hooks/use-print-house-add-machine";
-import {SideBarContainer} from "@/components/containers/side-bar-container";
 import {useTranslation} from "react-i18next";
+import {MachinesContainer} from "@/components/containers/machines-container/machines-container";
+import {MachinesSideList} from "@/components/containers/machines-container/side-list/machines-side-list";
+import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
+
 const CustomerEditMachines = () => {
     const router = useRouter();
     const {categoryId} = router.query;
@@ -46,21 +48,32 @@ const CustomerEditMachines = () => {
     const moveToStepByIndex = (stepIndex: number) => {
         setActiveStep(stepIndex)
     }
+    const ActionsFooter = () => {
+        return activeStep >= 0 &&
+            <NavigationButtons canAddMachine={activeStep + 1 === machineSteps.length}
+                               canUpdate={true} onClickAddMachine={() => {}}
+                               onClickUpdate={updateMachine} onClickNext={navigateNext} onClickBack={navigateBack}
+                               hasBack={activeStep > 0} hasNext={activeStep + 1 < machineSteps.length}/>
+    }
     const Side = () => {
-        return <SideList list={getPrintHouseMachinesList()} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
-                         title={'Machines'} quickActions={true}>
-            <SecondaryButton variant={'contained'} style={{width: '100%'}} href={`/machines/add-machine/category/${categoryId}`}>{t('navigationButtons.add')}</SecondaryButton>
-        </SideList>
+        return <MachinesSideList list={getPrintHouseMachinesList()} selectedItem={selectedMachine?.id}
+                                 onSelect={onSelectMachine}
+                                 title={'Machines'} quickActions={true}>
+        </MachinesSideList>
     }
     return (
-        <SideBarContainer side={Side()} header={t(categoryName)}
-                       subHeader={selectedMachine?.manufacturer && selectedMachine?.nickName ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.nickName : ''}>
+        <MachinesContainer side={Side()} header={t(categoryName)}
+                           actions={ActionsFooter()}
+                           sideAction={<SecondaryButton variant={'contained'} style={{width: '80%', margin: 'auto'}}
+                                                                  href={`/machines/add-machine/category/${categoryId}`}>{t('navigationButtons.add')}</SecondaryButton>}
+                           subHeader={selectedMachine?.manufacturer && selectedMachine?.nickName ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.nickName : ''}>
             {!!selectedMachine?.id &&
                 <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
-                                nextStep={navigateNext} actionButtonClicked={updateMachine} moveToStep={moveToStepByIndex}
+                                nextStep={navigateNext} actionButtonClicked={updateMachine}
+                                moveToStep={moveToStepByIndex}
                                 isAddForm={false}/>
             }
-        </SideBarContainer>
+        </MachinesContainer>
 
     );
 }

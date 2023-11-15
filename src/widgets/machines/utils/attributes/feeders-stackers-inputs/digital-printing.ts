@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const digitalPrinting = (state: Record<string, any>) => {
     return [
         {
@@ -25,6 +27,7 @@ const digitalPrinting = (state: Record<string, any>) => {
                     name: "",
                     label: "machineAttributes.height",
                     type: "text",
+                    unit: EMeasurementUnits.CM,
                     placeholder: "machineAttributes.height",
                     required: true,
                     parameterKey: "height",
@@ -38,6 +41,7 @@ const digitalPrinting = (state: Record<string, any>) => {
                     type: "text",
                     placeholder: "machineAttributes.length",
                     required: true,
+                    unit: EMeasurementUnits.CM,
                     parameterKey: "length",
                     options: [],
                     value: state.attributes?.feeders?.length ? state.attributes?.feeders?.length : ''
@@ -50,6 +54,7 @@ const digitalPrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.width",
                     required: true,
                     parameterKey: "width",
+                    unit: EMeasurementUnits.CM,
                     options: [],
                     value: state.attributes?.feeders?.width ? state.attributes?.feeders?.width : ''
 
@@ -83,6 +88,7 @@ const digitalPrinting = (state: Record<string, any>) => {
                     type: "text",
                     placeholder: "machineAttributes.height",
                     required: true,
+                    unit: EMeasurementUnits.CM,
                     parameterKey: "height",
                     options: [],
                     value: state.attributes?.stackers?.height ? state.attributes?.stackers?.height : ''
@@ -93,6 +99,7 @@ const digitalPrinting = (state: Record<string, any>) => {
                     label: "machineAttributes.length",
                     type: "text",
                     placeholder: "machineAttributes.length",
+                    unit: EMeasurementUnits.CM,
                     required: true,
                     parameterKey: "length",
                     options: [],
@@ -104,6 +111,7 @@ const digitalPrinting = (state: Record<string, any>) => {
                     label: "machineAttributes.width",
                     type: "text",
                     placeholder: "machineAttributes.width",
+                    unit: EMeasurementUnits.CM,
                     required: true,
                     parameterKey: "width",
                     options: [],

@@ -1,5 +1,5 @@
-import {SideBarContainer} from "@/components/containers/side-bar-container";
-import {SideList} from "@/widgets/machines/components/side-list/side-list";
+import {SideBarContainer} from "@/components/containers/side-container/side-bar-container";
+import {SideList} from "@/components/containers/side-container/side-list/side-list";
 import {PrimaryTable} from "@/components/tables/primary-table";
 import {useMaterials} from "@/widgets/materials-widget/use-materials";
 import React, {useEffect, useRef} from "react";
@@ -34,8 +34,6 @@ const MaterialsWidget = () => {
         getMaterialTableHeaders,
         getPrintHouseMaterialCategorySuppliers,
         materialCategoryData,
-        replace,
-        materialCategories,
         downloadExcelFile,
         uploadExcelFile
     } = useMaterials();

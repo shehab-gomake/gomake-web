@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 export interface IInput {
   name: string;
   label: string;
@@ -12,6 +14,7 @@ export interface IInput {
   isValid: boolean;
   regex?: RegExp;
   inputs?: IInput[];
+  unit?: EMeasurementUnits;
 }
 export interface IFormInput {
   input: IInput;

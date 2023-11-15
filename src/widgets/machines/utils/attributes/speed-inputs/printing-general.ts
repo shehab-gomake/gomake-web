@@ -1,26 +1,13 @@
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
-const flexoPrinting = (state: Record<string, any>) => {
+const printingGeneral = (state: Record<string, any>) => {
     return [
-        {
-            name: "setupTimeMin",
-            label: "machineAttributes.setupTimeMin",
-            type: "text",
-            placeholder: "machineAttributes.setupTimeMin",
-            required: true,
-            parameterKey: "setupTimeMin",
-            unit: EMeasurementUnits.MINUTE,
-            options: [],
-            value: state.attributes?.setupTimeMin ? state.attributes?.setupTimeMin : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.setupTimeMin,
-        },
         {
             name: 'machineAttributes.speedByColor',
             parameterKey: 'speedByColor',
             value: state.attributes?.speedByColor || [],
             machineInputType: 'multiArrayInput',
-            isValid: state.attributes?.speedByColor?.length > 0,
+            isValid: true,
             inputs: [
                 {
                     name: "color",
@@ -35,8 +22,38 @@ const flexoPrinting = (state: Record<string, any>) => {
                     name: "speed",
                     label: "machineAttributes.speed",
                     type: "text",
+                    unit: EMeasurementUnits.PPM,
                     placeholder: "machineAttributes.speed",
                     required: true,
+                    parameterKey: "speed",
+                    options: []
+                },
+            ]
+        },
+        {
+            name: 'machineAttributes.speedByPaperSizeByColor',
+            parameterKey: 'speedByColorBySize',
+            value: state.attributes?.speedByColorBySize || [],
+            machineInputType: 'multiArrayInput',
+            isValid: true,
+            inputs: [
+                {
+                    name: "mediaLength",
+                    label: "machineAttributes.lengthDirection",
+                    type: "text",
+                    placeholder: "machineAttributes.lengthDirection",
+                    required: true,
+                    unit: EMeasurementUnits.CM,
+                    parameterKey: "mediaLength",
+                    options: []
+                },
+                {
+                    name: "speed",
+                    label: "machineAttributes.speedPercentage",
+                    type: "text",
+                    placeholder: "machineAttributes.speedPercentage",
+                    required: true,
+                    unit: EMeasurementUnits.PERCENTAGE,
                     parameterKey: "speed",
                     options: []
                 },
@@ -47,7 +64,7 @@ const flexoPrinting = (state: Record<string, any>) => {
             name: 'machineAttributes.speedByMediaWeight',
             parameterKey: 'speedByMediaWeight',
             value: state.attributes?.speedByMediaWeight || [],
-            isValid: state.attributes?.speedByMediaWeight?.length > 0,
+            isValid: true,
             machineInputType: 'multiArrayInput',
             inputs: [
                 {
@@ -56,16 +73,8 @@ const flexoPrinting = (state: Record<string, any>) => {
                     type: "text",
                     placeholder: "machineAttributes.weight",
                     required: true,
+                    unit: EMeasurementUnits.GRAM,
                     parameterKey: "weight",
-                    options: []
-                },
-                {
-                    name: "targetWeight",
-                    label: "machineAttributes.targetWeight",
-                    type: "text",
-                    placeholder: "machineAttributes.targetWeight",
-                    required: true,
-                    parameterKey: "targetWeight",
                     options: []
                 },
                 {
@@ -73,14 +82,15 @@ const flexoPrinting = (state: Record<string, any>) => {
                     label: "machineAttributes.speedPercentage",
                     type: "text",
                     placeholder: "machineAttributes.speedPercentage",
+                    unit: EMeasurementUnits.PERCENTAGE,
                     required: true,
                     parameterKey: "speedPercentage",
                     options: []
                 },
-
             ]
         }
     ]
 }
 
-export {flexoPrinting};
+export {printingGeneral};
+
