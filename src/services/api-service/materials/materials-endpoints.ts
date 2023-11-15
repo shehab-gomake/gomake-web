@@ -13,8 +13,8 @@ const DOWNLOAD_MATERIAL_EXCEL_FILE = '/v1/materials/download-material-excel'
 const UPLOAD_MATERIAL_EXCEL_FILE = '/v1/materials/upload-material-excel-file';
 const ADD_MATERIAL_CATEGORY_URL = '/v1/materials/add-material-category';
 const DELETE_MATERIAL_CATEGORY_URL = '/v1/materials/delete-material-category';
-const ADD_MATERIAL_CATEGORY_ROW_URL = '';
-const DELETE_MATERIAL_CATEGORY_Row_URL = '';
+const ADD_MATERIAL_CATEGORY_ROW_URL = '/v1/materials/add-material-category-row';
+const DELETE_MATERIAL_CATEGORY_Row_URL = '/v1/materials/delete-material-category-row';
 
 const getMaterialCategoryDataApi: ICallAndSetData = async (callApi, setState, material: { materialKey: string, categoryKey: string, supplierId: string }) => {
     return await getSetApiData(callApi,
@@ -58,7 +58,7 @@ const updateMaterialsPropApi: ICallAndSetData = async (callApi, callBack, data) 
         UPDATE_MATERIALS_PROPS_URL,
         callBack,
         data)
-}
+} 
 
 const getMaterialExcelFileApi: ICallAndSetData = async (callApi, setState, material: string) => {
     return await getSetApiData(callApi,
@@ -101,7 +101,7 @@ const addMaterialCategoryRowApi: ICallAndSetData = async (callApi, callBack, row
 }
 
 
-const deleteMaterialCategoryRowApi: ICallAndSetData = async (callApi, callBack, row: { id: string }) => {
+const deleteMaterialCategoryRowApi: ICallAndSetData = async (callApi, callBack, row: { rowId: string } ) => {
     return await getSetApiData(callApi,
         EHttpMethod.POST,
         DELETE_MATERIAL_CATEGORY_Row_URL,
@@ -120,7 +120,6 @@ export {
     uploadMaterialExcelFileApi,
     addMaterialCategoryApi,
     deleteMaterialCategoryApi,
-    
     addMaterialCategoryRowApi,
     deleteMaterialCategoryRowApi
 }

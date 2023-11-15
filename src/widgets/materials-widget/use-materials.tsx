@@ -27,6 +27,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import { useTranslation } from "react-i18next";
+import { useAddCategoryRow } from "./components/add-row/use-add-row";
 
 const useMaterials = () => {
     const { query, push, replace } = useRouter();
@@ -43,7 +44,8 @@ const useMaterials = () => {
     const { alertSuccessDelete, alertFaultDelete } = useSnackBar();
     const setCurrencies = useSetRecoilState(currenciesState);
     const setOpenModal = useSetRecoilState<any>(openAddRowModalState);
-    const { getFilteredMaterials } = useFilteredMaterials()
+    const { getFilteredMaterials } = useFilteredMaterials();
+    const { onDeleteCategoryRow } = useAddCategoryRow();
     const setActiveFilter = useSetRecoilState(activeFilterState);
     const setFlagState = useSetRecoilState(flagState);
     const { errorColor, primaryColor } = useGomakeTheme();
@@ -148,9 +150,7 @@ const useMaterials = () => {
     }, [materialHeaders, materialCategoryData, activeFilter, materialFilter])
 
     ////////////////////////////////////////////lama/////////////////////////////////////////////////////////
-    const onDeleteRow = (id: string) => {
-        setMaterialCategoryData(materialCategoryData.map(row => id === row.id ? { ...row, checked: !row.checked } : row))
-    }
+
     const tableHeadersNew = useCallback(() => {
         return [<Checkbox onChange={onChangeHeaderCheckBox}
             checked={isAllSelected()} />, ...materialHeaders.map(header => header.value), <Tooltip title={t("materials.buttons.addRow")}>
@@ -163,15 +163,24 @@ const useMaterials = () => {
 
     const tableRowsNew = useMemo(() => {
         return getFilteredMaterials().map((dataRow) => {
-            return [<Checkbox onChange={() => onChangeRowCheckBox(dataRow.id)}
-                checked={dataRow.checked} />, ...materialHeaders.map(header =>
-                    <TableCellData {...dataRow.rowData[header.key]} id={dataRow.id} parameterKey={header.key} />,
-                    <IconButton onClick={() => alert("delete row")}>
-                        <DeleteOutlineIcon style={{ color: errorColor(500) }} />
-                    </IconButton>
-                )]
+            return [
+                <Checkbox
+                    onChange={() => onChangeRowCheckBox(dataRow.id)}
+                    checked={dataRow.checked}
+                />,
+                ...materialHeaders.map(header => (
+                    <TableCellData
+                        {...dataRow.rowData[header.key]}
+                        id={dataRow.id}
+                        parameterKey={header.key}
+                    />
+                )),
+                <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
+                    <DeleteOutlineIcon style={{ color: errorColor(500) }} />
+                </IconButton>,
+            ];
         })
-    }, [materialHeaders, materialCategoryData, activeFilter, materialFilter])
+    }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
 
     /////////////////////////////////////////////////lama///////////////////////////////////////////////////////////////////
 
@@ -248,9 +257,8 @@ const useMaterials = () => {
         replace,
         downloadExcelFile,
         uploadExcelFile,
-
-
-        tableHeadersNew
+        tableHeadersNew,
+        tableRowsNew
     }
 }
 

@@ -27,7 +27,7 @@ const AddRowModal = () => {
         <GoMakeModal
             insideStyle={classes.insideStyle}
             openModal={openModal}
-            onClose={() => setOpenModal(false)}
+            onClose={() => {setOpenModal(false),setRowData("")}}
             modalTitle={t("materials.buttons.addNewRow")}>
             <Stack direction={'column'} marginBottom={"15px"} marginTop={"15px"} gap={"20px"} >
                 {

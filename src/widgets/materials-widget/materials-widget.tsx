@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { flagState , openAddCategoryModalState, openAddSupplierModalState, selectedSupplierIdState } from "@/widgets/materials-widget/state";
+import { flagState, openAddCategoryModalState, openAddSupplierModalState, selectedSupplierIdState } from "@/widgets/materials-widget/state";
 import { AddSupplierModal } from "@/widgets/materials-widget/components/add-supplier/add-supplier-modal";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { SecondaryButton } from "@/components/button/secondary-button";
@@ -45,11 +45,12 @@ const MaterialsWidget = () => {
         materialCategories,
         downloadExcelFile,
         uploadExcelFile,
-
-
-
-        tableHeadersNew
+        tableHeadersNew,
+        tableRowsNew
     } = useMaterials();
+
+const tableRowData = (materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ? tableRowsNew : tableRows ;
+const tableHeadersData = (materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ? tableHeadersNew() : tableHeaders() ;
 
     const Side = () =>
         <Stack gap={'10px'} direction={'column'} >
@@ -107,9 +108,9 @@ const MaterialsWidget = () => {
                         <FiltersActionsBar />
                     </Stack>
                     {materialCategoryData.length > 0 ?
-                        <PrimaryTable rows={tableRows} headers={tableHeaders()} /> :
-                        ((flag && materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ?
-                            <PrimaryTable rows={tableRows} headers={tableHeadersNew()} />
+                        <PrimaryTable rows={tableRowData} headers={tableHeadersData} /> :
+                        (flag && materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ?
+                            <PrimaryTable rows={tableRowsNew} headers={tableHeadersNew()} />
                             :
                             <div style={classes.noData}>
                                 {t("materials.sheetPaper.supplierAddedSheetYet")}
@@ -120,7 +121,7 @@ const MaterialsWidget = () => {
                                     }}>
                                     {t("materials.sheetPaper.pleaseAddNow")}
                                 </span>
-                            </div>)}
+                            </div>}
                 </Stack>}
                 <AddSupplierModal />
                 <AddCategoryModal />
