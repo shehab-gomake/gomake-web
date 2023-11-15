@@ -10,6 +10,7 @@ import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useDateFormat } from "@/hooks/use-date-format";
 
 const useOrders = () => {
   const { t } = useTranslation();
@@ -21,6 +22,7 @@ const useOrders = () => {
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const debounce = useDebounce(patternSearch, 500);
   const [page, setPage] = useState(1);
+  const {GetDateFormat} = useDateFormat();
   const [limit, setLimit] = useState(20);
   const [statusId, setStatusId] = useState<any>();
   const [customerId, setCustomerId] = useState<any>();
@@ -144,7 +146,7 @@ const useOrders = () => {
     const data = res?.data?.data?.result;
     const totalItems = res?.data?.data?.totalItems;
     const mapData = data?.map((quote: any) => [
-      quote?.createdDate,
+      GetDateFormat(quote?.createdDate),
       quote?.customerName,
       quote?.boardMissionsNumbers?.length,
       quote?.orderNumber,
@@ -179,7 +181,7 @@ const useOrders = () => {
     const data = res?.data?.data?.result;
     const totalItems = res?.data?.data?.totalItems;
     const mapData = data?.map((quote: any) => [
-      quote?.createdDate,
+      GetDateFormat(quote?.createdDate),
       quote?.customerName,
       quote?.boardMissionsNumbers?.length,
       quote?.orderNumber,
