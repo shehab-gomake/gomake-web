@@ -7,8 +7,8 @@ import {HeaderWidget} from "@/widgets/header";
 import {navStatusState} from "@/store/nav-status";
 import {hoverStatusState} from "@/store";
 
-const CustomerAuthLayout = ({children}: IAuthLayout) => {
-    const {canAccess} = useAuthLayoutHook();
+const CustomerAuthLayout = ({children, permissionEnumValue}: IAuthLayout) => {
+    const {canAccess} = useAuthLayoutHook(permissionEnumValue);
     const {clasess} = useStyle({isHover: false, navStatus: null});
     const setNavStatus = useSetRecoilState(navStatusState);
     const isHover = useRecoilValue(hoverStatusState);
