@@ -1,5 +1,5 @@
-import {SideBarContainer} from "@/components/containers/side-bar-container";
-import {SideList} from "@/widgets/machines/components/side-list/side-list";
+import {SideBarContainer} from "@/components/containers/side-container/side-bar-container";
+import {SideList} from "@/components/containers/side-container/side-list/side-list";
 import {PrimaryTable} from "@/components/tables/primary-table";
 import {useMaterials} from "@/widgets/materials-widget/use-materials";
 import React, {useEffect, useRef} from "react";
@@ -14,7 +14,6 @@ import {PrimaryButton} from "@/components/button/primary-button";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { useGomakeRouter } from "@/hooks/use-gomake-router";
 
 
 const MaterialsWidget = () => {
@@ -24,7 +23,6 @@ const MaterialsWidget = () => {
     const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
     const supplierId = useRecoilValue(selectedSupplierIdState)
     const elementRef = useRef(null);
-    const { navigate } = useGomakeRouter();
     const {
         materialCategory,
         materialType,
@@ -38,15 +36,15 @@ const MaterialsWidget = () => {
         getMaterialTableHeaders,
         getPrintHouseMaterialCategorySuppliers,
         materialCategoryData,
-        replace,
-        materialCategories,
         downloadExcelFile,
-        uploadExcelFile
+        uploadExcelFile,
+        materialCategories,
+        replace
     } = useMaterials();
 
     const Side = () => 
     <Stack  gap={'10px'} direction={'column'} >
-    <SecondaryButton variant={'text'} onClick={()=>navigate("/materials")} startIcon={ dir === 'ltr' ?  <ArrowBackIcon/> : <ArrowForwardIcon/> } style={{gap:5}} >{t("materials.buttons.back")}
+    <SecondaryButton variant={'text'} href={'/materials'}  startIcon={ dir === 'ltr' ?  <ArrowBackIcon/> : <ArrowForwardIcon/> } style={{gap:5}} >{t("materials.buttons.back")}
       </SecondaryButton>
     <SideList list={materialsCategoriesList()} selectedItem={materialCategory?.toString()}
                                  onSelect={onSelectCategory}

@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const generalBasicSettings = (state: Record<string, any>) => {
     return [
         {
@@ -72,6 +74,7 @@ const generalBasicSettings = (state: Record<string, any>) => {
             value: state.attributes?.printLife ? state.attributes?.printLife : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.printLife,
+            unit: EMeasurementUnits.METER
 
         },
         {

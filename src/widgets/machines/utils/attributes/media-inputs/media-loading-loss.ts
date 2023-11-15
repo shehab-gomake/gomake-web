@@ -1,3 +1,4 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const mediaLoadingLoss = (state: Record<string, any>) => {
     return [
@@ -8,6 +9,7 @@ const mediaLoadingLoss = (state: Record<string, any>) => {
             placeholder: "machineAttributes.mediaLoaded",
             required: true,
             parameterKey: "mediaLoaded",
+            unit: EMeasurementUnits.METER,
             options: [],
             value: state?.attributes?.mediaLoaded ? state?.attributes?.mediaLoaded : '',
             machineInputType: 'input',

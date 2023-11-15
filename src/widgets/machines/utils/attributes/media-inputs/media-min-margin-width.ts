@@ -1,3 +1,4 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const mediaMinMarginWidth = (state: Record<string, any>) => {
     return [
@@ -8,6 +9,7 @@ const mediaMinMarginWidth = (state: Record<string, any>) => {
             placeholder: "machineAttributes.minWidthMarginWithoutPrinting",
             required: true,
             parameterKey: "minWidthMarginWithoutPrinting",
+            unit: EMeasurementUnits.MM,
             options: [],
             value: state?.attributes?.minWidthMarginWithoutPrinting ? state?.attributes?.minWidthMarginWithoutPrinting : '',
             machineInputType: 'input',
