@@ -57,14 +57,14 @@ export const activeFilterState = atom<EMaterialActiveFilter>({
 export const filterState = atom<{key: string; value: string} | null>({
     key: 'filterState',
     default: null
-})
+});
 
 export const flagState = atom<boolean>({
     key: 'flagState',
     default: false
-})
+});
 
 export const openAddRowModalState = atom<boolean>({
     key: 'openAddRowModalState',
     default: false
-})
+});

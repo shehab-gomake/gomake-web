@@ -17,6 +17,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useGomakeRouter } from "@/hooks/use-gomake-router";
 import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
+import { useMaterialsCategories } from "./use-materials-categories";
 
 const MaterialsWidget = () => {
     const { t } = useTranslation();
@@ -28,6 +29,8 @@ const MaterialsWidget = () => {
     const flag = useRecoilValue(flagState)
     const elementRef = useRef(null);
     const { navigate } = useGomakeRouter();
+    const { getMaterialCategoryData } = useMaterialsCategories();
+
     const {
         materialCategory,
         materialType,
@@ -37,7 +40,6 @@ const MaterialsWidget = () => {
         tableRows,
         getCurrenciesApi,
         getMaterialCategories,
-        getMaterialCategoryData,
         getMaterialTableHeaders,
         getPrintHouseMaterialCategorySuppliers,
         materialCategoryData,
@@ -49,8 +51,8 @@ const MaterialsWidget = () => {
         tableRowsNew
     } = useMaterials();
 
-const tableRowData = (materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ? tableRowsNew : tableRows ;
-const tableHeadersData = (materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ? tableHeadersNew() : tableHeaders() ;
+    const tableRowData = (materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ? tableRowsNew : tableRows;
+    const tableHeadersData = (materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ? tableHeadersNew() : tableHeaders();
 
     const Side = () =>
         <Stack gap={'10px'} direction={'column'} >

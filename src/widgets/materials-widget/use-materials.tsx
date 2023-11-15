@@ -52,7 +52,7 @@ const useMaterials = () => {
     const { t } = useTranslation();
 
     const onSelectCategory = (category: string) => {
-        //setDefaultSupplier('')
+        setDefaultSupplier('')
         push(`/materials/${materialType}?materialCategory=${category}`)
         setFlagState(false);
     }
@@ -82,20 +82,6 @@ const useMaterials = () => {
             }
         }
         await getMaterialCategoriesApi(callApi, callBack, material)
-    }
-
-    const getMaterialCategoryData = async (materialType: string, materialCategory: string, supplierId: string) => {
-        const callBack = (res) => {
-            if (res.success) {
-                setMaterialCategoryData(res.data?.map(row => ({ ...row, checked: false })));
-                res.data?.every(row => !row.isActive) ? setActiveFilter(EMaterialActiveFilter.ALL) : setActiveFilter(EMaterialActiveFilter.ACTIVE)
-            }
-        }
-        await getMaterialCategoryDataApi(callApi, callBack, {
-            materialKey: materialType,
-            categoryKey: materialCategory,
-            supplierId
-        })
     }
 
     const materialsCategoriesList = useCallback(() => {
@@ -149,7 +135,6 @@ const useMaterials = () => {
         })
     }, [materialHeaders, materialCategoryData, activeFilter, materialFilter])
 
-    ////////////////////////////////////////////lama/////////////////////////////////////////////////////////
 
     const tableHeadersNew = useCallback(() => {
         return [<Checkbox onChange={onChangeHeaderCheckBox}
@@ -182,7 +167,6 @@ const useMaterials = () => {
         })
     }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
 
-    /////////////////////////////////////////////////lama///////////////////////////////////////////////////////////////////
 
 
     const getCurrenciesApi = async () => {
@@ -249,7 +233,6 @@ const useMaterials = () => {
         tableRows,
         getCurrenciesApi,
         getMaterialCategories,
-        getMaterialCategoryData,
         getMaterialTableHeaders,
         getPrintHouseMaterialCategorySuppliers,
         materialCategoryData,
@@ -258,7 +241,7 @@ const useMaterials = () => {
         downloadExcelFile,
         uploadExcelFile,
         tableHeadersNew,
-        tableRowsNew
+        tableRowsNew,
     }
 }
 
