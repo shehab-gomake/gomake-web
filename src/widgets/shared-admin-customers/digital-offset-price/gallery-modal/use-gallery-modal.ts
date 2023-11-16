@@ -6,6 +6,7 @@ import { getPrintHouseMaterialsByMaterialKey } from "@/services/hooks";
 import { materialsCategoriesState } from "@/store/material-categories";
 import { compareStrings } from "@/utils/constants";
 import { useGomakeAxios } from "@/hooks";
+import { selectedShapeState } from "./gallery-modal-store";
 
 const useGalleryModal = ({ onClose }) => {
   const { callApi } = useGomakeAxios();
@@ -14,7 +15,8 @@ const useGalleryModal = ({ onClose }) => {
   );
   const selectParameterButton = useRecoilValue<any>(selectParameterButtonState);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
-  const [selectedShape, setSelectedShape] = useState<any>();
+  const [selectedShape, setSelectedShape] =
+    useRecoilState<any>(selectedShapeState);
   const [materialData, setMaterialData] = useState<any>([]);
   const [materialType, setMaterialType] = useState<any>({});
   const [materialParameter, setMaterialParameter] = useState({});

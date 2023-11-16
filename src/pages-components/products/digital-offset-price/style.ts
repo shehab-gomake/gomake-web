@@ -557,6 +557,26 @@ const useStyle = () => {
         ...FONT_FAMILY.Inter(600, 14),
         width: "fit-content",
       },
+      btnSelectedStyle: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 6,
+        padding: "8px 0px",
+      },
+      btnSelectedTextStyle: {
+        ...FONT_FAMILY.Lexend(400, 16),
+        color: "rgba(46, 48, 146, 1)",
+      },
+      btnSelectedIconReChoose: {
+        width: 24,
+        height: 24,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        cursor: "pointer",
+      },
     };
   }, [i18next.language, t]);
   return {
