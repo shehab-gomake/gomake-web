@@ -48,7 +48,7 @@ const useUserProfile = () => {
                 setChangeProfileImage(false);
             }
         }
-        const res = await updateUserProfileImage(callApi, callBack, {userId: profileState.id, fileBase64: file});
+        const res = await updateUserProfileImage(callApi, callBack, {userId: profileState.userId, fileBase64: file});
         return res.success
     }
 
@@ -66,7 +66,7 @@ const useUserProfile = () => {
             }
         }
 
-        await resetUserInitials(callApi, callBack, {...data, id: profileState.id});
+        await resetUserInitials(callApi, callBack, {...data, id: profileState.userId});
     }
 
     const updateUserPassword = async (
@@ -85,7 +85,7 @@ const useUserProfile = () => {
             }
         }
         const result = await resetUserPassword(callApi, callBack, {
-            id: userId ? userId : profileState.id,
+            id: userId ? userId : profileState.userId,
             currentPassword,
             newPassword,
             confirmPassword

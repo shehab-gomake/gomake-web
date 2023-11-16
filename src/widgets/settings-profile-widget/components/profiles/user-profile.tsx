@@ -2,9 +2,7 @@ import {ProfileAvatar} from "@/widgets/settings-profile-widget/components/avatar
 import {GoMakeModal} from "@/components";
 import {useState} from "react";
 import {useTranslation} from "react-i18next";
-
 import Stack from "@mui/material/Stack";
-import {IInput} from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
 import {personalInputs} from "@/widgets/settings-profile-widget/components/profiles/inputs/personal-inputs";
 import {contactsInputs} from "@/widgets/settings-profile-widget/components/profiles/inputs/contacts-inputs";
 import Button from "@mui/material/Button";
@@ -15,8 +13,7 @@ import {useRecoilState} from "recoil";
 import {userProfileState} from "@/store/user-profile";
 import {useUserProfile} from "@/hooks/use-user-profile";
 import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
-
-
+import {IInput} from "@/components/form-inputs/interfaces";
 const UserProfile = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [state, setState] = useRecoilState(userProfileState);
@@ -44,7 +41,7 @@ const UserProfile = () => {
                             <FormInputsSectionComponent sectionTitle={section.title}>
                                 {
                                     section.inputs.map(profileInput => <FormInput key={profileInput.parameterKey}
-                                                                                  input={profileInput as IInput & {readonly: boolean }}
+                                                                                  input={profileInput as IInput}
                                                                                   changeState={changeState}
                                                                                   readonly={profileInput?.readonly}
                                                                                   error={false}/>)

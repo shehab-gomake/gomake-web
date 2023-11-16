@@ -1,22 +1,22 @@
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
-import { CSSProperties } from "react";
 
 export interface IInput {
   name: string;
   label: string;
   type: string;
-  placeholder: string;
-  required: boolean;
+  placeholder?: string;
+  required?: boolean;
   parameterKey: string;
-  options: {value: any; text: string}[];
+  options?: {value: any; text: string}[];
   optionsUrl?: string;
   value?: string;
   disabled?: boolean;
-  isValid: boolean;
+  isValid?: boolean;
   regex?: RegExp;
   inputs?: IInput[];
   unit?: EMeasurementUnits;
   direction?: string;
+  readonly?: boolean;
 }
 export interface IFormInput {
   input: IInput;

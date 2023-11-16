@@ -10,8 +10,6 @@ import {PrimaryTabsComponent} from "@/components/tabs/primary-tabs";
 const SettingsProfileWidget = () => {
     const {t} = useTranslation();
     const {
-        openModal,
-        setOpenModal,
     } = useEmployee();
 
     const tabs: ITab[] = [

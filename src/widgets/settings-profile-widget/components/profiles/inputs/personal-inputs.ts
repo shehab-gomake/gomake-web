@@ -55,7 +55,7 @@ const personalInputs = (state: IUserProfile)  => {
             required: true,
             parameterKey: "systemLang",
             options: languages,
-            value: state.systemLang,
+            value: state?.systemLang ? state.systemLang : '',
             isValid: !!state.systemLang,
             readonly: false
         },

@@ -2,7 +2,6 @@ import * as React from "react";
 import TextField from "@mui/material/TextField";
 import {styled} from "@mui/material/styles";
 import Autocomplete from "@mui/material/Autocomplete";
-import {ArrowDownIcon} from "@/icons/arrow-down";
 import {useState} from "react";
 import {useTranslation} from "react-i18next";
 import Stack from "@mui/material/Stack";
@@ -65,7 +64,6 @@ const GoMakeAutoComplate = ({
                                 defaultValue,
                                 disabled,
                                 multiple = false,
-                                arrowColor,
                                 onChangeTextField,
                                 PaperComponent
                             }: {
@@ -146,9 +144,9 @@ const GoMakeAutoComplate = ({
             isOptionEqualToValue={(option: any, value: any) =>
                 option?.id === value?.id
             }
-            getOptionSelected={(option: any, value: any) => {
-                return option?.id === value?.id;
-            }}
+            // getOptionSelected={(option: any, value: any) => {
+            //     return option?.id === value?.id;
+            // }}
             PaperComponent={PaperComponent}
 
         />

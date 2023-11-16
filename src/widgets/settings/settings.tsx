@@ -2,9 +2,9 @@ import {useTranslation} from "react-i18next";
 import {SideList} from "@/components/containers/side-container/side-list/side-list";
 import {list} from "@/widgets/settings/side-list";
 import {useEffect, useState} from "react";
-import {IListItem} from "@/components/containers/side-container/side-list/interface";
 import {useRouter} from "next/router";
 import {SideBarContainer} from "@/components/containers/side-container/side-bar-container";
+import {IListItem} from "@/components/containers/interface";
 
 
 const SettingsWidget = () => {
@@ -18,14 +18,21 @@ const SettingsWidget = () => {
     }
 
     useEffect(() => {
-        if (settingsRoute) {
+        if (!!settingsRoute) {
             const item = list.find(item => item.path === settingsRoute);
-                if (id && !item.editComponent) {
-                    push('/settings/' + item.path).then();
-                }
                 setSelected(!!item ? item : list[0]);
         }
+    }, [settingsRoute])
+
+    useEffect(() => {
+        if (!!settingsRoute && !!id) {
+            const item = list.find(item => item.path === settingsRoute);
+                if (!item?.editComponent) {
+                    push('/settings/' + item.path).then();
+                }
+        }
     }, [settingsRoute, id])
+
     const Side = () => {
         return <SideList list={list.map(item => ({...item, text: t(item.text)}))} selectedItem={selected?.value} onSelect={onSelectItem}
                   title={t('settings.settings')}/>
@@ -33,10 +40,10 @@ const SettingsWidget = () => {
     return (
         <SideBarContainer side={Side()} header={''} subHeader={''}>
             {
-                selected && selected.component && !id &&<selected.component/>
+                !!selected && !!selected.component && !id &&<selected.component/>
             }
             {
-                selected && selected.component && selected.editComponent && id &&<selected.editComponent/>
+                !!selected && !!selected.component && !!selected.editComponent && !!id && <selected.editComponent/>
             }
         </SideBarContainer>
     )
