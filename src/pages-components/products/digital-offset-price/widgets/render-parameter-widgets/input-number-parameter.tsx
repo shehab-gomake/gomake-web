@@ -19,7 +19,6 @@ const InputNumberParameterWidget = ({
       value={index !== -1 ? temp[index].values : ""}
       onChange={(e: any, item: any) => {
         if (subSection?.type) {
-          console.log("Gggg");
           onChangeSubProductsForPrice(
             parameter?.id,
             subSection?.id,

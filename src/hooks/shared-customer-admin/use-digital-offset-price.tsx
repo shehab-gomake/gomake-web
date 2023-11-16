@@ -18,14 +18,13 @@ import {
 } from "@/store";
 import { useMaterials } from "../use-materials";
 import { digitslPriceState } from "./store";
-
+import cloneDeep from "lodash.clonedeep";
 import { userProfileState } from "@/store/user-profile";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { compareStrings } from "@/utils/constants";
 import { EButtonTypes, EParameterTypes } from "@/enums";
 import lodashClonedeep from "lodash.clonedeep";
 import { maltiParameterState } from "@/widgets/shared-admin-customers/digital-offset-price/multi-parameter-modal/store/multi-param-atom";
-import cloneDeep from "lodash.clonedeep";
 import { InputNumberParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
 import { DropDownListParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/drop-down-list-parameter";
 import { SelectChildParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-child-parameter";
@@ -83,7 +82,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     useState<any>();
   const [selectedValueConfigForSettings, setSelectedValueConfigForSettings] =
     useState<any>();
-  console.log("generalParameters", generalParameters);
   const setSelectParameterButton = useSetRecoilState(
     selectParameterButtonState
   );
