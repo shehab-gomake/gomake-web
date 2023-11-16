@@ -22,7 +22,6 @@ const useGalleryModal = ({ onClose }) => {
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const [selectedShape, setSelectedShape] =
     useRecoilState<any>(selectedShapeState);
-  console.log("selectedShape", selectedShape);
   const [materialData, setMaterialData] =
     useRecoilState<any>(materialBtnDataState);
   const [materialType, setMaterialType] = useState<any>({});
@@ -80,7 +79,6 @@ const useGalleryModal = ({ onClose }) => {
           ...item,
           valueIds: [selectedShape?.id],
         };
-        console.log("updatedItem", updatedItem);
         temp[i] = updatedItem;
         matchFound = true;
         setGeneralParameters([...temp]);

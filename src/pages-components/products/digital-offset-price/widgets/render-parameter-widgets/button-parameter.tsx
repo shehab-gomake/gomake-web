@@ -16,7 +16,6 @@ const ButtonParameterWidget = ({
   const generalParameters = useRecoilValue<any>(generalParametersState);
   const [isSelectedShape, setIsSelectedShape] = useState<any>();
   const [selectedShape, setSelectedShape] = useState<any>();
-  console.log("generalParameters", generalParameters);
   useEffect(() => {
     const isSelectedShape = generalParameters.find((param) => {
       return (
