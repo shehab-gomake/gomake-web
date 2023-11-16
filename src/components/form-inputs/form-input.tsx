@@ -1,13 +1,14 @@
-import React, { ChangeEvent,memo, SyntheticEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, memo, SyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks";
 import { useStyle } from "@/components/form-inputs/style";
 import { IFormInput } from "@/components/form-inputs/interfaces";
-import { GoMakeAutoComplate, GomakeTextInput, SecondSwitch , PrimarySwitch } from "@/components";
+import { GoMakeAutoComplate, GomakeTextInput, SecondSwitch, PrimarySwitch } from "@/components";
 import { MuiColorInput } from 'mui-color-input';
 import { GoMakeFileFiled } from "../file-filed/file-filed";
+import { ImageUploadComponent } from "./image-input";
 
-const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
+const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
   const [options, setOptions] = useState([]);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
   const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
@@ -16,12 +17,11 @@ const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
   const { classes } = useStyle();
   const fileInputRef = React.createRef<HTMLInputElement>();
   const [color, setColor] = useState<string>(input.value);
-  const [selectedNameFile, setselectedNameFile] = useState<string>(input.value);
-  
-  
-  const handleChange = (value: string ) => {
+  const [selectedNameFile, setSelectedNameFile] = useState<string>(input.value);
+
+  const handleChange = (value: string) => {
     setColor(value);
-    changeState(input.parameterKey,  value);
+    changeState(input.parameterKey, value);
   };
 
   const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
@@ -64,20 +64,16 @@ const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
         input.options.map(({ value, text }) => ({ label: text, value }))
       );
     }
-  
-    if(input.type === "color")
-    {
-        setColor(input.value);
+    if (input.type === "color") {
+      setColor(input.value);
     }
-    if(input.type === "file")
-    {
-      setselectedNameFile(input.value);
+    if (input.type === "file" || input.type === "image") {
+      setSelectedNameFile(input.value);
     }
   }, [input]);
 
-  useEffect(()=>{
-    if(input.type === "select")
-    {
+  useEffect(() => {
+    if (input.type === "select") {
       const selectedValue = options?.find((option) => option.value === input.value);
       if (selectedValue) {
         setSelectedLabel(selectedValue.label);
@@ -85,18 +81,16 @@ const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
         setSelectedLabel("");
       }
     }
-  
-  },[selectedLabel]);
+  }, [selectedLabel]);
 
   return (
     <>
       {!input.disabled && (
-        <div  style={input.direction == "row" ? classes.inputContainerRow : classes.inputContainer} key={input.parameterKey}>
+        <div style={input.direction == "row" ? classes.inputContainerRow : classes.inputContainer} key={input.parameterKey}>
           <div style={classes.inputLbl}>
             {
-               <span>{t(input.label)}</span> 
+              <span>{t(input.label)}</span>
             }
-           
             {input.required && <span style={classes.required}>*</span>}
           </div>
           <div style={classes.input}>
@@ -113,26 +107,32 @@ const FormInput = ({ input, error, changeState, readonly  }: IFormInput) => {
                 options={options}
               />
             ) : input.type === "switch" ? (
-              <SecondSwitch  checked={!!input.value} onChange={handleSwitchCheck} />
+              <SecondSwitch checked={!!input.value} onChange={handleSwitchCheck} />
             )
-              :  input.type === 'primeSwitch' ? (
-                        <PrimarySwitch checked={!!input.value} onChange={handleSwitchCheck} />
+              : input.type === 'primeSwitch' ? (
+                <PrimarySwitch checked={!!input.value} onChange={handleSwitchCheck} />
+              )
+                : input.type === "color" ? (
+                  <div style={classes.fileInputStyle}>
+                    <MuiColorInput value={color} onChange={handleChange} format="hex" />
+                  </div>
+                )
+                  : input.type === "image" ?
+                    (
+                      <ImageUploadComponent onChange={(value) => changeState(input.parameterKey, value)}
+                        value={selectedNameFile} />
                     )
-            : input.type === "color" ? ( 
-            <div style={classes.fileInputStyle}>
-                 <MuiColorInput value={color} onChange={handleChange} format="hex" />
-            </div>
-            ) : (
-              <GomakeTextInput
-                style={{ height: "40px" }}
-                onChange={onChangeState}
-                type={input.type}
-                error={error || (input.value && input.regex && !input.regex.test(input.value))}
-                placeholder={t(input.placeholder)}
-                disabled={!!readonly}
-                value={input.value}
-              />
-            )}
+                    : (
+                      <GomakeTextInput
+                        style={{ height: "40px" }}
+                        onChange={onChangeState}
+                        type={input.type}
+                        error={error || (input.value && input.regex && !input.regex.test(input.value))}
+                        placeholder={t(input.placeholder)}
+                        disabled={!!readonly}
+                        value={input.value}
+                      />
+                    )}
           </div>
         </div>
       )}

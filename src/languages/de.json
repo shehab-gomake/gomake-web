@@ -243,10 +243,18 @@
       "save": "Speichern",
       "saveModifications": "Änderungen speichern",
       "duplicate": "Duplizieren",
-      "back": "Terug"
+      "back": "Terug",
+      "addNew": "Neue Kategorie hinzufügen",
+      "addRow": "Zeile hinzufügen",
+      "addNewRow": "Neue Zeile hinzufügen",
+      "openImage": "Bild öffnen",
+      "changeImage": "Bild ändern",
+      "selectImage": "Bild auswählen",
+      "add": "Hinzufügen"
     },
     "modals": {
-      "subTitleDeleteModal": "Sind Sie sicher, {{name}} zu löschen?"
+      "subTitleDeleteModal": "Sind Sie sicher, {{name}} zu löschen?",
+      "uploadImage": "Bild hochladen"
     },
     "sheetPaper": {
       "inputs": {

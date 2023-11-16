@@ -5,23 +5,22 @@ import { CurrencyInput } from "@/widgets/materials-widget/components/table-cell-
 import { ArrayInput } from "@/widgets/materials-widget/components/table-cell-data/array-input";
 import { NumberStringInput } from "@/widgets/materials-widget/components/table-cell-data/number-string-input";
 import { useTableCellData } from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
+import { ImageInput } from "./image-input";
 
 
 const TableCellData = ({ value, type, isEditable, parameterKey, id }: IRowData) => {
     const { updateCellData } = useTableCellData();
 
-
     const toggleIsActive = async () => {
         await updateCellData(id, parameterKey, !value)
     }
+
     return type === EDataTypeEnum.BOOLEAN ? <SecondSwitch checked={value} onChange={toggleIsActive} /> :
         type === EDataTypeEnum.CURRENCY ? <CurrencyInput value={value as string} id={id} key={parameterKey} /> :
             type === EDataTypeEnum.ARRAY_INPUT ?
                 <ArrayInput valueArray={value as string[]} type={type} isEditable={isEditable} parameterKey={parameterKey} id={id} /> :
                 type === EDataTypeEnum.IMAGE ?
-                    <a href={value?.toString()} target="_blank" rel="noopener noreferrer">
-                       { <img src={value?.toString()} style={{ maxWidth: '70px', maxHeight: '70px' }} alt="Image" />}
-                    </a> :
+                    <ImageInput parameterKey={parameterKey} id={id} value={value.toString()} /> :
                     <NumberStringInput type={type} isEditable={isEditable} parameterKey={parameterKey} id={id} value={value} />
 }
 

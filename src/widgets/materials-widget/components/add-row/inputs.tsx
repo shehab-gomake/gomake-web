@@ -18,7 +18,7 @@ const rowInputs = (state,currencies) => {
                 value: currency.value,
                 text: currency.label
             })),
-            value: state?.currency,
+            value: state?.parameterKey,
             isValid: true,
 
         } : EDataTypeEnum[header?.inputType] == "ARRAY_INPUT" ? 
@@ -30,13 +30,13 @@ const rowInputs = (state,currencies) => {
             required: false,
             parameterKey: "unitPrice",
             options: [],
-            value: state?.unitPrice,
+            value: state?.parameterKey,
             isValid: true,
         } :
         {
             name: header?.key,
             label: header?.value,
-            type: EDataTypeEnum[header?.inputType] == "BOOLEAN" ? "switch" : EDataTypeEnum[header?.inputType],
+            type: EDataTypeEnum[header?.inputType] == "BOOLEAN" ? "switch" : EDataTypeEnum[header?.inputType].toLowerCase(),
             placeholder: header?.key,
             required: false,
             parameterKey: header?.key,
