@@ -28,7 +28,7 @@ const useQuoteWidget = () => {
   const [canOrder, setCanOrder] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
-  const [selectedClient, setSelectedClient] = useState<any>({});
+  const [selectedClient, setSelectedClient] = useState<any>(null);
   const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
   const [quoteNumber, setquoteNumber] = useRecoilState<any>(QuoteNumberState);
   
