@@ -82,6 +82,7 @@ const SectionMappingWidget = ({
     setTemplate(temp);
     setGeneralParameters(newArray);
   };
+  console.log("groupedParametersArray", groupedParametersArray);
   return (
     <>
       <div key={index} style={clasess.subSectionContainer}>

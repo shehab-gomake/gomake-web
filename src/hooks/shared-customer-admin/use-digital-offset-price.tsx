@@ -19,23 +19,13 @@ import {
 import { useMaterials } from "../use-materials";
 import { digitslPriceState } from "./store";
 
-import {
-  GoMakeAutoComplate,
-  GomakePrimaryButton,
-  GomakeTextInput,
-  SecondSwitch,
-} from "@/components";
 import { userProfileState } from "@/store/user-profile";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
-import { SettingsIcon } from "@/icons/settings";
 import { compareStrings } from "@/utils/constants";
 import { EButtonTypes, EParameterTypes } from "@/enums";
 import lodashClonedeep from "lodash.clonedeep";
 import { maltiParameterState } from "@/widgets/shared-admin-customers/digital-offset-price/multi-parameter-modal/store/multi-param-atom";
 import cloneDeep from "lodash.clonedeep";
-import { selectedShapeState } from "@/widgets/shared-admin-customers/digital-offset-price/gallery-modal/gallery-modal-store";
-import { FONT_FAMILY } from "@/utils/font-family";
-import { RechooseIcon } from "@/icons";
 import { InputNumberParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
 import { DropDownListParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/drop-down-list-parameter";
 import { SelectChildParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-child-parameter";
@@ -97,8 +87,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setSelectParameterButton = useSetRecoilState(
     selectParameterButtonState
   );
-  const selectedShape = useRecoilValue<any>(selectedShapeState);
-  console.log("selectedShape", selectedShape);
   const selectBtnTypeToAction = (parameter, sectionId, subSectionId) => {
     if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
       setSelectParameterButton({ parameter, sectionId, subSectionId });
@@ -764,7 +752,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           selectBtnTypeToAction={selectBtnTypeToAction}
           subSection={subSection}
           section={section}
-          selectedShape={selectedShape}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {

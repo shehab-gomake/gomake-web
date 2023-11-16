@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-import { generalParametersState, selectParameterButtonState } from "@/store";
+import {
+  generalParametersState,
+  materialBtnDataState,
+  selectParameterButtonState,
+} from "@/store";
 import { getPrintHouseMaterialsByMaterialKey } from "@/services/hooks";
 import { materialsCategoriesState } from "@/store/material-categories";
 import { compareStrings } from "@/utils/constants";
@@ -17,7 +21,8 @@ const useGalleryModal = ({ onClose }) => {
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const [selectedShape, setSelectedShape] =
     useRecoilState<any>(selectedShapeState);
-  const [materialData, setMaterialData] = useState<any>([]);
+  const [materialData, setMaterialData] =
+    useRecoilState<any>(materialBtnDataState);
   const [materialType, setMaterialType] = useState<any>({});
   const [materialParameter, setMaterialParameter] = useState({});
 
