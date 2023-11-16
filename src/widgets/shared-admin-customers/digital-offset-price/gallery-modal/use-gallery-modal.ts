@@ -11,6 +11,7 @@ import { materialsCategoriesState } from "@/store/material-categories";
 import { compareStrings } from "@/utils/constants";
 import { useGomakeAxios } from "@/hooks";
 import { selectedShapeState } from "./gallery-modal-store";
+import lodashClonedeep from "lodash.clonedeep";
 
 const useGalleryModal = ({ onClose }) => {
   const { callApi } = useGomakeAxios();
@@ -21,10 +22,11 @@ const useGalleryModal = ({ onClose }) => {
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const [selectedShape, setSelectedShape] =
     useRecoilState<any>(selectedShapeState);
+  console.log("selectedShape", selectedShape);
   const [materialData, setMaterialData] =
     useRecoilState<any>(materialBtnDataState);
   const [materialType, setMaterialType] = useState<any>({});
-  const [materialParameter, setMaterialParameter] = useState({});
+  const [materialParameter, setMaterialParameter] = useState<any>({});
 
   useEffect(() => {
     if (selectParameterButton?.parameter?.materialPath?.length > 0) {
@@ -64,8 +66,31 @@ const useGalleryModal = ({ onClose }) => {
   };
 
   const onClickChoosParameter = () => {
-    let temp = [...generalParameters];
-    setGeneralParameters([...temp, materialParameter]);
+    let temp = lodashClonedeep(generalParameters);
+    let matchFound = false;
+    for (let i = 0; i < temp.length; i++) {
+      const item = temp[i];
+      if (
+        item.parameterId === materialParameter.parameterId &&
+        item.actionIndex === materialParameter.actionIndex &&
+        item.sectionId === materialParameter.sectionId &&
+        item.subSectionId === materialParameter.subSectionId
+      ) {
+        const updatedItem = {
+          ...item,
+          valueIds: [selectedShape?.id],
+        };
+        console.log("updatedItem", updatedItem);
+        temp[i] = updatedItem;
+        matchFound = true;
+        setGeneralParameters([...temp]);
+        break;
+      }
+    }
+    if (!matchFound) {
+      setGeneralParameters([...temp, materialParameter]);
+    }
+
     onClose();
   };
   return {

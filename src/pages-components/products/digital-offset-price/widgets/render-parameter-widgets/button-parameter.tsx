@@ -10,13 +10,13 @@ const ButtonParameterWidget = ({
   selectBtnTypeToAction,
   subSection,
   section,
-  // selectedShape,
 }) => {
   let Comp;
   const materialData = useRecoilValue<any>(materialBtnDataState);
   const generalParameters = useRecoilValue<any>(generalParametersState);
   const [isSelectedShape, setIsSelectedShape] = useState<any>();
   const [selectedShape, setSelectedShape] = useState<any>();
+  console.log("generalParameters", generalParameters);
   useEffect(() => {
     const isSelectedShape = generalParameters.find((param) => {
       return (
@@ -34,7 +34,7 @@ const ButtonParameterWidget = ({
   }, [materialData, isSelectedShape]);
 
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
-    if (isSelectedShape) {
+    if (isSelectedShape && selectedShape) {
       Comp = (
         <div style={clasess.btnSelectedStyle}>
           <img
@@ -44,7 +44,12 @@ const ButtonParameterWidget = ({
           <div style={clasess.btnSelectedTextStyle}>
             {selectedShape?.rowData?.name?.value}
           </div>
-          <div style={clasess.btnSelectedIconReChoose}>
+          <div
+            style={clasess.btnSelectedIconReChoose}
+            onClick={() =>
+              selectBtnTypeToAction(parameter, section?.id, subSection?.id)
+            }
+          >
             <RechooseIcon />
           </div>
         </div>
