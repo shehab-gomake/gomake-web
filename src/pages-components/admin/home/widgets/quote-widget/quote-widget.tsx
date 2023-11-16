@@ -74,10 +74,9 @@ const QuoteWidget = ({isAdmin = true}) => {
                         options={renderOptions() ? renderOptions() : []}
                         placeholder={t("home.admin.selectCustomer")}
                         style={clasess.selectCustomerContainer}
-                        getOptionLabel={(option: any) => `${option.name}-${option.code}`}
+                        getOptionLabel={(option: any) => option && option.name ? `${option.name}-${option.code}` : ''}
                         onChangeTextField={checkWhatRenderArray}
                         value={selectedClient}
-                        //key={ QuoteExist?.result?.clientName}
                         onChange={(e: any, value: any) => {
                             handleClicktoSelectedCustomer(userQuote?.client?.id, value).then();
                         }}
