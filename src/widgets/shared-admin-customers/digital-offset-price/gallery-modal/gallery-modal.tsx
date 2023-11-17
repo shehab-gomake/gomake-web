@@ -2,21 +2,25 @@ import { GoMakeModal, GomakePrimaryButton } from "@/components";
 
 import { useGalleryModal } from "./use-gallery-modal";
 import { useStyle } from "./style";
+import { useTranslation } from "react-i18next";
 
-const GalleryModal = ({ openModal, onClose, modalTitle }) => {
+const GalleryModal = ({ openModal, onClose }) => {
   const { clasess } = useStyle();
+  const { t } = useTranslation();
   const {
     materialData,
     selectedShape,
     createParameterForCalculation,
     onClickChoosParameter,
   } = useGalleryModal({ onClose });
-
+  console.log("materialData", materialData);
   return (
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={modalTitle}
+        modalTitle={t("products.offsetPrice.admin.chooseShape", {
+          name: `${materialData?.materialName}`,
+        })}
         onClose={onClose}
         insideStyle={clasess.insideStyle}
       >
@@ -36,7 +40,7 @@ const GalleryModal = ({ openModal, onClose, modalTitle }) => {
                   <img
                     src={item?.rowData?.image?.value}
                     alt="shape"
-                    style={{ width: "100%" }}
+                    style={{ width: 250, height: 210, padding: 5 }}
                   />
                 </div>
                 <div style={clasess.shapeNameStyle}>

@@ -1443,7 +1443,7 @@
         "dontVAT": "Enthält keine Mehrwertsteuer",
         "addOrder": "Hinzufügen",
         "makeShape": "Eigenes Muster erstellen",
-        "chooseShape": "Muster auswählen",
+        "chooseShape": "{{name}} auswählen",
         "client": "Kunde",
         "quote": "Angebot",
         "type": "Typ",

@@ -34,6 +34,7 @@ const useStyle = () => {
         backgroundColor: "white",
         gap: 12,
         cursor: "pointer",
+        "box-shadow": "0px 4px 20px 0px rgba(0, 0, 0, 0.08)",
       },
       shapeSelectedContainer: {
         display: "flex",

@@ -1444,7 +1444,7 @@
         "dontVAT": "Doesn’t include VAT",
         "addOrder": "Add",
         "makeShape": "Make your own shape",
-        "chooseShape": "Choose shape",
+        "chooseShape": "Choose {{name}}",
         "client": "Client",
         "quote": "Quote",
         "type": "Type",

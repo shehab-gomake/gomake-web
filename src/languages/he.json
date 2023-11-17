@@ -1443,7 +1443,7 @@
         "dontVAT": "לא כולל מע\"מ",
         "addOrder": "הוסף",
         "makeShape": "צור צורה משלך",
-        "chooseShape": "בחר צורה",
+        "chooseShape": "{{name}} צורה",
         "client": "לקוח",
         "quote": "ציטוט",
         "type": "סוג",

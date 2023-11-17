@@ -263,7 +263,6 @@ const PriceListPageWidget = ({ widgetType }) => {
       <GalleryModal
         openModal={GalleryModalOpen}
         onClose={onCloseGalleryModal}
-        modalTitle={t("products.offsetPrice.admin.chooseShape")}
       />
       <MultiParameterModal
         openModal={multiParameterModal}
