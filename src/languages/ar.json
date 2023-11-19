@@ -1493,6 +1493,7 @@
     "quote": {
       "title": "اقتباس",
       "deliverOn": "تسليم في",
+      "dateOfReference": "تاريخ الإشارة:",
       "upload": "تحميل",
       "businessCode": "رمز العمل",
       "businessName": "اسم العمل",

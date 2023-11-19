@@ -15,6 +15,7 @@ const useStyle = ({ marginTop, marginBottom, color }) => {
         display: "flex",
         ...FONT_FAMILY.Lexend(500, 24),
         color: color ? color : primaryColor(500),
+        lineHeight: "30px",
       },
     };
   }, [marginTop, marginBottom]);

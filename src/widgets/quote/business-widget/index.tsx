@@ -12,8 +12,6 @@ interface IProps {
   isPurchaseNumber?: boolean;
   isAgent?: boolean;
 }
-// updateAgent,
-// setSelectedAgnet,
 const BusinessWidget = ({
   isBusinessCode = true,
   isBusinessName = true,

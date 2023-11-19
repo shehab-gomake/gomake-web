@@ -215,3 +215,14 @@ input::placeholder {
   display: flex;
   align-items: center;
 }
+.customInput:hover {
+  background-color:#F2F4F7;
+  width: fit-content
+}
+.MuiOutlinedInput-root {
+  padding: 0 !important;
+}
+.MuiAutocomplete-input{
+  padding: 0 !important;
+
+}
