@@ -12,6 +12,8 @@ import { FormInput } from "@/components/form-inputs/form-input";
 import { FormInputsSectionComponent } from "@/components/form-inputs/form-inputs-section";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { useTranslation } from "react-i18next";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const CompanyProfileComponent = () => {
   const {
@@ -91,9 +93,12 @@ const CompanyProfileComponent = () => {
           justifyContent: "flex-end",
         }}
       >
-        <SecondaryButton onClick={updateProfileChanges} variant={"contained"}>
-          {t("profileSettings.update")}
-        </SecondaryButton>
+        <PermissionCheck userPermission={Permissions.EDIT_COMPANY_PROFILE} >
+            <SecondaryButton onClick={updateProfileChanges} variant={"contained"}>
+              {t("profileSettings.update")}
+            </SecondaryButton>
+        </PermissionCheck>
+      
       </div>
     </div>
   );

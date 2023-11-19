@@ -4,11 +4,13 @@ import {useTableCellData} from "@/widgets/materials-widget/components/table-cell
 import {UpdateValueInput} from "@/components/text-input/update-value-input";
 import {PrimaryButton} from "@/components/button/primary-button";
 import {useStyle} from "@/widgets/materials-widget/style";
+import {DotsLoader} from "@/components/dots-loader/dots-Loader";
 
 
 const NumberStringInput = ({value, isEditable, parameterKey, id}: IRowData) => {
     const {classes} = useStyle();
     const [isUpdate, setIsUpdate] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false)
     const [updateValue, setUpdateValue] = useState('');
     const {updateCellData} = useTableCellData();
     const onClick = () => {
@@ -23,9 +25,17 @@ const NumberStringInput = ({value, isEditable, parameterKey, id}: IRowData) => {
 
     const onBlur = () => {
         if (updateValue !== value) {
-            updateCellData(id, parameterKey, updateValue).then();
-        }
+            setIsLoading(true)
+            updateCellData(id, parameterKey, updateValue).then(
+                () => {
+                    setIsLoading(false);
+                    setIsUpdate(false);
+
+                }
+            );
+        } else {
         setIsUpdate(false);
+        }
     }
 
     const onClickOut = useCallback(() => {
@@ -33,7 +43,7 @@ const NumberStringInput = ({value, isEditable, parameterKey, id}: IRowData) => {
     }, [updateValue])
 
     return (
-        isUpdate ? <UpdateValueInput clickedOut={onClickOut()} onInputChange={onInputChange} value={updateValue as string} onUpdate={onBlur}
+        isUpdate ? isLoading ? <DotsLoader/> : <UpdateValueInput clickedOut={onClickOut()} onInputChange={onInputChange} value={updateValue as string} onUpdate={onBlur}
                                   onCancel={() => setIsUpdate(false)}/> :
             isEditable ? <PrimaryButton sx={classes.clickableData} onClick={onClick} variant={'text'}>{value}</PrimaryButton> :  <span>{value}</span>
     )

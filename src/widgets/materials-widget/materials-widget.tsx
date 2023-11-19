@@ -1,5 +1,5 @@
-import {SideBarContainer} from "@/components/containers/side-bar-container";
-import {SideList} from "@/widgets/machines/components/side-list/side-list";
+import {SideBarContainer} from "@/components/containers/side-container/side-bar-container";
+import {SideList} from "@/components/containers/side-container/side-list/side-list";
 import {PrimaryTable} from "@/components/tables/primary-table";
 import {useMaterials} from "@/widgets/materials-widget/use-materials";
 import React, {useEffect, useRef} from "react";
@@ -12,15 +12,17 @@ import {openAddSupplierModalState, selectedSupplierIdState} from "@/widgets/mate
 import {AddSupplierModal} from "@/widgets/materials-widget/components/add-supplier/add-supplier-modal";
 import {PrimaryButton} from "@/components/button/primary-button";
 import {SecondaryButton} from "@/components/button/secondary-button";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 
 const MaterialsWidget = () => {
     const {t} = useTranslation();
     const {classes} = useStyle();
+    const dir: 'rtl' | 'ltr' = t('direction');
     const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
     const supplierId = useRecoilValue(selectedSupplierIdState)
     const elementRef = useRef(null);
-
     const {
         materialCategory,
         materialType,
@@ -34,12 +36,17 @@ const MaterialsWidget = () => {
         getMaterialTableHeaders,
         getPrintHouseMaterialCategorySuppliers,
         materialCategoryData,
-        replace,
-        materialCategories,
         downloadExcelFile,
-        uploadExcelFile
+        uploadExcelFile,
+        materialCategories,
+        replace
     } = useMaterials();
-    const Side = () => <SideList list={materialsCategoriesList()} selectedItem={materialCategory?.toString()}
+
+    const Side = () => 
+    <Stack  gap={'10px'} direction={'column'} >
+    <SecondaryButton variant={'text'} href={'/materials'}  startIcon={ dir === 'ltr' ?  <ArrowBackIcon/> : <ArrowForwardIcon/> } style={{gap:5}} >{t("materials.buttons.back")}
+      </SecondaryButton>
+    <SideList list={materialsCategoriesList()} selectedItem={materialCategory?.toString()}
                                  onSelect={onSelectCategory}
                                  title={'choose category'}>
         <Stack gap={'10px'} direction={'row'} justifyContent={'space-between'}>
@@ -48,18 +55,18 @@ const MaterialsWidget = () => {
             <SecondaryButton onClick={() => elementRef && elementRef.current.click()} variant={'contained'}>Upload</SecondaryButton>
         </Stack>
     </SideList>
+    </Stack>
 
-    // useEffect(() => {
-    //     if (materialType && materialCategories.length > 0) {
-    //         if (!materialCategory || !materialCategories.some(category => category.categoryKey === materialCategory)) {
-    //             replace({
-    //                 pathname: materialType.toString(),
-    //                 query: {materialCategory: materialCategories[0].categoryKey}
-    //             })
-    //         }
-    //     }
-    // }, [materialCategories, materialCategory, materialType])
-
+    useEffect(() => {
+        if (materialType && materialCategories.length > 0) {
+            if (!materialCategory || !materialCategories.some(category => category.categoryKey === materialCategory)) {
+                replace({
+                    pathname: materialType.toString(),
+                    query: { materialCategory: materialCategories[0].categoryKey }
+                })
+            }
+        }
+    }, [materialCategories])
 
     useEffect(() => {
         getCurrenciesApi().then()
@@ -73,22 +80,21 @@ const MaterialsWidget = () => {
     useEffect(() => {
         if (!!materialType && !!materialCategory) {
             if (supplierId) {
-                getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(), supplierId).then()
+                getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(), supplierId).then();
             } else {
                 getPrintHouseMaterialCategorySuppliers(materialType?.toString(), materialCategory?.toString()).then();
             }
         }
-    }, [materialType, materialCategory, supplierId])
+    }, [materialType, materialCategory ,supplierId])
+
 
     return (
         <>
-            <SideBarContainer side={Side()} header={materialType?.toString()} subHeader={''}>
+            <SideBarContainer side={Side()} header={materialType?.toString()} subHeader={''} >
                 {materialCategory && <Stack gap={2}>
                     <Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-start'}>
-
                         <h4 style={classes.subHeader}>{materialCategory?.toString()}</h4>
                         <FiltersActionsBar/>
-
                     </Stack>
                     {
                         materialCategoryData.length > 0 ?

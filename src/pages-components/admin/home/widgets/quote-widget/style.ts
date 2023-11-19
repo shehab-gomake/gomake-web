@@ -17,6 +17,7 @@ const useStyle = () => {
         paddingLeft: 20,
         paddingRight: 20,
         backgroundColor: "#FFFFFF",
+        margin: '0 4px',
         borderRadius: 8,
         // boxShadow: "0px 4px 15px 0px rgba(0, 0, 0, 0.08)",
         boxShadow:

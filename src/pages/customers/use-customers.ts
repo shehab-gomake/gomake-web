@@ -8,6 +8,9 @@ import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-
 import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/api-service/customers/customers-api";
 import { DEFAULT_VALUES } from "./enums";
 import { useSnackBar } from "@/hooks";
+import { permissionsState } from "@/store/permissions";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { usePermission } from "@/hooks/use-permission";
 export interface IStatus {
   label: string;
   value: string;
@@ -20,6 +23,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
   const [pagesCount, setPagesCount] = useState(0);
   const pageSize = DEFAULT_VALUES.PageSize;
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+  const { CheckPermission } = usePermission();  
 
   const tableHeaders = [
     clientType == "C" ? t("customers.customerCode") : t("suppliers.supplierCode"),
@@ -27,7 +31,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
     t("customers.email"),
     t("customers.phone"),
     t("customers.status"),
-    t("customers.hashtag"),
+    CheckPermission(Permissions.EDIT_CLIENT) ? t("customers.hashtag") : null,
   ]
     ;
 

@@ -1,4 +1,3 @@
-import {ISideListProps} from "@/widgets/machines/components/side-list/interface";
 import {
     Box,
     Divider,
@@ -7,10 +6,9 @@ import {
     ListItemText,
     MenuItem,
 } from "@mui/material";
-import {useStyle} from "@/widgets/machines/components/side-list/style";
 import {styled} from "@mui/material/styles";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {SearchInput} from "@/widgets/machines/components/side-list/search-input";
+import {SearchInput} from "@/components/containers/search-input";
 import {useCallback, useState} from "react";
 import {usePrintHouseAddMachine} from "@/widgets/machines/hooks/use-print-house-add-machine";
 import {DeleteIcon} from "@/components/icons/delete-icon";
@@ -19,6 +17,8 @@ import {useAdminAddMachine} from "@/widgets/machines/hooks/use-admin-add-machine
 import {OptionsButton} from "@/components/options-button/options-button";
 import {useTranslation} from "react-i18next";
 import Stack from "@mui/material/Stack";
+import {ISideListProps} from "@/components/containers/interface";
+import {useStyle} from "@/components/containers/machines-container/side-list/style";
 
 const ListButton = styled(ListItemButton)(() => {
     const {primaryColor} = useGomakeTheme();
@@ -34,7 +34,7 @@ const ListButton = styled(ListItemButton)(() => {
         },
     };
 });
-const SideList = ({
+const MachinesSideList = ({
                       list,
                       selectedItem,
                       onSelect,
@@ -83,8 +83,7 @@ const SideList = ({
         }
     }, [filter, list]);
     return (
-        <>
-            <Box style={classes.container}>
+            <Box style={{...classes.container, overflowY: 'hidden'}}>
                 <h1 style={classes.header}>{title}</h1>
                 <SearchInput
                     name={'side-list-search'}
@@ -95,7 +94,6 @@ const SideList = ({
                 <List
                     style={classes.listContainer}
                     component="nav"
-                    aria-label="main mailbox folders"
                 >
                     {filteredList().map((item) => (
                         <ListButton
@@ -131,8 +129,7 @@ const SideList = ({
                 </List>
                 {!!children && <div style={classes.buttonWrapper}>{children}</div>}
             </Box>
-        </>
     );
 };
 
-export {SideList};
+export {MachinesSideList};

@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next";
 import { QUOTE_STATUSES } from "../enums";
 import { PDFIcon } from "./icons/pdf";
 import { OptionsButton } from "@/components/options-button/options-button";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const MoreMenuWidget = ({ quote, onClcikOpenModal }: any) => {
   const { clasess } = useStyle();
@@ -16,8 +18,11 @@ const MoreMenuWidget = ({ quote, onClcikOpenModal }: any) => {
     <OptionsButton>
       <MenuItem>
         <div style={clasess.menuRowStyle}>
-          <EditingIcon />
-          <div style={clasess.rowTextStyle}>{t("sales.quote.loggers")}</div>
+          <PermissionCheck userPermission={Permissions.SHOW_LOGGERS_QUOTE}>
+              <EditingIcon />
+              <div style={clasess.rowTextStyle}>{t("sales.quote.loggers")}</div>
+          </PermissionCheck>
+         
         </div>
       </MenuItem>
       <MenuItem>

@@ -149,6 +149,16 @@ input::placeholder {
 }
 
 
+.dots-loader > div {
+  animation: dots-loader 0.6s infinite alternate;
+}
+
+@keyframes dots-loader {
+  to {
+    opacity: 0.1;
+    transform: translateY(2px);
+  }
+}
 /* Editor styling */
 
 .ql-toolbar.ql-snow {

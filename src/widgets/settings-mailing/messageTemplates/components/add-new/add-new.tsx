@@ -4,17 +4,17 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { Stack } from "@mui/material";
 import { groupNameInput } from "./inputs";
 import { useRecoilState } from "recoil";
-import { SMSTemplateGroup } from "../../interfaces/interface";
-import { templateGroupState } from "@/widgets/settings-mailing/states/state";
+import { templateGroupStateNew } from "@/widgets/settings-mailing/states/state";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import { SMSTemplateGroup } from "../../interfaces/interface"; 
 
 interface IProps {
-    onClickAdd: (value : any) => void;
+    onClickAdd: (value : SMSTemplateGroup) => void;
 }
 
 const AddNewSMSTemplateGroup = ({ onClickAdd }: IProps) => {
     const { t } = useTranslation();
-    const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupState);
+    const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupStateNew);
     const onChangeInputs = (key, value) => {
         setTemplateGroup({ ...templateGroup, [key]: value })
     }

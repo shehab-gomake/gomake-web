@@ -11,9 +11,15 @@ import {ITab} from "@/components/tabs/interface";
 import {EActions} from "@/widgets/settings-users/Permissions/enum/actions";
 import {AddUpdateRole} from "@/widgets/settings-users/Permissions/components/add-update-role";
 import {useAddRole} from "@/widgets/settings-users/use-add-role";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { useRecoilState } from "recoil";
+import { permissionsState } from "@/store/permissions";
+import { usePermission } from "@/hooks/use-permission";
 
 const SettingsUsersWidget = () => {
     const {t} = useTranslation();
+    const { CheckPermission } = usePermission();
     const {
         handleAddEmployeeClick,
         openModal,
@@ -24,16 +30,22 @@ const SettingsUsersWidget = () => {
     } = useEmployee();
     const {addNewRole, setOpenAddRoleModal, openAddRoleModal, inputValue, setInputValue} = useAddRole();
     const tabs: ITab[] = [
-        {title: t("usersSettings.users"), component: <UsersSettings/>},
-        {title: t("usersSettings.permission"), component: <PermissionsWidget/>}
+        CheckPermission(Permissions.SHOW_USERS) &&  {title:  t("usersSettings.users"), component: <UsersSettings/> },
+        CheckPermission(Permissions.SHOW_PERMISSION_MANAGMENT) &&  {title:  t("usersSettings.permission"), component:  <PermissionsWidget/>}
+        
     ];
     return (
         <div>
             <PrimaryTabsComponent tabs={tabs} >
                 <div style={{display: "flex", gap: 10}}>
-                    <AddButton  label={t("usersSettings.addEmployee")} onClick={handleAddEmployeeClick}/>
-                    <AddButton label={t("permissionsSettings.addRole")}
+                    <PermissionCheck userPermission={Permissions.ADD_EMPLOYEE} >
+                           <AddButton label={t("usersSettings.addEmployee")} onClick={handleAddEmployeeClick}/>
+                    </PermissionCheck>
+                    <PermissionCheck userPermission={Permissions.ADD_ROLE} >
+                        <AddButton label={t("permissionsSettings.addRole")}
                                onClick={() => setOpenAddRoleModal(true)}/>
+                    </PermissionCheck>
+                  
                 </div>
 
 

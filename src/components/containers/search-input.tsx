@@ -7,7 +7,7 @@ const SearchInput = styled(TextField)(() => {
     return {
         width: "100%",
         input: {
-            backgroundColor: "#FFFFFF",
+            backgroundColor: "#F8F8F8",
             boxSizing: "border-box",
             borderRadius: 0,
             height: 40,

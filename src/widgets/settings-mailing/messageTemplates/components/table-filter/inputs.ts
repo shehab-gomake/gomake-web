@@ -1,9 +1,8 @@
 import { allSMSTemplateGroupsState } from "@/widgets/settings-mailing/states/state";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
 const filterInput = (state: any) => {
-    const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(allSMSTemplateGroupsState);
-    
+    const allSMSTemplateGroups = useRecoilValue<any>(allSMSTemplateGroupsState);
     return [
         {
             name: "SMSgroup",

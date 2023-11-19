@@ -20,7 +20,11 @@ const useStyle = () => {
       navigationButtons: {
         display: 'flex',
         justifyContent: 'flex-end' as 'flex-end',
-        gap: 10
+        gap: 10,
+        position: 'sticky' as 'sticky',
+        bottom: 0,
+        width: '100%',
+        marginTop: '5px'
       },
       actionButton: {
         height: 40,

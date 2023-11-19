@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const flexoPrinting = (state: Record<string, any>) => {
     return [
         {
@@ -51,6 +53,7 @@ const flexoPrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.standard",
                     required: true,
                     parameterKey: "standard",
+                    unit: EMeasurementUnits.INCH,
                     options: [],
                     value: state.attributes?.coreDiameter?.standard ? state.attributes?.coreDiameter?.standard : ''
                 },
@@ -61,6 +64,7 @@ const flexoPrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.option",
                     required: true,
                     parameterKey: "option",
+                    unit: EMeasurementUnits.INCH,
                     options: [],
                     value: state.attributes?.coreDiameter?.option ? state.attributes?.coreDiameter?.option : ''
 
