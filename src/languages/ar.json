@@ -245,7 +245,8 @@
       "save": "حفظ",
       "saveModifications": "حفظ التعديلات",
       "duplicate": "نسخ",
-      "back": "رجوع"
+      "back": "رجوع",
+      "addNew": "إضافة جديدة"
     },
     "modals": {
       "subTitleDeleteModal": "هل أنت متأكد من حذف {{name}}"
@@ -1445,7 +1446,7 @@
         "dontVAT": "لا تشمل ضريبة القيمة المضافة",
         "addOrder": "إضافة الطلب",
         "makeShape": "قم بإنشاء شكلك الخاص",
-        "chooseShape": "اختر الشكل",
+        "chooseShape": "اختر {{name}}",
         "client": "العميل",
         "quote": "اقتباس",
         "type": "النوع",
