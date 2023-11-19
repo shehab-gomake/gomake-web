@@ -7,10 +7,12 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
       insideStyle: {
-        width: "80%",
+        width: 1150,
         borderRadius: 5,
-        height: "90%",
-        backgroundColor: "#f7f7f7",
+        height: "auto",
+        maxHeight: 900,
+        backgroundColor: "#FFFFFF",
+        padding: 45,
       },
       mainContainer: {
         display: "flex",
@@ -20,6 +22,7 @@ const useStyle = () => {
         flexWrap: "wrap" as "wrap",
         width: "100%",
         gap: 16,
+        marginTop: 24,
       },
       shapeContainer: {
         display: "flex",
@@ -31,6 +34,7 @@ const useStyle = () => {
         backgroundColor: "white",
         gap: 12,
         cursor: "pointer",
+        "box-shadow": "0px 4px 20px 0px rgba(0, 0, 0, 0.08)",
       },
       shapeSelectedContainer: {
         display: "flex",
@@ -61,7 +65,7 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         gap: 16,
-        marginBottom: 20,
+        marginTop: 8,
       },
       customizeBtnStyle: {
         width: "15%",

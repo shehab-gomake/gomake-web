@@ -28,5 +28,6 @@ export const materialsCategoriesState = atom({
     { id: EMaterialsId.TUBES, name: "Tubes" },
     { id: EMaterialsId.VARNISHS, name: "Varnishs" },
     { id: EMaterialsId.WIDE_FORMAT_MATERIAL, name: "WideFormatMaterial" },
+    { id: EMaterialsId.DIE_STAMP, name: "DieStamp" },
   ],
 });

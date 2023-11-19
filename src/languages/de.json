@@ -243,7 +243,8 @@
       "save": "Speichern",
       "saveModifications": "Änderungen speichern",
       "duplicate": "Duplizieren",
-      "back": "Terug"
+      "back": "Terug",
+      "orderList": "Bestellliste"
     },
     "modals": {
       "subTitleDeleteModal": "Sind Sie sicher, {{name}} zu löschen?"
@@ -1443,7 +1444,7 @@
         "dontVAT": "Enthält keine Mehrwertsteuer",
         "addOrder": "Hinzufügen",
         "makeShape": "Eigenes Muster erstellen",
-        "chooseShape": "Muster auswählen",
+        "chooseShape": "{{name}} auswählen",
         "client": "Kunde",
         "quote": "Angebot",
         "type": "Typ",

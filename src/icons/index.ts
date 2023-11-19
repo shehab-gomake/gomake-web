@@ -26,5 +26,7 @@ export * from "./remove-icon";
 export * from "./admin-panel";
 export * from "./setting";
 export * from "./re-order-icon";
-export * from "./left-arrow-icon"
-export * from "./constant-tabs"
+export * from "./left-arrow-icon";
+export * from "./constant-tabs";
+export * from "./add-new-icon";
+export * from "./rechoose-icon";

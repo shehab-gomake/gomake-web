@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { isLoadgingState } from "@/store";
+import { generalParametersState, isLoadgingState } from "@/store";
 import { Checkbox, CircularProgress, Slider } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,8 @@ import { useRecoilValue } from "recoil";
 import { EWidgetProductType } from "../enums";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { exampleTypeState } from "@/store/example-type";
+
 const RightSideWidget = ({
   clasess,
   clientDefaultValue,
@@ -26,17 +28,18 @@ const RightSideWidget = ({
   setGraphicNotes,
   printingNotes,
   graphicNotes,
-  generalParameters,
   workFlowSelected,
   widgetType,
   setPriceRecovery,
   priceRecovery,
+  setSamlleType,
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
-
+  const generalParameters = useRecoilValue<any>(generalParametersState);
   const quantity = generalParameters?.find(
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
+  const exampleTypeValues = useRecoilValue(exampleTypeState);
   const [changePrice, setChangePrice] = useState<number>(0);
   const handleChange = (event: Event, newValue: number | number[]) => {
     setPriceRecovery(false);
@@ -217,9 +220,11 @@ const RightSideWidget = ({
               </div>
               <div style={clasess.autoCompleteContainer}>
                 <GoMakeAutoComplate
-                  options={["q", "w"]}
+                  options={exampleTypeValues}
+                  getOptionLabel={(option: any) => option.text}
                   placeholder={t("products.offsetPrice.admin.sampleType")}
                   style={clasess.dropDownListStyle}
+                  onChange={(e, value) => setSamlleType(value)}
                 />
               </div>
               <div style={clasess.multiLineContainer}>
@@ -241,9 +246,11 @@ const RightSideWidget = ({
               </div>
               <div style={clasess.autoCompleteContainer}>
                 <GoMakeAutoComplate
-                  options={["q", "w"]}
+                  options={exampleTypeValues}
+                  getOptionLabel={(option: any) => option.text}
                   placeholder={t("products.offsetPrice.admin.sampleType")}
                   style={clasess.dropDownListStyle}
+                  onChange={(e, value) => setSamlleType(value)}
                 />
               </div>
               <div style={clasess.multiLineContainer}>

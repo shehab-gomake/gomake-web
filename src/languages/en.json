@@ -246,7 +246,8 @@
       "save": "Save",
       "saveModifications": "Save modifications",
       "duplicate": "Duplicate",
-      "back":"back"
+      "back":"back",
+      "addNew":"Add New"
     },
     "modals": {
       "subTitleDeleteModal": "Are you sure to delete {{name}}"
@@ -1451,7 +1452,7 @@
         "dontVAT": "Doesn’t include VAT",
         "addOrder": "Add",
         "makeShape": "Make your own shape",
-        "chooseShape": "Choose shape",
+        "chooseShape": "Choose {{name}}",
         "client": "Client",
         "quote": "Quote",
         "type": "Type",
