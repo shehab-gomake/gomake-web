@@ -1,11 +1,14 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { isLoadgingState } from "@/store";
+import { generalParametersState, isLoadgingState } from "@/store";
 import { Checkbox, CircularProgress, Slider } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { EWidgetProductType } from "../enums";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { exampleTypeState } from "@/store/example-type";
 
 const RightSideWidget = ({
   clasess,
@@ -25,17 +28,18 @@ const RightSideWidget = ({
   setGraphicNotes,
   printingNotes,
   graphicNotes,
-  generalParameters,
   workFlowSelected,
   widgetType,
   setPriceRecovery,
   priceRecovery,
+  setSamlleType,
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
-
+  const generalParameters = useRecoilValue<any>(generalParametersState);
   const quantity = generalParameters?.find(
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
+  const exampleTypeValues = useRecoilValue(exampleTypeState);
   const [changePrice, setChangePrice] = useState<number>(0);
   const handleChange = (event: Event, newValue: number | number[]) => {
     setPriceRecovery(false);
@@ -86,9 +90,9 @@ const RightSideWidget = ({
             {t("products.offsetPrice.admin.flyerPoster")}
           </div>
           <div style={clasess.flyerText}>
-            {isNaN(defaultPrice / quantity?.value)
+            {isNaN(defaultPrice / quantity?.values[0])
               ? 0
-              : (defaultPrice / quantity?.value).toFixed(2)}{" "}
+              : (defaultPrice / quantity?.values[0]).toFixed(2)}{" "}
             USD
           </div>
         </div>
@@ -117,22 +121,25 @@ const RightSideWidget = ({
         </div>
         <div style={clasess.orderContainer}>
           {t("products.offsetPrice.admin.orderToral", {
-            pieceNum: quantity?.value,
-            price: isNaN(defaultPrice / quantity?.value)
+            pieceNum: quantity?.values[0],
+            price: isNaN(defaultPrice / quantity?.values[0])
               ? 0
-              : (defaultPrice / quantity?.value).toFixed(2),
+              : (defaultPrice / quantity?.values[0]).toFixed(2),
           })}
         </div>
         <div style={clasess.progress}>
-          <Slider
-            defaultValue={defaultPrice}
-            value={defaultPrice}
-            aria-label="Default"
-            style={{ width: "93%", marginLeft: 10 }}
-            min={10}
-            max={100}
-            onChange={handleChange}
-          />
+          <PermissionCheck userPermission={Permissions.EDIT_PRICE_QUOTE}>
+            <Slider
+                defaultValue={defaultPrice}
+                value={defaultPrice}
+                aria-label="Default"
+                style={{ width: "93%", marginLeft: 10 }}
+                min={10}
+                max={100}
+                onChange={handleChange}
+            />
+          </PermissionCheck>
+          
         </div>
         <div style={clasess.labelBrogressContainer}>
           <div style={clasess.labelStyle}>10.00</div>
@@ -174,7 +181,7 @@ const RightSideWidget = ({
                     widgetType === EWidgetProductType.DUPLICATE
                   ) {
                     setDefaultPrice(
-                      template?.quoteItem?.unitPrice * quantity?.value
+                      template?.quoteItem?.unitPrice * quantity?.values[0]
                     );
                   } else {
                     setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2));
@@ -213,9 +220,11 @@ const RightSideWidget = ({
               </div>
               <div style={clasess.autoCompleteContainer}>
                 <GoMakeAutoComplate
-                  options={["q", "w"]}
+                  options={exampleTypeValues}
+                  getOptionLabel={(option: any) => option.text}
                   placeholder={t("products.offsetPrice.admin.sampleType")}
                   style={clasess.dropDownListStyle}
+                  onChange={(e, value) => setSamlleType(value)}
                 />
               </div>
               <div style={clasess.multiLineContainer}>
@@ -237,9 +246,11 @@ const RightSideWidget = ({
               </div>
               <div style={clasess.autoCompleteContainer}>
                 <GoMakeAutoComplate
-                  options={["q", "w"]}
+                  options={exampleTypeValues}
+                  getOptionLabel={(option: any) => option.text}
                   placeholder={t("products.offsetPrice.admin.sampleType")}
                   style={clasess.dropDownListStyle}
+                  onChange={(e, value) => setSamlleType(value)}
                 />
               </div>
               <div style={clasess.multiLineContainer}>

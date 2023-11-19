@@ -43,12 +43,13 @@ const MaterialsWidget = () => {
         getMaterialTableHeaders,
         getPrintHouseMaterialCategorySuppliers,
         materialCategoryData,
-        replace,
-        materialCategories,
         downloadExcelFile,
         uploadExcelFile,
         tableHeadersNew,
-        tableRowsNew
+        tableRowsNew,
+        uploadExcelFile,
+        materialCategories,
+        replace
     } = useMaterials();
 
     const tableRowData = (materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ? tableRowsNew : tableRows;
@@ -60,6 +61,14 @@ const MaterialsWidget = () => {
             </SecondaryButton>
             <SideList list={materialsCategoriesList()} selectedItem={materialCategory?.toString()} onSelect={onSelectCategory} title={'choose category'} isHaveDeleteIcon={true} >
                 {/* <Stack gap={'10px'} direction={'row'} justifyContent={'space-between'}>
+    const Side = () => 
+    <Stack  gap={'10px'} direction={'column'} >
+    <SecondaryButton variant={'text'} href={'/materials'}  startIcon={ dir === 'ltr' ?  <ArrowBackIcon/> : <ArrowForwardIcon/> } style={{gap:5}} >{t("materials.buttons.back")}
+      </SecondaryButton>
+    <SideList list={materialsCategoriesList()} selectedItem={materialCategory?.toString()}
+                                 onSelect={onSelectCategory}
+                                 title={'choose category'}>
+        <Stack gap={'10px'} direction={'row'} justifyContent={'space-between'}>
             <PrimaryButton onClick={downloadExcelFile} variant={'contained'}>Download</PrimaryButton>
             <input ref={elementRef} onChange={uploadExcelFile} type="file" accept=".xlsx"  hidden={true} />
             <SecondaryButton onClick={() => elementRef && elementRef.current.click()} variant={'contained'}>Upload</SecondaryButton>

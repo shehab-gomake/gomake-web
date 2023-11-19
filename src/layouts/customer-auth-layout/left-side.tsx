@@ -7,14 +7,19 @@ import { useRecoilState } from "recoil";
 import { navStatusState } from "@/store/nav-status";
 import { BackNavIcon } from "@/icons/back-nav";
 import { adaptRight } from "@/utils/adapter";
-import { hoverStatusState } from "@/store";
+import { hoverStatusState, permissionsState } from "@/store";
 import LockIcon from "@mui/icons-material/Lock";
+import { usePermission } from "@/hooks/use-permission";
 const LeftSideLayout = () => {
   const { t } = useTranslation();
+
   const { tabs1, tabs2, tabs3, profile } = useAuthLayoutHook();
+ 
+
+
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
-
+  const { CheckPermission } = usePermission();
   const { clasess } = useStyle({ navStatus });
   return (
     <div
@@ -71,7 +76,7 @@ const LeftSideLayout = () => {
               </div>
             );
           } else {
-            return <Tab key={tab.key} tab={tab} />;
+               return <Tab key={tab.key} tab={tab} />;
           }
         })}
       </div>
@@ -83,17 +88,29 @@ const LeftSideLayout = () => {
           alignSelf: "flex-start",
         }}
       >
-        {[...tabs2, ...tabs3].map((tab) => {
-          if (tab.isLine) {
-            return (
-              <div style={clasess.lineContainer}>
-                <div key={tab.key} style={clasess.line} />
-              </div>
-            );
-          } else {
-            return <Tab key={tab.key} tab={tab} />;
-          }
-        })}
+  
+        {tabs2.every(tab => tab.Permission === false) ? (
+      
+            <div style={clasess.lineContainer}>
+              <div style={clasess.line} />
+            </div>
+          ) : (
+           
+            [...tabs2, ...tabs3].map(tab => {
+    
+              if (tab.isLine) {
+                return (
+                  <div style={clasess.lineContainer} key={tab.key}>
+                    <div style={clasess.line} />
+                  </div>
+                );
+              } else if (tab.Permission !== null && CheckPermission(tab.Permission) === true) {
+                return <Tab key={tab.key} tab={tab} />;
+              }
+             
+            })
+          )}
+       
       </div>
       <div style={clasess.poweredContainer}>
         <div style={clasess.poweredByLbl}>{t("login.poweredBy")}</div>

@@ -11,7 +11,7 @@ import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
 import { RightSideWidget } from "./widgets/right-side-widget";
 import {
-  ChooseShapeModal,
+  GalleryModal,
   MakeShapeModal,
   MultiParameterModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
@@ -25,7 +25,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     handleNextClick,
     handlePreviousClick,
     onOpeneMakeShape,
-    onCloseChooseShape,
+    onCloseGalleryModal,
     onCloseMakeShape,
     setDefaultPrice,
     handleChange,
@@ -39,9 +39,10 @@ const PriceListPageWidget = ({ widgetType }) => {
     setPrintingNotes,
     setGraphicNotes,
     setPriceRecovery,
-    onOpeneMultiParameterModal,
     onCloseMultiParameterModal,
-    setGeneralParameters,
+    setSamlleType,
+    duplicateParameters,
+    setTemplate,
     multiParameterModal,
     settingParameters,
     priceRecovery,
@@ -50,7 +51,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     urgentOrder,
     defaultPrice,
     makeShapeOpen,
-    chooseShapeOpen,
+    GalleryModalOpen,
     activeIndex,
     template,
     tabs,
@@ -62,7 +63,6 @@ const PriceListPageWidget = ({ widgetType }) => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
-    generalParameters,
     workFlowSelected,
     relatedParameters,
   } = useDigitalOffsetPrice({ clasess, widgetType });
@@ -122,6 +122,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                               if (subSection?.isAccordion) {
                                 return (
                                   <AccordionMappingWidget
+                                    key={index}
                                     clasess={clasess}
                                     expanded={expanded}
                                     index={index}
@@ -131,11 +132,15 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     _renderParameterType={_renderParameterType}
                                     _getParameter={_getParameter}
                                     relatedParameters={relatedParameters}
+                                    duplicateParameters={duplicateParameters}
+                                    template={template}
+                                    setTemplate={setTemplate}
                                   />
                                 );
                               } else {
                                 return (
                                   <SectionMappingWidget
+                                    key={index}
                                     clasess={clasess}
                                     index={index}
                                     subSection={subSection}
@@ -143,7 +148,10 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     _renderParameterType={_renderParameterType}
                                     _getParameter={_getParameter}
                                     relatedParameters={relatedParameters}
-                                    generalParameters={generalParameters}
+                                    isAccordion={false}
+                                    duplicateParameters={duplicateParameters}
+                                    template={template}
+                                    setTemplate={setTemplate}
                                   />
                                 );
                               }
@@ -176,11 +184,11 @@ const PriceListPageWidget = ({ widgetType }) => {
               setGraphicNotes={setGraphicNotes}
               graphicNotes={graphicNotes}
               printingNotes={printingNotes}
-              generalParameters={generalParameters}
               workFlowSelected={workFlowSelected}
               widgetType={widgetType}
               setPriceRecovery={setPriceRecovery}
               priceRecovery={priceRecovery}
+              setSamlleType={setSamlleType}
             />
           </div>
 
@@ -252,10 +260,9 @@ const PriceListPageWidget = ({ widgetType }) => {
         onClose={onCloseMakeShape}
         modalTitle={t("products.offsetPrice.admin.makeShape")}
       />
-      <ChooseShapeModal
-        openModal={chooseShapeOpen}
-        onClose={onCloseChooseShape}
-        modalTitle={t("products.offsetPrice.admin.chooseShape")}
+      <GalleryModal
+        openModal={GalleryModalOpen}
+        onClose={onCloseGalleryModal}
       />
       <MultiParameterModal
         openModal={multiParameterModal}
@@ -263,8 +270,6 @@ const PriceListPageWidget = ({ widgetType }) => {
         modalTitle={""}
         settingParameters={settingParameters}
         _renderParameterType={_renderParameterType}
-        generalParameters={generalParameters}
-        setGeneralParameters={setGeneralParameters}
       />
     </div>
   );

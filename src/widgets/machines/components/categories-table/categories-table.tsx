@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { machineCategoriesState } from "@/store/machine-categories";
 import { EditIcon } from "@/components/icons/edit-icon";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -11,12 +11,17 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 import {useTranslation} from "react-i18next";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import {Permissions} from "@/components/CheckPermission/enum";
+import { permissionsState } from "@/store/permissions";
+import { usePermission } from "@/hooks/use-permission";
 
 const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
   const [filter, setFilter] = useState<string>("");
   const {t} = useTranslation();
   const { primaryColor } = useGomakeTheme();
-  const categoriesList = useRecoilValue(machineCategoriesState);
+  const categoriesList = useRecoilValue(machineCategoriesState); 
+  const { CheckPermission } = usePermission();
   const { classes } = useStyle();
   const categories = useCallback(() => {
     if (!!filter) {
@@ -29,10 +34,11 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
 
   const tableHeaders = [
     t('machineAttributes.category'),
-    t('machineAttributes.editMachine'),
+    CheckPermission(Permissions.EDIT_MACHINE) ? t('machineAttributes.editMachine') : null,
   ];
   const tableRows = categories()?.map((category) => [
     <>{t(category.name)}</>,
+    <PermissionCheck userPermission={Permissions.EDIT_MACHINE} >
     <PrimaryButton
       startIcon={<EditIcon color={primaryColor(500)} width={20} height={20} />}
       href={
@@ -43,7 +49,8 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
       variant={"text"}
     >
       {t('machineAttributes.edit')}
-    </PrimaryButton>,
+    </PrimaryButton>
+    </PermissionCheck>,
   ]);
 
   return (

@@ -1,4 +1,3 @@
-import { ISideListProps } from "@/widgets/machines/components/side-list/interface";
 import {
   Box,
   Divider,
@@ -9,10 +8,10 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import { useStyle } from "@/widgets/machines/components/side-list/style";
+import { useStyle } from "@/components/containers/side-container/side-list/style";
 import { styled } from "@mui/material/styles";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { SearchInput } from "@/widgets/machines/components/side-list/search-input";
+import { SearchInput } from "@/components/containers/search-input";
 import { useCallback, useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { usePrintHouseAddMachine } from "@/widgets/machines/hooks/use-print-house-add-machine";

@@ -1,8 +1,7 @@
-import { IListItem } from "@/widgets/machines/components/side-list/interface";
+import { IListItem } from "@/components/containers/interface";
 import { ProductsSettingsWidget } from "@/widgets/products-settings-widget/products-settings-widget";
 import { EmptyComponent } from "@/widgets/settings/empty-component";
 import { ProfileIcon } from "@/components/icons/profile-icon";
-import { CubeIcon } from "@/components/icons/cube-icon";
 import { SmsIcon } from "@/components/icons/sms-icon";
 import { ProductsSettingsIcon } from "@/components/icons/products-settings-icon";
 import { DocumentIcon } from "@/components/icons/document-icon";

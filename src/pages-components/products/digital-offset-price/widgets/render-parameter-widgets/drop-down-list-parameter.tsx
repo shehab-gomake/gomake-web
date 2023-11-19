@@ -1,0 +1,104 @@
+import { GoMakeAutoComplate } from "@/components";
+import { SettingsIcon } from "@/icons/settings";
+
+const DropDownListParameterWidget = ({
+  parameter,
+  clasess,
+  index,
+  temp,
+  onChangeSubProductsForPrice,
+  subSection,
+  section,
+  selectedValueConfig,
+  inModal,
+  setSelectedValueConfig,
+  onOpeneMultiParameterModal,
+  subSectionParameters,
+  list,
+  setSelectedValueConfigForSettings,
+  setSelectedValueForSettings,
+  onChangeForPrice,
+}) => {
+  const defaultObject = parameter.valuesConfigs.find(
+    (item) => item.isDefault === true
+  );
+
+  return (
+    <div style={clasess.dropDownListWithSettingIcon}>
+      <GoMakeAutoComplate
+        options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
+        key={selectedValueConfig}
+        placeholder={parameter.name}
+        style={clasess.dropDownListStyle}
+        getOptionLabel={(option: any) => option.updateName}
+        defaultValue={
+          index !== -1 ? { updateName: temp[index].values } : defaultObject
+        }
+        onChange={(e: any, value: any) => {
+          if (parameter?.setSettingIcon) {
+            setSelectedValueForSettings({
+              parameter,
+              subSection,
+              section,
+            });
+            setSelectedValueConfigForSettings(value);
+          }
+          if (subSection?.type) {
+            onChangeSubProductsForPrice(
+              parameter?.id,
+              subSection?.id,
+              section?.id,
+              parameter?.parameterType,
+              parameter?.name,
+              parameter?.actionId,
+              { valueIds: value?.id, values: value?.updateName },
+              subSection?.type,
+              index,
+              parameter?.actionIndex
+            );
+          } else {
+            onChangeForPrice(
+              parameter?.id,
+              subSection?.id,
+              section?.id,
+              parameter?.parameterType,
+              parameter?.name,
+              value?.activateAction === true ? parameter?.actionId : null,
+              {
+                valueIds: value?.id,
+                values: value?.updateName,
+                actionId:
+                  value?.activateAction === true ? parameter?.actionId : null,
+              },
+              index,
+              parameter?.actionIndex
+            );
+          }
+        }}
+      />
+      {parameter?.setSettingIcon && inModal && (
+        <div
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            setSelectedValueConfig(parameter?.valuesConfigs);
+            onOpeneMultiParameterModal(
+              parameter,
+              subSection,
+              section,
+              subSectionParameters,
+              list
+            );
+          }}
+        >
+          <SettingsIcon
+            stroke={"rgba(237, 2, 140, 1)"}
+            width={24}
+            height={24}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export { DropDownListParameterWidget };

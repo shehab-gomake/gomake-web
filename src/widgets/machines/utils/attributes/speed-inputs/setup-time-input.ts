@@ -1,16 +1,19 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const setupTimeInput = (state: Record<string, any>) => {
     return [
         {
-            name: "setupTimeMin",
-            label: "machineAttributes.setupTimeMin",
+            name: "setupTime",
+            label: "machineAttributes.setupTime",
             type: "text",
-            placeholder: "machineAttributes.setupTimeMin",
+            placeholder: "machineAttributes.setupTime",
             required: true,
-            parameterKey: "setupTimeMin",
+            parameterKey: "setupTime",
+            unit: EMeasurementUnits.MINUTE,
             options: [],
-            value: state?.attributes?.setupTimeMin ? state?.attributes?.setupTimeMin : '',
+            value: state?.attributes?.setupTime ? state?.attributes?.setupTime : '',
             machineInputType: 'input',
-            isValid: !!state?.attributes?.setupTimeMin,
+            isValid: !!state?.attributes?.setupTime,
         },
     ]
 }

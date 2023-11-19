@@ -250,7 +250,8 @@
       "openImage": "Bild öffnen",
       "changeImage": "Bild ändern",
       "selectImage": "Bild auswählen",
-      "add": "Hinzufügen"
+      "add": "Hinzufügen",
+      "orderList": "Bestellliste"
     },
     "modals": {
       "subTitleDeleteModal": "Sind Sie sicher, {{name}} zu löschen?",

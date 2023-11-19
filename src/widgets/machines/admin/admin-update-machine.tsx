@@ -1,4 +1,3 @@
-import {SideList} from "@/widgets/machines/components/side-list/side-list";
 import {MachineStepper} from "@/widgets/machines/components/stepper/machines-stepper";
 import {useEffect, useState} from "react";
 import {useRecoilValue} from "recoil";
@@ -9,7 +8,8 @@ import {useAdminMachines} from "@/widgets/machines/hooks/use-admin-machines";
 import {useRouter} from "next/router";
 import {machineState} from "@/widgets/machines/state/machine-state";
 import {useAdminAddMachine} from "@/widgets/machines/hooks/use-admin-add-machine";
-import {SideBarContainer} from "@/components/containers/side-bar-container";
+import {SideBarContainer} from "@/components/containers/side-container/side-bar-container";
+import {MachinesSideList} from "@/components/containers/machines-container/side-list/machines-side-list";
 
 const AdminUpdateMachine = () => {
     const router = useRouter();
@@ -44,7 +44,7 @@ const AdminUpdateMachine = () => {
         setActiveStep(stepIndex)
     }
 
-    const Side = () => <SideList list={getMachinesList} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
+    const Side = () => <MachinesSideList list={getMachinesList} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
                                  title={'Machines'} quickActions={true} isAdmin={true}/>
     return (
         <SideBarContainer side={Side()} header={categoryName} subHeader={ selectedMachine.manufacturer ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.model : ''}>

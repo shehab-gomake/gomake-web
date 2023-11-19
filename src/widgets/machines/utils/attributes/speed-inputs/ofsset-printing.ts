@@ -1,53 +1,79 @@
-import {digitalPrinting} from "@/widgets/machines/utils/attributes/speed-inputs/digital-printing";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import {printingGeneral} from "@/widgets/machines/utils/attributes/speed-inputs/printing-general";
 
 const ofssetPrinting = (state: Record<string, any>) => {
     return [
-        ...digitalPrinting(state),
         {
-        name: 'machineAttributes.speedByPaperThickness',
-        parameterKey: 'speedByPaperThickness',
-        value: state.attributes?.speedByPaperThickness || [],
-        isValid: state.attributes?.speedByPaperThickness?.length > 0,
-        machineInputType: 'multiArrayInput',
-        inputs: [
-            {
-                name: "weight",
-                label: "machineAttributes.mediaWeightMainSpeed",
-                type: "text",
-                placeholder: "machineAttributes.mediaWeightMainSpeed",
-                required: true,
-                parameterKey: "mediaWeightMainSpeed",
-                options: []
-            },
-            {
-                name: "",
-                label: "machineAttributes.maxTargetMediaWeight",
-                type: "text",
-                placeholder: "machineAttributes.maxTargetMediaWeight",
-                required: true,
-                parameterKey: "maxTargetMediaWeight",
-                options: []
-            },
-            {
-                name: "",
-                label: "machineAttributes.minTargetMediaWeight",
-                type: "text",
-                placeholder: "machineAttributes.minTargetMediaWeight",
-                required: true,
-                parameterKey: "minTargetMediaWeight",
-                options: []
-            },
-            {
-                name: "speedPercentage",
-                label: "machineAttributes.speedPercentage",
-                type: "text",
-                placeholder: "machineAttributes.speedPercentage",
-                required: true,
-                parameterKey: "speedPercentage",
-                options: []
-            },
-        ]
-    },
+            name: "stationWashTime",
+            label: "machineAttributes.stationWashTime",
+            type: "text",
+            placeholder: "machineAttributes.stationWashTime",
+            required: true,
+            parameterKey: "stationWashTime",
+            unit: EMeasurementUnits.MINUTE,
+            options: [],
+            value: state?.attributes?.stationWashTime ? state?.attributes?.stationWashTime : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.stationWashTime,
+        },
+        {
+            name: 'machineAttributes.setupTimeSheetWaste',
+            parameterKey: 'setupTimeSheetWaste',
+            value: state.attributes?.setupTimeSheetWaste || [],
+            machineInputType: 'multiArrayInput',
+            isValid: state.attributes?.setupTimeSheetWaste?.length > 0,
+            inputs: [
+                {
+                    name: "weight",
+                    label: "machineAttributes.upToMediaWeight",
+                    type: "text",
+                    placeholder: "machineAttributes.upToMediaWeight",
+                    unit: EMeasurementUnits.GRAM,
+                    required: true,
+                    parameterKey: "mediaWeight",
+                    options: []
+                },
+                {
+                    name: "sheetLost",
+                    label: "machineAttributes.mediaSheetsLoss",
+                    type: "text",
+                    placeholder: "machineAttributes.mediaSheetsLoss",
+                    required: true,
+                    parameterKey: "sheetsLoss",
+                    options: []
+                },
+            ]
+        },
+        {
+            name: 'machineAttributes.setupTimeByWeight',
+            parameterKey: 'setupTime',
+            value: state.attributes?.setupTime || [],
+            machineInputType: 'multiArrayInput',
+            isValid: state.attributes?.setupTime?.length > 0,
+            inputs: [
+                {
+                    name: "weight",
+                    label: "machineAttributes.upToMediaWeight",
+                    type: "text",
+                    placeholder: "machineAttributes.upToMediaWeight",
+                    unit: EMeasurementUnits.GRAM,
+                    required: true,
+                    parameterKey: "mediaWeight",
+                    options: []
+                },
+                {
+                    name: "time",
+                    label: "machineAttributes.time",
+                    type: "text",
+                    unit: EMeasurementUnits.MINUTE,
+                    placeholder: "machineAttributes.time",
+                    required: true,
+                    parameterKey: "time",
+                    options: []
+                },
+            ]
+        },
+        ...printingGeneral(state),
         ]
 }
 

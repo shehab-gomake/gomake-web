@@ -18,7 +18,7 @@ const ofssetPrintingSteps: IStep[] = [
     {label: 'speed',  component: SpeedComponent},
     {label: 'feedersStackers',  component: FeedersStackersComponent},
     {label: 'colors',  component: ColorsInputsComponent},
-    {label: 'coating',  component: MachineCoatingComponent},
+    {label: 'moreSettings',  component: MachineCoatingComponent},
 ];
 
 export {ofssetPrintingSteps};
