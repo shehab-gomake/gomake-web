@@ -4,11 +4,11 @@ const useStyle = () => {
   const classes = useMemo(() => {
     return {
       insideStyle: {
-        width: 400, 
-        height: "70%",
-       // height: 700,
+         width: "25%", 
+         height: "60%",
+        // height: 700,
         padding: 20,
-        //position: "relative" as "relative",
+        position: "relative" as "relative",
       },
       addBtnStyle: {
         display : "flex",

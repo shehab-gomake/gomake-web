@@ -23,12 +23,12 @@ import {
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
 import { useFilteredMaterials } from "@/widgets/materials-widget/use-filtered-materials";
 import { EMaterialActiveFilter } from "./enums";
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import { useTranslation } from "react-i18next";
 import { useAddCategoryRow } from "./components/add-row/use-add-row";
-import { RemoveIcon } from "@/icons/remove-icon";
+import { WastebasketNew } from "@/icons/wastebasket-new";
+import { Wastebasket } from "@/icons/wastebasket";
 
 const useMaterials = () => {
     const { query, push, replace } = useRouter();
@@ -49,7 +49,7 @@ const useMaterials = () => {
     const { onDeleteCategoryRow } = useAddCategoryRow();
     const setActiveFilter = useSetRecoilState(activeFilterState);
     const setFlagState = useSetRecoilState(flagState);
-    const { errorColor, primaryColor } = useGomakeTheme();
+    const { primaryColor , errorColor } = useGomakeTheme();
     const { t } = useTranslation();
 
     const onSelectCategory = (category: string) => {
@@ -88,7 +88,7 @@ const useMaterials = () => {
     const materialsCategoriesList = useCallback(() => {
         return materialCategories.map(category => ({
             text: category.categoryName, value: category.categoryKey, icon: category.isAddedByPrintHouse ? () => <IconButton onClick={() => onDeleteCategory(category?.categoryKey)}>
-               <RemoveIcon />
+                <WastebasketNew  width={"30px"} height={"30px"}/>
             </IconButton> : null
         }))
     }, [materialCategories])
@@ -162,7 +162,7 @@ const useMaterials = () => {
                     />
                 )),
                 <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
-                    <RemoveIcon />
+                    <WastebasketNew  width={"30px"} height={"30px"}/>
                 </IconButton>,
             ];
         })

@@ -120,8 +120,6 @@
       "createQoute": "Create qoute",
       "SaveQuote":"Save Quote",
       "AddItemToQuote":"Add Item to Quote",
-      "SaveQuote":"Save Quote",
-      "AddItemToQuote":"Add Item to Quote",
       "pleaseSelectCustomer": "Please select a customer",
       "pleaseSelectClientType": "Please select a client type",
       "pleaseSelectProduct": "Please select a product"
@@ -251,7 +249,6 @@
       "save": "Save",
       "saveModifications": "Save modifications",
       "duplicate": "Duplicate",
-<<<<<<< HEAD
       "back": "back",
       "addNew": "Add new category",
       "addRow": "add row",
@@ -259,10 +256,6 @@
       "openImage": "Open image",
       "changeImage": "Change image",
       "selectImage": "Select Image"
-=======
-      "back":"back",
-      "addNew":"Add New"
->>>>>>> main
     },
     "modals": {
       "subTitleDeleteModal": "Are you sure to delete {{name}}",
@@ -2219,11 +2212,9 @@
     "body": "Body",
     "attachment": "Attachments",
     "more": "More",
-    "addNew": "Add new",
     "group": "SMS groups",
     "groupName": "group name",
     "addNewGroup": "Add new group",
-    "add": "Add",
     "Edit": "Edit",
     "Duplicate": "Duplication",
     "Delete": "Delete",
