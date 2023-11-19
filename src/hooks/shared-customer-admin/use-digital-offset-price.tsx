@@ -53,7 +53,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [defaultPrice, setDefaultPrice] = useState<any>("-----");
-  console.log("defaultPrice", defaultPrice);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
   const [template, setTemplate] = useState<any>([]);
   const [urgentOrder, setUrgentOrder] = useState(false);
@@ -1157,7 +1156,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const quantity = generalParameters?.find(
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
-  console.log("quantity", quantity);
   const addItemForQuotes = useCallback(async () => {
     const res = await callApi("POST", `/v1/erp-service/quote/add-item`, {
       productId: router?.query?.productId,
