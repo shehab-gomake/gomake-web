@@ -4,7 +4,7 @@ import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
 
 export default function Quotes() {
   return (
-    <CustomerAuthLayout>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_QUOTES}>
       <QuotesListPageWidget />
     </CustomerAuthLayout>
   );
