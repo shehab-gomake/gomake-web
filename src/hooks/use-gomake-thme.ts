@@ -87,6 +87,12 @@ const useGomakeTheme = () => {
     },
     [theme]
   );
+  const grayColor = useCallback(
+    (degree: number) => {
+      return getColor("gray", degree);
+    },
+    [theme]
+  );
   return {
     theme,
     changedTheme,
@@ -97,6 +103,7 @@ const useGomakeTheme = () => {
     neutralColor,
     errorColor,
     warningColor,
+    grayColor,
   };
 };
 

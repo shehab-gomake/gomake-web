@@ -1499,6 +1499,7 @@
     "quote": {
       "title": "Quote",
       "deliverOn": "Deliver on",
+      "dateOfReference":"Date of reference :",
       "upload": "upload",
       "businessCode": "Business code",
       "businessName": "Business name",
@@ -1956,7 +1957,6 @@
     "contacts": "Contacts",
     "email1": "Email 1",
     "email2": "Email 2",
-    "phone1": "Phone 1",
     "phone2": "Phone 2",
     "mobile": "Mobile",
     "country": "Country",

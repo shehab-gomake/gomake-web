@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate } from "@/components";
 import { generalParametersState } from "@/store";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 const SelectChildParameterWidget = ({
   parameter,
@@ -15,7 +15,9 @@ const SelectChildParameterWidget = ({
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
-  const setGeneralParameters = useSetRecoilState<any>(generalParametersState);
+  const [generalParameters, setGeneralParameters] = useRecoilState<any>(
+    generalParametersState
+  );
   return (
     <GoMakeAutoComplate
       options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
@@ -52,36 +54,34 @@ const SelectChildParameterWidget = ({
             parameter?.actionIndex
           );
         }
-        setGeneralParameters((prev) => {
-          let temp = [...prev];
-          parameter?.childsParameters.forEach((parameter) => {
-            const parameterId = parameter.id;
-            if (value?.values.hasOwnProperty(parameterId)) {
-              const index = temp.findIndex(
-                (item) =>
-                  item?.parameterId === parameter?.id &&
-                  item?.sectionId === section?.id &&
-                  item?.subSectionId === subSection?.id &&
-                  item?.actionIndex === parameter?.actionIndex
-              );
-
-              if (index !== -1) {
-                temp[index] = {
-                  ...temp[index],
-                  values: [value?.values[parameterId]],
-                };
-              } else {
-                temp.push({
-                  parameterId: parameter?.id,
-                  sectionId: section?.id,
-                  subSectionId: subSection?.id,
-                  ParameterType: parameter?.parameterType,
-                  values: [value?.values[parameterId]],
-                });
-              }
+        let temp = [...generalParameters];
+        parameter?.childsParameters.forEach((parameter) => {
+          const parameterId = parameter.id;
+          if (value?.values.hasOwnProperty(parameterId)) {
+            const index = temp.findIndex(
+              (item) =>
+                item?.parameterId === parameter?.id &&
+                item?.sectionId === section?.id &&
+                item?.subSectionId === subSection?.id &&
+                item?.actionIndex === parameter?.actionIndex
+            );
+            if (index !== -1) {
+              temp[index] = {
+                ...temp[index],
+                values: [value?.values[parameterId]],
+              };
+            } else {
+              temp.push({
+                parameterId: parameter?.id,
+                sectionId: section?.id,
+                subSectionId: subSection?.id,
+                ParameterType: parameter?.parameterType,
+                values: [value?.values[parameterId]],
+              });
             }
-          });
+          }
         });
+        setGeneralParameters(temp);
       }}
     />
   );
