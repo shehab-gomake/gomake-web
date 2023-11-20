@@ -19,28 +19,13 @@ const AutoCompleteUpdatedValue = ({
   useEffect(() => {
     setUpdateValue(value);
   }, [value]);
-
-  const onChangeValue = (e: any, value: any) => {
-    console.log("value", value);
-  };
   return (
     <>
       <div style={clasess.inputMainContainer}>
         <div style={clasess.labelStyle}>{label}</div>
-        {/* <UpdateValueAutoComplete
-          clickedOut={() => onBlur()}
-          // onInputChange={onInputChange}
-          onCancel={() => setIsUpdate(null)}
-          onUpdate={() => onBlur().then()}
-          value={updateValue}
-          options={options}
-          getOptionLabel={getOptionLabel}
-          onChange={onChangeValue}
-        /> */}
         {isUpdate ? (
           <UpdateValueAutoComplete
             clickedOut={() => onBlur()}
-            // onInputChange={onInputChange}
             onCancel={() => setIsUpdate(null)}
             onUpdate={() => onBlur().then()}
             value={updateValue}

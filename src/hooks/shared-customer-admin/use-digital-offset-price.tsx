@@ -50,7 +50,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [generalParameters, setGeneralParameters] = useRecoilState<any>(
     generalParametersState
   );
-  console.log("generalParameters", generalParameters);
   const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [defaultPrice, setDefaultPrice] = useState<any>("-----");

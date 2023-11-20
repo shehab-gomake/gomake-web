@@ -11,11 +11,9 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 
 const MoreMenuWidget = ({ quote, onClcikOpenModal }: any) => {
-  console.log("quote", quote);
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const { user, navigate } = useMoreCircle();
-  console.log("user", user);
 
   return (
     <OptionsButton>

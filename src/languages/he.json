@@ -1501,6 +1501,8 @@
       "agent": "סוכן",
       "contactID": "מזהה איש קשר",
       "contactName": "שם איש קשר",
+      "contactEmail": "דואר אלקטרוני ליצירת קשר",
+      "mobileContact": "איש קשר נייד",
       "portable": "טלפון נייד",
       "email": "דוא\"ל",
       "addressID": "מזהה כתובת",

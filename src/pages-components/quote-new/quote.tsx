@@ -35,7 +35,6 @@ const QuoteNewPageWidget = () => {
   useEffect(() => {
     setSelectDate(quoteItemValue?.dueDate);
   }, [quoteItemValue]);
-  console.log("quoteItemValue", quoteItemValue);
 
   return (
     <>

@@ -1499,6 +1499,8 @@
       "agent": "Agent",
       "contactID": "Kontakt-ID",
       "contactName": "Kontaktname",
+      "mobileContact": "Mobilkontakt",
+      "contactEmail": "Kontakt-E-Mail",
       "portable": "Tragbar",
       "email": "E-Mail",
       "addressID": "Adress-ID",
