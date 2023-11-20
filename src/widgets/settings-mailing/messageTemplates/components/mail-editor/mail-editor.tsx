@@ -11,7 +11,10 @@ import { FormInput } from '@/components/form-inputs/form-input';
 import { IInput } from '@/components/form-inputs/interfaces';
 import { Stack } from '@mui/material';
 import { MyEditor } from './myEditor';
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { languagesState } from "@/store/languages";
+import { GoMakeAutoComplate } from "@/components";
+import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplate";
 
 export interface IProps {
     onClickSave: (value: any) => void;
@@ -19,9 +22,11 @@ export interface IProps {
 const EmailSettings = ({ onClickSave }: IProps) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
+    const { getSmsTemplateById } = useMessageTemplate();
     const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
     const [subject, setSubject] = useRecoilState<string>(smsSubjectState);
     const [body, setBody] = useRecoilState<string>(smsBodyState);
+    const languages = useRecoilValue(languagesState);
 
 
     const handleUpdateClick = () => {
@@ -42,6 +47,12 @@ const EmailSettings = ({ onClickSave }: IProps) => {
         setState({ ...state, [key]: value })
     }
 
+    // const onChangeLanguage = async (e: any, value: any ) => {
+    //     await getSmsTemplateById(state?.id , value?.value);
+    //     setBody(state?.text);
+    //     setSubject(state?.title);
+    //   };
+
     return (
         <div style={classes.containerStyle}>
             <div style={classes.subSection}>
@@ -52,6 +63,19 @@ const EmailSettings = ({ onClickSave }: IProps) => {
                 <h3 style={classes.subSectionHeader} >{t("mailingSettings.body")}</h3>
                 <MyEditor headerEditor={EditorTYPE.BODY} ></MyEditor>
             </div>
+            {/* <div style={classes.subSection}>
+                <h3 style={classes.subSectionHeader}>{t("mailingSettings.language")}</h3>
+                <GoMakeAutoComplate
+                    options={languages.map(lang => ({
+                        label: lang.text,
+                        value: lang.value
+                    }))}
+                    onChange={(e: any, value: any) => setState({ ...state, lang: value?.value })}
+                    style={classes.dropDownListStyle}
+                    value={state?.lang}
+                    placeholder={t("mailingSettings.selectLanguage")}/>
+                    
+            </div> */}
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.attachment")}</h3>
                 <PdfUploadComponent onUpload={true} fileName={state?.attachment}></PdfUploadComponent>

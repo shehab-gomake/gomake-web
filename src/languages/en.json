@@ -2234,6 +2234,8 @@
     "mails" : "Mailing",
     "addNewAttachment" :"add new attachment",
     "sendFrom": "Send From Email",
-    "noAttachment": "No Attachment"
+    "noAttachment": "No Attachment",
+    "selectLanguage" : "Select Language",
+    "language": "Language"
   }
 }
