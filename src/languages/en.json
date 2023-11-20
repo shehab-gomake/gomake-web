@@ -1499,6 +1499,7 @@
     "quote": {
       "title": "Quote",
       "deliverOn": "Deliver on",
+      "dateOfReference":"Date of reference :",
       "upload": "upload",
       "businessCode": "Business code",
       "businessName": "Business name",

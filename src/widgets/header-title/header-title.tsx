@@ -1,8 +1,8 @@
 import { Skeleton } from "@mui/material";
 import { useStyle } from "./style";
 
-const HeaderTitle = ({ marginTop, marginBottom, ...props }: any) => {
-  const { clasess } = useStyle({ marginTop, marginBottom });
+const HeaderTitle = ({ marginTop, marginBottom, color, ...props }: any) => {
+  const { clasess } = useStyle({ marginTop, marginBottom, color });
 
   return (
     <div style={clasess.container}>
