@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
+import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
 
 const QuoteNewPageWidget = () => {
   const { clasess } = useStyle();
@@ -69,6 +70,7 @@ const QuoteNewPageWidget = () => {
             {/* <div style={clasess.lineDateStyle} /> */}
           </div>
           <BusinessNewWidget values={quoteItemValue} getQuote={getQuote} />
+          <ContactNewWidget values={quoteItemValue} getQuote={getQuote} />
         </div>
       )}
     </>
