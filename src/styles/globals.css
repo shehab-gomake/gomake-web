@@ -221,8 +221,11 @@ input::placeholder {
 }
 .MuiOutlinedInput-root {
   padding: 0 !important;
+  padding-left: 5px !important;
 }
 .MuiAutocomplete-input{
   padding: 0 !important;
+  padding-left: 5px !important;
+
 
 }

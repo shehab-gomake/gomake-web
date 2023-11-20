@@ -50,6 +50,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [generalParameters, setGeneralParameters] = useRecoilState<any>(
     generalParametersState
   );
+  console.log("generalParameters", generalParameters);
   const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [defaultPrice, setDefaultPrice] = useState<any>("-----");
@@ -168,18 +169,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           temp[paramIndex].values = selectedParam.valueIds;
         }
       }
+      const filteredArray = temp1.filter((obj) => obj.values[0] !== "false");
       temp.forEach((tempObject) => {
-        const index = temp1.findIndex(
+        const index = filteredArray.findIndex(
           (param) => param.parameterId === tempObject.parameterId
         );
+
         if (index !== -1) {
-          temp1[index] = tempObject;
+          filteredArray[index] = tempObject;
         } else {
-          temp1?.push(tempObject);
+          filteredArray?.push(tempObject);
         }
       });
 
-      setGeneralParameters(temp1);
+      setGeneralParameters(filteredArray);
     }
   }, [
     selectedValueForSettings,
@@ -550,7 +553,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           });
         });
         const newSubProducts2 = Object.values(typeMap);
-        setGeneralParameters(newGeneralParameters);
+        const filteredArray = newGeneralParameters.filter(
+          (obj) => obj.values[0] !== "false"
+        );
+        setGeneralParameters(filteredArray);
         setSubProducts(newSubProducts2);
         setRelatedParameters(relatedParametersArray);
         setIsSetTemplete(true);
@@ -905,7 +911,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (data?.valueIds === undefined && data?.values === undefined) {
         temp.splice(index, 1);
       }
-      return temp;
+      const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
+      return filteredArray;
     });
   };
   const onChangeSubProductsForPrice = (
@@ -982,6 +989,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (data?.valueId === undefined && data?.value === undefined) {
         temp.splice(index, 1);
       }
+
       setSubProducts([
         ...subProducts,
         {
@@ -1269,6 +1277,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   };
 
+  // useEffect(() => {
+  //   let temp = [...generalParameters];
+  //   const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
+  // }, [generalParameters]);
   return {
     t,
     handleTabClick,

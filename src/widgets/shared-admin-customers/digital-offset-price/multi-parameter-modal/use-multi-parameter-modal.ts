@@ -69,7 +69,7 @@ const useMultiParameterModal = ({ settingParameters, onClose }) => {
               );
 
               if (propertyValue) {
-                temp[i].values.push(parseFloat(propertyValue?.value));
+                temp[i].values.push(propertyValue?.value);
               }
             }
           }
