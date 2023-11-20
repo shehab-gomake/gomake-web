@@ -31,3 +31,6 @@ export * from "./constant-tabs";
 export * from "./add-new-icon";
 export * from "./rechoose-icon";
 export * from "./arrow-up";
+export * from "./plus-icon";
+export * from "./wastebasket-new";
+export * from "./wastebasket-new2";
