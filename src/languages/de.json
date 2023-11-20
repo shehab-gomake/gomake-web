@@ -1491,6 +1491,7 @@
     "quote": {
       "title": "Angebot",
       "deliverOn": "Lieferung am",
+      "dateOfReference": "Bezugsdatum:",
       "upload": "Hochladen",
       "businessCode": "Geschäftscode",
       "businessName": "Firmenname",

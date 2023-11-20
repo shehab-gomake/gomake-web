@@ -30,3 +30,4 @@ export * from "./left-arrow-icon";
 export * from "./constant-tabs";
 export * from "./add-new-icon";
 export * from "./rechoose-icon";
+export * from "./arrow-up";

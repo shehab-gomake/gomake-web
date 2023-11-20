@@ -1493,6 +1493,7 @@
     "quote": {
       "title": "ציטוט",
       "deliverOn": "ספק בתאריך",
+      "dateOfReference": "תאריך התייחסות:",
       "upload": "העלה",
       "businessCode": "קוד עסק",
       "businessName": "שם עסק",

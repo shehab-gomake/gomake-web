@@ -13,7 +13,6 @@ const GalleryModal = ({ openModal, onClose }) => {
     createParameterForCalculation,
     onClickChoosParameter,
   } = useGalleryModal({ onClose });
-  console.log("materialData", materialData);
   return (
     <>
       <GoMakeModal
