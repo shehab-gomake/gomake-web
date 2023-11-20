@@ -1493,6 +1493,7 @@
     "quote": {
       "title": "ציטוט",
       "deliverOn": "ספק בתאריך",
+      "dateOfReference": "תאריך התייחסות:",
       "upload": "העלה",
       "businessCode": "קוד עסק",
       "businessName": "שם עסק",
@@ -1951,7 +1952,6 @@
     "contacts": "אנשי קשר",
     "email1": "דוא\"ל 1",
     "email2": "דוא\"ל 2",
-    "phone1": "טלפון 1",
     "phone2": "טלפון 2",
     "mobile": "טלפון נייד",
     "country": "מדינה",

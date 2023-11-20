@@ -77,8 +77,8 @@ const useChildValuesMapping = ({
     }
   };
   const onChangeText = (e) => {
-    setValueState(parseFloat(e.target.value));
-    setParentValue(parseFloat(e.target.value));
+    setValueState(e.target.value);
+    setParentValue(e.target.value);
   };
   const isDisabled = () => {
     let isDisabled = false;

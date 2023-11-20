@@ -1491,6 +1491,7 @@
     "quote": {
       "title": "Angebot",
       "deliverOn": "Lieferung am",
+      "dateOfReference": "Bezugsdatum:",
       "upload": "Hochladen",
       "businessCode": "Geschäftscode",
       "businessName": "Firmenname",
@@ -1945,7 +1946,6 @@
     "contacts": "Kontakte",
     "email1": "E-Mail 1",
     "email2": "E-Mail 2",
-    "phone1": "Telefon 1",
     "phone2": "Telefon 2",
     "mobile": "Mobiltelefon",
     "country": "Land",
