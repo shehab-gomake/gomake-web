@@ -16,9 +16,10 @@ import 'react-quill/dist/quill.snow.css';
 const ReactQuill = lazy(() => import('react-quill'));
 import debounce from 'lodash.debounce';
 
-export interface IProps {
+interface IProps {
     headerEditor: EditorTYPE;
 }
+
 const MyEditor = ({ headerEditor }: IProps) => {
 
     const { templateVariables } = useMessageTemplate();
@@ -74,10 +75,50 @@ const MyEditor = ({ headerEditor }: IProps) => {
         if (!quill) {
             return;
         }
+
         let range = quill.getSelection(true);
+        let position = range.index;
+
+        if (range.index === 0) {
+            // Insert at the beginning with a space
+            quill.insertEmbed(
+                0,
+                'TemplateMarker',
+                {
+                    color: 'rgb(235, 236, 255)',
+                    marker: value?.value,
+                    title: value?.label,
+                },
+            );
+            quill.insertText(1, ' '); // Add a space
+            quill.setSelection(2, 0);
+            return;
+        }
+
+        if ( range.index == quill.getLength() - 2) {
+
+            const nextChar = quill.getText(range.index + 1, 1);
+            position += nextChar !== ' ' ? 1 : 0;
+            quill.insertText(position, ' '); // Add a space
+            position += 1;
+
+        }
+        else  if (range.index == quill.getLength() - 1 ) {
+
+            quill.insertText(position, ' '); // Add a space
+            position += 1;
+
+        }
+
+        else if (range.index > 0) {
+
+            const prevChar = quill.getText(range.index - 1, 1);
+            position += prevChar !== ' ' ? 1 : 0;
+
+        }
 
         quill.insertEmbed(
-            range.index,
+            position,
             'TemplateMarker',
             {
                 color: 'rgb(235, 236, 255)',
@@ -86,10 +127,12 @@ const MyEditor = ({ headerEditor }: IProps) => {
             },
         );
 
-        quill.insertText(range.index + 1, ' ');
-        quill.setSelection(range.index + 2, 2);
+        // Adjust the selection to be after the inserted variable
+        quill.insertText(position + 1, ' '); // Add a space
+        quill.setSelection(position + 1, 0);
+    };
 
-    }
+
 
     const [body, setBody] = useRecoilState<string>(smsBodyState);
     const handleChangeBody = useMemo(() => debounce(value => {
@@ -125,19 +168,23 @@ const MyEditor = ({ headerEditor }: IProps) => {
         toolbar: {
             container: [
                 ['bold', 'italic', 'underline', 'strike'],
-                [{ 'header': '1' }, { 'header': '2' } , { 'font': [] }],
-                ['link', 'image'],
+                [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
+                ['link'],
             ],
         },
+        clipboard: {
+            matchVisual: false,
+        },
     };
+
 
     return (
         <div dir={dir} className='editorDiv'>
             <Suspense>
-                <ReactQuill modules={modules}  style={headerEditor ? classes.myEditorBody : classes.myEditorSubject} value={headerEditor ? body : subject} onChange={headerEditor ? handleChangeBody : handleChangeSubject} ref={editorRef} id='editor' />
+                <ReactQuill modules={modules} style={headerEditor ? classes.myEditorBody : classes.myEditorSubject} value={headerEditor ? body : subject} onChange={headerEditor ? handleChangeBody : handleChangeSubject} ref={editorRef} id='editor' />
             </Suspense>
             <Stack direction={'column'} style={classes.variablesContainer}   >
-                <ScrollMenu  LeftArrow={LeftArrow} RightArrow={RightArrow} apiRef={apiRef}
+                <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} apiRef={apiRef}
                     RTL={RTL}>
                     {templateVariables?.map((option) => (
                         <button style={classes.variableStyle}

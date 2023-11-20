@@ -15,7 +15,7 @@ interface IProps {
 }
 
 
-const PdfUploadComponent = ({ onUpload, fileName}: IProps) => {
+const PdfUploadComponent = ({ onUpload, fileName }: IProps) => {
     const { t } = useTranslation();
     const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
     const [selectedFileName, setSelectedFileName] = useState(t("mailingSettings.noAttachment"));
@@ -36,14 +36,14 @@ const PdfUploadComponent = ({ onUpload, fileName}: IProps) => {
 
     return (
         <Stack direction={"row"} alignItems={'center'} justifyContent={'center'} gap={'10px'}>
-            <Stack direction={"row"} gap={'10px'} boxShadow={onUpload ?  "0px 1px 10px rgba(0, 0, 0, 0.08)" :"none"} borderRadius={"4px"} alignItems={"center"} justifyContent={"center"} width={"170px"} height={"40px"}>
+            {(!onUpload || ( fileName || selectedFileName != t("mailingSettings.noAttachment"))) && <Stack direction={"row"} gap={'10px'} boxShadow={onUpload ? "0px 1px 10px rgba(0, 0, 0, 0.08)" : "none"} borderRadius={"4px"} alignItems={"center"} justifyContent={"center"} width={"170px"} height={"40px"}>
                 <IconButton style={classes.IconButtonStyle}>
                     <FileIcon></FileIcon>
                 </IconButton>
                 <label style={classes.labelStyle}>
-                    {fileName !=null ?  "attachment.pdf" : selectedFileName}
+                    {fileName != null ? "attachment.pdf" : selectedFileName}
                 </label>
-                </Stack>
+            </Stack>}
             <input
                 type="file"
                 accept=".pdf"

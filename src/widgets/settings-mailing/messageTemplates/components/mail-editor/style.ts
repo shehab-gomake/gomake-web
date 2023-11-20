@@ -22,6 +22,10 @@ const useStyle = () => {
                 border: "0px",
                 boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
             },
+            selectLanguageStyle: {
+                width: "170px",
+               
+            },
             containerStyle: {
                 display: "flex",
                 gap: "24px",
@@ -79,7 +83,7 @@ const useStyle = () => {
             variableStyle: {
                 ...FONT_FAMILY.Lexend(400, 13),
                 display: "flex",
-                width: "110px",
+                width: "120px",
                 height: "24px",
                 borderRadius: "4px",
                 background: "#FFFFFF",
