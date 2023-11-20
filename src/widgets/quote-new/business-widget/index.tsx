@@ -1,4 +1,3 @@
-import { UpdateValueAutoComplete } from "@/components";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { useBusinessNeWidget } from "./use-business-widget";
@@ -27,7 +26,6 @@ const BusinessNewWidget = ({ values, getQuote }) => {
     updateAgent,
     t,
   } = useBusinessNeWidget({ getQuote });
-  console.log("agentListValue", agentListValue);
   return (
     <>
       <div style={clasess.businessContainerStyle}>
