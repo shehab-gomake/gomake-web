@@ -9,6 +9,7 @@ export interface ISMSTemplate {
     id? : string,
     title: string,
     text: string,
+    lang : string,
     smsTemplatesGroupId: string,
     templateTypeId: SMSTemplatesEnum,
     templateType: string,

@@ -1663,7 +1663,6 @@
       "attachFiles":"Attach Files",
       "copyTo":"Copy to",
       "managerApproval":"Manager Approval"
-
     }
   },
   "usersSettings": {
@@ -2329,7 +2328,10 @@
     "sendFrom": "Send From Email",
     "noAttachment": "No Attachment",
     "selectLanguage" : "Select Language",
-    "language": "Language"
+    "language": "Language",
+    "changeLang" : "Change Language",
+    "changeAnyway" : "Change Anyway",
+    "changeLangSubTitle" :"You may have made changes to the editor content. If so, these changes will be discarded if you proceed to change the language"
   },
   "partners": {
     "options": {
