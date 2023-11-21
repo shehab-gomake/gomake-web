@@ -14,20 +14,24 @@ const ContactMapping = ({
   items,
   changeItems,
   updateClientContact,
-  // isUpdateContactName,
-  // setIsUpdateContactName,
-  // isUpdateContactMobile,
-  // setIsUpdateContactMobile,
-  // isUpdateContactEmail,
-  // setIsUpdateContactEmail,
 }) => {
-  console.log("item", item);
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const [isUpdateContactName, setIsUpdateContactName] = useState(null);
   const [isUpdateContactEmail, setIsUpdateContactEmail] = useState(null);
   const [isUpdateContactMobile, setIsUpdateContactMobile] = useState(null);
-
+  const onBlurContactName = async (item) => {
+    updateClientContact(item);
+    setIsUpdateContactName(null);
+  };
+  const onBlurContactEmail = async (item) => {
+    updateClientContact(item);
+    setIsUpdateContactEmail(null);
+  };
+  const onBlurContactMobile = async (item) => {
+    updateClientContact(item);
+    setIsUpdateContactMobile(null);
+  };
   return (
     <div style={clasess.businessContainerStyle}>
       <InputUpdatedValues
@@ -35,7 +39,7 @@ const ContactMapping = ({
           item?.contactName !== null ? item?.contactName : "No contact name"
         }
         label={t("sales.quote.contactName")}
-        onBlur={() => updateClientContact(item)}
+        onBlur={() => onBlurContactName(item)}
         isUpdate={isUpdateContactName}
         setIsUpdate={setIsUpdateContactName}
         onInputChange={(e: any) => {
@@ -48,7 +52,7 @@ const ContactMapping = ({
           item?.contactPhone !== null ? item?.contactPhone : "No mobile contact"
         }
         label={t("sales.quote.mobileContact")}
-        onBlur={() => updateClientContact(item)}
+        onBlur={() => onBlurContactMobile(item)}
         isUpdate={isUpdateContactMobile}
         setIsUpdate={setIsUpdateContactMobile}
         onInputChange={(e: any) => {
@@ -60,7 +64,7 @@ const ContactMapping = ({
           item?.contactMail !== null ? item?.contactMail : "No contact mail"
         }
         label={t("sales.quote.contactEmail")}
-        onBlur={() => updateClientContact(item)}
+        onBlur={() => onBlurContactEmail(item)}
         isUpdate={isUpdateContactEmail}
         setIsUpdate={setIsUpdateContactEmail}
         onInputChange={(e: any) => {
