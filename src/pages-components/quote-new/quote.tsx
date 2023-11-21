@@ -10,8 +10,59 @@ import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
 
 const QuoteNewPageWidget = () => {
   const { clasess } = useStyle();
-  const { selectDate, setSelectDate, updateDueDate, getQuote, t } =
-    useQuoteNew();
+  const {
+    selectDate,
+    selectBusiness,
+    isUpdateBusinessName,
+    isUpdatePurchaseNumer,
+    isUpdateAddress,
+    selectedAgent,
+    agentListValue,
+    isUpdateAgent,
+    isDisplayWidget,
+    clientContactsValue,
+    isUpdateContactName,
+    items,
+    displayedItems,
+    isUpdateContactEmail,
+    isUpdateContactMobile,
+    selectedContactById,
+    openDeleteModalContact,
+    selectedContact,
+    setSelectDate,
+    updateDueDate,
+    setIsUpdateBusinessName,
+    setSelectBusiness,
+    setIsUpdateAddress,
+    setIsUpdatePurchaseNumer,
+    setIsUpdateBusinessCode,
+    onBlurBusinessName,
+    onBlurPurchaseNumer,
+    onBlurBusinessCode,
+    onBlurAddress,
+    onBlurAgent,
+    setIsUpdateAgent,
+    updateAgent,
+    t,
+    handleShowLess,
+    setIsDisplayWidget,
+    onOpenDeleteModalContact,
+    changeItems,
+    updateClientContact,
+    setIsUpdateContactName,
+    setIsUpdateContactMobile,
+    setIsUpdateContactEmail,
+    handleShowMore,
+    setSelectedContactById,
+    onInputChangePhone,
+    onInputChangeMail,
+    onClickAddNewContact,
+    onCloseDeleteModalContact,
+    onClickDeleteContact,
+    onBlurContactMobile,
+    onBlurContactName,
+    onBlurContactEmail,
+  } = useQuoteNew();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const dateRef = useRef(null);
   const [activeClickAway, setActiveClickAway] = useState(false);
@@ -68,8 +119,60 @@ const QuoteNewPageWidget = () => {
             </div>
             {/* <div style={clasess.lineDateStyle} /> */}
           </div>
-          <BusinessNewWidget values={quoteItemValue} getQuote={getQuote} />
-          <ContactNewWidget values={quoteItemValue} getQuote={getQuote} />
+          <div style={clasess.bordersecondContainer}>
+            <BusinessNewWidget
+              values={quoteItemValue}
+              selectBusiness={selectBusiness}
+              onBlurBusinessName={onBlurBusinessName}
+              isUpdateBusinessName={isUpdateBusinessName}
+              setIsUpdateBusinessName={setIsUpdateBusinessName}
+              setSelectBusiness={setSelectBusiness}
+              onBlurPurchaseNumer={onBlurPurchaseNumer}
+              isUpdatePurchaseNumer={isUpdatePurchaseNumer}
+              setIsUpdatePurchaseNumer={setIsUpdatePurchaseNumer}
+              onBlurBusinessCode={onBlurBusinessCode}
+              setIsUpdateBusinessCode={setIsUpdateBusinessCode}
+              onBlurAddress={onBlurAddress}
+              isUpdateAddress={isUpdateAddress}
+              setIsUpdateAddress={setIsUpdateAddress}
+              selectedAgent={selectedAgent}
+              agentListValue={agentListValue}
+              onBlurAgent={onBlurAgent}
+              isUpdateAgent={isUpdateAgent}
+              setIsUpdateAgent={setIsUpdateAgent}
+              updateAgent={updateAgent}
+            />
+            <ContactNewWidget
+              handleShowLess={handleShowLess}
+              items={items}
+              displayedItems={displayedItems}
+              setIsDisplayWidget={setIsDisplayWidget}
+              onOpenDeleteModalContact={onOpenDeleteModalContact}
+              changeItems={changeItems}
+              updateClientContact={updateClientContact}
+              isUpdateContactName={isUpdateContactName}
+              setIsUpdateContactName={setIsUpdateContactName}
+              isUpdateContactMobile={isUpdateContactMobile}
+              setIsUpdateContactMobile={setIsUpdateContactMobile}
+              isUpdateContactEmail={isUpdateContactEmail}
+              setIsUpdateContactEmail={setIsUpdateContactEmail}
+              handleShowMore={handleShowMore}
+              isDisplayWidget={isDisplayWidget}
+              clientContactsValue={clientContactsValue}
+              onBlurContactName={onBlurContactName}
+              setSelectedContactById={setSelectedContactById}
+              selectedContactById={selectedContactById}
+              onBlurContactMobile={onBlurContactMobile}
+              onInputChangePhone={onInputChangePhone}
+              onBlurContactEmail={onBlurContactEmail}
+              onInputChangeMail={onInputChangeMail}
+              onClickAddNewContact={onClickAddNewContact}
+              openDeleteModalContact={openDeleteModalContact}
+              onCloseDeleteModalContact={onCloseDeleteModalContact}
+              onClickDeleteContact={onClickDeleteContact}
+              selectedContact={selectedContact}
+            />
+          </div>
         </div>
       )}
     </>

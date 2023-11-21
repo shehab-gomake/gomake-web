@@ -10,15 +10,14 @@ const InputUpdatedValues = ({
   onBlur,
   isUpdate,
   setIsUpdate,
+  onInputChange,
 }: IBusinessWidget) => {
   const { clasess } = useStyle({ isAnderLine });
   const [updateValue, setUpdateValue] = useState();
   useEffect(() => {
     setUpdateValue(value);
   }, [value]);
-  const onInputChange = (v: any) => {
-    setUpdateValue(v);
-  };
+
   return (
     <>
       <div style={clasess.inputMainContainer}>

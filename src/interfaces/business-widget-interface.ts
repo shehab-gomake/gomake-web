@@ -8,4 +8,6 @@ export interface IBusinessWidget {
   options?: any;
   getOptionLabel?: any;
   onChange?: any;
+  onInputChange?: any;
+  setInputData?: any;
 }

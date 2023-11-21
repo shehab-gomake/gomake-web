@@ -64,6 +64,11 @@ const useStyle = () => {
         color: grayColor(200),
         backgroundColor: grayColor(200),
       },
+      bordersecondContainer: {
+        width: "100%",
+        borderBottom: `1px solid ${grayColor(200)}`,
+        marginBottom: 12,
+      },
     };
   }, []);
   return {
