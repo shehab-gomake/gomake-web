@@ -7,6 +7,7 @@ import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
 import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
+import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
 
 const QuoteNewPageWidget = () => {
   const { clasess } = useStyle();
@@ -86,10 +87,21 @@ const QuoteNewPageWidget = () => {
   useEffect(() => {
     setSelectDate(quoteItemValue?.dueDate);
   }, [quoteItemValue]);
-
+  const tableHeaders = [
+    "#",
+    "Item code",
+    "Item name",
+    "Details",
+    "Amount",
+    "Discount",
+    "Unit price",
+    "Final price",
+  ];
+  const columnWidths = ["5%", "8%", "12%", "33%", "8%", "8%", "8%", "8%"];
+  const headerHeight = "44px";
   return (
     <>
-      {quoteItemValue && (
+      {quoteItemValue?.id && (
         <div style={clasess.mainContainer}>
           <div style={clasess.titleQuateContainer}>
             <HeaderTitle
@@ -173,6 +185,12 @@ const QuoteNewPageWidget = () => {
               selectedContact={selectedContact}
             />
           </div>
+          <QuoteForPriceTable
+            priceListItems={quoteItemValue?.priceListItems}
+            tableHeaders={tableHeaders}
+            columnWidths={columnWidths}
+            headerHeight={headerHeight}
+          />
         </div>
       )}
     </>
