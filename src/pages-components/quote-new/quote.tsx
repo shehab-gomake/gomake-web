@@ -8,6 +8,7 @@ import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
 import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
 import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
+import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
 
 const QuoteNewPageWidget = () => {
   const { clasess } = useStyle();
@@ -191,6 +192,7 @@ const QuoteNewPageWidget = () => {
             columnWidths={columnWidths}
             headerHeight={headerHeight}
           />
+          <WriteCommentComp />
         </div>
       )}
     </>

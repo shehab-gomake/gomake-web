@@ -12,12 +12,15 @@ import {
   styled,
   tableCellClasses,
 } from "@mui/material";
+import { useStyle } from "./style";
+import { GomakeTextInput } from "@/components";
 const QuoteForPriceTable = ({
   priceListItems,
   columnWidths,
   tableHeaders,
   headerHeight,
 }) => {
+  const { clasess } = useStyle({ headerHeight });
   const PrimaryTableCell = styled(TableCell)(() => {
     return {
       [`&.${tableCellClasses.head}`]: {
@@ -31,25 +34,16 @@ const QuoteForPriceTable = ({
 
   return (
     <>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} style={{ maxHeight: 300 }}>
         <Table>
           <TableHead>
-            <TableRow
-              style={{
-                height: headerHeight,
-                background: "#8283BE",
-                color: "white",
-              }}
-            >
+            <TableRow style={clasess.tableRowStyle}>
               {tableHeaders.map((header, index) => (
                 <PrimaryTableCell
                   key={index}
                   style={{
                     width: columnWidths[index],
-                    borderRight: "1px solid #EAECF0",
-                    color: "#FFF",
-                    textAlign: "center",
-                    ...FONT_FAMILY.Inter(400, 12),
+                    ...clasess.tableHeaderStyle,
                   }}
                 >
                   {header}
@@ -63,15 +57,12 @@ const QuoteForPriceTable = ({
                 key={item.id}
                 style={{
                   background: index % 2 === 0 ? "#FFFFFF" : "#F8FAFB",
-                  // boxShadow: "0px 1px 3px 0px #1018281A",
-                  // borderBottom: "1px solid #FAECF0",
                 }}
               >
                 <PrimaryTableCell
                   style={{
                     width: columnWidths[0],
-                    textAlign: "center",
-                    padding: "16px 24px",
+                    ...clasess.cellContainerStyle,
                   }}
                 >
                   {index + 1}
@@ -79,8 +70,7 @@ const QuoteForPriceTable = ({
                 <PrimaryTableCell
                   style={{
                     width: columnWidths[1],
-                    textAlign: "center",
-                    padding: "16px 24px",
+                    ...clasess.cellContainerStyle,
                   }}
                 >
                   225
@@ -88,10 +78,9 @@ const QuoteForPriceTable = ({
                 <PrimaryTableCell
                   style={{
                     width: columnWidths[2],
-                    textAlign: "center",
-                    padding: "16px 24px",
-                    fontWeight: 600,
+                    ...FONT_FAMILY.Inter(600, 14),
                     color: "#5859A8",
+                    ...clasess.cellContainerStyle,
                   }}
                 >
                   {item.productName}
@@ -107,8 +96,7 @@ const QuoteForPriceTable = ({
                 <PrimaryTableCell
                   style={{
                     width: columnWidths[4],
-                    textAlign: "center",
-                    padding: "16px 24px",
+                    ...clasess.cellContainerStyle,
                   }}
                 >
                   {item.quantity}
@@ -116,8 +104,7 @@ const QuoteForPriceTable = ({
                 <PrimaryTableCell
                   style={{
                     width: columnWidths[5],
-                    textAlign: "center",
-                    padding: "16px 24px",
+                    ...clasess.cellContainerStyle,
                   }}
                 >
                   {item.discount || "N/A"}
@@ -125,8 +112,7 @@ const QuoteForPriceTable = ({
                 <PrimaryTableCell
                   style={{
                     width: columnWidths[6],
-                    textAlign: "center",
-                    padding: "16px 24px",
+                    ...clasess.cellContainerStyle,
                   }}
                 >
                   {item.price}
@@ -134,8 +120,7 @@ const QuoteForPriceTable = ({
                 <PrimaryTableCell
                   style={{
                     width: columnWidths[7],
-                    textAlign: "center",
-                    padding: "16px 24px",
+                    ...clasess.cellContainerStyle,
                   }}
                 >
                   {item.finalPrice}
@@ -145,7 +130,43 @@ const QuoteForPriceTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      <div>fffffff</div>
+      <div style={clasess.tableFooterContainer}>
+        <div style={clasess.firstRowForFooterContainer}>
+          <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
+            Total Before VAT
+          </div>
+          <div style={{ ...clasess.oddRowContainer, width: "19%" }}>
+            400,000 ILS
+          </div>
+          <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
+            Discount
+          </div>
+          <div style={{ ...clasess.oddRowContainer, width: "19%" }}>
+            10% (-234 ILS)
+          </div>
+          <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
+            VAT (17%)
+          </div>
+          <div style={{ ...clasess.oddRowContainer, width: "23%" }}>
+            700 ILS
+          </div>
+        </div>
+        <div style={clasess.firstRowForFooterContainer}>
+          <div
+            style={{
+              ...clasess.evenRowContainer,
+              width: "13%",
+              borderBottomLeftRadius: 6,
+              borderBottomRightRadius: 6,
+            }}
+          >
+            Total Before VAT
+          </div>
+          <div style={{ ...clasess.oddRowContainer, width: "87%" }}>
+            400,000 ILS
+          </div>
+        </div>
+      </div>
     </>
   );
 };
