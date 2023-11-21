@@ -43,7 +43,6 @@ const ContactMapping = ({
         isUpdate={isUpdateContactName}
         setIsUpdate={setIsUpdateContactName}
         onInputChange={(e: any) => {
-          console.log("eeeee", e);
           changeItems(index, "contactName", e);
         }}
       />
