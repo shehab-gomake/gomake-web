@@ -18,9 +18,9 @@ const getAllSMSTemplatesApi: ICallAndSetData = async (callApi, setState, data) =
     return  await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_SMS_TEMPLATES_URL , setState , data)
 }
 
-//get bu id 
-const getSMSTemplateApi: ICallAndSetData = async (callApi, setState , id: string) => {
-    return  await getSetApiData(callApi, EHttpMethod.GET, GET_SMS_TEMPLATE_BY_ID_URL , setState , id)
+//get by id 
+const getSMSTemplateApi: ICallAndSetData = async (callApi, setState , data: { id: string, lang : string}) => {
+    return  await getSetApiData(callApi, EHttpMethod.GET, GET_SMS_TEMPLATE_BY_ID_URL , setState , data)
 }
 
 const updateSMSTemplateApi: ICallAndSetData = async (callApi, setState, SmsTemplate) => {

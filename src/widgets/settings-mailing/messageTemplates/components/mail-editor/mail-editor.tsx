@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import * as React from "react";
 import { PdfUploadComponent } from '../upload-file/upload-file';
 import { EditorTYPE } from '../../enums/enum';
-import { smsBodyState, smsSubjectState, smsTemplateState } from '@/widgets/settings-mailing/states/state';
+import {  languageTemplateState, smsBodyState, smsSubjectState, smsTemplateState } from '@/widgets/settings-mailing/states/state';
 import { ISMSTemplate } from '../../interfaces/interface';
 import { mailInputs1, mailInputs2, mailInputs3 } from './inputs';
 import { FormInput } from '@/components/form-inputs/form-input';
@@ -22,12 +22,12 @@ export interface IProps {
 const EmailSettings = ({ onClickSave }: IProps) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
-    const { getSmsTemplateById } = useMessageTemplate();
+    const {onOpenDeleteModal } = useMessageTemplate();
     const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
     const [subject, setSubject] = useRecoilState<string>(smsSubjectState);
     const [body, setBody] = useRecoilState<string>(smsBodyState);
     const languages = useRecoilValue(languagesState);
-
+    const setLanguageState = useSetRecoilState<string>(languageTemplateState);
 
     const handleUpdateClick = () => {
         const updatedTemplate = {
@@ -47,14 +47,28 @@ const EmailSettings = ({ onClickSave }: IProps) => {
         setState({ ...state, [key]: value })
     }
 
-    // const onChangeLanguage = async (e: any, value: any ) => {
-    //     await getSmsTemplateById(state?.id , value?.value);
-    //     setBody(state?.text);
-    //     setSubject(state?.title);
-    //   };
+    const onChangeLanguage =  (e: any, value: any) => {
+        onOpenDeleteModal(); 
+        setLanguageState(value?.value); 
+    };
+
 
     return (
         <div style={classes.containerStyle}>
+             <div style={classes.subSection}>
+                <h3 style={classes.subSectionHeader}>{t("mailingSettings.language")}</h3>
+                <GoMakeAutoComplate
+                    options={languages.map(lang => ({
+                        label: lang.text,
+                        value: lang.value
+                    }))}
+                    onChange={(e: any, value: any) => onChangeLanguage(e, value)}
+                    style={classes.dropDownListStyle}
+                    value={state?.lang}
+                    disableClearable={true}
+                    placeholder={t("mailingSettings.selectLanguage")}/>
+                    
+            </div>
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.subject")}</h3>
                 <MyEditor headerEditor={EditorTYPE.SUBJECT} ></MyEditor>
@@ -63,19 +77,6 @@ const EmailSettings = ({ onClickSave }: IProps) => {
                 <h3 style={classes.subSectionHeader} >{t("mailingSettings.body")}</h3>
                 <MyEditor headerEditor={EditorTYPE.BODY} ></MyEditor>
             </div>
-            {/* <div style={classes.subSection}>
-                <h3 style={classes.subSectionHeader}>{t("mailingSettings.language")}</h3>
-                <GoMakeAutoComplate
-                    options={languages.map(lang => ({
-                        label: lang.text,
-                        value: lang.value
-                    }))}
-                    onChange={(e: any, value: any) => setState({ ...state, lang: value?.value })}
-                    style={classes.dropDownListStyle}
-                    value={state?.lang}
-                    placeholder={t("mailingSettings.selectLanguage")}/>
-                    
-            </div> */}
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.attachment")}</h3>
                 <PdfUploadComponent onUpload={true} fileName={state?.attachment}></PdfUploadComponent>

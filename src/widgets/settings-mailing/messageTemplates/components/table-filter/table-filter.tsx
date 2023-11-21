@@ -1,7 +1,7 @@
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { Stack } from "@mui/material";
-import { filterInput, switchInputs } from "./inputs";
+import { filterInput} from "./inputs";
 import { useStyle } from "./style";
 import { useRecoilState } from "recoil";
 import { SMSTemplateGroup } from "../../interfaces/interface";
@@ -20,11 +20,6 @@ const TableFilter = () => {
             {
                 filterInput(templateGroup).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
             }
-            {/* <Stack direction={'row'} gap={"16px"}>
-                {
-                    switchInputs(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
-                }
-            </Stack> */}
         </Stack>
     );
 }

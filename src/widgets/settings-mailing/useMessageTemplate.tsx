@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks";
-import { allSMSTemplateGroupsState, allSmsTemplateState, editModalState, groupModalState, smsTemplateState, templateGroupState, templateGroupStateNew, templateVariablesState } from "./states/state";
+import { allSMSTemplateGroupsState, allSmsTemplateState, changeLanguageModalState, editModalState, groupModalState, languageTemplateState, smsBodyState, smsSubjectState, smsTemplateState, templateGroupState, templateGroupStateNew, templateVariablesState } from "./states/state";
 import { MoreMenuWidget } from "./messageTemplates/components/more-circle/index";
 import { PdfUploadComponent } from "./messageTemplates/components/upload-file/upload-file";
 import { ISMSTemplate, SMSTemplateGroup } from "./messageTemplates/interfaces/interface";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 const useMessageTemplate = () => {
   const { t } = useTranslation();
@@ -17,12 +17,32 @@ const useMessageTemplate = () => {
   const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
   const [editModal, setEditModal] = useRecoilState<boolean>(editModalState);
   const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupState);
-
-  const setSMSTemplate = useSetRecoilState<ISMSTemplate>(smsTemplateState);
-
   const setNewTemplateGroup = useSetRecoilState<SMSTemplateGroup>(templateGroupStateNew);
-
   const [types, setTypes] = useState([]);
+
+
+  //////////////////////////////////////////////////
+
+  const [SMSTemplate, setSMSTemplate] = useRecoilState<ISMSTemplate>(smsTemplateState);
+  const [openDeleteModal, setOpenDeleteModal] = useRecoilState<boolean>(changeLanguageModalState);
+  const setSubject = useSetRecoilState<string>(smsSubjectState);
+  const setBody = useSetRecoilState<string>(smsBodyState);
+  const [languageState, setLanguageState] = useRecoilState<string>(languageTemplateState);
+
+  const onCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+  };
+
+  const onOpenDeleteModal = () => {
+    setOpenDeleteModal(true);
+  };
+
+  const onClickYes = async () => {
+    await getSmsTemplateById(SMSTemplate?.id  , languageState);
+    setOpenDeleteModal(false);
+  };
+
+  /////////////////////////////////////////////////
 
   const tableHeaders = [
     t("mailingSettings.type"),
@@ -107,6 +127,7 @@ const useMessageTemplate = () => {
       if (data.success) {
         alertSuccessUpdate();
         setEditModal(!editModal);
+
         getAllSmsTemplates();
       } else {
         alertFaultUpdate();
@@ -118,13 +139,15 @@ const useMessageTemplate = () => {
 
 
   // get by id
-  const getSmsTemplateById = async (id) => {
+  const getSmsTemplateById = async (id , language=null) => {
     const callBack = (res) => {
       if (res.success) {
         setSMSTemplate(res.data);
+        setBody(res.data?.text);
+        setSubject(res.data?.title);
       }
     }
-    await getSMSTemplateApi(callApi, callBack, { templateId: id })
+    await getSMSTemplateApi(callApi, callBack, { templateId: id , lang: language })
   }
 
   return {
@@ -140,7 +163,11 @@ const useMessageTemplate = () => {
     templateGroup,
     setTemplateGroup,
     types,
-    getSmsTemplateById
+    getSmsTemplateById,
+    openDeleteModal,
+    onOpenDeleteModal,
+    onCloseDeleteModal,
+    onClickYes
   };
 };
 
