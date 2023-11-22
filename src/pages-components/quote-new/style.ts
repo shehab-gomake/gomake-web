@@ -9,12 +9,12 @@ const useStyle = () => {
       mainContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        justifyContent: "flex-start",
+        justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
         position: "relative" as "relative",
-        paddingRight: 24,
-        paddingLeft: 10,
+        paddingRight: 20,
+        height: "100vh",
       },
       titleQuateContainer: {
         display: "flex",

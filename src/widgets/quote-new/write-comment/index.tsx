@@ -4,7 +4,7 @@ import { GomakeTextInput } from "@/components";
 
 const WriteCommentComp = () => {
   const { clasess } = useStyle();
-  const [data, setData] = useState("");
+  const [data, setData] = useState("ddd");
   return (
     <div style={clasess.writeCommentcontainer}>
       <GomakeTextInput

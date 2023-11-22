@@ -7,18 +7,16 @@ import {
 
 import { useStyle } from "./style";
 import { useRecoilValue } from "recoil";
-import { quoteState } from "@/pages-components/quote/store/quote";
 import { useCallback, useEffect, useState } from "react";
 import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { quoteItemState } from "@/store";
 
-const AddNewItemModal = () => {
+const AddNewItemModal = ({ openModal, onClose }) => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const quoteStateValue = useRecoilValue<any>(quoteState);
   const quoteItemValue: any = useRecoilValue(quoteItemState);
   const [productValue, setProductValues] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState<any>({});
@@ -36,9 +34,9 @@ const AddNewItemModal = () => {
   return (
     <>
       <GoMakeModal
-        openModal={quoteStateValue?.openAddNewItemModal}
+        openModal={openModal}
         modalTitle={t("sales.quote.addNewItem")}
-        onClose={() => quoteStateValue?.onCloseNewItem()}
+        onClose={onClose}
         insideStyle={clasess.insideStyle}
       >
         <div style={clasess.mainContainer}>

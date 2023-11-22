@@ -9,6 +9,10 @@ import { quoteItemState } from "@/store";
 import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
 import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
 import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
+import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
+import { AddNewItemModal } from "@/widgets/quote/modals-widgets/add-new-item-modal";
+import { DuplicateItemModal } from "@/widgets/quote/modals-widgets/duplicate-item-modal";
+import { GoMakeDeleteModal } from "@/components";
 
 const QuoteNewPageWidget = () => {
   const { clasess } = useStyle();
@@ -31,6 +35,15 @@ const QuoteNewPageWidget = () => {
     selectedContactById,
     openDeleteModalContact,
     selectedContact,
+    openAddNewItemModal,
+    openDuplicateWithDifferentQTYModal,
+    openDeleteItemModal,
+    onCloseDeleteItemModal,
+    deleteQuoteItem,
+    onCloseDuplicateWithDifferentQTY,
+    setAmountValue,
+    onOpenNewItem,
+    onCloseNewItem,
     setSelectDate,
     updateDueDate,
     setIsUpdateBusinessName,
@@ -64,6 +77,10 @@ const QuoteNewPageWidget = () => {
     onBlurContactMobile,
     onBlurContactName,
     onBlurContactEmail,
+    getCalculateQuoteItem,
+    onClickDuplicateWithDifferentQTY,
+    duplicateQuoteItemWithAnotherQuantity,
+    onClickDeleteQouteItem,
   } = useQuoteNew();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const dateRef = useRef(null);
@@ -97,9 +114,27 @@ const QuoteNewPageWidget = () => {
     "Discount",
     "Unit price",
     "Final price",
+    "More",
   ];
   const columnWidths = ["5%", "8%", "12%", "33%", "8%", "8%", "8%", "8%"];
   const headerHeight = "44px";
+  const [priceListItems, setPriceListItems] = useState<any>([]);
+  useEffect(() => {
+    setPriceListItems(quoteItemValue?.priceListItems);
+  }, [quoteItemValue]);
+
+  const changepriceListItems = (
+    index: number,
+    filedName: string,
+    value: any
+  ) => {
+    let temp = [...priceListItems];
+    temp[index] = {
+      ...temp[index],
+      [filedName]: value,
+    };
+    setPriceListItems(temp);
+  };
   return (
     <>
       {quoteItemValue?.id && (
@@ -187,14 +222,41 @@ const QuoteNewPageWidget = () => {
             />
           </div>
           <QuoteForPriceTable
-            priceListItems={quoteItemValue?.priceListItems}
+            priceListItems={priceListItems}
             tableHeaders={tableHeaders}
             columnWidths={columnWidths}
             headerHeight={headerHeight}
+            changepriceListItems={changepriceListItems}
+            getCalculateQuoteItem={getCalculateQuoteItem}
+            onClickDuplicateWithDifferentQTY={onClickDuplicateWithDifferentQTY}
+            onClickDeleteQouteItem={onClickDeleteQouteItem}
           />
-          <WriteCommentComp />
+          <div style={{ width: "100%" }}>
+            <WriteCommentComp />
+            <ButtonsContainer onOpenNewItem={onOpenNewItem} />
+          </div>
         </div>
       )}
+      <AddNewItemModal
+        openModal={openAddNewItemModal}
+        onClose={onCloseNewItem}
+      />
+      <DuplicateItemModal
+        openModal={openDuplicateWithDifferentQTYModal}
+        onClose={onCloseDuplicateWithDifferentQTY}
+        setAmountValue={setAmountValue}
+        duplicateQuoteItemWithAnotherQuantity={
+          duplicateQuoteItemWithAnotherQuantity
+        }
+      />
+      <GoMakeDeleteModal
+        title="Delete Item"
+        yesBtn={t("materials.buttons.delete")}
+        openModal={openDeleteItemModal}
+        onClose={onCloseDeleteItemModal}
+        subTitle="Are you sure to delete this item?"
+        onClickDelete={deleteQuoteItem}
+      />
     </>
   );
 };

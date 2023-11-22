@@ -1,6 +1,4 @@
 import React from "react";
-import { CharacterDetails } from "./character-details";
-import { FONT_FAMILY } from "@/utils/font-family";
 import {
   Table,
   TableBody,
@@ -13,12 +11,16 @@ import {
   tableCellClasses,
 } from "@mui/material";
 import { useStyle } from "./style";
-import { GomakeTextInput } from "@/components";
+import { RowMappingWidget } from "./row-mapping";
 const QuoteForPriceTable = ({
   priceListItems,
   columnWidths,
   tableHeaders,
   headerHeight,
+  changepriceListItems,
+  getCalculateQuoteItem,
+  onClickDuplicateWithDifferentQTY,
+  onClickDeleteQouteItem,
 }) => {
   const { clasess } = useStyle({ headerHeight });
   const PrimaryTableCell = styled(TableCell)(() => {
@@ -34,7 +36,7 @@ const QuoteForPriceTable = ({
 
   return (
     <>
-      <TableContainer component={Paper} style={{ maxHeight: 300 }}>
+      <TableContainer component={Paper} style={{ maxHeight: 340 }}>
         <Table>
           <TableHead>
             <TableRow style={clasess.tableRowStyle}>
@@ -52,80 +54,20 @@ const QuoteForPriceTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {priceListItems.map((item, index) => (
-              <TableRow
+            {priceListItems?.map((item, index) => (
+              <RowMappingWidget
                 key={item.id}
-                style={{
-                  background: index % 2 === 0 ? "#FFFFFF" : "#F8FAFB",
-                }}
-              >
-                <PrimaryTableCell
-                  style={{
-                    width: columnWidths[0],
-                    ...clasess.cellContainerStyle,
-                  }}
-                >
-                  {index + 1}
-                </PrimaryTableCell>
-                <PrimaryTableCell
-                  style={{
-                    width: columnWidths[1],
-                    ...clasess.cellContainerStyle,
-                  }}
-                >
-                  225
-                </PrimaryTableCell>
-                <PrimaryTableCell
-                  style={{
-                    width: columnWidths[2],
-                    ...FONT_FAMILY.Inter(600, 14),
-                    color: "#5859A8",
-                    ...clasess.cellContainerStyle,
-                  }}
-                >
-                  {item.productName}
-                </PrimaryTableCell>
-                <PrimaryTableCell
-                  style={{
-                    width: columnWidths[3],
-                    textAlign: "start",
-                  }}
-                >
-                  <CharacterDetails details={item.details} />
-                </PrimaryTableCell>
-                <PrimaryTableCell
-                  style={{
-                    width: columnWidths[4],
-                    ...clasess.cellContainerStyle,
-                  }}
-                >
-                  {item.quantity}
-                </PrimaryTableCell>
-                <PrimaryTableCell
-                  style={{
-                    width: columnWidths[5],
-                    ...clasess.cellContainerStyle,
-                  }}
-                >
-                  {item.discount || "N/A"}
-                </PrimaryTableCell>
-                <PrimaryTableCell
-                  style={{
-                    width: columnWidths[6],
-                    ...clasess.cellContainerStyle,
-                  }}
-                >
-                  {item.price}
-                </PrimaryTableCell>
-                <PrimaryTableCell
-                  style={{
-                    width: columnWidths[7],
-                    ...clasess.cellContainerStyle,
-                  }}
-                >
-                  {item.finalPrice}
-                </PrimaryTableCell>
-              </TableRow>
+                item={item}
+                index={index}
+                columnWidths={columnWidths}
+                headerHeight={headerHeight}
+                changepriceListItems={changepriceListItems}
+                getCalculateQuoteItem={getCalculateQuoteItem}
+                onClickDuplicateWithDifferentQTY={
+                  onClickDuplicateWithDifferentQTY
+                }
+                onClickDeleteQouteItem={onClickDeleteQouteItem}
+              />
             ))}
           </TableBody>
         </Table>

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 const CharacterDetails = ({ details }) => {
   const [showAll, setShowAll] = useState(false);
 
-  const truncatedDetails = showAll ? details : details?.slice(0, 110);
+  const truncatedDetails = showAll ? details : details?.slice(0, 90);
 
   const handleShowMore = () => {
     setShowAll(true);
@@ -25,7 +25,7 @@ const CharacterDetails = ({ details }) => {
     >
       {truncatedDetails}
       {!showAll && ".. "}
-      {details?.length > 110 && (
+      {details?.length > 90 && (
         <span
           onClick={showAll ? handleShowLess : handleShowMore}
           style={{

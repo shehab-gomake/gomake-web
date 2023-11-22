@@ -145,8 +145,6 @@ const useQuoteNew = () => {
     },
     [quoteItemValue]
   );
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //Contact Widget
 
   const [isDisplayWidget, setIsDisplayWidget] = useState(false);
   const [items, setItems] = useState([]);
@@ -231,7 +229,6 @@ const useQuoteNew = () => {
   };
 
   const [selectedContactById, setSelectedContactById] = useState<any>();
-  const [isAddNewContactWidget, setIsAddNewContactWidget] = useState(false);
   const onChangeUpdateClientContact = useCallback(
     (filedName: string, value: any) => {
       setSelectedContactById((prev) => {
@@ -293,7 +290,92 @@ const useQuoteNew = () => {
       alertFaultDelete();
     }
   }, []);
+  const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
+  const onOpenNewItem = () => {
+    setOpenAddNewItemModal(true);
+  };
+  const onCloseNewItem = () => {
+    setOpenAddNewItemModal(false);
+  };
 
+  const getCalculateQuoteItem = useCallback(
+    async (quoteItemId: string, calculationType: number, data: number) => {
+      const res = await callApi(
+        EHttpMethod.GET,
+        `/v1/erp-service/quote/get-calculate-quote-item`,
+        {
+          QuoteItemId: quoteItemId,
+          data,
+          calculationType,
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [quoteItemValue]
+  );
+  const [qouteItemId, setQuateItemId] = useState();
+  const [
+    openDuplicateWithDifferentQTYModal,
+    setOpenDuplicateWithDifferentQTYModal,
+  ] = useState(false);
+  const onCloseDuplicateWithDifferentQTY = () => {
+    setOpenDuplicateWithDifferentQTYModal(false);
+  };
+  const onOpenDuplicateWithDifferentQTY = () => {
+    setOpenDuplicateWithDifferentQTYModal(true);
+  };
+  const onClickDuplicateWithDifferentQTY = (quoteItem) => {
+    onOpenDuplicateWithDifferentQTY();
+    setQuateItemId(quoteItem?.id);
+  };
+  const [amountVlue, setAmountValue] = useState();
+  const duplicateQuoteItemWithAnotherQuantity = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/quote/duplicate-quote-with-another-quantity`,
+      {
+        quoteItemId: qouteItemId,
+        amount: parseInt(amountVlue),
+      }
+    );
+    if (res?.success) {
+      alertSuccessAdded();
+      onCloseDuplicateWithDifferentQTY();
+      getQuote();
+    } else {
+      alertFaultAdded();
+    }
+  }, [qouteItemId, amountVlue]);
+  const [openDeleteItemModal, setOpenDeleteItemModal] = useState(false);
+  const onCloseDeleteItemModal = () => {
+    setOpenDeleteItemModal(false);
+  };
+  const onOpenDeleteItemModal = () => {
+    setOpenDeleteItemModal(true);
+  };
+  const deleteQuoteItem = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.DELETE,
+      `/v1/erp-service/quote/delete-quote-item?QuoteItemId=${qouteItemId}`
+    );
+    if (res?.success) {
+      alertSuccessDelete();
+      onCloseDeleteItemModal();
+      getQuote();
+    } else {
+      alertFaultDelete();
+    }
+  }, [qouteItemId]);
+
+  const onClickDeleteQouteItem = (quoteItem) => {
+    onOpenDeleteItemModal();
+    setQuateItemId(quoteItem?.id);
+  };
   return {
     selectDate,
     selectBusiness,
@@ -316,6 +398,15 @@ const useQuoteNew = () => {
     isUpdateContactName1,
     isUpdateContactEmail1,
     isUpdateContactMobile1,
+    openAddNewItemModal,
+    openDuplicateWithDifferentQTYModal,
+    openDeleteItemModal,
+    onCloseDeleteItemModal,
+    deleteQuoteItem,
+    onCloseDuplicateWithDifferentQTY,
+    setAmountValue,
+    onOpenNewItem,
+    onCloseNewItem,
     setIsUpdateContactName1,
     setIsUpdateContactEmail1,
     setIsUpdateContactMobile1,
@@ -352,6 +443,10 @@ const useQuoteNew = () => {
     onBlurContactMobile,
     onBlurContactName,
     onBlurContactEmail,
+    getCalculateQuoteItem,
+    onClickDuplicateWithDifferentQTY,
+    duplicateQuoteItemWithAnotherQuantity,
+    onClickDeleteQouteItem,
   };
 };
 

@@ -57,6 +57,11 @@ const useStyle = ({ headerHeight }) => {
         height: 44,
         borderBottom: "1px solid #EAECF0",
       },
+      cellTextInputStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
     };
   }, []);
   return {

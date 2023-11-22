@@ -34,3 +34,5 @@ export * from "./arrow-up";
 export * from "./plus-icon";
 export * from "./wastebasket-new";
 export * from "./wastebasket-new2";
+export * from "./upload-icon";
+export * from "./arrow-down-new";
