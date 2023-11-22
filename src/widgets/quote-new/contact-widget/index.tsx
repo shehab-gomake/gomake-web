@@ -14,7 +14,6 @@ const ContactNewWidget = ({
   onOpenDeleteModalContact,
   changeItems,
   updateClientContact,
-  isUpdateContactName,
   setIsUpdateContactName,
   isUpdateContactMobile,
   setIsUpdateContactMobile,
@@ -40,80 +39,72 @@ const ContactNewWidget = ({
   const { t } = useTranslation();
   return (
     <>
-      <ClickOutside onClick={handleShowLess} style={{ width: "100%" }}>
-        <div style={clasess.mainContainer}>
-          {items?.length > 0 ? (
-            <>
-              <div>
-                {items?.slice(0, displayedItems).map((item, index) => (
-                  <ContactMapping
-                    key={`${index}-${item.id}`}
-                    item={item}
-                    index={index}
-                    setIsDisplayWidget={setIsDisplayWidget}
-                    displayedItems={displayedItems}
-                    onOpenDeleteModalContact={onOpenDeleteModalContact}
-                    items={items}
-                    changeItems={changeItems}
-                    updateClientContact={updateClientContact}
-                    // isUpdateContactName={isUpdateContactName}
-                    // setIsUpdateContactName={setIsUpdateContactName}
-                    // isUpdateContactMobile={isUpdateContactMobile}
-                    // setIsUpdateContactMobile={setIsUpdateContactMobile}
-                    // isUpdateContactEmail={isUpdateContactEmail}
-                    // setIsUpdateContactEmail={setIsUpdateContactEmail}
-                  />
-                ))}
-              </div>
-            </>
-          ) : (
-            <div
-              style={clasess.addNewContactNameStyle}
-              onClick={() => setIsDisplayWidget(true)}
-            >
-              <PlusNewIcon />
-              <div style={clasess.addNewContactNameTextStyle}>Add Contact</div>
+      <div style={clasess.mainContainer}>
+        {items?.length > 0 ? (
+          <>
+            <div>
+              {items?.slice(0, displayedItems).map((item, index) => (
+                <ContactMapping
+                  key={`${index}-${item.id}`}
+                  item={item}
+                  index={index}
+                  setIsDisplayWidget={setIsDisplayWidget}
+                  displayedItems={displayedItems}
+                  onOpenDeleteModalContact={onOpenDeleteModalContact}
+                  items={items}
+                  changeItems={changeItems}
+                  updateClientContact={updateClientContact}
+                />
+              ))}
             </div>
-          )}
-          {items?.length > 2 && displayedItems === 2 && (
-            <div style={clasess.showLessContainer} onClick={handleShowMore}>
-              Show More
-            </div>
-          )}
-          {items?.length > 2 && displayedItems > 2 && (
-            <div style={clasess.showLessContainer} onClick={handleShowLess}>
-              Show Less
-            </div>
-          )}
-        </div>
-        {isDisplayWidget && (
-          <AddContactNewWidget
-            clientContactsValue={clientContactsValue}
-            onBlurContactName={onBlurContactName}
-            setIsUpdateContactName={setIsUpdateContactName}
-            setSelectedContactById={setSelectedContactById}
-            selectedContactById={selectedContactById}
-            onBlurContactMobile={onBlurContactMobile}
-            isUpdateContactMobile={isUpdateContactMobile}
-            setIsUpdateContactMobile={setIsUpdateContactMobile}
-            onInputChangePhone={onInputChangePhone}
-            onBlurContactEmail={onBlurContactEmail}
-            isUpdateContactEmail={isUpdateContactEmail}
-            setIsUpdateContactEmail={setIsUpdateContactEmail}
-            onInputChangeMail={onInputChangeMail}
-            onClickAddNewContact={onClickAddNewContact}
-          />
+          </>
+        ) : (
+          <div
+            style={clasess.addNewContactNameStyle}
+            onClick={() => setIsDisplayWidget(true)}
+          >
+            <PlusNewIcon />
+            <div style={clasess.addNewContactNameTextStyle}>Add Contact</div>
+          </div>
         )}
-
-        <GoMakeDeleteModal
-          title={t("sales.quote.deleteContactRow")}
-          yesBtn={t("materials.buttons.delete")}
-          openModal={openDeleteModalContact}
-          onClose={onCloseDeleteModalContact}
-          subTitle={t("sales.quote.subTitleDeleteContactRow")}
-          onClickDelete={() => onClickDeleteContact(selectedContact)}
+        {items?.length > 2 && displayedItems === 2 && (
+          <div style={clasess.showLessContainer} onClick={handleShowMore}>
+            Show More
+          </div>
+        )}
+        {items?.length > 2 && displayedItems > 2 && (
+          <div style={clasess.showLessContainer} onClick={handleShowLess}>
+            Show Less
+          </div>
+        )}
+      </div>
+      {isDisplayWidget && (
+        <AddContactNewWidget
+          clientContactsValue={clientContactsValue}
+          onBlurContactName={onBlurContactName}
+          setIsUpdateContactName={setIsUpdateContactName}
+          setSelectedContactById={setSelectedContactById}
+          selectedContactById={selectedContactById}
+          onBlurContactMobile={onBlurContactMobile}
+          isUpdateContactMobile={isUpdateContactMobile}
+          setIsUpdateContactMobile={setIsUpdateContactMobile}
+          onInputChangePhone={onInputChangePhone}
+          onBlurContactEmail={onBlurContactEmail}
+          isUpdateContactEmail={isUpdateContactEmail}
+          setIsUpdateContactEmail={setIsUpdateContactEmail}
+          onInputChangeMail={onInputChangeMail}
+          onClickAddNewContact={onClickAddNewContact}
         />
-      </ClickOutside>
+      )}
+
+      <GoMakeDeleteModal
+        title={t("sales.quote.deleteContactRow")}
+        yesBtn={t("materials.buttons.delete")}
+        openModal={openDeleteModalContact}
+        onClose={onCloseDeleteModalContact}
+        subTitle={t("sales.quote.subTitleDeleteContactRow")}
+        onClickDelete={() => onClickDeleteContact(selectedContact)}
+      />
     </>
   );
 };

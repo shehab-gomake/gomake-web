@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import { useStyle } from "./style";
 import { RowMappingWidget } from "./row-mapping";
+import { useTranslation } from "react-i18next";
+import { FONT_FAMILY } from "@/utils/font-family";
 const QuoteForPriceTable = ({
   priceListItems,
   columnWidths,
@@ -21,8 +23,10 @@ const QuoteForPriceTable = ({
   getCalculateQuoteItem,
   onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
+  quoteItems,
 }) => {
   const { clasess } = useStyle({ headerHeight });
+  const { t } = useTranslation();
   const PrimaryTableCell = styled(TableCell)(() => {
     return {
       [`&.${tableCellClasses.head}`]: {
@@ -35,7 +39,7 @@ const QuoteForPriceTable = ({
   });
 
   return (
-    <>
+    <div>
       <TableContainer component={Paper} style={{ maxHeight: 340 }}>
         <Table>
           <TableHead>
@@ -75,22 +79,22 @@ const QuoteForPriceTable = ({
       <div style={clasess.tableFooterContainer}>
         <div style={clasess.firstRowForFooterContainer}>
           <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
-            Total Before VAT
+            {t("sales.quote.totalBeforeVAT")}
           </div>
           <div style={{ ...clasess.oddRowContainer, width: "19%" }}>
-            400,000 ILS
+            {quoteItems?.totalPrice?.toFixed(2)} ILS
           </div>
           <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
-            Discount
+            {t("sales.quote.discount")}
           </div>
           <div style={{ ...clasess.oddRowContainer, width: "19%" }}>
-            10% (-234 ILS)
+            {quoteItems?.discount}
           </div>
           <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
             VAT (17%)
           </div>
           <div style={{ ...clasess.oddRowContainer, width: "23%" }}>
-            700 ILS
+            {Math.ceil(quoteItems?.totalVAT)} ILS
           </div>
         </div>
         <div style={clasess.firstRowForFooterContainer}>
@@ -102,14 +106,21 @@ const QuoteForPriceTable = ({
               borderBottomRightRadius: 6,
             }}
           >
-            Total Before VAT
+            {t("sales.quote.totalPrice")}
           </div>
-          <div style={{ ...clasess.oddRowContainer, width: "87%" }}>
-            400,000 ILS
+          <div
+            style={{
+              ...clasess.oddRowContainer,
+              width: "87%",
+              color: "#F135A3",
+              ...FONT_FAMILY.Inter(700, 18),
+            }}
+          >
+            {Math.ceil(quoteItems?.totalPayment)} ILS
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
