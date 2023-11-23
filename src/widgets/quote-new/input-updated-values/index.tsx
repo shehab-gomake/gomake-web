@@ -10,15 +10,15 @@ const InputUpdatedValues = ({
   onBlur,
   isUpdate,
   setIsUpdate,
+  onInputChange,
+  speicalStyle,
 }: IBusinessWidget) => {
   const { clasess } = useStyle({ isAnderLine });
   const [updateValue, setUpdateValue] = useState();
   useEffect(() => {
     setUpdateValue(value);
   }, [value]);
-  const onInputChange = (v: any) => {
-    setUpdateValue(v);
-  };
+
   return (
     <>
       <div style={clasess.inputMainContainer}>
@@ -33,7 +33,7 @@ const InputUpdatedValues = ({
           />
         ) : (
           <div
-            style={clasess.inputTextStyle}
+            style={{ ...clasess.inputTextStyle, ...speicalStyle }}
             className="customInput"
             onClick={() => setIsUpdate(1)}
           >

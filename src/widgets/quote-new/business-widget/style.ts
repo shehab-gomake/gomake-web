@@ -10,7 +10,7 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         gap: 24,
-        marginBottom: 12,
+        marginBottom: 14,
       },
     };
   }, []);

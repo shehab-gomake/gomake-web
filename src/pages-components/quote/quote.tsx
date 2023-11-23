@@ -342,7 +342,7 @@ const QuotePageWidget = () => {
           <TotalPriceAndVatWidit />
         </div>
       )}
-      <AddNewItemModal />
+      {/* <AddNewItemModal /> */}
     </>
   );
 };

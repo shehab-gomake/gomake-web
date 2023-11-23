@@ -6,19 +6,21 @@ import {
 } from "@/components";
 
 import { useStyle } from "./style";
-import { useRecoilValue } from "recoil";
-import { quoteState } from "@/pages-components/quote/store/quote";
 
-const DuplicateItemModal = () => {
+const DuplicateItemModal = ({
+  openModal,
+  onClose,
+  setAmountValue,
+  duplicateQuoteItemWithAnotherQuantity,
+}) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const quoteStateValue = useRecoilValue<any>(quoteState);
   return (
     <>
       <GoMakeModal
-        openModal={quoteStateValue?.openDuplicateWithDifferentQTYModal}
+        openModal={openModal}
         modalTitle={t("sales.quote.duplicateItemWithDifferentQTY")}
-        onClose={() => quoteStateValue?.onCloseDuplicateWithDifferentQTY()}
+        onClose={onClose}
         insideStyle={clasess.insideStyle}
       >
         <div style={clasess.mainContainer}>
@@ -27,11 +29,14 @@ const DuplicateItemModal = () => {
               style={clasess.textInputStyle}
               placeholder={t("sales.quote.item")}
               type="number"
-              onChange={(e: any) => quoteStateValue.setAmountValue(e.target.value)}
+              onChange={(e: any) => setAmountValue(e.target.value)}
             />
           </div>
           <div style={clasess.btnContainer}>
-            <GomakePrimaryButton style={clasess.sendBtn} onClick={()=>quoteStateValue.duplicateQuoteItemWithAnotherQuantity()}>
+            <GomakePrimaryButton
+              style={clasess.sendBtn}
+              onClick={() => duplicateQuoteItemWithAnotherQuantity()}
+            >
               {t("sales.quote.duplicate")}
             </GomakePrimaryButton>
           </div>

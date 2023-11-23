@@ -1,70 +1,110 @@
-import { useState } from "react";
-import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
-import { useContactNewWidget } from "./use-contact-widget";
-import { AddPlusIcon, PlusNewIcon } from "@/icons";
+import { PlusNewIcon } from "@/icons";
 import { ContactMapping } from "./contact-mapping";
 import { AddContactNewWidget } from "./add-contact-widget";
-import { Fade } from "@mui/material";
+import { GoMakeDeleteModal } from "@/components";
+import { useTranslation } from "react-i18next";
 
-const ContactNewWidget = ({ values, getQuote }) => {
+const ContactNewWidget = ({
+  handleShowLess,
+  items,
+  displayedItems,
+  setIsDisplayWidget,
+  onOpenDeleteModalContact,
+  changeItems,
+  updateClientContact,
+  setIsUpdateContactName,
+  isUpdateContactMobile,
+  setIsUpdateContactMobile,
+  isUpdateContactEmail,
+  setIsUpdateContactEmail,
+  handleShowMore,
+  isDisplayWidget,
+  clientContactsValue,
+  onBlurContactName,
+  setSelectedContactById,
+  selectedContactById,
+  onBlurContactMobile,
+  onInputChangePhone,
+  onBlurContactEmail,
+  onInputChangeMail,
+  onClickAddNewContact,
+  openDeleteModalContact,
+  onCloseDeleteModalContact,
+  onClickDeleteContact,
+  selectedContact,
+}) => {
   const { clasess } = useStyle();
-  const {
-    quoteStateValue,
-    quoteItemValue,
-    clientContactsValue,
-    items,
-    setItems,
-    changeItems,
-    updateClientContact,
-    t,
-  } = useContactNewWidget();
-  console.log("items", items);
-
-  const [displayedItems, setDisplayedItems] = useState(2);
-
-  const handleShowMore = () => {
-    setDisplayedItems(items.length);
-  };
-
-  const handleShowLess = () => {
-    setDisplayedItems(2);
-  };
-
+  const { t } = useTranslation();
   return (
-    <div style={clasess.mainContainer}>
-      <AddContactNewWidget />
-      <div>
+    <>
+      <div style={clasess.mainContainer}>
         {items?.length > 0 ? (
           <>
-            {/* {items?.map((item: any, index: number) => {
-              return <ContactMapping item={item} key={index} index={index} />;
-            })} */}
             <div>
               {items?.slice(0, displayedItems).map((item, index) => (
-                <ContactMapping item={item} key={index} index={index} />
+                <ContactMapping
+                  key={`${index}-${item.id}`}
+                  item={item}
+                  index={index}
+                  setIsDisplayWidget={setIsDisplayWidget}
+                  displayedItems={displayedItems}
+                  onOpenDeleteModalContact={onOpenDeleteModalContact}
+                  items={items}
+                  changeItems={changeItems}
+                  updateClientContact={updateClientContact}
+                />
               ))}
             </div>
           </>
         ) : (
-          <div style={clasess.addNewContactNameStyle}>
+          <div
+            style={clasess.addNewContactNameStyle}
+            onClick={() => setIsDisplayWidget(true)}
+          >
             <PlusNewIcon />
             <div style={clasess.addNewContactNameTextStyle}>Add Contact</div>
           </div>
         )}
+        {items?.length > 2 && displayedItems === 2 && (
+          <div style={clasess.showLessContainer} onClick={handleShowMore}>
+            Show More
+          </div>
+        )}
+        {items?.length > 2 && displayedItems > 2 && (
+          <div style={clasess.showLessContainer} onClick={handleShowLess}>
+            Show Less
+          </div>
+        )}
       </div>
-      {items?.length > 2 && displayedItems === 2 && (
-        <div style={clasess.showLessContainer} onClick={handleShowMore}>
-          Show More
-        </div>
+      {isDisplayWidget && (
+        <AddContactNewWidget
+          clientContactsValue={clientContactsValue}
+          onBlurContactName={onBlurContactName}
+          setIsUpdateContactName={setIsUpdateContactName}
+          setSelectedContactById={setSelectedContactById}
+          selectedContactById={selectedContactById}
+          onBlurContactMobile={onBlurContactMobile}
+          isUpdateContactMobile={isUpdateContactMobile}
+          setIsUpdateContactMobile={setIsUpdateContactMobile}
+          onInputChangePhone={onInputChangePhone}
+          onBlurContactEmail={onBlurContactEmail}
+          isUpdateContactEmail={isUpdateContactEmail}
+          setIsUpdateContactEmail={setIsUpdateContactEmail}
+          onInputChangeMail={onInputChangeMail}
+          onClickAddNewContact={onClickAddNewContact}
+        />
       )}
-      {items?.length > 2 && displayedItems > 2 && (
-        <div style={clasess.showLessContainer} onClick={handleShowLess}>
-          Show Less
-        </div>
-      )}
-      <AddContactNewWidget />
-    </div>
+
+      <GoMakeDeleteModal
+        title={t("sales.quote.deleteContactRow")}
+        yesBtn={t("materials.buttons.delete")}
+        openModal={openDeleteModalContact}
+        onClose={onCloseDeleteModalContact}
+        subTitle={t("sales.quote.subTitleDeleteContactRow")}
+        onClickDelete={() => onClickDeleteContact(selectedContact)}
+      />
+    </>
   );
 };
 

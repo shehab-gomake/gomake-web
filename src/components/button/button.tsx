@@ -64,6 +64,17 @@ const GomakePrimaryButton = ({ ...props }) => {
         >
           {props.children}
         </span>
+        {props.rightIcon && (
+          <span
+            style={{
+              display: "flex",
+              justifyContent: "center ",
+              alignItems: "center",
+            }}
+          >
+            {props.rightIcon}
+          </span>
+        )}
       </div>
     </StyledButton>
   );

@@ -40,6 +40,7 @@ const UpdateValueAutoComplete = ({
         }}
       >
         <Autocomplete
+          id="updateValueAutoComplete"
           options={options}
           sx={{
             ml: 1,
