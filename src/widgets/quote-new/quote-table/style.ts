@@ -13,6 +13,7 @@ const useStyle = ({ headerHeight }) => {
         borderRight: "1px solid #EAECF0",
         color: "#FFF",
         textAlign: "center" as "center",
+        backgroundColor: "inherit",
         ...FONT_FAMILY.Inter(400, 12),
       },
       cellContainerStyle: {

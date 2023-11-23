@@ -17,7 +17,7 @@ const useStyle = () => {
         paddingRight: 20,
         height: "100%",
         overflow: "hidden",
-        marginBottom: 145,
+        // marginBottom: 145,
       },
       titleQuateContainer: {
         display: "flex",

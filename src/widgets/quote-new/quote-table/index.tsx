@@ -46,11 +46,11 @@ const QuoteForPriceTable = ({
       <TableContainer
         component={Paper}
         style={{
-          maxHeight: 400,
+          maxHeight: 420,
           overflow: "scroll",
         }}
       >
-        <Table>
+        <Table stickyHeader={true}>
           <TableHead>
             <TableRow style={clasess.tableRowStyle}>
               {tableHeaders.map((header, index) => (
