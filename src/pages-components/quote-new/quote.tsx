@@ -14,9 +14,11 @@ import { AddNewItemModal } from "@/widgets/quote/modals-widgets/add-new-item-mod
 import { DuplicateItemModal } from "@/widgets/quote/modals-widgets/duplicate-item-modal";
 import { GoMakeDeleteModal } from "@/components";
 import lodashClonedeep from "lodash.clonedeep";
+import { navStatusState } from "@/store/nav-status";
 
 const QuoteNewPageWidget = () => {
   const { clasess } = useStyle();
+  const navStatus = useRecoilValue(navStatusState);
   const {
     selectDate,
     selectBusiness,
@@ -270,7 +272,13 @@ const QuoteNewPageWidget = () => {
             />
           </div>
 
-          <div style={{ position: "fixed", bottom: 0, width: "91.5%" }}>
+          <div
+            style={{
+              position: "fixed",
+              bottom: 0,
+              width: navStatus?.isClosed ? "91.407%" : "85.16%",
+            }}
+          >
             <WriteCommentComp />
             <ButtonsContainer onOpenNewItem={onOpenNewItem} />
           </div>
