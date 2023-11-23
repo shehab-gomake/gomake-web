@@ -6,7 +6,6 @@ import { useState } from "react";
 import { machineCategoriesState } from "@/store/machine-categories";
 import { GomakePrimaryButton } from "@/components";
 import { TabsMappingWidget } from "./widgets/tabs-mapping";
-import { PricingSectionMappingWidget } from "./widgets/pricing-section-mapping";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
 import { RightSideWidget } from "./widgets/right-side-widget";
@@ -16,6 +15,7 @@ import {
   MultiParameterModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
 import { EWidgetProductType } from "./enums";
+import {PricingWidget} from "@/widgets/product-pricing-widget/pricing-widget";
 
 const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
@@ -65,6 +65,9 @@ const PriceListPageWidget = ({ widgetType }) => {
     errorMsg,
     workFlowSelected,
     relatedParameters,
+      jobDetails,
+      jobActions,
+      workFlows
   } = useDigitalOffsetPrice({ clasess, widgetType });
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
@@ -107,14 +110,15 @@ const PriceListPageWidget = ({ widgetType }) => {
                       if (index === activeIndex) {
                         if (section.name === "Pricing") {
                           return (
-                            <PricingSectionMappingWidget
-                              clasess={clasess}
-                              machineCategories={machineCategories}
-                              onChangeCategoryData={onChangeCategoryData}
-                              section={section}
-                              pricingDefaultValue={pricingDefaultValue}
-                              workFlowSelected={workFlowSelected}
-                            />
+                            // <PricingSectionMappingWidget
+                            //   clasess={clasess}
+                            //   machineCategories={machineCategories}
+                            //   onChangeCategoryData={onChangeCategoryData}
+                            //   section={section}
+                            //   pricingDefaultValue={pricingDefaultValue}
+                            //   workFlowSelected={workFlowSelected}
+                            // />
+                              <PricingWidget actions={jobActions} workFlows={workFlows}/>
                           );
                         } else {
                           return section?.subSections?.map(
