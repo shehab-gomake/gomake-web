@@ -376,6 +376,28 @@ const useQuoteNew = () => {
     onOpenDeleteItemModal();
     setQuateItemId(quoteItem?.id);
   };
+
+  const getCalculateQuote = useCallback(
+    async (calculationType: number, data: number) => {
+      const res = await callApi(
+        EHttpMethod.GET,
+        `/v1/erp-service/quote/get-calculate-quote`,
+        {
+          QuoteId: quoteItemValue?.id,
+          data,
+          calculationType,
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [quoteItemValue]
+  );
   return {
     selectDate,
     selectBusiness,
@@ -401,6 +423,7 @@ const useQuoteNew = () => {
     openAddNewItemModal,
     openDuplicateWithDifferentQTYModal,
     openDeleteItemModal,
+    getCalculateQuote,
     onCloseDeleteItemModal,
     deleteQuoteItem,
     onCloseDuplicateWithDifferentQTY,

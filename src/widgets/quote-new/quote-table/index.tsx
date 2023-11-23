@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -14,6 +14,7 @@ import { useStyle } from "./style";
 import { RowMappingWidget } from "./row-mapping";
 import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { InputUpdatedValues } from "../input-updated-values";
 const QuoteForPriceTable = ({
   priceListItems,
   columnWidths,
@@ -24,6 +25,8 @@ const QuoteForPriceTable = ({
   onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
   quoteItems,
+  changeQuoteItems,
+  getCalculateQuote,
 }) => {
   const { clasess } = useStyle({ headerHeight });
   const { t } = useTranslation();
@@ -37,6 +40,23 @@ const QuoteForPriceTable = ({
       },
     };
   });
+
+  const [isUpdateTotalPayment, setIsUpdateTotalPayment] = useState(null);
+  const onBlurTotalPayment = async () => {
+    getCalculateQuote(2, quoteItems?.totalPayment);
+    setIsUpdateTotalPayment(null);
+  };
+  const onInputTotalPayment = (e) => {
+    changeQuoteItems("totalPayment", e);
+  };
+  const [isUpdateDiscount, setIsUpdateDiscount] = useState(null);
+  const onBlurDiscount = async () => {
+    getCalculateQuote(0, quoteItems?.discount);
+    setIsUpdateDiscount(null);
+  };
+  const onInputDiscount = (e) => {
+    changeQuoteItems("discount", e);
+  };
 
   return (
     <div>
@@ -57,7 +77,7 @@ const QuoteForPriceTable = ({
               ))}
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody style={{ border: "1px solid #EAECF0" }}>
             {priceListItems?.map((item, index) => (
               <RowMappingWidget
                 key={item.id}
@@ -81,14 +101,28 @@ const QuoteForPriceTable = ({
           <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
             {t("sales.quote.totalBeforeVAT")}
           </div>
-          <div style={{ ...clasess.oddRowContainer, width: "19%" }}>
-            {quoteItems?.totalPrice?.toFixed(2)} ILS
+          <div
+            style={{
+              ...clasess.oddRowContainer,
+              width: "19%",
+              paddingLeft: 36,
+            }}
+          >
+            {quoteItems?.totalPrice}
           </div>
           <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
             {t("sales.quote.discount")}
           </div>
           <div style={{ ...clasess.oddRowContainer, width: "19%" }}>
-            {quoteItems?.discount}
+            <div style={clasess.cellTextInputStyle}>
+              <InputUpdatedValues
+                value={quoteItems?.discount}
+                onBlur={onBlurDiscount}
+                isUpdate={isUpdateDiscount}
+                setIsUpdate={setIsUpdateDiscount}
+                onInputChange={(e) => onInputDiscount(e)}
+              />
+            </div>
           </div>
           <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
             VAT (17%)
@@ -116,7 +150,15 @@ const QuoteForPriceTable = ({
               ...FONT_FAMILY.Inter(700, 18),
             }}
           >
-            {Math.ceil(quoteItems?.totalPayment)} ILS
+            <div style={clasess.cellTextInputStyle}>
+              <InputUpdatedValues
+                value={quoteItems?.totalPayment}
+                onBlur={onBlurTotalPayment}
+                isUpdate={isUpdateTotalPayment}
+                setIsUpdate={setIsUpdateTotalPayment}
+                onInputChange={(e) => onInputTotalPayment(e)}
+              />
+            </div>
           </div>
         </div>
       </div>

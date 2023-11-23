@@ -26,13 +26,13 @@ const ButtonsContainer = ({ onOpenNewItem }) => {
           leftIcon={<PlusIcon stroke={"#344054"} />}
           style={clasess.btnContainer}
         >
-          {t("sales.quote.addNewItems")}
+          {t("sales.quote.addExistItem")}
         </GomakePrimaryButton>
         <GomakePrimaryButton
           leftIcon={<PlusIcon stroke={"#344054"} />}
           style={clasess.btnContainer}
         >
-          {t("sales.quote.addNewItems")}
+          {t("sales.quote.addDelivery")}
         </GomakePrimaryButton>
       </div>
       <div style={clasess.btnsContainer}>

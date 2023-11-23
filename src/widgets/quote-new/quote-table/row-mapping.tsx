@@ -75,6 +75,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[1],
           ...clasess.cellContainerStyle,
+          color: "#000000",
         }}
       >
         225
@@ -121,7 +122,7 @@ const RowMappingWidget = ({
       >
         <div style={clasess.cellTextInputStyle}>
           <InputUpdatedValues
-            value={item.discount || "0"}
+            value={item.discount ? `${item.discount}%` : "0%"}
             onBlur={onBlurDiscount}
             isUpdate={isUpdateDiscount}
             setIsUpdate={setIsUpdateDiscount}

@@ -38,6 +38,7 @@ const QuoteNewPageWidget = () => {
     openAddNewItemModal,
     openDuplicateWithDifferentQTYModal,
     openDeleteItemModal,
+    getCalculateQuote,
     onCloseDeleteItemModal,
     deleteQuoteItem,
     onCloseDuplicateWithDifferentQTY,
@@ -249,6 +250,8 @@ const QuoteNewPageWidget = () => {
               }
               onClickDeleteQouteItem={onClickDeleteQouteItem}
               quoteItems={quoteItems}
+              changeQuoteItems={changeQuoteItems}
+              getCalculateQuote={getCalculateQuote}
             />
           </div>
 
