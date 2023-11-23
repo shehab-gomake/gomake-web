@@ -3,12 +3,6 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { GomakePrimaryButton } from "@/components";
-import { useRecoilState } from "recoil";
-import {
-  isUpdateContactEmailState,
-  isUpdateContactMobileState,
-  isUpdateContactNameState,
-} from "@/pages-components/quote-new/store/quote";
 
 const AddContactNewWidget = ({
   clientContactsValue,

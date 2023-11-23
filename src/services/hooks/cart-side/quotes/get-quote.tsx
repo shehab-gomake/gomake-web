@@ -25,7 +25,7 @@ const getAndSetQuotes = async (
       unitPrice: item?.price,
       discount: item?.discount,
       finalPrice: item?.finalPrice,
-      more: <MoreMenuWidget quoteItem={item}/>,
+      // more: <MoreMenuWidget quoteItem={item}/>,
       quoteItemId: item?.id,
     };
   });
