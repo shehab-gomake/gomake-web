@@ -91,7 +91,7 @@ const WorkFlowComponent = ({
 };
 
 const WorkFlowsComponent = ({workflows, showSelected}: IWorksFlowsProps) => {
-    const totalPageDelay = 1000 * 8;
+    const totalPageDelay = 1000 * 5;
     const elementDelay = totalPageDelay / workflows.length;
     return <Stack gap={'10px'}>{workflows.map((flow, index) => <WorkFlowComponent showSelected={showSelected}
                                                                                   delay={index * elementDelay}
