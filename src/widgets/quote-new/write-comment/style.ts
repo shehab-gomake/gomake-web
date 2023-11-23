@@ -1,7 +1,4 @@
 import { useMemo } from "react";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { FONT_FAMILY } from "@/utils/font-family";
-
 const useStyle = () => {
   const clasess = useMemo(() => {
     return {
@@ -13,6 +10,8 @@ const useStyle = () => {
         padding: "14px 29px",
         background: "#F4F1F6",
         borderBottom: "1px solid #67707F",
+        borderTopRightRadius: 8,
+        borderTopLeftRadius: 8,
       },
       textInputStyle: {
         height: 44,
