@@ -3,21 +3,21 @@ import { Checkbox, TableRow } from "@mui/material";
 import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { CharacterDetails } from "./character-details";
-import { MoreMenuWidget } from "@/widgets/quote/more-circle";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useQuoteTable } from "./use-quote-table";
+import { MoreMenuWidgetWithChilds } from "@/widgets/quote/more-circle-with-childs";
 
-const RowMappingWidget = ({
+const RowMappingChildWidget = ({
   item,
   index,
   columnWidths,
   headerHeight,
-  changepriceListItems,
   getCalculateQuoteItem,
-  onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
-}) => {
+  parentIndex,
+  childInex,
+  changepriceListItemsChild,
+}: any) => {
   const { clasess } = useStyle({ headerHeight });
   const {
     isUpdateAmount,
@@ -38,11 +38,12 @@ const RowMappingWidget = ({
     onInputChangeAmount,
   } = useQuoteTable({
     getCalculateQuoteItem,
-    changepriceListItems,
+    changepriceListItemsChild,
     item,
     index,
+    parentIndex,
+    childInex,
   });
-  console.log("item", item);
   return (
     <TableRow
       key={item.id}
@@ -77,9 +78,7 @@ const RowMappingWidget = ({
           ...clasess.cellContainerStyle,
           color: "#000000",
         }}
-      >
-        225
-      </PrimaryTableCell>
+      ></PrimaryTableCell>
       <PrimaryTableCell
         style={{
           width: columnWidths[2],
@@ -87,17 +86,13 @@ const RowMappingWidget = ({
           color: "#5859A8",
           ...clasess.cellContainerStyle,
         }}
-      >
-        {item.productName}
-      </PrimaryTableCell>
+      ></PrimaryTableCell>
       <PrimaryTableCell
         style={{
           width: columnWidths[3],
           textAlign: "start",
         }}
-      >
-        <CharacterDetails details={item.details} />
-      </PrimaryTableCell>
+      ></PrimaryTableCell>
       <PrimaryTableCell
         style={{
           width: columnWidths[4],
@@ -122,7 +117,7 @@ const RowMappingWidget = ({
       >
         <div style={clasess.cellTextInputStyle}>
           <InputUpdatedValues
-            value={item.discount ? `${item.discount}%` : "0%"}
+            value={item.discount}
             onBlur={onBlurDiscount}
             isUpdate={isUpdateDiscount}
             setIsUpdate={setIsUpdateDiscount}
@@ -168,13 +163,12 @@ const RowMappingWidget = ({
           ...clasess.cellContainerStyle,
         }}
       >
-        <MoreMenuWidget
+        <MoreMenuWidgetWithChilds
           quoteItem={item}
-          onClickDuplicateWithDifferentQTY={onClickDuplicateWithDifferentQTY}
           onClickDeleteQouteItem={onClickDeleteQouteItem}
         />
       </PrimaryTableCell>
     </TableRow>
   );
 };
-export { RowMappingWidget };
+export { RowMappingChildWidget };

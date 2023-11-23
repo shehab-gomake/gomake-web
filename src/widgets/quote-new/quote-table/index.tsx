@@ -15,6 +15,8 @@ import { RowMappingWidget } from "./row-mapping";
 import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { InputUpdatedValues } from "../input-updated-values";
+import { QuoteForPriceChildTable } from "../quote-child-table";
+import { RowMappingChildWidget } from "../quote-child-table/row-mapping";
 const QuoteForPriceTable = ({
   priceListItems,
   columnWidths,
@@ -27,6 +29,7 @@ const QuoteForPriceTable = ({
   quoteItems,
   changeQuoteItems,
   getCalculateQuote,
+  changepriceListItemsChild,
 }) => {
   const { clasess } = useStyle({ headerHeight });
   const { t } = useTranslation();
@@ -57,7 +60,7 @@ const QuoteForPriceTable = ({
   const onInputDiscount = (e) => {
     changeQuoteItems("discount", e);
   };
-
+  let indexs = 0;
   return (
     <div>
       <TableContainer component={Paper} style={{ maxHeight: 340 }}>
@@ -78,21 +81,49 @@ const QuoteForPriceTable = ({
             </TableRow>
           </TableHead>
           <TableBody style={{ border: "1px solid #EAECF0" }}>
-            {priceListItems?.map((item, index) => (
-              <RowMappingWidget
-                key={item.id}
-                item={item}
-                index={index}
-                columnWidths={columnWidths}
-                headerHeight={headerHeight}
-                changepriceListItems={changepriceListItems}
-                getCalculateQuoteItem={getCalculateQuoteItem}
-                onClickDuplicateWithDifferentQTY={
-                  onClickDuplicateWithDifferentQTY
-                }
-                onClickDeleteQouteItem={onClickDeleteQouteItem}
-              />
-            ))}
+            {priceListItems?.map((item: any, index: number) => {
+              indexs++;
+              const parentIndex = indexs;
+              return (
+                <>
+                  <RowMappingWidget
+                    key={item.id}
+                    item={item}
+                    index={parentIndex}
+                    columnWidths={columnWidths}
+                    headerHeight={headerHeight}
+                    changepriceListItems={changepriceListItems}
+                    getCalculateQuoteItem={getCalculateQuoteItem}
+                    onClickDuplicateWithDifferentQTY={
+                      onClickDuplicateWithDifferentQTY
+                    }
+                    onClickDeleteQouteItem={onClickDeleteQouteItem}
+                  />
+                  {item?.childsQuoteItems &&
+                    item?.childsQuoteItems?.map(
+                      (childItem: any, childIndex: number) => {
+                        indexs++;
+                        return (
+                          <RowMappingChildWidget
+                            key={childItem.id}
+                            item={childItem}
+                            index={indexs}
+                            columnWidths={columnWidths}
+                            headerHeight={headerHeight}
+                            parentIndex={index}
+                            childInex={childIndex}
+                            changepriceListItemsChild={
+                              changepriceListItemsChild
+                            }
+                            onClickDeleteQouteItem={onClickDeleteQouteItem}
+                            getCalculateQuoteItem={getCalculateQuoteItem}
+                          />
+                        );
+                      }
+                    )}
+                </>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>

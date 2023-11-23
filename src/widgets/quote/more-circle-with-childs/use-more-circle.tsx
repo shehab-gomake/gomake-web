@@ -4,8 +4,7 @@ import { DeleteMenuIcon } from "../more-circle-with-childs/icons/delete-menu";
 import { useRecoilValue } from "recoil";
 import { quoteState } from "@/pages-components/quote/store/quote";
 
-const useMoreCircleWithChilds = ({ quoteItem }) => {
-  const quoteStateValue = useRecoilValue<any>(quoteState);
+const useMoreCircleWithChilds = ({ quoteItem, onClickDeleteQouteItem }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -24,7 +23,7 @@ const useMoreCircleWithChilds = ({ quoteItem }) => {
     {
       name: "Delete",
       icon: <DeleteMenuIcon />,
-      onclick: () => quoteStateValue.onClickDeleteQouteItem(quoteItem),
+      onclick: () => onClickDeleteQouteItem(quoteItem),
     },
   ];
 

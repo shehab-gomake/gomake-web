@@ -13,6 +13,7 @@ import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
 import { AddNewItemModal } from "@/widgets/quote/modals-widgets/add-new-item-modal";
 import { DuplicateItemModal } from "@/widgets/quote/modals-widgets/duplicate-item-modal";
 import { GoMakeDeleteModal } from "@/components";
+import lodashClonedeep from "lodash.clonedeep";
 
 const QuoteNewPageWidget = () => {
   const { clasess } = useStyle();
@@ -137,6 +138,20 @@ const QuoteNewPageWidget = () => {
     setPriceListItems(temp);
   };
 
+  const changepriceListItemsChild = (
+    parentIndex: number,
+    childInex: number,
+    filedName: string,
+    value: any
+  ) => {
+    let temp = lodashClonedeep(priceListItems);
+    temp[parentIndex].childsQuoteItems[childInex] = {
+      ...temp[parentIndex].childsQuoteItems[childInex],
+      [filedName]: value,
+    };
+    setPriceListItems(temp);
+  };
+
   const [quoteItems, setquoteItems] = useState<any>([]);
   const changeQuoteItems = useCallback(
     (filedName: string, value: any) => {
@@ -183,7 +198,7 @@ const QuoteNewPageWidget = () => {
                   />
                 </div>
               </div>
-              {/* <div style={clasess.lineDateStyle} /> */}
+              {/* <div style={clasess.lineDateStyle} /> Don't Delete */}
             </div>
             <div style={clasess.bordersecondContainer}>
               <BusinessNewWidget
@@ -252,6 +267,7 @@ const QuoteNewPageWidget = () => {
               quoteItems={quoteItems}
               changeQuoteItems={changeQuoteItems}
               getCalculateQuote={getCalculateQuote}
+              changepriceListItemsChild={changepriceListItemsChild}
             />
           </div>
 
