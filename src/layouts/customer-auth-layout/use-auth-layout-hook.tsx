@@ -2,6 +2,7 @@ import { useGomakeAuth, useGomakeAxios, useGomakeRouter } from "@/hooks";
 import {
   CustomersIcon,
   HomeIcon,
+  PartnersIcon,
   ProductFloorIcon,
   ProductsIcon,
   ReportsIcon,
@@ -45,6 +46,20 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         },
         isProduction: true,
       },
+
+      {
+        isLine: false,
+        key: "partners",
+        title: "tabs.partners",
+        path: "/partners",
+        isList: false,
+        icon: () => {
+          return <PartnersIcon />;
+        },
+        isProduction: true,
+      },
+
+
       {
         isLine: true,
         key: "line_1",

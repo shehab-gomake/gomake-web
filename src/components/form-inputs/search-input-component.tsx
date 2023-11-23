@@ -6,9 +6,10 @@ import { useTranslation } from "react-i18next";
 interface ISearchInputProps {
   onChange: (value: string) => void;
   value?: string;
+  placeHolder?: string;
 }
 
-const SearchInputComponent = ({ onChange, value }: ISearchInputProps) => {
+const SearchInputComponent = ({ onChange, value ,placeHolder }: ISearchInputProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   return (
@@ -17,7 +18,7 @@ const SearchInputComponent = ({ onChange, value }: ISearchInputProps) => {
         onChange(e.target.value);
       }}
       style={classes.searchInput}
-      placeholder={t("header.search")}
+      placeholder={ placeHolder || t("header.search")}
       value={value}
       startAdornment={
         <InputAdornment position="start">

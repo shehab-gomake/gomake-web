@@ -1,0 +1,86 @@
+import { useTranslation } from "react-i18next";
+import { Stack, Tab, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
+import { useState } from "react";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useStyle } from "./style";
+import { HeaderTitle } from "@/widgets/header-title";
+import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
+import { DiscoverWidget } from "../discover/discover";
+
+
+const PrimaryButtonsTabWidget = () => {
+    const { t } = useTranslation();
+    const [selectedTab, setSelectedTab] = useState(0);
+    const { primaryColor } = useGomakeTheme();
+    const { classes } = useStyle();
+
+    const tabLabels = [
+        t('G.wall'),
+        t('My partners'),
+    ];
+
+    const theme = createMuiTheme({
+        palette: {
+            secondary: {
+                main: '#FFF',
+            },
+        },
+    });
+
+    const handleTabChange = (event, newValue) => {
+        setSelectedTab(newValue);
+    };
+    
+    return (
+        <div style={{width : "100%"}} >
+            <Stack direction={'row'} gap={'20px'} height={"100px"}>
+                <HeaderTitle title={t("Marketplace")} />
+                <ThemeProvider theme={theme}  >
+                    <Tabs
+                        style={classes.container}
+                        value={selectedTab}
+                        onChange={handleTabChange}
+                        textColor="secondary"
+                        TabIndicatorProps={{ style:{ display: 'none' } }}
+                    >
+                        {tabLabels.map((label, index) => (
+                            <Tab
+                                key={index}
+                                sx={{
+                                    backgroundColor: selectedTab === index ? primaryColor(500) : primaryColor(50),
+                                    color: selectedTab === index ? '#FFF' : '#3F3F3F',
+                                    minHeight: '0px',
+                                    height: '30px',
+                                    borderRadius: '4px',
+                                    padding: '10px',
+                                    marginRight: '10px',
+                                    textTransform: 'none',
+                                    fontStyle: 'normal',
+                                    ...FONT_FAMILY.Lexend(500, 16),
+                                    lineHeight: 'normal',
+                                    width: `${Math.min(label.length * 12, 150)}px`,
+                                }}
+                                label={label}
+
+                            />
+                        ))}
+                    </Tabs>
+                </ThemeProvider>
+            </Stack>
+            <DiscoverWidget></DiscoverWidget>
+
+            {
+                selectedTab == 0 &&
+                <Stack direction={'column'} marginTop={"24px"} marginBottom={"24px"}  >
+                </Stack>
+            }
+            {
+                selectedTab == 1 &&
+                <Stack direction={'row'} marginBottom={"24px"} width={"90%"} gap={"20px"} >
+                </Stack>
+            }
+        </div>
+    )
+};
+export { PrimaryButtonsTabWidget };
