@@ -28,14 +28,13 @@ const ChartWidget = () => {
                 {
                     data: [0, 0, 0, 0, 0, 0],
                 },
-
             ]}
 
             width={600}
             height={300}
             colors={['#F89AD1']} 
-        /> */}
-       
+        />
+        */}
     </div>
 
     );

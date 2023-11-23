@@ -16,13 +16,11 @@ const useStyle = () => {
         // paddingBottom: 20,
         // paddingLeft: 20,
         // paddingRight: 20,
-        padding: "20px",
+        // padding: "20px",
         backgroundColor: "#FFFFFF",
         margin: '0 4px',
         borderRadius: 8,
-        //  boxShadow: "0px 4px 15px 0px rgba(0, 0, 0, 0.08)",
-        boxShadow:
-          "0 1px 0px 0 rgba(0, 0, 0, 0.08), 0 0px 5px 0 rgba(0, 0, 0, 0.08)",
+        boxShadow: "0 1px 0px 0 rgba(0, 0, 0, 0.08), 0 0px 5px 0 rgba(0, 0, 0, 0.08)",
       },
       openBtnStyle: {
         display: "flex",
@@ -80,6 +78,13 @@ const useStyle = () => {
         gap: "10px",
         ...FONT_FAMILY.Lexend(500, 16),
         lineHeight: "20px",
+      },
+      dataRowStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        lineHeight: "17.5px",
+        color:"#292D32",
+        letterSpacing: '-1%',
+
       }
     };
   }, []);
