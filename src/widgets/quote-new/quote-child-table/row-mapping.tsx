@@ -17,7 +17,9 @@ const RowMappingChildWidget = ({
   parentIndex,
   childInex,
   changepriceListItemsChild,
+  childList,
 }: any) => {
+  console.log("index", childList);
   const { clasess } = useStyle({ headerHeight });
   const {
     isUpdateAmount,
@@ -55,6 +57,7 @@ const RowMappingChildWidget = ({
         style={{
           width: columnWidths[0],
           ...clasess.cellContainerStyle,
+          borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
         <div
@@ -77,6 +80,7 @@ const RowMappingChildWidget = ({
           width: columnWidths[1],
           ...clasess.cellContainerStyle,
           color: "#000000",
+          borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       ></PrimaryTableCell>
       <PrimaryTableCell
@@ -91,12 +95,14 @@ const RowMappingChildWidget = ({
         style={{
           width: columnWidths[3],
           textAlign: "start",
+          borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       ></PrimaryTableCell>
       <PrimaryTableCell
         style={{
           width: columnWidths[4],
           ...clasess.cellContainerStyle,
+          borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
         <div style={clasess.cellTextInputStyle}>
@@ -113,11 +119,12 @@ const RowMappingChildWidget = ({
         style={{
           width: columnWidths[5],
           ...clasess.cellContainerStyle,
+          borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
         <div style={clasess.cellTextInputStyle}>
           <InputUpdatedValues
-            value={item.discount}
+            value={item.discount ? item.discount : "0"}
             onBlur={onBlurDiscount}
             isUpdate={isUpdateDiscount}
             setIsUpdate={setIsUpdateDiscount}
@@ -129,6 +136,7 @@ const RowMappingChildWidget = ({
         style={{
           width: columnWidths[6],
           ...clasess.cellContainerStyle,
+          borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
         <div style={clasess.cellTextInputStyle}>
@@ -145,6 +153,7 @@ const RowMappingChildWidget = ({
         style={{
           width: columnWidths[7],
           ...clasess.cellContainerStyle,
+          borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
         <div style={clasess.cellTextInputStyle}>
@@ -161,6 +170,7 @@ const RowMappingChildWidget = ({
         style={{
           width: columnWidths[7],
           ...clasess.cellContainerStyle,
+          borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
         <MoreMenuWidgetWithChilds

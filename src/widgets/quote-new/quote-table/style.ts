@@ -1,9 +1,7 @@
 import { useMemo } from "react";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = ({ headerHeight }) => {
-  const { grayColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       tableRowStyle: {
@@ -19,7 +17,7 @@ const useStyle = ({ headerHeight }) => {
       },
       cellContainerStyle: {
         textAlign: "center" as "center",
-        padding: "8px 24px",
+        padding: "0px 24px",
       },
       tableFooterContainer: {
         display: "flex",
@@ -46,7 +44,7 @@ const useStyle = ({ headerHeight }) => {
         background: "#8283BE",
         ...FONT_FAMILY.Inter(500, 12),
         height: 44,
-        borderBottom: "1px solid #EAECF0",
+        // borderBottom: "1px solid #EAECF0",
       },
       oddRowContainer: {
         display: "flex",
@@ -54,7 +52,7 @@ const useStyle = ({ headerHeight }) => {
         background: "#FFFFFFF",
         ...FONT_FAMILY.Inter(400, 14),
         height: 44,
-        borderBottom: "1px solid #EAECF0",
+        // borderBottom: "1px solid #EAECF0",
       },
       cellTextInputStyle: {
         display: "flex",

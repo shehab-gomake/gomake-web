@@ -75,7 +75,8 @@ const QuoteForPriceTable = ({
                   <RowMappingWidget
                     key={item.id}
                     item={item}
-                    index={parentIndex}
+                    index={index}
+                    parentIndex={parentIndex}
                     columnWidths={columnWidths}
                     headerHeight={headerHeight}
                     changepriceListItems={changepriceListItems}
@@ -103,6 +104,7 @@ const QuoteForPriceTable = ({
                             }
                             onClickDeleteQouteItem={onClickDeleteQouteItem}
                             getCalculateQuoteItem={getCalculateQuoteItem}
+                            childList={item?.childsQuoteItems}
                           />
                         );
                       }

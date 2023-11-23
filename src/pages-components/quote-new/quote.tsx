@@ -15,6 +15,7 @@ import { DuplicateItemModal } from "@/widgets/quote/modals-widgets/duplicate-ite
 import { GoMakeDeleteModal } from "@/components";
 import lodashClonedeep from "lodash.clonedeep";
 import { navStatusState } from "@/store/nav-status";
+import { SettingNewIcon } from "@/icons";
 
 const QuoteNewPageWidget = () => {
   const { clasess } = useStyle();
@@ -173,15 +174,23 @@ const QuoteNewPageWidget = () => {
       {quoteItemValue?.id && (
         <div style={clasess.mainContainer}>
           <div style={{ width: "100%" }}>
-            <div style={clasess.titleQuateContainer}>
-              <HeaderTitle
-                title={t("sales.quote.title")}
-                marginBottom={1}
-                marginTop={1}
-                color="rgba(241, 53, 163, 1)"
-              />
-              <div style={clasess.quoteNumberStyle}>
-                {" - "} {quoteItemValue?.number}
+            <div style={clasess.titleSettingContainer}>
+              <div style={clasess.titleQuateContainer}>
+                <HeaderTitle
+                  title={t("sales.quote.title")}
+                  marginBottom={1}
+                  marginTop={1}
+                  color="rgba(241, 53, 163, 1)"
+                />
+                <div style={clasess.quoteNumberStyle}>
+                  {" - "} {quoteItemValue?.number}
+                </div>
+              </div>
+              <div style={clasess.settingsStatusContainer}>
+                <div style={clasess.quoteStatusContainer}>
+                  Waiting for manager approval
+                </div>
+                <SettingNewIcon />
               </div>
             </div>
             <div style={clasess.datesContainer}>

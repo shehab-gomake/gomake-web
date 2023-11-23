@@ -17,6 +17,7 @@ const RowMappingWidget = ({
   getCalculateQuoteItem,
   onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
+  parentIndex,
 }) => {
   const { clasess } = useStyle({ headerHeight });
   const {
@@ -42,7 +43,6 @@ const RowMappingWidget = ({
     item,
     index,
   });
-  console.log("item", item);
   return (
     <TableRow
       key={item.id}
@@ -54,6 +54,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[0],
           ...clasess.cellContainerStyle,
+          borderBottom: item?.childsQuoteItems && "none",
         }}
       >
         <div
@@ -68,7 +69,7 @@ const RowMappingWidget = ({
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
           />
-          {index}
+          {parentIndex}
         </div>
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -76,6 +77,7 @@ const RowMappingWidget = ({
           width: columnWidths[1],
           ...clasess.cellContainerStyle,
           color: "#000000",
+          borderBottom: item?.childsQuoteItems && "none",
         }}
       >
         225
@@ -86,6 +88,7 @@ const RowMappingWidget = ({
           ...FONT_FAMILY.Inter(600, 14),
           color: "#5859A8",
           ...clasess.cellContainerStyle,
+          borderBottom: item?.childsQuoteItems && "none",
         }}
       >
         {item.productName}
@@ -94,6 +97,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[3],
           textAlign: "start",
+          borderBottom: item?.childsQuoteItems && "none",
         }}
       >
         <CharacterDetails details={item.details} />
@@ -102,6 +106,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[4],
           ...clasess.cellContainerStyle,
+          borderBottom: item?.childsQuoteItems && "none",
         }}
       >
         <div style={clasess.cellTextInputStyle}>
@@ -118,11 +123,12 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[5],
           ...clasess.cellContainerStyle,
+          borderBottom: item?.childsQuoteItems && "none",
         }}
       >
         <div style={clasess.cellTextInputStyle}>
           <InputUpdatedValues
-            value={item.discount ? `${item.discount}%` : "0%"}
+            value={item.discount ? item.discount : "0"}
             onBlur={onBlurDiscount}
             isUpdate={isUpdateDiscount}
             setIsUpdate={setIsUpdateDiscount}
@@ -134,6 +140,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[6],
           ...clasess.cellContainerStyle,
+          borderBottom: item?.childsQuoteItems && "none",
         }}
       >
         <div style={clasess.cellTextInputStyle}>
@@ -150,6 +157,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[7],
           ...clasess.cellContainerStyle,
+          borderBottom: item?.childsQuoteItems && "none",
         }}
       >
         <div style={clasess.cellTextInputStyle}>
@@ -166,6 +174,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[7],
           ...clasess.cellContainerStyle,
+          borderBottom: item?.childsQuoteItems && "none",
         }}
       >
         <MoreMenuWidget
