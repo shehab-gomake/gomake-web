@@ -19,7 +19,6 @@ const RowMappingChildWidget = ({
   changepriceListItemsChild,
   childList,
 }: any) => {
-  console.log("index", childList);
   const { clasess } = useStyle({ headerHeight });
   const {
     isUpdateAmount,

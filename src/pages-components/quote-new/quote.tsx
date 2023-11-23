@@ -14,12 +14,10 @@ import { AddNewItemModal } from "@/widgets/quote/modals-widgets/add-new-item-mod
 import { DuplicateItemModal } from "@/widgets/quote/modals-widgets/duplicate-item-modal";
 import { GoMakeDeleteModal } from "@/components";
 import lodashClonedeep from "lodash.clonedeep";
-import { navStatusState } from "@/store/nav-status";
 import { SettingNewIcon } from "@/icons";
 
 const QuoteNewPageWidget = () => {
   const { clasess } = useStyle();
-  const navStatus = useRecoilValue(navStatusState);
   const {
     selectDate,
     selectBusiness,
