@@ -4,27 +4,25 @@ import { Stack } from "@mui/material";
 import { ReactNode } from "react";
 
 interface IProps {
-    number: string;
+    numberHeader: string;
     desc: string;
     Icon: ReactNode;
 }
-const WallSectionCard = ({number,desc,Icon} : IProps ) => {
+const WallSectionCard = ({numberHeader,desc,Icon} : IProps ) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
 
   return (
     <div style={classes.cardStyle}>
-      <Stack direction={'row'} justifyContent={"space-between"} paddingRight={"30px"} paddingLeft={"20px"}>
         <Stack direction={'column'} alignItems={"flex-start"}>
           <h6 style={classes.numberStyle}>
-            {number}
+            {numberHeader}
           </h6>
           <h1 style={classes.descStyle}>
             {desc}
           </h1>
         </Stack>
         {Icon}
-      </Stack>
     </div>
   )
 };

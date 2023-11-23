@@ -1,5 +1,3 @@
-
-
 const discoverInputs = (state) =>{
     return [
         {
