@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -12,10 +12,8 @@ import {
 } from "@mui/material";
 import { useStyle } from "./style";
 import { RowMappingWidget } from "./row-mapping";
-import { useTranslation } from "react-i18next";
-import { FONT_FAMILY } from "@/utils/font-family";
-import { InputUpdatedValues } from "../input-updated-values";
 import { RowMappingChildWidget } from "../quote-child-table/row-mapping";
+import { TotalPriceComp } from "../total-price";
 const QuoteForPriceTable = ({
   priceListItems,
   columnWidths,
@@ -31,7 +29,6 @@ const QuoteForPriceTable = ({
   changepriceListItemsChild,
 }) => {
   const { clasess } = useStyle({ headerHeight });
-  const { t } = useTranslation();
   const PrimaryTableCell = styled(TableCell)(() => {
     return {
       [`&.${tableCellClasses.head}`]: {
@@ -43,26 +40,16 @@ const QuoteForPriceTable = ({
     };
   });
 
-  const [isUpdateTotalPayment, setIsUpdateTotalPayment] = useState(null);
-  const onBlurTotalPayment = async () => {
-    getCalculateQuote(2, quoteItems?.totalPayment);
-    setIsUpdateTotalPayment(null);
-  };
-  const onInputTotalPayment = (e) => {
-    changeQuoteItems("totalPayment", e);
-  };
-  const [isUpdateDiscount, setIsUpdateDiscount] = useState(null);
-  const onBlurDiscount = async () => {
-    getCalculateQuote(0, quoteItems?.discount);
-    setIsUpdateDiscount(null);
-  };
-  const onInputDiscount = (e) => {
-    changeQuoteItems("discount", e);
-  };
   let indexs = 0;
   return (
     <div>
-      <TableContainer component={Paper} style={{ maxHeight: 380 }}>
+      <TableContainer
+        component={Paper}
+        style={{
+          maxHeight: 400,
+          overflow: "scroll",
+        }}
+      >
         <Table>
           <TableHead>
             <TableRow style={clasess.tableRowStyle}>
@@ -126,74 +113,11 @@ const QuoteForPriceTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      <div style={clasess.tableFooterContainer}>
-        <div style={clasess.firstRowForFooterContainer}>
-          <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
-            {t("sales.quote.totalBeforeVAT")}
-          </div>
-          <div
-            style={{
-              ...clasess.oddRowContainer,
-              width: "19%",
-              paddingLeft: 36,
-            }}
-          >
-            {quoteItems?.totalPrice}
-          </div>
-          <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
-            {t("sales.quote.discount")}
-          </div>
-          <div style={{ ...clasess.oddRowContainer, width: "19%" }}>
-            <div style={clasess.cellTextInputStyle}>
-              <InputUpdatedValues
-                value={quoteItems?.discount}
-                onBlur={onBlurDiscount}
-                isUpdate={isUpdateDiscount}
-                setIsUpdate={setIsUpdateDiscount}
-                onInputChange={(e) => onInputDiscount(e)}
-              />
-            </div>
-          </div>
-          <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
-            VAT (17%)
-          </div>
-          <div style={{ ...clasess.oddRowContainer, width: "23%" }}>
-            {Math.ceil(quoteItems?.totalVAT)} ILS
-          </div>
-        </div>
-        <div style={clasess.firstRowForFooterContainer}>
-          <div
-            style={{
-              ...clasess.evenRowContainer,
-              width: "13%",
-              borderBottomLeftRadius: 6,
-              borderBottomRightRadius: 6,
-            }}
-          >
-            {t("sales.quote.totalPrice")}
-          </div>
-          <div
-            style={{
-              ...clasess.oddRowContainer,
-              width: "87%",
-            }}
-          >
-            <div style={clasess.cellTextInputStyle}>
-              <InputUpdatedValues
-                value={quoteItems?.totalPayment}
-                onBlur={onBlurTotalPayment}
-                isUpdate={isUpdateTotalPayment}
-                setIsUpdate={setIsUpdateTotalPayment}
-                onInputChange={(e) => onInputTotalPayment(e)}
-                speicalStyle={{
-                  color: "#F135A3",
-                  ...FONT_FAMILY.Inter(700, 18),
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      <TotalPriceComp
+        getCalculateQuote={getCalculateQuote}
+        quoteItems={quoteItems}
+        changeQuoteItems={changeQuoteItems}
+      />
     </div>
   );
 };

@@ -1,26 +1,8 @@
-import { useMemo } from "react";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-
-const useStyle = ({ headerHeight }) => {
-  const { grayColor } = useGomakeTheme();
+import { useMemo } from "react";
+const useStyle = () => {
   const clasess = useMemo(() => {
     return {
-      tableRowStyle: {
-        height: headerHeight,
-        background: "#8283BE",
-        color: "white",
-      },
-      tableHeaderStyle: {
-        borderRight: "1px solid #EAECF0",
-        color: "#FFF",
-        textAlign: "center" as "center",
-        ...FONT_FAMILY.Inter(400, 12),
-      },
-      cellContainerStyle: {
-        textAlign: "center" as "center",
-        padding: "8px 24px",
-      },
       tableFooterContainer: {
         display: "flex",
         flexDirection: "column" as "column",

@@ -15,8 +15,9 @@ const useStyle = () => {
         maxWidth: "100%",
         position: "relative" as "relative",
         paddingRight: 20,
-        height: "100vh",
-        // marginBottom: 100,
+        height: "100%",
+        overflow: "hidden",
+        marginBottom: 145,
       },
       titleQuateContainer: {
         display: "flex",
