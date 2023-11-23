@@ -12,9 +12,11 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
+        maxWidth: "100%",
         position: "relative" as "relative",
         paddingRight: 20,
         height: "100vh",
+        // marginBottom: 100,
       },
       titleQuateContainer: {
         display: "flex",
@@ -68,6 +70,9 @@ const useStyle = () => {
         width: "100%",
         borderBottom: `1px solid ${grayColor(200)}`,
         marginBottom: 12,
+        marginTop: 12,
+        maxHeight: 160,
+        overflow: "scroll",
       },
     };
   }, []);

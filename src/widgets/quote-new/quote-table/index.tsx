@@ -15,7 +15,6 @@ import { RowMappingWidget } from "./row-mapping";
 import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { InputUpdatedValues } from "../input-updated-values";
-import { QuoteForPriceChildTable } from "../quote-child-table";
 import { RowMappingChildWidget } from "../quote-child-table/row-mapping";
 const QuoteForPriceTable = ({
   priceListItems,
@@ -63,7 +62,7 @@ const QuoteForPriceTable = ({
   let indexs = 0;
   return (
     <div>
-      <TableContainer component={Paper} style={{ maxHeight: 340 }}>
+      <TableContainer component={Paper} style={{ maxHeight: 380 }}>
         <Table>
           <TableHead>
             <TableRow style={clasess.tableRowStyle}>
@@ -177,8 +176,6 @@ const QuoteForPriceTable = ({
             style={{
               ...clasess.oddRowContainer,
               width: "87%",
-              color: "#F135A3",
-              ...FONT_FAMILY.Inter(700, 18),
             }}
           >
             <div style={clasess.cellTextInputStyle}>
@@ -188,6 +185,10 @@ const QuoteForPriceTable = ({
                 isUpdate={isUpdateTotalPayment}
                 setIsUpdate={setIsUpdateTotalPayment}
                 onInputChange={(e) => onInputTotalPayment(e)}
+                speicalStyle={{
+                  color: "#F135A3",
+                  ...FONT_FAMILY.Inter(700, 18),
+                }}
               />
             </div>
           </div>

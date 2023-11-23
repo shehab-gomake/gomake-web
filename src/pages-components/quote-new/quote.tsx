@@ -28,7 +28,6 @@ const QuoteNewPageWidget = () => {
     isUpdateAgent,
     isDisplayWidget,
     clientContactsValue,
-    isUpdateContactName,
     items,
     displayedItems,
     isUpdateContactEmail,
@@ -271,12 +270,13 @@ const QuoteNewPageWidget = () => {
             />
           </div>
 
-          <div style={{ width: "100%" }}>
+          <div style={{ position: "fixed", bottom: 0, width: "91.5%" }}>
             <WriteCommentComp />
             <ButtonsContainer onOpenNewItem={onOpenNewItem} />
           </div>
         </div>
       )}
+
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}

@@ -2,7 +2,6 @@ import { useStyle } from "./style";
 import { PlusNewIcon } from "@/icons";
 import { ContactMapping } from "./contact-mapping";
 import { AddContactNewWidget } from "./add-contact-widget";
-import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
 
