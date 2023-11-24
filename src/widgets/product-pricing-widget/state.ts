@@ -1,12 +1,12 @@
 import { atom } from "recoil";
-import {ICalculatedWorkFlow, IJobDetail, IPricingAction} from "@/widgets/product-pricing-widget/interface";
+import {ICalculatedWorkFlow, IPricingAction} from "@/widgets/product-pricing-widget/interface";
 
 export const workFlowsState = atom<ICalculatedWorkFlow[]>({
     key: "workFlowsState",
     default: [],
 });
 
-export const jobDetailsState = atom<IJobDetail[]>({
+export const jobDetailsState = atom<any[]>({
     key: "jobDetailsState",
     default: [
         {title: "Title1", value: "Value1"},
