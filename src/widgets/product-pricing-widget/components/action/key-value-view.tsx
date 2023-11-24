@@ -5,35 +5,39 @@ import {IOutput} from "@/widgets/product-pricing-widget/interface";
 import {useState} from "react";
 import {UpdateValueInput} from "@/components/text-input/update-value-input";
 import Button from "@mui/material/Button";
+import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
 
 interface IKeyValueViewProps extends IOutput {
     valueColor?: string;
     key?: string;
     onUpdate?: (v: string) => void;
+    source?: EWorkSource;
 }
 
 interface IParametersMappingProps {
     parameters: IKeyValueViewProps[]
+    source?: EWorkSource;
 }
 
-const ParametersMapping = ({parameters}: IParametersMappingProps) => {
+const ParametersMapping = ({parameters, source}: IParametersMappingProps) => {
     return <>
         {
             parameters?.flatMap((parameter, index, array) => {
-                return index < array.length - 1 ? [<KeyValueViewComponent {...parameter}/>,
+                return index < array.length - 1 ? [<KeyValueViewComponent source={source} {...parameter}/>,
                     <Divider  orientation={'vertical'} flexItem/>] : [
-                    <KeyValueViewComponent {...parameter}/>]
+                    <KeyValueViewComponent {...parameter} source={source}/>]
             })
         }
     </>
 }
-const KeyValueViewComponent = ({name, values, valueColor, defaultUnit}: IKeyValueViewProps) => {
+const KeyValueViewComponent = ({name, values, valueColor, defaultUnit, outSourceValues, source}: IKeyValueViewProps) => {
     const {classes} = useStyle();
+    const curValues = source === EWorkSource.OUT ? !!outSourceValues ? outSourceValues : ['0'] : values;
     return (
         <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
             <span style={classes.detailTitle}>{name}</span>
             {
-                values?.map(value => <span style={valueColor ? {
+                curValues?.map(value => <span style={valueColor ? {
                     ...classes.detailValue,
                     color: valueColor
                 } : classes.detailValue}>{!!defaultUnit ? `${value} ${defaultUnit}` : value}</span>)
@@ -43,9 +47,9 @@ const KeyValueViewComponent = ({name, values, valueColor, defaultUnit}: IKeyValu
     )
 }
 
-const EditableKeyValueViewComponent = ({name, values, valueColor, defaultUnit, onUpdate}: IKeyValueViewProps) => {
+const EditableKeyValueViewComponent = ({name, values, valueColor, defaultUnit, onUpdate, outSourceValues, source, supplierId}: IKeyValueViewProps) => {
     const {classes} = useStyle();
-    const value = values[0];
+    const value = source === EWorkSource.OUT ? !!outSourceValues && outSourceValues[0] ? outSourceValues[0] : '0' :  values[0];
     const [edit, setEdit] = useState<boolean>(false);
     const [editValue, setEditValue] = useState<string>(value);
     const handleValueClick = (e) => {
@@ -55,6 +59,7 @@ const EditableKeyValueViewComponent = ({name, values, valueColor, defaultUnit, o
 
     const handleCancelUpdate = () => {
         setEdit(false);
+        setEditValue(value);
     }
 
     const onInputChange = (v: string) => {

@@ -12,7 +12,7 @@ import {
 } from "@/widgets/product-pricing-widget/components/action/key-value-view";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {InOutSourceSelect} from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
-import {RuleType} from "@/widgets/product-pricing-widget/enums";
+import {EWorkSource, RuleType} from "@/widgets/product-pricing-widget/enums";
 import {useActionUpdateValues} from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
@@ -37,10 +37,12 @@ const ActionContainerComponent = ({
                                       profitO,
                                       totalPriceO,
                                       totalRealProductionTimeO,
-                                      totalCostO
+                                      totalCostO,
+                                      source
                                   }: IActionContainerComponentProps) => {
+    source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const {updateDeliveryTime, updateCost, updateProfit, updatePrice} = useActionUpdateValues()
+    const {updateDeliveryTime, updateCost, updateProfit, updatePrice, changeActionWorkSource} = useActionUpdateValues()
     const {classes} = useStyle();
     const {secondColor} = useGomakeTheme();
     const inputsParameters = outputs.filter(parameter => parameter.propertyType === RuleType.PARAMETER);
@@ -48,21 +50,26 @@ const ActionContainerComponent = ({
     const handleDeliveryTimeUpdate = (newValue: string) => {
         const object = {
             ...totalRealProductionTimeO,
-            values: [newValue]
+            values: source === EWorkSource.INTERNAL ? [newValue] : totalRealProductionTimeO.values,
+            outSourceValues: source === EWorkSource.OUT ? [newValue] : totalRealProductionTimeO.outSourceValues
         }
         updateDeliveryTime(object, actionId);
     }
 
     const handleCostUpdate = (newCost: string) => {
-        updateCost(newCost, profitO.values[0], actionId);
+        updateCost(newCost, profitO.values[0], actionId, source);
     }
 
     const handleProfitUpdate = (profit: string) => {
-        updateProfit(totalCostO.values[0], profit, actionId);
+        updateProfit(totalCostO.values[0], profit, actionId, source);
     }
 
     const handleUpdatePrice = (price: string) => {
-        updatePrice(price, totalCostO.values[0], actionId);
+        updatePrice(price, totalCostO.values[0], actionId, source);
+    }
+
+    const handleSourceChange = (source: EWorkSource) => {
+        changeActionWorkSource(source, actionId);
     }
     return (
         <Fade in={true} timeout={delay}>
@@ -79,17 +86,18 @@ const ActionContainerComponent = ({
                         </Stack>
                         <Divider orientation={'vertical'} flexItem/>
                         <EditableKeyValueViewComponent
-                            onUpdate={handleDeliveryTimeUpdate} {...totalRealProductionTimeO} />
+                            onUpdate={handleDeliveryTimeUpdate} {...totalRealProductionTimeO} source={source}/>
                         <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
-                        <EditableKeyValueViewComponent onUpdate={handleCostUpdate} {...totalCostO} />
+                        <EditableKeyValueViewComponent onUpdate={handleCostUpdate} {...totalCostO} source={source}/>
                         <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
-                        <EditableKeyValueViewComponent onUpdate={handleProfitUpdate} {...profitO} />
+                        <EditableKeyValueViewComponent onUpdate={handleProfitUpdate} {...profitO} source={source}/>
                         <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
                         <EditableKeyValueViewComponent onUpdate={handleUpdatePrice} {...totalPriceO}
+                                                       source={source}
                                                        valueColor={secondColor(500)}/>
                         <Divider orientation={'vertical'} flexItem/>
                         <div onClick={(e) => e.stopPropagation()}>
-                            <InOutSourceSelect/>
+                            <InOutSourceSelect value={source} onChange={handleSourceChange}/>
                         </div>
                     </Stack>
                     <IconButton onClick={() => setIsOpen(!isOpen)} style={classes.toggleActionButton}>
@@ -108,7 +116,7 @@ const ActionContainerComponent = ({
                     }
                     {outputsParameters.length > 0 && <><Divider/>
                         <Stack padding={'10px 0'} direction={'row'} gap={'16px'} flexWrap={'wrap'}>
-                            <ParametersMapping parameters={outputsParameters}/>
+                            <ParametersMapping source={source} parameters={outputsParameters}/>
                         </Stack></>}
                 </Collapse>
             </Stack>
@@ -122,8 +130,10 @@ const ActionComponent = ({
                              profitO,
                              totalPriceO,
                              totalRealProductionTimeO,
-                             totalCostO
+                             totalCostO,
+                             source
                          }: IWorkFlowAction) => {
+    source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
     const {classes} = useStyle();
     const {secondColor} = useGomakeTheme();
     const parameters = [
@@ -149,9 +159,9 @@ const ActionComponent = ({
                         }
                     </Stack>
                     <Divider orientation={'vertical'} flexItem/>
-                    <ParametersMapping parameters={parameters}/>
+                    <ParametersMapping source={source} parameters={parameters}/>
                     <Divider orientation={'vertical'} flexItem/>
-                    <InOutSourceSelect disabled={true}/>
+                    <InOutSourceSelect value={source} disabled={true}/>
                 </Stack>
             </Stack>
         </Stack>

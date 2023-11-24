@@ -1,13 +1,19 @@
 import {GoMakeSelect} from "@/components/select/go-make-select";
+import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
 
 interface Interface {
     disabled?: boolean;
+    onChange?: (v: EWorkSource) => void;
+    value: EWorkSource;
 }
-const InOutSourceSelect = ({disabled}: Interface) => {
+const InOutSourceSelect = ({disabled, onChange, value}: Interface) => {
     const options = [
-        {value: 1, label: 'internal'},
-        {value: 2, label: 'Outsource'}
+        {value: EWorkSource.INTERNAL, label: 'internal'},
+        {value: EWorkSource.OUT, label: 'Outsource'}
     ]
-  return <GoMakeSelect disabled={disabled} options={options}/>
+    const handleOnChange = (v: EWorkSource) => {
+        onChange(v)
+    }
+  return <GoMakeSelect value={value} onSelectWorkSource={handleOnChange} disabled={disabled} options={options}/>
 }
 export {InOutSourceSelect}
