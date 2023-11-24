@@ -5,13 +5,14 @@ import {workFlowsState} from "@/widgets/product-pricing-widget/state";
 const useActionUpdateValues = () => {
     const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
     const updateDeliveryTime = (updatedObj: IOutput, actionId: string) => {
-        setWorkFlows(workFlows.map(flow => !flow.selected ? flow : {
-            ...flow,
-            actions: flow.actions.map(action => action.actionId !== actionId ? action : {
+        const selectedWorkFlow = workFlows?.find(flow => flow.selected);
+        if (selectedWorkFlow) {
+            const updatedActions = selectedWorkFlow.actions?.map(action => action.actionId !== actionId ? action : {
                 ...action,
                 totalRealProductionTimeO: updatedObj
-            })
-        }));
+            });
+            updateSelectedWorkFlow(updatedActions);
+        }
     }
 
     const updateCost = (cost: string, profit: string, actionId: string) => {
@@ -29,7 +30,6 @@ const useActionUpdateValues = () => {
                     values: [price.toString()]
                 }
             })
-
             updateSelectedWorkFlow(updatedActions);
         }
     };
@@ -78,6 +78,7 @@ const useActionUpdateValues = () => {
         const totalPrice = actions.reduce((sum, action) => sum + +action.totalPriceO.values[0], 0);
         const totalCost = actions.reduce((sum, action) => sum + +action.totalCostO.values[0], 0);
         const profit = (totalPrice - totalCost) / totalCost * 100;
+        const deliveryTime = actions.reduce((sum, action) => sum + +action.totalRealProductionTimeO.values[0], 0);
         setWorkFlows(workFlows.map(flow => !flow.selected ? flow : {
             ...flow,
             actions: actions,
@@ -94,6 +95,11 @@ const useActionUpdateValues = () => {
             profitO: {
                 ...flow.profitO,
                 values: [profit.toString()]
+            },
+            totalProductionTime: deliveryTime,
+            totalRealProductionTimeO: {
+                ...flow.totalRealProductionTimeO,
+                values: [deliveryTime.toString()]
             }
         }))
     }
