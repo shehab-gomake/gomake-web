@@ -16,7 +16,7 @@ const useActionUpdateValues = () => {
         }
     }
 
-    const updateCost = (cost: string, profit: string, actionId: string, source: EWorkSource) => {
+    const updateCost = (cost: string, profit: string = '0', actionId: string, source: EWorkSource) => {
         const price = +cost + (+profit * +cost / 100);
         const selectedWorkFlow = workFlows?.find(flow => flow.selected);
         if (selectedWorkFlow) {
@@ -29,7 +29,9 @@ const useActionUpdateValues = () => {
                 },
                 totalPriceO: {
                     ...action.totalPriceO,
-                    values: [price.toString()]
+                    values: [price.toString()],
+                    outSourceValues: source === EWorkSource.OUT ? [price.toString()] : action.totalPriceO.outSourceValues
+
                 }
             })
             updateSelectedWorkFlow(updatedActions);
@@ -44,8 +46,8 @@ const useActionUpdateValues = () => {
                 ...action,
                 profitO: {
                     ...action.profitO,
-                    values: source === EWorkSource.INTERNAL ? [profit] : action.profitO.values,
-                    outSourceValues: source === EWorkSource.OUT ? [profit] : action.profitO.outSourceValues
+                    values: source === EWorkSource.INTERNAL ? [profit.toString()] : action.profitO.values,
+                    outSourceValues: source === EWorkSource.OUT ? [profit.toString()] : action.profitO.outSourceValues
                 },
                 totalPriceO: {
                     ...action.totalPriceO,

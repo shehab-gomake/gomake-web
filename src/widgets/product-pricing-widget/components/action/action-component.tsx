@@ -69,15 +69,15 @@ const ActionContainerComponent = ({
     }
 
     const handleCostUpdate = (newCost: string) => {
-        updateCost(newCost, profitO.values[0], actionId, source);
+        updateCost(newCost, EWorkSource.OUT ? profitO?.outSourceValues[0] : profitO.values[0], actionId, source);
     }
 
     const handleProfitUpdate = (profit: string) => {
-        updateProfit(totalCostO.values[0], profit, actionId, source);
+        updateProfit(source === EWorkSource.OUT ? totalCostO?.outSourceValues[0] : totalCostO.values[0], profit, actionId, source);
     }
 
     const handleUpdatePrice = (price: string) => {
-        updatePrice(price, totalCostO.values[0], actionId, source);
+        updatePrice(price, source === EWorkSource.OUT ? totalCostO?.outSourceValues[0] : totalCostO.values[0], actionId, source);
     }
 
     const handleSourceChange = (source: EWorkSource) => {
