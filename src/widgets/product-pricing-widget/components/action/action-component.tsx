@@ -80,8 +80,11 @@ const ActionContainerComponent = ({
                         <Divider orientation={'vertical'} flexItem/>
                         <EditableKeyValueViewComponent
                             onUpdate={handleDeliveryTimeUpdate} {...totalRealProductionTimeO} />
+                        <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
                         <EditableKeyValueViewComponent onUpdate={handleCostUpdate} {...totalCostO} />
+                        <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
                         <EditableKeyValueViewComponent onUpdate={handleProfitUpdate} {...profitO} />
+                        <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
                         <EditableKeyValueViewComponent onUpdate={handleUpdatePrice} {...totalPriceO}
                                                        valueColor={secondColor(500)}/>
                         <Divider orientation={'vertical'} flexItem/>

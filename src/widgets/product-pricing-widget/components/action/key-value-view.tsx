@@ -21,7 +21,7 @@ const ParametersMapping = ({parameters}: IParametersMappingProps) => {
         {
             parameters?.flatMap((parameter, index, array) => {
                 return index < array.length - 1 ? [<KeyValueViewComponent {...parameter}/>,
-                    <Divider style={{height: '50%', margin: 'auto 0'}} orientation={'vertical'} flexItem/>] : [
+                    <Divider  orientation={'vertical'} flexItem/>] : [
                     <KeyValueViewComponent {...parameter}/>]
             })
         }
