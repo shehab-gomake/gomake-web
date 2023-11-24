@@ -114,7 +114,8 @@ const ActionContainerComponent = ({
                             </Stack>
                         </>
                     }
-                    {outputsParameters.length > 0 && <><Divider/>
+                    {outputsParameters.length > 0 && source === EWorkSource.INTERNAL && <>
+                        <Divider/>
                         <Stack padding={'10px 0'} direction={'row'} gap={'16px'} flexWrap={'wrap'}>
                             <ParametersMapping source={source} parameters={outputsParameters}/>
                         </Stack></>}
