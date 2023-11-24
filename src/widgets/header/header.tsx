@@ -8,7 +8,6 @@ import {useHeader} from "./use-header";
 import {GoMakeMenu} from "@/components";
 import {useRecoilState, useRecoilValue} from "recoil";
 import {userProfileState} from "@/store/user-profile";
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import {QuoteIfExistState} from "@/pages-components/quote/store/quote";
 import {CartIcon} from "@/icons/cart-icon";
 
@@ -69,7 +68,7 @@ const HeaderWidget = () => {
 
                     }
 
-                    <div style={{marginLeft: 14}}>
+                    <div>
                         <IconButton onClick={handleClick}>{userAvatar()}</IconButton>
                     </div>
                     {/* <div style={clasess.userNameStyle}>{user?.displayName}</div> */}

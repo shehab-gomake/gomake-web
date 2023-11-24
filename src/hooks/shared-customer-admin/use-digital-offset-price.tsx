@@ -31,6 +31,7 @@ import { SelectChildParameterWidget } from "@/pages-components/products/digital-
 import { SWITCHParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/switch-parameter";
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 import { SelectMaterialsParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
+import {jobActionsState, jobDetailsState, workFlowsState} from "@/widgets/product-pricing-widget/state";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -68,6 +69,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("Production");
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
+  const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
+  const [jobDetails, setJobDetails] = useRecoilState(jobDetailsState);
+  const [jobActions, setJobActions] = useRecoilState(jobActionsState);
   const [workFlowSelected, setWorkFlowSelected] = useState<any>();
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const setLoading = useSetRecoilState(isLoadgingState);
@@ -1112,6 +1116,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       //Check it is work
       if (res?.success) {
         setPricingDefaultValue(res?.data?.data?.data);
+        setWorkFlows(res?.data?.data?.data?.workFlows?.map((flow, index) => ({id: index.toString(), ...flow})));
+        setJobActions(res?.data?.data?.data?.actions)
       }
       setLoading(false);
     }
@@ -1276,6 +1282,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   };
 
+  useEffect(() => {
+    setPricingDefaultValue({
+      actions: jobActions,
+      workFlows,
+      jobDetails
+    });
+  }, [workFlows, jobActions, jobDetails])
+
   // useEffect(() => {
   //   let temp = [...generalParameters];
   //   const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
@@ -1330,6 +1344,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     errorMsg,
     workFlowSelected,
     relatedParameters,
+    workFlows,
+    jobDetails,
+    jobActions
   };
 };
 

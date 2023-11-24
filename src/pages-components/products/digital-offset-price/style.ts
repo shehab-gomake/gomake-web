@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
+import {adaptPaddingLeft} from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
   const { primaryColor, secondColor, errorColor, neutralColor } =
@@ -32,7 +33,9 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "68%",
+        width: "100%",
+        ...adaptPaddingLeft(t('direction'), 20)
+
       },
       rightSideMainContainer: {
         display: "flex",

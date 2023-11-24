@@ -1,8 +1,10 @@
+import {SCREEN_HEIGHT, SCREEN_WIDTH} from "@/utils/layout-config";
+
 export const convertWidthToVW = (width: number) => {
-  return `${(width / 1920) * 100}vw`;
+  return `${(width / SCREEN_WIDTH) * 100}vw`;
 };
 export const convertHeightToVH = (height: number) => {
-  return `${(height / 1080) * 100}vh`;
+  return `${(height / SCREEN_HEIGHT) * 100}vh`;
 };
 export const leftRightAdapter = (dir: string, size: number) => {
   return dir === "rtl" ? { right: size } : { left: size };

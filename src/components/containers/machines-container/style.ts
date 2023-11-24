@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import {adaptPaddingLeft, adaptPaddingRight, convertHeightToVH} from "@/utils/adapter";
 import {useTranslation} from "react-i18next";
+import {HEADER_HEIGHT, SCREEN_HEIGHT} from "@/utils/layout-config";
 
 const useStyle = () => {
   const { theme, primaryColor, secondColor } = useGomakeTheme();
@@ -12,8 +13,8 @@ const useStyle = () => {
     return {
       gridContainer: {
         display: 'grid',
-        maxHeight: convertHeightToVH(1080 - 50),
-        height: convertHeightToVH(1080 - 50),
+        maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
+        height: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
         gridTemplateColumns: '20% auto',
         gridTemplateRows: '40px 40px auto 60px',
         // columnGap: '20px',

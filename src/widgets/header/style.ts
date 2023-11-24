@@ -5,6 +5,7 @@ import i18next from "i18next";
 import {convertHeightToVH, convertWidthToVW, leftRightAdapter} from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import {HEADER_HEIGHT} from "@/utils/layout-config";
 
 const useStyle = () => {
   const { t } = useTranslation();
@@ -17,10 +18,8 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        paddingBottom: 7,
-        marginTop:10,
-        height: convertHeightToVH(50),
-        maxHeight: convertHeightToVH(50)
+        height: convertHeightToVH(HEADER_HEIGHT),
+        maxHeight: convertHeightToVH(HEADER_HEIGHT)
       },
       searchInputContainer: {
         width: convertWidthToVW(375),
@@ -44,6 +43,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
+        gap: 14
       },
       userNameStyle: {
         ...FONT_FAMILY.Lexend(400, 12),
