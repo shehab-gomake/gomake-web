@@ -6,10 +6,14 @@ import {useStyle} from "@/widgets/product-pricing-widget/style";
 import {Collapse, Fade, IconButton} from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import {ParametersMapping} from "@/widgets/product-pricing-widget/components/action/key-value-view";
+import {
+    EditableKeyValueViewComponent,
+    ParametersMapping
+} from "@/widgets/product-pricing-widget/components/action/key-value-view";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {InOutSourceSelect} from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
 import {RuleType} from "@/widgets/product-pricing-widget/enums";
+import {useActionUpdateValues} from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
     delay: number;
@@ -25,6 +29,7 @@ const Actions = ({actions}: IActionsComponentProps) => {
     </Stack>
 }
 const ActionContainerComponent = ({
+                                      actionId,
                                       actionName,
                                       outputs,
                                       delay,
@@ -35,19 +40,30 @@ const ActionContainerComponent = ({
                                       totalCostO
                                   }: IActionContainerComponentProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const {updateDeliveryTime, updateCost, updateProfit, updatePrice} = useActionUpdateValues()
     const {classes} = useStyle();
     const {secondColor} = useGomakeTheme();
-    const parameters = [
-        totalRealProductionTimeO,
-        totalCostO,
-        profitO,
-        {
-            ...totalPriceO,
-            valueColor: secondColor(500),
-        },
-    ]
     const inputsParameters = outputs.filter(parameter => parameter.propertyType === RuleType.PARAMETER);
     const outputsParameters = outputs.filter(parameter => parameter.propertyType === RuleType.OUTPUT);
+    const handleDeliveryTimeUpdate = (newValue: string) => {
+        const object = {
+            ...totalRealProductionTimeO,
+            values: [newValue]
+        }
+        updateDeliveryTime(object, actionId);
+    }
+
+    const handleCostUpdate = (newCost: string) => {
+        updateCost(newCost, profitO.values[0], actionId);
+    }
+
+    const handleProfitUpdate = (profit: string) => {
+        updateProfit(totalCostO.values[0], profit, actionId);
+    }
+
+    const handleUpdatePrice = (price: string) => {
+        updatePrice(price, totalCostO.values[0], actionId);
+    }
     return (
         <Fade in={true} timeout={delay}>
             <Stack onClick={() => setIsOpen(!isOpen)}
@@ -62,7 +78,12 @@ const ActionContainerComponent = ({
                             }
                         </Stack>
                         <Divider orientation={'vertical'} flexItem/>
-                        <ParametersMapping parameters={parameters}/>
+                        <EditableKeyValueViewComponent
+                            onUpdate={handleDeliveryTimeUpdate} {...totalRealProductionTimeO} />
+                        <EditableKeyValueViewComponent onUpdate={handleCostUpdate} {...totalCostO} />
+                        <EditableKeyValueViewComponent onUpdate={handleProfitUpdate} {...profitO} />
+                        <EditableKeyValueViewComponent onUpdate={handleUpdatePrice} {...totalPriceO}
+                                                       valueColor={secondColor(500)}/>
                         <Divider orientation={'vertical'} flexItem/>
                         <div onClick={(e) => e.stopPropagation()}>
                             <InOutSourceSelect/>
