@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import {IWorkFlowAction} from "@/widgets/product-pricing-widget/interface";
 import {useStyle} from "@/widgets/product-pricing-widget/style";
 import {Collapse, Fade, IconButton} from "@mui/material";
@@ -14,13 +14,16 @@ import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {InOutSourceSelect} from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
 import {EWorkSource, RuleType} from "@/widgets/product-pricing-widget/enums";
 import {useActionUpdateValues} from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
+import {useRecoilValue} from "recoil";
+import {printHouseSuppliersState} from "@/widgets/product-pricing-widget/state";
+import {GoMakeAutoComplate} from "@/components";
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
     delay: number;
 }
 
 interface IActionsComponentProps {
-    actions: IWorkFlowAction[]
+    actions: IWorkFlowAction[];
 }
 
 const Actions = ({actions}: IActionsComponentProps) => {
@@ -38,11 +41,20 @@ const ActionContainerComponent = ({
                                       totalPriceO,
                                       totalRealProductionTimeO,
                                       totalCostO,
-                                      source
+                                      source,
+                                      supplierId
                                   }: IActionContainerComponentProps) => {
     source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const {updateDeliveryTime, updateCost, updateProfit, updatePrice, changeActionWorkSource} = useActionUpdateValues()
+    const {
+        updateDeliveryTime,
+        updateCost,
+        updateProfit,
+        updatePrice,
+        changeActionWorkSource,
+        updateActionSupplier
+    } = useActionUpdateValues();
+    const suppliers = useRecoilValue(printHouseSuppliersState);
     const {classes} = useStyle();
     const {secondColor} = useGomakeTheme();
     const inputsParameters = outputs.filter(parameter => parameter.propertyType === RuleType.PARAMETER);
@@ -71,6 +83,16 @@ const ActionContainerComponent = ({
     const handleSourceChange = (source: EWorkSource) => {
         changeActionWorkSource(source, actionId);
     }
+    const handleSupplierChange = (e, value) => {
+        updateActionSupplier(value?.value, actionId);
+    }
+    const getSupplierId = useCallback(() => {
+        if (supplierId) {
+            const supplier = suppliers?.find(sup => sup.value === supplierId)
+            return !!supplier ? supplier.label : ''
+        }
+        return ''
+    }, [supplierId, suppliers])
     return (
         <Fade in={true} timeout={delay}>
             <Stack onClick={() => setIsOpen(!isOpen)}
@@ -80,8 +102,14 @@ const ActionContainerComponent = ({
                         <Stack style={classes.sectionTitle} direction={'row'} alignItems={'center'} gap={'10px'}>
                             <span>{actionName}</span>
                             {
-                                !!machineName && <> <Divider orientation={'vertical'} flexItem color={'#000'}/>
-                                    <span onClick={(e) => e.stopPropagation()}>{machineName}</span></>
+                                source === EWorkSource.OUT ?
+                                    <div onClick={(e) => e.stopPropagation()}><Divider orientation={'vertical'} flexItem
+                                                                                       color={'#000'}/>
+                                        <GoMakeAutoComplate value={getSupplierId()} style={{width: '200px'}}
+                                                            onChange={handleSupplierChange} options={suppliers}/>
+                                    </div> :
+                                    !!machineName && <> <Divider orientation={'vertical'} flexItem color={'#000'}/>
+                                        <span onClick={(e) => e.stopPropagation()}>{machineName}</span></>
                             }
                         </Stack>
                         <Divider orientation={'vertical'} flexItem/>
@@ -132,11 +160,13 @@ const ActionComponent = ({
                              totalPriceO,
                              totalRealProductionTimeO,
                              totalCostO,
-                             source
+                             source,
+                             supplierId
                          }: IWorkFlowAction) => {
     source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
     const {classes} = useStyle();
     const {secondColor} = useGomakeTheme();
+    const suppliers = useRecoilValue(printHouseSuppliersState);
     const parameters = [
         totalRealProductionTimeO,
         totalCostO,
@@ -146,6 +176,13 @@ const ActionComponent = ({
             valueColor: secondColor(500),
         },
     ]
+    const getSupplierId = useCallback(() => {
+        if (supplierId) {
+            const supplier = suppliers?.find(sup => sup.value === supplierId)
+            return !!supplier ? supplier.label : ''
+        }
+        return ''
+    }, [supplierId, suppliers])
     return (
         <Stack style={{...classes.actionContainer, backgroundColor: '#D0D5DD'}}>
             <Stack padding={'10px 0'} direction={'row'} justifyContent={'space-between'}>
@@ -153,10 +190,14 @@ const ActionComponent = ({
                     <Stack style={classes.sectionTitle} direction={'row'} alignItems={'center'} gap={'10px'}>
                         <span>{actionName}</span>
                         {
-                            machineName && <>
-                                <Divider orientation={'vertical'} flexItem color={'#000'}/>
-                                <span>{machineName}</span>
-                            </>
+                            source === EWorkSource.OUT ? <>
+                                    <Divider orientation={'vertical'} flexItem color={'#000'}/>
+                                    <span>{getSupplierId()}</span>
+                                </> :
+                                machineName && <>
+                                    <Divider orientation={'vertical'} flexItem color={'#000'}/>
+                                    <span>{machineName}</span>
+                                </>
                         }
                     </Stack>
                     <Divider orientation={'vertical'} flexItem/>

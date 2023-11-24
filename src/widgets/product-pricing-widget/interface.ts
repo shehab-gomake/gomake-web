@@ -61,6 +61,8 @@ export interface IWorkFlowAction {
     totalRealProductionTimeO: IOutput;
     outputs: IOutput[];
     source?: EWorkSource;
+    supplierId?: string;
+
 
 }
 
@@ -74,6 +76,5 @@ export interface IOutput {
     htmlElementType: HtmlElementType;
     isEditable: boolean;
     outSourceValues?: string[];
-    supplierId?: string;
 
 }

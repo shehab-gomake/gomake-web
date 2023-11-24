@@ -127,11 +127,21 @@ const useActionUpdateValues = () => {
         if (selectedWorkFlow) {
             const updatedActions = selectedWorkFlow.actions?.map(action => action.actionId !== actionId ? action : {
                 ...action,
-                source
+                source: source
             })
 
             updateSelectedWorkFlow(updatedActions)
         }
+    }
+
+    const updateActionSupplier = (supplierId: string, actionId: string) => {
+        setWorkFlows(workFlows.map(flow => !flow.selected ? flow : {
+            ...flow,
+            actions: flow.actions?.map(action => action.actionId !== actionId ? action : {
+                ...action,
+                supplierId: supplierId
+            })
+        }));
     }
 
     return {
@@ -139,7 +149,8 @@ const useActionUpdateValues = () => {
         updateCost,
         updateProfit,
         updatePrice,
-        changeActionWorkSource
+        changeActionWorkSource,
+        updateActionSupplier
     }
 }
 
