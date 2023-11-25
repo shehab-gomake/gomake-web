@@ -3,9 +3,7 @@ import { PrimaryButtonsTabWidget } from "./components/primary-buttons-tab/button
 const PartnersComponent = () => {
 
   return (
-    <div>
-      <PrimaryButtonsTabWidget></PrimaryButtonsTabWidget>
-    </div>
+    <PrimaryButtonsTabWidget></PrimaryButtonsTabWidget>
   );
 };
 export { PartnersComponent };

@@ -12,7 +12,6 @@ import { WallTableWidget } from "../g-wall-table/g-wall-table";
 import { RequestsTableWidget } from "../requests-table/requets-table";
 import { HeaderArrowIcon } from "../icons/arrow-icon";
 
-
 const PrimaryButtonsTabWidget = () => {
     const { t } = useTranslation();
     const [selectedTab, setSelectedTab] = useState(0);
@@ -67,18 +66,15 @@ const PrimaryButtonsTabWidget = () => {
                                     width: `${Math.min(label.length * 12, 150)}px`,
                                 }}
                                 label={label}
-
                             />
                         ))}
                     </Tabs>
                 </ThemeProvider>
             </Stack>
-
             <DiscoverWidget></DiscoverWidget>
-
             {
                 selectedTab == 0 &&
-                <Stack direction={'column'} gap={"20px"}  marginTop={"24px"} marginBottom={"24px"}>
+                <Stack direction={'column'} gap={"20px"} marginTop={"24px"} marginBottom={"24px"}>
                     <WallSectionWidget />
                     <WallTableWidget />
                 </Stack>

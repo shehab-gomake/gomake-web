@@ -16,7 +16,7 @@ const RequestsTableWidget = () => {
     const { t } = useTranslation();
 
     return (
-        <TableContainer component={Paper} style={{ width: "92%" }} >
+        <TableContainer component={Paper} style={{ width: "99%" }} >
             <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
                 <TableHead>
                     <TableRow>

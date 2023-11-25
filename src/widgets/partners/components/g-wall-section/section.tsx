@@ -9,7 +9,7 @@ import { WaitingRequestIcon } from "../icons/waiting-request-icon";
 const WallSectionWidget = () => {
  
   return (
-    <Stack direction={"row"} justifyContent={"space-between"} width={"92%"} >
+    <Stack direction={"row"} justifyContent={"space-between"} width={"99%"} >
     <WallSectionCard numberHeader={"92.6k"} desc={"Total partners"} Icon={ <TotalPartnersIcon/>}/>
     <WallSectionCard numberHeader={"85.5k"} desc={"Active partners"} Icon={ <ActivePartnersIcon/>}/>
     <WallSectionCard numberHeader={"36%"} desc={"success rate"} Icon={ <RateIcon/>}/>
