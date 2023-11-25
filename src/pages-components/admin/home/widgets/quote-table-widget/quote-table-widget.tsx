@@ -22,23 +22,6 @@ const QuoteTableWidget = ({ isAdmin = true }) => {
     return (
 
         <div style={classes.mainContainer}>
-            {/* <Stack direction={"row"} justifyContent={'space-between'} width={'100%'}>
-                <div style={classes.buttonsContainerStyle} >
-                    <SecondaryButton variant="contained" style={classes.buttonStyle}>Quotes</SecondaryButton>
-                    <SecondaryButton variant="contained" style={classes.buttonSecondStyle}>Orders</SecondaryButton>
-                    <SecondaryButton variant="contained" style={classes.buttonSecondStyle}>Items</SecondaryButton>
-                    <SecondaryButton variant="contained" style={classes.buttonSecondStyle}>Delivery</SecondaryButton>
-                    <SecondaryButton variant="contained" style={classes.buttonSecondStyle}>Invoice</SecondaryButton>
-                    <SecondaryButton variant="contained" style={classes.buttonSecondStyle}>Recipt</SecondaryButton>
-                </div>
-                <SecondaryButton variant="contained" style={classes.addNewStyle}>Add new</SecondaryButton>
-            </Stack> */}
-            {/* <PrimaryTable
-                stickyFirstCol={false}
-                stickyHeader={false}
-                rows={tableRows}
-                headers={tableHeaders}
-            /> */}
             <TableContainer component={Paper} style={{ padding: "20px"}}>
             <Stack direction={"row"} justifyContent={'space-between'} width={'100%'}>
                 <div style={classes.buttonsContainerStyle} >

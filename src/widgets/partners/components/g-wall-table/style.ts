@@ -12,13 +12,11 @@ const useStyle = () => {
                 width: "92%",
                 boxShadow: "0 1px 0px 0 rgba(0, 0, 0, 0.08), 0 0px 5px 0 rgba(0, 0, 0, 0.08)",
               },
-        
             headersStyle: {
                 color: primaryColor(800),
                 ...FONT_FAMILY.Lexend(500, 14),
                 letterSpacing: '-1%',
                 lineHeight: "17.5px",
-
             },
             dataRowStyle: {
                 ...FONT_FAMILY.Lexend(500, 14),

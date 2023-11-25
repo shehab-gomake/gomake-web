@@ -3,21 +3,24 @@ import { InputAdornment } from "@mui/material";
 import { SearchIcon } from "@/icons";
 import { useStyle } from "@/components/form-inputs/style";
 import { useTranslation } from "react-i18next";
+
 interface ISearchInputProps {
   onChange: (value: string) => void;
   value?: string;
   placeHolder?: string;
+  searchInputStyle?: any;
 }
 
-const SearchInputComponent = ({ onChange, value ,placeHolder }: ISearchInputProps) => {
+const SearchInputComponent = ({ onChange, value ,placeHolder,searchInputStyle }: ISearchInputProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+
   return (
     <GoMakeTextInputIcon
       onChange={(e) => {
         onChange(e.target.value);
       }}
-      style={classes.searchInput}
+      style={searchInputStyle || classes.searchInput}
       placeholder={ placeHolder || t("header.search")}
       value={value}
       startAdornment={

@@ -9,6 +9,8 @@ import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 import { DiscoverWidget } from "../discover/discover";
 import { WallSectionWidget } from "../g-wall-section/section";
 import { WallTableWidget } from "../g-wall-table/g-wall-table";
+import { RequestsTableWidget } from "../requests-table/requets-table";
+import { HeaderArrowIcon } from "../icons/arrow-icon";
 
 
 const PrimaryButtonsTabWidget = () => {
@@ -36,8 +38,9 @@ const PrimaryButtonsTabWidget = () => {
 
     return (
         <div style={{ width: "100%" }} >
-            <Stack direction={'row'} gap={'20px'} height={"100px"}>
+            <Stack direction={'row'} gap={'15px'} height={"100px"} alignItems={"center"}>
                 <HeaderTitle title={t("Marketplace")} />
+                <HeaderArrowIcon></HeaderArrowIcon>
                 <ThemeProvider theme={theme}  >
                     <Tabs
                         style={classes.container}
@@ -70,20 +73,21 @@ const PrimaryButtonsTabWidget = () => {
                     </Tabs>
                 </ThemeProvider>
             </Stack>
-            
+
             <DiscoverWidget></DiscoverWidget>
 
             {
                 selectedTab == 0 &&
-                <Stack direction={'column'} marginTop={"24px"} marginBottom={"24px"} gap={"20px"} >
-                    <WallSectionWidget/>
-                    <WallTableWidget/>
+                <Stack direction={'column'} gap={"20px"}  marginTop={"24px"} marginBottom={"24px"}>
+                    <WallSectionWidget />
+                    <WallTableWidget />
                 </Stack>
             }
             {
                 selectedTab == 1 &&
-                <Stack direction={'column'} marginTop={"24px"} marginBottom={"24px"} gap={"20px"} >
-
+                <Stack direction={'column'} marginTop={'20px'} gap={'10px'} >
+                    <h2 style={classes.headerStyle}>Requests</h2>
+                    <RequestsTableWidget />
                 </Stack>
             }
         </div>

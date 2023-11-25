@@ -1,0 +1,14 @@
+const PaintIcon = () => {
+  return (
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M6.66675 10.6673C6.66675 9.56065 6.66675 8.66732 8.66675 8.66732H11.3334C13.3334 8.66732 13.3334 8.00065 13.3334 6.66732V5.33398C13.3334 4.00065 13.3334 3.33398 11.3334 3.33398H10.6667" stroke="#8283BE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M7.99997 1.33398H5.3333C4.89997 2.63398 4.89997 4.03398 5.3333 5.33398H7.99997C8.4333 4.03398 8.4333 2.63398 7.99997 1.33398Z" stroke="#8283BE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.33341 1.33398H4.66675C3.33341 1.33398 2.66675 2.00065 2.66675 3.33398C2.66675 4.66732 3.33341 5.33398 4.66675 5.33398H5.33341C4.66675 4.00065 4.66675 2.66732 5.33341 1.33398Z" stroke="#8283BE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M8.66667 1.33398H8C8.66667 2.66732 8.66667 4.00065 8 5.33398H8.66667C10 5.33398 10.6667 4.66732 10.6667 3.33398C10.6667 2.00065 10 1.33398 8.66667 1.33398Z" stroke="#8283BE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M6.33325 14.666H6.99992C7.99992 14.666 7.99992 13.9993 7.99992 13.666V11.666C7.99992 11.3327 7.99992 10.666 6.99992 10.666H6.33325C5.33325 10.666 5.33325 11.3327 5.33325 11.666V13.666C5.33325 13.9993 5.33325 14.666 6.33325 14.666Z" stroke="#8283BE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+  );
+};
+
+export { PaintIcon };

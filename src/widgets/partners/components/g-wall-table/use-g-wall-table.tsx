@@ -1,5 +1,5 @@
 import { TiraIcon } from "../icons/company-1";
-import { MoreMenuWidget } from "../more-circle";
+import { MoreMenuWidget } from "./more-circle";
 
 const useWallTableWidget = () => {
     
@@ -30,7 +30,7 @@ const useWallTableWidget = () => {
 
     
     const rows = [
-        createData( "1",<span style={{display: "flex",justifyContent: "center",alignItems: "center",}}><TiraIcon/>Company name</span>,  "Tira, Palestine",'322', '45%', '322', '322', '45%', <MoreMenuWidget/>),
+        createData( "1", <span style={{display: "flex",justifyContent: "center",alignItems: "center",}}><TiraIcon/>Company name</span>,   "Tira, Palestine",'322', '45%', '322', '322', '45%', <MoreMenuWidget/>),
         createData( "2", <span style={{display: "flex",justifyContent: "center",alignItems: "center",}}><TiraIcon/>Company name</span>,  "Tira, Palestine",'322', '45%', '322', '322', '45%', <MoreMenuWidget/>),
         createData( "3", <span style={{display: "flex",justifyContent: "center",alignItems: "center",}}><TiraIcon/>Company name</span>,  "Tira, Palestine",'322', '45%', '322', '322', '45%', <MoreMenuWidget/>),
         createData( "4", <span style={{display: "flex",justifyContent: "center",alignItems: "center",}}><TiraIcon/>Company name</span>,  "Tira, Palestine",'322', '45%', '322', '322', '45%', <MoreMenuWidget/>),

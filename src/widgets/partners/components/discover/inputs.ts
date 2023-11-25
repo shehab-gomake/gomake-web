@@ -1,4 +1,29 @@
-const discoverInputs = (state) =>{
+const discoverInputs = (state) => {
+
+    const statuses = [{ text: "Active", value: "true" }, { text: "Inactive", value: "false" }];
+   
+    const dates = [
+        { text: "Today", value: "2023-11-25" },
+        { text: "Tomorrow", value: "2023-11-26" },
+        { text: "Next Week", value: "2023-12-02" },
+    ];
+
+    const categories = [
+        { text: "Products", value: "products" },
+        { text: "Printing house", value: "printingHouse" },
+        { text: "Machine", value: "machine" },
+        { text: "Location", value: "location" },
+        { text: "Action", value: "action" },
+    ];
+
+    const subCategories = [
+        { text: "Die cut", value: "dieCut" },
+        { text: "Role slickers", value: "roleSlickers" },
+        { text: "Labels", value: "labels" },
+        { text: "Paper products", value: "paperProducts" },
+        { text: "Book cover", value: "bookCover" },
+    ];
+
     return [
         {
             name: "Categories",
@@ -6,7 +31,7 @@ const discoverInputs = (state) =>{
             placeholder: "Categories",
             required: false,
             parameterKey: "categories",
-            options: [],
+            options: categories,
             value: state?.categories,
         },
         {
@@ -15,7 +40,7 @@ const discoverInputs = (state) =>{
             placeholder: "Sub category",
             required: false,
             parameterKey: "subCategory",
-            options: [],
+            options: subCategories,
             value: state?.subCategory,
         },
         {
@@ -24,7 +49,7 @@ const discoverInputs = (state) =>{
             placeholder: "Status",
             required: false,
             parameterKey: "status",
-            options: [],
+            options: statuses,
             value: state?.status,
         },
         {
@@ -33,7 +58,7 @@ const discoverInputs = (state) =>{
             placeholder: "Date",
             required: false,
             parameterKey: "date",
-            options: [],
+            options: dates,
             value: state?.date,
         },
     ];
