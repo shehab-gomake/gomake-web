@@ -4,7 +4,6 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { convertHeightToVH } from "@/utils/adapter";
 
 const useStyle = () => {
-  const { primaryColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
         tabStyle: {

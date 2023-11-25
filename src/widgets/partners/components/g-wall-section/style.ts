@@ -12,7 +12,7 @@ const useStyle = () => {
         textAlign: "center" as "center",
         backgroundColor: "#FFFFFF",
         borderRadius: 4,
-        width: "300px",
+        width: "290px",
         height: "92px",
         boxShadow: "0 1px 0px 0 rgba(0, 0, 0, 0.08), 0 0px 5px 0 rgba(0, 0, 0, 0.08)",
         display: "flex",
@@ -20,7 +20,6 @@ const useStyle = () => {
         padding :"20px",
         justifyContent: 'space-between',
       },
-
       numberStyle: {
         ...FONT_FAMILY.Lexend(500, 24),
       },

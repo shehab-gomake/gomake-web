@@ -7,6 +7,8 @@ import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets/header-title";
 import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 import { DiscoverWidget } from "../discover/discover";
+import { WallSectionWidget } from "../g-wall-section/section";
+import { WallTableWidget } from "../g-wall-table/g-wall-table";
 
 
 const PrimaryButtonsTabWidget = () => {
@@ -31,9 +33,9 @@ const PrimaryButtonsTabWidget = () => {
     const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
     };
-    
+
     return (
-        <div style={{width : "100%"}} >
+        <div style={{ width: "100%" }} >
             <Stack direction={'row'} gap={'20px'} height={"100px"}>
                 <HeaderTitle title={t("Marketplace")} />
                 <ThemeProvider theme={theme}  >
@@ -42,7 +44,7 @@ const PrimaryButtonsTabWidget = () => {
                         value={selectedTab}
                         onChange={handleTabChange}
                         textColor="secondary"
-                        TabIndicatorProps={{ style:{ display: 'none' } }}
+                        TabIndicatorProps={{ style: { display: 'none' } }}
                     >
                         {tabLabels.map((label, index) => (
                             <Tab
@@ -68,16 +70,20 @@ const PrimaryButtonsTabWidget = () => {
                     </Tabs>
                 </ThemeProvider>
             </Stack>
+            
             <DiscoverWidget></DiscoverWidget>
 
             {
                 selectedTab == 0 &&
-                <Stack direction={'column'} marginTop={"24px"} marginBottom={"24px"}  >
+                <Stack direction={'column'} marginTop={"24px"} marginBottom={"24px"} gap={"20px"} >
+                    <WallSectionWidget/>
+                    <WallTableWidget/>
                 </Stack>
             }
             {
                 selectedTab == 1 &&
-                <Stack direction={'row'} marginBottom={"24px"} width={"90%"} gap={"20px"} >
+                <Stack direction={'column'} marginTop={"24px"} marginBottom={"24px"} gap={"20px"} >
+
                 </Stack>
             }
         </div>
