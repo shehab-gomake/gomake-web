@@ -1182,7 +1182,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       printingNotes,
       graphicNotes,
       isNeedExample: false,
-      jobDetails: pricingDefaultValue?.jobDetails,
+      //jobDetails: pricingDefaultValue?.jobDetails,
       itemParmetersValues: itemParmetersValues,
       workFlow: pricingDefaultValue?.workFlows,
       actions: pricingDefaultValue?.actions,
