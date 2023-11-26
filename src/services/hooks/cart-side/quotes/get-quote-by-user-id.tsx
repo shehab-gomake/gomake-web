@@ -1,12 +1,13 @@
 import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../../call-api.interface";
 import { MoreMenuWidget } from "@/widgets/quote/more-circle";
-
+import { MoreMenuWidgetWithChilds } from "@/widgets/quote/more-circle-with-childs";
 const getAndSetQuotesByUserId = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
 ) => {
+  let indexs = 0;
   const result: any = await callApi(
     "GET",
     "/v1/erp-service/quote/get-quotes-by-user-id",
@@ -15,18 +16,43 @@ const getAndSetQuotesByUserId = async (
 
   const _data: any = returnResult(result, undefined);
   const mapData = _data?.priceListItems?.map((item: any, index: number) => {
+    indexs++;
+    const parentIndex = indexs;
+    const _childsQuoteItemsMapping = item?.childsQuoteItems?.map(
+      (child: any, index2: number) => {
+        indexs++;
+        return {
+          id: indexs,
+          amount: child?.quantity,
+          unitPrice: child?.price,
+          discount: child?.discount,
+          finalPrice: child?.finalPrice,
+          // more: <MoreMenuWidgetWithChilds quoteItem={child} />,
+          quoteItemId: child?.id,
+        };
+      }
+    );
     return {
-      id: index + 1,
+      id: parentIndex,
       itemName: item?.productName,
       details: (
-        <div style={{ height: 36, overflowY: "scroll" }}>{item?.content}</div>
+        <div
+          style={
+            _childsQuoteItemsMapping != null
+              ? { height: "100%", overflowY: "scroll", paddingRight: 5 }
+              : { height: 36, overflowY: "scroll", paddingRight: 5 }
+          }
+        >
+          {item?.content}
+        </div>
       ),
       amount: item?.quantity,
       unitPrice: item?.price,
       discount: item?.discount,
       finalPrice: item?.finalPrice,
-      more: <MoreMenuWidget quoteItem={item} />,
+      // more: <MoreMenuWidget quoteItem={item} />,
       quoteItemId: item?.id,
+      childsQuoteItems: _childsQuoteItemsMapping,
     };
   });
   _data.priceListItemsMapping = mapData;

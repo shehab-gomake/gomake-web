@@ -57,7 +57,7 @@ const PackinDrumWeightsMapping = ({ index, item, selectedItem }) => {
           </div>
           <div>
             <div style={clasess.lableTextStyle}>
-              {t("materials.inputs.material")}
+              {t("materials.inputs.materials")}
             </div>
             <GomakeTextInput
               placeholder={t("materials.inputs.enterMaterial")}

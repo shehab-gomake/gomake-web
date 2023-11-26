@@ -2,6 +2,9 @@ import { EditIcon } from "@/icons";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { SectionMappingWidget } from "./section-mapping";
+import { useRecoilState } from "recoil";
+import { generalParametersState } from "@/store";
 const AccordionMappingWidget = ({
   clasess,
   expanded,
@@ -11,8 +14,13 @@ const AccordionMappingWidget = ({
   section,
   _renderParameterType,
   _getParameter,
+  relatedParameters,
+  duplicateParameters,
+  template,
+  setTemplate,
 }: any) => {
   const { t } = useTranslation();
+
   return (
     <Accordion
       expanded={expanded === `panel_${index}`}
@@ -45,60 +53,19 @@ const AccordionMappingWidget = ({
         </div>
       </AccordionSummary>
       <AccordionDetails>
-        <div style={clasess.parametersContainer}>
-          {subSection?.parameters?.map((parameter, index) => {
-            if (parameter?.parameterType === 3) {
-              const value = _getParameter(parameter, subSection, section);
-              return (
-                <div key={index}>
-                  <div style={clasess.parameterType3Container}>
-                    <div
-                      style={
-                        value?.value === "true"
-                          ? clasess.parameterType3ActiveLabelStyle
-                          : clasess.parameterLabelStyle
-                      }
-                    >
-                      {parameter?.name}
-                      {parameter?.isRequired ? (
-                        <span style={clasess.spanRequierd}> *</span>
-                      ) : null}
-                    </div>
-                    <div style={{ marginTop: -9 }}>
-                      {_renderParameterType(
-                        parameter,
-                        subSection,
-                        section,
-                        subSection?.parameters
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            } else {
-              return (
-                <div key={index}>
-                  <div style={clasess.parameterContainer}>
-                    <div style={clasess.parameterLabelStyle}>
-                      {parameter?.name}
-                      {parameter?.isRequired ? (
-                        <span style={clasess.spanRequierd}> *</span>
-                      ) : null}
-                    </div>
-                    <div style={clasess.renderParameterTypeContainer}>
-                      {_renderParameterType(
-                        parameter,
-                        subSection,
-                        section,
-                        subSection?.parameters
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            }
-          })}
-        </div>
+        <SectionMappingWidget
+          clasess={clasess}
+          index={index}
+          subSection={subSection}
+          section={section}
+          _renderParameterType={_renderParameterType}
+          _getParameter={_getParameter}
+          relatedParameters={relatedParameters}
+          isAccordion={true}
+          duplicateParameters={duplicateParameters}
+          template={template}
+          setTemplate={setTemplate}
+        />
       </AccordionDetails>
     </Accordion>
   );

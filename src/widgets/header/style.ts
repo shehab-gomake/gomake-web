@@ -2,9 +2,10 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 
-import { convertWidthToVW, leftRightAdapter } from "@/utils/adapter";
+import {convertHeightToVH, convertWidthToVW, leftRightAdapter} from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import {HEADER_HEIGHT} from "@/utils/layout-config";
 
 const useStyle = () => {
   const { t } = useTranslation();
@@ -17,13 +18,16 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        marginBottom: 7,
+        height: convertHeightToVH(HEADER_HEIGHT),
+        maxHeight: convertHeightToVH(HEADER_HEIGHT)
       },
       searchInputContainer: {
         width: convertWidthToVW(375),
         backgroundColor: "#F8F8F8",
         borderRadius: 10,
-        height: 30,
+        height: 40,
+        alignSelf: "flex-start",
+        display:"flex",
       },
       iconStyle: {
         position: "absolute" as "absolute",
@@ -38,9 +42,10 @@ const useStyle = () => {
       },
       profileContainer: {
         display: "flex",
-        flexDirection: "column" as "column",
+        flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
+        gap: 14
       },
       userNameStyle: {
         ...FONT_FAMILY.Lexend(400, 12),

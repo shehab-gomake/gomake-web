@@ -3,7 +3,7 @@ import { useStyle } from "@/widgets/machines/components/layout/style";
 const MaterialsLayout = ({ side, children, subHeader, header }: any) => {
   const { classes } = useStyle();
   return (
-    <div>
+    <div style={{ height: "84vh" }}>
       <h1 style={classes.header}>{header}</h1>
       <div style={classes.container}>
         <div style={classes.sideList}>{side}</div>

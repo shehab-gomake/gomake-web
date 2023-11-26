@@ -1,0 +1,6 @@
+export enum QuoteStatuses {
+    CANCELED_IRRELEVANT = 7,
+    CANCELED_PRICE = 8,
+    CANCELED_DELIVERY_TIME = 9,
+    CANCELED_OTHER = 10,
+}

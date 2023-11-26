@@ -8,8 +8,7 @@ import {EHttpMethod} from "@/services/api-service/enums";
 import { ISetState } from "@/services/hooks/call-api.interface";
 const GET_CUSTOMER_BY_ID_URL = '/v1/customers/get-customer';
 const TOGGLE_CUSTOMER_STATUS_URL = '/v1/crm-service/customer/update-customer-status/';
-//const ADD_NEW_CUSTOMER_URL = '/v1/customers/add-customer';
-//const UPDATE_CUSTOMER_URL = '';
+
 
 //get by id
 const getAndSetCustomerById: ICallAndSetData = async (callApi, setState, data) => {
@@ -87,14 +86,6 @@ const getAndSetCustomersPagination = async (
 const toggleCustomerStatus: ICallAndSetData = async (callApi, setState, data ) => {
   return await getSetApiData(callApi, EHttpMethod.PUT, TOGGLE_CUSTOMER_STATUS_URL , setState , data );
 }
-
-// const addNewCustomerTest: ICallAndSetData = async (callApi, setState, data) => {
-//   return await getSetApiData(callApi, EHttpMethod.POST, ADD_NEW_CUSTOMER_URL, setState, data);
-// }
-
-// const updateCustomer: ICallAndSetData = async (callApi, setState, employee: Employee) => {
-//   return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_CUSTOMER_URL, setState, employee);
-// }
 
 export {
   getAndSetCustomerById,

@@ -1,5 +1,20 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const flexoPrinting = (state: Record<string, any>) => {
     return [
+        {
+            name: "setupTimeMin",
+            label: "machineAttributes.setupTimeMin",
+            type: "text",
+            placeholder: "machineAttributes.setupTimeMin",
+            required: true,
+            parameterKey: "setupTimeMin",
+            unit: EMeasurementUnits.MINUTE,
+            options: [],
+            value: state.attributes?.setupTimeMin ? state.attributes?.setupTimeMin : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.setupTimeMin,
+        },
         {
             name: 'machineAttributes.speedByColor',
             parameterKey: 'speedByColor',

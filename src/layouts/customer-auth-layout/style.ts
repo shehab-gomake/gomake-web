@@ -18,15 +18,20 @@ const useStyle = ({
         height: "100vh",
         display: "flex",
         flexDirection: "row" as "row",
+        gap: 20
       },
       logoContainer: {
         display: "flex",
         marginTop: navStatus?.isClosed ? 20 : 0,
+        backgroundColor:"#504FA1",
+        borderRadius:8,
+        padding:10
       },
       leftContainer: {
         backgroundColor: primaryColor(500),
-        width: navStatus?.isClosed ? 140 : 280,
-        minWidth: navStatus?.isClosed ? 140 : 280,
+        width: navStatus?.isClosed ? 125 : 245,
+        minWidth: navStatus?.isClosed ? 125 : 245,
+        transitionDuration:"0.4s",
         height: "100vh",
         display: "flex",
         flexDirection: "column" as "column",
@@ -37,13 +42,13 @@ const useStyle = ({
         paddingTop: navStatus?.isClosed ? 8 : 40,
         paddingBottom: navStatus?.isClosed ? 8 : 40,
         overflowY: "scroll" as "scroll",
+        position: "relative" as "relative",
+        zIndex:100000
       },
       rightContainer: {
         width: "100%",
         display: "flex",
         flexDirection: "column" as "column",
-        padding: 20,
-        paddingTop: 7,
         backgroundColor: "#FFFFFF",
       },
       headerContainer: {
@@ -103,6 +108,7 @@ const useStyle = ({
         ...FONT_FAMILY.Inter(400, 16),
         color: "#FFF",
         cursor: "pointer",
+        minWidth:"fit-content"
       },
       line: {
         border: "1px solid #FFFFFF",
@@ -122,6 +128,7 @@ const useStyle = ({
         paddingTop: convertWidthToVW(15),
         paddingLeft: convertWidthToVW(40),
         paddingRight: convertWidthToVW(40),
+       
       },
       rotate90: {
         "-webkit-animation": "rotate90 0.5s forwards ",

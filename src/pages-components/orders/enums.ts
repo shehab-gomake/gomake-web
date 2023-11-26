@@ -1,0 +1,16 @@
+export enum QUOTE_STATUSES{
+        Create = 1,
+        Open= 2,
+        Closed= 3,
+        Canceled= 4,
+        Waiting= 5,
+        Approved= 6,
+        CanceledIrrelvant= 7,
+        CanceledPrice= 8,
+        CanceledDeliveryTime= 9,
+        CanceledOther= 10,
+        ApprovedByManager=11,
+        RejectedByManager=12,
+        PartialClosed=13,
+        WaitForPrintHouseConfirm=14,
+    }

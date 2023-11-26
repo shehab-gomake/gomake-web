@@ -6,6 +6,7 @@ import { initReactI18next, useTranslation } from "react-i18next";
 import ar from "@/languages/ar.json";
 import en from "@/languages/en.json";
 import he from "@/languages/he.json";
+import de from "@/languages/de.json";
 import { ThemeProvider } from "@/providers";
 import { GomakeLoading } from "@/widgets";
 import { GoMakeSnackBar } from "@/components";
@@ -31,6 +32,11 @@ i18n
       he: {
         translation: {
           ...he,
+        },
+      },
+        de: {
+        translation: {
+          ...de,
         },
       },
     },

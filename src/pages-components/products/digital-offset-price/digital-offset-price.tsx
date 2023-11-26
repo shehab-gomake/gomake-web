@@ -6,15 +6,16 @@ import { useState } from "react";
 import { machineCategoriesState } from "@/store/machine-categories";
 import { GomakePrimaryButton } from "@/components";
 import { TabsMappingWidget } from "./widgets/tabs-mapping";
-import { PricingSectionMappingWidget } from "./widgets/pricing-section-mapping";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
 import { RightSideWidget } from "./widgets/right-side-widget";
 import {
-  ChooseShapeModal,
+  GalleryModal,
   MakeShapeModal,
+  MultiParameterModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
 import { EWidgetProductType } from "./enums";
+import {PricingWidget} from "@/widgets/product-pricing-widget/pricing-widget";
 
 const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
@@ -24,7 +25,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     handleNextClick,
     handlePreviousClick,
     onOpeneMakeShape,
-    onCloseChooseShape,
+    onCloseGalleryModal,
     onCloseMakeShape,
     setDefaultPrice,
     handleChange,
@@ -37,12 +38,20 @@ const PriceListPageWidget = ({ widgetType }) => {
     setUrgentOrder,
     setPrintingNotes,
     setGraphicNotes,
+    setPriceRecovery,
+    onCloseMultiParameterModal,
+    setSamlleType,
+    duplicateParameters,
+    setTemplate,
+    multiParameterModal,
+    settingParameters,
+    priceRecovery,
     graphicNotes,
     printingNotes,
     urgentOrder,
     defaultPrice,
     makeShapeOpen,
-    chooseShapeOpen,
+    GalleryModalOpen,
     activeIndex,
     template,
     tabs,
@@ -54,6 +63,11 @@ const PriceListPageWidget = ({ widgetType }) => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
+    workFlowSelected,
+    relatedParameters,
+      jobDetails,
+      jobActions,
+      workFlows
   } = useDigitalOffsetPrice({ clasess, widgetType });
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
@@ -65,17 +79,11 @@ const PriceListPageWidget = ({ widgetType }) => {
     });
   };
   return (
-    <div
-      style={{
-        height: "100%",
-        minHeight: "100%",
-        maxHeight: "100%",
-      }}
-    >
+    <div style={{ height: "85vh" }}>
       {template?.sections?.length > 0 && (
         <div style={clasess.mainContainer}>
           <HeaderTitle
-            title={t("products.offsetPrice.admin.title2")}
+            title={template?.name}
             marginTop={24}
             marginBottom={24}
           />
@@ -95,20 +103,22 @@ const PriceListPageWidget = ({ widgetType }) => {
                   );
                 })}
               </div>
-              <div style={{ height: 700, overflow: "scroll", width: "100%" }}>
+              <div style={{ height: 666, overflow: "scroll", width: "100%" }}>
                 <div style={clasess.sectionsContainer}>
                   {[...template?.sections, PricingTab]?.map(
                     (section: any, index: number) => {
                       if (index === activeIndex) {
                         if (section.name === "Pricing") {
                           return (
-                            <PricingSectionMappingWidget
-                              clasess={clasess}
-                              machineCategories={machineCategories}
-                              onChangeCategoryData={onChangeCategoryData}
-                              section={section}
-                              pricingDefaultValue={pricingDefaultValue}
-                            />
+                            // <PricingSectionMappingWidget
+                            //   clasess={clasess}
+                            //   machineCategories={machineCategories}
+                            //   onChangeCategoryData={onChangeCategoryData}
+                            //   section={section}
+                            //   pricingDefaultValue={pricingDefaultValue}
+                            //   workFlowSelected={workFlowSelected}
+                            // />
+                              <PricingWidget actions={jobActions} workFlows={workFlows}/>
                           );
                         } else {
                           return section?.subSections?.map(
@@ -116,6 +126,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                               if (subSection?.isAccordion) {
                                 return (
                                   <AccordionMappingWidget
+                                    key={index}
                                     clasess={clasess}
                                     expanded={expanded}
                                     index={index}
@@ -124,17 +135,27 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     section={section}
                                     _renderParameterType={_renderParameterType}
                                     _getParameter={_getParameter}
+                                    relatedParameters={relatedParameters}
+                                    duplicateParameters={duplicateParameters}
+                                    template={template}
+                                    setTemplate={setTemplate}
                                   />
                                 );
                               } else {
                                 return (
                                   <SectionMappingWidget
+                                    key={index}
                                     clasess={clasess}
                                     index={index}
                                     subSection={subSection}
                                     section={section}
                                     _renderParameterType={_renderParameterType}
                                     _getParameter={_getParameter}
+                                    relatedParameters={relatedParameters}
+                                    isAccordion={false}
+                                    duplicateParameters={duplicateParameters}
+                                    template={template}
+                                    setTemplate={setTemplate}
                                   />
                                 );
                               }
@@ -147,7 +168,6 @@ const PriceListPageWidget = ({ widgetType }) => {
                 </div>
               </div>
             </div>
-
             <RightSideWidget
               clasess={clasess}
               clientDefaultValue={clientDefaultValue}
@@ -168,18 +188,14 @@ const PriceListPageWidget = ({ widgetType }) => {
               setGraphicNotes={setGraphicNotes}
               graphicNotes={graphicNotes}
               printingNotes={printingNotes}
+              workFlowSelected={workFlowSelected}
+              widgetType={widgetType}
+              setPriceRecovery={setPriceRecovery}
+              priceRecovery={priceRecovery}
+              setSamlleType={setSamlleType}
             />
           </div>
-          <MakeShapeModal
-            openModal={makeShapeOpen}
-            onClose={onCloseMakeShape}
-            modalTitle={t("products.offsetPrice.admin.makeShape")}
-          />
-          <ChooseShapeModal
-            openModal={chooseShapeOpen}
-            onClose={onCloseChooseShape}
-            modalTitle={t("products.offsetPrice.admin.chooseShape")}
-          />
+
           <div
             style={{
               width: "100%",
@@ -187,10 +203,13 @@ const PriceListPageWidget = ({ widgetType }) => {
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "flex-start",
-              position: "absolute",
+              position: "fixed",
+              paddingTop: "8px",
               gap: 20,
               bottom: 0,
               right: 20,
+              boxShadow: "0px 1px 20px rgba(0, 0, 0, 0.08)",
+              background: "#FFF",
             }}
           >
             <div style={{ width: "68%" }}>
@@ -239,6 +258,23 @@ const PriceListPageWidget = ({ widgetType }) => {
           </div>
         </div>
       )}
+
+      <MakeShapeModal
+        openModal={makeShapeOpen}
+        onClose={onCloseMakeShape}
+        modalTitle={t("products.offsetPrice.admin.makeShape")}
+      />
+      <GalleryModal
+        openModal={GalleryModalOpen}
+        onClose={onCloseGalleryModal}
+      />
+      <MultiParameterModal
+        openModal={multiParameterModal}
+        onClose={onCloseMultiParameterModal}
+        modalTitle={""}
+        settingParameters={settingParameters}
+        _renderParameterType={_renderParameterType}
+      />
     </div>
   );
 };

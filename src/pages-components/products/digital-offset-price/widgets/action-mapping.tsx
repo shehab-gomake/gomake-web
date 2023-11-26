@@ -81,10 +81,7 @@ const ActionMappingWidget = ({
         ) : null}
         <div style={{ display: "flex" }}></div>
         {action?.outputs.slice(0, 3).map((item, index) => (
-          <div
-            key={index}
-            // style={{ backgroundColor: index % 1 === 0 ? "lightgray" : "white" }}
-          >
+          <div key={index}>
             <div style={clasess.cellContainer}>
               <div>{item?.name}</div>
               <div>{item.value}</div>
@@ -103,7 +100,7 @@ const ActionMappingWidget = ({
           </div>
         ))}
       </div>
-      {action?.outputs.slice(8, 12)?.lengh && (
+      {
         <div style={clasess.cellsContainerStyle}>
           <div style={{ display: "flex" }}></div>
           {action?.outputs.slice(8, 12).map((item, index) => (
@@ -115,9 +112,9 @@ const ActionMappingWidget = ({
             </div>
           ))}
         </div>
-      )}
-      {action?.outputs.slice(12, 18)?.lengh && (
-        <div style={clasess.cellsContainerStyle}>
+      }
+      {
+        <div style={clasess.cellsContainerStyle2}>
           <div style={{ display: "flex" }}></div>
           {action?.outputs.slice(12, 18).map((item, index) => (
             <div key={index}>
@@ -128,7 +125,46 @@ const ActionMappingWidget = ({
             </div>
           ))}
         </div>
-      )}
+      }
+      {
+        <div style={clasess.cellsContainerStyle}>
+          <div style={{ display: "flex" }}></div>
+          {action?.outputs.slice(18, 24).map((item, index) => (
+            <div key={index}>
+              <div style={clasess.cellContainer}>
+                <div>{item?.name}</div>
+                <div>{item.value}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      }
+      {
+        <div style={clasess.cellsContainerStyle2}>
+          <div style={{ display: "flex" }}></div>
+          {action?.outputs.slice(24, 32).map((item, index) => (
+            <div key={index}>
+              <div style={clasess.cellContainer}>
+                <div>{item?.name}</div>
+                <div>{item.value}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      }
+      {
+        <div style={clasess.cellsContainerStyle2}>
+          <div style={{ display: "flex" }}></div>
+          {action?.outputs.slice(32, 40).map((item, index) => (
+            <div key={index}>
+              <div style={clasess.cellContainer}>
+                <div>{item?.name}</div>
+                <div>{item.value}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      }
     </div>
   );
 };

@@ -4,10 +4,16 @@ import { GoMakeMenu } from "@/components";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
 
-const MoreMenuWidget = ({ quoteItem }) => {
+const MoreMenuWidget = ({
+  quoteItem,
+  onClickDuplicateWithDifferentQTY,
+  onClickDeleteQouteItem,
+}) => {
   const { clasess } = useStyle();
   const { open, anchorEl, menuList, handleClose, handleClick } = useMoreCircle({
     quoteItem,
+    onClickDuplicateWithDifferentQTY,
+    onClickDeleteQouteItem,
   });
   return (
     <>
