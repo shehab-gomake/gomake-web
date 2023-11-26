@@ -17,6 +17,8 @@ export interface IBoard {
     creationDate: Date;
     stationInDate: Date
     tags: string[];
+    workOrder:string;
+    startDate:Date;
     checked: boolean;
 }
 

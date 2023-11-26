@@ -1,5 +1,7 @@
+import {ReactNode} from "react";
+
 export interface ITableProps {
-    rows: (string | number | JSX.Element | Date)[][];
+    rows: (ReactNode)[][];
     headers: (string | JSX.Element)[];
     stickyHeader?: boolean;
     stickyFirstCol?: boolean;
