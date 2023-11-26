@@ -4,7 +4,7 @@ import * as React from "react";
 const GoMakeMenu = ({ handleClose, open, anchorEl, ...props }) => {
   const { children }: any = props;
   return (
-    <div>
+    <div >
       <Menu
         aria-labelledby="demo-positioned-button"
         anchorEl={anchorEl}

@@ -1,10 +1,11 @@
 import {IOutput, IWorkFlowAction} from "@/widgets/product-pricing-widget/interface";
-import {useRecoilState} from "recoil";
-import {workFlowsState} from "@/widgets/product-pricing-widget/state";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {jobActionsState, workFlowsState} from "@/widgets/product-pricing-widget/state";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
 
 const useActionUpdateValues = () => {
     const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
+    const actions = useRecoilValue(jobActionsState);
     const updateDeliveryTime = (updatedObj: IOutput, actionId: string) => {
         const selectedWorkFlow = workFlows?.find(flow => flow.selected);
         if (selectedWorkFlow) {
@@ -68,8 +69,8 @@ const useActionUpdateValues = () => {
                 ...action,
                 profitO: {
                     ...action.profitO,
-                    values: source === EWorkSource.INTERNAL ?  [profitPercentage.toString()] : action.profitO.values,
-                    outSourceValues: source === EWorkSource.OUT ?  [profitPercentage.toString()] : action.profitO.outSourceValues,
+                    values: source === EWorkSource.INTERNAL ? [profitPercentage.toString()] : action.profitO.values,
+                    outSourceValues: source === EWorkSource.OUT ? [profitPercentage.toString()] : action.profitO.outSourceValues,
 
                 },
                 totalPriceO: {
@@ -93,7 +94,7 @@ const useActionUpdateValues = () => {
                 sum :
             sum + +action.totalCostO.values[0], 0);
 
-        const deliveryTime = actions.reduce((sum, action) =>action.source === EWorkSource.OUT ?
+        const deliveryTime = actions.reduce((sum, action) => action.source === EWorkSource.OUT ?
             action.totalRealProductionTimeO?.outSourceValues && action.totalRealProductionTimeO?.outSourceValues[0] ? sum + +action.totalRealProductionTimeO?.outSourceValues[0] :
                 sum :
             sum + +action.totalRealProductionTimeO.values[0], 0);
@@ -144,6 +145,55 @@ const useActionUpdateValues = () => {
                 supplierId: supplierId
             })
         }));
+    };
+
+    const getActionMachinesList = (actionId: string) => {
+        const action = actions.find(action => action.actionId === actionId);
+        if (action) {
+            return action?.machineCategories?.flatMap(category => category.machines)?.map(machine => ({
+                value: machine.machineId,
+                label: machine.machineName
+            }));
+        }
+        return [];
+    }
+    const compareArrays = (array1:  {id: string, machineId: string}[], array2:  {id: string, machineId: string}[]): boolean => {
+        return  array1.length === array2.length && array1.every(element =>
+            array2.some(otherElement =>  otherElement.machineId === element.machineId)
+        );
+
+    }
+
+    const selectNewMachine = (machineId: string, actionId: string) => {
+        console.log('machineId', machineId);
+        const selectedWorkFlow = workFlows?.find(flow => flow.selected);
+        if (selectedWorkFlow) {
+            const workFlowMachines = selectedWorkFlow?.actions?.map(action => ({
+                id: action.actionId,
+                machineId: action.actionId === actionId ? machineId : action.mongoDBMachineId
+            }));
+            console.log('workFlowMachines', workFlowMachines)
+            const workFlowSameMachines = workFlows.find(flow => {
+                const machines = flow.actions?.map(action => ({
+                    id: action.actionId,
+                    machineId: action.mongoDBMachineId
+                }));
+                return compareArrays(workFlowMachines, machines);
+                });
+            if (!!workFlowSameMachines) {
+                setWorkFlows(workFlows.map(flow => workFlowSameMachines.id === flow.id ? {...flow, selected: true} : {...flow, selected: false}))
+                return true
+            } else {
+                const workFlowHasMachine = workFlows?.find(flow => {
+                    return flow.actions?.flatMap(action => action.mongoDBMachineId)?.includes(machineId);
+                });
+                if (!!workFlowHasMachine) {
+                    setWorkFlows(workFlows?.map(flow => flow.id === workFlowHasMachine.id ? {...flow, selected: true} : {...flow, selected: false}));
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     return {
@@ -152,7 +202,9 @@ const useActionUpdateValues = () => {
         updateProfit,
         updatePrice,
         changeActionWorkSource,
-        updateActionSupplier
+        updateActionSupplier,
+        getActionMachinesList,
+        selectNewMachine
     }
 }
 

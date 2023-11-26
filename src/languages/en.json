@@ -83,7 +83,15 @@
     "profits": "profits",
     "properties": "Properties",
     "quotes": "Quotes",
-    "orders": "Orders"
+    "orders": "Orders",
+    "partners": "Partners",
+    "deliveryNotes": "Delivery notes",
+    "invoices": "Invoices",
+    "receipts": "Receipts",
+    "purchase": "Purchase",
+    "purchaseOrders": "Orders",
+    "purchaseInvoices": "invoices",
+    "supplierPayments": "payments"
   },
   "properties": {
     "parameter": "Parameter",
@@ -2022,6 +2030,12 @@
     "edit": "Edit",
     "duplicate": "Duplicate",
     "delete": "Delete"
+  },
+  "datepicker": {
+    "today": "Today",
+    "thisMonth": "This month",
+    "choose": "Choose",
+    "datepicker": "Datepicker"
   },
   "machinesCategories": {
     "digitalPrinting": "Digital Printing",

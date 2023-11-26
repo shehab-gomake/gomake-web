@@ -83,7 +83,15 @@
     "profits": "Gewinne",
     "properties": "Eigenschaften",
     "quotes": "Angebote",
-    "orders": "Bestellungen"
+    "orders": "Bestellungen",
+    "partners": "Partner",
+    "deliveryNotes": "Lieferscheine",
+    "invoices": "Rechnungen",
+    "receipts": "Einnahmen",
+    "purchase": "Erwerben",
+    "purchaseOrders": "Aufträge",
+    "purchaseInvoices": "Rechnungen",
+    "supplierPayments": "Zahlungen"
   },
   "properties": {
     "parameter": "Parameter",

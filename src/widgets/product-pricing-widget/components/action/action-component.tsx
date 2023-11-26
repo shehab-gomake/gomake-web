@@ -17,6 +17,7 @@ import {useActionUpdateValues} from "@/widgets/product-pricing-widget/components
 import {useRecoilValue} from "recoil";
 import {printHouseSuppliersState} from "@/widgets/product-pricing-widget/state";
 import {GoMakeAutoComplate} from "@/components";
+import Button from "@mui/material/Button";
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
     delay: number;
@@ -46,13 +47,16 @@ const ActionContainerComponent = ({
                                   }: IActionContainerComponentProps) => {
     source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [chooseMachine, setChooseMachine] = useState<boolean>(false);
     const {
         updateDeliveryTime,
         updateCost,
         updateProfit,
         updatePrice,
         changeActionWorkSource,
-        updateActionSupplier
+        updateActionSupplier,
+        getActionMachinesList,
+        selectNewMachine
     } = useActionUpdateValues();
     const suppliers = useRecoilValue(printHouseSuppliersState);
     const {classes} = useStyle();
@@ -103,13 +107,28 @@ const ActionContainerComponent = ({
                             <span>{actionName}</span>
                             {
                                 source === EWorkSource.OUT ?
-                                    <div onClick={(e) => e.stopPropagation()}><Divider orientation={'vertical'} flexItem
-                                                                                       color={'#000'}/>
-                                        <GoMakeAutoComplate value={getSupplierId()} style={{width: '200px'}}
+                                    <Stack gap={'10px'} direction={'row'} onClick={(e) => e.stopPropagation()}>
+                                        <Divider orientation={'vertical'} flexItem color={'#000'}/>
+                                        <GoMakeAutoComplate placeholder={'Select supplier'} value={getSupplierId()}
+                                                            style={{width: '200px'}}
                                                             onChange={handleSupplierChange} options={suppliers}/>
-                                    </div> :
-                                    !!machineName && <> <Divider orientation={'vertical'} flexItem color={'#000'}/>
-                                        <span onClick={(e) => e.stopPropagation()}>{machineName}</span></>
+                                    </Stack> :
+                                    !!machineName && <>
+                                        <Divider orientation={'vertical'} flexItem color={'#000'}/>
+                                        {!chooseMachine ? <Button onClick={(e) => {
+                                                e.stopPropagation()
+                                                setChooseMachine(true);
+                                            }} variant={'text'} style={classes.sectionTitle}>{machineName}</Button> :
+                                            <div onClick={(e) => e.stopPropagation()}>
+                                                    <GoMakeAutoComplate onChange={(e, v) => {
+                                                        if (selectNewMachine(v?.value, actionId)) {
+                                                            setChooseMachine(false);
+                                                        }
+                                                    }} style={{width: '200px'}} options={getActionMachinesList(actionId)}
+                                                                        placeholder={'Choose machine'} value={machineName}/>
+                                            </div>
+                                        }
+                                    </>
                             }
                         </Stack>
                         <Divider orientation={'vertical'} flexItem/>
