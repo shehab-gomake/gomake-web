@@ -95,6 +95,7 @@ const ContactNewWidget = ({
           setIsUpdateContactEmail={setIsUpdateContactEmail}
           onInputChangeMail={onInputChangeMail}
           onClickAddNewContact={onClickAddNewContact}
+          setIsDisplayWidget={setIsDisplayWidget}
         />
       )}
 
