@@ -83,7 +83,15 @@
     "profits": "רווחים",
     "properties": "מאפיינים",
     "quotes": "הצעות מחיר",
-    "orders": "הזמנות"
+    "orders": "הזמנות",
+    "partners": "שותפים",
+    "deliveryNotes": "תעודות משלוח",
+    "invoices": "חשבוניות",
+    "receipts": "קבלות",
+    "purchase": "לקנות",
+    "purchaseOrders": "הזמנות",
+    "purchaseInvoices": "חשבוניות",
+    "supplierPayments": "תשלומים"
   },
   "properties": {
     "parameter": "פרמטר",

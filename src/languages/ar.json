@@ -86,7 +86,15 @@
     "profits": "الأرباح",
     "properties": "الخصائص",
     "quotes": "عروض",
-    "orders": "طلبات"
+    "orders": "طلبات",
+    "partners": "شركاء",
+    "deliveryNotes": "ملاحظات التسليم",
+    "invoices": "الفواتير",
+    "receipts": "ايصالات",
+    "purchase": "ابتاع",
+    "purchaseOrders": "اوامر",
+    "purchaseInvoices": "الفواتير",
+    "supplierPayments": "الدفعات"
   },
   "properties": {
     "parameter": "المعلمة",

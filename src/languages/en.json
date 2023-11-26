@@ -84,7 +84,14 @@
     "properties": "Properties",
     "quotes": "Quotes",
     "orders": "Orders",
-    "partners": "Partners"
+    "partners": "Partners",
+    "deliveryNotes": "Delivery notes",
+    "invoices": "Invoices",
+    "receipts": "Receipts",
+    "purchase": "Purchase",
+    "purchaseOrders": "Orders",
+    "purchaseInvoices": "invoices",
+    "supplierPayments": "payments"
   },
   "properties": {
     "parameter": "Parameter",

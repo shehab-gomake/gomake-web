@@ -3,10 +3,10 @@ import { CustomerAuthLayout } from "@/layouts";
 import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
 import {EDocumentTypeEnum} from "@/enums";
 
-export default function Quotes() {
+export default function Receipts() {
   return (
     <CustomerAuthLayout>
-      <QuotesListPageWidget documentType={EDocumentTypeEnum.Quote}/>
+      <QuotesListPageWidget documentType={EDocumentTypeEnum.Receipts} />
     </CustomerAuthLayout>
   );
 }
