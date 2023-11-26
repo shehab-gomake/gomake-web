@@ -2,14 +2,14 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 
-import {convertHeightToVH, convertWidthToVW, leftRightAdapter} from "@/utils/adapter";
+import { convertHeightToVH, convertWidthToVW, leftRightAdapter } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import {HEADER_HEIGHT} from "@/utils/layout-config";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { neutralColor } = useGomakeTheme();
+  const { neutralColor, primaryColor, successColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       container: {
@@ -18,6 +18,8 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
+        paddingBottom: 7,
+        marginTop: 10,
         height: convertHeightToVH(HEADER_HEIGHT),
         maxHeight: convertHeightToVH(HEADER_HEIGHT)
       },
@@ -27,7 +29,7 @@ const useStyle = () => {
         borderRadius: 10,
         height: 40,
         alignSelf: "flex-start",
-        display:"flex",
+        display: "flex",
       },
       iconStyle: {
         position: "absolute" as "absolute",
@@ -56,8 +58,16 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-
         gap: 10,
+      },
+      mainMenuContainer2: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        width: "466px",
+        gap: 10,
+        overflow: "visible"
       },
       accountTextStyle: {
         width: "100%",
@@ -66,6 +76,18 @@ const useStyle = () => {
         paddingLeft: 16,
         paddingRight: 16,
         color: neutralColor(600),
+      },
+      notificationTextStyle: {
+        width: "100%",
+        ...FONT_FAMILY.Lexend(500, 14),
+        padding: 10,
+        paddingLeft: 16,
+        paddingRight: 16,
+        color: neutralColor(600),
+      },
+      footerTextStyle: {
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: primaryColor(200),
       },
       imgNameContainer: {
         display: "flex",
@@ -113,6 +135,49 @@ const useStyle = () => {
         width: '30px',
         height: '30px',
         fontSize: '12px'
+      },
+      menuItemTextStyle: {
+        display: "flex",
+        width: "100%",
+        ...FONT_FAMILY.Lexend(400, 16),
+        color: primaryColor(900),
+        paddingTop: "10px",
+        paddingLeft: "10px",
+      },
+      textStyle: {
+        whiteSpace: "pre-wrap" as "pre-wrap", // Preserve newlines and spaces
+  wordWrap: "break-word" as "break-word",
+        ...FONT_FAMILY.Lexend(400, 16),
+        color: primaryColor(900),
+      },
+      subTextStyle: {
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: "#A5ACB8",
+        padding: "0px 0px 0px 64px"
+      },
+      menuItemContainer: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: neutralColor(600),
+        display: "flex",
+        alignItems: "flex-start",
+      },
+      footerItemContainer: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: neutralColor(600),
+        display: "flex",
+        alignItems: "center",
+        gap:"4px"
+      },
+      acceptBtnStyle: {
+        width: "64px",
+        height: "28px",
+        backgroundColor: successColor(500),
+      },
+      rejectBtnStyle: {
+        width: "64px",
+        height: "28px",
+        color: "#3C4257",
+        borderColor: "#DDDEE1",
       }
     };
   }, [i18next.language, t]);
