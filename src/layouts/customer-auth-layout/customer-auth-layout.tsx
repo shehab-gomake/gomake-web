@@ -15,19 +15,18 @@ const CustomerAuthLayout = ({children, permissionEnumValue}: IAuthLayout) => {
 
     return (
         <div style={clasess.container}>
-            <>
-                <LeftSideLayout/>
-                <div style={clasess.rightContainer}
-                     onMouseEnter={() => {
-                         if (!isHover) {
-                             setNavStatus({isClosed: true});
-                         }
-                     }}
-                >
-                    <HeaderWidget/>
-                    {canAccess && <div style={clasess.bodyContainer}>{children}</div>}
-                </div>
-            </>
+            <LeftSideLayout/>
+            <div style={clasess.rightContainer}
+                 onMouseEnter={() => {
+                     if (!isHover) {
+                         setNavStatus({isClosed: true});
+                     }
+                 }}
+            >
+                <HeaderWidget/>
+                {canAccess && <div style={clasess.bodyContainer}>{children}</div>}
+            </div>
+            <div></div>
         </div>
     );
 };

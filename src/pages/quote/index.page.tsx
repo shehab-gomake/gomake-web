@@ -5,11 +5,11 @@ import { QuotePageWidget } from "@/pages-components/quote/quote";
 
 export default function Quote() {
   return (
-    <CustomerAuthLayout>
-      <QuotePageWidget />
-    </CustomerAuthLayout>
     // <CustomerAuthLayout>
-    //   <QuoteNewPageWidget />
+    //   <QuotePageWidget />
     // </CustomerAuthLayout>
+    <CustomerAuthLayout>
+      <QuoteNewPageWidget />
+    </CustomerAuthLayout>
   );
 }

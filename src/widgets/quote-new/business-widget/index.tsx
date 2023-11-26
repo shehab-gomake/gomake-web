@@ -1,31 +1,32 @@
 import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
-import { useBusinessNeWidget } from "./use-business-widget";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
+import { useTranslation } from "react-i18next";
 
-const BusinessNewWidget = ({ values, getQuote }) => {
+const BusinessNewWidget = ({
+  values,
+  selectBusiness,
+  onBlurBusinessName,
+  isUpdateBusinessName,
+  setIsUpdateBusinessName,
+  setSelectBusiness,
+  onBlurPurchaseNumer,
+  isUpdatePurchaseNumer,
+  setIsUpdatePurchaseNumer,
+  onBlurBusinessCode,
+  setIsUpdateBusinessCode,
+  onBlurAddress,
+  isUpdateAddress,
+  setIsUpdateAddress,
+  selectedAgent,
+  agentListValue,
+  onBlurAgent,
+  isUpdateAgent,
+  setIsUpdateAgent,
+  updateAgent,
+}) => {
   const { clasess } = useStyle();
-  const {
-    selectBusiness,
-    isUpdateBusinessName,
-    isUpdatePurchaseNumer,
-    isUpdateAddress,
-    selectedAgent,
-    agentListValue,
-    isUpdateAgent,
-    setIsUpdateBusinessName,
-    setIsUpdateAddress,
-    setIsUpdatePurchaseNumer,
-    setIsUpdateBusinessCode,
-    onBlurBusinessName,
-    onBlurPurchaseNumer,
-    onBlurBusinessCode,
-    onBlurAddress,
-    onBlurAgent,
-    setIsUpdateAgent,
-    updateAgent,
-    t,
-  } = useBusinessNeWidget({ getQuote });
+  const { t } = useTranslation();
   return (
     <>
       <div style={clasess.businessContainerStyle}>
@@ -35,6 +36,7 @@ const BusinessNewWidget = ({ values, getQuote }) => {
           onBlur={onBlurBusinessName}
           isUpdate={isUpdateBusinessName}
           setIsUpdate={setIsUpdateBusinessName}
+          onInputChange={(e) => setSelectBusiness({ name: e })}
         />
         <InputUpdatedValues
           value={
@@ -46,6 +48,7 @@ const BusinessNewWidget = ({ values, getQuote }) => {
           onBlur={onBlurPurchaseNumer}
           isUpdate={isUpdatePurchaseNumer}
           setIsUpdate={setIsUpdatePurchaseNumer}
+          onInputChange={(e) => console.log("ddff")}
         />
         <InputUpdatedValues
           value={`${selectBusiness?.code}`}

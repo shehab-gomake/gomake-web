@@ -12,9 +12,10 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
+        marginBottom: 14,
         gap: 24,
-        marginBottom: 4,
       },
+
       addNewContactNameStyle: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -49,9 +50,10 @@ const useStyle = () => {
       },
       showLessContainer: {
         ...FONT_FAMILY.Inter(600, 14),
-        color: primaryColor(700),
+        color: primaryColor(500),
         padding: "8px 14px",
         cursor: "pointer",
+        minWidth: 104,
       },
       mainContainer: {
         display: "flex",
@@ -59,6 +61,15 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-end",
         width: "100%",
+      },
+      saveBtnStyle: {
+        borderRadius: 4,
+        padding: "4px 10px",
+        ...FONT_FAMILY.Lexend(500, 16),
+        color: "#FFFFFF",
+        backgroundColor: secondColor(500),
+        height: 28,
+        width: 60,
       },
     };
   }, []);
