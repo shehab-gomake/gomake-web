@@ -2031,6 +2031,12 @@
     "duplicate": "Duplicate",
     "delete": "Delete"
   },
+  "datepicker": {
+    "today": "Today",
+    "thisMonth": "This month",
+    "choose": "Choose",
+    "datepicker": "Datepicker"
+  },
   "machinesCategories": {
     "digitalPrinting": "Digital Printing",
     "ofssetPrinting": "Ofsset Printing",

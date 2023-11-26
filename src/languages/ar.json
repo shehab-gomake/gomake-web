@@ -13,6 +13,7 @@
     "login": "تسجيل الدخول",
     "username": "اسم المستخدم",
     "email": "البريد الإلكتروني",
+
     "password": "كلمة المرور",
     "emailIsRequired": "البريد الإلكتروني مطلوب",
     "passwordIsRequired": "كلمة المرور مطلوبة",
@@ -36,6 +37,7 @@
   },
   "tabs": {
     "home": "الصفحة الرئيسية",
+
     "productFloor": "المنتجات",
     "materials": "المواد",
     "products": "المنتجات",
@@ -74,6 +76,7 @@
     "varnishs": "الورنيش",
     "machines": "الآلات",
     "addMachine": "إضافة آلة",
+
     "wideFormatMaterial": "لفات الطباعة العريضة",
     "adminPanel": "لوحة الإدارة",
     "actions": "الإجراءات",

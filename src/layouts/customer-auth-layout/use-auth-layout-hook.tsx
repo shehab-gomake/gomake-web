@@ -41,7 +41,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         isLine: false,
         key: "productFloor",
         title: "tabs.productFloor",
-        path: "/product-floor",
+        path: "/production-floor",
         isList: false,
         icon: () => {
           return <ProductFloorIcon />;

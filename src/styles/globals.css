@@ -148,6 +148,13 @@ input::placeholder {
   padding-top: 12px !important;
 }
 
+.rdrCalendarWrapper {
+  direction: ltr;
+}
+.rdrStaticRangeLabel{
+  text-align: unset!important;
+}
+
 
 .dots-loader > div {
   animation: dots-loader 0.6s infinite alternate;
