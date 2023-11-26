@@ -15,9 +15,7 @@ import { blockModalState, partnerInfoModalState } from "../states";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import Drawer from '@mui/material/Drawer';
 import React from "react";
-import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-
-
+import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 const WallTableWidget = () => {
     const { classes } = useStyle();
     const { rows , list } = useWallTableWidget();
@@ -33,7 +31,7 @@ const WallTableWidget = () => {
                         <TableCell style={classes.headersStyle} align="center" >{t("Id")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("Partner")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("Quote Number")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center"><div style={{ display: "flex", justifyContent: "center" , alignItems:"center" , gap:"3px"}} >View<RemoveRedEyeOutlinedIcon></RemoveRedEyeOutlinedIcon></div></TableCell>
+                        <TableCell style={classes.headersStyle} align="center"><div style={{ display: "flex", justifyContent: "center" , alignItems:"center" , gap:"3px"}} >Edit<DriveFileRenameOutlineOutlinedIcon/></div></TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("Response")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("Total products")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("Total quotes")}</TableCell>
