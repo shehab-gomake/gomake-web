@@ -4,16 +4,15 @@ import * as React from "react";
 const GoMakeMenu = ({ handleClose, open, anchorEl, ...props }) => {
   const { children }: any = props;
   return (
-    <div>
-      <Menu
-        aria-labelledby="demo-positioned-button"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-      >
-        {children}
-      </Menu>
-    </div>
+    <Menu
+      aria-labelledby="demo-positioned-button"
+      anchorEl={anchorEl}
+      open={open}
+      onClose={handleClose}
+      style={props.style}
+    >
+      {children}
+    </Menu>
   );
 };
 

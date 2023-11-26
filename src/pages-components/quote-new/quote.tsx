@@ -11,10 +11,17 @@ import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import { GoMakeDeleteModal } from "@/components";
 import { HeaderTitle } from "@/widgets";
 import { SettingNewIcon } from "@/icons";
-
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useQuoteNew } from "./use-quote";
 import { quoteItemState } from "@/store";
 import { useStyle } from "./style";
+import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
+import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
+import { OtherReasonModal } from "@/widgets/quote/total-price-and-vat/other-reason-modal";
+import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
+import { _renderQuoteStatus } from "@/utils/constants";
+import { IconButton } from "@mui/material";
+import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 
 const QuoteNewPageWidget = () => {
   const { clasess } = useStyle();
@@ -45,7 +52,30 @@ const QuoteNewPageWidget = () => {
     headerHeight,
     quoteItems,
     dateRef,
-    activeClickAway,
+    anchorElCancelBtn,
+    anchorElSendBtn,
+    openSendBtn,
+    openCancelBtn,
+    openOtherReasonModal,
+    openIrreleventCancelModal,
+    openPriceCancelModal,
+    openDeliveryTimeCancelModal,
+    anchorElSettingMenu,
+    openSettingMenu,
+    handleSettingMenuClick,
+    handleSettingMenuClose,
+    onClcikClosePriceModal,
+    onClcikOpenDeliveryTimeModal,
+    onClcikOpenPriceModal,
+    onClcikOpenIrreleventModal,
+    onClcikCloseModal,
+    onClcikOpenModal,
+    onClcikCloseDeliveryTimeModal,
+    onClcikCloseIrreleventModal,
+    handleCancelBtnClick,
+    handleCancelBtnClose,
+    handleSendBtnClick,
+    handleSendBtnClose,
     changepriceListItems,
     changeQuoteItems,
     changepriceListItemsChild,
@@ -57,7 +87,6 @@ const QuoteNewPageWidget = () => {
     onOpenNewItem,
     onCloseNewItem,
     setSelectDate,
-    updateDueDate,
     setIsUpdateBusinessName,
     setSelectBusiness,
     setIsUpdateAddress,
@@ -95,6 +124,9 @@ const QuoteNewPageWidget = () => {
     duplicateQuoteItemWithAnotherQuantity,
     onClickDeleteQouteItem,
     setActiveClickAway,
+    setReasonText,
+    onClickCancelOffer,
+    updateCancelQuote,
   } = useQuoteNew();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
 
@@ -118,9 +150,18 @@ const QuoteNewPageWidget = () => {
                 </div>
                 <div style={clasess.settingsStatusContainer}>
                   <div style={clasess.quoteStatusContainer}>
-                    Waiting for manager approval
+                    {_renderQuoteStatus(
+                      quoteItemValue?.statusID,
+                      quoteItemValue,
+                      t
+                    )}
                   </div>
-                  <SettingNewIcon />
+                  <IconButton
+                    style={{ marginRight: 4 }}
+                    onClick={handleSettingMenuClick}
+                  >
+                    <SettingNewIcon />
+                  </IconButton>
                 </div>
               </div>
               <div style={clasess.datesContainer}>
@@ -219,7 +260,11 @@ const QuoteNewPageWidget = () => {
             </div>
             <div style={{ width: "100%", flex: 0.1 }}>
               <WriteCommentComp />
-              <ButtonsContainer onOpenNewItem={onOpenNewItem} />
+              <ButtonsContainer
+                onOpenNewItem={onOpenNewItem}
+                handleCancelBtnClick={handleCancelBtnClick}
+                handleSendBtnClick={handleSendBtnClick}
+              />
             </div>
           </div>
         </div>
@@ -244,6 +289,71 @@ const QuoteNewPageWidget = () => {
         onClose={onCloseDeleteItemModal}
         subTitle={t("sales.quote.areYouSureDeleteItem")}
         onClickDelete={deleteQuoteItem}
+      />
+      <SendBtnMenu
+        handleClose={handleSendBtnClose}
+        open={openSendBtn}
+        anchorEl={anchorElSendBtn}
+      />
+      <SettingQuoteMenu
+        handleClose={handleSettingMenuClose}
+        open={openSettingMenu}
+        anchorEl={anchorElSettingMenu}
+      />
+      <CancelBtnMenu
+        handleClose={handleCancelBtnClose}
+        open={openCancelBtn}
+        anchorEl={anchorElCancelBtn}
+        onClcikOpenDeliveryTimeModal={onClcikOpenDeliveryTimeModal}
+        onClcikOpenPriceModal={onClcikOpenPriceModal}
+        onClcikOpenIrreleventModal={onClcikOpenIrreleventModal}
+        onClcikOpenModal={onClcikOpenModal}
+      />
+      <OtherReasonModal
+        openModal={openOtherReasonModal}
+        onClose={onClcikCloseModal}
+        setReasonText={setReasonText}
+        onClickCancelOffer={onClickCancelOffer}
+      />
+      <GoMakeDeleteModal
+        icon={
+          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        }
+        title={t("sales.quote.titleCancelModal")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openIrreleventCancelModal}
+        onClose={onClcikCloseIrreleventModal}
+        subTitle={t("sales.quote.subTitleCancelModal")}
+        cancelBtn={t("sales.quote.cancelBtn")}
+        onClickDelete={() =>
+          updateCancelQuote(QuoteStatuses.CANCELED_IRRELEVANT)
+        }
+      />
+      <GoMakeDeleteModal
+        icon={
+          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        }
+        title={t("sales.quote.titleCancelModal")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openPriceCancelModal}
+        onClose={onClcikClosePriceModal}
+        subTitle={t("sales.quote.subTitleCancelModal")}
+        cancelBtn={t("sales.quote.cancelBtn")}
+        onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
+      />
+      <GoMakeDeleteModal
+        icon={
+          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        }
+        title={t("sales.quote.titleCancelModal")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openDeliveryTimeCancelModal}
+        onClose={onClcikCloseDeliveryTimeModal}
+        subTitle={t("sales.quote.subTitleCancelModal")}
+        cancelBtn={t("sales.quote.cancelBtn")}
+        onClickDelete={() =>
+          updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)
+        }
       />
     </>
   );

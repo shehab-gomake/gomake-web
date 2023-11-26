@@ -9,7 +9,11 @@ import {
 import { useTranslation } from "react-i18next";
 import { GomakePrimaryButton } from "@/components";
 
-const ButtonsContainer = ({ onOpenNewItem }) => {
+const ButtonsContainer = ({
+  onOpenNewItem,
+  handleCancelBtnClick,
+  handleSendBtnClick,
+}) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   return (
@@ -42,22 +46,26 @@ const ButtonsContainer = ({ onOpenNewItem }) => {
         >
           {t("sales.quote.attachFiles")}
         </GomakePrimaryButton>
-        <GomakePrimaryButton
+        {/* <GomakePrimaryButton
           rightIcon={<ArrowDownNewIcon />}
           style={clasess.btnSecondContainer}
         >
           {t("sales.quote.copyTo")}
-        </GomakePrimaryButton>
+        </GomakePrimaryButton> */}
         <GomakePrimaryButton
           rightIcon={<ArrowDownNewIcon />}
           style={clasess.btnSecondContainer}
+          onClick={handleSendBtnClick}
         >
           {t("login.send")}
         </GomakePrimaryButton>
         <GomakePrimaryButton style={clasess.btnSecondContainer}>
           {t("sales.quote.print")}
         </GomakePrimaryButton>
-        <GomakePrimaryButton style={clasess.btnSecondContainer}>
+        <GomakePrimaryButton
+          style={clasess.btnSecondContainer}
+          onClick={handleCancelBtnClick}
+        >
           {t("materials.buttons.cancel")}
         </GomakePrimaryButton>
         <GomakePrimaryButton style={clasess.btnThirdContainer}>

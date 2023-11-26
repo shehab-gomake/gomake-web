@@ -11,6 +11,7 @@ import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-
 import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
+import { _renderQuoteStatus } from "@/utils/constants";
 
 const useQuotes = () => {
   const { t } = useTranslation();
@@ -23,7 +24,7 @@ const useQuotes = () => {
   const debounce = useDebounce(patternSearch, 500);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
-  const {GetDateFormat} = useDateFormat();
+  const { GetDateFormat } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
   const [customerId, setCustomerId] = useState<any>();
   const [dateRange, setDateRange] = useState<any>();
@@ -37,9 +38,6 @@ const useQuotes = () => {
   const onClcikCloseModal = () => {
     setOpenModal(false);
   };
- 
-
-
 
   const onClcikOpenModal = (quote: any) => {
     setSelectedQuote(quote);
@@ -87,50 +85,7 @@ const useQuotes = () => {
       setCanOrder(false);
     }
   };
-  const _renderQuoteStatus = (status: number, quote: any) => {
-    if (status === QUOTE_STATUSES.Create) {
-      return t("sales.quote.createdBy", { name: quote?.userName });
-    }
-    if (status === QUOTE_STATUSES.Open) {
-      return t("sales.quote.open");
-    }
-    if (status === QUOTE_STATUSES.Closed) {
-      return t("sales.quote.closed");
-    }
-    if (status === QUOTE_STATUSES.Canceled) {
-      return t("sales.quote.canceled");
-    }
-    if (status === QUOTE_STATUSES.Waiting) {
-      return t("sales.quote.waiting");
-    }
-    if (status === QUOTE_STATUSES.Approved) {
-      return t("sales.quote.approved");
-    }
-    if (status === QUOTE_STATUSES.CanceledIrrelvant) {
-      return t("sales.quote.canceledIrrelvant");
-    }
-    if (status === QUOTE_STATUSES.CanceledPrice) {
-      return t("sales.quote.canceledPrice");
-    }
-    if (status === QUOTE_STATUSES.CanceledDeliveryTime) {
-      return t("sales.quote.canceledDeliveryTime");
-    }
-    if (status === QUOTE_STATUSES.CanceledOther) {
-      return t("sales.quote.canceledOther");
-    }
-    if (status === QUOTE_STATUSES.ApprovedByManager) {
-      return t("sales.quote.approvedByManager");
-    }
-    if (status === QUOTE_STATUSES.RejectedByManager) {
-      return t("sales.quote.rejectedByManager");
-    }
-    if (status === QUOTE_STATUSES.PartialClosed) {
-      return t("sales.quote.partialClosed");
-    }
-    if (status === QUOTE_STATUSES.WaitForPrintHouseConfirm) {
-      return t("sales.quote.waitForPrintHouseConfirm");
-    }
-  };
+
   const getAllQuotes = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -156,7 +111,7 @@ const useQuotes = () => {
       quote?.worksNames,
       quote?.totalPrice,
       quote?.notes,
-      _renderQuoteStatus(quote?.statusID, quote),
+      _renderQuoteStatus(quote?.statusID, quote, t),
       <MoreMenuWidget quote={quote} onClcikOpenModal={onClcikOpenModal} />,
     ]);
     setAllQuotes(mapData);
@@ -189,7 +144,7 @@ const useQuotes = () => {
       quote?.worksNames,
       quote?.totalPrice,
       quote?.notes,
-      _renderQuoteStatus(quote?.statusID, quote),
+      _renderQuoteStatus(quote?.statusID, quote, t),
       <MoreMenuWidget quote={quote} onClcikOpenModal={onClcikOpenModal} />,
     ]);
     setAllQuotes(mapData);

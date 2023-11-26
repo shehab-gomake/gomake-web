@@ -14,7 +14,6 @@ const useStyle = () => {
         width: "100%",
         maxWidth: "100%",
         position: "relative" as "relative",
-        paddingRight: 20,
         height: "100%",
         overflow: "hidden",
       },
@@ -30,7 +29,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: 15,
+        gap: 5,
       },
       quoteStatusContainer: {
         display: "flex",

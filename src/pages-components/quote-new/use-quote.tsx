@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 
 import { EHttpMethod } from "@/services/api-service/enums";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
   getAndSetAllCustomers,
   getAndSetAllEmployees,
@@ -17,6 +17,7 @@ import {
   clientContactsState,
   quoteItemState,
 } from "@/store";
+import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 
 const useQuoteNew = () => {
   const {
@@ -28,6 +29,7 @@ const useQuoteNew = () => {
     alertFaultDelete,
   } = useSnackBar();
   const { callApi } = useGomakeAxios();
+  const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
 
   const [quoteItemValue, setQuoteItemValue] =
@@ -50,6 +52,7 @@ const useQuoteNew = () => {
     useRecoilState<any>(agentListsState);
   const [isDisplayWidget, setIsDisplayWidget] = useState(false);
   const [items, setItems] = useState([]);
+  const [reasonText, setReasonText] = useState("");
   const [isUpdateContactName, setIsUpdateContactName] = useState(null);
   const [isUpdateContactEmail, setIsUpdateContactEmail] = useState(null);
   const [isUpdateContactMobile, setIsUpdateContactMobile] = useState(null);
@@ -71,6 +74,34 @@ const useQuoteNew = () => {
   const [openDeleteItemModal, setOpenDeleteItemModal] = useState(false);
   const [priceListItems, setPriceListItems] = useState<any>([]);
   const [quoteItems, setquoteItems] = useState<any>([]);
+  const [anchorElCancelBtn, setAnchorElCancelBtn] =
+    useState<null | HTMLElement>(null);
+  const [anchorElSendBtn, setAnchorElSendBtn] = useState<null | HTMLElement>(
+    null
+  );
+  const [anchorElSettingMenu, setAnchorElSettingMenu] =
+    useState<null | HTMLElement>(null);
+  const openSendBtn = Boolean(anchorElSendBtn);
+  const openCancelBtn = Boolean(anchorElCancelBtn);
+  const openSettingMenu = Boolean(anchorElSettingMenu);
+  const handleSettingMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElSettingMenu(event.currentTarget);
+  };
+  const handleSettingMenuClose = () => {
+    setAnchorElSettingMenu(null);
+  };
+  const handleCancelBtnClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElCancelBtn(event.currentTarget);
+  };
+  const handleCancelBtnClose = () => {
+    setAnchorElCancelBtn(null);
+  };
+  const handleSendBtnClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElSendBtn(event.currentTarget);
+  };
+  const handleSendBtnClose = () => {
+    setAnchorElSendBtn(null);
+  };
   const tableHeaders = [
     "#",
     t("sales.quote.itemCode"),
@@ -477,6 +508,79 @@ const useQuoteNew = () => {
   useEffect(() => {
     setSelectDate(quoteItemValue?.dueDate);
   }, [quoteItemValue]);
+
+  const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
+  const [openIrreleventCancelModal, setOpenIrreleventCancelModal] =
+    useState(false);
+  const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
+  const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] =
+    useState(false);
+
+  const onClcikOpenIrreleventModal = () => {
+    setOpenIrreleventCancelModal(true);
+  };
+  const onClcikCloseIrreleventModal = () => {
+    setOpenIrreleventCancelModal(false);
+  };
+
+  const onClcikOpenPriceModal = () => {
+    setOpenPriceCancelModal(true);
+  };
+  const onClcikClosePriceModal = () => {
+    setOpenPriceCancelModal(false);
+  };
+
+  const onClcikOpenDeliveryTimeModal = () => {
+    setOpenDeliveryTimeCancelModal(true);
+  };
+  const onClcikCloseDeliveryTimeModal = () => {
+    setOpenDeliveryTimeCancelModal(false);
+  };
+  const onClcikOpenModal = () => {
+    setOpenOtherReasonModal(true);
+  };
+  const onClcikCloseModal = () => {
+    setOpenOtherReasonModal(false);
+  };
+  const onClickCancelOffer = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/erp-service/quote/cancel-quote-state`,
+      {
+        quoteId: quoteItemValue?.id,
+        quoteStatus: QuoteStatuses.CANCELED_OTHER,
+        cancelText: reasonText,
+      }
+    );
+    if (res?.success) {
+      alertSuccessUpdate();
+      navigate("/home");
+    } else {
+      alertFaultUpdate();
+    }
+  }, [quoteItemValue, reasonText]);
+
+  const updateCancelQuote = useCallback(
+    async (quoteStatus: number) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/erp-service/quote/cancel-quote-state`,
+        {
+          quoteId: quoteItemValue?.id,
+          quoteStatus: quoteStatus,
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        navigate("/home");
+      } else {
+        alertFaultUpdate();
+      }
+    },
+
+    [quoteItemValue]
+  );
+
   return {
     dateRef,
     activeClickAway,
@@ -509,6 +613,30 @@ const useQuoteNew = () => {
     priceListItems,
     quoteItems,
     tableHeaders,
+    anchorElCancelBtn,
+    anchorElSendBtn,
+    openSendBtn,
+    openCancelBtn,
+    openOtherReasonModal,
+    openIrreleventCancelModal,
+    openPriceCancelModal,
+    openDeliveryTimeCancelModal,
+    anchorElSettingMenu,
+    openSettingMenu,
+    handleSettingMenuClick,
+    handleSettingMenuClose,
+    onClcikOpenPriceModal,
+    onClcikOpenModal,
+    onClcikClosePriceModal,
+    onClcikOpenDeliveryTimeModal,
+    onClcikCloseDeliveryTimeModal,
+    onClcikCloseModal,
+    onClcikOpenIrreleventModal,
+    onClcikCloseIrreleventModal,
+    handleCancelBtnClick,
+    handleCancelBtnClose,
+    handleSendBtnClick,
+    handleSendBtnClose,
     handleClickSelectDate,
     setActiveClickAway,
     changeQuoteItems,
@@ -561,6 +689,9 @@ const useQuoteNew = () => {
     onClickDuplicateWithDifferentQTY,
     duplicateQuoteItemWithAnotherQuantity,
     onClickDeleteQouteItem,
+    setReasonText,
+    onClickCancelOffer,
+    updateCancelQuote,
   };
 };
 
