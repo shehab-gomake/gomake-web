@@ -48,7 +48,7 @@ const useMoreCircle = () => {
     {
       name: "Message",
       icon: <MailIcon />,
-      onclick: () => navigate("/"),
+      onclick: () => null,
     },
     {
       name: "Block",

@@ -5,7 +5,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea, Stack } from '@mui/material';
 import { useStyle } from './style';
-const image1 = require('.///images/image1.png')
+
 interface IProps {
     imagePath: string;
     name?: string;

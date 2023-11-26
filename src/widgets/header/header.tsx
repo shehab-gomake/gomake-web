@@ -1,27 +1,25 @@
-import {useTranslation} from "react-i18next";
-import {Avatar, IconButton, MenuItem} from "@mui/material";
-
-import {EditIcon} from "@/icons";
-
-import {useStyle} from "./style";
-import {useHeader} from "./use-header";
-import {GoMakeMenu} from "@/components";
-import {useRecoilState, useRecoilValue} from "recoil";
-import {userProfileState} from "@/store/user-profile";
+import { useTranslation } from "react-i18next";
+import { Avatar, IconButton, InputAdornment, MenuItem } from "@mui/material";
+import { EditIcon, Messages, Notifications, SearchIcon, Statistics } from "@/icons";
+import { useStyle } from "./style";
+import { useHeader } from "./use-header";
+import { ColoredCycle, GoMakeMenu, GoMakeTextInputIcon } from "@/components";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { userProfileState } from "@/store/user-profile";
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import {QuoteIfExistState} from "@/pages-components/quote/store/quote";
-import {CartIcon} from "@/icons/cart-icon";
+import { QuoteIfExistState } from "@/pages-components/quote/store/quote";
+import { CartIcon } from "@/icons/cart-icon";
+import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 
 const HeaderWidget = () => {
-    const {clasess} = useStyle();
-    const {t} = useTranslation();
+    const { clasess } = useStyle();
+    const { t } = useTranslation();
     const userProfile = useRecoilValue(userProfileState);
     const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
-    const {user, open, anchorEl, handleClick, handleClose, navigate, handleClickQuoteExist} =
-        useHeader();
+    const { user, open, anchorEl, handleClick, handleClose, navigate, handleClickQuoteExist, openNotify, anchorNotifyEl, handleClickNotify, handleCloseNotify } = useHeader();
     const userAvatar = () => {
         return !!userProfile.imagePath ? (
-            <Avatar style={clasess.avatarProps} src={userProfile.imagePath}/>
+            <Avatar style={clasess.avatarProps} src={userProfile.imagePath} />
         ) : (
             <Avatar
                 style={{
@@ -33,53 +31,36 @@ const HeaderWidget = () => {
             </Avatar>
         );
     };
+
     return (
         <div style={clasess.container}>
-
-            <div style={{width: "100%"}}/>
-            {/* <GoMakeTextInputIcon
-        style={clasess.searchInputContainer}
-        placeholder={t("header.search")}
-        startAdornment={
-          <InputAdornment position="start">
-            <div style={clasess.iconStyle}>
-              <SearchIcon width={20} height={20} />
-            </div>
-          </InputAdornment>
-        }
-      /> */}
+            {/* <SearchInputComponent onChange={() => null} searchInputStyle={clasess.searchInputContainer} /> */}
+            <div style={{ width: "100%" }} />
             <div style={clasess.rightSideContainer}>
-                {/* <IconButton>
-          <Statistics />
-        </IconButton>
-        <IconButton>
-          <Messages />
-        </IconButton>
-        <IconButton>
-          <Notifications />
-        </IconButton> */}
+                <IconButton>
+                    <Statistics />
+                </IconButton>
+                <IconButton>
+                    <Messages />
+                </IconButton>
+                <IconButton onClick={handleClickNotify}>
+                    <Notifications />
+                </IconButton>
                 <div style={clasess.profileContainer}>
                     {
                         QuoteIfExist == true &&
-                        <div style={{borderRight: "1px solid #D0D5DD"}}>
-                            <IconButton onClick={()=>navigate("quote")}  style={{backgroundColor: "#F135A3", marginRight: 20, width: 30, height: 30}}>
-                                <CartIcon/>
+                        <div style={{ borderRight: "1px solid #D0D5DD" }}>
+                            <IconButton onClick={() => navigate("quote")} style={{ backgroundColor: "#F135A3", marginRight: 20, width: 30, height: 30 }}>
+                                <CartIcon />
                             </IconButton>
                         </div>
-
                     }
-
-                    <div style={{marginLeft: 14}}>
+                    <div style={{ marginLeft: 14 }}>
                         <IconButton onClick={handleClick}>{userAvatar()}</IconButton>
                     </div>
                     {/* <div style={clasess.userNameStyle}>{user?.displayName}</div> */}
-
-
                 </div>
-
             </div>
-
-
             <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
                 <div style={clasess.mainMenuContainer}>
 
@@ -94,7 +75,7 @@ const HeaderWidget = () => {
                         </div>
                     </div>
                     <MenuItem
-                        style={{width: "100%", minWidth: 200}}
+                        style={{ width: "100%", minWidth: 200 }}
                         onClick={() => navigate("/settings/profile")}
                         onMouseDown={(e) => {
                             if (e.button === 1) {
@@ -106,10 +87,10 @@ const HeaderWidget = () => {
                             <div style={clasess.manageAccountTextStyle}>
                                 {t("login.manageAccount")}
                             </div>
-                            <EditIcon/>
+                            <EditIcon />
                         </div>
                     </MenuItem>
-                    <div style={clasess.lineContainer}/>
+                    <div style={clasess.lineContainer} />
                     <MenuItem
                         style={clasess.logoutContainer}
                         onClick={() => {
@@ -122,9 +103,38 @@ const HeaderWidget = () => {
                 </div>
             </GoMakeMenu>
 
+            <GoMakeMenu handleClose={handleCloseNotify} open={openNotify} anchorEl={anchorNotifyEl}>
+                <div style={clasess.mainMenuContainer}>
+
+                    <div style={clasess.accountTextStyle}>{t("Notifications")}</div>
+
+                    <MenuItem style={{ width: "100%", minWidth: 200 }}>
+                        <div style={clasess.manageAccountStyle}>
+                            <div style={clasess.manageAccountTextStyle}>
+                                {t("login.manageAccount")}
+                            </div>
+                            <EditIcon />
+                        </div>
+                    </MenuItem>
+
+                    <div style={clasess.lineContainer} />
+
+                    <MenuItem style={clasess.logoutContainer}>
+                        <ColoredCycle backgroundColor={"red"} ></ColoredCycle>
+                        <div style={clasess.logoutContainer}>{t("login.logOut")}</div>
+                    </MenuItem>
+
+                    <div style={clasess.lineContainer} />
+
+                    <MenuItem style={clasess.logoutContainer}>
+                        <div style={clasess.logoutContainer}>{t("login.logOut")}</div>
+                    </MenuItem>
+
+                </div>
+            </GoMakeMenu>
 
         </div>
 
     );
 };
-export {HeaderWidget};
+export { HeaderWidget };
