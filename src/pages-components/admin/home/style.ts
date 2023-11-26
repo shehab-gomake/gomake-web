@@ -8,7 +8,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const useStyle = () => {
   const { t } = useTranslation();
   const { primaryColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -25,9 +25,9 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-end",
         width: "100%",
-        gap: 25,
+        gap: 20,
         backgroundColor: "#FFFFFF",
-        marginBottom: 25,
+        marginBottom: 15,
       },
       titleStyle: {
         ...FONT_FAMILY.Lexend(600, 25),
@@ -36,7 +36,7 @@ const useStyle = () => {
     };
   }, [i18next.language, t]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

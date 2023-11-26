@@ -2,6 +2,7 @@ import { useGomakeAuth, useGomakeAxios, useGomakeRouter } from "@/hooks";
 import {
   CustomersIcon,
   HomeIcon,
+  PartnersIcon,
   ProductFloorIcon,
   ProductsIcon,
   ReportsIcon,
@@ -15,6 +16,8 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { ICompanyProfile, companyProfileState } from "@/store/company-profile";
 import { Permissions } from "@/components/CheckPermission/enum";
 
+import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
+import PendingActionsOutlinedIcon from '@mui/icons-material/PendingActionsOutlined';
 
 const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
 
@@ -42,6 +45,17 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         isList: false,
         icon: () => {
           return <ProductFloorIcon />;
+        },
+        isProduction: true,
+      },
+      {
+        isLine: false,
+        key: "partners",
+        title: "tabs.partners",
+        path: "/partners",
+        isList: false,
+        icon: () => {
+          return <PartnersIcon />;
         },
         isProduction: true,
       },
@@ -172,7 +186,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         Permission:Permissions.SHOW_MACHINES,
         isList: false,
         icon: () => {
-          return <ProductsIcon />;
+          return <LocalPrintshopOutlinedIcon style={{color:"#FFFFFF"}}/>;
         },
         isProduction: true,
       },
@@ -184,7 +198,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         Permission:Permissions.SHOW_ACTIONS,
         isList: false,
         icon: () => {
-          return <ProductsIcon />;
+          return <PendingActionsOutlinedIcon style={{color:"#FFFFFF"}} />;
         },
         isProduction: true,
       },

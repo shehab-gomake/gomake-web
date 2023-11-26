@@ -25,7 +25,9 @@ const useStyle = () => {
         width: convertWidthToVW(375),
         backgroundColor: "#F8F8F8",
         borderRadius: 10,
-        height: 30,
+        height: 40,
+        alignSelf: "flex-start",
+        display:"flex",
       },
       iconStyle: {
         position: "absolute" as "absolute",
