@@ -47,7 +47,7 @@ const KeyValueViewComponent = ({name, values, valueColor, defaultUnit, outSource
     )
 }
 
-const EditableKeyValueViewComponent = ({name, values, valueColor, defaultUnit, onUpdate, outSourceValues, source, supplierId}: IKeyValueViewProps) => {
+const EditableKeyValueViewComponent = ({name, values, valueColor, defaultUnit, onUpdate, outSourceValues, source}: IKeyValueViewProps) => {
     const {classes} = useStyle();
     const value = source === EWorkSource.OUT ? !!outSourceValues && outSourceValues[0] ? outSourceValues[0] : '0' :  values[0];
     const [edit, setEdit] = useState<boolean>(false);
