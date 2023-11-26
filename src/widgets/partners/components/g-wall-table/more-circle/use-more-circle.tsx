@@ -5,10 +5,15 @@ import { MailIcon } from "./icons/mail";
 import { BlockIcon } from "./icons/block";
 import { CubeIcon } from "./icons/cube";
 import { CartIcon } from "./icons/cart";
+import {  useSetRecoilState} from "recoil";
+import { blockModalState, partnerInfoModalState } from "../../states";
 
 const useMoreCircle = () => {
   
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const setOpenModal = useSetRecoilState<boolean>(blockModalState);
+  const setOpenPartnerModal = useSetRecoilState<boolean>(partnerInfoModalState);
+
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -21,7 +26,7 @@ const useMoreCircle = () => {
     {
       name: "Go to orders",
       icon: <CubeIcon />,
-      onclick: () => null,
+      onclick: () => setOpenPartnerModal(true),
     },
     {
       name: "Go to quotes",
@@ -46,7 +51,7 @@ const useMoreCircle = () => {
     {
       name: "Block",
       icon: <BlockIcon />,
-      onclick: () => null,
+      onclick: () => setOpenModal(true),
     }
   ];
 

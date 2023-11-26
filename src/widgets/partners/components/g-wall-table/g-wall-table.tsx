@@ -8,12 +8,18 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useStyle } from "./style";
 import { useWallTableWidget } from "./use-g-wall-table";
-import { Checkbox } from "@mui/material";
+import { Checkbox, Stack } from "@mui/material";
+import { GoMakeModal } from "@/components";
+import { useRecoilState } from "recoil";
+import { blockModalState, partnerInfoModalState } from "../states";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 const WallTableWidget = () => {
     const { classes } = useStyle();
     const { rows } = useWallTableWidget();
     const { t } = useTranslation();
+    const [openModal, setOpenModal] = useRecoilState<boolean>(blockModalState);
+    const [openPartnerModal, setOpenPartnerModal] = useRecoilState<boolean>(partnerInfoModalState);
 
     return (
 
@@ -49,6 +55,33 @@ const WallTableWidget = () => {
                     ))}
                 </TableBody>
             </Table>
+            <GoMakeModal
+                openModal={openModal}
+                modalTitle={t("Block printing house")}
+                onClose={() => setOpenModal(false)}
+                insideStyle={classes.insideStyle}
+                isBlockModal={true}>
+                <Stack direction={"column"} gap={"30px"} marginTop={"10px"}>
+                    <h4>Are you sure that you want to block this printing house from your partner list?</h4>
+                    <Stack direction={"row"} gap={"10px"} justifyContent={"flex-end"}>
+                        <SecondaryButton style={classes.cancelBtnStyle} variant="outlined" onClick={() => setOpenModal(false)}>Cancel</SecondaryButton>
+                        <SecondaryButton style={classes.blockBtnStyle} variant="contained">Block</SecondaryButton>
+                    </Stack>
+                </Stack>
+            </GoMakeModal>
+            <GoMakeModal
+                openModal={openPartnerModal}
+                modalTitle={t("Block printing house")}
+                onClose={() => setOpenPartnerModal(false)}
+                insideStyle={classes.insideStyle1}
+                >
+                <Stack direction={"column"} gap={"30px"} marginTop={"10px"}>
+                   
+                    <Stack direction={"row"} gap={"10px"} justifyContent={"flex-end"}>
+                  <SecondaryButton style={classes.blockBtnStyle} variant="contained">Block</SecondaryButton>
+                    </Stack>
+                </Stack>
+            </GoMakeModal>
         </TableContainer>
     )
 };
