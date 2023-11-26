@@ -16,3 +16,8 @@ export enum RuleType {
     OUTPUT,
     PARAMETER
 }
+
+export enum EWorkSource {
+    INTERNAL,
+    OUT
+}

@@ -1,4 +1,4 @@
-import {HtmlElementType, RuleType, UnitType} from "@/widgets/product-pricing-widget/enums";
+import {EWorkSource, HtmlElementType, RuleType, UnitType} from "@/widgets/product-pricing-widget/enums";
 
 export interface IPricingWidgetProps {
     jobDetails?: string;
@@ -60,6 +60,10 @@ export interface IWorkFlowAction {
     totalRealProductionTime: number;
     totalRealProductionTimeO: IOutput;
     outputs: IOutput[];
+    source?: EWorkSource;
+    supplierId?: string;
+
+
 }
 
 export interface IOutput {
@@ -71,4 +75,6 @@ export interface IOutput {
     propertyType: RuleType;
     htmlElementType: HtmlElementType;
     isEditable: boolean;
+    outSourceValues?: string[];
+
 }

@@ -1,12 +1,13 @@
 import {styled} from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import {FONT_FAMILY} from "@/utils/font-family";
-import {MenuItem, Select} from "@mui/material";
-import {useState} from "react";
+import {MenuItem, Select, SelectChangeEvent, SelectProps} from "@mui/material";
+import {ReactNode} from "react";
+import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
 
-interface ISelectProps {
-    options: { value: string | number, label: string }[];
-    disabled?: boolean;
+interface ISelectProps extends SelectProps{
+    options: { value: EWorkSource, label: string }[];
+    onSelectWorkSource: (source: EWorkSource) => void
 }
 
 const StyledInput = styled(InputBase)(({theme}) => {
@@ -33,10 +34,9 @@ const StyledInput = styled(InputBase)(({theme}) => {
         },
     }
 });
-const GoMakeSelect = ({options, disabled}: ISelectProps) => {
-    const [value, setValue] = useState<any>(options[0].value);
-    const handleChange = (event: { target: { value: string } }) => {
-        setValue(event.target.value);
+const GoMakeSelect = ({options, disabled, onSelectWorkSource, value}: ISelectProps) => {
+    const handleChange = (event: SelectChangeEvent<EWorkSource>, child: ReactNode) => {
+        onSelectWorkSource(event.target.value as EWorkSource);
     };
     return (
         <Select

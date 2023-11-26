@@ -21,3 +21,9 @@ export const jobActionsState = atom<IPricingAction[]>({
     key: "jobActionsState",
     default: [],
 });
+
+export const printHouseSuppliersState = atom<{ label: string, value: string }[]>({
+    key: "printHouseSuppliersState",
+    default: [],
+});
+
