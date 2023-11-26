@@ -13,46 +13,51 @@ import { GeneralSection } from "./components.tsx/section-1";
 import { MembersSection } from "./components.tsx/section-2";
 import { InfoSection } from "./components.tsx/section-3";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import Image from "next/image";
-
+import { useStyle } from "./style";
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
+
 const useWallTableWidget = () => {
+    const { classes } = useStyle();
 
     function createData(
         id: any,
         partner: any,
-        address: any,
-        lastOrder: any,
-        successRate: any,
+        quoteNumber: any,
+        response: any,
+        view: any,
         totalProducts: any,
         totalQuotes: any,
-        balance: any,
+        successRate: any,
         more: any,
 
     ) {
         return {
             id,
             partner,
-            address,
-            lastOrder,
-            successRate,
+            quoteNumber,
+            response,
+            view,
             totalProducts,
             totalQuotes,
-            balance,
+            successRate,
             more
         };
     }
 
 
     const rows = [
-        createData("1", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "Tira, Palestine", '322', '45%', '322', '322', '45%', <MoreMenuWidget />),
-        createData("2", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "Tira, Palestine", '322', '45%', '322', '322', '45%', <MoreMenuWidget />),
-        createData("3", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "Tira, Palestine", '322', '45%', '322', '322', '45%', <MoreMenuWidget />),
-        createData("4", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "Tira, Palestine", '322', '45%', '322', '322', '45%', <MoreMenuWidget />),
-        createData("5", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "Tira, Palestine", '322', '45%', '322', '322', '45%', <MoreMenuWidget />),
-        createData("6", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "Tira, Palestine", '322', '45%', '322', '322', '45%', <MoreMenuWidget />),
-        createData("7", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "Tira, Palestine", '322', '45%', '322', '322', '45%', <MoreMenuWidget />),
-        createData("8", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "Tira, Palestine", '322', '45%', '322', '322', '45%', <MoreMenuWidget />),
+        createData("1", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "X64654654", "45%", <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '322', '322', '45%', <MoreMenuWidget />),
+        createData("2", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "TT1543", "45%", <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>, '322', '322', '45%', <MoreMenuWidget />),
+        createData("3", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "TT1544", "45%", <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '322', '322', '45%', <MoreMenuWidget />),
+        createData("4", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "TT1546", "45%", <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '322', '322', '45%', <MoreMenuWidget />),
+        createData("5", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "TT1548", "45%", <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>, '322', '322', '45%', <MoreMenuWidget />),
+        createData("6", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "X64654659", "45%", <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '322', '322', '45%', <MoreMenuWidget />),
+        createData("7", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "X64654658", "45%", <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>, '322', '322', '45%', <MoreMenuWidget />),
+        createData("8", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "TT1558", "45%", <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '322', '322', '45%', <MoreMenuWidget />),
+        createData("9", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />Company name</span>, "TT1568", "45%", <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '322', '322', '45%', <MoreMenuWidget />),
+
 
     ];
 

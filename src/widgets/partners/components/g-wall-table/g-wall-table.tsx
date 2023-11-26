@@ -15,6 +15,7 @@ import { blockModalState, partnerInfoModalState } from "../states";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import Drawer from '@mui/material/Drawer';
 import React from "react";
+import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 
 
 const WallTableWidget = () => {
@@ -31,12 +32,12 @@ const WallTableWidget = () => {
                     <TableRow>
                         <TableCell style={classes.headersStyle} align="center" >{t("Id")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("Partner")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Address")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Last order")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Success rate")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("Quote Number")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center"><div style={{ display: "flex", justifyContent: "center" , alignItems:"center" , gap:"3px"}} >View<RemoveRedEyeOutlinedIcon></RemoveRedEyeOutlinedIcon></div></TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("Response")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("Total products")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("Total quotes")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Balance")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("Success rate")}</TableCell>
                         <TableCell style={classes.headersStyle} align="right">{t("more")}</TableCell>
                     </TableRow>
                 </TableHead>
@@ -46,12 +47,12 @@ const WallTableWidget = () => {
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                             <TableCell style={classes.headersStyle} align="center"><Checkbox color="primary" inputProps={{ 'aria-label': 'select all desserts', }} />{row.id}</TableCell>
                             <TableCell style={classes.headersStyle} align="center">{row.partner}</TableCell>
-                            <TableCell style={classes.dataRowStyle} align="center">{row.address}</TableCell>
-                            <TableCell style={classes.dataRowStyle} align="center">{row.lastOrder}</TableCell>
-                            <TableCell style={classes.dataRowStyle} align="center">{row.successRate}</TableCell>
+                            <TableCell style={classes.dataRowStyle} align="center">{row.quoteNumber}</TableCell>
+                            <TableCell style={classes.dataRowStyle} align="center">{row.response}</TableCell>
+                            <TableCell style={classes.dataRowStyle} align="center">{row.view}</TableCell>
                             <TableCell style={classes.dataRowStyle} align="center">{row.totalProducts}</TableCell>
                             <TableCell style={classes.dataRowStyle} align="center">{row.totalQuotes}</TableCell>
-                            <TableCell style={classes.dataRowStyle} align="center">{row.balance}</TableCell>
+                            <TableCell style={classes.dataRowStyle} align="center">{row.successRate}</TableCell>
                             <TableCell align="right">{row.more}</TableCell>
                         </TableRow>
                     ))}

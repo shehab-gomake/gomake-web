@@ -3,7 +3,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-    const { primaryColor, errorColor, neutralColor } = useGomakeTheme();
+    const { primaryColor, errorColor, neutralColor , successColor} = useGomakeTheme();
     const classes = useMemo(() => {
         return {
             tableStyle: {
@@ -55,6 +55,30 @@ const useStyle = () => {
                 borderColor: neutralColor(700),
                 color: neutralColor(700)
             },
+            acceptedStyle:{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "71px",
+                height: "22px",
+                padding: "2px, 12px, 2px, 12px",
+                borderRadius: "17px",
+                color: successColor(500),
+                background: successColor(100),
+                ...FONT_FAMILY.Lexend(500, 14),
+            },
+            deniedStyle:{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "71px",
+                height: "22px",
+                padding: "2px, 12px, 2px, 12px",
+                borderRadius: "17px",
+                color: errorColor(400),
+                background: errorColor(100),
+                ...FONT_FAMILY.Lexend(500, 14),
+            }
 
         };
     }, []);

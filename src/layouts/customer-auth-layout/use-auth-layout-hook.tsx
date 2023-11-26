@@ -16,6 +16,8 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { ICompanyProfile, companyProfileState } from "@/store/company-profile";
 import { Permissions } from "@/components/CheckPermission/enum";
 
+import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
+import PendingActionsOutlinedIcon from '@mui/icons-material/PendingActionsOutlined';
 
 const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
 
@@ -46,7 +48,6 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         },
         isProduction: true,
       },
-
       {
         isLine: false,
         key: "partners",
@@ -58,8 +59,6 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         },
         isProduction: true,
       },
-
-
       {
         isLine: true,
         key: "line_1",
@@ -187,7 +186,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         Permission:Permissions.SHOW_MACHINES,
         isList: false,
         icon: () => {
-          return <ProductsIcon />;
+          return <LocalPrintshopOutlinedIcon style={{color:"#FFFFFF"}}/>;
         },
         isProduction: true,
       },
@@ -199,7 +198,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         Permission:Permissions.SHOW_ACTIONS,
         isList: false,
         icon: () => {
-          return <ProductsIcon />;
+          return <PendingActionsOutlinedIcon style={{color:"#FFFFFF"}} />;
         },
         isProduction: true,
       },

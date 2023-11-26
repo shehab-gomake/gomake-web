@@ -6,7 +6,7 @@ import { discoverInputs } from "./inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { useState } from "react";
-import { PrimaryButton } from "@/components/button/primary-button";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 const DiscoverWidget = () => {
     const { t } = useTranslation();
@@ -29,7 +29,8 @@ const DiscoverWidget = () => {
                         discoverInputs(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
                     }
                     </Stack>
-                    <PrimaryButton variant="contained" style={{ width: "128px", height: "40px" }}>Search</PrimaryButton>
+                    <SecondaryButton variant="contained" style={{ width: "140px", height: "40px" }}>Search</SecondaryButton>
+                    <SecondaryButton  variant="outlined" style={{ width: "140px", height: "40px" , lineHeight:"15px"  }}>Add new</SecondaryButton>
                 </Stack>
             </Stack>
         </div>

@@ -19,7 +19,7 @@ const PrimaryButtonsTabWidget = () => {
     const { classes } = useStyle();
 
     const tabLabels = [
-        t('G.wall'),
+        t('Collaboration'),
         t('My partners'),
     ];
 
