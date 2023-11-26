@@ -1,11 +1,11 @@
 import * as React from "react";
 
-const ColoredCycle = ({ backgroundColor }: any) => {
+const ColoredCycle = ({ backgroundColor , width , height }: any) => {
   return (
     <div
       style={{
-        width: 30,
-        height: 30,
+        width: width || 30,
+        height: height || 30,
         borderRadius: "50%",
         backgroundColor: `${backgroundColor}`,
         fill: "Background",

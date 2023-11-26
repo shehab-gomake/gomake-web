@@ -7,6 +7,9 @@ import { useGomakeAxios } from "@/hooks";
 
 import { useStyle } from "./style";
 import { MoreMenuWidget } from "../more-circle";
+import { useRecoilState } from "recoil";
+import { permissionsState } from "@/store/permissions";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const useProductManagement = () => {
   const { callApi } = useGomakeAxios();
@@ -15,6 +18,7 @@ const useProductManagement = () => {
   const [allProducts, setAllProducts] = useState<any>();
   const [term, setTerm] = useState<any>("");
   const [productSearched, setProductSearched] = useState([]);
+  const [permissions, setPermissions] = useRecoilState(permissionsState);
   const [allProductSKU, setAllProductSKU] = useState<any>();
   const getAllProductsSKU = useCallback(async () => {
     await getAlltProductSKU(callApi, setAllProductSKU);
@@ -78,7 +82,7 @@ const useProductManagement = () => {
     t("products.productManagement.admin.details"),
     t("products.productManagement.admin.groups"),
     t("products.productManagement.admin.status"),
-    t("products.productManagement.admin.more"),
+    permissions && permissions[Permissions.EDIT_PRODUCT] ? t("products.productManagement.admin.more") : null,
   ];
   const filterArray = (array: any, searchText: string) =>
     array.filter((item) => {

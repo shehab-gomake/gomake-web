@@ -8,8 +8,11 @@ import {useGomakeRouter} from "./use-gomake-router";
 import {userTypeState} from "@/store/user-type";
 import {userProfileState} from "@/store/user-profile";
 import {useTranslation} from "react-i18next";
+import {Permissions} from "@/components/CheckPermission/enum";
 
-const useCustomer = () => {
+
+const useCustomer = (permissionEnumValue?:Permissions) => {
+
     const {callApi} = useGomakeAxios();
     const [user, setUser] = useRecoilState<any>(userState);
     const setUserProfile = useSetRecoilState(userProfileState);
@@ -17,6 +20,7 @@ const useCustomer = () => {
     const [adminsAutoComplate, setAdminsAutoComplate] = useState([]);
     const [permissions, setPermissions] = useRecoilState<any>(permissionsState);
     const {navigate} = useGomakeRouter();
+
     const {i18n} = useTranslation();
     const logOut = useCallback(() => {
         setUser({});
@@ -27,14 +31,28 @@ const useCustomer = () => {
     const validate = useCallback(async () => {
         const validate: any = await callApi("GET", "/v1/auth/validate");
         if (validate?.success) {
-            setUser({...validate?.data?.data?.customer, type: "user"});
+            const user = validate?.data?.data?.customer;
+            const userPermissions = [...user.permissions];
+            user.permissions = null;
+            setUser({...user, type: "user"});
             setUserType({type: "user"});
             setUserProfile(validate?.data?.data?.customer);
-            if (validate?.data?.data?.customer?.systemLanguage) {
-                localStorage.setItem('systemLanguage', validate?.data?.data?.customer?.systemLanguage)
-                i18n.changeLanguage(validate?.data?.data?.customer?.systemLanguage).then();
+            if (validate?.data?.data?.customer?.systemLang) {
+                localStorage.setItem('systemLanguage', validate?.data?.data?.customer?.systemLang)
+                i18n.changeLanguage(validate?.data?.data?.customer?.systemLang).then();
             }
-            //   setPermissions(validate?.data?.data?.permissions); will  be implemented later
+
+
+            setPermissions(userPermissions);
+            if (permissionEnumValue !== null && permissionEnumValue !== undefined) {
+
+                if (userPermissions) {
+                 
+                    return !!userPermissions?.includes(permissionEnumValue);
+                } else {
+                    return false;
+                }
+            }
             return true;
         }
         clearStorage();

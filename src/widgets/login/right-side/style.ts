@@ -12,9 +12,9 @@ const useStyle = () => {
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#504FA1",
-        flex: 0.5,
         height: "100%",
         minHeight: "100vh",
+        width: "50%"
       },
       poweredContainer: {
         display: "flex",

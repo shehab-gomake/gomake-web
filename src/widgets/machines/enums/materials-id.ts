@@ -23,4 +23,5 @@ export enum EMaterialsId {
   TUBES = 22,
   VARNISHS = 23,
   WIDE_FORMAT_MATERIAL = 24,
+  DIE_STAMP = 25,
 }

@@ -1,34 +1,32 @@
+import {useRecoilValue, useSetRecoilState} from "recoil";
 import {IAuthLayout} from "./interfaces";
 import {LeftSideLayout} from "./left-side";
 import {useStyle} from "./style";
 import {useAuthLayoutHook} from "./use-auth-layout-hook";
 import {HeaderWidget} from "@/widgets/header";
+import {navStatusState} from "@/store/nav-status";
+import {hoverStatusState} from "@/store";
 
-const CustomerAuthLayout = ({children}: IAuthLayout) => {
-    const {canAccess} = useAuthLayoutHook();
+const CustomerAuthLayout = ({children, permissionEnumValue}: IAuthLayout) => {
+    const {canAccess} = useAuthLayoutHook(permissionEnumValue);
     const {clasess} = useStyle({isHover: false, navStatus: null});
-    const handleScroll = (e) => {
-        const scrollY = window.scrollY;
-        const documentHeight = e.target.scrollHeight;
-        const windowHeight = window.innerHeight;
-        console.log('scroll', e.target.scrollHeight)
-        console.log('client', e.target.clientHeight)
-        console.log('offsetTop', e.target.offsetTop)
-        console.log('windowHeight', windowHeight)
-        console.log('client', e)
 
-    };
+    const setNavStatus = useSetRecoilState(navStatusState);
+    const isHover = useRecoilValue(hoverStatusState);
     return (
         <div style={clasess.container}>
-            {
-                canAccess && <>
-                    <LeftSideLayout/>
-                    <div  style={clasess.rightContainer}>
-                        <HeaderWidget/>
-                        <div onScroll={handleScroll}   style={clasess.bodyContainer}>{children}</div>
-                    </div>
-                </>
-            }
+            <LeftSideLayout/>
+            <div style={clasess.rightContainer}
+                 onMouseEnter={() => {
+                     if (!isHover) {
+                         setNavStatus({isClosed: true});
+                     }
+                 }}
+            >
+                <HeaderWidget/>
+                {canAccess && <div style={clasess.bodyContainer}>{children}</div>}
+            </div>
+            <div></div>
         </div>
     );
 };

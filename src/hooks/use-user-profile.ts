@@ -33,7 +33,7 @@ const useUserProfile = () => {
     const updateProfile = async () => {
         const callBack = (res) => {
             if (res.success) {
-                i18n.changeLanguage(profileState.systemLanguage);
+                i18n.changeLanguage(profileState.systemLang);
                 alertSuccessUpdate();
             } else {
                 alertFaultUpdate();
@@ -48,8 +48,6 @@ const useUserProfile = () => {
                 setChangeProfileImage(false);
             }
         }
-
-        setProfileState({...profileState, imagePath: ''})
         const res = await updateUserProfileImage(callApi, callBack, {userId: profileState.id, fileBase64: file});
         return res.success
     }
@@ -75,19 +73,24 @@ const useUserProfile = () => {
         currentPassword: string,
         newPassword: string,
         confirmPassword: string,
-        userId? : string,
+        userId?: string,
     ) => {
 
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessUpdate();
-                
+
             } else {
                 alertFaultUpdate();
             }
         }
-        const result = await resetUserPassword(callApi, callBack, {id: userId? userId : profileState.id, currentPassword, newPassword, confirmPassword})
-    return result.success;
+        const result = await resetUserPassword(callApi, callBack, {
+            id: userId ? userId : profileState.id,
+            currentPassword,
+            newPassword,
+            confirmPassword
+        })
+        return result.success;
     }
     return {
         updateProfile,

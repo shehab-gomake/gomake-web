@@ -21,7 +21,7 @@ const StyledButton = styled(Button, {
   gap: 7,
   color: "#FFFFFF",
   "&:hover": {
-    letterSpacing: "0.1em",
+    // letterSpacing: "0.1em",
     backgroundColor: props.primaryColor(500),
   },
   transition: "0.25s",
@@ -39,17 +39,16 @@ const GomakePrimaryButton = ({ ...props }) => {
       <div
         style={{
           display: "flex",
+          flexDirection: "row",
           width: "100%",
-          justifyContent: "space-between",
+          justifyContent: "flex-start",
           alignItems: "center",
-          flexWrap: "wrap",
-
+          gap: 8,
         }}
       >
         {props.leftIcon && (
           <span
             style={{
-              width: "15%",
               display: "flex",
               justifyContent: "center ",
               alignItems: "center",
@@ -60,13 +59,22 @@ const GomakePrimaryButton = ({ ...props }) => {
         )}
         <span
           style={{
-            width: props.leftIcon ? "85%" : "100%",
-            flexWrap: "wrap",
-
+            width: props.leftIcon ? "fit-content" : "100%",
           }}
         >
           {props.children}
         </span>
+        {props.rightIcon && (
+          <span
+            style={{
+              display: "flex",
+              justifyContent: "center ",
+              alignItems: "center",
+            }}
+          >
+            {props.rightIcon}
+          </span>
+        )}
       </div>
     </StyledButton>
   );

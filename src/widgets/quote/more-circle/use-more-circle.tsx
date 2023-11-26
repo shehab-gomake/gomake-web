@@ -6,13 +6,15 @@ import { NegotiateRequestIcon } from "./icons/negotiate-request";
 import { AnalysisIcon } from "./icons/analysis";
 import { DeleteMenuIcon } from "./icons/delete-menu";
 import { useRecoilValue } from "recoil";
-import { quoteState } from "@/pages-components/quote/store/quote";
 import { useGomakeRouter } from "@/hooks";
 import { quoteItemState } from "@/store";
 
-const useMoreCircle = ({ quoteItem }) => {
+const useMoreCircle = ({
+  quoteItem,
+  onClickDuplicateWithDifferentQTY,
+  onClickDeleteQouteItem,
+}) => {
   const { navigate } = useGomakeRouter();
-  const quoteStateValue = useRecoilValue<any>(quoteState);
   const quoteItemValue: any = useRecoilValue(quoteItemState);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -46,12 +48,12 @@ const useMoreCircle = ({ quoteItem }) => {
     {
       name: "Duplicate with different QTY",
       icon: <DuplicateWithDifferentMenuIcon />,
-      onclick: () => quoteStateValue.onOpenDuplicateWithDifferentQTY(),
+      onclick: () => onClickDuplicateWithDifferentQTY(quoteItem),
     },
     {
       name: "Negotiate request",
       icon: <NegotiateRequestIcon />,
-      onclick: () => quoteStateValue.onOpenNegotiateRequest(),
+      // onclick: () => onOpenNegotiateRequest(),
     },
     {
       name: "Analysis",
@@ -61,7 +63,7 @@ const useMoreCircle = ({ quoteItem }) => {
     {
       name: "Delete",
       icon: <DeleteMenuIcon />,
-      onclick: () => quoteStateValue.onClickDeleteQouteItem(quoteItem),
+      onclick: () => onClickDeleteQouteItem(quoteItem),
     },
   ];
 
