@@ -13,16 +13,18 @@ import { GoMakeModal } from "@/components";
 import { useRecoilState } from "recoil";
 import { blockModalState, partnerInfoModalState } from "../states";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import Drawer from '@mui/material/Drawer';
+import React from "react";
+
 
 const WallTableWidget = () => {
     const { classes } = useStyle();
-    const { rows } = useWallTableWidget();
+    const { rows , list } = useWallTableWidget();
     const { t } = useTranslation();
     const [openModal, setOpenModal] = useRecoilState<boolean>(blockModalState);
     const [openPartnerModal, setOpenPartnerModal] = useRecoilState<boolean>(partnerInfoModalState);
 
     return (
-
         <TableContainer component={Paper} style={{ width: "99%" }} >
             <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
                 <TableHead>
@@ -69,19 +71,19 @@ const WallTableWidget = () => {
                     </Stack>
                 </Stack>
             </GoMakeModal>
-            <GoMakeModal
-                openModal={openPartnerModal}
-                modalTitle={t("Block printing house")}
-                onClose={() => setOpenPartnerModal(false)}
-                insideStyle={classes.insideStyle1}
-                >
-                <Stack direction={"column"} gap={"30px"} marginTop={"10px"}>
-                   
-                    <Stack direction={"row"} gap={"10px"} justifyContent={"flex-end"}>
-                  <SecondaryButton style={classes.blockBtnStyle} variant="contained">Block</SecondaryButton>
-                    </Stack>
-                </Stack>
-            </GoMakeModal>
+            <div >
+                {(['right'] as const).map((anchor) => (
+                    <React.Fragment key={anchor} >
+                        <Drawer
+                            anchor={anchor}
+                            open={openPartnerModal}
+                            onClose={() => setOpenPartnerModal(false)}
+                        >
+                            {list(anchor)}
+                        </Drawer>
+                    </React.Fragment>
+                ))}
+            </div>
         </TableContainer>
     )
 };

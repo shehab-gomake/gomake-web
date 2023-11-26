@@ -2,10 +2,8 @@ import { PrimaryButtonsTabWidget } from "./components/primary-buttons-tab/button
 
 const PartnersComponent = () => {
   
-
   return (
     <PrimaryButtonsTabWidget></PrimaryButtonsTabWidget>
-
   );
 };
 export { PartnersComponent };

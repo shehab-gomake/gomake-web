@@ -7,12 +7,14 @@ import { CubeIcon } from "./icons/cube";
 import { CartIcon } from "./icons/cart";
 import {  useSetRecoilState} from "recoil";
 import { blockModalState, partnerInfoModalState } from "../../states";
+import { useGomakeRouter } from "@/hooks/use-gomake-router";
 
 const useMoreCircle = () => {
   
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const setOpenModal = useSetRecoilState<boolean>(blockModalState);
   const setOpenPartnerModal = useSetRecoilState<boolean>(partnerInfoModalState);
+  const { navigate } = useGomakeRouter();
 
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -26,7 +28,7 @@ const useMoreCircle = () => {
     {
       name: "Go to orders",
       icon: <CubeIcon />,
-      onclick: () => setOpenPartnerModal(true),
+      onclick: () => {setAnchorEl(null) , setOpenPartnerModal(true) },
     },
     {
       name: "Go to quotes",
@@ -46,7 +48,7 @@ const useMoreCircle = () => {
     {
       name: "Message",
       icon: <MailIcon />,
-      onclick: () => null,
+      onclick: () => navigate("/"),
     },
     {
       name: "Block",
