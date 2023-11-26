@@ -40,34 +40,34 @@ const ButtonsContainer = ({ onOpenNewItem }) => {
           leftIcon={<UploadNewIcon />}
           style={clasess.btnSecondContainer}
         >
-          Attach Files
+          {t("sales.quote.attachFiles")}
         </GomakePrimaryButton>
         <GomakePrimaryButton
           rightIcon={<ArrowDownNewIcon />}
           style={clasess.btnSecondContainer}
         >
-          Copy to
+          {t("sales.quote.copyTo")}
         </GomakePrimaryButton>
         <GomakePrimaryButton
           rightIcon={<ArrowDownNewIcon />}
           style={clasess.btnSecondContainer}
         >
-          Send
+          {t("login.send")}
         </GomakePrimaryButton>
         <GomakePrimaryButton style={clasess.btnSecondContainer}>
-          Print
+          {t("sales.quote.print")}
         </GomakePrimaryButton>
         <GomakePrimaryButton style={clasess.btnSecondContainer}>
-          Cancel
+          {t("materials.buttons.cancel")}
         </GomakePrimaryButton>
         <GomakePrimaryButton style={clasess.btnThirdContainer}>
-          Save
+          {t("materials.buttons.save")}
         </GomakePrimaryButton>
         <GomakePrimaryButton style={clasess.btnThirdContainer}>
-          Manager Approval
+          {t("sales.quote.managerApproval")}
         </GomakePrimaryButton>
         <GomakePrimaryButton style={clasess.btnOrderNowContainer}>
-          Order Now
+          {t("sales.quote.orderNowTitle")}
         </GomakePrimaryButton>
       </div>
     </div>

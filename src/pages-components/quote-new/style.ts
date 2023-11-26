@@ -17,7 +17,6 @@ const useStyle = () => {
         paddingRight: 20,
         height: "100%",
         overflow: "hidden",
-        // marginBottom: 145,
       },
       titleQuateContainer: {
         display: "flex",
@@ -97,6 +96,13 @@ const useStyle = () => {
         marginTop: 12,
         maxHeight: 140,
         overflow: "scroll",
+      },
+      secondContainer: {
+        width: "100%",
+        height: "100%",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column" as "column",
       },
     };
   }, []);

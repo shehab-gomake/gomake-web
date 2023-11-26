@@ -1,20 +1,20 @@
-import { HeaderTitle } from "@/widgets";
-import { useStyle } from "./style";
-import { useQuoteNew } from "./use-quote";
-import { DateFormatterDDMMYYYY } from "@/utils/adapter";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
+
+import { DuplicateItemModal } from "@/widgets/quote/modals-widgets/duplicate-item-modal";
+import { AddNewItemModal } from "@/widgets/quote/modals-widgets/add-new-item-modal";
+import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
+import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
 import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
 import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
-import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
-import { AddNewItemModal } from "@/widgets/quote/modals-widgets/add-new-item-modal";
-import { DuplicateItemModal } from "@/widgets/quote/modals-widgets/duplicate-item-modal";
+import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import { GoMakeDeleteModal } from "@/components";
-import lodashClonedeep from "lodash.clonedeep";
+import { HeaderTitle } from "@/widgets";
 import { SettingNewIcon } from "@/icons";
+
+import { useQuoteNew } from "./use-quote";
+import { quoteItemState } from "@/store";
+import { useStyle } from "./style";
 
 const QuoteNewPageWidget = () => {
   const { clasess } = useStyle();
@@ -39,6 +39,16 @@ const QuoteNewPageWidget = () => {
     openAddNewItemModal,
     openDuplicateWithDifferentQTYModal,
     openDeleteItemModal,
+    priceListItems,
+    tableHeaders,
+    columnWidths,
+    headerHeight,
+    quoteItems,
+    dateRef,
+    activeClickAway,
+    changepriceListItems,
+    changeQuoteItems,
+    changepriceListItemsChild,
     getCalculateQuote,
     onCloseDeleteItemModal,
     deleteQuoteItem,
@@ -61,6 +71,7 @@ const QuoteNewPageWidget = () => {
     setIsUpdateAgent,
     updateAgent,
     t,
+    handleClickSelectDate,
     handleShowLess,
     setIsDisplayWidget,
     onOpenDeleteModalContact,
@@ -83,103 +94,15 @@ const QuoteNewPageWidget = () => {
     onClickDuplicateWithDifferentQTY,
     duplicateQuoteItemWithAnotherQuantity,
     onClickDeleteQouteItem,
+    setActiveClickAway,
   } = useQuoteNew();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
-  const dateRef = useRef(null);
-  const [activeClickAway, setActiveClickAway] = useState(false);
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dateRef.current && !dateRef.current.contains(event.target)) {
-        if (activeClickAway) {
-          updateDueDate();
-          setActiveClickAway(false);
-        }
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
-  const handleClickSelectDate = () => {
-    dateRef?.current?.showPicker();
-  };
-  useEffect(() => {
-    setSelectDate(quoteItemValue?.dueDate);
-  }, [quoteItemValue]);
-  const tableHeaders = [
-    "#",
-    "Item code",
-    "Item name",
-    "Details",
-    "Amount",
-    "Discount",
-    "Unit price",
-    "Final price",
-    "More",
-  ];
-  const columnWidths = ["5%", "8%", "12%", "33%", "8%", "8%", "8%", "8%"];
-  const headerHeight = "44px";
-  const [priceListItems, setPriceListItems] = useState<any>([]);
-  useEffect(() => {
-    setPriceListItems(quoteItemValue?.priceListItems);
-  }, [quoteItemValue]);
 
-  const changepriceListItems = (
-    index: number,
-    filedName: string,
-    value: any
-  ) => {
-    let temp = [...priceListItems];
-    temp[index] = {
-      ...temp[index],
-      [filedName]: value,
-    };
-    setPriceListItems(temp);
-  };
-
-  const changepriceListItemsChild = (
-    parentIndex: number,
-    childInex: number,
-    filedName: string,
-    value: any
-  ) => {
-    let temp = lodashClonedeep(priceListItems);
-    temp[parentIndex].childsQuoteItems[childInex] = {
-      ...temp[parentIndex].childsQuoteItems[childInex],
-      [filedName]: value,
-    };
-    setPriceListItems(temp);
-  };
-
-  const [quoteItems, setquoteItems] = useState<any>([]);
-  const changeQuoteItems = useCallback(
-    (filedName: string, value: any) => {
-      setquoteItems((prev) => {
-        return {
-          ...prev,
-          [filedName]: value,
-        };
-      });
-    },
-    [quoteItems]
-  );
-  useEffect(() => {
-    setquoteItems(quoteItemValue);
-  }, [quoteItemValue]);
   return (
     <>
       {quoteItemValue?.id && (
         <div style={clasess.mainContainer}>
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              overflow: "hidden",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          <div style={clasess.secondContainer}>
             <div>
               <div style={clasess.titleSettingContainer}>
                 <div style={clasess.titleQuateContainer}>
@@ -315,11 +238,11 @@ const QuoteNewPageWidget = () => {
         }
       />
       <GoMakeDeleteModal
-        title="Delete Item"
+        title={t("sales.quote.deleteItem")}
         yesBtn={t("materials.buttons.delete")}
         openModal={openDeleteItemModal}
         onClose={onCloseDeleteItemModal}
-        subTitle="Are you sure to delete this item?"
+        subTitle={t("sales.quote.areYouSureDeleteItem")}
         onClickDelete={deleteQuoteItem}
       />
     </>

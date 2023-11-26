@@ -1598,7 +1598,21 @@
       "orderNowTitle": "Jetzt bestellen!",
       "createdBy": "Erstellt von {{name}}",
       "customer": "Kunde",
-      "orderList": "Bestellliste"
+      "orderList": "Bestellliste",
+      "deleteItem": "Element löschen",
+      "areYouSureDeleteItem": "Sind Sie sicher, dass Sie dieses Element löschen möchten?",
+      "amount": "Betrag",
+      "itemCode": "Artikelcode",
+      "noPurchaseNumber": "Keine Bestellnummer",
+      "addContact": "Kontakt hinzufügen",
+      "showMore": "Mehr anzeigen",
+      "showLess": "Weniger anzeigen",
+      "noMobileContact": "Kein Mobilkontakt",
+      "noContactEmail": "Keine Kontakt-E-Mail",
+      "writeCommentHere": "Schreiben Sie hier Ihren Kommentar",
+      "attachFiles": "Dateien anhängen",
+      "copyTo": "Kopieren nach",
+      "managerApproval": "Manager Genehmigung"
     }
   },
   "usersSettings": {

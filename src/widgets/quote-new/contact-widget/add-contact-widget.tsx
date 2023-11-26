@@ -43,7 +43,7 @@ const AddContactNewWidget = ({
           value={
             selectedContactById?.phone !== null
               ? selectedContactById?.phone
-              : "No mobile contact"
+              : t("sales.quote.noMobileContact")
           }
           label={t("sales.quote.mobileContact")}
           onBlur={onBlurContactMobile}
@@ -55,7 +55,7 @@ const AddContactNewWidget = ({
           value={
             selectedContactById?.mail !== null
               ? selectedContactById?.mail
-              : "No contact email"
+              : t("sales.quote.noContactEmail")
           }
           label={t("sales.quote.contactEmail")}
           onBlur={onBlurContactEmail}

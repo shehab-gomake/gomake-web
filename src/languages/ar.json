@@ -1603,7 +1603,21 @@
       "orderNowTitle": "اطلب الآن!",
       "createdBy": "تم الإنشاء بواسطة {{name}}",
       "customer": "العميل",
-      "orderList": "قائمة الطلبات"
+      "orderList": "قائمة الطلبات",
+      "deleteItem": "حذف العنصر",
+      "areYouSureDeleteItem": "هل أنت متأكد من حذف هذا العنصر؟",
+      "amount": "المبلغ",
+      "itemCode": "كود العنصر",
+      "noPurchaseNumber": "لا يوجد رقم شراء",
+      "addContact": "إضافة جهة اتصال",
+      "showMore": "عرض المزيد",
+      "showLess": "عرض أقل",
+      "noMobileContact": "لا يوجد اتصال محمول",
+      "noContactEmail": "لا يوجد بريد إلكتروني للاتصال",
+      "writeCommentHere": "اكتب تعليقك هنا",
+      "attachFiles": "إرفاق ملفات",
+      "copyTo": "نسخ إلى",
+      "managerApproval": "موافقة الإدارة"
     }
   },
   "usersSettings": {

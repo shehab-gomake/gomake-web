@@ -1,5 +1,10 @@
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useCallback, useEffect, useRef, useState } from "react";
+import lodashClonedeep from "lodash.clonedeep";
+import { useTranslation } from "react-i18next";
+import { useRecoilState } from "recoil";
+
 import { EHttpMethod } from "@/services/api-service/enums";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   getAndSetAllCustomers,
   getAndSetAllEmployees,
@@ -12,9 +17,6 @@ import {
   clientContactsState,
   quoteItemState,
 } from "@/store";
-import { useCallback, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue } from "recoil";
 
 const useQuoteNew = () => {
   const {
@@ -30,8 +32,58 @@ const useQuoteNew = () => {
 
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
-
   const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
+  const [customersListValue, setCustomersListValue] =
+    useRecoilState<any>(businessListsState);
+  const [selectBusiness, setSelectBusiness] = useState<any>({});
+  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<
+    number | null
+  >(null);
+  const [isUpdatePurchaseNumer, setIsUpdatePurchaseNumer] = useState<
+    number | null
+  >(null);
+  const [, setIsUpdateBusinessCode] = useState<number | null>(null);
+  const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
+  const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
+  const [selectedAgent, setSelectedAgent] = useState<any>();
+  const [agentListValue, setAgentListValue] =
+    useRecoilState<any>(agentListsState);
+  const [isDisplayWidget, setIsDisplayWidget] = useState(false);
+  const [items, setItems] = useState([]);
+  const [isUpdateContactName, setIsUpdateContactName] = useState(null);
+  const [isUpdateContactEmail, setIsUpdateContactEmail] = useState(null);
+  const [isUpdateContactMobile, setIsUpdateContactMobile] = useState(null);
+  const [isUpdateContactName1, setIsUpdateContactName1] = useState(null);
+  const [isUpdateContactEmail1, setIsUpdateContactEmail1] = useState(null);
+  const [isUpdateContactMobile1, setIsUpdateContactMobile1] = useState(null);
+  const [clientContactsValue, setClientContactsValue] =
+    useRecoilState<any>(clientContactsState);
+  const [selectedContact, setSelectedContact] = useState();
+  const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
+  const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
+  const [qouteItemId, setQuateItemId] = useState();
+  const [
+    openDuplicateWithDifferentQTYModal,
+    setOpenDuplicateWithDifferentQTYModal,
+  ] = useState(false);
+  const [selectedContactById, setSelectedContactById] = useState<any>();
+  const [amountVlue, setAmountValue] = useState();
+  const [openDeleteItemModal, setOpenDeleteItemModal] = useState(false);
+  const [priceListItems, setPriceListItems] = useState<any>([]);
+  const [quoteItems, setquoteItems] = useState<any>([]);
+  const tableHeaders = [
+    "#",
+    t("sales.quote.itemCode"),
+    t("products.profits.itemName"),
+    t("products.profits.details"),
+    t("sales.quote.amount"),
+    t("sales.quote.discount"),
+    t("products.profits.pricingListWidget.unitPrice"),
+    t("products.offsetPrice.admin.finalPrice"),
+    t("products.profits.more"),
+  ];
+  const columnWidths = ["5%", "8%", "12%", "33%", "8%", "8%", "8%", "8%"];
+  const headerHeight = "44px";
 
   const getQuote = useCallback(async () => {
     await getAndSetQuotesByUserId(callApi, setQuoteItemValue);
@@ -57,9 +109,6 @@ const useQuoteNew = () => {
     getQuote();
   }, []);
 
-  const [customersListValue, setCustomersListValue] =
-    useRecoilState<any>(businessListsState);
-  const [selectBusiness, setSelectBusiness] = useState<any>({});
   const getAllCustomers = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListValue, {
       ClientType: "C",
@@ -77,16 +126,6 @@ const useQuoteNew = () => {
     getAllCustomers();
   }, []);
 
-  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<
-    number | null
-  >(null);
-  const [isUpdatePurchaseNumer, setIsUpdatePurchaseNumer] = useState<
-    number | null
-  >(null);
-  const [, setIsUpdateBusinessCode] = useState<number | null>(null);
-  const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
-  const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
-
   const onBlurBusinessName = async () => {
     setIsUpdateBusinessName(null);
   };
@@ -102,11 +141,6 @@ const useQuoteNew = () => {
   const onBlurAgent = async () => {
     setIsUpdateAgent(null);
   };
-
-  const [selectedAgent, setSelectedAgent] = useState<any>();
-
-  const [agentListValue, setAgentListValue] =
-    useRecoilState<any>(agentListsState);
   const getAllEmployees = useCallback(async () => {
     await getAndSetAllEmployees(callApi, setAgentListValue, {
       isAgent: true,
@@ -145,17 +179,6 @@ const useQuoteNew = () => {
     },
     [quoteItemValue]
   );
-
-  const [isDisplayWidget, setIsDisplayWidget] = useState(false);
-  const [items, setItems] = useState([]);
-  const [isUpdateContactName, setIsUpdateContactName] = useState(null);
-  const [isUpdateContactEmail, setIsUpdateContactEmail] = useState(null);
-  const [isUpdateContactMobile, setIsUpdateContactMobile] = useState(null);
-
-  const [isUpdateContactName1, setIsUpdateContactName1] = useState(null);
-  const [isUpdateContactEmail1, setIsUpdateContactEmail1] = useState(null);
-  const [isUpdateContactMobile1, setIsUpdateContactMobile1] = useState(null);
-
   const onBlurContactName = async () => {
     setIsUpdateContactName(null);
     setIsDisplayWidget(false);
@@ -204,9 +227,6 @@ const useQuoteNew = () => {
     }
   }, []);
 
-  const [clientContactsValue, setClientContactsValue] =
-    useRecoilState<any>(clientContactsState);
-
   const getAllClientContacts = useCallback(async () => {
     if (quoteItemValue?.customerID) {
       await getAndSetClientContacts(callApi, setClientContactsValue, {
@@ -228,7 +248,6 @@ const useQuoteNew = () => {
     setDisplayedItems(2);
   };
 
-  const [selectedContactById, setSelectedContactById] = useState<any>();
   const onChangeUpdateClientContact = useCallback(
     (filedName: string, value: any) => {
       setSelectedContactById((prev) => {
@@ -268,8 +287,6 @@ const useQuoteNew = () => {
     }
   }, [selectedContactById, quoteItemValue]);
 
-  const [selectedContact, setSelectedContact] = useState();
-  const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
   const onOpenDeleteModalContact = (item) => {
     setSelectedContact(item);
     setOpenDeleteModalContact(true);
@@ -290,7 +307,6 @@ const useQuoteNew = () => {
       alertFaultDelete();
     }
   }, []);
-  const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
   const onOpenNewItem = () => {
     setOpenAddNewItemModal(true);
   };
@@ -318,11 +334,7 @@ const useQuoteNew = () => {
     },
     [quoteItemValue]
   );
-  const [qouteItemId, setQuateItemId] = useState();
-  const [
-    openDuplicateWithDifferentQTYModal,
-    setOpenDuplicateWithDifferentQTYModal,
-  ] = useState(false);
+
   const onCloseDuplicateWithDifferentQTY = () => {
     setOpenDuplicateWithDifferentQTYModal(false);
   };
@@ -333,7 +345,7 @@ const useQuoteNew = () => {
     onOpenDuplicateWithDifferentQTY();
     setQuateItemId(quoteItem?.id);
   };
-  const [amountVlue, setAmountValue] = useState();
+
   const duplicateQuoteItemWithAnotherQuantity = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -351,7 +363,6 @@ const useQuoteNew = () => {
       alertFaultAdded();
     }
   }, [qouteItemId, amountVlue]);
-  const [openDeleteItemModal, setOpenDeleteItemModal] = useState(false);
   const onCloseDeleteItemModal = () => {
     setOpenDeleteItemModal(false);
   };
@@ -398,7 +409,77 @@ const useQuoteNew = () => {
     },
     [quoteItemValue]
   );
+
+  useEffect(() => {
+    setPriceListItems(quoteItemValue?.priceListItems);
+  }, [quoteItemValue]);
+
+  const changepriceListItems = (
+    index: number,
+    filedName: string,
+    value: any
+  ) => {
+    let temp = [...priceListItems];
+    temp[index] = {
+      ...temp[index],
+      [filedName]: value,
+    };
+    setPriceListItems(temp);
+  };
+
+  const changepriceListItemsChild = (
+    parentIndex: number,
+    childInex: number,
+    filedName: string,
+    value: any
+  ) => {
+    let temp = lodashClonedeep(priceListItems);
+    temp[parentIndex].childsQuoteItems[childInex] = {
+      ...temp[parentIndex].childsQuoteItems[childInex],
+      [filedName]: value,
+    };
+    setPriceListItems(temp);
+  };
+
+  const changeQuoteItems = useCallback(
+    (filedName: string, value: any) => {
+      setquoteItems((prev) => {
+        return {
+          ...prev,
+          [filedName]: value,
+        };
+      });
+    },
+    [quoteItems]
+  );
+  useEffect(() => {
+    setquoteItems(quoteItemValue);
+  }, [quoteItemValue]);
+  const dateRef = useRef(null);
+  const [activeClickAway, setActiveClickAway] = useState(false);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dateRef.current && !dateRef.current.contains(event.target)) {
+        if (activeClickAway) {
+          updateDueDate();
+          setActiveClickAway(false);
+        }
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
+  const handleClickSelectDate = () => {
+    dateRef?.current?.showPicker();
+  };
+  useEffect(() => {
+    setSelectDate(quoteItemValue?.dueDate);
+  }, [quoteItemValue]);
   return {
+    dateRef,
+    activeClickAway,
     selectDate,
     selectBusiness,
     isUpdateBusinessName,
@@ -423,6 +504,16 @@ const useQuoteNew = () => {
     openAddNewItemModal,
     openDuplicateWithDifferentQTYModal,
     openDeleteItemModal,
+    columnWidths,
+    headerHeight,
+    priceListItems,
+    quoteItems,
+    tableHeaders,
+    handleClickSelectDate,
+    setActiveClickAway,
+    changeQuoteItems,
+    changepriceListItemsChild,
+    changepriceListItems,
     getCalculateQuote,
     onCloseDeleteItemModal,
     deleteQuoteItem,

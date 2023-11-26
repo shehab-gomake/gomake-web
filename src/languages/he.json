@@ -1603,7 +1603,21 @@
       "orderNowTitle": "הזמן כעת!",
       "createdBy": "נוצר על ידי {{name}}",
       "customer": "לקוח",
-      "orderList": "רשימת הזמנות"
+      "orderList": "רשימת הזמנות",
+      "deleteItem": "מחיקת פריט",
+      "areYouSureDeleteItem": "האם אתה בטוח שברצונך למחוק פריט זה?",
+      "amount": "סכום",
+      "itemCode": "קוד פריט",
+      "noPurchaseNumber": "אין מספר רכישה",
+      "addContact": "הוסף איש קשר",
+      "showMore": "הצג עוד",
+      "showLess": "הצג פחות",
+      "noMobileContact": "אין יצירת קשר ניידה",
+      "noContactEmail": "אין דואר אלקטרוני ליצירת קשר",
+      "writeCommentHere": "כתוב את התגובה שלך כאן",
+      "attachFiles": "צרף קבצים",
+      "copyTo": "העתק אל",
+      "managerApproval": "אישור מנהל"
     }
   },
   "usersSettings": {
