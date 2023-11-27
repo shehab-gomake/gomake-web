@@ -16,8 +16,6 @@ artifacts:
   type: zip
   files:
     - package.json
-    - next.config.js
-    - tsconfig.json
-    - next-env.d.ts
-    - babel2.config.js
     - .next/**/*
+    - src/**/*
+    - public/**/*
