@@ -14,6 +14,8 @@ import {PrimaryButton} from "@/components/button/primary-button";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import {convertHeightToVH} from "@/utils/adapter";
+import {HEADER_HEIGHT, SCREEN_HEIGHT} from "@/utils/layout-config";
 
 
 const MaterialsWidget = () => {
@@ -89,7 +91,7 @@ const MaterialsWidget = () => {
 
 
     return (
-        <>
+        <div style={{maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT - 20), overflow: 'hidden'}}>
             <SideBarContainer side={Side()} header={materialType?.toString()} subHeader={''} >
                 {materialCategory && <Stack gap={2}>
                     <Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-start'}>
@@ -98,7 +100,7 @@ const MaterialsWidget = () => {
                     </Stack>
                     {
                         materialCategoryData.length > 0 ?
-                            <PrimaryTable rows={tableRows} headers={tableHeaders()}/> :
+                            <PrimaryTable  rows={tableRows} headers={tableHeaders()}/> :
                             <div style={classes.noData}>
                                 {t("materials.sheetPaper.supplierAddedSheetYet")}
                                 <span
@@ -114,7 +116,7 @@ const MaterialsWidget = () => {
                 </Stack>}
                 <AddSupplierModal/>
             </SideBarContainer>
-        </>
+        </div>
     );
 }
 

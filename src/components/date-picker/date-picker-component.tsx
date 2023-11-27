@@ -7,7 +7,6 @@ import {DateRangePicker} from 'react-date-range';
 import {useDatePicker} from "@/components/date-picker/use-date-picker";
 import Stack from "@mui/material/Stack";
 import {Clear} from "@mui/icons-material";
-import {endOfToday} from "date-fns";
 import {staticDateRange} from "@/components/date-picker/const";
 interface IGoMakeDatepicker {
 
