@@ -6,6 +6,7 @@ import {useRouter} from "next/router";
 import {useRecoilState, useSetRecoilState } from "recoil";
 import {
     activeFilterState,
+    flagState,
     materialCategorySuppliersState,
     openAddSupplierModalState,
     selectedSupplierIdState
@@ -24,6 +25,8 @@ const useAddMaterialSupplier = () => {
     const setSelectedSupplier = useSetRecoilState(selectedSupplierIdState);
     const [materialSuppliers, setMaterialSuppliers] = useRecoilState(materialCategorySuppliersState);
     const setActiveFilter = useSetRecoilState(activeFilterState);
+    const setFlagState = useSetRecoilState(flagState);
+
 
     const getPrintHouseSuppliersList = async () => {
         const callBack = (res) => {
@@ -41,7 +44,7 @@ const useAddMaterialSupplier = () => {
         setNewSupplier(value);
     }
 
-    const onAddSupplier = async () => {
+    const onAddSupplier = async (materialCategories) => {
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessAdded();
@@ -49,6 +52,7 @@ const useAddMaterialSupplier = () => {
                 setMaterialSuppliers([...materialSuppliers, newSupplier])
                 setSelectedSupplier(newSupplier.value);
                 setActiveFilter(EMaterialActiveFilter.ALL);
+                materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse ? setFlagState(true) : setFlagState(false)
             } else {
                 alertFaultAdded();
             }

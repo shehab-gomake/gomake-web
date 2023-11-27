@@ -1,8 +1,8 @@
 const Wastebasket = (props: any) => {
   return (
     <svg
-      width="61"
-      height="62"
+      width={props.width || "61"}
+      height={props.height || "62"}
       viewBox="0 0 61 62"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

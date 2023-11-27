@@ -4,5 +4,7 @@ export enum EDataTypeEnum {
     BOOLEAN,
     ARRAY_INPUT,
     TRANSLATE,
-    CURRENCY
+    CURRENCY,
+    LIST,
+    IMAGE
 }
