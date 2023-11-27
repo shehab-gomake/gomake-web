@@ -2,7 +2,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 16
+      nodejs: 18
     commands:
       - npm install -g typescript
       - npm install
@@ -17,5 +17,3 @@ artifacts:
   files:
     - package.json
     - .next/**/*
-    - src/**/*
-    - public/**/*
