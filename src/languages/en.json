@@ -2406,6 +2406,12 @@
     "Block": "Block",
     "Transfer to partial": "Transfer to partial",
     "Connect with category": "Connect with category",
-    "Connect with machine": "Connect with machine"
+    "Connect with machine": "Connect with machine",
+    "totalOrdersQuote":"Total Orders Quote",
+    "waitingForReview" :"Waiting for review",
+    "approved":"Approved",
+    "declined":"Declined",
+    "blocked":"Blocked",
+    "waitingToApprove":"Waiting to approve"
   }
 }
