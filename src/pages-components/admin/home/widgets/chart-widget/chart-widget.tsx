@@ -8,7 +8,7 @@ const ChartWidget = () => {
     const { classes } = useStyle(dir);
     return (
         <div style={classes.mainContainer}>
-            {/* <BarChart /> */}
+            <BarChart />
         </div>
     );
 };
