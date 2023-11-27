@@ -10,7 +10,7 @@ const WorkflowRateComponent = ({label, value}: Interface) => {
   return(
       <span style={{
           width: 'fit-content',
-          padding: '3px 5px',
+          padding: '5px 10px',
           textAlign: "center",
           verticalAlign: 'middle',
           ...FONT_FAMILY.Lexend(500, 14),

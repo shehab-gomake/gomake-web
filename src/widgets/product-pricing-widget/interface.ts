@@ -44,8 +44,14 @@ export interface ICalculatedWorkFlow {
     profitO: IOutput;
     totalPriceO: IOutput;
     totalRealProductionTimeO: IOutput;
-    source?: EWorkSource;
-    supplierId?: string;
+    recommendationRang: {
+        deliveryTime: number;
+        price: number;
+        profit: number;
+        deliveryTimePercent: number;
+        pricePercent: number;
+        profitPercent: number;
+    }
 }
 
 export interface IPrintActionType {
@@ -87,6 +93,7 @@ export interface IOutput {
     outSourceValues?: string[];
 
 }
+
 export interface IOutSourceSupplier {
     supplierId: string;
     supplierName: string;
