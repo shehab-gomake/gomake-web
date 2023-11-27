@@ -581,6 +581,25 @@ const useQuoteNew = () => {
     [quoteItemValue]
   );
 
+  const onClickSendQuoteToClient = useCallback(
+    async (messageType: number) => {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/quote/send-quote-to-clinet`,
+        {
+          quoteId: quoteItemValue?.id,
+          messageType,
+        }
+      );
+      if (res?.success) {
+        alertSuccessAdded();
+      } else {
+        alertFaultAdded();
+      }
+    },
+    [quoteItemValue]
+  );
+
   return {
     dateRef,
     activeClickAway,
@@ -623,6 +642,7 @@ const useQuoteNew = () => {
     openDeliveryTimeCancelModal,
     anchorElSettingMenu,
     openSettingMenu,
+    onClickSendQuoteToClient,
     handleSettingMenuClick,
     handleSettingMenuClose,
     onClcikOpenPriceModal,

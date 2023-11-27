@@ -127,6 +127,7 @@ const QuoteNewPageWidget = () => {
     setReasonText,
     onClickCancelOffer,
     updateCancelQuote,
+    onClickSendQuoteToClient,
   } = useQuoteNew();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
 
@@ -294,6 +295,7 @@ const QuoteNewPageWidget = () => {
         handleClose={handleSendBtnClose}
         open={openSendBtn}
         anchorEl={anchorElSendBtn}
+        onClickSendQuoteToClient={onClickSendQuoteToClient}
       />
       <SettingQuoteMenu
         handleClose={handleSettingMenuClose}

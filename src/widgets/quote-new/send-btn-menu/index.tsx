@@ -2,7 +2,12 @@ import React from "react";
 import { GoMakeMenu } from "@/components";
 import { MenuItem } from "@mui/material";
 
-const SendBtnMenu = ({ handleClose, open, anchorEl }) => {
+const SendBtnMenu = ({
+  handleClose,
+  open,
+  anchorEl,
+  onClickSendQuoteToClient,
+}) => {
   return (
     <GoMakeMenu
       handleClose={handleClose}
@@ -12,6 +17,7 @@ const SendBtnMenu = ({ handleClose, open, anchorEl }) => {
     >
       <MenuItem
         onClick={() => {
+          onClickSendQuoteToClient(0);
           handleClose();
         }}
       >
@@ -19,6 +25,7 @@ const SendBtnMenu = ({ handleClose, open, anchorEl }) => {
       </MenuItem>
       <MenuItem
         onClick={() => {
+          onClickSendQuoteToClient(1);
           handleClose();
         }}
       >
