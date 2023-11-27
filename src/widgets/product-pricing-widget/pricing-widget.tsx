@@ -18,7 +18,7 @@ import {InOutSourceSelect} from "@/widgets/product-pricing-widget/components/in-
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
 import {OutSourceSuppliers} from "@/widgets/product-pricing-widget/components/work-flow/out-source-supplier";
 
-const PricingWidget = ({workFlows, getOutSourceSuppliers}: IPricingWidgetProps) => {
+const PricingWidget = ({workFlows}: IPricingWidgetProps) => {
     const [view, setView] = useState<number>(0);
     const setSuppliers = useSetRecoilState(printHouseSuppliersState);
     const selectedWorkFlow = workFlows?.find(flow => flow.selected);
@@ -31,7 +31,6 @@ const PricingWidget = ({workFlows, getOutSourceSuppliers}: IPricingWidgetProps) 
             }
         }
         getPrintHouseSuppliersListApi(callApi, callBack).then();
-        getOutSourceSuppliers();
     }, [])
 
     return (

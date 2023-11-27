@@ -1110,32 +1110,39 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
   const calculationProduct = useCallback(async () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
-      setLoading(true);
-      const res = await callApi(
-        "POST",
-        `/v1/calculation-service/calculations/calculate-product`,
-        {
-          clientId: router?.query?.customerId,
-          clientTypeId: router?.query?.clientTypeId,
-          productId: router?.query?.productId,
-          generalParameters: generalParameters,
-          subProducts: subProducts,
-        },
-        false
-      );
-      //Check it is work
-      if (res?.success) {
-        setPricingDefaultValue(res?.data?.data?.data);
-        setWorkFlows(
-          res?.data?.data?.data?.workFlows?.map((flow, index) => ({
-            id: index.toString(),
-            ...flow,
-          }))
+        setLoading(true);
+        const res = await callApi(
+            "POST",
+            `/v1/calculation-service/calculations/calculate-product`,
+            {
+                clientId: router?.query?.customerId,
+                clientTypeId: router?.query?.clientTypeId,
+                productId: router?.query?.productId,
+                generalParameters: generalParameters,
+                subProducts: subProducts,
+            },
+            false
         );
-        setJobActions(res?.data?.data?.data?.actions);
-      }
-      setLoading(false);
+        //Check it is work
+        if (res?.success) {
+            setPricingDefaultValue(res?.data?.data?.data);
+            setWorkFlows(
+                res?.data?.data?.data?.workFlows?.map((flow, index) => ({
+                    id: index.toString(),
+                    ...flow,
+                }))
+            );
+            setJobActions(res?.data?.data?.data?.actions);
+        }
+        setLoading(false);
     }
+    }, [
+          generalParameters,
+          subProducts,
+          router,
+          isRequiredParameters,
+          validateParameters,
+      ]);
     const
         PricingTab = {
             id: "c66465de-95d6-4ea3-bd3f-7efe60f4cb0555",
@@ -1358,5 +1365,4 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     jobActions,
   };
 };
-
 export {useDigitalOffsetPrice};

@@ -139,7 +139,7 @@ const ActionContainerComponent = ({
                         <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
                         <Stack direction={'row'} gap={'3px'} alignItems={'center'}>
                             <EditableKeyValueViewComponent onUpdate={handleProfitUpdate} {...profitO} source={source}/>
-                            <span>{`(${+totalPriceO.values[0] - +totalCostO.values[0]} ${totalPriceO.defaultUnit})`}</span>
+                            <span>{source === EWorkSource.OUT ? `(${+totalPriceO.outSourceValues[0] - +totalCostO.outSourceValues[0]} ${totalPriceO.defaultUnit})` : `(${+totalPriceO.values[0] - +totalCostO.values[0]} ${totalPriceO.defaultUnit})`}</span>
                         </Stack>
                         <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
                         <EditableKeyValueViewComponent onUpdate={handleUpdatePrice} {...totalPriceO}
