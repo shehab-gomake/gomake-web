@@ -41,7 +41,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         isLine: false,
         key: "productFloor",
         title: "tabs.productFloor",
-        path: "/product-floor",
+        path: "/production-floor",
         isList: false,
         icon: () => {
           return <ProductFloorIcon />;
@@ -89,6 +89,24 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
             path: "/orders",
             Permission:Permissions.SHOW_ORDERS
           },
+          {
+            key: "delivery notes",
+            title: "tabs.deliveryNotes",
+            path: "/deliveryNotes",
+            Permission:Permissions.SHOW_ORDERS
+          },
+          {
+            key: "invoices",
+            title: "tabs.invoices",
+            path: "/invoices",
+            Permission:Permissions.SHOW_ORDERS
+          },
+          {
+            key: "receipts",
+            title: "tabs.receipts",
+            path: "/receipts",
+            Permission:Permissions.SHOW_ORDERS
+          },
         ],
         icon: () => {
           return <SalesIcon />;
@@ -108,11 +126,31 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
       // },
       {
         isLine: false,
-        key: "shoping",
-        title: "tabs.shoping",
+        key: "purchase",
+        title: "tabs.purchase",
         path: "/",
         isList: true,
         Permission:Permissions.SHOW_SHOPPING,
+        list: [
+          {
+            key: "purchaseOrders",
+            title: "tabs.purchaseOrders",
+            path: "/purchaseOrders",
+            Permission:Permissions.SHOW_ORDERS
+          },
+          {
+            key: "purchaseInvoices",
+            title: "tabs.purchaseInvoices",
+            path: "/purchaseOrder",
+            Permission:Permissions.SHOW_ORDERS
+          },
+          {
+            key: "supplierPayments",
+            title: "tabs.supplierPayments",
+            path: "/purchaseOrder",
+            Permission:Permissions.SHOW_ORDERS
+          },
+        ],
         icon: () => {
           return <ShopingIcon />;
         },
@@ -148,9 +186,9 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         isLine: false,
         key: "reports",
         title: "tabs.reports",
-        path: "/",
+        path: "/reports",
         Permission:Permissions.SHOW_REPORTS,
-        isList: true,
+        isList: false,
         icon: () => {
           return <ReportsIcon />;
         },

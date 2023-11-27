@@ -5,7 +5,6 @@ const useStyle = (maxHeight: number, dir: 'rtl' | 'ltr') => {
     const classes = useMemo((): Record<string, CSSProperties> => {
         return {
             tableContainer: {
-                maxHeight: maxHeight ? maxHeight : '100%',
                 boxSizing: 'border-box'
             },
             sticky: {

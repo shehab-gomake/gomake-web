@@ -10,9 +10,9 @@ import {hoverStatusState} from "@/store";
 const CustomerAuthLayout = ({children, permissionEnumValue}: IAuthLayout) => {
     const {canAccess} = useAuthLayoutHook(permissionEnumValue);
     const {clasess} = useStyle({isHover: false, navStatus: null});
+
     const setNavStatus = useSetRecoilState(navStatusState);
     const isHover = useRecoilValue(hoverStatusState);
-
     return (
         <div style={clasess.container}>
             <LeftSideLayout/>
