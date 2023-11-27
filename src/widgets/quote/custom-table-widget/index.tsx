@@ -100,15 +100,15 @@ const CustomTableWidget = ({
         })}
       </div>
       <AddNegotiateRequestModal />
-      <DuplicateItemModal />
-      <GoMakeDeleteModal
+      {/* <DuplicateItemModal /> */}
+      {/* <GoMakeDeleteModal
         title="Delete Item"
         yesBtn={t("materials.buttons.delete")}
         openModal={quoteStateValue.openDeleteItemModal}
         onClose={quoteStateValue.onCloseDeleteItemModal}
         subTitle="Are you sure to delete this item?"
         onClickDelete={quoteStateValue.deleteQuoteItem}
-      />
+      /> */}
     </div>
   );
 };

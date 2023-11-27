@@ -83,7 +83,15 @@
     "profits": "Gewinne",
     "properties": "Eigenschaften",
     "quotes": "Angebote",
-    "orders": "Bestellungen"
+    "orders": "Bestellungen",
+    "partners": "Partner",
+    "deliveryNotes": "Lieferscheine",
+    "invoices": "Rechnungen",
+    "receipts": "Einnahmen",
+    "purchase": "Erwerben",
+    "purchaseOrders": "Aufträge",
+    "purchaseInvoices": "Rechnungen",
+    "supplierPayments": "Zahlungen"
   },
   "properties": {
     "parameter": "Parameter",
@@ -1499,6 +1507,7 @@
     "quote": {
       "title": "Angebot",
       "deliverOn": "Lieferung am",
+      "dateOfReference": "Bezugsdatum:",
       "upload": "Hochladen",
       "businessCode": "Geschäftscode",
       "businessName": "Firmenname",
@@ -1506,6 +1515,8 @@
       "agent": "Agent",
       "contactID": "Kontakt-ID",
       "contactName": "Kontaktname",
+      "mobileContact": "Mobilkontakt",
+      "contactEmail": "Kontakt-E-Mail",
       "portable": "Tragbar",
       "email": "E-Mail",
       "addressID": "Adress-ID",
@@ -1953,7 +1964,6 @@
     "contacts": "Kontakte",
     "email1": "E-Mail 1",
     "email2": "E-Mail 2",
-    "phone1": "Telefon 1",
     "phone2": "Telefon 2",
     "mobile": "Mobiltelefon",
     "country": "Land",

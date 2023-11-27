@@ -4,7 +4,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = ({ insideStyle, headerPadding }: any) => {
-  const { primaryColor } = useGomakeTheme();
+  const { primaryColor , errorColor } = useGomakeTheme();
 
   const clasess = useMemo(() => {
     return {
@@ -37,6 +37,11 @@ const useStyle = ({ insideStyle, headerPadding }: any) => {
       titleModalStyle: {
         display: "flex",
         color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(500, 24),
+      },
+      titleBlockModalStyle: {
+        display: "flex",
+        color: errorColor(500),
         ...FONT_FAMILY.Lexend(500, 24),
       },
       boxContainer: {

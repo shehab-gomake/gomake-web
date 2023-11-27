@@ -11,12 +11,12 @@ import {
 import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useRecoilState } from "recoil";
-import { QuoteIfExistState, QuoteNumberState } from "@/pages-components/quote/store/quote";
-
+import {
+  QuoteIfExistState,
+  QuoteNumberState,
+} from "@/pages-components/quote/store/quote";
 
 const useQuoteWidget = () => {
-
-  console.log("useQuoteWidget page")
   const { t } = useTranslation();
   const { errorColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
@@ -29,18 +29,19 @@ const useQuoteWidget = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
   const [selectedClient, setSelectedClient] = useState<any>({});
-  const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
+  const [QuoteIfExist, setQuoteIfExist] =
+    useRecoilState<any>(QuoteIfExistState);
   const [quoteNumber, setquoteNumber] = useRecoilState<any>(QuoteNumberState);
-  
+
   const [selectedProduct, setSelectedProduct] = useState<any>({});
 
   const [isDisabled, setIsDisabled] = useState(true);
   const onClcikOpenModal = (quoteId: any) => {
-    setOpenModal(true); 
+    setOpenModal(true);
   };
   //PopOver Btns
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const onClcikCloseModal =  async () => {
+  const onClcikCloseModal = async () => {
     setOpenModal(false);
   };
 
@@ -73,11 +74,11 @@ const useQuoteWidget = () => {
 
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
-      getAllCustomersCreateQuote(e.target.value)
-    } 
+      getAllCustomersCreateQuote(e.target.value);
+    }
   };
   const renderOptions = () => {
-      return customersListCreateQuote;
+    return customersListCreateQuote;
   };
   const getAllClientTypes = useCallback(async () => {
     await getAndSetClientTypes(callApi, setClientTypesValues);
@@ -88,70 +89,67 @@ const useQuoteWidget = () => {
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       ClientType: "C",
-      onlyCreateOrderClients:  false,
-      searchTerm:SearchTerm,
+      onlyCreateOrderClients: false,
+      searchTerm: SearchTerm,
     });
   }, []);
 
-  const handleClicktoSelectedCustomer = useCallback(async (clientIdifExist,value) =>{
-    debugger;
-    setSelectedClient(value);
+  const handleClicktoSelectedCustomer = useCallback(
+    async (clientIdifExist, value) => {
+      debugger;
+      setSelectedClient(value);
 
-    const clientType = clientTypesValue.find((c) => c.id == value?.clientTypeId);
+      const clientType = clientTypesValue.find(
+        (c) => c.id == value?.clientTypeId
+      );
 
-  
-    if(clientIdifExist != null && value?.id != null)
-    {
-      if(clientIdifExist != value?.id )
-      {
-        setOpenModal(true);
+      if (clientIdifExist != null && value?.id != null) {
+        if (clientIdifExist != value?.id) {
+          setOpenModal(true);
+        }
       }
-    
-    }
 
-    if (clientType) {
-      setSelectedClientType(clientType);
-    } else {
-      setSelectedClientType({});
-    }
-  
-  },[clientTypesValue]);
-
+      if (clientType) {
+        setSelectedClientType(clientType);
+      } else {
+        setSelectedClientType({});
+      }
+    },
+    [clientTypesValue]
+  );
 
   const getAndSetExistQuote = useCallback(async () => {
-     await getAndSetExistQuotes(callApi, setUserQuote);
-  },[]);
+    await getAndSetExistQuotes(callApi, setUserQuote);
+  }, []);
 
+  const updateQuoteExist = useCallback(async () => {
+    await getAndSetExistQuote();
+  }, []);
 
-  const updateQuoteExist = useCallback(async () =>{
-   await getAndSetExistQuote();
-  },[]);
-
-
-  
-  const updateCustomerList = useCallback (async ()=>{
+  const updateCustomerList = useCallback(async () => {
     setSelectedClient(null);
     setSelectedClientType(null);
-  },[]);
-  const updateCustomerListSelectedAfterConfirm = useCallback(async (selectedCustomersList)=>{
-     setSelectedClient(selectedCustomersList);
-  
-  },[])
+  }, []);
+  const updateCustomerListSelectedAfterConfirm = useCallback(
+    async (selectedCustomersList) => {
+      setSelectedClient(selectedCustomersList);
+    },
+    []
+  );
 
   useEffect(() => {
     getAllClientTypes();
     getAllProducts();
     getAndSetExistQuote();
   }, []);
-  
-  const onClickSaveQuote = async (quoteId)=>{
-    
-    await saveQuote(callApi,setUserQuote, quoteId);
+
+  const onClickSaveQuote = async (quoteId) => {
+    await saveQuote(callApi, setUserQuote, quoteId);
     setquoteNumber(null);
     setQuoteIfExist(false);
     //setSelectedClient(null);
     setUserQuote(null);
-  }
+  };
   const onClcikCreateQuote = () => {
     navigate(
       `/admin/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&productId=${selectedProduct?.id}`
@@ -174,12 +172,12 @@ const useQuoteWidget = () => {
     }
   };
 
-  useEffect(()=>{
-      userQuote?.result ?  getAllCustomersCreateQuote(userQuote?.result?.clientName) : getAllCustomersCreateQuote();
-  },[userQuote])
+  useEffect(() => {
+    userQuote?.result
+      ? getAllCustomersCreateQuote(userQuote?.result?.clientName)
+      : getAllCustomersCreateQuote();
+  }, [userQuote]);
 
-
- 
   return {
     clientTypesValue,
     productValue,

@@ -83,7 +83,15 @@
     "profits": "profits",
     "properties": "Properties",
     "quotes": "Quotes",
-    "orders": "Orders"
+    "orders": "Orders",
+    "partners": "Partners",
+    "deliveryNotes": "Delivery notes",
+    "invoices": "Invoices",
+    "receipts": "Receipts",
+    "purchase": "Purchase",
+    "purchaseOrders": "Orders",
+    "purchaseInvoices": "invoices",
+    "supplierPayments": "payments"
   },
   "properties": {
     "parameter": "Parameter",
@@ -1508,13 +1516,16 @@
     "quote": {
       "title": "Quote",
       "deliverOn": "Deliver on",
+      "dateOfReference":"Date of reference :",
       "upload": "upload",
       "businessCode": "Business code",
       "businessName": "Business name",
       "purchaseNumber": "Purchase number",
       "agent": "Agent",
       "contactID": "Contact ID",
-      "contactName": "Contact name",
+      "contactName": "Contact Name",
+      "mobileContact":"Mobile contact",
+      "contactEmail":"Contact email",
       "Confirm":"Confirm",
       "MessageForClient":"There is a price offer for setup! \n This action will result in preserving the offer in setup and opening a new document for a new customer.",
       "portable": "Portable",
@@ -1965,7 +1976,6 @@
     "contacts": "Contacts",
     "email1": "Email 1",
     "email2": "Email 2",
-    "phone1": "Phone 1",
     "phone2": "Phone 2",
     "mobile": "Mobile",
     "country": "Country",
@@ -2029,6 +2039,12 @@
     "edit": "Edit",
     "duplicate": "Duplicate",
     "delete": "Delete"
+  },
+  "datepicker": {
+    "today": "Today",
+    "thisMonth": "This month",
+    "choose": "Choose",
+    "datepicker": "Datepicker"
   },
   "machinesCategories": {
     "digitalPrinting": "Digital Printing",

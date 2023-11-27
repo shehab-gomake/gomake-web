@@ -83,7 +83,15 @@
     "profits": "רווחים",
     "properties": "מאפיינים",
     "quotes": "הצעות מחיר",
-    "orders": "הזמנות"
+    "orders": "הזמנות",
+    "partners": "שותפים",
+    "deliveryNotes": "תעודות משלוח",
+    "invoices": "חשבוניות",
+    "receipts": "קבלות",
+    "purchase": "לקנות",
+    "purchaseOrders": "הזמנות",
+    "purchaseInvoices": "חשבוניות",
+    "supplierPayments": "תשלומים"
   },
   "properties": {
     "parameter": "פרמטר",
@@ -1500,6 +1508,7 @@
     "quote": {
       "title": "ציטוט",
       "deliverOn": "ספק בתאריך",
+      "dateOfReference": "תאריך התייחסות:",
       "upload": "העלה",
       "businessCode": "קוד עסק",
       "businessName": "שם עסק",
@@ -1507,6 +1516,8 @@
       "agent": "סוכן",
       "contactID": "מזהה איש קשר",
       "contactName": "שם איש קשר",
+      "contactEmail": "דואר אלקטרוני ליצירת קשר",
+      "mobileContact": "איש קשר נייד",
       "portable": "טלפון נייד",
       "email": "דוא\"ל",
       "addressID": "מזהה כתובת",
@@ -1958,7 +1969,6 @@
     "contacts": "אנשי קשר",
     "email1": "דוא\"ל 1",
     "email2": "דוא\"ל 2",
-    "phone1": "טלפון 1",
     "phone2": "טלפון 2",
     "mobile": "טלפון נייד",
     "country": "מדינה",

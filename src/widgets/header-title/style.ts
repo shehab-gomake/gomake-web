@@ -3,7 +3,7 @@ import { convertHeightToVH } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = ({ marginTop, marginBottom }) => {
+const useStyle = ({ marginTop, marginBottom, color }) => {
   const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
@@ -13,8 +13,9 @@ const useStyle = ({ marginTop, marginBottom }) => {
       },
       titleStyle: {
         display: "flex",
-        ...FONT_FAMILY.Lexend(700, 20),
-        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(500, 24),
+        color: color ? color : primaryColor(500),
+        lineHeight: "30px",
       },
     };
   }, [marginTop, marginBottom]);

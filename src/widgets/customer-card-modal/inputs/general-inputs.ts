@@ -3,37 +3,16 @@ const generalInputs = (state) => {
     return [
         {
             name: "phone1",
-            label: "customers.modal.phone1",
+            label: "customers.modal.phone",
             type: "text",
-            placeholder: "customers.modal.phone1",
+            placeholder: "customers.modal.phone",
             required: false,
             parameterKey: "tel1",
             options: [],
             value: state?.tel1,
             isValid: true,
         },
-        {
-            name: "phone2",
-            label: "customers.modal.phone2",
-            type: "text",
-            placeholder: "customers.modal.phone2",
-            required: false,
-            parameterKey: "tel2",
-            options: [],
-            value: state?.tel2,
-            isValid: true,
-        },
-        {
-            name: "site",
-            label: "customers.modal.site",
-            type: "text",
-            placeholder: "customers.modal.site",
-            required: false,
-            parameterKey: "internetSite",
-            options: [],
-            value: state?.internetSite,
-            isValid: true,
-        },
+        
         {
             name: "mainContactName",
             label: "customers.modal.mainContactName",
@@ -56,7 +35,18 @@ const generalInputs = (state) => {
             value: state?.phone,
             isValid: true,
         },
-
+        {
+            name: "clientLang",
+            label: "customers.modal.language",
+            type: "select",
+            placeholder: "customers.modal.language",
+            required: false,
+            parameterKey: "clientLang",
+            options: [],
+            optionsUrl: "/v1/enum/get-enums/languages",
+            value: state?.clientLang,
+            isValid: true,
+        },
     ];
 }
 
@@ -97,6 +87,7 @@ const generalInputs2 = (typeClient , state) => {
             value: state?.agentId,
             isValid: true,
         },
+        
         {
             name: "isActive",
             label: "customers.modal.active",

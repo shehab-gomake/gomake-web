@@ -14,15 +14,15 @@ const MoreMenuWidget = ({ quote, onClcikOpenModal }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const { user, navigate } = useMoreCircle();
+
   return (
     <OptionsButton>
       <MenuItem>
         <div style={clasess.menuRowStyle}>
           <PermissionCheck userPermission={Permissions.SHOW_LOGGERS_QUOTE}>
-              <EditingIcon />
-              <div style={clasess.rowTextStyle}>{t("sales.quote.loggers")}</div>
+            <EditingIcon />
+            <div style={clasess.rowTextStyle}>{t("sales.quote.loggers")}</div>
           </PermissionCheck>
-         
         </div>
       </MenuItem>
       <MenuItem>

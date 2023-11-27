@@ -31,6 +31,7 @@ import { SelectChildParameterWidget } from "@/pages-components/products/digital-
 import { SWITCHParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/switch-parameter";
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 import { SelectMaterialsParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
+import {jobActionsState, jobDetailsState, workFlowsState} from "@/widgets/product-pricing-widget/state";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -53,7 +54,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [defaultPrice, setDefaultPrice] = useState<any>("-----");
-  console.log("defaultPrice", defaultPrice);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
   const [template, setTemplate] = useState<any>([]);
   const [urgentOrder, setUrgentOrder] = useState(false);
@@ -69,6 +69,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("Production");
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
+  const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
+  const [jobDetails, setJobDetails] = useRecoilState(jobDetailsState);
+  const [jobActions, setJobActions] = useRecoilState(jobActionsState);
   const [workFlowSelected, setWorkFlowSelected] = useState<any>();
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const setLoading = useSetRecoilState(isLoadgingState);
@@ -169,18 +172,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           temp[paramIndex].values = selectedParam.valueIds;
         }
       }
+      const filteredArray = temp1.filter((obj) => obj.values[0] !== "false");
       temp.forEach((tempObject) => {
-        const index = temp1.findIndex(
+        const index = filteredArray.findIndex(
           (param) => param.parameterId === tempObject.parameterId
         );
+
         if (index !== -1) {
-          temp1[index] = tempObject;
+          filteredArray[index] = tempObject;
         } else {
-          temp1?.push(tempObject);
+          filteredArray?.push(tempObject);
         }
       });
 
-      setGeneralParameters(temp1);
+      setGeneralParameters(filteredArray);
     }
   }, [
     selectedValueForSettings,
@@ -551,7 +556,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           });
         });
         const newSubProducts2 = Object.values(typeMap);
-        setGeneralParameters(newGeneralParameters);
+        const filteredArray = newGeneralParameters.filter(
+          (obj) => obj.values[0] !== "false"
+        );
+        setGeneralParameters(filteredArray);
         setSubProducts(newSubProducts2);
         setRelatedParameters(relatedParametersArray);
         setIsSetTemplete(true);
@@ -906,7 +914,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (data?.valueIds === undefined && data?.values === undefined) {
         temp.splice(index, 1);
       }
-      return temp;
+      const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
+      return filteredArray;
     });
   };
   const onChangeSubProductsForPrice = (
@@ -983,6 +992,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (data?.valueId === undefined && data?.value === undefined) {
         temp.splice(index, 1);
       }
+
       setSubProducts([
         ...subProducts,
         {
@@ -1106,6 +1116,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       //Check it is work
       if (res?.success) {
         setPricingDefaultValue(res?.data?.data?.data);
+        setWorkFlows(res?.data?.data?.data?.workFlows?.map((flow, index) => ({id: index.toString(), ...flow})));
+        setJobActions(res?.data?.data?.data?.actions)
       }
       setLoading(false);
     }
@@ -1157,7 +1169,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const quantity = generalParameters?.find(
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
-  console.log("quantity", quantity);
   const addItemForQuotes = useCallback(async () => {
     const res = await callApi("POST", `/v1/erp-service/quote/add-item`, {
       productId: router?.query?.productId,
@@ -1171,7 +1182,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       printingNotes,
       graphicNotes,
       isNeedExample: false,
-      jobDetails: pricingDefaultValue?.jobDetails,
+      //jobDetails: pricingDefaultValue?.jobDetails,
       itemParmetersValues: itemParmetersValues,
       workFlow: pricingDefaultValue?.workFlows,
       actions: pricingDefaultValue?.actions,
@@ -1271,6 +1282,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   };
 
+  useEffect(() => {
+    setPricingDefaultValue({
+      actions: jobActions,
+      workFlows,
+      jobDetails
+    });
+  }, [workFlows, jobActions, jobDetails])
+
+  // useEffect(() => {
+  //   let temp = [...generalParameters];
+  //   const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
+  // }, [generalParameters]);
   return {
     t,
     handleTabClick,
@@ -1321,6 +1344,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     errorMsg,
     workFlowSelected,
     relatedParameters,
+    workFlows,
+    jobDetails,
+    jobActions
   };
 };
 

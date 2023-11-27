@@ -1,25 +1,25 @@
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
-import {GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton} from "@/components";
-import {useQuoteWidget} from "./use-quote-widget";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
+import { useQuoteWidget } from "./use-quote-widget";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import {useStyle} from "./style";
-import {Popover} from "@mui/material";
-import {PermissionCheck} from "@/components/CheckPermission/check-permission";
-import {Permissions} from "@/components/CheckPermission/enum";
-import {useEffect, useState} from "react";
-import {SecondaryButton} from "@/components/button/secondary-button";
-import {useRecoilState} from "recoil";
-import {QuoteIfExistState, QuoteNumberState} from "@/pages-components/quote/store/quote";
+import { useStyle } from "./style";
+import { Popover } from "@mui/material";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { useEffect, useState } from "react";
+import { SecondaryButton } from "@/components/button/secondary-button";
+import { useRecoilState } from "recoil";
+import { QuoteIfExistState, QuoteNumberState } from "@/pages-components/quote/store/quote";
 import Stack from "@mui/material/Stack";
 
-const QuoteWidget = ({isAdmin = true}) => {
-    const {clasess} = useStyle();
+const QuoteWidget = ({ isAdmin = true }) => {
+    const { clasess } = useStyle();
     const [QuoteId, setQuoteId] = useState("");
     const [quoteNumber, setquoteNumber] = useRecoilState<any>(QuoteNumberState);
     const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
 
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const {
         clientTypesValue,
         productValue,
@@ -48,8 +48,8 @@ const QuoteWidget = ({isAdmin = true}) => {
     } = useQuoteWidget();
 
     useEffect(() => {
-        
-        if(userQuote){
+
+        if (userQuote) {
             debugger;
             setQuoteId(userQuote.id);
             setquoteNumber(userQuote.number)
@@ -57,19 +57,19 @@ const QuoteWidget = ({isAdmin = true}) => {
             setSelectedClient(userQuote.client);
             const clientType = clientTypesValue.find((c) => c.id == userQuote.client.clientTypeId);
             setSelectedClientType(clientType)
-        }else{
+        } else {
             setQuoteId(null);
             setquoteNumber(null)
             setQuoteIfExist(false);
             //setSelectedClient(null)
         }
-        
-    },[userQuote])
+
+    }, [userQuote])
     return (
 
         <div style={clasess.mainContainer}>
             <div style={clasess.autoComplateRowContainer}>
-                <div style={{width: "65%"}}>
+                <div style={{ width: "65%" }}>
                     <GoMakeAutoComplate
                         options={renderOptions() ? renderOptions() : []}
                         placeholder={t("home.admin.selectCustomer")}
@@ -82,7 +82,7 @@ const QuoteWidget = ({isAdmin = true}) => {
                         }}
                     />
                 </div>
-                <div style={{width: "30%"}}>
+                <div style={{ width: "30%" }}>
                     <GoMakeAutoComplate
                         options={clientTypesValue}
                         placeholder={t("home.admin.selectType")}
@@ -100,7 +100,7 @@ const QuoteWidget = ({isAdmin = true}) => {
                 </div>
             </div>
             <div style={clasess.autoComplateRowContainer}>
-                <div style={{width: "65%"}}>
+                <div style={{ width: "65%" }}>
                     <GoMakeAutoComplate
                         options={productValue}
                         placeholder={t("home.admin.selectProduct")}
@@ -114,7 +114,7 @@ const QuoteWidget = ({isAdmin = true}) => {
             </div>
 
             {
-                userQuote  ?
+                userQuote ?
                     <Stack direction={'row'} gap={'13px'} width={'100%'}>
                         <div style={clasess.btnContainer}>
                             <PermissionCheck userPermission={Permissions.CREATE_QUOTES}>
@@ -127,7 +127,7 @@ const QuoteWidget = ({isAdmin = true}) => {
                                                 : onClcikCreateQuoteForCustomer
                                     }
                                     variant="contained"
-                                    style={{width: "100%", height: 40}}
+                                    style={{ width: "100%", height: 40 }}
 
 
                                 >
@@ -138,13 +138,13 @@ const QuoteWidget = ({isAdmin = true}) => {
 
 
                         </div>
-                        <div style={{width: "50%"}}>
+                        <div style={{ width: "50%" }}>
                             <SecondaryButton
                                 variant="contained"
-                                style={{width: "100%", height: 40}}
+                                style={{ width: "100%", height: 40 }}
                                 onClick={() => {
-                                    onClickSaveQuote(QuoteId).then(()=>setSelectedClient(null)).then(()=>setSelectedClientType(null))
-                                       
+                                    onClickSaveQuote(QuoteId).then(() => setSelectedClient(null)).then(() => setSelectedClientType(null))
+
                                 }}
                             >
                                 {t("home.admin.SaveQuote")}
@@ -152,7 +152,7 @@ const QuoteWidget = ({isAdmin = true}) => {
                         </div>
 
                     </Stack>
-                    : <div style={{width: "50%"}}>
+                    : <div style={{ width: "50%" }}>
                         <GomakePrimaryButton
                             onClick={
                                 isDisabled
@@ -162,7 +162,7 @@ const QuoteWidget = ({isAdmin = true}) => {
                                         : onClcikCreateQuoteForCustomer
                             }
                             variant="contained"
-                            style={{width: "100%", height: 40}}
+                            style={{ width: "100%", height: 40 }}
 
 
                         >
@@ -189,7 +189,7 @@ const QuoteWidget = ({isAdmin = true}) => {
             <GoMakeDeleteModal
                 icon={
                     <WarningAmberIcon
-                        style={{width: 120, height: 120, color: errorColor(300)}}
+                        style={{ width: 120, height: 120, color: errorColor(300) }}
                     />
                 }
                 title={t("sales.quote.titleMessage")}
@@ -202,7 +202,7 @@ const QuoteWidget = ({isAdmin = true}) => {
                 onClickDelete={() => {
                     onClickSaveQuote(QuoteId)
                         .then(() => onClcikCloseModal())
-                    
+
                 }}
             />
         </div>
@@ -210,4 +210,4 @@ const QuoteWidget = ({isAdmin = true}) => {
     );
 };
 
-export {QuoteWidget};
+export { QuoteWidget };

@@ -13,6 +13,7 @@
     "login": "تسجيل الدخول",
     "username": "اسم المستخدم",
     "email": "البريد الإلكتروني",
+
     "password": "كلمة المرور",
     "emailIsRequired": "البريد الإلكتروني مطلوب",
     "passwordIsRequired": "كلمة المرور مطلوبة",
@@ -36,6 +37,7 @@
   },
   "tabs": {
     "home": "الصفحة الرئيسية",
+
     "productFloor": "المنتجات",
     "materials": "المواد",
     "products": "المنتجات",
@@ -74,6 +76,7 @@
     "varnishs": "الورنيش",
     "machines": "الآلات",
     "addMachine": "إضافة آلة",
+
     "wideFormatMaterial": "لفات الطباعة العريضة",
     "adminPanel": "لوحة الإدارة",
     "actions": "الإجراءات",
@@ -83,7 +86,15 @@
     "profits": "الأرباح",
     "properties": "الخصائص",
     "quotes": "عروض",
-    "orders": "طلبات"
+    "orders": "طلبات",
+    "partners": "شركاء",
+    "deliveryNotes": "ملاحظات التسليم",
+    "invoices": "الفواتير",
+    "receipts": "ايصالات",
+    "purchase": "ابتاع",
+    "purchaseOrders": "اوامر",
+    "purchaseInvoices": "الفواتير",
+    "supplierPayments": "الدفعات"
   },
   "properties": {
     "parameter": "المعلمة",
@@ -1501,6 +1512,7 @@
     "quote": {
       "title": "اقتباس",
       "deliverOn": "تسليم في",
+      "dateOfReference": "تاريخ الإشارة:",
       "upload": "تحميل",
       "businessCode": "رمز العمل",
       "businessName": "اسم العمل",
@@ -1510,6 +1522,8 @@
       "Confirm":"موافقه",
       "MessageForClient":"هناك عرض سعر للإعداد! سيؤدي هذا الإجراء إلى الاحتفاظ بالعرض في الإعداد وفتح وثيقة جديدة لعميل جديد.",
       "contactName": "اسم الاتصال",
+      "mobileContact": "جهة الاتصال المحمولة",
+      "contactEmail": "البريد الإلكتروني للاتصال",
       "portable": "محمول",
       "email": "بريد إلكتروني",
       "titleMessage":"هناك عرض سعر بالتكوين ",
@@ -1749,7 +1763,6 @@
       "priceLists": "قوائم الأسعار والمنتجات",
       "gomakeUsers": "مستخدمي Gomake",
       "cardIndex": "فهرس البطاقات",
-      "phone1": "هاتف 1",
       "phone2": "هاتف 2",
       "site": "الموقع",
       "mainContactName": "اسم الجهة الرئيسية للاتصال",

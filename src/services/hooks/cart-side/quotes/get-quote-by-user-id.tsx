@@ -27,7 +27,7 @@ const getAndSetQuotesByUserId = async (
           unitPrice: child?.price,
           discount: child?.discount,
           finalPrice: child?.finalPrice,
-          more: <MoreMenuWidgetWithChilds quoteItem={child} />,
+          // more: <MoreMenuWidgetWithChilds quoteItem={child} />,
           quoteItemId: child?.id,
         };
       }
@@ -50,7 +50,7 @@ const getAndSetQuotesByUserId = async (
       unitPrice: item?.price,
       discount: item?.discount,
       finalPrice: item?.finalPrice,
-      more: <MoreMenuWidget quoteItem={item} />,
+      // more: <MoreMenuWidget quoteItem={item} />,
       quoteItemId: item?.id,
       childsQuoteItems: _childsQuoteItemsMapping,
     };
