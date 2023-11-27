@@ -125,13 +125,37 @@
       "selectType": "בחר סוג",
       "selectProduct": "בחר מוצר",
       "createQoute": "צור הצעה",
-      "SaveQuote":"שמור הצעה",
-      "AddItemToQuote":"הוסף פריט להצעה",
-      "pleaseSelectCustomer": "בחר לקוח בבקשה",
-      "pleaseSelectClientType": "בחר סוג לקוח בבקשה",
-      "pleaseSelectProduct": "בחר מוצר בבקשה"
-    }
-  },
+      "SaveQuote": "שמור הצעה",
+      "AddItemToQuote": "הוסף פריט להצעה",
+      "pleaseSelectCustomer": "בבקשה בחר לקוח",
+      "pleaseSelectClientType": "בבקשה בחר סוג לקוח",
+      "pleaseSelectProduct": "בבקשה בחר מוצר"
+    },
+    "headers": {
+      "offerNumber": "מספר הצעה",
+      "clientType": "סוג לקוח",
+      "jobName": "שם העבודה",
+      "productDate": "תאריך יצור",
+      "finalPrice": "מחיר סופי",
+      "status": "סטטוס",
+      "remark": "הערה",
+      "more": "עוד"
+    },
+    "tabs": {
+      "Quotes": "הצעות",
+      "Orders": "הזמנות",
+      "Items": "פריטים",
+      "Delivery": "משלוח",
+      "Invoice": "חשבונית",
+      "Receipt": "קבלה"
+    },
+    "quoteOutput": "פלט הצעה",
+    "addNew": "הוסף חדש",
+    "duplicate": "שכפול",
+  "documents": "מסמכים",
+  "loggers": "מתיחים"
+  }
+  ,
   "materials": {
     "inputs": {
       "categoryName": "שם קטגוריה",
@@ -2202,5 +2226,85 @@
     "addNewAttachment": "הוסף קובץ מצורף חדש",
     "sendFrom": "שלח מהדואר האלקטרוני",
     "noAttachment": "אין קובץ מצורף"
-  }
+  },
+  "partners": {
+    "options": {
+        "active": "פעיל",
+        "inActive": "לא פעיל",
+        "today": "היום",
+        "tomorrow": "מחר",
+        "nextWeek": "השבוע הבא",
+        "products": "מוצרים",
+        "printingHouse": "בית הדפוס",
+        "machine": "המכונה",
+        "location": "המיקום",
+        "action": "הפעולה",
+        "dieCut": "חיתוך במקובע",
+        "roleSlickers": "מדבקות תפקיד",
+        "labels": "תווי זיהוי",
+        "paperProducts": "מוצרי נייר",
+        "bookCover": "כריכת ספר"
+    },
+    "headers": {
+        "id": "מספר זיהוי",
+        "partners": "שותפים",
+        "quoteNumber": "מספר הצעה",
+        "view": "תצוגה",
+        "response": "תגובה",
+        "totalProducts": "סך המוצרים",
+        "totalQuotes": "סך ההצעות מחיר",
+        "successRate": "שיעור הצלחה",
+        "more": "עוד",
+        "requests": "בקשות",
+        "name": "שם",
+        "logo": "לוגו",
+        "country": "מדינה",
+        "city": "עיר",
+        "partnerType": "סוג השותף",
+        "status": "סטטוס"
+    },
+    "Drawer": {
+        "PartnerInfo": "מידע על השותף",
+        "Overview": "סקירה כללית",
+        "Vision": "חזון",
+        "Team member": "חבר בצוות",
+        "Aprofessional": "בית דפוס מקצועי המתמחה בספק פתרונות הדפסה באיכות גבוהה לצרכים מגוונים.",
+        "TransformPrint": "המרת הדפסה לחוויה מהפכנית, קידום יחסים חזקים וקבועים בנויים על ישרות, שקיפות ומעולף משולב.",
+        "addPartner": "הוסף שותף",
+        "Contact information": "פרטי יצירת קשר",
+        "TiraPalestine": "טירה, פלסטין",
+        "TiraPress": "מדפסת טירה",
+        "4.9": "4.9"
+    },
+    "marketplace": "השוק",
+    "collaboration": "השתתפות",
+    "myPartners": "השותפים שלי",
+    "What are you looking for?": "מה את/ה מחפש/ת?",
+    "Search for company, product, machine, etc..": "חיפוש אחרי חברה, מוצר, מכונה, וכו'.",
+    "search": "חיפוש",
+    "addNew": "הוסף חדש",
+    "categories": "קטגוריות",
+    "date": "תאריך",
+    "subCategory": "תת קטגוריה",
+    "status": "סטטוס",
+    "totalPartners": "סך השותפים",
+    "activePartners": "שותפים פעילים",
+    "successRate": "שיעור הצלחה",
+    "totalOrders": "סך ההזמנות",
+    "waitingRequests": "בקשות בהמתנה",
+    "blockPrintingHouse": "חסום בית דפוס",
+    "Are you sure that you want to block this printing house from your partner list?": "האם את/ה בטוח/ה שברצונך לחסום בית הדפוס הזה מרשימת השותפים שלך?",
+    "cancel": "ביטול",
+    "block": "חסימה",
+    "Partner info": "מידע על השותף",
+    "Go to quotes": "עבור להצעות מחיר",
+    "Cart": "עגלה",
+    "Payments": "תשלומים",
+    "Message": "הודעה",
+    "Block": "חסימה",
+    "Transfer to partial": "העבר לחלקי",
+    "Connect with category": "התחברות עם קטגוריה",
+    "Connect with machine": "התחברות עם מכונה"
+}
+
 }
