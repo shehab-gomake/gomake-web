@@ -1157,7 +1157,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         generalParameters: generalParameters,
         productItemDTO: {
           productId: router?.query?.productId,
-          details: pricingDefaultValue?.jobDetails,
+          //details: pricingDefaultValue?.jobDetails,
           itemParmetersValues: itemParmetersValues,
           workFlow: workFlowSelected,
         },
