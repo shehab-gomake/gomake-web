@@ -31,7 +31,11 @@ import { SelectChildParameterWidget } from "@/pages-components/products/digital-
 import { SWITCHParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/switch-parameter";
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 import { SelectMaterialsParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
-import {jobActionsState, jobDetailsState, workFlowsState} from "@/widgets/product-pricing-widget/state";
+import {
+  jobActionsState,
+  jobDetailsState,
+  workFlowsState,
+} from "@/widgets/product-pricing-widget/state";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -623,7 +627,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     let temp = [...generalParameters, ...subProductsWithType];
-    setItemParmetersValues(temp);
+    const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
+    setItemParmetersValues(filteredArray);
   }, [generalParameters, subProductsWithType, subProducts]);
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -1116,8 +1121,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       //Check it is work
       if (res?.success) {
         setPricingDefaultValue(res?.data?.data?.data);
-        setWorkFlows(res?.data?.data?.data?.workFlows?.map((flow, index) => ({id: index.toString(), ...flow})));
-        setJobActions(res?.data?.data?.data?.actions)
+        setWorkFlows(
+          res?.data?.data?.data?.workFlows?.map((flow, index) => ({
+            id: index.toString(),
+            ...flow,
+          }))
+        );
+        setJobActions(res?.data?.data?.data?.actions);
       }
       setLoading(false);
     }
@@ -1286,9 +1296,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setPricingDefaultValue({
       actions: jobActions,
       workFlows,
-      jobDetails
+      jobDetails,
     });
-  }, [workFlows, jobActions, jobDetails])
+  }, [workFlows, jobActions, jobDetails]);
 
   // useEffect(() => {
   //   let temp = [...generalParameters];
@@ -1346,7 +1356,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     relatedParameters,
     workFlows,
     jobDetails,
-    jobActions
+    jobActions,
   };
 };
 
