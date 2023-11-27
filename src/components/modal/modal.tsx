@@ -18,7 +18,7 @@ const GoMakeModal = ({
   const { t } = useTranslation();
   const { clasess } = useStyle({ insideStyle, headerPadding });
   return (
-    <Modal disableEnforceFocus open={openModal} onClose={onClose} {...props}>
+    <Modal sx={{zIndex: 999999}} disableEnforceFocus open={openModal} onClose={onClose} {...props}>
       <div style={clasess.container}>
         <div style={clasess.headerContainer}>
           {modalTitle && (
