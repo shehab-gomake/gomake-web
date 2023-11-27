@@ -10,8 +10,8 @@ const useStyle = () => {
         borderRadius: 5,
         height: "35%",
       },
-      mainModalContainer:{
-        display:"flex",
+      mainModalContainer: {
+        display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "space-between",
         width: "100%",
@@ -23,7 +23,8 @@ const useStyle = () => {
         borderRadius: 4,
         height: 110,
         overflow: "scroll",
-        marginTop:20
+        marginTop: 20,
+        padding: 5,
       },
       btnContainer: {
         display: "flex",
@@ -32,7 +33,7 @@ const useStyle = () => {
         alignItems: "flex-end",
         width: "100%",
         marginTop: 25,
-        height: 40
+        height: 40,
       },
       sendBtn: {
         width: "30%",

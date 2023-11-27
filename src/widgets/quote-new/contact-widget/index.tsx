@@ -63,17 +63,19 @@ const ContactNewWidget = ({
             onClick={() => setIsDisplayWidget(true)}
           >
             <PlusNewIcon />
-            <div style={clasess.addNewContactNameTextStyle}>Add Contact</div>
+            <div style={clasess.addNewContactNameTextStyle}>
+              {t("sales.quote.addContact")}
+            </div>
           </div>
         )}
         {items?.length > 2 && displayedItems === 2 && (
           <div style={clasess.showLessContainer} onClick={handleShowMore}>
-            Show More
+            {t("sales.quote.showMore")}
           </div>
         )}
         {items?.length > 2 && displayedItems > 2 && (
           <div style={clasess.showLessContainer} onClick={handleShowLess}>
-            Show Less
+            {t("sales.quote.showLess")}
           </div>
         )}
       </div>
@@ -93,6 +95,7 @@ const ContactNewWidget = ({
           setIsUpdateContactEmail={setIsUpdateContactEmail}
           onInputChangeMail={onInputChangeMail}
           onClickAddNewContact={onClickAddNewContact}
+          setIsDisplayWidget={setIsDisplayWidget}
         />
       )}
 

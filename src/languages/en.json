@@ -298,7 +298,7 @@
       "settings": "Settings",
       "supplierSheet": "Supplier",
       "selectSupplier": "Select supplier",
-      "unitPrice": "Unit Price",
+      "unitPrice": "Unit price",
       "pricePerUnit": "price per unit",
       "selectCurrency": "Select Currency",
       "selectDirection": "Select direction",
@@ -321,7 +321,7 @@
       "updatePricePerTon": "Update Price Per Ton",
       "updatePricePerUnit": "Update Price Per Unit",
       "updatePrice": "Update Price",
-      "updateUnitPrice": "Update Unit Price",
+      "updateUnitPrice": "Update Unit price",
       "addPercentToPrice": "Add Percent To Price",
       "enterPrice": "Enter Price",
       "updateCurrency": "Update Currency",
@@ -363,7 +363,7 @@
       "height": "Height",
       "width": "Width",
       "settings": "Settings",
-      "unitPrice": "Unit Price",
+      "unitPrice": "Unit price",
       "pricePerUnit": "price per unit",
       "selectCurrency": "Select currency",
       "modal": {
@@ -1382,7 +1382,7 @@
         "addNewQuantity": "add new quantity",
         "saveStep": "Save step",
         "testQuantity": "Quantity",
-        "unitPrice": "Unit Price",
+        "unitPrice": "Unit price",
         "testFinalPrice": "Test Final Price"
       },
       "exceptions": {
@@ -1623,10 +1623,25 @@
       "confirmWithoutNotification": "confirm without notification",
       "confirmWithNotification": "confirm with notification",
       "warningMsg": "Make sure that the contact details, mobile number and e-mail are correct",
-      "orderNowTitle": "Order Now!",
+      "orderNowTitle": "Order Now",
       "createdBy": "Created by {{name}}",
       "customer": "Customer",
-      "orderList": "Order List"
+      "orderList": "Order List",
+      "deleteItem":"Delete Item",
+      "areYouSureDeleteItem":"Are you sure to delete this item?",
+      "amount":"Amount",
+      "itemCode":"Item code",
+      "noPurchaseNumber":"No purchase number",
+      "addContact":"Add Contact",
+      "showMore":"Show More",
+      "showLess":"Show Less",
+      "noMobileContact":"No mobile contact",
+      "noContactEmail":"No contact email",
+      "writeCommentHere":"Write Your Comment here",
+      "attachFiles":"Attach Files",
+      "copyTo":"Copy to",
+      "managerApproval":"Manager Approval"
+      
     }
   },
   "usersSettings": {

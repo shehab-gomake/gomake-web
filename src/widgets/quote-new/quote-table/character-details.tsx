@@ -1,9 +1,10 @@
 import { FONT_FAMILY } from "@/utils/font-family";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const CharacterDetails = ({ details }) => {
   const [showAll, setShowAll] = useState(false);
-
+  const { t } = useTranslation();
   const truncatedDetails = showAll ? details : details?.slice(0, 90);
 
   const handleShowMore = () => {
@@ -37,7 +38,7 @@ const CharacterDetails = ({ details }) => {
             cursor: "pointer",
           }}
         >
-          {showAll ? " Show Less" : "Show More"}
+          {showAll ? t("sales.quote.showLess") : t("sales.quote.showMore")}
         </span>
       )}
     </div>
