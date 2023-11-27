@@ -67,7 +67,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     relatedParameters,
       jobDetails,
       jobActions,
-      workFlows
+      workFlows,
   } = useDigitalOffsetPrice({ clasess, widgetType });
   const machineCategories = useRecoilValue(machineCategoriesState);
   const [actionState, setActionState] = useState({});
@@ -118,7 +118,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                             //   pricingDefaultValue={pricingDefaultValue}
                             //   workFlowSelected={workFlowSelected}
                             // />
-                              <PricingWidget actions={jobActions} workFlows={workFlows}/>
+                              <PricingWidget  actions={jobActions} workFlows={workFlows}/>
                           );
                         } else {
                           return section?.subSections?.map(

@@ -21,3 +21,9 @@ export enum EWorkSource {
     INTERNAL,
     OUT
 }
+
+export enum EOutsourceSupplierStatus {
+    NeedApprove = 0,
+    Approved,
+    Manually
+}

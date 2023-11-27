@@ -13,7 +13,7 @@ const useStyle = () => {
       },
       detailValue: {
         ...FONT_FAMILY.Inter(500, 14),
-        color: primaryColor(900)
+        color: primaryColor(900),
       },
       sectionTitle: {
         color: primaryColor(900),
@@ -21,7 +21,7 @@ const useStyle = () => {
       },
       actionContainer: {
         backgroundColor: '#F9FAFB',
-        padding: '0 16px',
+        padding: '10px 16px',
         borderRadius: 16,
       },
       actionContainerBorder: '2px solid ' + primaryColor(500),

@@ -13,6 +13,7 @@ import {PrimaryButton} from "@/components/button/primary-button";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {ParametersMapping} from "@/widgets/product-pricing-widget/components/action/key-value-view";
 import {useWorkFlows} from "@/widgets/product-pricing-widget/use-work-flows";
+import {WorkflowRateComponent} from "@/widgets/product-pricing-widget/components/work-flow/workflow-rate-component";
 
 interface IWorkFlowComponentProps extends ICalculatedWorkFlow {
     delay: number;
@@ -35,7 +36,8 @@ const WorkFlowComponent = ({
                                totalPriceO,
                                totalRealProductionTimeO,
                                totalCostO,
-                               profitO
+                               profitO,
+                               recommendationRang
                            }: IWorkFlowComponentProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const {secondColor} = useGomakeTheme();
@@ -57,6 +59,7 @@ const WorkFlowComponent = ({
             valueColor: secondColor(500),
         },
     ]
+
     return (
         <>
             <Fade in={true} timeout={delay}>
@@ -69,6 +72,12 @@ const WorkFlowComponent = ({
                         <span>{`Work Flow ${index}`}</span>
                         <Divider orientation={'vertical'} flexItem/>
                         <ParametersMapping parameters={parameters}/>
+                        <Divider orientation={'vertical'} flexItem/>
+                        <Stack direction={'row'} flexWrap={"wrap"} alignItems={'center'} gap={'10px'}>
+                            <WorkflowRateComponent label={'Price'} value={recommendationRang.price}/>
+                            <WorkflowRateComponent label={'Profit'} value={recommendationRang.profit}/>
+                            <WorkflowRateComponent label={'D.Time'} value={recommendationRang.deliveryTime}/>
+                        </Stack>
                     </Stack>
                     <Stack direction={'row'} gap={'12px'}>
                         <PrimaryButton onClick={handleSelectWorkFlow}

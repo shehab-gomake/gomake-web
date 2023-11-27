@@ -19,6 +19,8 @@ import {PrimaryButton} from "@/components/button/primary-button";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import {convertHeightToVH} from "@/utils/adapter";
+import {HEADER_HEIGHT, SCREEN_HEIGHT} from "@/utils/layout-config";
 import {useGomakeRouter} from "@/hooks/use-gomake-router";
 import {AddCategoryModal} from "./components/add-category/add-category-modal";
 import {AddRowModal} from "./components/add-row/add-row-modal";
@@ -72,6 +74,7 @@ const MaterialsWidget = () => {
                     <SecondaryButton onClick={() => elementRef && elementRef.current.click()}
                                      variant={'contained'}>Upload</SecondaryButton>
                 </Stack>
+
                 <Stack direction={'row'} style={{marginTop:10}}>
                     <PrimaryButton onClick={() => setOpenAddCategoryModal(true)}
                                    variant={'contained'}>{t("materials.buttons.addNew")}</PrimaryButton>
@@ -111,6 +114,7 @@ const MaterialsWidget = () => {
 
 
     return (
+        <div style={{maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT - 20), overflow: 'hidden'}}>
         <>
             <SideBarContainer side={Side()} header={materialType?.toString()} subHeader={''}>
                 {materialCategory && <Stack gap={2}>
@@ -118,6 +122,8 @@ const MaterialsWidget = () => {
                         <h4 style={classes.subHeader}>{materialCategory?.toString()}</h4>
                         <FiltersActionsBar/>
                     </Stack>
+
+                        <div style={{paddingBottom: '30px'}}><PrimaryTable rows={tableRows} headers={tableHeaders()}/></div> :
                     {materialCategoryData.length > 0 ?
                         <PrimaryTable rows={tableRowData} headers={tableHeadersData}/> :
                         (flag && materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ?
@@ -138,7 +144,8 @@ const MaterialsWidget = () => {
                 <AddCategoryModal/>
                 <AddRowModal/>
             </SideBarContainer>
-        </>
+            <AddSupplierModal/>
+        </div>
     );
 }
 

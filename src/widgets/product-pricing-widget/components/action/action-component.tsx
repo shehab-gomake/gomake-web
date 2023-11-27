@@ -120,12 +120,12 @@ const ActionContainerComponent = ({
                                                 setChooseMachine(true);
                                             }} variant={'text'} style={classes.sectionTitle}>{machineName}</Button> :
                                             <div onClick={(e) => e.stopPropagation()}>
-                                                    <GoMakeAutoComplate onChange={(e, v) => {
-                                                        if (selectNewMachine(v?.value, actionId)) {
-                                                            setChooseMachine(false);
-                                                        }
-                                                    }} style={{width: '200px'}} options={getActionMachinesList(actionId)}
-                                                                        placeholder={'Choose machine'} value={machineName}/>
+                                                <GoMakeAutoComplate onChange={(e, v) => {
+                                                    if (selectNewMachine(v?.value, actionId)) {
+                                                        setChooseMachine(false);
+                                                    }
+                                                }} style={{width: '200px'}} options={getActionMachinesList(actionId)}
+                                                                    placeholder={'Choose machine'} value={machineName}/>
                                             </div>
                                         }
                                     </>
@@ -137,7 +137,10 @@ const ActionContainerComponent = ({
                         <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
                         <EditableKeyValueViewComponent onUpdate={handleCostUpdate} {...totalCostO} source={source}/>
                         <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
-                        <EditableKeyValueViewComponent onUpdate={handleProfitUpdate} {...profitO} source={source}/>
+                        <Stack direction={'row'} gap={'3px'} alignItems={'center'}>
+                            <EditableKeyValueViewComponent onUpdate={handleProfitUpdate} {...profitO} source={source}/>
+                            <span>{source === EWorkSource.OUT ? `(${+totalPriceO.outSourceValues[0] - +totalCostO.outSourceValues[0]} ${totalPriceO.defaultUnit})` : `(${+totalPriceO.values[0] - +totalCostO.values[0]} ${totalPriceO.defaultUnit})`}</span>
+                        </Stack>
                         <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
                         <EditableKeyValueViewComponent onUpdate={handleUpdatePrice} {...totalPriceO}
                                                        source={source}
@@ -151,7 +154,7 @@ const ActionContainerComponent = ({
                         {isOpen ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
                     </IconButton>
                 </Stack>
-                <Collapse in={isOpen} collapsedSize={0} orientation={'vertical'}>
+                <Collapse in={isOpen} collapsedSize={0} orientation={'vertical'} onClick={(e) => e.stopPropagation()}>
                     {
                         inputsParameters.length > 0 && <>
                             <Divider/>
