@@ -68,7 +68,7 @@ const GoMakeDatepicker = ({}: IGoMakeDatepicker) => {
     return (
         <div>
             <Stack direction={'row'} gap={'3px'} alignItems={'center'}>
-                <GomakeTextInput disabled={true} style={{height: '35px', cursor: 'pointer', minWidth: '190px'}}
+                <GomakeTextInput disabled={false} style={{height: '35px', cursor: 'pointer', minWidth: '190px'}}
                                  value={dateString()} labelText={'select'} placeholder={'select date'}
                                  onClick={handleInputClick}/>
                 <Clear onClick={handleClear}/>
