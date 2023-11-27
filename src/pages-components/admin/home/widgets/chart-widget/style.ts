@@ -7,8 +7,8 @@ const useStyle = () => {
             backgroundColor: "#FFFFFF",
             margin: '0 4px',
             borderRadius: 8,
-            width: "90%",
-            height: "90%",
+            width: "50%",
+            height: "100%",
             boxShadow:"0 1px 0px 0 rgba(0, 0, 0, 0.08), 0 0px 5px 0 rgba(0, 0, 0, 0.08)",
           },
     };

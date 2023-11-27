@@ -37,8 +37,8 @@ const PrimaryButtonsTabWidget = () => {
 
     return (
         <div style={{ width: "100%" }} >
-            <Stack direction={'row'} gap={'15px'} height={"100px"} alignItems={"center"}>
-                <HeaderTitle title={t("Marketplace")} />
+                <Stack direction={'row'} alignItems={"center"} gap={"10px"} marginBottom={"20px"}>
+                <HeaderTitle title={"Marketplace"} marginTop={"0px"} marginBottom={"0px"} />
                 <HeaderArrowIcon></HeaderArrowIcon>
                 <ThemeProvider theme={theme}  >
                     <Tabs
