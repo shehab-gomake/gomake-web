@@ -42,24 +42,25 @@ const HeaderWidget = () => {
             {/* <SearchInputComponent onChange={() => null} searchInputStyle={clasess.searchInputContainer} /> */}
             <div style={{ width: "100%" }} />
             <div style={clasess.rightSideContainer}>
+                {
+                    QuoteIfExist == true &&
+                    <IconButton onClick={() => navigate("quote")}>
+                        <CartIcon />
+                    </IconButton>
+                }
                 <IconButton>
                     <Statistics />
                 </IconButton>
                 <IconButton>
                     <Messages />
                 </IconButton>
-                <IconButton onClick={handleClickNotify}>
-                    <Notifications />
-                </IconButton>
+                <div style={{ borderRight: "1px solid #D0D5DD" }}>
+
+                    <IconButton onClick={handleClickNotify}>
+                        <Notifications />
+                    </IconButton>
+                </div>
                 <div style={clasess.profileContainer}>
-                    {
-                        QuoteIfExist == true &&
-                        <div style={{ borderRight: "1px solid #D0D5DD" }}>
-                            <IconButton onClick={() => navigate("quote")} style={{ backgroundColor: "#F135A3", marginRight: 20, width: 30, height: 30 }}>
-                                <CartIcon />
-                            </IconButton>
-                        </div>
-                    }
                     <div style={{ marginLeft: 14 }}>
                         <IconButton onClick={handleClick}>{userAvatar()}</IconButton>
                     </div>

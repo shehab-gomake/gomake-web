@@ -8,7 +8,7 @@ const useStyle = () => {
   const classes = useMemo(() => {
     return {
       cardStyle: {
-        border: "1px dotted #c9c8c3",
+        //border: "1px dotted #c9c8c3",
         textAlign: "center" as "center",
         backgroundColor: "#FFFFFF",
         borderRadius: 4,
