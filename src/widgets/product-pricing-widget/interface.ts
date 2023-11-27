@@ -1,10 +1,16 @@
-import {EWorkSource, HtmlElementType, RuleType, UnitType} from "@/widgets/product-pricing-widget/enums";
+import {
+    EOutsourceSupplierStatus,
+    EWorkSource,
+    HtmlElementType,
+    RuleType,
+    UnitType
+} from "@/widgets/product-pricing-widget/enums";
 
 export interface IPricingWidgetProps {
     jobDetails?: string;
     actions: IPricingAction[];
     workFlows: ICalculatedWorkFlow[];
-    onSelectNewWorkFlow?: (id: string) => void
+    onSelectNewWorkFlow?: (id: string) => void;
 }
 
 
@@ -37,6 +43,14 @@ export interface ICalculatedWorkFlow {
     profitO: IOutput;
     totalPriceO: IOutput;
     totalRealProductionTimeO: IOutput;
+    recommendationRang: {
+        deliveryTime: number;
+        price: number;
+        profit: number;
+        deliveryTimePercent: number;
+        pricePercent: number;
+        profitPercent: number;
+    }
 }
 
 export interface IPrintActionType {
@@ -77,4 +91,14 @@ export interface IOutput {
     isEditable: boolean;
     outSourceValues?: string[];
 
+}
+
+export interface IOutSourceSupplier {
+    supplierId: string;
+    supplierName: string;
+    cost: number;
+    finalPrice: number;
+    profit: number;
+    workHours: number;
+    status: EOutsourceSupplierStatus;
 }

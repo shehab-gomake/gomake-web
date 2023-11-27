@@ -2,14 +2,16 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import {convertHeightToVH} from "@/utils/adapter";
+import {HEADER_HEIGHT, SCREEN_HEIGHT} from "@/utils/layout-config";
 
 const useStyle = () => {
   const { theme, primaryColor, secondColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
-        padding: '0 3px', maxHeight: convertHeightToVH(1080 - 50),
-        height: convertHeightToVH(1080 - 50),
+        padding: '0 3px',
+        maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
+        height: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
       },
       container: {
         display: "flex",

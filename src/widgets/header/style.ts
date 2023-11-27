@@ -19,7 +19,8 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         paddingBottom: 7,
-        marginTop: 10,
+        paddingTop: 10,
+        // marginTop: 10,
         height: convertHeightToVH(HEADER_HEIGHT),
         maxHeight: convertHeightToVH(HEADER_HEIGHT)
       },

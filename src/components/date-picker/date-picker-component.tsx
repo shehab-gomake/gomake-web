@@ -7,7 +7,6 @@ import {DateRangePicker} from 'react-date-range';
 import {useDatePicker} from "@/components/date-picker/use-date-picker";
 import Stack from "@mui/material/Stack";
 import {Clear} from "@mui/icons-material";
-import {endOfToday} from "date-fns";
 import {staticDateRange} from "@/components/date-picker/const";
 interface IGoMakeDatepicker {
 
@@ -69,7 +68,7 @@ const GoMakeDatepicker = ({}: IGoMakeDatepicker) => {
     return (
         <div>
             <Stack direction={'row'} gap={'3px'} alignItems={'center'}>
-                <GomakeTextInput disabled={true} style={{height: '35px', cursor: 'pointer', minWidth: '190px'}}
+                <GomakeTextInput disabled={false} style={{height: '35px', cursor: 'pointer', minWidth: '190px'}}
                                  value={dateString()} labelText={'select'} placeholder={'select date'}
                                  onClick={handleInputClick}/>
                 <Clear onClick={handleClear}/>
