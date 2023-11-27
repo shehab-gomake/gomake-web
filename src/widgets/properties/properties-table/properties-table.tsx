@@ -88,7 +88,7 @@ const PropertiesTable = () => {
                 {t("properties.type")}
               </StyledTableCell>
               <StyledTableCell align={"center"}>
-                {CheckPermission(Permissions.EDIT_PROPERITES_PRICING_ACTIONS) ? t("properties.more") : null }
+                { t("properties.more")}
               </StyledTableCell>
             </TableRow>
           </TableHead>
@@ -114,15 +114,12 @@ const PropertiesTable = () => {
                     {property.ruleType == 0 ? "Output" : "Input"}{" "}
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>
-                    <PermissionCheck userPermission={Permissions.EDIT_PROPERITES_PRICING_ACTIONS} >
-                        <MoreMenuWidget
-                          rules={property.actionRules}
-                          actionId={actionId}
-                          propertyId={property.propertyId}
-                          ruleType={property.ruleType}
-                        />
-                    </PermissionCheck>
-                  
+                    <MoreMenuWidget
+                        rules={property.actionRules}
+                        actionId={actionId}
+                        propertyId={property.propertyId}
+                        ruleType={property.ruleType}
+                    />
                   </StyledTableCell>
                 </StyledTableRow>
               );
