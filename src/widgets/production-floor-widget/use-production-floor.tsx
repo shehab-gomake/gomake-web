@@ -1,5 +1,5 @@
 import {useCallback, useState} from "react";
-import {IBoard} from "@/widgets/production-floor-widget/interface";
+import {IBoard, ICurrentStation} from "@/widgets/production-floor-widget/interface";
 import {
     getAllWorkJobsApi,
     updateWorkJobStatusApi
@@ -15,9 +15,11 @@ import {DateFormatterDDMMYYYY} from "@/utils/adapter";
 import {useRouter} from "next/router";
 import {useRecoilState, useRecoilValue} from "recoil";
 import {productionStatusesState, workJobsState} from "@/widgets/production-floor-widget/state";
+import {useDateFormat} from "@/hooks/use-date-format";
 
 const useProductionFloor = () => {
     const {callApi} = useGomakeAxios();
+    const {GetDateFormat} = useDateFormat();
     const [workJobs, setWorkJobs] = useRecoilState(workJobsState);
     const {query} = useRouter();
     const statuses = useRecoilValue(productionStatusesState);
@@ -41,10 +43,416 @@ const useProductionFloor = () => {
         {id: '7', name: 'demo7', checked: true},
         {id: '8', name: 'demo8', checked: true},
         {id: '9', name: 'demo9', checked: true},
-        {id: '10', name: 'demo10', checked: true},
+        {id: '10', name: 'demo10', checked: true}]
+    const mockData :IBoard[] = [
+        {
+            id: "3123",
+            currentStation: {
+                name:'Cutting',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "D7781",
+            orderNumber: "O-124888",
+            orderId: "string",
+            jobName: "Books",
+            productName: "Books",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.IN_PROCESS,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["#cover"],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        },
+        {
+            id: "5122",
+            currentStation: {
+                name:'Printing',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "DB8981",
+            orderNumber: "O-124890",
+            orderId: "string",
+            jobName: "Business card",
+            productName: "Business card",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.DONE,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["",""],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        },
+        {
+            id: "88991",
+            currentStation: {
+                name:'Finish',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "DB8983",
+            orderNumber: "O-124890",
+            orderId: "string",
+            jobName: "Stickers",
+            productName: "Stickers",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.WAITING,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["",""],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        },
+        {
+            id: "512112",
+            currentStation: {
+                name:'Printing',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "F8985",
+            orderNumber: "O-124892",
+            orderId: "string",
+            jobName: "Rolls",
+            productName: "Rolls",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.STUCK,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["",""],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        },
+        {
+            id: "988122",
+            currentStation: {
+                name:'Pre printing',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "F8986",
+            orderNumber: "O-124892",
+            orderId: "string",
+            jobName: "Foil",
+            productName: "Foil",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.WAITING,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["",""],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        },
+        {
+            id: "6612",
+            currentStation: {
+                name:'Packaging',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "X8312",
+            orderNumber: "O-124597",
+            orderId: "string",
+            jobName: "Magnet",
+            productName: "Magnet",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.IN_PROCESS,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["",""],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        },
+        {
+            id: "55323",
+            currentStation: {
+                name:'Cutting',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "D7783",
+            orderNumber: "O-124869",
+            orderId: "string",
+            jobName: "Books",
+            productName: "Books",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.IN_PROCESS,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["#cover"],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        },
+        {
+            id: "55215",
+            currentStation: {
+                name:'Printing',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "DB8983",
+            orderNumber: "O-124892",
+            orderId: "string",
+            jobName: "Business card",
+            productName: "Business card",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.WAITING,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["",""],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        },
+        {
+            id: "656556",
+            currentStation: {
+                name:'Printing',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "DB8987",
+            orderNumber: "O-124890",
+            orderId: "string",
+            jobName: "Stickers",
+            productName: "Stickers",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.STUCK,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["",""],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        },
+        {
+            id: "553523",
+            currentStation: {
+                name:'Printing',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "F8987",
+            orderNumber: "O-124865",
+            orderId: "string",
+            jobName: "Rolls",
+            productName: "Rolls",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.DONE,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["",""],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        },
+        {
+            id: "6643434",
+            currentStation: {
+                name:'Graphics',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "F8977",
+            orderNumber: "O-124854",
+            orderId: "string",
+            jobName: "Foil",
+            productName: "Foil",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.DONE,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["",""],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        },
+        {
+            id: "53322",
+            currentStation: {
+                name:'Finish',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "X8344",
+            orderNumber: "O-124567",
+            orderId: "string",
+            jobName: "Magnet",
+            productName: "Magnet",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.WAITING,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["",""],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        },
+        {
+            id: "662223",
+            currentStation: {
+                name:'Printing',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "F8960",
+            orderNumber: "O-124886",
+            orderId: "string",
+            jobName: "Rolls",
+            productName: "Rolls",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.STUCK,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["",""],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        },
+        {
+            id: "553222",
+            currentStation: {
+                name:'Pre printing',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "F8955",
+            orderNumber: "O-124854",
+            orderId: "string",
+            jobName: "Foil",
+            productName: "Foil",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.DONE,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["",""],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        },
+        {
+            id: "53523",
+            currentStation: {
+                name:'Packaging',
+                id:'',
+                actionId:'',
+                machineId:"",
+                employeeId:""
+            },
+            boardMissionNumber: "X8332",
+            orderNumber: "O-1245997",
+            orderId: "string",
+            jobName: "Magnet",
+            productName: "Magnet",
+            productId: "string",
+            clientName: "string",
+            clientId: "string",
+            statusId: EStatus.STUCK,
+            actionDueDate: new Date(),
+            dueDate: new Date(),
+            creationDate: new Date(),
+            stationInDate: new Date(),
+            tags: ["",""],
+            workOrder:"",
+            startDate:new Date(),
+            checked: false
+        }
     ]
     const getWorkJobs = async () => {
-        const callBack = (res) => {
+        /*const callBack = (res) => {
             if (res.success) {
                 const add = [...workJobs, ...res.data.map(bordMission => ({...bordMission, checked: false}))]
                 setWorkJobs(add);
@@ -54,7 +462,8 @@ const useProductionFloor = () => {
         if (!load) {
             setLoad(true)
          await getAllWorkJobsApi(callApi, callBack);
-        }
+        }*/
+        setWorkJobs(mockData)
     }
 
     const onUpdateStatus = async (id: string, status: EStatus) => {
@@ -84,8 +493,8 @@ const useProductionFloor = () => {
                     workJob.currentStation.name,
                     <StatusBtn id={workJob.id} onChange={onUpdateStatus} status={workJob.statusId}/>,
                     workJob?.orderNumber.toString(),
-                    DateFormatterDDMMYYYY(workJob.stationInDate.toString()),
-                    DateFormatterDDMMYYYY(workJob.actionDueDate?.toString()),
+                    GetDateFormat(workJob.stationInDate),
+                    GetDateFormat(workJob.actionDueDate),
                     workJob.tags[0],
                     <OptionsButton><></>
                     </OptionsButton>
