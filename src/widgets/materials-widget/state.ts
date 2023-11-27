@@ -11,6 +11,7 @@ export const materialHeadersState = atom<{
     value: string;
     filterType: EFilterType
     isFilter: boolean
+    inputType: number
 }[]>({
     key: "materialHeadersState",
     default: [],
@@ -19,7 +20,7 @@ export const materialActionState = atom<{ key: string; action: EMaterialsActions
     key: "materialActionState",
     default: [],
 });
-export const materialCategoriesState = atom<{ categoryKey: string, categoryName: string }[]>({
+export const materialCategoriesState = atom<{ categoryKey: string, categoryName: string , isAddedByPrintHouse : boolean  }[]>({
     key: "materialCategoriesState",
     default: [],
 });
@@ -27,8 +28,14 @@ export const materialCategoryDataState = atom<IMaterialCategoryRow[]>({
     key: "materialCategoryDataState",
     default: [],
 });
+
 export const openAddSupplierModalState = atom<boolean>({
     key: "openAddSupplierModalState",
+    default: false,
+});
+
+export const openAddCategoryModalState = atom<boolean>({
+    key: "openAddCategoryModalState",
     default: false,
 });
 
@@ -50,7 +57,14 @@ export const activeFilterState = atom<EMaterialActiveFilter>({
 export const filterState = atom<{key: string; value: string} | null>({
     key: 'filterState',
     default: null
-})
+});
 
+export const flagState = atom<boolean>({
+    key: 'flagState',
+    default: false
+});
 
-
+export const openAddRowModalState = atom<boolean>({
+    key: 'openAddRowModalState',
+    default: false
+});

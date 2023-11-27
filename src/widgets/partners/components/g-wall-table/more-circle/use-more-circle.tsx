@@ -7,14 +7,14 @@ import { CubeIcon } from "./icons/cube";
 import { CartIcon } from "./icons/cart";
 import {  useSetRecoilState} from "recoil";
 import { blockModalState, partnerInfoModalState } from "../../states";
-import { useGomakeRouter } from "@/hooks/use-gomake-router";
+import { useTranslation } from "react-i18next";
 
 const useMoreCircle = () => {
   
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const setOpenModal = useSetRecoilState<boolean>(blockModalState);
   const setOpenPartnerModal = useSetRecoilState<boolean>(partnerInfoModalState);
-  const { navigate } = useGomakeRouter();
+  const { t } = useTranslation();
 
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -26,32 +26,32 @@ const useMoreCircle = () => {
 
   const menuList = [
     {
-      name: "Go to orders",
+      name: t("partners.Partner info"),
       icon: <CubeIcon />,
       onclick: () => {setAnchorEl(null) , setOpenPartnerModal(true) },
     },
     {
-      name: "Go to quotes",
+      name: t("partners.Go to quotes"),
       icon: <SmallCubeIcon />,
       onclick: () => null,
     },
     {
-      name: "Cart",
+      name: t("partners.Cart"),
       icon: <CartIcon />,
       onclick: () => null,
     },
     {
-      name: "Payments",
+      name: t("partners.Payments"),
       icon: <DollarIcon />,
       onclick: () => null,
     },
     {
-      name: "Message",
+      name: t("partners.Message"),
       icon: <MailIcon />,
       onclick: () => null,
     },
     {
-      name: "Block",
+      name: t("partners.Block"),
       icon: <BlockIcon />,
       onclick: () => setOpenModal(true),
     }

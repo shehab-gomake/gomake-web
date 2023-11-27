@@ -23,7 +23,11 @@ const useStyle = () => {
                 height: convertHeightToVH(550),
             },
             buttonWrapper: {
-                padding: '18px 14px'
+                padding: '3px 14px'
+            },
+            deleteButtonDirection:{
+                display: "flex",
+                flexDirection: "row-reverse" as "row-reverse"
             },
             menuStyle: {
                 elevation: 0,

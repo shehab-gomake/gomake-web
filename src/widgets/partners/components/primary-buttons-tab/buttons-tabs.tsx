@@ -5,22 +5,23 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets/header-title";
-import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 import { DiscoverWidget } from "../discover/discover";
-import { WallSectionWidget } from "../g-wall-section/section";
+import { WallSectionWidget } from "../g-wall-section/collaboration-section";
 import { WallTableWidget } from "../g-wall-table/g-wall-table";
 import { RequestsTableWidget } from "../requests-table/requets-table";
-import { HeaderArrowIcon } from "../icons/arrow-icon";
+import { HeaderRightArrowIcon, HeaderLeftArrowIcon } from "../icons/arrow-icon";
+import { MyPartnersSectionWidget } from "../g-wall-section/my-partner-section";
 
 const PrimaryButtonsTabWidget = () => {
     const { t } = useTranslation();
     const [selectedTab, setSelectedTab] = useState(0);
     const { primaryColor } = useGomakeTheme();
     const { classes } = useStyle();
+    const dir: "rtl" | "ltr" = t("direction");
 
     const tabLabels = [
-        t('Collaboration'),
-        t('My partners'),
+        t('partners.collaboration'),
+        t('partners.myPartners'),
     ];
 
     const theme = createMuiTheme({
@@ -36,10 +37,10 @@ const PrimaryButtonsTabWidget = () => {
     };
 
     return (
-        <div style={{ width: "100%" }} >
-                <Stack direction={'row'} alignItems={"center"} gap={"10px"} marginBottom={"20px"}>
-                <HeaderTitle title={"Marketplace"} marginTop={"0px"} marginBottom={"0px"} />
-                <HeaderArrowIcon></HeaderArrowIcon>
+        <div style={{}}>
+            <Stack direction={'row'} alignItems={"center"} gap={"10px"} marginBottom={"20px"}>
+                <HeaderTitle title={t('partners.marketplace')} marginTop={"0px"} marginBottom={"0px"} />
+                {dir == "ltr" ? <HeaderRightArrowIcon /> : <HeaderLeftArrowIcon />}
                 <ThemeProvider theme={theme}  >
                     <Tabs
                         style={classes.container}
@@ -82,7 +83,8 @@ const PrimaryButtonsTabWidget = () => {
             {
                 selectedTab == 1 &&
                 <Stack direction={'column'} marginTop={'20px'} gap={'10px'} >
-                    <h2 style={classes.headerStyle}>Requests</h2>
+                    <MyPartnersSectionWidget />
+                    {/* <h2 style={classes.headerStyle}>{t("partners.headers.requests")}</h2> */}
                     <RequestsTableWidget />
                 </Stack>
             }

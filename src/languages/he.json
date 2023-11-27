@@ -125,13 +125,37 @@
       "selectType": "בחר סוג",
       "selectProduct": "בחר מוצר",
       "createQoute": "צור הצעה",
-      "SaveQuote":"שמור הצעה",
-      "AddItemToQuote":"הוסף פריט להצעה",
-      "pleaseSelectCustomer": "בחר לקוח בבקשה",
-      "pleaseSelectClientType": "בחר סוג לקוח בבקשה",
-      "pleaseSelectProduct": "בחר מוצר בבקשה"
-    }
-  },
+      "SaveQuote": "שמור הצעה",
+      "AddItemToQuote": "הוסף פריט להצעה",
+      "pleaseSelectCustomer": "בבקשה בחר לקוח",
+      "pleaseSelectClientType": "בבקשה בחר סוג לקוח",
+      "pleaseSelectProduct": "בבקשה בחר מוצר"
+    },
+    "headers": {
+      "offerNumber": "מספר הצעה",
+      "clientType": "סוג לקוח",
+      "jobName": "שם העבודה",
+      "productDate": "תאריך יצור",
+      "finalPrice": "מחיר סופי",
+      "status": "סטטוס",
+      "remark": "הערה",
+      "more": "עוד"
+    },
+    "tabs": {
+      "Quotes": "הצעות",
+      "Orders": "הזמנות",
+      "Items": "פריטים",
+      "Delivery": "משלוח",
+      "Invoice": "חשבונית",
+      "Receipt": "קבלה"
+    },
+    "quoteOutput": "פלט הצעה",
+    "addNew": "הוסף חדש",
+    "duplicate": "שכפול",
+  "documents": "מסמכים",
+  "loggers": "מתיחים"
+  }
+  ,
   "materials": {
     "inputs": {
       "categoryName": "שם קטגוריה",
@@ -247,17 +271,24 @@
       "noData": "אין נתונים"
     },
     "buttons": {
+      "add": "הוסף",
       "cancel": "ביטול",
       "delete": "מחיקה",
       "edit": "עריכה",
       "save": "שמירה",
       "saveModifications": "שמור שינויים",
       "duplicate": "שכפול",
-      "addNew": "הוסף חדש",
-      "back": "חזרה"
+      "back": "חזרה",
+      "addNew": "הוספת קטגוריה חדשה",
+      "addRow": "הוספת שורה",
+      "addNewRow": "הוספת שורה חדשה",
+      "openImage": "פתיחת תמונה",
+      "changeImage": "שינוי תמונה",
+      "selectImage": "בחר תמונה"
     },
     "modals": {
-      "subTitleDeleteModal": "האם אתה בטוח שברצונך למחוק את {{name}}"
+      "subTitleDeleteModal": "האם אתה בטוח שברצונך למחוק את {{name}}",
+      "uploadImage": "העלאת תמונה"
     },
     "sheetPaper": {
       "inputs": {
@@ -1454,7 +1485,7 @@
         "dontVAT": "לא כולל מע\"מ",
         "addOrder": "הוסף",
         "makeShape": "צור צורה משלך",
-        "chooseShape": "{{name}} צורה",
+        "chooseShape": "בחר צורה",
         "client": "לקוח",
         "quote": "ציטוט",
         "type": "סוג",
@@ -1611,7 +1642,21 @@
       "orderNowTitle": "הזמן כעת!",
       "createdBy": "נוצר על ידי {{name}}",
       "customer": "לקוח",
-      "orderList": "רשימת הזמנות"
+      "orderList": "רשימת הזמנות",
+      "deleteItem": "מחיקת פריט",
+      "areYouSureDeleteItem": "האם אתה בטוח שברצונך למחוק פריט זה?",
+      "amount": "סכום",
+      "itemCode": "קוד פריט",
+      "noPurchaseNumber": "אין מספר רכישה",
+      "addContact": "הוסף איש קשר",
+      "showMore": "הצג עוד",
+      "showLess": "הצג פחות",
+      "noMobileContact": "אין יצירת קשר ניידה",
+      "noContactEmail": "אין דואר אלקטרוני ליצירת קשר",
+      "writeCommentHere": "כתוב את התגובה שלך כאן",
+      "attachFiles": "צרף קבצים",
+      "copyTo": "העתק אל",
+      "managerApproval": "אישור מנהל"
     }
   },
   "usersSettings": {
@@ -2086,78 +2131,77 @@
       "documentinCreation" : "יצירת מסמכים",
       "docmentType" : "סוג מסמך"
     },
-    "TitleDefinition":{
-      "TitleDefinition":"הגדרת כותרת",
-      "defaultFormat":"ברירת מחדל",
-      "BusinessName" : "שם עסק ",
-      "H.P./authorizedDealer" :"סוחר מורשה",
-      "LogoUpload":"העלאת לוגו",
-      "CustomLogo":"לוגו מותאם אישית"
+    "TitleDefinition": {
+      "TitleDefinition": "הגדרת כותרת",
+      "defaultFormat": "ברירת מחדל",
+      "BusinessName": "שם עסק ",
+      "H.P./authorizedDealer": "סוחר מורשה",
+      "LogoUpload": "העלאת לוגו",
+      "CustomLogo": "לוגו מותאם אישית"
     },
-    "TableSetting":{
-        "TableSetting":"הגדרות טבלה",
-        "defaultFormat":"ברירת מחדל",
-        "TableHeaderbgcolor":"צבע רקע כותרת הטבלה:",
-        "Tabletextcolor":"צבע טקסט הטבלה:",
-        "Verticalbordercolor":"צבע גבול אנכי בטבלה:",
-        "Horizontalbordercolor":"צבע גבול אופקי בטבלה:",
-        "Placementoftext":"מיקום טקסט בטבלה:"
+    "TableSetting": {
+      "TableSetting": "הגדרות טבלה",
+      "defaultFormat": "ברירת מחדל",
+      "TableHeaderbgcolor": "צבע רקע כותרת הטבלה:",
+      "Tabletextcolor": "צבע טקסט הטבלה:",
+      "Verticalbordercolor": "צבע גבול אנכי בטבלה:",
+      "Horizontalbordercolor": "צבע גבול אופקי בטבלה:",
+      "Placementoftext": "מיקום טקסט בטבלה:"
     },
-    "Additional":{
-      "Additional":"נוסף",
-      "Remarks":"הערות",
-      "Options":"אפשרויות",
-      "Viewsalesperson":"הצג איש מכירות",
-      "Viewdocproducer" : "הצג מפיק מסמך",
-      "Showpaymentdate" : "הצג תאריך תשלום",
-      "Showcustomertype" : "הצג סוג לקוח",
-      "Showcustomercode":"הצג קוד לקוח",
-      "Viewcustomerbalance" : "הצג יתרת לקוח",
-      "Showpaymentterms" : "הצג תנאי תשלום",
-      "Showtaxpayable" : "הצג אם חייב בניכוי במקור"
+    "Additional": {
+      "Additional": "נוסף",
+      "Remarks": "הערות",
+      "Options": "אפשרויות",
+      "Viewsalesperson": "הצג איש מכירות",
+      "Viewdocproducer": "הצג מפיק מסמך",
+      "Showpaymentdate": "הצג תאריך תשלום",
+      "Showcustomertype": "הצג סוג לקוח",
+      "Showcustomercode": "הצג קוד לקוח",
+      "Viewcustomerbalance": "הצג יתרת לקוח",
+      "Showpaymentterms": "הצג תנאי תשלום",
+      "Showtaxpayable": "הצג אם חייב בניכוי במקור"
     },
-    "Footer":{
-      "Footer":"הגדרות כותרת תחתונה",
-      "Manualfooter" : "כותרת תחתונה ידנית",
-      "Email":"דוא''ל:",
-      "Phone":"טלפון:",
-      "Address":"כתובת:",
-      "FooterImage":"כותרת תחתונה: תמונה "
+    "Footer": {
+      "Footer": "הגדרות כותרת תחתונה",
+      "Manualfooter": "כותרת תחתונה ידנית",
+      "Email": "דוא''ל:",
+      "Phone": "טלפון:",
+      "Address": "כתובת:",
+      "FooterImage": "כותרת תחתונה: תמונה "
     },
-    "QRCodes":{
-      "QRCodes":"קודי QR",
-      "PDFproductionQrCodes":"הפקת PDF - קודי QR",
-      "DisplayQRcodesinaworkorderdocument" : "הצג קודי QR במסמך הזמנת עבודה",
-      "Showpaymentdate":"הצג את תאריך התשלום",
-      "DisplayaninitialQRCode" : "הצג קוד QR ראשוני עבור כל ההזמנה בתוך PD הייצורF",
-      "displayall":"להציג את כל הסוגים בכמויות שוות ב-PDF של PACA",
-      "ShowStarted":"הצג QRs התחילו והסתיימו ב-PDF להפקה"
+    "QRCodes": {
+      "QRCodes": "קודי QR",
+      "PDFproductionQrCodes": "הפקת PDF - קודי QR",
+      "DisplayQRcodesinaworkorderdocument": "הצג קודי QR במסמך הזמנת עבודה",
+      "Showpaymentdate": "הצג את תאריך התשלום",
+      "DisplayaninitialQRCode": "הצג קוד QR ראשוני עבור כל ההזמנה בתוך PD הייצורF",
+      "displayall": "להציג את כל הסוגים בכמויות שוות ב-PDF של PACA",
+      "ShowStarted": "הצג QRs התחילו והסתיימו ב-PDF להפקה"
     },
-    "IframeDocument":{
-      "Document" : "מסמך"
-
+    "IframeDocument": {
+      "Document": "מסמך"
     }
   },
-  "documentType":{
-    "Order" :"הזזמנה",
-    "Invoice":"חשבונית",
-    "DeliveryNotes":"תעודת משלוח",
-    "Purchase":"הזמנת רכש",
-    "InvoiceRefund":"חשבונית זיכוי",
-    "Receipt":"קבלה",
-    "JournalEntry":"ערך יומן",
-    "PurchaseInvoice":"חשבונית ספק",
-    "PurchaseInvoiceRefund":"חשבונית ספק זיכוי",
-    "ForeignJournalEntry":"ערך יומן זר",
-    "DeliveryNoteRefund":"החזר תעודת משלוח",
-    "Quote":"הצעה",
-    "ExternalInvoice":"חשבונית חיצונית",
-    "All":"הכל",
-    "ExternalPayment":"תשלום חיצוני",
-    "BoardMission":"פקודות עבודה",
-    "AgingReport":"דוח הזדקנות",
-    "LedgerReport":"דוח חשבונות",
-    "SalesReport":"דווח מכירות"
+  "documentType": {
+    "Order": "הזזמנה",
+    "Invoice": "חשבונית",
+    "DeliveryNotes": "תעודת משלוח",
+    "Purchase": "הזמנת רכש",
+    "InvoiceRefund": "חשבונית זיכוי",
+    "Receipt": "קבלה",
+    "JournalEntry": "ערך יומן",
+    "PurchaseInvoice": "חשבונית ספק",
+    "PurchaseInvoiceRefund": "חשבונית ספק זיכוי",
+    "ForeignJournalEntry": "ערך יומן זר",
+    "DeliveryNoteRefund": "החזר תעודת משלוח",
+    "Quote": "הצעה",
+    "ExternalInvoice": "חשבונית חיצונית",
+    "All": "הכל",
+    "ExternalPayment": "תשלום חיצוני",
+    "BoardMission": "פקודות עבודה",
+    "AgingReport": "דוח הזדקנות",
+    "LedgerReport": "דוח חשבונות",
+    "SalesReport": "דווח מכירות"
   },
   "mailingSettings": {
     "emailSetting": "הגדרות דואר אלקטרוני",
@@ -2202,5 +2246,91 @@
     "addNewAttachment": "הוסף קובץ מצורף חדש",
     "sendFrom": "שלח מהדואר האלקטרוני",
     "noAttachment": "אין קובץ מצורף"
-  }
+  },
+  "partners": {
+    "options": {
+        "active": "פעיל",
+        "inActive": "לא פעיל",
+        "today": "היום",
+        "tomorrow": "מחר",
+        "nextWeek": "השבוע הבא",
+        "products": "מוצרים",
+        "printingHouse": "בית הדפוס",
+        "machine": "המכונה",
+        "location": "המיקום",
+        "action": "הפעולה",
+        "dieCut": "חיתוך במקובע",
+        "roleSlickers": "מדבקות תפקיד",
+        "labels": "תווי זיהוי",
+        "paperProducts": "מוצרי נייר",
+        "bookCover": "כריכת ספר"
+    },
+    "headers": {
+        "id": "מספר זיהוי",
+        "partners": "שותפים",
+        "quoteNumber": "מספר הצעה",
+        "view": "תצוגה",
+        "response": "תגובה",
+        "totalProducts": "סך המוצרים",
+        "totalQuotes": "סך ההצעות מחיר",
+        "successRate": "שיעור הצלחה",
+        "more": "עוד",
+        "requests": "בקשות",
+        "name": "שם",
+        "logo": "לוגו",
+        "country": "מדינה",
+        "city": "עיר",
+        "partnerType": "סוג השותף",
+        "status": "סטטוס"
+    },
+    "Drawer": {
+        "PartnerInfo": "מידע על השותף",
+        "Overview": "סקירה כללית",
+        "Vision": "חזון",
+        "Team member": "חבר בצוות",
+        "Aprofessional": "בית דפוס מקצועי המתמחה בספק פתרונות הדפסה באיכות גבוהה לצרכים מגוונים.",
+        "TransformPrint": "המרת הדפסה לחוויה מהפכנית, קידום יחסים חזקים וקבועים בנויים על ישרות, שקיפות ומעולף משולב.",
+        "addPartner": "הוסף שותף",
+        "Contact information": "פרטי יצירת קשר",
+        "TiraPalestine": "טירה, פלסטין",
+        "TiraPress": "מדפסת טירה",
+        "4.9": "4.9"
+    },
+    "marketplace": "השוק",
+    "collaboration": "השתתפות",
+    "myPartners": "השותפים שלי",
+    "What are you looking for?": "מה את/ה מחפש/ת?",
+    "Search for company, product, machine, etc..": "חיפוש אחרי חברה, מוצר, מכונה, וכו'.",
+    "search": "חיפוש",
+    "addNew": "הוסף חדש",
+    "categories": "קטגוריות",
+    "date": "תאריך",
+    "subCategory": "תת קטגוריה",
+    "status": "סטטוס",
+    "totalPartners": "סך השותפים",
+    "activePartners": "שותפים פעילים",
+    "successRate": "שיעור הצלחה",
+    "totalOrders": "סך ההזמנות",
+    "waitingRequests": "בקשות בהמתנה",
+    "blockPrintingHouse": "חסום בית דפוס",
+    "Are you sure that you want to block this printing house from your partner list?": "האם את/ה בטוח/ה שברצונך לחסום בית הדפוס הזה מרשימת השותפים שלך?",
+    "cancel": "ביטול",
+    "block": "חסימה",
+    "Partner info": "מידע על השותף",
+    "Go to quotes": "עבור להצעות מחיר",
+    "Cart": "עגלה",
+    "Payments": "תשלומים",
+    "Message": "הודעה",
+    "Block": "חסימה",
+    "Transfer to partial": "העבר לחלקי",
+    "Connect with category": "התחברות עם קטגוריה",
+    "Connect with machine": "התחברות עם מכונה",
+    "totalOrdersQuote": "סך הזמנות להצעה",
+    "waitingForReview": "ממתין לסקירה",
+    "approved": "אושר",
+    "declined": "נדחה",
+    "blocked": "חסום",
+    "waitingToApprove": "ממתין לאישור"
+}
+
 }

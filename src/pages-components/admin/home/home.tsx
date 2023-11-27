@@ -19,7 +19,7 @@ const HomePageComponentForAdmin = ({ isAdmin }) => {
         <ChartWidget />
       </div>
       <div style={classes.secondRowContainer}>
-        <div style={classes.titleStyle}>{t("Quote output")}</div>
+        <div style={classes.titleStyle}>{t("home.quoteOutput")}</div>
         <QuoteTableWidget isAdmin={isAdmin} />
       </div>
     </div>

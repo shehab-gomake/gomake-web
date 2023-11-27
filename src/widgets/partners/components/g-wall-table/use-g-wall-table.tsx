@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import { useState } from "react";
 import React from "react";
 import { HeaderTitle } from "@/widgets/header-title";
-import { HeaderArrowIcon } from "../icons/arrow-icon";
+import { HeaderLeftArrowIcon, HeaderRightArrowIcon } from "../icons/arrow-icon";
 import { GeneralCard } from "./components.tsx/general-card";
 import { partnerInfoModalState } from "../states";
 import { useRecoilState } from "recoil";
@@ -22,6 +22,7 @@ type Anchor = 'top' | 'left' | 'bottom' | 'right';
 const useWallTableWidget = () => {
     const { classes } = useStyle();
     const { t } = useTranslation();
+    const dir: "rtl" | "ltr" = t("direction");
 
     function createData(
         id: any,
@@ -29,7 +30,6 @@ const useWallTableWidget = () => {
         quoteNumber: any,
         response: any,
         view: any,
-        totalProducts: any,
         totalQuotes: any,
         successRate: any,
         more: any,
@@ -41,26 +41,22 @@ const useWallTableWidget = () => {
             quoteNumber,
             response,
             view,
-            totalProducts,
             totalQuotes,
             successRate,
             more
         };
     }
 
-    <Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33772099_8109544.svg"} alt="logo" width={40} height={40}/>
+    <Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33772099_8109544.svg"} alt="logo" width={40} height={40} />
     const rows = [
-        createData("1", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />{t("Tira Press")}</span>, "X64654654", <CreateOutlinedIcon/>, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '322', '322', '45%', <MoreMenuWidget />),
-        createData("2", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33068038_7979631.jpg"} alt="logo" width={40} height={40}/>{t("FREEPRINT")}</span>, "TT1543", <CreateOutlinedIcon/>, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>, '300', '4000', '69%', <MoreMenuWidget />),
-        createData("3", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33076540_8014175.jpg"} alt="logo" width={40} height={40}/>Digital Print</span>, "TT1544", <CreateOutlinedIcon/>, <div style={{ display: "flex", justifyContent: "center" }}><h2 style={classes.acceptedStyle}>Accept</h2></div>, '150', '1600', '30%', <MoreMenuWidget />),
-        createData("4", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/34630260_8025507.jpg"} alt="logo" width={40} height={40}/>Print Studio</span>, "TT1546", <CreateOutlinedIcon/>, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '130', '2700', '25%', <MoreMenuWidget />),
-        createData("5", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33068033_7983307.jpg"} alt="logo" width={40} height={40}/>Ok Printer</span>, "TT1548", <CreateOutlinedIcon/>, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>, '230', '1200', '48%', <MoreMenuWidget />),
-        createData("6", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33758854_8085381.jpg"} alt="logo" width={40} height={40}/>Screenox</span>, "X64654659", <CreateOutlinedIcon/>, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '350', '3500', '70%', <MoreMenuWidget />),
-        createData("7", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33772094_8109564.jpg"} alt="logo" width={40} height={40}/>Company name</span>, "X64654658", <CreateOutlinedIcon/>, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>, '200', '1450', '50%', <MoreMenuWidget />),
-        createData("8", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33758854_8085381.jpg"} alt="logo" width={40} height={40}/>Company name</span>, "TT1558", <CreateOutlinedIcon/>, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '180', '1000', '60%', <MoreMenuWidget />),
-        createData("9", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33758854_8085381.jpg"} alt="logo" width={40} height={40}/>Company name</span>, "TT1568", <CreateOutlinedIcon/>, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '310', '2100', '53%', <MoreMenuWidget />),
-
-
+        createData("1", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />{t("Tira Press")}</span>, "X64654654", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>,  '322', '45%', <MoreMenuWidget />),
+        createData("2", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33068038_7979631.jpg"} alt="logo" width={40} height={40} />{t("FREEPRINT")}</span>, "TT1543", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>,'4000', '69%', <MoreMenuWidget />),
+        createData("3", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/Untitled-1-02.png"} alt="logo" width={40} height={40} />Digital Print</span>, "TT1544", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }}><h2 style={classes.acceptedStyle}>Accept</h2></div>,  '1600', '30%', <MoreMenuWidget />),
+        createData("4", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/34630260_8025507.jpg"} alt="logo" width={40} height={40} />Print Studio</span>, "TT1546", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>,  '2700', '25%', <MoreMenuWidget />),
+        createData("5", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33068033_7983307.jpg"} alt="logo" width={40} height={40} />Ok Printer</span>, "TT1548", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>,  '1200', '48%', <MoreMenuWidget />),
+        createData("6", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33758854_8085381.jpg"} alt="logo" width={40} height={40} />Screenox</span>, "X64654659", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>,  '3500', '70%', <MoreMenuWidget />),
+        createData("7", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33772094_8109564.jpg"} alt="logo" width={40} height={40} />Printing House</span>, "X64654658", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>,  '1450', '50%', <MoreMenuWidget />),
+        createData("8", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/Untitled-1-01.png"} alt="logo" width={40} height={40} />Dubai Printing Press</span>, "TT1568", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '2100', '53%', <MoreMenuWidget />),
     ];
 
     const [openPartnerModal, setOpenPartnerModal] = useRecoilState<boolean>(partnerInfoModalState);
@@ -92,15 +88,14 @@ const useWallTableWidget = () => {
             onKeyDown={() => setOpenPartnerModal(false)}
         >
             <Stack direction={'row'} alignItems={"center"} gap={"10px"} marginBottom={"20px"}>
-                <HeaderTitle title={"Partner info"} marginTop={"0px"} marginBottom={"0px"} />
-                <HeaderArrowIcon></HeaderArrowIcon>
+                <HeaderTitle title={t("partners.Drawer.PartnerInfo")} marginTop={"0px"} marginBottom={"0px"} />
+                {dir == "ltr" ? <HeaderRightArrowIcon /> : <HeaderLeftArrowIcon />}
             </Stack>
             <Stack direction={'column'} gap={"20px"} >
-
                 <GeneralCard></GeneralCard>
-                <GeneralSection title="Overview" subTitle="A professional printing house that specializes in provide high-quality printing solutions for a wide range of needs."></GeneralSection>
-                <GeneralSection title="Vision" subTitle="Transform print into a transformative experience,Foster strong, enduring relationships built on integrity, transparency, and shared excellence."></GeneralSection>
-                <MembersSection title="Team member"></MembersSection>
+                <GeneralSection title={t("partners.Drawer.Overview")} subTitle={t("partners.Drawer.Aprofessional")}></GeneralSection>
+                <GeneralSection title={t("partners.Drawer.Vision")} subTitle={t("partners.Drawer.TransformPrint")}></GeneralSection>
+                <MembersSection title={t("partners.Drawer.Team member")}></MembersSection>
                 <InfoSection />
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Image
@@ -109,7 +104,7 @@ const useWallTableWidget = () => {
                         width={150}
                         height={150}
                     /></div>
-                <SecondaryButton variant="contained" style={{ width: "160px", height: "40px", alignSelf: "center" , lineHeight:"15px" , position: "fixed" as "fixed", bottom: "15px",}}>Add partner</SecondaryButton>
+                <SecondaryButton variant="contained" style={{ width: "160px", height: "40px", alignSelf: "center", lineHeight: "15px", position: "fixed" as "fixed", bottom: "15px", }}>{t("partners.Drawer.addPartner")}</SecondaryButton>
             </Stack>
         </Box>
     );

@@ -13,15 +13,16 @@ interface IProps {
 }
 const GeneralCard = ({ title, subTitle, Icon }: IProps) => {
     const { classes } = useStyle();
+    const { t } = useTranslation();
 
     return (
         <Stack direction={'row'} gap={"6px"} alignItems={"center"}>
             <TiraBigIcon />
             <Stack direction={'column'} >
-                <h6 style={classes.titleStyle}>Company name</h6>
+                <h6 style={classes.titleStyle}>{t("partners.Drawer.TiraPress")}</h6>
                 <Stack direction={'row'} alignItems={"center"} gap={"4px"}>
                     <LocationIcon />
-                    <h1 style={classes.subTitleStyle}>Tira, Palestine</h1>
+                    <h1 style={classes.subTitleStyle}>{t("partners.Drawer.TiraPalestine")}</h1>
                 </Stack>
             </Stack>
             <Box
@@ -39,7 +40,7 @@ const GeneralCard = ({ title, subTitle, Icon }: IProps) => {
                     max={1}
                     emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
                 />
-                <Box sx={{ ml: 0.5 }}>4.9</Box>
+                <Box sx={{ ml: 0.5 }}>{t("partners.Drawer.4.9")}</Box>
             </Box>
         </Stack>
     )

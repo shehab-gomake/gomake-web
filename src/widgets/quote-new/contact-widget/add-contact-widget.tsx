@@ -3,6 +3,8 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { GomakePrimaryButton } from "@/components";
+import { WastebasketNew2 } from "@/icons";
+import { IconButton } from "@mui/material";
 
 const AddContactNewWidget = ({
   clientContactsValue,
@@ -19,6 +21,7 @@ const AddContactNewWidget = ({
   setIsUpdateContactEmail,
   onInputChangeMail,
   onClickAddNewContact,
+  setIsDisplayWidget,
 }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -28,7 +31,6 @@ const AddContactNewWidget = ({
       <div style={clasess.businessContainerStyle}>
         <AutoCompleteUpdatedValue
           label={t("sales.quote.contactName")}
-          // value={selectedAgent?.text}
           options={clientContactsValue}
           onBlur={onBlurContactName}
           isUpdate={true}
@@ -43,7 +45,7 @@ const AddContactNewWidget = ({
           value={
             selectedContactById?.phone !== null
               ? selectedContactById?.phone
-              : "No mobile contact"
+              : t("sales.quote.noMobileContact")
           }
           label={t("sales.quote.mobileContact")}
           onBlur={onBlurContactMobile}
@@ -55,7 +57,7 @@ const AddContactNewWidget = ({
           value={
             selectedContactById?.mail !== null
               ? selectedContactById?.mail
-              : "No contact email"
+              : t("sales.quote.noContactEmail")
           }
           label={t("sales.quote.contactEmail")}
           onBlur={onBlurContactEmail}
@@ -67,8 +69,14 @@ const AddContactNewWidget = ({
           style={clasess.saveBtnStyle}
           onClick={onClickAddNewContact}
         >
-          Save
+          {t("materials.buttons.save")}
         </GomakePrimaryButton>
+        <IconButton
+          onClick={() => setIsDisplayWidget(false)}
+          style={{ padding: 4 }}
+        >
+          <WastebasketNew2 />
+        </IconButton>
       </div>
     </>
   );

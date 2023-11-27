@@ -24,29 +24,19 @@ import {EWidgetProductType} from "@/pages-components/products/digital-offset-pri
 import {compareStrings} from "@/utils/constants";
 import {EButtonTypes, EParameterTypes} from "@/enums";
 import lodashClonedeep from "lodash.clonedeep";
+
+import { maltiParameterState } from "@/widgets/shared-admin-customers/digital-offset-price/multi-parameter-modal/store/multi-param-atom";
+import { InputNumberParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
+import { DropDownListParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/drop-down-list-parameter";
+import { SelectChildParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-child-parameter";
+import { SWITCHParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/switch-parameter";
+import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
+import { SelectMaterialsParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
 import {
-    maltiParameterState
-} from "@/widgets/shared-admin-customers/digital-offset-price/multi-parameter-modal/store/multi-param-atom";
-import {
-    InputNumberParameterWidget
-} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
-import {
-    DropDownListParameterWidget
-} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/drop-down-list-parameter";
-import {
-    SelectChildParameterWidget
-} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-child-parameter";
-import {
-    SWITCHParameterWidget
-} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/switch-parameter";
-import {
-    ButtonParameterWidget
-} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
-import {
-    SelectMaterialsParameterWidget
-} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
-import {jobActionsState, jobDetailsState, workFlowsState} from "@/widgets/product-pricing-widget/state";
-import {getOutsourcingSuppliersListApi} from "@/services/api-service/suppliers/suppliers-endpoints";
+  jobActionsState,
+  jobDetailsState,
+  workFlowsState,
+} from "@/widgets/product-pricing-widget/state";
 
 const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const {navigate} = useGomakeRouter();
@@ -638,25 +628,27 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         setSubProductsWithType(result);
     }, [subProducts]);
 
-    useEffect(() => {
-        let temp = [...generalParameters, ...subProductsWithType];
-        setItemParmetersValues(temp);
-    }, [generalParameters, subProductsWithType, subProducts]);
-    const handleChange =
-        (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
-            setExpanded(newExpanded ? panel : false);
-        };
-    const _getParameter = (parameter: any, subSection: any, section: any) => {
-        if (subSection?.type) {
-            const allParameters = subProducts.flatMap((item) => item.parameters);
-            let temp = [...allParameters];
-            const index = temp.findIndex(
-                (item) =>
-                    item?.parameterId === parameter?.id &&
-                    item?.sectionId === section?.id &&
-                    item?.subSectionId === subSection?.id &&
-                    item?.actionIndex === parameter?.actionIndex
-            );
+
+  useEffect(() => {
+    let temp = [...generalParameters, ...subProductsWithType];
+    const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
+    setItemParmetersValues(filteredArray);
+  }, [generalParameters, subProductsWithType, subProducts]);
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
+  const _getParameter = (parameter: any, subSection: any, section: any) => {
+    if (subSection?.type) {
+      const allParameters = subProducts.flatMap((item) => item.parameters);
+      let temp = [...allParameters];
+      const index = temp.findIndex(
+        (item) =>
+          item?.parameterId === parameter?.id &&
+          item?.sectionId === section?.id &&
+          item?.subSectionId === subSection?.id &&
+          item?.actionIndex === parameter?.actionIndex
+      );
 
             return temp[index];
         } else {
@@ -1114,46 +1106,35 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         return isValid;
     };
 
-    const calculationProduct = useCallback(async () => {
-        let checkParameter = validateParameters(isRequiredParameters);
-        if (!!checkParameter) {
-            setLoading(true);
-            const res = await callApi(
-                "POST",
-                `/v1/calculation-service/calculations/calculate-product`,
-                {
-                    clientId: router?.query?.customerId,
-                    clientTypeId: router?.query?.clientTypeId,
-                    productId: router?.query?.productId,
-                    generalParameters: generalParameters,
-                    subProducts: subProducts,
-                },
-                false
-            );
-            //Check it is work
-            if (res?.success) {
-                setPricingDefaultValue(res?.data?.data?.data);
-                setWorkFlows(res?.data?.data?.data?.workFlows?.map((flow, index) => ({id: index.toString(), ...flow})));
-                setJobActions(res?.data?.data?.data?.actions)
-            }
-            setLoading(false);
-        }
-    }, [
-        generalParameters,
-        subProducts,
-        router,
-        isRequiredParameters,
-        validateParameters,
-    ]);
-    const getOutsourcingSuppliers =  () => {
-         getOutsourcingSuppliersListApi(callApi, () => {
-        }, {
-            clientId: router?.query?.customerId,
-            clientTypeId: router?.query?.clientTypeId,
-            productId: router?.query?.productId,
-            generalParameters: generalParameters,
-            subProducts: subProducts,
-        }).then()
+
+  const calculationProduct = useCallback(async () => {
+    let checkParameter = validateParameters(isRequiredParameters);
+    if (!!checkParameter) {
+      setLoading(true);
+      const res = await callApi(
+        "POST",
+        `/v1/calculation-service/calculations/calculate-product`,
+        {
+          clientId: router?.query?.customerId,
+          clientTypeId: router?.query?.clientTypeId,
+          productId: router?.query?.productId,
+          generalParameters: generalParameters,
+          subProducts: subProducts,
+        },
+        false
+      );
+      //Check it is work
+      if (res?.success) {
+        setPricingDefaultValue(res?.data?.data?.data);
+        setWorkFlows(
+          res?.data?.data?.data?.workFlows?.map((flow, index) => ({
+            id: index.toString(),
+            ...flow,
+          }))
+        );
+        setJobActions(res?.data?.data?.data?.actions);
+      }
+      setLoading(false);
     }
     const
         PricingTab = {
@@ -1309,73 +1290,73 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         }
     };
 
-    useEffect(() => {
-        setPricingDefaultValue({
-            actions: jobActions,
-            workFlows,
-            jobDetails
-        });
-    }, [workFlows, jobActions, jobDetails])
 
-    // useEffect(() => {
-    //   let temp = [...generalParameters];
-    //   const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
-    // }, [generalParameters]);
-    return {
-        t,
-        handleTabClick,
-        handleNextClick,
-        handlePreviousClick,
-        onOpeneMakeShape,
-        onCloseGalleryModal,
-        onCloseMakeShape,
-        setDefaultPrice,
-        onChangeForPrice,
-        handleChange,
-        _renderParameterType,
-        _getParameter,
-        createProfitTestCase,
-        renderOptions,
-        checkWhatRenderArray,
-        navigate,
-        navigateForRouter,
-        updateQuoteItem,
-        setUrgentOrder,
-        setPrintingNotes,
-        setGraphicNotes,
-        setPriceRecovery,
-        onOpeneMultiParameterModal,
-        onCloseMultiParameterModal,
-        setSamlleType,
-        duplicateParameters,
-        setTemplate,
-        multiParameterModal,
-        settingParameters,
-        priceRecovery,
-        graphicNotes,
-        printingNotes,
-        urgentOrder,
-        defaultPrice,
-        makeShapeOpen,
-        GalleryModalOpen,
-        activeIndex,
-        template,
-        tabs,
-        activeTab,
-        PricingTab,
-        expanded,
-        clientDefaultValue,
-        clientTypeDefaultValue,
-        clientTypesValue,
-        pricingDefaultValue,
-        errorMsg,
-        workFlowSelected,
-        relatedParameters,
-        workFlows,
-        jobDetails,
-        jobActions,
-      getOutsourcingSuppliers
-    };
+  useEffect(() => {
+    setPricingDefaultValue({
+      actions: jobActions,
+      workFlows,
+      jobDetails,
+    });
+  }, [workFlows, jobActions, jobDetails]);
+
+  // useEffect(() => {
+  //   let temp = [...generalParameters];
+  //   const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
+  // }, [generalParameters]);
+  return {
+    t,
+    handleTabClick,
+    handleNextClick,
+    handlePreviousClick,
+    onOpeneMakeShape,
+    onCloseGalleryModal,
+    onCloseMakeShape,
+    setDefaultPrice,
+    onChangeForPrice,
+    handleChange,
+    _renderParameterType,
+    _getParameter,
+    createProfitTestCase,
+    renderOptions,
+    checkWhatRenderArray,
+    navigate,
+    navigateForRouter,
+    updateQuoteItem,
+    setUrgentOrder,
+    setPrintingNotes,
+    setGraphicNotes,
+    setPriceRecovery,
+    onOpeneMultiParameterModal,
+    onCloseMultiParameterModal,
+    setSamlleType,
+    duplicateParameters,
+    setTemplate,
+    multiParameterModal,
+    settingParameters,
+    priceRecovery,
+    graphicNotes,
+    printingNotes,
+    urgentOrder,
+    defaultPrice,
+    makeShapeOpen,
+    GalleryModalOpen,
+    activeIndex,
+    template,
+    tabs,
+    activeTab,
+    PricingTab,
+    expanded,
+    clientDefaultValue,
+    clientTypeDefaultValue,
+    clientTypesValue,
+    pricingDefaultValue,
+    errorMsg,
+    workFlowSelected,
+    relatedParameters,
+    workFlows,
+    jobDetails,
+    jobActions,
+  };
 };
 
 export {useDigitalOffsetPrice};
