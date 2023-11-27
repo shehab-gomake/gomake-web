@@ -75,7 +75,7 @@ const MaterialsWidget = () => {
                                      variant={'contained'}>Upload</SecondaryButton>
                 </Stack>
 
-                <Stack direction={'row'} style={{marginTop:10}}>
+                <Stack direction={'row'} style={{marginTop: 10}}>
                     <PrimaryButton onClick={() => setOpenAddCategoryModal(true)}
                                    variant={'contained'}>{t("materials.buttons.addNew")}</PrimaryButton>
                 </Stack>
@@ -114,38 +114,41 @@ const MaterialsWidget = () => {
 
 
     return (
-        <div style={{maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT - 20), overflow: 'hidden'}}>
         <>
-            <SideBarContainer side={Side()} header={materialType?.toString()} subHeader={''}>
-                {materialCategory && <Stack gap={2}>
-                    <Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-start'}>
-                        <h4 style={classes.subHeader}>{materialCategory?.toString()}</h4>
-                        <FiltersActionsBar/>
-                    </Stack>
+            <div style={{maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT - 20), overflow: 'hidden'}}>
+                <SideBarContainer side={Side()} header={materialType?.toString()} subHeader={''}>
+                    {materialCategory && <Stack gap={2}>
+                        <Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-start'}>
+                            <h4 style={classes.subHeader}>{materialCategory?.toString()}</h4>
+                            <FiltersActionsBar/>
+                        </Stack>
 
-                        <div style={{paddingBottom: '30px'}}><PrimaryTable rows={tableRows} headers={tableHeaders()}/></div> :
-                    {materialCategoryData.length > 0 ?
-                        <PrimaryTable rows={tableRowData} headers={tableHeadersData}/> :
-                        (flag && materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ?
-                            <PrimaryTable rows={tableRowsNew} headers={tableHeadersNew()}/>
-                            :
-                            <div style={classes.noData}>
-                                {t("materials.sheetPaper.supplierAddedSheetYet")}
-                                <span
-                                    style={classes.noDataSpan}
-                                    onClick={() => {
-                                        setOpenAddSupplierModal(true)
-                                    }}>
+                        <div style={{paddingBottom: '30px'}}><PrimaryTable rows={tableRows} headers={tableHeaders()}/>
+                        </div>
+                        :
+                        {materialCategoryData.length > 0 ?
+                            <PrimaryTable rows={tableRowData} headers={tableHeadersData}/> :
+                            (flag && materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ?
+                                <PrimaryTable rows={tableRowsNew} headers={tableHeadersNew()}/>
+                                :
+                                <div style={classes.noData}>
+                                    {t("materials.sheetPaper.supplierAddedSheetYet")}
+                                    <span
+                                        style={classes.noDataSpan}
+                                        onClick={() => {
+                                            setOpenAddSupplierModal(true)
+                                        }}>
                                     {t("materials.sheetPaper.pleaseAddNow")}
                                 </span>
-                            </div>}
-                </Stack>}
+                                </div>}
+                    </Stack>}
+                    <AddSupplierModal/>
+                    <AddCategoryModal/>
+                    <AddRowModal/>
+                </SideBarContainer>
                 <AddSupplierModal/>
-                <AddCategoryModal/>
-                <AddRowModal/>
-            </SideBarContainer>
-            <AddSupplierModal/>
-        </div>
+            </div>
+        </>
     );
 }
 
