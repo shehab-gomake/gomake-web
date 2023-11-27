@@ -2304,7 +2304,13 @@
     "Block": "חסימה",
     "Transfer to partial": "העבר לחלקי",
     "Connect with category": "התחברות עם קטגוריה",
-    "Connect with machine": "התחברות עם מכונה"
+    "Connect with machine": "התחברות עם מכונה",
+    "totalOrdersQuote": "סך הזמנות להצעה",
+    "waitingForReview": "ממתין לסקירה",
+    "approved": "אושר",
+    "declined": "נדחה",
+    "blocked": "חסום",
+    "waitingToApprove": "ממתין לאישור"
 }
 
 }

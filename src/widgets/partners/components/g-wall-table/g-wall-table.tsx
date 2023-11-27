@@ -35,7 +35,6 @@ const WallTableWidget = () => {
                         <TableCell style={classes.headersStyle} align="center">{t("partners.headers.quoteNumber")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("partners.headers.view")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("partners.headers.response")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("partners.headers.totalProducts")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("partners.headers.totalQuotes")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("partners.headers.successRate")}</TableCell>
                         <TableCell style={classes.headersStyle} align="right">{t("partners.headers.more")}</TableCell>
@@ -50,7 +49,6 @@ const WallTableWidget = () => {
                             <TableCell style={classes.dataRowStyle} align="center">{row.quoteNumber}</TableCell>
                             <TableCell style={classes.dataRowStyle} align="center">{row.response}</TableCell>
                             <TableCell style={classes.dataRowStyle} align="center">{row.view}</TableCell>
-                            <TableCell style={classes.dataRowStyle} align="center">{row.totalProducts}</TableCell>
                             <TableCell style={classes.dataRowStyle} align="center">{row.totalQuotes}</TableCell>
                             <TableCell style={classes.dataRowStyle} align="center">{row.successRate}</TableCell>
                             <TableCell align="right">{row.more}</TableCell>

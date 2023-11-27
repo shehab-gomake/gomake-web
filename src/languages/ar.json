@@ -2220,6 +2220,12 @@
     "Block": "حظر",
     "Transfer to partial": "نقل إلى جزئي",
     "Connect with category": "الاتصال بالفئة",
-    "Connect with machine": "الاتصال بالآلة"
+    "Connect with machine": "الاتصال بالآلة",
+    "totalOrdersQuote": "إجمالي الطلبات للعرض",
+    "waitingForReview": "في انتظار المراجعة",
+    "approved": "تمت الموافقة عليه",
+    "declined": "تم رفضه",
+    "blocked": "تم حظره",
+    "waitingToApprove": "في انتظار الموافقة"
   }
 }

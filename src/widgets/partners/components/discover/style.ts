@@ -22,7 +22,7 @@ const useStyle = () => {
       },
       searchInputStyle: {
         height: 40,
-        width: convertWidthToVW(400),
+        width: "30%",
         backgroundColor: "#F8F8F8",
         borderRadius: 10,
       }

@@ -30,7 +30,6 @@ const useWallTableWidget = () => {
         quoteNumber: any,
         response: any,
         view: any,
-        totalProducts: any,
         totalQuotes: any,
         successRate: any,
         more: any,
@@ -42,7 +41,6 @@ const useWallTableWidget = () => {
             quoteNumber,
             response,
             view,
-            totalProducts,
             totalQuotes,
             successRate,
             more
@@ -51,14 +49,14 @@ const useWallTableWidget = () => {
 
     <Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33772099_8109544.svg"} alt="logo" width={40} height={40} />
     const rows = [
-        createData("1", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />{t("Tira Press")}</span>, "X64654654", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '322', '322', '45%', <MoreMenuWidget />),
-        createData("2", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33068038_7979631.jpg"} alt="logo" width={40} height={40} />{t("FREEPRINT")}</span>, "TT1543", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>, '300', '4000', '69%', <MoreMenuWidget />),
-        createData("3", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/Untitled-1-02.png"} alt="logo" width={40} height={40} />Digital Print</span>, "TT1544", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }}><h2 style={classes.acceptedStyle}>Accept</h2></div>, '150', '1600', '30%', <MoreMenuWidget />),
-        createData("4", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/34630260_8025507.jpg"} alt="logo" width={40} height={40} />Print Studio</span>, "TT1546", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '130', '2700', '25%', <MoreMenuWidget />),
-        createData("5", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33068033_7983307.jpg"} alt="logo" width={40} height={40} />Ok Printer</span>, "TT1548", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>, '230', '1200', '48%', <MoreMenuWidget />),
-        createData("6", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33758854_8085381.jpg"} alt="logo" width={40} height={40} />Screenox</span>, "X64654659", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '350', '3500', '70%', <MoreMenuWidget />),
-        createData("7", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33772094_8109564.jpg"} alt="logo" width={40} height={40} />Printing House</span>, "X64654658", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>, '200', '1450', '50%', <MoreMenuWidget />),
-        createData("8", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/Untitled-1-01.png"} alt="logo" width={40} height={40} />Dubai Printing Press</span>, "TT1568", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '310', '2100', '53%', <MoreMenuWidget />),
+        createData("1", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><TiraIcon />{t("Tira Press")}</span>, "X64654654", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>,  '322', '45%', <MoreMenuWidget />),
+        createData("2", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33068038_7979631.jpg"} alt="logo" width={40} height={40} />{t("FREEPRINT")}</span>, "TT1543", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>,'4000', '69%', <MoreMenuWidget />),
+        createData("3", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/Untitled-1-02.png"} alt="logo" width={40} height={40} />Digital Print</span>, "TT1544", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }}><h2 style={classes.acceptedStyle}>Accept</h2></div>,  '1600', '30%', <MoreMenuWidget />),
+        createData("4", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/34630260_8025507.jpg"} alt="logo" width={40} height={40} />Print Studio</span>, "TT1546", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>,  '2700', '25%', <MoreMenuWidget />),
+        createData("5", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33068033_7983307.jpg"} alt="logo" width={40} height={40} />Ok Printer</span>, "TT1548", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>,  '1200', '48%', <MoreMenuWidget />),
+        createData("6", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33758854_8085381.jpg"} alt="logo" width={40} height={40} />Screenox</span>, "X64654659", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>,  '3500', '70%', <MoreMenuWidget />),
+        createData("7", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/33772094_8109564.jpg"} alt="logo" width={40} height={40} />Printing House</span>, "X64654658", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.deniedStyle}>Deny</h2></div>,  '1450', '50%', <MoreMenuWidget />),
+        createData("8", <span style={{ display: "flex", justifyContent: "center", alignItems: "center", }}><Image src={"https://gomake-dev.s3.eu-west-3.amazonaws.com/partners-demo/Untitled-1-01.png"} alt="logo" width={40} height={40} />Dubai Printing Press</span>, "TT1568", <CreateOutlinedIcon />, <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.acceptedStyle}>Accept</h2></div>, '2100', '53%', <MoreMenuWidget />),
     ];
 
     const [openPartnerModal, setOpenPartnerModal] = useRecoilState<boolean>(partnerInfoModalState);
