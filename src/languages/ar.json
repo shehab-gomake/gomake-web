@@ -150,7 +150,10 @@
       "Receipt": "الإيصال"
     },
     "quoteOutput": "إخراج العرض",
-    "addNew": "إضافة جديدة"
+    "addNew": "إضافة جديدة",
+    "duplicate": "تكرار",
+    "documents": "وثائق",
+    "loggers": "سجلات"
   },
   "materials": {
     "inputs": {

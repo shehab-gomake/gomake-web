@@ -13,11 +13,11 @@ const WallSectionWidget = () => {
 
   return (
     <Stack direction={"row"} justifyContent={"space-between"} width={"99%"} >
-    <WallSectionCard numberHeader={dir =="ltr" ?"225+":"٢٢٥+"} desc={t("partners.totalPartners")} Icon={ <TotalPartnersIcon/>}/>
-    <WallSectionCard numberHeader={dir =="ltr" ?"85.5k": "٨٥.٥ ألف"} desc={t("partners.activePartners")} Icon={ <ActivePartnersIcon/>}/>
-    <WallSectionCard numberHeader={dir =="ltr" ?"36%": "٣٦٪"} desc={t("partners.successRate")}  Icon={ <RateIcon/>}/>
-    <WallSectionCard numberHeader={dir =="ltr" ?"38.4k":"٣٨.٤ ألف"} desc={t("partners.totalOrders")} Icon={ <TotalOrdersIcon/>}/>
-    <WallSectionCard numberHeader={dir =="ltr" ?"38.4k":"٣٨.٤ ألف"} desc={t("partners.waitingRequests")}  Icon={ <WaitingRequestIcon/>}/>
+    <WallSectionCard numberHeader={"225+"} desc={t("partners.totalPartners")} Icon={ <TotalPartnersIcon/>}/>
+    <WallSectionCard numberHeader={"85.5k"} desc={t("partners.activePartners")} Icon={ <ActivePartnersIcon/>}/>
+    <WallSectionCard numberHeader={"36%"} desc={t("partners.successRate")}  Icon={ <RateIcon/>}/>
+    <WallSectionCard numberHeader={"38.4k"} desc={t("partners.totalOrders")} Icon={ <TotalOrdersIcon/>}/>
+    <WallSectionCard numberHeader={"38.4k"} desc={t("partners.waitingRequests")}  Icon={ <WaitingRequestIcon/>}/>
     </Stack>
     )
 };

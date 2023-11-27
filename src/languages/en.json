@@ -151,7 +151,10 @@
       "Receipt": "Receipt"
     },
     "quoteOutput": "Quote output",
-    "addNew": "Add new"
+    "addNew": "Add new",
+    "duplicate":"Duplicate",
+    "documents":"Documents",
+    "loggers":"Loggers"
   },
   "materials": {
     "inputs": {
