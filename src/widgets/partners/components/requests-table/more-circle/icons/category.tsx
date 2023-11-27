@@ -6,7 +6,6 @@ const CategoryIcon = () => {
 <path d="M8.42676 5.6875L11.6601 6.5075" stroke="#8283BE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M7.77344 8.26758L9.70677 8.76091" stroke="#8283BE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
-
     );
 };
 

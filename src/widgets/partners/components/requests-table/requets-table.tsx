@@ -20,14 +20,14 @@ const RequestsTableWidget = () => {
             <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
                 <TableHead>
                     <TableRow>
-                        <TableCell style={classes.headersStyle} align="center" >{t("Id")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Name")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Logo")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Country")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("City")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Partner type")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Status")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="right">{t("more")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center" >{t("partners.headers.id")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("partners.headers.name")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("partners.headers.logo")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("partners.headers.country")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("partners.headers.city")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("partners.headers.partnerType")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("partners.headers.status")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="right">{t("partners.headers.more")}</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody style={classes.tableStyle}>
