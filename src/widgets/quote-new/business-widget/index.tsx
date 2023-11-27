@@ -42,7 +42,7 @@ const BusinessNewWidget = ({
           value={
             values?.purchaseNumber !== null
               ? `${values?.purchaseNumber}`
-              : "No purchase number"
+              : t("sales.quote.noPurchaseNumber")
           }
           label={t("sales.quote.purchaseNumber")}
           onBlur={onBlurPurchaseNumer}

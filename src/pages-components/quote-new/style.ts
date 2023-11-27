@@ -14,10 +14,8 @@ const useStyle = () => {
         width: "100%",
         maxWidth: "100%",
         position: "relative" as "relative",
-        paddingRight: 20,
         height: "100%",
         overflow: "hidden",
-        // marginBottom: 145,
       },
       titleQuateContainer: {
         display: "flex",
@@ -31,7 +29,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: 15,
+        gap: 5,
       },
       quoteStatusContainer: {
         display: "flex",
@@ -97,6 +95,13 @@ const useStyle = () => {
         marginTop: 12,
         maxHeight: 140,
         overflow: "scroll",
+      },
+      secondContainer: {
+        width: "100%",
+        height: "100%",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column" as "column",
       },
     };
   }, []);

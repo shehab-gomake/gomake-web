@@ -8,12 +8,12 @@ const useQuoteTableWidget = () => {
     const { classes } = useStyle();
 
     const tabLabels = [
-        t('Quotes'),
-        t('Orders'),
-        t('Items'),
-        t('Delivery'),
-        t('Invoice'),
-        t('Receipt'),
+        t('home.tabs.Quotes'),
+        t('home.tabs.Orders'),
+        t('home.tabs.Items'),
+        t('home.tabs.Delivery'),
+        t('home.tabs.Invoice'),
+        t('home.tabs.Receipt'),
     ];
 
     function createData(

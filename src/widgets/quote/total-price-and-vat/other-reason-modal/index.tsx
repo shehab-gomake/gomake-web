@@ -12,7 +12,7 @@ const OtherReasonModal = ({
   onClose,
   setReasonText,
   onClickCancelOffer,
-}) => {
+}: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   return (

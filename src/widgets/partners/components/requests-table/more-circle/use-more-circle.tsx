@@ -4,12 +4,15 @@ import { CategoryIcon } from "./icons/category";
 import { PaintIcon } from "./icons/format-paint";
 import { MailIcon } from "./icons/mail";
 import { BlockIcon } from "./icons/block";
+import { useTranslation } from "react-i18next";
 
 
 const useMoreCircle = () => {
   
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const { t } = useTranslation();
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -19,27 +22,27 @@ const useMoreCircle = () => {
 
   const menuList = [
     {
-      name: "Transfer to partial",
+      name: t("partners.Transfer to partial"),
       icon: <ReturnIcon />,
       onclick: () => null,
     },
     {
-      name: "Connect with category",
+      name: t("partners.Connect with category"),
       icon: <CategoryIcon />,
       onclick: () => null,
     },
     {
-      name: "Connect with machine",
+      name: t("partners.Connect with machine"),
       icon: <PaintIcon/>,
       onclick: () => null,
     },
     {
-      name: "Message",
+      name: t("partners.Message"),
       icon: <MailIcon />,
       onclick: () => null,
     },
     {
-      name: "Block",
+      name: t("partners.Block"),
       icon: <BlockIcon />,
       onclick: () => null,
     }
