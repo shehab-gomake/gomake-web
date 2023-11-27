@@ -114,7 +114,6 @@ const MaterialsWidget = () => {
 
 
     return (
-        <>
             <div style={{maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT - 20), overflow: 'hidden'}}>
                 <SideBarContainer side={Side()} header={materialType?.toString()} subHeader={''}>
                     {materialCategory && <Stack gap={2}>
@@ -148,7 +147,6 @@ const MaterialsWidget = () => {
                 </SideBarContainer>
                 <AddSupplierModal/>
             </div>
-        </>
     );
 }
 
