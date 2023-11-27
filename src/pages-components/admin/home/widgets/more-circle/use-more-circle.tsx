@@ -2,11 +2,14 @@ import { useState } from "react";
 import { DuplicateMenuIcon } from "./icons/duplicate-menu";
 import { DuplicateWithDifferentMenuIcon } from "./icons/duplicate-with-different-menu";
 import { LoggerIcon } from "./icons/logger";
+import { useTranslation } from "react-i18next";
 
 const useMoreCircle = () => {
   
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const { t } = useTranslation();
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -16,17 +19,17 @@ const useMoreCircle = () => {
 
   const menuList = [
     {
-      name: "duplicate",
+      name: t("home.duplicate"),
       icon: <DuplicateMenuIcon />,
       onclick: () => null,
     },
     {
-      name: "documents",
+      name: t("home.documents"),
       icon: <DuplicateWithDifferentMenuIcon />,
       onclick: () => null,
     },
     {
-      name: "loggers",
+      name: t("home.loggers"),
       icon: <LoggerIcon />,
       onclick: () => null,
     }
