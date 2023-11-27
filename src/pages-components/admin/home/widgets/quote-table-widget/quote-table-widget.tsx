@@ -28,7 +28,6 @@ const QuoteTableWidget = ({ isAdmin = true }) => {
 
     useEffect(() => {
         let newRows;
-
         if (selectedTab === 0) {
             newRows = quoteRows;
         } else if (selectedTab === 1) {
@@ -77,19 +76,19 @@ const QuoteTableWidget = ({ isAdmin = true }) => {
                             ))}
                         </Tabs>
                     </ThemeProvider>
-                    <SecondaryButton variant="contained" style={classes.addNewStyle}>Add new</SecondaryButton>
+                    <SecondaryButton variant="contained" style={classes.addNewStyle}>{t("home.addNew")}</SecondaryButton>
                 </Stack>
                 <Table sx={{ minWidth: 650 , }} size="small" aria-label="a dense table">
                     <TableHead>
                         <TableRow>
-                            <TableCell style={{ color: "#B5B7C0" }}>{t("offer number")}</TableCell>
-                            <TableCell style={{ color: "#B5B7C0" }} align="center">{t("client type")}</TableCell>
-                            <TableCell style={{ color: "#B5B7C0" }} align="center">{t("job name")}</TableCell>
-                            <TableCell style={{ color: "#B5B7C0" }} align="center">{t("Production Date")}</TableCell>
-                            <TableCell style={{ color: "#B5B7C0" }} align="center">{t("final price")}</TableCell>
-                            <TableCell style={{ color: "#B5B7C0" }} align="center">{t("Status")}</TableCell>
-                            <TableCell style={{ color: "#B5B7C0" }} align="center">{t("remark")}</TableCell>
-                            <TableCell style={{ color: "#B5B7C0" }} align="right">{t("more")}</TableCell>
+                            <TableCell style={{ color: "#B5B7C0" }}>{t("home.headers.offerNumber")}</TableCell>
+                            <TableCell style={{ color: "#B5B7C0" }} align="center">{t("home.headers.clientType")}</TableCell>
+                            <TableCell style={{ color: "#B5B7C0" }} align="center">{t("home.headers.jobName")}</TableCell>
+                            <TableCell style={{ color: "#B5B7C0" }} align="center">{t("home.headers.productDate")}</TableCell>
+                            <TableCell style={{ color: "#B5B7C0" }} align="center">{t("home.headers.finalPrice")}</TableCell>
+                            <TableCell style={{ color: "#B5B7C0" }} align="center">{t("home.headers.status")}</TableCell>
+                            <TableCell style={{ color: "#B5B7C0" }} align="center">{t("home.headers.remark")}</TableCell>
+                            <TableCell style={{ color: "#B5B7C0" }} align="right">{t("home.headers.more")}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

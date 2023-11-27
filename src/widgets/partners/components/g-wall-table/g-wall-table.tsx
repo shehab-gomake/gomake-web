@@ -15,7 +15,7 @@ import { blockModalState, partnerInfoModalState } from "../states";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import Drawer from '@mui/material/Drawer';
 import React from "react";
-import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
+
 const WallTableWidget = () => {
     const { classes } = useStyle();
     const { rows , list } = useWallTableWidget();
@@ -28,15 +28,15 @@ const WallTableWidget = () => {
             <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
                 <TableHead>
                     <TableRow>
-                        <TableCell style={classes.headersStyle} align="center" >{t("Id")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Partner")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Quote Number")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("View")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Response")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Total products")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Total quotes")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center">{t("Success rate")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="right">{t("more")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center" >{t("partners.headers.id")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("partners.headers.partners")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("partners.headers.quoteNumber")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("partners.headers.view")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("partners.headers.response")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("partners.headers.totalProducts")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("partners.headers.totalQuotes")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("partners.headers.successRate")}</TableCell>
+                        <TableCell style={classes.headersStyle} align="right">{t("partners.headers.more")}</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody style={classes.tableStyle}>
@@ -58,15 +58,15 @@ const WallTableWidget = () => {
             </Table>
             <GoMakeModal
                 openModal={openModal}
-                modalTitle={t("Block printing house")}
+                modalTitle={t("partners.blockPrintingHouse")}
                 onClose={() => setOpenModal(false)}
                 insideStyle={classes.insideStyle}
                 isBlockModal={true}>
                 <Stack direction={"column"} gap={"30px"} marginTop={"10px"}>
-                    <h4>Are you sure that you want to block this printing house from your partner list?</h4>
+                    <h4>{t("partners.Are you sure that you want to block this printing house from your partner list?")}</h4>
                     <Stack direction={"row"} gap={"10px"} justifyContent={"flex-end"}>
-                        <SecondaryButton style={classes.cancelBtnStyle} variant="outlined" onClick={() => setOpenModal(false)}>Cancel</SecondaryButton>
-                        <SecondaryButton style={classes.blockBtnStyle} variant="contained">Block</SecondaryButton>
+                        <SecondaryButton style={classes.cancelBtnStyle} variant="outlined" onClick={() => setOpenModal(false)}>{t("partners.cancel")}</SecondaryButton>
+                        <SecondaryButton style={classes.blockBtnStyle} variant="contained">{t("partners.block")}</SecondaryButton>
                     </Stack>
                 </Stack>
             </GoMakeModal>

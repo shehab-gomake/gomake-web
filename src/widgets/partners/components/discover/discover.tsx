@@ -21,16 +21,16 @@ const DiscoverWidget = () => {
     return (
         <div style={classes.mainContainer} >
             <Stack direction={'column'} gap={"10px"} padding={"10px"}>
-                <h3 style={classes.headerStyle}>What are you looking for?</h3>
+                <h3 style={classes.headerStyle}>{t("partners.What are you looking for?")}</h3>
                 <Stack direction={'row'} gap={"16px"} width={"100%"} alignItems={"end"} >
-                    <SearchInputComponent searchInputStyle={classes.searchInputStyle} onChange={(e) => setTermSearch(e)} placeHolder="Search for company, product, machine, etc.." />
+                    <SearchInputComponent searchInputStyle={classes.searchInputStyle} onChange={(e) => setTermSearch(e)} placeHolder={t("partners.Search for company, product, machine, etc..")} />
                     <Stack direction={'row'} gap={"16px"}>
                     {
-                        discoverInputs(state).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
+                        discoverInputs(state ,t ).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
                     }
                     </Stack>
-                    <SecondaryButton variant="contained" style={{ width: "140px", height: "40px" }}>Search</SecondaryButton>
-                    <SecondaryButton  variant="outlined" style={{ width: "140px", height: "40px" , lineHeight:"15px"  }}>Add new</SecondaryButton>
+                    <SecondaryButton variant="contained" style={{ width: "140px", height: "40px" }}>{t("partners.search")}</SecondaryButton>
+                    <SecondaryButton  variant="outlined" style={{ width: "140px", height: "40px" , lineHeight:"15px"  }}>{t("partners.addNew")}</SecondaryButton>
                 </Stack>
             </Stack>
         </div>

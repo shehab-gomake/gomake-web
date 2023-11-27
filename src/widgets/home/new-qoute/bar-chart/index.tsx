@@ -35,8 +35,9 @@ export function BarChart() {
           borderWidth: 0,
           borderRadius: 8,
           gap: 20,
-          data: [150, 300, 180, 200, 120, 50, 150, 300, 180, 200, 120, 50],
+          data: [150, 300, 180, 200, 120, 100, 150, 450, 180, 200, 120, 50],
           barThickness: 40,
+          
         },
       ],
     },
@@ -46,6 +47,7 @@ export function BarChart() {
           display: false,
         },
       },
+      
       scales: {
         x: {
           title: {
@@ -58,6 +60,7 @@ export function BarChart() {
               family: 'Lexend',
             },
           },
+          
           grid: {
             display: false,
           },
@@ -87,6 +90,7 @@ export function BarChart() {
   };
   return (
     <Bar
+    dir="rtl"
       data={state.data}
       options={state.options}
       style={{

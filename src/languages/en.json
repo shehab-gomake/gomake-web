@@ -131,7 +131,27 @@
       "pleaseSelectCustomer": "Please select a customer",
       "pleaseSelectClientType": "Please select a client type",
       "pleaseSelectProduct": "Please select a product"
-    }
+    },
+    "headers": {
+    "offerNumber":"offer number",
+    "clientType":"client type",
+    "jobName":"job name",
+    "productDate":"Production Date",
+    "finalPrice":"final price",
+    "status":"Status",
+    "remark":"remark",
+    "more":"more"
+    },
+    "tabs": {
+      "Quotes": "Quotes", 
+      "Orders": "Orders",
+      "Items": "Items",
+      "Delivery": "Delivery",
+      "Invoice": "Invoice",
+      "Receipt": "Receipt"
+    },
+    "quoteOutput": "Quote output",
+    "addNew": "Add new"
   },
   "materials": {
     "inputs": {
@@ -2252,5 +2272,74 @@
     "addNewAttachment" :"add new attachment",
     "sendFrom": "Send From Email",
     "noAttachment": "No Attachment"
+  },
+
+
+  "partners": {
+    "options":{
+      "active": "Active",
+      "inActive": "Inactive",
+      "today":"Today",
+      "tomorrow":"Tomorrow",
+      "nextWeek":"Next Week",
+      "products":"Products",
+      "printingHouse":"Printing house",
+      "machine":"Machine",
+      "location":"Location",
+      "action":"Action",
+      "dieCut":"Die cut",
+      "roleSlickers":"Role slickers",
+      "labels":"Labels",
+      "paperProducts":"Paper products",
+      "bookCover":"Book cover"
+    },
+    "headers": {
+      "id": "Id",
+      "partners": "Partners",
+      "quoteNumber": "Quote Number",
+      "view": "View",
+      "response": "Response",
+      "totalProducts": "Total products",
+      "totalQuotes": "Total quotes",
+      "successRate": "Success rate",
+      "more": "more",
+      "requests":"Requests",
+      "name":"Name",
+      "logo":"Logo",
+      "country":"Country",
+      "city":"City",
+      "partnerType":"Partner type",
+      "status":"Status"
+    },
+    "marketplace": "Marketplace",
+    "collaboration": "Collaboration",
+    "myPartners": "My partners",
+    "What are you looking for?": "What are you looking for?",
+    "Search for company, product, machine, etc..": "Search for company, product, machine, etc..",
+    "search": "Search",
+    "addNew": "Add new",
+    "categories": "categories",
+    "date": "Date",
+    "subCategory": "subCategory",
+    "status": "status",
+    "totalPartners": "Total partners",
+    "activePartners": "Active partners",
+    "successRate": "success rate",
+    "totalOrders": "Total Orders",
+    "waitingRequests": "Waiting Requests",
+    "blockPrintingHouse": "Block printing house",
+    "Are you sure that you want to block this printing house from your partner list?": "Are you sure that you want to block this printing house from your partner list?",
+    "cancel": "Cancel",
+    "block": "Block",
+    "Partner info": "Partner info",
+    "Go to quotes": "Go to quotes",
+    "Cart": "Cart",
+    "Payments": "Payments",
+    "Message": "Message",
+    "Block": "Block",
+    "Transfer to partial":"Transfer to partial",
+    "Connect with category":"Connect with category",
+    "Connect with machine":"Connect with machine"
+  
   }
 }

@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import { useState } from "react";
 import React from "react";
 import { HeaderTitle } from "@/widgets/header-title";
-import { HeaderArrowIcon } from "../icons/arrow-icon";
+import {  HeaderLeftArrowIcon ,HeaderRightArrowIcon} from "../icons/arrow-icon";
 import { GeneralCard } from "./components.tsx/general-card";
 import { partnerInfoModalState } from "../states";
 import { useRecoilState } from "recoil";
@@ -22,6 +22,7 @@ type Anchor = 'top' | 'left' | 'bottom' | 'right';
 const useWallTableWidget = () => {
     const { classes } = useStyle();
     const { t } = useTranslation();
+    const dir: "rtl" | "ltr" = t("direction");
 
     function createData(
         id: any,
@@ -93,7 +94,7 @@ const useWallTableWidget = () => {
         >
             <Stack direction={'row'} alignItems={"center"} gap={"10px"} marginBottom={"20px"}>
                 <HeaderTitle title={"Partner info"} marginTop={"0px"} marginBottom={"0px"} />
-                <HeaderArrowIcon></HeaderArrowIcon>
+                {dir== "ltr" ? <HeaderRightArrowIcon/>: <HeaderLeftArrowIcon/> }
             </Stack>
             <Stack direction={'column'} gap={"20px"} >
 

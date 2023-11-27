@@ -18,6 +18,7 @@ import { MarkIcon } from "@/icons/mark-icon";
 const HeaderWidget = () => {
     const { clasess } = useStyle();
     const { t } = useTranslation();
+    const dir: "rtl" | "ltr" = t("direction");
     const userProfile = useRecoilValue(userProfileState);
     const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
     const { primaryColor, successColor, warningColor } = useGomakeTheme();
@@ -54,8 +55,7 @@ const HeaderWidget = () => {
                 <IconButton>
                     <Messages />
                 </IconButton>
-                <div style={{ borderRight: "1px solid #D0D5DD" }}>
-
+                <div style={{ [dir === 'ltr' ? 'borderRight' : 'borderLeft']: '1px solid #D0D5DD' }}>
                     <IconButton onClick={handleClickNotify}>
                         <Notifications />
                     </IconButton>
