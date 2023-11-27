@@ -1,12 +1,3 @@
-export interface ISideBarContainer {
-    side:  JSX.Element;
-    children: any;
-    header: string;
-    subHeader: string;
-    actions?: JSX.Element;
-    sideAction?: JSX.Element
-}
-
 export interface ISideListProps {
     list: IListItem [];
     selectedItem: string;
@@ -15,9 +6,8 @@ export interface ISideListProps {
     children?: any;
     quickActions?: boolean;
     isAdmin?: boolean;
-    isHaveDeleteIcon? :boolean;
+    isHaveDeleteIcon?: boolean;
 }
-
 
 export interface IListItem {
     text: string;

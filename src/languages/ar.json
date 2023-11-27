@@ -257,10 +257,18 @@
       "saveModifications": "حفظ التعديلات",
       "duplicate": "نسخ",
       "back": "رجوع",
-      "addNew": "إضافة جديدة"
+      "addNew": "إضافة جديدة",
+      "add": "إضافة",
+      "addNew": "إضافة فئة جديدة",
+      "addRow": "إضافة صف",
+      "addNewRow": "إضافة صف جديد",
+      "openImage": "فتح الصورة",
+      "changeImage": "تغيير الصورة",
+      "selectImage": "اختر صورة"
     },
     "modals": {
-      "subTitleDeleteModal": "هل أنت متأكد من حذف {{name}}"
+      "subTitleDeleteModal": "هل أنت متأكد من حذف {{name}}",
+      "uploadImage": "تحميل صورة"
     },
     "sheetPaper": {
       "inputs": {

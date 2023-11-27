@@ -247,17 +247,24 @@
       "noData": "אין נתונים"
     },
     "buttons": {
+      "add": "הוסף",
       "cancel": "ביטול",
       "delete": "מחיקה",
       "edit": "עריכה",
       "save": "שמירה",
       "saveModifications": "שמור שינויים",
       "duplicate": "שכפול",
-      "addNew": "הוסף חדש",
-      "back": "חזרה"
+      "back": "חזרה",
+      "addNew": "הוספת קטגוריה חדשה",
+      "addRow": "הוספת שורה",
+      "addNewRow": "הוספת שורה חדשה",
+      "openImage": "פתיחת תמונה",
+      "changeImage": "שינוי תמונה",
+      "selectImage": "בחר תמונה"
     },
     "modals": {
-      "subTitleDeleteModal": "האם אתה בטוח שברצונך למחוק את {{name}}"
+      "subTitleDeleteModal": "האם אתה בטוח שברצונך למחוק את {{name}}",
+      "uploadImage": "העלאת תמונה"
     },
     "sheetPaper": {
       "inputs": {
@@ -1454,7 +1461,7 @@
         "dontVAT": "לא כולל מע\"מ",
         "addOrder": "הוסף",
         "makeShape": "צור צורה משלך",
-        "chooseShape": "{{name}} צורה",
+        "chooseShape": "בחר צורה",
         "client": "לקוח",
         "quote": "ציטוט",
         "type": "סוג",
@@ -2086,78 +2093,77 @@
       "documentinCreation" : "יצירת מסמכים",
       "docmentType" : "סוג מסמך"
     },
-    "TitleDefinition":{
-      "TitleDefinition":"הגדרת כותרת",
-      "defaultFormat":"ברירת מחדל",
-      "BusinessName" : "שם עסק ",
-      "H.P./authorizedDealer" :"סוחר מורשה",
-      "LogoUpload":"העלאת לוגו",
-      "CustomLogo":"לוגו מותאם אישית"
+    "TitleDefinition": {
+      "TitleDefinition": "הגדרת כותרת",
+      "defaultFormat": "ברירת מחדל",
+      "BusinessName": "שם עסק ",
+      "H.P./authorizedDealer": "סוחר מורשה",
+      "LogoUpload": "העלאת לוגו",
+      "CustomLogo": "לוגו מותאם אישית"
     },
-    "TableSetting":{
-        "TableSetting":"הגדרות טבלה",
-        "defaultFormat":"ברירת מחדל",
-        "TableHeaderbgcolor":"צבע רקע כותרת הטבלה:",
-        "Tabletextcolor":"צבע טקסט הטבלה:",
-        "Verticalbordercolor":"צבע גבול אנכי בטבלה:",
-        "Horizontalbordercolor":"צבע גבול אופקי בטבלה:",
-        "Placementoftext":"מיקום טקסט בטבלה:"
+    "TableSetting": {
+      "TableSetting": "הגדרות טבלה",
+      "defaultFormat": "ברירת מחדל",
+      "TableHeaderbgcolor": "צבע רקע כותרת הטבלה:",
+      "Tabletextcolor": "צבע טקסט הטבלה:",
+      "Verticalbordercolor": "צבע גבול אנכי בטבלה:",
+      "Horizontalbordercolor": "צבע גבול אופקי בטבלה:",
+      "Placementoftext": "מיקום טקסט בטבלה:"
     },
-    "Additional":{
-      "Additional":"נוסף",
-      "Remarks":"הערות",
-      "Options":"אפשרויות",
-      "Viewsalesperson":"הצג איש מכירות",
-      "Viewdocproducer" : "הצג מפיק מסמך",
-      "Showpaymentdate" : "הצג תאריך תשלום",
-      "Showcustomertype" : "הצג סוג לקוח",
-      "Showcustomercode":"הצג קוד לקוח",
-      "Viewcustomerbalance" : "הצג יתרת לקוח",
-      "Showpaymentterms" : "הצג תנאי תשלום",
-      "Showtaxpayable" : "הצג אם חייב בניכוי במקור"
+    "Additional": {
+      "Additional": "נוסף",
+      "Remarks": "הערות",
+      "Options": "אפשרויות",
+      "Viewsalesperson": "הצג איש מכירות",
+      "Viewdocproducer": "הצג מפיק מסמך",
+      "Showpaymentdate": "הצג תאריך תשלום",
+      "Showcustomertype": "הצג סוג לקוח",
+      "Showcustomercode": "הצג קוד לקוח",
+      "Viewcustomerbalance": "הצג יתרת לקוח",
+      "Showpaymentterms": "הצג תנאי תשלום",
+      "Showtaxpayable": "הצג אם חייב בניכוי במקור"
     },
-    "Footer":{
-      "Footer":"הגדרות כותרת תחתונה",
-      "Manualfooter" : "כותרת תחתונה ידנית",
-      "Email":"דוא''ל:",
-      "Phone":"טלפון:",
-      "Address":"כתובת:",
-      "FooterImage":"כותרת תחתונה: תמונה "
+    "Footer": {
+      "Footer": "הגדרות כותרת תחתונה",
+      "Manualfooter": "כותרת תחתונה ידנית",
+      "Email": "דוא''ל:",
+      "Phone": "טלפון:",
+      "Address": "כתובת:",
+      "FooterImage": "כותרת תחתונה: תמונה "
     },
-    "QRCodes":{
-      "QRCodes":"קודי QR",
-      "PDFproductionQrCodes":"הפקת PDF - קודי QR",
-      "DisplayQRcodesinaworkorderdocument" : "הצג קודי QR במסמך הזמנת עבודה",
-      "Showpaymentdate":"הצג את תאריך התשלום",
-      "DisplayaninitialQRCode" : "הצג קוד QR ראשוני עבור כל ההזמנה בתוך PD הייצורF",
-      "displayall":"להציג את כל הסוגים בכמויות שוות ב-PDF של PACA",
-      "ShowStarted":"הצג QRs התחילו והסתיימו ב-PDF להפקה"
+    "QRCodes": {
+      "QRCodes": "קודי QR",
+      "PDFproductionQrCodes": "הפקת PDF - קודי QR",
+      "DisplayQRcodesinaworkorderdocument": "הצג קודי QR במסמך הזמנת עבודה",
+      "Showpaymentdate": "הצג את תאריך התשלום",
+      "DisplayaninitialQRCode": "הצג קוד QR ראשוני עבור כל ההזמנה בתוך PD הייצורF",
+      "displayall": "להציג את כל הסוגים בכמויות שוות ב-PDF של PACA",
+      "ShowStarted": "הצג QRs התחילו והסתיימו ב-PDF להפקה"
     },
-    "IframeDocument":{
-      "Document" : "מסמך"
-
+    "IframeDocument": {
+      "Document": "מסמך"
     }
   },
-  "documentType":{
-    "Order" :"הזזמנה",
-    "Invoice":"חשבונית",
-    "DeliveryNotes":"תעודת משלוח",
-    "Purchase":"הזמנת רכש",
-    "InvoiceRefund":"חשבונית זיכוי",
-    "Receipt":"קבלה",
-    "JournalEntry":"ערך יומן",
-    "PurchaseInvoice":"חשבונית ספק",
-    "PurchaseInvoiceRefund":"חשבונית ספק זיכוי",
-    "ForeignJournalEntry":"ערך יומן זר",
-    "DeliveryNoteRefund":"החזר תעודת משלוח",
-    "Quote":"הצעה",
-    "ExternalInvoice":"חשבונית חיצונית",
-    "All":"הכל",
-    "ExternalPayment":"תשלום חיצוני",
-    "BoardMission":"פקודות עבודה",
-    "AgingReport":"דוח הזדקנות",
-    "LedgerReport":"דוח חשבונות",
-    "SalesReport":"דווח מכירות"
+  "documentType": {
+    "Order": "הזזמנה",
+    "Invoice": "חשבונית",
+    "DeliveryNotes": "תעודת משלוח",
+    "Purchase": "הזמנת רכש",
+    "InvoiceRefund": "חשבונית זיכוי",
+    "Receipt": "קבלה",
+    "JournalEntry": "ערך יומן",
+    "PurchaseInvoice": "חשבונית ספק",
+    "PurchaseInvoiceRefund": "חשבונית ספק זיכוי",
+    "ForeignJournalEntry": "ערך יומן זר",
+    "DeliveryNoteRefund": "החזר תעודת משלוח",
+    "Quote": "הצעה",
+    "ExternalInvoice": "חשבונית חיצונית",
+    "All": "הכל",
+    "ExternalPayment": "תשלום חיצוני",
+    "BoardMission": "פקודות עבודה",
+    "AgingReport": "דוח הזדקנות",
+    "LedgerReport": "דוח חשבונות",
+    "SalesReport": "דווח מכירות"
   },
   "mailingSettings": {
     "emailSetting": "הגדרות דואר אלקטרוני",
