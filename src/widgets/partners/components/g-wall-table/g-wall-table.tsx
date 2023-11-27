@@ -31,7 +31,7 @@ const WallTableWidget = () => {
                         <TableCell style={classes.headersStyle} align="center" >{t("Id")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("Partner")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("Quote Number")}</TableCell>
-                        <TableCell style={classes.headersStyle} align="center"><div style={{ display: "flex", justifyContent: "center" , alignItems:"center" , gap:"3px"}} >Edit<DriveFileRenameOutlineOutlinedIcon/></div></TableCell>
+                        <TableCell style={classes.headersStyle} align="center">{t("View")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("Response")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("Total products")}</TableCell>
                         <TableCell style={classes.headersStyle} align="center">{t("Total quotes")}</TableCell>

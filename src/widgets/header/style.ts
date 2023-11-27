@@ -41,13 +41,14 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
+        
       },
       profileContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: 14
+        gap: 14,
       },
       userNameStyle: {
         ...FONT_FAMILY.Lexend(400, 12),
