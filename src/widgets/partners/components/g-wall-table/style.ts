@@ -7,7 +7,7 @@ const useStyle = () => {
     const classes = useMemo(() => {
         return {
             tableStyle: {
-                border: "1px dotted #c9c8c3",
+                //border: "1px dotted #c9c8c3",
                 borderRadius: 4,
                 width: "99%",
                 boxShadow: "0 1px 0px 0 rgba(0, 0, 0, 0.08), 0 0px 5px 0 rgba(0, 0, 0, 0.08)",

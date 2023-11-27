@@ -9,7 +9,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+// import Paper from '@mui/material/Paper';
 import { useEffect, useState } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -47,7 +47,7 @@ const QuoteTableWidget = ({ isAdmin = true }) => {
 
     return (
         <div style={classes.mainContainer}>
-            <TableContainer component={Paper} style={{ padding: "20px" }}>
+            <TableContainer style={{ padding: "20px" }}>
                 <Stack direction={"row"} justifyContent={'space-between'} width={'100%'}>
                     <ThemeProvider theme={theme}  >
                         <Tabs
@@ -79,7 +79,7 @@ const QuoteTableWidget = ({ isAdmin = true }) => {
                     </ThemeProvider>
                     <SecondaryButton variant="contained" style={classes.addNewStyle}>Add new</SecondaryButton>
                 </Stack>
-                <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+                <Table sx={{ minWidth: 650 , }} size="small" aria-label="a dense table">
                     <TableHead>
                         <TableRow>
                             <TableCell style={{ color: "#B5B7C0" }}>{t("offer number")}</TableCell>

@@ -109,7 +109,7 @@ const useWallTableWidget = () => {
                         width={150}
                         height={150}
                     /></div>
-                <SecondaryButton variant="contained" style={{ width: "160px", height: "40px", alignSelf: "center" , lineHeight:"15px" }}>Add partner</SecondaryButton>
+                <SecondaryButton variant="contained" style={{ width: "160px", height: "40px", alignSelf: "center" , lineHeight:"15px" , position: "fixed" as "fixed", bottom: "15px",}}>Add partner</SecondaryButton>
             </Stack>
         </Box>
     );

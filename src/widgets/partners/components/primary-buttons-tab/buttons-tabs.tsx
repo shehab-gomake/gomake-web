@@ -71,6 +71,7 @@ const PrimaryButtonsTabWidget = () => {
                     </Tabs>
                 </ThemeProvider>
             </Stack>
+            
             <DiscoverWidget></DiscoverWidget>
             {
                 selectedTab == 0 &&
