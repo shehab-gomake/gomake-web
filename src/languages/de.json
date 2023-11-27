@@ -83,7 +83,15 @@
     "profits": "Gewinne",
     "properties": "Eigenschaften",
     "quotes": "Angebote",
-    "orders": "Bestellungen"
+    "orders": "Bestellungen",
+    "partners": "Partner",
+    "deliveryNotes": "Lieferscheine",
+    "invoices": "Rechnungen",
+    "receipts": "Einnahmen",
+    "purchase": "Erwerben",
+    "purchaseOrders": "Aufträge",
+    "purchaseInvoices": "Rechnungen",
+    "supplierPayments": "Zahlungen"
   },
   "properties": {
     "parameter": "Parameter",
@@ -244,10 +252,18 @@
       "saveModifications": "Änderungen speichern",
       "duplicate": "Duplizieren",
       "back": "Terug",
+      "addNew": "Neue Kategorie hinzufügen",
+      "addRow": "Zeile hinzufügen",
+      "addNewRow": "Neue Zeile hinzufügen",
+      "openImage": "Bild öffnen",
+      "changeImage": "Bild ändern",
+      "selectImage": "Bild auswählen",
+      "add": "Hinzufügen",
       "orderList": "Bestellliste"
     },
     "modals": {
-      "subTitleDeleteModal": "Sind Sie sicher, {{name}} zu löschen?"
+      "subTitleDeleteModal": "Sind Sie sicher, {{name}} zu löschen?",
+      "uploadImage": "Bild hochladen"
     },
     "sheetPaper": {
       "inputs": {
@@ -1444,7 +1460,7 @@
         "dontVAT": "Enthält keine Mehrwertsteuer",
         "addOrder": "Hinzufügen",
         "makeShape": "Eigenes Muster erstellen",
-        "chooseShape": "{{name}} auswählen",
+        "chooseShape": "Muster auswählen",
         "client": "Kunde",
         "quote": "Angebot",
         "type": "Typ",

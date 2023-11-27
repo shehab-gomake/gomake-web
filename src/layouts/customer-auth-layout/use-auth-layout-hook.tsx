@@ -2,6 +2,7 @@ import { useGomakeAuth, useGomakeAxios, useGomakeRouter } from "@/hooks";
 import {
   CustomersIcon,
   HomeIcon,
+  PartnersIcon,
   ProductFloorIcon,
   ProductsIcon,
   ReportsIcon,
@@ -15,6 +16,8 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { ICompanyProfile, companyProfileState } from "@/store/company-profile";
 import { Permissions } from "@/components/CheckPermission/enum";
 
+import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
+import PendingActionsOutlinedIcon from '@mui/icons-material/PendingActionsOutlined';
 
 const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
 
@@ -38,10 +41,21 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         isLine: false,
         key: "productFloor",
         title: "tabs.productFloor",
-        path: "/product-floor",
+        path: "/production-floor",
         isList: false,
         icon: () => {
           return <ProductFloorIcon />;
+        },
+        isProduction: true,
+      },
+      {
+        isLine: false,
+        key: "partners",
+        title: "tabs.partners",
+        path: "/partners",
+        isList: false,
+        icon: () => {
+          return <PartnersIcon />;
         },
         isProduction: true,
       },
@@ -75,6 +89,24 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
             path: "/orders",
             Permission:Permissions.SHOW_ORDERS
           },
+          {
+            key: "delivery notes",
+            title: "tabs.deliveryNotes",
+            path: "/deliveryNotes",
+            Permission:Permissions.SHOW_ORDERS
+          },
+          {
+            key: "invoices",
+            title: "tabs.invoices",
+            path: "/invoices",
+            Permission:Permissions.SHOW_ORDERS
+          },
+          {
+            key: "receipts",
+            title: "tabs.receipts",
+            path: "/receipts",
+            Permission:Permissions.SHOW_ORDERS
+          },
         ],
         icon: () => {
           return <SalesIcon />;
@@ -94,11 +126,31 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
       // },
       {
         isLine: false,
-        key: "shoping",
-        title: "tabs.shoping",
+        key: "purchase",
+        title: "tabs.purchase",
         path: "/",
         isList: true,
         Permission:Permissions.SHOW_SHOPPING,
+        list: [
+          {
+            key: "purchaseOrders",
+            title: "tabs.purchaseOrders",
+            path: "/purchaseOrders",
+            Permission:Permissions.SHOW_ORDERS
+          },
+          {
+            key: "purchaseInvoices",
+            title: "tabs.purchaseInvoices",
+            path: "/purchaseOrder",
+            Permission:Permissions.SHOW_ORDERS
+          },
+          {
+            key: "supplierPayments",
+            title: "tabs.supplierPayments",
+            path: "/purchaseOrder",
+            Permission:Permissions.SHOW_ORDERS
+          },
+        ],
         icon: () => {
           return <ShopingIcon />;
         },
@@ -134,9 +186,9 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         isLine: false,
         key: "reports",
         title: "tabs.reports",
-        path: "/",
+        path: "/reports",
         Permission:Permissions.SHOW_REPORTS,
-        isList: true,
+        isList: false,
         icon: () => {
           return <ReportsIcon />;
         },
@@ -172,7 +224,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         Permission:Permissions.SHOW_MACHINES,
         isList: false,
         icon: () => {
-          return <ProductsIcon />;
+          return <LocalPrintshopOutlinedIcon style={{color:"#FFFFFF"}}/>;
         },
         isProduction: true,
       },
@@ -184,7 +236,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         Permission:Permissions.SHOW_ACTIONS,
         isList: false,
         icon: () => {
-          return <ProductsIcon />;
+          return <PendingActionsOutlinedIcon style={{color:"#FFFFFF"}} />;
         },
         isProduction: true,
       },

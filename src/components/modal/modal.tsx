@@ -10,6 +10,7 @@ const GoMakeModal = ({
   withClose = true,
   insideStyle,
   modalTitle,
+  isBlockModal,
   headerPadding = 0,
   ...props
 }: any) => {
@@ -21,7 +22,7 @@ const GoMakeModal = ({
       <div style={clasess.container}>
         <div style={clasess.headerContainer}>
           {modalTitle && (
-            <div style={clasess.titleModalStyle}>{modalTitle}</div>
+            <div style={isBlockModal ? clasess.titleBlockModalStyle : clasess.titleModalStyle}>{modalTitle}</div>
           )}
           {withClose && (
             <div style={clasess.closeIcon} onClick={onClose}>

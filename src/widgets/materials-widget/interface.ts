@@ -15,3 +15,7 @@ export interface IRowData {
     parameterKey?: string;
     id?: string;
 }
+
+export interface IDynamicRowData {
+    [key: string]: string | boolean | number |any[] | any ; 
+  }

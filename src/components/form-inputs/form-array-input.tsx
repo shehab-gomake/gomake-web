@@ -3,8 +3,8 @@ import {useStyle} from "@/widgets/machines/components/inputs/style";
 import {useTranslation} from "react-i18next";
 import {RemoveSecondaryBtn} from "@/components/button/remove-secondary-btn";
 import {IFormArrayInputsProps, IInput} from "@/components/form-inputs/interfaces";
-import {FormInput} from "@/components/form-inputs/form-input";
 import {SecondaryButton} from "@/components/button/secondary-button";
+import { FormInput } from "./form-input";
 
 const FormArrayInput = ({name, inputs, updateState, parameterKey, value, isValid}: IFormArrayInputsProps) => {
     const [state, setState] = useState<Record<string, any>>({});

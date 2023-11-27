@@ -10,6 +10,7 @@ import { adaptRight } from "@/utils/adapter";
 import { hoverStatusState, permissionsState } from "@/store";
 import LockIcon from "@mui/icons-material/Lock";
 import { usePermission } from "@/hooks/use-permission";
+import {useEffect} from "react";
 const LeftSideLayout = () => {
   const { t } = useTranslation();
 
@@ -21,6 +22,14 @@ const LeftSideLayout = () => {
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
   const { CheckPermission } = usePermission();
   const { clasess } = useStyle({ navStatus });
+  useEffect(()=>{
+      debugger;
+      const isHover = localStorage.getItem('isHover');
+      if(isHover && isHover == "true"){
+          setIsHover(true);
+          setNavStatus({isClosed:false})
+      }
+  },[])
   return (
     <div
       style={clasess.leftContainer}
@@ -46,6 +55,7 @@ const LeftSideLayout = () => {
             height: 30,
           }}
           onClick={() => {
+              localStorage.setItem('isHover',!isHover+"")
             setIsHover(!isHover);
           }}
         >

@@ -101,6 +101,10 @@ const useStyle = () => {
         ...leftRightAdapter(t("direction"), 16),
         top: 10,
       },
+      selectBtn: {
+        height: 33.29,
+        ...FONT_FAMILY.Lexend(500, 12),        
+      },
     };
   }, [theme]);
   return {

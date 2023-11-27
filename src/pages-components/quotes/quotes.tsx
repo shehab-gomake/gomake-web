@@ -9,7 +9,11 @@ import {
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
-const QuotesListPageWidget = () => {
+import {EDocumentTypeEnum} from "@/enums";
+interface IListWidgetProps{
+  documentType:EDocumentTypeEnum
+}
+const QuotesListPageWidget = (props:IListWidgetProps) => {
   const { clasess } = useStyle();
   const {
     tableHeaders,

@@ -15,6 +15,7 @@ export interface ISideListProps {
     children?: any;
     quickActions?: boolean;
     isAdmin?: boolean;
+    isHaveDeleteIcon? :boolean;
 }
 
 
