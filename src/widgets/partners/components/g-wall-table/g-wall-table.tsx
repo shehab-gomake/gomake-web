@@ -22,7 +22,9 @@ const WallTableWidget = () => {
     const { t } = useTranslation();
     const [openModal, setOpenModal] = useRecoilState<boolean>(blockModalState);
     const [openPartnerModal, setOpenPartnerModal] = useRecoilState<boolean>(partnerInfoModalState);
-
+    const dir: "rtl" | "ltr" = t("direction");
+    const anchorDir = (dir === "ltr") ? 'right' : 'left';
+    
     return (
         <TableContainer component={Paper} style={{ width: "99%" }} >
             <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -71,7 +73,7 @@ const WallTableWidget = () => {
                 </Stack>
             </GoMakeModal>
             <div >
-                {(['right'] as const).map((anchor) => (
+                {([anchorDir] as const).map((anchor) => (
                     <React.Fragment key={anchor} >
                         <Drawer
                             anchor={anchor}

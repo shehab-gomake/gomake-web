@@ -8,7 +8,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Bar , Line} from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,
@@ -90,7 +90,6 @@ export function BarChart() {
   };
   return (
     <Bar
-    dir="rtl"
       data={state.data}
       options={state.options}
       style={{
@@ -98,5 +97,6 @@ export function BarChart() {
         height: 300,
       }}
     />
+    
   );
 }

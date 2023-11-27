@@ -50,20 +50,13 @@ const HeaderWidget = () => {
                     </IconButton>
                 }
                 <IconButton>
-                    <Statistics />
-                </IconButton>
-                <IconButton>
                     <Messages />
                 </IconButton>
-                <div style={{ [dir === 'ltr' ? 'borderRight' : 'borderLeft']: '1px solid #D0D5DD' }}>
                     <IconButton onClick={handleClickNotify}>
                         <Notifications />
                     </IconButton>
-                </div>
                 <div style={clasess.profileContainer}>
-                    <div style={{ marginLeft: 14 }}>
                         <IconButton onClick={handleClick}>{userAvatar()}</IconButton>
-                    </div>
                     {/* <div style={clasess.userNameStyle}>{user?.displayName}</div> */}
                 </div>
             </div>
