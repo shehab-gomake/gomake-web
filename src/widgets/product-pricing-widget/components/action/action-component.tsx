@@ -151,7 +151,7 @@ const ActionContainerComponent = ({
                         {isOpen ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
                     </IconButton>
                 </Stack>
-                <Collapse in={isOpen} collapsedSize={0} orientation={'vertical'}>
+                <Collapse in={isOpen} collapsedSize={0} orientation={'vertical'} onClick={(e) => e.stopPropagation()}>
                     {
                         inputsParameters.length > 0 && <>
                             <Divider/>

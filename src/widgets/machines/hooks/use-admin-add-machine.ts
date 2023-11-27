@@ -1,4 +1,4 @@
-import {useCallback} from "react";
+import {useCallback, useEffect} from "react";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {machineState} from "@/widgets/machines/state/machine-state";
@@ -19,6 +19,7 @@ const useAdminAddMachine = () => {
         setState(initState[categoryId]);
     }
 
+    useEffect(() => {console.log(state)}, [state])
 
     const curMachineCategoryId = useCallback(() => state?.category ? state?.category.toString() : '', [state]);
 

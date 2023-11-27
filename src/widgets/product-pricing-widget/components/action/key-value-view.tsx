@@ -24,13 +24,20 @@ const ParametersMapping = ({parameters, source}: IParametersMappingProps) => {
         {
             parameters?.flatMap((parameter, index, array) => {
                 return index < array.length - 1 ? [<KeyValueViewComponent source={source} {...parameter}/>,
-                    <Divider  orientation={'vertical'} flexItem/>] : [
+                    <Divider orientation={'vertical'} flexItem/>] : [
                     <KeyValueViewComponent {...parameter} source={source}/>]
             })
         }
     </>
 }
-const KeyValueViewComponent = ({name, values, valueColor, defaultUnit, outSourceValues, source}: IKeyValueViewProps) => {
+const KeyValueViewComponent = ({
+                                   name,
+                                   values,
+                                   valueColor,
+                                   defaultUnit,
+                                   outSourceValues,
+                                   source
+                               }: IKeyValueViewProps) => {
     const {classes} = useStyle();
     const curValues = source === EWorkSource.OUT ? !!outSourceValues ? outSourceValues : ['0'] : values;
     return (
@@ -47,9 +54,17 @@ const KeyValueViewComponent = ({name, values, valueColor, defaultUnit, outSource
     )
 }
 
-const EditableKeyValueViewComponent = ({name, values, valueColor, defaultUnit, onUpdate, outSourceValues, source}: IKeyValueViewProps) => {
+const EditableKeyValueViewComponent = ({
+                                           name,
+                                           values,
+                                           valueColor,
+                                           defaultUnit,
+                                           onUpdate,
+                                           outSourceValues,
+                                           source
+                                       }: IKeyValueViewProps) => {
     const {classes} = useStyle();
-    const value = source === EWorkSource.OUT ? !!outSourceValues && outSourceValues[0] ? outSourceValues[0] : '0' :  values[0];
+    const value = source === EWorkSource.OUT ? !!outSourceValues && outSourceValues[0] ? outSourceValues[0] : '0' : values[0];
     const [edit, setEdit] = useState<boolean>(false);
     const [editValue, setEditValue] = useState<string>(value);
     const handleValueClick = (e) => {
@@ -73,10 +88,12 @@ const EditableKeyValueViewComponent = ({name, values, valueColor, defaultUnit, o
     return (
         <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
             <span style={classes.detailTitle}>{name}</span>
-            {edit ? <UpdateValueInput value={editValue} onUpdate={handleValueUpdate} onInputChange={onInputChange} clickedOut={handleValueUpdate} onCancel={handleCancelUpdate}/> : <Button onClick={handleValueClick} variant={'text'} style={valueColor ? {
-                ...classes.detailValue,
-                color: valueColor
-            } : classes.detailValue}>{!!defaultUnit ? `${value} ${defaultUnit}` : value}</Button>}
+            {edit ? <UpdateValueInput value={editValue} onUpdate={handleValueUpdate} onInputChange={onInputChange}
+                                      clickedOut={handleValueUpdate} onCancel={handleCancelUpdate}/> :
+                <Button onClick={handleValueClick} variant={'text'} style={valueColor ? {
+                    ...classes.detailValue,
+                    color: valueColor
+                } : classes.detailValue}>{!!defaultUnit ? `${value} ${defaultUnit}` : value}</Button>}
 
 
         </Stack>
