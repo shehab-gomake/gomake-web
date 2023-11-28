@@ -4,6 +4,7 @@ export interface ITabsProps {
     navigationButtons?: boolean;
     actionBtn?: HTMLButtonElement;
     onSelectTab?: (index: number) => void;
+    selectedColor?: "primary" | "secondary";
 }
 
 export interface ITab {
