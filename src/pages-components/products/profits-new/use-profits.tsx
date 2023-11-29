@@ -56,6 +56,7 @@ const useNewProfits = () => {
   const [actionProfitRowChartData, setActionProfitRowChartData] = useState<any>(
     []
   );
+  const [isUpdateCost, setIsUpdateCost] = useState(null);
   console.log("FFFFFF", {
     allActionProfitRowsByActionId,
     actionProfitByActionId,
@@ -135,28 +136,54 @@ const useNewProfits = () => {
         EHttpMethod.PUT,
         `/v1/printhouse-config/profits/update-action-profit`,
         {
+          recordID: actionProfitByActionId?.recordID,
+          id: actionProfitByActionId?.id,
           printingActionId: actionProfitByActionId?.printingActionId,
           pricingBy: data?.value,
           transitionType: actionProfitByActionId?.transitionType,
           minPrice: actionProfitByActionId?.minPrice,
-          actionProfitRows: actionProfitByActionId?.actionProfitRows,
-          actionExpections: actionProfitByActionId?.actionExpections,
+          actionProfitRows: [],
+          actionExpections: [],
         }
       );
       if (res?.success) {
         alertSuccessUpdate();
         setSelectedPricingBy(data);
+        getAllActionProfitRowsByActionId();
       } else {
         alertFaultUpdate();
       }
     },
-
     [actionProfitByActionId]
   );
+
+  const [actionProfitRowsList, setActionProfitRowsList] = useState<any>([]);
+  useEffect(() => {
+    setActionProfitRowsList(allActionProfitRowsByActionId);
+  }, [allActionProfitRowsByActionId]);
+  const changeactionProfitRowsItems = (
+    index: number,
+    filedName: string,
+    value: any
+  ) => {
+    console.log("DDDDDD", {
+      index,
+      filedName,
+      value,
+      actionProfitRowsList,
+    });
+    let temp = [...actionProfitRowsList];
+    temp[index] = {
+      ...temp[index],
+      [filedName]: value,
+    };
+    setActionProfitRowsList(temp);
+  };
   return {
     allActionProfitRowsByActionId,
     actionProfitRowChartData,
     actionProfitByActionId,
+    actionProfitRowsList,
     selectedTransition,
     selectedPricingBy,
     tableHeaders,
@@ -166,6 +193,7 @@ const useNewProfits = () => {
     updatePricingByForAction,
     setSelectedTransition,
     setSelectedPricingBy,
+    changeactionProfitRowsItems,
   };
 };
 

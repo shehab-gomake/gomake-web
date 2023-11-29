@@ -4,7 +4,7 @@ import { ProfitsPageWidget } from "@/pages-components/products/profits/profits";
 
 export default function Profits() {
   return (
-    <CustomerAuthLayout>
+    <CustomerAuthLayout withGap={false}>
       {/* <ProfitsPageWidget /> */}
       <ProfitsNewPageWidget />
     </CustomerAuthLayout>

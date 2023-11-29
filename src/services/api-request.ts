@@ -2,13 +2,18 @@ import axios from "axios";
 import config from "@/config";
 import { getUserToken } from "./storage-data";
 // import { clearStorage } from './storage'
-const apiRequest = async (method = "GET", url: string, data: any = {}, language?: string) => {
+const apiRequest = async (
+  method = "GET",
+  url: string,
+  data: any = {},
+  language?: string
+) => {
   try {
-    const SERVER = config.api_server;
+    // const SERVER = config.api_server;
     // if(safdsa){
     //     trh
     // }
-    //const SERVER = 'http://localhost:3010'
+    const SERVER = "http://localhost:9600";
     const reqUrl = SERVER + url;
     const options: any = {
       method,
@@ -19,9 +24,9 @@ const apiRequest = async (method = "GET", url: string, data: any = {}, language?
         Accept: "application/json",
         "Content-Type": "application/json",
         "project-name": "business-dashboard",
-        ...(getUserToken() && { "Authorization": "Bearer "+ getUserToken() }),
+        ...(getUserToken() && { Authorization: "Bearer " + getUserToken() }),
         ...(data.customAuth && { "auth-token": data.customAuth }),
-        lang: language ? language : 'en',
+        lang: language ? language : "en",
       },
     };
     if (method === "GET") {

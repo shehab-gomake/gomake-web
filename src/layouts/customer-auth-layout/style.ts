@@ -6,9 +6,11 @@ import { useMemo } from "react";
 const useStyle = ({
   isHover = false,
   navStatus,
+  withGap = true,
 }: {
   isHover?: boolean;
   navStatus: any;
+  withGap: boolean;
 }) => {
   const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
@@ -18,20 +20,20 @@ const useStyle = ({
         height: "100vh",
         display: "flex",
         flexDirection: "row" as "row",
-        gap: 20
+        gap: withGap ? 20 : 0,
       },
       logoContainer: {
         display: "flex",
         marginTop: navStatus?.isClosed ? 20 : 0,
-        backgroundColor:"#504FA1",
-        borderRadius:8,
-        padding:10
+        backgroundColor: "#504FA1",
+        borderRadius: 8,
+        padding: 10,
       },
       leftContainer: {
         backgroundColor: primaryColor(500),
         width: navStatus?.isClosed ? 125 : 245,
         minWidth: navStatus?.isClosed ? 125 : 245,
-        transitionDuration:"0.4s",
+        transitionDuration: "0.4s",
         height: "100vh",
         display: "flex",
         flexDirection: "column" as "column",
@@ -43,7 +45,7 @@ const useStyle = ({
         paddingBottom: navStatus?.isClosed ? 8 : 40,
         overflowY: "scroll" as "scroll",
         position: "relative" as "relative",
-        zIndex:100000
+        zIndex: 100000,
       },
       rightContainer: {
         width: "100%",
@@ -88,7 +90,7 @@ const useStyle = ({
         alignSelf: "flex-start",
         width: "100%",
         // height: "100%",
-        marginTop: '10px',
+        marginTop: "10px",
       },
       lastTabsContainer: {
         alignSelf: "flex-start",
@@ -108,7 +110,7 @@ const useStyle = ({
         ...FONT_FAMILY.Inter(400, 16),
         color: "#FFF",
         cursor: "pointer",
-        minWidth:"fit-content"
+        minWidth: "fit-content",
       },
       line: {
         border: "1px solid #FFFFFF",
@@ -128,7 +130,6 @@ const useStyle = ({
         paddingTop: convertWidthToVW(15),
         paddingLeft: convertWidthToVW(40),
         paddingRight: convertWidthToVW(40),
-       
       },
       rotate90: {
         "-webkit-animation": "rotate90 0.5s forwards ",

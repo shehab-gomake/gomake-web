@@ -84,12 +84,19 @@ const useStyle = () => {
         color: secondColor(400),
         boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.08)",
       },
+      pricListWidgetMainContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        width: "100%",
+        gap: 16,
+      },
       headerMainCointaner: {
         width: "100%",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 16,
         height: 40,
       },
       listTitle: {
@@ -120,7 +127,6 @@ const useStyle = () => {
         alignItems: "center",
         gap: 7,
         marginLeft: 13.33,
-        marginTop: 20.83,
         cursor: "pointer",
       },
       autoCompleteContainer: {
@@ -154,12 +160,22 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(400, 14),
         width: "25%",
       },
+      cellTextInputStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
       autoCompleteStyleContainer: {
         height: 25,
         borderRadius: 0,
         ...FONT_FAMILY.Lexend(400, 14),
         color: "#F135A3",
         borderBottom: "none",
+      },
+      chartContainer: {
+        maxHeight: 300,
+        minWidth: "100%",
+        width: "100%",
       },
     };
   }, []);
