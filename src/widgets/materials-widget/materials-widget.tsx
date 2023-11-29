@@ -2,7 +2,7 @@ import {SideBarContainer} from "@/components/containers/side-container/side-bar-
 import {SideList} from "@/components/containers/side-container/side-list/side-list";
 import {PrimaryTable} from "@/components/tables/primary-table";
 import {useMaterials} from "@/widgets/materials-widget/use-materials";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef} from "react";
 import Stack from "@mui/material/Stack";
 import {useTranslation} from "react-i18next";
 import {useStyle} from "@/widgets/materials-widget/style";
@@ -21,7 +21,6 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {convertHeightToVH} from "@/utils/adapter";
 import {HEADER_HEIGHT, SCREEN_HEIGHT} from "@/utils/layout-config";
-import {useGomakeRouter} from "@/hooks/use-gomake-router";
 import {AddCategoryModal} from "./components/add-category/add-category-modal";
 import {AddRowModal} from "./components/add-row/add-row-modal";
 import {useMaterialsCategories} from "./use-materials-categories";
@@ -114,8 +113,7 @@ const MaterialsWidget = () => {
 
 
     return (
-        <div style={{maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT - 20), overflow: 'hidden'}}>
-            <>
+            <div style={{maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT - 20), overflow: 'hidden'}}>
                 <SideBarContainer side={Side()} header={materialType?.toString()} subHeader={''}>
                     {materialCategory && <Stack gap={2}>
                         <Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-start'}>
@@ -125,7 +123,6 @@ const MaterialsWidget = () => {
 
                         <div style={{paddingBottom: '30px'}}><PrimaryTable rows={tableRows} headers={tableHeaders()}/>
                         </div>
-                        :
                         {materialCategoryData.length > 0 ?
                             <PrimaryTable rows={tableRowData} headers={tableHeadersData}/> :
                             (flag && materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ?
@@ -147,11 +144,8 @@ const MaterialsWidget = () => {
                     <AddRowModal/>
                 </SideBarContainer>
                 <AddSupplierModal/>
-            </>
-        </div>
-);
+            </div>
+    );
 }
 
-export {
-    MaterialsWidget
-};
+export {MaterialsWidget};
