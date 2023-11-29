@@ -1136,166 +1136,166 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         }
         setLoading(false);
     }
-    }, [
-          generalParameters,
-          subProducts,
-          router,
-          isRequiredParameters,
-          validateParameters,
-      ]);
-    const
-        PricingTab = {
-            id: "c66465de-95d6-4ea3-bd3f-7efe60f4cb0555",
-            name: "Pricing",
-            icon: "pricing",
-            jobDetails: pricingDefaultValue?.jobDetails,
-            actions: pricingDefaultValue?.actions,
-            flows: pricingDefaultValue?.workFlows,
-        };
-    const createProfitTestCase = useCallback(async () => {
-        const res = await callApi(
-            "POST",
-            `/v1/printhouse-config/profits/create-profit-test-case?systemID=2`,
-            {
-                clientId: router?.query?.customerId,
-                clientTypeId: router?.query?.clientTypeId,
-                generalParameters: generalParameters,
-                productItemDTO: {
-                    productId: router?.query?.productId,
-                    details: pricingDefaultValue?.jobDetails,
-                    itemParmetersValues: itemParmetersValues,
-                    workFlow: workFlowSelected,
-                },
-                actionId: router?.query?.actionId,
-                actionProductId: router?.query?.actionProductId,
-            },
-            false
-        );
-        if (res?.success) {
-            navigate(`/products/profits?actionId=${router?.query?.actionId}`);
-        }
-    }, [
-        generalParameters,
-        router,
-        pricingDefaultValue,
-        itemParmetersValues,
-        workFlowSelected,
-    ]);
-    const quantity = generalParameters?.find(
-        (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+  }, [
+    generalParameters,
+    subProducts,
+    router,
+    isRequiredParameters,
+    validateParameters,
+  ]);
+
+  const PricingTab = {
+    id: "c66465de-95d6-4ea3-bd3f-7efe60f4cb0555",
+    name: "Pricing",
+    icon: "pricing",
+    jobDetails: pricingDefaultValue?.jobDetails,
+    actions: pricingDefaultValue?.actions,
+    flows: pricingDefaultValue?.workFlows,
+  };
+  const createProfitTestCase = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/printhouse-config/profits/create-profit-test-case?systemID=2`,
+      {
+        clientId: router?.query?.customerId,
+        clientTypeId: router?.query?.clientTypeId,
+        generalParameters: generalParameters,
+        productItemDTO: {
+          productId: router?.query?.productId,
+          //details: pricingDefaultValue?.jobDetails,
+          itemParmetersValues: itemParmetersValues,
+          workFlow: workFlowSelected,
+        },
+        actionId: router?.query?.actionId,
+        actionProductId: router?.query?.actionProductId,
+      },
+      false
     );
-    const addItemForQuotes = useCallback(async () => {
-        const res = await callApi("POST", `/v1/erp-service/quote/add-item`, {
-            productId: router?.query?.productId,
-            userID: userProfile?.id,
-            customerID: router?.query?.customerId,
-            clientTypeId: router?.query?.clientTypeId,
-            unitPrice: defaultPrice / quantity?.values[0],
-            amount: quantity?.values[0],
-            isNeedGraphics: false,
-            isUrgentWork: urgentOrder,
-            printingNotes,
-            graphicNotes,
-            isNeedExample: false,
-            //jobDetails: pricingDefaultValue?.jobDetails,
-            itemParmetersValues: itemParmetersValues,
-            workFlow: pricingDefaultValue?.workFlows,
-            actions: pricingDefaultValue?.actions,
-        });
-        if (res?.success) {
-            navigate("/quote");
-        }
-    }, [
-        router,
-        pricingDefaultValue,
-        quantity,
-        urgentOrder,
-        graphicNotes,
+    if (res?.success) {
+      navigate(`/products/profits?actionId=${router?.query?.actionId}`);
+    }
+  }, [
+    generalParameters,
+    router,
+    pricingDefaultValue,
+    itemParmetersValues,
+    workFlowSelected,
+  ]);
+  const quantity = generalParameters?.find(
+    (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+  );
+  const addItemForQuotes = useCallback(async () => {
+    const res = await callApi("POST", `/v1/erp-service/quote/add-item`, {
+      productId: router?.query?.productId,
+      userID: userProfile?.id,
+      customerID: router?.query?.customerId,
+      clientTypeId: router?.query?.clientTypeId,
+      unitPrice: defaultPrice / quantity?.values[0],
+      amount: quantity?.values[0],
+      isNeedGraphics: false,
+      isUrgentWork: urgentOrder,
+      printingNotes,
+      graphicNotes,
+      isNeedExample: false,
+      //jobDetails: pricingDefaultValue?.jobDetails,
+      itemParmetersValues: itemParmetersValues,
+      workFlow: pricingDefaultValue?.workFlows,
+      actions: pricingDefaultValue?.actions,
+    });
+    if (res?.success) {
+      navigate("/quote");
+    }
+  }, [
+    router,
+    pricingDefaultValue,
+    quantity,
+    urgentOrder,
+    graphicNotes,
+    printingNotes,
+    userProfile,
+    itemParmetersValues,
+    defaultPrice,
+    workFlowSelected,
+  ]);
+  useEffect(() => {
+    if (
+      widgetType === EWidgetProductType.EDIT ||
+      widgetType === EWidgetProductType.DUPLICATE
+    ) {
+      setUrgentOrder(!!template?.quoteItem?.isUrgentWork);
+      setPrintingNotes(template?.quoteItem?.printingNotes);
+      setGraphicNotes(template?.quoteItem?.graphicNotes);
+      setPricingDefaultValue({
+        actions: template?.actions,
+        jobDetails: template?.jobDetails,
+        workFlows: template?.workFlows,
+      });
+      setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.values[0]);
+      setCanCalculation(false);
+      const workFlowSelect = template?.workFlows?.find(
+        (workFlow) => workFlow?.selected === true
+      );
+      setWorkFlowSelected(workFlowSelect);
+    }
+  }, [widgetType, template, quantity]);
+  const updateQuoteItem = useCallback(async () => {
+    const res = await callApi(
+      "PUT",
+      `/v1/erp-service/quote/update-quote-item`,
+      {
+        quoteItemId: router?.query?.quoteItem,
+        productId: router?.query?.productId,
+        userID: userProfile?.id,
+        customerID: router?.query?.customerId,
+        clientTypeId: router?.query?.clientTypeId,
+        unitPrice: defaultPrice / quantity?.values[0],
+        amount: quantity?.values[0],
+        isNeedGraphics: false,
+        isUrgentWork: urgentOrder,
         printingNotes,
-        userProfile,
-        itemParmetersValues,
-        defaultPrice,
-        workFlowSelected,
-    ]);
-    useEffect(() => {
-        if (
-            widgetType === EWidgetProductType.EDIT ||
-            widgetType === EWidgetProductType.DUPLICATE
-        ) {
-            setUrgentOrder(!!template?.quoteItem?.isUrgentWork);
-            setPrintingNotes(template?.quoteItem?.printingNotes);
-            setGraphicNotes(template?.quoteItem?.graphicNotes);
-            setPricingDefaultValue({
-                actions: template?.actions,
-                jobDetails: template?.jobDetails,
-                workFlows: template?.workFlows,
-            });
-            setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.values[0]);
-            setCanCalculation(false);
-            const workFlowSelect = template?.workFlows?.find(
-                (workFlow) => workFlow?.selected === true
-            );
-            setWorkFlowSelected(workFlowSelect);
-        }
-    }, [widgetType, template, quantity]);
-    const updateQuoteItem = useCallback(async () => {
-        const res = await callApi(
-            "PUT",
-            `/v1/erp-service/quote/update-quote-item`,
-            {
-                quoteItemId: router?.query?.quoteItem,
-                productId: router?.query?.productId,
-                userID: userProfile?.id,
-                customerID: router?.query?.customerId,
-                clientTypeId: router?.query?.clientTypeId,
-                unitPrice: defaultPrice / quantity?.values[0],
-                amount: quantity?.values[0],
-                isNeedGraphics: false,
-                isUrgentWork: urgentOrder,
-                printingNotes,
-                graphicNotes,
-                isNeedExample: false,
-                jobDetails: pricingDefaultValue?.jobDetails,
-                itemParmetersValues: itemParmetersValues,
-                workFlow:
-                    pricingDefaultValue?.workFlows != null
-                        ? pricingDefaultValue?.workFlows
-                        : template?.workFlows,
-                actions:
-                    pricingDefaultValue?.actions?.length > 0
-                        ? pricingDefaultValue?.actions
-                        : template?.actions,
-            }
-        );
-        if (res?.success) {
-            navigate("/quote");
-        }
-    }, [
-        itemParmetersValues,
-        router,
-        pricingDefaultValue,
-        quantity,
-        urgentOrder,
         graphicNotes,
-        printingNotes,
-        userProfile,
-        workFlowSelected,
-        defaultPrice,
-        template,
-    ]);
-    const navigateForRouter = () => {
-        let checkParameter = validateParameters(isRequiredParameters);
-        if (!!checkParameter) {
-            setErrorMsg("");
-            if (router?.query?.actionId) {
-                createProfitTestCase();
-            } else {
-                addItemForQuotes();
-            }
-        } else {
-            setErrorMsg("Please enter all required parameters");
-        }
-    };
+        isNeedExample: false,
+        jobDetails: pricingDefaultValue?.jobDetails,
+        itemParmetersValues: itemParmetersValues,
+        workFlow:
+          pricingDefaultValue?.workFlows != null
+            ? pricingDefaultValue?.workFlows
+            : template?.workFlows,
+        actions:
+          pricingDefaultValue?.actions?.length > 0
+            ? pricingDefaultValue?.actions
+            : template?.actions,
+      }
+    );
+    if (res?.success) {
+      navigate("/quote");
+    }
+  }, [
+    itemParmetersValues,
+    router,
+    pricingDefaultValue,
+    quantity,
+    urgentOrder,
+    graphicNotes,
+    printingNotes,
+    userProfile,
+    workFlowSelected,
+    defaultPrice,
+    template,
+  ]);
+  const navigateForRouter = () => {
+    let checkParameter = validateParameters(isRequiredParameters);
+    if (!!checkParameter) {
+      setErrorMsg("");
+      if (router?.query?.actionId) {
+        createProfitTestCase();
+      } else {
+        addItemForQuotes();
+      }
+    } else {
+      setErrorMsg("Please enter all required parameters");
+    }
+  };
 
 
   useEffect(() => {
