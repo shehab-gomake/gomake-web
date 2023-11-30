@@ -47,7 +47,8 @@ const EmailSettings = ({ onClickSave }: IProps) => {
         setState({ ...state, [key]: value })
     }
 
-    const onChangeLanguage =  (e: any, value: any) => {
+    const onChangeLanguage =  (e: any, value: {value:string; text:string;}) =>
+    {
         onOpenDeleteModal(); 
         setLanguageState(value?.value); 
     };

@@ -18,7 +18,7 @@ const useMessageTemplate = () => {
   const [editModal, setEditModal] = useRecoilState<boolean>(editModalState);
   const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupState);
   const setNewTemplateGroup = useSetRecoilState<SMSTemplateGroup>(templateGroupStateNew);
-  const [types, setTypes] = useState([]);
+  const [types, setTypes] = useState<{value: string; text: string;}[]>([]);
   const [SMSTemplate, setSMSTemplate] = useRecoilState<ISMSTemplate>(smsTemplateState);
   const [openDeleteModal, setOpenDeleteModal] = useRecoilState<boolean>(changeLanguageModalState);
   const setSubject = useSetRecoilState<string>(smsSubjectState);
@@ -34,7 +34,7 @@ const useMessageTemplate = () => {
   };
 
   const onClickYes = async () => {
-    await getSmsTemplateById(SMSTemplate?.id  , languageState);
+    await getSmsTemplateById(SMSTemplate?.id , languageState);
     setOpenDeleteModal(false);
   };
 

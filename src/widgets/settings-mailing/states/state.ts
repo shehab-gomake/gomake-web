@@ -46,7 +46,7 @@ export const changeLanguageModalState = atom<boolean>({
 
 export const languageTemplateState = atom<string>({
   key: "languageTemplateState",
-  default: "en",
+  default: "",
 });
 
 export const editModalState = atom<boolean>({

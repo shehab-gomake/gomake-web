@@ -2299,7 +2299,6 @@
       "unitPrice": "Unit Price",
       "add": "Add",
       "back": "back",
-      "addNew": "Add new category",
       "addRow": "add row",
       "addNewRow": "Add new row",
       "openImage": "Open image",
@@ -2313,6 +2312,7 @@
       "MessageForClient":"There is a price offer for setup! \n This action will result in preserving the offer in setup and opening a new document for a new customer.",
       "titleMessage":"There is a price offer for setup",
     "AddItemtoQuote":"Add item to quote",
+    
   "measurementUnits": {
     "cm": "cm",
     "mm": "mm",

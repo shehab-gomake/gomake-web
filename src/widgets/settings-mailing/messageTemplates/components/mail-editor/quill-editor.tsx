@@ -21,7 +21,6 @@ interface IProps {
 }
 
 const QuillEditor = ({ headerEditor }: IProps) => {
-
     const { templateVariables } = useMessageTemplate();
     const { classes } = useStyle();
     const { t } = useTranslation();
@@ -40,7 +39,6 @@ const QuillEditor = ({ headerEditor }: IProps) => {
 
     useEffect(() => {
         const { Quill } = require("react-quill");
-
         var Embed = Quill.import('blots/embed');
         class TemplateMarker extends Embed {
             static create(value) {
@@ -178,7 +176,7 @@ const QuillEditor = ({ headerEditor }: IProps) => {
     };
 
     return (
-        <div dir={dir} className='editorDiv'>
+        <div dir={dir} className='editorDiv' style={{width: "100%"}}>
             <Suspense>
                 <ReactQuill modules={modules} style={headerEditor ? classes.myEditorBody : classes.myEditorSubject} value={headerEditor ? body : subject} onChange={headerEditor ? handleChangeBody : handleChangeSubject} ref={editorRef} id='editor' />
             </Suspense>

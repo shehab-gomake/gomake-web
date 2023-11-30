@@ -3,10 +3,8 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { convertHeightToVH } from "@/utils/adapter";
 
-
 const useStyle = () => {
     const { primaryColor, secondColor, neutralColor } = useGomakeTheme();
-
     const classes = useMemo(() => {
         return {
             iconStyle: {
@@ -88,10 +86,11 @@ const useStyle = () => {
                 padding: "1px",
                 margin: "4px",
                 border: "1px solid rgb(130, 131, 190)",
+                alignItems: "center",
             },
             variablesContainer: {
                 paddingTop: "3px",
-                width: "780px",
+                width: "100%",
             },
             footerStyle: {
                 display: "flex",
