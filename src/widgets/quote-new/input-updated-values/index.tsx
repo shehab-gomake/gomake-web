@@ -12,6 +12,7 @@ const InputUpdatedValues = ({
   setIsUpdate,
   onInputChange,
   speicalStyle,
+  sign,
 }: IBusinessWidget) => {
   const { clasess } = useStyle({ isAnderLine });
   const [updateValue, setUpdateValue] = useState();
@@ -37,7 +38,7 @@ const InputUpdatedValues = ({
             className="customInput"
             onClick={() => setIsUpdate(1)}
           >
-            {value}
+            {value} {sign}
           </div>
         )}
       </div>

@@ -41,6 +41,7 @@ export type PricingListProps = {
     value: number
   ) => void;
   onOpenAddStepModal: () => void;
+  updateActionProfitRow: (data: any) => void;
 };
 export type PricingListTableProps = {
   tableHeaders: string[];
@@ -51,6 +52,8 @@ export type PricingListTableProps = {
     value: number
   ) => void;
   onOpenAddStepModal: () => void;
+  updateActionProfitRow: (data: any) => void;
+  selectedPricingBy: SelectedPricingByType;
 };
 export type PricingListTableRowProps = {
   item: any;
@@ -60,6 +63,8 @@ export type PricingListTableRowProps = {
     filedName: string,
     value: number
   ) => void;
+  updateActionProfitRow: (data: any) => void;
+  selectedPricingBy: SelectedPricingByType;
 };
 export type LineChartProps = {
   actionProfitRowChartData: ActionProfitRowChartData;

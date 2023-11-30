@@ -29,6 +29,8 @@ const PricingListTable = ({
   tableBodyList,
   changeactionProfitRowsItems,
   onOpenAddStepModal,
+  updateActionProfitRow,
+  selectedPricingBy,
 }: PricingListTableProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -67,6 +69,8 @@ const PricingListTable = ({
                   item={item}
                   index={index}
                   changeactionProfitRowsItems={changeactionProfitRowsItems}
+                  updateActionProfitRow={updateActionProfitRow}
+                  selectedPricingBy={selectedPricingBy}
                 />
               );
             })}

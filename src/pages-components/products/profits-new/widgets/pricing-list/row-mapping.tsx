@@ -5,51 +5,72 @@ import { InputUpdatedValues } from "@/widgets/quote-new/input-updated-values";
 import { usePriceList } from "./use-pricing-list";
 import { PricingListTableRowProps } from "../../interface";
 import { ChangeEvent } from "react";
+import { EPricingBy } from "../../enums/profites-enum";
 
 const RowMappingWidget = ({
   item,
   index,
   changeactionProfitRowsItems,
+  updateActionProfitRow,
+  selectedPricingBy,
 }: PricingListTableRowProps) => {
   const { clasess } = useStyle();
   const {
     isUpdateCost,
     isUpdatTotalPrice,
+    isUpdateProfit,
+    profit,
+    onBlurProfit,
+    onInputChangeProfit,
     setIsUpdateTotalPrice,
     setIsUpdateCost,
-    onBlurDiscount,
-    onInputChangeDiscount,
+    onBlurCost,
+    onInputChangeCost,
     onBlurTotalPrice,
     onInputChangeTotalPrice,
-  } = usePriceList({ changeactionProfitRowsItems, index });
+    setIsUpdateProfit,
+  } = usePriceList({
+    changeactionProfitRowsItems,
+    index,
+    updateActionProfitRow,
+    item,
+  });
   return (
     <TableRow key={item.id}>
       <PrimaryTableCell style={clasess.cellContainerStyle}>
         <div style={clasess.cellTextInputStyle}>
           <InputUpdatedValues
             value={item?.value}
-            onBlur={onBlurDiscount}
+            onBlur={() => onBlurCost(item)}
             isUpdate={isUpdateCost}
             setIsUpdate={setIsUpdateCost}
             onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
-              onInputChangeDiscount(e)
+              onInputChangeCost(e)
             }
           />
         </div>
       </PrimaryTableCell>
       <PrimaryTableCell style={clasess.cellContainerStyle}>
-        {item?.value === 0
-          ? 0
-          : (((item?.totalPrice - item?.value) / item?.value) * 100).toFixed(
-              2
-            )}{" "}
-        %
+        <div style={clasess.cellTextInputStyle}>
+          {selectedPricingBy?.value === EPricingBy.COST ? (
+            <InputUpdatedValues
+              value={profit}
+              sign={"%"}
+              onBlur={() => onBlurProfit(item)}
+              isUpdate={isUpdateProfit}
+              setIsUpdate={setIsUpdateProfit}
+              onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
+                onInputChangeProfit(e)
+              }
+            />
+          ) : null}
+        </div>
       </PrimaryTableCell>
       <PrimaryTableCell style={clasess.cellContainerStyle}>
         <div style={clasess.cellTextInputStyle}>
           <InputUpdatedValues
             value={item?.totalPrice}
-            onBlur={onBlurTotalPrice}
+            onBlur={() => onBlurTotalPrice(item)}
             isUpdate={isUpdatTotalPrice}
             setIsUpdate={setIsUpdateTotalPrice}
             onInputChange={(e: ChangeEvent<HTMLInputElement>) =>

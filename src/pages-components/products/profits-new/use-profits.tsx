@@ -175,6 +175,7 @@ const useNewProfits = () => {
         alertSuccessUpdate();
         setSelectedPricingBy(data);
         getAllActionProfitRowsByActionId();
+        getActionProfitRowChartData();
       } else {
         alertFaultUpdate();
       }
@@ -213,12 +214,34 @@ const useNewProfits = () => {
       if (res?.success) {
         alertSuccessAdded();
         getAllActionProfitRowsByActionId();
+        getActionProfitRowChartData();
       } else {
         alertFaultAdded();
       }
     },
     [actionProfitByActionId, selectedPricingBy]
   );
+
+  const updateActionProfitRow = useCallback(async (data: any) => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printhouse-config/action-profit-rows/update-action-profit-row`,
+      {
+        id: data?.id,
+        actionProfitId: data?.actionProfitId,
+        value: data?.value,
+        pricingBy: data?.pricingBy,
+        totalPrice: data?.totalPrice,
+      }
+    );
+    if (res?.success) {
+      alertSuccessUpdate();
+      getAllActionProfitRowsByActionId();
+      getActionProfitRowChartData();
+    } else {
+      alertFaultUpdate();
+    }
+  }, []);
   return {
     allActionProfitRowsByActionId,
     actionProfitRowChartData,
@@ -238,6 +261,7 @@ const useNewProfits = () => {
     setSelectedPricingBy,
     changeactionProfitRowsItems,
     addNewStepForActionProfitRow,
+    updateActionProfitRow,
   };
 };
 

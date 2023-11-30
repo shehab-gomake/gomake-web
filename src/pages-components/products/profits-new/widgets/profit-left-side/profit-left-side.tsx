@@ -20,6 +20,7 @@ const ProfitLeftSideWidget = () => {
     setSelectedTransition,
     changeactionProfitRowsItems,
     addNewStepForActionProfitRow,
+    updateActionProfitRow,
   } = useNewProfits();
   return (
     <div style={clasess.mainHeaderContainer}>
@@ -35,6 +36,7 @@ const ProfitLeftSideWidget = () => {
         changeactionProfitRowsItems={changeactionProfitRowsItems}
         setSelectedTransition={setSelectedTransition}
         onOpenAddStepModal={onOpenAddStepModal}
+        updateActionProfitRow={updateActionProfitRow}
       />
       <AddStepModal
         openModal={openAddStepModal}

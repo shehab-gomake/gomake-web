@@ -17,6 +17,7 @@ const PricingList = ({
   updatePricingByForAction,
   changeactionProfitRowsItems,
   onOpenAddStepModal,
+  updateActionProfitRow,
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -50,6 +51,8 @@ const PricingList = ({
         tableBodyList={tableBodyList}
         changeactionProfitRowsItems={changeactionProfitRowsItems}
         onOpenAddStepModal={onOpenAddStepModal}
+        updateActionProfitRow={updateActionProfitRow}
+        selectedPricingBy={selectedPricingBy}
       />
       <div style={clasess.chartContainer}>
         <LineChart actionProfitRowChartData={actionProfitRowChartData} />
