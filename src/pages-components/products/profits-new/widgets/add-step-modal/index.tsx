@@ -35,8 +35,8 @@ const AddStepModal = ({
                 placeholder={selectedPricingBy?.label}
                 style={clasess.textInputStyle}
                 value={value}
-                onChange={(e: any) => {
-                  setValue(e.target.value);
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setValue(parseInt(e.target.value, 10));
                 }}
                 type="number"
               />
@@ -47,8 +47,8 @@ const AddStepModal = ({
                 placeholder={t("products.profits.pricingListWidget.totalPrice")}
                 style={clasess.textInputStyle}
                 value={totalPrice}
-                onChange={(e: any) => {
-                  setTotalPrice(e.target.value);
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setTotalPrice(parseInt(e.target.value, 10));
                 }}
                 type="number"
               />

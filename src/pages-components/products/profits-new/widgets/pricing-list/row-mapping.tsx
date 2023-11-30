@@ -4,6 +4,7 @@ import { useStyle } from "./style";
 import { InputUpdatedValues } from "@/widgets/quote-new/input-updated-values";
 import { usePriceList } from "./use-pricing-list";
 import { PricingListTableRowProps } from "../../interface";
+import { ChangeEvent } from "react";
 
 const RowMappingWidget = ({
   item,
@@ -30,7 +31,9 @@ const RowMappingWidget = ({
             onBlur={onBlurDiscount}
             isUpdate={isUpdateCost}
             setIsUpdate={setIsUpdateCost}
-            onInputChange={(e: any) => onInputChangeDiscount(e)}
+            onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onInputChangeDiscount(e)
+            }
           />
         </div>
       </PrimaryTableCell>
@@ -49,7 +52,9 @@ const RowMappingWidget = ({
             onBlur={onBlurTotalPrice}
             isUpdate={isUpdatTotalPrice}
             setIsUpdate={setIsUpdateTotalPrice}
-            onInputChange={(e: any) => onInputChangeTotalPrice(e)}
+            onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onInputChangeTotalPrice(e)
+            }
           />
         </div>
       </PrimaryTableCell>
