@@ -17,7 +17,12 @@ import {
 } from "./interface";
 
 const useNewProfits = () => {
-  const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+  const {
+    alertFaultUpdate,
+    alertSuccessUpdate,
+    alertSuccessAdded,
+    alertFaultAdded,
+  } = useSnackBar();
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const router = useRouter();
@@ -74,6 +79,8 @@ const useNewProfits = () => {
   const [actionProfitRowChartData, setActionProfitRowChartData] =
     useState<ActionProfitRowChartData>();
   const [actionProfitRowsList, setActionProfitRowsList] = useState([]);
+  const [openAddStepModal, setOpenAddStepModal] = useState<boolean>(false);
+
   const [tableHeaders, setTableHeaders] = useState<string[]>([
     t("products.profits.pricingListWidget.cost"),
     t("products.profits.pricingListWidget.profit"),
@@ -130,6 +137,13 @@ const useNewProfits = () => {
       ]);
     }
   }, [selectedPricingBy]);
+
+  const onCloseAddStepModal = () => {
+    setOpenAddStepModal(false);
+  };
+  const onOpenAddStepModal = () => {
+    setOpenAddStepModal(true);
+  };
   useEffect(() => {
     let defaultPricingByValue = PricingBy.find(
       (item) => item?.value === actionProfitByActionId?.pricingBy
@@ -183,6 +197,28 @@ const useNewProfits = () => {
     };
     setActionProfitRowsList(temp);
   };
+
+  const addNewStepForActionProfitRow = useCallback(
+    async (value: number, totalPrice: number) => {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/printhouse-config/action-profit-rows/add-action-profit-row`,
+        {
+          actionProfitId: actionProfitByActionId?.id,
+          value,
+          pricingBy: selectedPricingBy?.value,
+          totalPrice: totalPrice,
+        }
+      );
+      if (res?.success) {
+        alertSuccessAdded();
+        getAllActionProfitRowsByActionId();
+      } else {
+        alertFaultAdded();
+      }
+    },
+    [actionProfitByActionId, selectedPricingBy]
+  );
   return {
     allActionProfitRowsByActionId,
     actionProfitRowChartData,
@@ -194,10 +230,14 @@ const useNewProfits = () => {
     Transition,
     PricingBy,
     router,
+    openAddStepModal,
+    onCloseAddStepModal,
+    onOpenAddStepModal,
     updatePricingByForAction,
     setSelectedTransition,
     setSelectedPricingBy,
     changeactionProfitRowsItems,
+    addNewStepForActionProfitRow,
   };
 };
 

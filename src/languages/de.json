@@ -1371,6 +1371,7 @@
         "more": "Mehr",
         "height": "Höhe",
         "addNewQuantity": "Neue Menge hinzufügen",
+        "addNewStep": "Neuen Schritt hinzufügen",
         "saveStep": "Schritt speichern",
         "testQuantity": "Menge",
         "unitPrice": "Stückpreis",
@@ -1378,7 +1379,8 @@
         "materialQuantity": "Materialmenge",
         "beats": "Beats",
         "linear": "Linear",
-        "steps": "Schritte"
+        "steps": "Schritte",
+        "pleaseEnterallrequiredvalues": "Bitte geben Sie alle erforderlichen Werte ein"
       },
       "exceptions": {
         "title": "Ausnahmen",

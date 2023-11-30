@@ -10,6 +10,7 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { LineChartProps } from "@/pages-components/products/profits-new/interface";
 
 ChartJS.register(
   CategoryScale,
@@ -34,7 +35,7 @@ export const options = {
   },
 };
 
-export function LineChart({ actionProfitRowChartData }) {
+export function LineChart({ actionProfitRowChartData }: LineChartProps) {
   const data = {
     labels: actionProfitRowChartData?.profitAxis,
     datasets: [

@@ -1396,6 +1396,7 @@
         "more": "עוד",
         "height": "גובה",
         "addNewQuantity": "הוסף כמות חדשה",
+        "addNewStep": "הוסף שלב חדש",
         "saveStep": "שמור שלב",
         "testQuantity": "כמות",
         "unitPrice": "מחיר ליחידה",
@@ -1403,7 +1404,8 @@
         "materialQuantity": "כמות חומר",
         "beats": "קצבים",
         "linear": "לינארי",
-        "steps": "שלבים"
+        "steps": "שלבים",
+        "pleaseEnterallrequiredvalues": "אנא הזן את כל הערכים הנדרשים"
       },
       "exceptions": {
         "title": "חריגים",

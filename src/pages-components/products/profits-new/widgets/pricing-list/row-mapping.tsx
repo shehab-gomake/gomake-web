@@ -3,9 +3,13 @@ import { TableRow } from "@mui/material";
 import { useStyle } from "./style";
 import { InputUpdatedValues } from "@/widgets/quote-new/input-updated-values";
 import { usePriceList } from "./use-pricing-list";
+import { PricingListTableRowProps } from "../../interface";
 
-const RowMappingWidget = ({ item, index, changeactionProfitRowsItems }) => {
-  console.log("item", item);
+const RowMappingWidget = ({
+  item,
+  index,
+  changeactionProfitRowsItems,
+}: PricingListTableRowProps) => {
   const { clasess } = useStyle();
   const {
     isUpdateCost,

@@ -1,6 +1,6 @@
-import { ProfitHeaderWidget } from "./widgets/profit-header/profit-header";
-import { ProfitLeftSideWidget } from "./widgets/profit-left-side/profit-left-side";
 import { ProfitRightSideWidget } from "./widgets/profit-right-side/profit-right-side";
+import { ProfitLeftSideWidget } from "./widgets/profit-left-side/profit-left-side";
+import { ProfitHeaderWidget } from "./widgets/profit-header/profit-header";
 import { useNewProfits } from "./use-profits";
 import { useStyle } from "./style";
 

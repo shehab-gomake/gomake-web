@@ -1403,6 +1403,7 @@
         "more": "More",
         "height": "height",
         "addNewQuantity": "add new quantity",
+        "addNewStep": "add new step",
         "saveStep": "Save step",
         "testQuantity": "Quantity",
         "unitPrice": "Unit price",
@@ -1410,7 +1411,8 @@
         "materialQuantity":"Material Quantity",
         "beats":"Beats",
         "linear":"Linear",
-        "steps":"Steps"
+        "steps":"Steps",
+        "pleaseEnterallrequiredvalues":"Please Enter all required values"
       },
       "exceptions": {
         "title": "Exceptions",

@@ -1,6 +1,7 @@
 import { PricingList } from "../pricing-list/pricing-list";
 import { useNewProfits } from "../../use-profits";
 import { useStyle } from "./style";
+import { AddStepModal } from "../add-step-modal";
 
 const ProfitLeftSideWidget = () => {
   const { clasess } = useStyle();
@@ -12,9 +13,13 @@ const ProfitLeftSideWidget = () => {
     tableHeaders,
     Transition,
     PricingBy,
+    openAddStepModal,
+    onCloseAddStepModal,
+    onOpenAddStepModal,
     updatePricingByForAction,
     setSelectedTransition,
     changeactionProfitRowsItems,
+    addNewStepForActionProfitRow,
   } = useNewProfits();
   return (
     <div style={clasess.mainHeaderContainer}>
@@ -29,6 +34,13 @@ const ProfitLeftSideWidget = () => {
         updatePricingByForAction={updatePricingByForAction}
         changeactionProfitRowsItems={changeactionProfitRowsItems}
         setSelectedTransition={setSelectedTransition}
+        onOpenAddStepModal={onOpenAddStepModal}
+      />
+      <AddStepModal
+        openModal={openAddStepModal}
+        onCloseModal={onCloseAddStepModal}
+        selectedPricingBy={selectedPricingBy}
+        addNewStepForActionProfitRow={addNewStepForActionProfitRow}
       />
     </div>
   );

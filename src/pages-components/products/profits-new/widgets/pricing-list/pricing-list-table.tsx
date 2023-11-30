@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { RowMappingWidget } from "./row-mapping";
 import { Plus } from "@/pages-components/products/profits/widgets/pricing-list/icons/plus";
+import { PricingListTableProps } from "../../interface";
 
 const PrimaryTableCell = styled(TableCell)(() => {
   return {
@@ -27,8 +28,8 @@ const PricingListTable = ({
   tableHeaders,
   tableBodyList,
   changeactionProfitRowsItems,
-}) => {
-  console.log("tableBodyList", tableBodyList);
+  onOpenAddStepModal,
+}: PricingListTableProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   return (
@@ -58,7 +59,7 @@ const PricingListTable = ({
               ))}
             </TableRow>
           </TableHead>
-          <TableBody style={{ border: "1px solid #EAECF0" }}>
+          <TableBody>
             {tableBodyList?.map((item: any, index: number) => {
               return (
                 <RowMappingWidget
@@ -72,9 +73,9 @@ const PricingListTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      <div style={clasess.addNewQuantity}>
+      <div style={clasess.addNewQuantity} onClick={() => onOpenAddStepModal()}>
         <Plus />
-        {t("products.profits.pricingListWidget.addNewQuantity")}
+        {t("products.profits.pricingListWidget.addNewStep")}
       </div>
     </>
   );

@@ -1396,6 +1396,7 @@
         "more": "المزيد",
         "height": "الارتفاع",
         "addNewQuantity": "إضافة كمية جديدة",
+        "addNewStep": "إضافة خطوة جديدة",
         "saveStep": "حفظ الخطوة",
         "testQuantity": "الكمية",
         "unitPrice": "سعر الوحدة",
@@ -1403,7 +1404,8 @@
         "materialQuantity": "كمية المواد",
         "beats": "إيقاعات",
         "linear": "خطي",
-        "steps": "خطوات"
+        "steps": "خطوات",
+        "pleaseEnterallrequiredvalues": "الرجاء إدخال جميع القيم المطلوبة"
       },
       "exceptions": {
         "title": "الاستثناءات",

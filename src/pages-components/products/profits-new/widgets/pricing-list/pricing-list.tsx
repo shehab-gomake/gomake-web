@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { LineChart } from "@/pages-components/products/profits/widgets/line-chart";
 import { PricingListTable } from "./pricing-list-table";
 import { useStyle } from "./style";
+import { PricingListProps } from "../../interface";
 
 const PricingList = ({
   tableHeaders,
@@ -15,7 +16,8 @@ const PricingList = ({
   selectedPricingBy,
   updatePricingByForAction,
   changeactionProfitRowsItems,
-}) => {
+  onOpenAddStepModal,
+}: PricingListProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   return (
@@ -47,6 +49,7 @@ const PricingList = ({
         tableHeaders={tableHeaders}
         tableBodyList={tableBodyList}
         changeactionProfitRowsItems={changeactionProfitRowsItems}
+        onOpenAddStepModal={onOpenAddStepModal}
       />
       <div style={clasess.chartContainer}>
         <LineChart actionProfitRowChartData={actionProfitRowChartData} />
