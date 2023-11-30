@@ -1399,7 +1399,11 @@
         "saveStep": "حفظ الخطوة",
         "testQuantity": "الكمية",
         "unitPrice": "سعر الوحدة",
-        "testFinalPrice": "السعر النهائي للاختبار"
+        "testFinalPrice": "السعر النهائي للاختبار",
+        "materialQuantity": "كمية المواد",
+        "beats": "إيقاعات",
+        "linear": "خطي",
+        "steps": "خطوات"
       },
       "exceptions": {
         "title": "الاستثناءات",

@@ -28,13 +28,16 @@ const PricingListTable = ({
   tableBodyList,
   changeactionProfitRowsItems,
 }) => {
+  console.log("tableBodyList", tableBodyList);
   const { t } = useTranslation();
   const { clasess } = useStyle();
   return (
     <>
       <TableContainer
         style={{
-          maxHeight: 400,
+          // maxHeight: 123,
+          maxHeight: 250,
+
           overflow: "scroll",
         }}
       >
@@ -59,6 +62,7 @@ const PricingListTable = ({
             {tableBodyList?.map((item: any, index: number) => {
               return (
                 <RowMappingWidget
+                  key={item?.id}
                   item={item}
                   index={index}
                   changeactionProfitRowsItems={changeactionProfitRowsItems}

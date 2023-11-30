@@ -1399,7 +1399,11 @@
         "saveStep": "שמור שלב",
         "testQuantity": "כמות",
         "unitPrice": "מחיר ליחידה",
-        "testFinalPrice": "מחיר סופי לניסוי"
+        "testFinalPrice": "מחיר סופי לניסוי",
+        "materialQuantity": "כמות חומר",
+        "beats": "קצבים",
+        "linear": "לינארי",
+        "steps": "שלבים"
       },
       "exceptions": {
         "title": "חריגים",

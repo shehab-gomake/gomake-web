@@ -3,16 +3,17 @@ import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 import { convertHeightToVH } from "@/utils/adapter";
 import { HEADER_HEIGHT, SCREEN_HEIGHT } from "@/utils/layout-config";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
   const { t } = useTranslation();
-
+  const { neutralColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       mainGridContainer: {
         display: "grid" as "grid",
         gridTemplateRows: "auto 1fr",
-        background: "#ECECEC",
+        background: neutralColor(100),
         padding: 10,
         gridGap: "8px",
         maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),

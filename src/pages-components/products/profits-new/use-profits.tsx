@@ -1,41 +1,51 @@
-import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import { getAndSetAllActionProfitRowsByActionId } from "./services/get-all-action-profit-rows-by-action-id";
-import { getAndSetActionProfitByActionId } from "./services/get-action-profit-by-action-id";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { getAndSetActionProfitRowChartData } from "./services/get-action-profit-row-chart-data";
-import { EPricingBy, ETransition } from "./enums/profites-enum";
+import { useTranslation } from "react-i18next";
+import { useRouter } from "next/router";
+
 import { EHttpMethod } from "@/services/api-service/enums";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+
+import { getAndSetAllActionProfitRowsByActionId } from "./services/get-all-action-profit-rows-by-action-id";
+import { getAndSetActionProfitRowChartData } from "./services/get-action-profit-row-chart-data";
+import { getAndSetActionProfitByActionId } from "./services/get-action-profit-by-action-id";
+import { EPricingBy, ETransition } from "./enums/profites-enum";
+import {
+  ActionProfit,
+  ActionProfitRowChartData,
+  SelectedPricingByType,
+  SelectedTransition,
+} from "./interface";
 
 const useNewProfits = () => {
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+  const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const router = useRouter();
   const Transition = [
     {
-      label: "Linear",
+      label: t("products.profits.pricingListWidget.linear"),
       value: ETransition.LINEAR,
     },
     {
-      label: "Steps",
+      label: t("products.profits.pricingListWidget.steps"),
       value: ETransition.STEPS,
     },
   ];
   const PricingBy = [
     {
-      label: "Cost",
+      label: t("products.profits.pricingListWidget.cost"),
       value: EPricingBy.COST,
     },
     {
-      label: "Quantity",
+      label: t("products.profits.pricingListWidget.quantity"),
       value: EPricingBy.QUANTITY,
     },
     {
-      label: "Material Quantity",
+      label: t("products.profits.pricingListWidget.materialQuantity"),
       value: EPricingBy.MATERIAL_QUANTITY,
     },
     {
-      label: "Beats",
+      label: t("products.profits.pricingListWidget.beats"),
       value: EPricingBy.BEATS,
     },
     {
@@ -47,28 +57,29 @@ const useNewProfits = () => {
       value: EPricingBy.CUBIC_METER,
     },
   ];
-  const [selectedPricingBy, setSelectedPricingBy] = useState<any>({});
-  const [selectedTransition, setSelectedTransition] = useState<any>({});
+  const [selectedPricingBy, setSelectedPricingBy] =
+    useState<SelectedPricingByType>({
+      label: "",
+      value: 0,
+    });
+  const [selectedTransition, setSelectedTransition] =
+    useState<SelectedTransition>({
+      label: "",
+      value: 0,
+    });
   const [allActionProfitRowsByActionId, setAllActionProfitRowsByActionId] =
     useState([]);
-
-  const [actionProfitByActionId, setActionProfitByActionId] = useState<any>([]);
-  const [actionProfitRowChartData, setActionProfitRowChartData] = useState<any>(
-    []
-  );
-  const [isUpdateCost, setIsUpdateCost] = useState(null);
-  console.log("FFFFFF", {
-    allActionProfitRowsByActionId,
-    actionProfitByActionId,
-    actionProfitRowChartData,
-  });
-  const [tableHeaders, setTableHeaders] = useState([
-    "Cost",
-    "Profit",
-    "Total price",
-    "More",
+  const [actionProfitByActionId, setActionProfitByActionId] =
+    useState<ActionProfit>();
+  const [actionProfitRowChartData, setActionProfitRowChartData] =
+    useState<ActionProfitRowChartData>();
+  const [actionProfitRowsList, setActionProfitRowsList] = useState([]);
+  const [tableHeaders, setTableHeaders] = useState<string[]>([
+    t("products.profits.pricingListWidget.cost"),
+    t("products.profits.pricingListWidget.profit"),
+    t("products.profits.pricingListWidget.totalPrice"),
+    t("products.profits.pricingListWidget.more"),
   ]);
-
   const getAllActionProfitRowsByActionId = useCallback(async () => {
     await getAndSetAllActionProfitRowsByActionId(
       callApi,
@@ -106,16 +117,16 @@ const useNewProfits = () => {
     if (selectedPricingBy?.value === EPricingBy.COST) {
       setTableHeaders([
         selectedPricingBy?.label,
-        "Profit",
-        "Total price",
-        "More",
+        t("products.profits.pricingListWidget.profit"),
+        t("products.profits.pricingListWidget.totalPrice"),
+        t("products.profits.pricingListWidget.more"),
       ]);
     } else {
       setTableHeaders([
         selectedPricingBy?.label,
-        "Unit price",
-        "Total price",
-        "More",
+        t("products.profits.pricingListWidget.unitPrice"),
+        t("products.profits.pricingListWidget.totalPrice"),
+        t("products.profits.pricingListWidget.more"),
       ]);
     }
   }, [selectedPricingBy]);
@@ -131,7 +142,7 @@ const useNewProfits = () => {
   }, [actionProfitByActionId]);
 
   const updatePricingByForAction = useCallback(
-    async (data: any) => {
+    async (data: SelectedPricingByType) => {
       const res = await callApi(
         EHttpMethod.PUT,
         `/v1/printhouse-config/profits/update-action-profit`,
@@ -157,21 +168,14 @@ const useNewProfits = () => {
     [actionProfitByActionId]
   );
 
-  const [actionProfitRowsList, setActionProfitRowsList] = useState<any>([]);
   useEffect(() => {
     setActionProfitRowsList(allActionProfitRowsByActionId);
   }, [allActionProfitRowsByActionId]);
   const changeactionProfitRowsItems = (
     index: number,
     filedName: string,
-    value: any
+    value: number
   ) => {
-    console.log("DDDDDD", {
-      index,
-      filedName,
-      value,
-      actionProfitRowsList,
-    });
     let temp = [...actionProfitRowsList];
     temp[index] = {
       ...temp[index],

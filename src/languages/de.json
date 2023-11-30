@@ -1374,7 +1374,11 @@
         "saveStep": "Schritt speichern",
         "testQuantity": "Menge",
         "unitPrice": "Stückpreis",
-        "testFinalPrice": "Testendpreis"
+        "testFinalPrice": "Testendpreis",
+        "materialQuantity": "Materialmenge",
+        "beats": "Beats",
+        "linear": "Linear",
+        "steps": "Schritte"
       },
       "exceptions": {
         "title": "Ausnahmen",

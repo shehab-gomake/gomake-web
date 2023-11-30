@@ -5,6 +5,7 @@ import { InputUpdatedValues } from "@/widgets/quote-new/input-updated-values";
 import { usePriceList } from "./use-pricing-list";
 
 const RowMappingWidget = ({ item, index, changeactionProfitRowsItems }) => {
+  console.log("item", item);
   const { clasess } = useStyle();
   const {
     isUpdateCost,

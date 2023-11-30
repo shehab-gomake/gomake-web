@@ -1406,7 +1406,11 @@
         "saveStep": "Save step",
         "testQuantity": "Quantity",
         "unitPrice": "Unit price",
-        "testFinalPrice": "Test Final Price"
+        "testFinalPrice": "Test Final Price",
+        "materialQuantity":"Material Quantity",
+        "beats":"Beats",
+        "linear":"Linear",
+        "steps":"Steps"
       },
       "exceptions": {
         "title": "Exceptions",
