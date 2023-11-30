@@ -120,9 +120,6 @@ const MaterialsWidget = () => {
                             <h4 style={classes.subHeader}>{materialCategory?.toString()}</h4>
                             <FiltersActionsBar/>
                         </Stack>
-
-                        <div style={{paddingBottom: '30px'}}><PrimaryTable rows={tableRows} headers={tableHeaders()}/>
-                        </div>
                         {materialCategoryData.length > 0 ?
                             <PrimaryTable rows={tableRowData} headers={tableHeadersData}/> :
                             (flag && materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ?
