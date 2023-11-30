@@ -19,10 +19,6 @@ const useMessageTemplate = () => {
   const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(templateGroupState);
   const setNewTemplateGroup = useSetRecoilState<SMSTemplateGroup>(templateGroupStateNew);
   const [types, setTypes] = useState([]);
-
-
-  //////////////////////////////////////////////////
-
   const [SMSTemplate, setSMSTemplate] = useRecoilState<ISMSTemplate>(smsTemplateState);
   const [openDeleteModal, setOpenDeleteModal] = useRecoilState<boolean>(changeLanguageModalState);
   const setSubject = useSetRecoilState<string>(smsSubjectState);
@@ -41,8 +37,6 @@ const useMessageTemplate = () => {
     await getSmsTemplateById(SMSTemplate?.id  , languageState);
     setOpenDeleteModal(false);
   };
-
-  /////////////////////////////////////////////////
 
   const tableHeaders = [
     t("mailingSettings.type"),

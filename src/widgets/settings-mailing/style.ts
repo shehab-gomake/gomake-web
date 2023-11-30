@@ -1,6 +1,5 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
     const { theme } = useGomakeTheme();
@@ -14,6 +13,18 @@ const useStyle = () => {
                 width: "100%",
                 marginBottom: 40,
             },
+            editorModalStyle: {
+                paddingLeft: 20,
+                padding: 20,
+                gap: "15px",
+                width: "852px"
+            },
+            groupModalStyle: {
+                paddingLeft: 20,
+                padding: 20,
+                width: "518px",
+                height: "214px"
+            }
         };
     }, [theme]);
     return {

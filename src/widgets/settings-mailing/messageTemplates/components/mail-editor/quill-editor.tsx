@@ -20,7 +20,7 @@ interface IProps {
     headerEditor: EditorTYPE;
 }
 
-const MyEditor = ({ headerEditor }: IProps) => {
+const QuillEditor = ({ headerEditor }: IProps) => {
 
     const { templateVariables } = useMessageTemplate();
     const { classes } = useStyle();
@@ -30,7 +30,7 @@ const MyEditor = ({ headerEditor }: IProps) => {
     const editorRef = headerEditor ? editorRefBody : editorRefSubject;
     type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
     const dir: 'rtl' | 'ltr' = t('direction');
-    const RTL = dir == 'rtl';
+    const RTL = dir === 'rtl';
     const apiRef: { current: scrollVisibilityApiType } = useRef(null);
 
     useEffect(() => {
@@ -95,7 +95,7 @@ const MyEditor = ({ headerEditor }: IProps) => {
             return;
         }
 
-        if ( range.index == quill.getLength() - 2) {
+        if (range.index === quill.getLength() - 2) {
 
             const nextChar = quill.getText(range.index + 1, 1);
             position += nextChar !== ' ' ? 1 : 0;
@@ -103,7 +103,7 @@ const MyEditor = ({ headerEditor }: IProps) => {
             position += 1;
 
         }
-        else  if (range.index == quill.getLength() - 1 ) {
+        else if (range.index === quill.getLength() - 1) {
 
             quill.insertText(position, ' '); // Add a space
             position += 1;
@@ -177,19 +177,17 @@ const MyEditor = ({ headerEditor }: IProps) => {
         },
     };
 
-
     return (
         <div dir={dir} className='editorDiv'>
             <Suspense>
                 <ReactQuill modules={modules} style={headerEditor ? classes.myEditorBody : classes.myEditorSubject} value={headerEditor ? body : subject} onChange={headerEditor ? handleChangeBody : handleChangeSubject} ref={editorRef} id='editor' />
             </Suspense>
-            <Stack direction={'column'} style={classes.variablesContainer}   >
+            <Stack style={classes.variablesContainer}   >
                 <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} apiRef={apiRef}
                     RTL={RTL}>
                     {templateVariables?.map((option) => (
                         <button style={classes.variableStyle}
-                            onClick={() => AddVariable(option)}
-                        >
+                            onClick={() => AddVariable(option)}>
                             {option?.label}
                         </button>
                     ))}
@@ -199,4 +197,4 @@ const MyEditor = ({ headerEditor }: IProps) => {
     );
 };
 
-export { MyEditor };
+export { QuillEditor };

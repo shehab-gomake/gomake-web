@@ -10,7 +10,7 @@ import { mailInputs1, mailInputs2, mailInputs3 } from './inputs';
 import { FormInput } from '@/components/form-inputs/form-input';
 import { IInput } from '@/components/form-inputs/interfaces';
 import { Stack } from '@mui/material';
-import { MyEditor } from './myEditor';
+import { QuillEditor } from './quill-editor';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { languagesState } from "@/store/languages";
 import { GoMakeAutoComplate } from "@/components";
@@ -52,30 +52,25 @@ const EmailSettings = ({ onClickSave }: IProps) => {
         setLanguageState(value?.value); 
     };
 
-
     return (
         <div style={classes.containerStyle}>
              <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.language")}</h3>
                 <GoMakeAutoComplate
-                    options={languages.map(lang => ({
-                        label: lang.text,
-                        value: lang.value
-                    }))}
+                    options={languages.map(({ text, value }) => ({ ...languages, label: text, value }))}
                     onChange={(e: any, value: any) => onChangeLanguage(e, value)}
                     style={classes.dropDownListStyle}
-                    value={state?.lang}
+                    value={!!state.lang ? languages.find((lang) => lang.value === state?.lang)?.text : ''}
                     disableClearable={true}
-                    placeholder={t("mailingSettings.selectLanguage")}/>
-                    
+                    placeholder={t("mailingSettings.selectLanguage")}/>  
             </div>
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.subject")}</h3>
-                <MyEditor headerEditor={EditorTYPE.SUBJECT} ></MyEditor>
+                <QuillEditor headerEditor={EditorTYPE.SUBJECT} ></QuillEditor>
             </div>
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader} >{t("mailingSettings.body")}</h3>
-                <MyEditor headerEditor={EditorTYPE.BODY} ></MyEditor>
+                <QuillEditor headerEditor={EditorTYPE.BODY} ></QuillEditor>
             </div>
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.attachment")}</h3>
