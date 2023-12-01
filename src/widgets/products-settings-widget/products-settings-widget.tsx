@@ -20,15 +20,18 @@ const ProductsSettingsWidget = () => {
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.mainHeadecontainer}>
-          <UsersSettingsTabs
+        <PermissionCheck userPermission={Permissions.SHOW_PRODUCTS_SETTINGS}>
+            <UsersSettingsTabs
               value={value}
               onChange={handleChange}
               aria-label="tabs example"
-          >
+            >
               {tabs?.map((tab) => {
-                  return <UsersSettingsTab label={tab?.name} />;
+                return <UsersSettingsTab label={tab?.name} />;
               })}
-          </UsersSettingsTabs>
+            </UsersSettingsTabs>
+        </PermissionCheck>
+       
         {value === 3 ? (
           <GomakePrimaryButton
             style={clasess.gobackBtnStyle}
@@ -40,17 +43,23 @@ const ProductsSettingsWidget = () => {
             {t("products.productManagement.admin.goBack")}
           </GomakePrimaryButton>
         ) : (
-            <AddButton
-                label={t("products.productManagement.admin.addProduct")}
-                onClick={() => setValue(EWidgetProductSettingsTabs.ADD_PRODUCT)}
-            />
+          <PermissionCheck userPermission={Permissions.ADD_PRODUCT} >
+                  <AddButton
+                    label={t("products.productManagement.admin.addProduct")}
+                    onClick={() => setValue(EWidgetProductSettingsTabs.ADD_PRODUCT)}
+                  />
+          </PermissionCheck>
+        
         )}
       </div>
       <CustomTabPanel
         value={value}
         index={EWidgetProductSettingsTabs.PRODUCT_MANAGMENT}
       >
+        <PermissionCheck userPermission={Permissions.SHOW_PRODUCT_MANAGMENT} >
           <ProductManagementWidget />
+        </PermissionCheck>
+      
       </CustomTabPanel>
       <CustomTabPanel
         value={value}
