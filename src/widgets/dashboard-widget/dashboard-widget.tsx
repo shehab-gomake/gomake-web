@@ -20,14 +20,14 @@ import {useDashboardLogout} from "@/hooks/use-dashboard-logout";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {DashboardActions} from "@/store";
 import {AgentsList} from "@/widgets/agents/agents-list";
-import {selectedAgentIdState} from "@/widgets/agents/state/selected-agent-id";
+import {selectedAgentIdsState} from "@/widgets/agents/state/selected-agent-id";
 
 const DashboardWidget = ({}: IDashboardWidget) => {
     const INTERVAL_TIMEOUT = 2 * 60 * 1000;
     const {machines, addMachineProgress, getCheckedMachines} = useGomakeMachines();
     const [tasksFilter, setTasksFilter] = useState<string>('');
     const selectedClient = useRecoilValue(selectedClientIdState);
-    const selectedAgent = useRecoilValue(selectedAgentIdState);
+    const selectedAgents = useRecoilValue(selectedAgentIdsState);
     const clients = useRecoilValue(clientsState);
     const {classes} = useStyle();
     const {dates, action} = useGomakeDateRange();
@@ -105,8 +105,8 @@ const DashboardWidget = ({}: IDashboardWidget) => {
         if (selectedClient) {
             tasksArray = tasksArray.filter(board => board.clientId === selectedClient);
         }
-        if (selectedAgent) {
-            tasksArray = tasksArray.filter(board => board.agentId === selectedAgent);
+        if (selectedAgents && selectedAgents.length > 0) {
+            tasksArray = tasksArray.filter(board => selectedAgents.find(agentId => agentId === board.agentId));
         }
         return tasksFilter ?
             tasksArray.filter((boardsMissions: IBoardMissions) => {
@@ -114,7 +114,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
                     boardsMissions.orderNumber.toLowerCase().includes(tasksFilter.toLowerCase())
             })
             : tasksArray;
-    }, [tasksFilter, getFilteredBoardsMissions(), selectedClient,selectedAgent])
+    }, [tasksFilter, getFilteredBoardsMissions(), selectedClient,selectedAgents])
     return (
         <div style={classes.container}>
             <Cards data={statistics ? statistics : {} as IDashboardStatistic}/>

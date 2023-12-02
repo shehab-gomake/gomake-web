@@ -1,8 +1,8 @@
 import {atom} from "recoil";
 
-const selectedAgentIdState = atom({
-    key: 'selectedAgentIdState',
-    default: ''
+const selectedAgentIdsState = atom({
+    key: 'selectedAgentIdsState',
+    default: []
 });
 
-export {selectedAgentIdState};
+export {selectedAgentIdsState};

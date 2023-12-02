@@ -1,4 +1,4 @@
-import {useCallback, useEffect} from "react";
+import React, {useCallback, useEffect} from "react";
 import {useGomakeAxios} from "@/hooks";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {Autocomplete, Box} from "@mui/material";
@@ -7,7 +7,7 @@ import {useTranslation} from "react-i18next";
 import {styled} from "@mui/material/styles";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import { AccountCircle } from "@mui/icons-material";
-import {selectedAgentIdState} from "@/widgets/agents/state/selected-agent-id";
+import {selectedAgentIdsState} from "@/widgets/agents/state/selected-agent-id";
 import {agentsState} from "@/store/agents-state";
 import {GoMakeAutoComplate} from "@/components/auto-complete";
 
@@ -68,8 +68,8 @@ const AgentsList = () => {
     const {callApi} = useGomakeAxios();
     const setAgents = useSetRecoilState(agentsState);
     const agents = useRecoilValue(agentsState);
-    const setSelectedAgentId = useSetRecoilState(selectedAgentIdState);
-
+    const setSelectedAgentsIds = useSetRecoilState(selectedAgentIdsState);
+    const selectedAgents = useRecoilValue(selectedAgentIdsState);
     useEffect(() => {
         callApi('GET', '/agents', {}, true, true).then((res) => {
             if (res && res.success) {
@@ -82,13 +82,31 @@ const AgentsList = () => {
         return agents.map(agent => ({label: agent.name, id: agent.id}))
     }, [agents]);
 
-    const handleChange = (event: any) => {
-        debugger;
-        //setSelectedAgentId(value?.id);
+    const handleChange = (e: any, value: any) => {
+        let agentIds = [];
+        if(value && value.length  >0){
+            agentIds = value.map((x:any) => x.id)
+        }
+        setSelectedAgentsIds(agentIds);
     }
     return (
         <div style={{width:'200px'}}>
-            <GoMakeAutoComplate onChange={(e:any)=> handleChange(e)} multiple={true} options={getClientsList()}/>
+            <GoMakeAutoComplate
+                placeholder={t('dashboard-widget.agents')}
+                options={getClientsList()}
+                //style={clasess.multiSelectStyle}
+                multiple
+                onChange={handleChange}
+                value={selectedAgents.map((item: any) => {
+                    const agent = getClientsList()?.find(
+                        (agent: any) => agent?.id === item
+                    );
+                    return {
+                        label: agent?.label,
+                        id: agent?.id,
+                    };
+                })}
+            />
             {
                 /* <AutoSearch
                 fullWidth={true}
@@ -98,7 +116,15 @@ const AgentsList = () => {
                     <Input {...params} placeholder={t('dashboard-widget.agents') as string}/>
                     <AccountCircle sx={{ position: 'absolute', left: '5px', top: '8px', color: 'action.active'}} />
                 </Box>}
-                options={getClientsList()}/>*/
+                options={getClientsList()}/>  value={/*productState?.groups?.map((item: any) => {
+                    const group = allGroups?.find(
+                        (group: any) => group?.id === item
+                    );
+                    return {
+                        label: group?.label,
+                        id: group?.id,
+                    };
+                })*/
             }
         </div>
     );
