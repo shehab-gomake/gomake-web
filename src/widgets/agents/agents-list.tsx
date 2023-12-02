@@ -12,60 +12,10 @@ import {agentsState} from "@/store/agents-state";
 import {GoMakeAutoComplate} from "@/components/auto-complete";
 
 
-
-const Input = styled(TextField)(() => {
-    const {primaryColor} = useGomakeTheme();
-    return {
-        input: {
-            backgroundColor: "#FFFFFF",
-            boxSizing: "border-box",
-            borderRadius: '10px',
-            fontFamily: "Jost",
-            fontStyle: "normal",
-            fontWeight: 300,
-            fontSize: 14,
-            lineHeight: "21px",
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-            color: primaryColor(500),
-        },
-
-        "& .MuiOutlinedInput-root": {
-            "&:hover fieldset": {
-                border: `2px solid ${primaryColor(500)}`
-
-            },
-            "& fieldset": {
-                border: `1px solid ${primaryColor(500)}`,
-                boxSizing: "border-box",
-                borderRadius: 10,
-                width: "100%",
-            },
-            "&.Mui-focused fieldset": {
-                borderColor:primaryColor(500),
-                borderRadius: 10,
-                width: "100%",
-            },
-        },
-        '& .MuiInputBase-root': {
-            height: 40
-        },
-    }
-});
-
-const AutoSearch = styled(Autocomplete)(() => {
-    return {
-        '& .MuiAutocomplete-root,': {
-            width: '200px',
-            border: 0,
-
-        }
-    }
-});
 const AgentsList = () => {
     const {t} = useTranslation();
     const {callApi} = useGomakeAxios();
+    const {primaryColor} = useGomakeTheme();
     const setAgents = useSetRecoilState(agentsState);
     const agents = useRecoilValue(agentsState);
     const setSelectedAgentsIds = useSetRecoilState(selectedAgentIdsState);
@@ -78,14 +28,21 @@ const AgentsList = () => {
         })
     }, [])
 
-    const getClientsList = useCallback(() => {
-        return agents.map(agent => ({label: agent.name, id: agent.id}))
+    const getAgentsList = useCallback(() => {
+        const agentsList =  agents.map(agent => ({label: agent.name, id: agent.id}));
+        return [{label: "בחר הכל", id: "all"},...agentsList];
     }, [agents]);
 
     const handleChange = (e: any, value: any) => {
         let agentIds = [];
         if(value && value.length  >0){
-            agentIds = value.map((x:any) => x.id)
+            if(value.length == 1 && value.find((x:any)=>x.id == "all")){
+                const allAgents = getAgentsList();
+                agentIds = allAgents.map((x:any) => x.id)
+            }else{
+                agentIds = value.map((x:any) => x.id)
+            }
+            
         }
         setSelectedAgentsIds(agentIds);
     }
@@ -93,12 +50,27 @@ const AgentsList = () => {
         <div style={{width:'200px'}}>
             <GoMakeAutoComplate
                 placeholder={t('dashboard-widget.agents')}
-                options={getClientsList()}
+                options={getAgentsList()}
+                style={{
+                    backgroundColor: "#FFFFFF",
+                    boxSizing: "border-box",
+                    borderRadius: '10px',
+                    fontFamily: "Jost",
+                    fontStyle: "normal",
+                    fontWeight: 300,
+                    fontSize: 14,
+                    lineHeight: "21px",
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                    color: primaryColor(500),
+                    border: `1px solid ${primaryColor(500)}`
+                }}
                 //style={clasess.multiSelectStyle}
                 multiple
                 onChange={handleChange}
                 value={selectedAgents.map((item: any) => {
-                    const agent = getClientsList()?.find(
+                    const agent = getAgentsList()?.find(
                         (agent: any) => agent?.id === item
                     );
                     return {

@@ -1,2 +1,0 @@
-(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[459],{4498:function(n,u,t){(window.__NEXT_P=window.__NEXT_P||[]).push(["/login",function(){return t(156)}])},156:function(n,u,t){"use strict";t.r(u),t.d(u,{default:function(){return r}});var _=t(5893),e=t(6126),i=t(2120);function r(){let{t:n}=(0,i.$G)();return(0,_.jsx)(e.Up,{})}}},function(n){n.O(0,[774,888,179],function(){return n(n.s=4498)}),_N_E=n.O()}]);
-//# sourceMappingURL=login-04bccb55e5200a0e.js.map

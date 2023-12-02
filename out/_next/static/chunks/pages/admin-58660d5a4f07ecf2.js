@@ -1,2 +1,0 @@
-(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[964],{7077:function(n,u,e){(window.__NEXT_P=window.__NEXT_P||[]).push(["/admin",function(){return e(237)}])},237:function(n,u,e){"use strict";e.r(u),e.d(u,{default:function(){return i}});var r=e(5893),t=e(8241);function i(){return(0,r.jsx)(t.Kn,{children:(0,r.jsx)(r.Fragment,{children:"admin screen"})})}}},function(n){n.O(0,[241,774,888,179],function(){return n(n.s=7077)}),_N_E=n.O()}]);
-//# sourceMappingURL=admin-58660d5a4f07ecf2.js.map

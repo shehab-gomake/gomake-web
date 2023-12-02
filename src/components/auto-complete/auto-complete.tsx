@@ -111,7 +111,7 @@ const GoMakeAutoComplate = ({
       renderInput={(params: any) => (
         <TextField
           {...params}
-          placeholder={!multiple && (defaultValue?.label || placeholder)}
+          placeholder={defaultValue?.label || placeholder}
           onChange={onChangeTextField || params.onChange}
           InputProps={
             dir === "rtl"
