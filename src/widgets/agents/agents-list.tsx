@@ -9,6 +9,7 @@ import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import { AccountCircle } from "@mui/icons-material";
 import {selectedAgentIdState} from "@/widgets/agents/state/selected-agent-id";
 import {agentsState} from "@/store/agents-state";
+import {GoMakeAutoComplate} from "@/components/auto-complete";
 
 
 
@@ -81,12 +82,15 @@ const AgentsList = () => {
         return agents.map(agent => ({label: agent.name, id: agent.id}))
     }, [agents]);
 
-    const handleChange = (event: object, value: any) => {
-        setSelectedAgentId(value?.id);
+    const handleChange = (event: any) => {
+        debugger;
+        //setSelectedAgentId(value?.id);
     }
     return (
-        <div>
-            <AutoSearch
+        <div style={{width:'200px'}}>
+            <GoMakeAutoComplate onChange={(e:any)=> handleChange(e)} multiple={true} options={getClientsList()}/>
+            {
+                /* <AutoSearch
                 fullWidth={true}
                 forcePopupIcon={false}
                 onChange={handleChange}
@@ -94,7 +98,8 @@ const AgentsList = () => {
                     <Input {...params} placeholder={t('dashboard-widget.agents') as string}/>
                     <AccountCircle sx={{ position: 'absolute', left: '5px', top: '8px', color: 'action.active'}} />
                 </Box>}
-                options={getClientsList()}/>
+                options={getClientsList()}/>*/
+            }
         </div>
     );
 };
