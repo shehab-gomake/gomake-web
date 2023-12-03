@@ -1420,7 +1420,7 @@
         "parameter": "Parameter",
         "value": "Value",
         "scopeOfChange": "scope of change",
-        "min": "Minimum =",
+        "min": "Minimum",
         "addNewException": "Add new exception",
         "chooseScope": "choose scope",
         "selectTypeOfException": "Select type of exception",

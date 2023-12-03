@@ -6,8 +6,29 @@ import { useStyle } from "./style";
 
 const ProfitsNewPageWidget = () => {
   const { clasess } = useStyle();
-  const { router } = useNewProfits();
-
+  const {
+    actionProfitRowChartData,
+    actionProfitRowsList,
+    selectedTransition,
+    selectedPricingBy,
+    tableHeaders,
+    Transition,
+    PricingBy,
+    router,
+    openAddStepModal,
+    minimumValue,
+    isUpdateMinimumValue,
+    onBlurMinimumValue,
+    setIsUpdateMinimumValue,
+    onInputChangeMinimumValue,
+    onCloseAddStepModal,
+    onOpenAddStepModal,
+    updatePricingByForAction,
+    setSelectedTransition,
+    changeactionProfitRowsItems,
+    addNewStepForActionProfitRow,
+    updateActionProfitRow,
+  } = useNewProfits();
   return (
     <div style={clasess.mainGridContainer}>
       {router.query.quoteId && (
@@ -16,8 +37,30 @@ const ProfitsNewPageWidget = () => {
         </header>
       )}
       <div style={clasess.bodyGridContainer}>
-        <ProfitLeftSideWidget />
-        <ProfitRightSideWidget />
+        <ProfitLeftSideWidget
+          actionProfitRowChartData={actionProfitRowChartData}
+          actionProfitRowsList={actionProfitRowsList}
+          selectedTransition={selectedTransition}
+          selectedPricingBy={selectedPricingBy}
+          tableHeaders={tableHeaders}
+          Transition={Transition}
+          PricingBy={PricingBy}
+          openAddStepModal={openAddStepModal}
+          onCloseAddStepModal={onCloseAddStepModal}
+          onOpenAddStepModal={onOpenAddStepModal}
+          updatePricingByForAction={updatePricingByForAction}
+          setSelectedTransition={setSelectedTransition}
+          changeactionProfitRowsItems={changeactionProfitRowsItems}
+          addNewStepForActionProfitRow={addNewStepForActionProfitRow}
+          updateActionProfitRow={updateActionProfitRow}
+        />
+        <ProfitRightSideWidget
+          minimumValue={minimumValue}
+          isUpdateMinimumValue={isUpdateMinimumValue}
+          onBlurMinimumValue={onBlurMinimumValue}
+          setIsUpdateMinimumValue={setIsUpdateMinimumValue}
+          onInputChangeMinimumValue={onInputChangeMinimumValue}
+        />
       </div>
     </div>
   );

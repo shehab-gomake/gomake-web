@@ -1,27 +1,26 @@
 import { PricingList } from "../pricing-list/pricing-list";
-import { useNewProfits } from "../../use-profits";
 import { useStyle } from "./style";
 import { AddStepModal } from "../add-step-modal";
+import { ProfitLeftSideProps } from "../../interface";
 
-const ProfitLeftSideWidget = () => {
+const ProfitLeftSideWidget = ({
+  actionProfitRowChartData,
+  actionProfitRowsList,
+  selectedTransition,
+  selectedPricingBy,
+  tableHeaders,
+  Transition,
+  PricingBy,
+  openAddStepModal,
+  onCloseAddStepModal,
+  onOpenAddStepModal,
+  updatePricingByForAction,
+  setSelectedTransition,
+  changeactionProfitRowsItems,
+  addNewStepForActionProfitRow,
+  updateActionProfitRow,
+}: ProfitLeftSideProps) => {
   const { clasess } = useStyle();
-  const {
-    actionProfitRowChartData,
-    actionProfitRowsList,
-    selectedTransition,
-    selectedPricingBy,
-    tableHeaders,
-    Transition,
-    PricingBy,
-    openAddStepModal,
-    onCloseAddStepModal,
-    onOpenAddStepModal,
-    updatePricingByForAction,
-    setSelectedTransition,
-    changeactionProfitRowsItems,
-    addNewStepForActionProfitRow,
-    updateActionProfitRow,
-  } = useNewProfits();
   return (
     <div style={clasess.mainHeaderContainer}>
       <PricingList

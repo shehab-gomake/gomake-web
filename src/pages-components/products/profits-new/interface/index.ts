@@ -75,3 +75,33 @@ export type AddStepModalProps = {
   selectedPricingBy: SelectedPricingByType;
   addNewStepForActionProfitRow: (value: number, totalPrice: number) => void;
 };
+
+export type ProfitRightSideProps = {
+  minimumValue: number;
+  isUpdateMinimumValue: number;
+  onBlurMinimumValue: () => void;
+  setIsUpdateMinimumValue: (value: any) => void;
+  onInputChangeMinimumValue: (type: any) => void;
+};
+
+export type ProfitLeftSideProps = {
+  tableHeaders: string[];
+  actionProfitRowsList: any[];
+  PricingBy: SelectedPricingByType[];
+  Transition: SelectedTransition[];
+  actionProfitRowChartData: ActionProfitRowChartData;
+  setSelectedTransition: (value: any) => void;
+  selectedTransition: SelectedTransition;
+  selectedPricingBy: SelectedPricingByType;
+  updatePricingByForAction: (value: any) => void;
+  changeactionProfitRowsItems: (
+    index: number,
+    filedName: string,
+    value: number
+  ) => void;
+  onOpenAddStepModal: () => void;
+  updateActionProfitRow: (data: any) => void;
+  addNewStepForActionProfitRow: (value: number, totalPrice: number) => void;
+  openAddStepModal: boolean;
+  onCloseAddStepModal: () => void;
+};

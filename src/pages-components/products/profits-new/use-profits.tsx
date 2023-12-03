@@ -242,6 +242,45 @@ const useNewProfits = () => {
       alertFaultUpdate();
     }
   }, []);
+
+  const updateMinPriceForAction = useCallback(
+    async (data: number) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/printhouse-config/profits/update-action-profit`,
+        {
+          recordID: actionProfitByActionId?.recordID,
+          id: actionProfitByActionId?.id,
+          printingActionId: actionProfitByActionId?.printingActionId,
+          pricingBy: actionProfitByActionId?.pricingBy,
+          transitionType: actionProfitByActionId?.transitionType,
+          minPrice: data,
+          actionProfitRows: [],
+          actionExpections: [],
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        getAllActionProfitRowsByActionId();
+        getActionProfitByActionId();
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [actionProfitByActionId]
+  );
+  const [minimumValue, setMinimumValue] = useState(0);
+  useEffect(() => {
+    setMinimumValue(actionProfitByActionId?.minPrice);
+  }, [actionProfitByActionId]);
+  const [isUpdateMinimumValue, setIsUpdateMinimumValue] = useState(null);
+  const onBlurMinimumValue = async () => {
+    updateMinPriceForAction(minimumValue);
+    setIsUpdateMinimumValue(null);
+  };
+  const onInputChangeMinimumValue = (e) => {
+    setMinimumValue(e);
+  };
   return {
     allActionProfitRowsByActionId,
     actionProfitRowChartData,
@@ -254,6 +293,11 @@ const useNewProfits = () => {
     PricingBy,
     router,
     openAddStepModal,
+    minimumValue,
+    isUpdateMinimumValue,
+    onBlurMinimumValue,
+    setIsUpdateMinimumValue,
+    onInputChangeMinimumValue,
     onCloseAddStepModal,
     onOpenAddStepModal,
     updatePricingByForAction,
@@ -262,6 +306,7 @@ const useNewProfits = () => {
     changeactionProfitRowsItems,
     addNewStepForActionProfitRow,
     updateActionProfitRow,
+    updateMinPriceForAction,
   };
 };
 
