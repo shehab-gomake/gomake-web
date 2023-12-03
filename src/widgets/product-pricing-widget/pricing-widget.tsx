@@ -8,31 +8,20 @@ import {Actions} from "@/widgets/product-pricing-widget/components/action/action
 import {useEffect, useState} from "react";
 import {PrimaryButton} from "@/components/button/primary-button";
 import {WorkFlowsComponent} from "@/widgets/product-pricing-widget/components/work-flow/work-flow-component";
-import {printHouseSuppliersState} from "@/widgets/product-pricing-widget/state";
-import {useSetRecoilState} from "recoil";
-import {useGomakeAxios} from "@/hooks";
-import {
-    getPrintHouseSuppliersListApi
-} from "@/services/api-service/suppliers/suppliers-endpoints";
 import {InOutSourceSelect} from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
-import {OutSourceSuppliers} from "@/widgets/product-pricing-widget/components/work-flow/out-source-supplier";
+import {
+    OutSourceSuppliers
+} from "@/widgets/product-pricing-widget/components/outsource-suppliers/out-source-suppliers-widget";
 
-const PricingWidget = ({workFlows}: IPricingWidgetProps) => {
+const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps) => {
     const [view, setView] = useState<number>(0);
-    const setSuppliers = useSetRecoilState(printHouseSuppliersState);
     const selectedWorkFlow = workFlows?.find(flow => flow.selected);
-    const {callApi} = useGomakeAxios();
-
     useEffect(() => {
-        const callBack = (res) => {
-            if (res.success) {
-                setSuppliers(res.data?.map(({name, id}) => ({label: name, value: id})));
-            }
+        if (view === 3) {
+            getOutSourcingSuppliers();
         }
-        getPrintHouseSuppliersListApi(callApi, callBack).then();
-    }, [])
-
+    } , [view])
     return (
         <Stack gap={'16px'} width={'100%'}>
             <Stack direction={"row"} justifyContent={'space-between'}>

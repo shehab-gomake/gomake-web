@@ -1,6 +1,4 @@
 import {EOutsourceSupplierStatus} from "@/widgets/product-pricing-widget/enums";
-import {useRecoilValue} from "recoil";
-import {outsourceSuppliersState} from "@/widgets/product-pricing-widget/state";
 import {useStyle} from "@/widgets/product-pricing-widget/style";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {Fade} from "@mui/material";
@@ -33,7 +31,7 @@ const OutSourceSupplierComponent = ({
                                     }: IOutSourceSupplier) => {
     const {classes} = useStyle();
     const {secondColor} = useGomakeTheme();
-    const {updatePrice, updateWorHours, updateProfit, updateCost} = useOutsourceSupplier()
+    const {updatePrice, updateWorHours, updateProfit, updateCost, addItem} = useOutsourceSupplier();
     const handleDeliveryTimeUpdate = (newValue: number) => {
         updateWorHours(supplierId, +newValue);
     }
@@ -47,13 +45,11 @@ const OutSourceSupplierComponent = ({
     const handleUpdatePrice = (price: number) => {
         updatePrice(supplierId, price);
     }
-    const buttonText = status === EOutsourceSupplierStatus.NeedApprove ? 'Send Approval Request' :
-        status === EOutsourceSupplierStatus.Approved ? 'Approved - Add to cart ' :
-            status === EOutsourceSupplierStatus.Manually ? 'Manual' : '';
+
     return (
         <Fade in={true} timeout={700}>
             <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'}
-                   style={classes.actionContainer}>
+                   style={{...classes.actionContainer, padding: '10px 16px'}}>
                 <Stack alignItems={'center'} direction={"row"} gap={'10px'} flexWrap={'wrap'}>
                     <span style={classes.sectionTitle}>{supplierName}</span>
                     <Divider orientation={'vertical'} flexItem/>
@@ -70,8 +66,7 @@ const OutSourceSupplierComponent = ({
                                    valueColor={secondColor(500)} label={'Price'} value={finalPrice}
                                    onUpdate={handleUpdatePrice}/>
                 </Stack>
-                {!!buttonText &&
-                    <PrimaryButton style={{width: 'fit-content', height: 35}} variant={'contained'}>{buttonText}</PrimaryButton>}
+                <PrimaryButton onClick={() => addItem(supplierId)} style={{width: 'fit-content', height: 35}} variant={'contained'}>Add</PrimaryButton>
             </Stack>
         </Fade>
     )
@@ -119,14 +114,5 @@ const EditableValue = ({value, onUpdate, valueColor, label, isEditable, unit}: I
 }
 
 
-const OutSourceSuppliers = () => {
-    const suppliers = useRecoilValue(outsourceSuppliersState);
-
-    return <Stack gap={'15px'}>
-        {
-            suppliers.map(supplier => <OutSourceSupplierComponent {...supplier}/>)
-        }
-    </Stack>
-}
-export {OutSourceSupplierComponent, OutSourceSuppliers}
+export {OutSourceSupplierComponent}
 

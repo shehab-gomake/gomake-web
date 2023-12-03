@@ -33,10 +33,11 @@ import { SWITCHParameterWidget } from "@/pages-components/products/digital-offse
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 import { SelectMaterialsParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
 import {
-  jobActionsState,
-  jobDetailsState,
-  workFlowsState,
+    jobActionsState,
+    jobDetailsState, outsourceSuppliersState,
+    workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
+import {getOutsourcingSuppliersListApi} from "@/services/api-service/suppliers/suppliers-endpoints";
 
 const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const {navigate} = useGomakeRouter();
@@ -77,6 +78,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
     const [jobDetails, setJobDetails] = useRecoilState(jobDetailsState);
     const [jobActions, setJobActions] = useRecoilState(jobActionsState);
+    const setOutSuppliers = useSetRecoilState(outsourceSuppliersState);
     const [workFlowSelected, setWorkFlowSelected] = useState<any>();
     const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
     const setLoading = useSetRecoilState(isLoadgingState);
@@ -1144,6 +1146,21 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     validateParameters,
   ]);
 
+  const getOutSourcingSuppliers = () => {
+      const callBack = (res) => {
+          if (res.success) {
+              setOutSuppliers(res.data);
+          }
+      }
+      getOutsourcingSuppliersListApi(callApi, callBack, {
+          // clientId: router?.query?.customerId,
+          // clientTypeId: router?.query?.clientTypeId,
+          // productId: router?.query?.productId,
+          // generalParameters: generalParameters,
+          // subProducts: subProducts,
+      }).then();
+  }
+
   const PricingTab = {
     id: "c66465de-95d6-4ea3-bd3f-7efe60f4cb0555",
     name: "Pricing",
@@ -1217,6 +1234,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     defaultPrice,
     workFlowSelected,
   ]);
+
   useEffect(() => {
     if (
       widgetType === EWidgetProductType.EDIT ||
@@ -1363,6 +1381,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     workFlows,
     jobDetails,
     jobActions,
+      getOutSourcingSuppliers
   };
 };
 export {useDigitalOffsetPrice};

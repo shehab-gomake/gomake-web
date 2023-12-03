@@ -11,6 +11,7 @@ export interface IPricingWidgetProps {
     actions: IPricingAction[];
     workFlows: ICalculatedWorkFlow[];
     onSelectNewWorkFlow?: (id: string) => void;
+    getOutSourcingSuppliers: () => void;
 }
 
 
