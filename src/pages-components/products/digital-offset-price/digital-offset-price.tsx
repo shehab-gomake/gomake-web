@@ -65,19 +65,10 @@ const PriceListPageWidget = ({ widgetType }) => {
     errorMsg,
     workFlowSelected,
     relatedParameters,
-      jobDetails,
       jobActions,
       workFlows,
+      getOutSourcingSuppliers
   } = useDigitalOffsetPrice({ clasess, widgetType });
-  const machineCategories = useRecoilValue(machineCategoriesState);
-  const [actionState, setActionState] = useState({});
-  const onChangeCategoryData = (actionId, categoryId, value) => {
-    setActionState({
-      actionId,
-      categoryId,
-      value,
-    });
-  };
   return (
     <div style={{ height: "85vh" }}>
       {template?.sections?.length > 0 && (
@@ -118,7 +109,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                             //   pricingDefaultValue={pricingDefaultValue}
                             //   workFlowSelected={workFlowSelected}
                             // />
-                              <PricingWidget  actions={jobActions} workFlows={workFlows}/>
+                              <PricingWidget getOutSourcingSuppliers={getOutSourcingSuppliers}  actions={jobActions} workFlows={workFlows}/>
                           );
                         } else {
                           return section?.subSections?.map(

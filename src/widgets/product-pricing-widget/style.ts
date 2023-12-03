@@ -21,7 +21,7 @@ const useStyle = () => {
       },
       actionContainer: {
         backgroundColor: '#F9FAFB',
-        padding: '10px 16px',
+        padding: '0 16px',
         borderRadius: 16,
       },
       actionContainerBorder: '2px solid ' + primaryColor(500),

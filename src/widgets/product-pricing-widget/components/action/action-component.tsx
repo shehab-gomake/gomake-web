@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
-import {useCallback, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 import {IWorkFlowAction} from "@/widgets/product-pricing-widget/interface";
 import {useStyle} from "@/widgets/product-pricing-widget/style";
 import {Collapse, Fade, IconButton} from "@mui/material";
@@ -15,7 +15,7 @@ import {InOutSourceSelect} from "@/widgets/product-pricing-widget/components/in-
 import {EWorkSource, RuleType} from "@/widgets/product-pricing-widget/enums";
 import {useActionUpdateValues} from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
 import {useRecoilValue} from "recoil";
-import {printHouseSuppliersState} from "@/widgets/product-pricing-widget/state";
+import {outsourceSuppliersState} from "@/widgets/product-pricing-widget/state";
 import {GoMakeAutoComplate} from "@/components";
 import Button from "@mui/material/Button";
 
@@ -58,7 +58,10 @@ const ActionContainerComponent = ({
         getActionMachinesList,
         selectNewMachine
     } = useActionUpdateValues();
-    const suppliers = useRecoilValue(printHouseSuppliersState);
+    const suppliersState = useRecoilValue(outsourceSuppliersState);
+    const suppliers = useMemo(() => {
+        return suppliersState?.map(s => ({value: s.supplierId, label: s.supplierName}))
+    }, [suppliersState])
     const {classes} = useStyle();
     const {secondColor} = useGomakeTheme();
     const inputsParameters = outputs.filter(parameter => parameter.propertyType === RuleType.PARAMETER);
@@ -118,7 +121,7 @@ const ActionContainerComponent = ({
                                         {!chooseMachine ? <Button onClick={(e) => {
                                                 e.stopPropagation()
                                                 setChooseMachine(true);
-                                            }} variant={'text'} style={classes.sectionTitle}>{machineName}</Button> :
+                                            }} variant={'text'} style={classes.sectionTitle}>{machineName.length > 20 ? machineName.slice(0, 20) + '...' : machineName}</Button> :
                                             <div onClick={(e) => e.stopPropagation()}>
                                                 <GoMakeAutoComplate onChange={(e, v) => {
                                                     if (selectNewMachine(v?.value, actionId)) {
@@ -188,7 +191,7 @@ const ActionComponent = ({
     source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
     const {classes} = useStyle();
     const {secondColor} = useGomakeTheme();
-    const suppliers = useRecoilValue(printHouseSuppliersState);
+    const suppliers = useRecoilValue(outsourceSuppliersState);
     const parameters = [
         totalRealProductionTimeO,
         totalCostO,
@@ -200,8 +203,8 @@ const ActionComponent = ({
     ]
     const getSupplierId = useCallback(() => {
         if (supplierId) {
-            const supplier = suppliers?.find(sup => sup.value === supplierId)
-            return !!supplier ? supplier.label : ''
+            const supplier = suppliers?.find(sup => sup.supplierId === supplierId)
+            return !!supplier ? supplier.supplierName : ''
         }
         return ''
     }, [supplierId, suppliers])
