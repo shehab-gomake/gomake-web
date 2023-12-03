@@ -16,7 +16,7 @@ const perforationMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "maxLength",
                     options: [],
-                    value: state.attributes?.folding?.maxLength ? state.attributes?.folding?.maxLength : ''
+                    value: state.attributes?.perforation?.maxLength ? state.attributes?.perforation?.maxLength : ''
 
                 },
                 {
@@ -27,7 +27,7 @@ const perforationMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "maxWidth",
                     options: [],
-                    value: state.attributes?.folding?.maxWidth ? state.attributes?.folding?.maxWidth : ''
+                    value: state.attributes?.perforation?.maxWidth ? state.attributes?.perforation?.maxWidth : ''
 
                 },
             ]

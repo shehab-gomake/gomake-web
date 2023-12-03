@@ -5,7 +5,6 @@ const spiralClosingMachine = (state: Record<string, any>) => {
         ...minMaxInput(state, 'thickness', 'thickness'),
         ...minMaxInput(state, 'width', 'width'),
         ...minMaxInput(state, 'length', 'length'),
-        ...minMaxInput(state, 'paperThickness', 'paperThickness'),
     ]
 }
 

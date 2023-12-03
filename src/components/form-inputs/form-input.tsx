@@ -91,7 +91,10 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
         <div style={input.direction == "row" ? classes.inputContainerRow : classes.inputContainer} key={input.parameterKey}>
           <div style={classes.inputLbl}>
             {
-              <span>{t(input.label)}</span>
+              <Stack direction={'row'} gap={'7px'} alignItems={'flex-end'} padding={'0 5px'}>
+                <span>{t(input.label)}</span>
+                {input.unit && <small>{`${t('measurementUnits.' + input.unit)}`}</small>}
+              </Stack>
             }
             {input.required && <span style={classes.required}>*</span>}
           </div>

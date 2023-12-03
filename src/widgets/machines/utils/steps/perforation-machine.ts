@@ -14,14 +14,14 @@ const perforationMachineSteps = (isAdmin: boolean): IStep[] => {
             {label: 'basic', component: BasicInputsComponent},
             {label: 'machineDimensions', component: MachineDimensionsComponent},
             {label: 'media', component: MediaSettingComponent},
-            {label: 'folding', component: MachineRunComponent},
+            {label: 'perforation', component: MachineRunComponent},
             {label: 'speed', component: SpeedComponent},
         ] :
         [
             {label: 'basic', component: BasicInputsComponent},
             {label: 'machineDimensions', component: MachineDimensionsComponent},
             {label: 'media', component: MediaSettingComponent},
-            {label: 'folding', component: MachineRunComponent},
+            {label: 'perforation', component: MachineRunComponent},
             {label: 'connection', component: ConnectionComponent},
             {label: 'speed', component: SpeedComponent},
         ];

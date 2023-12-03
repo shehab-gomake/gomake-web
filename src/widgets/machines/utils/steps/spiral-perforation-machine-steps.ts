@@ -6,7 +6,6 @@ import {
 import {MachineDimensionsComponent} from "@/widgets/machines/components/forms/machine-dimensions";
 import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 import {ConnectionComponent} from "@/widgets/machines/components/forms/connection-inputs";
-import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/other-setting-inputs";
 
 
 const spiralPerforationMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
@@ -14,7 +13,6 @@ const spiralPerforationMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
         {label: 'machineDimensions', component: MachineDimensionsComponent},
         {label: 'media', component: MediaSettingComponent},
         {label: 'speed', component: SpeedComponent},
-        {label: 'spiralSettings', component: OtherSettingsInputsComponent},
     ] :
     [
         {label: 'basic', component: BasicInputsComponent},
@@ -22,7 +20,6 @@ const spiralPerforationMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
         {label: 'media', component: MediaSettingComponent},
         {label: 'speed', component: SpeedComponent},
         {label: 'connection', component: ConnectionComponent},
-        {label: 'spiralSettings', component: OtherSettingsInputsComponent},
     ];
 
 export {spiralPerforationMachineSteps};
