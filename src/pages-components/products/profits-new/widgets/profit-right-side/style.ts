@@ -11,8 +11,9 @@ const useStyle = () => {
         width: "100%",
         backgroundColor: "#FFF",
         borderRadius: 17,
-        padding: "15px 20px",
+        padding: "15px 12px",
         height: "100%",
+        gap: 16,
       },
     };
   }, []);

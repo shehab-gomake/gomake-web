@@ -38,4 +38,4 @@ export * from "./upload-icon";
 export * from "./arrow-down-new";
 export * from "./setting-new";
 export * from "./partners";
-
+export * from "./arrow-down-with-square";

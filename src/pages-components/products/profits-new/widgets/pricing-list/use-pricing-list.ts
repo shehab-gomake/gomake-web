@@ -10,6 +10,7 @@ const usePriceList = ({
   const [isUpdatTotalPrice, setIsUpdateTotalPrice] = useState(null);
   const [isUpdateProfit, setIsUpdateProfit] = useState(null);
   const [profit, setProfit] = useState<any>();
+  console.log("item", item);
   useEffect(() => {
     item?.value === 0
       ? setProfit(0)
@@ -25,12 +26,11 @@ const usePriceList = ({
     setIsUpdateTotalPrice(null);
   };
   const onBlurProfit = async (item) => {
-    const totalPrice = (item?.value * (1 + profit)) / 100;
-    changeactionProfitRowsItems(index, "totalPrice", totalPrice);
-    if (totalPrice) {
-      updateActionProfitRow({ ...item, totalPrice });
-      setIsUpdateProfit(null);
-    }
+    updateActionProfitRow({
+      ...item,
+      totalPrice: (item?.value * (1 + profit)) / 100,
+    });
+    setIsUpdateProfit(null);
   };
   const onInputChangeCost = (e) => {
     changeactionProfitRowsItems(index, "value", e);
