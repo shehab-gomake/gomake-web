@@ -11,19 +11,20 @@ export interface IInput {
   options: {value: any; text: string}[];
   optionsUrl?: string;
   value?: string;
+  values? :string[];
   disabled?: boolean;
   isValid: boolean;
   regex?: RegExp;
   inputs?: IInput[];
   unit?: EMeasurementUnits;
   direction?: string;
+  multiple?: boolean;
 }
 export interface IFormInput {
   input: IInput;
   changeState: (key: string, value: any) => void;
   error: boolean;
   readonly?: boolean;
-
 }
 
 export interface IFormArrayInputsProps {
@@ -33,6 +34,5 @@ export interface IFormArrayInputsProps {
   inputs: IInput[] | any[];
   updateState: (key: string, value: any) => void;
   isValid: boolean;
-
 }
 

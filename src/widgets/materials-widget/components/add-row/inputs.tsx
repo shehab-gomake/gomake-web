@@ -2,7 +2,7 @@ import { useRecoilValue } from "recoil";
 import { materialHeadersState } from "../../state";
 import { EDataTypeEnum } from "@/widgets/materials-widget/components/table-cell-data/data-type-enum";
 
-const rowInputs = (state, currencies) => {
+const rowInputs = (state, currencies , machinesCategories) => {
     const materialHeaders = useRecoilValue<{ key: string, value: string, inputType: number }[]>(materialHeadersState);
 
     return materialHeaders.filter(header => header.key !== "Active").map((header) => (
@@ -33,6 +33,23 @@ const rowInputs = (state, currencies) => {
                     options: [],
                     value: state?.parameterKey,
                     isValid: true,
+                } :
+                 EDataTypeEnum[header?.inputType] == "MACHINES_LIST" ?
+                {
+                    name: header?.key,
+                    label: header?.value,
+                    type: "select",
+                    placeholder: header?.key,
+                    required: false,
+                    parameterKey: header?.key,
+                    options: machinesCategories.map(machine => ({
+                        value: machine.id,
+                        text: `${machine.manufacturer} - ${machine.model}`
+                    })),
+                    value: state?.parameterKey,
+                    values: state?.machines ? state?.machines : [],
+                    isValid: true,
+                    multiple: true,
                 } :
                 {
                     name: header?.key,

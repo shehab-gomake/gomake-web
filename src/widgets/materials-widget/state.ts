@@ -68,3 +68,8 @@ export const openAddRowModalState = atom<boolean>({
     key: 'openAddRowModalState',
     default: false
 });
+
+export const materialsMachinesState = atom<[]>({
+    key: 'materialsMachinesState',
+    default: []
+});
