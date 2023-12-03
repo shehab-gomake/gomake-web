@@ -37,7 +37,7 @@ const rowInputs = (state, currencies) => {
                 {
                     name: header?.key,
                     label: header?.value,
-                    type: EDataTypeEnum[header?.inputType] == "BOOLEAN" ? "switch" : EDataTypeEnum[header?.inputType].toLowerCase(),
+                    type: EDataTypeEnum[header?.inputType] == "BOOLEAN" ? "switch" : EDataTypeEnum[header?.inputType]?.toLowerCase(),
                     placeholder: header?.key,
                     required: false,
                     parameterKey: header?.key,
