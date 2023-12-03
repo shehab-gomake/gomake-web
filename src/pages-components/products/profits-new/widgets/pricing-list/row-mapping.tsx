@@ -20,6 +20,9 @@ const RowMappingWidget = ({
     isUpdatTotalPrice,
     isUpdateProfit,
     profit,
+    unitPrice,
+    isUpdateUnitPrice,
+    setIsUpdateUnitPrice,
     onBlurProfit,
     onInputChangeProfit,
     setIsUpdateTotalPrice,
@@ -29,11 +32,14 @@ const RowMappingWidget = ({
     onBlurTotalPrice,
     onInputChangeTotalPrice,
     setIsUpdateProfit,
+    onBlurUnitPrice,
+    onInputChangeUnitPrice,
   } = usePriceList({
     changeactionProfitRowsItems,
     index,
     updateActionProfitRow,
     item,
+    selectedPricingBy,
   });
   return (
     <TableRow key={item.id}>
@@ -63,7 +69,17 @@ const RowMappingWidget = ({
                 onInputChangeProfit(e)
               }
             />
-          ) : null}
+          ) : (
+            <InputUpdatedValues
+              value={unitPrice}
+              onBlur={() => onBlurUnitPrice(item)}
+              isUpdate={isUpdateUnitPrice}
+              setIsUpdate={setIsUpdateUnitPrice}
+              onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
+                onInputChangeUnitPrice(e)
+              }
+            />
+          )}
         </div>
       </PrimaryTableCell>
       <PrimaryTableCell style={clasess.cellContainerStyle}>
