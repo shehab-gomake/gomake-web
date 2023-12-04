@@ -105,7 +105,6 @@ const ProfitRightSideWidget = ({
                         )}
                       </Draggable>
                     ) : (
-                      // Render non-draggable item for exceptionType 3
                       <div key={item.name}>
                         <PricingTableMapping
                           key={item.name}
@@ -132,6 +131,17 @@ const ProfitRightSideWidget = ({
         title="Additions and Exceptions"
         onclickOpenMenu={handleClickPricingTables}
       >
+        <div>children</div>
+        <div>children</div>
+        <div>children</div>
+        <div>children</div>
+        <div>children</div>
+        <div>children</div>
+        <div>children</div>
+        <div>children</div>
+        <div>children</div>
+        <div>children</div>
+        <div>children</div>
         <div>children</div>
         <div>children</div>
       </AccordionTable>
