@@ -13,7 +13,7 @@ const AccordionTable = ({
 }: IAccordionTable) => {
   const { classes } = useAccordionStyle();
   const { t } = useTranslation();
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(true);
 
   const handleChange = () => {
     setChecked((prev) => !prev);

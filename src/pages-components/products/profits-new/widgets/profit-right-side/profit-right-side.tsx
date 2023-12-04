@@ -133,17 +133,6 @@ const ProfitRightSideWidget = ({
       >
         <div>children</div>
         <div>children</div>
-        <div>children</div>
-        <div>children</div>
-        <div>children</div>
-        <div>children</div>
-        <div>children</div>
-        <div>children</div>
-        <div>children</div>
-        <div>children</div>
-        <div>children</div>
-        <div>children</div>
-        <div>children</div>
       </AccordionTable>
       <MinimumWidget
         minimumValue={minimumValue}
