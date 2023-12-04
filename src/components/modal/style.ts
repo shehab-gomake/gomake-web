@@ -6,7 +6,7 @@ import { useMemo } from "react";
 const useStyle = ({ insideStyle, headerPadding }: any) => {
   const { primaryColor , errorColor } = useGomakeTheme();
 
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       container: {
         display: "flex",
@@ -66,7 +66,7 @@ const useStyle = ({ insideStyle, headerPadding }: any) => {
     };
   }, [insideStyle, headerPadding]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

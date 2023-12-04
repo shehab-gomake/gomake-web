@@ -8,75 +8,88 @@ import {
 } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { GomakePrimaryButton } from "@/components";
+import { OrderNowModal } from "@/widgets/quote/total-price-and-vat/order-now-modal";
+import { useTotalPriceAndVat } from "@/widgets/quote/total-price-and-vat/use-total-price-and-vat";
 
 const ButtonsContainer = ({
   onOpenNewItem,
   handleCancelBtnClick,
   handleSendBtnClick,
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
+
+
+  const { openOrderNowModal, onClickCloseOrderNowModal, onClickConfirmWithoutNotification, onClickOpenOrderNowModal, onClickConfirmWithNotification } = useTotalPriceAndVat();
+
   return (
-    <div style={clasess.writeCommentcontainer}>
-      <div style={clasess.btnsContainer}>
+    <div style={classes.writeCommentcontainer}>
+      <div style={classes.btnsContainer}>
         <GomakePrimaryButton
           leftIcon={<PlusIcon stroke={"#344054"} />}
-          style={clasess.btnContainer}
+          style={classes.btnContainer}
           onClick={() => onOpenNewItem()}
         >
           {t("sales.quote.addNewItems")}
         </GomakePrimaryButton>
         <GomakePrimaryButton
           leftIcon={<PlusIcon stroke={"#344054"} />}
-          style={clasess.btnContainer}
+          style={classes.btnContainer}
         >
           {t("sales.quote.addExistItem")}
         </GomakePrimaryButton>
         <GomakePrimaryButton
           leftIcon={<PlusIcon stroke={"#344054"} />}
-          style={clasess.btnContainer}
+          style={classes.btnContainer}
         >
           {t("sales.quote.addDelivery")}
         </GomakePrimaryButton>
       </div>
-      <div style={clasess.btnsContainer}>
+      <div style={classes.btnsContainer}>
         <GomakePrimaryButton
           leftIcon={<UploadNewIcon />}
-          style={clasess.btnSecondContainer}
+          style={classes.btnSecondContainer}
         >
           {t("sales.quote.attachFiles")}
         </GomakePrimaryButton>
         {/* <GomakePrimaryButton
           rightIcon={<ArrowDownNewIcon />}
-          style={clasess.btnSecondContainer}
+          style={classes.btnSecondContainer}
         >
           {t("sales.quote.copyTo")}
         </GomakePrimaryButton> */}
         <GomakePrimaryButton
           rightIcon={<ArrowDownNewIcon />}
-          style={clasess.btnSecondContainer}
+          style={classes.btnSecondContainer}
           onClick={handleSendBtnClick}
         >
           {t("login.send")}
         </GomakePrimaryButton>
-        <GomakePrimaryButton style={clasess.btnSecondContainer}>
+        <GomakePrimaryButton style={classes.btnSecondContainer}>
           {t("sales.quote.print")}
         </GomakePrimaryButton>
         <GomakePrimaryButton
-          style={clasess.btnSecondContainer}
+          style={classes.btnSecondContainer}
           onClick={handleCancelBtnClick}
         >
           {t("materials.buttons.cancel")}
         </GomakePrimaryButton>
-        <GomakePrimaryButton style={clasess.btnThirdContainer}>
+        <GomakePrimaryButton style={classes.btnThirdContainer}>
           {t("materials.buttons.save")}
         </GomakePrimaryButton>
-        <GomakePrimaryButton style={clasess.btnThirdContainer}>
+        <GomakePrimaryButton style={classes.btnThirdContainer}>
           {t("sales.quote.managerApproval")}
         </GomakePrimaryButton>
-        <GomakePrimaryButton style={clasess.btnOrderNowContainer}>
+        <GomakePrimaryButton style={classes.btnOrderNowContainer} onClick={onClickOpenOrderNowModal}>
           {t("sales.quote.orderNowTitle")}
         </GomakePrimaryButton>
+
+        <OrderNowModal
+          openModal={openOrderNowModal}
+          onClose={onClickCloseOrderNowModal}
+          confirmWithoutNotification={onClickConfirmWithoutNotification}
+          confirmWithNotification={onClickConfirmWithNotification}
+        />
       </div>
     </div>
   );

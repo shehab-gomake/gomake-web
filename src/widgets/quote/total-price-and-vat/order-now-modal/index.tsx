@@ -1,8 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { GoMakeModal, GomakePrimaryButton } from "@/components";
-
+import { GoMakeModal} from "@/components";
 import { useStyle } from "./style";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { SecondaryButton } from "@/components/button/secondary-button";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 const OrderNowModal = ({
   openModal,
@@ -11,39 +12,44 @@ const OrderNowModal = ({
   confirmWithNotification,
 }) => {
   const { t } = useTranslation();
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   return (
     <>
       <GoMakeModal
         openModal={openModal}
         modalTitle={t("sales.quote.orderNowTitle")}
         onClose={onClose}
-        insideStyle={clasess.insideStyle}
+        insideStyle={classes.insideStyle}
+        headerStyle={classes.headerStyle}
+        withClose={false}
       >
-        <div style={clasess.mainContainer}>
-          <WarningAmberIcon style={clasess.iconContainer} />
-          <div style={clasess.titleContainer}>
+        <div style={classes.mainContainer}>
+          <WarningAmberIcon style={classes.iconContainer} />
+          <div style={classes.titleContainer}>
             {t("sales.quote.warningMsg")}
           </div>
-          <div style={clasess.mainBtnContainer}>
-            <GomakePrimaryButton
-              style={clasess.cancelContainer}
-              onClick={onClose}
-            >
-              {t("sales.quote.cancel")}
-            </GomakePrimaryButton>
-            <GomakePrimaryButton
-              style={clasess.withNotificationContainer}
-              onClick={confirmWithoutNotification}
-            >
-              {t("sales.quote.confirmWithoutNotification")}
-            </GomakePrimaryButton>
-            <GomakePrimaryButton
-              style={clasess.withoutNotificationContainer}
+          <div style={classes.mainBtnContainer}>
+            <SecondaryButton
+              style={classes.withoutNotificationContainer}
               onClick={confirmWithNotification}
+              variant="contained"
             >
               {t("sales.quote.confirmWithNotification")}
-            </GomakePrimaryButton>
+            </SecondaryButton>
+            <SecondaryButton
+              style={classes.withNotificationContainer}
+              onClick={confirmWithoutNotification}
+              variant="outlined"
+            >
+              {t("sales.quote.confirmWithoutNotification")}
+            </SecondaryButton>
+            <PrimaryButton
+              style={classes.cancelContainer}
+              onClick={onClose}
+              variant="outlined"
+            >
+              {t("sales.quote.cancel")}
+            </PrimaryButton>
           </div>
         </div>
       </GoMakeModal>
