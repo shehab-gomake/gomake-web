@@ -2413,5 +2413,19 @@
     "declined":"Declined",
     "blocked":"Blocked",
     "waitingToApprove":"Waiting to approve"
+  },
+  "pricingWidget": {
+    "selected": "Selected",
+    "others": "Others",
+    "generalInformation": "General information",
+    "cost": "Cost",
+    "profit": "Profit",
+    "endTime": "Est.Time",
+    "finalPrice": "Final price",
+    "inSource": "Internal",
+    "outSource": "Outsource",
+    "inOutSource": "Internal + Outsource",
+    "workFlow": "Work Flow",
+    "add": "Add"
   }
 }

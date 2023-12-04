@@ -9,7 +9,8 @@ import Button from "@mui/material/Button";
 import {useState} from "react";
 import {IOutSourceSupplier} from "@/widgets/product-pricing-widget/interface";
 import {PrimaryButton} from "@/components/button/primary-button";
-import {useOutsourceSupplier} from "@/widgets/product-pricing-widget/components/work-flow/use-outsource-supplier";
+import {useOutsourceSupplier} from "@/widgets/product-pricing-widget/components/outsource-suppliers/use-outsource-supplier";
+import {useTranslation} from "react-i18next";
 
 interface IProps {
     value: number;
@@ -29,6 +30,7 @@ const OutSourceSupplierComponent = ({
                                         finalPrice,
                                         profit
                                     }: IOutSourceSupplier) => {
+    const {t} = useTranslation();
     const {classes} = useStyle();
     const {secondColor} = useGomakeTheme();
     const {updatePrice, updateWorHours, updateProfit, updateCost, addItem} = useOutsourceSupplier();
@@ -54,19 +56,19 @@ const OutSourceSupplierComponent = ({
                     <span style={classes.sectionTitle}>{supplierName}</span>
                     <Divider orientation={'vertical'} flexItem/>
                     <EditableValue unit={'W.H'} isEditable={status === EOutsourceSupplierStatus.Manually}
-                                   label={'Est.Time'} value={workHours} onUpdate={handleDeliveryTimeUpdate}/>
+                                   label={t('pricingWidget.endTime')} value={workHours} onUpdate={handleDeliveryTimeUpdate}/>
                     <Divider orientation={'vertical'} flexItem/>
-                    <EditableValue unit={'$'} isEditable={status === EOutsourceSupplierStatus.Manually} label={'Cost'}
+                    <EditableValue unit={'$'} isEditable={status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.cost')}
                                    value={cost} onUpdate={handleCostUpdate}/>
                     <Divider orientation={'vertical'} flexItem/>
-                    <EditableValue unit={'%'} isEditable={status === EOutsourceSupplierStatus.Manually} label={'Profit'}
+                    <EditableValue unit={'%'} isEditable={status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.profit')}
                                    value={profit} onUpdate={handleProfitUpdate}/>
                     <Divider orientation={'vertical'} flexItem/>
                     <EditableValue unit={'$'} isEditable={status === EOutsourceSupplierStatus.Manually}
-                                   valueColor={secondColor(500)} label={'Price'} value={finalPrice}
+                                   valueColor={secondColor(500)} label={t('pricingWidget.finalPrice')} value={finalPrice}
                                    onUpdate={handleUpdatePrice}/>
                 </Stack>
-                <PrimaryButton onClick={() => addItem(supplierId)} style={{width: 'fit-content', height: 35}} variant={'contained'}>Add</PrimaryButton>
+                <PrimaryButton onClick={() => addItem(supplierId)} style={{width: 'fit-content', height: 35}} variant={'contained'}>{t('pricingWidget.add')}</PrimaryButton>
             </Stack>
         </Fade>
     )

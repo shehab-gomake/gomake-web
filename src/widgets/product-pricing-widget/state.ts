@@ -1,9 +1,17 @@
-import {atom} from "recoil";
+import {atom, selector} from "recoil";
 import {ICalculatedWorkFlow, IOutSourceSupplier, IPricingAction} from "@/widgets/product-pricing-widget/interface";
 
 export const workFlowsState = atom<ICalculatedWorkFlow[]>({
     key: "workFlowsState",
     default: [],
+});
+
+export const selectedWorkFlowState = selector<ICalculatedWorkFlow>({
+    key: 'selectedWorkFlowState',
+    get: ({get}) => {
+        const workFlows = get(workFlowsState);
+        return workFlows?.find(flow => flow.selected);
+    },
 });
 
 export const jobDetailsState = atom<any[]>({
@@ -26,3 +34,12 @@ export const outsourceSuppliersState = atom<IOutSourceSupplier[]>({
     default: [],
 });
 
+export const itemParametersValuesState = atom<any[]>({
+    key: "itemParametersValuesState",
+    default: [],
+});
+
+export const productUrgentWorkState = atom<boolean>({
+    key: 'productUrgentWorkState',
+    default: false
+})

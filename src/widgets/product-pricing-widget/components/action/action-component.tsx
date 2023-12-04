@@ -38,10 +38,10 @@ const ActionContainerComponent = ({
                                       outputs,
                                       delay,
                                       machineName,
-                                      profitO,
-                                      totalPriceO,
-                                      totalRealProductionTimeO,
-                                      totalCostO,
+                                      profit,
+                                      totalPrice,
+                                      totalProductionTime,
+                                      totalCost,
                                       source,
                                       supplierId
                                   }: IActionContainerComponentProps) => {
@@ -68,23 +68,23 @@ const ActionContainerComponent = ({
     const outputsParameters = outputs.filter(parameter => parameter.propertyType === RuleType.OUTPUT);
     const handleDeliveryTimeUpdate = (newValue: string) => {
         const object = {
-            ...totalRealProductionTimeO,
-            values: source === EWorkSource.INTERNAL ? [newValue] : totalRealProductionTimeO.values,
-            outSourceValues: source === EWorkSource.OUT ? [newValue] : totalRealProductionTimeO.outSourceValues
+            ...totalProductionTime,
+            values: source === EWorkSource.INTERNAL ? [newValue] : totalProductionTime.values,
+            outSourceValues: source === EWorkSource.OUT ? [newValue] : totalProductionTime.outSourceValues
         }
         updateDeliveryTime(object, actionId);
     }
 
     const handleCostUpdate = (newCost: string) => {
-        updateCost(newCost, EWorkSource.OUT ? profitO?.outSourceValues[0] : profitO.values[0], actionId, source);
+        updateCost(newCost, EWorkSource.OUT ? profit?.outSourceValues[0] : profit.values[0], actionId, source);
     }
 
     const handleProfitUpdate = (profit: string) => {
-        updateProfit(source === EWorkSource.OUT ? totalCostO?.outSourceValues[0] : totalCostO.values[0], profit, actionId, source);
+        updateProfit(source === EWorkSource.OUT ? totalCost?.outSourceValues[0] : totalCost.values[0], profit, actionId, source);
     }
 
     const handleUpdatePrice = (price: string) => {
-        updatePrice(price, source === EWorkSource.OUT ? totalCostO?.outSourceValues[0] : totalCostO.values[0], actionId, source);
+        updatePrice(price, source === EWorkSource.OUT ? totalCost?.outSourceValues[0] : totalCost.values[0], actionId, source);
     }
 
     const handleSourceChange = (source: EWorkSource) => {
@@ -114,7 +114,7 @@ const ActionContainerComponent = ({
                                         <Divider orientation={'vertical'} flexItem color={'#000'}/>
                                         <GoMakeAutoComplate placeholder={'Select supplier'} value={getSupplierId()}
                                                             style={{width: '200px'}}
-                                                            onChange={handleSupplierChange} options={suppliers}/>
+                                                            onChange={handleSupplierChange} options={suppliersState?.map(s => ({value: s.supplierId, label: s.supplierName}))}/>
                                     </Stack> :
                                     !!machineName && <>
                                         <Divider orientation={'vertical'} flexItem color={'#000'}/>
@@ -136,16 +136,16 @@ const ActionContainerComponent = ({
                         </Stack>
                         <Divider orientation={'vertical'} flexItem/>
                         <EditableKeyValueViewComponent
-                            onUpdate={handleDeliveryTimeUpdate} {...totalRealProductionTimeO} source={source}/>
+                            onUpdate={handleDeliveryTimeUpdate} {...totalProductionTime} source={source}/>
                         <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
-                        <EditableKeyValueViewComponent onUpdate={handleCostUpdate} {...totalCostO} source={source}/>
+                        <EditableKeyValueViewComponent onUpdate={handleCostUpdate} {...totalCost} source={source}/>
                         <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
                         <Stack direction={'row'} gap={'3px'} alignItems={'center'}>
-                            <EditableKeyValueViewComponent onUpdate={handleProfitUpdate} {...profitO} source={source}/>
-                            <span>{source === EWorkSource.OUT ? `(${+totalPriceO.outSourceValues[0] - +totalCostO.outSourceValues[0]} ${totalPriceO.defaultUnit})` : `(${+totalPriceO.values[0] - +totalCostO.values[0]} ${totalPriceO.defaultUnit})`}</span>
+                            <EditableKeyValueViewComponent onUpdate={handleProfitUpdate} {...profit} source={source}/>
+                            <span>{source === EWorkSource.OUT ? `(${+totalPrice.outSourceValues[0] - +totalCost.outSourceValues[0]} ${totalPrice.defaultUnit})` : `(${+totalPrice.values[0] - +totalCost.values[0]} ${totalPrice.defaultUnit})`}</span>
                         </Stack>
                         <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
-                        <EditableKeyValueViewComponent onUpdate={handleUpdatePrice} {...totalPriceO}
+                        <EditableKeyValueViewComponent onUpdate={handleUpdatePrice} {...totalPrice}
                                                        source={source}
                                                        valueColor={secondColor(500)}/>
                         <Divider orientation={'vertical'} flexItem/>
@@ -181,10 +181,10 @@ const ActionContainerComponent = ({
 const ActionComponent = ({
                              actionName,
                              machineName,
-                             profitO,
-                             totalPriceO,
-                             totalRealProductionTimeO,
-                             totalCostO,
+                             profit,
+                             totalPrice,
+                             totalProductionTime,
+                             totalCost,
                              source,
                              supplierId
                          }: IWorkFlowAction) => {
@@ -193,11 +193,11 @@ const ActionComponent = ({
     const {secondColor} = useGomakeTheme();
     const suppliers = useRecoilValue(outsourceSuppliersState);
     const parameters = [
-        totalRealProductionTimeO,
-        totalCostO,
-        profitO,
+        totalProductionTime,
+        totalCost,
+        profit,
         {
-            ...totalPriceO,
+            ...totalPrice,
             valueColor: secondColor(500),
         },
     ]
