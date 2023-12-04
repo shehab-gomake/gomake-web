@@ -29,12 +29,12 @@ const MaterialsWidget = () => {
     const { t } = useTranslation();
     const { classes } = useStyle();
     const dir: 'rtl' | 'ltr' = t('direction');
+    const { getMaterialCategoryData } = useMaterialsCategories();
     const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
     const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
     const supplierId = useRecoilValue(selectedSupplierIdState)
     const flag = useRecoilValue(flagState)
     const elementRef = useRef(null);
-    const { getMaterialCategoryData } = useMaterialsCategories();
 
     const {
         materialCategory,
@@ -61,21 +61,20 @@ const MaterialsWidget = () => {
     // const tableHeadersData = (materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ? tableHeadersNew() : tableHeaders();
 
     const Side = () =>
-        <Stack gap={'10px'} direction={'column'}>
+        <Stack direction={'column'} gap={'10px'}>
             <SecondaryButton variant={'text'} href={'/materials'}
                 startIcon={dir === 'ltr' ? <ArrowBackIcon /> : <ArrowForwardIcon />}
                 style={{ gap: 5 }}>{t("materials.buttons.back")}
             </SecondaryButton>
             <SideList list={materialsCategoriesList()} selectedItem={materialCategory?.toString()}
                 onSelect={onSelectCategory} title={'choose category'} isHaveDeleteIcon={true}>
-                <Stack gap={'10px'} direction={'row'} justifyContent={'space-between'}>
-                    <PrimaryButton onClick={downloadExcelFile} variant={'contained'}>Download</PrimaryButton>
-                    <input ref={elementRef} onChange={uploadExcelFile} type="file" accept=".xlsx" hidden={true} />
-                    <SecondaryButton onClick={() => elementRef && elementRef.current.click()}
-                        variant={'contained'}>Upload</SecondaryButton>
-                </Stack>
-
-                <Stack direction={'row'} style={{ marginTop: 10 }}>
+                <Stack style={classes.buttonsContainerStyle}>
+                    <Stack gap={'10px'} direction={'row'} justifyContent={'space-between'}>
+                        <PrimaryButton onClick={downloadExcelFile} variant={'outlined'}>{t("materials.buttons.download")}</PrimaryButton>
+                        <input ref={elementRef} onChange={uploadExcelFile} type="file" accept=".xlsx" hidden={true} />
+                        <SecondaryButton onClick={() => elementRef && elementRef.current.click()}
+                            variant={'outlined'}>{t("materials.buttons.upload")}</SecondaryButton>
+                    </Stack>
                     <PrimaryButton onClick={() => setOpenAddCategoryModal(true)}
                         variant={'contained'}>{t("materials.buttons.addNew")}</PrimaryButton>
                 </Stack>
@@ -137,11 +136,10 @@ const MaterialsWidget = () => {
                                 </span>
                             </div>}
                 </Stack>}
-                <AddSupplierModal />
-                <AddCategoryModal />
-                <AddRowModal />
             </SideBarContainer>
             <AddSupplierModal />
+            <AddCategoryModal />
+            <AddRowModal />
         </div>
     );
 }

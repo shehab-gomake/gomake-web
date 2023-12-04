@@ -20,9 +20,7 @@ const AddRowModal = () => {
     const currencies = useRecoilValue(currenciesState);
     const machinesCategories =useRecoilValue<any>(materialsMachinesState);
     const [openModal, setOpenModal] = useRecoilState<boolean>(openAddRowModalState);
-    useEffect(()=>{
-        console.log(rowData);
-    },[rowData])
+
     const onChangeInputs = (key, value) => {
         setRowData({ ...rowData, [key]: value })
     }
@@ -34,9 +32,9 @@ const AddRowModal = () => {
             onClose={() => { setOpenModal(false), setRowData("") }}
             modalTitle={t("materials.buttons.addNewRow")}>
             <Stack display={"flex"} direction={'column'} marginTop={"10px"} >
-                <Stack display={"flex"} direction={'row'} gap={"25px"} flexWrap={"wrap"}  >
+                <Stack style={classes.inputsDivStyle}>
                     {
-                        rowInputs(rowData, currencies , machinesCategories).map(item => <Stack width={"180px"}  ><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
+                        rowInputs(rowData, currencies, machinesCategories).map(item => <Stack width={"180px"} ><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false}/></Stack>)
                     }
                 </Stack>
                 <SecondaryButton variant="contained" onClick={() => onAddCategoryRow(rowData)} style={classes.addBtnStyle}>{t("materials.buttons.add")}</SecondaryButton>

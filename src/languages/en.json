@@ -286,7 +286,9 @@
       "addNewRow": "Add new row",
       "openImage": "Open image",
       "changeImage": "Change image",
-      "selectImage": "Select Image"
+      "selectImage": "Select Image",
+      "upload": "Upload",
+      "download" : "Download"
     },
     "modals": {
       "subTitleDeleteModal": "Are you sure to delete {{name}}",
