@@ -1,7 +1,7 @@
-import React, {useCallback, useEffect} from "react";
+import React, {FormEvent, useCallback, useEffect, useState} from "react";
 import {useGomakeAxios} from "@/hooks";
 import {useRecoilValue, useSetRecoilState} from "recoil";
-import {Autocomplete, Box} from "@mui/material";
+import {Autocomplete, Box, Checkbox, FormControlLabel, FormGroup} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import {useTranslation} from "react-i18next";
 import {styled} from "@mui/material/styles";
@@ -10,16 +10,27 @@ import { AccountCircle } from "@mui/icons-material";
 import {selectedAgentIdsState} from "@/widgets/agents/state/selected-agent-id";
 import {agentsState} from "@/store/agents-state";
 import {GoMakeAutoComplate} from "@/components/auto-complete";
+import Button from "@mui/material/Button";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import {GomakeTextInput} from "@/components";
+import MenuItem from "@mui/material/MenuItem";
+import {IMachine} from "@/shared";
+import {useStyle} from "@/widgets/machine-list/style";
+import {StyledMenu} from "@/widgets";
 
 
 const AgentsList = () => {
     const {t} = useTranslation();
     const {callApi} = useGomakeAxios();
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
     const {primaryColor} = useGomakeTheme();
+    const {classes} = useStyle();
     const setAgents = useSetRecoilState(agentsState);
     const agents = useRecoilValue(agentsState);
     const setSelectedAgentsIds = useSetRecoilState(selectedAgentIdsState);
     const selectedAgents = useRecoilValue(selectedAgentIdsState);
+    const [filter, setFilter] = useState<string>();
     useEffect(() => {
         callApi('GET', '/agents', {}, true, true).then((res) => {
             if (res && res.success) {
@@ -27,12 +38,29 @@ const AgentsList = () => {
             }
         })
     }, [])
-
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
     const getAgentsList = useCallback(() => {
-        const agentsList =  agents.map(agent => ({label: agent.name, id: agent.id}));
-        return [{label: "בחר הכל", id: "all"},...agentsList];
+        const agentsList =  agents.map(agent => ({label: agent.name, id: agent.id,checked:false}));
+        return agentsList;
     }, [agents]);
-
+    const setAgentChecked = (agentId: string) => {
+        debugger;
+        const updatedAgents:any[] = getAgentsList().map((agent) => {
+            if (agent.id === agentId) {
+                agent.checked = !agent.checked;
+            }
+            return agent
+        });
+        setAgents(updatedAgents)
+    };
+    const checkAllAgents = ()=> {
+        
+    }
     const handleChange = (e: any, value: any) => {
         let agentIds = [];
         if(value && value.length  >0){
@@ -46,58 +74,50 @@ const AgentsList = () => {
         }
         setSelectedAgentsIds(agentIds);
     }
+    const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
+        setFilter(event.currentTarget.value);
+    }
     return (
         <div style={{width:'200px'}}>
-            <GoMakeAutoComplate
-                placeholder={t('dashboard-widget.agents')}
-                options={getAgentsList()}
-                style={{
-                    backgroundColor: "#FFFFFF",
-                    boxSizing: "border-box",
-                    borderRadius: '10px',
-                    fontFamily: "Jost",
-                    fontStyle: "normal",
-                    fontWeight: 300,
-                    fontSize: 14,
-                    lineHeight: "21px",
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    color: primaryColor(500),
-                    border: `1px solid ${primaryColor(500)}`
-                }}
-                //style={clasess.multiSelectStyle}
-                multiple
-                onChange={handleChange}
-                value={selectedAgents.map((item: any) => {
-                    const agent = getAgentsList()?.find(
-                        (agent: any) => agent?.id === item
-                    );
-                    return {
-                        label: agent?.label,
-                        id: agent?.id,
-                    };
-                })}
-            />
-            {
-                /* <AutoSearch
-                fullWidth={true}
-                forcePopupIcon={false}
-                onChange={handleChange}
-                renderInput={(params) => <Box sx={{ position: 'relative' }}>
-                    <Input {...params} placeholder={t('dashboard-widget.agents') as string}/>
-                    <AccountCircle sx={{ position: 'absolute', left: '5px', top: '8px', color: 'action.active'}} />
-                </Box>}
-                options={getClientsList()}/>  value={/*productState?.groups?.map((item: any) => {
-                    const group = allGroups?.find(
-                        (group: any) => group?.id === item
-                    );
-                    return {
-                        label: group?.label,
-                        id: group?.id,
-                    };
-                })*/
-            }
+            <div>
+                <Button style={classes.button} variant={'contained'} onClick={handleClick}>
+                    <span>{t('machines-list-widget.machinesList')}</span>
+                    <KeyboardArrowDownIcon/>
+                </Button>
+                <StyledMenu  anchorEl={anchorEl}
+                             open={open}
+                             onClose={handleClose}
+                             MenuListProps={{
+                                 'aria-labelledby': 'basic-button',
+                             }}>
+                    <FormGroup>
+                        <div style={classes.searchInput}>
+                            <GomakeTextInput  placeholder={'search machine'} value={filter} onChange={handleFilterChange}/>
+                        </div>
+                        <MenuItem style={classes.machineName}>
+                            <FormControlLabel  label={t('dashboard-widget.all')}
+                                               control={<Checkbox checked={getAgentsList().every(agent => agent.checked)}
+                                                                  onChange={() => {
+                                                                      checkAllAgents();
+                                                                  }}/>}
+                            />
+                        </MenuItem>
+                        {
+                            getAgentsList().map((agent:any) => {
+                                return <MenuItem style={classes.machineName} key={agent.id}>
+                                    <FormControlLabel  label={agent.label}
+                                                       control={<Checkbox checked={agent.checked}
+                                                                          onChange={() => {
+                                                                              setAgentChecked(agent.id)
+                                                                          }}/>}
+                                    />
+                                </MenuItem>
+
+                            })
+                        }
+                    </FormGroup>
+                </StyledMenu>
+            </div>
         </div>
     );
 };

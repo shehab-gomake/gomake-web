@@ -121,4 +121,4 @@ const StyledMenu = styled((props: MenuProps) => (
         }
     },
 }));
-export {MachineList}
+export {MachineList,StyledMenu}
