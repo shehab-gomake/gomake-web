@@ -24,17 +24,16 @@ const AgentsList = () => {
     const {callApi} = useGomakeAxios();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
-    const {primaryColor} = useGomakeTheme();
     const {classes} = useStyle();
     const setAgents = useSetRecoilState(agentsState);
     const agents = useRecoilValue(agentsState);
-    const setSelectedAgentsIds = useSetRecoilState(selectedAgentIdsState);
-    const selectedAgents = useRecoilValue(selectedAgentIdsState);
     const [filter, setFilter] = useState<string>();
     useEffect(() => {
         callApi('GET', '/agents', {}, true, true).then((res) => {
             if (res && res.success) {
-                setAgents(res.data);
+                const agentsResult = res.data;
+                agentsResult.forEach((x:any) => x.checked = false);
+                setAgents(agentsResult);
             }
         })
     }, [])
@@ -44,35 +43,30 @@ const AgentsList = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const getAgentsList = useCallback(() => {
-        const agentsList =  agents.map(agent => ({label: agent.name, id: agent.id,checked:false}));
-        return agentsList;
-    }, [agents]);
-    const setAgentChecked = (agentId: string) => {
-        debugger;
-        const updatedAgents:any[] = getAgentsList().map((agent) => {
+    const getAgents = () => {
+        if (filter) {
+            return agents.filter((agent) => agent.name.toLowerCase().includes(filter.toLowerCase()));
+        }else {
+            return agents;
+        }
+    }
+   
+    
+    const setAgentChecked = useCallback((agentId: string) => {
+        const updatedAgents:any[] = agents.map((agent) => {
             if (agent.id === agentId) {
-                agent.checked = !agent.checked;
+                return {...agent, checked: !agent.checked}
             }
             return agent
         });
         setAgents(updatedAgents)
-    };
+    }, [agents]);
     const checkAllAgents = ()=> {
-        
-    }
-    const handleChange = (e: any, value: any) => {
-        let agentIds = [];
-        if(value && value.length  >0){
-            if(value.length == 1 && value.find((x:any)=>x.id == "all")){
-                const allAgents = getAgentsList();
-                agentIds = allAgents.map((x:any) => x.id)
-            }else{
-                agentIds = value.map((x:any) => x.id)
-            }
-            
-        }
-        setSelectedAgentsIds(agentIds);
+        const isChecked = agents.every(agent => agent.checked);
+        const updatedAgents:any[] = agents.map((agent) => {
+            return {...agent, checked: !isChecked}
+        });
+        setAgents(updatedAgents)
     }
     const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
         setFilter(event.currentTarget.value);
@@ -81,7 +75,7 @@ const AgentsList = () => {
         <div style={{width:'200px'}}>
             <div>
                 <Button style={classes.button} variant={'contained'} onClick={handleClick}>
-                    <span>{t('machines-list-widget.machinesList')}</span>
+                    <span>{t('dashboard-widget.agents')}</span>
                     <KeyboardArrowDownIcon/>
                 </Button>
                 <StyledMenu  anchorEl={anchorEl}
@@ -92,20 +86,20 @@ const AgentsList = () => {
                              }}>
                     <FormGroup>
                         <div style={classes.searchInput}>
-                            <GomakeTextInput  placeholder={'search machine'} value={filter} onChange={handleFilterChange}/>
+                            <GomakeTextInput  placeholder={'search'} value={filter} onChange={handleFilterChange}/>
                         </div>
                         <MenuItem style={classes.machineName}>
                             <FormControlLabel  label={t('dashboard-widget.all')}
-                                               control={<Checkbox checked={getAgentsList().every(agent => agent.checked)}
+                                               control={<Checkbox checked={getAgents().every(agent => agent.checked)}
                                                                   onChange={() => {
                                                                       checkAllAgents();
                                                                   }}/>}
                             />
                         </MenuItem>
                         {
-                            getAgentsList().map((agent:any) => {
+                            getAgents().map((agent:any) => {
                                 return <MenuItem style={classes.machineName} key={agent.id}>
-                                    <FormControlLabel  label={agent.label}
+                                    <FormControlLabel  label={agent.name}
                                                        control={<Checkbox checked={agent.checked}
                                                                           onChange={() => {
                                                                               setAgentChecked(agent.id)
