@@ -19,6 +19,12 @@ export type ActionProfit = {
   recordID: number;
 };
 
+export type ProfitsPricingTables = {
+  description: string;
+  exceptionType: number;
+  name: string;
+};
+
 export type ActionProfitRowChartData = {
   costAxis: number[];
   quantityAxis: number[];
@@ -82,6 +88,17 @@ export type ProfitRightSideProps = {
   onBlurMinimumValue: () => void;
   setIsUpdateMinimumValue: (value: any) => void;
   onInputChangeMinimumValue: (type: any) => void;
+  profitsPricingTables?: ProfitsPricingTables[];
+  anchorElPricingTables?: null | HTMLElement;
+  openPricingTables?: boolean;
+  handleClickPricingTables?: (e) => void;
+  handleClosePricingTables?: () => void;
+  anchorElPricingTablesMapping?: null | HTMLElement;
+  openPricingTablesMapping?: boolean;
+  handleClickPricingTablesMapping?: (e) => void;
+  handleClosePricingTablesMapping?: () => void;
+  selectedPricingTableItems?: any;
+  setSelectedPricingTableItems?: (value: any) => void;
 };
 
 export type ProfitLeftSideProps = {

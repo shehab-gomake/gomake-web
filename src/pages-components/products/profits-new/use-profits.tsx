@@ -12,9 +12,11 @@ import { EPricingBy, ETransition } from "./enums/profites-enum";
 import {
   ActionProfit,
   ActionProfitRowChartData,
+  ProfitsPricingTables,
   SelectedPricingByType,
   SelectedTransition,
 } from "./interface";
+import { getAndSetProfitsPricingTables } from "./services/get-action-profit-by-action-id copy";
 
 const useNewProfits = () => {
   const {
@@ -80,7 +82,8 @@ const useNewProfits = () => {
     useState<ActionProfitRowChartData>();
   const [actionProfitRowsList, setActionProfitRowsList] = useState([]);
   const [openAddStepModal, setOpenAddStepModal] = useState<boolean>(false);
-
+  const [profitsPricingTables, setProfitsPricingTables] =
+    useState<ProfitsPricingTables[]>();
   const [tableHeaders, setTableHeaders] = useState<string[]>([
     t("products.profits.pricingListWidget.cost"),
     t("products.profits.pricingListWidget.profit"),
@@ -101,6 +104,12 @@ const useNewProfits = () => {
     });
   }, [router]);
 
+  const getProfitsPricingTables = useCallback(async () => {
+    await getAndSetProfitsPricingTables(callApi, setProfitsPricingTables, {
+      actionId: router.query.actionId,
+    });
+  }, [router]);
+
   const getActionProfitRowChartData = useCallback(async () => {
     if (actionProfitByActionId?.id) {
       await getAndSetActionProfitRowChartData(
@@ -116,6 +125,7 @@ const useNewProfits = () => {
   useEffect(() => {
     getAllActionProfitRowsByActionId();
     getActionProfitByActionId();
+    getProfitsPricingTables();
   }, []);
   useEffect(() => {
     getActionProfitRowChartData();
@@ -281,6 +291,31 @@ const useNewProfits = () => {
   const onInputChangeMinimumValue = (e) => {
     setMinimumValue(e);
   };
+
+  const [anchorElPricingTables, setAnchorElPricingTables] =
+    useState<null | HTMLElement>(null);
+  const openPricingTables = Boolean(anchorElPricingTables);
+
+  const handleClickPricingTables = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElPricingTables(event.currentTarget);
+  };
+  const handleClosePricingTables = () => {
+    setAnchorElPricingTables(null);
+  };
+
+  const [anchorElPricingTablesMapping, setAnchorElPricingTablesMapping] =
+    useState<null | HTMLElement>(null);
+  const openPricingTablesMapping = Boolean(anchorElPricingTablesMapping);
+
+  const handleClickPricingTablesMapping = (
+    event: React.MouseEvent<HTMLElement>
+  ) => {
+    setAnchorElPricingTablesMapping(event.currentTarget);
+  };
+  const handleClosePricingTablesMapping = () => {
+    setAnchorElPricingTablesMapping(null);
+  };
+  const [selectedPricingTableItems, setSelectedPricingTableItems] = useState();
   return {
     allActionProfitRowsByActionId,
     actionProfitRowChartData,
@@ -295,6 +330,17 @@ const useNewProfits = () => {
     openAddStepModal,
     minimumValue,
     isUpdateMinimumValue,
+    profitsPricingTables,
+    anchorElPricingTables,
+    openPricingTables,
+    handleClickPricingTables,
+    handleClosePricingTables,
+    selectedPricingTableItems,
+    setSelectedPricingTableItems,
+    anchorElPricingTablesMapping,
+    openPricingTablesMapping,
+    handleClickPricingTablesMapping,
+    handleClosePricingTablesMapping,
     onBlurMinimumValue,
     setIsUpdateMinimumValue,
     onInputChangeMinimumValue,

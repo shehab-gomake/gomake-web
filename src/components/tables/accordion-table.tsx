@@ -9,6 +9,7 @@ const AccordionTable = ({
   title,
   isDefault = false,
   children,
+  onclickOpenMenu,
 }: IAccordionTable) => {
   const { classes } = useAccordionStyle();
   const { t } = useTranslation();
@@ -19,7 +20,7 @@ const AccordionTable = ({
   };
   return (
     <div style={classes.mainContainer}>
-      <div style={classes.headerTableContainer} onClick={handleChange}>
+      <div style={classes.headerTableContainer}>
         <div style={classes.headerTitleStyle}>
           <div style={classes.titleStyle}>{title}</div>
           {isDefault && (
@@ -29,10 +30,10 @@ const AccordionTable = ({
           )}
         </div>
         <div style={classes.headerTitleStyle}>
-          <div style={classes.iconContainer}>
+          <div style={classes.iconContainer} onClick={onclickOpenMenu}>
             <MoreCircleIcon />
           </div>
-          <div style={classes.iconContainer}>
+          <div style={classes.iconContainer} onClick={handleChange}>
             <ArrowDownWithSquare />
           </div>
         </div>

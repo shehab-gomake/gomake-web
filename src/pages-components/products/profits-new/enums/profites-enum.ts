@@ -10,3 +10,9 @@ export enum ETransition {
   LINEAR = 0,
   STEPS = 1,
 }
+export enum ETypeException {
+  ADDITIONAL = 0,
+  NEWBASE = 1,
+  EDITBASE = 2,
+  DEFAULT = 3,
+}

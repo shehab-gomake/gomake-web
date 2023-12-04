@@ -1426,7 +1426,9 @@
         "additionalProfit": "أرباح إضافية",
         "deleteExceptionProfit": "حذف استثناء الربح؟",
         "updateException": "تحديث الاستثناء",
-        "deleteException": "حذف الاستثناء"
+        "deleteException": "حذف الاستثناء",
+        "addNewRule": "إضافة قاعدة جديدة",
+        "reorder": "إعادة ترتيب"
       }
     },
     "actions": {

@@ -1401,7 +1401,9 @@
         "additionalProfit": "Zusätzlicher Gewinn",
         "deleteExceptionProfit": "Ausnahme-Gewinn löschen?",
         "updateException": "Ausnahme aktualisieren",
-        "deleteException": "Ausnahme löschen"
+        "deleteException": "Ausnahme löschen",
+        "addNewRule": "Neue Regel hinzufügen",
+        "reorder": "Neu ordnen"
       }
     },
     "actions": {

@@ -18,6 +18,17 @@ const ProfitsNewPageWidget = () => {
     openAddStepModal,
     minimumValue,
     isUpdateMinimumValue,
+    profitsPricingTables,
+    anchorElPricingTables,
+    openPricingTables,
+    anchorElPricingTablesMapping,
+    openPricingTablesMapping,
+    selectedPricingTableItems,
+    setSelectedPricingTableItems,
+    handleClickPricingTablesMapping,
+    handleClosePricingTablesMapping,
+    handleClickPricingTables,
+    handleClosePricingTables,
     onBlurMinimumValue,
     setIsUpdateMinimumValue,
     onInputChangeMinimumValue,
@@ -60,6 +71,17 @@ const ProfitsNewPageWidget = () => {
           onBlurMinimumValue={onBlurMinimumValue}
           setIsUpdateMinimumValue={setIsUpdateMinimumValue}
           onInputChangeMinimumValue={onInputChangeMinimumValue}
+          profitsPricingTables={profitsPricingTables}
+          anchorElPricingTables={anchorElPricingTables}
+          openPricingTables={openPricingTables}
+          handleClickPricingTables={handleClickPricingTables}
+          handleClosePricingTables={handleClosePricingTables}
+          anchorElPricingTablesMapping={anchorElPricingTablesMapping}
+          openPricingTablesMapping={openPricingTablesMapping}
+          handleClickPricingTablesMapping={handleClickPricingTablesMapping}
+          handleClosePricingTablesMapping={handleClosePricingTablesMapping}
+          selectedPricingTableItems={selectedPricingTableItems}
+          setSelectedPricingTableItems={setSelectedPricingTableItems}
         />
       </div>
     </div>

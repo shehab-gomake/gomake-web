@@ -25,4 +25,5 @@ export interface IAccordionTable {
   title: string;
   isDefault?: boolean;
   children: React.ReactNode;
+  onclickOpenMenu: (e) => void;
 }

@@ -18,6 +18,7 @@ const useAccordionStyle = () => {
         alignItems: "center",
         width: "100%",
         padding: "10px 16px",
+
         borderRadius: "16px",
         backgroundColor: "#D5D6E9",
         cursor: "pointer",
@@ -50,6 +51,8 @@ const useAccordionStyle = () => {
         maxHeight: 200,
         padding: "10px 15px",
         overflow: "scroll",
+        paddingRight: 0,
+        paddingBottom: 0,
       },
     };
   }, []);

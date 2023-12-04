@@ -1426,7 +1426,9 @@
         "additionalProfit": "רווח נוסף",
         "deleteExceptionProfit": "מחק רווח חריג?",
         "updateException": "עדכן חריג",
-        "deleteException": "מחק חריג"
+        "deleteException": "מחק חריג",
+        "addNewRule": "הוסף כלל חדש",
+        "reorder": "סדר מחדש"
       }
     },
     "actions": {

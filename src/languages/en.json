@@ -1433,7 +1433,9 @@
         "additionalProfit": "Additional Profit",
         "deleteExceptionProfit": "Delete Exception Profit ?",
         "updateException": "Update exception",
-        "deleteException": "Delete exception"
+        "deleteException": "Delete exception",
+        "addNewRule":"Add New Rule",
+        "reorder":"Reorder"
       }
     },
     "actions": {
