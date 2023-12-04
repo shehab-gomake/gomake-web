@@ -76,9 +76,9 @@ const WorkFlowComponent = ({
                         <ParametersMapping parameters={parameters}/>
                         <Divider orientation={'vertical'} flexItem/>
                         <Stack direction={'row'} flexWrap={"wrap"} alignItems={'center'} gap={'10px'}>
-                            <WorkflowRateComponent label={'Price'} value={recommendationRang.price}/>
-                            <WorkflowRateComponent label={'Profit'} value={recommendationRang.profit}/>
-                            <WorkflowRateComponent label={'D.Time'} value={recommendationRang.deliveryTime}/>
+                            <WorkflowRateComponent label={t('pricingWidget.price')} value={recommendationRang.price}/>
+                            <WorkflowRateComponent label={t('pricingWidget.profit')} value={recommendationRang.profit}/>
+                            <WorkflowRateComponent label={t('pricingWidget.endTime')} value={recommendationRang.deliveryTime}/>
                         </Stack>
                     </Stack>
                     <Stack direction={'row'} gap={'12px'}>

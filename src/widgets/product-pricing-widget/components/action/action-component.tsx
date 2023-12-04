@@ -18,6 +18,7 @@ import {useRecoilValue} from "recoil";
 import {outsourceSuppliersState} from "@/widgets/product-pricing-widget/state";
 import {GoMakeAutoComplate} from "@/components";
 import Button from "@mui/material/Button";
+import {useTranslation} from "react-i18next";
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
     delay: number;
@@ -190,6 +191,7 @@ const ActionComponent = ({
                          }: IWorkFlowAction) => {
     source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
     const {classes} = useStyle();
+    const {t} = useTranslation();
     const {secondColor} = useGomakeTheme();
     const suppliers = useRecoilValue(outsourceSuppliersState);
     const parameters = [
@@ -228,7 +230,7 @@ const ActionComponent = ({
                     <Divider orientation={'vertical'} flexItem/>
                     <ParametersMapping source={source} parameters={parameters}/>
                     <Divider orientation={'vertical'} flexItem/>
-                    <InOutSourceSelect value={source} disabled={true}/>
+                    <span style={classes.sourceLabel}>{source === EWorkSource.OUT ? t('pricingWidget.outSource') : t('pricingWidget.inSource')}</span>
                 </Stack>
             </Stack>
         </Stack>

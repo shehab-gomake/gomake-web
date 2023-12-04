@@ -15,11 +15,10 @@ const InOutSourceSelect = ({disabled, onChange, value, withPartially}: Interface
     const {t} = useTranslation();
     useEffect(() => {
         const options = [
-            {value: EWorkSource.INTERNAL, label: t('pricingWidget.inSource')},
+            {value: EWorkSource.INTERNAL, label: withPartially ? t('pricingWidget.inOutSource') : t('pricingWidget.inSource')},
             {value: EWorkSource.OUT, label: t('pricingWidget.outSource')},
         ]
-        const partially = {value: EWorkSource.PARTIALLY, label: t('pricingWidget.inOutSource')};
-        setState(withPartially ? [...options, partially] : options)
+        setState(options)
 
     }, [withPartially, t])
     const handleOnChange = (v: EWorkSource) => {

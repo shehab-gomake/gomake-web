@@ -19,7 +19,7 @@ import {useRecoilValue} from "recoil";
 import {selectedWorkFlowState} from "@/widgets/product-pricing-widget/state";
 
 const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps) => {
-    const [view, setView] = useState<EPricingViews>(0);
+    const [view, setView] = useState<EPricingViews>(EPricingViews.SELECTED_WORKFLOW);
     const {t} = useTranslation();
     const {classes} = useStyle();
     const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
@@ -30,19 +30,20 @@ const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps
         <Stack gap={'16px'} width={'100%'}>
             <Stack direction={"row"} justifyContent={'space-between'}>
                 { !!workFlows && view !== EPricingViews.OUTSOURCE_WORKFLOW ? <ButtonGroup sx={classes.buttonGroup} orientation={'horizontal'}>
-                    <PrimaryButton onClick={() => setView(0)} sx={classes.button}
-                                   variant={view === 0 ? 'contained' : 'outlined'}>{t('pricingWidget.selected')}</PrimaryButton>
-                    <PrimaryButton onClick={() => setView(1)} sx={classes.button}
-                                   variant={view === 1 ? 'contained' : 'outlined'}>{t('pricingWidget.others')}</PrimaryButton>
+                    <PrimaryButton onClick={() => setView(EPricingViews.SELECTED_WORKFLOW)} sx={classes.button}
+                                   variant={view === EPricingViews.SELECTED_WORKFLOW ? 'contained' : 'outlined'}>{t('pricingWidget.selected')}</PrimaryButton>
+                    <PrimaryButton onClick={() => setView(EPricingViews.OTHERS_WORKFLOWS)} sx={classes.button}
+                                   variant={view === EPricingViews.OTHERS_WORKFLOWS ? 'contained' : 'outlined'}>{t('pricingWidget.others')}</PrimaryButton>
 
                 </ButtonGroup> : <div/>}
                 <InOutSourceSelect onChange={(v: EWorkSource) => setView(v === EWorkSource.OUT ? EPricingViews.OUTSOURCE_WORKFLOW : EPricingViews.SELECTED_WORKFLOW)}
+                                   withPartially={selectedWorkFlow?.actions?.some(action => action.source === EWorkSource.OUT)}
                                    value={view ===  EPricingViews.OUTSOURCE_WORKFLOW? EWorkSource.OUT : EWorkSource.INTERNAL}/>
             </Stack>
             {selectedWorkFlow && <GeneralInformationComponent details={selectedWorkFlow?.generalInformation}/>}
             <Divider/>
-            {selectedWorkFlow && view === 0 && <Actions actions={selectedWorkFlow?.actions}/>}
-            {workFlows && view === 1 && <WorkFlowsComponent showSelected={() => setView(EPricingViews.SELECTED_WORKFLOW)} workflows={workFlows}/>}
+            {selectedWorkFlow && view === EPricingViews.SELECTED_WORKFLOW && <Actions actions={selectedWorkFlow?.actions}/>}
+            {workFlows && view === EPricingViews.OTHERS_WORKFLOWS && <WorkFlowsComponent showSelected={() => setView(EPricingViews.SELECTED_WORKFLOW)} workflows={workFlows}/>}
             {view === EPricingViews.OUTSOURCE_WORKFLOW && <OutSourceSuppliers/>}
         </Stack>
     );
