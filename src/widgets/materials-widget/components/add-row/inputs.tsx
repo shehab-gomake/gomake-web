@@ -3,27 +3,27 @@ import { materialHeadersState } from "../../state";
 import { EDataTypeEnum } from "@/widgets/materials-widget/components/table-cell-data/data-type-enum";
 
 const rowInputs = (state, currencies) => {
-    const materialHeaders = useRecoilValue<{ key: string, value: string, inputType: number }[]>(materialHeadersState);
+    const materialHeaders = useRecoilValue<{ key: string, value: string, inputType: number,values:[] }[]>(materialHeadersState);
+    return materialHeaders.filter(header => header.key !== "Active").map((header)=>{
+        switch ( EDataTypeEnum[header?.inputType]){
+            case "CURRENCY":
+                return {
+                    name: "Currency",
+                    label: "materials.inputs.currency",
+                    type: "select",
+                    placeholder: "materials.inputs.currency",
+                    required: false,
+                    parameterKey: "currency",
+                    options: currencies.map(currency => ({
+                        value: currency.value,
+                        text: currency.label
+                    })),
+                    value: state?.parameterKey,
+                    isValid: true,
 
-    return materialHeaders.filter(header => header.key !== "Active").map((header) => (
-        
-        EDataTypeEnum[header?.inputType] == "CURRENCY" ?
-            {
-                name: "Currency",
-                label: "materials.inputs.currency",
-                type: "select",
-                placeholder: "materials.inputs.currency",
-                required: false,
-                parameterKey: "currency",
-                options: currencies.map(currency => ({
-                    value: currency.value,
-                    text: currency.label
-                })),
-                value: state?.parameterKey,
-                isValid: true,
-
-            } : EDataTypeEnum[header?.inputType] == "ARRAY_INPUT" ?
-                {
+                }
+            case "ARRAY_INPUT":
+                return {
                     name: "Unit price",
                     label: "materials.inputs.unitPrice",
                     type: "number",
@@ -33,8 +33,21 @@ const rowInputs = (state, currencies) => {
                     options: [],
                     value: state?.parameterKey,
                     isValid: true,
-                } :
-                {
+                }
+            case "LIST":
+                return {
+                    name: header?.key,
+                    label: header?.value,
+                    type: "select",
+                    placeholder: header?.key,
+                    required: false,
+                    parameterKey:header?.key,
+                    options:header.values ? header.values.map(value => ({value:value,text:value}) ) : [],
+                    value: "",
+                    isValid: true,
+                }
+            default:
+                return {
                     name: header?.key,
                     label: header?.value,
                     type: EDataTypeEnum[header?.inputType] == "BOOLEAN" ? "switch" : EDataTypeEnum[header?.inputType]?.toLowerCase(),
@@ -45,7 +58,8 @@ const rowInputs = (state, currencies) => {
                     value: EDataTypeEnum[header?.inputType] == "BOOLEAN" ? state[header?.key] : state?.header?.key,
                     isValid: true,
                 }
-    ));
+        }
+    });
 };
 
 export { rowInputs };
