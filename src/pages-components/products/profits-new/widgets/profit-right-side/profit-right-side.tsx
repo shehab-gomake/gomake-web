@@ -8,9 +8,9 @@ import { ProfitRightSideProps } from "../../interface";
 import { PricingTableMapping } from "../pricing-table-mapping";
 import { PricingTableMenu } from "../pricing-table-menu";
 import { PricingTableMappingMenu } from "../pricing-table-mapping-menu";
-import { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { ETypeException } from "../../enums/profites-enum";
+import { AdditionsAndExceptionsMapping } from "../additions-and-exceptions-mapping";
 
 const ProfitRightSideWidget = ({
   minimumValue,
@@ -18,7 +18,6 @@ const ProfitRightSideWidget = ({
   onBlurMinimumValue,
   setIsUpdateMinimumValue,
   onInputChangeMinimumValue,
-  profitsPricingTables,
   anchorElPricingTables,
   openPricingTables,
   handleClickPricingTables,
@@ -29,42 +28,13 @@ const ProfitRightSideWidget = ({
   handleClosePricingTablesMapping,
   selectedPricingTableItems,
   setSelectedPricingTableItems,
+  dataForExceptions,
+  dataForPricing,
+  onDragEnd,
 }: ProfitRightSideProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const [data, setData] = useState([
-    {
-      name: "Default",
-      description: "Default",
-      exceptionType: 3,
-    },
-    {
-      name: "Default1",
-      description: "Default",
-      exceptionType: 2,
-    },
-    {
-      name: "Default2",
-      description: "Default",
-      exceptionType: 1,
-    },
-    {
-      name: "Default3",
-      description: "Default",
-      exceptionType: 0,
-    },
-  ]);
-  const onDragEnd = (result) => {
-    if (!result.destination) {
-      return;
-    }
 
-    const newData = Array.from(data);
-    const [removed] = newData.splice(result.source.index, 1);
-    newData.splice(result.destination.index, 0, removed);
-    console.log("newData", newData);
-    setData(newData);
-  };
   return (
     <div style={clasess.mainHeaderContainer}>
       <AccordionTable
@@ -77,11 +47,11 @@ const ProfitRightSideWidget = ({
             <Droppable droppableId="droppable">
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {data.map((item, index) =>
+                  {dataForPricing?.map((item, index) =>
                     item.exceptionType !== ETypeException.DEFAULT ? (
                       <Draggable
-                        key={item.name}
-                        draggableId={item.name}
+                        key={item.id}
+                        draggableId={item.id}
                         index={index}
                       >
                         {(provided) => (
@@ -91,7 +61,7 @@ const ProfitRightSideWidget = ({
                             {...provided.dragHandleProps}
                           >
                             <PricingTableMapping
-                              key={item.name}
+                              key={item.id}
                               item={item}
                               index={index}
                               handleClickPricingTablesMapping={
@@ -105,9 +75,8 @@ const ProfitRightSideWidget = ({
                         )}
                       </Draggable>
                     ) : (
-                      <div key={item.name}>
+                      <div key={item.id}>
                         <PricingTableMapping
-                          key={item.name}
                           item={item}
                           index={index}
                           handleClickPricingTablesMapping={
@@ -131,8 +100,19 @@ const ProfitRightSideWidget = ({
         title="Additions and Exceptions"
         onclickOpenMenu={handleClickPricingTables}
       >
-        <div>children</div>
-        <div>children</div>
+        {dataForExceptions?.map((item, index) => {
+          return (
+            <div key={item.id} style={{ width: "100%" }}>
+              <AdditionsAndExceptionsMapping
+                item={item}
+                handleClickPricingTablesMapping={
+                  handleClickPricingTablesMapping
+                }
+                setSelectedPricingTableItems={setSelectedPricingTableItems}
+              />
+            </div>
+          );
+        })}
       </AccordionTable>
       <MinimumWidget
         minimumValue={minimumValue}

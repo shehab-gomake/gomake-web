@@ -24,6 +24,9 @@ const ProfitsNewPageWidget = () => {
     anchorElPricingTablesMapping,
     openPricingTablesMapping,
     selectedPricingTableItems,
+    dataForExceptions,
+    dataForPricing,
+    onDragEnd,
     setSelectedPricingTableItems,
     handleClickPricingTablesMapping,
     handleClosePricingTablesMapping,
@@ -82,6 +85,9 @@ const ProfitsNewPageWidget = () => {
           handleClosePricingTablesMapping={handleClosePricingTablesMapping}
           selectedPricingTableItems={selectedPricingTableItems}
           setSelectedPricingTableItems={setSelectedPricingTableItems}
+          dataForExceptions={dataForExceptions}
+          dataForPricing={dataForPricing}
+          onDragEnd={onDragEnd}
         />
       </div>
     </div>

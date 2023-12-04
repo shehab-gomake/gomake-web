@@ -8,7 +8,7 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getAndSetAllActionProfitRowsByActionId } from "./services/get-all-action-profit-rows-by-action-id";
 import { getAndSetActionProfitRowChartData } from "./services/get-action-profit-row-chart-data";
 import { getAndSetActionProfitByActionId } from "./services/get-action-profit-by-action-id";
-import { EPricingBy, ETransition } from "./enums/profites-enum";
+import { EPricingBy, ETransition, ETypeException } from "./enums/profites-enum";
 import {
   ActionProfit,
   ActionProfitRowChartData,
@@ -316,6 +316,54 @@ const useNewProfits = () => {
     setAnchorElPricingTablesMapping(null);
   };
   const [selectedPricingTableItems, setSelectedPricingTableItems] = useState();
+  const [dataForPricing, setDataForPricing] =
+    useState<ProfitsPricingTables[]>();
+  const [dataForExceptions, setDataForExceptions] =
+    useState<ProfitsPricingTables[]>();
+
+  const reOrderPricingTables = useCallback(async (data: any) => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printhouse-config/profits/update-re-order-pricing-tables?actionId=${router.query.actionId}`,
+      {
+        data,
+      }
+    );
+  }, []);
+  useEffect(() => {
+    const filteredArray = profitsPricingTables?.reduce(
+      (result, item) => {
+        const newArrayIndex =
+          item.exceptionType === ETypeException.ADDITIONAL ? 0 : 1;
+
+        if (!result[newArrayIndex]) {
+          result[newArrayIndex] = [];
+        }
+
+        result[newArrayIndex].push(item);
+
+        return result;
+      },
+      [[], []]
+    );
+    if (filteredArray) {
+      setDataForExceptions(filteredArray[0]);
+      setDataForPricing(filteredArray[1]);
+    }
+  }, [profitsPricingTables]);
+  const onDragEnd = (result) => {
+    if (!result.destination) {
+      return;
+    }
+    const newData = Array.from(dataForPricing);
+    const [removed] = newData.splice(result.source.index, 1);
+    newData.splice(result.destination.index, 0, removed);
+    const transformedArray = newData
+      .filter((item) => item.exceptionType !== ETypeException.DEFAULT)
+      .map((item, index) => ({ id: item?.id, index: index + 1 }));
+    setDataForPricing(newData);
+    reOrderPricingTables(transformedArray);
+  };
   return {
     allActionProfitRowsByActionId,
     actionProfitRowChartData,
@@ -333,12 +381,15 @@ const useNewProfits = () => {
     profitsPricingTables,
     anchorElPricingTables,
     openPricingTables,
-    handleClickPricingTables,
-    handleClosePricingTables,
     selectedPricingTableItems,
-    setSelectedPricingTableItems,
     anchorElPricingTablesMapping,
     openPricingTablesMapping,
+    dataForExceptions,
+    dataForPricing,
+    onDragEnd,
+    setSelectedPricingTableItems,
+    handleClickPricingTables,
+    handleClosePricingTables,
     handleClickPricingTablesMapping,
     handleClosePricingTablesMapping,
     onBlurMinimumValue,

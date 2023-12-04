@@ -29,6 +29,26 @@ const useStyle = () => {
         cursor: "pointer",
         display: "flex",
       },
+      firstRowStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 15,
+      },
+      ruleTextStyle: {
+        color: "#667085",
+        ...FONT_FAMILY.Inter(500, 14),
+      },
+      lineStyle: {
+        height: 25,
+        width: 1,
+        backgroundColor: "#D0D5DD",
+      },
+      valueStyle: {
+        color: "#344054",
+        ...FONT_FAMILY.Inter(600, 14),
+      },
     };
   }, []);
   return {

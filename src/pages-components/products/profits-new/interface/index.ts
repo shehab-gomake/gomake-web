@@ -23,6 +23,9 @@ export type ProfitsPricingTables = {
   description: string;
   exceptionType: number;
   name: string;
+  id: string;
+  index: number;
+  profitValue: number;
 };
 
 export type ActionProfitRowChartData = {
@@ -99,6 +102,9 @@ export type ProfitRightSideProps = {
   handleClosePricingTablesMapping?: () => void;
   selectedPricingTableItems?: any;
   setSelectedPricingTableItems?: (value: any) => void;
+  dataForExceptions?: ProfitsPricingTables[];
+  dataForPricing?: ProfitsPricingTables[];
+  onDragEnd?: (res) => void;
 };
 
 export type ProfitLeftSideProps = {
