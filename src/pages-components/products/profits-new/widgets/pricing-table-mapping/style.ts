@@ -11,6 +11,7 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         gap: 11,
+        cursor: "pointer",
       },
       cardItemWithMore: {
         display: "flex",

@@ -1,7 +1,6 @@
-import { MoreCircleIcon, SortIcon } from "@/icons";
+import { MoreCircleIcon } from "@/icons";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
-import { ETypeException } from "../../enums/profites-enum";
 
 const AdditionsAndExceptionsMapping = ({
   item,
@@ -10,7 +9,6 @@ const AdditionsAndExceptionsMapping = ({
 }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
-  console.log("item", item);
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.cardItemWithMore}>
