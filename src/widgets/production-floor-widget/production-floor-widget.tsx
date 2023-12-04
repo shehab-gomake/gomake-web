@@ -42,11 +42,11 @@ const ProductionFloorWidget = () => {
             connection
                 .start()
                 .then(() => {
-                    connection.on("ReceiveMessage", (message) => {
-                        console.log(message)
+                    connection.on("AddBoardMissions", (data) => {
+                        alert(JSON.stringify(data))
                     });
                 })
-                .catch((error) => console.log(error));
+                .catch((error) => alert(JSON.stringify(error)));
         }
     }, [connection]);
     const handleModalClose = () => {
