@@ -21,14 +21,15 @@ import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {DashboardActions} from "@/store";
 import {AgentsList} from "@/widgets/agents/agents-list";
 import {selectedAgentIdsState} from "@/widgets/agents/state/selected-agent-id";
+import {agentsState, selectedAgentsState} from "@/store/agents-state";
 
 const DashboardWidget = ({}: IDashboardWidget) => {
     const INTERVAL_TIMEOUT = 2 * 60 * 1000;
     const {machines, addMachineProgress, getCheckedMachines} = useGomakeMachines();
     const [tasksFilter, setTasksFilter] = useState<string>('');
     const selectedClient = useRecoilValue(selectedClientIdState);
-    const selectedAgents = useRecoilValue(selectedAgentIdsState);
     const clients = useRecoilValue(clientsState);
+    const selectedAgents = useRecoilValue(selectedAgentsState);
     const {classes} = useStyle();
     const {dates, action} = useGomakeDateRange();
     const {t} = useTranslation();
@@ -106,7 +107,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
             tasksArray = tasksArray.filter(board => board.clientId === selectedClient);
         }
         if (selectedAgents && selectedAgents.length > 0) {
-            tasksArray = tasksArray.filter(board => selectedAgents.find(agentId => agentId === board.agentId));
+            tasksArray = tasksArray.filter(board => selectedAgents.find( (agentId:string) => agentId === board.agentId));
         }
         return tasksFilter ?
             tasksArray.filter((boardsMissions: IBoardMissions) => {
