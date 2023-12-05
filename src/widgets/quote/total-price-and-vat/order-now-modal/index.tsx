@@ -22,6 +22,7 @@ const OrderNowModal = ({
         insideStyle={classes.insideStyle}
         headerStyle={classes.headerStyle}
         withClose={false}
+        isMiddleTitle={true}
       >
         <div style={classes.mainContainer}>
           <WarningAmberIcon style={classes.iconContainer} />

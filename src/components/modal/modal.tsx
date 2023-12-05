@@ -8,8 +8,8 @@ const GoMakeModal = ({
   openModal,
   onClose,
   withClose = true,
+  isMiddleTitle = false,
   insideStyle,
-  headerStyle,
   modalTitle,
   isBlockModal,
   headerPadding = 0,
@@ -17,11 +17,11 @@ const GoMakeModal = ({
 }: any) => {
   const { children }: any = props;
   const { t } = useTranslation();
-  const { classes } = useStyle({ insideStyle, headerPadding });
+  const { classes } = useStyle({ insideStyle, headerPadding , isMiddleTitle, withClose});
   return (
     <Modal  disableEnforceFocus open={openModal} onClose={onClose} {...props}>
       <div style={classes.container}>
-        <div style={headerStyle || classes.headerContainer}>
+        <div style={classes.headerContainer}>
           {modalTitle && (
             <div style={isBlockModal ? classes.titleBlockModalStyle : classes.titleModalStyle}>{modalTitle}</div>
           )}
