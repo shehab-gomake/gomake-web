@@ -1,4 +1,3 @@
-import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
@@ -23,6 +22,18 @@ const useStyle = () => {
         backgroundColor: "#F8FAFB",
         marginBottom: 6,
         borderRadius: 16,
+      },
+      WithBordermainContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        padding: "10px 16px",
+        backgroundColor: "#F8FAFB",
+        marginBottom: 6,
+        borderRadius: 16,
+        border: "2px solid  #504FA1",
       },
       emptyStyle: { width: 14, height: 24 },
       sortStyle: { cursor: "pointer" },

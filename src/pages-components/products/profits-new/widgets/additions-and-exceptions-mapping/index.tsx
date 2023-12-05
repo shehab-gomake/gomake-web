@@ -6,12 +6,22 @@ const AdditionsAndExceptionsMapping = ({
   item,
   handleClickPricingTablesMapping,
   setSelectedPricingTableItems,
+  selectedPricingTableItems,
 }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   return (
     <div style={clasess.mainContainer}>
-      <div style={clasess.cardItemWithMore}>
+      <div
+        style={
+          selectedPricingTableItems?.id === item?.id
+            ? clasess.WithBordermainContainer
+            : clasess.cardItemWithMore
+        }
+        onClick={() => {
+          setSelectedPricingTableItems(item);
+        }}
+      >
         <div style={clasess.firstRowStyle}>
           <div style={clasess.ruleTextStyle}>{t("properties.rule")}</div>
           <div>{item.name}</div>

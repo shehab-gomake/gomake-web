@@ -8,7 +8,9 @@ const PricingTableMapping = ({
   index,
   handleClickPricingTablesMapping,
   setSelectedPricingTableItems,
+  selectedPricingTableItems,
 }) => {
+  console.log("item", item);
   const { clasess } = useStyle();
   const { t } = useTranslation();
 
@@ -22,7 +24,16 @@ const PricingTableMapping = ({
         <div style={clasess.emptyStyle} />
       )}
 
-      <div style={clasess.cardItemWithMore}>
+      <div
+        style={
+          selectedPricingTableItems?.id === item?.id
+            ? clasess.WithBordermainContainer
+            : clasess.cardItemWithMore
+        }
+        onClick={() => {
+          setSelectedPricingTableItems(item);
+        }}
+      >
         <div>{item.name}</div>
         <div
           onClick={(e) => {

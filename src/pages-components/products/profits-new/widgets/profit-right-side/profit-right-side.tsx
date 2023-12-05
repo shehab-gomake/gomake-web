@@ -87,6 +87,9 @@ const ProfitRightSideWidget = ({
                               setSelectedPricingTableItems={
                                 setSelectedPricingTableItems
                               }
+                              selectedPricingTableItems={
+                                selectedPricingTableItems
+                              }
                             />
                           </div>
                         )}
@@ -102,6 +105,7 @@ const ProfitRightSideWidget = ({
                           setSelectedPricingTableItems={
                             setSelectedPricingTableItems
                           }
+                          selectedPricingTableItems={selectedPricingTableItems}
                         />
                       </div>
                     )
@@ -126,6 +130,7 @@ const ProfitRightSideWidget = ({
                   handleClickPricingTablesMapping
                 }
                 setSelectedPricingTableItems={setSelectedPricingTableItems}
+                selectedPricingTableItems={selectedPricingTableItems}
               />
             </div>
           );

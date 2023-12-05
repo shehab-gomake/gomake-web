@@ -315,7 +315,16 @@ const useNewProfits = () => {
   const handleClosePricingTablesMapping = () => {
     setAnchorElPricingTablesMapping(null);
   };
-  const [selectedPricingTableItems, setSelectedPricingTableItems] = useState();
+  const [selectedPricingTableItems, setSelectedPricingTableItems] =
+    useState<ProfitsPricingTables>();
+  useEffect(() => {
+    if (profitsPricingTables?.length > 0) {
+      const defaultRow = profitsPricingTables?.find((item) => {
+        return item.exceptionType === ETypeException.DEFAULT;
+      });
+      setSelectedPricingTableItems(defaultRow);
+    }
+  }, [profitsPricingTables]);
   const [dataForPricing, setDataForPricing] =
     useState<ProfitsPricingTables[]>();
   const [dataForExceptions, setDataForExceptions] =
