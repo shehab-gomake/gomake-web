@@ -154,7 +154,7 @@ const RightSideWidget = ({
               <CircularProgress size={25} style={{ marginRight: 40 }} />
             ) : (
               <GomakeTextInput
-                value={defaultPrice}
+                value={defaultPrice?.values && defaultPrice?.values?.length ? defaultPrice?.values[0] : ''}
                 onChange={(e: any) => {
                   setPriceRecovery(false);
                   setDefaultPrice(e.target.value);
@@ -184,7 +184,7 @@ const RightSideWidget = ({
                       template?.quoteItem?.unitPrice * quantity?.values[0]
                     );
                   } else {
-                    setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2));
+                    setDefaultPrice(workFlowSelected?.totalPrice?.values[0].toFixed(2));
                   }
                 }
               }}

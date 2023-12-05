@@ -6,37 +6,48 @@ import {useRouter} from "next/router";
 import {useQuoteWidget} from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
 import {materialsCategoriesState} from "@/store/material-categories";
 import {useGomakeAxios, useGomakeRouter} from "@/hooks";
-import {
-    getAndSetProductById,
-    getAndSetgetProductQuoteItemById,
-} from "@/services/hooks";
-import {
-    generalParametersState,
-    isLoadgingState,
-    selectParameterButtonState,
-    selectedValueConfigState,
-} from "@/store";
+import {getAndSetgetProductQuoteItemById, getAndSetProductById,} from "@/services/hooks";
+import {generalParametersState, isLoadgingState, selectedValueConfigState, selectParameterButtonState,} from "@/store";
 import {useMaterials} from "../use-materials";
 import {digitslPriceState} from "./store";
 import cloneDeep from "lodash.clonedeep";
+import lodashClonedeep from "lodash.clonedeep";
 import {userProfileState} from "@/store/user-profile";
 import {EWidgetProductType} from "@/pages-components/products/digital-offset-price/enums";
 import {compareStrings} from "@/utils/constants";
 import {EButtonTypes, EParameterTypes} from "@/enums";
-import lodashClonedeep from "lodash.clonedeep";
 
-import { maltiParameterState } from "@/widgets/shared-admin-customers/digital-offset-price/multi-parameter-modal/store/multi-param-atom";
-import { InputNumberParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
-import { DropDownListParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/drop-down-list-parameter";
-import { SelectChildParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-child-parameter";
-import { SWITCHParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/switch-parameter";
-import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
-import { SelectMaterialsParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
 import {
-  jobActionsState,
-  jobDetailsState,
-  workFlowsState,
+    maltiParameterState
+} from "@/widgets/shared-admin-customers/digital-offset-price/multi-parameter-modal/store/multi-param-atom";
+import {
+    InputNumberParameterWidget
+} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
+import {
+    DropDownListParameterWidget
+} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/drop-down-list-parameter";
+import {
+    SelectChildParameterWidget
+} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-child-parameter";
+import {
+    SWITCHParameterWidget
+} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/switch-parameter";
+import {
+    ButtonParameterWidget
+} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
+import {
+    SelectMaterialsParameterWidget
+} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
+import {
+    itemParametersValuesState,
+    jobActionsState,
+    jobDetailsState,
+    outsourceSuppliersState,
+    productUrgentWorkState,
+    workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
+import {getOutsourcingSuppliersListApi} from "@/services/api-service/suppliers/suppliers-endpoints";
+import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
 
 const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const {navigate} = useGomakeRouter();
@@ -61,13 +72,13 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const [defaultPrice, setDefaultPrice] = useState<any>("-----");
     const [makeShapeOpen, setMakeShapeOpen] = useState(false);
     const [template, setTemplate] = useState<any>([]);
-    const [urgentOrder, setUrgentOrder] = useState(false);
+    const [urgentOrder, setUrgentOrder] = useRecoilState(productUrgentWorkState);
     const [printingNotes, setPrintingNotes] = useState("");
     const [graphicNotes, setGraphicNotes] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
     const [subProducts, setSubProducts] = useState<any>([]);
     const [subProductsWithType, setSubProductsWithType] = useState<any>([]);
-    const [itemParmetersValues, setItemParmetersValues] = useState<any>([]);
+    const [itemParmetersValues, setItemParmetersValues] = useRecoilState<any>(itemParametersValuesState);
     const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
     const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
     const [expanded, setExpanded] = useState<string | false>("panel_0");
@@ -77,6 +88,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
     const [jobDetails, setJobDetails] = useRecoilState(jobDetailsState);
     const [jobActions, setJobActions] = useRecoilState(jobActionsState);
+    const setOutSuppliers = useSetRecoilState(outsourceSuppliersState);
     const [workFlowSelected, setWorkFlowSelected] = useState<any>();
     const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
     const setLoading = useSetRecoilState(isLoadgingState);
@@ -1144,6 +1156,21 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     validateParameters,
   ]);
 
+  const getOutSourcingSuppliers = () => {
+      const callBack = (res) => {
+          if (res.success) {
+              setOutSuppliers(res.data);
+          }
+      }
+      getOutsourcingSuppliersListApi(callApi, callBack, {
+          // clientId: router?.query?.customerId,
+          // clientTypeId: router?.query?.clientTypeId,
+          // productId: router?.query?.productId,
+          // generalParameters: generalParameters,
+          // subProducts: subProducts,
+      }).then();
+  }
+
   const PricingTab = {
     id: "c66465de-95d6-4ea3-bd3f-7efe60f4cb0555",
     name: "Pricing",
@@ -1186,21 +1213,26 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
   );
   const addItemForQuotes = useCallback(async () => {
     const res = await callApi("POST", `/v1/erp-service/quote/add-item`, {
+      supplierId: '',
+      sourceType: workFlowSelected?.actions?.every(action => action?.source === EWorkSource.INTERNAL) ? EWorkSource.INTERNAL : EWorkSource.PARTIALLY,
       productId: router?.query?.productId,
       userID: userProfile?.id,
       customerID: router?.query?.customerId,
       clientTypeId: router?.query?.clientTypeId,
-      unitPrice: defaultPrice / quantity?.values[0],
+      unitPrice: 5,
       amount: quantity?.values[0],
       isNeedGraphics: false,
       isUrgentWork: urgentOrder,
       printingNotes,
       graphicNotes,
       isNeedExample: false,
-      //jobDetails: pricingDefaultValue?.jobDetails,
+      jobDetails: '',
       itemParmetersValues: itemParmetersValues,
-      workFlow: pricingDefaultValue?.workFlows,
+      workFlow: [workFlowSelected],
       actions: pricingDefaultValue?.actions,
+        outSoucreCost: 0,
+        outSoucreProfit: 0,
+        outSourceFinalPrice: 0,
     });
     if (res?.success) {
       navigate("/quote");
@@ -1217,6 +1249,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     defaultPrice,
     workFlowSelected,
   ]);
+
   useEffect(() => {
     if (
       widgetType === EWidgetProductType.EDIT ||
@@ -1245,10 +1278,12 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
       {
         quoteItemId: router?.query?.quoteItem,
         productId: router?.query?.productId,
+        supplierId: '',
+        outSoucreType: 0,
         userID: userProfile?.id,
         customerID: router?.query?.customerId,
         clientTypeId: router?.query?.clientTypeId,
-        unitPrice: defaultPrice / quantity?.values[0],
+        unitPrice: 20,
         amount: quantity?.values[0],
         isNeedGraphics: false,
         isUrgentWork: urgentOrder,
@@ -1363,6 +1398,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     workFlows,
     jobDetails,
     jobActions,
+      getOutSourcingSuppliers
   };
 };
 export {useDigitalOffsetPrice};

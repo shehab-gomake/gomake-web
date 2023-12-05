@@ -14,6 +14,7 @@ import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {ParametersMapping} from "@/widgets/product-pricing-widget/components/action/key-value-view";
 import {useWorkFlows} from "@/widgets/product-pricing-widget/use-work-flows";
 import {WorkflowRateComponent} from "@/widgets/product-pricing-widget/components/work-flow/workflow-rate-component";
+import {useTranslation} from "react-i18next";
 
 interface IWorkFlowComponentProps extends ICalculatedWorkFlow {
     delay: number;
@@ -33,12 +34,13 @@ const WorkFlowComponent = ({
                                actions,
                                id,
                                showSelected,
-                               totalPriceO,
-                               totalRealProductionTimeO,
-                               totalCostO,
-                               profitO,
+                               totalPrice,
+                               totalRealProductionTime,
+                               totalCost,
+                               profit,
                                recommendationRang
                            }: IWorkFlowComponentProps) => {
+    const {t} = useTranslation();
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const {secondColor} = useGomakeTheme();
     const {classes} = useStyle();
@@ -51,11 +53,11 @@ const WorkFlowComponent = ({
         }
     }
     const parameters = [
-        totalRealProductionTimeO,
-        totalCostO,
-        profitO,
+        totalRealProductionTime,
+        totalCost,
+        profit,
         {
-            ...totalPriceO,
+            ...totalPrice,
             valueColor: secondColor(500),
         },
     ]
@@ -69,7 +71,7 @@ const WorkFlowComponent = ({
                     border: selected ? classes.actionContainerBorder : 'unset'
                 }}>
                     <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
-                        <span>{`Work Flow ${index}`}</span>
+                        <span>{`${t('pricingWidget.workFlow')} ${index}`}</span>
                         <Divider orientation={'vertical'} flexItem/>
                         <ParametersMapping parameters={parameters}/>
                         <Divider orientation={'vertical'} flexItem/>

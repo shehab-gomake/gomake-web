@@ -23,7 +23,6 @@ const LeftSideLayout = () => {
   const { CheckPermission } = usePermission();
   const { clasess } = useStyle({ navStatus });
   useEffect(()=>{
-      debugger;
       const isHover = localStorage.getItem('isHover');
       if(isHover && isHover == "true"){
           setIsHover(true);
