@@ -10,7 +10,6 @@ const PricingTableMapping = ({
   setSelectedPricingTableItems,
   selectedPricingTableItems,
 }) => {
-  console.log("item", item);
   const { clasess } = useStyle();
   const { t } = useTranslation();
 
