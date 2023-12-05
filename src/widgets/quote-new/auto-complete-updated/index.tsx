@@ -20,7 +20,7 @@ const AutoCompleteUpdatedValue = ({
   useEffect(() => {
     setUpdateValue(value);
   }, [value]);
-  return (
+  return ( 
     <>
       <div style={clasess.inputMainContainer}>
         <div style={clasess.labelStyle}>{label}</div>

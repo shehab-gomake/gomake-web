@@ -35,11 +35,12 @@ const BusinessNewWidget = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
-  const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const mappedCustomers = renderOptions().map(customer => ({
     text: customer?.name,
     id: customer?.id
   }));
+
+  // const quoteStateValue = useRecoilValue<any>(quoteItemState);
   // const [openAlertModal, setOpenAlertModal] = useState(false);
   // const [client, setClient] = useState();
   // const onCloseAlertModal = () => {

@@ -191,7 +191,7 @@ const QuoteNewPageWidget = () => {
                 {/* <div style={clasess.lineDateStyle} /> Don't Delete */}
               </div>
               <div style={clasess.bordersecondContainer}>
-                <BusinessNewWidget
+                <BusinessNewWidget 
                   values={quoteItemValue}
                   selectBusiness={selectBusiness}
                   onBlurBusinessName={onBlurBusinessName}
