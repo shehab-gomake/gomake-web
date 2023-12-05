@@ -3,8 +3,8 @@ import { convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = ({ insideStyle , headerPadding }: any) => {
-  const { primaryColor , errorColor , neutralColor } = useGomakeTheme();
+const useStyle = ({ insideStyle, headerPadding, isMiddleTitle }: any) => {
+  const { primaryColor, errorColor , neutralColor} = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -23,7 +23,7 @@ const useStyle = ({ insideStyle , headerPadding }: any) => {
         height: "90%",
         overFlow: "auto" as "auto",
         paddingTop: convertWidthToVW(25),
-        paddingLeft:  convertWidthToVW(20),
+        paddingLeft: convertWidthToVW(20),
         paddingRight: convertWidthToVW(20),
         paddingBottom: convertWidthToVW(20),
         ...insideStyle,
@@ -38,6 +38,7 @@ const useStyle = ({ insideStyle , headerPadding }: any) => {
         display: "flex",
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(500, 24),
+        ...(isMiddleTitle && { margin: "0 auto" }),
       },
       titleBlockModalStyle: {
         display: "flex",

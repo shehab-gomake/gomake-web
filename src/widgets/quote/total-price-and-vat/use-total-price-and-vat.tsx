@@ -31,10 +31,10 @@ const useTotalPriceAndVat = () => {
     setOpenOtherReasonModal(false);
   };
 
-  const onClcikOpenOrderNowModal = () => {
+  const onClickOpenOrderNowModal = () => {
     setOpenOrderNowModal(true);
   };
-  const onClcikCloseOrderNowModal = () => {
+  const onClickCloseOrderNowModal = () => {
     setOpenOrderNowModal(false);
   };
 
@@ -235,8 +235,8 @@ const useTotalPriceAndVat = () => {
     openOrderNowModal,
     onClickConfirmWithoutNotification,
     onClickConfirmWithNotification,
-    onClcikOpenOrderNowModal,
-    onClcikCloseOrderNowModal,
+    onClickOpenOrderNowModal,
+    onClickCloseOrderNowModal,
     onClcikOpenIrreleventModal,
     onClcikCloseIrreleventModal,
     onClcikOpenPriceModal,
