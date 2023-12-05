@@ -2444,6 +2444,8 @@
     "outSource": "Outsource",
     "inOutSource": "Internal + Outsource",
     "workFlow": "Work Flow",
-    "add": "Add"
+    "add": "Add",
+    "price": "Price",
+    "chooseWorkFlow": "Choose work flow"
   }
 }

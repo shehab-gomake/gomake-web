@@ -219,6 +219,9 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             );
             setWorkFlowSelected(workFlowSelect);
             setDefaultPrice(workFlowSelect?.totalPrice);
+        } else {
+            setWorkFlowSelected({});
+            setDefaultPrice('-----');
         }
     }, [pricingDefaultValue, canCalculation]);
     useEffect(() => {
@@ -641,26 +644,26 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     }, [subProducts]);
 
 
-  useEffect(() => {
-    let temp = [...generalParameters, ...subProductsWithType];
-    const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
-    setItemParmetersValues(filteredArray);
-  }, [generalParameters, subProductsWithType, subProducts]);
-  const handleChange =
-    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
-      setExpanded(newExpanded ? panel : false);
-    };
-  const _getParameter = (parameter: any, subSection: any, section: any) => {
-    if (subSection?.type) {
-      const allParameters = subProducts.flatMap((item) => item.parameters);
-      let temp = [...allParameters];
-      const index = temp.findIndex(
-        (item) =>
-          item?.parameterId === parameter?.id &&
-          item?.sectionId === section?.id &&
-          item?.subSectionId === subSection?.id &&
-          item?.actionIndex === parameter?.actionIndex
-      );
+    useEffect(() => {
+        let temp = [...generalParameters, ...subProductsWithType];
+        const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
+        setItemParmetersValues(filteredArray);
+    }, [generalParameters, subProductsWithType, subProducts]);
+    const handleChange =
+        (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+            setExpanded(newExpanded ? panel : false);
+        };
+    const _getParameter = (parameter: any, subSection: any, section: any) => {
+        if (subSection?.type) {
+            const allParameters = subProducts.flatMap((item) => item.parameters);
+            let temp = [...allParameters];
+            const index = temp.findIndex(
+                (item) =>
+                    item?.parameterId === parameter?.id &&
+                    item?.sectionId === section?.id &&
+                    item?.subSectionId === subSection?.id &&
+                    item?.actionIndex === parameter?.actionIndex
+            );
 
             return temp[index];
         } else {
@@ -1119,286 +1122,298 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     };
 
 
-  const calculationProduct = useCallback(async () => {
-    let checkParameter = validateParameters(isRequiredParameters);
-    if (!!checkParameter) {
-        setLoading(true);
+    const calculationProduct = useCallback(async () => {
+        setWorkFlows([]);
+        setJobActions([]);
+        let checkParameter = validateParameters(isRequiredParameters);
+        if (!!checkParameter) {
+            setLoading(true);
+            const res = await callApi(
+                "POST",
+                `/v1/calculation-service/calculations/calculate-product`,
+                {
+                    clientId: router?.query?.customerId,
+                    clientTypeId: router?.query?.clientTypeId,
+                    productId: router?.query?.productId,
+                    generalParameters: generalParameters,
+                    subProducts: subProducts,
+                },
+                false
+            );
+            //Check it is work
+            if (res?.success) {
+                // setPricingDefaultValue(res?.data?.data?.data);
+                setWorkFlows(
+                    res?.data?.data?.data?.workFlows?.map((flow, index) => ({
+                        id: index.toString(),
+                        ...flow,
+                    }))
+                );
+                setJobActions(res?.data?.data?.data?.actions);
+            }
+            setLoading(false);
+        }
+    }, [
+        generalParameters,
+        subProducts,
+        router,
+        isRequiredParameters,
+        validateParameters,
+    ]);
+
+    const getOutSourcingSuppliers = () => {
+        const callBack = (res) => {
+            if (res.success) {
+                setOutSuppliers(res.data);
+            }
+        }
+        getOutsourcingSuppliersListApi(callApi, callBack, {
+            // clientId: router?.query?.customerId,
+            // clientTypeId: router?.query?.clientTypeId,
+            // productId: router?.query?.productId,
+            // generalParameters: generalParameters,
+            // subProducts: subProducts,
+        }).then();
+    }
+
+    const PricingTab = {
+        id: "c66465de-95d6-4ea3-bd3f-7efe60f4cb0555",
+        name: "Pricing",
+        icon: "pricing",
+        jobDetails: pricingDefaultValue?.jobDetails,
+        actions: pricingDefaultValue?.actions,
+        flows: pricingDefaultValue?.workFlows,
+    };
+    const createProfitTestCase = useCallback(async () => {
         const res = await callApi(
             "POST",
-            `/v1/calculation-service/calculations/calculate-product`,
+            `/v1/printhouse-config/profits/create-profit-test-case?systemID=2`,
             {
                 clientId: router?.query?.customerId,
                 clientTypeId: router?.query?.clientTypeId,
-                productId: router?.query?.productId,
                 generalParameters: generalParameters,
-                subProducts: subProducts,
+                productItemDTO: {
+                    productId: router?.query?.productId,
+                    //details: pricingDefaultValue?.jobDetails,
+                    itemParmetersValues: itemParmetersValues,
+                    workFlow: workFlowSelected,
+                },
+                actionId: router?.query?.actionId,
+                actionProductId: router?.query?.actionProductId,
             },
             false
         );
-        //Check it is work
         if (res?.success) {
-            setPricingDefaultValue(res?.data?.data?.data);
-            setWorkFlows(
-                res?.data?.data?.data?.workFlows?.map((flow, index) => ({
-                    id: index.toString(),
-                    ...flow,
-                }))
-            );
-            setJobActions(res?.data?.data?.data?.actions);
+            navigate(`/products/profits?actionId=${router?.query?.actionId}`);
         }
-        setLoading(false);
-    }
-  }, [
-    generalParameters,
-    subProducts,
-    router,
-    isRequiredParameters,
-    validateParameters,
-  ]);
-
-  const getOutSourcingSuppliers = () => {
-      const callBack = (res) => {
-          if (res.success) {
-              setOutSuppliers(res.data);
-          }
-      }
-      getOutsourcingSuppliersListApi(callApi, callBack, {
-          // clientId: router?.query?.customerId,
-          // clientTypeId: router?.query?.clientTypeId,
-          // productId: router?.query?.productId,
-          // generalParameters: generalParameters,
-          // subProducts: subProducts,
-      }).then();
-  }
-
-  const PricingTab = {
-    id: "c66465de-95d6-4ea3-bd3f-7efe60f4cb0555",
-    name: "Pricing",
-    icon: "pricing",
-    jobDetails: pricingDefaultValue?.jobDetails,
-    actions: pricingDefaultValue?.actions,
-    flows: pricingDefaultValue?.workFlows,
-  };
-  const createProfitTestCase = useCallback(async () => {
-    const res = await callApi(
-      "POST",
-      `/v1/printhouse-config/profits/create-profit-test-case?systemID=2`,
-      {
-        clientId: router?.query?.customerId,
-        clientTypeId: router?.query?.clientTypeId,
-        generalParameters: generalParameters,
-        productItemDTO: {
-          productId: router?.query?.productId,
-          //details: pricingDefaultValue?.jobDetails,
-          itemParmetersValues: itemParmetersValues,
-          workFlow: workFlowSelected,
-        },
-        actionId: router?.query?.actionId,
-        actionProductId: router?.query?.actionProductId,
-      },
-      false
+    }, [
+        generalParameters,
+        router,
+        pricingDefaultValue,
+        itemParmetersValues,
+        workFlowSelected,
+    ]);
+    const quantity = generalParameters?.find(
+        (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
     );
-    if (res?.success) {
-      navigate(`/products/profits?actionId=${router?.query?.actionId}`);
-    }
-  }, [
-    generalParameters,
-    router,
-    pricingDefaultValue,
-    itemParmetersValues,
-    workFlowSelected,
-  ]);
-  const quantity = generalParameters?.find(
-    (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
-  );
-  const addItemForQuotes = useCallback(async () => {
-    const res = await callApi("POST", `/v1/erp-service/quote/add-item`, {
-      supplierId: '',
-      sourceType: workFlowSelected?.actions?.every(action => action?.source === EWorkSource.INTERNAL) ? EWorkSource.INTERNAL : EWorkSource.PARTIALLY,
-      productId: router?.query?.productId,
-      userID: userProfile?.id,
-      customerID: router?.query?.customerId,
-      clientTypeId: router?.query?.clientTypeId,
-      unitPrice: 5,
-      amount: quantity?.values[0],
-      isNeedGraphics: false,
-      isUrgentWork: urgentOrder,
-      printingNotes,
-      graphicNotes,
-      isNeedExample: false,
-      jobDetails: '',
-      itemParmetersValues: itemParmetersValues,
-      workFlow: [workFlowSelected],
-      actions: pricingDefaultValue?.actions,
-        outSoucreCost: 0,
-        outSoucreProfit: 0,
-        outSourceFinalPrice: 0,
-    });
-    if (res?.success) {
-      navigate("/quote");
-    }
-  }, [
-    router,
-    pricingDefaultValue,
-    quantity,
-    urgentOrder,
-    graphicNotes,
-    printingNotes,
-    userProfile,
-    itemParmetersValues,
-    defaultPrice,
-    workFlowSelected,
-  ]);
-
-  useEffect(() => {
-    if (
-      widgetType === EWidgetProductType.EDIT ||
-      widgetType === EWidgetProductType.DUPLICATE
-    ) {
-      setUrgentOrder(!!template?.quoteItem?.isUrgentWork);
-      setPrintingNotes(template?.quoteItem?.printingNotes);
-      setGraphicNotes(template?.quoteItem?.graphicNotes);
-      setPricingDefaultValue({
-        actions: template?.actions,
-        jobDetails: template?.jobDetails,
-        workFlows: template?.workFlows,
-      });
-      setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.values[0]);
-      setCanCalculation(false);
-      const workFlowSelect = template?.workFlows?.find(
-        (workFlow) => workFlow?.selected === true
-      );
-      setWorkFlowSelected(workFlowSelect);
-    }
-  }, [widgetType, template, quantity]);
-  const updateQuoteItem = useCallback(async () => {
-    const res = await callApi(
-      "PUT",
-      `/v1/erp-service/quote/update-quote-item`,
-      {
-        quoteItemId: router?.query?.quoteItem,
-        productId: router?.query?.productId,
-        supplierId: '',
-        outSoucreType: 0,
-        userID: userProfile?.id,
-        customerID: router?.query?.customerId,
-        clientTypeId: router?.query?.clientTypeId,
-        unitPrice: 20,
-        amount: quantity?.values[0],
-        isNeedGraphics: false,
-        isUrgentWork: urgentOrder,
-        printingNotes,
+    const addItemForQuotes = useCallback(async () => {
+        console.log(defaultPrice)
+        const res = await callApi("POST", `/v1/erp-service/quote/add-item`, {
+            supplierId: '',
+            sourceType: workFlowSelected?.actions?.every(action => action?.source === EWorkSource.INTERNAL) ? EWorkSource.INTERNAL : EWorkSource.PARTIALLY,
+            productId: router?.query?.productId,
+            userID: userProfile?.id,
+            customerID: router?.query?.customerId,
+            clientTypeId: router?.query?.clientTypeId,
+            unitPrice: +defaultPrice?.values[0] / +quantity?.values[0],
+            amount: quantity?.values[0],
+            isNeedGraphics: false,
+            isUrgentWork: urgentOrder,
+            printingNotes,
+            graphicNotes,
+            isNeedExample: false,
+            jobDetails: '',
+            itemParmetersValues: itemParmetersValues,
+            workFlow: pricingDefaultValue?.workFlows.length > 0
+                ? [workFlowSelected]
+                : template?.workFlows,
+            actions: pricingDefaultValue?.actions?.length > 0
+                ? pricingDefaultValue?.actions
+                : template?.actions,
+            outSoucreCost: 0,
+            outSoucreProfit: 0,
+            outSourceFinalPrice: 0,
+        });
+        if (res?.success) {
+            navigate("/quote");
+        }
+    }, [
+        router,
+        pricingDefaultValue,
+        quantity,
+        urgentOrder,
         graphicNotes,
-        isNeedExample: false,
-        jobDetails: pricingDefaultValue?.jobDetails,
-        itemParmetersValues: itemParmetersValues,
-        workFlow:
-          pricingDefaultValue?.workFlows != null
-            ? pricingDefaultValue?.workFlows
-            : template?.workFlows,
-        actions:
-          pricingDefaultValue?.actions?.length > 0
-            ? pricingDefaultValue?.actions
-            : template?.actions,
-      }
-    );
-    if (res?.success) {
-      navigate("/quote");
-    }
-  }, [
-    itemParmetersValues,
-    router,
-    pricingDefaultValue,
-    quantity,
-    urgentOrder,
-    graphicNotes,
-    printingNotes,
-    userProfile,
-    workFlowSelected,
-    defaultPrice,
-    template,
-  ]);
-  const navigateForRouter = () => {
-    let checkParameter = validateParameters(isRequiredParameters);
-    if (!!checkParameter) {
-      setErrorMsg("");
-      if (router?.query?.actionId) {
-        createProfitTestCase();
-      } else {
-        addItemForQuotes();
-      }
-    } else {
-      setErrorMsg("Please enter all required parameters");
-    }
-  };
+        printingNotes,
+        userProfile,
+        itemParmetersValues,
+        defaultPrice,
+        workFlowSelected,
+    ]);
+
+    useEffect(() => {
+        if (
+            widgetType === EWidgetProductType.EDIT ||
+            widgetType === EWidgetProductType.DUPLICATE
+        ) {
+            setUrgentOrder(!!template?.quoteItem?.isUrgentWork);
+            setPrintingNotes(template?.quoteItem?.printingNotes);
+            setGraphicNotes(template?.quoteItem?.graphicNotes);
+            setPricingDefaultValue({
+                actions: template?.actions,
+                jobDetails: template?.jobDetails,
+                workFlows: template?.workFlows,
+            });
+            setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.values[0]);
+            setCanCalculation(false);
+            const workFlowSelect = template?.workFlows?.find(
+                (workFlow) => workFlow?.selected === true
+            );
+            setWorkFlowSelected(workFlowSelect);
+        }
+    }, [widgetType, template, quantity]);
+    const updateQuoteItem = useCallback(async () => {
+        const res = await callApi(
+            "PUT",
+            `/v1/erp-service/quote/update-quote-item`,
+            {
+                quoteItemId: router?.query?.quoteItem,
+                productId: router?.query?.productId,
+                supplierId: '',
+                userID: userProfile?.id,
+                customerID: router?.query?.customerId,
+                clientTypeId: router?.query?.clientTypeId,
+                amount: quantity?.values[0],
+                isNeedGraphics: false,
+                isUrgentWork: urgentOrder,
+                printingNotes,
+                graphicNotes,
+                isNeedExample: false,
+                jobDetails: pricingDefaultValue?.jobDetails,
+                itemParmetersValues: itemParmetersValues,
+                workFlow:
+                    pricingDefaultValue?.workFlows != null
+                        ? [workFlowSelected]
+                        : template?.workFlows,
+                actions:
+                    pricingDefaultValue?.actions?.length > 0
+                        ? pricingDefaultValue?.actions
+                        : template?.actions,
+                sourceType: workFlowSelected?.actions?.every(action => action?.source === EWorkSource.INTERNAL) ? EWorkSource.INTERNAL : EWorkSource.PARTIALLY,
+                unitPrice: +defaultPrice?.values[0] / +quantity?.values[0],
+                outSoucreCost: 0,
+                outSoucreProfit: 0,
+                outSourceFinalPrice: 0,
+            },
+        );
+        if (res?.success) {
+            navigate("/quote");
+            setWorkFlows([]);
+            setJobActions([]);
+        }
+    }, [
+        itemParmetersValues,
+        router,
+        pricingDefaultValue,
+        quantity,
+        urgentOrder,
+        graphicNotes,
+        printingNotes,
+        userProfile,
+        workFlowSelected,
+        defaultPrice,
+        template,
+    ]);
+    const navigateForRouter = () => {
+        let checkParameter = validateParameters(isRequiredParameters);
+        if (!!checkParameter) {
+            setErrorMsg("");
+            if (router?.query?.actionId) {
+                createProfitTestCase();
+            } else {
+                addItemForQuotes();
+            }
+        } else {
+            setErrorMsg("Please enter all required parameters");
+        }
+    };
 
 
-  useEffect(() => {
-    setPricingDefaultValue({
-      actions: jobActions,
-      workFlows,
-      jobDetails,
-    });
-  }, [workFlows, jobActions, jobDetails]);
+    useEffect(() => {
+        setPricingDefaultValue({
+            actions: jobActions,
+            workFlows,
+            jobDetails,
+        });
+    }, [workFlows, jobActions, jobDetails]);
 
-  // useEffect(() => {
-  //   let temp = [...generalParameters];
-  //   const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
-  // }, [generalParameters]);
-  return {
-    t,
-    handleTabClick,
-    handleNextClick,
-    handlePreviousClick,
-    onOpeneMakeShape,
-    onCloseGalleryModal,
-    onCloseMakeShape,
-    setDefaultPrice,
-    onChangeForPrice,
-    handleChange,
-    _renderParameterType,
-    _getParameter,
-    createProfitTestCase,
-    renderOptions,
-    checkWhatRenderArray,
-    navigate,
-    navigateForRouter,
-    updateQuoteItem,
-    setUrgentOrder,
-    setPrintingNotes,
-    setGraphicNotes,
-    setPriceRecovery,
-    onOpeneMultiParameterModal,
-    onCloseMultiParameterModal,
-    setSamlleType,
-    duplicateParameters,
-    setTemplate,
-    multiParameterModal,
-    settingParameters,
-    priceRecovery,
-    graphicNotes,
-    printingNotes,
-    urgentOrder,
-    defaultPrice,
-    makeShapeOpen,
-    GalleryModalOpen,
-    activeIndex,
-    template,
-    tabs,
-    activeTab,
-    PricingTab,
-    expanded,
-    clientDefaultValue,
-    clientTypeDefaultValue,
-    clientTypesValue,
-    pricingDefaultValue,
-    errorMsg,
-    workFlowSelected,
-    relatedParameters,
-    workFlows,
-    jobDetails,
-    jobActions,
-      getOutSourcingSuppliers
-  };
+    // useEffect(() => {
+    //   let temp = [...generalParameters];
+    //   const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
+    // }, [generalParameters]);
+    return {
+        t,
+        handleTabClick,
+        handleNextClick,
+        handlePreviousClick,
+        onOpeneMakeShape,
+        onCloseGalleryModal,
+        onCloseMakeShape,
+        setDefaultPrice,
+        onChangeForPrice,
+        handleChange,
+        _renderParameterType,
+        _getParameter,
+        createProfitTestCase,
+        renderOptions,
+        checkWhatRenderArray,
+        navigate,
+        navigateForRouter,
+        updateQuoteItem,
+        setUrgentOrder,
+        setPrintingNotes,
+        setGraphicNotes,
+        setPriceRecovery,
+        onOpeneMultiParameterModal,
+        onCloseMultiParameterModal,
+        setSamlleType,
+        duplicateParameters,
+        setTemplate,
+        multiParameterModal,
+        settingParameters,
+        priceRecovery,
+        graphicNotes,
+        printingNotes,
+        urgentOrder,
+        defaultPrice,
+        makeShapeOpen,
+        GalleryModalOpen,
+        activeIndex,
+        template,
+        tabs,
+        activeTab,
+        PricingTab,
+        expanded,
+        clientDefaultValue,
+        clientTypeDefaultValue,
+        clientTypesValue,
+        pricingDefaultValue,
+        errorMsg,
+        workFlowSelected,
+        relatedParameters,
+        workFlows,
+        jobDetails,
+        jobActions,
+        getOutSourcingSuppliers
+    };
 };
 export {useDigitalOffsetPrice};

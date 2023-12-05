@@ -2249,5 +2249,22 @@
     "declined": "تم رفضه",
     "blocked": "تم حظره",
     "waitingToApprove": "في انتظار الموافقة"
+  },
+  "pricingWidget": {
+    "selected": "المحدد",
+    "others": "الآخرين",
+    "generalInformation": "معلومات عامة",
+    "cost": "التكلفة",
+    "profit": "الربح",
+    "endTime": "الوقت المتوقع",
+    "finalPrice": "السعر النهائي",
+    "inSource": "داخلي",
+    "outSource": "تفويض",
+    "inOutSource": "داخلي + تفويض",
+    "workFlow": "تدفق العمل",
+    "add": "إضافة",
+    "price": "السعر",
+    "chooseWorkFlow": "حدد تدفق العمل"
   }
+
 }

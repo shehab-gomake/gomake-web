@@ -321,7 +321,7 @@ const useStyle = () => {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 24),
         height: 28,
-        width: "150px",
+        width: "130px",
         boxShadow: "none",
       },
       priceRecoveryContainer: {

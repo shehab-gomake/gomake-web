@@ -50,6 +50,15 @@ const useStyle = () => {
           borderRadius: 0,
           border: 0,
         }
+      },
+      sourceLabel: {
+        padding: '3px 10px',
+        backgroundColor: '#F4F3FF',
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: '#5925DC',
+        borderRadius: '16px',
+        textAlign: 'center' as 'center'
+
       }
     };
   }, [theme]);
