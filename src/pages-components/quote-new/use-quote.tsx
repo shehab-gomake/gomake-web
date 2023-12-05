@@ -146,6 +146,7 @@ const useQuoteNew = () => {
       onlyCreateOrderClients: false,
     });
   }, []);
+
   useEffect(() => {
     const foundItem = customersListValue.find(
       (item: any) => item.id === quoteItemValue?.customerID
@@ -153,6 +154,8 @@ const useQuoteNew = () => {
     setSelectBusiness(foundItem);
   }, [quoteItemValue, customersListValue]);
 
+
+  // better to export to another file 
   useEffect(() => {
     getAllCustomers();
   }, []);
@@ -172,6 +175,11 @@ const useQuoteNew = () => {
   const onBlurAgent = async () => {
     setIsUpdateAgent(null);
   };
+
+
+ 
+
+
   const getAllEmployees = useCallback(async () => {
     await getAndSetAllEmployees(callApi, setAgentListValue, {
       isAgent: true,
@@ -600,6 +608,31 @@ const useQuoteNew = () => {
     [quoteItemValue]
   );
 
+
+
+
+  const onChangeSelectBusiness = useCallback(
+    async (item: any) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/erp-service/quote/change-client`,
+        {
+          quoteID: quoteItemValue?.id,
+          clientId: item?.id,
+          userId: quoteItemValue?.userID,
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [selectBusiness, quoteItemValue]
+  );
+
+
   return {
     dateRef,
     activeClickAway,
@@ -712,6 +745,7 @@ const useQuoteNew = () => {
     setReasonText,
     onClickCancelOffer,
     updateCancelQuote,
+    onChangeSelectBusiness
   };
 };
 

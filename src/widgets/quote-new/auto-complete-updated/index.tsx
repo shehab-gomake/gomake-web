@@ -13,6 +13,7 @@ const AutoCompleteUpdatedValue = ({
   options,
   getOptionLabel,
   onChange,
+  onChangeTextField
 }: IBusinessWidget) => {
   const { clasess } = useStyle({ isAnderLine });
   const [updateValue, setUpdateValue] = useState();
@@ -32,6 +33,7 @@ const AutoCompleteUpdatedValue = ({
             options={options}
             getOptionLabel={getOptionLabel}
             onChange={onChange}
+            onChangeTextField={onChangeTextField}
           />
         ) : (
           <div

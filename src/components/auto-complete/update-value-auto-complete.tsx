@@ -14,6 +14,7 @@ interface IUpdateValueAutoCompleteProps {
   options?: any;
   onChange?: any;
   getOptionLabel?: any;
+  onChangeTextField?: any;
 }
 
 const UpdateValueAutoComplete = ({
@@ -21,6 +22,7 @@ const UpdateValueAutoComplete = ({
   options,
   onChange,
   getOptionLabel,
+  onChangeTextField
 }: IUpdateValueAutoCompleteProps) => {
   const { secondColor } = useGomakeTheme();
   return (
@@ -50,10 +52,10 @@ const UpdateValueAutoComplete = ({
             position: "relative",
           }}
           getOptionLabel={getOptionLabel}
-          renderInput={(params) => <TextField {...params} />}
-          onChange={(e: any, value: any) => {
+          renderInput={(params) => <TextField onChange={onChangeTextField} {...params} />}
+          onChange={((e: any, value: any) => {
             onChange(e, value);
-          }}
+          })}
           popupIcon={
             <div style={{ position: "absolute", top: -11 }}>
               <ArrowUpIcon />
