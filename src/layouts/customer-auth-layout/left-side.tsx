@@ -10,26 +10,24 @@ import { adaptRight } from "@/utils/adapter";
 import { hoverStatusState, permissionsState } from "@/store";
 import LockIcon from "@mui/icons-material/Lock";
 import { usePermission } from "@/hooks/use-permission";
-import {useEffect} from "react";
-const LeftSideLayout = () => {
+import { useEffect } from "react";
+const LeftSideLayout = (withGap) => {
   const { t } = useTranslation();
 
   const { tabs1, tabs2, tabs3, profile } = useAuthLayoutHook();
- 
-
 
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
   const { CheckPermission } = usePermission();
-  const { clasess } = useStyle({ navStatus });
-  useEffect(()=>{
-      debugger;
-      const isHover = localStorage.getItem('isHover');
-      if(isHover && isHover == "true"){
-          setIsHover(true);
-          setNavStatus({isClosed:false})
-      }
-  },[])
+  const { clasess } = useStyle({ navStatus, withGap });
+  useEffect(() => {
+    debugger;
+    const isHover = localStorage.getItem("isHover");
+    if (isHover && isHover == "true") {
+      setIsHover(true);
+      setNavStatus({ isClosed: false });
+    }
+  }, []);
   return (
     <div
       style={clasess.leftContainer}
@@ -55,7 +53,7 @@ const LeftSideLayout = () => {
             height: 30,
           }}
           onClick={() => {
-              localStorage.setItem('isHover',!isHover+"")
+            localStorage.setItem("isHover", !isHover + "");
             setIsHover(!isHover);
           }}
         >
@@ -86,7 +84,7 @@ const LeftSideLayout = () => {
               </div>
             );
           } else {
-               return <Tab key={tab.key} tab={tab} />;
+            return <Tab key={tab.key} tab={tab} withGap={withGap} />;
           }
         })}
       </div>
@@ -98,29 +96,26 @@ const LeftSideLayout = () => {
           alignSelf: "flex-start",
         }}
       >
-  
-        {tabs2.every(tab => tab.Permission === false) ? (
-      
-            <div style={clasess.lineContainer}>
-              <div style={clasess.line} />
-            </div>
-          ) : (
-           
-            [...tabs2, ...tabs3].map(tab => {
-    
-              if (tab.isLine) {
-                return (
-                  <div style={clasess.lineContainer} key={tab.key}>
-                    <div style={clasess.line} />
-                  </div>
-                );
-              } else if (tab.Permission !== null && CheckPermission(tab.Permission) === true) {
-                return <Tab key={tab.key} tab={tab} />;
-              }
-             
-            })
-          )}
-       
+        {tabs2.every((tab) => tab.Permission === false) ? (
+          <div style={clasess.lineContainer}>
+            <div style={clasess.line} />
+          </div>
+        ) : (
+          [...tabs2, ...tabs3].map((tab) => {
+            if (tab.isLine) {
+              return (
+                <div style={clasess.lineContainer} key={tab.key}>
+                  <div style={clasess.line} />
+                </div>
+              );
+            } else if (
+              tab.Permission !== null &&
+              CheckPermission(tab.Permission) === true
+            ) {
+              return <Tab key={tab.key} tab={tab} />;
+            }
+          })
+        )}
       </div>
       <div style={clasess.poweredContainer}>
         <div style={clasess.poweredByLbl}>{t("login.poweredBy")}</div>

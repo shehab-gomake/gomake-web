@@ -23,7 +23,7 @@ const CustomerAuthLayout = ({
   const isHover = useRecoilValue(hoverStatusState);
   return (
     <div style={clasess.container}>
-      <LeftSideLayout />
+      <LeftSideLayout withGap={withGap} />
       <div
         style={clasess.rightContainer}
         onMouseEnter={() => {
