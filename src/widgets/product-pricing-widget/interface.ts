@@ -11,6 +11,7 @@ export interface IPricingWidgetProps {
     actions: IPricingAction[];
     workFlows: ICalculatedWorkFlow[];
     onSelectNewWorkFlow?: (id: string) => void;
+    getOutSourcingSuppliers: () => void;
 }
 
 
@@ -31,18 +32,14 @@ export interface IPricingMachine {
 
 export interface ICalculatedWorkFlow {
     id: string
-    totalCost: number;
     generalInformation: IOutput[];
-    totalProductionTime: number;
-    totalRealProductionTime: number;
-    totalPrice: number;
     selected: boolean;
     actions: IWorkFlowAction[];
     printActionTypeDTOs?: IPrintActionType[];
-    totalCostO: IOutput;
-    profitO: IOutput;
-    totalPriceO: IOutput;
-    totalRealProductionTimeO: IOutput;
+    totalCost: IOutput;
+    profit: IOutput;
+    totalPrice: IOutput;
+    totalRealProductionTime: IOutput;
     recommendationRang: {
         deliveryTime: number;
         price: number;
@@ -64,15 +61,10 @@ export interface IWorkFlowAction {
     mongoDBMachineId: string;
     machineName: string;
     categoryId: string;
-    profit: number;
-    profitO: IOutput;
-    totalPrice: number;
-    totalPriceO: IOutput;
-    totalCost: number;
-    totalCostO: IOutput;
-    totalProductionTime: number;
-    totalRealProductionTime: number;
-    totalRealProductionTimeO: IOutput;
+    profit: IOutput;
+    totalPrice: IOutput;
+    totalCost: IOutput;
+    totalProductionTime: IOutput;
     outputs: IOutput[];
     source?: EWorkSource;
     supplierId?: string;
@@ -89,8 +81,10 @@ export interface IOutput {
     propertyType: RuleType;
     htmlElementType: HtmlElementType;
     isEditable: boolean;
-    outSourceValues?: string[];
-
+    outSourceValues: string[];
+    materialWidth: number;
+    materialLength: number;
+    rectangles: IRectangle[];
 }
 
 export interface IOutSourceSupplier {
@@ -101,4 +95,11 @@ export interface IOutSourceSupplier {
     profit: number;
     workHours: number;
     status: EOutsourceSupplierStatus;
+}
+
+export interface IRectangle {
+    x: number;
+    y: number;
+    width: number;
+    length: number;
 }

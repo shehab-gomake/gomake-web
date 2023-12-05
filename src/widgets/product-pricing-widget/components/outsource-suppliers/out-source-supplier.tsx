@@ -1,6 +1,4 @@
 import {EOutsourceSupplierStatus} from "@/widgets/product-pricing-widget/enums";
-import {useRecoilValue} from "recoil";
-import {outsourceSuppliersState} from "@/widgets/product-pricing-widget/state";
 import {useStyle} from "@/widgets/product-pricing-widget/style";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {Fade} from "@mui/material";
@@ -11,7 +9,8 @@ import Button from "@mui/material/Button";
 import {useState} from "react";
 import {IOutSourceSupplier} from "@/widgets/product-pricing-widget/interface";
 import {PrimaryButton} from "@/components/button/primary-button";
-import {useOutsourceSupplier} from "@/widgets/product-pricing-widget/components/work-flow/use-outsource-supplier";
+import {useOutsourceSupplier} from "@/widgets/product-pricing-widget/components/outsource-suppliers/use-outsource-supplier";
+import {useTranslation} from "react-i18next";
 
 interface IProps {
     value: number;
@@ -31,9 +30,10 @@ const OutSourceSupplierComponent = ({
                                         finalPrice,
                                         profit
                                     }: IOutSourceSupplier) => {
+    const {t} = useTranslation();
     const {classes} = useStyle();
     const {secondColor} = useGomakeTheme();
-    const {updatePrice, updateWorHours, updateProfit, updateCost} = useOutsourceSupplier()
+    const {updatePrice, updateWorHours, updateProfit, updateCost, addItem} = useOutsourceSupplier();
     const handleDeliveryTimeUpdate = (newValue: number) => {
         updateWorHours(supplierId, +newValue);
     }
@@ -47,31 +47,28 @@ const OutSourceSupplierComponent = ({
     const handleUpdatePrice = (price: number) => {
         updatePrice(supplierId, price);
     }
-    const buttonText = status === EOutsourceSupplierStatus.NeedApprove ? 'Send Approval Request' :
-        status === EOutsourceSupplierStatus.Approved ? 'Approved - Add to cart ' :
-            status === EOutsourceSupplierStatus.Manually ? 'Manual' : '';
+
     return (
         <Fade in={true} timeout={700}>
             <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'}
-                   style={classes.actionContainer}>
+                   style={{...classes.actionContainer, padding: '10px 16px'}}>
                 <Stack alignItems={'center'} direction={"row"} gap={'10px'} flexWrap={'wrap'}>
                     <span style={classes.sectionTitle}>{supplierName}</span>
                     <Divider orientation={'vertical'} flexItem/>
                     <EditableValue unit={'W.H'} isEditable={status === EOutsourceSupplierStatus.Manually}
-                                   label={'Est.Time'} value={workHours} onUpdate={handleDeliveryTimeUpdate}/>
+                                   label={t('pricingWidget.endTime')} value={workHours} onUpdate={handleDeliveryTimeUpdate}/>
                     <Divider orientation={'vertical'} flexItem/>
-                    <EditableValue unit={'$'} isEditable={status === EOutsourceSupplierStatus.Manually} label={'Cost'}
+                    <EditableValue unit={'$'} isEditable={status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.cost')}
                                    value={cost} onUpdate={handleCostUpdate}/>
                     <Divider orientation={'vertical'} flexItem/>
-                    <EditableValue unit={'%'} isEditable={status === EOutsourceSupplierStatus.Manually} label={'Profit'}
+                    <EditableValue unit={'%'} isEditable={status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.profit')}
                                    value={profit} onUpdate={handleProfitUpdate}/>
                     <Divider orientation={'vertical'} flexItem/>
                     <EditableValue unit={'$'} isEditable={status === EOutsourceSupplierStatus.Manually}
-                                   valueColor={secondColor(500)} label={'Price'} value={finalPrice}
+                                   valueColor={secondColor(500)} label={t('pricingWidget.finalPrice')} value={finalPrice}
                                    onUpdate={handleUpdatePrice}/>
                 </Stack>
-                {!!buttonText &&
-                    <PrimaryButton style={{width: 'fit-content', height: 35}} variant={'contained'}>{buttonText}</PrimaryButton>}
+                <PrimaryButton onClick={() => addItem(supplierId)} style={{width: 'fit-content', height: 35}} variant={'contained'}>{t('pricingWidget.add')}</PrimaryButton>
             </Stack>
         </Fade>
     )
@@ -119,14 +116,5 @@ const EditableValue = ({value, onUpdate, valueColor, label, isEditable, unit}: I
 }
 
 
-const OutSourceSuppliers = () => {
-    const suppliers = useRecoilValue(outsourceSuppliersState);
-
-    return <Stack gap={'15px'}>
-        {
-            suppliers.map(supplier => <OutSourceSupplierComponent {...supplier}/>)
-        }
-    </Stack>
-}
-export {OutSourceSupplierComponent, OutSourceSuppliers}
+export {OutSourceSupplierComponent}
 

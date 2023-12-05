@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
-import {useCallback, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 import {IWorkFlowAction} from "@/widgets/product-pricing-widget/interface";
 import {useStyle} from "@/widgets/product-pricing-widget/style";
 import {Collapse, Fade, IconButton} from "@mui/material";
@@ -12,12 +12,15 @@ import {
 } from "@/widgets/product-pricing-widget/components/action/key-value-view";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {InOutSourceSelect} from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
-import {EWorkSource, RuleType} from "@/widgets/product-pricing-widget/enums";
+import {EWorkSource, HtmlElementType, RuleType} from "@/widgets/product-pricing-widget/enums";
 import {useActionUpdateValues} from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
 import {useRecoilValue} from "recoil";
-import {printHouseSuppliersState} from "@/widgets/product-pricing-widget/state";
+import {outsourceSuppliersState} from "@/widgets/product-pricing-widget/state";
 import {GoMakeAutoComplate} from "@/components";
 import Button from "@mui/material/Button";
+import {useTranslation} from "react-i18next";
+import {PrintImageComponent} from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
+import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
     delay: number;
@@ -38,10 +41,10 @@ const ActionContainerComponent = ({
                                       outputs,
                                       delay,
                                       machineName,
-                                      profitO,
-                                      totalPriceO,
-                                      totalRealProductionTimeO,
-                                      totalCostO,
+                                      profit,
+                                      totalPrice,
+                                      totalProductionTime,
+                                      totalCost,
                                       source,
                                       supplierId
                                   }: IActionContainerComponentProps) => {
@@ -58,30 +61,34 @@ const ActionContainerComponent = ({
         getActionMachinesList,
         selectNewMachine
     } = useActionUpdateValues();
-    const suppliers = useRecoilValue(printHouseSuppliersState);
+    const suppliersState = useRecoilValue(outsourceSuppliersState);
+    const suppliers = useMemo(() => {
+        return suppliersState?.map(s => ({value: s.supplierId, label: s.supplierName}))
+    }, [suppliersState])
     const {classes} = useStyle();
     const {secondColor} = useGomakeTheme();
-    const inputsParameters = outputs.filter(parameter => parameter.propertyType === RuleType.PARAMETER);
-    const outputsParameters = outputs.filter(parameter => parameter.propertyType === RuleType.OUTPUT);
+    const inputsParameters = outputs.filter(parameter => parameter.propertyType === RuleType.PARAMETER && parameter.htmlElementType === HtmlElementType.TEXT);
+    const outputsParameters = outputs.filter(parameter => parameter.propertyType === RuleType.OUTPUT && parameter.htmlElementType === HtmlElementType.TEXT);
+    const imageOutputs = outputs.filter(parameter => parameter.propertyType === RuleType.OUTPUT && parameter.htmlElementType === HtmlElementType.IMAGE);
     const handleDeliveryTimeUpdate = (newValue: string) => {
         const object = {
-            ...totalRealProductionTimeO,
-            values: source === EWorkSource.INTERNAL ? [newValue] : totalRealProductionTimeO.values,
-            outSourceValues: source === EWorkSource.OUT ? [newValue] : totalRealProductionTimeO.outSourceValues
+            ...totalProductionTime,
+            values: source === EWorkSource.INTERNAL ? [newValue] : totalProductionTime.values,
+            outSourceValues: source === EWorkSource.OUT ? [newValue] : totalProductionTime.outSourceValues
         }
         updateDeliveryTime(object, actionId);
     }
 
     const handleCostUpdate = (newCost: string) => {
-        updateCost(newCost, EWorkSource.OUT ? profitO?.outSourceValues[0] : profitO.values[0], actionId, source);
+        updateCost(newCost, EWorkSource.OUT ? profit?.outSourceValues[0] : profit.values[0], actionId, source);
     }
 
     const handleProfitUpdate = (profit: string) => {
-        updateProfit(source === EWorkSource.OUT ? totalCostO?.outSourceValues[0] : totalCostO.values[0], profit, actionId, source);
+        updateProfit(source === EWorkSource.OUT ? totalCost?.outSourceValues[0] : totalCost.values[0], profit, actionId, source);
     }
 
     const handleUpdatePrice = (price: string) => {
-        updatePrice(price, source === EWorkSource.OUT ? totalCostO?.outSourceValues[0] : totalCostO.values[0], actionId, source);
+        updatePrice(price, source === EWorkSource.OUT ? totalCost?.outSourceValues[0] : totalCost.values[0], actionId, source);
     }
 
     const handleSourceChange = (source: EWorkSource) => {
@@ -102,7 +109,7 @@ const ActionContainerComponent = ({
             <Stack onClick={() => setIsOpen(!isOpen)}
                    style={{...classes.actionContainer, border: isOpen ? classes.actionContainerBorder : 'unset'}}>
                 <Stack padding={'10px 0'} direction={'row'} justifyContent={'space-between'}>
-                    <Stack direction={'row'} gap={'16px'} alignItems={'center'}>
+                    <Stack direction={'row'} gap={'16px'} alignItems={'center'} flexWrap={'wrap'}>
                         <Stack style={classes.sectionTitle} direction={'row'} alignItems={'center'} gap={'10px'}>
                             <span>{actionName}</span>
                             {
@@ -111,38 +118,51 @@ const ActionContainerComponent = ({
                                         <Divider orientation={'vertical'} flexItem color={'#000'}/>
                                         <GoMakeAutoComplate placeholder={'Select supplier'} value={getSupplierId()}
                                                             style={{width: '200px'}}
-                                                            onChange={handleSupplierChange} options={suppliers}/>
+                                                            onChange={handleSupplierChange}
+                                                            options={suppliersState?.map(s => ({
+                                                                value: s.supplierId,
+                                                                label: s.supplierName
+                                                            }))}/>
                                     </Stack> :
                                     !!machineName && <>
                                         <Divider orientation={'vertical'} flexItem color={'#000'}/>
                                         {!chooseMachine ? <Button onClick={(e) => {
                                                 e.stopPropagation()
                                                 setChooseMachine(true);
-                                            }} variant={'text'} style={classes.sectionTitle}>{machineName}</Button> :
-                                            <div onClick={(e) => e.stopPropagation()}>
+                                            }} variant={'text'}
+                                                                  style={classes.sectionTitle}>{machineName.length > 20 ? machineName.slice(0, 20) + '...' : machineName}</Button> :
+                                            <Stack direction={'row'} gap={'5px'} alignItems={'center'}
+                                                   onClick={(e) => e.stopPropagation()}>
                                                 <GoMakeAutoComplate onChange={(e, v) => {
                                                     if (selectNewMachine(v?.value, actionId)) {
                                                         setChooseMachine(false);
                                                     }
                                                 }} style={{width: '200px'}} options={getActionMachinesList(actionId)}
                                                                     placeholder={'Choose machine'} value={machineName}/>
-                                            </div>
+                                                <IconButton onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    setChooseMachine(false);
+                                                }
+                                                }>
+                                                    <ClearRoundedIcon/>
+                                                </IconButton>
+                                            </Stack>
                                         }
                                     </>
                             }
                         </Stack>
                         <Divider orientation={'vertical'} flexItem/>
                         <EditableKeyValueViewComponent
-                            onUpdate={handleDeliveryTimeUpdate} {...totalRealProductionTimeO} source={source}/>
+                            onUpdate={handleDeliveryTimeUpdate} {...totalProductionTime} source={source}/>
                         <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
-                        <EditableKeyValueViewComponent onUpdate={handleCostUpdate} {...totalCostO} source={source}/>
+                        <EditableKeyValueViewComponent onUpdate={handleCostUpdate} {...totalCost} source={source}/>
                         <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
                         <Stack direction={'row'} gap={'3px'} alignItems={'center'}>
-                            <EditableKeyValueViewComponent onUpdate={handleProfitUpdate} {...profitO} source={source}/>
-                            <span>{source === EWorkSource.OUT ? `(${+totalPriceO.outSourceValues[0] - +totalCostO.outSourceValues[0]} ${totalPriceO.defaultUnit})` : `(${+totalPriceO.values[0] - +totalCostO.values[0]} ${totalPriceO.defaultUnit})`}</span>
+                            <EditableKeyValueViewComponent onUpdate={handleProfitUpdate} {...profit} source={source}/>
+                            <span>{source === EWorkSource.OUT ? `(${+totalPrice.outSourceValues[0] - +totalCost.outSourceValues[0]} ${totalPrice.defaultUnit})` : `(${+totalPrice.values[0] - +totalCost.values[0]} ${totalPrice.defaultUnit})`}</span>
                         </Stack>
                         <Divider orientation={'vertical'} style={{height: '50%', margin: 'auto 0'}} flexItem/>
-                        <EditableKeyValueViewComponent onUpdate={handleUpdatePrice} {...totalPriceO}
+                        <EditableKeyValueViewComponent onUpdate={handleUpdatePrice} {...totalPrice}
                                                        source={source}
                                                        valueColor={secondColor(500)}/>
                         <Divider orientation={'vertical'} flexItem/>
@@ -168,6 +188,9 @@ const ActionContainerComponent = ({
                         <Divider/>
                         <Stack padding={'10px 0'} direction={'row'} gap={'16px'} flexWrap={'wrap'}>
                             <ParametersMapping source={source} parameters={outputsParameters}/>
+                            {
+                                imageOutputs.map((parameter) => <PrintImageComponent {...parameter}/>)
+                            }
                         </Stack></>}
                 </Collapse>
             </Stack>
@@ -178,30 +201,31 @@ const ActionContainerComponent = ({
 const ActionComponent = ({
                              actionName,
                              machineName,
-                             profitO,
-                             totalPriceO,
-                             totalRealProductionTimeO,
-                             totalCostO,
+                             profit,
+                             totalPrice,
+                             totalProductionTime,
+                             totalCost,
                              source,
                              supplierId
                          }: IWorkFlowAction) => {
     source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
     const {classes} = useStyle();
+    const {t} = useTranslation();
     const {secondColor} = useGomakeTheme();
-    const suppliers = useRecoilValue(printHouseSuppliersState);
+    const suppliers = useRecoilValue(outsourceSuppliersState);
     const parameters = [
-        totalRealProductionTimeO,
-        totalCostO,
-        profitO,
+        totalProductionTime,
+        totalCost,
+        profit,
         {
-            ...totalPriceO,
+            ...totalPrice,
             valueColor: secondColor(500),
         },
     ]
     const getSupplierId = useCallback(() => {
         if (supplierId) {
-            const supplier = suppliers?.find(sup => sup.value === supplierId)
-            return !!supplier ? supplier.label : ''
+            const supplier = suppliers?.find(sup => sup.supplierId === supplierId)
+            return !!supplier ? supplier.supplierName : ''
         }
         return ''
     }, [supplierId, suppliers])
@@ -225,7 +249,8 @@ const ActionComponent = ({
                     <Divider orientation={'vertical'} flexItem/>
                     <ParametersMapping source={source} parameters={parameters}/>
                     <Divider orientation={'vertical'} flexItem/>
-                    <InOutSourceSelect value={source} disabled={true}/>
+                    <span
+                        style={classes.sourceLabel}>{source === EWorkSource.OUT ? t('pricingWidget.outSource') : t('pricingWidget.inSource')}</span>
                 </Stack>
             </Stack>
         </Stack>

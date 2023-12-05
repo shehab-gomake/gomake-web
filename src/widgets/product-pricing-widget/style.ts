@@ -21,7 +21,7 @@ const useStyle = () => {
       },
       actionContainer: {
         backgroundColor: '#F9FAFB',
-        padding: '10px 16px',
+        padding: '0 16px',
         borderRadius: 16,
       },
       actionContainerBorder: '2px solid ' + primaryColor(500),
@@ -35,6 +35,30 @@ const useStyle = () => {
         padding: '10px 16px',
         borderRadius: 16,
         backgroundColor: '#F9FAFB',
+      },
+      buttonGroup: {
+        borderRadius: '5px',
+        border: '1px solid' + primaryColor(500),
+        overflow: 'hidden', width: '400px'
+      },
+      button: {
+        width: '200px',
+        borderRadius: 0,
+        border: 0,
+        '&:hover' : {
+          width: '200px',
+          borderRadius: 0,
+          border: 0,
+        }
+      },
+      sourceLabel: {
+        padding: '3px 10px',
+        backgroundColor: '#F4F3FF',
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: '#5925DC',
+        borderRadius: '16px',
+        textAlign: 'center' as 'center'
+
       }
     };
   }, [theme]);

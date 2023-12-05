@@ -27,8 +27,8 @@ const TotalPriceAndVatWidit = () => {
     openOrderNowModal,
     onClickConfirmWithoutNotification,
     onClickConfirmWithNotification,
-    onClcikOpenOrderNowModal,
-    onClcikCloseOrderNowModal,
+    onClickOpenOrderNowModal,
+    onClickCloseOrderNowModal,
     onClcikOpenIrreleventModal,
     onClcikCloseIrreleventModal,
     onClcikOpenPriceModal,
@@ -188,7 +188,7 @@ const TotalPriceAndVatWidit = () => {
         <div style={clasess.rightSideBtnsContainer}>
           <GomakePrimaryButton
             style={clasess.orderNowBtn}
-            onClick={onClcikOpenOrderNowModal}
+            onClick={onClickOpenOrderNowModal}
           >
             {t("sales.quote.orderNow")}
           </GomakePrimaryButton>
@@ -245,7 +245,7 @@ const TotalPriceAndVatWidit = () => {
       />
       <OrderNowModal
         openModal={openOrderNowModal}
-        onClose={onClcikCloseOrderNowModal}
+        onClose={onClickCloseOrderNowModal}
         confirmWithoutNotification={onClickConfirmWithoutNotification}
         confirmWithNotification={onClickConfirmWithNotification}
       />
