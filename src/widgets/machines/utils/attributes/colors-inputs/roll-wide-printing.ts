@@ -1,10 +1,7 @@
-import {COLORS} from "@/widgets/machines/utils/const";
-import {additionalColorsInput} from "@/widgets/machines/utils/attributes/colors-inputs/additional-colors-input";
 
 const rollWidePrinting = (state: Record<string, any>) => {
     return [
 
-        ...additionalColorsInput(state),
         {
             name: "maxLayers",
             label: "machineAttributes.maxLayers",

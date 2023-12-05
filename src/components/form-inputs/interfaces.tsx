@@ -1,5 +1,4 @@
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
-import { CSSProperties } from "react";
 
 export interface IInput {
   name: string;
@@ -33,6 +32,6 @@ export interface IFormArrayInputsProps {
   inputs: IInput[] | any[];
   updateState: (key: string, value: any) => void;
   isValid: boolean;
-
+  newValue?: (key, value) => void;
 }
 
