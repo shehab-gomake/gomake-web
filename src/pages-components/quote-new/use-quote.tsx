@@ -44,10 +44,13 @@ const useQuoteNew = () => {
   const [isUpdatePurchaseNumer, setIsUpdatePurchaseNumer] = useState<
     number | null
   >(null);
+  
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
   const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
+
   const [selectedAgent, setSelectedAgent] = useState<any>();
+
   const [agentListValue, setAgentListValue] =
     useRecoilState<any>(agentListsState);
   const [isDisplayWidget, setIsDisplayWidget] = useState(false);
@@ -146,6 +149,7 @@ const useQuoteNew = () => {
       onlyCreateOrderClients: false,
     });
   }, []);
+
   useEffect(() => {
     const foundItem = customersListValue.find(
       (item: any) => item.id === quoteItemValue?.customerID
@@ -157,26 +161,32 @@ const useQuoteNew = () => {
     getAllCustomers();
   }, []);
 
-  const onBlurBusinessName = async () => {
-    setIsUpdateBusinessName(null);
-  };
   const onBlurPurchaseNumer = async () => {
     setIsUpdatePurchaseNumer(null);
   };
+
   const onBlurBusinessCode = async () => {
     setIsUpdateBusinessCode(null);
   };
+
   const onBlurAddress = async () => {
     setIsUpdateAddress(null);
   };
+
   const onBlurAgent = async () => {
     setIsUpdateAgent(null);
   };
+
+  const onBlurBusinessName = async () => {
+    setIsUpdateBusinessName(null);
+  };
+
   const getAllEmployees = useCallback(async () => {
     await getAndSetAllEmployees(callApi, setAgentListValue, {
       isAgent: true,
     });
   }, []);
+
   useEffect(() => {
     if (agentListValue?.length > 0) {
       const selectedAgent1 = agentListValue.find(
@@ -210,13 +220,39 @@ const useQuoteNew = () => {
     },
     [quoteItemValue]
   );
+
+  // update business name (client)
+  const onChangeSelectBusiness = useCallback(
+    async (item: any) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/erp-service/quote/change-client`,
+        {
+          quoteID: quoteItemValue?.id,
+          clientId: item?.id,
+          userId: quoteItemValue?.userID,
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        setIsUpdateBusinessName(null);
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [selectBusiness, quoteItemValue]
+  );
+
   const onBlurContactName = async () => {
     setIsUpdateContactName(null);
     setIsDisplayWidget(false);
   };
+
   const onBlurContactEmail = async () => {
     setIsUpdateContactEmail(null);
   };
+
   const onBlurContactMobile = async () => {
     setIsUpdateContactMobile(null);
   };
@@ -600,6 +636,12 @@ const useQuoteNew = () => {
     [quoteItemValue]
   );
 
+
+
+
+
+
+
   return {
     dateRef,
     activeClickAway,
@@ -712,6 +754,7 @@ const useQuoteNew = () => {
     setReasonText,
     onClickCancelOffer,
     updateCancelQuote,
+    onChangeSelectBusiness
   };
 };
 

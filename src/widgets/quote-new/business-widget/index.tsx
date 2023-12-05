@@ -2,14 +2,17 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { useTranslation } from "react-i18next";
+import { GoMakeAutoComplate } from "@/components/auto-complete";
+import { useRecoilValue } from "recoil";
+import { businessListsState } from "@/store/business-list";
+import { quoteItemState } from "@/store/quote-item";
+import { useEffect, useState } from "react";
+import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
+import { GoMakeAlertModal } from "@/components/modal/alert-modal";
 
 const BusinessNewWidget = ({
   values,
   selectBusiness,
-  onBlurBusinessName,
-  isUpdateBusinessName,
-  setIsUpdateBusinessName,
-  setSelectBusiness,
   onBlurPurchaseNumer,
   isUpdatePurchaseNumer,
   setIsUpdatePurchaseNumer,
@@ -24,19 +27,55 @@ const BusinessNewWidget = ({
   isUpdateAgent,
   setIsUpdateAgent,
   updateAgent,
+  onChangeSelectBusiness,
+  onBlurBusinessName,
+  isUpdateBusinessName,
+  setIsUpdateBusinessName,
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
+  const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
+  const mappedCustomers = renderOptions().map(customer => ({
+    text: customer?.name,
+    id: customer?.id
+  }));
+
+  // const quoteStateValue = useRecoilValue<any>(quoteItemState);
+  // const [openAlertModal, setOpenAlertModal] = useState(false);
+  // const [client, setClient] = useState();
+  // const onCloseAlertModal = () => {
+  //   setOpenAlertModal(false);
+  // };
+  // const onOpenAlertModal = (value:any) => {
+  //   setOpenAlertModal(true);
+  //   setClient(value);
+  // };
+ 
   return (
     <>
-      <div style={clasess.businessContainerStyle}>
-        <InputUpdatedValues
-          value={selectBusiness?.name}
+      <div style={classes.businessContainerStyle}>
+        {/* <h3 style={classes.labelStyle}>{t("sales.quote.businessName")}</h3>
+        <GoMakeAutoComplate
+          options={renderOptions()}
+          style={classes.autoCompleteStyle}
+          key={quoteStateValue?.client?.name}
+          value={quoteStateValue?.client}
+          placeholder={t("sales.quote.businessName")}
+          getOptionLabel={(item) => item?.name}
+          onChangeTextField={checkWhatRenderArray}
+          disableClearable={true}
+          onChange={(e: any, value: any)=>onOpenAlertModal(value)}
+        /> */}
+        <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
+          value={selectBusiness?.name}
+          options={mappedCustomers}
           onBlur={onBlurBusinessName}
           isUpdate={isUpdateBusinessName}
           setIsUpdate={setIsUpdateBusinessName}
-          onInputChange={(e) => setSelectBusiness({ name: e })}
+          getOptionLabel={(item) => item.text}
+          onChange={(e, value) => onChangeSelectBusiness(value)}
+          onChangeTextField={checkWhatRenderArray}
         />
         <InputUpdatedValues
           value={
@@ -76,6 +115,14 @@ const BusinessNewWidget = ({
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => updateAgent(value)}
         />
+        {/* <GoMakeAlertModal 
+        title={t("Change client")}
+        openModal={openAlertModal}
+        onClose={onCloseAlertModal}
+        subTitle={t("Are you sure to change client")}
+        onClickConfirm={()=>{onChangeSelectBusiness(client).then(setOpenAlertModal(false)); }}
+        >
+        </GoMakeAlertModal> */}
       </div>
     </>
   );

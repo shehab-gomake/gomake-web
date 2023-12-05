@@ -75,7 +75,7 @@ const BusinessWidget = ({
                 onChange={(e: any, item: any) => {
                   quoteStateValue.onChangeSelectBusiness(item);
                 }}
-              />
+              /> 
             </div>
           )}
           {isPurchaseNumber && (

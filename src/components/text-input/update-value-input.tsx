@@ -1,12 +1,12 @@
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {IconButton, Paper} from "@mui/material";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { IconButton, Paper } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
-import {FONT_FAMILY} from "@/utils/font-family";
-import {ChangeEvent, KeyboardEvent} from "react";
-import {ClickOutside} from "@/components/click-out-side/click-out-side";
-import {RouteChangeConfirmation} from "@/components/handle-navigation/handle-navigation";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { ChangeEvent, KeyboardEvent } from "react";
+import { ClickOutside } from "@/components/click-out-side/click-out-side";
+import { RouteChangeConfirmation } from "@/components/handle-navigation/handle-navigation";
 
 interface IUpdateValueInputProps {
     value: string;
@@ -17,13 +17,13 @@ interface IUpdateValueInputProps {
 }
 
 const UpdateValueInput = ({
-                              value,
-                              onUpdate,
-                              onCancel,
-                              onInputChange,
-                              clickedOut,
-                          }: IUpdateValueInputProps) => {
-    const {errorColor, successColor, secondColor} = useGomakeTheme();
+    value,
+    onUpdate,
+    onCancel,
+    onInputChange,
+    clickedOut,
+}: IUpdateValueInputProps) => {
+    const { errorColor, successColor, secondColor } = useGomakeTheme();
     const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
         onInputChange(event.target.value);
     };
@@ -36,7 +36,7 @@ const UpdateValueInput = ({
 
     return (
         <ClickOutside onClick={clickedOut}>
-            <RouteChangeConfirmation/>
+            <RouteChangeConfirmation />
             <Paper
                 component="form"
                 sx={{
@@ -50,7 +50,7 @@ const UpdateValueInput = ({
                 }}
             >
                 <InputBase
-                    sx={{ml: 1, flex: 1, ...FONT_FAMILY.Lexend(400, 14)}}
+                    sx={{ ml: 1, flex: 1, ...FONT_FAMILY.Lexend(400, 14) }}
                     value={value}
                     onChange={handleTextChange}
                     autoFocus={true}
@@ -72,7 +72,7 @@ const UpdateValueInput = ({
                         width: "16px",
                     }}
                 >
-                    <CloseIcon style={{width: "12px", height: "12px"}}/>
+                    <CloseIcon style={{ width: "12px", height: "12px" }} />
                 </IconButton>
                 <IconButton
                     onClick={(e) => {
@@ -87,11 +87,11 @@ const UpdateValueInput = ({
                         width: "16px",
                     }}
                 >
-                    <CheckIcon style={{width: "12px", height: "12px"}}/>
+                    <CheckIcon style={{ width: "12px", height: "12px" }} />
                 </IconButton>
             </Paper>
         </ClickOutside>
     );
 };
 
-export {UpdateValueInput};
+export { UpdateValueInput };
