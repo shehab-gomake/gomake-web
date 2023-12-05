@@ -15,7 +15,6 @@ const useStyle = () => {
       textInputStyle: {
         borderRadius: 4,
         height: 40,
-        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.05)",
       },
       btnContainer: {
         display: "flex",
@@ -38,14 +37,15 @@ const useStyle = () => {
       },
       inputsContainer: {
         display: "flex",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
+        alignItems: "center",
         marginTop: 10,
+        gap: 15,
       },
       textarea: {
         width: "100%",
         height: 200,
         padding: 8,
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         resize: "none" as "none",
         ...FONT_FAMILY.Lexend(500, 12),
         borderRadius: 4,
@@ -53,7 +53,11 @@ const useStyle = () => {
       dropDownListContainer: {
         width: 240,
         alignSelf: "center",
-        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.05)",
+        border: "none",
+        height: 40,
+        marginTop: 2,
+      },
+      textInputContainer: {
         border: "none",
         height: 40,
         marginTop: 2,
@@ -88,6 +92,11 @@ const useStyle = () => {
         padding: 1,
         height: 15,
         width: 15,
+      },
+      selectTypeStyle: {
+        display: "flex",
+        ...FONT_FAMILY.Lexend(500, 14),
+        marginBottom: 8,
       },
     };
   }, []);

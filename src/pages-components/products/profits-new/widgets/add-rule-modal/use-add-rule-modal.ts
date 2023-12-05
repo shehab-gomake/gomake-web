@@ -1,4 +1,16 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import {
+  getAllProductsForDropDownList,
+  getAndSetAllParameters,
+  getAndSetClientTypes,
+  getAndSetMachincesNew,
+} from "@/services/hooks";
+import {
+  clientTypesState,
+  machincesState,
+  parametersState,
+  productsState,
+} from "@/store";
 import { machineCategoriesState } from "@/store/machine-categories";
 import { useMaterials } from "@/widgets/properties/hooks/use-materials";
 import { useMaterialsCategories } from "@/widgets/properties/hooks/use-materials-categories";
@@ -9,7 +21,7 @@ import { usePrintHouseClients } from "@/widgets/properties/hooks/use-print-house
 import { usePrintHouseMachines } from "@/widgets/properties/hooks/use-print-house-machines";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 class ActionRule {
   id: string;
@@ -30,6 +42,7 @@ const useAddRuleModal = () => {
   const categories = useMemo(() => {
     return [
       { label: "Machine", id: "Machine" },
+      { label: "Products", id: "Products" },
       // { label: "Machine category", id: "Machine Category" },
       { label: "Client type", id: "Client Type" },
       // { label: "Client", id: "Client" },
@@ -70,29 +83,29 @@ const useAddRuleModal = () => {
   const [expression, setExpression] = useState(
     "Your rules will viewed here . . ."
   );
-  const addRule = useCallback(
-    async (
-      actionId: string,
-      propertyId: string,
-      ruleType: number,
-      rule: any
-    ) => {
-      const res = await callApi(
-        "POST",
-        `/v1/printhouse-config/print-house-action/add-rule/${actionId}/${propertyId}/${ruleType}`,
-        {
-          rule,
-        }
-      );
-      if (res?.success) {
-        alertSuccessAdded();
-        // getPrintHouseActionById(actionId);
-      } else {
-        alertFaultAdded();
-      }
-    },
-    []
-  );
+  // const addRule = useCallback(
+  //   async (
+  //     actionId: string,
+  //     propertyId: string,
+  //     ruleType: number,
+  //     rule: any
+  //   ) => {
+  //     const res = await callApi(
+  //       "POST",
+  //       `/v1/printhouse-config/print-house-action/add-rule/${actionId}/${propertyId}/${ruleType}`,
+  //       {
+  //         rule,
+  //       }
+  //     );
+  //     if (res?.success) {
+  //       alertSuccessAdded();
+  //       // getPrintHouseActionById(actionId);
+  //     } else {
+  //       alertFaultAdded();
+  //     }
+  //   },
+  //   []
+  // );
   const handleFormChange = (index, event, fieldNameId, value) => {
     let data = [...fields];
     if (fieldNameId == 1) {
@@ -130,7 +143,7 @@ const useAddRuleModal = () => {
         setFirstPartDefultValue([...first]);
       } else if (fields[index].category === "Property output") {
         let temp = [...fieldsStates];
-        temp[index].firstPart = Outputs.map((m) => {
+        temp[index].firstPart = Outputs?.map((m) => {
           return {
             label: m.name,
             id: m.id,
@@ -291,75 +304,123 @@ const useAddRuleModal = () => {
     ];
   }, []);
 
-  const boolState = useMemo(() => {
-    return [
-      { label: "Yes", id: true },
-      { label: "No", id: false },
-    ];
+  const create = async () => {
+    const textInput = displayText(rules);
+    setExpression(textInput);
+  };
+
+  const initialRule = {
+    linkCondition: "",
+    category: "",
+    statement: "",
+    condition: "",
+    statement2: "",
+  };
+  const [rules, setRules] = useState<any>([initialRule]);
+  const addRule = () => {
+    setRules([...rules, initialRule]);
+  };
+  const deleteRule = (index) => {
+    const updatedRules = [...rules];
+    updatedRules.splice(index, 1);
+    setRules(updatedRules);
+  };
+
+  const handleChange = (index, field, value) => {
+    const updatedRules = [...rules];
+    updatedRules[index][field] = value;
+    setRules(updatedRules);
+  };
+
+  const [machincesStateValue, setMachincesState] =
+    useRecoilState<any>(machincesState);
+  const [productsStateValue, setProductsState] =
+    useRecoilState<any>(productsState);
+  const [clientTypesStateValue, setClientTypesState] =
+    useRecoilState<any>(clientTypesState);
+  const [parametersStateValue, setParametersState] =
+    useRecoilState<any>(parametersState);
+
+  const getMachincesProfits = useCallback(async () => {
+    await getAndSetMachincesNew(callApi, setMachincesState);
+  }, []);
+  const getProducts = useCallback(async () => {
+    await getAllProductsForDropDownList(callApi, setProductsState);
+  }, []);
+  const getClientTypes = useCallback(async () => {
+    await getAndSetClientTypes(callApi, setClientTypesState);
+  }, []);
+  const getParameters = useCallback(async () => {
+    return await getAndSetAllParameters(callApi, setParametersState);
+  }, []);
+  useEffect(() => {
+    getMachincesProfits();
+    getProducts();
+    getClientTypes();
+    getParameters();
   }, []);
 
-  const create = async () => {
-    var values = validateForm();
-    if (values?.length != 0) {
-      let ruleName = "";
-      let val = "(";
-      values?.map((m, index) => {
-        val +=
-          " " +
-          m.linkCondition +
-          " " +
-          m.firstPart +
-          " " +
-          m.condition +
-          " " +
-          m.secondPart +
-          " ";
-        ruleName = m.category;
-      });
-      val += ")";
-      let obj = new ActionRule();
-      obj.priority = 1;
-      obj.expression = val;
-      obj.successEvent = value;
-      obj.ruleName = ruleName;
-      obj.isActive = true;
-      obj.isDeleted = false;
-      obj.ruleExpressionType = "LambdaExpression";
-      obj.errorMessage = "One or more adjust rules failed";
-      obj.errorType = "LambdaExpression";
-      try {
-        debugger;
-        // await addRule(actionId, propertyId, ruleType, obj);
-      } catch (error) {}
-      setExpression(val);
-    } else {
-      let val = "";
-      setExpression(val);
-    }
-  };
+  const [exceptionType, setExceptionType] = useState<any>();
+  const [additionalProfit, setAdditionalProfit] = useState<any>();
 
-  const validateForm = (): any => {
-    let values = [];
-    fields.map((m, index) => {
-      if (
-        m.firstPart != "" &&
-        m.condition != "" &&
-        m.secondPart != "" &&
-        ((m.linkCondition == "" && index == 0) ||
-          (m.linkCondition != "" && index != 0)) &&
-        value != ""
-      ) {
-        values.push(m);
-      }
-    });
-    if (values?.length == 0) {
-      alertFaultAdded();
+  function isRuleEmpty(rule) {
+    return Object.values(rule).every((value) => value === "");
+  }
+
+  function displayText(conditions) {
+    if (conditions.length === 0 || isRuleEmpty(conditions[0])) {
+      return "No rule found"; // Return a message if the array is empty or the rule is empty
     }
-    return values;
-  };
+    return conditions.map((condition) => {
+      const categoryLabel = condition.category ? condition.category.label : "";
+      const conditionLabel = condition.condition
+        ? condition.condition.label
+        : "";
+      const statement2Label = condition.statement2
+        ? condition.statement2.label
+        : "";
+
+      let text = "";
+
+      if (condition.linkCondition) {
+        text += ` ${condition.linkCondition.label} `;
+      }
+
+      if (typeof condition?.statement === "object") {
+        const statementLabel = condition?.statement.label;
+        text += `${categoryLabel} ${statement2Label} ${conditionLabel} ${statementLabel}`;
+      } else {
+        const statementLabel = condition?.statement;
+        if (statementLabel?.length > 0) {
+          text += `${categoryLabel} ${statement2Label} ${conditionLabel} ${statementLabel}`;
+        } else {
+          text += `${categoryLabel} ${conditionLabel} ${statement2Label}`;
+        }
+      }
+
+      return text.trim();
+    });
+  }
+  useEffect(() => {
+    const textInput = displayText(rules);
+    setExpression(textInput);
+  }, [rules]);
   return {
-    categories,
+    rules,
+    deleteRule,
+    handleChange,
     addRule,
+    machincesStateValue,
+    productsStateValue,
+    clientTypesStateValue,
+    parametersStateValue,
+    Outputs,
+    exceptionType,
+    setExceptionType,
+    additionalProfit,
+    setAdditionalProfit,
+
+    categories,
     setFields,
     fields,
     addFields,

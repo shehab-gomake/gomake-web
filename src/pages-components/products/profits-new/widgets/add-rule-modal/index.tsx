@@ -15,6 +15,20 @@ const AddRuleModal = ({ openModal, onCloseModal }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
+    rules,
+    deleteRule,
+    handleChange,
+    addRule,
+    machincesStateValue,
+    productsStateValue,
+    clientTypesStateValue,
+    parametersStateValue,
+    Outputs,
+    exceptionType,
+    setExceptionType,
+    additionalProfit,
+    setAdditionalProfit,
+
     value,
     expression,
     mainconditions,
@@ -50,16 +64,16 @@ const AddRuleModal = ({ openModal, onCloseModal }) => {
         }}
         insideStyle={clasess.insideStyle}
       >
-        <form>
-          {fields.map((field, index) => {
+        <div>
+          {rules.map((rule, index) => {
             return (
-              <div key={index}>
+              <>
                 {index != 0 && (
                   <div
                     style={{
                       display: "block",
-                      marginTop: 30,
-                      marginBottom: 30,
+                      marginTop: 15,
+                      marginBottom: 15,
                     }}
                   >
                     <label style={clasess.inputLable}>
@@ -69,15 +83,14 @@ const AddRuleModal = ({ openModal, onCloseModal }) => {
                       options={mainconditions}
                       style={clasess.dropDownListContainer}
                       placeholder={t("properties.condtion")}
-                      value={field.linkCondition}
+                      value={rule.linkCondition}
                       onChange={(event, value) => {
-                        handleFormChange(index, event, 1, value);
+                        handleChange(index, "linkCondition", value);
                       }}
                     />
                   </div>
                 )}
-
-                <div style={clasess.inputsContainer}>
+                <div key={index} style={clasess.inputsContainer}>
                   <div style={{ marginTop: "2%", fontSize: 16 }}> if</div>
                   <div>
                     <label style={clasess.inputLable}>
@@ -87,27 +100,65 @@ const AddRuleModal = ({ openModal, onCloseModal }) => {
                       options={categories}
                       style={clasess.dropDownListContainer}
                       placeholder={t("properties.category")}
-                      value={field.category}
-                      onChange={(event, value) => {
-                        handleFormChange(index, event, 2, value);
+                      value={rule.category}
+                      onChange={(e, value) => {
+                        handleChange(index, "category", value);
                       }}
                     />
                   </div>
-                  <div>
-                    <label style={clasess.inputLable}>
-                      {t("properties.statment")}
-                    </label>
-                    <GoMakeAutoComplate
-                      options={fieldsStates[index].firstPart}
-                      style={clasess.dropDownListContainer}
-                      placeholder={t("properties.statment")}
-                      defaultValue={firstPartDefultValue[index].defultValue}
-                      disabled={firstPartDefultValue[index].isDisabled}
-                      onChange={(event, value) => {
-                        handleFormChange(index, event, 3, value);
-                      }}
-                    />
-                  </div>
+                  {rule.category?.id != "Machine" &&
+                    rule.category?.id != "Client Type" &&
+                    rule.category?.id != "Products" && (
+                      <>
+                        {rule.category?.id === "Property input" && (
+                          <div>
+                            <label style={clasess.inputLable}>
+                              {t("properties.statment")}
+                            </label>
+                            <GoMakeAutoComplate
+                              options={parametersStateValue?.map((value) => {
+                                return {
+                                  ...value,
+                                  label: value.name,
+                                  id: value.id,
+                                };
+                              })}
+                              style={clasess.dropDownListContainer}
+                              placeholder={t("properties.statment")}
+                              // getOptionLabel={(value: any) => value?.name}
+                              value={rule.statement2}
+                              onChange={(e, value) =>
+                                handleChange(index, "statement2", value)
+                              }
+                            />
+                          </div>
+                        )}
+                        {rule.category?.id === "Property output" && (
+                          <div>
+                            <label style={clasess.inputLable}>
+                              {t("properties.statment")}
+                            </label>
+                            <GoMakeAutoComplate
+                              options={Outputs?.map((value) => {
+                                return {
+                                  ...value,
+                                  label: value.name,
+                                  id: value.id,
+                                };
+                              })}
+                              style={clasess.dropDownListContainer}
+                              placeholder={t("properties.statment")}
+                              // getOptionLabel={(value: any) => value?.name}
+                              value={rule.statement2}
+                              onChange={(e, value) =>
+                                handleChange(index, "statement2", value)
+                              }
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+
                   <div>
                     <label style={clasess.inputLable}>
                       {t("properties.condtion")}
@@ -116,128 +167,256 @@ const AddRuleModal = ({ openModal, onCloseModal }) => {
                       options={conditions}
                       style={clasess.dropDownListContainer}
                       placeholder={t("properties.condtion")}
-                      value={field.condition}
+                      value={rule.condition}
                       onChange={(event, value) => {
-                        handleFormChange(index, event, 4, value);
+                        handleChange(index, "condition", value);
                       }}
                     />
                   </div>
-                  <div>
-                    <label style={clasess.inputLable}>
-                      {t("properties.statment")}
-                    </label>
-
-                    {secondPartTypeState[index].isInputField && (
-                      <GomakeTextInput
-                        style={clasess.textInputStyle}
-                        placeholder={t("properties.statment")}
-                        value={field.secondPart}
-                        onChange={(event, value) => {
-                          handleNumberField(index, event, 5, value);
-                        }}
-                      />
-                    )}
-                    {!secondPartTypeState[index].isInputField && (
+                  {rule.category?.id === "Machine" && (
+                    <div>
+                      <label style={clasess.inputLable}>
+                        {t("properties.statment")}
+                      </label>
                       <GoMakeAutoComplate
-                        options={fieldsStates[index].secondPart}
+                        options={machincesStateValue?.map((value) => {
+                          return {
+                            ...value,
+                            label: `${value?.manufacturer} ${value?.model}`,
+                            id: value.id,
+                          };
+                        })}
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
-                        value={field.secondPart}
-                        onChange={(event, value) => {
-                          handleFormChange(index, event, 5, value);
-                        }}
+                        value={rule.statement2}
+                        onChange={(e, value) =>
+                          handleChange(index, "statement2", value)
+                        }
                       />
+                    </div>
+                  )}
+                  {rule.category?.id === "Property output" &&
+                    rules[index]?.statement2?.valueType === 1 && (
+                      <div>
+                        <label style={clasess.inputLable}>
+                          {t("properties.statment")}
+                        </label>
+                        <GoMakeAutoComplate
+                          options={machincesStateValue?.map((value) => {
+                            return {
+                              ...value,
+                              label: `${value?.manufacturer} ${value?.model}`,
+                              id: value.id,
+                            };
+                          })}
+                          style={clasess.dropDownListContainer}
+                          placeholder={t("properties.statment")}
+                          value={rule.statement}
+                          onChange={(e, value) =>
+                            handleChange(index, "statement", value)
+                          }
+                        />
+                      </div>
                     )}
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      cursor: "pointer",
-                    }}
-                    onClick={removeFields}
-                  >
-                    <DeleteMenuIcon />
-                  </div>
+                  {rule.category?.id === "Property output" &&
+                    rules[index]?.statement2?.valueType === 3 && (
+                      <div>
+                        <label style={clasess.inputLable}>
+                          {t("properties.statment")}
+                        </label>
+                        <GomakeTextInput
+                          style={clasess.textInputContainer}
+                          placeholder={t("properties.statment")}
+                          value={rule.statement}
+                          onChange={(e) =>
+                            handleChange(index, "statement", e.target.value)
+                          }
+                        />
+                      </div>
+                    )}
+                  {rule.category?.id === "Products" && (
+                    <div>
+                      <label style={clasess.inputLable}>
+                        {t("properties.statment")}
+                      </label>
+                      <GoMakeAutoComplate
+                        options={productsStateValue?.map((value) => {
+                          return {
+                            ...value,
+                            label: value?.name,
+                            id: value.id,
+                          };
+                        })}
+                        style={clasess.dropDownListContainer}
+                        placeholder={t("properties.statment")}
+                        // getOptionLabel={(value: any) => value?.name}
+                        value={rule.statement2}
+                        onChange={(e, value) =>
+                          handleChange(index, "statement2", value)
+                        }
+                      />
+                    </div>
+                  )}
+                  {rule.category?.id === "Client Type" && (
+                    <div>
+                      <label style={clasess.inputLable}>
+                        {t("properties.statment")}
+                      </label>
+                      <GoMakeAutoComplate
+                        options={clientTypesStateValue?.map((value) => {
+                          return {
+                            ...value,
+                            label: value?.name,
+                            id: value.id,
+                          };
+                        })}
+                        style={clasess.dropDownListContainer}
+                        placeholder={t("properties.statment")}
+                        value={rule.statement2}
+                        onChange={(e, value) =>
+                          handleChange(index, "statement2", value)
+                        }
+                      />
+                    </div>
+                  )}
+                  {rule.category?.id === "Property input" && (
+                    <div>
+                      <label style={clasess.inputLable}>
+                        {t("properties.statment")}
+                      </label>
+                      <GoMakeAutoComplate
+                        options={rules[index]?.statement2?.values?.map(
+                          (value) => {
+                            return {
+                              ...value,
+                              label: value?.name,
+                              id: value.id,
+                            };
+                          }
+                        )}
+                        style={clasess.dropDownListContainer}
+                        placeholder={t("properties.statment")}
+                        value={rule.statement}
+                        onChange={(e, value) =>
+                          handleChange(index, "statement", value)
+                        }
+                      />
+                    </div>
+                  )}
+                  {rules.length > 1 && (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        cursor: "pointer",
+                        marginTop: "2%",
+                      }}
+                      onClick={() => deleteRule(index)}
+                    >
+                      <DeleteMenuIcon />
+                    </div>
+                  )}
                 </div>
-              </div>
+              </>
             );
           })}
-        </form>
-        <div style={clasess.AddNewRuleDiv}>
-          <AddPlusIcon />{" "}
-          <span onClick={addFields} style={clasess.spanAddNewRule}>
-            {t("properties.addNewRule")}
-          </span>
-        </div>
-
-        <div style={clasess.valueContainer}>
-          <div style={clasess.inputLable}>
-            {t("products.profits.exceptions.selectScopeOfChange")}
+          <div style={clasess.AddNewRuleDiv}>
+            <AddPlusIcon />{" "}
+            <span onClick={addRule} style={clasess.spanAddNewRule}>
+              {t("properties.addNewRule")}
+            </span>
           </div>
-          <GoMakeAutoComplate
-            options={[
-              { label: "Additional", value: 0 },
-              { label: "NewBase", value: 1 },
-              { label: "EditBase", value: 2 },
-            ]}
-            placeholder={t("products.profits.exceptions.selectScopeOfChange")}
-            // onChange={(e: any, item: any) => {
-            //   profitsStateValue?.onChangeState("additionalProfit", null);
-            //   profitsStateValue?.onChangeState(
-            //     "exceptionType",
-            //     item?.value
-            //   );
-            // }}
+          <div
+            key="exceptionType"
             style={{
-              border: "0px",
-              background: "#fff",
-              borderRadius: 4,
-            }}
-          />
-        </div>
-
-        {/* <div style={clasess.valueContainer}>
-          <label style={clasess.inputLable}>value</label>
-          <GomakeTextInput
-            style={clasess.textInputStyle}
-            placeholder="value"
-            value={value}
-            onChange={(event, value) => {
-              handleNumberField(0, event, 6, value);
-            }}
-          />
-        </div> */}
-        {/* <div style={clasess.btnContainer}>
-          <GomakePrimaryButton
-            style={clasess.sendBtn}
-            onClick={() => {
-              create();
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              gap: 30,
+              marginTop: 20,
             }}
           >
-            {t("properties.create")}
-          </GomakePrimaryButton>
-        </div>
-        <div>
-          <div>
-            <label
-              style={{
-                ...FONT_FAMILY.Lexend(500, 12),
-                // color: primaryColor(500),
-                fontSize: 16,
-                marginBottom: 10,
+            <div>
+              <div style={clasess.selectTypeStyle}>
+                {t("products.profits.exceptions.selectScopeOfChange")}
+              </div>
+              <GoMakeAutoComplate
+                options={[
+                  { label: "Additional", id: 0 },
+                  { label: "NewBase", id: 1 },
+                  { label: "EditBase", id: 2 },
+                ]}
+                placeholder={t(
+                  "products.profits.exceptions.selectScopeOfChange"
+                )}
+                onChange={(e: any, value: any) => {
+                  setExceptionType(value);
+                }}
+                value={exceptionType}
+                style={{
+                  border: "0px",
+                  background: "#fff",
+                  borderRadius: 4,
+                }}
+              />
+            </div>
+            {exceptionType?.id === 0 ? (
+              <div>
+                <div>
+                  <div style={clasess.selectTypeStyle}>
+                    {t("products.profits.exceptions.additionalProfit")}
+                  </div>
+                </div>
+                <GomakeTextInput
+                  type="number"
+                  placeholder={t(
+                    "products.profits.exceptions.additionalProfit"
+                  )}
+                  onChange={(e: any) => {
+                    setAdditionalProfit(e.target.value);
+                  }}
+                  style={{
+                    border: "0px",
+                    background: "#fff",
+                    borderRadius: 4,
+                    height: 40,
+                  }}
+                />
+              </div>
+            ) : null}
+          </div>
+          <div style={clasess.btnContainer}>
+            <GomakePrimaryButton
+              style={clasess.sendBtn}
+              onClick={() => {
+                create();
               }}
             >
-              Terminal
-            </label>
-            <textarea
-              disabled={true}
-              style={clasess.textarea}
-              placeholder="Your rules will viewed here . . ."
-              value={expression}
-            />
+              {t("properties.create")}
+            </GomakePrimaryButton>
           </div>
-        </div> */}
+          <div>
+            <div>
+              <label
+                style={{
+                  ...FONT_FAMILY.Lexend(500, 12),
+                  // color: primaryColor(500),
+                  fontSize: 16,
+                  marginBottom: 10,
+                }}
+              >
+                Terminal
+              </label>
+              <textarea
+                disabled={true}
+                style={clasess.textarea}
+                placeholder="Your rules will viewed here . . ."
+                value={expression}
+              />
+            </div>
+          </div>
+        </div>
       </GoMakeModal>
     </>
   );
