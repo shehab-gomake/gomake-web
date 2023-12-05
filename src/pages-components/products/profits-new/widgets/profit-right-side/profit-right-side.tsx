@@ -13,6 +13,7 @@ import { ETypeException } from "../../enums/profites-enum";
 import { AdditionsAndExceptionsMapping } from "../additions-and-exceptions-mapping";
 import { GoMakeDeleteModal } from "@/components";
 import { useState } from "react";
+import { AddRuleModal } from "../add-rule-modal";
 
 const ProfitRightSideWidget = ({
   minimumValue,
@@ -37,11 +38,19 @@ const ProfitRightSideWidget = ({
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
+  const [openAddNewRuleModal, setOpenAddNewRuleModal] =
+    useState<boolean>(false);
   const onClickOpenDeleteRowModal = () => {
     setOpenDeleteRowModal(true);
   };
   const onClickCloseDeleteRowModal = () => {
     setOpenDeleteRowModal(false);
+  };
+  const onClickOpenAddNewRuleModal = () => {
+    setOpenAddNewRuleModal(true);
+  };
+  const onClickCloseAddNewRuleModal = () => {
+    setOpenAddNewRuleModal(false);
   };
   return (
     <div style={clasess.mainHeaderContainer}>
@@ -133,6 +142,7 @@ const ProfitRightSideWidget = ({
         handleClose={handleClosePricingTables}
         open={openPricingTables}
         anchorEl={anchorElPricingTables}
+        onClickOpenAddNewRuleModal={onClickOpenAddNewRuleModal}
       />
       <PricingTableMappingMenu
         handleClose={handleClosePricingTablesMapping}
@@ -149,6 +159,10 @@ const ProfitRightSideWidget = ({
         //     quoteStateValue?.selectedContact
         //   )
         // }
+      />
+      <AddRuleModal
+        openModal={openAddNewRuleModal}
+        onCloseModal={onClickCloseAddNewRuleModal}
       />
     </div>
   );
