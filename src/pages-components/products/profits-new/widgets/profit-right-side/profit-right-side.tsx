@@ -11,6 +11,8 @@ import { PricingTableMappingMenu } from "../pricing-table-mapping-menu";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { ETypeException } from "../../enums/profites-enum";
 import { AdditionsAndExceptionsMapping } from "../additions-and-exceptions-mapping";
+import { GoMakeDeleteModal } from "@/components";
+import { useState } from "react";
 
 const ProfitRightSideWidget = ({
   minimumValue,
@@ -34,7 +36,13 @@ const ProfitRightSideWidget = ({
 }: ProfitRightSideProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-
+  const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
+  const onClickOpenDeleteRowModal = () => {
+    setOpenDeleteRowModal(true);
+  };
+  const onClickCloseDeleteRowModal = () => {
+    setOpenDeleteRowModal(false);
+  };
   return (
     <div style={clasess.mainHeaderContainer}>
       <AccordionTable
@@ -131,6 +139,16 @@ const ProfitRightSideWidget = ({
         open={openPricingTablesMapping}
         anchorEl={anchorElPricingTablesMapping}
         selectedPricingTableItems={selectedPricingTableItems}
+        onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+      />
+      <GoMakeDeleteModal
+        openModal={openDeleteRowModal}
+        onClose={onClickCloseDeleteRowModal}
+        // onClickDelete={() =>
+        //   quoteStateValue?.onClickDeleteContact(
+        //     quoteStateValue?.selectedContact
+        //   )
+        // }
       />
     </div>
   );
