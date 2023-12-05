@@ -2163,7 +2163,12 @@
     "mails": "إرسال البريد",
     "addNewAttachment": "إضافة مرفق جديد",
     "sendFrom": "إرسال من البريد الإلكتروني",
-    "noAttachment": "لا توجد مرفقات"
+    "noAttachment": "لا توجد مرفقات",
+    "selectLanguage": "اختر اللغة",
+    "language": "اللغة",
+    "changeLang": "تغيير اللغة",
+    "changeAnyway": "تغيير على أي حال",
+    "changeLangSubTitle": "قد قمت بإجراء تغييرات في محتوى المحرر. إذا كان الأمر كذلك، سيتم تجاهل هذه التغييرات إذا قررت متابعة وتغيير اللغة"
   },
   "partners": {
     "options": {

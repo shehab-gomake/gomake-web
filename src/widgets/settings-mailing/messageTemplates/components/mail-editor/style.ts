@@ -2,12 +2,9 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { convertHeightToVH } from "@/utils/adapter";
-import { useTranslation } from "react-i18next";
-
 
 const useStyle = () => {
     const { primaryColor, secondColor, neutralColor } = useGomakeTheme();
-
     const classes = useMemo(() => {
         return {
             iconStyle: {
@@ -21,6 +18,10 @@ const useStyle = () => {
                 backgroundColor: "#FFF",
                 border: "0px",
                 boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+            },
+            selectLanguageStyle: {
+                width: "170px",
+
             },
             containerStyle: {
                 display: "flex",
@@ -57,29 +58,26 @@ const useStyle = () => {
                 color: primaryColor(900),
                 width: "810px"
             },
-
             myEditorSubject: {
                 height: convertHeightToVH(150),
-                 borderRadius: "0px 0px 12px 12px",
-                 borderColor: "#9695C7",
-                 ...FONT_FAMILY.Lexend(400, 16),
-                 lineHeight: "20px",
-                 color: primaryColor(900),
+                borderRadius: "0px 0px 12px 12px",
+                borderColor: "#9695C7",
+                ...FONT_FAMILY.Lexend(400, 16),
+                lineHeight: "20px",
+                color: primaryColor(900),
             },
-
             myEditorBody: {
                 height: convertHeightToVH(300),
-                 borderRadius: "0px 0px 12px 12px",
-                 borderColor: "#9695C7",
-                 ...FONT_FAMILY.Lexend(400, 16),
-                 lineHeight: "20px",
-                 color: primaryColor(900),
+                borderRadius: "0px 0px 12px 12px",
+                borderColor: "#9695C7",
+                ...FONT_FAMILY.Lexend(400, 16),
+                lineHeight: "20px",
+                color: primaryColor(900),
             },
-            
             variableStyle: {
                 ...FONT_FAMILY.Lexend(400, 13),
                 display: "flex",
-                width: "110px",
+                width: "120px",
                 height: "24px",
                 borderRadius: "4px",
                 background: "#FFFFFF",
@@ -88,17 +86,17 @@ const useStyle = () => {
                 padding: "1px",
                 margin: "4px",
                 border: "1px solid rgb(130, 131, 190)",
+                alignItems: "center",
             },
             variablesContainer: {
-            paddingTop: "3px",
-                width: "780px",
+                paddingTop: "3px",
+                width: "100%",
             },
             footerStyle: {
                 display: "flex",
                 alignSelf: "flex-end",
                 gap: "10px",
             },
-
             switchStyle: {
                 display: "flex",
                 flexDirection: "row" as "row",
@@ -114,7 +112,6 @@ const useStyle = () => {
                 flexGrow: 0,
                 boxShadow: "0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06)",
             }
-
         };
     }, []);
     return {

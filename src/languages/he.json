@@ -2245,7 +2245,12 @@
     "mails": "משלוחי דואר",
     "addNewAttachment": "הוסף קובץ מצורף חדש",
     "sendFrom": "שלח מהדואר האלקטרוני",
-    "noAttachment": "אין קובץ מצורף"
+    "noAttachment": "אין קובץ מצורף",
+    "selectLanguage": "בחר שפה",
+    "language": "שפה",
+    "changeLang": "שנה שפה",
+    "changeAnyway": "שנה בכל זאת",
+    "changeLangSubTitle": "ייתכן וביצעת שינויים בתוכן העורך. אם כן, השינויים הללו יימחקו אם תמשיך ותשנה את השפה"
   },
   "partners": {
     "options": {

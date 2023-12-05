@@ -19,7 +19,7 @@ const AdditionSettingsWidget = ({ item }: any) => {
   const materialAdditionsStateValue = useRecoilValue<any>(
     materialAdditionsState
   );
-
+ 
   return (
     <>
       <IconWidget

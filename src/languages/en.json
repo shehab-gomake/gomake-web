@@ -1555,7 +1555,6 @@
     "quote": {
       "title": "Quote",
       "deliverOn": "Deliver on",
-      "dateOfReference": "Date of reference :",
       "upload": "upload",
       "businessCode": "Business code",
       "businessName": "Business name",
@@ -2029,6 +2028,7 @@
     "contacts": "Contacts",
     "email1": "Email 1",
     "email2": "Email 2",
+    "phone1": "Phone 1",
     "phone2": "Phone 2",
     "mobile": "Mobile",
     "country": "Country",
@@ -2345,7 +2345,12 @@
       "setsHour": "sets/hour"
     },
     "sendFrom": "Send From Email",
-    "noAttachment": "No Attachment"
+    "noAttachment": "No Attachment",
+    "selectLanguage" : "Select Language",
+    "language": "Language",
+    "changeLang" : "Change Language",
+    "changeAnyway" : "Change Anyway",
+    "changeLangSubTitle" :"You may have made changes to the editor content. If so, these changes will be discarded if you proceed to change the language"
   },
   "partners": {
     "options": {
