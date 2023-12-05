@@ -8,7 +8,7 @@ import { MuiColorInput } from 'mui-color-input';
 import { GoMakeFileFiled } from "../file-filed/file-filed";
 import { ImageUploadComponent } from "./image-input";
 import Stack from "@mui/material/Stack";
-import { Checkbox } from "@mui/material";
+import { Checkbox, Paper } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 
 const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
@@ -40,16 +40,9 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     changeState(input.parameterKey, event.target.checked);
   };
 
-
-
-
   const handleSelectCheck = (parameterKey: string, isChecked: boolean, option: any) => {
     changeState(parameterKey, isChecked ? [...values, option?.value] : values.filter(v => v !== option?.value));
   };
-
-
-
-
 
   useEffect(() => {
     const selectedValue = options?.find((option) => option.value === input.value);
@@ -139,6 +132,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
                     </Stack>
                   )
                 } : undefined}
+                PaperComponent={(props:any )=> <Paper style={{width: "180px"}} {...props}>{props?.children}</Paper>}
               />
             ) : input.type === "switch" ? (
               <SecondSwitch checked={!!input.value} onChange={handleSwitchCheck} />

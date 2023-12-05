@@ -24,12 +24,11 @@ const MultiSelectInput = ({ values, parameterKey, id }: IProps) => {
     }
 
     return (
-        <Stack
-        // width={"150px"} 
-        >        {
+        <>
+            {
                 multiSelectInput(state, machinesCategories, values).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} />)
-            }</Stack>
-
+            }
+        </>
     )
 }
 
