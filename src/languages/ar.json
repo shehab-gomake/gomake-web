@@ -2263,7 +2263,8 @@
     "inOutSource": "داخلي + تفويض",
     "workFlow": "تدفق العمل",
     "add": "إضافة",
-    "price": "السعر"
+    "price": "السعر",
+    "chooseWorkFlow": "حدد تدفق العمل"
   }
 
 }

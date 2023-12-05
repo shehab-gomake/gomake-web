@@ -1,5 +1,5 @@
 import {IOutput, IRectangle} from "@/widgets/product-pricing-widget/interface";
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {GoMakeModal} from "@/components";
 import {PrimaryButton} from "@/components/button/primary-button";
 import {IconButton, Stack} from "@mui/material";
@@ -8,8 +8,9 @@ import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 
 const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: IOutput) => {
     const [open, setOpen] = useState<boolean>(false);
+    const imageElement = useRef(null);
     const handleDownloadClick = () => {
-        const element = document.getElementById('png-content');
+        const element = imageElement?.current;
         if (element) {
             html2canvas(element).then(canvas => {
                 const dataUrl = canvas.toDataURL('image/png');
@@ -32,7 +33,7 @@ const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: 
                         <DownloadRoundedIcon/>
                     </IconButton>
                     <Stack  justifyContent={'center'} alignItems={'center'}>
-                        <div id="png-content" style={{
+                        <div ref={imageElement} style={{
                             width: `${materialWidth}px`,
                             height: `${materialLength}px`,
                             border: '1px solid black',
