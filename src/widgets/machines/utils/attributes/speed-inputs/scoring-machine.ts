@@ -3,7 +3,7 @@ import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const scoringMachine = (state: Record<string, any>) => {
     return [
-        ...maxSpeedInput(state, EMeasurementUnits.MINUTE),
+        ...maxSpeedInput(state, EMeasurementUnits.METER),
         {
             name: "unitDelay",
             label: "machineAttributes.unitDelay",
