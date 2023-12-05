@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { useStyle } from "./style";
 import {
-  AddPlusIcon,
   ArrowDownNewIcon,
   PlusIcon,
   UploadNewIcon,
@@ -9,7 +8,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { GomakePrimaryButton } from "@/components";
 import { OrderNowModal } from "@/widgets/quote/total-price-and-vat/order-now-modal";
-import { useTotalPriceAndVat } from "@/widgets/quote/total-price-and-vat/use-total-price-and-vat";
+import { useButtonsContainer } from "./use-buttons-container";
 
 const ButtonsContainer = ({
   onOpenNewItem,
@@ -18,9 +17,7 @@ const ButtonsContainer = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-
-
-  const { openOrderNowModal, onClickCloseOrderNowModal, onClickConfirmWithoutNotification, onClickOpenOrderNowModal, onClickConfirmWithNotification } = useTotalPriceAndVat();
+  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification } = useButtonsContainer();
 
   return (
     <div style={classes.writeCommentcontainer}>
@@ -83,7 +80,6 @@ const ButtonsContainer = ({
         <GomakePrimaryButton style={classes.btnOrderNowContainer} onClick={onClickOpenOrderNowModal}>
           {t("sales.quote.orderNowTitle")}
         </GomakePrimaryButton>
-
         <OrderNowModal
           openModal={openOrderNowModal}
           onClose={onClickCloseOrderNowModal}
