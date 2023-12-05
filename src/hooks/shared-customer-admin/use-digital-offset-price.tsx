@@ -219,6 +219,9 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             );
             setWorkFlowSelected(workFlowSelect);
             setDefaultPrice(workFlowSelect?.totalPrice);
+        } else {
+            setWorkFlowSelected({});
+            setDefaultPrice('-----');
         }
     }, [pricingDefaultValue, canCalculation]);
     useEffect(() => {
@@ -1120,6 +1123,8 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
 
 
     const calculationProduct = useCallback(async () => {
+        setWorkFlows([]);
+        setJobActions([]);
         let checkParameter = validateParameters(isRequiredParameters);
         if (!!checkParameter) {
             setLoading(true);
@@ -1137,7 +1142,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             );
             //Check it is work
             if (res?.success) {
-                setPricingDefaultValue(res?.data?.data?.data);
+                // setPricingDefaultValue(res?.data?.data?.data);
                 setWorkFlows(
                     res?.data?.data?.data?.workFlows?.map((flow, index) => ({
                         id: index.toString(),

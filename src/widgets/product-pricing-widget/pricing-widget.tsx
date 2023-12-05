@@ -26,6 +26,11 @@ const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps
     useEffect(() => {
         getOutSourcingSuppliers();
     }, [])
+    useEffect(() => {
+        if (!selectedWorkFlow) {
+            setView(EPricingViews.OUTSOURCE_WORKFLOW);
+        }
+    }, [selectedWorkFlow])
     return (
         <Stack gap={'16px'} width={'100%'}>
             <Stack direction={"row"} justifyContent={'space-between'}>
@@ -33,10 +38,11 @@ const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps
                     <PrimaryButton onClick={() => setView(EPricingViews.SELECTED_WORKFLOW)} sx={classes.button}
                                    variant={view === EPricingViews.SELECTED_WORKFLOW ? 'contained' : 'outlined'}>{t('pricingWidget.selected')}</PrimaryButton>
                     <PrimaryButton onClick={() => setView(EPricingViews.OTHERS_WORKFLOWS)} sx={classes.button}
-                                   variant={view === EPricingViews.OTHERS_WORKFLOWS ? 'contained' : 'outlined'}>{t('pricingWidget.others')}</PrimaryButton>
+                                   variant={view === EPricingViews.OTHERS_WORKFLOWS ? 'contained' : 'outlined'}>{`${t('pricingWidget.others')} (${workFlows?.length})`}</PrimaryButton>
 
                 </ButtonGroup> : <div/>}
                 <InOutSourceSelect onChange={(v: EWorkSource) => setView(v === EWorkSource.OUT ? EPricingViews.OUTSOURCE_WORKFLOW : EPricingViews.SELECTED_WORKFLOW)}
+                                   disabled={!selectedWorkFlow}
                                    withPartially={selectedWorkFlow?.actions?.some(action => action.source === EWorkSource.OUT)}
                                    value={view ===  EPricingViews.OUTSOURCE_WORKFLOW? EWorkSource.OUT : EWorkSource.INTERNAL}/>
             </Stack>

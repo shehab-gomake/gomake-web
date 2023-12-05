@@ -106,7 +106,7 @@ const ActionContainerComponent = ({
             <Stack onClick={() => setIsOpen(!isOpen)}
                    style={{...classes.actionContainer, border: isOpen ? classes.actionContainerBorder : 'unset'}}>
                 <Stack padding={'10px 0'} direction={'row'} justifyContent={'space-between'}>
-                    <Stack direction={'row'} gap={'16px'} alignItems={'center'}>
+                    <Stack direction={'row'} gap={'16px'} alignItems={'center'} flexWrap={'wrap'}>
                         <Stack style={classes.sectionTitle} direction={'row'} alignItems={'center'} gap={'10px'}>
                             <span>{actionName}</span>
                             {

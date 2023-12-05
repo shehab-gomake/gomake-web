@@ -9,6 +9,7 @@ import { EWidgetProductType } from "../enums";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { exampleTypeState } from "@/store/example-type";
+import {DotsLoader} from "@/components/dots-loader/dots-Loader";
 
 const RightSideWidget = ({
   clasess,
@@ -151,10 +152,10 @@ const RightSideWidget = ({
           </div>
           <div style={clasess.totalStyle}>
             {isLoading ? (
-              <CircularProgress size={25} style={{ marginRight: 40 }} />
+              <DotsLoader/>
             ) : (
               <GomakeTextInput
-                value={defaultPrice?.values && defaultPrice?.values?.length ? defaultPrice?.values[0] : ''}
+                value={defaultPrice?.values && defaultPrice?.values?.length ? defaultPrice?.values[0] : '-----'}
                 onChange={(e: any) => {
                   setPriceRecovery(false);
                   setDefaultPrice(e.target.value);
@@ -162,9 +163,9 @@ const RightSideWidget = ({
                 }}
                 style={clasess.inputPriceStyle}
               />
-            )}{" "}
-            USD
+            )}
           </div>
+          <span style={clasess.totalStyle}>USD</span>
         </div>
         {widgetType === EWidgetProductType.EDIT ? (
           <div style={clasess.priceRecoveryContainer}>
