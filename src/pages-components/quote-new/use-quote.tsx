@@ -176,10 +176,6 @@ const useQuoteNew = () => {
     setIsUpdateAgent(null);
   };
 
-
- 
-
-
   const getAllEmployees = useCallback(async () => {
     await getAndSetAllEmployees(callApi, setAgentListValue, {
       isAgent: true,

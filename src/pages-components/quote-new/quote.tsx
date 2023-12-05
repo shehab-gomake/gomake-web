@@ -128,7 +128,8 @@ const QuoteNewPageWidget = () => {
     onClickCancelOffer,
     updateCancelQuote,
     onClickSendQuoteToClient,
-    onChangeSelectBusiness
+    onChangeSelectBusiness,
+    
   } = useQuoteNew();
   
   const quoteItemValue = useRecoilValue<any>(quoteItemState);

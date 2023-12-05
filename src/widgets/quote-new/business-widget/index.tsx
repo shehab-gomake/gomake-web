@@ -6,8 +6,9 @@ import { GoMakeAutoComplate } from "@/components/auto-complete";
 import { useRecoilValue } from "recoil";
 import { businessListsState } from "@/store/business-list";
 import { quoteItemState } from "@/store/quote-item";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
+import { GoMakeAlertModal } from "@/components/modal/alert-modal";
 
 const BusinessNewWidget = ({
   values,
@@ -26,7 +27,6 @@ const BusinessNewWidget = ({
   isUpdateAgent,
   setIsUpdateAgent,
   updateAgent,
-
   onChangeSelectBusiness,
   onBlurBusinessName,
   isUpdateBusinessName,
@@ -40,12 +40,21 @@ const BusinessNewWidget = ({
     text: customer?.name,
     id: customer?.id
   }));
-
+  // const [openAlertModal, setOpenAlertModal] = useState(false);
+  // const [client, setClient] = useState();
+  // const onCloseAlertModal = () => {
+  //   setOpenAlertModal(false);
+  // };
+  // const onOpenAlertModal = (value:any) => {
+  //   setOpenAlertModal(true);
+  //   setClient(value);
+  // };
+ 
   return (
     <>
       <div style={classes.businessContainerStyle}>
-        {/* <h3 style={classes.labelStyle}>{t("sales.quote.businessName")}</h3> */}
-        {/* <GoMakeAutoComplate
+        {/* <h3 style={classes.labelStyle}>{t("sales.quote.businessName")}</h3>
+        <GoMakeAutoComplate
           options={renderOptions()}
           style={classes.autoCompleteStyle}
           key={quoteStateValue?.client?.name}
@@ -54,8 +63,7 @@ const BusinessNewWidget = ({
           getOptionLabel={(item) => item?.name}
           onChangeTextField={checkWhatRenderArray}
           disableClearable={true}
-         // onChange={(e: any, value: any)=>onChangeSelectBusiness(value)}
-          onChange={(e: any, value: any)=>alert(value?.id)}
+          onChange={(e: any, value: any)=>onOpenAlertModal(value)}
         /> */}
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
@@ -106,6 +114,14 @@ const BusinessNewWidget = ({
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => updateAgent(value)}
         />
+        {/* <GoMakeAlertModal 
+        title={t("Change client")}
+        openModal={openAlertModal}
+        onClose={onCloseAlertModal}
+        subTitle={t("Are you sure to change client")}
+        onClickConfirm={()=>{onChangeSelectBusiness(client).then(setOpenAlertModal(false)); }}
+        >
+        </GoMakeAlertModal> */}
       </div>
     </>
   );
