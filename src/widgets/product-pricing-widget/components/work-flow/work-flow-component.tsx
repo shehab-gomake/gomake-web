@@ -70,7 +70,7 @@ const WorkFlowComponent = ({
                     ...classes.workFlowContainer,
                     border: selected ? classes.actionContainerBorder : 'unset'
                 }}>
-                    <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
+                    <Stack direction={'row'} gap={'10px'} alignItems={'center'} flexWrap={'wrap'}>
                         <span>{`${t('pricingWidget.workFlow')} ${index}`}</span>
                         <Divider orientation={'vertical'} flexItem/>
                         <ParametersMapping parameters={parameters}/>
@@ -81,9 +81,9 @@ const WorkFlowComponent = ({
                             <WorkflowRateComponent label={t('pricingWidget.endTime')} value={recommendationRang.deliveryTime}/>
                         </Stack>
                     </Stack>
-                    <Stack direction={'row'} gap={'12px'}>
+                    <Stack direction={'row'} gap={'12px'} flexWrap={'nowrap'} minWidth={'fit-content'}>
                         <PrimaryButton onClick={handleSelectWorkFlow}
-                                       variant={selected ? 'text' : 'contained'}>{selected ? 'Selected' : 'Choose work flow'}</PrimaryButton>
+                                       variant={selected ? 'text' : 'contained'}>{selected ? t('pricingWidget.selected') : t('pricingWidget.chooseWorkFlow')}</PrimaryButton>
                         <IconButton onClick={() => setIsOpen(!isOpen)} style={classes.toggleActionButton}>
                             {isOpen ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
                         </IconButton>
