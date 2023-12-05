@@ -82,7 +82,9 @@ export interface IOutput {
     htmlElementType: HtmlElementType;
     isEditable: boolean;
     outSourceValues: string[];
-
+    materialWidth: number;
+    materialLength: number;
+    rectangles: IRectangle[];
 }
 
 export interface IOutSourceSupplier {
@@ -93,4 +95,11 @@ export interface IOutSourceSupplier {
     profit: number;
     workHours: number;
     status: EOutsourceSupplierStatus;
+}
+
+export interface IRectangle {
+    x: number;
+    y: number;
+    width: number;
+    length: number;
 }
