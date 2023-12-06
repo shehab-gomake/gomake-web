@@ -28,7 +28,7 @@ const useStyle = () => {
       labelStyle: {
         ...FONT_FAMILY.Lexend(400, 14),
         color: grayColor(500),
-      },
+      }
     };
   }, []);
   return {

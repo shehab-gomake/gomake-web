@@ -2,8 +2,12 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
+import { AddressModal } from "./address-modal/address-modal";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store";
+import { addressModalState } from "./address-modal/state";
 
 const BusinessNewWidget = ({
   values,
@@ -38,7 +42,6 @@ const BusinessNewWidget = ({
     id: customer?.id
   }));
 
-  // const quoteStateValue = useRecoilValue<any>(quoteItemState);
   // const [openAlertModal, setOpenAlertModal] = useState(false);
   // const [client, setClient] = useState();
   // const onCloseAlertModal = () => {
@@ -48,6 +51,8 @@ const BusinessNewWidget = ({
   //   setOpenAlertModal(true);
   //   setClient(value);
   // };
+
+  const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
 
   return (
     <>
@@ -89,17 +94,18 @@ const BusinessNewWidget = ({
           onBlur={onBlurBusinessCode}
           setIsUpdate={setIsUpdateBusinessCode}
         />
-        {values?.quoteAddresses?.length > 0 && (
-          <InputUpdatedValues
-            value={`${values?.quoteAddresses[0]?.street} ${values?.quoteAddresses[0]?.apartment}, ${values?.quoteAddresses[0]?.city} `}
-            label={t("customers.modal.address")}
-            isAnderLine={true}
-            onBlur={onBlurAddress}
-            isUpdate={isUpdateAddress}
-            setIsUpdate={setIsUpdateAddress}
-          />
-        )}
-        <AutoCompleteUpdatedValue
+        <InputUpdatedValues
+          value={values?.quoteAddresses?.length > 0 ? `${values?.quoteAddresses[0]?.street} ${values?.quoteAddresses[0]?.apartment}, ${values?.quoteAddresses[0]?.city}` : "no address found"}
+          label={t("customers.modal.address")}
+          isUnderLine={true}
+          onBlur={onBlurAddress}
+          isUpdate={false}
+          setIsUpdate={setIsUpdateAddress}
+          flag={true}
+          onClickFlag={() => setOpenModal(true)}
+        />
+
+        {/* <AutoCompleteUpdatedValue
           label={t("sales.quote.agent")}
           value={selectedAgent?.text}
           options={agentListValue}
@@ -108,7 +114,7 @@ const BusinessNewWidget = ({
           setIsUpdate={setIsUpdateAgent}
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => updateAgent(value)}
-        />
+        /> */}
         {/* <GoMakeAlertModal 
         title={t("Change client")}
         openModal={openAlertModal}
@@ -117,6 +123,7 @@ const BusinessNewWidget = ({
         onClickConfirm={()=>{onChangeSelectBusiness(client).then(setOpenAlertModal(false)); }}
         >
         </GoMakeAlertModal> */}
+        <AddressModal />
       </div>
     </>
   );

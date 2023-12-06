@@ -1680,7 +1680,16 @@
       "attachFiles": "Attach Files",
       "copyTo": "Copy to",
       "managerApproval": "Manager Approval",
-      "dateOfReference" :"Date Of Reference"
+      "dateOfReference" :"Date Of Reference",
+      "addressLine1": "Address Line 1",
+      "addressLine2": "Address Line 2",
+      "enterYourAddress":"Enter Your Address",
+      "country":"Country",
+      "selectYourCountry":"Select Your Country",
+      "selectYourCity":"Select Your City",
+      "zipCode": "Zip Code",
+      "enterYourZipCode":"Enter Your ZipCode",
+      "save": "Save"
     }
   },
   "usersSettings": {

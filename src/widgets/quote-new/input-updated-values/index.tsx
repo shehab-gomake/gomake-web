@@ -6,14 +6,16 @@ import { IBusinessWidget } from "@/interfaces";
 const InputUpdatedValues = ({
   label,
   value,
-  isAnderLine,
+  isUnderLine,
   onBlur,
   isUpdate,
   setIsUpdate,
   onInputChange,
   speicalStyle,
+  onClickFlag,
+  flag
 }: IBusinessWidget) => {
-  const { clasess } = useStyle({ isAnderLine });
+  const { clasess } = useStyle({ isUnderLine });
   const [updateValue, setUpdateValue] = useState();
   useEffect(() => {
     setUpdateValue(value);
@@ -30,12 +32,13 @@ const InputUpdatedValues = ({
             onCancel={() => setIsUpdate(null)}
             onUpdate={() => onBlur().then()}
             value={updateValue}
+            
           />
         ) : (
           <div
             style={{ ...clasess.inputTextStyle, ...speicalStyle }}
             className="customInput"
-            onClick={() => setIsUpdate(1)}
+            onClick={flag ? onClickFlag : () => setIsUpdate(1)}
           >
             {value}
           </div>
