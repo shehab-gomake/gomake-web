@@ -11,7 +11,7 @@ const useButtonsContainer = () => {
     const { callApi } = useGomakeAxios();
     const quoteItemValue: any = useRecoilValue(quoteItemState);
     const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
-    const {alertSuccessUpdate,alertFaultUpdate,} = useSnackBar();
+    const { alertSuccessUpdate, alertFaultUpdate , alertRequiredFields } = useSnackBar();
 
     const onClickOpenOrderNowModal = () => {
         setOpenOrderNowModal(true);
@@ -54,12 +54,33 @@ const useButtonsContainer = () => {
         }
     }, [quoteItemValue]);
 
+    const onClickPrint = useCallback(async () => {
+        const res = await callApi(
+            EHttpMethod.GET,
+            `/v1/erp-service/quote/get-quote-pdf`,
+            {
+                quoteId: quoteItemValue?.id,
+            }
+        );
+        if (res?.success) {
+            const pdfLink = res.data.data.data;
+            //  window.open(pdfLink, "_blank");
+            const anchor = document.createElement('a');
+            anchor.href = pdfLink;
+            anchor.target = '_blank';
+            anchor.click();
+        } else {
+            alertRequiredFields();
+        }
+    }, [quoteItemValue]);
+
     return {
         openOrderNowModal,
         onClickConfirmWithoutNotification,
         onClickConfirmWithNotification,
         onClickOpenOrderNowModal,
         onClickCloseOrderNowModal,
+        onClickPrint,
         t,
     };
 };

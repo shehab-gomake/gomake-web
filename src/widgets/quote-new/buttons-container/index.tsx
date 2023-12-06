@@ -9,6 +9,8 @@ import { useTranslation } from "react-i18next";
 import { GomakePrimaryButton } from "@/components";
 import { OrderNowModal } from "@/widgets/quote/total-price-and-vat/order-now-modal";
 import { useButtonsContainer } from "./use-buttons-container";
+import { useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store";
 
 const ButtonsContainer = ({
   onOpenNewItem,
@@ -17,7 +19,7 @@ const ButtonsContainer = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification } = useButtonsContainer();
+  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification , onClickPrint } = useButtonsContainer();
 
   return (
     <div style={classes.writeCommentcontainer}>
@@ -62,9 +64,13 @@ const ButtonsContainer = ({
         >
           {t("login.send")}
         </GomakePrimaryButton>
-        <GomakePrimaryButton style={classes.btnSecondContainer}>
+        <GomakePrimaryButton
+         style={classes.btnSecondContainer}
+         onClick={onClickPrint}
+         >
           {t("sales.quote.print")}
         </GomakePrimaryButton>
+
         <GomakePrimaryButton
           style={classes.btnSecondContainer}
           onClick={handleCancelBtnClick}
