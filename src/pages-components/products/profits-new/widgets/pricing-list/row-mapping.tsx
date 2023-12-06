@@ -6,6 +6,7 @@ import { usePriceList } from "./use-pricing-list";
 import { PricingListTableRowProps } from "../../interface";
 import { ChangeEvent } from "react";
 import { EPricingBy } from "../../enums/profites-enum";
+import { MoreCircleIcon } from "@/icons";
 
 const RowMappingWidget = ({
   item,
@@ -13,6 +14,8 @@ const RowMappingWidget = ({
   changeactionProfitRowsItems,
   updateActionProfitRow,
   selectedPricingBy,
+  handleClickMorePriceTable,
+  setSelectedActionProfit,
 }: PricingListTableRowProps) => {
   const { clasess } = useStyle();
   const {
@@ -96,14 +99,21 @@ const RowMappingWidget = ({
         </div>
       </PrimaryTableCell>
 
-      <PrimaryTableCell
-        style={{
-          ...clasess.cellContainerStyle,
-          color: "#8283BE",
-          cursor: "pointer",
-        }}
-      >
-        Edit
+      <PrimaryTableCell style={clasess.cellContainerStyle}>
+        <div
+          onClick={(e) => {
+            handleClickMorePriceTable(e);
+            setSelectedActionProfit(item);
+          }}
+          style={{
+            cursor: "pointer",
+            display: "flex",
+            justifyContent: "center",
+            alignSelf: "flex-start",
+          }}
+        >
+          <MoreCircleIcon />
+        </div>
       </PrimaryTableCell>
     </TableRow>
   );

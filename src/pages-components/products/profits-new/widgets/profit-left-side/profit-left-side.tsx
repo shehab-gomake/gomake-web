@@ -19,6 +19,12 @@ const ProfitLeftSideWidget = ({
   changeactionProfitRowsItems,
   addNewStepForActionProfitRow,
   updateActionProfitRow,
+  anchorElMorePriceTable,
+  openMorePriceTable,
+  handleClickMorePriceTable,
+  handleCloseMorePriceTable,
+  selectedActionProfitRow,
+  setSelectedActionProfit,
 }: ProfitLeftSideProps) => {
   const { clasess } = useStyle();
   return (
@@ -36,6 +42,12 @@ const ProfitLeftSideWidget = ({
         setSelectedTransition={setSelectedTransition}
         onOpenAddStepModal={onOpenAddStepModal}
         updateActionProfitRow={updateActionProfitRow}
+        anchorElMorePriceTable={anchorElMorePriceTable}
+        openMorePriceTable={openMorePriceTable}
+        handleClickMorePriceTable={handleClickMorePriceTable}
+        handleCloseMorePriceTable={handleCloseMorePriceTable}
+        selectedActionProfitRow={selectedActionProfitRow}
+        setSelectedActionProfit={setSelectedActionProfit}
       />
       <AddStepModal
         openModal={openAddStepModal}

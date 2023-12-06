@@ -26,6 +26,12 @@ const ProfitsNewPageWidget = () => {
     selectedPricingTableItems,
     dataForExceptions,
     dataForPricing,
+    anchorElMorePriceTable,
+    openMorePriceTable,
+    selectedActionProfitRow,
+    setSelectedActionProfit,
+    handleClickMorePriceTable,
+    handleCloseMorePriceTable,
     onDragEnd,
     setSelectedPricingTableItems,
     handleClickPricingTablesMapping,
@@ -67,6 +73,12 @@ const ProfitsNewPageWidget = () => {
           changeactionProfitRowsItems={changeactionProfitRowsItems}
           addNewStepForActionProfitRow={addNewStepForActionProfitRow}
           updateActionProfitRow={updateActionProfitRow}
+          anchorElMorePriceTable={anchorElMorePriceTable}
+          openMorePriceTable={openMorePriceTable}
+          handleClickMorePriceTable={handleClickMorePriceTable}
+          handleCloseMorePriceTable={handleCloseMorePriceTable}
+          selectedActionProfitRow={selectedActionProfitRow}
+          setSelectedActionProfit={setSelectedActionProfit}
         />
         <ProfitRightSideWidget
           minimumValue={minimumValue}

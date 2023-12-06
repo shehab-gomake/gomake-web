@@ -34,7 +34,8 @@ const usePriceList = ({
   const onBlurProfit = async (item) => {
     updateActionProfitRow({
       ...item,
-      totalPrice: (item?.value * (1 + profit)) / 100,
+      // totalPrice: (item?.value * (1 + profit)) / 100,
+      totalPrice: profit * (item?.value / 100) + item?.value,
     });
     setIsUpdateProfit(null);
   };

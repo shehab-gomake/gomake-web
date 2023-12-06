@@ -4,6 +4,7 @@ import { LineChart } from "@/pages-components/products/profits/widgets/line-char
 import { PricingListTable } from "./pricing-list-table";
 import { useStyle } from "./style";
 import { PricingListProps } from "../../interface";
+import { MoreMenuWidget } from "./more-menu";
 
 const PricingList = ({
   tableHeaders,
@@ -18,6 +19,12 @@ const PricingList = ({
   changeactionProfitRowsItems,
   onOpenAddStepModal,
   updateActionProfitRow,
+  anchorElMorePriceTable,
+  openMorePriceTable,
+  handleClickMorePriceTable,
+  handleCloseMorePriceTable,
+  selectedActionProfitRow,
+  setSelectedActionProfit,
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -53,6 +60,12 @@ const PricingList = ({
         onOpenAddStepModal={onOpenAddStepModal}
         updateActionProfitRow={updateActionProfitRow}
         selectedPricingBy={selectedPricingBy}
+        handleClickMorePriceTable={handleClickMorePriceTable}
+        handleCloseMorePriceTable={handleCloseMorePriceTable}
+        anchorElMorePriceTable={anchorElMorePriceTable}
+        openMorePriceTable={openMorePriceTable}
+        selectedActionProfitRow={selectedActionProfitRow}
+        setSelectedActionProfit={setSelectedActionProfit}
       />
       <div style={clasess.chartContainer}>
         <LineChart actionProfitRowChartData={actionProfitRowChartData} />

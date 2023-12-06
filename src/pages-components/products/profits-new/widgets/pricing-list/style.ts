@@ -136,7 +136,6 @@ const useStyle = () => {
         height: 40,
         background: "#FFFF",
         color: "white",
-        width: "25%",
       },
       tableHeaderStyle: {
         color: "#B5B7C0",
@@ -144,7 +143,6 @@ const useStyle = () => {
         backgroundColor: "inherit",
         ...FONT_FAMILY.Inter(500, 14),
         borderBottom: "none",
-        width: "25%",
       },
       tableHeaderStyle2: {
         color: "#2E3092",
@@ -152,13 +150,11 @@ const useStyle = () => {
         backgroundColor: "inherit",
         ...FONT_FAMILY.Inter(500, 14),
         borderBottom: "none",
-        width: "25%",
       },
       cellContainerStyle: {
         textAlign: "center" as "center",
         color: "#090A1D",
         ...FONT_FAMILY.Lexend(400, 14),
-        width: "25%",
       },
       cellTextInputStyle: {
         display: "flex",
@@ -176,6 +172,10 @@ const useStyle = () => {
         maxHeight: 300,
         minWidth: "100%",
         width: "100%",
+      },
+      menuItemStyle: {
+        ...FONT_FAMILY.Lexend(500, 10),
+        color: primaryColor(300),
       },
     };
   }, []);

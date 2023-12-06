@@ -13,6 +13,9 @@ import {
 import { RowMappingWidget } from "./row-mapping";
 import { Plus } from "@/pages-components/products/profits/widgets/pricing-list/icons/plus";
 import { PricingListTableProps } from "../../interface";
+import { MoreMenuWidget } from "./more-menu";
+import { GoMakeDeleteModal } from "@/components";
+import { useState } from "react";
 
 const PrimaryTableCell = styled(TableCell)(() => {
   return {
@@ -24,6 +27,7 @@ const PrimaryTableCell = styled(TableCell)(() => {
     },
   };
 });
+
 const PricingListTable = ({
   tableHeaders,
   tableBodyList,
@@ -31,9 +35,23 @@ const PricingListTable = ({
   onOpenAddStepModal,
   updateActionProfitRow,
   selectedPricingBy,
+  anchorElMorePriceTable,
+  openMorePriceTable,
+  handleClickMorePriceTable,
+  handleCloseMorePriceTable,
+  selectedActionProfitRow,
+  setSelectedActionProfit,
 }: PricingListTableProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
+  const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
+  const onClickOpenDeleteRowModal = () => {
+    setOpenDeleteRowModal(true);
+  };
+  const onClickCloseDeleteRowModal = () => {
+    setOpenDeleteRowModal(false);
+  };
+
   return (
     <>
       <TableContainer
@@ -71,6 +89,8 @@ const PricingListTable = ({
                   changeactionProfitRowsItems={changeactionProfitRowsItems}
                   updateActionProfitRow={updateActionProfitRow}
                   selectedPricingBy={selectedPricingBy}
+                  handleClickMorePriceTable={handleClickMorePriceTable}
+                  setSelectedActionProfit={setSelectedActionProfit}
                 />
               );
             })}
@@ -81,6 +101,22 @@ const PricingListTable = ({
         <Plus />
         {t("products.profits.pricingListWidget.addNewStep")}
       </div>
+      <MoreMenuWidget
+        handleClose={handleCloseMorePriceTable}
+        open={openMorePriceTable}
+        anchorEl={anchorElMorePriceTable}
+        selectedActionProfitRow={selectedActionProfitRow}
+        onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+      />
+      <GoMakeDeleteModal
+        openModal={openDeleteRowModal}
+        onClose={onClickCloseDeleteRowModal}
+        // onClickDelete={() =>
+        //   quoteStateValue?.onClickDeleteContact(
+        //     quoteStateValue?.selectedContact
+        //   )
+        // }
+      />
     </>
   );
 };

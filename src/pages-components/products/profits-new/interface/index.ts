@@ -19,6 +19,14 @@ export type ActionProfit = {
   recordID: number;
 };
 
+export type ActionProfitRow = {
+  actionProfitId: string;
+  id: string;
+  pricingBy: number;
+  totalPrice: number;
+  value: number;
+};
+
 export type ProfitsPricingTables = {
   description: string;
   exceptionType: number;
@@ -51,6 +59,12 @@ export type PricingListProps = {
   ) => void;
   onOpenAddStepModal: () => void;
   updateActionProfitRow: (data: any) => void;
+  anchorElMorePriceTable?: null | HTMLElement;
+  openMorePriceTable?: boolean;
+  handleClickMorePriceTable?: (e) => void;
+  handleCloseMorePriceTable?: () => void;
+  selectedActionProfitRow: ActionProfitRow;
+  setSelectedActionProfit?: (value: any) => void;
 };
 export type PricingListTableProps = {
   tableHeaders: string[];
@@ -63,6 +77,12 @@ export type PricingListTableProps = {
   onOpenAddStepModal: () => void;
   updateActionProfitRow: (data: any) => void;
   selectedPricingBy: SelectedPricingByType;
+  anchorElMorePriceTable?: null | HTMLElement;
+  openMorePriceTable?: boolean;
+  handleClickMorePriceTable?: (e) => void;
+  handleCloseMorePriceTable?: () => void;
+  selectedActionProfitRow: ActionProfitRow;
+  setSelectedActionProfit?: (value: any) => void;
 };
 export type PricingListTableRowProps = {
   item: any;
@@ -74,6 +94,11 @@ export type PricingListTableRowProps = {
   ) => void;
   updateActionProfitRow: (data: any) => void;
   selectedPricingBy: SelectedPricingByType;
+  anchorElMorePriceTable?: null | HTMLElement;
+  openMorePriceTable?: boolean;
+  handleClickMorePriceTable?: (e) => void;
+  handleCloseMorePriceTable?: () => void;
+  setSelectedActionProfit?: (value: any) => void;
 };
 export type LineChartProps = {
   actionProfitRowChartData: ActionProfitRowChartData;
@@ -127,4 +152,10 @@ export type ProfitLeftSideProps = {
   addNewStepForActionProfitRow: (value: number, totalPrice: number) => void;
   openAddStepModal: boolean;
   onCloseAddStepModal: () => void;
+  anchorElMorePriceTable?: null | HTMLElement;
+  openMorePriceTable?: boolean;
+  handleClickMorePriceTable?: (e) => void;
+  handleCloseMorePriceTable?: () => void;
+  selectedActionProfitRow: ActionProfitRow;
+  setSelectedActionProfit?: (value: any) => void;
 };

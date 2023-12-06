@@ -373,6 +373,17 @@ const useNewProfits = () => {
     setDataForPricing(newData);
     reOrderPricingTables(transformedArray);
   };
+
+  const [anchorElMorePriceTable, setAnchorElMorePriceTable] =
+    useState<null | HTMLElement>(null);
+  const openMorePriceTable = Boolean(anchorElMorePriceTable);
+  const handleClickMorePriceTable = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElMorePriceTable(event.currentTarget);
+  };
+  const handleCloseMorePriceTable = () => {
+    setAnchorElMorePriceTable(null);
+  };
+  const [selectedActionProfitRow, setSelectedActionProfit] = useState();
   return {
     allActionProfitRowsByActionId,
     actionProfitRowChartData,
@@ -395,6 +406,12 @@ const useNewProfits = () => {
     openPricingTablesMapping,
     dataForExceptions,
     dataForPricing,
+    anchorElMorePriceTable,
+    openMorePriceTable,
+    selectedActionProfitRow,
+    setSelectedActionProfit,
+    handleClickMorePriceTable,
+    handleCloseMorePriceTable,
     onDragEnd,
     setSelectedPricingTableItems,
     handleClickPricingTables,
