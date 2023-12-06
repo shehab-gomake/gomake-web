@@ -2,20 +2,15 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { useTranslation } from "react-i18next";
-import { GoMakeAutoComplate } from "@/components/auto-complete";
-import { useRecoilValue } from "recoil";
-import { businessListsState } from "@/store/business-list";
-import { quoteItemState } from "@/store/quote-item";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
-import { GoMakeAlertModal } from "@/components/modal/alert-modal";
 
 const BusinessNewWidget = ({
   values,
   selectBusiness,
-  onBlurPurchaseNumer,
-  isUpdatePurchaseNumer,
-  setIsUpdatePurchaseNumer,
+  onBlurPurchaseNumber,
+  isUpdatePurchaseNumber,
+  setIsUpdatePurchaseNumber,
   onBlurBusinessCode,
   setIsUpdateBusinessCode,
   onBlurAddress,
@@ -31,10 +26,13 @@ const BusinessNewWidget = ({
   onBlurBusinessName,
   isUpdateBusinessName,
   setIsUpdateBusinessName,
+  updatePurchaseNumber
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
+  const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
+
   const mappedCustomers = renderOptions().map(customer => ({
     text: customer?.name,
     id: customer?.id
@@ -50,7 +48,7 @@ const BusinessNewWidget = ({
   //   setOpenAlertModal(true);
   //   setClient(value);
   // };
- 
+
   return (
     <>
       <div style={classes.businessContainerStyle}>
@@ -78,16 +76,12 @@ const BusinessNewWidget = ({
           onChangeTextField={checkWhatRenderArray}
         />
         <InputUpdatedValues
-          value={
-            values?.purchaseNumber !== null
-              ? `${values?.purchaseNumber}`
-              : t("sales.quote.noPurchaseNumber")
-          }
+          value={purchaseNumber}
           label={t("sales.quote.purchaseNumber")}
-          onBlur={onBlurPurchaseNumer}
-          isUpdate={isUpdatePurchaseNumer}
-          setIsUpdate={setIsUpdatePurchaseNumer}
-          onInputChange={(e) => console.log("ddff")}
+          onBlur={() => onBlurPurchaseNumber(purchaseNumber)}
+          isUpdate={isUpdatePurchaseNumber}
+          setIsUpdate={setIsUpdatePurchaseNumber}
+          onInputChange={(v) => setPurchaseNumber(v)}
         />
         <InputUpdatedValues
           value={`${selectBusiness?.code}`}

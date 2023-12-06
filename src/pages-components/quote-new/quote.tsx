@@ -29,7 +29,7 @@ const QuoteNewPageWidget = () => {
     selectDate,
     selectBusiness,
     isUpdateBusinessName,
-    isUpdatePurchaseNumer,
+    isUpdatePurchaseNumber,
     isUpdateAddress,
     selectedAgent,
     agentListValue,
@@ -90,10 +90,10 @@ const QuoteNewPageWidget = () => {
     setIsUpdateBusinessName,
     setSelectBusiness,
     setIsUpdateAddress,
-    setIsUpdatePurchaseNumer,
+    setIsUpdatePurchaseNumber,
     setIsUpdateBusinessCode,
     onBlurBusinessName,
-    onBlurPurchaseNumer,
+    onBlurPurchaseNumber,
     onBlurBusinessCode,
     onBlurAddress,
     onBlurAgent,
@@ -129,6 +129,7 @@ const QuoteNewPageWidget = () => {
     updateCancelQuote,
     onClickSendQuoteToClient,
     onChangeSelectBusiness,
+    updatePurchaseNumber
     
   } = useQuoteNew();
   
@@ -197,9 +198,9 @@ const QuoteNewPageWidget = () => {
                   onBlurBusinessName={onBlurBusinessName}
                   isUpdateBusinessName={isUpdateBusinessName}
                   setIsUpdateBusinessName={setIsUpdateBusinessName}
-                  onBlurPurchaseNumer={onBlurPurchaseNumer}
-                  isUpdatePurchaseNumer={isUpdatePurchaseNumer}
-                  setIsUpdatePurchaseNumer={setIsUpdatePurchaseNumer}
+                  onBlurPurchaseNumber={onBlurPurchaseNumber}
+                  isUpdatePurchaseNumber={isUpdatePurchaseNumber}
+                  setIsUpdatePurchaseNumber={setIsUpdatePurchaseNumber}
                   onBlurBusinessCode={onBlurBusinessCode}
                   setIsUpdateBusinessCode={setIsUpdateBusinessCode}
                   onBlurAddress={onBlurAddress}
@@ -212,6 +213,7 @@ const QuoteNewPageWidget = () => {
                   setIsUpdateAgent={setIsUpdateAgent}
                   updateAgent={updateAgent}
                   onChangeSelectBusiness={onChangeSelectBusiness}
+                  updatePurchaseNumber={updatePurchaseNumber}
                 />
                 <ContactNewWidget
                   handleShowLess={handleShowLess}
