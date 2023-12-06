@@ -49,6 +49,7 @@ export interface IMachineInputContainer {
   updateState: (key: string, value: any) => void;
   error: boolean;
   newValue?: (key, value) => void;
+  updateValues?: boolean;
 }
 
 export type TMachineInput = IMachineMultiInput | IInput | IMachineMultiArrayInput;

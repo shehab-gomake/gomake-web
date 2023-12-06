@@ -22,7 +22,7 @@ const useMachinesColors = () => {
     const colorManufacturers = useMemo(() => {
         const color = colors?.find(c => c.colorName === selectedColor)
         if (color) {
-            return color.manufacturers
+            return color.manufacturers;
         }
         return [];
     }, [selectedColor, colors])
@@ -32,7 +32,7 @@ const useMachinesColors = () => {
                 setColors(res?.data)
             }
         }
-        await getPrintHouseMachineColors(callApi,callBack, machineState?.id ).then()
+        await getPrintHouseMachineColors(callApi,callBack, machineState?.id ).then();
 
     }
     // 64cabbb5af8e85619868a453
@@ -71,6 +71,7 @@ const PrintingColors = ({}: IStepFormProps) => {
                    colors.length > 0 && colorsInputs.map((property: any) => (
                         <InputContainer key={property.parameterKey} attribute={property}
                                         newValue={onSelectColors}
+                                        updateValues={false}
                                         updateState={changeMachineAttributes} error={errors[property.parameterKey]}/>
                     ))
                 }

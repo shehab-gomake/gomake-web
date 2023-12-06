@@ -8,7 +8,7 @@ import {FormInput} from "./form-input";
 import {TransitionGroup} from "react-transition-group";
 import {Collapse} from "@mui/material";
 
-const FormArrayInput = ({name, inputs, updateState, parameterKey, value, isValid, newValue}: IFormArrayInputsProps) => {
+const FormArrayInput = ({name, inputs, updateState, parameterKey, value, isValid, newValue, updateValues}: IFormArrayInputsProps) => {
     const [state, setState] = useState<Record<string, any>>({});
     const [errors, setErrors] = useState<Record<string, boolean>>();
     const {t} = useTranslation();
@@ -86,7 +86,7 @@ const FormArrayInput = ({name, inputs, updateState, parameterKey, value, isValid
                                 {
                                     inputs.map((input) => <FormInput
                                         key={index}
-                                        readonly={false}
+                                        readonly={!updateValues}
                                         input={{...input, value: v[input.parameterKey], disabled: false}} error={false}
                                         changeState={(key, value) => {
                                             handleValuesChange(key, value, index);
