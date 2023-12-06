@@ -1308,7 +1308,8 @@
     "loadTime": "Load time",
     "connectToBooklet": "Connect to Booklet",
     "connectToBooksBinder": "Connect to Books Binder",
-    "connectToBookSewing": "Connect to Book Sewing"
+    "connectToBookSewing": "Connect to Book Sewing",
+    "machineColors": "Colors"
   },
   "tyingOptions": {
     "cross": "Cross",
