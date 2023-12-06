@@ -133,6 +133,8 @@ export type ProfitRightSideProps = {
   dataForPricing?: ProfitsPricingTables[];
   onDragEnd?: (res) => void;
   deleteExceptionProfit?: (id: string) => void;
+  selectedPricingBy?: SelectedPricingByType;
+  actionProfitByActionId?: any;
 };
 
 export type ProfitLeftSideProps = {

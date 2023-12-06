@@ -1,4 +1,5 @@
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { EHttpMethod } from "@/services/api-service/enums";
 import {
   getAllProductsForDropDownList,
   getAndSetAllParameters,
@@ -13,17 +14,21 @@ import {
 } from "@/store";
 import { useOutputs } from "@/widgets/properties/hooks/use-outputs";
 import { usePrintHouseClients } from "@/widgets/properties/hooks/use-print-house-clients";
+import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilState } from "recoil";
 
-const useAddRuleModal = () => {
+const useAddRuleModal = ({
+  typeExceptionSelected,
+  selectedPricingBy,
+  actionProfitByActionId,
+}) => {
   const { callApi } = useGomakeAxios();
   const { clients } = usePrintHouseClients();
-  console.log("clients", clients);
   const categories = useMemo(() => {
     return [
       { label: "Machine", id: "Machine" },
-      { label: "Machine category", id: "Machine Category" },
+      // { label: "Machine category", id: "Machine Category" },
       { label: "Products", id: "Products" },
       { label: "Client type", id: "Client Type" },
       { label: "Client", id: "Client" },
@@ -33,6 +38,14 @@ const useAddRuleModal = () => {
       // { label: "Material Category", id: "Material Category" },
     ];
   }, []);
+  const EStatementCategory = {
+    Machine: 1,
+    "Machine Category": 2,
+    "Client Type": 3,
+    Client: 4,
+    "Property input": 5,
+    "Property output": 6,
+  };
   const { Outputs } = useOutputs();
   const [expression, setExpression] = useState(
     "Your rules will viewed here . . ."
@@ -59,11 +72,8 @@ const useAddRuleModal = () => {
       { label: "No", id: false },
     ];
   }, []);
-
-  const create = async () => {
-    const textInput = displayText(rules);
-    setExpression(textInput);
-  };
+  const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
+  const router = useRouter();
 
   const initialRule = {
     linkCondition: "",
@@ -165,6 +175,50 @@ const useAddRuleModal = () => {
     const textInput = displayText(rules);
     setExpression(textInput);
   }, [rules]);
+  console.log("rules", rules);
+
+  const create = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/printhouse-config/action-profit-rows/add-action-exception`,
+      {
+        actionId: router?.query?.actionId,
+        actionProfitId: actionProfitByActionId?.id,
+        exceptionType: typeExceptionSelected,
+        additionalProfit: additionalProfit,
+        pricingBy: selectedPricingBy?.value,
+        exceptionRule: expression,
+        exceptionConditionProperties: rules.map((item) => {
+          return {
+            statementId:
+              typeof item?.statement === "object"
+                ? item?.statement?.id
+                : item.statement,
+            statementValue: item.statement2.id,
+            operator: item.condition.id,
+            conditionBetweenStatements: item.linkCondition
+              ? item.linkCondition.id
+              : "",
+            statementCategory: EStatementCategory[item.category.id],
+          };
+        }),
+      }
+    );
+    if (res?.success) {
+      alertSuccessAdded();
+    } else {
+      alertFaultAdded();
+    }
+  }, [
+    router,
+    typeExceptionSelected,
+    selectedPricingBy,
+    expression,
+    actionProfitByActionId,
+    additionalProfit,
+    EStatementCategory,
+    rules,
+  ]);
   return {
     rules,
     deleteRule,
@@ -181,7 +235,6 @@ const useAddRuleModal = () => {
     setAdditionalProfit,
     clients,
     BooleanRender,
-
     expression,
     mainconditions,
     categories,

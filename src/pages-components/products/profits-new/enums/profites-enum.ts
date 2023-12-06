@@ -21,3 +21,11 @@ export enum EProfitRowType {
   NORMAL_PROFIT_ROW = 1,
   EXCEPRION_PROFIT_ROW = 2,
 }
+export enum EStatementCategory {
+  MACHINE = 1,
+  MACHINECATEGORY = 2,
+  CLIENTTYPE = 3,
+  CLIENT = 4,
+  PARAMETER = 5,
+  OUTPUT = 6,
+}

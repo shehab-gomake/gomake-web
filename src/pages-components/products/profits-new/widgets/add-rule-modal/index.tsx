@@ -10,8 +10,15 @@ import { AddPlusIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DeleteMenuIcon } from "@/widgets/quote/more-circle/icons/delete-menu";
 import { useAddRuleModal } from "./use-add-rule-modal";
+import { ETypeException } from "../../enums/profites-enum";
 
-const AddRuleModal = ({ openModal, onCloseModal }) => {
+const AddRuleModal = ({
+  openModal,
+  onCloseModal,
+  typeExceptionSelected,
+  selectedPricingBy,
+  actionProfitByActionId,
+}) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -24,9 +31,6 @@ const AddRuleModal = ({ openModal, onCloseModal }) => {
     clientTypesStateValue,
     parametersStateValue,
     Outputs,
-    exceptionType,
-    setExceptionType,
-    additionalProfit,
     setAdditionalProfit,
     clients,
 
@@ -35,7 +39,11 @@ const AddRuleModal = ({ openModal, onCloseModal }) => {
     categories,
     conditions,
     create,
-  } = useAddRuleModal();
+  } = useAddRuleModal({
+    typeExceptionSelected,
+    selectedPricingBy,
+    actionProfitByActionId,
+  });
   return (
     <>
       <GoMakeModal
@@ -347,66 +355,27 @@ const AddRuleModal = ({ openModal, onCloseModal }) => {
               {t("properties.addNewRule")}
             </span>
           </div>
-          <div
-            key="exceptionType"
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              gap: 30,
-              marginTop: 20,
-            }}
-          >
-            <div>
+          {typeExceptionSelected === ETypeException.ADDITIONAL && (
+            <div style={{ width: "20%" }}>
               <div style={clasess.selectTypeStyle}>
-                {t("products.profits.exceptions.selectScopeOfChange")}
+                {t("products.profits.exceptions.additionalProfit")}
               </div>
-              <GoMakeAutoComplate
-                options={[
-                  { label: "Additional", id: 0 },
-                  { label: "NewBase", id: 1 },
-                  { label: "EditBase", id: 2 },
-                ]}
-                placeholder={t(
-                  "products.profits.exceptions.selectScopeOfChange"
-                )}
-                onChange={(e: any, value: any) => {
-                  setExceptionType(value);
+              <GomakeTextInput
+                type="number"
+                placeholder={t("products.profits.exceptions.additionalProfit")}
+                onChange={(e: any) => {
+                  setAdditionalProfit(e.target.value);
                 }}
-                value={exceptionType}
                 style={{
                   border: "0px",
                   background: "#fff",
                   borderRadius: 4,
+                  height: 40,
                 }}
               />
             </div>
-            {exceptionType?.id === 0 ? (
-              <div>
-                <div>
-                  <div style={clasess.selectTypeStyle}>
-                    {t("products.profits.exceptions.additionalProfit")}
-                  </div>
-                </div>
-                <GomakeTextInput
-                  type="number"
-                  placeholder={t(
-                    "products.profits.exceptions.additionalProfit"
-                  )}
-                  onChange={(e: any) => {
-                    setAdditionalProfit(e.target.value);
-                  }}
-                  style={{
-                    border: "0px",
-                    background: "#fff",
-                    borderRadius: 4,
-                    height: 40,
-                  }}
-                />
-              </div>
-            ) : null}
-          </div>
+          )}
+
           <div style={clasess.btnContainer}>
             <GomakePrimaryButton
               style={clasess.sendBtn}

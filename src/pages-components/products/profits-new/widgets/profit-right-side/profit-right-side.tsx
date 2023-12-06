@@ -1,5 +1,3 @@
-import { useTranslation } from "react-i18next";
-
 import { AccordionTable } from "@/components/tables/accordion-table";
 
 import { useStyle } from "./style";
@@ -35,9 +33,9 @@ const ProfitRightSideWidget = ({
   dataForPricing,
   onDragEnd,
   deleteExceptionProfit,
+  selectedPricingBy,
+  actionProfitByActionId,
 }: ProfitRightSideProps) => {
-  console.log("selectedPricingTableItems", selectedPricingTableItems);
-  const { t } = useTranslation();
   const { clasess } = useStyle();
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
   const [openAddNewRuleModal, setOpenAddNewRuleModal] =
@@ -54,12 +52,16 @@ const ProfitRightSideWidget = ({
   const onClickCloseAddNewRuleModal = () => {
     setOpenAddNewRuleModal(false);
   };
+  const [typeExceptionSelected, setTypeExceptionSelected] = useState<number>();
   return (
     <div style={clasess.mainHeaderContainer}>
       <AccordionTable
         title="Pricing Tables"
         isDefault={true}
-        onclickOpenMenu={handleClickPricingTables}
+        onclickOpenMenu={(e) => {
+          handleClickPricingTables(e),
+            setTypeExceptionSelected(ETypeException.NEWBASE);
+        }}
       >
         <div style={{ width: "100%" }}>
           <DragDropContext onDragEnd={onDragEnd}>
@@ -121,7 +123,10 @@ const ProfitRightSideWidget = ({
       </AccordionTable>
       <AccordionTable
         title="Additions and Exceptions"
-        onclickOpenMenu={handleClickPricingTables}
+        onclickOpenMenu={(e) => {
+          handleClickPricingTables(e),
+            setTypeExceptionSelected(ETypeException.ADDITIONAL);
+        }}
       >
         {dataForExceptions?.map((item, index) => {
           return (
@@ -168,6 +173,9 @@ const ProfitRightSideWidget = ({
       <AddRuleModal
         openModal={openAddNewRuleModal}
         onCloseModal={onClickCloseAddNewRuleModal}
+        typeExceptionSelected={typeExceptionSelected}
+        selectedPricingBy={selectedPricingBy}
+        actionProfitByActionId={actionProfitByActionId}
       />
     </div>
   );

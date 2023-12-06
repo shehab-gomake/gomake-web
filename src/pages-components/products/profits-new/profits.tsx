@@ -29,6 +29,7 @@ const ProfitsNewPageWidget = () => {
     anchorElMorePriceTable,
     openMorePriceTable,
     selectedActionProfitRow,
+    actionProfitByActionId,
     setSelectedActionProfit,
     handleClickMorePriceTable,
     handleCloseMorePriceTable,
@@ -51,6 +52,7 @@ const ProfitsNewPageWidget = () => {
     deleteActionProfitRow,
     deleteExceptionProfit,
   } = useNewProfits();
+  console.log("selectedPricingBy", selectedPricingBy);
   return (
     <div style={clasess.mainGridContainer}>
       {router.query.quoteId && (
@@ -104,6 +106,8 @@ const ProfitsNewPageWidget = () => {
           dataForPricing={dataForPricing}
           onDragEnd={onDragEnd}
           deleteExceptionProfit={deleteExceptionProfit}
+          selectedPricingBy={selectedPricingBy}
+          actionProfitByActionId={actionProfitByActionId}
         />
       </div>
     </div>
