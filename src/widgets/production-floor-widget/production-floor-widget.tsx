@@ -15,7 +15,7 @@ import {useProductionFloorSignalr} from "@/hooks/signalr/use-production-floor-si
 
 const ProductionFloorWidget = () => {
     const {tableHeaders, getWorkJobs, getWorkJobsRows, demo, product} = useProductionFloor();
-    const {} = useProductionFloorSignalr();
+    
     const [viewType, setViewType] = useState<1 | 2>(1);
     const {query, replace} = useRouter();
     const productId = query?.productId;

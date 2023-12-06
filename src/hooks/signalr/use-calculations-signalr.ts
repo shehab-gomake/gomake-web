@@ -3,15 +3,15 @@ import {getUserToken} from "@/services/storage-data";
 import {IBordMission} from "@/widgets/production-floor-widget/product-id-widget/interface";
 import config from "@/config";
 
-const useProductionFloorSignalr = () => {
-    const {data,connectionId} = useGoMakeSignalr<IBordMission[]>({
-        url: "http://gomake-erp-service-dev.eu-west-3.elasticbeanstalk.com" + '/hubs/boardMissions',
+const useCalculationsSignalr = () => {
+    const {data,connectionId} = useGoMakeSignalr<any>({
+        url: "https://localhost:7126" + '/hubs/workFlows',
         accessToken: getUserToken(),
-        methodName: "AddBoardMissions"
+        methodName: "updateWorkFlows"
     })
     return {
         data,connectionId
     }
 };
-export {useProductionFloorSignalr}
+export {useCalculationsSignalr}
 
