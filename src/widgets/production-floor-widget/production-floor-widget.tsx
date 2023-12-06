@@ -10,7 +10,7 @@ import {useRouter} from "next/router";
 import {ProductId} from "@/widgets/production-floor-widget/product-id-widget/product-id";
 import {StatusesButtonsComponent} from "@/widgets/production-floor-widget/production-statuses/production-statuses";
 import {GoMakeDatepicker} from "@/components/date-picker/date-picker-component";
-import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
+import {HttpTransportType, HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
 
 
 const ProductionFloorWidget = () => {
@@ -26,11 +26,11 @@ const ProductionFloorWidget = () => {
         getWorkJobs().then();
     }, []);
     const getAccessToken = ()=>{
-        return "eyJraWQiOiJWSlRNcW1iMVdDQUkzaVNCUXJGbjFSRWRneGppRVFEMzhzR0doWVVjZnMwPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJlMzA1NzQwZi02ZjA0LTQ1NDEtYTM1NS1iZTUxZjM1NzIxYmIiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0zLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtM191T1lnY09FUkQiLCJjbGllbnRfaWQiOiI1M245ZTJoZ2hxcnNxMGtyaGxzaHIyNTFrNSIsIm9yaWdpbl9qdGkiOiI1ZWM5MTdlZC1hY2QzLTQ3NzMtOWU0MS1hMTQ5MmExMGJmYzUiLCJldmVudF9pZCI6IjhmOGE0MDdlLTI0MjYtNDg5MC04MzhiLTlmZDBjNTJhY2U4YyIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE3MDE2Mjc5ODIsImV4cCI6MTcwMTcxNDM4MiwiaWF0IjoxNzAxNjI3OTgyLCJqdGkiOiIyZGMwZWNjNy1jOGJmLTRmMjktOWJiYi05ZWViN2RiNWJjZGMiLCJ1c2VybmFtZSI6ImUzMDU3NDBmLTZmMDQtNDU0MS1hMzU1LWJlNTFmMzU3MjFiYiJ9.yQTxhaqYGAdMYzdpT6aNdrcPYBvEriaftiy0bPA6-5ejqdX1ngUvHloBFpW1ruJGSnAQjFhfCyvs6j7GSQSv3BQLwXC0SmCuoeHl9ngWHsyvYfgP9V9trk_TG0suvB7ZvPKJsZQEZu-tJ_ab3go8cK-Hcto8MLpF5kTryGIJwWwVKs-U-s9gyYucr9LjR-k5Cs4djFlEHboZ2vXvsqn7nMF86nsvqiseCMppcJ6ICEiXC9yFT9IpfIw6VimSwFd5YFtfsq8uXEKuetn2b8LSfKk-cfvBmutLmZvb27dkTNc-2NRANHge5c9AM6iiY6JIXGHHovx622-mvMHY5at4YQ";
+        return "eyJraWQiOiJWSlRNcW1iMVdDQUkzaVNCUXJGbjFSRWRneGppRVFEMzhzR0doWVVjZnMwPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJlMzA1NzQwZi02ZjA0LTQ1NDEtYTM1NS1iZTUxZjM1NzIxYmIiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0zLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtM191T1lnY09FUkQiLCJjbGllbnRfaWQiOiI1M245ZTJoZ2hxcnNxMGtyaGxzaHIyNTFrNSIsIm9yaWdpbl9qdGkiOiI4ZWNiOTQ2MS04ZWIzLTQxZjMtYTYxMi1kZTdlYWMyZTg1ZTQiLCJldmVudF9pZCI6IjUwMzExMjMxLTkwOWQtNDY4Yy1hN2RkLTA2OGJiMzVmZmQ3NiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE3MDE4NTUzNDEsImV4cCI6MTcwMTk0MTc0MSwiaWF0IjoxNzAxODU1MzQxLCJqdGkiOiIzYjRhZGEzNC05YTc4LTQ1OTMtODM5Yi1iYTlhZDcyZTQ3NzQiLCJ1c2VybmFtZSI6ImUzMDU3NDBmLTZmMDQtNDU0MS1hMzU1LWJlNTFmMzU3MjFiYiJ9.CjnsRlHHQ-PpLz44cDiowrry7FO8TizhW-JBRuLglnovJ3UEfTQs4GrqLxwA4JdEY_EE7H9iVlOlAXSnNH27Mp5f8vrWRygT11Cq0zxglqbK41kV1cIfFbWLtZjGTsJARA5dt0-k8jfAKILqYG2-EAkqTdwz3bi1BCdNdlZvr8hxq5k1dEyur9IWBUwGQPw7ebCUpToJmt4yZsY7W33wuhe6pygUmAKvY1KN8smHvV1vKfjleDBTVqM9J4p-4MpAcuLvYwFoUgi3T_FzICtW67tQz33TXEBtsQ2IKwMM1kvkjJhUzWdHVnBMG0iFNpOcQGo9apiPUehCk3GYSAgDwQ";
     }
     useEffect(() => {
         const connect = new HubConnectionBuilder()
-            .withUrl("https://localhost:7125/boardMissions",{accessTokenFactory: () => getAccessToken()})
+            .withUrl("http://gomake-erp-service-dev.eu-west-3.elasticbeanstalk.com/hubs/boardMissions",{accessTokenFactory: () => getAccessToken()})
             .withAutomaticReconnect()
             .build();
 
