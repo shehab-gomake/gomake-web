@@ -4,6 +4,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { RouteChangeConfirmation } from "@/components/handle-navigation/handle-navigation";
 import { ArrowUpIcon } from "@/icons";
+import {useRef} from "react";
 
 interface IUpdateValueAutoCompleteProps {
   value?: any;
@@ -25,9 +26,10 @@ const UpdateValueAutoComplete = ({
   onChangeTextField
 }: IUpdateValueAutoCompleteProps) => {
   const { secondColor } = useGomakeTheme();
+  const optionsListEl = useRef();
   return (
     <>
-      <ClickOutside onClick={clickedOut}>
+      <ClickOutside exceptionRef={optionsListEl} onClick={clickedOut}>
         <RouteChangeConfirmation />
         <Paper
           component="form"
@@ -64,6 +66,9 @@ const UpdateValueAutoComplete = ({
             }
             style={{ height: 26 }}
             clearIcon={false}
+            PaperComponent={(props) => <Paper ref={optionsListEl} {...props}>
+                {props?.children}
+            </Paper>}
           />
         </Paper>
       </ClickOutside>
