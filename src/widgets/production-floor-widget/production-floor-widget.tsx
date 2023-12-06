@@ -10,21 +10,21 @@ import {useRouter} from "next/router";
 import {ProductId} from "@/widgets/production-floor-widget/product-id-widget/product-id";
 import {StatusesButtonsComponent} from "@/widgets/production-floor-widget/production-statuses/production-statuses";
 import {GoMakeDatepicker} from "@/components/date-picker/date-picker-component";
+import {useProductionFloorSignalr} from "@/hooks/signalr/use-production-floor-signalr";
 
 
 const ProductionFloorWidget = () => {
     const {tableHeaders, getWorkJobs, getWorkJobsRows, demo, product} = useProductionFloor();
+    const {} = useProductionFloorSignalr();
     const [viewType, setViewType] = useState<1 | 2>(1);
     const {query, replace} = useRouter();
     const productId = query?.productId;
     const openModal = useCallback(() => {
         return !!productId
     }, [productId]);
-
     useEffect(() => {
         getWorkJobs().then();
     }, []);
-
     const handleModalClose = () => {
         replace('/production-floor').then();
     }
