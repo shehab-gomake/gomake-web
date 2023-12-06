@@ -41,7 +41,7 @@ const useQuoteNew = () => {
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<
     number | null
   >(null);
-  const [isUpdatePurchaseNumer, setIsUpdatePurchaseNumer] = useState<
+  const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<
     number | null
   >(null);
   
@@ -161,8 +161,9 @@ const useQuoteNew = () => {
     getAllCustomers();
   }, []);
 
-  const onBlurPurchaseNumer = async () => {
-    setIsUpdatePurchaseNumer(null);
+  const onBlurPurchaseNumber = async (value=5) => {
+    updatePurchaseNumber(value);
+    setIsUpdatePurchaseNumber(null);
   };
 
   const onBlurBusinessCode = async () => {
@@ -213,6 +214,29 @@ const useQuoteNew = () => {
       if (res?.success) {
         alertSuccessUpdate();
         setIsUpdateAgent(null);
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [quoteItemValue]
+  );
+
+
+
+  const updatePurchaseNumber = useCallback(
+    async (value: any) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/erp-service/quote/update-purchase-number`,
+        {
+          quoteId: quoteItemValue?.id,
+          purchaseNumber: value,
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        setIsUpdatePurchaseNumber(null);
         getQuote();
       } else {
         alertFaultUpdate();
@@ -329,6 +353,7 @@ const useQuoteNew = () => {
   const onInputChangeMail = (v: any) => {
     onChangeUpdateClientContact("mail", v);
   };
+
   const onInputChangePhone = (v: any) => {
     onChangeUpdateClientContact("phone", v);
   };
@@ -361,6 +386,7 @@ const useQuoteNew = () => {
   const onCloseDeleteModalContact = () => {
     setOpenDeleteModalContact(false);
   };
+
   const onClickDeleteContact = useCallback(async (item: any) => {
     const res = await callApi(
       EHttpMethod.DELETE,
@@ -374,6 +400,7 @@ const useQuoteNew = () => {
       alertFaultDelete();
     }
   }, []);
+
   const onOpenNewItem = () => {
     setOpenAddNewItemModal(true);
   };
@@ -430,12 +457,15 @@ const useQuoteNew = () => {
       alertFaultAdded();
     }
   }, [qouteItemId, amountVlue]);
+
   const onCloseDeleteItemModal = () => {
     setOpenDeleteItemModal(false);
   };
+
   const onOpenDeleteItemModal = () => {
     setOpenDeleteItemModal(true);
   };
+
   const deleteQuoteItem = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.DELETE,
@@ -519,11 +549,14 @@ const useQuoteNew = () => {
     },
     [quoteItems]
   );
+
   useEffect(() => {
     setquoteItems(quoteItemValue);
   }, [quoteItemValue]);
+
   const dateRef = useRef(null);
   const [activeClickAway, setActiveClickAway] = useState(false);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dateRef.current && !dateRef.current.contains(event.target)) {
@@ -538,19 +571,19 @@ const useQuoteNew = () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
+
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
+
   useEffect(() => {
     setSelectDate(quoteItemValue?.dueDate);
   }, [quoteItemValue]);
 
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
-  const [openIrreleventCancelModal, setOpenIrreleventCancelModal] =
-    useState(false);
+  const [openIrreleventCancelModal, setOpenIrreleventCancelModal] = useState(false);
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
-  const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] =
-    useState(false);
+  const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] = useState(false);
 
   const onClcikOpenIrreleventModal = () => {
     setOpenIrreleventCancelModal(true);
@@ -636,19 +669,13 @@ const useQuoteNew = () => {
     [quoteItemValue]
   );
 
-
-
-
-
-
-
   return {
     dateRef,
     activeClickAway,
     selectDate,
     selectBusiness,
     isUpdateBusinessName,
-    isUpdatePurchaseNumer,
+    isUpdatePurchaseNumber,
     isUpdateAddress,
     selectedAgent,
     agentListValue,
@@ -719,10 +746,10 @@ const useQuoteNew = () => {
     setIsUpdateBusinessName,
     setSelectBusiness,
     setIsUpdateAddress,
-    setIsUpdatePurchaseNumer,
+    setIsUpdatePurchaseNumber,
     setIsUpdateBusinessCode,
     onBlurBusinessName,
-    onBlurPurchaseNumer,
+    onBlurPurchaseNumber,
     onBlurBusinessCode,
     onBlurAddress,
     onBlurAgent,
@@ -754,7 +781,8 @@ const useQuoteNew = () => {
     setReasonText,
     onClickCancelOffer,
     updateCancelQuote,
-    onChangeSelectBusiness
+    onChangeSelectBusiness,
+    updatePurchaseNumber
   };
 };
 

@@ -1678,7 +1678,8 @@
       "writeCommentHere": "Write Your Comment here",
       "attachFiles": "Attach Files",
       "copyTo": "Copy to",
-      "managerApproval": "Manager Approval"
+      "managerApproval": "Manager Approval",
+      "dateOfReference" :"Date Of Reference"
     }
   },
   "usersSettings": {
