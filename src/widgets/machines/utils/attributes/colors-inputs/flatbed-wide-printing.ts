@@ -1,8 +1,6 @@
-import {additionalColorsInput} from "@/widgets/machines/utils/attributes/colors-inputs/additional-colors-input";
 
 const flatbedWidePrinting = (state: Record<string, any>) => {
     return [
-        ...additionalColorsInput(state),
         {
             name: "printLayersMax",
             label: "machineAttributes.printLayersMax",

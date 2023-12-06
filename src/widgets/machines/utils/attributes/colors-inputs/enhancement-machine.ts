@@ -1,4 +1,3 @@
-import {additionalColorsInput} from "@/widgets/machines/utils/attributes/colors-inputs/additional-colors-input";
 
 const enhancementMachine = (state: Record<string, any>) => {
     return [
@@ -38,7 +37,6 @@ const enhancementMachine = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: true
         },
-        ...additionalColorsInput(state),
     ]
 };
 
