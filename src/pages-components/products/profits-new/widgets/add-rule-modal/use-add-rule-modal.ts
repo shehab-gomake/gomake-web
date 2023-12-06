@@ -369,9 +369,9 @@ const useAddRuleModal = () => {
 
   function displayText(conditions) {
     if (conditions.length === 0 || isRuleEmpty(conditions[0])) {
-      return "No rule found"; // Return a message if the array is empty or the rule is empty
+      return "No rule found";
     }
-    return conditions.map((condition) => {
+    const textArray = conditions.map((condition) => {
       const categoryLabel = condition.category ? condition.category.label : "";
       const conditionLabel = condition.condition
         ? condition.condition.label
@@ -383,7 +383,7 @@ const useAddRuleModal = () => {
       let text = "";
 
       if (condition.linkCondition) {
-        text += ` ${condition.linkCondition.label} `;
+        text += ` ${condition.linkCondition.id} `;
       }
 
       if (typeof condition?.statement === "object") {
@@ -400,11 +400,14 @@ const useAddRuleModal = () => {
 
       return text.trim();
     });
+    const joinedText = textArray;
+    return `if (${joinedText})`;
   }
   useEffect(() => {
     const textInput = displayText(rules);
     setExpression(textInput);
   }, [rules]);
+  console.log("rules", rules);
   return {
     rules,
     deleteRule,
