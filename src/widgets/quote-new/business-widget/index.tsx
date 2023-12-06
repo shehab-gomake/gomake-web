@@ -4,6 +4,8 @@ import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
+import { useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store";
 
 const BusinessNewWidget = ({
   values,
@@ -30,6 +32,7 @@ const BusinessNewWidget = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
   const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
 
@@ -38,35 +41,15 @@ const BusinessNewWidget = ({
     id: customer?.id
   }));
 
-  // const quoteStateValue = useRecoilValue<any>(quoteItemState);
-  // const [openAlertModal, setOpenAlertModal] = useState(false);
-  // const [client, setClient] = useState();
-  // const onCloseAlertModal = () => {
-  //   setOpenAlertModal(false);
-  // };
-  // const onOpenAlertModal = (value:any) => {
-  //   setOpenAlertModal(true);
-  //   setClient(value);
-  // };
-
+  //  selected agent here is : agentListValue.find((agent) => agent.value === quoteItemValue?.agentId).text  , but anyway there is a problem when updating "business name" the agent disappeared
+ 
   return (
     <>
       <div style={classes.businessContainerStyle}>
-        {/* <h3 style={classes.labelStyle}>{t("sales.quote.businessName")}</h3>
-        <GoMakeAutoComplate
-          options={renderOptions()}
-          style={classes.autoCompleteStyle}
-          key={quoteStateValue?.client?.name}
-          value={quoteStateValue?.client}
-          placeholder={t("sales.quote.businessName")}
-          getOptionLabel={(item) => item?.name}
-          onChangeTextField={checkWhatRenderArray}
-          disableClearable={true}
-          onChange={(e: any, value: any)=>onOpenAlertModal(value)}
-        /> */}
+
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
-          value={selectBusiness?.name}
+          value={quoteStateValue?.client?.name} 
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
           isUpdate={isUpdateBusinessName}
@@ -109,14 +92,6 @@ const BusinessNewWidget = ({
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => updateAgent(value)}
         />
-        {/* <GoMakeAlertModal 
-        title={t("Change client")}
-        openModal={openAlertModal}
-        onClose={onCloseAlertModal}
-        subTitle={t("Are you sure to change client")}
-        onClickConfirm={()=>{onChangeSelectBusiness(client).then(setOpenAlertModal(false)); }}
-        >
-        </GoMakeAlertModal> */}
       </div>
     </>
   );
