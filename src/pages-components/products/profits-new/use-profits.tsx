@@ -8,7 +8,12 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getAndSetAllActionProfitRowsByActionId } from "./services/get-all-action-profit-rows-by-action-id";
 import { getAndSetActionProfitRowChartData } from "./services/get-action-profit-row-chart-data";
 import { getAndSetActionProfitByActionId } from "./services/get-action-profit-by-action-id";
-import { EPricingBy, ETransition, ETypeException } from "./enums/profites-enum";
+import {
+  EPricingBy,
+  EProfitRowType,
+  ETransition,
+  ETypeException,
+} from "./enums/profites-enum";
 import {
   ActionProfit,
   ActionProfitRowChartData,
@@ -24,6 +29,8 @@ const useNewProfits = () => {
     alertSuccessUpdate,
     alertSuccessAdded,
     alertFaultAdded,
+    alertSuccessDelete,
+    alertFaultDelete,
   } = useSnackBar();
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
@@ -317,14 +324,22 @@ const useNewProfits = () => {
   };
   const [selectedPricingTableItems, setSelectedPricingTableItems] =
     useState<ProfitsPricingTables>();
+  const [profitRowType, setProfitRowType] = useState(1);
   useEffect(() => {
     if (profitsPricingTables?.length > 0) {
-      const defaultRow = profitsPricingTables?.find((item) => {
+      const defaultRow: any = profitsPricingTables?.find((item) => {
         return item.exceptionType === ETypeException.DEFAULT;
       });
       setSelectedPricingTableItems(defaultRow);
     }
   }, [profitsPricingTables]);
+  useEffect(() => {
+    if (selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT) {
+      setProfitRowType(EProfitRowType.NORMAL_PROFIT_ROW);
+    } else {
+      setProfitRowType(EProfitRowType.EXCEPRION_PROFIT_ROW);
+    }
+  }, [selectedPricingTableItems]);
   const [dataForPricing, setDataForPricing] =
     useState<ProfitsPricingTables[]>();
   const [dataForExceptions, setDataForExceptions] =
@@ -384,6 +399,36 @@ const useNewProfits = () => {
     setAnchorElMorePriceTable(null);
   };
   const [selectedActionProfitRow, setSelectedActionProfit] = useState();
+
+  const deleteActionProfitRow = useCallback(
+    async (id: string) => {
+      const res = await callApi(
+        "DELETE",
+        `/v1/printhouse-config/action-profit-rows/delete-action-profit-row?profitRowType=${profitRowType}&id=${id}`
+      );
+      if (res?.success) {
+        alertSuccessDelete();
+        getAllActionProfitRowsByActionId();
+        getActionProfitRowChartData();
+      } else {
+        alertFaultDelete();
+      }
+    },
+    [profitRowType]
+  );
+
+  const deleteExceptionProfit = useCallback(async (id: string) => {
+    const res = await callApi(
+      "DELETE",
+      `/v1/printhouse-config/profits/delete-exception-profit?actionExceptionId=${id}`
+    );
+    if (res?.success) {
+      alertSuccessDelete();
+      getProfitsPricingTables();
+    } else {
+      alertFaultDelete();
+    }
+  }, []);
   return {
     allActionProfitRowsByActionId,
     actionProfitRowChartData,
@@ -409,6 +454,7 @@ const useNewProfits = () => {
     anchorElMorePriceTable,
     openMorePriceTable,
     selectedActionProfitRow,
+    deleteActionProfitRow,
     setSelectedActionProfit,
     handleClickMorePriceTable,
     handleCloseMorePriceTable,
@@ -430,6 +476,7 @@ const useNewProfits = () => {
     addNewStepForActionProfitRow,
     updateActionProfitRow,
     updateMinPriceForAction,
+    deleteExceptionProfit,
   };
 };
 

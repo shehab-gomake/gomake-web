@@ -65,6 +65,7 @@ export type PricingListProps = {
   handleCloseMorePriceTable?: () => void;
   selectedActionProfitRow: ActionProfitRow;
   setSelectedActionProfit?: (value: any) => void;
+  deleteActionProfitRow?: (id: string) => void;
 };
 export type PricingListTableProps = {
   tableHeaders: string[];
@@ -83,6 +84,7 @@ export type PricingListTableProps = {
   handleCloseMorePriceTable?: () => void;
   selectedActionProfitRow: ActionProfitRow;
   setSelectedActionProfit?: (value: any) => void;
+  deleteActionProfitRow?: (id: string) => void;
 };
 export type PricingListTableRowProps = {
   item: any;
@@ -130,6 +132,7 @@ export type ProfitRightSideProps = {
   dataForExceptions?: ProfitsPricingTables[];
   dataForPricing?: ProfitsPricingTables[];
   onDragEnd?: (res) => void;
+  deleteExceptionProfit?: (id: string) => void;
 };
 
 export type ProfitLeftSideProps = {
@@ -158,4 +161,5 @@ export type ProfitLeftSideProps = {
   handleCloseMorePriceTable?: () => void;
   selectedActionProfitRow: ActionProfitRow;
   setSelectedActionProfit?: (value: any) => void;
+  deleteActionProfitRow?: (id: string) => void;
 };

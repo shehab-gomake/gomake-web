@@ -34,7 +34,9 @@ const ProfitRightSideWidget = ({
   dataForExceptions,
   dataForPricing,
   onDragEnd,
+  deleteExceptionProfit,
 }: ProfitRightSideProps) => {
+  console.log("selectedPricingTableItems", selectedPricingTableItems);
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
@@ -159,11 +161,9 @@ const ProfitRightSideWidget = ({
       <GoMakeDeleteModal
         openModal={openDeleteRowModal}
         onClose={onClickCloseDeleteRowModal}
-        // onClickDelete={() =>
-        //   quoteStateValue?.onClickDeleteContact(
-        //     quoteStateValue?.selectedContact
-        //   )
-        // }
+        onClickDelete={() =>
+          deleteExceptionProfit(selectedPricingTableItems?.id)
+        }
       />
       <AddRuleModal
         openModal={openAddNewRuleModal}

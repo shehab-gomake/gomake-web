@@ -25,6 +25,7 @@ const PricingList = ({
   handleCloseMorePriceTable,
   selectedActionProfitRow,
   setSelectedActionProfit,
+  deleteActionProfitRow,
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -66,6 +67,7 @@ const PricingList = ({
         openMorePriceTable={openMorePriceTable}
         selectedActionProfitRow={selectedActionProfitRow}
         setSelectedActionProfit={setSelectedActionProfit}
+        deleteActionProfitRow={deleteActionProfitRow}
       />
       <div style={clasess.chartContainer}>
         <LineChart actionProfitRowChartData={actionProfitRowChartData} />

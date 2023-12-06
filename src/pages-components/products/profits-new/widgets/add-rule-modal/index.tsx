@@ -28,22 +28,13 @@ const AddRuleModal = ({ openModal, onCloseModal }) => {
     setExceptionType,
     additionalProfit,
     setAdditionalProfit,
+    clients,
 
-    value,
     expression,
     mainconditions,
     categories,
-    fields,
-    fieldsStates,
-    firstPartDefultValue,
     conditions,
-    secondPartTypeState,
-    removeFields,
-    handleNumberField,
     create,
-    setFields,
-    addFields,
-    handleFormChange,
   } = useAddRuleModal();
   return (
     <>
@@ -52,15 +43,6 @@ const AddRuleModal = ({ openModal, onCloseModal }) => {
         modalTitle={t("products.profits.exceptions.addNewRule")}
         onClose={() => {
           onCloseModal();
-          setFields([
-            {
-              linkCondition: "",
-              category: "",
-              firstPart: "",
-              condition: "",
-              secondPart: "",
-            },
-          ]);
         }}
         insideStyle={clasess.insideStyle}
       >
@@ -195,6 +177,28 @@ const AddRuleModal = ({ openModal, onCloseModal }) => {
                       />
                     </div>
                   )}
+                  {rule.category?.id === "Client" && (
+                    <div>
+                      <label style={clasess.inputLable}>
+                        {t("properties.statment")}
+                      </label>
+                      <GoMakeAutoComplate
+                        options={clients?.map((value) => {
+                          return {
+                            ...value,
+                            label: value?.name,
+                            id: value.id,
+                          };
+                        })}
+                        style={clasess.dropDownListContainer}
+                        placeholder={t("properties.statment")}
+                        value={rule.statement2}
+                        onChange={(e, value) =>
+                          handleChange(index, "statement2", value)
+                        }
+                      />
+                    </div>
+                  )}
                   {rule.category?.id === "Property output" &&
                     rules[index]?.statement2?.valueType === 1 && (
                       <div>
@@ -280,28 +284,45 @@ const AddRuleModal = ({ openModal, onCloseModal }) => {
                     </div>
                   )}
                   {rule.category?.id === "Property input" && (
-                    <div>
-                      <label style={clasess.inputLable}>
-                        {t("properties.statment")}
-                      </label>
-                      <GoMakeAutoComplate
-                        options={rules[index]?.statement2?.values?.map(
-                          (value) => {
-                            return {
-                              ...value,
-                              label: value?.name,
-                              id: value.id,
-                            };
-                          }
-                        )}
-                        style={clasess.dropDownListContainer}
-                        placeholder={t("properties.statment")}
-                        value={rule.statement}
-                        onChange={(e, value) =>
-                          handleChange(index, "statement", value)
-                        }
-                      />
-                    </div>
+                    <>
+                      {rules[index]?.statement2?.type === 0 ? (
+                        <div>
+                          <label style={clasess.inputLable}>
+                            {t("properties.statment")}
+                          </label>
+                          <GoMakeAutoComplate
+                            options={rules[index]?.statement2?.values?.map(
+                              (value) => {
+                                return {
+                                  ...value,
+                                  label: value?.name,
+                                  id: value.id,
+                                };
+                              }
+                            )}
+                            style={clasess.dropDownListContainer}
+                            placeholder={t("properties.statment")}
+                            value={rule.statement}
+                            onChange={(e, value) =>
+                              handleChange(index, "statement", value)
+                            }
+                          />
+                        </div>
+                      ) : (
+                        <div>
+                          <label style={clasess.inputLable}>
+                            {t("properties.statment")}
+                          </label>
+                          <GomakeTextInput
+                            style={clasess.textInputContainer}
+                            placeholder={t("properties.statment")}
+                            onChange={(e) =>
+                              handleChange(index, "statement", e.target.value)
+                            }
+                          />
+                        </div>
+                      )}
+                    </>
                   )}
                   {rules.length > 1 && (
                     <div

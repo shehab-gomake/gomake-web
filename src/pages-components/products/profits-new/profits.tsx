@@ -48,6 +48,8 @@ const ProfitsNewPageWidget = () => {
     changeactionProfitRowsItems,
     addNewStepForActionProfitRow,
     updateActionProfitRow,
+    deleteActionProfitRow,
+    deleteExceptionProfit,
   } = useNewProfits();
   return (
     <div style={clasess.mainGridContainer}>
@@ -79,6 +81,7 @@ const ProfitsNewPageWidget = () => {
           handleCloseMorePriceTable={handleCloseMorePriceTable}
           selectedActionProfitRow={selectedActionProfitRow}
           setSelectedActionProfit={setSelectedActionProfit}
+          deleteActionProfitRow={deleteActionProfitRow}
         />
         <ProfitRightSideWidget
           minimumValue={minimumValue}
@@ -100,6 +103,7 @@ const ProfitsNewPageWidget = () => {
           dataForExceptions={dataForExceptions}
           dataForPricing={dataForPricing}
           onDragEnd={onDragEnd}
+          deleteExceptionProfit={deleteExceptionProfit}
         />
       </div>
     </div>

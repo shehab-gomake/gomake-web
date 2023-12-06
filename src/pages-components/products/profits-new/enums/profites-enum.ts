@@ -16,3 +16,8 @@ export enum ETypeException {
   EDITBASE = 2,
   DEFAULT = 3,
 }
+
+export enum EProfitRowType {
+  NORMAL_PROFIT_ROW = 1,
+  EXCEPRION_PROFIT_ROW = 2,
+}

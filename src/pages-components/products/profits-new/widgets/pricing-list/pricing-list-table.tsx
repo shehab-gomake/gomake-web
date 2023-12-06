@@ -41,6 +41,7 @@ const PricingListTable = ({
   handleCloseMorePriceTable,
   selectedActionProfitRow,
   setSelectedActionProfit,
+  deleteActionProfitRow,
 }: PricingListTableProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -111,11 +112,7 @@ const PricingListTable = ({
       <GoMakeDeleteModal
         openModal={openDeleteRowModal}
         onClose={onClickCloseDeleteRowModal}
-        // onClickDelete={() =>
-        //   quoteStateValue?.onClickDeleteContact(
-        //     quoteStateValue?.selectedContact
-        //   )
-        // }
+        onClickDelete={() => deleteActionProfitRow(selectedActionProfitRow?.id)}
       />
     </>
   );
