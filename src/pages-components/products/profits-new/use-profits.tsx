@@ -71,6 +71,9 @@ const useNewProfits = () => {
       value: EPricingBy.CUBIC_METER,
     },
   ];
+  const [selectedPricingTableItems, setSelectedPricingTableItems] =
+    useState<ProfitsPricingTables>();
+  const [profitRowType, setProfitRowType] = useState(1);
   const [selectedPricingBy, setSelectedPricingBy] =
     useState<SelectedPricingByType>({
       label: "",
@@ -104,7 +107,25 @@ const useNewProfits = () => {
       { actionId: router.query.actionId }
     );
   }, [router]);
+  const getAllActionProfitRowsByActionIdWithExceptionId =
+    useCallback(async () => {
+      await getAndSetAllActionProfitRowsByActionId(
+        callApi,
+        setAllActionProfitRowsByActionId,
+        {
+          actionId: router.query.actionId,
+          exceptionId: selectedPricingTableItems?.id,
+        }
+      );
+    }, [router, selectedPricingTableItems]);
 
+  useEffect(() => {
+    if (selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT) {
+      getAllActionProfitRowsByActionId();
+    } else {
+      getAllActionProfitRowsByActionIdWithExceptionId();
+    }
+  }, [selectedPricingTableItems]);
   const getActionProfitByActionId = useCallback(async () => {
     await getAndSetActionProfitByActionId(callApi, setActionProfitByActionId, {
       actionId: router.query.actionId,
@@ -322,9 +343,7 @@ const useNewProfits = () => {
   const handleClosePricingTablesMapping = () => {
     setAnchorElPricingTablesMapping(null);
   };
-  const [selectedPricingTableItems, setSelectedPricingTableItems] =
-    useState<ProfitsPricingTables>();
-  const [profitRowType, setProfitRowType] = useState(1);
+
   useEffect(() => {
     if (profitsPricingTables?.length > 0) {
       const defaultRow: any = profitsPricingTables?.find((item) => {
