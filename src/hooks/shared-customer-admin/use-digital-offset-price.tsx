@@ -48,6 +48,7 @@ import {
 } from "@/widgets/product-pricing-widget/state";
 import {getOutsourcingSuppliersListApi} from "@/services/api-service/suppliers/suppliers-endpoints";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
+import {useCalculationsSignalr} from "@/hooks/signalr/use-calculations-signalr";
 
 const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const {navigate} = useGomakeRouter();
@@ -106,6 +107,17 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const setSelectParameterButton = useSetRecoilState(
         selectParameterButtonState
     );
+    const {data,connectionId} = useCalculationsSignalr();
+    
+    useEffect(()=>{
+        setWorkFlows(
+            data?.workFlows?.map((flow, index) => ({
+                id: index.toString(),
+                ...flow,
+            }))
+        );
+        setJobActions(data?.actions);
+    },[data])
     const selectBtnTypeToAction = (parameter, sectionId, subSectionId) => {
         if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
             setSelectParameterButton({parameter, sectionId, subSectionId});
@@ -1143,13 +1155,13 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             //Check it is work
             if (res?.success) {
                 // setPricingDefaultValue(res?.data?.data?.data);
-                setWorkFlows(
+                /*setWorkFlows(
                     res?.data?.data?.data?.workFlows?.map((flow, index) => ({
                         id: index.toString(),
                         ...flow,
                     }))
                 );
-                setJobActions(res?.data?.data?.data?.actions);
+                setJobActions(res?.data?.data?.data?.actions);*/
             }
             setLoading(false);
         }

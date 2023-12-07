@@ -1,4 +1,4 @@
-import {useCallback, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {IBoard, ICurrentStation} from "@/widgets/production-floor-widget/interface";
 import {
     getAllWorkJobsApi,
@@ -16,6 +16,7 @@ import {useRouter} from "next/router";
 import {useRecoilState, useRecoilValue} from "recoil";
 import {productionStatusesState, workJobsState} from "@/widgets/production-floor-widget/state";
 import {useDateFormat} from "@/hooks/use-date-format";
+import {useProductionFloorSignalr} from "@/hooks/signalr/use-production-floor-signalr";
 
 const useProductionFloor = () => {
     const {callApi} = useGomakeAxios();
@@ -24,7 +25,7 @@ const useProductionFloor = () => {
     const {query} = useRouter();
     const statuses = useRecoilValue(productionStatusesState);
     const [load, setLoad] = useState(false)
-
+    const data = useProductionFloorSignalr();
     const product = useCallback(() => {
         if (!!query?.productId && workJobs.length > 0) {
             const workJob = workJobs.find(job => job.id === query.productId)
@@ -32,6 +33,7 @@ const useProductionFloor = () => {
         }
         return {} as IBoard
     }, [query, workJobs])
+    useEffect(()=>console.log(data),[data])
     const tableHeaders = ['', 'jobs', 'task category', 'station', 'status', 'customer', "Station Delivery time", 'Delivery time', 'tags', 'more']
     const demo = [
         {id: '1', name: 'demo1', checked: true},

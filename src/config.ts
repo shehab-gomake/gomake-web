@@ -7,6 +7,7 @@ if (getConfig()) {
     config = {
         api_server: publicRuntimeConfig.API_SERVER || serverRuntimeConfig.API_SERVER,
         erp_server: publicRuntimeConfig.ERP_SERVER || serverRuntimeConfig.ERP_SERVER,
+        calculation_server: publicRuntimeConfig.CALCAULATION_SERVER || serverRuntimeConfig.CALCAULATION_SERVER,
         google_place_service: publicRuntimeConfig.GOOGLE_PLACE_SERVICE || serverRuntimeConfig.GOOGLE_PLACE_SERVICE,
         enviroment: publicRuntimeConfig.ENVIROMENT || serverRuntimeConfig.API_SERVER,
         user_app: publicRuntimeConfig.USER_APP_URL || serverRuntimeConfig.USER_APP_URL,
