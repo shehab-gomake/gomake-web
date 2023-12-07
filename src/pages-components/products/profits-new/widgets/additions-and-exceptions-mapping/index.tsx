@@ -24,7 +24,7 @@ const AdditionsAndExceptionsMapping = ({
       >
         <div style={clasess.firstRowStyle}>
           <div style={clasess.ruleTextStyle}>{t("properties.rule")}</div>
-          <div>{item.name}</div>
+          <div style={{ width: "80%" }}>{item.name}</div>
           <div style={clasess.lineStyle} />
           <div style={clasess.ruleTextStyle}>
             {t("products.profits.exceptions.value")}

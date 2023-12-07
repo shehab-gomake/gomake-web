@@ -48,7 +48,7 @@ const useAccordionStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        maxHeight: 174,
+        maxHeight: 210,
         padding: "10px 10px",
         overflow: "scroll",
         paddingRight: 0,

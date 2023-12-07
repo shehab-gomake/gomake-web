@@ -22,6 +22,7 @@ const useStyle = () => {
         backgroundColor: "#F8FAFB",
         marginBottom: 6,
         borderRadius: 16,
+        gap: 5,
       },
       WithBordermainContainer: {
         display: "flex",
@@ -34,6 +35,7 @@ const useStyle = () => {
         marginBottom: 6,
         borderRadius: 16,
         border: "2px solid  #504FA1",
+        gap: 5,
       },
       emptyStyle: { width: 14, height: 24 },
       sortStyle: { cursor: "pointer" },

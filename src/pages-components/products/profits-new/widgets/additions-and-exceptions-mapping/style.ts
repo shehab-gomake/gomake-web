@@ -23,6 +23,7 @@ const useStyle = () => {
         marginBottom: 6,
         borderRadius: 16,
         cursor: "pointer",
+        gap: 5,
       },
       WithBordermainContainer: {
         display: "flex",
@@ -36,6 +37,7 @@ const useStyle = () => {
         borderRadius: 16,
         border: "2px solid  #504FA1",
         cursor: "pointer",
+        gap: 5,
       },
       emptyStyle: { width: 14, height: 24 },
       sortStyle: { cursor: "pointer" },
@@ -49,10 +51,12 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 15,
+        width: "100%",
       },
       ruleTextStyle: {
         color: "#667085",
         ...FONT_FAMILY.Inter(500, 14),
+        width: "5%",
       },
       lineStyle: {
         height: 25,
@@ -62,6 +66,7 @@ const useStyle = () => {
       valueStyle: {
         color: "#344054",
         ...FONT_FAMILY.Inter(600, 14),
+        width: "10%",
       },
     };
   }, []);
