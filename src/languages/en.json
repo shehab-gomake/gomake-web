@@ -1690,8 +1690,12 @@
       "selectYourCity":"Select Your City",
       "zipCode": "Zip Code",
       "enterYourZipCode":"Enter Your ZipCode",
-      "save": "Save"
-    }
+      "save": "Save",
+      "address": "Address",
+      "addressId": "Address ID",
+      "addAddress" :"Add Address",
+      "removeAddress": "Remove Address"
+        }
   },
   "usersSettings": {
     "add": "Add",

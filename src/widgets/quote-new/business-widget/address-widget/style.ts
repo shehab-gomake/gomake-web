@@ -36,7 +36,7 @@ const useStyle = () => {
                 width: "15%",
               },
               labelStyle: {
-                ...FONT_FAMILY.Lexend(500, 14),
+                ...FONT_FAMILY.Lexend(600, 14),
                 color: primaryColor(900),
                 height: 20,
               },

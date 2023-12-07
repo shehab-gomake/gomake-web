@@ -2,16 +2,13 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
-import { AddressModal } from "./address-widget/address-modal";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
+import { useRecoilState } from "recoil";
 import { addressModalState } from "./address-widget/state";
 import { PlusNewIcon } from "@/icons";
 import { MinusIcon } from "@/icons/minus-icon";
-import { GoMakeModal } from "@/components";
-import { AddressModalNew } from "./address-widget/address-modal-new";
+import { AddressModal} from "./address-widget/address-modal";
 
 const BusinessNewWidget = ({
   values,
@@ -118,13 +115,13 @@ const BusinessNewWidget = ({
             onClick={() => null}
           >
             <MinusIcon />
-            <div style={classes.addNewAddressTextStyle} onClick={() => onClickDeleteAddress(values?.quoteAddresses[0])}>Remove Address</div>
+            <div style={classes.addNewAddressTextStyle} onClick={() => onClickDeleteAddress(values?.quoteAddresses[0])}>{t("sales.quote.removeAddress")}</div>
           </div> : (
             <div
               style={classes.addNewAddressStyle}
             >
               <PlusNewIcon />
-              <div style={classes.addNewAddressTextStyle} onClick={() => setOpenModal(true)} >Add Address</div>
+              <div style={classes.addNewAddressTextStyle} onClick={() => setOpenModal(true)} >{t("sales.quote.addAddress")}</div>
             </div>
           )}
 
@@ -146,9 +143,7 @@ const BusinessNewWidget = ({
         onClickConfirm={()=>{onChangeSelectBusiness(client).then(setOpenAlertModal(false)); }}
         >
         </GoMakeAlertModal> */}
-
-        {/* <AddressModal /> */}
-        <AddressModalNew isUpdate={values?.quoteAddresses?.length > 0} />
+        <AddressModal isUpdate={values?.quoteAddresses?.length > 0} />
       </div>
     </>
   );

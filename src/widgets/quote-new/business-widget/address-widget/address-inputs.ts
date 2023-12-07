@@ -1,26 +1,30 @@
 const addressInputs = (state: any, cities: any[], filteredCityStreets: any[]) => {
     return [
         {
-            name: "City",
+            name: "city",
             label: "sales.quote.city",
-            type: "text",
+            type: "select",
             placeholder: "sales.quote.city",
             required: false,
             parameterKey: "city",
-            options: [],
+            options: cities.map(city => ({
+                value: city.Name,
+                text: city.Name
+            })),
             value: state?.city,
-            isValid: true,
         },
         {
-            name: "Street",
+            name: "street",
             label: "sales.quote.street",
-            type: "text",
+            type: "select",
             placeholder: "sales.quote.street",
             required: false,
             parameterKey: "street",
-            options: [],
+            options: filteredCityStreets.map(street => ({
+                value: street.name,
+                text: street.name,
+            })),
             value: state?.street,
-            isValid: true,
         },
         {
             name: "entrance",
