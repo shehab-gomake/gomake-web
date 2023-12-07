@@ -18,11 +18,11 @@ const useGomakeAxios = () => {
   const {t} = useTranslation();
   const language = t('language');
   const callApi = useCallback(
-    async (method: string, url: string, data?: any, lockScreen = true) => {
+    async (method: string, url: string, data?: any, lockScreen = true,requestAbortController:AbortController = null) => {
       if (lockScreen) {
         setLoading(true);
       }
-      const result = await apiRequest(method, url, data, language);
+      const result = await apiRequest(method, url, data, language,requestAbortController);
       if (lockScreen) {
         setTimeout(() => {
           setLoading(false);

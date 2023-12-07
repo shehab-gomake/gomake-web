@@ -33,7 +33,7 @@ const useGoMakeSignalr = <T>({accessToken, url, methodName}: ISignalRProps): {da
                         setData(newData);
                     });
                 })
-                .catch((error) => alert(JSON.stringify(error)));
+                .catch((error) => console.log(error));
         }
     }, [connection]);
     return {

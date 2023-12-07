@@ -1522,7 +1522,8 @@
         "actions": "Actions",
         "stationName": "Station name",
         "actionType": "Action type",
-        "machine": "Machine"
+        "machine": "Machine",
+        "loadingOptimalWorkflows": "loading optimal workflows..."
       }
     },
     "productManagement": {

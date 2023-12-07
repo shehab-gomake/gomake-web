@@ -1498,7 +1498,8 @@
         "actions": "פעולות",
         "stationName": "שם התחנה",
         "actionType": "סוג הפעולה",
-        "machine": "מכונה"
+        "machine": "מכונה",
+        "loadingOptimalWorkflows": "טוען תהליכי עבודה אופטימליים..."
       }
     },
     "productManagement": {

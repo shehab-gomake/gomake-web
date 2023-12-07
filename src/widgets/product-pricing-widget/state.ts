@@ -1,11 +1,19 @@
 import {atom, selector} from "recoil";
-import {ICalculatedWorkFlow, IOutSourceSupplier, IPricingAction} from "@/widgets/product-pricing-widget/interface";
+import {
+    ICalculatedWorkFlow,
+    ICalculationProgress,
+    IOutSourceSupplier,
+    IPricingAction
+} from "@/widgets/product-pricing-widget/interface";
 
 export const workFlowsState = atom<ICalculatedWorkFlow[]>({
     key: "workFlowsState",
     default: [],
 });
-
+export const calculationProgressState = atom<ICalculationProgress>({
+    key: "calculationProgressState",
+    default: {totalWorkFlowsCount:0,currentWorkFlowsCount:0},
+});
 export const selectedWorkFlowState = selector<ICalculatedWorkFlow>({
     key: 'selectedWorkFlowState',
     get: ({get}) => {

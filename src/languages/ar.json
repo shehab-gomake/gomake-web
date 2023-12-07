@@ -1498,7 +1498,8 @@
         "actions": "الإجراءات",
         "stationName": "اسم المحطة",
         "actionType": "نوع الإجراء",
-        "machine": "الجهاز"
+        "machine": "الجهاز",
+        "loadingOptimalWorkflows": "جارٍ تحميل سير العمل الأمثل..."
       }
     },
     "productManagement": {
