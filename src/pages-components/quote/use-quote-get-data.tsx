@@ -65,11 +65,13 @@ const useQuoteGetData = () => {
       });
     }
   }, [quoteItemValue]);
+
   useEffect(() => {
     getAllCustomers();
     getQuote();
     getAllEmployees();
   }, []);
+  
   useEffect(() => {
     getAllClientContacts();
     getAllClientAddress();

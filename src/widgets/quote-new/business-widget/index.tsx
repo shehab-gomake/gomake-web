@@ -4,10 +4,14 @@ import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
-import { AddressModal } from "./address-modal/address-modal";
+import { AddressModal } from "./address-widget/address-modal";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
-import { addressModalState } from "./address-modal/state";
+import { addressModalState } from "./address-widget/state";
+import { PlusNewIcon } from "@/icons";
+import { MinusIcon } from "@/icons/minus-icon";
+import { GoMakeModal } from "@/components";
+import { AddressModalNew } from "./address-widget/address-modal-new";
 
 const BusinessNewWidget = ({
   values,
@@ -30,7 +34,9 @@ const BusinessNewWidget = ({
   onBlurBusinessName,
   isUpdateBusinessName,
   setIsUpdateBusinessName,
-  updatePurchaseNumber
+  updatePurchaseNumber,
+  updateClientAddress,
+  onClickDeleteAddress
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -94,7 +100,8 @@ const BusinessNewWidget = ({
           onBlur={onBlurBusinessCode}
           setIsUpdate={setIsUpdateBusinessCode}
         />
-        <InputUpdatedValues
+
+        {values?.quoteAddresses?.length > 0 && <InputUpdatedValues
           value={values?.quoteAddresses?.length > 0 ? `${values?.quoteAddresses[0]?.street} ${values?.quoteAddresses[0]?.apartment}, ${values?.quoteAddresses[0]?.city}` : "no address found"}
           label={t("customers.modal.address")}
           isUnderLine={true}
@@ -103,7 +110,23 @@ const BusinessNewWidget = ({
           setIsUpdate={setIsUpdateAddress}
           flag={true}
           onClickFlag={() => setOpenModal(true)}
-        />
+        />}
+
+        {values?.quoteAddresses?.length > 0 ?
+          <div
+            style={classes.addNewAddressStyle}
+            onClick={() => null}
+          >
+            <MinusIcon />
+            <div style={classes.addNewAddressTextStyle} onClick={() => onClickDeleteAddress(values?.quoteAddresses[0])}>Remove Address</div>
+          </div> : (
+            <div
+              style={classes.addNewAddressStyle}
+            >
+              <PlusNewIcon />
+              <div style={classes.addNewAddressTextStyle} onClick={() => setOpenModal(true)} >Add Address</div>
+            </div>
+          )}
 
         {/* <AutoCompleteUpdatedValue
           label={t("sales.quote.agent")}
@@ -123,7 +146,9 @@ const BusinessNewWidget = ({
         onClickConfirm={()=>{onChangeSelectBusiness(client).then(setOpenAlertModal(false)); }}
         >
         </GoMakeAlertModal> */}
-        <AddressModal />
+
+        {/* <AddressModal /> */}
+        <AddressModalNew isUpdate={values?.quoteAddresses?.length > 0} />
       </div>
     </>
   );

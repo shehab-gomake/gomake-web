@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { grayColor } = useGomakeTheme();
+  const { grayColor , secondColor} = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -28,7 +28,23 @@ const useStyle = () => {
       labelStyle: {
         ...FONT_FAMILY.Lexend(400, 14),
         color: grayColor(500),
-      }
+      },
+      addNewAddressStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 8,
+        cursor: "pointer",
+      },
+      addNewAddressTextStyle: {
+        ...FONT_FAMILY.Lexend(500, 16),
+        color: secondColor(500),
+      },
+      removeAddressTextStyle: {
+        ...FONT_FAMILY.Lexend(500, 16),
+        color:"rgb(130, 131, 190)",
+      },
     };
   }, []);
   return {

@@ -10,20 +10,24 @@ import { addressInputs } from "./address-inputs";
 import { useStyle } from "./style";
 import { useRecoilState } from "recoil";
 import { addressModalState } from "./state";
+import { useQuoteNew } from "@/pages-components/quote-new/use-quote";
 
 const AddressModal = () => {
     const { t } = useTranslation();
     const { classes } = useStyle()
     const [state, setState] = useState<any>({});
     const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
-
+    const {updateClientAddress} = useQuoteNew();
     const cities = [{ Name: "1" }, { Name: "2" }];
     const streets = [{ name: "3" }, { name: "4" }];
 
     const onChangeInputs = (key, value) => {
-        setState({ ...state, [key]: value })
+        if (key == "city") {
+            setState({ ...state, city: value, street: "" });
+        } else {
+            setState({ ...state, [key]: value });
+        }
     }
-
     return (
         <div>
             <GoMakeModal
@@ -36,7 +40,7 @@ const AddressModal = () => {
                     {
                         addressInputs(state, cities, streets).map(item => <Stack width={"330px"}><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     }
-                    <SecondaryButton variant="contained" onClick={() => alert("test")} style={classes.saveBtn}>{t("sales.quote.save")}</SecondaryButton>
+                    <SecondaryButton variant="contained" onClick={()=>updateClientAddress(state)} style={classes.saveBtn}>{t("sales.quote.save")}</SecondaryButton>
                 </Stack>
             </GoMakeModal>
         </div>

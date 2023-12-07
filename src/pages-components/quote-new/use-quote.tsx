@@ -669,6 +669,67 @@ const useQuoteNew = () => {
     [quoteItemValue]
   );
 
+  const updateClientAddress = useCallback(async (item: any) => {
+    const res = await callApi(
+      "PUT",
+      `/v1/erp-service/quote/update-quote-address`,
+      {
+        quoteID: quoteItemValue?.id,
+        // id: quoteItemValue?.quoteAddress.?id, im not sure
+        addressID: item?.id,
+        street: item?.street,
+        city: item?.city,
+        entry: item?.entry,
+        apartment: item?.apartment,
+        // notes: item?.notes,
+        notes: "",
+      }
+    );
+    if (res?.success) {
+      alertSuccessUpdate();
+      getQuote();
+    } else {
+      alertFaultAdded();
+    }
+  }, []);
+
+  const onClickAddNewAddress = useCallback(async (item: any) => {
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/quote/add-quote-address`,
+      {
+        quoteID: quoteItemValue?.id,
+        addressID: item?.id,
+        street: item?.street,
+        city: item?.city,
+        entry: item?.entry,
+        apartment: item?.apartment,
+        // notes: item?.notes,
+        notes: "",
+      }
+    );
+    if (res?.success) {
+      alertSuccessAdded();
+
+      getQuote();
+    } else {
+      alertFaultAdded();
+    }
+  }, [quoteItemValue]);
+
+  const onClickDeleteAddress = useCallback(async (item: any) => {
+    const res = await callApi(
+      EHttpMethod.DELETE,
+      `/v1/erp-service/quote/delete-quote-address?quoteAddressId=${item?.id}`
+    );
+    if (res?.success) {
+      alertSuccessDelete();
+      getQuote();
+    } else {
+      alertFaultDelete();
+    }
+  }, []);
+
   return {
     dateRef,
     activeClickAway,
@@ -782,7 +843,10 @@ const useQuoteNew = () => {
     onClickCancelOffer,
     updateCancelQuote,
     onChangeSelectBusiness,
-    updatePurchaseNumber
+    updatePurchaseNumber,
+    updateClientAddress,
+    onClickAddNewAddress,
+    onClickDeleteAddress
   };
 };
 
