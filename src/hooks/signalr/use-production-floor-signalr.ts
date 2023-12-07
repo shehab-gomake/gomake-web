@@ -5,7 +5,7 @@ import config from "@/config";
 
 const useProductionFloorSignalr = () => {
     const {data,connectionId} = useGoMakeSignalr<IBordMission[]>({
-        url: "http://gomake-erp-service-dev.eu-west-3.elasticbeanstalk.com" + '/hubs/boardMissions',
+        url: config.erp_server + '/hubs/boardMissions',
         accessToken: getUserToken(),
         methodName: "AddBoardMissions"
     })

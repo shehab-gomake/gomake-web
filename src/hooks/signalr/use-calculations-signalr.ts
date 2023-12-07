@@ -5,7 +5,7 @@ import config from "@/config";
 
 const useCalculationsSignalr = () => {
     const {data,connectionId} = useGoMakeSignalr<any>({
-        url: "https://localhost:7126" + '/hubs/workFlows',
+        url: config.calculation_server + '/hubs/workFlows',
         accessToken: getUserToken(),
         methodName: "updateWorkFlows"
     })
