@@ -5,7 +5,7 @@ import config from "@/config";
 
 const useCalculationsSignalr = () => {
     const {data,connectionId} = useGoMakeSignalr<any>({
-        url: 'http://gomake-calculation-service.eu-west-3.elasticbeanstalk.com/hubs/workFlows',
+        url: 'https://calculation-service.gomake-dev.net/hubs/workFlows',
         accessToken: getUserToken(),
         methodName: "updateWorkFlows"
     })
