@@ -35,6 +35,7 @@ const ProfitRightSideWidget = ({
   deleteExceptionProfit,
   selectedPricingBy,
   actionProfitByActionId,
+  getProfitsPricingTables,
 }: ProfitRightSideProps) => {
   const { clasess } = useStyle();
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
@@ -84,7 +85,6 @@ const ProfitRightSideWidget = ({
                             <PricingTableMapping
                               key={item.id}
                               item={item}
-                              index={index}
                               handleClickPricingTablesMapping={
                                 handleClickPricingTablesMapping
                               }
@@ -102,7 +102,6 @@ const ProfitRightSideWidget = ({
                       <div key={item.id}>
                         <PricingTableMapping
                           item={item}
-                          index={index}
                           handleClickPricingTablesMapping={
                             handleClickPricingTablesMapping
                           }
@@ -176,6 +175,7 @@ const ProfitRightSideWidget = ({
         typeExceptionSelected={typeExceptionSelected}
         selectedPricingBy={selectedPricingBy}
         actionProfitByActionId={actionProfitByActionId}
+        getProfitsPricingTables={getProfitsPricingTables}
       />
     </div>
   );

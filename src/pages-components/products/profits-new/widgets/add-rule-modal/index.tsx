@@ -18,6 +18,7 @@ const AddRuleModal = ({
   typeExceptionSelected,
   selectedPricingBy,
   actionProfitByActionId,
+  getProfitsPricingTables,
 }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -43,6 +44,8 @@ const AddRuleModal = ({
     typeExceptionSelected,
     selectedPricingBy,
     actionProfitByActionId,
+    onCloseModal,
+    getProfitsPricingTables,
   });
   return (
     <>

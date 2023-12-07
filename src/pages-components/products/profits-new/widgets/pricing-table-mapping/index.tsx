@@ -5,7 +5,6 @@ import { ETypeException } from "../../enums/profites-enum";
 
 const PricingTableMapping = ({
   item,
-  index,
   handleClickPricingTablesMapping,
   setSelectedPricingTableItems,
   selectedPricingTableItems,
@@ -29,11 +28,15 @@ const PricingTableMapping = ({
             ? clasess.WithBordermainContainer
             : clasess.cardItemWithMore
         }
-        onClick={() => {
-          setSelectedPricingTableItems(item);
-        }}
       >
-        <div>{item.name}</div>
+        <div
+          onClick={() => {
+            setSelectedPricingTableItems(item);
+          }}
+          style={{ width: "100%" }}
+        >
+          {item.name}
+        </div>
         <div
           onClick={(e) => {
             handleClickPricingTablesMapping(e);

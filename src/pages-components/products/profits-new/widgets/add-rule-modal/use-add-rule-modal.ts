@@ -22,6 +22,8 @@ const useAddRuleModal = ({
   typeExceptionSelected,
   selectedPricingBy,
   actionProfitByActionId,
+  onCloseModal,
+  getProfitsPricingTables,
 }) => {
   const { callApi } = useGomakeAxios();
   const { clients } = usePrintHouseClients();
@@ -127,7 +129,7 @@ const useAddRuleModal = ({
   }, []);
 
   const [exceptionType, setExceptionType] = useState<any>();
-  const [additionalProfit, setAdditionalProfit] = useState<any>();
+  const [additionalProfit, setAdditionalProfit] = useState<any>(0);
 
   function isRuleEmpty(rule) {
     return Object.values(rule).every((value) => value === "");
@@ -206,6 +208,8 @@ const useAddRuleModal = ({
     );
     if (res?.success) {
       alertSuccessAdded();
+      onCloseModal();
+      getProfitsPricingTables();
     } else {
       alertFaultAdded();
     }

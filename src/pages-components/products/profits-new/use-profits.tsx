@@ -73,6 +73,7 @@ const useNewProfits = () => {
   ];
   const [selectedPricingTableItems, setSelectedPricingTableItems] =
     useState<ProfitsPricingTables>();
+
   const [profitRowType, setProfitRowType] = useState(1);
   const [selectedPricingBy, setSelectedPricingBy] =
     useState<SelectedPricingByType>({
@@ -496,6 +497,7 @@ const useNewProfits = () => {
     updateActionProfitRow,
     updateMinPriceForAction,
     deleteExceptionProfit,
+    getProfitsPricingTables,
   };
 };
 
