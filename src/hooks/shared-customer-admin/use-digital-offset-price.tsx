@@ -39,6 +39,7 @@ import {
     SelectMaterialsParameterWidget
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
 import {
+    calculationProgressState,
     itemParametersValuesState,
     jobActionsState,
     jobDetailsState,
@@ -87,10 +88,12 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const [activeTab, setActiveTab] = useState("Production");
     const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
     const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
+    const [calculationProgress, setCalculationProgress] = useRecoilState(calculationProgressState);
     const [jobDetails, setJobDetails] = useRecoilState(jobDetailsState);
     const [jobActions, setJobActions] = useRecoilState(jobActionsState);
     const setOutSuppliers = useSetRecoilState(outsourceSuppliersState);
     const [workFlowSelected, setWorkFlowSelected] = useState<any>();
+
     const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
     const setLoading = useSetRecoilState(isLoadgingState);
     const [digitalPriceData, setDigidatPriceData] =
@@ -108,15 +111,22 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         selectParameterButtonState
     );
     const {data,connectionId} = useCalculationsSignalr();
-    
+    const [requestAbortController,setRequestAbortController] = useState<AbortController>(null)
     useEffect(()=>{
-        setWorkFlows(
-            data?.workFlows?.map((flow, index) => ({
-                id: index.toString(),
-                ...flow,
-            }))
-        );
-        setJobActions(data?.actions);
+        if(data){
+            setLoading(false);
+            const currentWorkFlowsCount = data?.workFlows.length;
+            const totalWorkFlowsCount = data?.totalWorkFlows;
+            setCalculationProgress({totalWorkFlowsCount: totalWorkFlowsCount,currentWorkFlowsCount:currentWorkFlowsCount} )
+            setWorkFlows(
+                data?.workFlows?.map((flow, index) => ({
+                    id: index.toString(),
+                    ...flow,
+                }))
+            );
+            setJobActions(data?.actions);
+        }
+        
     },[data])
     const selectBtnTypeToAction = (parameter, sectionId, subSectionId) => {
         if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
@@ -1135,11 +1145,18 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
 
 
     const calculationProduct = useCallback(async () => {
+        if(requestAbortController){
+            requestAbortController.abort()
+        }
         setWorkFlows([]);
         setJobActions([]);
+        setCalculationProgress({totalWorkFlowsCount: 0,currentWorkFlowsCount:0} )
+        
         let checkParameter = validateParameters(isRequiredParameters);
         if (!!checkParameter) {
             setLoading(true);
+            const newRequestAbortController = new AbortController();
+            setRequestAbortController(newRequestAbortController)
             const res = await callApi(
                 "POST",
                 `/v1/calculation-service/calculations/calculate-product`,
@@ -1150,7 +1167,8 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                     generalParameters: generalParameters,
                     subProducts: subProducts,
                 },
-                false
+                false,
+                newRequestAbortController
             );
             //Check it is work
             if (res?.success) {

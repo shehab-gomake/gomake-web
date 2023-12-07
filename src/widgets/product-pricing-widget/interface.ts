@@ -103,3 +103,7 @@ export interface IRectangle {
     width: number;
     length: number;
 }
+export interface ICalculationProgress{
+    totalWorkFlowsCount: number;
+    currentWorkFlowsCount: number;
+}
