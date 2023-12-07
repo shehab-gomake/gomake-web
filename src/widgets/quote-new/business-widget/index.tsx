@@ -41,6 +41,7 @@ const BusinessNewWidget = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
+  const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
 
   const mappedCustomers = renderOptions().map(customer => ({
@@ -58,7 +59,6 @@ const BusinessNewWidget = ({
   //   setClient(value);
   // };
 
-  const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
 
   return (
     <>

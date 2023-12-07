@@ -14,7 +14,6 @@ import { useQuoteNew } from "@/pages-components/quote-new/use-quote";
 import { quoteItemState } from "@/store";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 
-
 interface IProps {
     label?: string;
     isUpdate? :boolean;
@@ -28,8 +27,9 @@ const AddressModalNew = ({isUpdate} : IProps) => {
     const { updateClientAddress , onClickAddNewAddress} = useQuoteNew();
     const cities = [{ Name: "1" }, { Name: "2" }];
     const streets = [{ name: "3" }, { name: "4" }];
-    const [addressState, setAddressState] = useState<any>(quoteStateValue?.quoteAddresses[0]);
 
+    const [addressState, setAddressState] = useState<any>(quoteStateValue?.quoteAddresses[0]);
+    
     const onChangeInputs = (key, value) => {
         setAddressState({ ...addressState, [key]: value });
     }
@@ -37,32 +37,33 @@ const AddressModalNew = ({isUpdate} : IProps) => {
     useEffect(() => {
         getAllClientAddress();
     }, [quoteStateValue]);
- 
+
     return ( 
         <div>
             <GoMakeModal
                 insideStyle={classes.insideStyle}
                 openModal={openModal}
-                onClose={() => { setOpenModal(false)}}
+                onClose={() => {setOpenModal(false); setAddressState(quoteStateValue?.quoteAddresses[0])}}
                 withClose={false}
-            >
+                >
                 <Stack display={"flex"} width={"330px"} gap={"12px"}>
                     <div style={classes.fieldContainer}>
                         <div style={classes.labelStyle}>{t("Address")}</div>
                         <GoMakeAutoComplate
                             options={clientAddressValue}
-                            value={clientAddressValue.find(address => address.id === addressState?.id)}
+                            value={clientAddressValue.find(address => address.id === addressState?.addressID)}
                             style={classes.autoComplateStyle}
                             placeholder={t("address")}
                             getOptionLabel={(item) => item?.city}
                             onChange={(e: any, item: any) => { const { clientId, ...newAddressState } = item;
                             setAddressState(newAddressState);}}
+                            disableClearable={true}
                         />
                     </div>
                     {
                         addressInputs(addressState, cities, streets).map(item => <Stack width={"330px"}><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     }
-                    <SecondaryButton variant="contained" onClick={() => isUpdate ? updateClientAddress("test") : onClickAddNewAddress(addressState) } style={classes.saveBtn}>{isUpdate ? t("sales.quote.save"): t("add")}</SecondaryButton>
+                    <SecondaryButton variant="contained" onClick={() => isUpdate ? updateClientAddress(addressState) : onClickAddNewAddress(addressState) } style={classes.saveBtn}>{isUpdate ? t("sales.quote.save"): t("add")}</SecondaryButton>
                 </Stack>
             </GoMakeModal>
         </div>

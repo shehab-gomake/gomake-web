@@ -18,6 +18,7 @@ import {
   quoteItemState,
 } from "@/store";
 import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
+import { addressModalState } from "@/widgets/quote-new/business-widget/address-widget/state";
 
 const useQuoteNew = () => {
   const {
@@ -669,29 +670,33 @@ const useQuoteNew = () => {
     [quoteItemValue]
   );
 
+  const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
   const updateClientAddress = useCallback(async (item: any) => {
     const res = await callApi(
       "PUT",
       `/v1/erp-service/quote/update-quote-address`,
       {
         quoteID: quoteItemValue?.id,
-        // id: quoteItemValue?.quoteAddress.?id, im not sure
-        addressID: item?.id,
+        id: quoteItemValue?.quoteAddresses[0]?.id, 
+        addressID: quoteItemValue?.quoteAddresses[0]?.addressID, 
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
         apartment: item?.apartment,
-        // notes: item?.notes,
-        notes: "",
+        notes: item?.notes || "",
       }
     );
     if (res?.success) {
       alertSuccessUpdate();
       getQuote();
+      setOpenModal(false);
     } else {
       alertFaultAdded();
     }
   }, []);
+
+
+
 
   const onClickAddNewAddress = useCallback(async (item: any) => {
     const res = await callApi(
@@ -704,18 +709,19 @@ const useQuoteNew = () => {
         city: item?.city,
         entry: item?.entry,
         apartment: item?.apartment,
-        // notes: item?.notes,
-        notes: "",
+        notes: item?.notes || "",
       }
     );
     if (res?.success) {
       alertSuccessAdded();
-
+      setOpenModal(false);
       getQuote();
     } else {
       alertFaultAdded();
     }
   }, [quoteItemValue]);
+
+
 
   const onClickDeleteAddress = useCallback(async (item: any) => {
     const res = await callApi(
@@ -844,6 +850,7 @@ const useQuoteNew = () => {
     updateCancelQuote,
     onChangeSelectBusiness,
     updatePurchaseNumber,
+
     updateClientAddress,
     onClickAddNewAddress,
     onClickDeleteAddress
