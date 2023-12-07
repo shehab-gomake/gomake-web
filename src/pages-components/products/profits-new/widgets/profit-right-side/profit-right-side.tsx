@@ -1,17 +1,18 @@
-import { AccordionTable } from "@/components/tables/accordion-table";
-
-import { useStyle } from "./style";
-import { MinimumWidget } from "../minimum-widget";
-import { ProfitRightSideProps } from "../../interface";
-import { PricingTableMapping } from "../pricing-table-mapping";
-import { PricingTableMenu } from "../pricing-table-menu";
-import { PricingTableMappingMenu } from "../pricing-table-mapping-menu";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { ETypeException } from "../../enums/profites-enum";
-import { AdditionsAndExceptionsMapping } from "../additions-and-exceptions-mapping";
-import { GoMakeDeleteModal } from "@/components";
 import { useState } from "react";
+
+import { AccordionTable } from "@/components/tables/accordion-table";
+import { GoMakeDeleteModal } from "@/components";
+
+import { AdditionsAndExceptionsMapping } from "../additions-and-exceptions-mapping";
+import { PricingTableMappingMenu } from "../pricing-table-mapping-menu";
+import { PricingTableMapping } from "../pricing-table-mapping";
+import { ETypeException } from "../../enums/profites-enum";
+import { PricingTableMenu } from "../pricing-table-menu";
+import { ProfitRightSideProps } from "../../interface";
+import { MinimumWidget } from "../minimum-widget";
 import { AddRuleModal } from "../add-rule-modal";
+import { useStyle } from "./style";
 
 const ProfitRightSideWidget = ({
   minimumValue,
@@ -36,6 +37,8 @@ const ProfitRightSideWidget = ({
   selectedPricingBy,
   actionProfitByActionId,
   getProfitsPricingTables,
+  typeExceptionSelected,
+  setTypeExceptionSelected,
 }: ProfitRightSideProps) => {
   const { clasess } = useStyle();
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
@@ -53,7 +56,6 @@ const ProfitRightSideWidget = ({
   const onClickCloseAddNewRuleModal = () => {
     setOpenAddNewRuleModal(false);
   };
-  const [typeExceptionSelected, setTypeExceptionSelected] = useState<number>();
   return (
     <div style={clasess.mainHeaderContainer}>
       <AccordionTable
@@ -161,6 +163,8 @@ const ProfitRightSideWidget = ({
         anchorEl={anchorElPricingTablesMapping}
         selectedPricingTableItems={selectedPricingTableItems}
         onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+        onClickOpenAddNewRuleModal={onClickOpenAddNewRuleModal}
+        setTypeExceptionSelected={setTypeExceptionSelected}
       />
       <GoMakeDeleteModal
         openModal={openDeleteRowModal}
@@ -176,6 +180,7 @@ const ProfitRightSideWidget = ({
         selectedPricingBy={selectedPricingBy}
         actionProfitByActionId={actionProfitByActionId}
         getProfitsPricingTables={getProfitsPricingTables}
+        selectedPricingTableItems={selectedPricingTableItems}
       />
     </div>
   );

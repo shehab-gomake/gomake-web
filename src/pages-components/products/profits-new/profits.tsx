@@ -30,6 +30,8 @@ const ProfitsNewPageWidget = () => {
     openMorePriceTable,
     selectedActionProfitRow,
     actionProfitByActionId,
+    typeExceptionSelected,
+    setTypeExceptionSelected,
     setSelectedActionProfit,
     handleClickMorePriceTable,
     handleCloseMorePriceTable,
@@ -109,6 +111,8 @@ const ProfitsNewPageWidget = () => {
           selectedPricingBy={selectedPricingBy}
           actionProfitByActionId={actionProfitByActionId}
           getProfitsPricingTables={getProfitsPricingTables}
+          typeExceptionSelected={typeExceptionSelected}
+          setTypeExceptionSelected={setTypeExceptionSelected}
         />
       </div>
     </div>

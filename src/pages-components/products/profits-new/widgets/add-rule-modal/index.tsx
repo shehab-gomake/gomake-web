@@ -19,6 +19,7 @@ const AddRuleModal = ({
   selectedPricingBy,
   actionProfitByActionId,
   getProfitsPricingTables,
+  selectedPricingTableItems,
 }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -46,6 +47,7 @@ const AddRuleModal = ({
     actionProfitByActionId,
     onCloseModal,
     getProfitsPricingTables,
+    selectedPricingTableItems,
   });
   return (
     <>

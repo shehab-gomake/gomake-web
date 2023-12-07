@@ -136,6 +136,8 @@ export type ProfitRightSideProps = {
   selectedPricingBy?: SelectedPricingByType;
   actionProfitByActionId?: any;
   getProfitsPricingTables?: () => void;
+  typeExceptionSelected?: number;
+  setTypeExceptionSelected?: (value: any) => void;
 };
 
 export type ProfitLeftSideProps = {

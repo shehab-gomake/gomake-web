@@ -17,6 +17,7 @@ import { usePrintHouseClients } from "@/widgets/properties/hooks/use-print-house
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilState } from "recoil";
+import { ETypeException } from "../../enums/profites-enum";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -24,9 +25,12 @@ const useAddRuleModal = ({
   actionProfitByActionId,
   onCloseModal,
   getProfitsPricingTables,
+  selectedPricingTableItems,
 }) => {
   const { callApi } = useGomakeAxios();
   const { clients } = usePrintHouseClients();
+  const isDefaultException =
+    selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
   const categories = useMemo(() => {
     return [
       { label: "Machine", id: "Machine" },
@@ -47,6 +51,7 @@ const useAddRuleModal = ({
     Client: 4,
     "Property input": 5,
     "Property output": 6,
+    Products: 7,
   };
   const { Outputs } = useOutputs();
   const [expression, setExpression] = useState(
@@ -180,32 +185,42 @@ const useAddRuleModal = ({
   console.log("rules", rules);
 
   const create = useCallback(async () => {
+    const requestBody: any = {
+      actionId: router?.query?.actionId,
+      actionProfitId: actionProfitByActionId?.id,
+      exceptionType: typeExceptionSelected,
+      additionalProfit: additionalProfit,
+      pricingBy: selectedPricingBy?.value,
+      exceptionRule: expression,
+      exceptionConditionProperties: rules.map((item) => {
+        return {
+          statementId:
+            typeof item?.statement === "object"
+              ? item?.statement?.id
+              : item.statement,
+          statementValue: item.statement2.id,
+          operator: item.condition.id,
+          conditionBetweenStatements: item.linkCondition
+            ? item.linkCondition.id
+            : "",
+          statementCategory: EStatementCategory[item.category.id],
+        };
+      }),
+    };
+
+    if (
+      !isDefaultException &&
+      typeExceptionSelected === ETypeException.EDITBASE
+    ) {
+      requestBody.duplicatedExceptionId = selectedPricingTableItems?.id;
+    }
+
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/printhouse-config/action-profit-rows/add-action-exception`,
-      {
-        actionId: router?.query?.actionId,
-        actionProfitId: actionProfitByActionId?.id,
-        exceptionType: typeExceptionSelected,
-        additionalProfit: additionalProfit,
-        pricingBy: selectedPricingBy?.value,
-        exceptionRule: expression,
-        exceptionConditionProperties: rules.map((item) => {
-          return {
-            statementId:
-              typeof item?.statement === "object"
-                ? item?.statement?.id
-                : item.statement,
-            statementValue: item.statement2.id,
-            operator: item.condition.id,
-            conditionBetweenStatements: item.linkCondition
-              ? item.linkCondition.id
-              : "",
-            statementCategory: EStatementCategory[item.category.id],
-          };
-        }),
-      }
+      requestBody
     );
+
     if (res?.success) {
       alertSuccessAdded();
       onCloseModal();
@@ -222,7 +237,9 @@ const useAddRuleModal = ({
     additionalProfit,
     EStatementCategory,
     rules,
+    isDefaultException,
   ]);
+
   return {
     rules,
     deleteRule,

@@ -73,6 +73,7 @@ const useNewProfits = () => {
   ];
   const [selectedPricingTableItems, setSelectedPricingTableItems] =
     useState<ProfitsPricingTables>();
+  const [typeExceptionSelected, setTypeExceptionSelected] = useState<number>();
 
   const [profitRowType, setProfitRowType] = useState(1);
   const [selectedPricingBy, setSelectedPricingBy] =
@@ -474,6 +475,8 @@ const useNewProfits = () => {
     anchorElMorePriceTable,
     openMorePriceTable,
     selectedActionProfitRow,
+    typeExceptionSelected,
+    setTypeExceptionSelected,
     deleteActionProfitRow,
     setSelectedActionProfit,
     handleClickMorePriceTable,

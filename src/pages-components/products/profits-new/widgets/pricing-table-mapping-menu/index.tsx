@@ -10,6 +10,8 @@ const PricingTableMappingMenu = ({
   anchorEl,
   selectedPricingTableItems,
   onClickOpenDeleteRowModal,
+  onClickOpenAddNewRuleModal,
+  setTypeExceptionSelected,
 }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -18,14 +20,18 @@ const PricingTableMappingMenu = ({
   const menuList = [
     {
       name: t("home.duplicate"),
-      onclick: handleClose,
+      onclick: () => {
+        onClickOpenAddNewRuleModal();
+        setTypeExceptionSelected(ETypeException.EDITBASE);
+        handleClose();
+      },
       hidden: false,
     },
-    {
-      name: t("materials.buttons.edit"),
-      onclick: handleClose,
-      hidden: false,
-    },
+    // {
+    //   name: t("materials.buttons.edit"),
+    //   onclick: handleClose,
+    //   hidden: false,
+    // },
     {
       name: t("navigationButtons.delete"),
       onclick: () => {
