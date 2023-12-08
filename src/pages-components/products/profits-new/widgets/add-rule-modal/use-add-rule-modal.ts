@@ -182,7 +182,6 @@ const useAddRuleModal = ({
     const textInput = displayText(rules);
     setExpression(textInput);
   }, [rules]);
-  console.log("rules", rules);
 
   const create = useCallback(async () => {
     const requestBody: any = {
