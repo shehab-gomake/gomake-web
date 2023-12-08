@@ -4,18 +4,23 @@ import {IDateRange, IMachine, IMachineProgress} from "@/shared";
 import {useGomakeAxios, useGomakeMachines} from "@/hooks";
 import {TODAY_DATE_RANGE} from "@/shared/constant";
 import {endOfDay} from "date-fns";
+import {useRecoilValue} from "recoil";
+import {selectedAgentsState} from "@/store/agents-state";
 
 const useBoardMissions = () => {
     const {machines, getCheckedMachines} = useGomakeMachines();
     const [boardsMissions, setBoardsMissions] = useState<IBoardMissions[]>([]);
     const [machinesProgress, setMachinesProgress] = useState<Record<string, IMachineProgress>>({})
     const [statistics, setStatistics] = useState<IDashboardStatistic>();
+    const selectedAgents = useRecoilValue(selectedAgentsState);
+
     const {callApi} = useGomakeAxios();
 
     const getBoardsMissionsByDateRange = async (dateRange: IDateRange) => {
-        const res = await callApi("GET", '/boardMissions', {
+        const res = await callApi("POST", '/boardMissions', {
             startDate: dateRange?.startDate?.toISOString(),
-            endDate: dateRange?.endDate?.toISOString()
+            endDate: dateRange?.endDate?.toISOString(),
+            agents: selectedAgents,
         }, true, true);
 
         setBoardsMissions(res?.data?.boardsMissions);
@@ -24,7 +29,7 @@ const useBoardMissions = () => {
     };
 
     const getLateBoardsMissions = async () => {
-        const res = await callApi("GET", '/lateBoardMissions', {}, true, true);
+        const res = await callApi("POST", '/lateBoardMissions', {agents: selectedAgents}, true, true);
         setBoardsMissions(res?.data?.boardsMissions);
         setMachinesProgress(res?.data?.machinesProgress);
         setStatistics(res?.data?.statistics);
@@ -32,9 +37,10 @@ const useBoardMissions = () => {
 
 
     const getLateTodayBoardsMissions = async () => {
-        const res = await callApi("GET", '/today-late-boardMissions', {
+        const res = await callApi("POST", '/today-late-boardMissions', {
             startDate: TODAY_DATE_RANGE.startDate?.toISOString(),
-            endDate: TODAY_DATE_RANGE.endDate?.toISOString()
+            endDate: TODAY_DATE_RANGE.endDate?.toISOString(),
+            agents: selectedAgents,
         }, true, true);
         setBoardsMissions(res?.data?.boardsMissions);
         setMachinesProgress(res?.data?.machinesProgress);
@@ -47,9 +53,10 @@ const useBoardMissions = () => {
         const month = date.getMonth();
         const day = date.getDate();
         const nextYearDate = new Date(year + 1, month, day);
-        const res = await callApi("GET", '/today-late-boardMissions', {
+        const res = await callApi("POST", '/today-late-boardMissions', {
             startDate: TODAY_DATE_RANGE.startDate?.toISOString(),
-            endDate: endOfDay(nextYearDate).toISOString()
+            endDate: endOfDay(nextYearDate).toISOString(),
+            agents: selectedAgents,
         }, true, true);
         setBoardsMissions(res?.data?.boardsMissions);
         setMachinesProgress(res?.data?.machinesProgress);

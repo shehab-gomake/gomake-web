@@ -9,6 +9,7 @@ export const apiRequest = async (method = "GET", url: string, data: any = {}, se
         // //     trh
         // // }
         // const SERVER = 'http://localhost:3010';
+        //const SERVER2 = 'https://production-service-prod.gomake.co.il';
         const SERVER2 = 'https://production-service-prod.gomake.co.il';
         const reqUrl = secondServer ? SERVER2 + url : SERVER + url;
         const options: any = {

@@ -29,9 +29,9 @@ const DashboardWidget = ({}: IDashboardWidget) => {
     const [tasksFilter, setTasksFilter] = useState<string>('');
     const selectedClient = useRecoilValue(selectedClientIdState);
     const clients = useRecoilValue(clientsState);
-    const selectedAgents = useRecoilValue(selectedAgentsState);
     const {classes} = useStyle();
     const {dates, action} = useGomakeDateRange();
+    const selectedAgents = useRecoilValue(selectedAgentsState);
     const {t} = useTranslation();
     const {secondColor} = useGomakeTheme();
     const {logout} = useDashboardLogout();
@@ -64,7 +64,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
 
     useEffect(() => {
         actions(action, dates);
-    }, [action, dates])
+    }, [action, dates,selectedAgents])
 
     useEffect(() => {
         addMachineProgress(machinesProgress);
@@ -75,7 +75,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
             actions(action, dates);
         }, INTERVAL_TIMEOUT);
         return () => clearInterval(interval);
-    }, [dates, action]);
+    }, [dates, action,selectedAgents]);
 
     const handelSearchValueChange = (event: ChangeEvent<HTMLInputElement>) => {
         const {value} = event.target;
@@ -106,16 +106,13 @@ const DashboardWidget = ({}: IDashboardWidget) => {
         if (selectedClient) {
             tasksArray = tasksArray.filter(board => board.clientId === selectedClient);
         }
-        if (selectedAgents && selectedAgents.length > 0) {
-            tasksArray = tasksArray.filter(board => selectedAgents.find( (agentId:string) => agentId === board.agentId));
-        }
         return tasksFilter ?
             tasksArray.filter((boardsMissions: IBoardMissions) => {
                 return boardsMissions.code.toLowerCase().includes(tasksFilter.toLowerCase()) ||
                     boardsMissions.orderNumber.toLowerCase().includes(tasksFilter.toLowerCase())
             })
             : tasksArray;
-    }, [tasksFilter, getFilteredBoardsMissions(), selectedClient,selectedAgents])
+    }, [tasksFilter, getFilteredBoardsMissions(), selectedClient])
     return (
         <div style={classes.container}>
             <Cards data={statistics ? statistics : {} as IDashboardStatistic}/>
