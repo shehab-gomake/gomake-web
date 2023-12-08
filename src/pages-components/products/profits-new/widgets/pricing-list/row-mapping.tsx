@@ -16,6 +16,7 @@ const RowMappingWidget = ({
   selectedPricingBy,
   handleClickMorePriceTable,
   setSelectedActionProfit,
+  selectedAdditionalProfitRow,
 }: PricingListTableRowProps) => {
   const { clasess } = useStyle();
   const {
@@ -85,6 +86,22 @@ const RowMappingWidget = ({
           )}
         </div>
       </PrimaryTableCell>
+      {selectedAdditionalProfitRow?.id && (
+        <PrimaryTableCell style={clasess.cellContainerStyle}>
+          <div style={clasess.cellTextInputStyle}>
+            <InputUpdatedValues
+              value={selectedAdditionalProfitRow.profitValue}
+              onBlur={() => onBlurTotalPrice(item)}
+              isUpdate={isUpdatTotalPrice}
+              setIsUpdate={setIsUpdateTotalPrice}
+              sign="%"
+              onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
+                onInputChangeTotalPrice(e)
+              }
+            />
+          </div>
+        </PrimaryTableCell>
+      )}
       <PrimaryTableCell style={clasess.cellContainerStyle}>
         <div style={clasess.cellTextInputStyle}>
           <InputUpdatedValues

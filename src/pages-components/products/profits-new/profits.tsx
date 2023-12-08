@@ -31,6 +31,12 @@ const ProfitsNewPageWidget = () => {
     selectedActionProfitRow,
     actionProfitByActionId,
     typeExceptionSelected,
+    selectedAdditionalProfitRow,
+    anchorElAdditionalProfitMenu,
+    openAdditionalProfitMenu,
+    handleCloseAdditionalProfitMenu,
+    handleClickAdditionalProfitMenu,
+    setSelectedActionProfitRow,
     setTypeExceptionSelected,
     setSelectedActionProfit,
     handleClickMorePriceTable,
@@ -86,6 +92,7 @@ const ProfitsNewPageWidget = () => {
           selectedActionProfitRow={selectedActionProfitRow}
           setSelectedActionProfit={setSelectedActionProfit}
           deleteActionProfitRow={deleteActionProfitRow}
+          selectedAdditionalProfitRow={selectedAdditionalProfitRow}
         />
         <ProfitRightSideWidget
           minimumValue={minimumValue}
@@ -113,6 +120,12 @@ const ProfitsNewPageWidget = () => {
           getProfitsPricingTables={getProfitsPricingTables}
           typeExceptionSelected={typeExceptionSelected}
           setTypeExceptionSelected={setTypeExceptionSelected}
+          selectedAdditionalProfitRow={selectedAdditionalProfitRow}
+          setSelectedActionProfitRow={setSelectedActionProfitRow}
+          anchorElAdditionalProfitMenu={anchorElAdditionalProfitMenu}
+          openAdditionalProfitMenu={openAdditionalProfitMenu}
+          handleCloseAdditionalProfitMenu={handleCloseAdditionalProfitMenu}
+          handleClickAdditionalProfitMenu={handleClickAdditionalProfitMenu}
         />
       </div>
     </div>

@@ -17,6 +17,7 @@ const PricingTableMappingMenu = ({
   const { t } = useTranslation();
   const isDefaultException =
     selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
+
   const menuList = [
     {
       name: t("home.duplicate"),

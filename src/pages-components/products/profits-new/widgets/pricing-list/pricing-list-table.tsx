@@ -42,6 +42,7 @@ const PricingListTable = ({
   selectedActionProfitRow,
   setSelectedActionProfit,
   deleteActionProfitRow,
+  selectedAdditionalProfitRow,
 }: PricingListTableProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -84,7 +85,7 @@ const PricingListTable = ({
             {tableBodyList?.map((item: any, index: number) => {
               return (
                 <RowMappingWidget
-                  key={item?.id}
+                  key={`${item?.id}-${item?.actionProfitId}-${index}`}
                   item={item}
                   index={index}
                   changeactionProfitRowsItems={changeactionProfitRowsItems}
@@ -92,6 +93,7 @@ const PricingListTable = ({
                   selectedPricingBy={selectedPricingBy}
                   handleClickMorePriceTable={handleClickMorePriceTable}
                   setSelectedActionProfit={setSelectedActionProfit}
+                  selectedAdditionalProfitRow={selectedAdditionalProfitRow}
                 />
               );
             })}

@@ -66,6 +66,7 @@ export type PricingListProps = {
   selectedActionProfitRow: ActionProfitRow;
   setSelectedActionProfit?: (value: any) => void;
   deleteActionProfitRow?: (id: string) => void;
+  selectedAdditionalProfitRow?: ProfitsPricingTables;
 };
 export type PricingListTableProps = {
   tableHeaders: string[];
@@ -85,6 +86,7 @@ export type PricingListTableProps = {
   selectedActionProfitRow: ActionProfitRow;
   setSelectedActionProfit?: (value: any) => void;
   deleteActionProfitRow?: (id: string) => void;
+  selectedAdditionalProfitRow?: ProfitsPricingTables;
 };
 export type PricingListTableRowProps = {
   item: any;
@@ -101,6 +103,7 @@ export type PricingListTableRowProps = {
   handleClickMorePriceTable?: (e) => void;
   handleCloseMorePriceTable?: () => void;
   setSelectedActionProfit?: (value: any) => void;
+  selectedAdditionalProfitRow?: ProfitsPricingTables;
 };
 export type LineChartProps = {
   actionProfitRowChartData: ActionProfitRowChartData;
@@ -127,6 +130,10 @@ export type ProfitRightSideProps = {
   openPricingTablesMapping?: boolean;
   handleClickPricingTablesMapping?: (e) => void;
   handleClosePricingTablesMapping?: () => void;
+  anchorElAdditionalProfitMenu?: null | HTMLElement;
+  openAdditionalProfitMenu?: boolean;
+  handleCloseAdditionalProfitMenu?: () => void;
+  handleClickAdditionalProfitMenu?: (e) => void;
   selectedPricingTableItems?: any;
   setSelectedPricingTableItems?: (value: any) => void;
   dataForExceptions?: ProfitsPricingTables[];
@@ -138,6 +145,8 @@ export type ProfitRightSideProps = {
   getProfitsPricingTables?: () => void;
   typeExceptionSelected?: number;
   setTypeExceptionSelected?: (value: any) => void;
+  selectedAdditionalProfitRow?: ProfitsPricingTables;
+  setSelectedActionProfitRow?: (value: any) => void;
 };
 
 export type ProfitLeftSideProps = {
@@ -167,4 +176,5 @@ export type ProfitLeftSideProps = {
   selectedActionProfitRow: ActionProfitRow;
   setSelectedActionProfit?: (value: any) => void;
   deleteActionProfitRow?: (id: string) => void;
+  selectedAdditionalProfitRow?: ProfitsPricingTables;
 };

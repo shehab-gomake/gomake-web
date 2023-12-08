@@ -74,7 +74,8 @@ const useNewProfits = () => {
   const [selectedPricingTableItems, setSelectedPricingTableItems] =
     useState<ProfitsPricingTables>();
   const [typeExceptionSelected, setTypeExceptionSelected] = useState<number>();
-
+  const [selectedAdditionalProfitRow, setSelectedActionProfitRow] =
+    useState<ProfitsPricingTables>();
   const [profitRowType, setProfitRowType] = useState(1);
   const [selectedPricingBy, setSelectedPricingBy] =
     useState<SelectedPricingByType>({
@@ -108,7 +109,8 @@ const useNewProfits = () => {
       setAllActionProfitRowsByActionId,
       { actionId: router.query.actionId }
     );
-  }, [router]);
+  }, [router, selectedPricingTableItems]);
+
   const getAllActionProfitRowsByActionIdWithExceptionId =
     useCallback(async () => {
       await getAndSetAllActionProfitRowsByActionId(
@@ -168,6 +170,15 @@ const useNewProfits = () => {
         t("products.profits.pricingListWidget.totalPrice"),
         t("products.profits.pricingListWidget.more"),
       ]);
+      if (selectedAdditionalProfitRow?.id) {
+        setTableHeaders([
+          selectedPricingBy?.label,
+          t("products.profits.pricingListWidget.profit"),
+          "Profit value",
+          t("products.profits.pricingListWidget.totalPrice"),
+          t("products.profits.pricingListWidget.more"),
+        ]);
+      }
     } else {
       setTableHeaders([
         selectedPricingBy?.label,
@@ -175,8 +186,17 @@ const useNewProfits = () => {
         t("products.profits.pricingListWidget.totalPrice"),
         t("products.profits.pricingListWidget.more"),
       ]);
+      if (selectedAdditionalProfitRow?.id) {
+        setTableHeaders([
+          selectedPricingBy?.label,
+          t("products.profits.pricingListWidget.unitPrice"),
+          "Profit value",
+          t("products.profits.pricingListWidget.totalPrice"),
+          t("products.profits.pricingListWidget.more"),
+        ]);
+      }
     }
-  }, [selectedPricingBy]);
+  }, [selectedPricingBy, selectedAdditionalProfitRow]);
 
   const onCloseAddStepModal = () => {
     setOpenAddStepModal(false);
@@ -225,7 +245,7 @@ const useNewProfits = () => {
 
   useEffect(() => {
     setActionProfitRowsList(allActionProfitRowsByActionId);
-  }, [allActionProfitRowsByActionId]);
+  }, [allActionProfitRowsByActionId, selectedPricingTableItems]);
   const changeactionProfitRowsItems = (
     index: number,
     filedName: string,
@@ -344,6 +364,19 @@ const useNewProfits = () => {
   };
   const handleClosePricingTablesMapping = () => {
     setAnchorElPricingTablesMapping(null);
+  };
+
+  const [anchorElAdditionalProfitMenu, setAnchorElAdditionalProfitMenu] =
+    useState<null | HTMLElement>(null);
+  const openAdditionalProfitMenu = Boolean(anchorElAdditionalProfitMenu);
+
+  const handleClickAdditionalProfitMenu = (
+    event: React.MouseEvent<HTMLElement>
+  ) => {
+    setAnchorElAdditionalProfitMenu(event.currentTarget);
+  };
+  const handleCloseAdditionalProfitMenu = () => {
+    setAnchorElAdditionalProfitMenu(null);
   };
 
   useEffect(() => {
@@ -476,6 +509,12 @@ const useNewProfits = () => {
     openMorePriceTable,
     selectedActionProfitRow,
     typeExceptionSelected,
+    selectedAdditionalProfitRow,
+    anchorElAdditionalProfitMenu,
+    openAdditionalProfitMenu,
+    handleCloseAdditionalProfitMenu,
+    handleClickAdditionalProfitMenu,
+    setSelectedActionProfitRow,
     setTypeExceptionSelected,
     deleteActionProfitRow,
     setSelectedActionProfit,

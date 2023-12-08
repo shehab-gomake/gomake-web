@@ -5,8 +5,8 @@ import { useTranslation } from "react-i18next";
 const AdditionsAndExceptionsMapping = ({
   item,
   handleClickPricingTablesMapping,
-  setSelectedPricingTableItems,
-  selectedPricingTableItems,
+  selectedAdditionalProfitRow,
+  setSelectedActionProfitRow,
 }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -14,12 +14,12 @@ const AdditionsAndExceptionsMapping = ({
     <div style={clasess.mainContainer}>
       <div
         style={
-          selectedPricingTableItems?.id === item?.id
+          selectedAdditionalProfitRow?.id === item?.id
             ? clasess.WithBordermainContainer
             : clasess.cardItemWithMore
         }
         onClick={() => {
-          setSelectedPricingTableItems(item);
+          setSelectedActionProfitRow(item);
         }}
       >
         <div style={clasess.firstRowStyle}>
@@ -34,7 +34,7 @@ const AdditionsAndExceptionsMapping = ({
         <div
           onClick={(e) => {
             handleClickPricingTablesMapping(e);
-            setSelectedPricingTableItems(item);
+            setSelectedActionProfitRow(item);
           }}
           style={clasess.moreIconStyle}
         >

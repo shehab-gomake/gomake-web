@@ -13,6 +13,7 @@ import { ProfitRightSideProps } from "../../interface";
 import { MinimumWidget } from "../minimum-widget";
 import { AddRuleModal } from "../add-rule-modal";
 import { useStyle } from "./style";
+import { AdditinalProfitMenu } from "../additinal-profit-menu";
 
 const ProfitRightSideWidget = ({
   minimumValue,
@@ -39,11 +40,25 @@ const ProfitRightSideWidget = ({
   getProfitsPricingTables,
   typeExceptionSelected,
   setTypeExceptionSelected,
+  selectedAdditionalProfitRow,
+  setSelectedActionProfitRow,
+  anchorElAdditionalProfitMenu,
+  openAdditionalProfitMenu,
+  handleCloseAdditionalProfitMenu,
+  handleClickAdditionalProfitMenu,
 }: ProfitRightSideProps) => {
   const { clasess } = useStyle();
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
+  const [openDeleteAdditionalRowModal, setOpenDeleteAdditionalRowModal] =
+    useState<boolean>(false);
   const [openAddNewRuleModal, setOpenAddNewRuleModal] =
     useState<boolean>(false);
+  const onClickOpenDeleteAdditionalRowModal = () => {
+    setOpenDeleteAdditionalRowModal(true);
+  };
+  const onClickCloseDeleteAdditionalRowModal = () => {
+    setOpenDeleteAdditionalRowModal(false);
+  };
   const onClickOpenDeleteRowModal = () => {
     setOpenDeleteRowModal(true);
   };
@@ -129,16 +144,16 @@ const ProfitRightSideWidget = ({
             setTypeExceptionSelected(ETypeException.ADDITIONAL);
         }}
       >
-        {dataForExceptions?.map((item, index) => {
+        {dataForExceptions?.map((item) => {
           return (
             <div key={item.id} style={{ width: "100%" }}>
               <AdditionsAndExceptionsMapping
                 item={item}
                 handleClickPricingTablesMapping={
-                  handleClickPricingTablesMapping
+                  handleClickAdditionalProfitMenu
                 }
-                setSelectedPricingTableItems={setSelectedPricingTableItems}
-                selectedPricingTableItems={selectedPricingTableItems}
+                selectedAdditionalProfitRow={selectedAdditionalProfitRow}
+                setSelectedActionProfitRow={setSelectedActionProfitRow}
               />
             </div>
           );
@@ -166,11 +181,26 @@ const ProfitRightSideWidget = ({
         onClickOpenAddNewRuleModal={onClickOpenAddNewRuleModal}
         setTypeExceptionSelected={setTypeExceptionSelected}
       />
+      <AdditinalProfitMenu
+        handleClose={handleCloseAdditionalProfitMenu}
+        open={openAdditionalProfitMenu}
+        anchorEl={anchorElAdditionalProfitMenu}
+        onClickOpenDeleteAdditionalRowModal={
+          onClickOpenDeleteAdditionalRowModal
+        }
+      />
       <GoMakeDeleteModal
         openModal={openDeleteRowModal}
         onClose={onClickCloseDeleteRowModal}
         onClickDelete={() =>
           deleteExceptionProfit(selectedPricingTableItems?.id)
+        }
+      />
+      <GoMakeDeleteModal
+        openModal={openDeleteAdditionalRowModal}
+        onClose={onClickCloseDeleteAdditionalRowModal}
+        onClickDelete={() =>
+          deleteExceptionProfit(selectedAdditionalProfitRow?.id)
         }
       />
       <AddRuleModal

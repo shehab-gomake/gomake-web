@@ -4,7 +4,6 @@ import { LineChart } from "@/pages-components/products/profits/widgets/line-char
 import { PricingListTable } from "./pricing-list-table";
 import { useStyle } from "./style";
 import { PricingListProps } from "../../interface";
-import { MoreMenuWidget } from "./more-menu";
 
 const PricingList = ({
   tableHeaders,
@@ -26,6 +25,7 @@ const PricingList = ({
   selectedActionProfitRow,
   setSelectedActionProfit,
   deleteActionProfitRow,
+  selectedAdditionalProfitRow,
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -68,6 +68,7 @@ const PricingList = ({
         selectedActionProfitRow={selectedActionProfitRow}
         setSelectedActionProfit={setSelectedActionProfit}
         deleteActionProfitRow={deleteActionProfitRow}
+        selectedAdditionalProfitRow={selectedAdditionalProfitRow}
       />
       <div style={clasess.chartContainer}>
         <LineChart actionProfitRowChartData={actionProfitRowChartData} />
