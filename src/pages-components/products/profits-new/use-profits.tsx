@@ -73,6 +73,7 @@ const useNewProfits = () => {
   ];
   const [selectedPricingTableItems, setSelectedPricingTableItems] =
     useState<ProfitsPricingTables>();
+  console.log("selectedPricingTableItems", selectedPricingTableItems);
   const [typeExceptionSelected, setTypeExceptionSelected] = useState<number>();
   const [selectedAdditionalProfitRow, setSelectedActionProfitRow] =
     useState<ProfitsPricingTables>();
@@ -103,32 +104,25 @@ const useNewProfits = () => {
     t("products.profits.pricingListWidget.totalPrice"),
     t("products.profits.pricingListWidget.more"),
   ]);
+
   const getAllActionProfitRowsByActionId = useCallback(async () => {
+    const requestBody: any = {
+      actionId: router.query.actionId,
+    };
+
+    if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
+      requestBody.exceptionId = selectedPricingTableItems?.id;
+    }
+
     await getAndSetAllActionProfitRowsByActionId(
       callApi,
       setAllActionProfitRowsByActionId,
-      { actionId: router.query.actionId }
+      requestBody
     );
   }, [router, selectedPricingTableItems]);
 
-  const getAllActionProfitRowsByActionIdWithExceptionId =
-    useCallback(async () => {
-      await getAndSetAllActionProfitRowsByActionId(
-        callApi,
-        setAllActionProfitRowsByActionId,
-        {
-          actionId: router.query.actionId,
-          exceptionId: selectedPricingTableItems?.id,
-        }
-      );
-    }, [router, selectedPricingTableItems]);
-
   useEffect(() => {
-    if (selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT) {
-      getAllActionProfitRowsByActionId();
-    } else {
-      getAllActionProfitRowsByActionIdWithExceptionId();
-    }
+    getAllActionProfitRowsByActionId();
   }, [selectedPricingTableItems]);
   const getActionProfitByActionId = useCallback(async () => {
     await getAndSetActionProfitByActionId(callApi, setActionProfitByActionId, {
@@ -261,16 +255,23 @@ const useNewProfits = () => {
 
   const addNewStepForActionProfitRow = useCallback(
     async (value: number, totalPrice: number) => {
+      const requestBody: any = {
+        actionProfitId: actionProfitByActionId?.id,
+        value,
+        pricingBy: selectedPricingBy?.value,
+        totalPrice: totalPrice,
+      };
+
+      if (selectedPricingTableItems?.exceptionType !== ETypeException.DEFAULT) {
+        requestBody.actionExceptionId = selectedPricingTableItems?.id;
+      }
+
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/printhouse-config/action-profit-rows/add-action-profit-row`,
-        {
-          actionProfitId: actionProfitByActionId?.id,
-          value,
-          pricingBy: selectedPricingBy?.value,
-          totalPrice: totalPrice,
-        }
+        requestBody
       );
+
       if (res?.success) {
         alertSuccessAdded();
         getAllActionProfitRowsByActionId();
@@ -279,7 +280,7 @@ const useNewProfits = () => {
         alertFaultAdded();
       }
     },
-    [actionProfitByActionId, selectedPricingBy]
+    [actionProfitByActionId, selectedPricingBy, selectedPricingTableItems]
   );
 
   const updateActionProfitRow = useCallback(async (data: any) => {
