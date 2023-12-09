@@ -10,7 +10,8 @@ const useStyle = () => {
       insideStyle: {
         width: 1150,
         borderRadius: 5,
-        height: 750,
+        height: "auto",
+        maxHeight: 750,
       },
       textInputStyle: {
         borderRadius: 4,
