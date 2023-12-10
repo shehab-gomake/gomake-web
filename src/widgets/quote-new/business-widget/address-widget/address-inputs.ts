@@ -1,29 +1,23 @@
-const addressInputs = (state: any, cities: any[], filteredCityStreets: any[]) => {
-    return [
+const addressInputs = (state: any, isNewAddressState: boolean) => {
+    const commonInputs = [
         {
             name: "city",
             label: "sales.quote.city",
-            type: "select",
+            type: "text",
             placeholder: "sales.quote.city",
             required: false,
             parameterKey: "city",
-            options: cities.map(city => ({
-                value: city.Name,
-                text: city.Name
-            })),
+            options: [],
             value: state?.city,
         },
         {
             name: "street",
             label: "sales.quote.street",
-            type: "select",
+            type: "text",
             placeholder: "sales.quote.street",
             required: false,
             parameterKey: "street",
-            options: filteredCityStreets.map(street => ({
-                value: street.name,
-                text: street.name,
-            })),
+            options: [],
             value: state?.street,
         },
         {
@@ -33,7 +27,7 @@ const addressInputs = (state: any, cities: any[], filteredCityStreets: any[]) =>
             placeholder: "sales.quote.entrance",
             required: false,
             parameterKey: "entry",
-            options:[],
+            options: [],
             value: state?.entry,
         },
         {
@@ -47,6 +41,23 @@ const addressInputs = (state: any, cities: any[], filteredCityStreets: any[]) =>
             value: state?.apartment,
         },
     ];
-}
+
+    if (isNewAddressState) {
+        return [
+            {
+                name: "addressId",
+                label: "sales.quote.addressId",
+                type: "text",
+                placeholder: "sales.quote.addressId",
+                required: false,
+                parameterKey: "addressId",
+                options: [],
+                value: state?.addressId,
+            },
+            ...commonInputs,
+        ];
+    }
+    return commonInputs;
+};
 
 export { addressInputs };

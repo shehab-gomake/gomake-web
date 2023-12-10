@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import lodashClonedeep from "lodash.clonedeep";
 import { useTranslation } from "react-i18next";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
@@ -12,13 +12,16 @@ import {
   getAndSetQuotesByUserId,
 } from "@/services/hooks";
 import {
+  addressSelectState,
   agentListsState,
   businessListsState,
+  clientAddressState,
   clientContactsState,
   quoteItemState,
 } from "@/store";
 import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { addressModalState } from "@/widgets/quote-new/business-widget/address-widget/state";
+import { useQuoteGetData } from "./use-quote-get-data";
 
 const useQuoteNew = () => {
   const {
@@ -45,7 +48,7 @@ const useQuoteNew = () => {
   const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<
     number | null
   >(null);
-  
+
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
   const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
@@ -162,7 +165,7 @@ const useQuoteNew = () => {
     getAllCustomers();
   }, []);
 
-  const onBlurPurchaseNumber = async (value=5) => {
+  const onBlurPurchaseNumber = async (value = 5) => {
     updatePurchaseNumber(value);
     setIsUpdatePurchaseNumber(null);
   };
@@ -671,14 +674,15 @@ const useQuoteNew = () => {
   );
 
   const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
+
   const updateClientAddress = useCallback(async (item: any) => {
     const res = await callApi(
       "PUT",
       `/v1/erp-service/quote/update-quote-address`,
       {
         quoteID: quoteItemValue?.id,
-        id: quoteItemValue?.quoteAddresses[0]?.id, 
-        addressID: quoteItemValue?.quoteAddresses[0]?.addressID, 
+        id: quoteItemValue?.quoteAddresses[0]?.id,
+        addressID: quoteItemValue?.quoteAddresses[0]?.addressID,
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
@@ -696,9 +700,7 @@ const useQuoteNew = () => {
   }, []);
 
 
-
-
-  const onClickAddNewAddress = useCallback(async (item: any) => {
+  const onClickAddAddress = useCallback(async (item: any) => {
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/quote/add-quote-address`,
@@ -721,6 +723,33 @@ const useQuoteNew = () => {
     }
   }, [quoteItemValue]);
 
+
+  const { getAllClientAddress } = useQuoteGetData();
+
+  const clientAddressValue = useRecoilValue<any>(clientAddressState);
+
+  const onClickAddNewAddress = useCallback(async (item: any, isUpdate: boolean) => {
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/crm-service/customer/create-address`,
+      {
+        address1: item?.addressId,
+        street: item?.street,
+        city: item?.city,
+        entry: item?.entry,
+        apartment: item?.apartment,
+        clientId: quoteItemValue?.customerID,
+      }
+    );
+    if (res?.success) {
+      alertSuccessAdded();
+      const result = await getAllClientAddress();
+      isUpdate ? updateClientAddress(result.find(item => item.id === res.data.data.result)) :
+        onClickAddAddress(result.find(item => item.id === res.data.data.result))
+    } else {
+      alertFaultAdded();
+    }
+  }, [quoteItemValue]);
 
 
   const onClickDeleteAddress = useCallback(async (item: any) => {
@@ -850,10 +879,10 @@ const useQuoteNew = () => {
     updateCancelQuote,
     onChangeSelectBusiness,
     updatePurchaseNumber,
-
     updateClientAddress,
-    onClickAddNewAddress,
-    onClickDeleteAddress
+    onClickAddAddress,
+    onClickDeleteAddress,
+    onClickAddNewAddress
   };
 };
 

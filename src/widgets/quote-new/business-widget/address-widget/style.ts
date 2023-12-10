@@ -3,13 +3,13 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-    const { grayColor , primaryColor} = useGomakeTheme();
+    const { primaryColor} = useGomakeTheme();
 
     const classes = useMemo(() => {
         return {
             insideStyle: {
                 width: "371px",
-                height: "58-px",
+                height: "580px",
                 padding: "20px",
                 borderRadius: "24px",
             },

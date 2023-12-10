@@ -1,29 +1,28 @@
 import { useGomakeAxios } from "@/hooks";
 import { getAndSetClientAddress} from "@/services/hooks";
-import { clientAddressState,quoteItemState} from "@/store";
-import { useCallback, useEffect } from "react";
-import { useRecoilState } from "recoil";
+import { addressSelectState, clientAddressState,quoteItemState} from "@/store";
+import { useCallback } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 const useQuoteGetData = () => {
+  
   const { callApi } = useGomakeAxios();
-
   const [clientAddressValue, setClientAddressValue] = useRecoilState<any>(clientAddressState);
-  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+  const addressSelect = useRecoilValue(addressSelectState);
+  const quoteItemValue = useRecoilValue<any>(quoteItemState);
 
-  // drop down list in addresses
   const getAllClientAddress = useCallback(async () => {
     if (quoteItemValue?.customerID) {
-      await getAndSetClientAddress(callApi, setClientAddressValue, {
+     return await getAndSetClientAddress(callApi, setClientAddressValue, {
         ClientId: quoteItemValue?.customerID,
       });
     }
   }, [quoteItemValue]);
-  
-
 
   return {
     quoteItemValue,
     clientAddressValue,
+    addressSelect,
     getAllClientAddress,
   };
 };
