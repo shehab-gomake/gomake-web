@@ -35,15 +35,14 @@ const AddressModal = ({ isUpdate }: IProps) => {
 
     useEffect(() => {
         getAllClientAddress();
-        if (quoteStateValue?.quoteAddresses.length > 0) {
-            const addressId = quoteStateValue?.quoteAddresses[0]?.addressID;
-            const city = quoteStateValue?.quoteAddresses[0]?.city;
-            setSelectedAddress({ label: city, value: addressId })
-        }
-        else {
-            setSelectedAddress(addressSelect[0])
-        }
-
+            if (quoteStateValue?.quoteAddresses.length > 0) {
+                const addressId = quoteStateValue?.quoteAddresses[0]?.addressID;
+                const city = quoteStateValue?.quoteAddresses[0]?.city;
+                setSelectedAddress({ label: city, value: addressId })
+            }
+            else {
+                setSelectedAddress(addressSelect[0])
+            }
     }, [quoteStateValue, openModal]);
 
     useEffect(() => {
@@ -64,7 +63,7 @@ const AddressModal = ({ isUpdate }: IProps) => {
             <GoMakeModal
                 insideStyle={classes.insideStyle}
                 openModal={openModal}
-                onClose={() => { setOpenModal(false); setAddressState(quoteStateValue?.quoteAddresses[0]); }}
+                onClose={() => { setOpenModal(false); }}
                 withClose={false}
             >
                 <Stack display={"flex"} width={"330px"} gap={"12px"}>

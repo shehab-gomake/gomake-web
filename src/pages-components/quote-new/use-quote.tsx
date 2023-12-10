@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import lodashClonedeep from "lodash.clonedeep";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue } from "recoil";
-
+import { useRecoilState , useSetRecoilState } from "recoil";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
@@ -35,7 +34,7 @@ const useQuoteNew = () => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
-
+  const { getAllClientAddress } = useQuoteGetData();
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
   const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
@@ -673,8 +672,7 @@ const useQuoteNew = () => {
     [quoteItemValue]
   );
 
-  const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
-
+  const setOpenModal = useSetRecoilState<boolean>(addressModalState);
   const updateClientAddress = useCallback(async (item: any) => {
     const res = await callApi(
       "PUT",
@@ -682,7 +680,7 @@ const useQuoteNew = () => {
       {
         quoteID: quoteItemValue?.id,
         id: quoteItemValue?.quoteAddresses[0]?.id,
-        addressID: quoteItemValue?.quoteAddresses[0]?.addressID,
+        addressID: item?.id,
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
@@ -698,7 +696,6 @@ const useQuoteNew = () => {
       alertFaultAdded();
     }
   }, []);
-
 
   const onClickAddAddress = useCallback(async (item: any) => {
     const res = await callApi(
@@ -716,17 +713,12 @@ const useQuoteNew = () => {
     );
     if (res?.success) {
       alertSuccessAdded();
-      setOpenModal(false);
       getQuote();
+      setOpenModal(false);
     } else {
       alertFaultAdded();
     }
   }, [quoteItemValue]);
-
-
-  const { getAllClientAddress } = useQuoteGetData();
-
-  const clientAddressValue = useRecoilValue<any>(clientAddressState);
 
   const onClickAddNewAddress = useCallback(async (item: any, isUpdate: boolean) => {
     const res = await callApi(

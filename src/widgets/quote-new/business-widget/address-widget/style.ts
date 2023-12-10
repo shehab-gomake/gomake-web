@@ -9,9 +9,10 @@ const useStyle = () => {
         return {
             insideStyle: {
                 width: "371px",
-                height: "580px",
                 padding: "20px",
                 borderRadius: "24px",
+                position: "relative" as "relative",
+                height: "auto",
             },
             saveBtn: {
                 width: "331px",
