@@ -1657,7 +1657,8 @@
       "writeCommentHere": "اكتب تعليقك هنا",
       "attachFiles": "إرفاق ملفات",
       "copyTo": "نسخ إلى",
-      "managerApproval": "موافقة الإدارة"
+      "managerApproval": "موافقة الإدارة",
+      "quoteNumber": "رقم العرض"
     }
   },
   "usersSettings": {

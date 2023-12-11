@@ -104,10 +104,12 @@ const useQuotes = () => {
     );
     const data = res?.data?.data?.result;
     const totalItems = res?.data?.data?.totalItems;
+
     const mapData = data?.map((quote: any) => [
       GetDateFormat(quote?.createdDate),
       quote?.customerName,
       quote?.orderNumber,
+      quote?.quoteNumber,
       quote?.worksNames,
       quote?.totalPrice,
       quote?.notes,
@@ -124,6 +126,7 @@ const useQuotes = () => {
     agentId,
     finalPatternSearch,
   ]);
+
   const getAllQuotesInitial = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -141,6 +144,7 @@ const useQuotes = () => {
       GetDateFormat(quote?.createdDate),
       quote?.customerName,
       quote?.orderNumber,
+      quote?.quoteNumber,
       quote?.worksNames,
       quote?.totalPrice,
       quote?.notes,
@@ -167,6 +171,7 @@ const useQuotes = () => {
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
     t("sales.quote.orderNumber"),
+    t("sales.quote.quoteNumber"),
     t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
