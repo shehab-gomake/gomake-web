@@ -10,7 +10,7 @@ import { OptionsButton } from "@/components/options-button/options-button";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 
-const MoreMenuWidget = ({ quote, onClcikOpenModal }: any) => {
+const MoreMenuWidget = ({ quote, onClickOpenModal , onClickPdf }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const { user, navigate } = useMoreCircle();
@@ -25,7 +25,7 @@ const MoreMenuWidget = ({ quote, onClcikOpenModal }: any) => {
           </PermissionCheck>
         </div>
       </MenuItem>
-      <MenuItem>
+      <MenuItem onClick={()=>onClickPdf(quote?.id)}>
         <div style={clasess.menuRowStyle}>
           <PDFIcon />
           <div style={clasess.rowTextStyle}>{t("sales.quote.pdf")}</div>
@@ -39,12 +39,12 @@ const MoreMenuWidget = ({ quote, onClcikOpenModal }: any) => {
       </MenuItem>
       {(quote?.statusID === QUOTE_STATUSES.Create &&
         quote?.userID === user?.id) ||
-      quote?.statusID === QUOTE_STATUSES.Open ? (
+        quote?.statusID === QUOTE_STATUSES.Open ? (
         <MenuItem
           onClick={() =>
             quote?.statusID === QUOTE_STATUSES.Create
               ? navigate(`/quote`)
-              : onClcikOpenModal(quote)
+              : onClickOpenModal(quote)
           }
         >
           <div style={clasess.menuRowStyle}>
