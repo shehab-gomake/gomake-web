@@ -18,6 +18,7 @@ import {
   quoteItemState,
 } from "@/store";
 import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
+import { addQuoteDeliveryApi } from "@/services/api-service/quotes/quotes-endpoints";
 
 const useQuoteNew = () => {
   const {
@@ -44,7 +45,7 @@ const useQuoteNew = () => {
   const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<
     number | null
   >(null);
-  
+
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
   const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
@@ -67,6 +68,9 @@ const useQuoteNew = () => {
   const [selectedContact, setSelectedContact] = useState();
   const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
   const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
+  const [openAddDeliveryModal, setOpenAddDeliveryModal] = useState(false);
+
+
   const [qouteItemId, setQuateItemId] = useState();
   const [
     openDuplicateWithDifferentQTYModal,
@@ -161,7 +165,7 @@ const useQuoteNew = () => {
     getAllCustomers();
   }, []);
 
-  const onBlurPurchaseNumber = async (value=5) => {
+  const onBlurPurchaseNumber = async (value = 5) => {
     updatePurchaseNumber(value);
     setIsUpdatePurchaseNumber(null);
   };
@@ -221,8 +225,6 @@ const useQuoteNew = () => {
     },
     [quoteItemValue]
   );
-
-
 
   const updatePurchaseNumber = useCallback(
     async (value: any) => {
@@ -407,6 +409,14 @@ const useQuoteNew = () => {
   const onCloseNewItem = () => {
     setOpenAddNewItemModal(false);
   };
+
+  const onOpenDeliveryModal = () => {
+    setOpenAddDeliveryModal(true);
+  };
+  const onCloseDeliveryModal = () => {
+    setOpenAddDeliveryModal(false);
+  };
+
 
   const getCalculateQuoteItem = useCallback(
     async (quoteItemId: string, calculationType: number, data: number) => {
@@ -669,6 +679,19 @@ const useQuoteNew = () => {
     [quoteItemValue]
   );
 
+  const onClickAddDelivery = async (deliveryType: string) => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessAdded();
+        getQuote();
+        onCloseDeliveryModal();
+      } else {
+        alertFaultAdded();
+      }
+    };
+    await addQuoteDeliveryApi(callApi, callBack, { quoteId: quoteItemValue?.id, productType: deliveryType });
+  };
+
   return {
     dateRef,
     activeClickAway,
@@ -782,7 +805,11 @@ const useQuoteNew = () => {
     onClickCancelOffer,
     updateCancelQuote,
     onChangeSelectBusiness,
-    updatePurchaseNumber
+    updatePurchaseNumber,
+    openAddDeliveryModal,
+    onOpenDeliveryModal,
+    onCloseDeliveryModal,
+    onClickAddDelivery
   };
 };
 

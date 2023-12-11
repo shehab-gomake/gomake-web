@@ -22,6 +22,7 @@ import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { _renderQuoteStatus } from "@/utils/constants";
 import { IconButton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
+import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal";
 
 const QuoteNewPageWidget = () => {
   const { clasess } = useStyle();
@@ -129,10 +130,13 @@ const QuoteNewPageWidget = () => {
     updateCancelQuote,
     onClickSendQuoteToClient,
     onChangeSelectBusiness,
-    updatePurchaseNumber
-    
+    updatePurchaseNumber,
+    openAddDeliveryModal,
+    onOpenDeliveryModal,
+    onCloseDeliveryModal,
+    onClickAddDelivery
   } = useQuoteNew();
-  
+
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
 
   return (
@@ -192,7 +196,7 @@ const QuoteNewPageWidget = () => {
                 {/* <div style={clasess.lineDateStyle} /> Don't Delete */}
               </div>
               <div style={clasess.bordersecondContainer}>
-                <BusinessNewWidget 
+                <BusinessNewWidget
                   values={quoteItemValue}
                   selectBusiness={selectBusiness}
                   onBlurBusinessName={onBlurBusinessName}
@@ -268,6 +272,7 @@ const QuoteNewPageWidget = () => {
               <WriteCommentComp />
               <ButtonsContainer
                 onOpenNewItem={onOpenNewItem}
+                onOpenDeliveryModal={onOpenDeliveryModal}
                 handleCancelBtnClick={handleCancelBtnClick}
                 handleSendBtnClick={handleSendBtnClick}
               />
@@ -279,6 +284,11 @@ const QuoteNewPageWidget = () => {
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}
+      />
+      <AddDeliveryModal
+        openModal={openAddDeliveryModal}
+        onClose={onCloseDeliveryModal}
+        onClickAdd={onClickAddDelivery}
       />
       <DuplicateItemModal
         openModal={openDuplicateWithDifferentQTYModal}

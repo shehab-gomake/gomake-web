@@ -6,7 +6,7 @@ import {
 } from "@/widgets/product-pricing-widget/state";
 import {useGomakeAxios, useGomakeRouter} from "@/hooks";
 import {useRouter} from "next/router";
-import {addItemToQuoteApi} from "@/services/api-service/quotes/qoutes-endpoints";
+import {addItemToQuoteApi} from "@/services/api-service/quotes/quotes-endpoints";
 import {userProfileState} from "@/store/user-profile";
 import {quantityParameterState} from "@/store";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";

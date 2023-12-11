@@ -1602,6 +1602,7 @@
       "addNewItems": "add new item",
       "addExistItem": "add exist item",
       "addDelivery": "add delivery",
+      "addDeliveryTitle": "Add delivery",
       "orderComments": "order comments",
       "irrelevant": "Irrelevant",
       "price": "Price",
@@ -1681,7 +1682,8 @@
       "attachFiles": "Attach Files",
       "copyTo": "Copy to",
       "managerApproval": "Manager Approval",
-      "dateOfReference" :"Date Of Reference"
+      "dateOfReference" :"Date Of Reference",
+      "selectDelivery" :"Select delivery"
     }
   },
   "usersSettings": {
