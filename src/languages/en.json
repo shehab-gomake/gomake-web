@@ -1681,7 +1681,10 @@
       "attachFiles": "Attach Files",
       "copyTo": "Copy to",
       "managerApproval": "Manager Approval",
-      "dateOfReference" :"Date Of Reference"
+      "dateOfReference" :"Date Of Reference",
+      "actionDate" :"Action Date",
+      "employeeName":"Employee Name",
+      "actionDescription":"Action Description"
     }
   },
   "usersSettings": {

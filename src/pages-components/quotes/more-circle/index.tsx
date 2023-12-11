@@ -10,14 +10,14 @@ import { OptionsButton } from "@/components/options-button/options-button";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 
-const MoreMenuWidget = ({ quote, onClickOpenModal , onClickPdf }: any) => {
+const MoreMenuWidget = ({ quote, onClickOpenModal , onClickPdf , onClickLoggers}: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const { user, navigate } = useMoreCircle();
 
   return (
     <OptionsButton>
-      <MenuItem>
+      <MenuItem onClick={onClickLoggers}>
         <div style={clasess.menuRowStyle}>
           <PermissionCheck userPermission={Permissions.SHOW_LOGGERS_QUOTE}>
             <EditingIcon />

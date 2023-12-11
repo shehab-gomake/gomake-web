@@ -61,6 +61,10 @@ const useStyle = () => {
         border:`1px solid ${secondColor(500)}`,
         color:secondColor(500),
         width:"50%",
+      },
+      insideStyle:{
+        width: "40%",
+        height: "540px"
       }
   
     };

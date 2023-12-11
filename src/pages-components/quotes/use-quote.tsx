@@ -36,7 +36,13 @@ const useQuotes = () => {
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [openLogsModal, setOpenLogsModal] = useState(false);
+  const [modalLogsTitle, setModalLogsTitle] = useState<string>();
+
+  const [employeeId, setEmployeeId] = useState<any>();
+
   const [selectedQuote, setSelectedQuote] = useState<any>();
+
   const onClcikCloseModal = () => {
     setOpenModal(false);
   };
@@ -45,6 +51,16 @@ const useQuotes = () => {
     setSelectedQuote(quote);
     setOpenModal(true);
   };
+
+  const onClickCloseLogsModal = () => {
+    setOpenLogsModal(false);
+  };
+
+  const onClickOpenLogsModal = (quoteNumber: string) => {
+    setModalLogsTitle(quoteNumber)
+    setOpenLogsModal(true);
+  };
+
   const [agentsCategories, setAgentsCategories] = useRecoilState(
     agentsCategoriesState
   );
@@ -116,7 +132,7 @@ const useQuotes = () => {
       quote?.totalPrice,
       quote?.notes,
       _renderQuoteStatus(quote?.statusID, quote, t),
-      <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} />,
+      <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} onClickLoggers={()=>onClickOpenLogsModal(quote?.quoteNumber)}/>,
     ]);
     setAllQuotes(mapData);
   }, [
@@ -179,6 +195,12 @@ const useQuotes = () => {
     t("sales.quote.notes"),
     t("sales.quote.status"),
     t("sales.quote.more"),
+  ];
+
+  const logsTableHeaders = [
+    t("sales.quote.actionDate"),
+    t("sales.quote.employeeName"),
+    t("sales.quote.actionDescription"),
   ];
 
   const quoteStatuses = [
@@ -308,6 +330,13 @@ const useQuotes = () => {
     onClcikClearFilter,
     onClickQuotePdf,
     t,
+    openLogsModal,
+    onClickOpenLogsModal,
+    onClickCloseLogsModal,
+    setEmployeeId,
+    employeeId,
+    modalLogsTitle,
+    logsTableHeaders
   };
 };
 
