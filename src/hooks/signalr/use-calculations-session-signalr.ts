@@ -3,15 +3,15 @@ import {getUserToken} from "@/services/storage-data";
 import {IBordMission} from "@/widgets/production-floor-widget/product-id-widget/interface";
 import config from "@/config";
 
-const useCalculationsSignalr = () => {
+const useCalculationsSessionSignalr = () => {
     const {data,connectionId} = useGoMakeSignalr<any>({
         url: 'https://calculation-service.gomake-dev.net/hubs/workFlows',
         accessToken: getUserToken(),
-        methodName: "updateWorkFlows"
+        methodName: "startCalculationSession"
     })
     return {
-        data,connectionId
+        calculationSessionId:data,connectionId
     }
 };
-export {useCalculationsSignalr}
+export {useCalculationsSessionSignalr}
 

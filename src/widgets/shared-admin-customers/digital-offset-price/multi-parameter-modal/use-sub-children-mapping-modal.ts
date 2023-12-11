@@ -49,6 +49,7 @@ const useSubChildMapping = ({
   }, [selectColorValue]);
 
   useEffect(() => {
+    console.log(selectColorValue)
     if (selectColorValue?.selectedParameterValues[0]?.valueIds?.length > 0) {
       const index =
         selectColorValue?.selectedParameterValues[0]?.valueIds?.findIndex(

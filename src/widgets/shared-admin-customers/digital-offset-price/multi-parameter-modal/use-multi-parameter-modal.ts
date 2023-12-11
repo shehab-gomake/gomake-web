@@ -1,7 +1,7 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useEffect } from "react";
 
-import { generalParametersState, selectedValueConfigState } from "@/store";
+import {generalParametersState, selectedValueConfigState, subProductsParametersState} from "@/store";
 
 import { selectColorValueState } from "./store/selecte-color-value";
 import { useTranslation } from "react-i18next";
@@ -13,6 +13,8 @@ const useMultiParameterModal = ({ settingParameters, onClose }) => {
   const [generalParameters, setGeneralParameters] = useRecoilState<any>(
     generalParametersState
   );
+  const subProductsParameters = useRecoilValue(subProductsParametersState);
+
   const { t } = useTranslation();
   const generalParametersLocal = useRecoilValue(maltiParameterState);
   const parameterLists = settingParameters?.parameter?.settingParameters;
@@ -25,15 +27,24 @@ const useMultiParameterModal = ({ settingParameters, onClose }) => {
 
   const getObjectById = () => {
     for (const config of selectedValueConfig) {
-      const foundParameter = generalParameters.find(
+      let foundParameter = generalParameters.find(
         (param) => param && param.valueIds && param.valueIds[0] === config.id
       );
+      if(!foundParameter){
+        const subProduct = subProductsParameters.find(subProduct => settingParameters.section && subProduct.sectionId === settingParameters.section.id );
+        if(subProduct && subProduct.parameters && subProduct.parameters.length > 0){
+          foundParameter = subProduct.parameters.find(
+              (param) => param && param.valueIds && param.valueIds[0] === config.id
+          );
+        }
+      }
       if (foundParameter) {
         return config;
       }
     }
   };
   useEffect(() => {
+
     const result = getObjectById();
     setSelectColorValue(result);
   }, [generalParameters, selectedValueConfig]);

@@ -51,6 +51,7 @@ const useChildValuesMapping = ({
     setIsFocused(false);
   });
   useEffect(() => {
+    console.log(value)
     if (
       selectColorValue?.selectedParameterValues[0]?.selectValuesCount ===
         value?.data?.length &&

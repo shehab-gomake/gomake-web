@@ -7,7 +7,13 @@ import {useQuoteWidget} from "@/pages-components/admin/home/widgets/quote-widget
 import {materialsCategoriesState} from "@/store/material-categories";
 import {useGomakeAxios, useGomakeRouter} from "@/hooks";
 import {getAndSetgetProductQuoteItemById, getAndSetProductById,} from "@/services/hooks";
-import {generalParametersState, isLoadgingState, selectedValueConfigState, selectParameterButtonState,} from "@/store";
+import {
+    generalParametersState,
+    isLoadgingState,
+    selectedValueConfigState,
+    selectParameterButtonState,
+    subProductsParametersState,
+} from "@/store";
 import {useMaterials} from "../use-materials";
 import {digitslPriceState} from "./store";
 import cloneDeep from "lodash.clonedeep";
@@ -49,7 +55,8 @@ import {
 } from "@/widgets/product-pricing-widget/state";
 import {getOutsourcingSuppliersListApi} from "@/services/api-service/suppliers/suppliers-endpoints";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
-import {useCalculationsSignalr} from "@/hooks/signalr/use-calculations-signalr";
+import { useCalculationsWorkFlowsSignalr } from "../signalr/use-calculations-workflows-signalr";
+import { useCalculationsSessionSignalr } from "../signalr/use-calculations-session-signalr";
 
 const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const {navigate} = useGomakeRouter();
@@ -78,7 +85,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const [printingNotes, setPrintingNotes] = useState("");
     const [graphicNotes, setGraphicNotes] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
-    const [subProducts, setSubProducts] = useState<any>([]);
+    const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
     const [subProductsWithType, setSubProductsWithType] = useState<any>([]);
     const [itemParmetersValues, setItemParmetersValues] = useRecoilState<any>(itemParametersValuesState);
     const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
@@ -99,7 +106,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const [digitalPriceData, setDigidatPriceData] =
         useRecoilState<any>(digitslPriceState);
     const [priceRecovery, setPriceRecovery] = useState(true);
-    const [canCalculation, setCanCalculation] = useState(true);
+    const [canCalculation, setCanCalculation] = useState(false);
     const [generalParametersLocal, setGeneralParametersLocal] =
         useRecoilState(maltiParameterState);
     const [sampleType, setSamlleType] = useState();
@@ -110,24 +117,32 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const setSelectParameterButton = useSetRecoilState(
         selectParameterButtonState
     );
-    const {data,connectionId} = useCalculationsSignalr();
+    const {calculationResult,connectionId} = useCalculationsWorkFlowsSignalr();
+    const {calculationSessionId} = useCalculationsSessionSignalr();
+
     const [requestAbortController,setRequestAbortController] = useState<AbortController>(null)
+    
     useEffect(()=>{
-        if(data){
+       
+    },[calculationSessionId])
+    useEffect(()=>{
+        if(calculationResult){
+            debugger;
+            
             setLoading(false);
-            const currentWorkFlowsCount = data?.workFlows.length;
-            const totalWorkFlowsCount = data?.totalWorkFlows;
+            const currentWorkFlowsCount = calculationResult?.workFlows.length;
+            const totalWorkFlowsCount = calculationResult?.totalWorkFlows;
             setCalculationProgress({totalWorkFlowsCount: totalWorkFlowsCount,currentWorkFlowsCount:currentWorkFlowsCount} )
             setWorkFlows(
-                data?.workFlows?.map((flow, index) => ({
+                calculationResult?.workFlows?.map((flow, index) => ({
                     id: index.toString(),
                     ...flow,
                 }))
             );
-            setJobActions(data?.actions);
+            setJobActions(calculationResult?.actions);
         }
         
-    },[data])
+    },[calculationResult])
     const selectBtnTypeToAction = (parameter, sectionId, subSectionId) => {
         if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
             setSelectParameterButton({parameter, sectionId, subSectionId});
@@ -388,6 +403,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                                     typeMap[subSection.type] = {
                                         type: subSection.type,
                                         parameters: temp,
+                                        sectionId: section.id
                                     };
                                 } else {
                                     typeMap[subSection.type].parameters.push(...temp);
@@ -637,6 +653,13 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     ]);
 
     useEffect(() => {
+        setGeneralParameters([])
+        setGeneralParametersLocal([])
+        setItemParmetersValues([])
+        setCanCalculation(false)
+        setWorkFlows([]);
+        setJobActions([]);
+        setCalculationProgress({totalWorkFlowsCount: 0,currentWorkFlowsCount:0} )
         if (
             widgetType === EWidgetProductType.EDIT ||
             widgetType === EWidgetProductType.DUPLICATE
@@ -653,7 +676,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     }, [generalParameters, canCalculation]);
 
     useEffect(() => {
-        let temp = [...subProducts];
+        let temp = JSON.parse(JSON.stringify(subProducts))
         const result = [];
         temp.forEach((item) => {
             const subProductType = item.type;
@@ -700,6 +723,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             return temp[index];
         }
     };
+    
     const _renderParameterType = (
         parameter: any,
         subSection: any,
@@ -1011,6 +1035,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             );
             (temp2[index2] = {
                 type: subSectionType,
+                sectionId: sectionId,
                 parameters: temp,
             }),
                 setSubProducts(temp2);
@@ -1035,7 +1060,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                     actionIndex,
                 });
             }
-            if (data?.valueId === undefined && data?.value === undefined) {
+            if (data?.valueIds === undefined && data?.values === undefined) {
                 temp.splice(index, 1);
             }
 
