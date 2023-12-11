@@ -118,7 +118,8 @@
     "deletefailed": "Deleted failed",
     "formNotValid": "Form not valid",
     "RequiredFields": "Missing required fields",
-    "noMaterialsSelected": "Please select materials"
+    "noMaterialsSelected": "Please select materials",
+    "duplicateFailed" : "Duplicate failed"
   },
   "home": {
     "admin": {

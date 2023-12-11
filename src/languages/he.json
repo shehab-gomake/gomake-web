@@ -117,7 +117,8 @@
     "deleteSusuccessfully": "נמחק בהצלחה",
     "deletefailed": "מחיקה נכשלה",
     "formNotValid": "הטופס אינו תקין",
-    "RequiredFields": "שדות חובה חסרים"
+    "RequiredFields": "שדות חובה חסרים",
+    "duplicateFailed" : "שכפול נכשל"
   },
   "home": {
     "admin": {
