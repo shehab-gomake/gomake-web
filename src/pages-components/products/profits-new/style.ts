@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 import { convertHeightToVH } from "@/utils/adapter";
 import { HEADER_HEIGHT, SCREEN_HEIGHT } from "@/utils/layout-config";
@@ -8,7 +7,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const useStyle = () => {
   const { t } = useTranslation();
   const { neutralColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainGridContainer: {
         display: "grid" as "grid",
@@ -26,9 +25,9 @@ const useStyle = () => {
         gridGap: "9px",
       },
     };
-  }, [i18next.language, t]);
+  }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

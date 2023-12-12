@@ -5,7 +5,7 @@ import { useNewProfits } from "./use-profits";
 import { useStyle } from "./style";
 
 const ProfitsNewPageWidget = () => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const {
     actionProfitRowChartData,
     actionProfitRowsList,
@@ -62,13 +62,13 @@ const ProfitsNewPageWidget = () => {
     getProfitsPricingTables,
   } = useNewProfits();
   return (
-    <div style={clasess.mainGridContainer}>
+    <div style={classes.mainGridContainer}>
       {router.query.quoteId && (
         <header>
           <ProfitHeaderWidget />
         </header>
       )}
-      <div style={clasess.bodyGridContainer}>
+      <div style={classes.bodyGridContainer}>
         <ProfitLeftSideWidget
           actionProfitRowChartData={actionProfitRowChartData}
           actionProfitRowsList={actionProfitRowsList}
