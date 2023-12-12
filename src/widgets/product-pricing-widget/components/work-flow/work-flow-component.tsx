@@ -15,6 +15,8 @@ import {ParametersMapping} from "@/widgets/product-pricing-widget/components/act
 import {useWorkFlows} from "@/widgets/product-pricing-widget/use-work-flows";
 import {WorkflowRateComponent} from "@/widgets/product-pricing-widget/components/work-flow/workflow-rate-component";
 import {useTranslation} from "react-i18next";
+import {useRecoilState} from "recoil";
+import {currentProductItemValueState} from "@/widgets/product-pricing-widget/state";
 
 interface IWorkFlowComponentProps extends ICalculatedWorkFlow {
     delay: number;
@@ -45,6 +47,8 @@ const WorkFlowComponent = ({
     const {secondColor} = useGomakeTheme();
     const {classes} = useStyle();
     const {selectWorkFlow} = useWorkFlows();
+    const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
+
     const handleSelectWorkFlow = (e) => {
         e.stopPropagation();
         if (!selected) {
