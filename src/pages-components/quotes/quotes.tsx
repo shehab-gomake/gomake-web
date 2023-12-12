@@ -39,8 +39,6 @@ const QuotesListPageWidget = (props: IListWidgetProps) => {
     onClcikClearFilter,
     openLogsModal,
     onClickCloseLogsModal,
-    setEmployeeId,
-    employeeId,
     modalLogsTitle,
     logsTableHeaders,
     t,
@@ -150,8 +148,8 @@ const QuotesListPageWidget = (props: IListWidgetProps) => {
         insideStyle={clasess.insideStyle}
         openModal={openLogsModal}
         onClose={onClickCloseLogsModal}
-        modalTitle={t('Logs for quote') + ' - ' + modalLogsTitle}>
-        <QuoteLogsWidget setEmployeeId={setEmployeeId} employeeId={employeeId} logsTableHeaders={logsTableHeaders}/>
+        modalTitle={t('sales.quote.quoteLogs') + ' - ' + modalLogsTitle}>
+        <QuoteLogsWidget logsTableHeaders={logsTableHeaders}/>
       </GoMakeModal>
     </>
   );

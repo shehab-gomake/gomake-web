@@ -1684,7 +1684,10 @@
       "dateOfReference" :"Date Of Reference",
       "actionDate" :"Action Date",
       "employeeName":"Employee Name",
-      "actionDescription":"Action Description"
+      "actionDescription":"Action Description",
+      "selectEmployee":"select employee",
+      "selectDate":"select date",
+      "quoteLogs":"Logs for quote"
     }
   },
   "usersSettings": {
