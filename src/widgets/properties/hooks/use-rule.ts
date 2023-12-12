@@ -2,13 +2,13 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { usePrintHouseActions } from "./use-print-house-action";
+import { useProperites } from "./use-properites";
 
 const useRule = () => {
   const { setSnackbarStateValue } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const { state, getPrintHouseActionById } = usePrintHouseActions();
+  // const { state, getPrintHouseActionById } = useProperites();
 
   const deleteRule = useCallback(
     async (
@@ -30,7 +30,7 @@ const useRule = () => {
           message: t("modal.deleteSusuccessfully"),
           type: "sucess",
         });
-        getPrintHouseActionById(actionId);
+        // getPrintHouseActionById(actionId);
       } else {
         setSnackbarStateValue({
           state: true,
@@ -62,7 +62,7 @@ const useRule = () => {
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        getPrintHouseActionById(actionId);
+        // getPrintHouseActionById(actionId);
       } else {
         setSnackbarStateValue({
           state: true,

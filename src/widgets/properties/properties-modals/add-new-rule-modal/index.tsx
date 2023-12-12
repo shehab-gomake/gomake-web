@@ -44,13 +44,7 @@ class ActionRule {
   isActive: boolean;
 }
 
-const AddNewRuleModal = ({
-  openModal,
-  onClose,
-  actionId,
-  propertyId,
-  ruleType,
-}) => {
+const AddNewRuleModal = ({ openModal, onClose }) => {
   const { primaryColor } = useGomakeTheme();
   const categories = useMemo(() => {
     return [
@@ -340,8 +334,7 @@ const AddNewRuleModal = ({
       obj.errorMessage = "One or more adjust rules failed";
       obj.errorType = "LambdaExpression";
       try {
-        debugger;
-        await addRule(actionId, propertyId, ruleType, obj);
+        // await addRule(actionId, propertyId, ruleType, obj);
       } catch (error) {}
       setExpression(val);
     } else {

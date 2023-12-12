@@ -20,7 +20,9 @@ const AddRuleModal = ({
   actionProfitByActionId,
   getProfitsPricingTables,
   selectedPricingTableItems,
-}) => {
+  isPropertiesWidge,
+  selectedProperties,
+}: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -365,6 +367,24 @@ const AddRuleModal = ({
               <div style={clasess.selectTypeStyle}>
                 {t("products.profits.exceptions.additionalProfit")}
               </div>
+              <GomakeTextInput
+                type="number"
+                placeholder={t("products.profits.exceptions.additionalProfit")}
+                onChange={(e: any) => {
+                  setAdditionalProfit(e.target.value);
+                }}
+                style={{
+                  border: "0px",
+                  background: "#fff",
+                  borderRadius: 4,
+                  height: 40,
+                }}
+              />
+            </div>
+          )}
+
+          {isPropertiesWidge && (
+            <div style={{ width: "20%" }}>
               <GomakeTextInput
                 type="number"
                 placeholder={t("products.profits.exceptions.additionalProfit")}
