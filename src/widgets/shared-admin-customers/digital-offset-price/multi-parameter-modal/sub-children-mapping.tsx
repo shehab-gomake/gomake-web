@@ -32,6 +32,7 @@ const SubChildrenMapping = ({
     decrementValue,
     setIsFocused,
     onChangeText,
+    getIsChecked,
   } = useSubChildMapping({
     forceChange,
     parameters,
@@ -48,10 +49,10 @@ const SubChildrenMapping = ({
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
             onChange={onChangeCheckBox}
-            checked={checked}
-            value={checked}
+            checked={getIsChecked}
+            value={getIsChecked}
             key={`c${index}_${selectColorValue}`}
-            disabled={isDisabled() && !checked}
+            //disabled={isDisabled() && !checked}
             id={`check_${index}_${index2}_${index3}`}
           />
         </div>

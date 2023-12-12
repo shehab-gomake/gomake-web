@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { maltiParameterState } from "./store/multi-param-atom";
 import { selectColorValueState } from "./store/selecte-color-value";
 import lodashClonedeep from "lodash.clonedeep";
 import { useClickAway } from "@uidotdev/usehooks";
+import {subProductsParametersState} from "@/store";
+import {compareStrings} from "@/utils/constants";
 
 const useSubChildMapping = ({
   forceChange,
@@ -21,6 +23,7 @@ const useSubChildMapping = ({
   const [valueState, setValueState] = useState<number>(
     parameters[index].defaultValue
   );
+  const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
   useEffect(() => {
     setValueState(parentValue);
   }, [parameters, parentValue]);
@@ -87,29 +90,69 @@ const useSubChildMapping = ({
     setIsFocused(false);
   });
   const onChangeCheckBox = (e) => {
-    setGeneralParameters((prev) => {
-      let temp = lodashClonedeep(prev);
-      const numProperties = temp.length;
+    debugger;
+    const section = settingParameters.section;
+    const subSection = settingParameters.subSection;
+    let subProductsCopy = lodashClonedeep(subProducts);
+    const subProductType = subSection.type;
+    let subProduct =  subProductsCopy.find(sub => sub.type == subProductType);
+   
+   
+    const colorParameter = settingParameters?.parameter?.settingParameters[0];
+    const colorParameterValue  = subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id );
+    if (e.target.checked){
+      if(colorParameterValue){
 
-      if (e.target.checked) {
-        temp[0].values.push(value?.value);
-        temp[0].valueIds.push(value?.valueId);
-      } else {
-        const index = temp[0].values.findIndex((p) => p === value?.value);
-        const index2 = temp[0].valueIds.findIndex((p) => p === value?.valueId);
-        if (index !== -1) {
-          temp[0].values.splice(index, 1);
-          temp[0].valueIds.splice(index2, 1);
-          for (let i = 1; i < numProperties; i++) {
-            temp[i].values.splice(index, 1);
+      }else{
+        let settingParameterIndex = 0;
+        settingParameters?.parameter?.settingParameters.forEach(settingParameter=>{
+          const newParamValues = [];
+          const newParamValueIds = [];
+          if(settingParameterIndex === 0){
+            newParamValues.push(value.value);
+            newParamValueIds.push(value.value);
+          }else{
+            newParamValues.push(settingParameter.defaultValue);
           }
-        }
+          subProduct.parameters.push({
+            parameterId: settingParameter?.id,
+            parameterName: settingParameter?.name,
+            actionId: settingParameter?.actionId,
+            parameterType: settingParameter?.parameterType,
+            values: newParamValues,
+            valueIds: newParamValueIds,
+            sectionId: section?.id,
+            subSectionId: subSection?.id,
+            actionIndex: settingParameter?.actionIndex,
+          })
+          settingParameterIndex++;
+        });
+        
       }
-
-      setChecked(e.target.checked);
-      return temp;
-    });
+    }else{
+      settingParameters?.parameter?.settingParameters.forEach(settingParameter=>{
+        subProduct.parameters = subProduct.parameters.filter(parameter => parameter.parameterId != settingParameter.id);
+      })
+     
+    }
+    
+    setSubProducts(subProductsCopy)
   };
+  
+
+  const getIsChecked = useMemo(() => {
+    const subSection = settingParameters.subSection;
+    const subProductType = subSection.type;
+    let subProduct =  subProducts.find(sub => sub.type == subProductType);
+    const colorParameter = settingParameters?.parameter?.settingParameters[0];
+    const colorParameterValue  = subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id && paramValue.values );
+    if(colorParameterValue){
+      const colorValue = colorParameterValue.values.find(val => val === value.value);
+      if(colorValue)
+        return true
+    }
+    return false
+  }, [subProducts]);
   const onChangeText = (e) => {
     setValueState(e.target.value);
   };
@@ -150,6 +193,7 @@ const useSubChildMapping = ({
     decrementValue,
     setIsFocused,
     onChangeText,
+    getIsChecked
   };
 };
 

@@ -32,7 +32,7 @@ const ChildrenValuesMapping = ({
     decrementValue,
     isDisabled,
     setIsFocused,
-  } = useChildValuesMapping({ value, index, parameters, settingParameters });
+  } = useChildValuesMapping({ value, index, parameters, settingParameters,item });
   return (
     <>
       {value?.valueId?.length != 0 && (
@@ -47,7 +47,7 @@ const ChildrenValuesMapping = ({
                 key={`c${index}_${selectColorValue}`}
                 checked={checked}
                 value={checked}
-                disabled={isDisabled() && !checked}
+                //disabled={isDisabled() && !checked}
               />
             </div>
           )}

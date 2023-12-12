@@ -10,6 +10,7 @@ const useChildValuesMapping = ({
   index,
   parameters,
   settingParameters,
+    item
 }) => {
   const paddingLeft = value?.valueId?.length === 0 ? 13 : 38;
   const selectColorValue = useRecoilValue<any>(selectColorValueState);
@@ -61,6 +62,7 @@ const useChildValuesMapping = ({
     }
   }, [selectColorValue, value, generalParameters]);
   const onChangeCheckBox = (e) => {
+    debugger;
     if (selectColorValue) {
       setGeneralParameters((prev) => {
         let temp = lodashClonedeep(prev);
