@@ -66,6 +66,7 @@ const RowMappingWidget = ({
             <InputUpdatedValues
               value={profit}
               sign={"%"}
+              isTwoDigit={true}
               onBlur={() => onBlurProfit(item)}
               isUpdate={isUpdateProfit}
               setIsUpdate={setIsUpdateProfit}

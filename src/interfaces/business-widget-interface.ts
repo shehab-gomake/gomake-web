@@ -12,4 +12,5 @@ export interface IBusinessWidget {
   setInputData?: any;
   speicalStyle?: any;
   sign?: string;
+  isTwoDigit?: boolean;
 }
