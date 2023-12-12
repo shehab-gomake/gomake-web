@@ -123,6 +123,7 @@ const useNewProfits = () => {
 
   useEffect(() => {
     getAllActionProfitRowsByActionId();
+    getActionProfitRowChartData();
   }, [selectedPricingTableItems]);
   const getActionProfitByActionId = useCallback(async () => {
     await getAndSetActionProfitByActionId(callApi, setActionProfitByActionId, {
@@ -138,15 +139,20 @@ const useNewProfits = () => {
 
   const getActionProfitRowChartData = useCallback(async () => {
     if (actionProfitByActionId?.id) {
+      const requestBody: any = {
+        actionProfitId: actionProfitByActionId?.id,
+      };
+
+      if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
+        requestBody.exceptionId = selectedPricingTableItems?.id;
+      }
       await getAndSetActionProfitRowChartData(
         callApi,
         setActionProfitRowChartData,
-        {
-          actionProfitId: actionProfitByActionId?.id,
-        }
+        requestBody
       );
     }
-  }, [actionProfitByActionId]);
+  }, [actionProfitByActionId, selectedPricingTableItems]);
 
   useEffect(() => {
     getAllActionProfitRowsByActionId();
