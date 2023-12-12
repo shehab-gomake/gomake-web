@@ -1,7 +1,7 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
+import { LAYOUT_DEFAULT_GAP, SIDE_MENU_Layout } from "@/utils/layout-config";
 import { useMemo } from "react";
 
 const useStyle = ({
@@ -46,7 +46,7 @@ const useStyle = ({
         paddingBottom: navStatus?.isClosed ? 8 : 40,
         overflowY: "scroll" as "scroll",
         position: "relative" as "relative",
-        zIndex: 100000,
+        zIndex: SIDE_MENU_Layout,
       },
       rightContainer: {
         width: "100%",

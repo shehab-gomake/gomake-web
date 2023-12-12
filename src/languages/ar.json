@@ -1607,6 +1607,7 @@
       "sendQuote": "إرسال الاقتباس",
       "cancel": "إلغاء",
       "yesBtn": "نعم",
+      "noBtn":"لا",
       "subTitleCancelModal": "هل أنت متأكد أنك تريد إلغاء هذا العرض؟",
       "cancellationBtn": "الغاء",
       "titleCancelModal": "تأكيد الإلغاء",

@@ -1613,6 +1613,7 @@
       "sendQuote": "send quote",
       "cancel": "Cancel",
       "yesBtn": "Yes",
+      "noBtn": "No",
       "subTitleCancelModal": "Are you sure you want to cancel this offer?",
       "cancelBtn": "cancelation",
       "titleCancelModal": "Confirm Cancel",

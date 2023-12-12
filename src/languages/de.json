@@ -1579,6 +1579,7 @@
       "sendQuote": "Angebot senden",
       "cancel": "Abbrechen",
       "yesBtn": "Ja",
+      "noBtn": "NEIN",
       "subTitleCancelModal": "Sind Sie sicher, dass Sie dieses Angebot stornieren möchten?",
       "cancelBtn": "Stornierung",
       "titleCancelModal": "Stornierung bestätigen",

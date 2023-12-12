@@ -24,8 +24,10 @@ const useActions = () => {
     const data = await getAllPrintHouseActions(callApi, setAllActions);
     const mapData = data?.map((action) => [
       action?.name,
-      `${action?.isInternal ? "Yes" : "No"} / ${
-        action?.isOutsource ? "Yes" : "No"
+      `${
+        action?.isInternal ? t("sales.quote.yesBtn") : t("sales.quote.noBtn")
+      } / ${
+        action?.isOutsource ? t("sales.quote.yesBtn") : t("sales.quote.noBtn")
       }`,
       action?.isActive ? (
         <div
