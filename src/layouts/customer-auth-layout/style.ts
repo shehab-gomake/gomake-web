@@ -1,16 +1,17 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
 import { useMemo } from "react";
 
 const useStyle = ({
   isHover = false,
   navStatus,
-  withGap = true,
+  customGap,
 }: {
   isHover?: boolean;
   navStatus: any;
-  withGap: boolean;
+  customGap: number;
 }) => {
   const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
@@ -20,7 +21,7 @@ const useStyle = ({
         height: "100vh",
         display: "flex",
         flexDirection: "row" as "row",
-        gap: withGap ? 20 : 0,
+        gap: customGap ? LAYOUT_DEFAULT_GAP : 0,
       },
       logoContainer: {
         display: "flex",

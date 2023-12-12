@@ -17,9 +17,9 @@ interface IProps {
     icon?: any;
     list?: any[];
   };
-  withGap?: boolean;
+  customGap?: number;
 }
-const Tab = ({ tab, withGap }: IProps) => {
+const Tab = ({ tab, customGap }: IProps) => {
   const [selectedTabValue, setSelectedTabValue] =
     useRecoilState(selectedTabState);
   const { navigate } = useGomakeRouter();
@@ -27,7 +27,7 @@ const Tab = ({ tab, withGap }: IProps) => {
   const [isHover, setIsHover] = useState(false);
   const navStatus = useRecoilValue(navStatusState);
   const { t } = useTranslation();
-  const { clasess } = useStyle({ isHover, navStatus, withGap });
+  const { clasess } = useStyle({ isHover, navStatus, customGap });
   const handleMouseEnter = useCallback(() => {
     setIsHover(true);
   }, []);

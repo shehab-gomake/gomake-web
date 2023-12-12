@@ -6,24 +6,25 @@ import { useAuthLayoutHook } from "./use-auth-layout-hook";
 import { HeaderWidget } from "@/widgets/header";
 import { navStatusState } from "@/store/nav-status";
 import { hoverStatusState } from "@/store";
+import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
 
 const CustomerAuthLayout = ({
   children,
   permissionEnumValue,
-  withGap = true,
+  customGap = LAYOUT_DEFAULT_GAP,
 }: IAuthLayout) => {
   const { canAccess } = useAuthLayoutHook(permissionEnumValue);
   const { clasess } = useStyle({
     isHover: false,
     navStatus: null,
-    withGap,
+    customGap,
   });
 
   const setNavStatus = useSetRecoilState(navStatusState);
   const isHover = useRecoilValue(hoverStatusState);
   return (
     <div style={clasess.container}>
-      <LeftSideLayout withGap={withGap} />
+      <LeftSideLayout customGap={customGap} />
       <div
         style={clasess.rightContainer}
         onMouseEnter={() => {

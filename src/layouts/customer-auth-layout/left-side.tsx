@@ -11,7 +11,7 @@ import { hoverStatusState, permissionsState } from "@/store";
 import LockIcon from "@mui/icons-material/Lock";
 import { usePermission } from "@/hooks/use-permission";
 import { useEffect } from "react";
-const LeftSideLayout = (withGap) => {
+const LeftSideLayout = (customGap) => {
   const { t } = useTranslation();
 
   const { tabs1, tabs2, tabs3, profile } = useAuthLayoutHook();
@@ -19,7 +19,7 @@ const LeftSideLayout = (withGap) => {
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
   const { CheckPermission } = usePermission();
-  const { clasess } = useStyle({ navStatus, withGap });
+  const { clasess } = useStyle({ navStatus, customGap });
   useEffect(() => {
     debugger;
     const isHover = localStorage.getItem("isHover");
@@ -84,7 +84,7 @@ const LeftSideLayout = (withGap) => {
               </div>
             );
           } else {
-            return <Tab key={tab.key} tab={tab} withGap={withGap} />;
+            return <Tab key={tab.key} tab={tab} customGap={customGap} />;
           }
         })}
       </div>
