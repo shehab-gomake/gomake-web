@@ -39,7 +39,7 @@ import {
     SelectMaterialsParameterWidget
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
 import {
-    calculationProgressState,
+    calculationProgressState, currentProductItemValueState,
     itemParametersValuesState,
     jobActionsState,
     jobDetailsState,
@@ -81,6 +81,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const [subProducts, setSubProducts] = useState<any>([]);
     const [subProductsWithType, setSubProductsWithType] = useState<any>([]);
     const [itemParmetersValues, setItemParmetersValues] = useRecoilState<any>(itemParametersValuesState);
+    const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
     const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
     const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
     const [expanded, setExpanded] = useState<string | false>("panel_0");
@@ -669,8 +670,40 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     useEffect(() => {
         let temp = [...generalParameters, ...subProductsWithType];
         const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
+        debugger
+        if(defaultPrice && defaultPrice?.values && quantity){
+            const productItemValue = {
+                supplierId: '',
+                sourceType: workFlowSelected?.actions?.every(action => action?.source === EWorkSource.INTERNAL) ? EWorkSource.INTERNAL : EWorkSource.PARTIALLY,
+                productId: router?.query?.productId,
+                userID: userProfile?.id,
+                customerID: router?.query?.customerId,
+                clientTypeId: router?.query?.clientTypeId,
+                unitPrice: +defaultPrice?.values[0] / +quantity?.values[0],
+                amount: quantity?.values[0],
+                isNeedGraphics: false,
+                isUrgentWork: urgentOrder,
+                printingNotes,
+                graphicNotes,
+                isNeedExample: false,
+                jobDetails: '',
+                itemParmetersValues: itemParmetersValues,
+                workFlow: pricingDefaultValue?.workFlows.length > 0
+                    ? [workFlowSelected]
+                    : template?.workFlows,
+                actions: pricingDefaultValue?.actions?.length > 0
+                    ? pricingDefaultValue?.actions
+                    : template?.actions,
+                outSoucreCost: 0,
+                outSoucreProfit: 0,
+                outSourceFinalPrice: 0,
+            }
+            setCurrentProductItemValue(productItemValue);
+        }
+       
         setItemParmetersValues(filteredArray);
-    }, [generalParameters, subProductsWithType, subProducts]);
+        
+    }, [generalParameters, subProductsWithType, subProducts,workFlowSelected]);
     const handleChange =
         (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
             setExpanded(newExpanded ? panel : false);
@@ -1248,32 +1281,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     );
     const addItemForQuotes = useCallback(async () => {
         console.log(defaultPrice)
-        const res = await callApi("POST", `/v1/erp-service/quote/add-item`, {
-            supplierId: '',
-            sourceType: workFlowSelected?.actions?.every(action => action?.source === EWorkSource.INTERNAL) ? EWorkSource.INTERNAL : EWorkSource.PARTIALLY,
-            productId: router?.query?.productId,
-            userID: userProfile?.id,
-            customerID: router?.query?.customerId,
-            clientTypeId: router?.query?.clientTypeId,
-            unitPrice: +defaultPrice?.values[0] / +quantity?.values[0],
-            amount: quantity?.values[0],
-            isNeedGraphics: false,
-            isUrgentWork: urgentOrder,
-            printingNotes,
-            graphicNotes,
-            isNeedExample: false,
-            jobDetails: '',
-            itemParmetersValues: itemParmetersValues,
-            workFlow: pricingDefaultValue?.workFlows.length > 0
-                ? [workFlowSelected]
-                : template?.workFlows,
-            actions: pricingDefaultValue?.actions?.length > 0
-                ? pricingDefaultValue?.actions
-                : template?.actions,
-            outSoucreCost: 0,
-            outSoucreProfit: 0,
-            outSourceFinalPrice: 0,
-        });
+        const res = await callApi("POST", `/v1/erp-service/quote/add-item`, currentProductItemValue);
         if (res?.success) {
             navigate("/quote");
         }
