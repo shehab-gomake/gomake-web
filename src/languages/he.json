@@ -2337,6 +2337,17 @@
     "declined": "נדחה",
     "blocked": "חסום",
     "waitingToApprove": "ממתין לאישור"
-}
-
-}
+},
+"documentingSettings": {
+  "documentNumbering": "מספור מסמך",
+  "documentDesign": "עיצוב מסמך",
+  "showDeliveryTime": "הצג זמן משלוח",
+  "name": "שם",
+  "prefix": "קידומת",
+  "value": "ערך",
+  "details": "פרטים",
+  "edit": "עריכה",
+  "editDefinition": "עריכת הגדרה",
+  "update": "עדכון",
+  "nextValueTip": "עליך להתחיל עם ערך גדול מ"
+}}

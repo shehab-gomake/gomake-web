@@ -2093,5 +2093,18 @@
     "rollDigitalEnhancement": "Rollen-Digitalveredelungsmaschine",
     "autoBookCutting": "Automatische Buchschneidemaschine",
     "rollAnalogEnhancement": "Rollen-Analogveredelungsmaschine"
+  },
+  "documentingSettings": {
+    "documentNumbering": "Documentnummering",
+    "documentDesign": "Documentontwerp",
+    "showDeliveryTime": "Toon bezorgtijd",
+    "name": "Naam",
+    "prefix": "Voorvoegsel",
+    "value": "Waarde",
+    "details": "Details",
+    "edit": "Bewerken",
+    "editDefinition": "Definitie bewerken",
+    "update": "Bijwerken",
+    "nextValueTip": "Je moet beginnen met een waarde groter dan"
   }
 }

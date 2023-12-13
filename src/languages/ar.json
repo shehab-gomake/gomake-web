@@ -2271,6 +2271,19 @@
     "add": "إضافة",
     "price": "السعر",
     "chooseWorkFlow": "حدد تدفق العمل"
+  },
+  "documentingSettings": {
+    "documentNumbering": "ترقيم المستند",
+    "documentDesign": "تصميم المستند",
+    "showDeliveryTime": "عرض وقت التسليم",
+    "name": "الاسم",
+    "prefix": "البادئة",
+    "value": "القيمة",
+    "details": "التفاصيل",
+    "edit": "تحرير",
+    "editDefinition": "تحرير التعريف",
+    "update": "تحديث",
+    "nextValueTip": "يجب أن تبدأ بقيمة أكبر من"
   }
 
 }

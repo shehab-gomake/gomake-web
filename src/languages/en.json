@@ -2178,7 +2178,8 @@
     "details": "Details",
     "edit": "Edit",
     "editDefinition": "Edit definition",
-    "update": "Update"
+    "update": "Update",
+    "nextValueTip": "You must initialize with a value greater than"
   },
   "documentingDesign": {
     "Save": "Save",
