@@ -59,7 +59,6 @@ const AddRuleModal = ({
     selectedProperties,
     getProperitesService,
   });
-  console.log("selectedProperties", selectedProperties);
   const [selectedOutputs, setSelectedOutputs] =
     useState<selectedOutputsProps>();
   const [selectedParameters, setSelectedParameters] =

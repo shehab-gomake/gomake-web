@@ -73,7 +73,6 @@ const useNewProfits = () => {
   ];
   const [selectedPricingTableItems, setSelectedPricingTableItems] =
     useState<ProfitsPricingTables>();
-  console.log("selectedPricingTableItems", selectedPricingTableItems);
   const [typeExceptionSelected, setTypeExceptionSelected] = useState<number>();
   const [selectedAdditionalProfitRow, setSelectedActionProfitRow] =
     useState<ProfitsPricingTables>();
