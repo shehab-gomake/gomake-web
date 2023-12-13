@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-
 import { GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
 import { useQuoteWidget } from "./use-quote-widget";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
@@ -63,9 +62,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
         }
     }, [userQuote])
 
-    
     return (
-
         <div style={clasess.mainContainer}>
             <div style={clasess.autoComplateRowContainer}>
                 <div style={{ width: "65%" }}>
@@ -111,7 +108,6 @@ const QuoteWidget = ({ isAdmin = true }) => {
                     />
                 </div>
             </div>
-
             {
                 userQuote ?
                     <Stack direction={'row'} gap={'13px'} width={'100%'}>
@@ -170,9 +166,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
                         </GomakePrimaryButton>
 
                     </div>
-
             }
-
             <Popover
                 id={id}
                 open={open}
@@ -201,11 +195,9 @@ const QuoteWidget = ({ isAdmin = true }) => {
                 onClickDelete={() => {
                     onClickSaveQuote(QuoteId)
                         .then(() => onClcikCloseModal())
-
                 }}
             />
         </div>
-
     );
 };
 
