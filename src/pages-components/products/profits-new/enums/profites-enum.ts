@@ -29,3 +29,11 @@ export enum EStatementCategory {
   PARAMETER = 5,
   OUTPUT = 6,
 }
+
+export enum EValueType {
+  MACHINE = 1,
+  MATERIAL = 2,
+  INPUTNUMBER = 3,
+  INPUTTEXT = 4,
+  BOOLEAN = 5,
+}

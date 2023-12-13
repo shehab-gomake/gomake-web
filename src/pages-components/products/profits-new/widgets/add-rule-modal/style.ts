@@ -99,6 +99,9 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         marginBottom: 8,
       },
+      autoComplateStyle: {
+        border: `none`,
+      },
     };
   }, []);
   return {

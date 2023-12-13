@@ -10,7 +10,10 @@ import { AddPlusIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DeleteMenuIcon } from "@/widgets/quote/more-circle/icons/delete-menu";
 import { useAddRuleModal } from "./use-add-rule-modal";
-import { ETypeException } from "../../enums/profites-enum";
+import { ETypeException, EValueType } from "../../enums/profites-enum";
+import { useEffect, useState } from "react";
+import { selectedOutputsProps, selectedParametersProps } from "../../interface";
+import { EParameterTypes } from "@/enums";
 
 const AddRuleModal = ({
   openModal,
@@ -45,6 +48,7 @@ const AddRuleModal = ({
     create,
     createProperties,
     setPropertieValue,
+    materialsTypes,
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -55,11 +59,205 @@ const AddRuleModal = ({
     selectedProperties,
     getProperitesService,
   });
+  console.log("selectedProperties", selectedProperties);
+  const [selectedOutputs, setSelectedOutputs] =
+    useState<selectedOutputsProps>();
+  const [selectedParameters, setSelectedParameters] =
+    useState<selectedParametersProps>();
+  useEffect(() => {
+    const selectedOutputs = Outputs?.find(
+      (output) => output?.id === selectedProperties?.propertyId
+    );
+    const selectedParameters = parametersStateValue?.find(
+      (parameter) => parameter?.id === selectedProperties?.propertyId
+    );
+    setSelectedOutputs(selectedOutputs);
+    setSelectedParameters(selectedParameters);
+  }, [selectedProperties, Outputs, parametersStateValue]);
+  console.log("selectedParameters", selectedParameters);
+  const _renderInptsForProperties = () => {
+    if (selectedProperties?.ruleType === 0) {
+      switch (selectedOutputs?.valueType) {
+        case EValueType.MACHINE:
+          return (
+            <div style={{ width: "20%" }}>
+              <div style={clasess.selectTypeStyle}>Select Machine</div>
+              <GoMakeAutoComplate
+                options={machincesStateValue?.map((value) => {
+                  return {
+                    ...value,
+                    label: `${value?.manufacturer} ${value?.model}`,
+                    id: value.id,
+                  };
+                })}
+                style={clasess.dropDownListContainer}
+                placeholder={"Select Machine"}
+                onChange={(e, value) =>
+                  setPropertieValue(`${value?.manufacturer} ${value?.model}`)
+                }
+              />
+            </div>
+          );
+        case EValueType.MATERIAL:
+          return (
+            <div style={{ width: "20%" }}>
+              <div style={clasess.selectTypeStyle}>Select Material</div>
+              <GoMakeAutoComplate
+                options={materialsTypes?.map((value) => {
+                  return {
+                    ...value,
+                    label: value.materialTypeName,
+                    id: value.materialTypeKey,
+                  };
+                })}
+                placeholder={"Select Material"}
+                style={clasess.autoComplateStyle}
+                onChange={(e: any, value: any) => {
+                  setPropertieValue(value?.id as string);
+                }}
+              />
+            </div>
+          );
+        case EValueType.INPUTNUMBER:
+          return (
+            <div style={{ width: "20%" }}>
+              <div style={clasess.selectTypeStyle}>Enter Value</div>
+              <GomakeTextInput
+                placeholder="Enter Value"
+                onChange={(e: any) => {
+                  setPropertieValue(e.target.value);
+                }}
+                style={{
+                  border: "0px",
+                  background: "#fff",
+                  borderRadius: 4,
+                  height: 40,
+                }}
+              />
+            </div>
+          );
+        case EValueType.INPUTTEXT:
+          return (
+            <div style={{ width: "20%" }}>
+              <div style={clasess.selectTypeStyle}>Enter Value</div>
+              <GomakeTextInput
+                placeholder="Enter Value"
+                onChange={(e: any) => {
+                  setPropertieValue(e.target.value);
+                }}
+                style={{
+                  border: "0px",
+                  background: "#fff",
+                  borderRadius: 4,
+                  height: 40,
+                }}
+              />
+            </div>
+          );
+        case EValueType.BOOLEAN:
+          return (
+            <div style={{ width: "20%" }}>
+              <div style={clasess.selectTypeStyle}>Select Value</div>
+              <GoMakeAutoComplate
+                options={[
+                  { label: "Yes", value: "true" },
+                  { label: "No", value: "false" },
+                ]}
+                placeholder={"Select Value"}
+                style={clasess.autoComplateStyle}
+                onChange={(e: any, value: any) => {
+                  setPropertieValue(value?.value as string);
+                }}
+              />
+            </div>
+          );
+      }
+    } else {
+      switch (selectedParameters?.type) {
+        case EParameterTypes.DROP_DOWN_LIST:
+          return (
+            <div style={{ width: "20%" }}>
+              <div style={clasess.selectTypeStyle}>Select Value</div>
+              <GoMakeAutoComplate
+                options={selectedParameters?.values?.map((value) => {
+                  return {
+                    ...value,
+                    label: value.name,
+                    id: value.id,
+                  };
+                })}
+                style={clasess.dropDownListContainer}
+                placeholder={"Select Value"}
+                onChange={(e, value) => setPropertieValue(value.name)}
+              />
+            </div>
+          );
+        case EParameterTypes.INPUT_NUMBER:
+          return (
+            <div style={{ width: "20%" }}>
+              <div style={clasess.selectTypeStyle}>Enter Value</div>
+              <GomakeTextInput
+                placeholder="Enter Value"
+                onChange={(e: any) => {
+                  setPropertieValue(e.target.value);
+                }}
+                style={{
+                  border: "0px",
+                  background: "#fff",
+                  borderRadius: 4,
+                  height: 40,
+                }}
+              />
+            </div>
+          );
+        case EParameterTypes.INPUT_TEXT:
+          return (
+            <div style={{ width: "20%" }}>
+              <div style={clasess.selectTypeStyle}>Enter Value</div>
+              <GomakeTextInput
+                placeholder="Enter Value"
+                onChange={(e: any) => {
+                  setPropertieValue(e.target.value);
+                }}
+                style={{
+                  border: "0px",
+                  background: "#fff",
+                  borderRadius: 4,
+                  height: 40,
+                }}
+              />
+            </div>
+          );
+        case EParameterTypes.SWITCH:
+          return (
+            <div style={{ width: "20%" }}>
+              <div style={clasess.selectTypeStyle}>Select Value</div>
+              <GoMakeAutoComplate
+                options={[
+                  { label: "Yes", value: "true" },
+                  { label: "No", value: "false" },
+                ]}
+                placeholder={"Select Value"}
+                style={clasess.autoComplateStyle}
+                onChange={(e: any, value: any) => {
+                  setPropertieValue(value?.value as string);
+                }}
+              />
+            </div>
+          );
+      }
+    }
+  };
   return (
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={t("products.profits.exceptions.addNewRule")}
+        modalTitle={
+          t("products.profits.exceptions.addNewRule") +
+          " (" +
+          selectedProperties?.propertyName +
+          ")"
+        }
         onClose={() => {
           onCloseModal();
         }}
@@ -387,23 +585,7 @@ const AddRuleModal = ({
             </div>
           )}
 
-          {isPropertiesWidge && (
-            <div style={{ width: "20%" }}>
-              <div style={clasess.selectTypeStyle}>Enter Value</div>
-              <GomakeTextInput
-                placeholder="Enter Value"
-                onChange={(e: any) => {
-                  setPropertieValue(e.target.value);
-                }}
-                style={{
-                  border: "0px",
-                  background: "#fff",
-                  borderRadius: 4,
-                  height: 40,
-                }}
-              />
-            </div>
-          )}
+          {isPropertiesWidge && _renderInptsForProperties()}
 
           <div style={clasess.btnContainer}>
             <GomakePrimaryButton

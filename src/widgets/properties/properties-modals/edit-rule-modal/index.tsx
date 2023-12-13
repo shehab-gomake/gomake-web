@@ -10,9 +10,9 @@ const EditRulesModal = ({
   openModal,
   onClose,
   selectedProperties,
-  actionId,
   onOpenAddRuleModal,
   deleteRule,
+  reOrderPricingTables,
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -20,7 +20,7 @@ const EditRulesModal = ({
 
   useEffect(() => {
     setRules(selectedProperties?.actionRules);
-  }, [selectedProperties]);
+  }, [selectedProperties, selectedProperties?.actionRules]);
 
   const deletePropertyRule = async (ruleId: string) => {
     try {
@@ -31,6 +31,15 @@ const EditRulesModal = ({
       );
     } catch (error) {}
   };
+  const ReOrderPropertyRule = async (data: any) => {
+    try {
+      await reOrderPricingTables(
+        selectedProperties?.propertyId,
+        selectedProperties?.ruleType,
+        data
+      );
+    } catch (error) {}
+  };
   const onDragEnd = (result) => {
     if (!result.destination) {
       return;
@@ -38,7 +47,12 @@ const EditRulesModal = ({
     const items = Array.from(rules);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
+    const transformedArray = items.map((item: any, index: number) => ({
+      id: item?.id,
+      priority: index + 1,
+    }));
     setRules(items);
+    ReOrderPropertyRule(transformedArray);
   };
   const getItemStyle = (isDragging, draggableStyle) => ({
     ...draggableStyle,

@@ -18,6 +18,8 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilState } from "recoil";
 import { ETypeException } from "../../enums/profites-enum";
+import { ICallAndSetData } from "@/services/api-service/interface";
+import { getSetApiData } from "@/services/api-service/get-set-api-data";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -29,6 +31,7 @@ const useAddRuleModal = ({
   selectedProperties,
   getProperitesService,
 }) => {
+  const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
   const { clients } = usePrintHouseClients();
   const [propertieValue, setPropertieValue] = useState<any>();
@@ -57,6 +60,25 @@ const useAddRuleModal = ({
     Products: 7,
   };
   const { Outputs } = useOutputs();
+  const [materialsTypes, setMaterialsTypes] = useState<
+    { materialTypeKey: string; materialTypeName: string }[]
+  >([]);
+  const getMaterialsTypesApi: ICallAndSetData = async (callApi, setState) => {
+    return await getSetApiData(
+      callApi,
+      EHttpMethod.GET,
+      GET_MATERIALS_TYPES_URL,
+      setState
+    );
+  };
+  const getAllMaterials = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        setMaterialsTypes(res.data);
+      }
+    };
+    await getMaterialsTypesApi(callApi, callBack);
+  };
   const [expression, setExpression] = useState(
     "Your rules will viewed here . . ."
   );
@@ -134,6 +156,7 @@ const useAddRuleModal = ({
     getProducts();
     getClientTypes();
     getParameters();
+    getAllMaterials();
   }, []);
 
   const [exceptionType, setExceptionType] = useState<any>();
@@ -300,6 +323,7 @@ const useAddRuleModal = ({
     createProperties,
     propertieValue,
     setPropertieValue,
+    materialsTypes,
   };
 };
 

@@ -178,3 +178,15 @@ export type ProfitLeftSideProps = {
   deleteActionProfitRow?: (id: string) => void;
   selectedAdditionalProfitRow?: ProfitsPricingTables;
 };
+
+export type selectedOutputsProps = {
+  id?: string;
+  name?: string;
+  valueType?: number;
+};
+export type selectedParametersProps = {
+  id?: string;
+  name?: string;
+  type?: number;
+  values?: any[];
+};

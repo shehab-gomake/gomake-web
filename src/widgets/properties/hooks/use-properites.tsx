@@ -6,7 +6,12 @@ import { EHttpMethod } from "@/services/api-service/enums";
 
 const useProperites = () => {
   const router = useRouter();
-  const { alertSuccessDelete, alertFaultDelete } = useSnackBar();
+  const {
+    alertSuccessDelete,
+    alertFaultDelete,
+    alertFaultUpdate,
+    alertSuccessUpdate,
+  } = useSnackBar();
   const [selectedProperties, setSelectedProperites] = useState();
   const [allProperties, setAllProperites] = useState([]);
   const [actionId, setActionId] = useState("");
@@ -55,28 +60,6 @@ const useProperites = () => {
     return allProperties;
   }, [filter, allProperties]);
 
-  // const deleteRule = useCallback(
-  //   async (
-  //     actionId: string,
-  //     propertyId: string,
-  //     ruleType: number,
-  //     id: string
-  //   ) => {
-  //     const res = await callApi(
-  //       EHttpMethod.PUT,
-  //       `/v1/printhouse-config/print-house-action/delete-rule/${router.query.actionId}/${propertyId}/${ruleType}`,
-  //       {
-  //         router?.query.actionId
-  //       }
-  //     );
-  //     if (res?.success) {
-  //       alertSuccessDelete();
-  //     } else {
-  //       alertFaultDelete();
-  //     }
-  //   },
-  //   []
-  // );
   const deleteRule = useCallback(
     async (propertyId: string, ruleType: number, id: string) => {
       const res = await callApi(
@@ -85,8 +68,28 @@ const useProperites = () => {
       );
       if (res?.success) {
         alertSuccessDelete();
+        getProperitesService();
+        onCloseEditModal();
       } else {
         alertFaultDelete();
+      }
+    },
+    []
+  );
+
+  const reOrderPricingTables = useCallback(
+    async (propertyId: string, ruleType: number, data: any) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/printhouse-config/print-house-action/reorder-rule/${router.query.actionId}/${propertyId}/${ruleType}`,
+        {
+          data,
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+      } else {
+        alertFaultUpdate();
       }
     },
     []
@@ -110,6 +113,7 @@ const useProperites = () => {
     setFilter,
     getProperitesService,
     deleteRule,
+    reOrderPricingTables,
   };
 };
 

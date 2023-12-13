@@ -31,7 +31,7 @@ const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.body}`]: {
     ...FONT_FAMILY.Lexend(500, 14),
     color: "#656572",
-    padding: 15,
+    padding: 5,
   },
 }));
 
@@ -60,11 +60,11 @@ const PropertiesTable = () => {
     handleClose,
     selectedProperties,
     setSelectedProperites,
-    actionId,
     properties,
     setFilter,
     getProperitesService,
     deleteRule,
+    reOrderPricingTables,
   } = useProperites();
 
   return (
@@ -102,7 +102,7 @@ const PropertiesTable = () => {
                     {property.propertyName}
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>
-                    <div style={classes.rowItem}>
+                    <div style={classes.rowItem} className="scrollBlue">
                       {property.actionRules.map((rule, index) => {
                         return (
                           <div style={classes.item}>
@@ -150,10 +150,10 @@ const PropertiesTable = () => {
       <EditRulesModal
         openModal={openEditRule}
         onClose={onCloseEditModal}
-        actionId={actionId}
         selectedProperties={selectedProperties}
         onOpenAddRuleModal={onOpenAddRuleModal}
         deleteRule={deleteRule}
+        reOrderPricingTables={reOrderPricingTables}
       />
       <MoreMenuWidget
         onOpenAddRuleModal={onOpenAddRuleModal}
