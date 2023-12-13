@@ -23,13 +23,13 @@ const QRCodes = () => {
             <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"}>
         
                 {
-                    QRCodesInputs1(documentDesign).map(item => <Stack direction={'column'}   width={460}  >
+                    QRCodesInputs1(documentDesign).map(item => <Stack direction={'column'}     >
                     <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                 }
             </Stack>
             <Stack direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"} >
                 {
-                    QRCodesInputs2(documentDesign).map(item => <Stack direction={'column'}   width={460}>
+                    QRCodesInputs2(documentDesign).map(item => <Stack direction={'column'}  >
                     <FormInput  input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     
                 }
@@ -37,7 +37,7 @@ const QRCodes = () => {
             <Stack  direction={'row'} marginBottom={"24px"}  marginTop={"24px"} width={"90%"} gap={"16px"}>
         
                 {
-                    QRCodesInputs3(documentDesign).map(item => <Stack direction={'column'}   width={460} >
+                    QRCodesInputs3(documentDesign).map(item => <Stack direction={'column'}   >
                     <FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                 }
             </Stack>
