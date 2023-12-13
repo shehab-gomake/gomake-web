@@ -32,6 +32,8 @@ const ChildrenValuesMapping = ({
     decrementValue,
     isDisabled,
     setIsFocused,
+    isChecked,
+      
   } = useChildValuesMapping({ value, index, parameters, settingParameters,item });
   return (
     <>
@@ -45,8 +47,8 @@ const ChildrenValuesMapping = ({
                 onChange={(e) => onChangeCheckBox(e)}
                 // id={`c${index}_${index2}`}
                 key={`c${index}_${selectColorValue}`}
-                checked={checked}
-                value={checked}
+                checked={isChecked}
+                value={isChecked}
                 //disabled={isDisabled() && !checked}
               />
             </div>

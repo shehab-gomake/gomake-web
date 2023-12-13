@@ -1,9 +1,13 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import { selectColorValueState } from "./store/selecte-color-value";
 import { maltiParameterState } from "./store/multi-param-atom";
-import { useEffect, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import lodashClonedeep from "lodash.clonedeep";
 import { useClickAway } from "@uidotdev/usehooks";
+import {subProductsCopyParametersState, subProductsParametersState} from "@/store";
+import {
+  userMultiParameterModalValues
+} from "@/widgets/shared-admin-customers/digital-offset-price/multi-parameter-modal/use-multi-parameter-modal-values";
 
 const useChildValuesMapping = ({
   value,
@@ -25,10 +29,36 @@ const useChildValuesMapping = ({
   const [parentValue, setParentValue] = useState(
     parameters[index].defaultValue
   );
+  const [subProducts, setSubProducts] = useRecoilState<any>(subProductsCopyParametersState);
+  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue} = userMultiParameterModalValues(settingParameters)
 
-  useEffect(() => {
-    setValueState(parameters[index].defaultValue);
-  }, [parameters]);
+  const getSelectedColorParameterValue = ()=>{
+    const subSection = settingParameters.subSection;
+    const subProductType = subSection.type;
+    let subProduct =  subProducts.find(sub => sub.type == subProductType);
+    const colorParameter = settingParameters?.parameter?.settingParameters[0];
+    return subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id && paramValue.values);
+  }
+  const isChecked = useMemo(() => {
+    
+    const colorParameterValue  = getSelectedColorParameterValue();
+    if(colorParameterValue){
+      if(value.valueId){
+        const subData = value.data;
+        if(subData){
+          let isAllValuesExists = true;
+          subData.forEach(x=>{
+            if(!colorParameterValue.values.find(val => val === x.value)){
+              isAllValuesExists = false;
+            }
+          })
+          if(isAllValuesExists)
+            return true
+        }
+      }
+    }
+    return false
+  }, [subProducts]);
   const updateValue = (increment: boolean) => {
     let temp = lodashClonedeep(generalParameters);
     const indexOfName = temp[0].value.findIndex((p) => p === value?.value);
@@ -51,37 +81,31 @@ const useChildValuesMapping = ({
   const ref = useClickAway(() => {
     setIsFocused(false);
   });
-  useEffect(() => {
-    console.log(value)
-    if (
-      selectColorValue?.selectedParameterValues[0]?.selectValuesCount ===
-        value?.data?.length &&
-      selectColorValue?.selectedParameterValues[0]?.valueIds?.length > 0
-    ) {
-      setChecked(true);
-    }
-  }, [selectColorValue, value, generalParameters]);
   const onChangeCheckBox = (e) => {
-    debugger;
-    if (selectColorValue) {
-      setGeneralParameters((prev) => {
-        let temp = lodashClonedeep(prev);
-
-        if (e.target.checked) {
-          setChecked(true);
-          setForceChange(true);
-        } else {
-          setForceChange(false);
-          setChecked(false);
-        }
-        setChecked(e.target.checked);
-        return temp;
-      });
-    }
+    const subData = value.data;
+    let newSubProducts = lodashClonedeep(subProducts);
+    subData.forEach(x=>{
+      debugger
+      if (e.target.checked){
+        newSubProducts = addValueToSubProduct(newSubProducts,x)
+      }
+      else {
+         newSubProducts = removeValueFromSubProduct(newSubProducts,x)
+      }
+    })
+    setSubProducts(newSubProducts);
   };
+  const setTextInputValue = (textInputVal) =>{
+    setValueState(textInputVal);
+    let newSubProducts = lodashClonedeep(subProducts);
+    const subData = value.data;
+    subData.forEach(x=>{
+      newSubProducts = setSubProductValue(newSubProducts,item.id,x,textInputVal);
+    })
+    setSubProducts(newSubProducts);
+  }
   const onChangeText = (e) => {
-    setValueState(e.target.value);
-    setParentValue(e.target.value);
+    setTextInputValue(e.target.value);
   };
   const isDisabled = () => {
     let isDisabled = false;
@@ -124,6 +148,7 @@ const useChildValuesMapping = ({
     incrementValue,
     decrementValue,
     isDisabled,
+    isChecked,
     setIsFocused,
   };
 };

@@ -8,6 +8,10 @@ export const subProductsParametersState = atom({
   key: "subProductsParametersState",
   default: [],
 });
+export const subProductsCopyParametersState = atom({
+  key: "subProductsCopyParametersState",
+  default: [],
+});
 export const quantityParameterState = selector({
   key: 'quantityParameterState',
   get: ({get}) => {

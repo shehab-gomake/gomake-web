@@ -11,7 +11,7 @@ import {
     generalParametersState,
     isLoadgingState,
     selectedValueConfigState,
-    selectParameterButtonState,
+    selectParameterButtonState, subProductsCopyParametersState,
     subProductsParametersState,
 } from "@/store";
 import {useMaterials} from "../use-materials";
@@ -86,6 +86,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const [graphicNotes, setGraphicNotes] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
     const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
+    const [subProductsCopy, setSubProductsCopy] = useRecoilState<any>(subProductsCopyParametersState);
     const [subProductsWithType, setSubProductsWithType] = useState<any>([]);
     const [itemParmetersValues, setItemParmetersValues] = useRecoilState<any>(itemParametersValuesState);
     const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
@@ -123,8 +124,9 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const [requestAbortController,setRequestAbortController] = useState<AbortController>(null)
     
     useEffect(()=>{
-       
-    },[calculationSessionId])
+        let copy = lodashClonedeep(subProducts);
+        setSubProductsCopy(copy)
+    },[subProducts])
     useEffect(()=>{
         if(calculationResult){
             debugger;
@@ -303,7 +305,8 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                             subProduct = {
                                 type: subSection.type,
                                 parameters: [],
-                                sectionId: section.id
+                                sectionId: section.id,
+                                sectionName: section.name,
                             }
                             subProductsArray.push(subProduct)
                         }
@@ -311,11 +314,15 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                         subSection.parameters
                             .filter((parameter) => !parameter.isHidden)
                             .forEach((parameter) => {
+                                parameter.relatedParameters.forEach(x=>{
+                                    x.sectionId = section.id;
+                                    x.subSectionId = subSection.id;
+                                })
                                 relatedParametersArray.push(...parameter.relatedParameters);
                                 const isParameterExits =  subProduct.parameters.find(param => param.parameterId === parameter?.id);
                                 let isSetDefaultValue = true;
-                                const parentParameter = subSection.parameters.find(subSuctionParam => subSuctionParam.relatedParameters && subSuctionParam.relatedParameters.find(related => related.parameterId === parameter?.id) );
-                                if(parentParameter && parentParameter.relatedParameters){
+                                //const parentParameter = subSection.parameters.find(subSuctionParam => subSuctionParam.relatedParameters && subSuctionParam.relatedParameters.find(related => related.parameterId === parameter?.id) );
+                                /*if(parentParameter && parentParameter.relatedParameters){
                                     const relationWithParent = parentParameter.relatedParameters.find(x=> x.parameterId === parameter?.id);
                                     if(relationWithParent && !relationWithParent.ActivateByAllValues){
                                         const parentParameterValue = subProduct.parameters.find(param => param.parameterId === parentParameter.id);
@@ -329,10 +336,10 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                                         }
                                         
                                     }
-                                }
-                                if(parameter?.parameterType === EParameterTypes.SWITCH && parameter?.defaultValue === "false"){
+                                }8/
+                                /*if(parameter?.parameterType === EParameterTypes.SWITCH && parameter?.defaultValue === "false"){
                                     isSetDefaultValue = false;
-                                }
+                                }*/
                                 if(!isParameterExits && isSetDefaultValue ){
                                    
                                     if (
@@ -439,7 +446,8 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                                 typeMap[subSection.type] = {
                                     type: subSection.type,
                                     parameters: temp,
-                                    sectionId: section.id
+                                    sectionId: section.id,
+                                    sectionName: section.name,
                                 };
                             } else {
                                 typeMap[subSection.type].parameters.push(...temp);
@@ -693,16 +701,9 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                 {parameter?.relatedParameters?.length > 0 && inModal && (
                     <>
                         {parameter.relatedParameters.map((relatedParameter) => {
-                            /*const parm = subSection?.type
-                                ? subProductsWithType.find(
-                                    (param) => param.parameterId === parameter.id
-                                )
-                                : generalParameters.find(
-                                    (param) => param.parameterId === parameter.id
-                                );*/
-
-                            const parm = subProductsWithType.find(
-                                (param) => param.parameterId === parameter.id
+                            const subProduct = subProducts.find(x=> x.type === subSection?.type);
+                            const parm = subProduct?.parameters?.find(
+                                (param) => param.parameterId === parameter.id 
                             );
                             const myParameter = list.find(
                                 (p) => p.id === relatedParameter.parameterId
@@ -854,6 +855,36 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                     actionIndex,
                 });
             }
+            const section = template.sections.find(section => section.id === sectionId );
+            const subSection = section.subSections.find(sub => sub.id === subSectionId);
+            const subSectionParameter = subSection.parameters.find(param => param.id === parameterId);
+            if(subSectionParameter){
+                if(subSectionParameter.settingParameters && subSectionParameter.settingParameters.length > 0){
+                    subSectionParameter.settingParameters.forEach(settingParam => {
+                        temp = temp.filter(x => x.parameterId != settingParam.id )
+                    })
+                }
+                const parameterValue = subSectionParameter.valuesConfigs.find(x=> x.id === data.valueIds);
+                if(parameterValue && parameterValue.selectedParameterValues && parameterValue.selectedParameterValues.length > 0){
+                    parameterValue.selectedParameterValues.forEach(selectedParam => {
+                        if(selectedParam.valueIds && selectedParam.valueIds.length > 0){
+                            const param = subSectionParameter.settingParameters.find(param => param.id === selectedParam.parameterId);
+                            temp.push({
+                                parameterId: param.id,
+                                sectionId: sectionId,
+                                subSectionId: subSectionId,
+                                ParameterType: param.parameterType,
+                                parameterName: param.name,
+                                actionId: param.actionId,
+                                values: selectedParam.valueIds,
+                                valueIds: selectedParam.valueIds,
+                                actionIndex,
+                            });
+                        }
+                        
+                    })
+                }
+            }
             let temp2 = [...subProducts];
             const index2 = subProducts.findIndex(
                 (item) => item.type === subSectionType
@@ -861,41 +892,10 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             (temp2[index2] = {
                 type: subSectionType,
                 sectionId: sectionId,
+                sectionName: section.name,
                 parameters: temp,
             }),
                 setSubProducts(temp2);
-        } else {
-            let temp = [];
-            if (index !== -1) {
-                temp[index] = {
-                    ...temp[index],
-                    values: [data.values],
-                    valueIds: [data.valueIds],
-                };
-            } else {
-                temp.push({
-                    parameterId: parameterId,
-                    sectionId: sectionId,
-                    subSectionId: subSectionId,
-                    ParameterType: ParameterType,
-                    parameterName: parameterName,
-                    actionId: actionId,
-                    values: [data.values],
-                    valueIds: [data.valueIds],
-                    actionIndex,
-                });
-            }
-            if (data?.valueIds === undefined && data?.values === undefined) {
-                temp.splice(index, 1);
-            }
-
-            setSubProducts([
-                ...subProducts,
-                {
-                    type: subSectionType,
-                    parameters: temp,
-                },
-            ]);
         }
     };
     const onCloseMakeShape = () => {
