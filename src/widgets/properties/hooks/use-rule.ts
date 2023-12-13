@@ -8,7 +8,6 @@ const useRule = () => {
   const { setSnackbarStateValue } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  // const { state, getPrintHouseActionById } = useProperites();
 
   const deleteRule = useCallback(
     async (
@@ -30,7 +29,6 @@ const useRule = () => {
           message: t("modal.deleteSusuccessfully"),
           type: "sucess",
         });
-        // getPrintHouseActionById(actionId);
       } else {
         setSnackbarStateValue({
           state: true,

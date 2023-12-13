@@ -1,28 +1,26 @@
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { getAndSetProperites } from "@/services/hooks/admin-side/profits/get-set-properites";
+import { EHttpMethod } from "@/services/api-service/enums";
 
 const useProperites = () => {
   const router = useRouter();
+  const { alertSuccessDelete, alertFaultDelete } = useSnackBar();
   const [selectedProperties, setSelectedProperites] = useState();
   const [allProperties, setAllProperites] = useState([]);
   const [actionId, setActionId] = useState("");
   const { callApi } = useGomakeAxios();
   useEffect(() => {
     if (router.query.actionId) {
-      getPrintHouseActionById(router.query.actionId as string).then((res) => {
-        setAllProperites(res?.data?.data?.data);
-        setActionId(router.query.actionId as string);
-      });
+      getProperitesService();
+      setActionId(router.query.actionId as string);
     }
   }, [router]);
 
-  const getPrintHouseActionById = async (actionId: string) => {
-    return await callApi(
-      "Get",
-      `/v1/printhouse-config/print-house-action/get-properties-by-action-id/${router.query.actionId}`
-    );
-  };
+  const getProperitesService = useCallback(async () => {
+    await getAndSetProperites(callApi, setAllProperites, router);
+  }, []);
 
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
   const [openEditRule, setOpenEditRule] = useState<boolean>(false);
@@ -56,6 +54,43 @@ const useProperites = () => {
     }
     return allProperties;
   }, [filter, allProperties]);
+
+  // const deleteRule = useCallback(
+  //   async (
+  //     actionId: string,
+  //     propertyId: string,
+  //     ruleType: number,
+  //     id: string
+  //   ) => {
+  //     const res = await callApi(
+  //       EHttpMethod.PUT,
+  //       `/v1/printhouse-config/print-house-action/delete-rule/${router.query.actionId}/${propertyId}/${ruleType}`,
+  //       {
+  //         router?.query.actionId
+  //       }
+  //     );
+  //     if (res?.success) {
+  //       alertSuccessDelete();
+  //     } else {
+  //       alertFaultDelete();
+  //     }
+  //   },
+  //   []
+  // );
+  const deleteRule = useCallback(
+    async (propertyId: string, ruleType: number, id: string) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/printhouse-config/print-house-action/delete-rule/${router.query.actionId}/${propertyId}/${ruleType}/${id}`
+      );
+      if (res?.success) {
+        alertSuccessDelete();
+      } else {
+        alertFaultDelete();
+      }
+    },
+    []
+  );
   return {
     allProperties,
     actionId,
@@ -73,6 +108,8 @@ const useProperites = () => {
     setSelectedProperites,
     properties,
     setFilter,
+    getProperitesService,
+    deleteRule,
   };
 };
 

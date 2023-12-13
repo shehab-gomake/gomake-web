@@ -22,6 +22,7 @@ const AddRuleModal = ({
   selectedPricingTableItems,
   isPropertiesWidge,
   selectedProperties,
+  getProperitesService,
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -37,12 +38,13 @@ const AddRuleModal = ({
     Outputs,
     setAdditionalProfit,
     clients,
-
     expression,
     mainconditions,
     categories,
     conditions,
     create,
+    createProperties,
+    setPropertieValue,
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -50,6 +52,8 @@ const AddRuleModal = ({
     onCloseModal,
     getProfitsPricingTables,
     selectedPricingTableItems,
+    selectedProperties,
+    getProperitesService,
   });
   return (
     <>
@@ -385,11 +389,11 @@ const AddRuleModal = ({
 
           {isPropertiesWidge && (
             <div style={{ width: "20%" }}>
+              <div style={clasess.selectTypeStyle}>Enter Value</div>
               <GomakeTextInput
-                type="number"
-                placeholder={t("products.profits.exceptions.additionalProfit")}
+                placeholder="Enter Value"
                 onChange={(e: any) => {
-                  setAdditionalProfit(e.target.value);
+                  setPropertieValue(e.target.value);
                 }}
                 style={{
                   border: "0px",
@@ -405,7 +409,7 @@ const AddRuleModal = ({
             <GomakePrimaryButton
               style={clasess.sendBtn}
               onClick={() => {
-                create();
+                isPropertiesWidge ? createProperties() : create();
               }}
             >
               {t("properties.create")}

@@ -26,9 +26,12 @@ const useAddRuleModal = ({
   onCloseModal,
   getProfitsPricingTables,
   selectedPricingTableItems,
+  selectedProperties,
+  getProperitesService,
 }) => {
   const { callApi } = useGomakeAxios();
   const { clients } = usePrintHouseClients();
+  const [propertieValue, setPropertieValue] = useState<any>();
   const isDefaultException =
     selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
   const categories = useMemo(() => {
@@ -182,7 +185,6 @@ const useAddRuleModal = ({
     const textInput = displayText(rules);
     setExpression(textInput);
   }, [rules]);
-
   const create = useCallback(async () => {
     const requestBody: any = {
       actionId: router?.query?.actionId,
@@ -239,6 +241,41 @@ const useAddRuleModal = ({
     isDefaultException,
   ]);
 
+  const createProperties = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/printhouse-config/print-house-action/add-rule/${router?.query?.actionId}/${selectedProperties?.propertyId}/${selectedProperties?.ruleType}`,
+      {
+        ruleName: expression,
+        ruleConditionStatements: null,
+        exceptionConditionProperties: rules.map((item) => {
+          return {
+            statementId:
+              typeof item?.statement === "object"
+                ? item?.statement?.id
+                : item.statement,
+            statementValue: item.statement2.id,
+            operator: item.condition.id,
+            conditionBetweenStatements: item.linkCondition
+              ? item.linkCondition.id
+              : "",
+            statementCategory: EStatementCategory[item.category.id],
+          };
+        }),
+        successEvent: propertieValue,
+        expression: expression,
+      }
+    );
+
+    if (res?.success) {
+      alertSuccessAdded();
+      getProperitesService();
+      onCloseModal();
+    } else {
+      alertFaultAdded();
+    }
+  }, [router, expression, selectedProperties, propertieValue, rules]);
+
   return {
     rules,
     deleteRule,
@@ -260,6 +297,9 @@ const useAddRuleModal = ({
     categories,
     conditions,
     create,
+    createProperties,
+    propertieValue,
+    setPropertieValue,
   };
 };
 

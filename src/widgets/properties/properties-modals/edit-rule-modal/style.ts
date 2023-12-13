@@ -9,7 +9,7 @@ const useStyle = () => {
       insideStyle: {
         width: 800,
         borderRadius: 5,
-        height: 370,
+        height: 385,
       },
       mainContainer: {
         display: "flex",
@@ -17,6 +17,14 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
+        height: "100%",
+      },
+      rulesContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        width: "100%",
+        height: 245,
+        overflow: "scroll",
       },
       textInputStyle: {
         width: "100%",
@@ -52,6 +60,8 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 12),
         display: "flex",
         justifyContent: "space-between",
+        gap: 5,
+        marginBottom: 10,
       },
       deleteBtn: {
         cursor: "pointer",

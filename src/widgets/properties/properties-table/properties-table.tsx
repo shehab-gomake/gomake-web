@@ -31,7 +31,7 @@ const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.body}`]: {
     ...FONT_FAMILY.Lexend(500, 14),
     color: "#656572",
-    padding: 5,
+    padding: 15,
   },
 }));
 
@@ -63,6 +63,8 @@ const PropertiesTable = () => {
     actionId,
     properties,
     setFilter,
+    getProperitesService,
+    deleteRule,
   } = useProperites();
 
   return (
@@ -104,7 +106,16 @@ const PropertiesTable = () => {
                       {property.actionRules.map((rule, index) => {
                         return (
                           <div style={classes.item}>
-                            {index + 1}- {rule.expression}
+                            {rule.successEvent ? (
+                              <>
+                                {index + 1}- {rule.expression} value=
+                                {rule.successEvent}
+                              </>
+                            ) : (
+                              <>
+                                {index + 1}- {rule.expression}
+                              </>
+                            )}
                           </div>
                         );
                       })}
@@ -134,6 +145,7 @@ const PropertiesTable = () => {
         onCloseModal={onCloseAddRuleModal}
         isPropertiesWidge={true}
         selectedProperties={selectedProperties}
+        getProperitesService={getProperitesService}
       />
       <EditRulesModal
         openModal={openEditRule}
@@ -141,6 +153,7 @@ const PropertiesTable = () => {
         actionId={actionId}
         selectedProperties={selectedProperties}
         onOpenAddRuleModal={onOpenAddRuleModal}
+        deleteRule={deleteRule}
       />
       <MoreMenuWidget
         onOpenAddRuleModal={onOpenAddRuleModal}
