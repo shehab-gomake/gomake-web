@@ -48,7 +48,6 @@ const QuoteWidget = ({ isAdmin = true }) => {
     } = useQuoteWidget();
 
     useEffect(() => {
-
         if (userQuote) {
             setQuoteId(userQuote.id);
             setquoteNumber(userQuote.number)
@@ -62,8 +61,9 @@ const QuoteWidget = ({ isAdmin = true }) => {
             setQuoteIfExist(false);
             //setSelectedClient(null)
         }
-
     }, [userQuote])
+
+    
     return (
 
         <div style={clasess.mainContainer}>
