@@ -10,7 +10,7 @@ interface IFormInputsSectionProps {
 const FormInputsSectionComponent = ({sectionTitle, children}: IFormInputsSectionProps) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
-    return <Stack direction={'column'} gap={'32px'}>
+    return <Stack  direction={'column'} gap={'20px'}>
         <h3 style={classes.subSectionHeader}>{t(sectionTitle)}</h3>
         <Stack gap={'16px'} direction={'row'} display={'flex'} flexWrap={'wrap'}>
             {children}

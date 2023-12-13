@@ -9,7 +9,7 @@ import { Stack, TextareaAutosize } from "@mui/material";
 import { FormInputsSectionComponent } from "@/components/form-inputs/form-inputs-section";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { AdditionalOptionsInputs, AdditionalOptionsInputs2, FooterInputs1, FooterInputs2, TableSettingInputs, TableSettingInputs2, TitleDefinitionCustomLogoInputs, TitleDefinitionInputs, creationDocumetInputs } from "../../inputs/document-creation-inputs";
+import { AdditionalOptionsInputs, AdditionalOptionsInputs2, FooterInputs1, FooterInputs2, TableSettingInputs, TableSettingInputs2, TitleDefinitionCustomLogoInputs, TitleDefinitionInputs, creationDocumentInputs } from "../../inputs/document-creation-inputs";
 import { QRCodes } from "./QRCodes/QRCodes";
 
 const DocumentDesign = () => {
@@ -20,7 +20,7 @@ const DocumentDesign = () => {
         await AddOrUpdateDocumentDesign(documentDesign);
     };
 
-    const ResetDeafultDocumentDesign = async () => {
+    const ResetDefaultDocumentDesign = async () => {
         await ResetDocumentDesign(documentDesign);
     };
 
@@ -37,7 +37,7 @@ const DocumentDesign = () => {
     }, [documentDesign?.docType, documentDesign?.agentId]);
 
     const DocumentDesignSection1: { inputs: any[], title: string }[] = [
-        { inputs: creationDocumetInputs(documentDesign), title: 'documentingDesign.documnetCreation.documentinCreation' },
+        { inputs: creationDocumentInputs(documentDesign), title: 'documentingDesign.documnetCreation.documentinCreation' },
         { inputs: TitleDefinitionInputs(documentDesign), title: 'documentingDesign.TitleDefinition.TitleDefinition' },
         { inputs: TitleDefinitionCustomLogoInputs(documentDesign), title: '' },
         { inputs: TableSettingInputs(documentDesign), title: 'documentingDesign.TableSetting.TableSetting' },
@@ -53,7 +53,7 @@ const DocumentDesign = () => {
     return (
         <div style={{ ...classes.container, position: 'relative', width: "60%" }}>
             <div style={{width:"100%"}}>
-                <Stack direction={'column'} gap={'32px'} paddingTop={'44px'}>
+                <Stack direction={'column'} gap={'24px'} paddingTop={'10px'}>
                     {
                         DocumentDesignSection1.map(section => {
                             return (
@@ -72,10 +72,10 @@ const DocumentDesign = () => {
                 <Stack direction={'row'} marginTop={"24px"} >
                     <span style={classes.subTitleStyle} >{t("documentingDesign.Additional.Additional")}</span>
                 </Stack>
-                <Stack direction={'row'} marginBottom={"24px"} marginTop={"24px"}>
+                <Stack direction={'row'} marginTop={"24px"}>
                     <span style={classes.subTitleSpanStyle} >{t("documentingDesign.Additional.Remarks")}</span>
                 </Stack>
-                <Stack direction={'row'} marginBottom={"24px"} marginTop={"24px"}>
+                <Stack direction={'row'}  marginTop={"24px"}>
                     <TextareaAutosize style={classes.textAreaStyle}></TextareaAutosize>
                 </Stack>
                 <Stack direction={'column'} gap={'32px'} paddingTop={'44px'}>
@@ -95,11 +95,10 @@ const DocumentDesign = () => {
                         })
                     }
                 </Stack>
-                <QRCodes />
-
+                <QRCodes/>
                 <div style={{ position: 'sticky', bottom: '0', left: '0', backgroundColor: "white", right: '0', padding: '16px' }}>
                     <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", gap: 16 }}>
-                        <SecondaryButton onClick={ResetDeafultDocumentDesign} variant="outlined" >{t("documentingDesign.Reset")}</SecondaryButton>
+                        <SecondaryButton onClick={ResetDefaultDocumentDesign} variant="outlined" >{t("documentingDesign.Reset")}</SecondaryButton>
                         <SecondaryButton onClick={addDocumentDesign} variant="contained">{t('documentingDesign.Save')}</SecondaryButton>
                     </div>
                 </div>
