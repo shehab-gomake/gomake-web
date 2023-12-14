@@ -74,7 +74,6 @@ const AddRuleModal = ({
     setSelectedParameters(selectedParameters);
   }, [selectedProperties, Outputs, parametersStateValue]);
 
-  console.log("selectedOutputs", selectedOutputs);
   const _renderInptsForProperties = () => {
     if (selectedProperties?.ruleType === 0) {
       switch (selectedOutputs?.valueType) {
