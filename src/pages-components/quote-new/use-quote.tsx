@@ -161,7 +161,7 @@ const useQuoteNew = () => {
     getAllCustomers();
   }, []);
 
-  const onBlurPurchaseNumber = async (value=5) => {
+  const onBlurPurchaseNumber = async (value) => {
     updatePurchaseNumber(value);
     setIsUpdatePurchaseNumber(null);
   };
