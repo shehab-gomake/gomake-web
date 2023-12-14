@@ -5,6 +5,7 @@ import Link from "next/link";
 import {TaskCategoryLabel} from "@/widgets/production-floor-widget/components/task-category-label";
 import {StatusBtn} from "@/widgets/production-floor-widget/components/status-btn";
 import {OptionsButton} from "@/components/options-button/options-button";
+import {useDateFormat} from "@/hooks/use-date-format";
 import {
     boardsMissionsSelectedIdsState,
     boardsMissionsState, isLoadingMoreBoardsState
@@ -13,7 +14,6 @@ import {updateBoardsMissionsStatusApi} from "@/services/api-service/production-f
 import {useGomakeAxios} from "@/hooks";
 import {productionFloorFiltersState} from "@/widgets/production-floor-widget/state";
 import {CurrentStationComponent} from "@/widgets/production-floor-widget/components/current-station-component";
-import {DateFormatterDDMMYYYY} from "@/utils/adapter";
 
 const useProductionFloorTable = () => {
     const boardsMissions = useRecoilValue(boardsMissionsState);
@@ -21,6 +21,7 @@ const useProductionFloorTable = () => {
     const [hasMoreBoards, setHasMoreBoards] = useState<boolean>(true);
     const [loadingBoards, setLoadingBoards] = useRecoilState<boolean>(isLoadingMoreBoardsState);
     const filters = useRecoilValue(productionFloorFiltersState);
+    const {GetDateFormat} = useDateFormat();
     const {callApi} = useGomakeAxios();
     const onSelectUnSelectBoardMission = (id: string) => {
         if (boardsMissionsSelectedIds?.includes(id)) {
@@ -51,8 +52,8 @@ const useProductionFloorTable = () => {
                     <CurrentStationComponent {...boardMission.currentStation} boardMissionId={boardMission.id}/>,
                     <StatusBtn id={boardMission?.id} onChange={onUpdateStatus} statusId={boardMission?.statusId}/>,
                     boardMission?.clientName,
-                    DateFormatterDDMMYYYY(boardMission?.actionDueDate),
-                    DateFormatterDDMMYYYY(boardMission?.dueDate),
+                    GetDateFormat(boardMission?.actionDueDate),
+                    GetDateFormat(boardMission?.dueDate),
                     <OptionsButton><></>
                     </OptionsButton>
                 ]

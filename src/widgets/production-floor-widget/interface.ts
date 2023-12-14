@@ -11,15 +11,15 @@ export interface IBoard {
     statusId: string;
     clientName: string;
     clientId: string;
-    actionDueDate: string;
-    dueDate: string;
-    boardMissionCreatedDate?: string;
-    stationInDate: string;
+    actionDueDate: Date;
+    dueDate: Date;
+    boardMissionCreatedDate?: Date;
+    stationInDate: Date
     tags: string[];
     productItemValue: any;
     orderId?: string;
     workOrder?: string;
-    startDate?: string;
+    startDate?: Date;
     checked?: boolean;
 }
 
@@ -81,6 +81,5 @@ export interface IBoardMissionStation {
     dueDate: string;
     outUserId: string;
     statusId: string;
-    actionName: string;
 }
 

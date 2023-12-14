@@ -9,11 +9,10 @@ import Stack from "@mui/material/Stack";
 import {Clear} from "@mui/icons-material";
 import {staticDateRange} from "@/components/date-picker/const";
 interface IGoMakeDatepicker {
-    onChange: (fromDate: Date, toDate: Date) => void;
-    placeholder?: string;
+    onChange: (fromDate, toDate) => void;
 }
 
-const GoMakeDatepicker = ({onChange, placeholder}: IGoMakeDatepicker) => {
+const GoMakeDatepicker = ({onChange}: IGoMakeDatepicker) => {
     const {t} = useTranslation();
     const [state, setState] = useState({
         selection: {
@@ -57,7 +56,7 @@ const GoMakeDatepicker = ({onChange, placeholder}: IGoMakeDatepicker) => {
         <div>
             <Stack direction={'row'} gap={'3px'} alignItems={'center'}>
                 <GomakeTextInput disabled={false} style={{height: '35px', cursor: 'pointer', minWidth: '190px'}}
-                                 value={dateString()} labelText={'select'} placeholder={placeholder}
+                                 value={dateString()} labelText={'select'} placeholder={'select date'}
                                  onClick={handleInputClick}/>
                 <Clear onClick={handleClear}/>
             </Stack>

@@ -14,13 +14,10 @@ import Drawer from "@mui/material/Drawer";
 import {useBoardMissionDrawer} from "@/widgets/production-floor-widget/hooks/use-board-mission-drawer";
 import {BoardMissionsWidget} from "@/widgets/board-mission-widget/board-missions-widget";
 import {DrawerCloseHeader} from "@/widgets/production-floor-widget/components/drawer-close-header";
-import {GoMakeDatepicker} from "@/components/date-picker/date-picker-component";
-import {useDatesFilters} from "@/widgets/production-floor-widget/hooks/use-dates-filters";
 
 const ProductionFloorWidget = () => {
     const {} = useProductionFloorData();
     const {} = useProductionFloorFilters();
-    const {onSelectDeliveryTimeDates, onSelectCreationDates} = useDatesFilters();
     const {
         getBoardsMissionsRows,
         hasMoreBoards,
@@ -38,8 +35,6 @@ const ProductionFloorWidget = () => {
                     <Button>kanban</Button>
                 </ButtonGroup>
                 <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
-                    <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={'select delivery time'}/>
-                    <GoMakeDatepicker onChange={onSelectCreationDates} placeholder={'select creation time'}/>
                     <ActionsMachinesSelect/>
                     <SearchInputComponent onChange={() => {
                     }}/>
