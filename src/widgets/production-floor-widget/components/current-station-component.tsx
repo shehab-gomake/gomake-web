@@ -37,7 +37,7 @@ const CurrentStationComponent = ({boardMissionId, actionName, machineName}: IPro
                   onClose={handleClose}>
                 {
                     boardMissionsStations?.map(station => <MenuItem
-                        onClick={() => onUpdateCurrentStation(boardMissionId, station.id)}>{station.actionName}</MenuItem>)
+                        onClick={() => onUpdateCurrentStation(boardMissionId, station.id)}>{station.id}</MenuItem>)
                 }
             </Menu>
         </div>
