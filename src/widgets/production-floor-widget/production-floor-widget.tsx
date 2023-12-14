@@ -1,68 +1,60 @@
-import {useProductionFloor} from "@/widgets/production-floor-widget/use-production-floor";
-import {useCallback, useEffect, useState} from "react";
-import {SecondaryTable} from "@/components/tables/secondary-table";
-import {Button, ButtonGroup} from "@mui/material";
+import React from "react";
 import Stack from "@mui/material/Stack";
+import {useProductionFloorData} from "@/widgets/production-floor-widget/hooks/use-production-floor-data";
+import {Button, ButtonGroup} from "@mui/material";
 import {SearchInputComponent} from "@/components/form-inputs/search-input-component";
-import {SelectComponent} from "@/widgets/production-floor-widget/components/select";
-import {GoMakeModal} from "@/components";
-import {useRouter} from "next/router";
-import {ProductId} from "@/widgets/production-floor-widget/product-id-widget/product-id";
 import {StatusesButtonsComponent} from "@/widgets/production-floor-widget/production-statuses/production-statuses";
-import {GoMakeDatepicker} from "@/components/date-picker/date-picker-component";
-import {useProductionFloorSignalr} from "@/hooks/signalr/use-production-floor-signalr";
-
+import {SecondaryTable} from "@/components/tables/secondary-table";
+import {useProductionFloorTable} from "@/widgets/production-floor-widget/hooks/use-production-floor-table";
+import {LoadMore} from "@/widgets/production-floor-widget/components/load-more";
+import {HEADER_HEIGHT, SCREEN_HEIGHT} from "@/utils/layout-config";
+import {useProductionFloorFilters} from "@/widgets/production-floor-widget/hooks/use-production-floor-filters";
+import {ActionsMachinesSelect} from "@/widgets/production-floor-widget/components/actions-machines-select";
+import Drawer from "@mui/material/Drawer";
+import {useBoardMissionDrawer} from "@/widgets/production-floor-widget/hooks/use-board-mission-drawer";
+import {BoardMissionsWidget} from "@/widgets/board-mission-widget/board-missions-widget";
+import {DrawerCloseHeader} from "@/widgets/production-floor-widget/components/drawer-close-header";
 
 const ProductionFloorWidget = () => {
-    const {tableHeaders, getWorkJobs, getWorkJobsRows, demo, product} = useProductionFloor();
-    const {} = useProductionFloorSignalr();
-    const [viewType, setViewType] = useState<1 | 2>(1);
-    const {query, replace} = useRouter();
-    const productId = query?.productId;
-    const openModal = useCallback(() => {
-        return !!productId
-    }, [productId]);
-    useEffect(() => {
-        getWorkJobs().then();
-    }, []);
-    const handleModalClose = () => {
-        replace('/production-floor').then();
-    }
-
-    const handleScroll = () => {
-            getWorkJobs().then()
-    }
-
+    const {} = useProductionFloorData();
+    const {} = useProductionFloorFilters();
+    const {
+        getBoardsMissionsRows,
+        hasMoreBoards,
+        setLoadingBoards,
+        loadingBoards,
+        handelEndGettingData,
+        tableHeaders
+    } = useProductionFloorTable();
+    const {open, handleClose, anchor} = useBoardMissionDrawer()
     return (
-        <Stack direction={'column'} gap={'5px'}>
+        <Stack direction={'column'} gap={'5px'} maxHeight={SCREEN_HEIGHT - HEADER_HEIGHT} overflow={'hidden'}>
             <Stack direction={'row'} justifyContent={'space-between'} padding={'10px 0'}>
                 <ButtonGroup>
-                    <Button variant={viewType === 1 ? 'contained' : 'text'}
-                            onClick={() => setViewType(1)}>table</Button>
-                    <Button variant={viewType === 2 ? 'contained' : 'text'}
-                            onClick={() => setViewType(2)}>kanban</Button>
+                    <Button>table</Button>
+                    <Button>kanban</Button>
                 </ButtonGroup>
                 <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
-                    <SelectComponent buttonLabel={'employee'} list={demo}/>
-                    <GoMakeDatepicker/>
+                    <ActionsMachinesSelect/>
                     <SearchInputComponent onChange={() => {
                     }}/>
                 </Stack>
             </Stack>
             <StatusesButtonsComponent/>
-            <Stack>
+            <Stack overflow={'auto'}>
+                <SecondaryTable onScrolledBottom={() => {
+                    setLoadingBoards(true)
+                }} rows={getBoardsMissionsRows()} headers={tableHeaders}/>
                 {
-                    viewType === 1 &&
-                    <SecondaryTable onScrolledBottom={handleScroll} rows={getWorkJobsRows()} headers={tableHeaders}/>
-                }
-                {
-                    viewType === 2 && <div>coming soon ...</div>
+                    loadingBoards && hasMoreBoards && <LoadMore setHasMoreBoards={handelEndGettingData}/>
                 }
             </Stack>
-            <GoMakeModal insideStyle={{width: '80vw'}} openModal={openModal() && !!product()} onClose={handleModalClose}
-                         modalTitle={'title'}>
-                <ProductId product={product()}/>
-            </GoMakeModal>
+            <Drawer open={open()} anchor={anchor} onClose={handleClose}>
+                <Stack width={'80vw'}>
+                    <DrawerCloseHeader/>
+                    <BoardMissionsWidget/>
+                </Stack>
+            </Drawer>
         </Stack>
     )
 }

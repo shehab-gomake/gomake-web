@@ -5,8 +5,8 @@ import { ICallAndSetData } from "@/services/api-service/interface";
 const GET_ENUMS_URL = "/v1/enum/get-enums/";
 
 
-const getCurrencies: ICallAndSetData = async (callApi, setState) => {
-  return await getSetApiData(
+const getCurrencies: ICallAndSetData<any, any> = async (callApi, setState) => {
+  return await getSetApiData<any>(
     callApi,
     EHttpMethod.GET,
       GET_ENUMS_URL + 'currency',

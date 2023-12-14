@@ -14,33 +14,33 @@ const GET_ALL_TEMPLATE_VARIABLES_URL = '/v1/communication-service/template-varia
 const GET_ALL_TEMPLATE_TYPES_URL = '/v1/enum/get-enums/SMSTemplate';
 
 
-const getAllSMSTemplatesApi: ICallAndSetData = async (callApi, setState, data) => {
-    return  await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_SMS_TEMPLATES_URL , setState , data)
+const getAllSMSTemplatesApi: ICallAndSetData<any, any> = async (callApi, setState, data) => {
+    return  await getSetApiData<any>(callApi, EHttpMethod.GET, GET_ALL_SMS_TEMPLATES_URL , setState , data)
 }
 
 //get by id 
-const getSMSTemplateApi: ICallAndSetData = async (callApi, setState , data: { id: string, lang : string}) => {
-    return  await getSetApiData(callApi, EHttpMethod.GET, GET_SMS_TEMPLATE_BY_ID_URL , setState , data)
+const getSMSTemplateApi: ICallAndSetData<any, any> = async (callApi, setState , data: { id: string, lang : string}) => {
+    return  await getSetApiData<any>(callApi, EHttpMethod.GET, GET_SMS_TEMPLATE_BY_ID_URL , setState , data)
 }
 
-const updateSMSTemplateApi: ICallAndSetData = async (callApi, setState, SmsTemplate) => {
-    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_SMS_TEMPLATE_URL, setState, SmsTemplate);
+const updateSMSTemplateApi: ICallAndSetData<any, any> = async (callApi, setState, SmsTemplate) => {
+    return await getSetApiData<any>(callApi, EHttpMethod.PUT, UPDATE_SMS_TEMPLATE_URL, setState, SmsTemplate);
 }
 
-const addSMSTemplateGroup: ICallAndSetData = async (callApi, setState, templateGroup: SMSTemplateGroup) => {
-    return await getSetApiData(callApi, EHttpMethod.POST, ADD_SMS_TEMPLATES_GROUP_URL, setState, templateGroup);
+const addSMSTemplateGroup: ICallAndSetData<any, any> = async (callApi, setState, templateGroup: SMSTemplateGroup) => {
+    return await getSetApiData<any>(callApi, EHttpMethod.POST, ADD_SMS_TEMPLATES_GROUP_URL, setState, templateGroup);
 }
 
-const getAllSMSTemplatesGroupsApi: ICallAndSetData = async (callApi, setState) => {
-    return  await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_SMS_TEMPLATES_GROUPS_URL, setState)
+const getAllSMSTemplatesGroupsApi: ICallAndSetData<any, any> = async (callApi, setState) => {
+    return  await getSetApiData<any>(callApi, EHttpMethod.GET, GET_ALL_SMS_TEMPLATES_GROUPS_URL, setState)
 }
 
-const getAllTemplateVariablesApi: ICallAndSetData = async (callApi, setState) => {
-    return  await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_TEMPLATE_VARIABLES_URL, setState)
+const getAllTemplateVariablesApi: ICallAndSetData<any, any> = async (callApi, setState) => {
+    return  await getSetApiData<any>(callApi, EHttpMethod.GET, GET_ALL_TEMPLATE_VARIABLES_URL, setState)
 }
 
-const getAllTemplateTypesApi: ICallAndSetData = async (callApi, setState) => {
-    return  await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_TEMPLATE_TYPES_URL, setState)
+const getAllTemplateTypesApi: ICallAndSetData<any, any> = async (callApi, setState) => {
+    return  await getSetApiData<any>(callApi, EHttpMethod.GET, GET_ALL_TEMPLATE_TYPES_URL, setState)
 }
 
 export { updateSMSTemplateApi , getAllSMSTemplatesApi , addSMSTemplateGroup  , getAllSMSTemplatesGroupsApi , getAllTemplateVariablesApi , getAllTemplateTypesApi , getSMSTemplateApi};

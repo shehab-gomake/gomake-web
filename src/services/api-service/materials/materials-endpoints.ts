@@ -16,35 +16,35 @@ const DELETE_MATERIAL_CATEGORY_URL = '/v1/materials/delete-material-category';
 const ADD_MATERIAL_CATEGORY_ROW_URL = '/v1/materials/add-material-category-row';
 const DELETE_MATERIAL_CATEGORY_Row_URL = '/v1/materials/delete-material-category-row';
 
-const getMaterialCategoryDataApi: ICallAndSetData = async (callApi, setState, material: { materialKey: string, categoryKey: string, supplierId: string }) => {
-    return await getSetApiData(callApi,
+const getMaterialCategoryDataApi: ICallAndSetData<any, any> = async (callApi, setState, material: { materialKey: string, categoryKey: string, supplierId: string }) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.GET,
         `${GET_MATERIAL_CATEGORY_DATA_URL}?materialKey=${material.materialKey}&categoryKey=${material.categoryKey}&supplierId=${material.supplierId}`,
         setState);
 }
 
-const getMaterialCategoriesApi: ICallAndSetData = async (callApi, setState, material: string) => {
-    return await getSetApiData(callApi,
+const getMaterialCategoriesApi: ICallAndSetData<any, any> = async (callApi, setState, material: string) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.GET,
         `${GET_MATERIAL_CATEGORIES_URL}?materialKey=${material}`,
         setState);
 }
 
-const getMaterialTableHeadersApi: ICallAndSetData = async (callApi, setState, material: string) => {
-    return await getSetApiData(callApi,
+const getMaterialTableHeadersApi: ICallAndSetData<any, any> = async (callApi, setState, material: string) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.GET,
         `${GET_MATERIAL_TABLE_HEADERS_URL}?materialKey=${material}`,
         setState);
 }
-const getMaterialsTypesApi: ICallAndSetData = async (callApi, setState) => {
-    return await getSetApiData(callApi,
+const getMaterialsTypesApi: ICallAndSetData<any, any> = async (callApi, setState) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.GET,
         GET_MATERIALS_TYPES_URL,
         setState);
 }
 
-const updateMaterialPropApi: ICallAndSetData = async (callApi, callBack, data) => {
-    return await getSetApiData(callApi,
+const updateMaterialPropApi: ICallAndSetData<any, any> = async (callApi, callBack, data) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.POST,
         UPDATE_MATERIAL_PROPS_URL,
         callBack,
@@ -52,23 +52,23 @@ const updateMaterialPropApi: ICallAndSetData = async (callApi, callBack, data) =
         false)
 }
 
-const updateMaterialsPropApi: ICallAndSetData = async (callApi, callBack, data) => {
-    return await getSetApiData(callApi,
+const updateMaterialsPropApi: ICallAndSetData<any, any> = async (callApi, callBack, data) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.POST,
         UPDATE_MATERIALS_PROPS_URL,
         callBack,
         data)
 } 
 
-const getMaterialExcelFileApi: ICallAndSetData = async (callApi, setState, material: string) => {
-    return await getSetApiData(callApi,
+const getMaterialExcelFileApi: ICallAndSetData<any, any> = async (callApi, setState, material: string) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.GET,
         `${DOWNLOAD_MATERIAL_EXCEL_FILE}?materialKey=${material}`,
         setState);
 }
 
-const uploadMaterialExcelFileApi: ICallAndSetData = async (callApi, callBack, data: { key: string, base64: string }) => {
-    return await getSetApiData(callApi,
+const uploadMaterialExcelFileApi: ICallAndSetData<any, any> = async (callApi, callBack, data: { key: string, base64: string }) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.POST,
         UPLOAD_MATERIAL_EXCEL_FILE,
         callBack,
@@ -76,24 +76,24 @@ const uploadMaterialExcelFileApi: ICallAndSetData = async (callApi, callBack, da
 }
 
 
-const addMaterialCategoryApi: ICallAndSetData = async (callApi, callBack, category: { materialTypeKey: string, categoryKey: string }) => {
-    return await getSetApiData(callApi,
+const addMaterialCategoryApi: ICallAndSetData<any, any> = async (callApi, callBack, category: { materialTypeKey: string, categoryKey: string }) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.POST,
         ADD_MATERIAL_CATEGORY_URL,
         callBack,
         category)
 }
 
-const deleteMaterialCategoryApi: ICallAndSetData = async (callApi, callBack, category: { materialTypeKey: string, categoryKey: string }) => {
-    return await getSetApiData(callApi,
+const deleteMaterialCategoryApi: ICallAndSetData<any, any> = async (callApi, callBack, category: { materialTypeKey: string, categoryKey: string }) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.POST,
         DELETE_MATERIAL_CATEGORY_URL,
         callBack,
         category)
 }
 
-const addMaterialCategoryRowApi: ICallAndSetData = async (callApi, callBack, row: { materialKey: string, categoryKey: string, rowData: Record<string, IDynamicRowData> }) => {
-    return await getSetApiData(callApi,
+const addMaterialCategoryRowApi: ICallAndSetData<any, any> = async (callApi, callBack, row: { materialKey: string, categoryKey: string, rowData: Record<string, IDynamicRowData> }) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.POST,
         ADD_MATERIAL_CATEGORY_ROW_URL,
         callBack,
@@ -101,8 +101,8 @@ const addMaterialCategoryRowApi: ICallAndSetData = async (callApi, callBack, row
 }
 
 
-const deleteMaterialCategoryRowApi: ICallAndSetData = async (callApi, callBack, row: { rowId: string } ) => {
-    return await getSetApiData(callApi,
+const deleteMaterialCategoryRowApi: ICallAndSetData<any, any> = async (callApi, callBack, row: { rowId: string } ) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.POST,
         DELETE_MATERIAL_CATEGORY_Row_URL,
         callBack,

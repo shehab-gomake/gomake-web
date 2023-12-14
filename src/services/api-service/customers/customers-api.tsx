@@ -11,8 +11,8 @@ const TOGGLE_CUSTOMER_STATUS_URL = '/v1/crm-service/customer/update-customer-sta
 
 
 //get by id
-const getAndSetCustomerById: ICallAndSetData = async (callApi, setState, data) => {
-  return await getSetApiData(callApi, EHttpMethod.GET, GET_CUSTOMER_BY_ID_URL, setState, data); 
+const getAndSetCustomerById: ICallAndSetData<any, any> = async (callApi, setState, data) => {
+  return await getSetApiData<any>(callApi, EHttpMethod.GET, GET_CUSTOMER_BY_ID_URL, setState, data);
 }
 
 //helper function
@@ -83,8 +83,8 @@ const getAndSetCustomersPagination = async (
   return _data.totalItems;
 };
 
-const toggleCustomerStatus: ICallAndSetData = async (callApi, setState, data ) => {
-  return await getSetApiData(callApi, EHttpMethod.PUT, TOGGLE_CUSTOMER_STATUS_URL , setState , data );
+const toggleCustomerStatus: ICallAndSetData<any, any> = async (callApi, setState, data ) => {
+  return await getSetApiData<any>(callApi, EHttpMethod.PUT, TOGGLE_CUSTOMER_STATUS_URL , setState , data );
 }
 
 export {

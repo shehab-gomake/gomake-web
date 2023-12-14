@@ -6,7 +6,7 @@ export interface ISignalRProps {
     url: string;
     methodName: string;
 }
-const useGoMakeSignalr = <T>({accessToken, url, methodName}: ISignalRProps): {data: T | null} => {
+const useGoMakeSignalr = <T>({accessToken, url, methodName}: ISignalRProps): {data: T | null, connection: null | HubConnection} => {
     const [connection, setConnection] = useState<null | HubConnection>(null);
     const [data, setData] = useState<T | null>(null);
     const getAccessToken = ()=>{
@@ -29,13 +29,15 @@ const useGoMakeSignalr = <T>({accessToken, url, methodName}: ISignalRProps): {da
                 .then(() => {
                     connection.on(methodName, (newData) => {
                         setData(newData);
+                        console.log(newData);
                     });
                 })
                 .catch((error) => alert(JSON.stringify(error)));
         }
     }, [connection]);
     return {
-        data
+        data,
+        connection
     };
 }
 

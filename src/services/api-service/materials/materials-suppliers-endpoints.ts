@@ -22,8 +22,8 @@ interface ISetDefaultSupplierData {
     categoryKey: string;
     supplierId: string;
 }
-const addMaterialSupplier: ICallAndSetData = async (callApi, setState, data: IAddSupplierData) => {
-    return await getSetApiData(callApi,
+const addMaterialSupplier: ICallAndSetData<any, any> = async (callApi, setState, data: IAddSupplierData) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.POST,
         ADD_NEW_MATERIAL_SUPPLIER,
         setState,
@@ -31,16 +31,16 @@ const addMaterialSupplier: ICallAndSetData = async (callApi, setState, data: IAd
     );
 }
 
-const getMaterialSuppliersApi: ICallAndSetData = async (callApi, setState, data: IGetMaterialSuppliersData) => {
-    return await getSetApiData(callApi,
+const getMaterialSuppliersApi: ICallAndSetData<any, any> = async (callApi, setState, data: IGetMaterialSuppliersData) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.GET,
         GET_MATERIAL_SUPPLIERS,
         setState,
         data
     );
 }
-const setDefaultSupplierApi: ICallAndSetData = async (callApi, setState, data: ISetDefaultSupplierData) => {
-    return await getSetApiData(callApi,
+const setDefaultSupplierApi: ICallAndSetData<any, any> = async (callApi, setState, data: ISetDefaultSupplierData) => {
+    return await getSetApiData<any>(callApi,
         EHttpMethod.POST,
         SET_DEFAULT_SUPPLIER_URL,
         setState,
