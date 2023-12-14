@@ -34,19 +34,19 @@ const personalInputs = (state: IUserProfile)  => {
             readonly: false
 
         },
-        {
-            name: "position",
-            label: "profileSettings.position",
-            type: "text",
-            placeholder: "profileSettings.position",
-            required: false,
-            parameterKey: "role",
-            options: [],
-            value: state.role,
-            machineInputType: 'input',
-            isValid: !!state.role,
-            readonly: false
-        },
+        // {
+        //     name: "position",
+        //     label: "profileSettings.position",
+        //     type: "text",
+        //     placeholder: "profileSettings.position",
+        //     required: false,
+        //     parameterKey: "role",
+        //     options: [],
+        //     value: state.role,
+        //     machineInputType: 'input',
+        //     isValid: !!state.role,
+        //     readonly: false
+        // },
         {
             name: "systemLang",
             label: "profileSettings.systemLanguage",
