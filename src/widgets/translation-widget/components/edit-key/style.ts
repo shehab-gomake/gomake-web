@@ -5,7 +5,7 @@ const useStyle = () => {
     return {
       insideStyle: {
          width: "300px", 
-         height: "500px",
+         height: "590px",
         padding: 20,
         position: "relative" as "relative",
       },

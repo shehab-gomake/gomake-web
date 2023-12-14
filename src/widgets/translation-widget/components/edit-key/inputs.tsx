@@ -1,22 +1,31 @@
 const inputs = (state)  => {
     return [
         {
+            name: "path",
+            label: "Path",
+            type: "text",
+            required: false,
+            parameterKey: "path",
+            options: [],
+            value: state?.path,
+            isValid: true,
+            readonly: true
+        },
+        {
             name: "Key",
             label: "Key",
             type: "text",
-         //   placeholder: "customers.modal.email",
             required: false,
-            parameterKey: "mail",
+            parameterKey: "key",
             options: [],
             value: state?.key,
             isValid: true,
-            readOnly: true
+            readonly: true
         },
         {
             name: "English",
             label: "English",
             type: "text",
-            // placeholder: "customers.modal.phone1",
             required: false,
             parameterKey: "en",
             options: [],
@@ -27,23 +36,23 @@ const inputs = (state)  => {
             name: "Hebrew",
             label: "Hebrew",
             type: "text",
-            // placeholder: "customers.modal.phone2",
             required: false,
             parameterKey: "he",
             options: [],
             value: state?.he,
             isValid: true,
+            readonly: false
         },
         {
             name: "Arabic",
             label: "Arabic",
             type: "text",
-            // placeholder: "customers.modal.mobile",
             required: false,
             parameterKey: "ar",
             options: [],
             value: state?.ar,
             isValid: true,
+            readonly: false
         },
 
         
