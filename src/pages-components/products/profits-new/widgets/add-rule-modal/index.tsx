@@ -73,13 +73,20 @@ const AddRuleModal = ({
     setSelectedOutputs(selectedOutputs);
     setSelectedParameters(selectedParameters);
   }, [selectedProperties, Outputs, parametersStateValue]);
+
+  console.log("selectedOutputs", selectedOutputs);
   const _renderInptsForProperties = () => {
     if (selectedProperties?.ruleType === 0) {
       switch (selectedOutputs?.valueType) {
         case EValueType.MACHINE:
           return (
             <div style={{ width: "20%" }}>
-              <div style={clasess.selectTypeStyle}>Select Machine</div>
+              <div style={clasess.selectTypeStyle}>
+                Select Machine
+                <span style={clasess.spanUnitStyle}>
+                  ({selectedOutputs?.defaultUnit})
+                </span>
+              </div>
               <GoMakeAutoComplate
                 options={machincesStateValue?.map((value) => {
                   return {
@@ -99,7 +106,12 @@ const AddRuleModal = ({
         case EValueType.MATERIAL:
           return (
             <div style={{ width: "20%" }}>
-              <div style={clasess.selectTypeStyle}>Select Material</div>
+              <div style={clasess.selectTypeStyle}>
+                Select Material
+                <span style={clasess.spanUnitStyle}>
+                  ({selectedOutputs?.defaultUnit})
+                </span>
+              </div>
               <GoMakeAutoComplate
                 options={materialsTypes?.map((value) => {
                   return {
@@ -119,7 +131,12 @@ const AddRuleModal = ({
         case EValueType.INPUTNUMBER:
           return (
             <div style={{ width: "20%" }}>
-              <div style={clasess.selectTypeStyle}>Enter Value</div>
+              <div style={clasess.selectTypeStyle}>
+                Enter Value
+                <span style={clasess.spanUnitStyle}>
+                  ({selectedOutputs?.defaultUnit})
+                </span>
+              </div>
               <GomakeTextInput
                 placeholder="Enter Value"
                 onChange={(e: any) => {
@@ -137,7 +154,12 @@ const AddRuleModal = ({
         case EValueType.INPUTTEXT:
           return (
             <div style={{ width: "20%" }}>
-              <div style={clasess.selectTypeStyle}>Enter Value</div>
+              <div style={clasess.selectTypeStyle}>
+                Enter Value
+                <span style={clasess.spanUnitStyle}>
+                  ({selectedOutputs?.defaultUnit})
+                </span>
+              </div>
               <GomakeTextInput
                 placeholder="Enter Value"
                 onChange={(e: any) => {
@@ -155,7 +177,12 @@ const AddRuleModal = ({
         case EValueType.BOOLEAN:
           return (
             <div style={{ width: "20%" }}>
-              <div style={clasess.selectTypeStyle}>Select Value</div>
+              <div style={clasess.selectTypeStyle}>
+                Select Value
+                <span style={clasess.spanUnitStyle}>
+                  ({selectedOutputs?.defaultUnit})
+                </span>
+              </div>
               <GoMakeAutoComplate
                 options={[
                   { label: "Yes", value: "true" },
@@ -175,7 +202,12 @@ const AddRuleModal = ({
         case EParameterTypes.DROP_DOWN_LIST:
           return (
             <div style={{ width: "20%" }}>
-              <div style={clasess.selectTypeStyle}>Select Value</div>
+              <div style={clasess.selectTypeStyle}>
+                Select Value
+                <span style={clasess.spanUnitStyle}>
+                  ({selectedOutputs?.defaultUnit})
+                </span>
+              </div>
               <GoMakeAutoComplate
                 options={selectedParameters?.values?.map((value) => {
                   return {
@@ -193,7 +225,12 @@ const AddRuleModal = ({
         case EParameterTypes.INPUT_NUMBER:
           return (
             <div style={{ width: "20%" }}>
-              <div style={clasess.selectTypeStyle}>Enter Value</div>
+              <div style={clasess.selectTypeStyle}>
+                Enter Value
+                <span style={clasess.spanUnitStyle}>
+                  ({selectedOutputs?.defaultUnit})
+                </span>
+              </div>
               <GomakeTextInput
                 placeholder="Enter Value"
                 onChange={(e: any) => {
@@ -211,7 +248,12 @@ const AddRuleModal = ({
         case EParameterTypes.INPUT_TEXT:
           return (
             <div style={{ width: "20%" }}>
-              <div style={clasess.selectTypeStyle}>Enter Value</div>
+              <div style={clasess.selectTypeStyle}>
+                Enter Value
+                <span style={clasess.spanUnitStyle}>
+                  ({selectedOutputs?.defaultUnit})
+                </span>
+              </div>
               <GomakeTextInput
                 placeholder="Enter Value"
                 onChange={(e: any) => {
@@ -229,7 +271,12 @@ const AddRuleModal = ({
         case EParameterTypes.SWITCH:
           return (
             <div style={{ width: "20%" }}>
-              <div style={clasess.selectTypeStyle}>Select Value</div>
+              <div style={clasess.selectTypeStyle}>
+                Select Value
+                <span style={clasess.spanUnitStyle}>
+                  ({selectedOutputs?.defaultUnit})
+                </span>
+              </div>
               <GoMakeAutoComplate
                 options={[
                   { label: "Yes", value: "true" },

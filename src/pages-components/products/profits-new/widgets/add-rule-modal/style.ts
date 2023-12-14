@@ -98,9 +98,15 @@ const useStyle = () => {
         display: "flex",
         ...FONT_FAMILY.Lexend(500, 14),
         marginBottom: 8,
+        width: "100%",
       },
       autoComplateStyle: {
         border: `none`,
+      },
+      spanUnitStyle: {
+        ...FONT_FAMILY.Lexend(500, 10),
+        marginLeft: 6,
+        marginTop: 4,
       },
     };
   }, []);

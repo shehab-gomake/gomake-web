@@ -183,10 +183,14 @@ export type selectedOutputsProps = {
   id?: string;
   name?: string;
   valueType?: number;
+  defaultUnit: string;
+  unitType: number;
 };
 export type selectedParametersProps = {
   id?: string;
   name?: string;
   type?: number;
   values?: any[];
+  defaultUnit: string;
+  unitType: number;
 };
