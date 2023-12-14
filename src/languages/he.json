@@ -1658,7 +1658,8 @@
       "writeCommentHere": "כתוב את התגובה שלך כאן",
       "attachFiles": "צרף קבצים",
       "copyTo": "העתק אל",
-      "managerApproval": "אישור מנהל"
+      "managerApproval": "אישור מנהל",
+      "quoteNumber": "מספר הצעה"
     }
   },
   "usersSettings": {
