@@ -1,5 +1,5 @@
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useRouter} from "next/router";
 
@@ -7,7 +7,13 @@ import {useQuoteWidget} from "@/pages-components/admin/home/widgets/quote-widget
 import {materialsCategoriesState} from "@/store/material-categories";
 import {useGomakeAxios, useGomakeRouter} from "@/hooks";
 import {getAndSetgetProductQuoteItemById, getAndSetProductById,} from "@/services/hooks";
-import {generalParametersState, isLoadgingState, selectedValueConfigState, selectParameterButtonState,} from "@/store";
+import {
+    isLoadgingState,
+    selectedValueConfigState,
+    selectParameterButtonState,
+    subProductsCopyParametersState,
+    subProductsParametersState,
+} from "@/store";
 import {useMaterials} from "../use-materials";
 import {digitslPriceState} from "./store";
 import cloneDeep from "lodash.clonedeep";
@@ -16,10 +22,6 @@ import {userProfileState} from "@/store/user-profile";
 import {EWidgetProductType} from "@/pages-components/products/digital-offset-price/enums";
 import {compareStrings} from "@/utils/constants";
 import {EButtonTypes, EParameterTypes} from "@/enums";
-
-import {
-    maltiParameterState
-} from "@/widgets/shared-admin-customers/digital-offset-price/multi-parameter-modal/store/multi-param-atom";
 import {
     InputNumberParameterWidget
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
@@ -39,7 +41,8 @@ import {
     SelectMaterialsParameterWidget
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
 import {
-    calculationProgressState, currentProductItemValueState,
+    calculationProgressState,
+    currentProductItemValueState,
     itemParametersValuesState,
     jobActionsState,
     jobDetailsState,
@@ -49,7 +52,7 @@ import {
 } from "@/widgets/product-pricing-widget/state";
 import {getOutsourcingSuppliersListApi} from "@/services/api-service/suppliers/suppliers-endpoints";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
-import {useCalculationsSignalr} from "@/hooks/signalr/use-calculations-signalr";
+import {useCalculationsWorkFlowsSignalr} from "../signalr/use-calculations-workflows-signalr";
 
 const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const {navigate} = useGomakeRouter();
@@ -66,19 +69,21 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     );
 
     const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
-    const [generalParameters, setGeneralParameters] = useRecoilState<any>(
+    /*const [generalParameters, setGeneralParameters] = useRecoilState<any>(
         generalParametersState
-    );
+    );*/
     const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
     const [multiParameterModal, setMultiParameterModal] = useState(false);
     const [defaultPrice, setDefaultPrice] = useState<any>("-----");
     const [makeShapeOpen, setMakeShapeOpen] = useState(false);
-    const [template, setTemplate] = useState<any>([]);
+   
     const [urgentOrder, setUrgentOrder] = useRecoilState(productUrgentWorkState);
     const [printingNotes, setPrintingNotes] = useState("");
     const [graphicNotes, setGraphicNotes] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
-    const [subProducts, setSubProducts] = useState<any>([]);
+    const [productTemplate, setProductTemplate] = useState<any>([]);
+    const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
+    const [subProductsCopy, setSubProductsCopy] = useRecoilState<any>(subProductsCopyParametersState);
     const [subProductsWithType, setSubProductsWithType] = useState<any>([]);
     const [itemParmetersValues, setItemParmetersValues] = useRecoilState<any>(itemParametersValuesState);
     const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
@@ -100,9 +105,9 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const [digitalPriceData, setDigidatPriceData] =
         useRecoilState<any>(digitslPriceState);
     const [priceRecovery, setPriceRecovery] = useState(true);
-    const [canCalculation, setCanCalculation] = useState(true);
-    const [generalParametersLocal, setGeneralParametersLocal] =
-        useRecoilState(maltiParameterState);
+    const [canCalculation, setCanCalculation] = useState(false);
+    /*const [generalParametersLocal, setGeneralParametersLocal] =
+        useRecoilState(maltiParameterState);*/
     const [sampleType, setSamlleType] = useState();
     const [selectedValueForSettings, setSelectedValueForSettings] =
         useState<any>();
@@ -111,24 +116,35 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const setSelectParameterButton = useSetRecoilState(
         selectParameterButtonState
     );
-    const {data,connectionId} = useCalculationsSignalr();
+    const {calculationResult,connectionId,calculationSessionId} = useCalculationsWorkFlowsSignalr();
+    //const {calculationSessionId} = useCalculationsSessionSignalr();
+
     const [requestAbortController,setRequestAbortController] = useState<AbortController>(null)
+    
     useEffect(()=>{
-        if(data){
-            setLoading(false);
-            const currentWorkFlowsCount = data?.workFlows.length;
-            const totalWorkFlowsCount = data?.totalWorkFlows;
-            setCalculationProgress({totalWorkFlowsCount: totalWorkFlowsCount,currentWorkFlowsCount:currentWorkFlowsCount} )
-            setWorkFlows(
-                data?.workFlows?.map((flow, index) => ({
-                    id: index.toString(),
-                    ...flow,
-                }))
-            );
-            setJobActions(data?.actions);
+        let copy = lodashClonedeep(subProducts);
+        setSubProductsCopy(copy)
+    },[subProducts])
+    useEffect(()=>{
+        if(calculationResult){
+            debugger
+            if(calculationResult.id === calculationSessionId){
+                setLoading(false);
+                const currentWorkFlowsCount = calculationResult?.workFlows.length;
+                const totalWorkFlowsCount = calculationResult?.totalWorkFlows;
+                setCalculationProgress({totalWorkFlowsCount: totalWorkFlowsCount,currentWorkFlowsCount:currentWorkFlowsCount} )
+                setWorkFlows(
+                    calculationResult?.workFlows?.map((flow, index) => ({
+                        id: index.toString(),
+                        ...flow,
+                    }))
+                );
+                setJobActions(calculationResult?.actions);
+            }
+            
         }
         
-    },[data])
+    },[calculationResult,calculationSessionId])
     const selectBtnTypeToAction = (parameter, sectionId, subSectionId) => {
         if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
             setSelectParameterButton({parameter, sectionId, subSectionId});
@@ -154,7 +170,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     }
 
     const duplicateParameters = (mySubSection: any) => {
-        setTemplate((prev) => {
+        setProductTemplate((prev) => {
             let temp = cloneDeep(prev);
 
             let myId = mySubSection?.id;
@@ -177,7 +193,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             return temp;
         });
     };
-    useEffect(() => {
+    /*useEffect(() => {
         if (
             generalParametersLocal?.length == 0 &&
             selectedValueForSettings?.parameter?.settingParameters?.length
@@ -196,8 +212,8 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             );
             setGeneralParametersLocal(temp);
         }
-    }, [selectedValueForSettings, generalParametersLocal]);
-    useEffect(() => {
+    }, [selectedValueForSettings, generalParametersLocal]);*/
+    /*useEffect(() => {
         let temp = lodashClonedeep(generalParametersLocal);
         let temp1 = [...generalParameters];
         if (
@@ -233,7 +249,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         selectedValueForSettings,
         selectedValueConfigForSettings,
         generalParametersLocal,
-    ]);
+    ]);*/
 
     useEffect(() => {
         if (pricingDefaultValue?.workFlows?.length > 0 && canCalculation) {
@@ -248,9 +264,9 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         }
     }, [pricingDefaultValue, canCalculation]);
     useEffect(() => {
-        if (template?.sections?.length > 0) {
+        if (productTemplate && productTemplate?.sections?.length > 0) {
             let temp = [...isRequiredParameters];
-            template?.sections?.map((section) => {
+            productTemplate?.sections?.map((section) => {
                 return section?.subSections?.map((subSection, i) => {
                     return subSection.parameters?.map((parameter, i) => {
                         const index = temp.findIndex(
@@ -270,347 +286,185 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             });
             setIsRequiredParameters(temp);
         }
-    }, [template]);
+    }, [productTemplate]);
     const [relatedParameters, setRelatedParameters] = useState([]);
-    const [isSetTemplete, setIsSetTemplete] = useState(false);
-    useEffect(() => {
-        if (!isSetTemplete) {
-            if (template?.sections?.length > 0) {
-                let sectionData: any = cloneDeep(template?.sections);
-                const newGeneralParameters = [];
-                const typeMap = {};
-                let relatedParametersArray = [];
-                sectionData.forEach((section) => {
-                    section.subSections.forEach((subSection) => {
-                        if (subSection.type) {
-                            let temp = [];
-                            subSection.parameters
-                                .filter((parameter) => !parameter.isHidden)
-                                .forEach((parameter) => {
-                                    relatedParametersArray.push(...parameter.relatedParameters);
-                                    if (
-                                        parameter?.parameterType === EParameterTypes.INPUT_NUMBER ||
-                                        parameter?.parameterType === EParameterTypes.INPUT_TEXT ||
-                                        parameter?.parameterType === EParameterTypes.SWITCH
-                                    ) {
-                                        if (parameter?.defaultValue?.length > 0) {
-                                            const defaultValue = parameter?.defaultValue;
-                                            temp.push({
-                                                parameterId: parameter?.id,
-                                                parameterName: parameter?.name,
-                                                actionId: parameter?.actionId,
-                                                parameterType: parameter?.parameterType,
-                                                ...(defaultValue?.length > 0 && {
-                                                    values: [defaultValue],
-                                                }),
-                                                sectionId: section?.id,
-                                                subSectionId: subSection?.id,
-                                                actionIndex: parameter?.actionIndex,
-                                            });
+    //const [isSetTemplete, setIsSetTemplete] = useState(false);
+    useEffect(() => 
+    {
+        debugger;
+        if (productTemplate && productTemplate?.sections?.length > 0) {
+            let sectionData: any = cloneDeep(productTemplate?.sections);
+            const newGeneralParameters = [];
+            const typeMap = {};
+            let relatedParametersArray = [];
+            const subProductsArray = [];
+            sectionData.forEach((section) => {
+                section.subSections.forEach((subSection) => {
+                    let subProduct = subProductsArray.find(sub => sub.type == subSection.type);
+                    if(!subProduct){
+                        subProduct = {
+                            type: subSection.type,
+                            parameters: [],
+                            sectionId: section.id,
+                            sectionName: section.name,
+                        }
+                        subProductsArray.push(subProduct)
+                    }
+                    let temp = [];
+                    subSection.parameters
+                        .filter((parameter) => !parameter.isHidden)
+                        .forEach((parameter) => {
+                            parameter.relatedParameters.forEach(x=>{
+                                x.sectionId = section.id;
+                                x.subSectionId = subSection.id;
+                            })
+                            relatedParametersArray.push(...parameter.relatedParameters);
+                            const isParameterExits =  subProduct.parameters.find(param => param.parameterId === parameter?.id);
+                            let isSetDefaultValue = true;
+                            //const parentParameter = subSection.parameters.find(subSuctionParam => subSuctionParam.relatedParameters && subSuctionParam.relatedParameters.find(related => related.parameterId === parameter?.id) );
+                            /*if(parentParameter && parentParameter.relatedParameters){
+                                const relationWithParent = parentParameter.relatedParameters.find(x=> x.parameterId === parameter?.id);
+                                if(relationWithParent && !relationWithParent.ActivateByAllValues){
+                                    const parentParameterValue = subProduct.parameters.find(param => param.parameterId === parentParameter.id);
+                                    if(parentParameterValue){
+                                        const relationValue = relationWithParent.selectedValueIds?.find(val => val == parentParameterValue.value )
+                                        if(!relationValue){
+                                            isSetDefaultValue = false;
                                         }
-                                    } else if (
-                                        parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST
-                                    ) {
-                                        const value = parameter?.valuesConfigs?.find(
-                                            (item) => item?.isDefault == true
-                                        );
-
-                                        if (value) {
-                                            const data = materialsEnumsValues.find((item) => {
-                                                return compareStrings(
-                                                    item.name,
-                                                    parameter?.materialPath[0]
-                                                );
-                                            });
-                                            temp.push({
-                                                parameterId: parameter?.id,
-                                                parameterName: parameter?.name,
-                                                actionId:
-                                                    value?.activateAction === true
-                                                        ? parameter?.actionId
-                                                        : null,
-                                                ...(data?.id > 0 && {material: data?.id}),
-                                                parameterType: parameter?.parameterType,
-                                                ...(value && {
-                                                    valueIds: [value?.id],
-                                                    values: [value?.updateName],
-                                                }),
-                                                sectionId: section?.id,
-                                                subSectionId: subSection?.id,
-                                                actionIndex: parameter?.actionIndex,
-                                            });
-                                        }
-                                    } else if (
-                                        parameter?.parameterType ===
-                                        EParameterTypes.SELECT_CHILDS_PARAMETERS
-                                    ) {
-                                        const defaultObject = parameter.valuesConfigs.find(
-                                            (item) => item.isDefault === true
-                                        );
-                                        parameter?.childsParameters.forEach((parameter) => {
-                                            const parameterId = parameter.id;
-                                            if (defaultObject?.values.hasOwnProperty(parameterId)) {
-                                                parameter.defaultValue =
-                                                    defaultObject?.values[parameterId];
-                                            }
-                                        });
-                                        if (defaultObject) {
-                                            temp.push({
-                                                parameterId: parameter?.id,
-                                                parameterName: parameter?.name,
-                                                actionId: parameter?.actionId,
-                                                parameterType: parameter?.parameterType,
-                                                ...(defaultObject && {
-                                                    valueIds: [defaultObject?.id],
-                                                    values: [defaultObject?.updateName],
-                                                }),
-                                                sectionId: section?.id,
-                                                subSectionId: subSection?.id,
-                                                actionIndex: parameter?.actionIndex,
-                                            });
-                                            parameter?.childsParameters?.map((item) => {
-                                                temp.push({
-                                                    parameterId: item?.id,
-                                                    parameterName: item?.name,
-                                                    actionId: item?.actionId,
-                                                    parameterType: item?.parameterType,
-                                                    values: [item?.defaultValue],
-                                                    sectionId: section?.id,
-                                                    subSectionId: subSection?.id,
-                                                    actionIndex: parameter?.actionIndex,
-                                                });
-                                            });
-                                        }
+                                    }else{
+                                        isSetDefaultValue = false;
                                     }
-                                });
+                                    
+                                }
+                            }*/
+                            if(parameter?.parameterType === EParameterTypes.SWITCH && parameter?.defaultValue === "false"){
+                                isSetDefaultValue = false;
+                            }
+                            if(!isParameterExits && isSetDefaultValue ){
 
-                            if (temp.length > 0) {
-                                if (!typeMap[subSection.type]) {
-                                    typeMap[subSection.type] = {
-                                        type: subSection.type,
-                                        parameters: temp,
-                                    };
-                                } else {
-                                    typeMap[subSection.type].parameters.push(...temp);
+                                if (
+                                    parameter?.parameterType === EParameterTypes.INPUT_NUMBER ||
+                                    parameter?.parameterType === EParameterTypes.INPUT_TEXT ||
+                                    parameter?.parameterType === EParameterTypes.SWITCH
+                                ) {
+                                    if (parameter?.defaultValue?.length > 0) {
+                                        const defaultValue = parameter?.defaultValue;
+                                        subProduct.parameters.push({
+                                            parameterId: parameter?.id,
+                                            parameterName: parameter?.name,
+                                            actionId: parameter?.actionId,
+                                            parameterType: parameter?.parameterType,
+                                            ...(defaultValue?.length > 0 && {
+                                                values: [defaultValue],
+                                            }),
+                                            sectionId: section?.id,
+                                            subSectionId: subSection?.id,
+                                            actionIndex: parameter?.actionIndex,
+                                        });
+                                    }
+                                } else if (
+                                    parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST
+                                ) {
+                                    const value = parameter?.valuesConfigs?.find(
+                                        (item) => item?.isDefault == true
+                                    );
+
+                                    if (value) {
+                                        const data = materialsEnumsValues.find((item) => {
+                                            return compareStrings(
+                                                item.name,
+                                                parameter?.materialPath[0]
+                                            );
+                                        });
+                                        subProduct.parameters.push({
+                                            parameterId: parameter?.id,
+                                            parameterName: parameter?.name,
+                                            actionId:
+                                                value?.activateAction === true
+                                                    ? parameter?.actionId
+                                                    : null,
+                                            ...(data?.id > 0 && {material: data?.id}),
+                                            parameterType: parameter?.parameterType,
+                                            ...(value && {
+                                                valueIds: [value?.id],
+                                                values: [value?.updateName],
+                                            }),
+                                            sectionId: section?.id,
+                                            subSectionId: subSection?.id,
+                                            actionIndex: parameter?.actionIndex,
+                                        });
+                                    }
+                                } else if (
+                                    parameter?.parameterType ===
+                                    EParameterTypes.SELECT_CHILDS_PARAMETERS
+                                ) {
+                                    const defaultObject = parameter.valuesConfigs.find(
+                                        (item) => item.isDefault === true
+                                    );
+                                    parameter?.childsParameters.forEach((parameter) => {
+                                        const parameterId = parameter.id;
+                                        if (defaultObject?.values.hasOwnProperty(parameterId)) {
+                                            parameter.defaultValue =
+                                                defaultObject?.values[parameterId];
+                                        }
+                                    });
+                                    if (defaultObject) {
+                                        subProduct.parameters.push({
+                                            parameterId: parameter?.id,
+                                            parameterName: parameter?.name,
+                                            actionId: parameter?.actionId,
+                                            parameterType: parameter?.parameterType,
+                                            ...(defaultObject && {
+                                                valueIds: [defaultObject?.id],
+                                                values: [defaultObject?.updateName],
+                                            }),
+                                            sectionId: section?.id,
+                                            subSectionId: subSection?.id,
+                                            actionIndex: parameter?.actionIndex,
+                                        });
+                                        parameter?.childsParameters?.map((item) => {
+                                            subProduct.parameters.push({
+                                                parameterId: item?.id,
+                                                parameterName: item?.name,
+                                                actionId: item?.actionId,
+                                                parameterType: item?.parameterType,
+                                                values: [item?.defaultValue],
+                                                sectionId: section?.id,
+                                                subSectionId: subSection?.id,
+                                                actionIndex: parameter?.actionIndex,
+                                            });
+
+                                        });
+                                    }
                                 }
                             }
+
+                        });
+
+                    if (temp.length > 0) {
+                        if (!typeMap[subSection.type]) {
+                            typeMap[subSection.type] = {
+                                type: subSection.type,
+                                parameters: temp,
+                                sectionId: section.id,
+                                sectionName: section.name,
+                            };
                         } else {
-                            let temp = [];
-                            subSection.parameters
-                                .filter((parameter) => !parameter.isHidden)
-                                .map((parameter, i) => {
-                                    const index = temp.findIndex(
-                                        (item) =>
-                                            item?.parameterId === parameter?.id &&
-                                            item?.sectionId === section?.id &&
-                                            item?.subSectionId === subSection?.id &&
-                                            item?.actionIndex === parameter?.actionIndex
-                                    );
-                                    relatedParametersArray.push(...parameter.relatedParameters);
-
-                                    if (index !== -1) {
-                                        temp[index] = {
-                                            ...temp[index],
-                                        };
-                                    } else {
-                                        if (
-                                            parameter?.parameterType ===
-                                            EParameterTypes.INPUT_NUMBER ||
-                                            parameter?.parameterType === EParameterTypes.INPUT_TEXT ||
-                                            parameter?.parameterType === EParameterTypes.SWITCH
-                                        ) {
-                                            if (parameter?.defaultValue?.length > 0) {
-                                                const defaultValue = parameter?.defaultValue;
-                                                temp.push({
-                                                    parameterId: parameter?.id,
-                                                    parameterName: parameter?.name,
-                                                    actionId: parameter?.actionId,
-                                                    parameterType: parameter?.parameterType,
-                                                    ...(defaultValue?.length > 0 && {
-                                                        values: [defaultValue],
-                                                    }),
-                                                    sectionId: section?.id,
-                                                    subSectionId: subSection?.id,
-                                                    actionIndex: parameter?.actionIndex,
-                                                });
-                                            }
-                                        } else if (
-                                            parameter?.parameterType ===
-                                            EParameterTypes.SELECT_MATERIALS
-                                        ) {
-                                            const value = parameter?.valuesConfigs?.find(
-                                                (item) => item?.isDefault == true
-                                            );
-
-                                            if (value) {
-                                                const data = materialsEnumsValues.find((item) => {
-                                                    return compareStrings(
-                                                        item.name,
-                                                        parameter?.materialPath[0]
-                                                    );
-                                                });
-                                                let options: any = allMaterials;
-                                                let selectedObj: any = {};
-                                                if (allMaterials?.length > 0) {
-                                                    if (parameter?.materialPath?.length == 1) {
-                                                        options = allMaterials?.find((material: any) => {
-                                                            return compareStrings(
-                                                                material.pathName,
-                                                                parameter?.materialPath[0]
-                                                            );
-                                                        })?.data;
-                                                        selectedObj = options?.find(
-                                                            (item: any) =>
-                                                                item?.valueId ===
-                                                                value?.materialValueIds[0]?.valueId
-                                                        );
-                                                        temp.push({
-                                                            parameterId: parameter?.id,
-                                                            parameterName: parameter?.name,
-                                                            actionId: parameter?.actionId,
-                                                            ...(data?.id > 0 && {material: data?.id}),
-                                                            parameterType: parameter?.parameterType,
-                                                            ...(value && {
-                                                                valueIds: [value?.materialValueIds[0]?.valueId],
-                                                                values: [selectedObj?.value],
-                                                            }),
-                                                            sectionId: section?.id,
-                                                            subSectionId: subSection?.id,
-                                                            actionIndex: parameter?.actionIndex,
-                                                        });
-                                                    }
-
-                                                    if (parameter?.materialPath?.length == 2) {
-                                                        options = allMaterials?.find((material: any) => {
-                                                            return compareStrings(
-                                                                material.pathName,
-                                                                parameter?.materialPath[0]
-                                                            );
-                                                        })?.data;
-                                                        const mergedDataArray = options.reduce(
-                                                            (result, obj) => {
-                                                                if (obj.data && Array.isArray(obj.data)) {
-                                                                    result = result.concat(obj.data);
-                                                                }
-                                                                return result;
-                                                            },
-                                                            []
-                                                        );
-                                                        selectedObj = mergedDataArray?.find(
-                                                            (item: any) =>
-                                                                item?.valueIds[0] ===
-                                                                value?.materialValueIds[0]?.valueId
-                                                        );
-                                                        temp.push({
-                                                            parameterId: parameter?.id,
-                                                            parameterName: parameter?.name,
-                                                            actionId: parameter?.actionId,
-                                                            ...(data?.id > 0 && {material: data?.id}),
-                                                            parameterType: parameter?.parameterType,
-                                                            ...(value && {
-                                                                valueIds: [value?.materialValueIds[0]?.valueId],
-                                                                values: [selectedObj?.value],
-                                                            }),
-                                                            sectionId: section?.id,
-                                                            subSectionId: subSection?.id,
-                                                            actionIndex: parameter?.actionIndex,
-                                                        });
-                                                    }
-                                                }
-                                            }
-                                        } else if (
-                                            parameter?.parameterType ===
-                                            EParameterTypes.DROP_DOWN_LIST
-                                        ) {
-                                            const value = parameter?.valuesConfigs?.find(
-                                                (item) => item?.isDefault == true
-                                            );
-
-                                            if (value) {
-                                                const data = materialsEnumsValues.find((item) => {
-                                                    return compareStrings(
-                                                        item.name,
-                                                        parameter?.materialPath[0]
-                                                    );
-                                                });
-                                                temp.push({
-                                                    parameterId: parameter?.id,
-                                                    parameterName: parameter?.name,
-
-                                                    actionId:
-                                                        value?.activateAction === true
-                                                            ? parameter?.actionId
-                                                            : null,
-                                                    ...(data?.id > 0 && {material: data?.id}),
-                                                    parameterType: parameter?.parameterType,
-                                                    ...(value && {
-                                                        valueIds: [value?.id],
-                                                        values: [value?.updateName],
-                                                    }),
-                                                    sectionId: section?.id,
-                                                    subSectionId: subSection?.id,
-                                                    actionIndex: parameter?.actionIndex,
-                                                });
-                                            }
-                                        } else if (
-                                            parameter?.parameterType ===
-                                            EParameterTypes.SELECT_CHILDS_PARAMETERS
-                                        ) {
-                                            const defaultObject = parameter.valuesConfigs.find(
-                                                (item) => item.isDefault === true
-                                            );
-                                            parameter?.childsParameters.forEach((parameter) => {
-                                                const parameterId = parameter.id;
-                                                if (defaultObject?.values.hasOwnProperty(parameterId)) {
-                                                    parameter.defaultValue =
-                                                        defaultObject?.values[parameterId];
-                                                }
-                                            });
-                                            if (defaultObject) {
-                                                temp.push({
-                                                    parameterId: parameter?.id,
-                                                    parameterName: parameter?.name,
-                                                    actionId: parameter?.actionId,
-                                                    parameterType: parameter?.parameterType,
-                                                    ...(defaultObject && {
-                                                        valueIds: [defaultObject?.id],
-                                                        values: [defaultObject?.updateName],
-                                                    }),
-                                                    sectionId: section?.id,
-                                                    subSectionId: subSection?.id,
-                                                    actionIndex: parameter?.actionIndex,
-                                                });
-                                                parameter?.childsParameters?.map((item) => {
-                                                    temp.push({
-                                                        parameterId: item?.id,
-                                                        parameterName: item?.name,
-                                                        actionId: item?.actionId,
-                                                        parameterType: item?.parameterType,
-                                                        values: [item?.defaultValue],
-                                                        sectionId: section?.id,
-                                                        subSectionId: subSection?.id,
-                                                        actionIndex: parameter?.actionIndex,
-                                                    });
-                                                });
-                                            }
-                                        }
-                                    }
-                                });
-                            newGeneralParameters.push(...temp);
+                            typeMap[subSection.type].parameters.push(...temp);
                         }
-                    });
+                    }
                 });
-                const newSubProducts2 = Object.values(typeMap);
-                const filteredArray = newGeneralParameters.filter(
-                    (obj) => obj.values[0] !== "false"
-                );
-                setGeneralParameters(filteredArray);
-                setSubProducts(newSubProducts2);
-                setRelatedParameters(relatedParametersArray);
-                setIsSetTemplete(true);
-            }
+            });
+            const newSubProducts2 = Object.values(typeMap);
+            const filteredArray = newGeneralParameters.filter(
+                (obj) => obj.values[0] !== "false"
+            );
+            //setGeneralParameters(filteredArray);
+            setSubProducts(subProductsArray);
+            setRelatedParameters(relatedParametersArray);
+            //setIsSetTemplete(true);
         }
-    }, [materialsEnumsValues, allMaterials, template]);
+    }, [materialsEnumsValues, allMaterials,productTemplate]);
 
     useEffect(() => {
         if (router?.query?.clientTypeId) {
@@ -638,6 +492,13 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     ]);
 
     useEffect(() => {
+        //setGeneralParameters([])
+        //setGeneralParametersLocal([])
+        setItemParmetersValues([])
+        setCanCalculation(false)
+        setWorkFlows([]);
+        setJobActions([]);
+        setCalculationProgress({totalWorkFlowsCount: 0,currentWorkFlowsCount:0} )
         if (
             widgetType === EWidgetProductType.EDIT ||
             widgetType === EWidgetProductType.DUPLICATE
@@ -651,10 +512,10 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         if (canCalculation) {
             calculationProduct();
         }
-    }, [generalParameters, canCalculation]);
+    }, [subProducts, canCalculation]);
 
     useEffect(() => {
-        let temp = [...subProducts];
+        let temp = JSON.parse(JSON.stringify(subProducts))
         const result = [];
         temp.forEach((item) => {
             const subProductType = item.type;
@@ -666,8 +527,40 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         setSubProductsWithType(result);
     }, [subProducts]);
 
-
     useEffect(() => {
+        //let temp = [...generalParameters, ...subProductsWithType];
+        //const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
+        if(defaultPrice && defaultPrice?.values && quantity){
+            const productItemValue = {
+                supplierId: '',
+                sourceType: workFlowSelected?.actions?.every(action => action?.source === EWorkSource.INTERNAL) ? EWorkSource.INTERNAL : EWorkSource.PARTIALLY,
+                productId: router?.query?.productId,
+                userID: userProfile?.id,
+                customerID: router?.query?.customerId,
+                clientTypeId: router?.query?.clientTypeId,
+                unitPrice: +defaultPrice?.values[0] / +quantity?.values[0],
+                amount: quantity?.values[0],
+                isNeedGraphics: false,
+                isUrgentWork: urgentOrder,
+                printingNotes,
+                graphicNotes,
+                isNeedExample: false,
+                jobDetails: '',
+                itemParmetersValues: itemParmetersValues,
+                workFlow: pricingDefaultValue?.workFlows.length > 0
+                    ? [workFlowSelected]
+                    : productTemplate?.workFlows,
+                actions: pricingDefaultValue?.actions?.length > 0
+                    ? pricingDefaultValue?.actions
+                    : productTemplate?.actions,
+                outSoucreCost: 0,
+                outSoucreProfit: 0,
+                outSourceFinalPrice: 0,
+            }
+            setCurrentProductItemValue(productItemValue);
+        }
+    }, [subProducts,workFlowSelected]);
+    /*useEffect(() => {
         let temp = [...generalParameters, ...subProductsWithType];
         const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
         debugger
@@ -702,37 +595,25 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         }
        
         setItemParmetersValues(filteredArray);
-        
-    }, [generalParameters, subProductsWithType, subProducts,workFlowSelected]);
+    }, [generalParameters, subProductsWithType, subProducts]);*/
     const handleChange =
         (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
             setExpanded(newExpanded ? panel : false);
         };
     const _getParameter = (parameter: any, subSection: any, section: any) => {
-        if (subSection?.type) {
-            const allParameters = subProducts.flatMap((item) => item.parameters);
-            let temp = [...allParameters];
-            const index = temp.findIndex(
-                (item) =>
-                    item?.parameterId === parameter?.id &&
-                    item?.sectionId === section?.id &&
-                    item?.subSectionId === subSection?.id &&
-                    item?.actionIndex === parameter?.actionIndex
-            );
+        const allParameters = subProducts.flatMap((item) => item.parameters);
+        let temp = [...allParameters];
+        const index = temp.findIndex(
+            (item) =>
+                item?.parameterId === parameter?.id &&
+                item?.sectionId === section?.id &&
+                item?.subSectionId === subSection?.id &&
+                item?.actionIndex === parameter?.actionIndex
+        );
 
-            return temp[index];
-        } else {
-            let temp = [...generalParameters];
-            const index = temp.findIndex(
-                (item) =>
-                    item?.parameterId === parameter?.id &&
-                    item?.sectionId === section?.id &&
-                    item?.subSectionId === subSection?.id &&
-                    item?.actionIndex === parameter?.actionIndex
-            );
-            return temp[index];
-        }
+        return temp[index];
     };
+    
     const _renderParameterType = (
         parameter: any,
         subSection: any,
@@ -743,9 +624,10 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         inModal: any
     ) => {
         let Comp;
-        const parametersArray = subSection?.type
+        /*const parametersArray = subSection?.type
             ? subProducts.flatMap((item) => item.parameters)
-            : generalParameters;
+            : generalParameters;?*/
+        const parametersArray = subProducts.flatMap((item) => item.parameters);
         const temp = [...parametersArray];
         const index = temp.findIndex(
             (item) =>
@@ -881,14 +763,10 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                 {parameter?.relatedParameters?.length > 0 && inModal && (
                     <>
                         {parameter.relatedParameters.map((relatedParameter) => {
-                            const parm = subSection?.type
-                                ? subProductsWithType.find(
-                                    (param) => param.parameterId === parameter.id
-                                )
-                                : generalParameters.find(
-                                    (param) => param.parameterId === parameter.id
-                                );
-
+                            const subProduct = subProducts.find(x=> x.type === subSection?.type);
+                            const parm = subProduct?.parameters?.find(
+                                (param) => param.parameterId === parameter.id 
+                            );
                             const myParameter = list.find(
                                 (p) => p.id === relatedParameter.parameterId
                             );
@@ -968,7 +846,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         index: any,
         actionIndex: number
     ) => {
-        setCanCalculation(true);
+        /*setCanCalculation(true);
         setGeneralParameters((prev) => {
             let temp = [...prev];
             if (index !== -1) {
@@ -995,7 +873,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             }
             const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
             return filteredArray;
-        });
+        });*/
     };
     const onChangeSubProductsForPrice = (
         parameterId: any,
@@ -1038,47 +916,47 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                     actionIndex,
                 });
             }
+            const section = productTemplate.sections.find(section => section.id === sectionId );
+            const subSection = section.subSections.find(sub => sub.id === subSectionId);
+            const subSectionParameter = subSection.parameters.find(param => param.id === parameterId);
+            if(subSectionParameter){
+                if(subSectionParameter.settingParameters && subSectionParameter.settingParameters.length > 0){
+                    subSectionParameter.settingParameters.forEach(settingParam => {
+                        temp = temp.filter(x => x.parameterId != settingParam.id )
+                    })
+                }
+                const parameterValue = subSectionParameter.valuesConfigs.find(x=> x.id === data.valueIds);
+                if(parameterValue && parameterValue.selectedParameterValues && parameterValue.selectedParameterValues.length > 0){
+                    parameterValue.selectedParameterValues.forEach(selectedParam => {
+                        if(selectedParam.valueIds && selectedParam.valueIds.length > 0){
+                            const param = subSectionParameter.settingParameters.find(param => param.id === selectedParam.parameterId);
+                            temp.push({
+                                parameterId: param.id,
+                                sectionId: sectionId,
+                                subSectionId: subSectionId,
+                                ParameterType: param.parameterType,
+                                parameterName: param.name,
+                                actionId: param.actionId,
+                                values: selectedParam.valueIds,
+                                valueIds: selectedParam.valueIds,
+                                actionIndex,
+                            });
+                        }
+                        
+                    })
+                }
+            }
             let temp2 = [...subProducts];
             const index2 = subProducts.findIndex(
                 (item) => item.type === subSectionType
             );
             (temp2[index2] = {
                 type: subSectionType,
+                sectionId: sectionId,
+                sectionName: section.name,
                 parameters: temp,
             }),
                 setSubProducts(temp2);
-        } else {
-            let temp = [];
-            if (index !== -1) {
-                temp[index] = {
-                    ...temp[index],
-                    values: [data.values],
-                    valueIds: [data.valueIds],
-                };
-            } else {
-                temp.push({
-                    parameterId: parameterId,
-                    sectionId: sectionId,
-                    subSectionId: subSectionId,
-                    ParameterType: ParameterType,
-                    parameterName: parameterName,
-                    actionId: actionId,
-                    values: [data.values],
-                    valueIds: [data.valueIds],
-                    actionIndex,
-                });
-            }
-            if (data?.valueId === undefined && data?.value === undefined) {
-                temp.splice(index, 1);
-            }
-
-            setSubProducts([
-                ...subProducts,
-                {
-                    type: subSectionType,
-                    parameters: temp,
-                },
-            ]);
         }
     };
     const onCloseMakeShape = () => {
@@ -1122,7 +1000,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         }
     };
     const handleNextClick = () => {
-        if (activeIndex < template.sections.length) {
+        if (activeIndex < productTemplate.sections.length) {
             setActiveIndex(activeIndex + 1);
         }
     };
@@ -1150,13 +1028,14 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     ];
 
     const getProductById = useCallback(async () => {
-        await getAndSetProductById(callApi, setTemplate, {
+        debugger;
+        await getAndSetProductById(callApi, setProductTemplate, {
             Id: router?.query?.productId,
         });
     }, [router, widgetType]);
 
     const getProductQuoteItemById = useCallback(async () => {
-        await getAndSetgetProductQuoteItemById(callApi, setTemplate, {
+        await getAndSetgetProductQuoteItemById(callApi, setProductTemplate, {
             QuoteItemId: router?.query?.quoteItem,
         });
     }, [router]);
@@ -1165,13 +1044,13 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         let isValid = true;
         const allParameters = subProducts.flatMap((item) => item.parameters);
         for (const item of inputArray) {
-            const index = [...generalParameters, ...allParameters].findIndex(
+            /*const index = [...generalParameters, ...allParameters].findIndex(
                 (par) => par.parameterId === item.id && par?.values[0]?.length
             );
             if (index == -1) {
                 isValid = false;
                 break;
-            }
+            }*/
         }
         return isValid;
     };
@@ -1190,15 +1069,18 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             setLoading(true);
             const newRequestAbortController = new AbortController();
             setRequestAbortController(newRequestAbortController)
+            const generalParameters = subProducts.find(x => !x.type).parameters;
+            const calculationSubProducts = subProducts.filter(x => x.type)
             const res = await callApi(
                 "POST",
                 `/v1/calculation-service/calculations/calculate-product`,
                 {
+                    signalRConnectionId:connectionId,
                     clientId: router?.query?.customerId,
                     clientTypeId: router?.query?.clientTypeId,
                     productId: router?.query?.productId,
                     generalParameters: generalParameters,
-                    subProducts: subProducts,
+                    subProducts: calculationSubProducts,
                 },
                 false,
                 newRequestAbortController
@@ -1217,7 +1099,6 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             setLoading(false);
         }
     }, [
-        generalParameters,
         subProducts,
         router,
         isRequiredParameters,
@@ -1248,6 +1129,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         flows: pricingDefaultValue?.workFlows,
     };
     const createProfitTestCase = useCallback(async () => {
+        const generalParameters = [];
         const res = await callApi(
             "POST",
             `/v1/printhouse-config/profits/create-profit-test-case?systemID=2`,
@@ -1270,15 +1152,23 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             navigate(`/products/profits?actionId=${router?.query?.actionId}`);
         }
     }, [
-        generalParameters,
         router,
         pricingDefaultValue,
         itemParmetersValues,
         workFlowSelected,
     ]);
-    const quantity = generalParameters?.find(
+    /*const quantity = generalParameters?.find(
         (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
-    );
+    );*/
+    //const quantity = 0;
+    const quantity = useMemo(()=>{
+        if(subProducts){
+            const generalParameters = subProducts.find(x => !x.type)?.parameters;
+            return generalParameters?.find(
+                (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+            );
+        }
+    },[subProducts])
     const addItemForQuotes = useCallback(async () => {
         console.log(defaultPrice)
         const res = await callApi("POST", `/v1/erp-service/quote/add-item`, currentProductItemValue);
@@ -1303,22 +1193,22 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             widgetType === EWidgetProductType.EDIT ||
             widgetType === EWidgetProductType.DUPLICATE
         ) {
-            setUrgentOrder(!!template?.quoteItem?.isUrgentWork);
-            setPrintingNotes(template?.quoteItem?.printingNotes);
-            setGraphicNotes(template?.quoteItem?.graphicNotes);
+            setUrgentOrder(!!productTemplate?.quoteItem?.isUrgentWork);
+            setPrintingNotes(productTemplate?.quoteItem?.printingNotes);
+            setGraphicNotes(productTemplate?.quoteItem?.graphicNotes);
             setPricingDefaultValue({
-                actions: template?.actions,
-                jobDetails: template?.jobDetails,
-                workFlows: template?.workFlows,
+                actions: productTemplate?.actions,
+                jobDetails: productTemplate?.jobDetails,
+                workFlows: productTemplate?.workFlows,
             });
-            setDefaultPrice(template?.quoteItem?.unitPrice * quantity?.values[0]);
+            setDefaultPrice(productTemplate?.quoteItem?.unitPrice * quantity?.values[0]);
             setCanCalculation(false);
-            const workFlowSelect = template?.workFlows?.find(
+            const workFlowSelect = productTemplate?.workFlows?.find(
                 (workFlow) => workFlow?.selected === true
             );
             setWorkFlowSelected(workFlowSelect);
         }
-    }, [widgetType, template, quantity]);
+    }, [widgetType, productTemplate, quantity]);
     const updateQuoteItem = useCallback(async () => {
         const res = await callApi(
             "PUT",
@@ -1341,11 +1231,11 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                 workFlow:
                     pricingDefaultValue?.workFlows != null
                         ? [workFlowSelected]
-                        : template?.workFlows,
+                        : productTemplate?.workFlows,
                 actions:
                     pricingDefaultValue?.actions?.length > 0
                         ? pricingDefaultValue?.actions
-                        : template?.actions,
+                        : productTemplate?.actions,
                 sourceType: workFlowSelected?.actions?.every(action => action?.source === EWorkSource.INTERNAL) ? EWorkSource.INTERNAL : EWorkSource.PARTIALLY,
                 unitPrice: +defaultPrice?.values[0] / +quantity?.values[0],
                 outSoucreCost: 0,
@@ -1369,7 +1259,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         userProfile,
         workFlowSelected,
         defaultPrice,
-        template,
+        productTemplate,
     ]);
     const navigateForRouter = () => {
         let checkParameter = validateParameters(isRequiredParameters);
@@ -1425,7 +1315,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         onCloseMultiParameterModal,
         setSamlleType,
         duplicateParameters,
-        setTemplate,
+        setProductTemplate,
         multiParameterModal,
         settingParameters,
         priceRecovery,
@@ -1436,7 +1326,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         makeShapeOpen,
         GalleryModalOpen,
         activeIndex,
-        template,
+        productTemplate,
         tabs,
         activeTab,
         PricingTab,

@@ -43,8 +43,7 @@ const DropDownListParameterWidget = ({
             });
             setSelectedValueConfigForSettings(value);
           }
-          if (subSection?.type) {
-            onChangeSubProductsForPrice(
+          onChangeSubProductsForPrice(
               parameter?.id,
               subSection?.id,
               section?.id,
@@ -55,25 +54,7 @@ const DropDownListParameterWidget = ({
               subSection?.type,
               index,
               parameter?.actionIndex
-            );
-          } else {
-            onChangeForPrice(
-              parameter?.id,
-              subSection?.id,
-              section?.id,
-              parameter?.parameterType,
-              parameter?.name,
-              value?.activateAction === true ? parameter?.actionId : null,
-              {
-                valueIds: value?.id,
-                values: value?.updateName,
-                actionId:
-                  value?.activateAction === true ? parameter?.actionId : null,
-              },
-              index,
-              parameter?.actionIndex
-            );
-          }
+          );
         }}
       />
       {parameter?.setSettingIcon && inModal && (
