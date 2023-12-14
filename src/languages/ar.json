@@ -117,7 +117,8 @@
     "deleteSusuccessfully": "تم الحذف بنجاح",
     "deletefailed": "فشل الحذف",
     "formNotValid": "النموذج غير صالح",
-    "RequiredFields": "حقول مطلوبة مفقودة"
+    "RequiredFields": "حقول مطلوبة مفقودة",
+    "duplicateFailed" : "فشل النسخ"
   },
   "home": {
     "admin": {

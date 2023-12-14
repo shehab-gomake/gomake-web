@@ -12,12 +12,12 @@ import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
-import { getQuotePdfApi } from "@/services/api-service/quotes/quotes-table-endpoints";
+import { duplicateQuoteApi, getQuotePdfApi } from "@/services/api-service/quotes/quotes-table-endpoints";
 
 const useQuotes = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { setSnackbarStateValue , alertRequiredFields } = useSnackBar();
+  const { setSnackbarStateValue, alertFaultUpdate, alertFaultDuplicate } = useSnackBar();
 
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
@@ -37,7 +37,7 @@ const useQuotes = () => {
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState<any>();
-  const onClcikCloseModal = () => {
+  const onClickCloseModal = () => {
     setOpenModal(false);
   };
 
@@ -45,6 +45,7 @@ const useQuotes = () => {
     setSelectedQuote(quote);
     setOpenModal(true);
   };
+
   const [agentsCategories, setAgentsCategories] = useRecoilState(
     agentsCategoriesState
   );
@@ -116,7 +117,7 @@ const useQuotes = () => {
       quote?.totalPrice,
       quote?.notes,
       _renderQuoteStatus(quote?.statusID, quote, t),
-      <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} />,
+      <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} onClickDuplicate={onClickQuoteDuplicate} />,
     ]);
     setAllQuotes(mapData);
   }, [
@@ -163,7 +164,7 @@ const useQuotes = () => {
     getAllQuotes();
   };
 
-  const onClcikClearFilter = () => {
+  const onClickClearFilter = () => {
     setStatusId(null);
     setAgentId(null);
     setCustomerId(null);
@@ -276,11 +277,30 @@ const useQuotes = () => {
       if (res?.success) {
         const pdfLink = res.data;
         window.open(pdfLink, "_blank");
-    } else {
-        alertRequiredFields();
-    }
+      } else {
+        alertFaultUpdate();
+      }
     };
     await getQuotePdfApi(callApi, callBack, { quoteId: id });
+  };
+
+  const onClickQuoteDuplicate = async (id: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
+        const quoteId = res?.data?.quoteId;
+        console.log(quoteId)
+        if (!isAnotherQuoteInCreate) {
+          navigate("/quote");
+        }
+        else {
+          onClickOpenModal({id:quoteId })
+        }
+      } else {
+        alertFaultDuplicate();
+      }
+    };
+    await duplicateQuoteApi(callApi, callBack, { quoteId: id });
   };
 
   return {
@@ -294,7 +314,7 @@ const useQuotes = () => {
     customerId,
     agentId,
     errorColor,
-    onClcikCloseModal,
+    onClickCloseModal,
     setPatternSearch,
     setStatusId,
     setCustomerId,
@@ -305,7 +325,7 @@ const useQuotes = () => {
     updateQuoteStatus,
     onClickSearchFilter,
     getAllQuotes,
-    onClcikClearFilter,
+    onClickClearFilter,
     onClickQuotePdf,
     t,
   };
