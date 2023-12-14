@@ -12,6 +12,10 @@ export const subProductsCopyParametersState = atom({
   key: "subProductsCopyParametersState",
   default: [],
 });
+export const productTemplateState = atom({
+  key: "productTemplateState",
+  default: "",
+});
 export const quantityParameterState = selector({
   key: 'quantityParameterState',
   get: ({get}) => {

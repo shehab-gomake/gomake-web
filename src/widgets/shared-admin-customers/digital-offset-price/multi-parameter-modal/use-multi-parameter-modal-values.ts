@@ -9,7 +9,6 @@ import {subProductsParametersState} from "@/store";
 const userMultiParameterModalValues = (settingParameters) => {
     
     const addValueToSubProduct =(subProducts,value)=>{
-        debugger;
         const section = settingParameters.section;
         const subSection = settingParameters.subSection;
         let subProductsCopy = lodashClonedeep(subProducts);

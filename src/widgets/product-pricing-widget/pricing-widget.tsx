@@ -34,7 +34,6 @@ const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps
         getOutSourcingSuppliers();
     }, [])
     useEffect(() => {
-        debugger
         if (!selectedWorkFlow) {
             setView(EPricingViews.OUTSOURCE_WORKFLOW);
         }else if(currentProductItemValue){

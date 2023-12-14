@@ -85,7 +85,6 @@ const useChildValuesMapping = ({
     const subData = value.data;
     let newSubProducts = lodashClonedeep(subProducts);
     subData.forEach(x=>{
-      debugger
       if (e.target.checked){
         newSubProducts = addValueToSubProduct(newSubProducts,x)
       }

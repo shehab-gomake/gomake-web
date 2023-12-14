@@ -9,7 +9,6 @@ const useChildMapping = ({ parameters, settingParameters }) => {
   const [generalParameters, setGeneralParameters] =
     useRecoilState(maltiParameterState);
   const foundMaterial = useMemo(() => {
-    debugger;
     if (allMaterials.length && parameters?.length)
       return allMaterials?.find((material) => {
         return parameters?.some(
