@@ -1998,7 +1998,15 @@
     "changePass": "Passwort ändern",
     "update": "Aktualisieren",
     "loginLogo": "Login-Logo",
-    "companyLogo": "Firmenlogo"
+    "companyLogo": "Firmenlogo",
+    "dayOfWork": "Arbeitstage",
+    "sunday": "Sonntag",
+    "monday": "Montag",
+    "tuesday": "Dienstag",
+    "wednesday": "Mittwoch",
+    "thursday": "Donnerstag",
+    "friday": "Freitag",
+    "saturday": "Samstag"
   },
   "remainWords": {
     "newQuote": "Neues Angebot",

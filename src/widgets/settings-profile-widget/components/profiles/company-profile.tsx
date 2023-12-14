@@ -14,6 +14,7 @@ import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { useTranslation } from "react-i18next";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import DaysOfWork from "./working-days/working-days";
 
 const CompanyProfileComponent = () => {
   const {
@@ -23,11 +24,14 @@ const CompanyProfileComponent = () => {
     updateProfileChanges,
     changeCompanyProfileImage,
     changeCompanyLoginImage,
+    daysOfWork
   } = useCompanyProfile();
+
   const { t } = useTranslation();
   useEffect(() => {
     getProfile().then();
   }, []);
+
   const changeState = (key, value) => {
     profileChange({
       ...profile,
@@ -35,7 +39,6 @@ const CompanyProfileComponent = () => {
     });
   };
 
-  useEffect(() => {}, [profile]);
   const formSections: { inputs: any[]; title: string }[] = [
     { inputs: companyProfileInputs(profile), title: "profileSettings.company" },
     {
@@ -51,6 +54,7 @@ const CompanyProfileComponent = () => {
       title: "profileSettings.financial",
     },
   ];
+
   return (
     <div style={{ paddingBottom: 2, paddingTop: "40px", position: "relative" }}>
       <Stack direction={"row"} gap={"57px"}>
@@ -81,6 +85,7 @@ const CompanyProfileComponent = () => {
                   error={false}
                 />
               ))}
+              {section.title === 'profileSettings.contacts' && <DaysOfWork options={daysOfWork} label={t("profileSettings.dayOfWork")} setState={profileChange} state={profile}/>}
             </FormInputsSectionComponent>
           );
         })}
@@ -94,11 +99,11 @@ const CompanyProfileComponent = () => {
         }}
       >
         <PermissionCheck userPermission={Permissions.EDIT_COMPANY_PROFILE} >
-            <SecondaryButton onClick={updateProfileChanges} variant={"contained"}>
-              {t("profileSettings.update")}
-            </SecondaryButton>
+          <SecondaryButton onClick={updateProfileChanges} variant={"contained"}>
+            {t("profileSettings.update")}
+          </SecondaryButton>
         </PermissionCheck>
-      
+
       </div>
     </div>
   );

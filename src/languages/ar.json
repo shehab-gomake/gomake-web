@@ -2026,7 +2026,15 @@
     "changePass": "تغيير كلمة المرور",
     "update": "تحديث",
     "loginLogo": "شعار تسجيل الدخول",
-    "companyLogo": "شعار الشركة"
+    "companyLogo": "شعار الشركة",
+    "dayOfWork": "أيام العمل",
+    "sunday": "الأحد",
+    "monday": "الاثنين",
+    "tuesday":"الثلاثاء",
+    "wednesday":"الاربعاء",
+    "thursday":"الخميس",
+    "friday" :"الجمعة",
+    "saturday":"السبت"
   },
   "remainWords": {
     "newQuote": "عرض جديد",
