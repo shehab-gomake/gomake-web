@@ -18,7 +18,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import PendingActionsOutlinedIcon from '@mui/icons-material/PendingActionsOutlined';
-
+import GTranslateIcon from '@mui/icons-material/GTranslate';
 const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
 
   const { isAuth } = useGomakeAuth(permissionEnumValue);
@@ -249,6 +249,17 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         isList: false,
         icon: () => {
           return <SettingNavBar />;
+        },
+        isProduction: true,
+      },
+      {
+        isLine: false,
+        key: "translations",
+        title: "Translations",
+        path: "/translations",
+        isList: false,
+        icon: () => {
+          return <GTranslateIcon  style={{color:"white"}}/>;
         },
         isProduction: true,
       },
