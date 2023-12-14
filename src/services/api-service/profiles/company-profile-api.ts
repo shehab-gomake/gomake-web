@@ -7,16 +7,16 @@ const UPDATE_COMPANY_PROFILE_URL = "/v1/update-print-house-profile";
 const UPDATE_COMPANY_LOGO_URL = "/v1/update-print-house-profile-image";
 const GET_COMPANY_LOGIN_LOGO_URL = "/v1/get-print-house-login-logo";
 
-const getCompanyProfile: ICallAndSetData = async (callApi, setState) => {
-  return await getSetApiData(
+const getCompanyProfile: ICallAndSetData<any, any> = async (callApi, setState) => {
+  return await getSetApiData<any>(
     callApi,
     EHttpMethod.GET,
     GET_COMPANY_PROFILE_URL,
     setState
   );
 };
-const getCompanyLoginLogo: ICallAndSetData = async (callApi, setState) => {
-  return await getSetApiData(
+const getCompanyLoginLogo: ICallAndSetData<any, any> = async (callApi, setState) => {
+  return await getSetApiData<any>(
     callApi,
     EHttpMethod.GET,
     GET_COMPANY_LOGIN_LOGO_URL,
@@ -24,12 +24,12 @@ const getCompanyLoginLogo: ICallAndSetData = async (callApi, setState) => {
   );
 };
 
-const updateCompanyProfile: ICallAndSetData = async (
+const updateCompanyProfile: ICallAndSetData<any, any> = async (
   callApi,
   setState,
   profile
 ) => {
-  return await getSetApiData(
+  return await getSetApiData<any>(
     callApi,
     EHttpMethod.POST,
     UPDATE_COMPANY_PROFILE_URL,
@@ -38,8 +38,8 @@ const updateCompanyProfile: ICallAndSetData = async (
   );
 };
 
-const updateCompanyLogo: ICallAndSetData = async (callApi, setState, data) => {
-  return await getSetApiData(
+const updateCompanyLogo: ICallAndSetData<any, any> = async (callApi, setState, data) => {
+  return await getSetApiData<any>(
     callApi,
     EHttpMethod.POST,
     UPDATE_COMPANY_LOGO_URL,

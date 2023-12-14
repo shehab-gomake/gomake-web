@@ -8,23 +8,23 @@ const UPDATE_USER_PROFILE_URL = '/v1/crm-service/update-user-profile';
 const UPDATE_USER_LOGO_URL = '/v1/crm-service/update-user-profile-image';
 const RESET_USER_PASSWORD = '/v1/crm-service/reset-user-password';
 const UPDATE_USER_INITIALS = '/v1/crm-service/update-user-initials';
-const getUserProfile: ICallAndSetData = async (callApi, setState) => {
-    return  await getSetApiData(callApi, EHttpMethod.GET, GET_USER_PROFILE_URL , setState);
+const getUserProfile: ICallAndSetData<any, any> = async (callApi, setState) => {
+    return  await getSetApiData<any>(callApi, EHttpMethod.GET, GET_USER_PROFILE_URL , setState);
 };
 
-const updateUserProfile: ICallAndSetData = async (callApi, setState, profile) => {
-    return  await getSetApiData(callApi, EHttpMethod.POST, UPDATE_USER_PROFILE_URL, setState, profile);
+const updateUserProfile: ICallAndSetData<any, any> = async (callApi, setState, profile) => {
+    return  await getSetApiData<any>(callApi, EHttpMethod.POST, UPDATE_USER_PROFILE_URL, setState, profile);
 };
 
-const updateUserProfileImage: ICallAndSetData = async (callApi, setState, data) => {
-    return  await getSetApiData(callApi, EHttpMethod.POST, UPDATE_USER_LOGO_URL, setState,  data);
+const updateUserProfileImage: ICallAndSetData<any, any> = async (callApi, setState, data) => {
+    return  await getSetApiData<any>(callApi, EHttpMethod.POST, UPDATE_USER_LOGO_URL, setState,  data);
 };
 
-const resetUserPassword: ICallAndSetData = async (callApi, setState, data) => {
-    return  await getSetApiData(callApi, EHttpMethod.POST, RESET_USER_PASSWORD, setState,  data);
+const resetUserPassword: ICallAndSetData<any, any> = async (callApi, setState, data) => {
+    return  await getSetApiData<any>(callApi, EHttpMethod.POST, RESET_USER_PASSWORD, setState,  data);
 };
-const resetUserInitials: ICallAndSetData = async (callApi, setState, data) => {
-    return  await getSetApiData(callApi, EHttpMethod.POST, UPDATE_USER_INITIALS, setState,  data);
+const resetUserInitials: ICallAndSetData<any, any> = async (callApi, setState, data) => {
+    return  await getSetApiData<any>(callApi, EHttpMethod.POST, UPDATE_USER_INITIALS, setState,  data);
 };
 
 export {getUserProfile, updateUserProfile, updateUserProfileImage, resetUserPassword, resetUserInitials};

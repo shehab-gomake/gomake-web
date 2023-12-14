@@ -1,24 +1,20 @@
 import Button from "@mui/material/Button";
 import {useStyle} from "@/widgets/production-floor-widget/components/style";
-import {useState} from "react";
-import {Menu, MenuItem} from "@mui/material";
+import {useCallback, useState} from "react";
+import {Menu} from "@mui/material";
 
-export enum EStatus {
-    NOT_YET = '1',
-    IN_PROCESS = '2',
-    DONE = '3',
-    STUCK = '4',
-    WAITING = '5'
-}
+import {useProductionFloorStatuses} from "@/widgets/production-floor-widget/hooks/use-production-floor-statuses";
 
 interface IStatusBtnProps {
     id?: string;
-    status: EStatus;
-    onChange?: (id: string, status: EStatus) => void
+    statusId: string;
+    onChange?: (id: string, statusId: string) => void
 }
 
-const StatusBtn = ({status, id, onChange}: IStatusBtnProps) => {
+const StatusBtn = ({statusId, id, onChange}: IStatusBtnProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
+    const {statuses} = useProductionFloorStatuses();
+    const {classes} = useStyle();
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -27,55 +23,64 @@ const StatusBtn = ({status, id, onChange}: IStatusBtnProps) => {
         setAnchorEl(null);
     };
 
-    const onSelectNewStatus = (status: EStatus) => {
-        onChange(id, status);
+    const onSelectNewStatus = (statusId: string) => {
+        onChange(id, statusId);
         handleClose();
     }
-    const {classes} = useStyle();
+    const boardStatus = useCallback(() => {
+        return statuses()?.find(status => status.id === statusId);
+    }, [statuses, statusId])
+
     return (
         <>
             <Button onClick={handleClick}
                     variant={!!anchorEl ? 'outlined' : 'contained'}
-                    sx={!anchorEl ? {...classes.statusLabel,
-                        ...classes.statusLabelBg[status],
-                        ...classes.borderRadius,
-                        display: 'inline',
-                        width: 150,
-                         height: 36}: {
-                        ...classes.borderRadius,
-                        ...classes.statusLabel,
-                        backgroundColor: "white",
-                        color: 'red',
-                        borderColor: 'red',
-                        display: 'inline',
-                        width: 150,
-                        height: 36
-                    }}>
+                    sx={!anchorEl ? {
+                            ...classes.statusLabel,
+                            ...classes.borderRadius,
+                            backgroundColor: boardStatus()?.backgroundColor,
+                            color: boardStatus()?.textColor,
+                            display: 'inline',
+                            width: 150,
+                            height: 36,
+                            '&:hover': {opacity: 0.7, backgroundColor: boardStatus()?.backgroundColor, color: boardStatus()?.textColor,}
+                        } :
+                        {
+                            ...classes.borderRadius,
+                            ...classes.statusLabel,
+                            backgroundColor: "white",
+                            color: 'red',
+                            borderColor: 'red',
+                            display: 'inline',
+                            width: 150,
+                            height: 36,
+                            '&:hover': {opacity: 0.7, backgroundColor: boardStatus()?.backgroundColor, color: boardStatus()?.textColor,}
+
+                        }}>
                 {
-                     !!anchorEl ? 'select status' :status === EStatus.IN_PROCESS ? 'in proccess' :
-                        status === EStatus.WAITING ? 'waiting' :
-                            status === EStatus.STUCK ? 'Stuck' :
-                                status === EStatus.DONE ? 'Done' : ''
+                    boardStatus()?.name
                 }
             </Button>
-                <Menu
-                    closeAfterTransition={true}
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                    MenuListProps={{
-                        sx: {width: anchorEl?.offsetWidth, padding: 0}
+            <Menu
+                closeAfterTransition={true}
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                    sx: {width: anchorEl?.offsetWidth, padding: 0}
+                }}
+            >
+                {
+                    statuses()?.map(status => <Button sx={{
+                        ...classes.statusLabel,
+                        backgroundColor: status.backgroundColor,
+                        color: status.textColor,
+                        borderRadius: 0,
+                        '&:hover': {opacity: 0.7, backgroundColor: status.backgroundColor, color: status.textColor,}
                     }}
-                >
-                    <Button sx={{...classes.statusLabel, ...classes.statusLabelBg[EStatus.WAITING], borderRadius: 0}}
-                            onClick={() => onSelectNewStatus(EStatus.WAITING)}>waiting</Button>
-                    <Button sx={{...classes.statusLabel, ...classes.statusLabelBg[EStatus.IN_PROCESS], borderRadius: 0}}
-                            onClick={() => onSelectNewStatus(EStatus.IN_PROCESS)}>in process</Button>
-                    <Button sx={{...classes.statusLabel, ...classes.statusLabelBg[EStatus.DONE], borderRadius: 0}}
-                            onClick={() => onSelectNewStatus(EStatus.DONE)}>done</Button>
-                    <Button sx={{...classes.statusLabel, ...classes.statusLabelBg[EStatus.STUCK], borderRadius: 0}}
-                            onClick={() => onSelectNewStatus(EStatus.STUCK)}>stuck</Button>
-                </Menu>
+                                                    onClick={() => onSelectNewStatus(status.id)}>{status.name}</Button>)
+                }
+            </Menu>
         </>
     );
 }
