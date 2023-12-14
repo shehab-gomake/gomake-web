@@ -6,17 +6,17 @@ const GET_DOCUMENT_DESIGN_BY_CREATION_DOC_URL = '/v1/erp-service/documentSetting
 const ADD_OR_UPDATE_DOCUMENT_DESIGN_URL = '/v1/erp-service/documentSettings/update-document-design';
 const RESET_DOCUMENT_DESIGN_URL = '/v1/erp-service/documentSettings/reset-documents-design';
 
-const getAllDocumentDesigningApi: ICallAndSetData = async (callApi, setState) => {
-    return  await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_DOCUMENT_DESIGN_URL, setState)
+const getAllDocumentDesigningApi: ICallAndSetData<any, any> = async (callApi, setState) => {
+    return  await getSetApiData<any>(callApi, EHttpMethod.GET, GET_ALL_DOCUMENT_DESIGN_URL, setState)
 }
-const getDocumentDesignByCreationDocingApi: ICallAndSetData = async (callApi, setState , data ) => {
-    return  await getSetApiData(callApi, EHttpMethod.GET, GET_DOCUMENT_DESIGN_BY_CREATION_DOC_URL, setState,data)
+const getDocumentDesignByCreationDocingApi: ICallAndSetData<any, any> = async (callApi, setState , data ) => {
+    return  await getSetApiData<any>(callApi, EHttpMethod.GET, GET_DOCUMENT_DESIGN_BY_CREATION_DOC_URL, setState,data)
 }
-const ResetDocumentDesigningApi: ICallAndSetData = async (callApi, setState , data ) => {
-    return  await getSetApiData(callApi, EHttpMethod.GET, RESET_DOCUMENT_DESIGN_URL, setState,data)
+const ResetDocumentDesigningApi: ICallAndSetData<any, any> = async (callApi, setState , data ) => {
+    return  await getSetApiData<any>(callApi, EHttpMethod.GET, RESET_DOCUMENT_DESIGN_URL, setState,data)
 }
-const AddOrUpdateDocumentDesignDocingApi: ICallAndSetData = async (callApi, setState , data ) => {
-    return  await getSetApiData(callApi, EHttpMethod.POST, ADD_OR_UPDATE_DOCUMENT_DESIGN_URL, setState,data)
+const AddOrUpdateDocumentDesignDocingApi: ICallAndSetData<any, any> = async (callApi, setState , data ) => {
+    return  await getSetApiData<any>(callApi, EHttpMethod.POST, ADD_OR_UPDATE_DOCUMENT_DESIGN_URL, setState,data)
 }
 
 export {

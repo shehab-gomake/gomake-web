@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
 
 export interface ISignalRProps {
@@ -6,10 +6,9 @@ export interface ISignalRProps {
     url: string;
     methodName: string;
 }
-const useGoMakeSignalr = <T>({accessToken, url, methodName}: ISignalRProps): {data: T | null,connectionId:string} => {
+const useGoMakeSignalr = <T>({accessToken, url, methodName}: ISignalRProps): {data: T | null, connection: null | HubConnection} => {
     const [connection, setConnection] = useState<null | HubConnection>(null);
     const [data, setData] = useState<T | null>(null);
-    const [connectionId, setConnectionId] = useState<string>("");
     const getAccessToken = ()=>{
        return accessToken
     }
@@ -28,16 +27,17 @@ const useGoMakeSignalr = <T>({accessToken, url, methodName}: ISignalRProps): {da
             connection
                 .start()
                 .then(() => {
-                    setConnectionId(connection.connectionId)
                     connection.on(methodName, (newData) => {
                         setData(newData);
+                        console.log(newData);
                     });
                 })
-                .catch((error) => console.log(error));
+                .catch((error) => alert(JSON.stringify(error)));
         }
     }, [connection]);
     return {
-        data,connectionId
+        data,
+        connection
     };
 }
 

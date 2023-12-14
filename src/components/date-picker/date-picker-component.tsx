@@ -9,10 +9,10 @@ import Stack from "@mui/material/Stack";
 import {Clear} from "@mui/icons-material";
 import {staticDateRange} from "@/components/date-picker/const";
 interface IGoMakeDatepicker {
-
+    onChange: (fromDate, toDate) => void;
 }
 
-const GoMakeDatepicker = ({}: IGoMakeDatepicker) => {
+const GoMakeDatepicker = ({onChange}: IGoMakeDatepicker) => {
     const {t} = useTranslation();
     const [state, setState] = useState({
         selection: {
@@ -24,29 +24,15 @@ const GoMakeDatepicker = ({}: IGoMakeDatepicker) => {
     const [openDatepicker, setOpenDatepicker] = useState<boolean>(false);
     const {dateStringFormat} = useDatePicker()
     const handleSelectDates = () => {
+        onChange(state.selection.startDate, state.selection.endDate);
         setOpenDatepicker(false);
     }
     const handleInputClick = () => {
-        if (state.selection.endDate === null) {
-            setState({
-                ...state, selection: {
-                    ...state.selection,
-                    endDate: new Date()
-                }
-            })
-        }
-        if (state.selection.startDate === null) {
-            setState({
-                ...state, selection: {
-                    ...state.selection,
-                    startDate: new Date()
-                }
-            })
-        }
         setOpenDatepicker(true);
     }
 
     const handleClear = () => {
+        onChange(null, null);
         setState({
             ...state,
             selection: {
@@ -56,6 +42,7 @@ const GoMakeDatepicker = ({}: IGoMakeDatepicker) => {
             }
         })
     }
+
 
     const dateString = useCallback(() => {
         if (state.selection.startDate === null || state.selection.endDate === null) {

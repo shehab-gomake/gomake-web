@@ -1,12 +1,8 @@
 import { useMemo } from "react";
-import i18next from "i18next";
-
-import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 const useStyle = () => {
-  const { t } = useTranslation();
   const { primaryColor, neutralColor } = useGomakeTheme();
 
   const clasess = useMemo(() => {
@@ -75,7 +71,7 @@ const useStyle = () => {
         height:40
       }
     };
-  }, [i18next.language, t]);
+  }, []);
   return {
     clasess,
   };

@@ -4,10 +4,10 @@ export type ICallApi = (
     data?: any,
     lock?: boolean,
 ) => any;
-export type ICallBack = (res: {success: boolean, data: any}) => void
+export type ICallBack<T> = (res: {success: boolean, data: T}) => void
 
-export interface ApiResponse {
+export interface ApiResponse<T> {
     success: boolean,
-    data: any
+    data: T
 }
-export type ICallAndSetData = (callApi: ICallApi, callBack: ICallBack, data?: any, lock?: boolean ) => Promise<ApiResponse>;
+export type ICallAndSetData<T,K> = (callApi: ICallApi, callBack: ICallBack<T>, data?: K, lock?: boolean ) => Promise<ApiResponse<T>>;
