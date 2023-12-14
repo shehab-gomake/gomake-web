@@ -26,6 +26,7 @@ const useButtonsContainer = () => {
             `/v1/erp-service/order/create-new-order`,
             {
                 quoteId: quoteItemValue?.id,
+                sendMessage:false,
             }
         );
         if (res?.success) {
@@ -43,6 +44,7 @@ const useButtonsContainer = () => {
             `/v1/erp-service/order/create-new-order`,
             {
                 quoteId: quoteItemValue?.id,
+                sendMessage:true,
             }
         );
         if (res?.success) {
