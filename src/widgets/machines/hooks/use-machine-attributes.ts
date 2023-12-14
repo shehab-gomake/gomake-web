@@ -12,7 +12,7 @@ import {getCategoryCoatingInputs} from "@/widgets/machines/utils/attributes/coat
 import {getCategoryPlateInputs} from "@/widgets/machines/utils/attributes/plate-inputs";
 import {getCategoryBlanketCylinderInputs} from "@/widgets/machines/utils/attributes/blanket-cylinder-inputs";
 import {getCategoryUnWinderInputs} from "@/widgets/machines/utils/attributes/unwinder-rewinder";
-import {getCategoryFoldingInputs} from "@/widgets/machines/utils/attributes/run-inputs";
+import {getCategoryRunInputs} from "@/widgets/machines/utils/attributes/run-inputs";
 import {getCategoryConnectionInputs} from "@/widgets/machines/utils/attributes/connection-inputs";
 import {getCategorySpeedInputs} from "@/widgets/machines/utils/attributes/speed-inputs";
 import {getCategoryCuttingOptionsInputs} from "@/widgets/machines/utils/attributes/cutting-options-inputs";
@@ -68,7 +68,7 @@ const useMachineAttributes = () => {
     const machinePlateAttributes = () => !!machineState.category ? getCategoryPlateInputs(machineState.category, machineState) : [];
     const machineBlanketCylinderAttributes = () => !!machineState.category ? getCategoryBlanketCylinderInputs(machineState.category, machineState) : [];
     const machineUnWinderAttributes = () => !!machineState.category ? getCategoryUnWinderInputs(machineState.category, machineState) : [];
-    const machineFoldingAttributes = () => !!machineState.category ? getCategoryFoldingInputs(machineState.category, machineState) : [];
+    const machineFoldingAttributes = () => !!machineState.category ? getCategoryRunInputs(machineState.category, machineState) : [];
     const machineConnectionAttributes = () => !!machineState.category ? getCategoryConnectionInputs(machineState.category, machineState) : [];
     const machineCuttingOptionsAttributes = () => !!machineState.category ? getCategoryCuttingOptionsInputs(machineState.category, machineState) : [];
     const machineOtherSettingsAttributes = () => !!machineState.category ? getCategoryInputs(machineState.category, machineState) : [];

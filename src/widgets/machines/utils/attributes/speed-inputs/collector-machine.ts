@@ -1,5 +1,6 @@
 import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import {insertTypeInput} from "@/widgets/machines/utils/attributes/speed-inputs/insert- type-input";
 
 const collectorMachine = (state: Record<string, any>) => {
     return [
@@ -17,6 +18,7 @@ const collectorMachine = (state: Record<string, any>) => {
             isValid: !!state?.attributes?.loadTime,
             unit: EMeasurementUnits.MINUTE
         },
+        ...insertTypeInput(state),
         {
             name: "speed",
             label: "machineAttributes.speed",
@@ -28,19 +30,20 @@ const collectorMachine = (state: Record<string, any>) => {
             value: state.attributes?.speed ? state.attributes?.speed: '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.speed,
-            unit: EMeasurementUnits.SPH
+            unit: EMeasurementUnits.BOOK_PH
         },
         {
-            name: "cellChargingTime",
-            label: "machineAttributes.cellChargingTime",
+            name: "cellLoadingTime",
+            label: "machineAttributes.cellLoadingTime",
             type: "text",
-            placeholder: "machineAttributes.cellChargingTime",
+            placeholder: "machineAttributes.cellLoadingTime",
             required: true,
-            parameterKey: "cellChargingTime",
+            parameterKey: "cellLoadingTime",
             options: [],
-            value: state.attributes?.cellChargingTime ? state.attributes?.cellChargingTime : '',
+            value: state.attributes?.cellLoadingTime ? state.attributes?.cellLoadingTime : '',
             machineInputType: 'input',
-            isValid: !!state?.attributes?.cellChargingTime,
+            isValid: !!state?.attributes?.cellLoadingTime,
+            unit: EMeasurementUnits.MINUTE
         },
         {
             name: "loadingWhileRunning",
@@ -86,13 +89,13 @@ const collectorMachine = (state: Record<string, any>) => {
             isValid: true,
             inputs: [
                 {
-                    name: "mediaLength",
-                    label: "machineAttributes.lengthDirection",
+                    name: "paperLength",
+                    label: "machineAttributes.paperLength",
                     type: "text",
-                    placeholder: "machineAttributes.lengthDirection",
+                    placeholder: "machineAttributes.paperLength",
                     required: true,
                     unit: EMeasurementUnits.CM,
-                    parameterKey: "mediaLength",
+                    parameterKey: "paperLength",
                     options: []
                 },
                 {

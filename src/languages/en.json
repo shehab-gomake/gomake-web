@@ -1213,7 +1213,7 @@
     "flatbeds": "Flatbeds",
     "pvc": "PVC",
     "speedSet": "Speed per Set",
-    "cellChargingTime": "Cell charging time",
+    "cellLoadingTime": "Cell loading time",
     "loadingWhileRunning": "Loading on the run",
     "cellsAmount": "Cells amount",
     "maxThicknessCells": "Maximum thickness in cell (mm)",
@@ -1223,11 +1223,11 @@
     "feedOption": "Feed option",
     "thicknessBeforeFolding": "Thickness before folding",
     "paperThickness": "Paper thickness",
-    "bookletSpeed": "Speed (Booklet/minute)",
+    "bookletSpeed": "Speed",
     "collectionConnection": "Connection to a collection machine",
     "printingMachineConnection": "Connection to printing machine",
     "collectionCell": "Collection cell",
-    "squareBackSpaneOption": "Square back Spane Option",
+    "squareSpineOption": "Square spine option",
     "up&down": "Up & Down",
     "side": "Side",
     "stapleHeadsAmount": "Staple heads amount",
@@ -1309,7 +1309,27 @@
     "connectToBooklet": "Connect to Booklet",
     "connectToBooksBinder": "Connect to Books Binder",
     "connectToBookSewing": "Connect to Book Sewing",
-    "machineColors": "Colors"
+    "connectToCollectorMachine": "Connect to collector",
+    "machineColors": "Colors",
+    "plateGauge": "Plate gauge",
+    "size": "Size",
+    "costBySizeType": "The Cost coefficient according to size Type",
+    "dieCut": "Die cut",
+    "dieKissCut": "Die kiss cut",
+    "dieStamp": "Die stamp",
+    "complexity": "Complexity",
+    "speedByComplexity": "The speed coefficient according to complexity",
+    "manualInsert": "Manual insert",
+    "manualInsertSpeed": "Speed for manual",
+    "delayBetweenUnits": "delay between booklets",
+    "isAvailableCollectorStacker": "Collector stacker available",
+    "paperLength": "Paper length",
+    "insertTypes": "Insert types",
+    "foldingUnit": "Folding unit",
+    "cellNumber": "Cell number",
+    "maxThicknessInCell": "Maximum thickness in cell",
+    "loadingInRun": "Loading in run",
+    "cellChargingTime": "Cell charging time"
   },
   "tyingOptions": {
     "cross": "Cross",
@@ -1382,7 +1402,10 @@
     "varnishSettings": "Varnish settings",
     "bookDimensions": "Book dimensions",
     "actions&materials": "Actions & Materials",
-    "moreSettings": "More settings"
+    "moreSettings": "More settings",
+    "dieTypes": "Die types",
+    "foldingUnit": "Folding unit",
+    "collectionInsideUnit": "Collection inside unit"
   },
   "products": {
     "profits": {
@@ -2118,7 +2141,7 @@
     "perforation": "Perforation machine",
     "foldingGluing": "Folding and gluing machine",
     "digitalEnhancement": "Digital enhancement machine",
-    "analogEnhancement": "Analog enhancement machine",
+    "analogEnhancement": " Sheets Die Machine",
     "encapsulation": "Encapsulation machine",
     "sideColoring": "Side coloring",
     "guillottine": "Guillottine machine",
@@ -2152,7 +2175,8 @@
     "rollVarnish": "Roll varnish  machine",
     "rollDigitalEnhancement": "Roll digital enhancement machine",
     "autoBookCutting": "Auto book cutting",
-    "rollAnalogEnhancement": "Roll analog enhancement machine"
+    "rollAnalogEnhancement": "Roll analog enhancement machine",
+    "thermalPlateProcessor": "Thermal plate processor"
   },
   "materialsActions": {
     "UpdateCurrency": "Update currency",
@@ -2272,8 +2296,10 @@
     "minute": "minute",
     "inch": "inch",
     "squareMeter": "m2",
+    "squareCM": "cm2",
     "setsHour": "sets/hour",
-    "sph": "SPH"
+    "sph": "SPH",
+    "bookPh": "BookPH"
   },
   "mailingSettings": {
     "emailSetting": "Email setting",
