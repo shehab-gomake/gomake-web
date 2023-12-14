@@ -498,6 +498,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         setCanCalculation(false)
         setWorkFlows([]);
         setJobActions([]);
+        setSubProducts([])
         setCalculationProgress({totalWorkFlowsCount: 0,currentWorkFlowsCount:0} )
         if (
             widgetType === EWidgetProductType.EDIT ||
@@ -1044,13 +1045,13 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         let isValid = true;
         const allParameters = subProducts.flatMap((item) => item.parameters);
         for (const item of inputArray) {
-            /*const index = [...generalParameters, ...allParameters].findIndex(
+            const index = allParameters.findIndex(
                 (par) => par.parameterId === item.id && par?.values[0]?.length
             );
             if (index == -1) {
                 isValid = false;
                 break;
-            }*/
+            }
         }
         return isValid;
     };
