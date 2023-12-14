@@ -1,5 +1,5 @@
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useRouter} from "next/router";
 
@@ -8,10 +8,10 @@ import {materialsCategoriesState} from "@/store/material-categories";
 import {useGomakeAxios, useGomakeRouter} from "@/hooks";
 import {getAndSetgetProductQuoteItemById, getAndSetProductById,} from "@/services/hooks";
 import {
-    generalParametersState,
-    isLoadgingState, productTemplateState,
+    isLoadgingState,
     selectedValueConfigState,
-    selectParameterButtonState, subProductsCopyParametersState,
+    selectParameterButtonState,
+    subProductsCopyParametersState,
     subProductsParametersState,
 } from "@/store";
 import {useMaterials} from "../use-materials";
@@ -22,10 +22,6 @@ import {userProfileState} from "@/store/user-profile";
 import {EWidgetProductType} from "@/pages-components/products/digital-offset-price/enums";
 import {compareStrings} from "@/utils/constants";
 import {EButtonTypes, EParameterTypes} from "@/enums";
-
-import {
-    maltiParameterState
-} from "@/widgets/shared-admin-customers/digital-offset-price/multi-parameter-modal/store/multi-param-atom";
 import {
     InputNumberParameterWidget
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
@@ -45,7 +41,8 @@ import {
     SelectMaterialsParameterWidget
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
 import {
-    calculationProgressState, currentProductItemValueState,
+    calculationProgressState,
+    currentProductItemValueState,
     itemParametersValuesState,
     jobActionsState,
     jobDetailsState,
@@ -55,8 +52,7 @@ import {
 } from "@/widgets/product-pricing-widget/state";
 import {getOutsourcingSuppliersListApi} from "@/services/api-service/suppliers/suppliers-endpoints";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
-import { useCalculationsWorkFlowsSignalr } from "../signalr/use-calculations-workflows-signalr";
-import { useCalculationsSessionSignalr } from "../signalr/use-calculations-session-signalr";
+import {useCalculationsWorkFlowsSignalr} from "../signalr/use-calculations-workflows-signalr";
 
 const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const {navigate} = useGomakeRouter();
@@ -120,8 +116,8 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const setSelectParameterButton = useSetRecoilState(
         selectParameterButtonState
     );
-    const {calculationResult,connectionId} = useCalculationsWorkFlowsSignalr();
-    const {calculationSessionId} = useCalculationsSessionSignalr();
+    const {calculationResult,connectionId,calculationSessionId} = useCalculationsWorkFlowsSignalr();
+    //const {calculationSessionId} = useCalculationsSessionSignalr();
 
     const [requestAbortController,setRequestAbortController] = useState<AbortController>(null)
     
@@ -131,20 +127,24 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     },[subProducts])
     useEffect(()=>{
         if(calculationResult){
-            setLoading(false);
-            const currentWorkFlowsCount = calculationResult?.workFlows.length;
-            const totalWorkFlowsCount = calculationResult?.totalWorkFlows;
-            setCalculationProgress({totalWorkFlowsCount: totalWorkFlowsCount,currentWorkFlowsCount:currentWorkFlowsCount} )
-            setWorkFlows(
-                calculationResult?.workFlows?.map((flow, index) => ({
-                    id: index.toString(),
-                    ...flow,
-                }))
-            );
-            setJobActions(calculationResult?.actions);
+            debugger
+            if(calculationResult.id === calculationSessionId){
+                setLoading(false);
+                const currentWorkFlowsCount = calculationResult?.workFlows.length;
+                const totalWorkFlowsCount = calculationResult?.totalWorkFlows;
+                setCalculationProgress({totalWorkFlowsCount: totalWorkFlowsCount,currentWorkFlowsCount:currentWorkFlowsCount} )
+                setWorkFlows(
+                    calculationResult?.workFlows?.map((flow, index) => ({
+                        id: index.toString(),
+                        ...flow,
+                    }))
+                );
+                setJobActions(calculationResult?.actions);
+            }
+            
         }
         
-    },[calculationResult])
+    },[calculationResult,calculationSessionId])
     const selectBtnTypeToAction = (parameter, sectionId, subSectionId) => {
         if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
             setSelectParameterButton({parameter, sectionId, subSectionId});
@@ -336,10 +336,10 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                                     }
                                     
                                 }
-                            }8/
-                            /*if(parameter?.parameterType === EParameterTypes.SWITCH && parameter?.defaultValue === "false"){
-                                isSetDefaultValue = false;
                             }*/
+                            if(parameter?.parameterType === EParameterTypes.SWITCH && parameter?.defaultValue === "false"){
+                                isSetDefaultValue = false;
+                            }
                             if(!isParameterExits && isSetDefaultValue ){
 
                                 if (
@@ -1075,6 +1075,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                 "POST",
                 `/v1/calculation-service/calculations/calculate-product`,
                 {
+                    signalRConnectionId:connectionId,
                     clientId: router?.query?.customerId,
                     clientTypeId: router?.query?.clientTypeId,
                     productId: router?.query?.productId,
@@ -1159,7 +1160,15 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     /*const quantity = generalParameters?.find(
         (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
     );*/
-    const quantity = 0;
+    //const quantity = 0;
+    const quantity = useMemo(()=>{
+        if(subProducts){
+            const generalParameters = subProducts.find(x => !x.type)?.parameters;
+            return generalParameters?.find(
+                (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+            );
+        }
+    },[subProducts])
     const addItemForQuotes = useCallback(async () => {
         console.log(defaultPrice)
         const res = await callApi("POST", `/v1/erp-service/quote/add-item`, currentProductItemValue);
