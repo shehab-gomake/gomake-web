@@ -3,7 +3,7 @@ import {getSetApiData} from "@/services/api-service/get-set-api-data";
 import {EHttpMethod} from "@/services/api-service/enums";
 const GET_EMPLOYEE_URL = '/v1/crm-service/employee/get-all-employees';
 
-const getAndSetEmployees2: ICallAndSetData = async (callApi, setState, data: {isAgent: boolean}) => {
-  return await getSetApiData(callApi, EHttpMethod.GET, GET_EMPLOYEE_URL, setState , data); 
+const getAndSetEmployees2: ICallAndSetData<any, any> = async (callApi, setState, data: {isAgent: boolean}) => {
+  return await getSetApiData<any>(callApi, EHttpMethod.GET, GET_EMPLOYEE_URL, setState , data);
 }  
 export { getAndSetEmployees2 };

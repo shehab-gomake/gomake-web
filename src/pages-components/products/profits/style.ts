@@ -39,7 +39,7 @@ const useStyle = () => {
         padding: convertWidthToVW(10),
         marginBottom: convertWidthToVW(35),
       },
-      //Header Filter Style
+      //DrawerCloseHeader Filter Style
       filterContainer: {
         display: "flex",
         flexDirection: "row" as "row",

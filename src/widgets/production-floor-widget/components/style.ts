@@ -1,10 +1,9 @@
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {useMemo} from "react";
 import {FONT_FAMILY} from "@/utils/font-family";
-import {EStatus} from "@/widgets/production-floor-widget/components/status-btn";
 
 const useStyle = () => {
-    const {theme, primaryColor, warningColor, secondColor, successColor, errorColor} = useGomakeTheme();
+    const {theme, primaryColor} = useGomakeTheme();
     const classes = useMemo(() => {
         return {
             categoryLabel: {
@@ -16,45 +15,25 @@ const useStyle = () => {
             },
             statusLabel: {
                 color: '#FFF',
-                ...FONT_FAMILY.Lexend(500, 14),
+                ...FONT_FAMILY.Lexend(500, 13),
                 width: '100%',
                 textTransform: 'capitalize',
                 justifyContent: 'center',
                 boxSizing: 'border-box',
-                display: 'flex'
-            },
-            statusLabelBg: {
-                [EStatus.WAITING]: {
-                    backgroundColor: warningColor(500),
-                    '&:hover' : {
-                        color: '#FFF',
-                        backgroundColor: warningColor(600)
-                    }
-                },
-                [EStatus.IN_PROCESS]: {
-                    backgroundColor: secondColor(500),
-                    '&:hover' : {
-                        color: '#FFF',
-                        backgroundColor: secondColor(600)
-                    }
-                },
-                [EStatus.DONE]: {
-                    backgroundColor: successColor(500),
-                    '&:hover' : {
-                        color: '#FFF',
-                        backgroundColor: successColor(600)
-                    }
-                },
-                [EStatus.STUCK]: {
-                    backgroundColor: errorColor(500),
-                    '&:hover' : {
-                        color: '#FFF',
-                        backgroundColor: errorColor(600)
-                    }
-                }
+                display: 'flex',
             },
             borderRadius: {
-                borderRadius: '4px',            }
+                borderRadius: '4px',
+            },
+            currentStationBtn: {
+                borderRadius: 0,
+                border: 0,
+                backgroundColor: primaryColor(500),
+                '&:hover': {
+                    backgroundColor: primaryColor(500),
+                    opacity: 0.8
+                }
+            }
         };
     }, [theme]);
     return {

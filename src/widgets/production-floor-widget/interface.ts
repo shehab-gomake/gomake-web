@@ -1,31 +1,85 @@
-import {EStatus} from "@/widgets/production-floor-widget/components/status-btn";
 
 export interface IBoard {
     id: string;
-    currentStation: ICurrentStation;
+    userId: string;
     boardMissionNumber: string;
     orderNumber: string;
-    orderId: string;
     jobName: string;
     productName: string;
     productId: string;
+    currentStation: ICurrentStation;
+    statusId: string;
     clientName: string;
     clientId: string;
-    statusId: EStatus;
     actionDueDate: Date;
     dueDate: Date;
-    creationDate: Date;
+    boardMissionCreatedDate?: Date;
     stationInDate: Date
     tags: string[];
-    workOrder:string;
-    startDate:Date;
-    checked: boolean;
+    productItemValue: any;
+    orderId?: string;
+    workOrder?: string;
+    startDate?: Date;
+    checked?: boolean;
 }
 
-export interface ICurrentStation  {
-    name: string;
+export interface ICurrentStation {
     id: string;
-    actionId: string;
-    machineId: string;
-    employeeId: string;
+    actionId?: string;
+    machineId?: string;
+    employeeId?: string;
+    actionName: string;
+    isLastStation: boolean;
+    machineName: string;
 }
+
+export interface IProductionStatus {
+    count: number;
+    boardMissionStatus: {
+        id: string;
+        name: string;
+        key: string;
+        index: number,
+        textColor: string;
+        backgroundColor: string
+        checked?: boolean;
+        count?:number;
+    }
+}
+
+export interface IProductionFloorFilter {
+    userId?: string;
+    stationId?: string[];
+    employeeId?: string[];
+    fromCreateDate?: Date;
+    toCreateDate?: Date;
+    fromDeliveryTime?: Date;
+    toDeliveryTime?: Date;
+    statusIds?: string[];
+}
+
+export interface IActionMachinesList {
+    actionId: string;
+    actionName: string;
+    machines: {
+        machineId: string;
+        machineName: string;
+    }[];
+}
+
+export interface IBoardMissionStation {
+    id: string;
+    boardMissionId: string;
+    actionId: string;
+    machineId: string | null;
+    employeeId: string | null;
+    index: number;
+    isDone: boolean;
+    inDate: string;
+    outDate: string;
+    inUserId: string;
+    dueDate: string;
+    outUserId: string;
+    statusId: string;
+}
+

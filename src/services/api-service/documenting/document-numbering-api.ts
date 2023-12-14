@@ -5,11 +5,11 @@ const GET_ALL_DOCUMENT_NUMBERS_URL = '/v1/erp-service/documentSettings/get-all-d
 const UPDATE_DOCUMENT_NUMBER_URL = '/v1/erp-service/documentSettings/update-document-numbers';
 
 
-const getAllDocumentNumbersApi: ICallAndSetData = async (callApi, setState) => {
+const getAllDocumentNumbersApi: ICallAndSetData<any, any> = async (callApi, setState) => {
     return  await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_DOCUMENT_NUMBERS_URL, setState)
 }
 
-const updateDocumentNumber: ICallAndSetData = async (callApi, setState, document) => {
+const updateDocumentNumber: ICallAndSetData<any, any> = async (callApi, setState, document) => {
     return  await getSetApiData(callApi, EHttpMethod.POST, UPDATE_DOCUMENT_NUMBER_URL, setState, document);
 }
 export {getAllDocumentNumbersApi , updateDocumentNumber};
