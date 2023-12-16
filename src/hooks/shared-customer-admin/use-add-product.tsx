@@ -1,9 +1,12 @@
-import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { getAndSetProductById } from "@/services/hooks";
+import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
+import { useRecoilState } from "recoil";
+import { v4 as uuidv4 } from "uuid";
+
+import { getAndSetProductById } from "@/services/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { compareStrings } from "@/utils/constants";
 import {
   GraphicIcon,
   HiddenIcon,
@@ -16,11 +19,10 @@ import {
   GomakeTextInput,
   SecondSwitch,
 } from "@/components";
+
 import { useMaterials } from "../use-materials";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { materialsCategoriesState } from "@/store/material-categories";
 import { digitslPriceState } from "./store";
-import { compareStrings } from "@/utils/constants";
+import { EParameterTypes } from "@/enums";
 
 const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
@@ -159,25 +161,34 @@ const useAddProduct = ({ clasess }) => {
 
   const updatedProductParameteName = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
-      await updateProductParameterEndPoint(sectionId, subSectionId, {
-        parameter: {
-          ...parameter,
-          name: changeName?.length ? changeName : parameter.name,
-        },
-      });
-      setChangeName("");
+      if (changeName !== parameter?.name && changeName?.length) {
+        await updateProductParameterEndPoint(sectionId, subSectionId, {
+          parameter: {
+            ...parameter,
+            name: changeName?.length ? changeName : parameter.name,
+          },
+        });
+        setChangeName("");
+      }
     },
     [router, changeName]
   );
   const updatedProductParameteDefaultValue = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
-      await updateProductParameterEndPoint(sectionId, subSectionId, {
-        parameter: {
-          ...parameter,
-          defaultValue: changeDefaultValue?.length && changeDefaultValue,
-        },
-      });
-      setChangeDefaultValue("");
+      if (
+        changeDefaultValue !== parameter?.defaultValue &&
+        changeDefaultValue?.length
+      ) {
+        await updateProductParameterEndPoint(sectionId, subSectionId, {
+          parameter: {
+            ...parameter,
+            defaultValue: changeDefaultValue?.length
+              ? changeDefaultValue
+              : parameter?.defaultValue,
+          },
+        });
+        setChangeDefaultValue("");
+      }
     },
 
     [router, changeDefaultValue]
@@ -471,7 +482,7 @@ const useAddProduct = ({ clasess }) => {
     parameter,
     subSectionParameters
   ) => {
-    if (parameter?.parameterType === 1) {
+    if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
       return (
         <GomakeTextInput
           style={clasess.textInputStyle}
@@ -488,7 +499,7 @@ const useAddProduct = ({ clasess }) => {
           type="number"
         />
       );
-    } else if (parameter?.parameterType === 2) {
+    } else if (parameter?.parameterType === EParameterTypes.INPUT_TEXT) {
       return (
         <GomakeTextInput
           style={clasess.textInputStyle}
@@ -505,7 +516,7 @@ const useAddProduct = ({ clasess }) => {
           }
         />
       );
-    } else if (parameter?.parameterType === 0) {
+    } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
       const defaultObject = parameter.valuesConfigs.find(
         (item) => item.isDefault === true
       );
@@ -566,7 +577,7 @@ const useAddProduct = ({ clasess }) => {
           }}
         />
       );
-    } else if (parameter?.parameterType === 3) {
+    } else if (parameter?.parameterType === EParameterTypes.SWITCH) {
       return (
         <SecondSwitch
           checked={parameter?.defaultValue === "true"}
@@ -580,7 +591,9 @@ const useAddProduct = ({ clasess }) => {
           }}
         />
       );
-    } else if (parameter?.parameterType === 6) {
+    } else if (
+      parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS
+    ) {
       const defaultObject = parameter.valuesConfigs.find(
         (item) => item.isDefault === true
       );
@@ -641,7 +654,7 @@ const useAddProduct = ({ clasess }) => {
           }}
         />
       );
-    } else if (parameter?.parameterType === 5) {
+    } else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
       if (allMaterials?.length > 0) {
         let isDefaultObj = parameter?.valuesConfigs?.find(
           (item) => item.isDefault === true
@@ -688,19 +701,19 @@ const useAddProduct = ({ clasess }) => {
         if (parameter?.materialPath?.length == 1) {
           options = allMaterials?.find((material: any) => {
             return compareStrings(
-              material.pathName,
+              material?.pathName,
               parameter?.materialPath[0]
             );
           })?.data;
-          let x = options?.find(
+          let defaultOptionData = options?.find(
             (item: any) =>
               item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
           );
-          defailtObjectValue = x;
+          defailtObjectValue = defaultOptionData;
         }
         return (
           <GoMakeAutoComplate
-            options={options}
+            options={options?.length > 0 ? options : []}
             placeholder={parameter.name}
             style={clasess.dropDownListStyle}
             defaultValue={defailtObjectValue}
