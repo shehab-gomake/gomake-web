@@ -670,7 +670,6 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     useEffect(() => {
         let temp = [...generalParameters, ...subProductsWithType];
         const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
-        debugger
         if(defaultPrice && defaultPrice?.values && quantity){
             const productItemValue = {
                 supplierId: '',

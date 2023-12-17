@@ -34,7 +34,6 @@ const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps
         getOutSourcingSuppliers();
     }, [])
     useEffect(() => {
-        debugger
         if (!selectedWorkFlow) {
             setView(EPricingViews.OUTSOURCE_WORKFLOW);
         }else if(currentProductItemValue){
@@ -47,7 +46,7 @@ const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps
                     setCurrentProductItemValue(temp)
                 }
             };
-            saveProductItemValueDraft(callApi,callBack,temp,true)
+            saveProductItemValueDraft(callApi,callBack,temp,true).then()
         }
     }, [selectedWorkFlow])
     
