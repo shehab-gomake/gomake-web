@@ -102,6 +102,18 @@ const bookletMachine = (state: Record<string, any>) => {
                 },
             ]
         },
+        {
+            name: "squareSpineOption",
+            label: "machineAttributes.squareSpineOption",
+            type: "switch",
+            placeholder: "machineAttributes.squareSpineOption",
+            required: true,
+            parameterKey: "squareSpineOption",
+            value: state.attributes?.squareSpineOption,
+            options: [],
+            machineInputType: 'input',
+            isValid: true,
+        },
     ]
 }
 

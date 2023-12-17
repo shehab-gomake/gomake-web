@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const bookletMachine = (state: Record<string, any>) => {
     return [
         {
@@ -11,6 +13,33 @@ const bookletMachine = (state: Record<string, any>) => {
             value: state?.attributes?.speed ? state?.attributes?.speed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.speed,
+            unit: EMeasurementUnits.MINUTE
+        },
+        {
+            name: "manualInsert",
+            label: "machineAttributes.manualInsert",
+            type: "switch",
+            placeholder: "machineAttributes.manualInsert",
+            required: true,
+            parameterKey: "manualInsert",
+            options: [],
+            value: state?.attributes?.manualInsert,
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.manualInsert,
+        },
+        {
+            name: "manualInsertSpeed",
+            label: "machineAttributes.manualInsertSpeed",
+            type: "text",
+            placeholder: "machineAttributes.manualInsertSpeed",
+            required: true,
+            parameterKey: "manualInsertSpeed",
+            options: [],
+            value: state?.attributes?.manualInsertSpeed,
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.manualInsertSpeed,
+            disabled: !state?.attributes?.manualInsert,
+            unit: EMeasurementUnits.MINUTE
         },
     ]
 }

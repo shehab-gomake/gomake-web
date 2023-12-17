@@ -6,6 +6,7 @@ import {
 import {MachineDimensionsComponent} from "@/widgets/machines/components/forms/machine-dimensions";
 import {ConnectionComponent} from "@/widgets/machines/components/forms/connection-inputs";
 import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
+import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/other-setting-inputs";
 
 const collectorMachineSteps = (isAdmin: boolean): IStep[] => {
     return isAdmin ?
@@ -14,6 +15,7 @@ const collectorMachineSteps = (isAdmin: boolean): IStep[] => {
             {label: 'machineDimensions', component: MachineDimensionsComponent},
             {label: 'media', component: MediaSettingComponent},
             {label: 'speed', component: SpeedComponent},
+            {label: 'foldingUnit', component: OtherSettingsInputsComponent},
         ] :
         [
             {label: 'basic', component: BasicInputsComponent},
@@ -21,6 +23,7 @@ const collectorMachineSteps = (isAdmin: boolean): IStep[] => {
             {label: 'media', component: MediaSettingComponent},
             {label: 'speed', component: SpeedComponent},
             {label: 'connection', component: ConnectionComponent},
+            {label: 'foldingUnit', component: OtherSettingsInputsComponent},
         ];
 }
 

@@ -9,6 +9,9 @@ export enum EMeasurementUnits {
     MINUTE = 'minute',
     INCH = 'inch',
     SQUARE_METER = 'squareMeter',
+    SQUARE_CM = 'squareCM',
     SETS_HOUR = 'setsHour',
-    SPH = 'sph'
+    SPH = 'sph',
+    PPH = 'pph',
+    BOOK_PH = 'bookPh'
 }
