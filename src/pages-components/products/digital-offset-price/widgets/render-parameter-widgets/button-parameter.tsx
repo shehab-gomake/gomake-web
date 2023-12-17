@@ -1,7 +1,7 @@
 import { GomakePrimaryButton } from "@/components";
 import { EButtonTypes } from "@/enums";
 import { RechooseIcon } from "@/icons";
-import { generalParametersState, materialBtnDataState } from "@/store";
+import { materialBtnDataState, subProductsParametersState } from "@/store";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 const ButtonParameterWidget = ({
@@ -10,21 +10,25 @@ const ButtonParameterWidget = ({
   selectBtnTypeToAction,
   subSection,
   section,
+  index,
 }) => {
   let Comp;
   const materialData = useRecoilValue<any>(materialBtnDataState);
-  const generalParameters = useRecoilValue<any>(generalParametersState);
+  const subProducts = useRecoilValue<any>(subProductsParametersState);
+  const subProductsParameters = subProducts?.find(
+    (x) => x.type === subSection?.type
+  )?.parameters;
   const [isSelectedShape, setIsSelectedShape] = useState<any>();
   const [selectedShape, setSelectedShape] = useState<any>();
   useEffect(() => {
-    const isSelectedShape = generalParameters.find((param) => {
+    const isSelectedShape = subProductsParameters?.find((param) => {
       return (
         param?.parameterId === parameter?.id &&
         param?.actionIndex === parameter?.actionIndex
       );
     });
     setIsSelectedShape(isSelectedShape);
-  }, [generalParameters]);
+  }, [subProductsParameters]);
   useEffect(() => {
     const selectedShape = materialData?.data?.find((data) => {
       return data?.id === isSelectedShape?.valueIds[0];
@@ -46,7 +50,13 @@ const ButtonParameterWidget = ({
           <div
             style={clasess.btnSelectedIconReChoose}
             onClick={() =>
-              selectBtnTypeToAction(parameter, section?.id, subSection?.id)
+              selectBtnTypeToAction(
+                parameter,
+                section?.id,
+                subSection?.id,
+                index,
+                subSection?.type
+              )
             }
           >
             <RechooseIcon />
@@ -58,7 +68,13 @@ const ButtonParameterWidget = ({
         <GomakePrimaryButton
           style={clasess.dynamicBtn}
           onClick={() =>
-            selectBtnTypeToAction(parameter, section?.id, subSection?.id)
+            selectBtnTypeToAction(
+              parameter,
+              section?.id,
+              subSection?.id,
+              index,
+              subSection?.type
+            )
           }
         >
           {parameter?.name}
@@ -70,7 +86,13 @@ const ButtonParameterWidget = ({
       <GomakePrimaryButton
         style={clasess.dynamicBtn}
         onClick={() =>
-          selectBtnTypeToAction(parameter, section?.id, subSection?.id)
+          selectBtnTypeToAction(
+            parameter,
+            section?.id,
+            subSection?.id,
+            index,
+            subSection?.type
+          )
         }
       >
         {parameter?.name}

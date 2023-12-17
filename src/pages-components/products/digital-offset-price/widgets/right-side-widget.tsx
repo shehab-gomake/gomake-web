@@ -1,7 +1,7 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { generalParametersState, isLoadgingState } from "@/store";
-import {Checkbox, CircularProgress, linearProgressClasses, Slider} from "@mui/material";
+import { Checkbox, Slider } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
@@ -9,11 +9,9 @@ import { EWidgetProductType } from "../enums";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { exampleTypeState } from "@/store/example-type";
-import {DotsLoader} from "@/components/dots-loader/dots-Loader";
-import LinearProgress from "@mui/material/LinearProgress";
-import {calculationProgressState} from "@/widgets/product-pricing-widget/state";
-import {styled} from "@mui/material/styles";
-import {ProgressBar} from "@/components/progress-bar/progress-bar";
+import { DotsLoader } from "@/components/dots-loader/dots-Loader";
+import { calculationProgressState } from "@/widgets/product-pricing-widget/state";
+import { ProgressBar } from "@/components/progress-bar/progress-bar";
 
 const RightSideWidget = ({
   clasess,
@@ -37,7 +35,6 @@ const RightSideWidget = ({
   widgetType,
   setPriceRecovery,
   priceRecovery,
-  setSamlleType,
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
   const generalParameters = useRecoilValue<any>(generalParametersState);
@@ -136,16 +133,15 @@ const RightSideWidget = ({
         <div style={clasess.progress}>
           <PermissionCheck userPermission={Permissions.EDIT_PRICE_QUOTE}>
             <Slider
-                defaultValue={defaultPrice}
-                value={defaultPrice}
-                aria-label="Default"
-                style={{ width: "93%", marginLeft: 10 }}
-                min={10}
-                max={100}
-                onChange={handleChange}
+              defaultValue={defaultPrice}
+              value={defaultPrice}
+              aria-label="Default"
+              style={{ width: "93%", marginLeft: 10 }}
+              min={10}
+              max={100}
+              onChange={handleChange}
             />
           </PermissionCheck>
-          
         </div>
         <div style={clasess.labelBrogressContainer}>
           <div style={clasess.labelStyle}>10.00</div>
@@ -157,33 +153,48 @@ const RightSideWidget = ({
           </div>
           <div style={clasess.totalStyle}>
             {isLoading ? (
-                <DotsLoader/>
+              <DotsLoader />
             ) : (
-                    <GomakeTextInput
-                        value={defaultPrice?.values && defaultPrice?.values?.length ? defaultPrice?.values[0] : '-----'}
-                        onChange={(e: any) => {
-                          setPriceRecovery(false);
-                          setDefaultPrice(e.target.value);
-                          setChangePrice(e.target.value);
-                        }}
-                        style={clasess.inputPriceStyle}
-                    />
-                )
-            }
+              <GomakeTextInput
+                value={
+                  defaultPrice?.values && defaultPrice?.values?.length
+                    ? defaultPrice?.values[0]
+                    : "-----"
+                }
+                onChange={(e: any) => {
+                  setPriceRecovery(false);
+                  setDefaultPrice(e.target.value);
+                  setChangePrice(e.target.value);
+                }}
+                style={clasess.inputPriceStyle}
+              />
+            )}
           </div>
           <span style={clasess.totalStyle}>USD</span>
         </div>
-        {
-          calculationProgress && calculationProgress.currentWorkFlowsCount > 0 
-            && calculationProgress.currentWorkFlowsCount !== calculationProgress.totalWorkFlowsCount
-            &&
-            <div style={{marginBottom:'15px'}}>
-              <ProgressBar bottomLeftText={t('products.offsetPrice.admin.loadingOptimalWorkflows')} 
-                           bottomRightText={calculationProgress.currentWorkFlowsCount + "/" + calculationProgress.totalWorkFlowsCount } 
-                           progress={(calculationProgress.currentWorkFlowsCount / calculationProgress.totalWorkFlowsCount)*100}/>
+        {calculationProgress &&
+          calculationProgress.currentWorkFlowsCount > 0 &&
+          calculationProgress.currentWorkFlowsCount !==
+            calculationProgress.totalWorkFlowsCount && (
+            <div style={{ marginBottom: "15px" }}>
+              <ProgressBar
+                bottomLeftText={t(
+                  "products.offsetPrice.admin.loadingOptimalWorkflows"
+                )}
+                bottomRightText={
+                  calculationProgress.currentWorkFlowsCount +
+                  "/" +
+                  calculationProgress.totalWorkFlowsCount
+                }
+                progress={
+                  (calculationProgress.currentWorkFlowsCount /
+                    calculationProgress.totalWorkFlowsCount) *
+                  100
+                }
+              />
             </div>
-        }
-        
+          )}
+
         {widgetType === EWidgetProductType.EDIT ? (
           <div style={clasess.priceRecoveryContainer}>
             <Checkbox
@@ -202,7 +213,9 @@ const RightSideWidget = ({
                       template?.quoteItem?.unitPrice * quantity?.values[0]
                     );
                   } else {
-                    setDefaultPrice(workFlowSelected?.totalPrice?.values[0].toFixed(2));
+                    setDefaultPrice(
+                      workFlowSelected?.totalPrice?.values[0].toFixed(2)
+                    );
                   }
                 }
               }}
@@ -242,7 +255,7 @@ const RightSideWidget = ({
                   getOptionLabel={(option: any) => option.text}
                   placeholder={t("products.offsetPrice.admin.sampleType")}
                   style={clasess.dropDownListStyle}
-                  onChange={(e, value) => setSamlleType(value)}
+                  // onChange={(e, value) => setSamlleType(value)}
                 />
               </div>
               <div style={clasess.multiLineContainer}>
@@ -268,7 +281,7 @@ const RightSideWidget = ({
                   getOptionLabel={(option: any) => option.text}
                   placeholder={t("products.offsetPrice.admin.sampleType")}
                   style={clasess.dropDownListStyle}
-                  onChange={(e, value) => setSamlleType(value)}
+                  // onChange={(e, value) => setSamlleType(value)}
                 />
               </div>
               <div style={clasess.multiLineContainer}>
