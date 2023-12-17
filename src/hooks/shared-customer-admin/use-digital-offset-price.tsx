@@ -581,6 +581,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           selectBtnTypeToAction={selectBtnTypeToAction}
           subSection={subSection}
           section={section}
+          //   index={index}
+          //   onChangeSubProductsForPrice={onChangeSubProductsForPrice}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
@@ -607,9 +609,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         style={{
           display: "flex",
           flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "flex-start",
           flexWrap: "wrap",
+          gap: 10,
         }}
       >
         <div style={clasess.parameterContainer}>
@@ -627,80 +628,82 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           </div>
           <div style={clasess.renderParameterTypeContainer}>{Comp}</div>
         </div>
-        {parameter?.relatedParameters?.length > 0 && inModal && (
-          <div>
-            {parameter.relatedParameters.map((relatedParameter) => {
-              const subProduct = subProducts.find(
-                (x) => x.type === subSection?.type
-              );
-              const parm = subProduct?.parameters?.find(
-                (param) => param.parameterId === parameter.id
-              );
-              const myParameter = list.find(
-                (p) => p.id === relatedParameter.parameterId
-              );
-              if (relatedParameter.activateByAllValues && parm?.values) {
-                return (
-                  <div style={{ marginLeft: 10 }}>
-                    {_renderParameterType(
-                      myParameter,
-                      subSection,
-                      section,
-                      subSection?.parameters,
-                      myParameter?.value,
-                      list,
-                      true
-                    )}
-                  </div>
+        <>
+          {parameter?.relatedParameters?.length > 0 && inModal && (
+            <>
+              {parameter.relatedParameters.map((relatedParameter) => {
+                const subProduct = subProducts.find(
+                  (x) => x.type === subSection?.type
                 );
-              } else {
-                if (
-                  parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST
-                ) {
-                  const valueInArray = relatedParameter.selectedValueIds.find(
-                    (c) => c == parm?.valueIds
+                const parm = subProduct?.parameters?.find(
+                  (param) => param.parameterId === parameter.id
+                );
+                const myParameter = list.find(
+                  (p) => p.id === relatedParameter.parameterId
+                );
+                if (relatedParameter.activateByAllValues && parm?.values) {
+                  return (
+                    <div>
+                      {_renderParameterType(
+                        myParameter,
+                        subSection,
+                        section,
+                        subSection?.parameters,
+                        myParameter?.value,
+                        list,
+                        true
+                      )}
+                    </div>
                   );
-
-                  if (valueInArray) {
-                    return (
-                      <div style={{ marginLeft: 10 }}>
-                        {_renderParameterType(
-                          myParameter,
-                          subSection,
-                          section,
-                          subSection?.parameters,
-                          myParameter?.value,
-                          list,
-                          true
-                        )}
-                      </div>
-                    );
-                  }
                 } else {
-                  const valueInArray = relatedParameter.selectedValueIds.find(
-                    (c) => c == parm?.values
-                  );
-
-                  if (valueInArray && myParameter) {
-                    return (
-                      <div style={{ marginLeft: 10 }}>
-                        {_renderParameterType(
-                          myParameter,
-                          subSection,
-                          section,
-                          subSection?.parameters,
-                          myParameter?.value,
-                          list,
-                          true
-                        )}
-                      </div>
+                  if (
+                    parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST
+                  ) {
+                    const valueInArray = relatedParameter.selectedValueIds.find(
+                      (c) => c == parm?.valueIds
                     );
+
+                    if (valueInArray) {
+                      return (
+                        <div>
+                          {_renderParameterType(
+                            myParameter,
+                            subSection,
+                            section,
+                            subSection?.parameters,
+                            myParameter?.value,
+                            list,
+                            true
+                          )}
+                        </div>
+                      );
+                    }
+                  } else {
+                    const valueInArray = relatedParameter.selectedValueIds.find(
+                      (c) => c == parm?.values
+                    );
+
+                    if (valueInArray && myParameter) {
+                      return (
+                        <div>
+                          {_renderParameterType(
+                            myParameter,
+                            subSection,
+                            section,
+                            subSection?.parameters,
+                            myParameter?.value,
+                            list,
+                            true
+                          )}
+                        </div>
+                      );
+                    }
                   }
                 }
-              }
-            })}
-          </div>
-        )}
+              })}
+            </>
+          )}
+        </>
       </div>
     );
   };

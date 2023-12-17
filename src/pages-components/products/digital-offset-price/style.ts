@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import {adaptPaddingLeft} from "@/utils/adapter";
+import { adaptPaddingLeft } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
   const { primaryColor, secondColor, errorColor, neutralColor } =
@@ -34,8 +34,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        ...adaptPaddingLeft(t('direction'), 20)
-
+        ...adaptPaddingLeft(t("direction"), 20),
       },
       rightSideMainContainer: {
         display: "flex",
@@ -160,6 +159,7 @@ const useStyle = () => {
         gap: 10,
         width: "100%",
         minWidth: 180,
+        maxWidth: 180,
       },
       WastebasketNewStyle: {
         display: "flex",
@@ -199,6 +199,7 @@ const useStyle = () => {
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
+        maxWidth: "180px",
         backgroundColor: "#FFF",
         borderRadius: 4,
       },

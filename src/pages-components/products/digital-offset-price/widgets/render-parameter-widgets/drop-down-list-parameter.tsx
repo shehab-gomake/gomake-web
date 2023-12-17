@@ -32,14 +32,6 @@ const DropDownListParameterWidget = ({
           index !== -1 ? { updateName: temp[index].values } : defaultObject
         }
         onChange={(e: any, value: any) => {
-          // if (parameter?.setSettingIcon) {
-          //   setSelectedValueForSettings({
-          //     parameter,
-          //     subSection,
-          //     section,
-          //   });
-          //   setSelectedValueConfigForSettings(value);
-          // }
           onChangeSubProductsForPrice(
             parameter?.id,
             subSection?.id,
