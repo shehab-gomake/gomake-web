@@ -5,7 +5,6 @@ const SWITCHParameterWidget = ({
   index,
   temp,
   onChangeSubProductsForPrice,
-  onChangeForPrice,
   subSection,
   section,
 }) => {
@@ -17,16 +16,16 @@ const SWITCHParameterWidget = ({
       }
       onChange={(e: any, value: any) => {
         onChangeSubProductsForPrice(
-            parameter?.id,
-            subSection?.id,
-            section?.id,
-            parameter?.parameterType,
-            parameter?.name,
-            parameter?.actionId,
-            { values: value?.toString() },
-            subSection?.type,
-            index,
-            parameter?.actionIndex
+          parameter?.id,
+          subSection?.id,
+          section?.id,
+          parameter?.parameterType,
+          parameter?.name,
+          parameter?.actionId,
+          { values: value?.toString() },
+          subSection?.type,
+          index,
+          parameter?.actionIndex
         );
       }}
     />

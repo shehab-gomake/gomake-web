@@ -8,7 +8,6 @@ const SelectChildParameterWidget = ({
   index,
   temp,
   onChangeSubProductsForPrice,
-  onChangeForPrice,
   subSection,
   section,
 }) => {
@@ -29,16 +28,16 @@ const SelectChildParameterWidget = ({
       }
       onChange={(e: any, value: any) => {
         onChangeSubProductsForPrice(
-            parameter?.id,
-            subSection?.id,
-            section?.id,
-            parameter?.parameterType,
-            parameter?.name,
-            parameter?.actionId,
-            { valueIds: value?.id, values: value?.updateName },
-            subSection?.type,
-            index,
-            parameter?.actionIndex
+          parameter?.id,
+          subSection?.id,
+          section?.id,
+          parameter?.parameterType,
+          parameter?.name,
+          parameter?.actionId,
+          { valueIds: value?.id, values: value?.updateName },
+          subSection?.type,
+          index,
+          parameter?.actionIndex
         );
         let temp = [...generalParameters];
         parameter?.childsParameters.forEach((parameter) => {
