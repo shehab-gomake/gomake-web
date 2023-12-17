@@ -561,42 +561,11 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             setCurrentProductItemValue(productItemValue);
         }
     }, [subProducts,workFlowSelected]);
-    /*useEffect(() => {
-        let temp = [...generalParameters, ...subProductsWithType];
-        const filteredArray = temp.filter((obj) => obj.values[0] !== "false");
-        debugger
-        if(defaultPrice && defaultPrice?.values && quantity){
-            const productItemValue = {
-                supplierId: '',
-                sourceType: workFlowSelected?.actions?.every(action => action?.source === EWorkSource.INTERNAL) ? EWorkSource.INTERNAL : EWorkSource.PARTIALLY,
-                productId: router?.query?.productId,
-                userID: userProfile?.id,
-                customerID: router?.query?.customerId,
-                clientTypeId: router?.query?.clientTypeId,
-                unitPrice: +defaultPrice?.values[0] / +quantity?.values[0],
-                amount: quantity?.values[0],
-                isNeedGraphics: false,
-                isUrgentWork: urgentOrder,
-                printingNotes,
-                graphicNotes,
-                isNeedExample: false,
-                jobDetails: '',
-                itemParmetersValues: itemParmetersValues,
-                workFlow: pricingDefaultValue?.workFlows.length > 0
-                    ? [workFlowSelected]
-                    : template?.workFlows,
-                actions: pricingDefaultValue?.actions?.length > 0
-                    ? pricingDefaultValue?.actions
-                    : template?.actions,
-                outSoucreCost: 0,
-                outSoucreProfit: 0,
-                outSourceFinalPrice: 0,
-            }
-            setCurrentProductItemValue(productItemValue);
-        }
-       
+    useEffect(() => {
+        const allParameters = subProducts.flatMap((item) => item.parameters);
+        const filteredArray = allParameters.filter((obj) => obj.values[0] !== "false");
         setItemParmetersValues(filteredArray);
-    }, [generalParameters, subProductsWithType, subProducts]);*/
+    }, [subProducts]);
     const handleChange =
         (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
             setExpanded(newExpanded ? panel : false);
