@@ -11,6 +11,14 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 20,
+      },
+      headersStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        width: "100%",
+        height: "50px",
+        alignItems: "center"
       }
     };
   }, [theme]);
