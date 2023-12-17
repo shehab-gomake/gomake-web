@@ -46,7 +46,7 @@ const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps
                     setCurrentProductItemValue(temp)
                 }
             };
-            saveProductItemValueDraft(callApi,callBack,temp,true)
+            saveProductItemValueDraft(callApi,callBack,temp,true).then()
         }
     }, [selectedWorkFlow])
     
