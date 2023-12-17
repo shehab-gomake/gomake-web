@@ -1,4 +1,4 @@
-const bookletMachine = (state: Record<string, any>) => {
+const collectorMachine = (state: Record<string, any>) => {
     return [
         {
             name: "foldingUnit",
@@ -13,4 +13,4 @@ const bookletMachine = (state: Record<string, any>) => {
     ];
 }
 
-export {bookletMachine};
+export {collectorMachine};

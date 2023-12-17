@@ -8,6 +8,7 @@ import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 import {ConnectionComponent} from "@/widgets/machines/components/forms/connection-inputs";
 import {CuttingOptions} from "@/widgets/machines/components/forms/cutting-options";
 import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/other-setting-inputs";
+import {MachineRunComponent} from "@/widgets/machines/components/forms/run";
 
 const bookBinderMachineSteps = (isAdmin: boolean): IStep[] => {
  return isAdmin ?
@@ -18,6 +19,8 @@ const bookBinderMachineSteps = (isAdmin: boolean): IStep[] => {
          {label: 'speed',  component: SpeedComponent},
          {label: 'glueSettings',  component: CuttingOptions},
          {label: 'addons',  component: OtherSettingsInputsComponent},
+         {label: 'collectionInsideUnit', component: MachineRunComponent},
+
      ] :
      [
          {label: 'basic',  component: BasicInputsComponent},
@@ -27,6 +30,8 @@ const bookBinderMachineSteps = (isAdmin: boolean): IStep[] => {
          {label: 'connection',  component: ConnectionComponent},
          {label: 'glueSettings',  component: CuttingOptions},
          {label: 'addons',  component: OtherSettingsInputsComponent},
+         {label: 'collectionInsideUnit', component: MachineRunComponent},
+
      ]
 }
 
