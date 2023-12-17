@@ -20,7 +20,7 @@ const inputs = (state)  => {
             options: [],
             value: state?.key,
             isValid: true,
-            readonly: true
+          //  readonly: true
         },
         {
             name: "English",

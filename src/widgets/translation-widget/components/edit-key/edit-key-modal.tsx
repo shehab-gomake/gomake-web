@@ -9,7 +9,7 @@ import { useStyle } from "./style";
 import { Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 
-const TranslationModal = ({ openModal, setOpenModal, label, state, setState, handleEdit , data }: any) => {
+const TranslationModal = ({ openModal, setOpenModal, label, state, setState, handleEdit , data1 , data2 , data3 }: any) => {
     const { t } = useTranslation();
     const { classes } = useStyle()
 
@@ -29,7 +29,7 @@ const TranslationModal = ({ openModal, setOpenModal, label, state, setState, han
                         inputs(state).map(item => <Stack width={"180px"}  ><FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={!!item.readonly} /></Stack>)
                     }
                 </Stack>
-                <SecondaryButton variant="contained" onClick={() => handleEdit(data, state?.path, state?.key, state?.en)} style={classes.addBtnStyle}>{t("materials.buttons.add")}</SecondaryButton>
+                <SecondaryButton variant="contained" onClick={() => handleEdit(data1 , data2 , data3, state)} style={classes.addBtnStyle}>{t("materials.buttons.add")}</SecondaryButton>
             </Stack>
         </GoMakeModal>
 
