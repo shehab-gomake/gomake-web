@@ -14,7 +14,7 @@ import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {InOutSourceSelect} from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
 import {EWorkSource, HtmlElementType, RuleType} from "@/widgets/product-pricing-widget/enums";
 import {useActionUpdateValues} from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
-import {useRecoilState, useRecoilValue} from "recoil";
+import {useRecoilValue} from "recoil";
 import {currentProductItemValueState, outsourceSuppliersState} from "@/widgets/product-pricing-widget/state";
 import {GoMakeAutoComplate} from "@/components";
 import Button from "@mui/material/Button";
@@ -22,7 +22,6 @@ import {useTranslation} from "react-i18next";
 import {PrintImageComponent} from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import {SettingsIcon} from "@/icons/settings";
-import {SettingNavBar, SettingNewIcon} from "@/icons";
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
     delay: number;
@@ -174,7 +173,7 @@ const ActionContainerComponent = ({
                         <div onClick={(e) => e.stopPropagation()}>
                             <InOutSourceSelect value={source} onChange={handleSourceChange}/>
                         </div>
-                        <a href={`/products/profits?actionId=${actionId}&actionName=${actionName}&draftId=${currentProductItemValue.id}`}>
+                        <a href={`/products/profits?actionId=${actionId}&actionName=${actionName}&draftId=${currentProductItemValue?.id}`}>
                             <SettingsIcon
                                 stroke={"rgba(237, 2, 140, 1)"}
                                 width={24}
