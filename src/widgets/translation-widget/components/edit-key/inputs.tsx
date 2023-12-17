@@ -20,7 +20,7 @@ const inputs = (state)  => {
             options: [],
             value: state?.key,
             isValid: true,
-          //  readonly: true
+            readonly: true
         },
         {
             name: "English",
@@ -31,6 +31,17 @@ const inputs = (state)  => {
             options: [],
             value: state?.en,
             isValid: true,
+        },
+        {
+            name: "Arabic",
+            label: "Arabic",
+            type: "text",
+            required: false,
+            parameterKey: "ar",
+            options: [],
+            value: state?.ar,
+            isValid: true,
+            readonly: false
         },
         {
             name: "Hebrew",
@@ -44,13 +55,13 @@ const inputs = (state)  => {
             readonly: false
         },
         {
-            name: "Arabic",
-            label: "Arabic",
+            name: "Deutsche",
+            label: "Deutsche",
             type: "text",
             required: false,
-            parameterKey: "ar",
+            parameterKey: "de",
             options: [],
-            value: state?.ar,
+            value: state?.de,
             isValid: true,
             readonly: false
         },

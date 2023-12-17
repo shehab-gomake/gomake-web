@@ -14,6 +14,7 @@ import { PlusIcon } from '@/icons';
 import { AddButton } from '@/components/button/add-button';
 import { HeaderTitle } from "@/widgets";
 import { fetchS3JsonTranslation } from '@/utils/S3Translation';
+import { useTranslations } from './use-translations';
 
 const NestedAccordion = ({ data, setOpenModal, openModal, state, setState, path = [] }) => {
 
@@ -76,16 +77,21 @@ const NestedAccordion = ({ data, setOpenModal, openModal, state, setState, path 
 };
 
 const TranslationsWidget = () => {
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const [enTranslationFile, setEnTranslationFile] = useState([]);
-  const [heTranslationFile, setHeTranslationFile] = useState([]);
-  const [arTranslationFile, setArTranslationFile] = useState([]);
 
-  const [state, setState] = useState<any>({});
   const { classes } = useStyle()
-
+  const {data,
+    handleEdit,
+    state,
+    setState,
+    openModal,
+    setOpenModal,
+    enTranslationFile, setEnTranslationFile,
+    heTranslationFile, setHeTranslationFile,
+    arTranslationFile, setArTranslationFile,
+    deTranslationFile, setDeTranslationFile} = useTranslations();
+    
   useEffect(() => {
-    const fetchTranslations = async () => {
+    const fetchTranslationFiles = async () => {
         try {
             const english = await fetchS3JsonTranslation("en.json")
             setEnTranslationFile(english);
@@ -93,67 +99,15 @@ const TranslationsWidget = () => {
             setHeTranslationFile(hebrew);
             const arabic = await fetchS3JsonTranslation("ar.json")
             setArTranslationFile(arabic);
+            const deutsche = await fetchS3JsonTranslation("de.json")
+            setDeTranslationFile(deutsche);
         } catch (error) {
-            console.error('Error fetching cities:', error);
+            console.error('Error fetching languages files:', error);
         }
     };
-    fetchTranslations();
+    fetchTranslationFiles();
 }, []);
 
-
-const data = Object.entries(enTranslationFile).map(([label, value]) => {
-    return {
-      label,
-      rows: Object.keys(value).filter((key) => typeof value[key] === 'string'),
-      children: Object.keys(value)
-        .filter((key) => typeof value[key] === 'object' && value[key] !== null)
-        .map((childLabel) => ({
-          label: childLabel,
-          rows: Object.keys(value[childLabel]).filter(
-            (key) => typeof value[childLabel][key] === 'string'
-          ),
-        })),
-    };
-  });
-
-
-
-  const handleEdit = (enFile, arFile, heFile, state) => {
-    const updateFile = (langFile, langKey) => {
-      const newLangFile = { ...langFile };
-      let currentObj = newLangFile;
-  
-      for (const pathKey of state?.path) {
-        currentObj = currentObj[pathKey];
-      }
-  
-      currentObj[state?.key] = state?.[langKey];
-  
-      return newLangFile;
-    };
-  
-    const newEnFile = updateFile(enFile, 'en');
-    const newArFile = updateFile(arFile, 'ar');
-    const newHeFile = updateFile(heFile, 'he');
-  
-    console.log('New English File:', newEnFile);
-    console.log('New Arabic File:', newArFile);
-    console.log('New Hebrew File:', newHeFile);
-  };
-
-  const handleAdd = (data, pathArray, key, newVal) => {
-    const newData = { ...data };
-      let currentObj = newData;
-    for (const pathKey of pathArray) {
-      if (!currentObj[pathKey]) {
-        currentObj[pathKey] = {};
-      }
-      currentObj = currentObj[pathKey];
-    }
-    currentObj[key] = newVal;
-
-    console.log(newData);
-  };
 
   return (
     <div style={classes.mainContainer}>
@@ -162,7 +116,7 @@ const data = Object.entries(enTranslationFile).map(([label, value]) => {
         <AddButton onClick={() =>null } label='add new'></AddButton>
       </div>
       <NestedAccordion data={data} openModal={openModal} setOpenModal={setOpenModal} state={state} setState={setState} />
-      <TranslationModal openModal={openModal} setOpenModal={setOpenModal} label={"Hello"} state={state} setState={setState} handleEdit={handleEdit} data1={enTranslationFile} data2={arTranslationFile} data3={heTranslationFile} />
+      <TranslationModal openModal={openModal} setOpenModal={setOpenModal} state={state} setState={setState}  />
     </div>
   );
 };
