@@ -73,6 +73,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   console.log("subProducts", subProducts);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -235,168 +236,165 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [productTemplate]);
   const [relatedParameters, setRelatedParameters] = useState([]);
   useEffect(() => {
-    if (productTemplate && productTemplate?.sections?.length > 0) {
-      let sectionData: any = cloneDeep(productTemplate?.sections);
-      const newGeneralParameters = [];
-      const typeMap = {};
-      let relatedParametersArray = [];
-      const subProductsArray = [];
-      sectionData.forEach((section) => {
-        section.subSections.forEach((subSection) => {
-          let subProduct = subProductsArray.find(
-            (sub) => sub.type == subSection.type
-          );
-          if (!subProduct) {
-            subProduct = {
-              type: subSection.type,
-              parameters: [],
-              sectionId: section.id,
-              sectionName: section.name,
-            };
-            subProductsArray.push(subProduct);
-          }
-          let temp = [];
-          subSection.parameters
-            .filter((parameter) => !parameter.isHidden)
-            .forEach((parameter) => {
-              parameter.relatedParameters.forEach((x) => {
-                x.sectionId = section.id;
-                x.subSectionId = subSection.id;
-                x?.actionIndex === parameter?.actionIndex;
-              });
-              relatedParametersArray.push(...parameter.relatedParameters);
-              const isParameterExits = subProduct.parameters.find(
-                (param) =>
-                  param.parameterId === parameter?.id &&
-                  param.actionIndex === parameter?.actionIndex
-              );
-              let isSetDefaultValue = true;
-              if (
-                parameter?.parameterType === EParameterTypes.SWITCH &&
-                parameter?.defaultValue === "false"
-              ) {
-                isSetDefaultValue = false;
-              }
-              if (!isParameterExits && isSetDefaultValue) {
+    if (!isSetTemplete) {
+      if (productTemplate && productTemplate?.sections?.length > 0) {
+        let sectionData: any = cloneDeep(productTemplate?.sections);
+        const typeMap = {};
+        let relatedParametersArray = [];
+        const subProductsArray = [];
+        sectionData.forEach((section) => {
+          section.subSections.forEach((subSection) => {
+            let subProduct = subProductsArray.find(
+              (sub) => sub.type == subSection.type
+            );
+            if (!subProduct) {
+              subProduct = {
+                type: subSection.type,
+                parameters: [],
+                sectionId: section.id,
+                sectionName: section.name,
+              };
+              subProductsArray.push(subProduct);
+            }
+            let temp = [];
+            subSection.parameters
+              .filter((parameter) => !parameter.isHidden)
+              .forEach((parameter) => {
+                parameter.relatedParameters.forEach((x) => {
+                  x.sectionId = section.id;
+                  x.subSectionId = subSection.id;
+                  x?.actionIndex === parameter?.actionIndex;
+                });
+                relatedParametersArray.push(...parameter.relatedParameters);
+                const isParameterExits = subProduct.parameters.find(
+                  (param) =>
+                    param.parameterId === parameter?.id &&
+                    param.actionIndex === parameter?.actionIndex
+                );
+                let isSetDefaultValue = true;
                 if (
-                  parameter?.parameterType === EParameterTypes.INPUT_NUMBER ||
-                  parameter?.parameterType === EParameterTypes.INPUT_TEXT ||
-                  parameter?.parameterType === EParameterTypes.SWITCH
+                  parameter?.parameterType === EParameterTypes.SWITCH &&
+                  parameter?.defaultValue === "false"
                 ) {
-                  if (parameter?.defaultValue?.length > 0) {
-                    const defaultValue = parameter?.defaultValue;
-                    subProduct.parameters.push({
-                      parameterId: parameter?.id,
-                      parameterName: parameter?.name,
-                      actionId: parameter?.actionId,
-                      parameterType: parameter?.parameterType,
-                      ...(defaultValue?.length > 0 && {
-                        values: [defaultValue],
-                      }),
-                      sectionId: section?.id,
-                      subSectionId: subSection?.id,
-                      actionIndex: parameter?.actionIndex,
-                    });
-                  }
-                } else if (
-                  parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST
-                ) {
-                  const value = parameter?.valuesConfigs?.find(
-                    (item) => item?.isDefault == true
-                  );
-
-                  if (value) {
-                    const data = materialsEnumsValues.find((item) => {
-                      return compareStrings(
-                        item.name,
-                        parameter?.materialPath[0]
-                      );
-                    });
-                    subProduct.parameters.push({
-                      parameterId: parameter?.id,
-                      parameterName: parameter?.name,
-                      actionId:
-                        value?.activateAction === true
-                          ? parameter?.actionId
-                          : null,
-                      ...(data?.id > 0 && { material: data?.id }),
-                      parameterType: parameter?.parameterType,
-                      ...(value && {
-                        valueIds: [value?.id],
-                        values: [value?.updateName],
-                      }),
-                      sectionId: section?.id,
-                      subSectionId: subSection?.id,
-                      actionIndex: parameter?.actionIndex,
-                    });
-                  }
-                } else if (
-                  parameter?.parameterType ===
-                  EParameterTypes.SELECT_CHILDS_PARAMETERS
-                ) {
-                  const defaultObject = parameter.valuesConfigs.find(
-                    (item) => item.isDefault === true
-                  );
-                  parameter?.childsParameters.forEach((parameter) => {
-                    const parameterId = parameter.id;
-                    if (defaultObject?.values.hasOwnProperty(parameterId)) {
-                      parameter.defaultValue =
-                        defaultObject?.values[parameterId];
-                    }
-                  });
-                  if (defaultObject) {
-                    subProduct.parameters.push({
-                      parameterId: parameter?.id,
-                      parameterName: parameter?.name,
-                      actionId: parameter?.actionId,
-                      parameterType: parameter?.parameterType,
-                      ...(defaultObject && {
-                        valueIds: [defaultObject?.id],
-                        values: [defaultObject?.updateName],
-                      }),
-                      sectionId: section?.id,
-                      subSectionId: subSection?.id,
-                      actionIndex: parameter?.actionIndex,
-                    });
-                    parameter?.childsParameters?.map((item) => {
+                  isSetDefaultValue = false;
+                }
+                if (!isParameterExits && isSetDefaultValue) {
+                  if (
+                    parameter?.parameterType === EParameterTypes.INPUT_NUMBER ||
+                    parameter?.parameterType === EParameterTypes.INPUT_TEXT ||
+                    parameter?.parameterType === EParameterTypes.SWITCH
+                  ) {
+                    if (parameter?.defaultValue?.length > 0) {
+                      const defaultValue = parameter?.defaultValue;
                       subProduct.parameters.push({
-                        parameterId: item?.id,
-                        parameterName: item?.name,
-                        actionId: item?.actionId,
-                        parameterType: item?.parameterType,
-                        values: [item?.defaultValue],
+                        parameterId: parameter?.id,
+                        parameterName: parameter?.name,
+                        actionId: parameter?.actionId,
+                        parameterType: parameter?.parameterType,
+                        ...(defaultValue?.length > 0 && {
+                          values: [defaultValue],
+                        }),
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         actionIndex: parameter?.actionIndex,
                       });
+                    }
+                  } else if (
+                    parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST
+                  ) {
+                    const value = parameter?.valuesConfigs?.find(
+                      (item) => item?.isDefault == true
+                    );
+
+                    if (value) {
+                      const data = materialsEnumsValues.find((item) => {
+                        return compareStrings(
+                          item.name,
+                          parameter?.materialPath[0]
+                        );
+                      });
+                      subProduct.parameters.push({
+                        parameterId: parameter?.id,
+                        parameterName: parameter?.name,
+                        actionId:
+                          value?.activateAction === true
+                            ? parameter?.actionId
+                            : null,
+                        ...(data?.id > 0 && { material: data?.id }),
+                        parameterType: parameter?.parameterType,
+                        ...(value && {
+                          valueIds: [value?.id],
+                          values: [value?.updateName],
+                        }),
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
+                      });
+                    }
+                  } else if (
+                    parameter?.parameterType ===
+                    EParameterTypes.SELECT_CHILDS_PARAMETERS
+                  ) {
+                    const defaultObject = parameter.valuesConfigs.find(
+                      (item) => item.isDefault === true
+                    );
+                    parameter?.childsParameters.forEach((parameter) => {
+                      const parameterId = parameter.id;
+                      if (defaultObject?.values.hasOwnProperty(parameterId)) {
+                        parameter.defaultValue =
+                          defaultObject?.values[parameterId];
+                      }
                     });
+                    if (defaultObject) {
+                      subProduct.parameters.push({
+                        parameterId: parameter?.id,
+                        parameterName: parameter?.name,
+                        actionId: parameter?.actionId,
+                        parameterType: parameter?.parameterType,
+                        ...(defaultObject && {
+                          valueIds: [defaultObject?.id],
+                          values: [defaultObject?.updateName],
+                        }),
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
+                      });
+                      parameter?.childsParameters?.map((item) => {
+                        subProduct.parameters.push({
+                          parameterId: item?.id,
+                          parameterName: item?.name,
+                          actionId: item?.actionId,
+                          parameterType: item?.parameterType,
+                          values: [item?.defaultValue],
+                          sectionId: section?.id,
+                          subSectionId: subSection?.id,
+                          actionIndex: parameter?.actionIndex,
+                        });
+                      });
+                    }
                   }
                 }
-              }
-            });
+              });
 
-          if (temp.length > 0) {
-            if (!typeMap[subSection.type]) {
-              typeMap[subSection.type] = {
-                type: subSection.type,
-                parameters: temp,
-                sectionId: section.id,
-                sectionName: section.name,
-              };
-            } else {
-              typeMap[subSection.type].parameters.push(...temp);
+            if (temp.length > 0) {
+              if (!typeMap[subSection.type]) {
+                typeMap[subSection.type] = {
+                  type: subSection.type,
+                  parameters: temp,
+                  sectionId: section.id,
+                  sectionName: section.name,
+                };
+              } else {
+                typeMap[subSection.type].parameters.push(...temp);
+              }
             }
-          }
+          });
         });
-      });
-      const newSubProducts2 = Object.values(typeMap);
-      const filteredArray = newGeneralParameters.filter(
-        (obj) => obj.values[0] !== "false"
-      );
-      //setGeneralParameters(filteredArray);
-      setSubProducts(subProductsArray);
-      setRelatedParameters(relatedParametersArray);
-      //setIsSetTemplete(true);
+
+        setSubProducts(subProductsArray);
+        setRelatedParameters(relatedParametersArray);
+        setIsSetTemplete(true);
+      }
     }
   }, [materialsEnumsValues, allMaterials, productTemplate]);
 
