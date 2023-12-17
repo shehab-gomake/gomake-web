@@ -19,7 +19,7 @@ import {
 } from "@/store";
 import { useMaterials } from "../use-materials";
 import { digitslPriceState } from "./store";
-import cloneDeep from "lodash.clonedeep";
+import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
 import { userProfileState } from "@/store/user-profile";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
@@ -70,7 +70,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [graphicNotes, setGraphicNotes] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [productTemplate, setProductTemplate] = useState<any>([]);
-  console.log("productTemplateproductTemplate", productTemplate);
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
@@ -171,28 +170,28 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
   }
 
-  const duplicateParameters = (mySubSection: any) => {
-    setProductTemplate((prev) => {
-      let temp = cloneDeep(prev);
-      let myId = mySubSection?.id;
-      let largestIndex = findLargestActionIndex(mySubSection.parameters);
-      const duplicatedParameters = mySubSection.parameters.map((parameter) => {
-        const duplicatedParameter = { ...parameter };
-        duplicatedParameter.actionIndex = largestIndex + 1;
-        return duplicatedParameter;
-      });
-      const uniqueParameters = removeDuplicates(duplicatedParameters);
-      temp.sections.forEach((section) => {
-        section.subSections.forEach((subSection) => {
-          if (subSection.id === myId) {
-            subSection.parameters =
-              subSection.parameters.concat(uniqueParameters);
-          }
-        });
-      });
-
-      return temp;
+  const duplicateParameters = (mySubSection) => {
+    let temp = cloneDeep(productTemplate);
+    let myId = mySubSection?.id;
+    let largestIndex = findLargestActionIndex(mySubSection.parameters);
+    const duplicatedParameters = mySubSection.parameters.map((parameter) => {
+      const duplicatedParameter = { ...parameter };
+      duplicatedParameter.actionIndex = largestIndex + 1;
+      return duplicatedParameter;
     });
+    const uniqueParameters = removeDuplicates(duplicatedParameters);
+    temp.sections.forEach((section) => {
+      section.subSections.forEach((subSection) => {
+        if (subSection.id === myId) {
+          subSection.parameters = cloneDeep(subSection.parameters).concat(
+            uniqueParameters
+          );
+        }
+      });
+    });
+
+    // Update the state with the modified temp object
+    setProductTemplate(temp);
   };
   useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0 && canCalculation) {
@@ -523,8 +522,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         item.subSectionId === subSection?.id &&
         item?.actionIndex === parameter?.actionIndex
     );
-    console.log("temptemptemptemp", { temp, index });
-
     if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
       Comp = (
         <InputNumberParameterWidget
