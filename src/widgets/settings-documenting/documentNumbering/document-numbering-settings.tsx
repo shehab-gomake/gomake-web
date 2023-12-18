@@ -9,12 +9,10 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { useDocumentNumbers } from "./use-documents-numbers";
 import { editDocumentInputs, editDocumentInputs1 } from "./inputs/edit-modal-inputs";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import { useState } from "react";
 const DocumentNumbering = () => {
     const { classes } = useStyle();
-    const { openModal, setOpenModal, document, setDocument, onUpdateDocument } = useDocumentNumbers();
+    const { openModal, setOpenModal, document, setDocument, onUpdateDocument , handleOnClose , setShowTooltip , showTooltip} = useDocumentNumbers();
     const { t } = useTranslation();
-    const [showTooltip, setShowTooltip] = useState(false);
 
     const onChangeInputs = (key, value) => {
         if (key === "value" && value <= document.nextValue) {
@@ -33,7 +31,7 @@ const DocumentNumbering = () => {
                     insideStyle={classes.insideStyle}
                     headerPadding={15}
                     openModal={openModal}
-                    onClose={() => { setOpenModal(false); setShowTooltip(false); }}
+                    onClose={handleOnClose}
                     modalTitle={t("documentingSettings.editDefinition") + " - " + document?.documentName}
                 >
                     <Stack direction={'column'} gap={"20px"} padding={3}>
