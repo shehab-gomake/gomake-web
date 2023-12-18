@@ -59,12 +59,12 @@ export const DateFormatterDDMMYYYY = (date: string) => {
   }
 };
 
-export const DateFormatter = (date: string) => {
-  if (date) {
-    let myDate = date?.split("T")[0];
-    let day = myDate?.split("-")[2];
-    let month = myDate?.split("-")[1];
-    let year = myDate?.split("-")[0];
+export const DateFormatter = (dateTime: string) => {
+  if (dateTime) {
+    let date = dateTime?.split("T")[0];
+    let day = date?.split("-")[2];
+    let month = date?.split("-")[1];
+    let year = date?.split("-")[0];
     return `${day}/${month}/${year}`;
   }
 };

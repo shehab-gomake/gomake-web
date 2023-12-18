@@ -16,9 +16,9 @@ const QuoteLogsWidget = ({ logsTableHeaders }: IQuoteLogsProps) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
     const employeeListValue = useRecoilValue<string[]>(employeesListsState);
-    const [employeeId, setEmployeeId] = useRecoilState<any>(employeeListState);
-    const [selectDate, setSelectDate] = useState<any>();
-    const [activeClickAway, setActiveClickAway] = useState(false);
+    const [employeeId, setEmployeeId] = useRecoilState<string>(employeeListState);
+    const [selectDate, setSelectDate] = useState<string>();
+    const [activeClickAway, setActiveClickAway] = useState<boolean>(false);
     const dateRef = useRef(null);
 
     const handleClickSelectDate = () => {

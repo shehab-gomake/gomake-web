@@ -12,6 +12,7 @@ import {
   getAndSetQuotesByUserId,
 } from "@/services/hooks";
 import {
+  IContactData,
   agentListsState,
   businessListsState,
   clientContactsState,
@@ -44,12 +45,12 @@ const useQuoteNew = () => {
   const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<
     number | null
   >(null);
-  
+
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
   const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
   const [selectedAgent, setSelectedAgent] = useState<any>();
-  const [agentListValue, setAgentListValue] = useRecoilState<any>(agentListsState);
+  const [agentListValue, setAgentListValue] = useRecoilState<{ text: string, value: string }[]>(agentListsState);
   const [isDisplayWidget, setIsDisplayWidget] = useState(false);
   const [items, setItems] = useState([]);
   const [reasonText, setReasonText] = useState("");
@@ -59,7 +60,7 @@ const useQuoteNew = () => {
   const [isUpdateContactName1, setIsUpdateContactName1] = useState(null);
   const [isUpdateContactEmail1, setIsUpdateContactEmail1] = useState(null);
   const [isUpdateContactMobile1, setIsUpdateContactMobile1] = useState(null);
-  const [clientContactsValue, setClientContactsValue] = useRecoilState<any>(clientContactsState);
+  const [clientContactsValue, setClientContactsValue] = useRecoilState<IContactData[]>(clientContactsState);
   const [selectedContact, setSelectedContact] = useState();
   const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
   const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
@@ -157,7 +158,7 @@ const useQuoteNew = () => {
     getAllCustomers();
   }, []);
 
-  const onBlurPurchaseNumber = async (value=5) => {
+  const onBlurPurchaseNumber = async (value = 5) => {
     updatePurchaseNumber(value);
     setIsUpdatePurchaseNumber(null);
   };
@@ -326,7 +327,7 @@ const useQuoteNew = () => {
     getAllClientContacts();
   }, [quoteItemValue]);
 
-  const [displayedItems, setDisplayedItems] = useState(2);
+  const [displayedItems, setDisplayedItems] = useState<number>(2);
   const handleShowMore = () => {
     setDisplayedItems(items.length);
   };

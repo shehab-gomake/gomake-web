@@ -5,7 +5,7 @@ export const employeesListsState = atom<string[]>({
   default: [],
 });
 
-export const employeeListState = atom<any>({
+export const employeeListState = atom<string>({
   key: "employeeListState",
   default: "",
 });
