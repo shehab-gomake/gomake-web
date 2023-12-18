@@ -1,9 +1,11 @@
 import { GomakePrimaryButton } from "@/components";
 import { AddNewIcon } from "@/icons";
 import { WastebasketNew } from "@/icons/wastebasket-new";
+import { subProductsParametersState } from "@/store";
 import cloneDeep from "lodash.clonedeep";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilState } from "recoil";
 
 const SectionMappingWidget = ({
   clasess,
@@ -19,13 +21,11 @@ const SectionMappingWidget = ({
   setTemplate,
 }: any) => {
   const { t } = useTranslation();
-
+  const [subProducts, setSubProducts] = useRecoilState<any>(
+    subProductsParametersState
+  );
   const [groupedParameters, setGroupedParameters] = useState<any>();
   const [groupedParametersArray, setGroupedParametersArray] = useState<any>();
-  console.log("groupedParametersArray", {
-    groupedParametersArray,
-    groupedParameters,
-  });
   useEffect(() => {
     const groupedParameters = subSection?.parameters
       ?.filter((param: any) => !param.isHidden)
@@ -49,29 +49,53 @@ const SectionMappingWidget = ({
       setGroupedParametersArray(Object?.values(groupedParameters));
     }
   }, [groupedParameters]);
+
   const deleteDuplicateSection = (mySectionId, mySubSectionId, index) => {
-    let temp = cloneDeep(template);
-    const myId = subSection?.id;
-    let temp2 = cloneDeep(groupedParametersArray);
-    temp2.splice(index, 1);
-    setGroupedParametersArray(temp2);
+    // 1. Delete the item from groupedParametersArray
+    const updatedGroupedParametersArray = [...groupedParametersArray];
+    updatedGroupedParametersArray.splice(index, 1);
+    // 2. Delete parameters from the template
+    const updatedTemplate = cloneDeep(template);
+    const updatedTemplateCopy = JSON.parse(JSON.stringify(updatedTemplate));
+    const sectionIndex = updatedTemplateCopy.sections.findIndex(
+      (section) => section.id === mySectionId.id
+    );
 
-    let flattenedArray = [].concat(...temp2);
-    const updatedArray = flattenedArray.map((param) => {
-      if (param.actionIndex > index) {
-        return { ...param, actionIndex: param.actionIndex - 1 };
+    if (sectionIndex !== -1) {
+      const subSectionIndex = updatedTemplateCopy.sections[
+        sectionIndex
+      ].subSections.findIndex(
+        (subSection) => subSection.id === mySubSectionId.id
+      );
+
+      if (subSectionIndex !== -1) {
+        updatedTemplateCopy.sections[sectionIndex].subSections[
+          subSectionIndex
+        ].parameters = updatedTemplateCopy.sections[sectionIndex].subSections[
+          subSectionIndex
+        ].parameters.filter((parameter) => parameter.actionIndex !== index);
       }
-      return param;
+    }
+    // 3. Delete parameters from subProducts
+    const updatedSubProducts = subProducts.map((subProduct) => {
+      if (subProduct.type === subSection.type) {
+        return {
+          ...subProduct,
+          parameters: subProduct.parameters
+            .map((parameter) => {
+              if (parameter.actionIndex === index) {
+                return null;
+              }
+              return parameter;
+            })
+            .filter(Boolean),
+        };
+      }
+      return subProduct;
     });
-    temp.sections.forEach((section) => {
-      section.subSections.forEach((subSection) => {
-        if (subSection.id === myId) {
-          subSection.parameters = updatedArray;
-        }
-      });
-    });
-
-    setTemplate(temp);
+    setGroupedParametersArray(updatedGroupedParametersArray);
+    setTemplate(updatedTemplateCopy);
+    setSubProducts(updatedSubProducts);
   };
   return (
     <>
