@@ -1,30 +1,41 @@
+import { useSnackBar } from "@/hooks";
 import { useState } from "react";
 
 const useTranslations = () => {
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const [enTranslationFile, setEnTranslationFile] = useState([]);
-  const [heTranslationFile, setHeTranslationFile] = useState([]);
-  const [arTranslationFile, setArTranslationFile] = useState([]);
-  const [deTranslationFile, setDeTranslationFile] = useState([]);
+  const {alertFaultAdded} = useSnackBar();
   const [state, setState] = useState<any>({});
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openCategoryModal, setOpenCategoryModal] = useState<boolean>(false);
+  const [translationFiles, setTranslationFiles] = useState({
+    en: [],
+    he: [],
+    ar: [],
+    de: [],
+  });
 
-  const handleEdit = (enFile, arFile, heFile, deFile ,state) => {
+  const handleEdit = (translationFiles, state) => {
     const updateFile = (langFile, langKey) => {
       const newLangFile = { ...langFile };
       let currentObj = newLangFile;
-  
+
       for (const pathKey of state?.path) {
         currentObj = currentObj[pathKey];
       }
-      currentObj[state?.key] = state?.[langKey];
-  
+
+      const newValue = state?.[langKey];
+
+      // Check if newValue is not empty before setting the value
+      if (newValue !== undefined && newValue !== null && newValue !== '') {
+        currentObj[state?.key] = newValue;
+      }
+
       return newLangFile;
     };
-  
-    const newEnFile = updateFile(enFile, 'en');
-    const newArFile = updateFile(arFile, 'ar');
-    const newHeFile = updateFile(heFile, 'he');
-    const newDeFile = updateFile(deFile, 'de');
+
+    const newEnFile = updateFile(translationFiles.en, 'en');
+    const newArFile = updateFile(translationFiles.ar, 'ar');
+    const newHeFile = updateFile(translationFiles.he, 'he');
+    const newDeFile = updateFile(translationFiles.de, 'de');
 
     //must replace with updateTranslations Files func
     console.log('New English File:', newEnFile);
@@ -33,21 +44,60 @@ const useTranslations = () => {
     console.log('New Deutsche File:', newDeFile);
   };
 
-  // const handleAdd = (data, pathArray, key, newVal) => {
-  //   const newData = { ...data };
-  //     let currentObj = newData;
-  //   for (const pathKey of pathArray) {
-  //     if (!currentObj[pathKey]) {
-  //       currentObj[pathKey] = {};
-  //     }
-  //     currentObj = currentObj[pathKey];
-  //   }
-  //   currentObj[key] = newVal;
+  const handleAdd = (translationFiles, state) => {
+    const updateFile = (langFile, langKey) => {
+      const newLangFile = { ...langFile };
+      let currentObj = newLangFile;
 
-  //   console.log(newData);
-  // };
+      for (const pathKey of state?.path) {
+        if (!currentObj[pathKey]) {
+          currentObj[pathKey] = {};
+        }
+        currentObj = currentObj[pathKey];
+      }
+
+      const newKey = state?.key;
+      const newValue = state?.[langKey] ?? ''
+
+      if (newValue !== null && newValue !== undefined) {
+        currentObj[newKey] = newValue;
+      }
+      return newLangFile;
+    };
+
+    const newEnFile = updateFile(translationFiles.en, 'en');
+    const newArFile = updateFile(translationFiles.ar, 'ar');
+    const newHeFile = updateFile(translationFiles.he, 'he');
+    const newDeFile = updateFile(translationFiles.de, 'de');
+
+    //must replace with updateTranslations func
+    console.log('New English File:', newEnFile);
+    console.log('New Arabic File:', newArFile);
+    console.log('New Hebrew File:', newHeFile);
+    console.log('New Deutsche File:', newDeFile);
+  };
+
+  const addEmptyBlockToAllFiles = (translationFiles, blockName) => {
+    const addEmptyBlockToFile = (langFile) => {
+      const newLangFile = { ...langFile };
+      // Check if the block already exists
+      if (!newLangFile[blockName]) {
+        // Add the new empty block
+        newLangFile[blockName] = {};
+      } else {
+        alertFaultAdded();
+       }
+      return newLangFile;
+    };
   
-  const data = Object.entries(enTranslationFile).map(([label, value]) => {
+    const newEnFile = addEmptyBlockToFile(translationFiles.en);
+    const newArFile = addEmptyBlockToFile(translationFiles.ar);
+    const newHeFile = addEmptyBlockToFile(translationFiles.he);
+    const newDeFile = addEmptyBlockToFile(translationFiles.de);
+  };
+
+  // format the json data
+  const data = Object.entries(translationFiles.en).map(([label, value]) => {
     return {
       label,
       rows: Object.keys(value).filter((key) => typeof value[key] === 'string'),
@@ -65,14 +115,16 @@ const useTranslations = () => {
   return {
     data,
     handleEdit,
+    handleAdd,
     state,
     setState,
     openModal,
     setOpenModal,
-    enTranslationFile, setEnTranslationFile,
-    heTranslationFile, setHeTranslationFile,
-    arTranslationFile, setArTranslationFile,
-    deTranslationFile, setDeTranslationFile
+    openCategoryModal,
+    setOpenCategoryModal,
+    translationFiles,
+    setTranslationFiles,
+    addEmptyBlockToAllFiles
   };
 };
 

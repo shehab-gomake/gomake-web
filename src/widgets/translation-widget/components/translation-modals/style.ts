@@ -15,6 +15,17 @@ const useStyle = () => {
        position: "fixed" as "fixed",
         bottom: "10px",
       },
+      categoryModalStyle: {
+        paddingLeft: 20,
+        padding: 20,
+        width: "518px",
+        height: "214px"
+      },
+      addButtonStyle: {
+        height: 40,
+        width: "200px",
+        paddingTop: "10px"
+      }
     };
   }, []);
   return {

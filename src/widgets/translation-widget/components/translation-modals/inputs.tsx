@@ -20,7 +20,7 @@ const inputs = (state)  => {
             options: [],
             value: state?.key,
             isValid: true,
-            readonly: true
+            readonly: state?.isEdit
         },
         {
             name: "English",
@@ -65,8 +65,9 @@ const inputs = (state)  => {
             isValid: true,
             readonly: false
         },
-
         
     ];
 }
-export { inputs};
+
+
+export { inputs };

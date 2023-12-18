@@ -9,15 +9,11 @@ import { Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useTranslations } from "../../use-translations";
 
-const TranslationModal = ({ openModal, setOpenModal, state, setState }: any) => {
+const TranslationModal = ({ openModal, setOpenModal, state, setState, translationFiles }: any) => {
     const { t } = useTranslation();
-    const { classes } = useStyle()
-    const {
-        handleEdit,
-        enTranslationFile,
-        heTranslationFile,
-        arTranslationFile,
-        deTranslationFile} = useTranslations();
+    const { classes } = useStyle();
+    const { handleEdit, handleAdd } = useTranslations();
+    const label = state?.isEdit ? t("materials.buttons.edit") : t("materials.buttons.add");
 
     const onChangeInputs = (key, value) => {
         setState({ ...state, [key]: value })
@@ -27,7 +23,7 @@ const TranslationModal = ({ openModal, setOpenModal, state, setState }: any) => 
         <GoMakeModal
             insideStyle={classes.insideStyle}
             openModal={openModal}
-            onClose={() => { setOpenModal(false) }}
+            onClose={() => setOpenModal(false)}
             modalTitle={t("Edit Translation")}>
             <Stack display={"flex"} direction={'column'} marginTop={"10px"} >
                 <Stack display={"flex"} direction={'row'} gap={"25px"} flexWrap={"wrap"}  >
@@ -35,7 +31,13 @@ const TranslationModal = ({ openModal, setOpenModal, state, setState }: any) => 
                         inputs(state).map(item => <Stack width={"180px"}  ><FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={!!item.readonly} /></Stack>)
                     }
                 </Stack>
-                <SecondaryButton variant="contained" onClick={() => handleEdit(enTranslationFile , arTranslationFile , heTranslationFile, deTranslationFile ,state)} style={classes.addBtnStyle}>{t("materials.buttons.edit")}</SecondaryButton>
+                <SecondaryButton
+                    variant="contained"
+                    onClick={() => (state?.isEdit ? handleEdit(translationFiles, state) : handleAdd(translationFiles, state))}
+                    style={classes.addBtnStyle}
+                >
+                    {label}
+                </SecondaryButton>
             </Stack>
         </GoMakeModal>
     );
