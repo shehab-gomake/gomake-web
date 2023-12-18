@@ -74,8 +74,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     subProductsParametersState
   );
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
-  console.log("subProducts", subProducts);
-  console.log("productTemplate", productTemplate);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
   );
@@ -173,6 +171,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }
 
   const duplicateParameters = (mySubSection) => {
+    setEffectExecuted(false);
     let temp = cloneDeep(productTemplate);
     let myId = mySubSection?.id;
     let largestIndex = findLargestActionIndex(mySubSection.parameters);
@@ -241,7 +240,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [productTemplate]);
   const [relatedParameters, setRelatedParameters] = useState([]);
-  console.log("relatedParameters", relatedParameters);
   useEffect(() => {
     if (!isSetTemplete) {
       if (productTemplate && productTemplate?.sections?.length > 0) {
@@ -404,9 +402,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     }
   }, [materialsEnumsValues, allMaterials, productTemplate]);
-
+  const [effectExecuted, setEffectExecuted] = useState(false);
   useEffect(() => {
-    if (productTemplate && productTemplate?.sections?.length > 0) {
+    if (
+      productTemplate &&
+      productTemplate?.sections?.length > 0 &&
+      !effectExecuted
+    ) {
       let product = cloneDeep(productTemplate);
       let sectionData: any = product.sections;
       let relatedParametersArray = [];
@@ -431,6 +433,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       });
       setProductTemplate(product);
       setRelatedParameters(relatedParametersArray);
+      setEffectExecuted(true);
     }
   }, [productTemplate]);
 
@@ -696,7 +699,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     p.id === relatedParameter.parameterId &&
                     p.actionIndex === relatedParameter.actionIndex
                 );
-                console.log("myParameter", { myParameter, parm });
                 if (relatedParameter.activateByAllValues && parm?.values) {
                   return (
                     <div>
@@ -1069,7 +1071,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [subProducts]);
   const addItemForQuotes = useCallback(async () => {
-    console.log(defaultPrice);
     const res = await callApi(
       "POST",
       `/v1/erp-service/quote/add-item`,

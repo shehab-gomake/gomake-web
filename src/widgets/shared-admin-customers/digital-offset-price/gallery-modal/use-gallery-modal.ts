@@ -11,7 +11,6 @@ import { selectedShapeState } from "./gallery-modal-store";
 const useGalleryModal = ({ onClose, onChangeSubProductsForPrice }) => {
   const { callApi } = useGomakeAxios();
   const selectParameterButton = useRecoilValue<any>(selectParameterButtonState);
-  console.log("selectParameterButton", selectParameterButton);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const [selectedShape, setSelectedShape] =
     useRecoilState<any>(selectedShapeState);

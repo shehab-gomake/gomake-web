@@ -1,11 +1,9 @@
 import { GomakePrimaryButton } from "@/components";
 import { AddNewIcon } from "@/icons";
 import { WastebasketNew } from "@/icons/wastebasket-new";
-import { generalParametersState } from "@/store";
 import cloneDeep from "lodash.clonedeep";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState } from "recoil";
 
 const SectionMappingWidget = ({
   clasess,
@@ -21,11 +19,13 @@ const SectionMappingWidget = ({
   setTemplate,
 }: any) => {
   const { t } = useTranslation();
-  const [generalParameters, setGeneralParameters] = useRecoilState<any>(
-    generalParametersState
-  );
+
   const [groupedParameters, setGroupedParameters] = useState<any>();
   const [groupedParametersArray, setGroupedParametersArray] = useState<any>();
+  console.log("groupedParametersArray", {
+    groupedParametersArray,
+    groupedParameters,
+  });
   useEffect(() => {
     const groupedParameters = subSection?.parameters
       ?.filter((param: any) => !param.isHidden)
@@ -55,15 +55,7 @@ const SectionMappingWidget = ({
     let temp2 = cloneDeep(groupedParametersArray);
     temp2.splice(index, 1);
     setGroupedParametersArray(temp2);
-    let myGeneralParameter = cloneDeep(generalParameters);
-    const newArray = myGeneralParameter.filter(
-      (item) =>
-        !(
-          item.sectionId === mySectionId?.id &&
-          item.subSectionId === mySubSectionId?.id &&
-          item.actionIndex === index
-        )
-    );
+
     let flattenedArray = [].concat(...temp2);
     const updatedArray = flattenedArray.map((param) => {
       if (param.actionIndex > index) {
@@ -80,7 +72,6 @@ const SectionMappingWidget = ({
     });
 
     setTemplate(temp);
-    setGeneralParameters(newArray);
   };
   return (
     <>
@@ -98,35 +89,56 @@ const SectionMappingWidget = ({
                   {subSection.name} #{index + 1}
                 </div>
                 <div style={clasess.parametersContainer}>
-                  {item?.map((parameter: any, index2: number) => {
-                    const value = _getParameter(parameter, subSection, section);
-                    return (
-                      <div key={parameter?.id} style={{ display: "flex" }}>
-                        {_renderParameterType(
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      alignItems: "flex-end",
+                      gap: 10,
+                    }}
+                  >
+                    <div>
+                      {item?.map((parameter: any, index2: number) => {
+                        const value = _getParameter(
                           parameter,
                           subSection,
-                          section,
-                          subSection?.parameters,
-                          value,
-                          subSection?.parameters,
-                          true
-                        )}
-                      </div>
-                    );
-                  })}
-                  {groupedParametersArray?.length > 1 && (
-                    <div style={clasess.WastebasketNewStyle}>
-                      <div style={{ width: "100%", height: 21 }} />
-                      <div
-                        style={{ cursor: "pointer" }}
-                        onClick={() =>
-                          deleteDuplicateSection(section, subSection, index)
-                        }
-                      >
-                        <WastebasketNew />
-                      </div>
+                          section
+                        );
+                        return (
+                          <div key={parameter?.id} style={{ display: "flex" }}>
+                            {_renderParameterType(
+                              parameter,
+                              subSection,
+                              section,
+                              subSection?.parameters,
+                              value,
+                              subSection?.parameters,
+                              true
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
-                  )}
+                    <div>
+                      {groupedParametersArray?.length > 1 && (
+                        <div style={clasess.WastebasketNewStyle}>
+                          <div style={{ width: "100%", height: 21 }} />
+                          <div
+                            style={{
+                              cursor: "pointer",
+                              height: 40,
+                            }}
+                            onClick={() =>
+                              deleteDuplicateSection(section, subSection, index)
+                            }
+                          >
+                            <WastebasketNew />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </>
             );

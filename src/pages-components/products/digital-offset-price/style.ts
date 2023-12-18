@@ -167,8 +167,10 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "180px",
-        gap: 10,
         minWidth: 180,
+        maxWidth: 180,
+        // height: 71,
+        gap: 10,
       },
       parameterType3Container: {
         display: "flex",
