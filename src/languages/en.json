@@ -2455,5 +2455,20 @@
     "add": "Add",
     "price": "Price",
     "chooseWorkFlow": "Choose work flow"
+  },
+  "translations" : {
+"title" : "Translations",
+"addNew" : "add new",
+"edit" : "Edit" ,
+"add" : "Add" ,
+"addNewBlock" :"Add new block" ,
+"editTranslation" : "Edit Translation",
+"addTranslation" : "Add Translation",
+"arabic": "Arabic",
+"english": "English",
+"hebrew": "Hebrew",
+"deutsche":"Deutsche",
+"key":"Key",
+"path":"Path"
   }
 }

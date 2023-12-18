@@ -4,20 +4,21 @@ import { useStyle } from './style';
 import { AddButton } from '@/components/button/add-button';
 import { HeaderTitle } from "@/widgets";
 import { fetchS3JsonTranslation } from '@/utils/S3Translation';
-import { useTranslations } from './use-translations';
 import { NestedAccordion } from './components/nested-accordion';
 import { AddBlockModal } from './components/translation-modals/add-block-modal';
+import { useTranslation } from 'react-i18next';
+import { useTranslations } from './use-translations';
 
 const TranslationsWidget = () => {
   const { classes } = useStyle()
+  const { t } = useTranslation();
   const {
     data,
     state,
     setState,
     openModal,
     setOpenModal,
-    openCategoryModal,
-    setOpenCategoryModal,
+    onClickOpenBlockModal,
     translationFiles,
     setTranslationFiles } = useTranslations();
 
@@ -45,12 +46,12 @@ const TranslationsWidget = () => {
   return (
     <div style={classes.mainContainer}>
       <div style={classes.headersStyle}>
-        <HeaderTitle title={"Translations"} />
-        <AddButton onClick={() => setOpenCategoryModal(true)} label='add new'></AddButton>
+        <HeaderTitle title={t("translations.title")} />
+        <AddButton onClick={onClickOpenBlockModal} label={t("translations.addNew")}></AddButton>
       </div>
       <NestedAccordion data={data} openModal={openModal} setOpenModal={setOpenModal} state={state} setState={setState} />
-      <TranslationModal openModal={openModal} setOpenModal={setOpenModal} state={state} setState={setState} translationFiles={translationFiles} />
-      <AddBlockModal openModal={openCategoryModal} setOpenModal={setOpenCategoryModal} state={state} translationFiles={translationFiles}/>
+      <TranslationModal  state={state} setState={setState} translationFiles={translationFiles} />
+      <AddBlockModal translationFiles={translationFiles} />
     </div>
   );
 };

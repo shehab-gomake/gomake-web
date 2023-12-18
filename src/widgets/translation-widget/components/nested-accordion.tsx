@@ -7,8 +7,11 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import { IconButton, Stack } from '@mui/material';
 import { PlusIcon } from '@/icons';
+import { useStyle } from './style';
 
-const NestedAccordion = ({ data, setOpenModal, openModal, state, setState, path = [] }) => {
+const NestedAccordion = ({ data, openModal, setOpenModal, state, setState, path = [] }) => {
+
+    const { classes } = useStyle()
 
     if (!data || data.length === 0) {
         return null;
@@ -58,7 +61,7 @@ const NestedAccordion = ({ data, setOpenModal, openModal, state, setState, path 
                         {item.rows &&
                             item.rows.map((row, rowIndex) => (
                                 <AccordionDetails key={rowIndex}>
-                                    <Stack direction={"row"} justifyContent={"space-between"}>
+                                    <Stack style={classes.accordionRowStyle}>
                                         <Typography>{row}</Typography>
                                         <IconButton onClick={() => handleClickEdit(row, currentPath)}>
                                             <EditIcon />

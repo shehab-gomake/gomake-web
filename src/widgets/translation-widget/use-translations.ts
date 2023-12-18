@@ -1,13 +1,17 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { updateTranslationFilesApi } from "@/services/api-service/aws-s3/update-translations-file";
 import { useState } from "react";
+import { useRecoilState } from "recoil";
+import { translationsBlockModal, translationsModal } from "./components/states/states";
+import { translationState } from "./components/states/interfaces";
 
 const useTranslations = () => {
   const { alertFaultAdded, alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
-  const [state, setState] = useState<any>({});
+  const [state, setState] = useState<translationState>();
   const { callApi } = useGomakeAxios();
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const [openCategoryModal, setOpenCategoryModal] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useRecoilState<boolean>(translationsModal);
+  const [openBlockModal, setOpenBlockModal] = useRecoilState<boolean>(translationsBlockModal);
+
   const [translationFiles, setTranslationFiles] = useState({
     en: [],
     he: [],
@@ -58,7 +62,6 @@ const useTranslations = () => {
       },
     ];
 
-    //must replace with updateTranslations func
     onUpdateTranslationFiles(arrayFiles);
   };
 
@@ -113,14 +116,15 @@ const useTranslations = () => {
   };
 
   const addEmptyBlockToAllFiles = (translationFiles, blockName) => {
+    let isExist = false;
     const addEmptyBlockToFile = (langFile) => {
       const newLangFile = { ...langFile };
       // Check if the block already exists
       if (!newLangFile[blockName]) {
         // Add the new empty block
-        newLangFile[blockName] = [];
+        newLangFile[blockName] = {};
       } else {
-        alertFaultAdded();
+        isExist = true;
       }
       return newLangFile;
     };
@@ -149,11 +153,15 @@ const useTranslations = () => {
       },
     ];
 
-    //must replace with updateTranslations func
-    onUpdateTranslationFiles(arrayFiles);
+    if (isExist) {
+      alertFaultAdded();
+    } else {
+      onUpdateTranslationFiles(arrayFiles);      
+    }
+
   };
 
-  // format the json data
+  // reFormat the json data
   const data = Object.entries(translationFiles.en).map(([label, value]) => {
     return {
       label,
@@ -169,17 +177,33 @@ const useTranslations = () => {
     };
   });
 
-
-
   const onUpdateTranslationFiles = async (updatedTranslationFiles) => {
     const callBack = (data) => {
       if (data.success) {
         alertSuccessUpdate();
+        onClickCloseBlockModal();
+        onClickCloseModal();
       } else {
         alertFaultUpdate();
       }
     }
     await updateTranslationFilesApi(callApi, callBack, updatedTranslationFiles)
+  }
+
+  const onClickOpenBlockModal = () => {
+    setOpenBlockModal(true);
+  }
+
+  const onClickCloseBlockModal = () => {
+    setOpenBlockModal(false);
+  }
+
+  const onClickOpenModal = () => {
+    setOpenModal(true);
+  }
+
+  const onClickCloseModal = () => {
+    setOpenModal(false);
   }
 
   return {
@@ -190,11 +214,15 @@ const useTranslations = () => {
     setState,
     openModal,
     setOpenModal,
-    openCategoryModal,
-    setOpenCategoryModal,
+    openBlockModal,
+    setOpenBlockModal,
     translationFiles,
     setTranslationFiles,
-    addEmptyBlockToAllFiles
+    addEmptyBlockToAllFiles,
+    onClickOpenBlockModal,
+    onClickCloseBlockModal,
+    onClickOpenModal,
+    onClickCloseModal
   };
 };
 

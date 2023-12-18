@@ -2,7 +2,7 @@ const inputs = (state)  => {
     return [
         {
             name: "path",
-            label: "Path",
+            label: "translations.path",
             type: "text",
             required: false,
             parameterKey: "path",
@@ -13,7 +13,7 @@ const inputs = (state)  => {
         },
         {
             name: "Key",
-            label: "Key",
+            label: "translations.key",
             type: "text",
             required: false,
             parameterKey: "key",
@@ -24,7 +24,7 @@ const inputs = (state)  => {
         },
         {
             name: "English",
-            label: "English",
+            label: "translations.english",
             type: "text",
             required: false,
             parameterKey: "en",
@@ -34,7 +34,7 @@ const inputs = (state)  => {
         },
         {
             name: "Arabic",
-            label: "Arabic",
+            label: "translations.arabic",
             type: "text",
             required: false,
             parameterKey: "ar",
@@ -45,7 +45,7 @@ const inputs = (state)  => {
         },
         {
             name: "Hebrew",
-            label: "Hebrew",
+            label: "translations.hebrew",
             type: "text",
             required: false,
             parameterKey: "he",
@@ -56,7 +56,7 @@ const inputs = (state)  => {
         },
         {
             name: "Deutsche",
-            label: "Deutsche",
+            label: "translations.deutsche",
             type: "text",
             required: false,
             parameterKey: "de",

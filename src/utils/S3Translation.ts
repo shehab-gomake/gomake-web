@@ -1,6 +1,8 @@
 const S3Url = "https://gomake-translations.s3.eu-central-1.amazonaws.com/";
-async function  fetchS3JsonTranslation(objKey){
-    const response = await fetch(`${S3Url}${objKey}`);
+
+async function fetchS3JsonTranslation(objKey) {
+    const timestamp = new Date().getTime();
+    const response = await fetch(`${S3Url}${objKey}?timestamp=${timestamp}`);
     const data = await response.json();
     return data;
 }

@@ -4,16 +4,28 @@ import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { GoMakeModal } from "@/components";
 import { inputs } from "./inputs";
-import { useStyle } from "./style";
+import { useStyle } from "../style";
 import { Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useTranslations } from "../../use-translations";
+import { translationState } from "../states/interfaces";
 
-const TranslationModal = ({ openModal, setOpenModal, state, setState, translationFiles }: any) => {
+interface IProps {
+    state: translationState;
+    setState: React.Dispatch<React.SetStateAction<translationState>>;
+    translationFiles: {
+        en: string[];
+        he: string[];
+        ar: string[];
+        de: string[];
+    };
+}
+const TranslationModal = ({ state, setState, translationFiles }: IProps) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
-    const { handleEdit, handleAdd } = useTranslations();
-    const label = state?.isEdit ? t("materials.buttons.edit") : t("materials.buttons.add");
+    const { handleEdit, handleAdd, openModal, onClickCloseModal } = useTranslations();
+    const btnLabel = state?.isEdit ? t("translations.edit") : t("translations.add");
+    const modalTitle = state?.isEdit ? t("translations.editTranslation") : t("translations.addTranslation");
 
     const onChangeInputs = (key, value) => {
         setState({ ...state, [key]: value })
@@ -23,12 +35,12 @@ const TranslationModal = ({ openModal, setOpenModal, state, setState, translatio
         <GoMakeModal
             insideStyle={classes.insideStyle}
             openModal={openModal}
-            onClose={() => setOpenModal(false)}
-            modalTitle={t("Edit Translation")}>
-            <Stack display={"flex"} direction={'column'} marginTop={"10px"} >
-                <Stack display={"flex"} direction={'row'} gap={"25px"} flexWrap={"wrap"}  >
+            onClose={onClickCloseModal}
+            modalTitle={modalTitle}>
+            <Stack style={classes.firstStack} >
+                <Stack style={classes.secondStack} >
                     {
-                        inputs(state).map(item => <Stack width={"180px"}  ><FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={!!item.readonly} /></Stack>)
+                        inputs(state).map(item => <Stack width={"180px"} ><FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={!!item.readonly} /></Stack>)
                     }
                 </Stack>
                 <SecondaryButton
@@ -36,7 +48,7 @@ const TranslationModal = ({ openModal, setOpenModal, state, setState, translatio
                     onClick={() => (state?.isEdit ? handleEdit(translationFiles, state) : handleAdd(translationFiles, state))}
                     style={classes.addBtnStyle}
                 >
-                    {label}
+                    {btnLabel}
                 </SecondaryButton>
             </Stack>
         </GoMakeModal>
