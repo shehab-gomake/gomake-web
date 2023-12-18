@@ -1,9 +1,11 @@
-import { useSnackBar } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { updateTranslationFilesApi } from "@/services/api-service/aws-s3/update-translations-file";
 import { useState } from "react";
 
 const useTranslations = () => {
-  const {alertFaultAdded} = useSnackBar();
+  const { alertFaultAdded, alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [state, setState] = useState<any>({});
+  const { callApi } = useGomakeAxios();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openCategoryModal, setOpenCategoryModal] = useState<boolean>(false);
   const [translationFiles, setTranslationFiles] = useState({
@@ -37,11 +39,27 @@ const useTranslations = () => {
     const newHeFile = updateFile(translationFiles.he, 'he');
     const newDeFile = updateFile(translationFiles.de, 'de');
 
-    //must replace with updateTranslations Files func
-    console.log('New English File:', newEnFile);
-    console.log('New Arabic File:', newArFile);
-    console.log('New Hebrew File:', newHeFile);
-    console.log('New Deutsche File:', newDeFile);
+    const arrayFiles = [
+      {
+        key: "en",
+        file: newEnFile
+      },
+      {
+        key: "ar",
+        file: newArFile
+      },
+      {
+        key: "he",
+        file: newHeFile
+      },
+      {
+        key: "de",
+        file: newDeFile
+      },
+    ];
+
+    //must replace with updateTranslations func
+    onUpdateTranslationFiles(arrayFiles);
   };
 
   const handleAdd = (translationFiles, state) => {
@@ -57,11 +75,12 @@ const useTranslations = () => {
       }
 
       const newKey = state?.key;
-      const newValue = state?.[langKey] ?? ''
+      const newValue = state?.[langKey];
 
-      if (newValue !== null && newValue !== undefined) {
+      if (newValue !== undefined && newValue !== null && newValue !== '') {
         currentObj[newKey] = newValue;
       }
+
       return newLangFile;
     };
 
@@ -70,11 +89,27 @@ const useTranslations = () => {
     const newHeFile = updateFile(translationFiles.he, 'he');
     const newDeFile = updateFile(translationFiles.de, 'de');
 
-    //must replace with updateTranslations func
-    console.log('New English File:', newEnFile);
-    console.log('New Arabic File:', newArFile);
-    console.log('New Hebrew File:', newHeFile);
-    console.log('New Deutsche File:', newDeFile);
+    const arrayFiles = [
+      {
+        key: "en",
+        file: newEnFile
+      },
+      {
+        key: "ar",
+        file: newArFile
+      },
+      {
+        key: "he",
+        file: newHeFile
+      },
+      {
+        key: "de",
+        file: newDeFile
+      },
+    ];
+
+    onUpdateTranslationFiles(arrayFiles);
+
   };
 
   const addEmptyBlockToAllFiles = (translationFiles, blockName) => {
@@ -83,17 +118,39 @@ const useTranslations = () => {
       // Check if the block already exists
       if (!newLangFile[blockName]) {
         // Add the new empty block
-        newLangFile[blockName] = {};
+        newLangFile[blockName] = [];
       } else {
         alertFaultAdded();
-       }
+      }
       return newLangFile;
     };
-  
+
     const newEnFile = addEmptyBlockToFile(translationFiles.en);
     const newArFile = addEmptyBlockToFile(translationFiles.ar);
     const newHeFile = addEmptyBlockToFile(translationFiles.he);
     const newDeFile = addEmptyBlockToFile(translationFiles.de);
+
+    const arrayFiles = [
+      {
+        key: "en",
+        file: newEnFile
+      },
+      {
+        key: "ar",
+        file: newArFile
+      },
+      {
+        key: "he",
+        file: newHeFile
+      },
+      {
+        key: "de",
+        file: newDeFile
+      },
+    ];
+
+    //must replace with updateTranslations func
+    onUpdateTranslationFiles(arrayFiles);
   };
 
   // format the json data
@@ -111,6 +168,19 @@ const useTranslations = () => {
         })),
     };
   });
+
+
+
+  const onUpdateTranslationFiles = async (updatedTranslationFiles) => {
+    const callBack = (data) => {
+      if (data.success) {
+        alertSuccessUpdate();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await updateTranslationFilesApi(callApi, callBack, updatedTranslationFiles)
+  }
 
   return {
     data,

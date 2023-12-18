@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { TranslationModal } from './components/translation-modals/translation -modal';
 import { useStyle } from './style';
 import { AddButton } from '@/components/button/add-button';
