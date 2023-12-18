@@ -75,6 +75,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   console.log("subProducts", subProducts);
+  console.log("productTemplate", productTemplate);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
   );
@@ -178,6 +179,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const duplicatedParameters = mySubSection.parameters.map((parameter) => {
       const duplicatedParameter = { ...parameter };
       duplicatedParameter.actionIndex = largestIndex + 1;
+      if (duplicatedParameter.relatedParameters) {
+        duplicatedParameter.relatedParameters.forEach((relatedParameter) => {
+          relatedParameter.actionIndex = duplicatedParameter.actionIndex;
+        });
+      }
       return duplicatedParameter;
     });
     const uniqueParameters = removeDuplicates(duplicatedParameters);
@@ -235,6 +241,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [productTemplate]);
   const [relatedParameters, setRelatedParameters] = useState([]);
+  console.log("relatedParameters", relatedParameters);
   useEffect(() => {
     if (!isSetTemplete) {
       if (productTemplate && productTemplate?.sections?.length > 0) {
@@ -263,7 +270,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameter.relatedParameters.forEach((x) => {
                   x.sectionId = section.id;
                   x.subSectionId = subSection.id;
-                  x?.actionIndex === parameter?.actionIndex;
+                  x.actionIndex = parameter?.actionIndex;
                 });
                 relatedParametersArray.push(...parameter.relatedParameters);
                 const isParameterExits = subProduct.parameters.find(
@@ -392,11 +399,40 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         });
 
         setSubProducts(subProductsArray);
-        setRelatedParameters(relatedParametersArray);
+        //setRelatedParameters(relatedParametersArray);
         setIsSetTemplete(true);
       }
     }
   }, [materialsEnumsValues, allMaterials, productTemplate]);
+
+  useEffect(() => {
+    if (productTemplate && productTemplate?.sections?.length > 0) {
+      let product = cloneDeep(productTemplate);
+      let sectionData: any = product.sections;
+      let relatedParametersArray = [];
+      sectionData.forEach((section) => {
+        section.subSections.forEach((subSection) => {
+          subSection.parameters
+            .filter((parameter) => !parameter.isHidden)
+            .forEach((parameter) => {
+              parameter.relatedParameters.forEach((x) => {
+                x.sectionId = section.id;
+                x.subSectionId = subSection.id;
+                x.actionIndex = parameter?.actionIndex;
+              });
+              relatedParametersArray.push(...parameter.relatedParameters);
+              if (parameter.relatedParameter) {
+                parameter.relatedParameter.forEach((relatedParameter) => {
+                  relatedParameter.actionIndex = parameter.actionIndex;
+                });
+              }
+            });
+        });
+      });
+      setProductTemplate(product);
+      setRelatedParameters(relatedParametersArray);
+    }
+  }, [productTemplate]);
 
   useEffect(() => {
     if (router?.query?.clientTypeId) {
@@ -651,11 +687,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   (x) => x.type === subSection?.type
                 );
                 const parm = subProduct?.parameters?.find(
-                  (param) => param.parameterId === parameter.id
+                  (param) =>
+                    param.parameterId === parameter.id &&
+                    param.actionIndex === relatedParameter.actionIndex
                 );
                 const myParameter = list.find(
-                  (p) => p.id === relatedParameter.parameterId
+                  (p) =>
+                    p.id === relatedParameter.parameterId &&
+                    p.actionIndex === relatedParameter.actionIndex
                 );
+                console.log("myParameter", { myParameter, parm });
                 if (relatedParameter.activateByAllValues && parm?.values) {
                   return (
                     <div>
