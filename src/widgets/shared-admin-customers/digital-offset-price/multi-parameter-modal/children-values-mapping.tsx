@@ -49,7 +49,7 @@ const ChildrenValuesMapping = ({
                 key={`c${index}_${selectColorValue}`}
                 checked={isChecked}
                 value={isChecked}
-                //disabled={isDisabled() && !checked}
+                disabled={isDisabled}
               />
             </div>
           )}

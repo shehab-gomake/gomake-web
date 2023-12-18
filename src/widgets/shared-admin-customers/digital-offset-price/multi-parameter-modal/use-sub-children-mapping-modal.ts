@@ -20,15 +20,19 @@ const useSubChildMapping = ({
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsCopyParametersState);
   const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue} = userMultiParameterModalValues(settingParameters)
+  const selectColorValue = useRecoilValue<any>(selectColorValueState);
   const ref = useClickAway(() => {
     setIsFocused(false);
   });
   const getSelectedColorParameterValue = ()=>{
-    const subSection = settingParameters.subSection;
-    const subProductType = subSection.type;
-    let subProduct =  subProducts.find(sub => sub.type == subProductType);
-    const colorParameter = settingParameters?.parameter?.settingParameters[0];
-    return subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id && paramValue.values);
+    if(subProducts){
+      const subSection = settingParameters.subSection;
+      const subProductType = subSection.type;
+      let subProduct =  subProducts.find(sub => sub.type == subProductType);
+      const colorParameter = settingParameters?.parameter?.settingParameters[0];
+      return subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id && paramValue.values);
+    }
+    
   }
   const onChangeCheckBox = (e) => {
     let newSubProducts = lodashClonedeep(subProducts);
@@ -52,6 +56,8 @@ const useSubChildMapping = ({
     return false
   }, [subProducts]);
   const textInputValue = useMemo(() => {
+    if(!subProducts)
+      return 
     const subSection = settingParameters.subSection;
     let subProductsCopy = lodashClonedeep(subProducts);
     const subProductType = subSection.type;
@@ -90,6 +96,9 @@ const useSubChildMapping = ({
     setTextInputValue(currentValue);
   };
   const getMaxSelectionValues = () => {
+    if(!subProducts){
+      return;
+    }
     const subSection = settingParameters.subSection;
     const subProductType = subSection.type;
     const subProduct =  subProducts.find(sub => sub.type == subProductType);
@@ -105,10 +114,13 @@ const useSubChildMapping = ({
     return null;
   }
   const isDisabled = useMemo(() => {
+    if(selectColorValue?.selectedParameterValues[0].valueIds.length > 0){
+      return true;
+    }
     const maxSelection = getMaxSelectionValues();
     if(maxSelection){
       const colorParameterValue  = getSelectedColorParameterValue();
-      if(colorParameterValue && colorParameterValue.values){
+      if(colorParameterValue && colorParameterValue.values ){
         const isValueExists = colorParameterValue.values.find(val => val === value.value);
         if(isValueExists)
           return false;

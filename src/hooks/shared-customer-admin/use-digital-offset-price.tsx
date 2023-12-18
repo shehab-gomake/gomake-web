@@ -593,6 +593,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         list,
         inModal: any
     ) => {
+        debugger;
         let Comp;
         /*const parametersArray = subSection?.type
             ? subProducts.flatMap((item) => item.parameters)

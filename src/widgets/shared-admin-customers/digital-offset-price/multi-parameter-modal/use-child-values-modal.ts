@@ -30,18 +30,12 @@ const useChildValuesMapping = ({
     parameters[index].defaultValue
   );
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsCopyParametersState);
-  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue} = userMultiParameterModalValues(settingParameters)
+  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue,getSelectedColorParameterValue} = userMultiParameterModalValues(settingParameters)
 
-  const getSelectedColorParameterValue = ()=>{
-    const subSection = settingParameters.subSection;
-    const subProductType = subSection.type;
-    let subProduct =  subProducts.find(sub => sub.type == subProductType);
-    const colorParameter = settingParameters?.parameter?.settingParameters[0];
-    return subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id && paramValue.values);
-  }
+ 
   const isChecked = useMemo(() => {
     
-    const colorParameterValue  = getSelectedColorParameterValue();
+    const colorParameterValue  = getSelectedColorParameterValue(subProducts);
     if(colorParameterValue){
       if(value.valueId){
         const subData = value.data;
@@ -71,11 +65,14 @@ const useChildValuesMapping = ({
   };
 
   const incrementValue = () => {
-    updateValue(true);
+    let currentValue = valueState as number;
+    currentValue++;
+    setTextInputValue(currentValue);
   };
-
   const decrementValue = () => {
-    updateValue(false);
+    let currentValue = valueState as number; //Double.parse(textInputValue);
+    currentValue--;
+    setTextInputValue(currentValue);
   };
 
   const ref = useClickAway(() => {
@@ -106,19 +103,14 @@ const useChildValuesMapping = ({
   const onChangeText = (e) => {
     setTextInputValue(e.target.value);
   };
-  const isDisabled = () => {
+  const isDisabled = useMemo(()=>{
     let isDisabled = false;
-    if (typeof selectColorValue === "undefined") {
-      isDisabled = true;
-    }
-    if (
-      selectColorValue?.selectedParameterValues[0]?.selectValuesCount <
-      generalParameters[0]?.values?.length + value?.valueId?.length
-    ) {
+    const selectedColorParameterValue  = getSelectedColorParameterValue(subProducts);
+    if (selectColorValue?.selectedParameterValues[0]?.selectValuesCount <= selectedColorParameterValue?.valueIds?.length || (selectColorValue?.selectedParameterValues[0].valueIds && selectColorValue?.selectedParameterValues[0].valueIds.length > 0) ) {
       isDisabled = true;
     }
     return isDisabled;
-  };
+  },[subProducts])
   useEffect(() => {
     const temp = parameters.map((item: any) => ({
       parameterId: item.id,
