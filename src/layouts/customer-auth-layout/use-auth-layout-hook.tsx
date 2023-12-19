@@ -251,18 +251,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
           return <SettingNavBar />;
         },
         isProduction: true,
-      },
-      {
-        isLine: false,
-        key: "translations",
-        title: "Translations",
-        path: "/translations",
-        isList: false,
-        icon: () => {
-          return <GTranslateIcon  style={{color:"white"}}/>;
-        },
-        isProduction: true,
-      },
+      }
     ];
   }, []);
 

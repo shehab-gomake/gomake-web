@@ -1,9 +1,10 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { updateTranslationFilesApi } from "@/services/api-service/aws-s3/update-translations-file";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRecoilState } from "recoil";
 import { translationsBlockModal, translationsModal } from "./components/states/states";
 import { translationState } from "./components/states/interfaces";
+import { getTranslationsExcelFileApi, uploadTranslationsExcelFileApi } from "@/services/api-service/aws-s3/download-upload-excel-translations";
 
 const useTranslations = () => {
   const { alertFaultAdded, alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
@@ -156,7 +157,7 @@ const useTranslations = () => {
     if (isExist) {
       alertFaultAdded();
     } else {
-      onUpdateTranslationFiles(arrayFiles);      
+      onUpdateTranslationFiles(arrayFiles);
     }
 
   };
@@ -188,6 +189,34 @@ const useTranslations = () => {
       }
     }
     await updateTranslationFilesApi(callApi, callBack, updatedTranslationFiles)
+  }
+
+  const downloadExcelFile = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const downloadLink = document.createElement('a');
+        downloadLink.href = res.data.data;
+        downloadLink.download = 'translations.xlsx';
+        downloadLink.click();
+      }
+    };
+    await getTranslationsExcelFileApi(callApi, callBack);
+  };
+
+  const uploadExcelFile = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const arrayBuffer = event.target.result;
+        const data = new Uint8Array(arrayBuffer as ArrayBuffer);
+        // Convert data to a Base64 string
+        const base64String = btoa(String.fromCharCode.apply(null, data));
+        uploadTranslationsExcelFileApi(callApi, () => {
+        }, { base64: base64String })
+      };
+      reader.readAsArrayBuffer(file)
+    }
   }
 
   const onClickOpenBlockModal = () => {
@@ -222,7 +251,9 @@ const useTranslations = () => {
     onClickOpenBlockModal,
     onClickCloseBlockModal,
     onClickOpenModal,
-    onClickCloseModal
+    onClickCloseModal,
+    downloadExcelFile,
+    uploadExcelFile
   };
 };
 

@@ -91,7 +91,8 @@
     "purchase": "Purchase",
     "purchaseOrders": "Orders",
     "purchaseInvoices": "invoices",
-    "supplierPayments": "payments"
+    "supplierPayments": "payments",
+    "translations": "Translations"
   },
   "properties": {
     "parameter": "Parameter",
@@ -1771,7 +1772,8 @@
     "finances": "Finances",
     "productManagement": "Product management",
     "shipmentsSetting": "Shipments setting",
-    "pricingSetting": "Pricing setting"
+    "pricingSetting": "Pricing setting",
+    "translations" : "Translations"
   },
   "customers": {
     "buttons": {
@@ -2469,6 +2471,8 @@
 "hebrew": "Hebrew",
 "deutsche":"Deutsche",
 "key":"Key",
-"path":"Path"
+"path":"Path",
+"download" : "Download",
+"upload":"Upload"
   }
 }

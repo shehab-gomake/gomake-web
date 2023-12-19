@@ -8,6 +8,7 @@ import { NestedAccordion } from './components/nested-accordion';
 import { AddBlockModal } from './components/translation-modals/add-block-modal';
 import { useTranslation } from 'react-i18next';
 import { useTranslations } from './use-translations';
+import { ExcelButtons } from './components/excel-translations-buttons';
 
 const TranslationsWidget = () => {
   const { classes } = useStyle()
@@ -20,7 +21,8 @@ const TranslationsWidget = () => {
     setOpenModal,
     onClickOpenBlockModal,
     translationFiles,
-    setTranslationFiles } = useTranslations();
+    setTranslationFiles
+  } = useTranslations();
 
   useEffect(() => {
     const fetchTranslationFiles = async () => {
@@ -50,8 +52,9 @@ const TranslationsWidget = () => {
         <AddButton onClick={onClickOpenBlockModal} label={t("translations.addNew")}></AddButton>
       </div>
       <NestedAccordion data={data} openModal={openModal} setOpenModal={setOpenModal} state={state} setState={setState} />
-      <TranslationModal  state={state} setState={setState} translationFiles={translationFiles} />
+      <TranslationModal state={state} setState={setState} translationFiles={translationFiles} />
       <AddBlockModal translationFiles={translationFiles} />
+      <ExcelButtons />
     </div>
   );
 };
