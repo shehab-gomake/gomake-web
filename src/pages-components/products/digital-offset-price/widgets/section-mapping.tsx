@@ -20,12 +20,14 @@ const SectionMappingWidget = ({
   template,
   setTemplate,
 }: any) => {
+  console.log("template", template);
   const { t } = useTranslation();
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
   const [groupedParameters, setGroupedParameters] = useState<any>();
   const [groupedParametersArray, setGroupedParametersArray] = useState<any>();
+  console.log("groupedParametersArray", groupedParametersArray);
   useEffect(() => {
     const groupedParameters = subSection?.parameters
       ?.filter((param: any) => !param.isHidden)
@@ -52,8 +54,11 @@ const SectionMappingWidget = ({
 
   const deleteDuplicateSection = (mySectionId, mySubSectionId, index) => {
     // 1. Delete the item from groupedParametersArray
-    const updatedGroupedParametersArray = [...groupedParametersArray];
-    updatedGroupedParametersArray.splice(index, 1);
+
+    const updatedGroupedParametersArray = [...groupedParametersArray].filter(
+      (param, index2) => index2 !== index
+    );
+    // updatedGroupedParametersArray.splice(index, 1);
     // 2. Delete parameters from the template
     const updatedTemplate = cloneDeep(template);
     const updatedTemplateCopy = JSON.parse(JSON.stringify(updatedTemplate));
@@ -67,13 +72,23 @@ const SectionMappingWidget = ({
       ].subSections.findIndex(
         (subSection) => subSection.id === mySubSectionId.id
       );
-
       if (subSectionIndex !== -1) {
+        const updatedArray = updatedTemplateCopy.sections[
+          sectionIndex
+        ].subSections[subSectionIndex].parameters
+          .map((param) => {
+            if (param.actionIndex > index) {
+              return { ...param, actionIndex: param.actionIndex - 1 };
+            } else if (param.actionIndex === index) {
+              return null; // Remove the parameter with actionIndex === index
+            }
+            return param;
+          })
+          .filter(Boolean);
+
         updatedTemplateCopy.sections[sectionIndex].subSections[
           subSectionIndex
-        ].parameters = updatedTemplateCopy.sections[sectionIndex].subSections[
-          subSectionIndex
-        ].parameters.filter((parameter) => parameter.actionIndex !== index);
+        ].parameters = updatedArray;
       }
     }
     // 3. Delete parameters from subProducts
@@ -83,8 +98,10 @@ const SectionMappingWidget = ({
           ...subProduct,
           parameters: subProduct.parameters
             .map((parameter) => {
-              if (parameter.actionIndex === index) {
-                return null;
+              if (parameter.actionIndex > index) {
+                return { ...parameter, actionIndex: parameter.actionIndex - 1 };
+              } else if (parameter.actionIndex === index) {
+                return null; // Remove the parameter with actionIndex === index
               }
               return parameter;
             })
