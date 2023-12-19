@@ -130,7 +130,12 @@ const SectionMappingWidget = ({
                           section
                         );
                         return (
-                          <div key={parameter?.id} style={{ display: "flex" }}>
+                          <div
+                            key={parameter?.id}
+                            style={{
+                              display: "flex",
+                            }}
+                          >
                             {_renderParameterType(
                               parameter,
                               subSection,

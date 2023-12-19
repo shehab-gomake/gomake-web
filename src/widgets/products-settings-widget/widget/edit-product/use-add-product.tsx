@@ -13,7 +13,6 @@ const useAddProduct = () => {
   const [productState, setProductState] = useState<any>([]);
   const onChangeStateProduct = useCallback(
     (filedName: string, value: any) => {
-      console.log("ssss", { filedName, value });
       setProductState((prev) => {
         return {
           ...prev,

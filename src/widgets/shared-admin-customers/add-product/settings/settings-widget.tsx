@@ -39,7 +39,6 @@ const SettingsWidget = ({
   const defultProductSKU = allProductSKU?.find(
     (item) => item.id === productState?.productSKUId
   );
-  console.log("productState", productState);
   const defultTemplate = allTemplate?.find(
     (item) => item.id === productState?.templateId
   );
