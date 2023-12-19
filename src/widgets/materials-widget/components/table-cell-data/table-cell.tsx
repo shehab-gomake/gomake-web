@@ -16,7 +16,8 @@ const TableCellData = ({value, type, isEditable, parameterKey, id, values}: IRow
         await updateCellData(id, parameterKey, !value)
     }
     const onSelectChange = async (event: SyntheticEvent, value) => {
-        await updateCellData(id, parameterKey, value?.value);
+        debugger
+        await updateCellData(id, parameterKey, value?.id);
     }
     switch (type) {
         case EDataTypeEnum.BOOLEAN:
