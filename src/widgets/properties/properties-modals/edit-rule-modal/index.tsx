@@ -25,7 +25,6 @@ const EditRulesModal = ({ openModal, onClose, actionRules,actionId, propertyId, 
 
     const deletePropertyRule =async (ruleId: string) => {
         try{
-            debugger
             await deleteRule(actionId, propertyId,ruleType,ruleId)
         }catch(error){
 

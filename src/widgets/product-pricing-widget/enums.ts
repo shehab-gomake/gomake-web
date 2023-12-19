@@ -19,11 +19,18 @@ export enum RuleType {
 
 export enum EWorkSource {
     INTERNAL,
-    OUT
+    OUT,
+    PARTIALLY,
 }
 
 export enum EOutsourceSupplierStatus {
     NeedApprove = 0,
     Approved,
     Manually
+}
+
+export enum EPricingViews {
+    SELECTED_WORKFLOW,
+    OTHERS_WORKFLOWS,
+    OUTSOURCE_WORKFLOW
 }

@@ -1,19 +1,15 @@
 const bookletMachine = (state: Record<string, any>) => {
     return [
         {
-            name: "squareBackSpaneOption",
-            label: "machineAttributes.squareBackSpaneOption",
+            name: "foldingUnit",
+            label: "machineAttributes.foldingUnit",
             type: "switch",
-            placeholder: "machineAttributes.squareBackSpaneOption",
+            placeholder: "machineAttributes.foldingUnit",
             required: true,
-            parameterKey: "squareBackSpaneOption",
-            value: state.attributes?.squareBackSpaneOption,
-            options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
-            machineInputType: 'input',
-            isValid: true,
+            parameterKey: "foldingUnit",
+            options: [],
+            value: state?.attributes?.foldingUnit
         },
-
-
     ];
 }
 

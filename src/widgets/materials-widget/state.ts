@@ -11,7 +11,8 @@ export const materialHeadersState = atom<{
     value: string;
     filterType: EFilterType
     isFilter: boolean
-    inputType: number
+    inputType: number,
+    values:[]
 }[]>({
     key: "materialHeadersState",
     default: [],

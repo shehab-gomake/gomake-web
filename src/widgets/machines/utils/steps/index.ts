@@ -53,6 +53,7 @@ import {
     rollDigitalEnhancementMachineSteps
 } from "@/widgets/machines/utils/steps/roll-digital-enhancement-machine-steps";
 import {adminActionsMaterialsStep} from "@/widgets/machines/utils/steps/admin-actions-materials-step";
+import {thermalPlateProcessorMachineSteps} from "@/widgets/machines/utils/steps/thermal-plate=processor-steps";
 
 const getSteps = (categoryId: ECategoryId, isAdmin: boolean): IStep[] => {
     let steps: IStep[];
@@ -207,6 +208,8 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean): IStep[] => {
         case ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE:
             steps = rollDigitalEnhancementMachineSteps(isAdmin);
             break;
+        case ECategoryId.THERMAL_PLATE_PROCESSOR:
+            steps = thermalPlateProcessorMachineSteps
     }
     return isAdmin && steps ? [...steps, ...adminActionsMaterialsStep] : steps ? steps : []
 }

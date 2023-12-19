@@ -117,7 +117,8 @@
     "deleteSusuccessfully": "تم الحذف بنجاح",
     "deletefailed": "فشل الحذف",
     "formNotValid": "النموذج غير صالح",
-    "RequiredFields": "حقول مطلوبة مفقودة"
+    "RequiredFields": "حقول مطلوبة مفقودة",
+    "duplicateFailed" : "فشل النسخ"
   },
   "home": {
     "admin": {
@@ -1498,7 +1499,8 @@
         "actions": "الإجراءات",
         "stationName": "اسم المحطة",
         "actionType": "نوع الإجراء",
-        "machine": "الجهاز"
+        "machine": "الجهاز",
+        "loadingOptimalWorkflows": "جارٍ تحميل سير العمل الأمثل..."
       }
     },
     "productManagement": {
@@ -1656,7 +1658,8 @@
       "writeCommentHere": "اكتب تعليقك هنا",
       "attachFiles": "إرفاق ملفات",
       "copyTo": "نسخ إلى",
-      "managerApproval": "موافقة الإدارة"
+      "managerApproval": "موافقة الإدارة",
+      "quoteNumber": "رقم العرض"
     }
   },
   "usersSettings": {
@@ -2163,7 +2166,12 @@
     "mails": "إرسال البريد",
     "addNewAttachment": "إضافة مرفق جديد",
     "sendFrom": "إرسال من البريد الإلكتروني",
-    "noAttachment": "لا توجد مرفقات"
+    "noAttachment": "لا توجد مرفقات",
+    "selectLanguage": "اختر اللغة",
+    "language": "اللغة",
+    "changeLang": "تغيير اللغة",
+    "changeAnyway": "تغيير على أي حال",
+    "changeLangSubTitle": "قد قمت بإجراء تغييرات في محتوى المحرر. إذا كان الأمر كذلك، سيتم تجاهل هذه التغييرات إذا قررت متابعة وتغيير اللغة"
   },
   "partners": {
     "options": {
@@ -2249,5 +2257,22 @@
     "declined": "تم رفضه",
     "blocked": "تم حظره",
     "waitingToApprove": "في انتظار الموافقة"
+  },
+  "pricingWidget": {
+    "selected": "المحدد",
+    "others": "الآخرين",
+    "generalInformation": "معلومات عامة",
+    "cost": "التكلفة",
+    "profit": "الربح",
+    "endTime": "الوقت المتوقع",
+    "finalPrice": "السعر النهائي",
+    "inSource": "داخلي",
+    "outSource": "تفويض",
+    "inOutSource": "داخلي + تفويض",
+    "workFlow": "تدفق العمل",
+    "add": "إضافة",
+    "price": "السعر",
+    "chooseWorkFlow": "حدد تدفق العمل"
   }
+
 }

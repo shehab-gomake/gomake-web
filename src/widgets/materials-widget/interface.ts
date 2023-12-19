@@ -12,6 +12,7 @@ export interface IRowData {
     isEditable: boolean;
     type: EDataTypeEnum;
     valueArray?: string[];
+    values?:string[]
     parameterKey?: string;
     id?: string;
 }

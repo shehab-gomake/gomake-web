@@ -15,7 +15,7 @@ const MultiParameterModal = ({
   _renderParameterType,
 }) => {
   const { clasess } = useStyle();
-  const { parameterLists, onClickSaveParameter, t } = useMultiParameterModal({
+  const { parameterLists, onClickSaveParameter, t,closeModal } = useMultiParameterModal({
     settingParameters,
     onClose,
   });
@@ -29,7 +29,7 @@ const MultiParameterModal = ({
         withClose={false}
       >
         <div style={clasess.mainContainer}>
-          <div style={clasess.closeIcon} onClick={onClose}>
+          <div style={clasess.closeIcon} onClick={closeModal}>
             <Tooltip title={t("modal.close")}>
               <IconButton>
                 <CloseIcon />

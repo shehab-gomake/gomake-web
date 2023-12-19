@@ -2,7 +2,7 @@ import {IBoard} from "@/widgets/production-floor-widget/interface";
 import {DateFormatterDDMMYYYY} from "@/utils/adapter";
 import Stack from "@mui/material/Stack";
 import {useMemo} from "react";
-import {PrimaryTabs, PrimaryTabsComponent} from "@/components/tabs/primary-tabs";
+import {PrimaryTabsComponent} from "@/components/tabs/primary-tabs";
 import {EActivityType} from "@/widgets/production-floor-widget/enums";
 import {ActivitiesComponent, IActivity} from "@/widgets/production-floor-widget/components/activities-component";
 import Button from "@mui/material/Button";

@@ -1,7 +1,7 @@
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useMessageTemplate } from "../../../useMessageTemplate";
 import { useEffect } from "react";
-import { useRecoilState , useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { allSmsTemplateState } from "@/widgets/settings-mailing/states/state";
 
 const TemplateTable = () => {

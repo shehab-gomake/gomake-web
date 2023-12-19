@@ -35,7 +35,7 @@ const StyledInput = styled(InputBase)(({theme}) => {
     }
 });
 const GoMakeSelect = ({options, disabled, onSelectWorkSource, value}: ISelectProps) => {
-    const handleChange = (event: SelectChangeEvent<EWorkSource>, child: ReactNode) => {
+    const handleChange = (event: SelectChangeEvent<EWorkSource>) => {
         onSelectWorkSource(event.target.value as EWorkSource);
     };
     return (
@@ -46,12 +46,8 @@ const GoMakeSelect = ({options, disabled, onSelectWorkSource, value}: ISelectPro
                 '& .MuiSelect-icon': {
                     color: '#5925DC'
                 },
-                '&.Mui-disabled': {
-                    '& .MuiSelect-icon': {
-                        display: 'none'
-                    },
                 }
-            }}
+            }
             value={value}
             onChange={handleChange}
             input={<StyledInput/>}

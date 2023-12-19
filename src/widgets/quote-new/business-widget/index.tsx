@@ -2,17 +2,17 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
+import { useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store";
 
 const BusinessNewWidget = ({
   values,
   selectBusiness,
-  onBlurBusinessName,
-  isUpdateBusinessName,
-  setIsUpdateBusinessName,
-  setSelectBusiness,
-  onBlurPurchaseNumer,
-  isUpdatePurchaseNumer,
-  setIsUpdatePurchaseNumer,
+  onBlurPurchaseNumber,
+  isUpdatePurchaseNumber,
+  setIsUpdatePurchaseNumber,
   onBlurBusinessCode,
   setIsUpdateBusinessCode,
   onBlurAddress,
@@ -24,31 +24,47 @@ const BusinessNewWidget = ({
   isUpdateAgent,
   setIsUpdateAgent,
   updateAgent,
+  onChangeSelectBusiness,
+  onBlurBusinessName,
+  isUpdateBusinessName,
+  setIsUpdateBusinessName,
+  updatePurchaseNumber
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
+  const quoteStateValue = useRecoilValue<any>(quoteItemState);
+  const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
+  const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
+
+  const mappedCustomers = renderOptions().map(customer => ({
+    text: customer?.name,
+    id: customer?.id
+  }));
+
+  //  selected agent here is : agentListValue.find((agent) => agent.value === quoteItemValue?.agentId).text  , but anyway there is a problem when updating "business name" the agent disappeared
+ 
   return (
     <>
-      <div style={clasess.businessContainerStyle}>
-        <InputUpdatedValues
-          value={selectBusiness?.name}
+      <div style={classes.businessContainerStyle}>
+
+        <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
+          value={quoteStateValue?.client?.name} 
+          options={mappedCustomers}
           onBlur={onBlurBusinessName}
           isUpdate={isUpdateBusinessName}
           setIsUpdate={setIsUpdateBusinessName}
-          onInputChange={(e) => setSelectBusiness({ name: e })}
+          getOptionLabel={(item) => item.text}
+          onChange={(e, value) => onChangeSelectBusiness(value)}
+          onChangeTextField={checkWhatRenderArray}
         />
         <InputUpdatedValues
-          value={
-            values?.purchaseNumber !== null
-              ? `${values?.purchaseNumber}`
-              : t("sales.quote.noPurchaseNumber")
-          }
+          value={purchaseNumber}
           label={t("sales.quote.purchaseNumber")}
-          onBlur={onBlurPurchaseNumer}
-          isUpdate={isUpdatePurchaseNumer}
-          setIsUpdate={setIsUpdatePurchaseNumer}
-          onInputChange={(e) => console.log("ddff")}
+          onBlur={() => onBlurPurchaseNumber(purchaseNumber)}
+          isUpdate={isUpdatePurchaseNumber}
+          setIsUpdate={setIsUpdatePurchaseNumber}
+          onInputChange={(v) => setPurchaseNumber(v)}
         />
         <InputUpdatedValues
           value={`${selectBusiness?.code}`}

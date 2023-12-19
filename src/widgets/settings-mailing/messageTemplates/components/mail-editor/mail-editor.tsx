@@ -4,14 +4,17 @@ import { useTranslation } from "react-i18next";
 import * as React from "react";
 import { PdfUploadComponent } from '../upload-file/upload-file';
 import { EditorTYPE } from '../../enums/enum';
-import { smsBodyState, smsSubjectState, smsTemplateState } from '@/widgets/settings-mailing/states/state';
+import {  languageTemplateState, smsBodyState, smsSubjectState, smsTemplateState } from '@/widgets/settings-mailing/states/state';
 import { ISMSTemplate } from '../../interfaces/interface';
 import { mailInputs1, mailInputs2, mailInputs3 } from './inputs';
 import { FormInput } from '@/components/form-inputs/form-input';
 import { IInput } from '@/components/form-inputs/interfaces';
 import { Stack } from '@mui/material';
-import { MyEditor } from './myEditor';
-import { useRecoilState } from "recoil";
+import { QuillEditor } from './quill-editor';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { languagesState } from "@/store/languages";
+import { GoMakeAutoComplate } from "@/components";
+import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplate";
 
 export interface IProps {
     onClickSave: (value: any) => void;
@@ -19,10 +22,12 @@ export interface IProps {
 const EmailSettings = ({ onClickSave }: IProps) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
+    const {onOpenDeleteModal } = useMessageTemplate();
     const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
     const [subject, setSubject] = useRecoilState<string>(smsSubjectState);
     const [body, setBody] = useRecoilState<string>(smsBodyState);
-
+    const languages = useRecoilValue(languagesState);
+    const setLanguageState = useSetRecoilState<string>(languageTemplateState);
 
     const handleUpdateClick = () => {
         const updatedTemplate = {
@@ -42,15 +47,31 @@ const EmailSettings = ({ onClickSave }: IProps) => {
         setState({ ...state, [key]: value })
     }
 
+    const onChangeLanguage =  (e: any, value: {value:string; text:string;}) =>
+    {
+        onOpenDeleteModal(); 
+        setLanguageState(value?.value); 
+    };
+
     return (
         <div style={classes.containerStyle}>
+             <div style={classes.subSection}>
+                <h3 style={classes.subSectionHeader}>{t("mailingSettings.language")}</h3>
+                <GoMakeAutoComplate
+                    options={languages.map(({ text, value }) => ({ ...languages, label: text, value }))}
+                    onChange={(e: any, value: any) => onChangeLanguage(e, value)}
+                    style={classes.dropDownListStyle}
+                    value={!!state.lang ? languages.find((lang) => lang.value === state?.lang)?.text : ''}
+                    disableClearable={true}
+                    placeholder={t("mailingSettings.selectLanguage")}/>  
+            </div>
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.subject")}</h3>
-                <MyEditor headerEditor={EditorTYPE.SUBJECT} ></MyEditor>
+                <QuillEditor headerEditor={EditorTYPE.SUBJECT} ></QuillEditor>
             </div>
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader} >{t("mailingSettings.body")}</h3>
-                <MyEditor headerEditor={EditorTYPE.BODY} ></MyEditor>
+                <QuillEditor headerEditor={EditorTYPE.BODY} ></QuillEditor>
             </div>
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.attachment")}</h3>

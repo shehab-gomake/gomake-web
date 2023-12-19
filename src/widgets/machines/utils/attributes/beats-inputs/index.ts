@@ -6,12 +6,12 @@ import {packageTyingMachine} from "@/widgets/machines/utils/attributes/beats-inp
 import {cartoonPackagingMachine} from "@/widgets/machines/utils/attributes/beats-inputs/cartoon-packaging-machinets";
 import {rollDieCutMachine} from "@/widgets/machines/utils/attributes/beats-inputs/roll-die-cut-machine";
 
-const getCategoryBeatsInputs = (categoryId: string, state: Record<string, any>) => {
+const getCategoryBeatsInputs = (categoryId: string, state: Record<string, any>, printColors?: {value: string, text: string}[]) => {
     switch (categoryId) {
         case ECategoryId.DIGITAL_PRINTING:
-            return digitalPrinting(state);
+            return digitalPrinting(state, printColors);
         case ECategoryId.ROLL_DIGITAL_PRINTING:
-            return digitalPrinting(state);
+            return digitalPrinting(state, printColors);
         case ECategoryId.DIGITAL_ENHANCEMENT_MACHINE:
             return digitalEnhancementMachine(state);
         case ECategoryId.SHRINK_PACKING_MACHINE:

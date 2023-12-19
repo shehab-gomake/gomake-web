@@ -1,8 +1,8 @@
-import axios from "axios";
+import axios, {AxiosRequestConfig} from "axios";
 import config from "@/config";
 import { getUserToken } from "./storage-data";
 // import { clearStorage } from './storage'
-const apiRequest = async (method = "GET", url: string, data: any = {}, language?: string) => {
+const apiRequest = async (method = "GET", url: string, data: any = {}, language?: string, requestAbortController?:AbortController) => {
   try {
     const SERVER = config.api_server;
     // if(safdsa){
@@ -10,11 +10,13 @@ const apiRequest = async (method = "GET", url: string, data: any = {}, language?
     // }
     //const SERVER = 'http://localhost:3010'
     const reqUrl = SERVER + url;
-    const options: any = {
+    const controller = new AbortController();
+    const options: AxiosRequestConfig = {
       method,
       url: reqUrl,
       data,
       responseType: "json",
+      signal:requestAbortController?.signal,
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -30,6 +32,7 @@ const apiRequest = async (method = "GET", url: string, data: any = {}, language?
         ...data,
       };
     }
+    
     const response = await axios(options);
     if (response) {
       if (method === "GET") {

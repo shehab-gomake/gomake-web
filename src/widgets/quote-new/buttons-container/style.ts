@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       writeCommentcontainer: {
         display: "flex",
@@ -68,7 +68,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

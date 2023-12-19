@@ -1,7 +1,7 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { generalParametersState, isLoadgingState } from "@/store";
-import { Checkbox, CircularProgress, Slider } from "@mui/material";
+import {Checkbox, CircularProgress, linearProgressClasses, Slider} from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
@@ -9,6 +9,11 @@ import { EWidgetProductType } from "../enums";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { exampleTypeState } from "@/store/example-type";
+import {DotsLoader} from "@/components/dots-loader/dots-Loader";
+import LinearProgress from "@mui/material/LinearProgress";
+import {calculationProgressState} from "@/widgets/product-pricing-widget/state";
+import {styled} from "@mui/material/styles";
+import {ProgressBar} from "@/components/progress-bar/progress-bar";
 
 const RightSideWidget = ({
   clasess,
@@ -36,6 +41,7 @@ const RightSideWidget = ({
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
   const generalParameters = useRecoilValue<any>(generalParametersState);
+  const calculationProgress = useRecoilValue(calculationProgressState);
   const quantity = generalParameters?.find(
     (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
@@ -151,21 +157,33 @@ const RightSideWidget = ({
           </div>
           <div style={clasess.totalStyle}>
             {isLoading ? (
-              <CircularProgress size={25} style={{ marginRight: 40 }} />
+                <DotsLoader/>
             ) : (
-              <GomakeTextInput
-                value={defaultPrice}
-                onChange={(e: any) => {
-                  setPriceRecovery(false);
-                  setDefaultPrice(e.target.value);
-                  setChangePrice(e.target.value);
-                }}
-                style={clasess.inputPriceStyle}
-              />
-            )}{" "}
-            USD
+                    <GomakeTextInput
+                        value={defaultPrice?.values && defaultPrice?.values?.length ? defaultPrice?.values[0] : '-----'}
+                        onChange={(e: any) => {
+                          setPriceRecovery(false);
+                          setDefaultPrice(e.target.value);
+                          setChangePrice(e.target.value);
+                        }}
+                        style={clasess.inputPriceStyle}
+                    />
+                )
+            }
           </div>
+          <span style={clasess.totalStyle}>USD</span>
         </div>
+        {
+          calculationProgress && calculationProgress.currentWorkFlowsCount > 0 
+            && calculationProgress.currentWorkFlowsCount !== calculationProgress.totalWorkFlowsCount
+            &&
+            <div style={{marginBottom:'15px'}}>
+              <ProgressBar bottomLeftText={t('products.offsetPrice.admin.loadingOptimalWorkflows')} 
+                           bottomRightText={calculationProgress.currentWorkFlowsCount + "/" + calculationProgress.totalWorkFlowsCount } 
+                           progress={(calculationProgress.currentWorkFlowsCount / calculationProgress.totalWorkFlowsCount)*100}/>
+            </div>
+        }
+        
         {widgetType === EWidgetProductType.EDIT ? (
           <div style={clasess.priceRecoveryContainer}>
             <Checkbox
@@ -184,7 +202,7 @@ const RightSideWidget = ({
                       template?.quoteItem?.unitPrice * quantity?.values[0]
                     );
                   } else {
-                    setDefaultPrice(workFlowSelected?.totalPrice.toFixed(2));
+                    setDefaultPrice(workFlowSelected?.totalPrice?.values[0].toFixed(2));
                   }
                 }
               }}

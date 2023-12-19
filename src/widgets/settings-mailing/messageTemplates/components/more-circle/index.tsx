@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { EditingIcon } from "./icons/edit";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
-import { editModalState, smsBodyState, smsSubjectState, smsTemplateState } from "@/widgets/settings-mailing/states/state";
+import { editModalState } from "@/widgets/settings-mailing/states/state";
 import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplate";
 import { useSetRecoilState } from "recoil";
 
@@ -19,14 +19,9 @@ const MoreMenuWidget = ({ id, item }: IProps) => {
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle();
   const { getSmsTemplateById } = useMessageTemplate();
   const setOpenModal = useSetRecoilState<boolean>(editModalState);
-  const setSubject = useSetRecoilState<string>(smsSubjectState);
-  const setBody = useSetRecoilState<string>(smsBodyState);
-
 
   const handleEditClick = async () => {
     await getSmsTemplateById(id);
-    setBody(item?.text);
-    setSubject(item?.title);
     setOpenModal(true);
   };
 

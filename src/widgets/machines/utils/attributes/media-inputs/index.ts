@@ -34,6 +34,10 @@ import {packageTyingMachine} from "@/widgets/machines/utils/attributes/media-inp
 import {cartoonPackagingMachine} from "@/widgets/machines/utils/attributes/media-inputs/cartoon-packaging-machine";
 import {rollMediaSettings} from "@/widgets/machines/utils/attributes/media-inputs/roll-media-settings";
 import {autoBookCuttingMachine} from "@/widgets/machines/utils/attributes/media-inputs/auto-book-cutting-machine";
+import {
+    thermalPlateProcessorMachine
+} from "@/widgets/machines/utils/attributes/media-inputs/thermal-plate-processor-machine";
+import {analogEnhacmentMachine} from "@/widgets/machines/utils/attributes/media-inputs/analog-enhacment-machine";
 
 const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) => {
     switch (categoryId) {
@@ -133,6 +137,10 @@ const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) 
             return rollMediaSettings(state);
         case ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE:
             return rollMediaSettings(state);
+        case ECategoryId.THERMAL_PLATE_PROCESSOR:
+            return thermalPlateProcessorMachine(state);
+        case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
+            return analogEnhacmentMachine(state)
         default:
             return []
     }

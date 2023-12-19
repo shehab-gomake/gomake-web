@@ -49,4 +49,5 @@ export enum ECategoryId {
     ROLL_DIE_CUT_MACHINE = '48',
     ROLL_LAMINATION_MACHINE = '49',
     ROLL_LASER_CUT_MACHINE = '50',
+    THERMAL_PLATE_PROCESSOR = '51'
 }

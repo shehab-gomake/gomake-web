@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { ITab } from "@/components/tabs/interface";
 import { DocumentNumbering } from "./documentNumbering/document-numbering-settings";
-import { EmptyComponent } from "@/widgets/settings/empty-component";
 import { DocumentDesignSetting } from "./documentDesign/document-design-settings";
 
 const SettingsDocumentingWidget = () => {

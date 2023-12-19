@@ -50,7 +50,6 @@ const QuoteWidget = ({ isAdmin = true }) => {
     useEffect(() => {
 
         if (userQuote) {
-            debugger;
             setQuoteId(userQuote.id);
             setquoteNumber(userQuote.number)
             setQuoteIfExist(true);
