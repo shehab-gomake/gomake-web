@@ -1402,6 +1402,8 @@
       "itemName": "Item name",
       "admin": {
         "title": "Profits",
+        "proporties":"Proporties",
+        "OSSettings":"OS settings",
         "chooseAction": "Choose action"
       },
       "pricingListWidget": {

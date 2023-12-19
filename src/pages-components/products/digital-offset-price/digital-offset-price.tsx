@@ -16,6 +16,7 @@ import {
 } from "@/widgets/shared-admin-customers/digital-offset-price";
 import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
+import { Tabs } from "@mui/material";
 
 const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
@@ -81,23 +82,26 @@ const PriceListPageWidget = ({ widgetType }) => {
           <div style={clasess.mainRowContainer}>
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
-                {[...productTemplate?.sections, PricingTab]?.map(
-                  (item, index) => {
-                    return (
-                      <TabsMappingWidget
-                        key={`tab-${index}`}
-                        clasess={clasess}
-                        index={index}
-                        handleTabClick={handleTabClick}
-                        activeIndex={activeIndex}
-                        item={item}
-                        productTemplate={productTemplate}
-                        setProductTemplate={setProductTemplate}
-                      />
-                    );
-                  }
-                )}
+                <Tabs variant="scrollable" scrollButtons={"auto"}>
+                  {[...productTemplate?.sections, PricingTab]?.map(
+                    (item, index) => {
+                      return (
+                        <TabsMappingWidget
+                          key={`tab-${index}`}
+                          clasess={clasess}
+                          index={index}
+                          handleTabClick={handleTabClick}
+                          activeIndex={activeIndex}
+                          item={item}
+                          productTemplate={productTemplate}
+                          setProductTemplate={setProductTemplate}
+                        />
+                      );
+                    }
+                  )}
+                </Tabs>
               </div>
+
               <div style={{ height: 666, overflow: "scroll", width: "100%" }}>
                 <div style={clasess.sectionsContainer}>
                   {[...productTemplate?.sections, PricingTab]?.map(

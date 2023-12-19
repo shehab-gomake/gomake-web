@@ -1378,6 +1378,8 @@
       "itemName": "שם הפריט",
       "admin": {
         "title": "רווחים",
+        "proporties": "מאפיינים",
+        "OSSettings": "הגדרות מערכת ההפעלה",
         "chooseAction": "בחר פעולה"
       },
       "pricingListWidget": {

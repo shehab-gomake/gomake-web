@@ -1378,6 +1378,8 @@
       "itemName": "اسم العنصر",
       "admin": {
         "title": "الأرباح",
+        "proporties": "الخصائص",
+        "OSSettings": "إعدادات النظام",
         "chooseAction": "اختر الإجراء"
       },
       "pricingListWidget": {

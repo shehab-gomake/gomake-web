@@ -1353,6 +1353,8 @@
       "itemName": "Artikelname",
       "admin": {
         "title": "Gewinne",
+        "proporties": "Eigenschaften",
+        "OSSettings": "Betriebssystemeinstellungen",
         "chooseAction": "Aktion auswählen"
       },
       "pricingListWidget": {

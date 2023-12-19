@@ -51,8 +51,6 @@ const useStyle = () => {
         borderRadius: 5,
       },
       rightSideContainer: {
-        // height: "100%",
-        // overflow: "scroll",
         width: "100%",
       },
       tabsContainer: {
@@ -62,6 +60,8 @@ const useStyle = () => {
         alignItems: "center",
         gap: 40,
         marginBottom: 20,
+        width: "100%",
+        maxWidth: 900,
       },
       tabContainer: {
         display: "flex",
@@ -70,14 +70,17 @@ const useStyle = () => {
         alignItems: "flex-start",
         gap: 6,
         cursor: "pointer",
+        width: "fit-content",
       },
       tabNameStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
         color: primaryColor(500),
+        width: "fit-content",
       },
       tabNameActiveStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
         color: secondColor(500),
+        width: "fit-content",
       },
       selectedTabLine: {
         display: "flex",

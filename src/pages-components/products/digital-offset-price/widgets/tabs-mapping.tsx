@@ -1,8 +1,10 @@
 import { AddNewIcon, RemoveIcon } from "@/icons";
 import { _renderActiveIcon, _renderUnActiveIcon } from "@/utils/constants";
 import { DoneIcon } from "@/widgets";
+import { Tab, Tabs } from "@mui/material";
 
 import cloneDeep from "lodash.clonedeep";
+import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const TabsMappingWidget = ({
@@ -53,6 +55,7 @@ const TabsMappingWidget = ({
     temp.sections = temp.sections.filter((x) => x.id !== item.id);
     setProductTemplate(temp);
   };
+
   return (
     <div>
       <div
@@ -82,9 +85,7 @@ const TabsMappingWidget = ({
           <div onClick={() => duplicateSection()}>
             <AddNewIcon />
           </div>
-        ) : (
-          <></>
-        )}
+        ) : null}
         {item.isCanDuplicated && item.index ? (
           <div onClick={() => removeSection()}>
             <RemoveIcon />
