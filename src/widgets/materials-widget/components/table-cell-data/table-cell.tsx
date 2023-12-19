@@ -16,7 +16,6 @@ const TableCellData = ({value, type, isEditable, parameterKey, id, values}: IRow
         await updateCellData(id, parameterKey, !value)
     }
     const onSelectChange = async (event: SyntheticEvent, value) => {
-        debugger
         await updateCellData(id, parameterKey, value?.id);
     }
     switch (type) {
