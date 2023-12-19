@@ -55,7 +55,7 @@ const ProductionFloorWidget = () => {
                 }
             </Stack>
             <Drawer open={open()} anchor={anchor} onClose={handleClose}>
-                <Stack width={'80vw'}>
+                <Stack width={'100vw'} height={'100vh'} zIndex={1999999999999999999999999999999999999999999999999}>
                     <DrawerCloseHeader/>
                     <BoardMissionsWidget/>
                 </Stack>

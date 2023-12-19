@@ -12,7 +12,7 @@ const useBoardMissionDrawer = () => {
     const handleClose = () => {
         replace('/production-floor').then();
     }
-    const anchor: "right" | "bottom" | "left" | "top" = 'right';
+    const anchor: "right" | "bottom" | "left" | "top" = 'bottom';
     return {
         open,
         handleClose,

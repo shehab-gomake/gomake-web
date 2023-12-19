@@ -1,7 +1,6 @@
 import {getSetApiData} from "@/services/api-service/get-set-api-data";
 import {EHttpMethod} from "@/services/api-service/enums";
 import {ICallAndSetData} from "@/services/api-service/interface";
-import {EStatus} from "@/widgets/production-floor-widget/components/status-btn";
 import {IBoardMissions} from "@/widgets/board-mission-widget/interface";
 
 const GET_MORE_BOARDS_MISSIONS_URL = '/v1/erp-service/board-missions/get-more';
@@ -16,7 +15,7 @@ const getMoreBoardMissions: ICallAndSetData<any, any> = async (callApi, setState
 };
 
 
-const updateBoardsMissionsStatusApi: ICallAndSetData<any, any> = async (callApi, setState, data: {boardsIds: string[], statusId: EStatus}) => {
+const updateBoardsMissionsStatusApi: ICallAndSetData<any, any> = async (callApi, setState, data: {boardsIds: string[], statusId: string}) => {
     return  await getSetApiData(callApi, EHttpMethod.POST, UPDATE_WORK_JOB_STATUS_URL, setState, data);
 };
 

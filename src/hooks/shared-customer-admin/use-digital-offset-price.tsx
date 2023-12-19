@@ -76,7 +76,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const [multiParameterModal, setMultiParameterModal] = useState(false);
     const [defaultPrice, setDefaultPrice] = useState<any>("-----");
     const [makeShapeOpen, setMakeShapeOpen] = useState(false);
-   
+
     const [urgentOrder, setUrgentOrder] = useRecoilState(productUrgentWorkState);
     const [printingNotes, setPrintingNotes] = useState("");
     const [graphicNotes, setGraphicNotes] = useState("");
@@ -120,7 +120,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     //const {calculationSessionId} = useCalculationsSessionSignalr();
 
     const [requestAbortController,setRequestAbortController] = useState<AbortController>(null)
-    
+
     useEffect(()=>{
         let copy = lodashClonedeep(subProducts);
         setSubProductsCopy(copy)
@@ -141,9 +141,9 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                 );
                 setJobActions(calculationResult?.actions);
             }
-            
+
         }
-        
+
     },[calculationResult,calculationSessionId])
     const selectBtnTypeToAction = (parameter, sectionId, subSectionId) => {
         if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
@@ -289,7 +289,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     }, [productTemplate]);
     const [relatedParameters, setRelatedParameters] = useState([]);
     //const [isSetTemplete, setIsSetTemplete] = useState(false);
-    useEffect(() => 
+    useEffect(() =>
     {
         debugger;
         if (productTemplate && productTemplate?.sections?.length > 0) {
@@ -583,7 +583,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
 
         return temp[index];
     };
-    
+
     const _renderParameterType = (
         parameter: any,
         subSection: any,
@@ -736,7 +736,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                         {parameter.relatedParameters.map((relatedParameter) => {
                             const subProduct = subProducts.find(x=> x.type === subSection?.type);
                             const parm = subProduct?.parameters?.find(
-                                (param) => param.parameterId === parameter.id 
+                                (param) => param.parameterId === parameter.id
                             );
                             const myParameter = list.find(
                                 (p) => p.id === relatedParameter.parameterId
@@ -913,7 +913,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                                 actionIndex,
                             });
                         }
-                        
+
                     })
                 }
             }
@@ -1034,7 +1034,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         setWorkFlows([]);
         setJobActions([]);
         setCalculationProgress({totalWorkFlowsCount: 0,currentWorkFlowsCount:0} )
-        
+
         let checkParameter = validateParameters(isRequiredParameters);
         if (!!checkParameter) {
             setLoading(true);
