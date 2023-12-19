@@ -107,7 +107,7 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
                         }
                         {input.required && <span style={classes.required}>*</span>}
                     </div>
-                    <div style={classes.input}>
+                    <div style={classes.inputs}>
                         {input.type === "file" ? (
                             <GoMakeFileFiled selectedNameFile={selectedNameFile}/>
                         ) : input.type === "select" ? (
