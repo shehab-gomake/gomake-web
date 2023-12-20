@@ -29,13 +29,10 @@ const AddressModal = ({ isUpdate }: IProps) => {
 
     const handleClick = () => {
         if (isNewAddressState) {
-            console.log("handle click onClickAddNewAddress(addressState, isUpdate) " + addressState)
             onClickAddNewAddress(addressState, isUpdate);
         } else if (isUpdate) {
-            console.log("handle click updateClientAddress(addressState) : " + addressState)
             updateClientAddress(addressState);
         } else {
-            console.log("handle click onClickAddAddress(addressState) : " + addressState)
             onClickAddAddress(addressState);
         }
     };

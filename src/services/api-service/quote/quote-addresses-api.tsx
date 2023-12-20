@@ -15,8 +15,8 @@ const addQuoteAddressApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.POST, ADD_CLIENT_ADDRESS_URL, setState, data);
 }
 
-const deleteQuoteAddressApi: ICallAndSetData = async (callApi, setState, data: { id: string}) => {
-    return await getSetApiData(callApi, EHttpMethod.POST, DELETE_CLIENT_ADDRESS_URL, setState, data);
+const deleteQuoteAddressApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.DELETE, DELETE_CLIENT_ADDRESS_URL, setState, data);
 }
 
 

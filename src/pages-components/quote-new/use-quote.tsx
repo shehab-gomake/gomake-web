@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import lodashClonedeep from "lodash.clonedeep";
 import { useTranslation } from "react-i18next";
-import { useRecoilState , useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
@@ -22,7 +22,6 @@ import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { addressModalState } from "@/widgets/quote-new/business-widget/address-widget/state";
 import { useQuoteGetData } from "./use-quote-get-data";
 import { addQuoteAddressApi, deleteQuoteAddressApi, updateQuoteAddressApi } from "@/services/api-service/quote/quote-addresses-api";
-import { addClientAddressApi } from "@/services/api-service/customers/addresses-api";
 
 const useQuoteNew = () => {
   const {
@@ -675,112 +674,6 @@ const useQuoteNew = () => {
   );
 
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
-   
-
-////////////////////////////////////////////////////////////////////
-
-
-  const updateClientAddress = useCallback(async (item: any) => {
-    console.log("yeesy update addressId" , quoteItemValue?.quoteAddresses[0]?.addressID)
-    console.log("yeesy update id" , quoteItemValue?.quoteAddresses[0]?.id)
-    console.log("yeesy update " , item)
-
-    const res = await callApi(
-      "PUT",
-      `/v1/erp-service/quote/update-quote-address`,
-      {
-        id: quoteItemValue?.quoteAddresses[0]?.id,
-        //addressID: item?.id,
-        addressID: quoteItemValue?.quoteAddresses[0]?.addressID,
-        street: item?.street,
-        city: item?.city,
-        entry: item?.entry,
-        apartment: item?.apartment,
-        notes: item?.notes || "",
-        quoteID: quoteItemValue?.id,
-      }
-    );
-    if (res?.success) {
-      alertSuccessUpdate();
-      getQuote();
-      setOpenModal(false);
-    } else {
-      alertFaultAdded();
-    }
-  }, []);
-
-
-  //   const updateClientAddressLama = async (item: any) => {
-  //   const callBack = (res) => {
-  //     if (res?.success) {
-  //       alertSuccessUpdate();
-  //       getQuote();
-  //       setOpenModal(false);
-  //     } else {
-  //       alertFaultAdded();
-  //     }
-  //   }
-  //   await updateQuoteAddressApi(callApi, callBack, 
-  //     {
-  //       quoteID: quoteItemValue?.id,
-  //       id: quoteItemValue?.quoteAddresses[0]?.id,
-  //       addressID: item?.id,
-  //       street: item?.street,
-  //       city: item?.city,
-  //       entry: item?.entry,
-  //       apartment: item?.apartment,
-  //       notes: item?.notes || "",
-  //     })
-  // }
-
-  const onClickAddAddress = useCallback(async (item: any) => {
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/quote/add-quote-address`,
-      {
-        quoteID: quoteItemValue?.id,
-        addressID: item?.id,
-        street: item?.street,
-        city: item?.city,
-        entry: item?.entry,
-        apartment: item?.apartment,
-        notes: item?.notes || "",
-      }
-    );
-    if (res?.success) {
-      alertSuccessAdded();
-      getQuote();
-      setOpenModal(false);
-    } else {
-      alertFaultAdded();
-    }
-  }, [quoteItemValue]);
-
-
-  // const onClickAddAddressLama = async (item: any) => {
-  //   const callBack = (res) => {
-  //     if (res.success) {
-  //       alertSuccessAdded();
-  //       getQuote();
-  //       setOpenModal(false);
-  //     }
-  //     else {
-  //       alertFaultAdded();
-  //     }
-  //   }
-  //   await addQuoteAddressApi(callApi, callBack, 
-  //     {
-  //     quoteID: quoteItemValue?.id,
-  //     addressID: item?.id,
-  //     street: item?.street,
-  //     city: item?.city,
-  //     entry: item?.entry,
-  //     apartment: item?.apartment,
-  //     notes: item?.notes || "",
-  //   })
-  // }
-
-
 
   const onClickAddNewAddress = useCallback(async (item: any, isUpdate: boolean) => {
     const res = await callApi(
@@ -805,57 +698,63 @@ const useQuoteNew = () => {
     }
   }, [quoteItemValue]);
 
-
-//  const onClickAddNewAddressLama = async (item: any, isUpdate: boolean) => {
-//     const callBack = (res) => {
-//       if (res?.success) {
-//         alertSuccessAdded();
-//         // const result =  getAllClientAddress();
-//         // isUpdate ? updateClientAddress(result.find(item => item.id === res.data.data.result)) :
-//         //   onClickAddAddress(result.find(item => item.id === res.data.data.result))
-//       } else {
-//         alertFaultAdded();
-//       }
-//     }
-//     await addClientAddressApi(callApi, callBack, 
-//       {
-//         address1: item?.addressId,
-//         street: item?.street,
-//         city: item?.city,
-//         entry: item?.entry,
-//         apartment: item?.apartment,
-//         clientId: quoteItemValue?.customerID,
-//       })
-//   }
-
-
-  const onClickDeleteAddress = useCallback(async (item: any) => {
-    const res = await callApi(
-      EHttpMethod.DELETE,
-      `/v1/erp-service/quote/delete-quote-address?quoteAddressId=${item?.id}`
-    );
-    if (res?.success) {
-      alertSuccessDelete();
-      getQuote();
-    } else {
-      alertFaultDelete();
+  const updateClientAddress = async (item: any) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getQuote();
+        setOpenModal(false);
+      } else {
+        alertFaultAdded();
+      }
     }
-  }, []);
+    await updateQuoteAddressApi(callApi, callBack,
+      {
+        id: quoteItemValue?.quoteAddresses[0]?.id,
+        addressID: quoteItemValue?.quoteAddresses[0]?.addressID,
+        street: item?.street,
+        city: item?.city,
+        entry: item?.entry,
+        apartment: item?.apartment,
+        notes: item?.notes || "",
+        quoteID: quoteItemValue?.id,
+      })
+  }
 
+  const onClickAddAddress = async (item: any) => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessAdded();
+        getQuote();
+        setOpenModal(false);
+      }
+      else {
+        alertFaultAdded();
+      }
+    }
+    await addQuoteAddressApi(callApi, callBack,
+      {
+        quoteID: quoteItemValue?.id,
+        addressID: item?.id,
+        street: item?.street,
+        city: item?.city,
+        entry: item?.entry,
+        apartment: item?.apartment,
+        notes: item?.notes || "",
+      })
+  }
 
-  //   const onClickDeleteAddressLama = async (item: any) => {
-  //   const callBack = (res) => {
-  //     if (res?.success) {
-  //       alertSuccessDelete();
-  //       getQuote();
-  //     } else {
-  //       alertFaultDelete();
-  //     }
-  //   }
-  //   await deleteQuoteAddressApi(callApi, callBack, {quoteAddressId: item?.id })
-  // }
-  //////////////////////////////////////////////////////////////////////
-
+  const onClickDeleteAddress = async (item: any) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessDelete();
+        getQuote();
+      } else {
+        alertFaultDelete();
+      }
+    }
+    await deleteQuoteAddressApi(callApi, callBack, { quoteAddressId: item?.id })
+  }
 
   return {
     dateRef,
