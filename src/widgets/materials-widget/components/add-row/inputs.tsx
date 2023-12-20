@@ -2,9 +2,11 @@ import { useRecoilValue } from "recoil";
 import { materialHeadersState } from "../../state";
 import { EDataTypeEnum } from "@/widgets/materials-widget/components/table-cell-data/data-type-enum";
 
-const rowInputs = (state, currencies) => {
-    const materialHeaders = useRecoilValue<{ key: string, value: string, inputType: number,values:[] }[]>(materialHeadersState);
-    return materialHeaders.filter(header => header.key !== "Active").map((header)=>{
+const rowInputs = (state, currencies,machinesCategories) => {
+    const materialHeaders = useRecoilValue<{ key: string, value: string, inputType: number,values:string[] }[]>(materialHeadersState);
+
+    return materialHeaders.filter(header => header.key !== "Active").map((header) => {
+
         switch ( EDataTypeEnum[header?.inputType]){
             case "CURRENCY":
                 return {
@@ -20,7 +22,6 @@ const rowInputs = (state, currencies) => {
                     })),
                     value: state?.parameterKey,
                     isValid: true,
-
                 }
             case "ARRAY_INPUT":
                 return {
@@ -46,6 +47,23 @@ const rowInputs = (state, currencies) => {
                     value: "",
                     isValid: true,
                 }
+            case "MACHINES_LIST":
+                return {
+                    ame: header?.key,
+                    label: header?.value,
+                    type: "select",
+                    placeholder: header?.key,
+                    required: false,
+                    parameterKey: header?.key,
+                    options: machinesCategories.map(machine => ({
+                        value: machine.id,
+                        text: `${machine.manufacturer} - ${machine.model}`
+                    })),
+                    value: state?.parameterKey,
+                    values: state?.machines ? state?.machines : [],
+                    isValid: true,
+                    multiple: true,
+                }
             default:
                 return {
                     name: header?.key,
@@ -59,7 +77,7 @@ const rowInputs = (state, currencies) => {
                     isValid: true,
                 }
         }
-    });
+        });
 };
 
 export { rowInputs };

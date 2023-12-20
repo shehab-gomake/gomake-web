@@ -10,6 +10,7 @@ import {machineState} from "@/widgets/machines/state/machine-state";
 import {useAdminAddMachine} from "@/widgets/machines/hooks/use-admin-add-machine";
 import {SideBarContainer} from "@/components/containers/side-container/side-bar-container";
 import {MachinesSideList} from "@/components/containers/machines-container/side-list/machines-side-list";
+import Button from "@mui/material/Button";
 
 const AdminUpdateMachine = () => {
     const router = useRouter();
@@ -48,7 +49,7 @@ const AdminUpdateMachine = () => {
                                  title={'Machines'} quickActions={true} isAdmin={true}/>
     return (
         <SideBarContainer side={Side()} header={categoryName} subHeader={ selectedMachine.manufacturer ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.model : ''}>
-
+            <Button variant={'contained'} onClick={updateMachine}>update machine</Button>
             {!!selectedMachine.id && <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
                                                      nextStep={navigateNext} actionButtonClicked={updateMachine}
                                                      moveToStep={moveToStepByIndex}

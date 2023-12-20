@@ -1,15 +1,20 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import { selectColorValueState } from "./store/selecte-color-value";
 import { maltiParameterState } from "./store/multi-param-atom";
-import { useEffect, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import lodashClonedeep from "lodash.clonedeep";
 import { useClickAway } from "@uidotdev/usehooks";
+import {subProductsCopyParametersState, subProductsParametersState} from "@/store";
+import {
+  userMultiParameterModalValues
+} from "@/widgets/shared-admin-customers/digital-offset-price/multi-parameter-modal/use-multi-parameter-modal-values";
 
 const useChildValuesMapping = ({
   value,
   index,
   parameters,
   settingParameters,
+    item
 }) => {
   const paddingLeft = value?.valueId?.length === 0 ? 13 : 38;
   const selectColorValue = useRecoilValue<any>(selectColorValueState);
@@ -24,10 +29,30 @@ const useChildValuesMapping = ({
   const [parentValue, setParentValue] = useState(
     parameters[index].defaultValue
   );
+  const [subProducts, setSubProducts] = useRecoilState<any>(subProductsCopyParametersState);
+  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue,getSelectedColorParameterValue} = userMultiParameterModalValues(settingParameters)
 
-  useEffect(() => {
-    setValueState(parameters[index].defaultValue);
-  }, [parameters]);
+ 
+  const isChecked = useMemo(() => {
+    
+    const colorParameterValue  = getSelectedColorParameterValue(subProducts);
+    if(colorParameterValue){
+      if(value.valueId){
+        const subData = value.data;
+        if(subData){
+          let isAllValuesExists = true;
+          subData.forEach(x=>{
+            if(!colorParameterValue.values.find(val => val === x.value)){
+              isAllValuesExists = false;
+            }
+          })
+          if(isAllValuesExists)
+            return true
+        }
+      }
+    }
+    return false
+  }, [subProducts]);
   const updateValue = (increment: boolean) => {
     let temp = lodashClonedeep(generalParameters);
     const indexOfName = temp[0].value.findIndex((p) => p === value?.value);
@@ -40,59 +65,52 @@ const useChildValuesMapping = ({
   };
 
   const incrementValue = () => {
-    updateValue(true);
+    let currentValue = valueState as number;
+    currentValue++;
+    setTextInputValue(currentValue);
   };
-
   const decrementValue = () => {
-    updateValue(false);
+    let currentValue = valueState as number; //Double.parse(textInputValue);
+    currentValue--;
+    setTextInputValue(currentValue);
   };
 
   const ref = useClickAway(() => {
     setIsFocused(false);
   });
-  useEffect(() => {
-    if (
-      selectColorValue?.selectedParameterValues[0]?.selectValuesCount ===
-        value?.data?.length &&
-      selectColorValue?.selectedParameterValues[0]?.valueIds?.length > 0
-    ) {
-      setChecked(true);
-    }
-  }, [selectColorValue, value, generalParameters]);
   const onChangeCheckBox = (e) => {
-    if (selectColorValue) {
-      setGeneralParameters((prev) => {
-        let temp = lodashClonedeep(prev);
-
-        if (e.target.checked) {
-          setChecked(true);
-          setForceChange(true);
-        } else {
-          setForceChange(false);
-          setChecked(false);
-        }
-        setChecked(e.target.checked);
-        return temp;
-      });
-    }
+    const subData = value.data;
+    let newSubProducts = lodashClonedeep(subProducts);
+    subData.forEach(x=>{
+      if (e.target.checked){
+        newSubProducts = addValueToSubProduct(newSubProducts,x)
+      }
+      else {
+         newSubProducts = removeValueFromSubProduct(newSubProducts,x)
+      }
+    })
+    setSubProducts(newSubProducts);
   };
+  const setTextInputValue = (textInputVal) =>{
+    setValueState(textInputVal);
+    let newSubProducts = lodashClonedeep(subProducts);
+    const subData = value.data;
+    subData.forEach(x=>{
+      newSubProducts = setSubProductValue(newSubProducts,item.id,x,textInputVal);
+    })
+    setSubProducts(newSubProducts);
+  }
   const onChangeText = (e) => {
-    setValueState(e.target.value);
-    setParentValue(e.target.value);
+    setTextInputValue(e.target.value);
   };
-  const isDisabled = () => {
+  const isDisabled = useMemo(()=>{
     let isDisabled = false;
-    if (typeof selectColorValue === "undefined") {
-      isDisabled = true;
-    }
-    if (
-      selectColorValue?.selectedParameterValues[0]?.selectValuesCount <
-      generalParameters[0]?.values?.length + value?.valueId?.length
-    ) {
+    const selectedColorParameterValue  = getSelectedColorParameterValue(subProducts);
+    if (selectColorValue?.selectedParameterValues[0]?.selectValuesCount <= selectedColorParameterValue?.valueIds?.length || (selectColorValue?.selectedParameterValues[0].valueIds && selectColorValue?.selectedParameterValues[0].valueIds.length > 0) ) {
       isDisabled = true;
     }
     return isDisabled;
-  };
+  },[subProducts])
   useEffect(() => {
     const temp = parameters.map((item: any) => ({
       parameterId: item.id,
@@ -121,6 +139,7 @@ const useChildValuesMapping = ({
     incrementValue,
     decrementValue,
     isDisabled,
+    isChecked,
     setIsFocused,
   };
 };

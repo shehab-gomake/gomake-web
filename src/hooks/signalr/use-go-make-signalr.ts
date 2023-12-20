@@ -6,7 +6,7 @@ export interface ISignalRProps {
     url: string;
     methodName: string;
 }
-const useGoMakeSignalr = <T>({accessToken, url, methodName}: ISignalRProps): {data: T | null,connectionId:string} => {
+const useGoMakeSignalr = <T>({accessToken, url, methodName}: ISignalRProps): {data: T | null,connection: null | HubConnection,connectionId:string} => {
     const [connection, setConnection] = useState<null | HubConnection>(null);
     const [data, setData] = useState<T | null>(null);
     const [connectionId, setConnectionId] = useState<string>("");
@@ -37,7 +37,7 @@ const useGoMakeSignalr = <T>({accessToken, url, methodName}: ISignalRProps): {da
         }
     }, [connection]);
     return {
-        data,connectionId
+        data,connection,connectionId
     };
 }
 

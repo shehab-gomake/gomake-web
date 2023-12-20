@@ -14,7 +14,8 @@ const useStyle = () => {
       inputsRow: {
         display: 'flex',
         alignItems: 'center' as 'center',
-        gap: '16px'
+        gap: '16px',
+        flexWrap: 'wrap' as 'wrap'
       },
       inputs: {
         boxSizing: 'border-box' as 'border-box',

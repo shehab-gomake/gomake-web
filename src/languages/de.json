@@ -117,7 +117,8 @@
     "deleteSusuccessfully": "Erfolgreich gelöscht",
     "deletefailed": "Löschen fehlgeschlagen",
     "formNotValid": "Formular ungültig",
-    "RequiredFields": "Erforderliche Felder fehlen"
+    "RequiredFields": "Erforderliche Felder fehlen",
+    "duplicateFailed" : "Duplikat fehlgeschlagen"
   },
   "home": {
     "admin": {

@@ -117,7 +117,8 @@
     "deleteSusuccessfully": "تم الحذف بنجاح",
     "deletefailed": "فشل الحذف",
     "formNotValid": "النموذج غير صالح",
-    "RequiredFields": "حقول مطلوبة مفقودة"
+    "RequiredFields": "حقول مطلوبة مفقودة",
+    "duplicateFailed" : "فشل النسخ"
   },
   "home": {
     "admin": {
@@ -1657,7 +1658,8 @@
       "writeCommentHere": "اكتب تعليقك هنا",
       "attachFiles": "إرفاق ملفات",
       "copyTo": "نسخ إلى",
-      "managerApproval": "موافقة الإدارة"
+      "managerApproval": "موافقة الإدارة",
+      "quoteNumber": "رقم العرض"
     }
   },
   "usersSettings": {

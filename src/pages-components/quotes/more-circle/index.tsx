@@ -10,46 +10,46 @@ import { OptionsButton } from "@/components/options-button/options-button";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 
-const MoreMenuWidget = ({ quote, onClcikOpenModal }: any) => {
-  const { clasess } = useStyle();
+const MoreMenuWidget = ({ quote, onClickOpenModal , onClickPdf , onClickDuplicate }: any) => {
+  const { classes } = useStyle();
   const { t } = useTranslation();
   const { user, navigate } = useMoreCircle();
 
   return (
     <OptionsButton>
       <MenuItem>
-        <div style={clasess.menuRowStyle}>
+        <div style={classes.menuRowStyle}>
           <PermissionCheck userPermission={Permissions.SHOW_LOGGERS_QUOTE}>
             <EditingIcon />
-            <div style={clasess.rowTextStyle}>{t("sales.quote.loggers")}</div>
+            <div style={classes.rowTextStyle}>{t("sales.quote.loggers")}</div>
           </PermissionCheck>
         </div>
       </MenuItem>
-      <MenuItem>
-        <div style={clasess.menuRowStyle}>
+      <MenuItem onClick={()=>onClickPdf(quote?.id)}>
+        <div style={classes.menuRowStyle}>
           <PDFIcon />
-          <div style={clasess.rowTextStyle}>{t("sales.quote.pdf")}</div>
+          <div style={classes.rowTextStyle}>{t("sales.quote.pdf")}</div>
         </div>
       </MenuItem>
-      <MenuItem>
-        <div style={clasess.menuRowStyle}>
+      <MenuItem onClick={()=>onClickDuplicate(quote?.id)}>
+        <div style={classes.menuRowStyle}>
           <ConvertIcon />
-          <div style={clasess.rowTextStyle}>{t("sales.quote.duplicate")}</div>
+          <div style={classes.rowTextStyle}>{t("sales.quote.duplicate")}</div>
         </div>
       </MenuItem>
       {(quote?.statusID === QUOTE_STATUSES.Create &&
         quote?.userID === user?.id) ||
-      quote?.statusID === QUOTE_STATUSES.Open ? (
+        quote?.statusID === QUOTE_STATUSES.Open ? (
         <MenuItem
           onClick={() =>
             quote?.statusID === QUOTE_STATUSES.Create
               ? navigate(`/quote`)
-              : onClcikOpenModal(quote)
+              : onClickOpenModal(quote)
           }
         >
-          <div style={clasess.menuRowStyle}>
+          <div style={classes.menuRowStyle}>
             <EditingIcon />
-            <div style={clasess.rowTextStyle}>{t("sales.quote.edit")}</div>
+            <div style={classes.rowTextStyle}>{t("sales.quote.edit")}</div>
           </div>
         </MenuItem>
       ) : null}

@@ -37,7 +37,6 @@ const useStyle = () => {
         width: '100%',
         color: '#8283BE',
         justifyContent:'space-between',
-
       },
       button: {
         width: 'fit-content' as 'fit-content',
@@ -67,13 +66,9 @@ const useStyle = () => {
         justifyContent: 'space-between',
         alignItems: 'flex-end',
       },
-      input: {
-       
-      },
       multiInputLabel: {
         ...FONT_FAMILY.Lexend(600, 16),
         color: secondColor(500),
-
       },
       multiInputContainer: {
         display: 'flex',
@@ -105,6 +100,13 @@ const useStyle = () => {
         height: 33.29,
         ...FONT_FAMILY.Lexend(500, 12),        
       },
+      multiSelectOption:{
+        width: "100%",
+        ...FONT_FAMILY.Lexend(400, 14),
+        display: "flex",
+        flexDirection : "row" as "row",
+        alignItems:'center'
+      }
     };
   }, [theme]);
   return {

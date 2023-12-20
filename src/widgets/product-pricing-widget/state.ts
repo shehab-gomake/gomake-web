@@ -51,3 +51,8 @@ export const productUrgentWorkState = atom<boolean>({
     key: 'productUrgentWorkState',
     default: false
 })
+
+export const currentProductItemValueState = atom<any>({
+    key: "currentProductItemValueState",
+    default: null ,
+});

@@ -1,4 +1,6 @@
-const minMaxInput = (state: Record<string, any>, parameterKey: string, label: string ) => {
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
+const minMaxInput = (state: Record<string, any>, parameterKey: string, label: string, unit?: EMeasurementUnits) => {
     return [
         {
             name: `machineAttributes.${label}`,
@@ -16,7 +18,8 @@ const minMaxInput = (state: Record<string, any>, parameterKey: string, label: st
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state?.attributes && state?.attributes[parameterKey] && state?.attributes[parameterKey]['min'] ? state?.attributes[parameterKey]['min'] : ''
+                    value: state?.attributes && state?.attributes[parameterKey] && state?.attributes[parameterKey]['min'] ? state?.attributes[parameterKey]['min'] : '',
+                    unit: unit
                 },
                 {
                     name: "",
@@ -26,7 +29,8 @@ const minMaxInput = (state: Record<string, any>, parameterKey: string, label: st
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state?.attributes && state?.attributes[parameterKey] && state?.attributes[parameterKey]['max'] ? state?.attributes[parameterKey]['max'] : ''
+                    value: state?.attributes && state?.attributes[parameterKey] && state?.attributes[parameterKey]['max'] ? state?.attributes[parameterKey]['max'] : '',
+                    unit: unit
                 },
             ]
         },

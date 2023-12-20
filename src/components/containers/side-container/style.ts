@@ -26,7 +26,6 @@ const useStyle = () => {
       },
       main: {
         width: "100%",
-
       },
       header: {
         ...FONT_FAMILY.Lexend(700, 20),

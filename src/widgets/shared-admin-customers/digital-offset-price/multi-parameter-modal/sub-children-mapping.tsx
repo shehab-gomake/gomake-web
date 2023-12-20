@@ -6,6 +6,7 @@ import { CheckboxIcon } from "./icons/checkbox-icon";
 import { MinusIcon } from "./icons/minus";
 import { PlusIcon } from "./icons/plus";
 import { useSubChildMapping } from "./use-sub-children-mapping-modal";
+import {useEffect} from "react";
 
 const SubChildrenMapping = ({
   parameters,
@@ -21,17 +22,16 @@ const SubChildrenMapping = ({
   settingParameters,
 }) => {
   const {
-    checked,
-    selectColorValue,
     ref,
     isFocused,
-    valueState,
     onChangeCheckBox,
     isDisabled,
     incrementValue,
     decrementValue,
     setIsFocused,
     onChangeText,
+    isChecked,
+    textInputValue,
   } = useSubChildMapping({
     forceChange,
     parameters,
@@ -39,6 +39,7 @@ const SubChildrenMapping = ({
     value,
     index,
     parentValue,
+    item
   });
   return (
     <div style={clasess.childRowContainer}>
@@ -47,17 +48,18 @@ const SubChildrenMapping = ({
           <Checkbox
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
-            onChange={onChangeCheckBox}
-            checked={checked}
-            value={checked}
-            key={`c${index}_${selectColorValue}`}
-            disabled={isDisabled() && !checked}
+            onChange={(e) => onChangeCheckBox(e)}
+            checked={isChecked}
+            value={isChecked}
+            key={`c${index}_${value.value}`}
+            disabled={isDisabled}
             id={`check_${index}_${index2}_${index3}`}
           />
         </div>
       )}
 
       <div style={clasess.childLabelStyle}>
+        
         {item?.parameterType != 1 ? (
           value?.value
         ) : (
@@ -69,7 +71,7 @@ const SubChildrenMapping = ({
               }}
               onFocus={() => setIsFocused(true)}
               onChange={onChangeText}
-              value={valueState}
+              value={textInputValue}
               id={`input_${index}_${index2}_${index3}`}
             />
             {isFocused && (
