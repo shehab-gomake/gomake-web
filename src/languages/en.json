@@ -2097,7 +2097,15 @@
     "changePass": "Change password",
     "update": "Update",
     "loginLogo": "Login logo",
-    "companyLogo": "Company logo"
+    "companyLogo": "Company logo",
+    "dayOfWork": "Working days",
+    "sunday": "Sun",
+    "monday": "Mon",
+    "tuesday":"Tue",
+    "wednesday":"Wed",
+    "thursday":"Thu",
+    "friday" :"Fri",
+    "saturday":"Sat"
   },
   "remainWords": {
     "newQuote": "New quote",
@@ -2225,7 +2233,8 @@
     "details": "Details",
     "edit": "Edit",
     "editDefinition": "Edit definition",
-    "update": "Update"
+    "update": "Update",
+    "nextValueTip": "You must initialize with a value greater than"
   },
   "documentingDesign": {
     "Save": "Save",

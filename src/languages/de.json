@@ -1999,7 +1999,15 @@
     "changePass": "Passwort ändern",
     "update": "Aktualisieren",
     "loginLogo": "Login-Logo",
-    "companyLogo": "Firmenlogo"
+    "companyLogo": "Firmenlogo",
+    "dayOfWork": "Arbeitstage",
+    "sunday": "Sonntag",
+    "monday": "Montag",
+    "tuesday": "Dienstag",
+    "wednesday": "Mittwoch",
+    "thursday": "Donnerstag",
+    "friday": "Freitag",
+    "saturday": "Samstag"
   },
   "remainWords": {
     "newQuote": "Neues Angebot",
@@ -2094,5 +2102,18 @@
     "rollDigitalEnhancement": "Rollen-Digitalveredelungsmaschine",
     "autoBookCutting": "Automatische Buchschneidemaschine",
     "rollAnalogEnhancement": "Rollen-Analogveredelungsmaschine"
+  },
+  "documentingSettings": {
+    "documentNumbering": "Documentnummering",
+    "documentDesign": "Documentontwerp",
+    "showDeliveryTime": "Toon bezorgtijd",
+    "name": "Naam",
+    "prefix": "Voorvoegsel",
+    "value": "Waarde",
+    "details": "Details",
+    "edit": "Bewerken",
+    "editDefinition": "Definitie bewerken",
+    "update": "Bijwerken",
+    "nextValueTip": "Je moet beginnen met een waarde groter dan"
   }
 }

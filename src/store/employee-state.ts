@@ -19,7 +19,7 @@ export const initState: IUserData = {
     isHaveFullKanbanPermission: false,
     pinCode: null,
     isAgent: false,
-    isGraphicArtist: null,
+    isGraphicArtist: false,
     isCourier: null,
     mailService: null,
     mailServicePassword: "",

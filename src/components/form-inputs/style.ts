@@ -63,7 +63,7 @@ const useStyle = () => {
         color: primaryColor(900),
         ...FONT_FAMILY.Lexend(600, 14),
         display: 'flex',
-        justifyContent: 'space-between',
+      //  justifyContent: 'space-between',
         alignItems: 'flex-end',
       },
       multiInputLabel: {

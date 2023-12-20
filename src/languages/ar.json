@@ -2028,7 +2028,15 @@
     "changePass": "تغيير كلمة المرور",
     "update": "تحديث",
     "loginLogo": "شعار تسجيل الدخول",
-    "companyLogo": "شعار الشركة"
+    "companyLogo": "شعار الشركة",
+    "dayOfWork": "أيام العمل",
+    "sunday": "الأحد",
+    "monday": "الاثنين",
+    "tuesday":"الثلاثاء",
+    "wednesday":"الاربعاء",
+    "thursday":"الخميس",
+    "friday" :"الجمعة",
+    "saturday":"السبت"
   },
   "remainWords": {
     "newQuote": "عرض جديد",
@@ -2273,6 +2281,19 @@
     "add": "إضافة",
     "price": "السعر",
     "chooseWorkFlow": "حدد تدفق العمل"
+  },
+  "documentingSettings": {
+    "documentNumbering": "ترقيم المستند",
+    "documentDesign": "تصميم المستند",
+    "showDeliveryTime": "عرض وقت التسليم",
+    "name": "الاسم",
+    "prefix": "البادئة",
+    "value": "القيمة",
+    "details": "التفاصيل",
+    "edit": "تحرير",
+    "editDefinition": "تحرير التعريف",
+    "update": "تحديث",
+    "nextValueTip": "يجب أن تبدأ بقيمة أكبر من"
   }
 
 }
