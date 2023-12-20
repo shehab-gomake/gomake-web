@@ -15,7 +15,7 @@ i18n
   .use(initReactI18next)
   .init({
     backend: {
-      loadPath: `https://gomake-translations.s3.eu-central-1.amazonaws.com/{{lng}}.json`,
+      loadPath: `https://gomake-translations.s3.eu-central-1.amazonaws.com/web/{{lng}}.json`,
     },
     lng: "en",
     fallbackLng: "en",
