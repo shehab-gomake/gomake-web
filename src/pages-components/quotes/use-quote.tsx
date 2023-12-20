@@ -13,7 +13,6 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
 import { duplicateQuoteApi, getQuotePdfApi } from "@/services/api-service/quotes/quotes-table-endpoints";
-import { getQuotePdfApi } from "@/services/api-service/quotes/quotes-table-endpoints";
 import { employeesListsState } from "./states";
 
 const useQuotes = () => {
@@ -40,7 +39,7 @@ const useQuotes = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openLogsModal, setOpenLogsModal] = useState(false);
   const [modalLogsTitle, setModalLogsTitle] = useState<string>();
-  const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
+  //const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
   const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
   const [selectedQuote, setSelectedQuote] = useState<any>();
   const onClickCloseModal = () => {

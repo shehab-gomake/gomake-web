@@ -140,7 +140,7 @@ const QuotesListPageWidget = (props:IListWidgetProps) => {
         onClickDelete={() => updateQuoteStatus()}
       />
       <GoMakeModal
-        insideStyle={clasess.insideStyle}
+        insideStyle={classes.insideStyle}
         openModal={openLogsModal}
         onClose={onClickCloseLogsModal}
         modalTitle={t('sales.quote.quoteLogs') + ' - ' + modalLogsTitle}>
