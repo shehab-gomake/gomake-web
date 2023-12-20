@@ -14,6 +14,11 @@ const useStyle = () => {
         position: "relative" as "relative",
         height: "auto",
       },
+      stackStyle: {
+        display:"flex",
+        width:"330px",
+        gap:"12px"
+      },
       saveBtn: {
         width: "331px",
         height: "40px",

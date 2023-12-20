@@ -1,64 +1,46 @@
 import * as React from "react";
-import { useTranslation } from "react-i18next";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { GoMakeAutoComplate, GoMakeModal } from "@/components";
-import { useEffect, useState } from "react";
 import { Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { addressInputs } from "./address-inputs";
 import { useStyle } from "./style";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { addressModalState, isNewAddress } from "./state";
-import { useQuoteNew } from "@/pages-components/quote-new/use-quote";
-import { quoteItemState } from "@/store";
-import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
+import { useAddressWidget } from "./use-address-widget";
 
 interface IProps {
-    isUpdate?: boolean;
+    isUpdate?: boolean; 
 }
 const AddressModal = ({ isUpdate }: IProps) => {
-    const { t } = useTranslation();
     const { classes } = useStyle();
-    const { updateClientAddress, onClickAddAddress, onClickAddNewAddress } = useQuoteNew();
-    const { getAllClientAddress, clientAddressValue, addressSelect } = useQuoteGetData();
-    const quoteStateValue = useRecoilValue<any>(quoteItemState);
-    const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
-    const [addressState, setAddressState] = useState<any>(quoteStateValue?.quoteAddresses[0]);
-    const [selectedAddress, setSelectedAddress] = useState<any>(null);
-    const [isNewAddressState, setIsNewAddressState] = useRecoilState<boolean>(isNewAddress);
+    const { t,
+        onChangeInputs,
+        addressState,
+        openModal,
+        setOpenModal,
+        addressSelect,
+        selectedAddress,
+        isNewAddressState,
+        onClickAddAddress,
+        onClickAddNewAddress,
+        updateClientAddress,
+        setSelectedAddress } = useAddressWidget();
+    const buttonLabel = isUpdate ? t("sales.quote.save") : t("sales.quote.add")
 
-
-    const onChangeInputs = (key, value) => {
-        setAddressState({ ...addressState, [key]: value });
-    }
-
-    useEffect(() => {
-        getAllClientAddress();
-            if (quoteStateValue?.quoteAddresses.length > 0) {
-                const addressId = quoteStateValue?.quoteAddresses[0]?.addressID;
-                const city = quoteStateValue?.quoteAddresses[0]?.city;
-                setSelectedAddress({ label: city, value: addressId })
-            }
-            else {
-                setSelectedAddress(addressSelect[0])
-            }
-    }, [quoteStateValue, openModal]);
-
-    useEffect(() => {
-        if (selectedAddress?.label == "add new address") {
-            setAddressState({ ...addressState, city: "", street: "", addressId: "", apartment: "", entry: "" })
-            setIsNewAddressState(true);
+    const handleClick = () => {
+        if (isNewAddressState) {
+            console.log("handle click onClickAddNewAddress(addressState, isUpdate) " + addressState)
+            onClickAddNewAddress(addressState, isUpdate);
+        } else if (isUpdate) {
+            console.log("handle click updateClientAddress(addressState) : " + addressState)
+            updateClientAddress(addressState);
+        } else {
+            console.log("handle click onClickAddAddress(addressState) : " + addressState)
+            onClickAddAddress(addressState);
         }
-        else if (selectedAddress) {
-            setIsNewAddressState(false);
-           const address = clientAddressValue.find(x => x.id === selectedAddress.value);
-           setAddressState(address)
-        }
-    }, [selectedAddress]);
+    };
 
     return (
-
         <div>
             <GoMakeModal
                 insideStyle={classes.insideStyle}
@@ -66,7 +48,7 @@ const AddressModal = ({ isUpdate }: IProps) => {
                 onClose={() => { setOpenModal(false); }}
                 withClose={false}
             >
-                <Stack display={"flex"} width={"330px"} gap={"12px"}>
+                <Stack style={classes.stackStyle}>
                     <div style={classes.fieldContainer}>
                         <h3 style={classes.labelStyle}>{t("sales.quote.address")}</h3>
                         <GoMakeAutoComplate
@@ -83,11 +65,11 @@ const AddressModal = ({ isUpdate }: IProps) => {
                     {
                         addressInputs(addressState, isNewAddressState).map(item => <Stack width={"330px"}><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
                     }
-                    <SecondaryButton variant="contained" onClick={() => isNewAddressState ? onClickAddNewAddress(addressState , isUpdate) : isUpdate ? updateClientAddress(addressState) : onClickAddAddress(addressState)} style={classes.saveBtn}>{isUpdate ? t("sales.quote.save") : t("sales.quote.add")}</SecondaryButton>
+                    <SecondaryButton variant="contained" onClick={handleClick} style={classes.saveBtn}>{buttonLabel}</SecondaryButton>
                 </Stack>
             </GoMakeModal>
         </div>
     );
 };
-
+ 
 export { AddressModal };

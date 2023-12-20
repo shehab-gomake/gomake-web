@@ -21,6 +21,14 @@ const InputUpdatedValues = ({
     setUpdateValue(value);
   }, [value]);
 
+  const handleClick = () => {
+    if (flag) {
+      onClickFlag();
+    } else {
+      setIsUpdate(1);
+    }
+  };
+
   return (
     <>
       <div style={clasess.inputMainContainer}>
@@ -38,7 +46,7 @@ const InputUpdatedValues = ({
           <div
             style={{ ...clasess.inputTextStyle, ...speicalStyle }}
             className="customInput"
-            onClick={flag ? onClickFlag : () => setIsUpdate(1)}
+            onClick={handleClick}
           >
             {value}
           </div>
