@@ -73,7 +73,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("subProducts", subProducts);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -213,7 +212,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [pricingDefaultValue, canCalculation]);
   useEffect(() => {
-    console.log("currentProcutTemplae", productTemplate);
     if (productTemplate && productTemplate?.sections?.length > 0) {
       let temp = [...isRequiredParameters];
       productTemplate?.sections?.map((section) => {
