@@ -23,44 +23,46 @@ const SelectChildParameterWidget = ({
   )?.parameters;
   const [value, setValue] = useState<any>();
   useEffect(() => {
-    let temp = [...subProductsParams];
-    parameter?.childsParameters.forEach((parameter) => {
-      const parameterId = parameter.id;
-      if (value?.values.hasOwnProperty(parameterId)) {
-        const myindex = temp.findIndex((item) => {
-          return (
-            item?.parameterId === parameter?.id &&
-            item?.sectionId === section?.id &&
-            item?.subSectionId === subSection?.id &&
-            item?.actionIndex === parameter?.actionIndex
-          );
-        });
-        if (myindex !== -1) {
-          temp[myindex] = {
-            ...temp[myindex],
-            values: [value?.values[parameterId]],
-          };
-        } else {
-          temp.push({
-            parameterId: parameter?.id,
-            sectionId: section?.id,
-            subSectionId: subSection?.id,
-            ParameterType: parameter?.parameterType,
-            values: [value?.values[parameterId]],
+    if (subProductsParams) {
+      let temp = [...subProductsParams];
+      parameter?.childsParameters.forEach((parameter) => {
+        const parameterId = parameter.id;
+        if (value?.values.hasOwnProperty(parameterId)) {
+          const myindex = temp.findIndex((item) => {
+            return (
+              item?.parameterId === parameter?.id &&
+              item?.sectionId === section?.id &&
+              item?.subSectionId === subSection?.id &&
+              item?.actionIndex === parameter?.actionIndex
+            );
           });
+          if (myindex !== -1) {
+            temp[myindex] = {
+              ...temp[myindex],
+              values: [value?.values[parameterId]],
+            };
+          } else {
+            temp.push({
+              parameterId: parameter?.id,
+              sectionId: section?.id,
+              subSectionId: subSection?.id,
+              ParameterType: parameter?.parameterType,
+              values: [value?.values[parameterId]],
+            });
+          }
         }
-      }
-    });
-    const updatedSubProducts = subProducts.map((item) => {
-      if (item.type === subSection?.type) {
-        return {
-          ...item,
-          parameters: temp,
-        };
-      }
-      return item;
-    });
-    setSubProducts(updatedSubProducts);
+      });
+      const updatedSubProducts = subProducts.map((item) => {
+        if (item.type === subSection?.type) {
+          return {
+            ...item,
+            parameters: temp,
+          };
+        }
+        return item;
+      });
+      setSubProducts(updatedSubProducts);
+    }
   }, [value]);
   return (
     <>
