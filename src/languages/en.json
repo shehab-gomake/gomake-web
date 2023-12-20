@@ -1721,7 +1721,13 @@
       "address": "Address",
       "addressId": "Address ID",
       "addAddress" :"Add Address",
-      "removeAddress": "Remove Address"
+      "removeAddress": "Remove Address",
+      "actionDate" :"Action Date",
+      "employeeName":"Employee Name",
+      "actionDescription":"Action Description",
+      "selectEmployee":"select employee",
+      "selectDate":"select date",
+      "quoteLogs":"Logs for quote"
     }
   },
   "usersSettings": {

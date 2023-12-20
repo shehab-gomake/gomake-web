@@ -66,6 +66,10 @@ const useStyle = () => {
         width: 120,
         height: 120,
         color: errorColor(300)
+      },
+      insideStyle:{
+        width: "40%",
+        height: "540px"
       }
     };
   }, [i18next.language, t,theme]);
