@@ -15,8 +15,8 @@ import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
 interface IListWidgetProps {
   documentType: EDocumentTypeEnum
 }
-const QuotesListPageWidget = (props: IListWidgetProps) => {
-  const { clasess } = useStyle();
+const QuotesListPageWidget = (props:IListWidgetProps) => {
+  const { classes } = useStyle();
   const {
     tableHeaders,
     allQuotes,
@@ -26,8 +26,7 @@ const QuotesListPageWidget = (props: IListWidgetProps) => {
     statusId,
     customerId,
     agentId,
-    errorColor,
-    onClcikCloseModal,
+    onClickCloseModal,
     setPatternSearch,
     setStatusId,
     setCustomerId,
@@ -36,7 +35,7 @@ const QuotesListPageWidget = (props: IListWidgetProps) => {
     checkWhatRenderArray,
     updateQuoteStatus,
     onClickSearchFilter,
-    onClcikClearFilter,
+    onClickClearFilter,
     openLogsModal,
     onClickCloseLogsModal,
     modalLogsTitle,
@@ -46,22 +45,22 @@ const QuotesListPageWidget = (props: IListWidgetProps) => {
 
   return (
     <>
-      <div style={clasess.mainContainer}>
+      <div style={classes.mainContainer}>
         <HeaderTitle
           title={t("sales.quote.quoteList")}
           marginTop={1}
           marginBottom={1}
         />
-        <div style={clasess.filtersContainer}>
-          <div style={clasess.selectedFilterContainer}>
-            <div style={clasess.statusFilterContainer}>
-              <div style={clasess.filterLabelStyle}>
+        <div style={classes.filtersContainer}>
+          <div style={classes.selectedFilterContainer}>
+            <div style={classes.statusFilterContainer}>
+              <div style={classes.filterLabelStyle}>
                 {t("sales.quote.status")}
               </div>
               <GoMakeAutoComplate
                 key={statusId?.value}
                 options={quoteStatuses}
-                style={clasess.textInputStyle}
+                style={classes.textInputStyle}
                 getOptionLabel={(option: any) => option.label}
                 placeholder={t("sales.quote.chooseStatus")}
                 onChange={(e: any, value: any) => {
@@ -70,8 +69,8 @@ const QuotesListPageWidget = (props: IListWidgetProps) => {
                 value={statusId}
               />
             </div>
-            <div style={clasess.statusFilterContainer}>
-              <div style={clasess.filterLabelStyle}>
+            <div style={classes.statusFilterContainer}>
+              <div style={classes.filterLabelStyle}>
                 {t("sales.quote.customer")}
               </div>
               <GoMakeAutoComplate
@@ -79,7 +78,7 @@ const QuotesListPageWidget = (props: IListWidgetProps) => {
                 options={renderOptions()}
                 getOptionLabel={(option: any) => `${option.name}`}
                 onChangeTextField={checkWhatRenderArray}
-                style={clasess.textInputStyle}
+                style={classes.textInputStyle}
                 placeholder={t("sales.quote.chooseCustomer")}
                 onChange={(e: any, value: any) => {
                   setCustomerId(value);
@@ -87,14 +86,14 @@ const QuotesListPageWidget = (props: IListWidgetProps) => {
                 value={customerId}
               />
             </div>
-            <div style={clasess.statusFilterContainer}>
-              <div style={clasess.filterLabelStyle}>
+            <div style={classes.statusFilterContainer}>
+              <div style={classes.filterLabelStyle}>
                 {t("sales.quote.agent")}
               </div>
               <GoMakeAutoComplate
                 key={agentId?.id}
                 options={agentsCategories}
-                style={clasess.textInputStyle}
+                style={classes.textInputStyle}
                 getOptionLabel={(option: any) => option.label}
                 placeholder={t("sales.quote.ChooseAgent")}
                 onChange={(e: any, value: any) => {
@@ -103,20 +102,20 @@ const QuotesListPageWidget = (props: IListWidgetProps) => {
                 value={agentId}
               />
             </div>
-            <div style={clasess.statusFilterContainer}>
-              <div style={clasess.filterLabelStyle} />
+            <div style={classes.statusFilterContainer}>
+              <div style={classes.filterLabelStyle} />
               <GomakePrimaryButton
-                style={clasess.searchBtnStyle}
+                style={classes.searchBtnStyle}
                 onClick={onClickSearchFilter}
               >
                 {t("sales.quote.search")}
               </GomakePrimaryButton>
             </div>
-            <div style={clasess.statusFilterContainer}>
-              <div style={clasess.filterLabelStyle} />
+            <div style={classes.statusFilterContainer}>
+              <div style={classes.filterLabelStyle} />
               <GomakePrimaryButton
-                style={clasess.clearBtnStyle}
-                onClick={onClcikClearFilter}
+                style={classes.clearBtnStyle}
+                onClick={onClickClearFilter}
               >
                 {t("sales.quote.clear")}
               </GomakePrimaryButton>
@@ -132,15 +131,11 @@ const QuotesListPageWidget = (props: IListWidgetProps) => {
         />
       </div>
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon
-            style={{ width: 120, height: 120, color: errorColor(300) }}
-          />
-        }
+        icon={<WarningAmberIcon style={classes.warningIconStyle} />}
         title={t("sales.quote.titleModal")}
         yesBtn={t("sales.quote.changeStatus")}
         openModal={openModal}
-        onClose={onClcikCloseModal}
+        onClose={onClickCloseModal}
         subTitle={t("sales.quote.subTitleModal")}
         onClickDelete={() => updateQuoteStatus()}
       />

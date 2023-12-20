@@ -1,4 +1,4 @@
-import React, {ChangeEvent, SyntheticEvent, useEffect, useState} from "react";
+import React, {ChangeEvent, SyntheticEvent,useCallback, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useGomakeAxios} from "@/hooks";
 import {useStyle} from "@/components/form-inputs/style";
@@ -8,6 +8,8 @@ import {MuiColorInput} from 'mui-color-input';
 import {GoMakeFileFiled} from "../file-filed/file-filed";
 import {ImageUploadComponent} from "./image-input";
 import Stack from "@mui/material/Stack";
+import { Checkbox, Paper } from "@mui/material";
+import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 
 
 const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
@@ -19,33 +21,37 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
     const {classes} = useStyle();
     const [color, setColor] = useState<string>(input.value);
     const [selectedNameFile, setSelectedNameFile] = useState<string>(input.value);
-
+   const [values, setValues] = useState([]);
     const handleChange = (value: string) => {
         setColor(value);
         changeState(input.parameterKey, value);
     };
 
-    const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
-        changeState(input.parameterKey, e.target.value as string);
-    };
+  const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
+    changeState(input.parameterKey, e.target.value as string);
+  };
 
-    const selectChange = (event: SyntheticEvent, value): void => {
-        setSelectedLabel(value?.label ? value.label : "");
-        changeState(input.parameterKey, value?.value ? value.value : "");
-    };
+  const selectChange = (event: SyntheticEvent, value): void => {
+    setSelectedLabel(value?.label ? value.label : "");
+    changeState(input.parameterKey, value?.value ? value.value : "");
+  };
 
-    const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
-        changeState(input.parameterKey, event.target.checked);
-    };
+  const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
+    changeState(input.parameterKey, event.target.checked);
+  };
 
-    useEffect(() => {
-        const selectedValue = options?.find((option) => option.value === input.value);
-        if (selectedValue) {
-            setSelectedLabel(selectedValue.label);
-        } else {
-            setSelectedLabel("");
-        }
-    }, [options]);
+  const handleSelectCheck = (parameterKey: string, isChecked: boolean, option: any) => {
+    changeState(parameterKey, isChecked ? [...values, option?.value] : values.filter(v => v !== option?.value));
+  };
+
+  useEffect(() => {
+    const selectedValue = options?.find((option) => option.value === input.value);
+    if (selectedValue) {
+      setSelectedLabel(selectedValue.label);
+    } else {
+      setSelectedLabel("");
+    }
+  }, [options]);
 
     useEffect(() => {
         if (input.optionsUrl && !dataLoaded) {
@@ -70,6 +76,9 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
         }
         if (input.type === "file" || input.type === "image") {
             setSelectedNameFile(input.value);
+        }
+        setValues(!!input?.values ? input?.values : []);
+        if (input?.multiple) {
         }
     }, [input]);
 
@@ -98,18 +107,36 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
                         }
                         {input.required && <span style={classes.required}>*</span>}
                     </div>
-                    <div style={classes.input}>
+                    <div style={classes.inputs}>
                         {input.type === "file" ? (
                             <GoMakeFileFiled selectedNameFile={selectedNameFile}/>
                         ) : input.type === "select" ? (
                             <GoMakeAutoComplate
                                 style={{minWidth: 180, border: 0}}
-                                onChange={selectChange}
-                                value={selectedLabel}
+                                onChange={input.multiple ? () => null : selectChange}
+                                value={input.multiple ? "" : selectedLabel}
                                 error={error}
                                 disabled={!!readonly}
                                 placeholder={t(input.placeholder)}
                                 options={options}
+                                multiple={false}
+                                renderOption={input.multiple ? (props: any, option: any) => {
+                                  return (
+                                      <Stack style={classes.multiSelectOption}>
+                                        <div>
+                                          <Checkbox
+                                              onChange={(e, checked) => handleSelectCheck(input.parameterKey, checked, option)}
+                                              icon={<CheckboxIcon />}
+                                              checkedIcon={<CheckboxCheckedIcon />}
+                                              checked={values?.includes(option?.value)} />
+                                        </div>
+                                        <div>
+                                          {option.label}
+                                        </div>
+                                      </Stack>
+                                  )
+                                } : undefined}
+                                PaperComponent={(props:any )=> <Paper style={{width: "180px"}} {...props}>{props?.children}</Paper>}
                             />
                         ) : input.type === "switch" ? (
                                 <SecondSwitch checked={!!input.value} onChange={handleSwitchCheck}/>
@@ -146,4 +173,4 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
     );
 };
 
-export {FormInput}
+export { FormInput }

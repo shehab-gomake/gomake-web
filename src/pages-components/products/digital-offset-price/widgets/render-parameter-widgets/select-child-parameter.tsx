@@ -28,8 +28,7 @@ const SelectChildParameterWidget = ({
         index !== -1 ? { updateName: temp[index].values } : defaultObject
       }
       onChange={(e: any, value: any) => {
-        if (subSection?.type) {
-          onChangeSubProductsForPrice(
+        onChangeSubProductsForPrice(
             parameter?.id,
             subSection?.id,
             section?.id,
@@ -40,20 +39,7 @@ const SelectChildParameterWidget = ({
             subSection?.type,
             index,
             parameter?.actionIndex
-          );
-        } else {
-          onChangeForPrice(
-            parameter?.id,
-            subSection?.id,
-            section?.id,
-            parameter?.parameterType,
-            parameter?.name,
-            parameter?.actionId,
-            { valueIds: value?.id, values: value?.updateName },
-            index,
-            parameter?.actionIndex
-          );
-        }
+        );
         let temp = [...generalParameters];
         parameter?.childsParameters.forEach((parameter) => {
           const parameterId = parameter.id;

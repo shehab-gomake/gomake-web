@@ -7,8 +7,8 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const {theme,secondColor}=useGomakeTheme()
-  const clasess = useMemo(() => {
+  const {theme,secondColor,errorColor}=useGomakeTheme()
+  const classes = useMemo(() => {
     return {
       mainContainer: {
           display: "flex",
@@ -62,15 +62,19 @@ const useStyle = () => {
         color:secondColor(500),
         width:"50%",
       },
+      warningIconStyle: {
+        width: 120,
+        height: 120,
+        color: errorColor(300)
+      },
       insideStyle:{
         width: "40%",
         height: "540px"
       }
-  
     };
   }, [i18next.language, t,theme]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

@@ -41,6 +41,11 @@ const useStyle = () => {
         '&:hover': {
           backgroundColor: neutralColor(200)
         }
+      },
+      buttonsContainerStyle: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "10px"
       }
     };
   }, [theme]);

@@ -6,5 +6,6 @@ export enum EDataTypeEnum {
     TRANSLATE,
     CURRENCY,
     LIST,
-    IMAGE
+    IMAGE,
+    MACHINES_LIST
 }

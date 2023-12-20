@@ -6,7 +6,7 @@ import { UpdateValueAutoComplete } from "@/components";
 const AutoCompleteUpdatedValue = ({
   label,
   value,
-  isAnderLine,
+  isUnderLine,
   onBlur,
   isUpdate,
   setIsUpdate,
@@ -15,7 +15,7 @@ const AutoCompleteUpdatedValue = ({
   onChange,
   onChangeTextField
 }: IBusinessWidget) => {
-  const { clasess } = useStyle({ isAnderLine });
+  const { clasess } = useStyle({ isUnderLine });
   const [updateValue, setUpdateValue] = useState();
   useEffect(() => {
     setUpdateValue(value);

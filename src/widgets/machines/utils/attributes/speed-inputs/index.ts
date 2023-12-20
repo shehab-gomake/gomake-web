@@ -49,6 +49,8 @@ import {
 } from "@/widgets/machines/utils/attributes/speed-inputs/roll-analog-enhancement-machine";
 import {digitalPrinting} from "@/widgets/machines/utils/attributes/speed-inputs/digital-printing";
 import {ofssetPrinting} from "@/widgets/machines/utils/attributes/speed-inputs/ofsset-printing";
+import {thermalPlateProcessor} from "@/widgets/machines/utils/attributes/speed-inputs/thermal-plate-processor";
+import {analogEnhancement} from "@/widgets/machines/utils/attributes/speed-inputs/analog-enhancement";
 
 
 const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) => {
@@ -151,6 +153,10 @@ const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) 
             return rollAnalogEnhancementMachine(state);
         case ECategoryId.ROLL_ANALOG_ENHANCEMENT_MACHINE:
             return rollAnalogEnhancementMachine(state);
+        case ECategoryId.THERMAL_PLATE_PROCESSOR:
+            return thermalPlateProcessor(state);
+        case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
+            return analogEnhancement(state);
         default:
             return [];
     }

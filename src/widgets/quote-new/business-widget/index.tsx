@@ -4,6 +4,13 @@ import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
+import { useRecoilState } from "recoil";
+import { addressModalState } from "./address-widget/state";
+import { PlusNewIcon } from "@/icons";
+import { MinusIcon } from "@/icons/minus-icon";
+import { AddressModal} from "./address-widget/address-modal";
+import { useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store";
 
 const BusinessNewWidget = ({
   values,
@@ -26,11 +33,15 @@ const BusinessNewWidget = ({
   onBlurBusinessName,
   isUpdateBusinessName,
   setIsUpdateBusinessName,
-  updatePurchaseNumber
+  updatePurchaseNumber,
+  updateClientAddress,
+  onClickDeleteAddress
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
+  const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
 
   const mappedCustomers = renderOptions().map(customer => ({
@@ -38,35 +49,15 @@ const BusinessNewWidget = ({
     id: customer?.id
   }));
 
-  // const quoteStateValue = useRecoilValue<any>(quoteItemState);
-  // const [openAlertModal, setOpenAlertModal] = useState(false);
-  // const [client, setClient] = useState();
-  // const onCloseAlertModal = () => {
-  //   setOpenAlertModal(false);
-  // };
-  // const onOpenAlertModal = (value:any) => {
-  //   setOpenAlertModal(true);
-  //   setClient(value);
-  // };
-
+  //  selected agent here is : agentListValue.find((agent) => agent.value === quoteItemValue?.agentId).text  , but anyway there is a problem when updating "business name" the agent disappeared
+ 
   return (
     <>
       <div style={classes.businessContainerStyle}>
-        {/* <h3 style={classes.labelStyle}>{t("sales.quote.businessName")}</h3>
-        <GoMakeAutoComplate
-          options={renderOptions()}
-          style={classes.autoCompleteStyle}
-          key={quoteStateValue?.client?.name}
-          value={quoteStateValue?.client}
-          placeholder={t("sales.quote.businessName")}
-          getOptionLabel={(item) => item?.name}
-          onChangeTextField={checkWhatRenderArray}
-          disableClearable={true}
-          onChange={(e: any, value: any)=>onOpenAlertModal(value)}
-        /> */}
+
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
-          value={selectBusiness?.name}
+          value={quoteStateValue?.client?.name} 
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
           isUpdate={isUpdateBusinessName}
@@ -89,17 +80,35 @@ const BusinessNewWidget = ({
           onBlur={onBlurBusinessCode}
           setIsUpdate={setIsUpdateBusinessCode}
         />
-        {values?.quoteAddresses?.length > 0 && (
-          <InputUpdatedValues
-            value={`${values?.quoteAddresses[0]?.street} ${values?.quoteAddresses[0]?.apartment}, ${values?.quoteAddresses[0]?.city} `}
-            label={t("customers.modal.address")}
-            isAnderLine={true}
-            onBlur={onBlurAddress}
-            isUpdate={isUpdateAddress}
-            setIsUpdate={setIsUpdateAddress}
-          />
-        )}
-        <AutoCompleteUpdatedValue
+
+        {values?.quoteAddresses?.length > 0 && <InputUpdatedValues
+          value={values?.quoteAddresses?.length > 0 ? `${values?.quoteAddresses[0]?.street} ${values?.quoteAddresses[0]?.apartment}, ${values?.quoteAddresses[0]?.city}` : "no address found"}
+          label={t("customers.modal.address")}
+          isUnderLine={true}
+          onBlur={onBlurAddress}
+          isUpdate={false}
+          setIsUpdate={setIsUpdateAddress}
+          flag={true}
+          onClickFlag={() => setOpenModal(true)}
+        />}
+
+        {values?.quoteAddresses?.length > 0 ?
+          <div
+            style={classes.addNewAddressStyle}
+            onClick={() => null}
+          >
+            <MinusIcon />
+            <div style={classes.addNewAddressTextStyle} onClick={() => onClickDeleteAddress(values?.quoteAddresses[0])}>{t("sales.quote.removeAddress")}</div>
+          </div> : (
+            <div
+              style={classes.addNewAddressStyle}
+            >
+              <PlusNewIcon />
+              <div style={classes.addNewAddressTextStyle} onClick={() => setOpenModal(true)} >{t("sales.quote.addAddress")}</div>
+            </div>
+          )}
+
+        {/* <AutoCompleteUpdatedValue
           label={t("sales.quote.agent")}
           value={selectedAgent?.text}
           options={agentListValue}
@@ -109,6 +118,7 @@ const BusinessNewWidget = ({
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => updateAgent(value)}
         />
+        /> */}
         {/* <GoMakeAlertModal 
         title={t("Change client")}
         openModal={openAlertModal}
@@ -117,6 +127,7 @@ const BusinessNewWidget = ({
         onClickConfirm={()=>{onChangeSelectBusiness(client).then(setOpenAlertModal(false)); }}
         >
         </GoMakeAlertModal> */}
+        <AddressModal isUpdate={values?.quoteAddresses?.length > 0} />
       </div>
     </>
   );

@@ -12,13 +12,14 @@ import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
+import { duplicateQuoteApi, getQuotePdfApi } from "@/services/api-service/quotes/quotes-table-endpoints";
 import { getQuotePdfApi } from "@/services/api-service/quotes/quotes-table-endpoints";
 import { employeesListsState } from "./states";
 
 const useQuotes = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { setSnackbarStateValue , alertRequiredFields } = useSnackBar();
+  const { setSnackbarStateValue, alertFaultUpdate, alertFaultDuplicate } = useSnackBar();
 
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
@@ -42,8 +43,7 @@ const useQuotes = () => {
   const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
   const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
   const [selectedQuote, setSelectedQuote] = useState<any>();
-
-  const onClcikCloseModal = () => {
+  const onClickCloseModal = () => {
     setOpenModal(false);
   };
 
@@ -51,6 +51,10 @@ const useQuotes = () => {
     setSelectedQuote(quote);
     setOpenModal(true);
   };
+
+  const [agentsCategories, setAgentsCategories] = useRecoilState(
+    agentsCategoriesState
+  );
 
   const onClickCloseLogsModal = () => {
     setOpenLogsModal(false);
@@ -122,15 +126,17 @@ const useQuotes = () => {
     );
     const data = res?.data?.data?.result;
     const totalItems = res?.data?.data?.totalItems;
+
     const mapData = data?.map((quote: any) => [
       GetDateFormat(quote?.createdDate),
       quote?.customerName,
       quote?.orderNumber,
+      quote?.quoteNumber,
       quote?.worksNames,
       quote?.totalPrice,
       quote?.notes,
       _renderQuoteStatus(quote?.statusID, quote, t),
-      <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} onClickLoggers={()=>onClickOpenLogsModal(quote?.quoteNumber)}/>,
+      <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} onClickDuplicate={onClickQuoteDuplicate} onClickLoggers={()=>onClickOpenLogsModal(quote?.quoteNumber)} />,
     ]);
     setAllQuotes(mapData);
   }, [
@@ -161,6 +167,7 @@ const useQuotes = () => {
       GetDateFormat(quote?.createdDate),
       quote?.customerName,
       quote?.orderNumber,
+      quote?.quoteNumber,
       quote?.worksNames,
       quote?.totalPrice,
       quote?.notes,
@@ -178,7 +185,7 @@ const useQuotes = () => {
     getAllQuotes();
   };
 
-  const onClcikClearFilter = () => {
+  const onClickClearFilter = () => {
     setStatusId(null);
     setAgentId(null);
     setCustomerId(null);
@@ -189,6 +196,7 @@ const useQuotes = () => {
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
     t("sales.quote.orderNumber"),
+    t("sales.quote.quoteNumber"),
     t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
@@ -300,11 +308,30 @@ const useQuotes = () => {
       if (res?.success) {
         const pdfLink = res.data;
         window.open(pdfLink, "_blank");
-    } else {
-        alertRequiredFields();
-    }
+      } else {
+        alertFaultUpdate();
+      }
     };
     await getQuotePdfApi(callApi, callBack, { quoteId: id });
+  };
+
+  const onClickQuoteDuplicate = async (id: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
+        const quoteId = res?.data?.quoteId;
+        console.log(quoteId)
+        if (!isAnotherQuoteInCreate) {
+          navigate("/quote");
+        }
+        else {
+          onClickOpenModal({id:quoteId })
+        }
+      } else {
+        alertFaultDuplicate();
+      }
+    };
+    await duplicateQuoteApi(callApi, callBack, { quoteId: id });
   };
 
   return {
@@ -318,7 +345,7 @@ const useQuotes = () => {
     customerId,
     agentId,
     errorColor,
-    onClcikCloseModal,
+    onClickCloseModal,
     setPatternSearch,
     setStatusId,
     setCustomerId,
@@ -329,7 +356,7 @@ const useQuotes = () => {
     updateQuoteStatus,
     onClickSearchFilter,
     getAllQuotes,
-    onClcikClearFilter,
+    onClickClearFilter,
     onClickQuotePdf,
     t,
     openLogsModal,

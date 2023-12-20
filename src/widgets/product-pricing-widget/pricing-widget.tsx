@@ -15,22 +15,41 @@ import {
 } from "@/widgets/product-pricing-widget/components/outsource-suppliers/out-source-suppliers-widget";
 import {useTranslation} from "react-i18next";
 import {useStyle} from "@/widgets/product-pricing-widget/style";
-import {useRecoilValue} from "recoil";
-import {selectedWorkFlowState} from "@/widgets/product-pricing-widget/state";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {currentProductItemValueState, selectedWorkFlowState} from "@/widgets/product-pricing-widget/state";
+import {saveProductItemValueDraft} from "@/services/api-service/quotes/save-product-item-value-draft-api";
+import {useGomakeAxios} from "@/hooks";
+import {useRouter} from "next/router";
+import cloneDeep from "lodash.clonedeep";
 
 const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps) => {
     const [view, setView] = useState<EPricingViews>(EPricingViews.SELECTED_WORKFLOW);
     const {t} = useTranslation();
     const {classes} = useStyle();
     const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
+    const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
+    const router = useRouter();
+    const { callApi } = useGomakeAxios();
     useEffect(() => {
         getOutSourcingSuppliers();
     }, [])
     useEffect(() => {
         if (!selectedWorkFlow) {
             setView(EPricingViews.OUTSOURCE_WORKFLOW);
+        }else if(currentProductItemValue){
+            let temp = cloneDeep(currentProductItemValue);
+            temp.workFlow = [selectedWorkFlow];
+            const callBack = (res) => {
+                if (res.success) {
+                    const id = res.data.productItemValueDraftId;
+                    temp.id = id;
+                    setCurrentProductItemValue(temp)
+                }
+            };
+            saveProductItemValueDraft(callApi,callBack,temp,true)
         }
     }, [selectedWorkFlow])
+    
     return (
         <Stack gap={'16px'} width={'100%'}>
             <Stack direction={"row"} justifyContent={'space-between'}>

@@ -36,7 +36,6 @@ const UpdateValueAutoComplete = ({
           sx={{
             p: "4px 4px",
             display: "inline-flex",
-            alignItems: "center",
             width: 137,
             height: "26px",
             border: "1px solid " + secondColor(400),
@@ -60,8 +59,8 @@ const UpdateValueAutoComplete = ({
               onChange(e, value);
             })}
             popupIcon={
-              <div style={{ position: "absolute", top: -11 }}>
-                <ArrowUpIcon />
+              <div style={{position: "absolute", top: "50%", transform: "translateY(-50%)" }}>
+              <ArrowUpIcon />
               </div>
             }
             style={{ height: 26 }}
