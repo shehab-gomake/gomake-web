@@ -6,6 +6,8 @@ import {ArrayInput} from "@/widgets/materials-widget/components/table-cell-data/
 import {NumberStringInput} from "@/widgets/materials-widget/components/table-cell-data/number-string-input";
 import {useTableCellData} from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
 import {ImageInput} from "./image-input";
+import { materialsMachinesState, openAddRowModalState } from "../../state";
+import { MultiSelectInput } from "./multi-select-input";
 import {SyntheticEvent} from "react";
 
 
@@ -20,14 +22,13 @@ const TableCellData = ({value, type, isEditable, parameterKey, id, values}: IRow
     }
     switch (type) {
         case EDataTypeEnum.BOOLEAN:
-            return <SecondSwitch checked={value} onChange={toggleIsActive}/>
+            return <SecondSwitch checked={value} onChange={toggleIsActive} />
         case EDataTypeEnum.CURRENCY:
-            return <CurrencyInput value={value as string} id={id} key={parameterKey}/>
+            return <CurrencyInput value={value as string} id={id} key={parameterKey} />
         case EDataTypeEnum.ARRAY_INPUT:
-            return <ArrayInput valueArray={value as string[]} type={type} isEditable={isEditable}
-                               parameterKey={parameterKey} id={id}/>
+            return <ArrayInput valueArray={value as string[]} type={type} isEditable={isEditable} parameterKey={parameterKey} id={id} />
         case EDataTypeEnum.IMAGE:
-            return <ImageInput parameterKey={parameterKey} id={id} value={value.toString()}/>
+            return <ImageInput parameterKey={parameterKey} id={id} value={value.toString()} />
         case EDataTypeEnum.LIST:
             return <div style={{minWidth: "80px"}}>
                 <GoMakeAutoComplate onChange={onSelectChange} value={value}
@@ -36,9 +37,10 @@ const TableCellData = ({value, type, isEditable, parameterKey, id, values}: IRow
                                         label: inputValue
                                     })) : []}/>
             </div>
+        case EDataTypeEnum.MACHINES_LIST:
+            return <MultiSelectInput values={value as string[]} parameterKey={parameterKey} id={id} />
         default:
-            return <NumberStringInput type={type} isEditable={isEditable} parameterKey={parameterKey} id={id}
-                                      value={value}/>
+            return <NumberStringInput type={type} isEditable={isEditable} parameterKey={parameterKey} id={id} value={value} />
     }
 
 }

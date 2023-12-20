@@ -20,6 +20,11 @@ const useStyle = () => {
                 color: primaryColor(300),
                 height: '10px'
             },
+            multiSelectStyle: {
+                display:"flex",
+               // justifyContent:"center",
+                width:"80%" 
+            }
         };
     }, [theme]);
     return {
