@@ -20,14 +20,12 @@ const SectionMappingWidget = ({
   template,
   setTemplate,
 }: any) => {
-  console.log("template", template);
   const { t } = useTranslation();
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
   const [groupedParameters, setGroupedParameters] = useState<any>();
   const [groupedParametersArray, setGroupedParametersArray] = useState<any>();
-  console.log("groupedParametersArray", groupedParametersArray);
   useEffect(() => {
     const groupedParameters = subSection?.parameters
       ?.filter((param: any) => !param.isHidden)
@@ -54,11 +52,8 @@ const SectionMappingWidget = ({
 
   const deleteDuplicateSection = (mySectionId, mySubSectionId, index) => {
     // 1. Delete the item from groupedParametersArray
-
-    const updatedGroupedParametersArray = [...groupedParametersArray].filter(
-      (param, index2) => index2 !== index
-    );
-    // updatedGroupedParametersArray.splice(index, 1);
+    const updatedGroupedParametersArray = [...groupedParametersArray];
+    updatedGroupedParametersArray.splice(index, 1);
     // 2. Delete parameters from the template
     const updatedTemplate = cloneDeep(template);
     const updatedTemplateCopy = JSON.parse(JSON.stringify(updatedTemplate));
