@@ -73,6 +73,9 @@ const SectionMappingWidget = ({
         ].subSections[subSectionIndex].parameters
           .map((param) => {
             if (param.actionIndex > index) {
+              param.relatedParameters.forEach(
+                (related) => (related.actionIndex = related.actionIndex - 1)
+              );
               return { ...param, actionIndex: param.actionIndex - 1 };
             } else if (param.actionIndex === index) {
               return null; // Remove the parameter with actionIndex === index

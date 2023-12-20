@@ -24,7 +24,7 @@ const DropDownListParameterWidget = ({
     <div style={clasess.dropDownListWithSettingIcon}>
       <GoMakeAutoComplate
         options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
-        key={selectedValueConfig}
+        key={parameter.id + "-" + parameter.actionIndex}
         placeholder={parameter.name}
         style={clasess.dropDownListStyle}
         getOptionLabel={(option: any) => option.updateName}

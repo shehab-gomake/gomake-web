@@ -213,6 +213,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [pricingDefaultValue, canCalculation]);
   useEffect(() => {
+    console.log("currentProcutTemplae", productTemplate);
     if (productTemplate && productTemplate?.sections?.length > 0) {
       let temp = [...isRequiredParameters];
       productTemplate?.sections?.map((section) => {
