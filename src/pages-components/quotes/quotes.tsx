@@ -4,14 +4,16 @@ import { useQuotes } from "./use-quote";
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
+  GoMakeModal,
   GomakePrimaryButton,
 } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
-import {EDocumentTypeEnum} from "@/enums";
-interface IListWidgetProps{
-  documentType:EDocumentTypeEnum
+import { EDocumentTypeEnum } from "@/enums";
+import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
+interface IListWidgetProps {
+  documentType: EDocumentTypeEnum
 }
 const QuotesListPageWidget = (props:IListWidgetProps) => {
   const { classes } = useStyle();
@@ -34,8 +36,13 @@ const QuotesListPageWidget = (props:IListWidgetProps) => {
     updateQuoteStatus,
     onClickSearchFilter,
     onClickClearFilter,
+    openLogsModal,
+    onClickCloseLogsModal,
+    modalLogsTitle,
+    logsTableHeaders,
     t,
   } = useQuotes();
+
   return (
     <>
       <div style={classes.mainContainer}>
@@ -132,6 +139,13 @@ const QuotesListPageWidget = (props:IListWidgetProps) => {
         subTitle={t("sales.quote.subTitleModal")}
         onClickDelete={() => updateQuoteStatus()}
       />
+      <GoMakeModal
+        insideStyle={classes.insideStyle}
+        openModal={openLogsModal}
+        onClose={onClickCloseLogsModal}
+        modalTitle={t('sales.quote.quoteLogs') + ' - ' + modalLogsTitle}>
+        <QuoteLogsWidget logsTableHeaders={logsTableHeaders}/>
+      </GoMakeModal>
     </>
   );
 };

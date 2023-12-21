@@ -1708,7 +1708,26 @@
       "copyTo": "Copy to",
       "managerApproval": "Manager Approval",
       "dateOfReference" :"Date Of Reference",
-      "quoteNumber": "Quote number"
+      "quoteNumber": "Quote number",
+      "addressLine1": "Address Line 1",
+      "addressLine2": "Address Line 2",
+      "enterYourAddress":"Enter Your Address",
+      "country":"Country",
+      "selectYourCountry":"Select Your Country",
+      "selectYourCity":"Select Your City",
+      "zipCode": "Zip Code",
+      "enterYourZipCode":"Enter Your ZipCode",
+      "save": "Save",
+      "address": "Address",
+      "addressId": "Address ID",
+      "addAddress" :"Add Address",
+      "removeAddress": "Remove Address",
+      "actionDate" :"Action Date",
+      "employeeName":"Employee Name",
+      "actionDescription":"Action Description",
+      "selectEmployee":"select employee",
+      "selectDate":"select date",
+      "quoteLogs":"Logs for quote"
     }
   },
   "usersSettings": {
@@ -2078,7 +2097,15 @@
     "changePass": "Change password",
     "update": "Update",
     "loginLogo": "Login logo",
-    "companyLogo": "Company logo"
+    "companyLogo": "Company logo",
+    "dayOfWork": "Working days",
+    "sunday": "Sun",
+    "monday": "Mon",
+    "tuesday":"Tue",
+    "wednesday":"Wed",
+    "thursday":"Thu",
+    "friday" :"Fri",
+    "saturday":"Sat"
   },
   "remainWords": {
     "newQuote": "New quote",
@@ -2206,7 +2233,8 @@
     "details": "Details",
     "edit": "Edit",
     "editDefinition": "Edit definition",
-    "update": "Update"
+    "update": "Update",
+    "nextValueTip": "You must initialize with a value greater than"
   },
   "documentingDesign": {
     "Save": "Save",

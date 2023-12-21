@@ -54,15 +54,15 @@ const useAdminAddMachine = () => {
 
     const updateMachine = async () => {
         const callBack = (res) => {
-            if (result?.success) {
+            if (res?.success) {
                 setState(res.data);
-                setUpdatedMachine(result.data);
+                setUpdatedMachine(res.data);
                 alertSuccessUpdate()
             } else {
                 alertFaultUpdate();
             }
         }
-        const result = await adminUpdateMachine(callApi, callBack, state);
+        await adminUpdateMachine(callApi, callBack, state);
 
     }
 

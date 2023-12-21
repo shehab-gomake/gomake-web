@@ -5,7 +5,7 @@ import { IconButton, Tooltip } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { clientContactsState } from "@/store";
+import { IContactData, clientContactsState } from "@/store";
 import { quoteState } from "@/pages-components/quote/store/quote";
 import { PlusIcon } from "@/icons";
 interface IProps {
@@ -24,7 +24,7 @@ const AddContactWidget = ({
 }: IProps) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
-  const [clientContactsValue] = useRecoilState<any>(clientContactsState);
+  const [clientContactsValue] = useRecoilState<IContactData[]>(clientContactsState);
   const quoteStateValue = useRecoilValue<any>(quoteState);
 
   return (
