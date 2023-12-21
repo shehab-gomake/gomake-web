@@ -95,6 +95,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                           item={item}
                           productTemplate={productTemplate}
                           setProductTemplate={setProductTemplate}
+                          isAdmin={false}
                         />
                       );
                     }

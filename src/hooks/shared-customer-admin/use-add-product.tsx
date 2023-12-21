@@ -845,6 +845,8 @@ const useAddProduct = ({ clasess }) => {
     updatedProductParameterValuesConfigsHidden,
     updatedProductParameterValuesConfigsDefault,
     updatedValuesConfigsForParameters,
+    setTemplate,
+    getProductById,
     changeDefaultValue,
     changeName,
     productState,

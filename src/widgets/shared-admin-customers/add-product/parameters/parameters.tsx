@@ -11,6 +11,7 @@ import { SettingIcon } from "../icons";
 
 import { useStyle } from "./style";
 import { EParameterTypes } from "@/enums";
+import { Tabs } from "@mui/material";
 
 const ParameterWidget = () => {
   const { clasess } = useStyle();
@@ -28,6 +29,8 @@ const ParameterWidget = () => {
     updatedProductParameteName,
     setChangeName,
     updatedValuesConfigsForParameters,
+    setTemplate,
+    getProductById,
     activeIndex,
     template,
     selectedSubSection,
@@ -43,18 +46,24 @@ const ParameterWidget = () => {
           <div style={clasess.mainRowContainer}>
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
-                {template?.sections.map((item, index) => {
-                  return (
-                    <TabsMappingWidget
-                      key={`tab-${index}`}
-                      clasess={clasess}
-                      index={index}
-                      handleTabClick={handleTabClick}
-                      activeIndex={activeIndex}
-                      item={item}
-                    />
-                  );
-                })}
+                <Tabs variant="scrollable" scrollButtons={"auto"}>
+                  {template?.sections.map((item, index) => {
+                    return (
+                      <TabsMappingWidget
+                        key={`tab-${index}`}
+                        clasess={clasess}
+                        index={index}
+                        handleTabClick={handleTabClick}
+                        activeIndex={activeIndex}
+                        productTemplate={template}
+                        setProductTemplate={setTemplate}
+                        item={item}
+                        isAdmin={true}
+                        getProductById={getProductById}
+                      />
+                    );
+                  })}
+                </Tabs>
               </div>
               <div style={{ height: "50vh", overflow: "scroll" }}>
                 <div style={clasess.sectionsContainer}>

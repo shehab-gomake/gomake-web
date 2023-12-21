@@ -1,10 +1,12 @@
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { AddNewIcon, RemoveIcon } from "@/icons";
+import { EHttpMethod } from "@/services/api-service/enums";
 import { _renderActiveIcon, _renderUnActiveIcon } from "@/utils/constants";
 import { DoneIcon } from "@/widgets";
-import { Tab, Tabs } from "@mui/material";
 
 import cloneDeep from "lodash.clonedeep";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const TabsMappingWidget = ({
@@ -15,7 +17,17 @@ const TabsMappingWidget = ({
   item,
   productTemplate,
   setProductTemplate,
+  isAdmin,
+  getProductById,
 }: any) => {
+  const { callApi } = useGomakeAxios();
+  const {
+    alertFaultAdded,
+    alertSuccessAdded,
+    alertSuccessDelete,
+    alertFaultDelete,
+  } = useSnackBar();
+  const router = useRouter();
   const duplicateSection = () => {
     let temp = cloneDeep(productTemplate);
     const section = temp.sections.find((x) => x.id === item.id);
@@ -55,6 +67,40 @@ const TabsMappingWidget = ({
     temp.sections = temp.sections.filter((x) => x.id !== item.id);
     setProductTemplate(temp);
   };
+  const duplicateSectionFunction = useCallback(
+    async (item) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/printhouse-config/products/duplicate-section`,
+        {
+          productId: router?.query?.id,
+          sectionId: item?.id,
+        }
+      );
+      if (res?.success) {
+        alertSuccessAdded();
+        getProductById();
+      } else {
+        alertFaultAdded();
+      }
+    },
+    [router]
+  );
+  const deleteSection = useCallback(
+    async (item: any) => {
+      const res = await callApi(
+        EHttpMethod.DELETE,
+        `/v1/printhouse-config/products/delete-section?productId=${router?.query?.id}&&sectionId=${item?.id}`
+      );
+      if (res?.success) {
+        alertSuccessDelete();
+        getProductById();
+      } else {
+        alertFaultDelete();
+      }
+    },
+    [router]
+  );
 
   return (
     <div>
@@ -81,8 +127,12 @@ const TabsMappingWidget = ({
         >
           {item.name}
         </div>
-        {item.isCanDuplicated && !item.index ? (
-          <div onClick={() => duplicateSection()}>
+        {item.isCanDuplicated && !item.index && !item.isCanDeleted ? (
+          <div
+            onClick={() =>
+              isAdmin ? duplicateSectionFunction(item) : duplicateSection()
+            }
+          >
             <AddNewIcon />
           </div>
         ) : null}
@@ -93,6 +143,11 @@ const TabsMappingWidget = ({
         ) : (
           <></>
         )}
+        {item.isCanDeleted ? (
+          <div onClick={() => deleteSection(item)} style={{ marginTop: 5 }}>
+            <RemoveIcon />
+          </div>
+        ) : null}
       </div>
       {index === activeIndex ? (
         <div style={clasess.selectedTabLine} />
