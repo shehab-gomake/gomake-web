@@ -18,11 +18,12 @@ import { generalInputs, generalInputs2, lastOrderInputs } from "./inputs/general
 import { Stack } from "@mui/material";
 import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useSnackBar } from "@/hooks";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { gomakeUserState } from "./components/gomakeUser-tab/gomakeUserState";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { resetPassModalState } from "./state";
 import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
+import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 
 interface IProps {
   isValidCustomer?: (value: any, value1: any, value2: any, value3: any) => boolean;
@@ -72,6 +73,7 @@ const CustomerCardWidget = ({ isValidCustomer, codeFlag, typeClient, getAllCusto
   const [contacts, setContacts] = useState(customer && customer.contacts ? customer.contacts : []);
   const [addresses, setAddresses] = useState(customer && customer.addresses ? customer.addresses : []);
   const [users, setUsers] = useState(customer && customer.users ? customer.users : []);
+  const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
 
   useEffect(() => {
     addInitContact();
@@ -291,7 +293,7 @@ const CustomerCardWidget = ({ isValidCustomer, codeFlag, typeClient, getAllCusto
         </Stack>
         <Stack direction={'row'} marginTop={"16px"} marginBottom={"24px"} width={"90%"} gap={"20px"} >
           {
-            customerInputs(typeClient, codeFlag, customer).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={!!item.readonly} />)
+            customerInputs(typeClient, codeFlag, customer , clientTypesCategories).map(item => <FormInput input={item as IInput} changeState={onChangeInputs} error={item.required && !item.value} readonly={!!item.readonly} />)
           }
         </Stack>
         <Stack direction={'row'} marginBottom={"24px"} width={"90%"} gap={"20px"} >

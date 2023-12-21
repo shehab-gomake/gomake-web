@@ -95,15 +95,14 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
     const callBack = (res) => {
       if (res.success) {
         const clientTypes = res.data.map(types => ({
-          label: types.text,
-          id: types.value
+          label: types.name,
+          id: types.id
         }));
         setClientTypesCategories(clientTypes);
       }
     }
     await getAndSetClientTypes(callApi, callBack)
   }
-
 
   ///////////////////////// select agent //////////////////////////////
   const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
