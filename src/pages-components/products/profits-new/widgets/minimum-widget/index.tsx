@@ -11,6 +11,7 @@ const MinimumWidget = ({
   setIsUpdateMinimumValue,
   onInputChangeMinimumValue,
 }: ProfitRightSideProps) => {
+  console.log("minimumValue", minimumValue);
   const { clasess } = useStyle();
   const { t } = useTranslation();
 
@@ -25,7 +26,7 @@ const MinimumWidget = ({
           {t("products.profits.exceptions.value")}
         </div>
         <InputUpdatedValues
-          value={minimumValue}
+          value={minimumValue != null ? minimumValue : 0}
           onBlur={() => onBlurMinimumValue()}
           isUpdate={isUpdateMinimumValue}
           setIsUpdate={setIsUpdateMinimumValue}
