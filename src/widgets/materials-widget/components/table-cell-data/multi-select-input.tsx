@@ -10,8 +10,8 @@ import { useStyle } from "./style";
 
 interface IProps {
     parameterKey: string;
-    id: string;
     values: string[];
+    id: string;
 }
 
 const MultiSelectInput = ({ values, parameterKey, id }: IProps) => {
@@ -19,14 +19,25 @@ const MultiSelectInput = ({ values, parameterKey, id }: IProps) => {
     const { updateCellData } = useTableCellData();
     const machinesCategories = useRecoilValue<any>(materialsMachinesState);
 
-    const onChangeInputs = async (key, value) => {
-        await updateCellData(id, key , value);
-    }
+
 
     const options = machinesCategories.map(machine => ({
         value: machine.id,
         label: `${machine.manufacturer} - ${machine.model}`
     }));
+
+    const reorderedOptions = options.sort((a, b) => {
+        const isSelectedA = values.includes(a.value);
+        const isSelectedB = values.includes(b.value);
+
+        if (isSelectedA && !isSelectedB) {
+            return -1;
+        } else if (!isSelectedA && isSelectedB) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
 
     const selectedLabels = values.map(selectedId => options.find(opt => opt.value === selectedId)?.label)
         .filter(label => label !== null && label !== undefined);
@@ -35,15 +46,19 @@ const MultiSelectInput = ({ values, parameterKey, id }: IProps) => {
         onChangeInputs(parameterKey, isChecked ? [...values, option?.value] : values.filter(v => v !== option?.value));
     };
 
+    const onChangeInputs = async (key, value) => {
+        await updateCellData(id, key, value);
+    }
+    
+
     return (
-        <div style={{padding:"0px 20px 0px 20px"}}>
+        <div style={{ padding: "0px 20px 0px 20px" }}>
             <GoMakeAutoComplate
                 style={{ border: 0 }}
                 //onChange={onChangeInputs}
                 value={selectedLabels}
-                disabled={false}
-                placeholder={"Select machines"}
-                options={options}
+                disableClearable={true} placeholder={"Select machines"}
+                options={reorderedOptions}
                 renderOption={(props: any, option: any) => {
                     return (
                         <Stack style={classes.multiSelectOption}>
