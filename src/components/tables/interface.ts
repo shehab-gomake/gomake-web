@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+export type TABLE_TYPE = "PrimaryTable " | "ClassicTable";
 
 export interface ITableProps {
   rows: ReactNode[][];
@@ -6,7 +7,9 @@ export interface ITableProps {
   stickyHeader?: boolean;
   stickyFirstCol?: boolean;
   maxHeight?: number;
+  variant?: TABLE_TYPE;
 }
+
 export interface ISecondaryTableProps {
   rows: ITableRow[];
   headers: (string | JSX.Element)[];

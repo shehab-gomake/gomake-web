@@ -12,11 +12,13 @@ import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
+import { getQuotePdfApi } from "@/services/api-service/quotes/quotes-table-endpoints";
 
 const useQuotes = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { setSnackbarStateValue } = useSnackBar();
+  const { setSnackbarStateValue , alertRequiredFields } = useSnackBar();
+
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
@@ -39,7 +41,7 @@ const useQuotes = () => {
     setOpenModal(false);
   };
 
-  const onClcikOpenModal = (quote: any) => {
+  const onClickOpenModal = (quote: any) => {
     setSelectedQuote(quote);
     setOpenModal(true);
   };
@@ -49,6 +51,7 @@ const useQuotes = () => {
   useEffect(() => {
     setFinalPatternSearch(debounce);
   }, [debounce]);
+
   const getAgentCategories = async () => {
     const callBack = (res) => {
       if (res.success) {
@@ -61,6 +64,7 @@ const useQuotes = () => {
     };
     await getAndSetEmployees2(callApi, callBack, { isAgent: true });
   };
+
   const renderOptions = () => {
     if (!!canOrder) {
       return customersListCreateOrder;
@@ -112,7 +116,7 @@ const useQuotes = () => {
       quote?.totalPrice,
       quote?.notes,
       _renderQuoteStatus(quote?.statusID, quote, t),
-      <MoreMenuWidget quote={quote} onClcikOpenModal={onClcikOpenModal} />,
+      <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} />,
     ]);
     setAllQuotes(mapData);
   }, [
@@ -124,6 +128,7 @@ const useQuotes = () => {
     agentId,
     finalPatternSearch,
   ]);
+
   const getAllQuotesInitial = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -145,13 +150,15 @@ const useQuotes = () => {
       quote?.totalPrice,
       quote?.notes,
       _renderQuoteStatus(quote?.statusID, quote, t),
-      <MoreMenuWidget quote={quote} onClcikOpenModal={onClcikOpenModal} />,
+      <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} />,
     ]);
     setAllQuotes(mapData);
   }, [page, limit]);
+
   useEffect(() => {
     getAllQuotes();
   }, []);
+
   const onClickSearchFilter = () => {
     getAllQuotes();
   };
@@ -232,6 +239,7 @@ const useQuotes = () => {
       value: QUOTE_STATUSES.WaitForPrintHouseConfirm,
     },
   ];
+
   useEffect(() => {
     getAllCustomersCreateQuote();
     getAllCustomersCreateOrder();
@@ -261,6 +269,20 @@ const useQuotes = () => {
       });
     }
   }, [selectedQuote]);
+
+
+  const onClickQuotePdf = async (id: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const pdfLink = res.data;
+        window.open(pdfLink, "_blank");
+    } else {
+        alertRequiredFields();
+    }
+    };
+    await getQuotePdfApi(callApi, callBack, { quoteId: id });
+  };
+
   return {
     patternSearch,
     tableHeaders,
@@ -284,6 +306,7 @@ const useQuotes = () => {
     onClickSearchFilter,
     getAllQuotes,
     onClcikClearFilter,
+    onClickQuotePdf,
     t,
   };
 };

@@ -41,13 +41,16 @@ const useQuoteNew = () => {
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<
     number | null
   >(null);
-  const [isUpdatePurchaseNumer, setIsUpdatePurchaseNumer] = useState<
+  const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<
     number | null
   >(null);
+  
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
   const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
+
   const [selectedAgent, setSelectedAgent] = useState<any>();
+
   const [agentListValue, setAgentListValue] =
     useRecoilState<any>(agentListsState);
   const [isDisplayWidget, setIsDisplayWidget] = useState(false);
@@ -146,6 +149,7 @@ const useQuoteNew = () => {
       onlyCreateOrderClients: false,
     });
   }, []);
+
   useEffect(() => {
     const foundItem = customersListValue.find(
       (item: any) => item.id === quoteItemValue?.customerID
@@ -157,26 +161,33 @@ const useQuoteNew = () => {
     getAllCustomers();
   }, []);
 
-  const onBlurBusinessName = async () => {
-    setIsUpdateBusinessName(null);
+  const onBlurPurchaseNumber = async (value=5) => {
+    updatePurchaseNumber(value);
+    setIsUpdatePurchaseNumber(null);
   };
-  const onBlurPurchaseNumer = async () => {
-    setIsUpdatePurchaseNumer(null);
-  };
+
   const onBlurBusinessCode = async () => {
     setIsUpdateBusinessCode(null);
   };
+
   const onBlurAddress = async () => {
     setIsUpdateAddress(null);
   };
+
   const onBlurAgent = async () => {
     setIsUpdateAgent(null);
   };
+
+  const onBlurBusinessName = async () => {
+    setIsUpdateBusinessName(null);
+  };
+
   const getAllEmployees = useCallback(async () => {
     await getAndSetAllEmployees(callApi, setAgentListValue, {
       isAgent: true,
     });
   }, []);
+
   useEffect(() => {
     if (agentListValue?.length > 0) {
       const selectedAgent1 = agentListValue.find(
@@ -210,13 +221,62 @@ const useQuoteNew = () => {
     },
     [quoteItemValue]
   );
+
+
+
+  const updatePurchaseNumber = useCallback(
+    async (value: any) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/erp-service/quote/update-purchase-number`,
+        {
+          quoteId: quoteItemValue?.id,
+          purchaseNumber: value,
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        setIsUpdatePurchaseNumber(null);
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [quoteItemValue]
+  );
+
+  // update business name (client)
+  const onChangeSelectBusiness = useCallback(
+    async (item: any) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/erp-service/quote/change-client`,
+        {
+          quoteID: quoteItemValue?.id,
+          clientId: item?.id,
+          userId: quoteItemValue?.userID,
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        setIsUpdateBusinessName(null);
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [selectBusiness, quoteItemValue]
+  );
+
   const onBlurContactName = async () => {
     setIsUpdateContactName(null);
     setIsDisplayWidget(false);
   };
+
   const onBlurContactEmail = async () => {
     setIsUpdateContactEmail(null);
   };
+
   const onBlurContactMobile = async () => {
     setIsUpdateContactMobile(null);
   };
@@ -293,6 +353,7 @@ const useQuoteNew = () => {
   const onInputChangeMail = (v: any) => {
     onChangeUpdateClientContact("mail", v);
   };
+
   const onInputChangePhone = (v: any) => {
     onChangeUpdateClientContact("phone", v);
   };
@@ -325,6 +386,7 @@ const useQuoteNew = () => {
   const onCloseDeleteModalContact = () => {
     setOpenDeleteModalContact(false);
   };
+
   const onClickDeleteContact = useCallback(async (item: any) => {
     const res = await callApi(
       EHttpMethod.DELETE,
@@ -338,6 +400,7 @@ const useQuoteNew = () => {
       alertFaultDelete();
     }
   }, []);
+
   const onOpenNewItem = () => {
     setOpenAddNewItemModal(true);
   };
@@ -394,12 +457,15 @@ const useQuoteNew = () => {
       alertFaultAdded();
     }
   }, [qouteItemId, amountVlue]);
+
   const onCloseDeleteItemModal = () => {
     setOpenDeleteItemModal(false);
   };
+
   const onOpenDeleteItemModal = () => {
     setOpenDeleteItemModal(true);
   };
+
   const deleteQuoteItem = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.DELETE,
@@ -483,11 +549,14 @@ const useQuoteNew = () => {
     },
     [quoteItems]
   );
+
   useEffect(() => {
     setquoteItems(quoteItemValue);
   }, [quoteItemValue]);
+
   const dateRef = useRef(null);
   const [activeClickAway, setActiveClickAway] = useState(false);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dateRef.current && !dateRef.current.contains(event.target)) {
@@ -502,19 +571,19 @@ const useQuoteNew = () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
+
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
+
   useEffect(() => {
     setSelectDate(quoteItemValue?.dueDate);
   }, [quoteItemValue]);
 
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
-  const [openIrreleventCancelModal, setOpenIrreleventCancelModal] =
-    useState(false);
+  const [openIrreleventCancelModal, setOpenIrreleventCancelModal] = useState(false);
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
-  const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] =
-    useState(false);
+  const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] = useState(false);
 
   const onClcikOpenIrreleventModal = () => {
     setOpenIrreleventCancelModal(true);
@@ -606,7 +675,7 @@ const useQuoteNew = () => {
     selectDate,
     selectBusiness,
     isUpdateBusinessName,
-    isUpdatePurchaseNumer,
+    isUpdatePurchaseNumber,
     isUpdateAddress,
     selectedAgent,
     agentListValue,
@@ -677,10 +746,10 @@ const useQuoteNew = () => {
     setIsUpdateBusinessName,
     setSelectBusiness,
     setIsUpdateAddress,
-    setIsUpdatePurchaseNumer,
+    setIsUpdatePurchaseNumber,
     setIsUpdateBusinessCode,
     onBlurBusinessName,
-    onBlurPurchaseNumer,
+    onBlurPurchaseNumber,
     onBlurBusinessCode,
     onBlurAddress,
     onBlurAgent,
@@ -712,6 +781,8 @@ const useQuoteNew = () => {
     setReasonText,
     onClickCancelOffer,
     updateCancelQuote,
+    onChangeSelectBusiness,
+    updatePurchaseNumber
   };
 };
 

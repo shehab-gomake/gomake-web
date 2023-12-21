@@ -5,7 +5,6 @@ const SWITCHParameterWidget = ({
   index,
   temp,
   onChangeSubProductsForPrice,
-  onChangeForPrice,
   subSection,
   section,
 }) => {
@@ -16,32 +15,18 @@ const SWITCHParameterWidget = ({
         index !== -1 ? (temp[index].values[0] === "true" ? true : false) : ""
       }
       onChange={(e: any, value: any) => {
-        if (subSection?.type) {
-          onChangeSubProductsForPrice(
-            parameter?.id,
-            subSection?.id,
-            section?.id,
-            parameter?.parameterType,
-            parameter?.name,
-            parameter?.actionId,
-            { values: value?.toString() },
-            subSection?.type,
-            index,
-            parameter?.actionIndex
-          );
-        } else {
-          onChangeForPrice(
-            parameter?.id,
-            subSection?.id,
-            section?.id,
-            parameter?.parameterType,
-            parameter?.name,
-            parameter?.actionId,
-            { values: value?.toString() },
-            index,
-            parameter?.actionIndex
-          );
-        }
+        onChangeSubProductsForPrice(
+          parameter?.id,
+          subSection?.id,
+          section?.id,
+          parameter?.parameterType,
+          parameter?.name,
+          parameter?.actionId,
+          { values: value?.toString() },
+          subSection?.type,
+          index,
+          parameter?.actionIndex
+        );
       }}
     />
   );

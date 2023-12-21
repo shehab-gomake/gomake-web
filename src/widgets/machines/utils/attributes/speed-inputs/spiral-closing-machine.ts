@@ -1,4 +1,5 @@
 import {feedOptions} from "@/widgets/machines/utils/const/feed-options";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const spiralClosingMachine = (state: Record<string, any>) => {
     return [
@@ -13,6 +14,7 @@ const spiralClosingMachine = (state: Record<string, any>) => {
             value: state.attributes?.setupTime ? state.attributes?.setupTime : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.setupTime,
+            unit: EMeasurementUnits.MINUTE
         },
         {
             name: "actionType",
@@ -39,10 +41,10 @@ const spiralClosingMachine = (state: Record<string, any>) => {
             isValid: !!state?.attributes?.closeSpeed,
         },
         {
-            name: 'machineAttributes.insertSpeed',
-            parameterKey: 'insertSpeed',
-            value: state.attributes?.insertSpeed || [],
-            isValid: state.attributes?.insertSpeed?.length > 0,
+            name: 'machineAttributes.speedByThickness',
+            parameterKey: 'speedByThickness',
+            value: state.attributes?.speedByThickness || [],
+            isValid: state.attributes?.speedByThickness?.length > 0,
             machineInputType: 'multiArrayInput',
             inputs: [
                 {
@@ -52,7 +54,8 @@ const spiralClosingMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.maxThickness",
                     required: true,
                     parameterKey: "maxThickness",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.MM
                 },
                 {
                     name: "speed",
@@ -61,7 +64,8 @@ const spiralClosingMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.speed",
                     required: true,
                     parameterKey: "speed",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.PERCENTAGE
                 },
 
             ]

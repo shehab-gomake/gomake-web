@@ -6,7 +6,6 @@ const InputNumberParameterWidget = ({
   index,
   temp,
   onChangeSubProductsForPrice,
-  onChangeForPrice,
   subSection,
   section,
   type,
@@ -18,32 +17,18 @@ const InputNumberParameterWidget = ({
       placeholder={parameter.name}
       value={index !== -1 ? temp[index].values : ""}
       onChange={(e: any, item: any) => {
-        if (subSection?.type) {
-          onChangeSubProductsForPrice(
-            parameter?.id,
-            subSection?.id,
-            section?.id,
-            parameter?.parameterType,
-            parameter?.name,
-            parameter?.actionId,
-            { values: e.target.value },
-            subSection?.type,
-            index,
-            parameter?.actionIndex
-          );
-        } else {
-          onChangeForPrice(
-            parameter?.id,
-            subSection?.id,
-            section?.id,
-            parameter?.parameterType,
-            parameter?.name,
-            parameter?.actionId,
-            { values: e.target.value },
-            index,
-            parameter?.actionIndex
-          );
-        }
+        onChangeSubProductsForPrice(
+          parameter?.id,
+          subSection?.id,
+          section?.id,
+          parameter?.parameterType,
+          parameter?.name,
+          parameter?.actionId,
+          { values: e.target.value },
+          subSection?.type,
+          index,
+          parameter?.actionIndex
+        );
       }}
       type={type}
     />

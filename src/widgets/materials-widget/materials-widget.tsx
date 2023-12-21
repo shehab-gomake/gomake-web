@@ -2,7 +2,7 @@ import {SideBarContainer} from "@/components/containers/side-container/side-bar-
 import {SideList} from "@/components/containers/side-container/side-list/side-list";
 import {PrimaryTable} from "@/components/tables/primary-table";
 import {useMaterials} from "@/widgets/materials-widget/use-materials";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef} from "react";
 import Stack from "@mui/material/Stack";
 import {useTranslation} from "react-i18next";
 import {useStyle} from "@/widgets/materials-widget/style";
@@ -19,7 +19,8 @@ import {PrimaryButton} from "@/components/button/primary-button";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import {useGomakeRouter} from "@/hooks/use-gomake-router";
+import {convertHeightToVH} from "@/utils/adapter";
+import {HEADER_HEIGHT, SCREEN_HEIGHT} from "@/utils/layout-config";
 import {AddCategoryModal} from "./components/add-category/add-category-modal";
 import {AddRowModal} from "./components/add-row/add-row-modal";
 import {useMaterialsCategories} from "./use-materials-categories";
@@ -72,7 +73,8 @@ const MaterialsWidget = () => {
                     <SecondaryButton onClick={() => elementRef && elementRef.current.click()}
                                      variant={'contained'}>Upload</SecondaryButton>
                 </Stack>
-                <Stack direction={'row'} style={{marginTop:10}}>
+
+                <Stack direction={'row'} style={{marginTop: 10}}>
                     <PrimaryButton onClick={() => setOpenAddCategoryModal(true)}
                                    variant={'contained'}>{t("materials.buttons.addNew")}</PrimaryButton>
                 </Stack>
@@ -111,34 +113,35 @@ const MaterialsWidget = () => {
 
 
     return (
-        <>
-            <SideBarContainer side={Side()} header={materialType?.toString()} subHeader={''}>
-                {materialCategory && <Stack gap={2}>
-                    <Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-start'}>
-                        <h4 style={classes.subHeader}>{materialCategory?.toString()}</h4>
-                        <FiltersActionsBar/>
-                    </Stack>
-                    {materialCategoryData.length > 0 ?
-                        <PrimaryTable rows={tableRowData} headers={tableHeadersData}/> :
-                        (flag && materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ?
-                            <PrimaryTable rows={tableRowsNew} headers={tableHeadersNew()}/>
-                            :
-                            <div style={classes.noData}>
-                                {t("materials.sheetPaper.supplierAddedSheetYet")}
-                                <span
-                                    style={classes.noDataSpan}
-                                    onClick={() => {
-                                        setOpenAddSupplierModal(true)
-                                    }}>
+            <div style={{maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT - 20), overflow: 'hidden'}}>
+                <SideBarContainer side={Side()} header={materialType?.toString()} subHeader={''}>
+                    {materialCategory && <Stack gap={2}>
+                        <Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-start'}>
+                            <h4 style={classes.subHeader}>{materialCategory?.toString()}</h4>
+                            <FiltersActionsBar/>
+                        </Stack>
+                        {materialCategoryData.length > 0 ?
+                            <PrimaryTable rows={tableRowData} headers={tableHeadersData}/> :
+                            (flag && materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ?
+                                <PrimaryTable rows={tableRowsNew} headers={tableHeadersNew()}/>
+                                :
+                                <div style={classes.noData}>
+                                    {t("materials.sheetPaper.supplierAddedSheetYet")}
+                                    <span
+                                        style={classes.noDataSpan}
+                                        onClick={() => {
+                                            setOpenAddSupplierModal(true)
+                                        }}>
                                     {t("materials.sheetPaper.pleaseAddNow")}
                                 </span>
-                            </div>}
-                </Stack>}
+                                </div>}
+                    </Stack>}
+                    <AddSupplierModal/>
+                    <AddCategoryModal/>
+                    <AddRowModal/>
+                </SideBarContainer>
                 <AddSupplierModal/>
-                <AddCategoryModal/>
-                <AddRowModal/>
-            </SideBarContainer>
-        </>
+            </div>
     );
 }
 

@@ -82,6 +82,7 @@ const useSnackBar = () => {
     Alert,
     alertFaultUpdate,
     alertSuccessUpdate,
+    alertFaultAdded,
     alertSuccessAdded,
     alertFaultAdded,
     alertSuccessDelete,

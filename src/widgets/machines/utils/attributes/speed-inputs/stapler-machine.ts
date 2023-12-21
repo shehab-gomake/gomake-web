@@ -1,18 +1,9 @@
+import {maxSpeedInput} from "@/widgets/machines/utils/attributes/speed-inputs/max-speed-input";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const staplerMachine = (state: Record<string, any>) => {
     return [
-        {
-            name: "maxSpeedStitches",
-            label: "machineAttributes.maxSpeedStitches",
-            type: "text",
-            placeholder: "machineAttributes.maxSpeedStitches",
-            required: true,
-            parameterKey: "maxSpeedStitches",
-            options: [],
-            value: state.attributes?.maxSpeedStitches ? state.attributes?.maxSpeedStitches : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.maxSpeedStitches,
-        },
+        ...maxSpeedInput(state, EMeasurementUnits.MINUTE),
         {
             name: "setDelay",
             label: "machineAttributes.setDelay",
@@ -24,6 +15,7 @@ const staplerMachine = (state: Record<string, any>) => {
             value: state.attributes?.setDelay ? state.attributes?.setDelay : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.setDelay,
+            unit: EMeasurementUnits.MINUTE
         },
     ]
 }

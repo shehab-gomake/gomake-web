@@ -1353,6 +1353,8 @@
       "itemName": "Artikelname",
       "admin": {
         "title": "Gewinne",
+        "proporties": "Eigenschaften",
+        "OSSettings": "Betriebssystemeinstellungen",
         "chooseAction": "Aktion auswählen"
       },
       "pricingListWidget": {
@@ -1481,7 +1483,8 @@
         "actions": "Aktionen",
         "stationName": "Name der Station",
         "actionType": "Aktionstyp",
-        "machine": "Maschine"
+        "machine": "Maschine",
+        "loadingOptimalWorkflows": "Laden optimaler Arbeitsabläufe..."
       }
     },
     "productManagement": {

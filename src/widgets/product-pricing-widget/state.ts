@@ -1,9 +1,25 @@
-import { atom } from "recoil";
-import {ICalculatedWorkFlow, IPricingAction} from "@/widgets/product-pricing-widget/interface";
+import {atom, selector} from "recoil";
+import {
+    ICalculatedWorkFlow,
+    ICalculationProgress,
+    IOutSourceSupplier,
+    IPricingAction
+} from "@/widgets/product-pricing-widget/interface";
 
 export const workFlowsState = atom<ICalculatedWorkFlow[]>({
     key: "workFlowsState",
     default: [],
+});
+export const calculationProgressState = atom<ICalculationProgress>({
+    key: "calculationProgressState",
+    default: {totalWorkFlowsCount:0,currentWorkFlowsCount:0},
+});
+export const selectedWorkFlowState = selector<ICalculatedWorkFlow>({
+    key: 'selectedWorkFlowState',
+    get: ({get}) => {
+        const workFlows = get(workFlowsState);
+        return workFlows?.find(flow => flow.selected);
+    },
 });
 
 export const jobDetailsState = atom<any[]>({
@@ -21,9 +37,22 @@ export const jobActionsState = atom<IPricingAction[]>({
     key: "jobActionsState",
     default: [],
 });
-
-export const printHouseSuppliersState = atom<{ label: string, value: string }[]>({
-    key: "printHouseSuppliersState",
+export const outsourceSuppliersState = atom<IOutSourceSupplier[]>({
+    key: "outsourceSuppliersState",
     default: [],
 });
 
+export const itemParametersValuesState = atom<any[]>({
+    key: "itemParametersValuesState",
+    default: [],
+});
+
+export const productUrgentWorkState = atom<boolean>({
+    key: 'productUrgentWorkState',
+    default: false
+})
+
+export const currentProductItemValueState = atom<any>({
+    key: "currentProductItemValueState",
+    default: null ,
+});

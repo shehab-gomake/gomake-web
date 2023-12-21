@@ -3,11 +3,11 @@ import {MachineMultiInput} from "@/widgets/machines/components/inputs/machine-mu
 import {FormArrayInput} from "@/components/form-inputs/form-array-input";
 import {FormInput} from "@/components/form-inputs/form-input";
 
-const InputContainer = ({attribute, updateState, error}: IMachineInputContainer) => {
+const InputContainer = ({attribute, updateState, error, newValue}: IMachineInputContainer) => {
     {
         switch (attribute.machineInputType) {
             case 'multiArrayInput':
-                return <FormArrayInput name={attribute.name} parameterKey={attribute.parameterKey} value={attribute.value} inputs={attribute.inputs} updateState={updateState} isValid={!error}/>
+                return <FormArrayInput newValue={newValue} name={attribute.name} parameterKey={attribute.parameterKey} value={attribute.value} inputs={attribute.inputs} updateState={updateState} isValid={!error}/>
             case 'multiInput':
                 return <MachineMultiInput name={attribute.name} parameterKey={attribute.parameterKey}
                                           updateState={updateState}

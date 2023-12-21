@@ -13,4 +13,5 @@ export interface IBusinessWidget {
   speicalStyle?: any;
   sign?: string;
   isTwoDigit?: boolean;
+  onChangeTextField?: any;
 }

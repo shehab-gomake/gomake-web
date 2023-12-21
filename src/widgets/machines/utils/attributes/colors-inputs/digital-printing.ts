@@ -1,5 +1,3 @@
-import {COLORS} from "@/widgets/machines/utils/const";
-import {additionalColorsInput} from "@/widgets/machines/utils/attributes/colors-inputs/additional-colors-input";
 import {basicColorsInput} from "@/widgets/machines/utils/attributes/colors-inputs/basic-colors-input";
 
 const digitalPrinting = (state: Record<string, any>) => {
@@ -56,7 +54,6 @@ const digitalPrinting = (state: Record<string, any>) => {
             isValid: true
 
         },
-        ...additionalColorsInput(state),
     ]
 };
 

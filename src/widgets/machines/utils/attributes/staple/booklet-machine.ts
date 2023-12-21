@@ -24,18 +24,6 @@ const bookletMachine = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: !!state?.attributes?.stapleCost,
         },
-        {
-            name: "thickness",
-            label: "machineAttributes.thickness",
-            type: "text",
-            placeholder: "machineAttributes.thickness",
-            required: true,
-            parameterKey: "stapleThickness",
-            options: [],
-            value: state.attributes?.stapleThickness ? state.attributes?.stapleThickness : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.stapleThickness,
-        },
     ];
 }
 

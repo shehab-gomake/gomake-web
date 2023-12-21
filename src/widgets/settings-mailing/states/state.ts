@@ -2,7 +2,7 @@ import { atom } from "recoil";
 import { ISMSTemplate } from "../messageTemplates/interfaces/interface";
 
 export const initState: ISMSTemplate = {
-  title: "<p>hello world!</p>",
+  title: "",
   text: "",
   smsTemplatesGroupId: null,
   templateTypeId: null,
@@ -16,6 +16,7 @@ export const initState: ISMSTemplate = {
   sendMailCopyToAgent: false,
   bccMail: "",
   fileBase64: null,
+  lang : "",
 };
 
 export const smsTemplateState = atom<ISMSTemplate>({
@@ -36,6 +37,16 @@ export const templateGroupStateNew = atom<any>({
 export const groupModalState = atom<boolean>({
   key: "groupModalState",
   default: false,
+});
+
+export const changeLanguageModalState = atom<boolean>({
+  key: "changeLanguageModalState",
+  default: false,
+});
+
+export const languageTemplateState = atom<string>({
+  key: "languageTemplateState",
+  default: "",
 });
 
 export const editModalState = atom<boolean>({

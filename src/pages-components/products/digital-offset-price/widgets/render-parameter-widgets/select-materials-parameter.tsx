@@ -13,7 +13,6 @@ const SelectMaterialsParameterWidget = ({
   index,
   temp,
   inModal,
-  onChangeForPrice,
   subSection,
   section,
   setDigidatPriceData,
@@ -117,149 +116,77 @@ const SelectMaterialsParameterWidget = ({
               }
               getOptionLabel={(option: any) => option.value}
               onChange={(e: any, value: any) => {
-                if (subSection?.type) {
-                  if (parameter?.materialPath?.length == 3) {
-                    onChangeSubProductsForPrice(
-                      parameter?.id,
-                      subSection?.id,
-                      section?.id,
-                      parameter?.parameterType,
-                      parameter?.name,
-                      parameter?.actionId,
-                      {
-                        valueIds: value?.valueId,
-                        values: value?.value,
-                        ...(data?.id > 0 && { material: data?.id }),
-                      },
-                      subSection?.type,
-                      index,
-                      parameter?.actionIndex
-                    );
-                    setDigidatPriceData({
-                      ...digitalPriceData,
-                      selectedMaterialLvl3: value,
-                      selectedOptionLvl3: value,
-                    });
-                  }
-                  if (parameter?.materialPath?.length == 2) {
-                    onChangeSubProductsForPrice(
-                      parameter?.id,
-                      subSection?.id,
-                      section?.id,
-                      parameter?.parameterType,
-                      parameter?.name,
-                      parameter?.actionId,
-                      {
-                        valueIds: value?.valueId,
-                        values: value?.value,
-                        ...(data?.id > 0 && { material: data?.id }),
-                      },
-                      subSection?.type,
-                      index,
-                      parameter?.actionIndex
-                    );
-                    setDigidatPriceData({
-                      ...digitalPriceData,
-                      selectedMaterialLvl2: value?.data,
-                      selectedOptionLvl2: value,
-                      selectedMaterialLvl3: null,
-                    });
-                  }
-                  if (parameter?.materialPath?.length == 1) {
-                    onChangeSubProductsForPrice(
-                      parameter?.id,
-                      subSection?.id,
-                      section?.id,
-                      parameter?.parameterType,
-                      parameter?.name,
-                      parameter?.actionId,
-                      {
-                        valueIds: value?.valueId,
-                        values: value?.value,
-                        ...(data?.id > 0 && { material: data?.id }),
-                      },
-                      subSection?.type,
-                      index,
-                      parameter?.actionIndex
-                    );
-                    setDigidatPriceData({
-                      ...digitalPriceData,
-                      selectedMaterialLvl1: value?.data,
-                      selectedOptionLvl1: value,
-                      selectedMaterialLvl2: { value: "" },
-                      selectedMaterialLvl3: { value: "" },
-                    });
-                  }
-                } else {
-                  if (parameter?.materialPath?.length == 3) {
-                    onChangeForPrice(
-                      parameter?.id,
-                      subSection?.id,
-                      section?.id,
-                      parameter?.parameterType,
-                      parameter?.name,
-                      parameter?.actionId,
-                      {
-                        valueIds: value?.valueId,
-                        values: value?.value,
-                        ...(data?.id > 0 && { material: data?.id }),
-                      },
-                      index,
-                      parameter?.actionIndex
-                    );
-                    setDigidatPriceData({
-                      ...digitalPriceData,
-                      selectedMaterialLvl3: value,
-                      selectedOptionLvl3: value,
-                    });
-                  }
-                  if (parameter?.materialPath?.length == 2) {
-                    onChangeForPrice(
-                      parameter?.id,
-                      subSection?.id,
-                      section?.id,
-                      parameter?.parameterType,
-                      parameter?.name,
-                      parameter?.actionId,
-                      {
-                        valueIds: value?.valueId,
-                        values: value?.value,
-                        ...(data?.id > 0 && { material: data?.id }),
-                      },
-                      index,
-                      parameter?.actionIndex
-                    );
-                    setDigidatPriceData({
-                      ...digitalPriceData,
-                      selectedMaterialLvl2: value?.data,
-                      selectedOptionLvl2: value,
-                      selectedMaterialLvl3: null,
-                    });
-                  }
-                  if (parameter?.materialPath?.length == 1) {
-                    onChangeForPrice(
-                      parameter?.id,
-                      subSection?.id,
-                      section?.id,
-                      parameter?.parameterType,
-                      parameter?.name,
-                      parameter?.actionId,
-                      {
-                        valueIds: value?.valueId,
-                        values: value?.value,
-                        ...(data?.id > 0 && { material: data?.id }),
-                      },
-                      index,
-                      parameter?.actionIndex
-                    );
-                    setDigidatPriceData({
-                      ...digitalPriceData,
-                      selectedMaterialLvl1: value?.data,
-                      selectedOptionLvl1: value,
-                      selectedMaterialLvl2: { value: "" },
-                      selectedMaterialLvl3: { value: "" },
-                    });
-                  }
+                if (parameter?.materialPath?.length == 3) {
+                  onChangeSubProductsForPrice(
+                    parameter?.id,
+                    subSection?.id,
+                    section?.id,
+                    parameter?.parameterType,
+                    parameter?.name,
+                    parameter?.actionId,
+                    {
+                      valueIds: value?.valueId,
+                      values: value?.value,
+                      ...(data?.id > 0 && { material: data?.id }),
+                    },
+                    subSection?.type,
+                    index,
+                    parameter?.actionIndex
+                  );
+                  setDigidatPriceData({
+                    ...digitalPriceData,
+                    selectedMaterialLvl3: value,
+                    selectedOptionLvl3: value,
+                  });
+                }
+                if (parameter?.materialPath?.length == 2) {
+                  onChangeSubProductsForPrice(
+                    parameter?.id,
+                    subSection?.id,
+                    section?.id,
+                    parameter?.parameterType,
+                    parameter?.name,
+                    parameter?.actionId,
+                    {
+                      valueIds: value?.valueId,
+                      values: value?.value,
+                      ...(data?.id > 0 && { material: data?.id }),
+                    },
+                    subSection?.type,
+                    index,
+                    parameter?.actionIndex
+                  );
+                  setDigidatPriceData({
+                    ...digitalPriceData,
+                    selectedMaterialLvl2: value?.data,
+                    selectedOptionLvl2: value,
+                    selectedMaterialLvl3: null,
+                  });
+                }
+                if (parameter?.materialPath?.length == 1) {
+                  onChangeSubProductsForPrice(
+                    parameter?.id,
+                    subSection?.id,
+                    section?.id,
+                    parameter?.parameterType,
+                    parameter?.name,
+                    parameter?.actionId,
+                    {
+                      valueIds: value?.valueId,
+                      values: value?.value,
+                      ...(data?.id > 0 && { material: data?.id }),
+                    },
+                    subSection?.type,
+                    index,
+                    parameter?.actionIndex
+                  );
+                  setDigidatPriceData({
+                    ...digitalPriceData,
+                    selectedMaterialLvl1: value?.data,
+                    selectedOptionLvl1: value,
+                    selectedMaterialLvl2: { value: "" },
+                    selectedMaterialLvl3: { value: "" },
+                  });
                 }
               }}
             />

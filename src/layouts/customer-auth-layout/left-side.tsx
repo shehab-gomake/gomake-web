@@ -21,7 +21,6 @@ const LeftSideLayout = (customGap) => {
   const { CheckPermission } = usePermission();
   const { clasess } = useStyle({ navStatus, customGap });
   useEffect(() => {
-    debugger;
     const isHover = localStorage.getItem("isHover");
     if (isHover && isHover == "true") {
       setIsHover(true);

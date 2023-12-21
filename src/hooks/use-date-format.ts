@@ -6,7 +6,6 @@ const useDateFormat = () => {
     const {t} = useTranslation();
     const dir: "rtl" | "ltr" = t("direction");
     const GetDateFormat = (date: Date) => {
-        debugger;
         const utcDate = moment.utc(date,"DD-MM-YYYY h:mm");
         let format = "YYYY-MM-DD HH:mm";
         if(dir == "rtl"){
@@ -15,7 +14,7 @@ const useDateFormat = () => {
         return utcDate.local().format(format);
     }
     return {
-        GetDateFormat: GetDateFormat
+        GetDateFormat
     };
 };
 

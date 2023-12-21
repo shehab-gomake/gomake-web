@@ -1,4 +1,5 @@
-import {feedOptions} from "@/widgets/machines/utils/const/feed-options";
+import {maxSpeedInput} from "@/widgets/machines/utils/attributes/speed-inputs/max-speed-input";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const spiralPerforationMachine = (state: Record<string, any>) => {
     return [
@@ -14,21 +15,10 @@ const spiralPerforationMachine = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: !!state?.attributes?.setupTime,
         },
+        ...maxSpeedInput(state, EMeasurementUnits.SETS_HOUR),
         {
-            name: "actionType",
-            label: "machineAttributes.actionType",
-            type: "select",
-            placeholder: "machineAttributes.actionType",
-            required: true,
-            parameterKey: "actionType",
-            value: state.attributes?.actionType,
-            options: feedOptions,
-            machineInputType: 'input',
-            isValid: true,
-        },
-        {
-            name: 'machineAttributes.autoActionFeederType',
-            parameterKey: 'autoActionFeederType',
+            name: 'machineAttributes.feederSettings',
+            parameterKey: 'feederSettings',
             machineInputType: 'multiInput',
             value: state.attributes?.autoActionFeederType ? state.attributes?.autoActionFeederType : {},
             isValid: !!state?.attributes?.autoActionFeederType?.feederHeight &&
@@ -42,8 +32,8 @@ const spiralPerforationMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.loadingWhileRunning",
                     required: true,
                     parameterKey: "loadingWhileRunning",
-                    value: state.attributes?.autoActionFeederType?.loadingWhileRunning,
-                    options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
+                    value: state.attributes?.feederSettings?.loadingWhileRunning,
+                    options: [],
                     machineInputType: 'input',
                     isValid: true,
                 },
@@ -55,8 +45,9 @@ const spiralPerforationMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "feederHeight",
                     options: [],
-                    value: state.attributes?.autoActionFeederType?.feederHeight ? state.attributes?.autoActionFeederType?.feederHeight : ''
-
+                    value: state.attributes?.feederSettings?.feederHeight ? state.attributes?.feederSettings?.feederHeight : '',
+                    disabled: !!state.attributes?.feederSettings?.loadingWhileRunning,
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -66,84 +57,60 @@ const spiralPerforationMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "insertSpeed",
                     options: [],
-                    value: state.attributes?.autoActionFeederType?.insertSpeed ? state.attributes?.autoActionFeederType?.insertSpeed : ''
-
+                    value: state.attributes?.feederSettings?.insertSpeed ? state.attributes?.feederSettings?.insertSpeed : '',
+                    disabled: !!state.attributes?.feederSettings?.loadingWhileRunning,
+                    unit: EMeasurementUnits.MINUTE
                 },
             ]
         },
         {
-            name: 'machineAttributes.autoActionStackerType',
-            parameterKey: 'autoActionStackerType',
+            name: 'machineAttributes.stackerSettings',
+            parameterKey: 'stackerSettings',
             machineInputType: 'multiInput',
-            value: state.attributes?.autoActionStackerType ? state.attributes?.autoActionStackerType : {},
-            isValid: !!state?.attributes?.autoActionStackerType?.feederHeight &&
-                !!state?.attributes?.autoActionStackerType?.insertSpeed,
+            value: state.attributes?.stackerSettings ? state.attributes?.stackerSettings : {},
+            isValid: !!state?.attributes?.stackerSettings?.feederHeight &&
+                !!state?.attributes?.stackerSettings?.insertSpeed,
 
             inputs: [
                 {
-                    name: "loadingWhileRunning",
-                    label: "machineAttributes.loadingWhileRunning",
+                    name: "unloadingOnRun",
+                    label: "machineAttributes.unloadingOnRun",
                     type: "switch",
-                    placeholder: "machineAttributes.loadingWhileRunning",
+                    placeholder: "machineAttributes.unloadingOnRun",
                     required: true,
-                    parameterKey: "loadingWhileRunning",
-                    value: state.attributes?.autoActionStackerType?.loadingWhileRunning,
-                    options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
+                    parameterKey: "unloadingOnRun",
+                    value: state.attributes?.stackerSettings?.unloadingOnRun,
+                    options: [],
                     machineInputType: 'input',
                     isValid: true,
                 },
                 {
                     name: "",
-                    label: "machineAttributes.feederHeight",
+                    label: "machineAttributes.stackerHeight",
                     type: "text",
-                    placeholder: "machineAttributes.feederHeight",
+                    placeholder: "machineAttributes.stackerHeight",
                     required: true,
-                    parameterKey: "feederHeight",
+                    parameterKey: "stackerHeight",
                     options: [],
-                    value: state.attributes?.autoActionStackerType?.feederHeight ? state.attributes?.autoActionStackerType?.feederHeight : ''
-
+                    value: state.attributes?.stackerSettings?.stackerHeight ? state.attributes?.stackerSettings?.stackerHeight : '',
+                    unit: EMeasurementUnits.CM,
+                    disabled: !!state.attributes?.stackerSettings?.unloadingOnRun
                 },
                 {
                     name: "",
-                    label: "machineAttributes.insertSpeed",
+                    label: "machineAttributes.unloadSpeed",
                     type: "text",
-                    placeholder: "machineAttributes.insertSpeed",
+                    placeholder: "machineAttributes.unloadSpeed",
                     required: true,
-                    parameterKey: "insertSpeed",
+                    parameterKey: "unloadSpeed",
                     options: [],
-                    value: state.attributes?.autoActionStackerType?.insertSpeed ? state.attributes?.autoActionStackerType?.insertSpeed : ''
+                    value: state.attributes?.stackerSettings?.unloadSpeed ? state.attributes?.stackerSettings?.unloadSpeed : '',
+                    unit: EMeasurementUnits.MINUTE,
+                    disabled: !!state.attributes?.stackerSettings?.unloadingOnRun
 
                 },
             ]
         },
-        {
-            name: 'machineAttributes.insertSpeed',
-            parameterKey: 'insertSpeed',
-            value: state.attributes?.insertSpeed || [],
-            isValid: state.attributes?.insertSpeed?.length > 0,
-            machineInputType: 'multiArrayInput',
-            inputs: [
-                {
-                    name: "maxThickness",
-                    label: "machineAttributes.maxThickness",
-                    type: "text",
-                    placeholder: "machineAttributes.maxThickness",
-                    required: true,
-                    parameterKey: "maxThickness",
-                    options: []
-                },
-                {
-                    name: "speed",
-                    label: "machineAttributes.speed",
-                    type: "text",
-                    placeholder: "machineAttributes.speed",
-                    required: true,
-                    parameterKey: "speed",
-                    options: []
-                },
-
-            ]
-        }
     ]
 }
 

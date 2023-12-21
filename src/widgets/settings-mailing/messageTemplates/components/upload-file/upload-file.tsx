@@ -14,20 +14,19 @@ interface IProps {
     fileName?: string;
 }
 
-
-const PdfUploadComponent = ({ onUpload, fileName}: IProps) => {
+const PdfUploadComponent = ({ onUpload, fileName }: IProps) => {
     const { t } = useTranslation();
+    const { classes } = useStyle(onUpload);
     const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
-    const [selectedFileName, setSelectedFileName] = useState(t("mailingSettings.noAttachment"));
+    const [isAttachment, setIsAttachment] = useState(false);
     const inputRef = useRef(null);
-    const { classes } = useStyle();
 
     const handleFileSelect = (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                setSelectedFileName("attachment.pdf");
+                setIsAttachment(true);
                 setState({ ...state, fileBase64: e.target.result });
             };
             reader.readAsDataURL(file);
@@ -35,15 +34,16 @@ const PdfUploadComponent = ({ onUpload, fileName}: IProps) => {
     };
 
     return (
-        <Stack direction={"row"} alignItems={'center'} justifyContent={'center'} gap={'10px'}>
-            <Stack direction={"row"} gap={'10px'} boxShadow={onUpload ?  "0px 1px 10px rgba(0, 0, 0, 0.08)" :"none"} borderRadius={"4px"} alignItems={"center"} justifyContent={"center"} width={"170px"} height={"40px"}>
+        <Stack style={classes.attachmentContainer} >
+
+            {(!onUpload || (fileName || isAttachment)) && <Stack style={classes.attachmentStyle}>
                 <IconButton style={classes.IconButtonStyle}>
                     <FileIcon></FileIcon>
                 </IconButton>
                 <label style={classes.labelStyle}>
-                    {fileName !=null ?  "attachment.pdf" : selectedFileName}
+                    {!!fileName ? "attachment.pdf" : isAttachment ? "attachment.pdf" : t("mailingSettings.noAttachment")}
                 </label>
-                </Stack>
+            </Stack>}
             <input
                 type="file"
                 accept=".pdf"
@@ -55,6 +55,5 @@ const PdfUploadComponent = ({ onUpload, fileName}: IProps) => {
         </Stack>
     );
 }
-
 
 export { PdfUploadComponent };

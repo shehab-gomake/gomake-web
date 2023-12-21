@@ -1,18 +1,9 @@
+import {maxSpeedInput} from "@/widgets/machines/utils/attributes/speed-inputs/max-speed-input";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const perforationMachine = (state: Record<string, any>) => {
     return [
-        {
-            name: "speed",
-            label: "machineAttributes.speed",
-            type: "text",
-            placeholder: "machineAttributes.speed",
-            required: true,
-            parameterKey: "speed",
-            options: [],
-            value: state?.attributes?.speed ? state?.attributes?.speed : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.speed,
-        },
+        ...maxSpeedInput(state, EMeasurementUnits.METER),
         {
             name: "unitDelay",
             label: "machineAttributes.unitDelay",

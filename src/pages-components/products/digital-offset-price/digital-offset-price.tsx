@@ -15,7 +15,8 @@ import {
   MultiParameterModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
 import { EWidgetProductType } from "./enums";
-import {PricingWidget} from "@/widgets/product-pricing-widget/pricing-widget";
+import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
+import { Tabs } from "@mui/material";
 
 const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
@@ -40,9 +41,8 @@ const PriceListPageWidget = ({ widgetType }) => {
     setGraphicNotes,
     setPriceRecovery,
     onCloseMultiParameterModal,
-    setSamlleType,
     duplicateParameters,
-    setTemplate,
+    setProductTemplate,
     multiParameterModal,
     settingParameters,
     priceRecovery,
@@ -53,7 +53,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     makeShapeOpen,
     GalleryModalOpen,
     activeIndex,
-    template,
+    productTemplate,
     tabs,
     activeTab,
     PricingTab,
@@ -65,47 +65,47 @@ const PriceListPageWidget = ({ widgetType }) => {
     errorMsg,
     workFlowSelected,
     relatedParameters,
-      jobDetails,
-      jobActions,
-      workFlows
+    jobActions,
+    workFlows,
+    getOutSourcingSuppliers,
+    onChangeSubProductsForPrice,
   } = useDigitalOffsetPrice({ clasess, widgetType });
-  const machineCategories = useRecoilValue(machineCategoriesState);
-  const [actionState, setActionState] = useState({});
-  const onChangeCategoryData = (actionId, categoryId, value) => {
-    setActionState({
-      actionId,
-      categoryId,
-      value,
-    });
-  };
   return (
     <div style={{ height: "85vh" }}>
-      {template?.sections?.length > 0 && (
+      {productTemplate?.sections?.length > 0 && (
         <div style={clasess.mainContainer}>
           <HeaderTitle
-            title={template?.name}
+            title={productTemplate?.name}
             marginTop={24}
             marginBottom={24}
           />
           <div style={clasess.mainRowContainer}>
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
-                {[...template?.sections, PricingTab]?.map((item, index) => {
-                  return (
-                    <TabsMappingWidget
-                      key={`tab-${index}`}
-                      clasess={clasess}
-                      index={index}
-                      handleTabClick={handleTabClick}
-                      activeIndex={activeIndex}
-                      item={item}
-                    />
-                  );
-                })}
+                <Tabs variant="scrollable" scrollButtons={"auto"}>
+                  {[...productTemplate?.sections, PricingTab]?.map(
+                    (item, index) => {
+                      return (
+                        <TabsMappingWidget
+                          key={`tab-${index}`}
+                          clasess={clasess}
+                          index={index}
+                          handleTabClick={handleTabClick}
+                          activeIndex={activeIndex}
+                          item={item}
+                          productTemplate={productTemplate}
+                          setProductTemplate={setProductTemplate}
+                          isAdmin={false}
+                        />
+                      );
+                    }
+                  )}
+                </Tabs>
               </div>
+
               <div style={{ height: 666, overflow: "scroll", width: "100%" }}>
                 <div style={clasess.sectionsContainer}>
-                  {[...template?.sections, PricingTab]?.map(
+                  {[...productTemplate?.sections, PricingTab]?.map(
                     (section: any, index: number) => {
                       if (index === activeIndex) {
                         if (section.name === "Pricing") {
@@ -118,7 +118,11 @@ const PriceListPageWidget = ({ widgetType }) => {
                             //   pricingDefaultValue={pricingDefaultValue}
                             //   workFlowSelected={workFlowSelected}
                             // />
-                              <PricingWidget actions={jobActions} workFlows={workFlows}/>
+                            <PricingWidget
+                              getOutSourcingSuppliers={getOutSourcingSuppliers}
+                              actions={jobActions}
+                              workFlows={workFlows}
+                            />
                           );
                         } else {
                           return section?.subSections?.map(
@@ -137,8 +141,8 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     _getParameter={_getParameter}
                                     relatedParameters={relatedParameters}
                                     duplicateParameters={duplicateParameters}
-                                    template={template}
-                                    setTemplate={setTemplate}
+                                    template={productTemplate}
+                                    setTemplate={setProductTemplate}
                                   />
                                 );
                               } else {
@@ -154,8 +158,8 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     relatedParameters={relatedParameters}
                                     isAccordion={false}
                                     duplicateParameters={duplicateParameters}
-                                    template={template}
-                                    setTemplate={setTemplate}
+                                    template={productTemplate}
+                                    setTemplate={setProductTemplate}
                                   />
                                 );
                               }
@@ -175,7 +179,7 @@ const PriceListPageWidget = ({ widgetType }) => {
               checkWhatRenderArray={checkWhatRenderArray}
               clientTypeDefaultValue={clientTypeDefaultValue}
               clientTypesValue={clientTypesValue}
-              template={template}
+              template={productTemplate}
               setDefaultPrice={setDefaultPrice}
               defaultPrice={defaultPrice}
               tabs={tabs}
@@ -192,7 +196,6 @@ const PriceListPageWidget = ({ widgetType }) => {
               widgetType={widgetType}
               setPriceRecovery={setPriceRecovery}
               priceRecovery={priceRecovery}
-              setSamlleType={setSamlleType}
             />
           </div>
 
@@ -201,7 +204,7 @@ const PriceListPageWidget = ({ widgetType }) => {
               width: "100%",
               display: "flex",
               flexDirection: "row",
-              justifyContent: "space-between",
+              justifyContent: "flex-end",
               alignItems: "flex-start",
               position: "fixed",
               paddingTop: "8px",
@@ -222,7 +225,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                     {t("products.offsetPrice.admin.previousBtn")}
                   </GomakePrimaryButton>
                 ) : null}
-                {[...template?.sections, PricingTab].length - 1 !=
+                {[...productTemplate?.sections, PricingTab].length - 1 !=
                 activeIndex ? (
                   <GomakePrimaryButton
                     style={clasess.nextBtnStyle}
@@ -267,6 +270,7 @@ const PriceListPageWidget = ({ widgetType }) => {
       <GalleryModal
         openModal={GalleryModalOpen}
         onClose={onCloseGalleryModal}
+        onChangeSubProductsForPrice={onChangeSubProductsForPrice}
       />
       <MultiParameterModal
         openModal={multiParameterModal}

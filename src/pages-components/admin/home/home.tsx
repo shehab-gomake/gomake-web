@@ -16,7 +16,7 @@ const HomePageComponentForAdmin = ({ isAdmin }) => {
       <div style={classes.titleStyle}>{quoteNumber ? t("remainWords.AddItemtoQuote") + " " + quoteNumber : t("remainWords.newQuote")}</div>
       <div style={classes.firstRowContainer}>
         <QuoteWidget isAdmin={isAdmin} />
-        <ChartWidget />
+        {/* <ChartWidget /> */}
       </div>
       <div style={classes.secondRowContainer}>
         <div style={classes.titleStyle}>{t("home.quoteOutput")}</div>

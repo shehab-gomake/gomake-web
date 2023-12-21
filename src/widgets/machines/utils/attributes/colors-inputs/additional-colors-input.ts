@@ -1,11 +1,10 @@
-import {COLORS} from "@/widgets/machines/utils/const";
 
-const additionalColorsInput = (state: Record<string, any>) => {
+const additionalColorsInput = (state: Record<string, any>, colors= [], manufacturers = []) => {
     return [
         {
-            name: 'machineAttributes.additionalColorsCoast',
-            parameterKey: 'additionalColorsCoast',
-            value: state?.attributes?.additionalColorsCoast ? state?.attributes?.additionalColorsCoast : [],
+            name: 'machineAttributes.machineColors',
+            parameterKey: 'machineColors',
+            value: state?.attributes?.machineColors ? state?.attributes?.machineColors : [],
             machineInputType: 'multiArrayInput',
             isValid: true,
             inputs: [
@@ -16,19 +15,20 @@ const additionalColorsInput = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.color",
                     required: true,
                     parameterKey: "color",
-                    value: COLORS[0].value,
-                    options:  COLORS
+                    value: '',
+                    options:  colors
                 },
                 {
-                    name: "cost",
-                    label: "machineAttributes.cost",
-                    type: "text",
-                    placeholder: "machineAttributes.cost",
+                    name: "manufacturer",
+                    label: "machineAttributes.manufacturer",
+                    type: "select",
+                    placeholder: "machineAttributes.manufacturer",
                     required: true,
-                    parameterKey: "cost",
-                    options: []
+                    parameterKey: "manufacturer",
+                    value: '',
+                    options:  manufacturers,
+                    disabled: manufacturers.length === 0
                 },
-
             ]
         },
     ]

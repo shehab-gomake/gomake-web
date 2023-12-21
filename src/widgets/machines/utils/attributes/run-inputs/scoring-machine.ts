@@ -16,7 +16,7 @@ const scoringMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "maxLength",
                     options: [],
-                    value: state.attributes?.folding?.maxLength ? state.attributes?.folding?.maxLength : ''
+                    value: state.attributes?.scoring?.maxLength ? state.attributes?.scoring?.maxLength : ''
 
                 },
                 {
@@ -27,7 +27,7 @@ const scoringMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "maxWidth",
                     options: [],
-                    value: state.attributes?.folding?.maxWidth ? state.attributes?.folding?.maxWidth : ''
+                    value: state.attributes?.scoring?.maxWidth ? state.attributes?.scoring?.maxWidth : ''
 
                 },
             ]
