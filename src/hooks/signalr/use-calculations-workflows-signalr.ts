@@ -3,9 +3,12 @@ import {getUserToken} from "@/services/storage-data";
 import {IBordMission} from "@/widgets/production-floor-widget/product-id-widget/interface";
 import config from "@/config";
 import {useEffect, useState} from "react";
+import {
+    ICalculationSignalRResult
+} from "@/pages-components/products/digital-offset-price/interfaces/calculation-signalr-result";
 
 const useCalculationsWorkFlowsSignalr = () => {
-    const {data,connection,connectionId} = useGoMakeSignalr<any>({
+    const {data,connection,connectionId} = useGoMakeSignalr<ICalculationSignalRResult>({
         url: 'https://calculation-service.gomake-dev.net/hubs/workFlows',
         accessToken: getUserToken(),
         methodName: "updateWorkFlows"
@@ -14,7 +17,6 @@ const useCalculationsWorkFlowsSignalr = () => {
     useEffect(()=>{
         if(connection){
             connection.on("startCalculationSession", (newData) => {
-                debugger;
                 setConnectionSessionId(newData);
             });
         }
