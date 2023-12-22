@@ -34,6 +34,7 @@ const ProfitsNewPageWidget = () => {
     selectedAdditionalProfitRow,
     anchorElAdditionalProfitMenu,
     openAdditionalProfitMenu,
+    calculateCaseValue,
     handleCloseAdditionalProfitMenu,
     handleClickAdditionalProfitMenu,
     setSelectedActionProfitRow,
@@ -63,9 +64,9 @@ const ProfitsNewPageWidget = () => {
   } = useNewProfits();
   return (
     <div style={classes.mainGridContainer}>
-      {router.query.quoteId && (
+      {router.query.draftId && (
         <header>
-          <ProfitHeaderWidget />
+          <ProfitHeaderWidget calculateCaseValue={calculateCaseValue} />
         </header>
       )}
       <div style={classes.bodyGridContainer}>

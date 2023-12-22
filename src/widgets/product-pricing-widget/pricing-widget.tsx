@@ -57,7 +57,9 @@ const PricingWidget = ({
       saveProductItemValueDraft(callApi, callBack, temp, true);
     }
   }, [selectedWorkFlow]);
-
+  useEffect(() => {
+    console.log("selectedWorkFlow", selectedWorkFlow);
+  }, [selectedWorkFlow]);
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack direction={"row"} justifyContent={"space-between"}>

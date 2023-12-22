@@ -14,7 +14,7 @@ const useStyle = () => {
         backgroundColor: "#FFF",
         borderRadius: 17,
         padding: "15px 12px",
-        maxHeight: router.query.quoteId ? 559 : "100vh",
+        maxHeight: router.query.draftId ? 560 : "100vh",
         overflow: "scroll",
       },
     };

@@ -22,6 +22,7 @@ import {
   SelectedTransition,
 } from "./interface";
 import { getAndSetProfitsPricingTables } from "./services/get-action-profit-by-action-id copy";
+import { getAndSetCalculateCaseProfits } from "./services/get-calculate-case-profits";
 
 const useNewProfits = () => {
   const {
@@ -91,6 +92,7 @@ const useNewProfits = () => {
     useState([]);
   const [actionProfitByActionId, setActionProfitByActionId] =
     useState<ActionProfit>();
+  const [calculateCaseValue, setSalculateCaseValue] = useState<any>();
   const [actionProfitRowChartData, setActionProfitRowChartData] =
     useState<ActionProfitRowChartData>();
   const [actionProfitRowsList, setActionProfitRowsList] = useState([]);
@@ -130,6 +132,13 @@ const useNewProfits = () => {
     });
   }, [router]);
 
+  const getCalculateCaseProfits = useCallback(async () => {
+    await getAndSetCalculateCaseProfits(callApi, setSalculateCaseValue, {
+      actionId: router.query.actionId,
+      productItemValueId: router.query.draftId,
+    });
+  }, [router]);
+
   const getProfitsPricingTables = useCallback(async () => {
     await getAndSetProfitsPricingTables(callApi, setProfitsPricingTables, {
       actionId: router.query.actionId,
@@ -157,6 +166,7 @@ const useNewProfits = () => {
     getAllActionProfitRowsByActionId();
     getActionProfitByActionId();
     getProfitsPricingTables();
+    getCalculateCaseProfits();
   }, []);
   useEffect(() => {
     getActionProfitRowChartData();
@@ -518,6 +528,7 @@ const useNewProfits = () => {
     selectedAdditionalProfitRow,
     anchorElAdditionalProfitMenu,
     openAdditionalProfitMenu,
+    calculateCaseValue,
     handleCloseAdditionalProfitMenu,
     handleClickAdditionalProfitMenu,
     setSelectedActionProfitRow,
