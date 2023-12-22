@@ -20,7 +20,11 @@ const EditProductWidget = () => {
   return (
     <>
       <div style={clasess.mainContainer}>
-        <HeaderTitle title={t("products.addProduct.admin.editProduct")} />
+        <HeaderTitle
+          title={t("products.addProduct.admin.editProduct")}
+          marginTop={1}
+          marginBottom={20}
+        />
         <div style={clasess.headerTabsContainer}>
           {tabs?.map((item, index) => {
             return (

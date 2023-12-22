@@ -12,7 +12,8 @@ export interface IBusinessWidget {
   setInputData?: any;
   speicalStyle?: any;
   onChangeTextField?:any;
-
   onClickFlag?:any;
   flag?:any;
+  sign?: string;
+  isTwoDigit?: boolean;
 }

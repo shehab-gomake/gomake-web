@@ -1379,6 +1379,8 @@
       "itemName": "שם הפריט",
       "admin": {
         "title": "רווחים",
+        "proporties": "מאפיינים",
+        "OSSettings": "הגדרות מערכת ההפעלה",
         "chooseAction": "בחר פעולה"
       },
       "pricingListWidget": {
@@ -1397,10 +1399,16 @@
         "more": "עוד",
         "height": "גובה",
         "addNewQuantity": "הוסף כמות חדשה",
+        "addNewStep": "הוסף שלב חדש",
         "saveStep": "שמור שלב",
         "testQuantity": "כמות",
         "unitPrice": "מחיר ליחידה",
-        "testFinalPrice": "מחיר סופי לניסוי"
+        "testFinalPrice": "מחיר סופי לניסוי",
+        "materialQuantity": "כמות חומר",
+        "beats": "קצבים",
+        "linear": "לינארי",
+        "steps": "שלבים",
+        "pleaseEnterallrequiredvalues": "אנא הזן את כל הערכים הנדרשים"
       },
       "exceptions": {
         "title": "חריגים",
@@ -1421,7 +1429,9 @@
         "additionalProfit": "רווח נוסף",
         "deleteExceptionProfit": "מחק רווח חריג?",
         "updateException": "עדכן חריג",
-        "deleteException": "מחק חריג"
+        "deleteException": "מחק חריג",
+        "addNewRule": "הוסף כלל חדש",
+        "reorder": "סדר מחדש"
       }
     },
     "actions": {
@@ -1601,6 +1611,7 @@
       "sendQuote": "שלח הצעה",
       "cancel": "ביטול",
       "yesBtn": "כן",
+      "noBtn": "לא",
       "subTitleCancelModal": "האם אתה בטוח שברצונך לבטל הצעה זו?",
       "cancelBtn": "ביטול",
       "titleCancelModal": "אישור ביטול",

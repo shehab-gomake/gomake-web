@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import {adaptPaddingLeft} from "@/utils/adapter";
+import { adaptPaddingLeft } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
   const { primaryColor, secondColor, errorColor, neutralColor } =
@@ -34,8 +34,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        ...adaptPaddingLeft(t('direction'), 20)
-
+        ...adaptPaddingLeft(t("direction"), 20),
       },
       rightSideMainContainer: {
         display: "flex",
@@ -52,8 +51,6 @@ const useStyle = () => {
         borderRadius: 5,
       },
       rightSideContainer: {
-        // height: "100%",
-        // overflow: "scroll",
         width: "100%",
       },
       tabsContainer: {
@@ -63,6 +60,8 @@ const useStyle = () => {
         alignItems: "center",
         gap: 40,
         marginBottom: 20,
+        width: "100%",
+        maxWidth: 900,
       },
       tabContainer: {
         display: "flex",
@@ -71,14 +70,17 @@ const useStyle = () => {
         alignItems: "flex-start",
         gap: 6,
         cursor: "pointer",
+        width: "fit-content",
       },
       tabNameStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
         color: primaryColor(500),
+        width: "fit-content",
       },
       tabNameActiveStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
         color: secondColor(500),
+        width: "fit-content",
       },
       selectedTabLine: {
         display: "flex",
@@ -160,6 +162,7 @@ const useStyle = () => {
         gap: 10,
         width: "100%",
         minWidth: 180,
+        maxWidth: 180,
       },
       WastebasketNewStyle: {
         display: "flex",
@@ -167,8 +170,10 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "180px",
-        gap: 10,
         minWidth: 180,
+        maxWidth: 180,
+        // height: 71,
+        gap: 10,
       },
       parameterType3Container: {
         display: "flex",
@@ -199,6 +204,7 @@ const useStyle = () => {
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
+        maxWidth: "180px",
         backgroundColor: "#FFF",
         borderRadius: 4,
       },

@@ -15,7 +15,8 @@ import {
   MultiParameterModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
 import { EWidgetProductType } from "./enums";
-import {PricingWidget} from "@/widgets/product-pricing-widget/pricing-widget";
+import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
+import { Tabs } from "@mui/material";
 
 const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
@@ -40,7 +41,6 @@ const PriceListPageWidget = ({ widgetType }) => {
     setGraphicNotes,
     setPriceRecovery,
     onCloseMultiParameterModal,
-    setSamlleType,
     duplicateParameters,
     setProductTemplate,
     multiParameterModal,
@@ -65,9 +65,10 @@ const PriceListPageWidget = ({ widgetType }) => {
     errorMsg,
     workFlowSelected,
     relatedParameters,
-      jobActions,
-      workFlows,
-      getOutSourcingSuppliers
+    jobActions,
+    workFlows,
+    getOutSourcingSuppliers,
+    onChangeSubProductsForPrice,
   } = useDigitalOffsetPrice({ clasess, widgetType });
   return (
     <div style={{ height: "85vh" }}>
@@ -81,21 +82,27 @@ const PriceListPageWidget = ({ widgetType }) => {
           <div style={clasess.mainRowContainer}>
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
-                {[...productTemplate?.sections, PricingTab]?.map((item, index) => {
-                  return (
-                    <TabsMappingWidget
-                      key={`tab-${index}`}
-                      clasess={clasess}
-                      index={index}
-                      handleTabClick={handleTabClick}
-                      activeIndex={activeIndex}
-                      item={item}
-                      productTemplate={productTemplate}
-                      setProductTemplate={setProductTemplate}
-                    />
-                  );
-                })}
+                <Tabs variant="scrollable" scrollButtons={"auto"}>
+                  {[...productTemplate?.sections, PricingTab]?.map(
+                    (item, index) => {
+                      return (
+                        <TabsMappingWidget
+                          key={`tab-${index}`}
+                          clasess={clasess}
+                          index={index}
+                          handleTabClick={handleTabClick}
+                          activeIndex={activeIndex}
+                          item={item}
+                          productTemplate={productTemplate}
+                          setProductTemplate={setProductTemplate}
+                          isAdmin={false}
+                        />
+                      );
+                    }
+                  )}
+                </Tabs>
               </div>
+
               <div style={{ height: 666, overflow: "scroll", width: "100%" }}>
                 <div style={clasess.sectionsContainer}>
                   {[...productTemplate?.sections, PricingTab]?.map(
@@ -111,7 +118,11 @@ const PriceListPageWidget = ({ widgetType }) => {
                             //   pricingDefaultValue={pricingDefaultValue}
                             //   workFlowSelected={workFlowSelected}
                             // />
-                              <PricingWidget getOutSourcingSuppliers={getOutSourcingSuppliers}  actions={jobActions} workFlows={workFlows}/>
+                            <PricingWidget
+                              getOutSourcingSuppliers={getOutSourcingSuppliers}
+                              actions={jobActions}
+                              workFlows={workFlows}
+                            />
                           );
                         } else {
                           return section?.subSections?.map(
@@ -185,7 +196,6 @@ const PriceListPageWidget = ({ widgetType }) => {
               widgetType={widgetType}
               setPriceRecovery={setPriceRecovery}
               priceRecovery={priceRecovery}
-              setSamlleType={setSamlleType}
             />
           </div>
 
@@ -194,7 +204,7 @@ const PriceListPageWidget = ({ widgetType }) => {
               width: "100%",
               display: "flex",
               flexDirection: "row",
-              justifyContent: "space-between",
+              justifyContent: "flex-end",
               alignItems: "flex-start",
               position: "fixed",
               paddingTop: "8px",
@@ -260,6 +270,7 @@ const PriceListPageWidget = ({ widgetType }) => {
       <GalleryModal
         openModal={GalleryModalOpen}
         onClose={onCloseGalleryModal}
+        onChangeSubProductsForPrice={onChangeSubProductsForPrice}
       />
       <MultiParameterModal
         openModal={multiParameterModal}

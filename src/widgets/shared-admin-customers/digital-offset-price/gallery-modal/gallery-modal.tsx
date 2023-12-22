@@ -4,7 +4,7 @@ import { useGalleryModal } from "./use-gallery-modal";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 
-const GalleryModal = ({ openModal, onClose }) => {
+const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -12,7 +12,7 @@ const GalleryModal = ({ openModal, onClose }) => {
     selectedShape,
     createParameterForCalculation,
     onClickChoosParameter,
-  } = useGalleryModal({ onClose });
+  } = useGalleryModal({ onClose, onChangeSubProductsForPrice });
   return (
     <>
       <GoMakeModal

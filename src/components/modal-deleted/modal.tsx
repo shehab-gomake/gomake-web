@@ -41,7 +41,10 @@ const GoMakeDeleteModal = ({
           <div style={clasess.btnsContainer}>
             <GomakePrimaryButton
               style={clasess.confermBtn}
-              onClick={onClickDelete}
+              onClick={() => {
+                onClickDelete();
+                onClose();
+              }}
             >
               {yesBtn}
             </GomakePrimaryButton>{" "}

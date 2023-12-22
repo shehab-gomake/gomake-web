@@ -160,7 +160,7 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
             paddingRight: 20,
           }}
         >
-          <LineChart />
+          {/* <LineChart /> */}
         </div>
       </div>
       <AddQuantityModal

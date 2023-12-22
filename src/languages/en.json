@@ -98,9 +98,9 @@
     "rule": "Rule",
     "type": "Type",
     "more": "More",
-    "addNewRule": "add new rule",
-    "addRule": "add rule",
-    "editRules": "edit rules",
+    "addNewRule": "Add new rule",
+    "addRule": "Add rule",
+    "editRules": "Edit Rules",
     "cancel": "cancel",
     "create": "create",
     "statment": "statment",
@@ -1428,6 +1428,8 @@
       "itemName": "Item name",
       "admin": {
         "title": "Profits",
+        "proporties":"Proporties",
+        "OSSettings":"OS settings",
         "chooseAction": "Choose action"
       },
       "pricingListWidget": {
@@ -1446,10 +1448,16 @@
         "more": "More",
         "height": "height",
         "addNewQuantity": "add new quantity",
+        "addNewStep": "add new step",
         "saveStep": "Save step",
         "testQuantity": "Quantity",
         "unitPrice": "Unit price",
-        "testFinalPrice": "Test Final Price"
+        "testFinalPrice": "Test Final Price",
+        "materialQuantity":"Material Quantity",
+        "beats":"Beats",
+        "linear":"Linear",
+        "steps":"Steps",
+        "pleaseEnterallrequiredvalues":"Please Enter all required values"
       },
       "exceptions": {
         "title": "Exceptions",
@@ -1457,7 +1465,7 @@
         "parameter": "Parameter",
         "value": "Value",
         "scopeOfChange": "scope of change",
-        "min": "Minimum =",
+        "min": "Minimum",
         "addNewException": "Add new exception",
         "chooseScope": "choose scope",
         "selectTypeOfException": "Select type of exception",
@@ -1470,7 +1478,9 @@
         "additionalProfit": "Additional Profit",
         "deleteExceptionProfit": "Delete Exception Profit ?",
         "updateException": "Update exception",
-        "deleteException": "Delete exception"
+        "deleteException": "Delete exception",
+        "addNewRule":"Add New Rule",
+        "reorder":"Reorder"
       }
     },
     "actions": {
@@ -1648,6 +1658,7 @@
       "sendQuote": "send quote",
       "cancel": "Cancel",
       "yesBtn": "Yes",
+      "noBtn": "No",
       "subTitleCancelModal": "Are you sure you want to cancel this offer?",
       "cancelBtn": "cancelation",
       "titleCancelModal": "Confirm Cancel",

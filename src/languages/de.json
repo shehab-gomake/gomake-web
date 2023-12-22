@@ -1354,6 +1354,8 @@
       "itemName": "Artikelname",
       "admin": {
         "title": "Gewinne",
+        "proporties": "Eigenschaften",
+        "OSSettings": "Betriebssystemeinstellungen",
         "chooseAction": "Aktion auswählen"
       },
       "pricingListWidget": {
@@ -1372,10 +1374,16 @@
         "more": "Mehr",
         "height": "Höhe",
         "addNewQuantity": "Neue Menge hinzufügen",
+        "addNewStep": "Neuen Schritt hinzufügen",
         "saveStep": "Schritt speichern",
         "testQuantity": "Menge",
         "unitPrice": "Stückpreis",
-        "testFinalPrice": "Testendpreis"
+        "testFinalPrice": "Testendpreis",
+        "materialQuantity": "Materialmenge",
+        "beats": "Beats",
+        "linear": "Linear",
+        "steps": "Schritte",
+        "pleaseEnterallrequiredvalues": "Bitte geben Sie alle erforderlichen Werte ein"
       },
       "exceptions": {
         "title": "Ausnahmen",
@@ -1396,7 +1404,9 @@
         "additionalProfit": "Zusätzlicher Gewinn",
         "deleteExceptionProfit": "Ausnahme-Gewinn löschen?",
         "updateException": "Ausnahme aktualisieren",
-        "deleteException": "Ausnahme löschen"
+        "deleteException": "Ausnahme löschen",
+        "addNewRule": "Neue Regel hinzufügen",
+        "reorder": "Neu ordnen"
       }
     },
     "actions": {
@@ -1573,6 +1583,7 @@
       "sendQuote": "Angebot senden",
       "cancel": "Abbrechen",
       "yesBtn": "Ja",
+      "noBtn": "NEIN",
       "subTitleCancelModal": "Sind Sie sicher, dass Sie dieses Angebot stornieren möchten?",
       "cancelBtn": "Stornierung",
       "titleCancelModal": "Stornierung bestätigen",

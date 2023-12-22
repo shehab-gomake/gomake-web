@@ -239,3 +239,12 @@ input::placeholder {
 .table-sorting:hover{
   background-color:#EBECFF ;
 }
+
+.MuiTabs-flexContainer{
+  gap:25px !important
+}
+.MuiTabs-scrollButtons{
+  display: flex !important;
+  align-items: flex-start !important;
+  margin-top: 3px !important;
+}

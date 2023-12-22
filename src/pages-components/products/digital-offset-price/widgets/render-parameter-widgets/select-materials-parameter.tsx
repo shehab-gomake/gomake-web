@@ -13,7 +13,6 @@ const SelectMaterialsParameterWidget = ({
   index,
   temp,
   inModal,
-  onChangeForPrice,
   subSection,
   section,
   setDigidatPriceData,
@@ -119,20 +118,20 @@ const SelectMaterialsParameterWidget = ({
               onChange={(e: any, value: any) => {
                 if (parameter?.materialPath?.length == 3) {
                   onChangeSubProductsForPrice(
-                      parameter?.id,
-                      subSection?.id,
-                      section?.id,
-                      parameter?.parameterType,
-                      parameter?.name,
-                      parameter?.actionId,
-                      {
-                        valueIds: value?.valueId,
-                        values: value?.value,
-                        ...(data?.id > 0 && { material: data?.id }),
-                      },
-                      subSection?.type,
-                      index,
-                      parameter?.actionIndex
+                    parameter?.id,
+                    subSection?.id,
+                    section?.id,
+                    parameter?.parameterType,
+                    parameter?.name,
+                    parameter?.actionId,
+                    {
+                      valueIds: value?.valueId,
+                      values: value?.value,
+                      ...(data?.id > 0 && { material: data?.id }),
+                    },
+                    subSection?.type,
+                    index,
+                    parameter?.actionIndex
                   );
                   setDigidatPriceData({
                     ...digitalPriceData,
@@ -142,20 +141,20 @@ const SelectMaterialsParameterWidget = ({
                 }
                 if (parameter?.materialPath?.length == 2) {
                   onChangeSubProductsForPrice(
-                      parameter?.id,
-                      subSection?.id,
-                      section?.id,
-                      parameter?.parameterType,
-                      parameter?.name,
-                      parameter?.actionId,
-                      {
-                        valueIds: value?.valueId,
-                        values: value?.value,
-                        ...(data?.id > 0 && { material: data?.id }),
-                      },
-                      subSection?.type,
-                      index,
-                      parameter?.actionIndex
+                    parameter?.id,
+                    subSection?.id,
+                    section?.id,
+                    parameter?.parameterType,
+                    parameter?.name,
+                    parameter?.actionId,
+                    {
+                      valueIds: value?.valueId,
+                      values: value?.value,
+                      ...(data?.id > 0 && { material: data?.id }),
+                    },
+                    subSection?.type,
+                    index,
+                    parameter?.actionIndex
                   );
                   setDigidatPriceData({
                     ...digitalPriceData,
@@ -166,20 +165,20 @@ const SelectMaterialsParameterWidget = ({
                 }
                 if (parameter?.materialPath?.length == 1) {
                   onChangeSubProductsForPrice(
-                      parameter?.id,
-                      subSection?.id,
-                      section?.id,
-                      parameter?.parameterType,
-                      parameter?.name,
-                      parameter?.actionId,
-                      {
-                        valueIds: value?.valueId,
-                        values: value?.value,
-                        ...(data?.id > 0 && { material: data?.id }),
-                      },
-                      subSection?.type,
-                      index,
-                      parameter?.actionIndex
+                    parameter?.id,
+                    subSection?.id,
+                    section?.id,
+                    parameter?.parameterType,
+                    parameter?.name,
+                    parameter?.actionId,
+                    {
+                      valueIds: value?.valueId,
+                      values: value?.value,
+                      ...(data?.id > 0 && { material: data?.id }),
+                    },
+                    subSection?.type,
+                    index,
+                    parameter?.actionIndex
                   );
                   setDigidatPriceData({
                     ...digitalPriceData,

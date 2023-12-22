@@ -1,5 +1,6 @@
 import { styled } from "@mui/material/styles";
 import {
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -10,64 +11,65 @@ import {
 } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useStyle } from "@/widgets/properties/properties-table/style";
-import { GomakeTextInput } from "@/components";
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MoreMenuWidget } from "../more-circle";
-import { usePrintHouseActions } from "../hooks/use-print-house-action";
 import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
-import { PermissionCheck } from "@/components/CheckPermission";
-import { Permissions } from "@/components/CheckPermission/enum";
-import { useRecoilState } from "recoil";
-import { permissionsState } from "@/store/permissions";
-import { usePermission } from "@/hooks/use-permission";
+
+import { useProperites } from "../hooks/use-properites";
+import { MoreCircleIcon } from "@/icons";
+import { AddRuleModal } from "@/pages-components/products/profits-new/widgets/add-rule-modal";
+import { EditRulesModal } from "../properties-modals/edit-rule-modal";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#",
-    color: "#B5B7C0",
+    backgroundColor: "#EBECFF",
+    color: "#000000",
     ...FONT_FAMILY.Lexend(500, 14),
+    padding: 5,
   },
   [`&.${tableCellClasses.body}`]: {
     ...FONT_FAMILY.Lexend(500, 14),
     color: "#656572",
+    padding: 5,
   },
 }));
 
 const StyledTableRow = styled(TableRow)(() => ({
   "&:nth-of-type(even)": {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#ECECEC",
   },
-  // hide last border
   "&:last-child td, &:last-child th": {
     border: 0,
   },
 }));
 
 const PropertiesTable = () => {
-  const [filter, setFilter] = useState<string>("");
   const { t } = useTranslation();
   const { classes } = useStyle();
-  const { state, actionId } = usePrintHouseActions();
-  const { CheckPermission } = usePermission();
-  const [actionPropertyDetails, setActionPropertyDetails] = useState([
-    { actionId: actionId, propertyId: "", ruleType: 0 },
-  ]);
-  const properties = useCallback(() => {
-    if (!!filter) {
-      return state?.filter((property) =>
-        property.propertyName.toLowerCase().includes(filter.toLowerCase())
-      );
-    }
-    return state;
-  }, [filter, state]);
-  useEffect(() => {
-    properties()?.map((property) => { });
-  });
+  const {
+    openAddRule,
+    openEditRule,
+    onCloseAddRuleModal,
+    onOpenAddRuleModal,
+    onCOpenEditModal,
+    onCloseEditModal,
+    anchorEl,
+    open,
+    handleClick,
+    handleClose,
+    selectedProperties,
+    setSelectedProperites,
+    properties,
+    setFilter,
+    getProperitesService,
+    deleteRule,
+    reOrderPricingTables,
+  } = useProperites();
+
   return (
     <>
       <div style={classes.headerContainer}>
-      
         <HeaderTitleWithSearch
           title="Action pricing properties"
           onChange={(e) => setFilter(e)}
@@ -77,7 +79,7 @@ const PropertiesTable = () => {
       <TableContainer style={classes.shadowBorder}>
         <Table>
           <TableHead>
-            <TableRow>
+            <TableRow style={{ background: "#EBECFF" }}>
               <StyledTableCell align={"center"}>
                 {t("properties.parameter")}
               </StyledTableCell>
@@ -88,7 +90,7 @@ const PropertiesTable = () => {
                 {t("properties.type")}
               </StyledTableCell>
               <StyledTableCell align={"center"}>
-                { t("properties.more")}
+                {t("properties.more")}
               </StyledTableCell>
             </TableRow>
           </TableHead>
@@ -100,11 +102,20 @@ const PropertiesTable = () => {
                     {property.propertyName}
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>
-                    <div className="scrollBlue" style={classes.rowItem}>
+                    <div style={classes.rowItem} className="scrollBlue">
                       {property.actionRules.map((rule, index) => {
                         return (
                           <div style={classes.item}>
-                            {index + 1}- {rule.expression}
+                            {rule.successEvent ? (
+                              <>
+                                {index + 1}- {rule.expression} value=
+                                {rule.successEvent}
+                              </>
+                            ) : (
+                              <>
+                                {index + 1}- {rule.expression}
+                              </>
+                            )}
                           </div>
                         );
                       })}
@@ -114,12 +125,14 @@ const PropertiesTable = () => {
                     {property.ruleType == 0 ? "Output" : "Input"}{" "}
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>
-                    <MoreMenuWidget
-                        rules={property.actionRules}
-                        actionId={actionId}
-                        propertyId={property.propertyId}
-                        ruleType={property.ruleType}
-                    />
+                    <IconButton
+                      onClick={(e) => {
+                        handleClick(e);
+                        setSelectedProperites(property);
+                      }}
+                    >
+                      <MoreCircleIcon />
+                    </IconButton>
                   </StyledTableCell>
                 </StyledTableRow>
               );
@@ -127,6 +140,28 @@ const PropertiesTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <AddRuleModal
+        openModal={openAddRule}
+        onCloseModal={onCloseAddRuleModal}
+        isPropertiesWidge={true}
+        selectedProperties={selectedProperties}
+        getProperitesService={getProperitesService}
+      />
+      <EditRulesModal
+        openModal={openEditRule}
+        onClose={onCloseEditModal}
+        selectedProperties={selectedProperties}
+        onOpenAddRuleModal={onOpenAddRuleModal}
+        deleteRule={deleteRule}
+        reOrderPricingTables={reOrderPricingTables}
+      />
+      <MoreMenuWidget
+        onOpenAddRuleModal={onOpenAddRuleModal}
+        onCOpenEditModal={onCOpenEditModal}
+        handleClose={handleClose}
+        anchorEl={anchorEl}
+        open={open}
+      />
     </>
   );
 };

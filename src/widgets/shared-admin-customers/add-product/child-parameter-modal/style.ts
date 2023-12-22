@@ -10,8 +10,17 @@ const useStyle = () => {
       insideStyle: {
         width: "50%",
         borderRadius: 5,
-        height: "75%",
+        height: "auto",
+        maxHeight: 500,
         backgroundColor: "#f7f7f7",
+      },
+      addBtnStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        gap: 10,
+        marginBottom: 15,
       },
       addNewValueContainer: {
         display: "flex",
@@ -22,7 +31,6 @@ const useStyle = () => {
         gap: 15,
         flexWrap: "wrap" as "wrap",
         marginBottom: 25,
-        // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
       textInputContainer: {
         width: "25%",
