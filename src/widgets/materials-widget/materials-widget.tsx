@@ -111,17 +111,16 @@ const MaterialsWidget = () => {
             }
         }
     }, [materialType, materialCategory, supplierId])
-
     return (
-        <div style={{ maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT - 20), overflow: 'hidden' }}>
+        <div>
             <SideBarContainer side={Side()} header={materialType?.toString()} subHeader={''}>
                 {materialCategory && <Stack gap={2}>
                     <Stack direction={'row'} justifyContent={'space-between'} alignItems={'flex-start'}>
                         <h4 style={classes.subHeader}>{materialCategory?.toString()}</h4>
                         <FiltersActionsBar />
                     </Stack>
-                    {materialCategoryData.length > 0 ?
-                        <PrimaryTable rows={tableRowData} headers={tableHeadersNew()} /> :
+                    {materialCategoryData.length > 0 ? <div style={{paddingBottom: "1%"}}>
+                        <PrimaryTable rows={tableRowData} headers={tableHeadersNew()} /></div> :
                         (flag && materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ?
                             <PrimaryTable rows={tableRowsNew} headers={tableHeadersNew()} />
                             :

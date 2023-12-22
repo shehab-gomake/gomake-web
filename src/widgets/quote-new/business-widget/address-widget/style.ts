@@ -17,7 +17,7 @@ const useStyle = () => {
       stackStyle: {
         display:"flex",
         width:"330px",
-        gap:"12px"
+        gap:"13px"
       },
       saveBtn: {
         width: "331px",
@@ -78,7 +78,8 @@ const useStyle = () => {
         borderRadius: 4,
         border: "1px solid #FFFFFF",
         height: 40,
-        width: "330px",
+        width: "300px",
+        
       },
       addContactContainer: {
         display: "flex",

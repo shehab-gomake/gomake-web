@@ -9,7 +9,7 @@ import { useStyle } from "./style";
 import { useAddressWidget } from "./use-address-widget";
 
 interface IProps {
-    isUpdate?: boolean; 
+    isUpdate?: boolean;
 }
 const AddressModal = ({ isUpdate }: IProps) => {
     const { classes } = useStyle();
@@ -48,16 +48,17 @@ const AddressModal = ({ isUpdate }: IProps) => {
                 <Stack style={classes.stackStyle}>
                     <div style={classes.fieldContainer}>
                         <h3 style={classes.labelStyle}>{t("sales.quote.address")}</h3>
-                        <GoMakeAutoComplate
-                            disableClearable={true}
-                            options={addressSelect}
-                            value={selectedAddress}
-                            style={classes.autoComplateStyle}
-                            placeholder={t("sales.quote.address")}
-                            onChange={(e: any, value: any) => {
-                                setSelectedAddress(value);
-                            }}
-                        />
+                        <div style={{padding: '6.5px 14px'}}>
+                            <GoMakeAutoComplate
+                                disableClearable={true}
+                                options={addressSelect}
+                                value={selectedAddress}
+                                style={classes.autoComplateStyle}
+                                placeholder={t("sales.quote.address")}
+                                onChange={(e: any, value: any) => {
+                                    setSelectedAddress(value);
+                                }}
+                            /></div>
                     </div>
                     {
                         addressInputs(addressState, isNewAddressState).map(item => <Stack width={"330px"}><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
@@ -68,5 +69,5 @@ const AddressModal = ({ isUpdate }: IProps) => {
         </div>
     );
 };
- 
+
 export { AddressModal };

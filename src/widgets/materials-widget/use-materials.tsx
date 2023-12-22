@@ -141,6 +141,8 @@ const useMaterials = () => {
         </Tooltip>];
     }, [materialHeaders, materialCategoryData])
 
+    ///////////////////////////////////////////////////////////
+
     const tableRows = useMemo(() => {
         return getFilteredMaterials().map((dataRow) => {
             return [<Checkbox onChange={() => onChangeRowCheckBox(dataRow.id)}
@@ -171,6 +173,7 @@ const useMaterials = () => {
         })
     }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
 
+    ///////////////////////////////////////////////////////////
 
 
     const getCurrenciesApi = async () => {

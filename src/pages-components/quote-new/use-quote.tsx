@@ -275,8 +275,8 @@ const useQuoteNew = () => {
 
   const onBlurContactName = async () => {
     setIsUpdateContactName(null);
-    setIsDisplayWidget(false);
-  };
+  //  setIsDisplayWidget(false);
+  }; 
 
   const onBlurContactEmail = async () => {
     setIsUpdateContactEmail(null);
