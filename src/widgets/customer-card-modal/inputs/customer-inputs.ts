@@ -1,4 +1,5 @@
-const customerInputs = (typeClient, codeFlag, state) => {
+const customerInputs = (typeClient, codeFlag, state , clientTypesCategories) => {
+
     return [
         codeFlag && {
             name: "code",
@@ -41,8 +42,10 @@ const customerInputs = (typeClient, codeFlag, state) => {
             placeholder: typeClient === "C" ? "customers.modal.clientType" : "suppliers.supplierType",
             required: true,
             parameterKey: "clientTypeId",
-            options: [],
-            optionsUrl: "/v1/clientTypes/get-all-clientTypes",
+            options: clientTypesCategories.map(type => ({
+                value: type?.id,
+                text: type?.label
+            })),
             value: state?.clientTypeId,
             isValid: true,
         },
