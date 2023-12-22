@@ -12,14 +12,14 @@ import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
-import { duplicateQuoteApi, getQuotePdfApi } from "@/services/api-service/quotes/quotes-table-endpoints";
+import { getQuotePdfApi } from "@/services/api-service/quotes/quotes-table-endpoints";
 import { employeesListsState } from "./states";
+import { duplicateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
 
 const useQuotes = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue, alertFaultUpdate, alertFaultDuplicate } = useSnackBar();
-
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
@@ -314,13 +314,16 @@ const useQuotes = () => {
     await getQuotePdfApi(callApi, callBack, { quoteId: id });
   };
 
+
+///////////////////////////////// DOCUMENT DUPLICATE IS DONE ( MORE CIRCLE OPTION) /////////////////////////////////////
   const onClickQuoteDuplicate = async (id: string) => {
     const callBack = (res) => {
       if (res?.success) {
+
         const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
         const quoteId = res?.data?.quoteId;
-        console.log(quoteId)
         if (!isAnotherQuoteInCreate) {
+         // documentType == 0 ? navigate("/quote") : navigate("/order")
           navigate("/quote");
         }
         else {
@@ -330,8 +333,9 @@ const useQuotes = () => {
         alertFaultDuplicate();
       }
     };
-    await duplicateQuoteApi(callApi, callBack, { quoteId: id });
+    await duplicateDocumentApi(callApi, callBack, { documentId: id  , documentType : 0 });
   };
+///////////////////////////////// DOCUMENT DUPLICATE IS DONE ( MORE CIRCLE OPTION) /////////////////////////////////////
 
   return {
     patternSearch,

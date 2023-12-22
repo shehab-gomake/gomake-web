@@ -23,7 +23,7 @@ import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { addressModalState } from "@/widgets/quote-new/business-widget/address-widget/state";
 import { useQuoteGetData } from "./use-quote-get-data";
 import { addQuoteAddressApi, deleteQuoteAddressApi, updateQuoteAddressApi } from "@/services/api-service/quote/quote-addresses-api";
-import { addDocumentAddressApi, addDocumentContactApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentItemApi, updateDocumentAddressApi } from "@/services/api-service/generic-doc/documents-api";
+import { addDocumentAddressApi, addDocumentContactApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, updateDocumentAddressApi, updateDocumentContactApi } from "@/services/api-service/generic-doc/documents-api";
 
 const useQuoteNew = () => {
   const {
@@ -75,7 +75,7 @@ const useQuoteNew = () => {
     setOpenDuplicateWithDifferentQTYModal,
   ] = useState(false);
   const [selectedContactById, setSelectedContactById] = useState<any>();
-  const [amountVlue, setAmountValue] = useState();
+  const [amountValue, setAmountValue] = useState();
   const [openDeleteItemModal, setOpenDeleteItemModal] = useState(false);
   const [priceListItems, setPriceListItems] = useState<any>([]);
   const [quoteItems, setquoteItems] = useState<any>([]);
@@ -224,8 +224,6 @@ const useQuoteNew = () => {
     [quoteItemValue]
   );
 
-
-
   const updatePurchaseNumber = useCallback(
     async (value: any) => {
       const res = await callApi(
@@ -275,7 +273,6 @@ const useQuoteNew = () => {
 
   const onBlurContactName = async () => {
     setIsUpdateContactName(null);
-    setIsDisplayWidget(false);
   };
 
   const onBlurContactEmail = async () => {
@@ -300,8 +297,7 @@ const useQuoteNew = () => {
   }, [quoteItemValue]);
 
 
-  ////////////////////////////// CONTACT SECTION //////////////////////////////////////
-
+  ////////////////////////////// CONTACT SECTION IS DONE //////////////////////////////////////
   const getAllClientContacts = useCallback(async () => {
     if (quoteItemValue?.customerID) {
       await getAndSetClientContacts(callApi, setClientContactsValue, {
@@ -310,42 +306,18 @@ const useQuoteNew = () => {
     }
   }, [quoteItemValue]);
 
-
-  // const onClickAddNewContact = useCallback(async () => {
-  //   const res = await callApi(
-  //     EHttpMethod.POST,
-  //     `/v1/erp-service/quote/add-quote-contact`,
-  //     {
-  //       contactID: selectedContactById?.id,
-  //       contactName: selectedContactById?.name,
-  //       contactMail: selectedContactById?.mail,
-  //       contactPhone: selectedContactById?.phone,
-  //       quoteID: quoteItemValue?.id,
-  //     }
-  //   );
-  //   if (res?.success) {
-  //     alertSuccessAdded();
-  //     setIsDisplayWidget(false);
-  //     getQuote();
-  //   } else {
-  //     alertFaultAdded();
-  //   }
-  // }, [selectedContactById, quoteItemValue]);
-
-
   const onClickAddNewContact = async () => {
     const callBack = (res) => {
-      if (res.success) {
-        alertSuccessAdded();
-        getQuote();
-        setOpenModal(false);
-      }
-      else {
-        alertFaultAdded();
-      }
+    if (res?.success) {
+      alertSuccessAdded();
+      setIsDisplayWidget(false);
+      getQuote();
+    } else {
+      alertFaultAdded();
+    }
     }
     await addDocumentContactApi(callApi, callBack, {
-      documentType: 550,
+      documentType: 0,
       contact:
       {
         contactID: selectedContactById?.id,
@@ -357,53 +329,53 @@ const useQuoteNew = () => {
     })
   }
 
-
-
-  const updateClientContact = useCallback(async (item: any) => {
-    const res = await callApi(
-      "PUT",
-      `/v1/erp-service/quote/update-quote-contact`,
+  const updateClientContact = async (item: any) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        setIsUpdateContactEmail(null);
+        setIsUpdateContactName(null);
+        setIsUpdateContactMobile(null);
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await updateDocumentContactApi(callApi, callBack, {
+      documentType: 0,
+      contact:
       {
         id: item?.id,
         contactID: item?.contactID,
         contactName: item?.contactName,
         contactMail: item?.contactMail,
         contactPhone: item?.contactPhone,
-        quoteID: item?.quoteID,
+        documentID: quoteItemValue?.id,
       }
-    );
-    if (res?.success) {
-      alertSuccessUpdate();
-      setIsUpdateContactEmail(null);
-      setIsUpdateContactName(null);
-      setIsUpdateContactMobile(null);
-      getQuote();
-    } else {
-      alertFaultUpdate();
+    })
+  }
+
+  const onClickDeleteContact = async (item: any) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessDelete();
+        onCloseDeleteModalContact();
+        getQuote();
+      } else {
+        alertFaultDelete();
+      }
     }
-  }, []);
-
-
-  const onClickDeleteContact = useCallback(async (item: any) => {
-    const res = await callApi(
-      EHttpMethod.DELETE,
-      `/v1/erp-service/quote/delete-quote-contact?quoteContactId=${item?.id}`
-    );
-    if (res?.success) {
-      alertSuccessDelete();
-      onCloseDeleteModalContact();
-      getQuote();
-    } else {
-      alertFaultDelete();
-    }
-  }, []);
-
+    await deleteDocumentContactApi(callApi, callBack,
+      {
+        documentType: 0,
+        documentContactId: item?.id
+      })
+  }
 
   useEffect(() => {
     getAllClientContacts();
   }, [quoteItemValue]);
-
-////////////////////////////// CONTACT SECTION //////////////////////////////////////
+  ////////////////////////////// CONTACT SECTION IS DONE //////////////////////////////////////
 
   const [displayedItems, setDisplayedItems] = useState<number>(2);
   const handleShowMore = () => {
@@ -433,8 +405,6 @@ const useQuoteNew = () => {
     onChangeUpdateClientContact("phone", v);
   };
 
-
-
   const onOpenDeleteModalContact = (item) => {
     setSelectedContact(item);
     setOpenDeleteModalContact(true);
@@ -442,8 +412,6 @@ const useQuoteNew = () => {
   const onCloseDeleteModalContact = () => {
     setOpenDeleteModalContact(false);
   };
-
- 
 
   const onOpenNewItem = () => {
     setOpenAddNewItemModal(true);
@@ -484,23 +452,22 @@ const useQuoteNew = () => {
     setQuateItemId(quoteItem?.id);
   };
 
-  const duplicateQuoteItemWithAnotherQuantity = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/quote/duplicate-quote-with-another-quantity`,
-      {
-        quoteItemId: quoteItemId,
-        amount: parseInt(amountVlue),
+
+  /////////////////////////////// DUPLICATE DOCUMENT ITEM IS DONE /////////////////////////////// 
+  const duplicateQuoteItemWithAnotherQuantity = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessAdded();
+        onCloseDuplicateWithDifferentQTY();
+        getQuote();
+      } else {
+        alertFaultAdded();
       }
-    );
-    if (res?.success) {
-      alertSuccessAdded();
-      onCloseDuplicateWithDifferentQTY();
-      getQuote();
-    } else {
-      alertFaultAdded();
     }
-  }, [quoteItemId, amountVlue]);
+    await duplicateWithAnotherQuantityApi(callApi, callBack, { ItemId: quoteItemId, amount: parseInt(amountValue) , documentType: 0 })
+  }
+  /////////////////////////////// DUPLICATE DOCUMENT ITEM IS DONE /////////////////////////////// 
+
 
   const onCloseDeleteItemModal = () => {
     setOpenDeleteItemModal(false);
@@ -511,8 +478,7 @@ const useQuoteNew = () => {
   };
 
 
-  /////////////////////////////////////////////////////
-
+  ////////////////////////////  DELETE QUOTE ITEM DONE  /////////////////////////
   const deleteQuoteItem = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -525,8 +491,7 @@ const useQuoteNew = () => {
     }
     await deleteDocumentItemApi(callApi, callBack, { ItemId: quoteItemId, documentType: 0 })
   }
-
-  ///////////////////////////////////////////////////////////////////
+  ////////////////////////////  DELETE QUOTE ITEM DONE  /////////////////////////
 
 
   const onClickDeleteQouteItem = (quoteItem) => {
