@@ -466,6 +466,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCanCalculation(false);
     setWorkFlows([]);
     setJobActions([]);
+    setSubProducts([])
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
@@ -522,6 +523,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setCurrentProductItemValue(productItemValue);
     }
   }, [subProducts, workFlowSelected]);
+  useEffect(() => {
+    const allParameters = subProducts.flatMap((item) => item.parameters);
+    const filteredArray = allParameters.filter((obj) => obj.values[0] !== "false");
+    setItemParmetersValues(filteredArray);
+  }, [subProducts]);
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);

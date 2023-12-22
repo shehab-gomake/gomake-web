@@ -6,6 +6,7 @@ import {ECategoryId} from "@/widgets/machines/enums/category-id";
 import {useAdminAddMachine} from "@/widgets/machines/hooks/use-admin-add-machine";
 import {SideBarContainer} from "@/components/containers/side-container/side-bar-container";
 import {MachinesSideList} from "@/components/containers/machines-container/side-list/machines-side-list";
+import Button from "@mui/material/Button";
 
 const AdminAddMachine = () => {
     const {categoryList, categoryName} = useMachinesCategories();
@@ -31,10 +32,10 @@ const AdminAddMachine = () => {
         setActiveStep(stepIndex)
     }
     const Side = () => <MachinesSideList list={categoryList} selectedItem={selectedCategory} onSelect={onSelectCategory}
-                                 title={'Categories'}/>
+                                         title={'Categories'}/>
   return (
       <SideBarContainer side={Side()} header={categoryName(selectedCategory)} subHeader={'Add Machine'}>
-
+          <Button variant={'contained'} onClick={adminAddMachine}>add machine</Button>
           <MachineStepper steps={getCategorySteps()} activeStep={activeStep} previousStep={navigateBack}
                           nextStep={navigateNext} actionButtonClicked={adminAddMachine} moveToStep={moveToStepByIndex}
                           isAddForm={true}/>

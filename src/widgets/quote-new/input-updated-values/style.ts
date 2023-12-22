@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 
-const useStyle = ({ isAnderLine }) => {
+const useStyle = ({ isUnderLine }) => {
   const { grayColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
@@ -26,7 +26,7 @@ const useStyle = ({ isAnderLine }) => {
         borderRadius: 4,
         padding: "4px 6px",
         width: "fit-content",
-        textDecoration: isAnderLine ? "underline" : "none",
+        textDecoration: isUnderLine ? "underline" : "none",
       },
     };
   }, []);

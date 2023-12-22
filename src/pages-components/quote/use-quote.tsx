@@ -158,6 +158,7 @@ const useQuote = () => {
       });
     }
   }, [selectedContactById, quoteItemValue]);
+
   const onClickDeleteAddress = useCallback(async (item: any) => {
     const res = await callApi(
       EHttpMethod.DELETE,
@@ -179,6 +180,7 @@ const useQuote = () => {
       });
     }
   }, []);
+  
   const onClickAddNewAddress = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,

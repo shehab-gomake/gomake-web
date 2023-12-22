@@ -18,7 +18,7 @@ import {
     materialCategoriesState,
     materialCategoryDataState,
     materialCategorySuppliersState,
-    materialHeadersState, openAddRowModalState, selectedSupplierIdState
+    materialHeadersState, materialsMachinesState, openAddRowModalState, selectedSupplierIdState
 } from "@/widgets/materials-widget/state";
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
 import { useFilteredMaterials } from "@/widgets/materials-widget/use-filtered-materials";
@@ -28,7 +28,12 @@ import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import { useTranslation } from "react-i18next";
 import { useAddCategoryRow } from "./components/add-row/use-add-row";
 import { WastebasketNew } from "@/icons/wastebasket-new";
-import { Wastebasket } from "@/icons/wastebasket";
+
+
+import {
+
+    getAndSetMachincesNew,
+} from "@/services/hooks";
 
 const useMaterials = () => {
     const { query, push, replace } = useRouter();
@@ -49,7 +54,7 @@ const useMaterials = () => {
     const { onDeleteCategoryRow } = useAddCategoryRow();
     const setActiveFilter = useSetRecoilState(activeFilterState);
     const setFlagState = useSetRecoilState(flagState);
-    const { primaryColor , errorColor } = useGomakeTheme();
+    const { primaryColor, errorColor } = useGomakeTheme();
     const { t } = useTranslation();
 
     const onSelectCategory = (category: string) => {
@@ -88,7 +93,7 @@ const useMaterials = () => {
     const materialsCategoriesList = useCallback(() => {
         return materialCategories.map(category => ({
             text: category.categoryName, value: category.categoryKey, icon: category.isAddedByPrintHouse ? () => <IconButton onClick={() => onDeleteCategory(category?.categoryKey)}>
-                <WastebasketNew  width={"30px"} height={"30px"}/>
+                <WastebasketNew width={"30px"} height={"30px"} />
             </IconButton> : null
         }))
     }, [materialCategories])
@@ -127,16 +132,6 @@ const useMaterials = () => {
             checked={isAllSelected()} />, ...materialHeaders.map(header => header.value)];
     }, [materialHeaders, materialCategoryData])
 
-
-    const tableRows = useMemo(() => {
-        return getFilteredMaterials().map((dataRow) => {
-            return [<Checkbox onChange={() => onChangeRowCheckBox(dataRow.id)}
-                checked={dataRow.checked} />, ...materialHeaders.map(header =>
-                    <TableCellData {...dataRow.rowData[header.key]} id={dataRow.id} parameterKey={header.key} />)]
-        })
-    }, [materialHeaders, materialCategoryData, activeFilter, materialFilter])
-
-
     const tableHeadersNew = useCallback(() => {
         return [<Checkbox onChange={onChangeHeaderCheckBox}
             checked={isAllSelected()} />, ...materialHeaders.map(header => header.value), <Tooltip title={t("materials.buttons.addRow")}>
@@ -145,6 +140,16 @@ const useMaterials = () => {
             </IconButton>
         </Tooltip>];
     }, [materialHeaders, materialCategoryData])
+
+    ///////////////////////////////////////////////////////////
+
+    const tableRows = useMemo(() => {
+        return getFilteredMaterials().map((dataRow) => {
+            return [<Checkbox onChange={() => onChangeRowCheckBox(dataRow.id)}
+                checked={dataRow.checked} />, ...materialHeaders.map(header =>
+                    <TableCellData {...dataRow.rowData[header.key]} id={dataRow.id} parameterKey={header.key} />)]
+        })
+    }, [materialHeaders, materialCategoryData, activeFilter, materialFilter])
 
 
     const tableRowsNew = useMemo(() => {
@@ -162,12 +167,13 @@ const useMaterials = () => {
                     />
                 )),
                 <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
-                    <WastebasketNew  width={"30px"} height={"30px"}/>
+                    <WastebasketNew width={"30px"} height={"30px"} />
                 </IconButton>,
             ];
         })
     }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
 
+    ///////////////////////////////////////////////////////////
 
 
     const getCurrenciesApi = async () => {
@@ -225,6 +231,11 @@ const useMaterials = () => {
         }
     }
 
+    const setMachinesState = useSetRecoilState<[]>(materialsMachinesState);
+    const getMachinesMaterials = useCallback(async () => {
+        await getAndSetMachincesNew(callApi, setMachinesState);
+    }, []);
+
     return {
         materialCategory,
         materialType,
@@ -243,6 +254,7 @@ const useMaterials = () => {
         uploadExcelFile,
         tableHeadersNew,
         tableRowsNew,
+        getMachinesMaterials
     }
 }
 

@@ -75,6 +75,13 @@ const useSnackBar = () => {
     });
   };
 
+  const alertFaultDuplicate = () => {
+    setSnackbarStateValue({
+      state: true,
+      message: t("modal.duplicateFailed"),
+      type: "error",
+    });
+  };
   return {
     snackbarStateValue,
     setSnackbarStateValue,
@@ -88,6 +95,7 @@ const useSnackBar = () => {
     alertSuccessDelete,
     alertFaultDelete,
     alertRequiredFields,
+    alertFaultDuplicate
   };
 };
 

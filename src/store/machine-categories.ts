@@ -54,5 +54,6 @@ export const machineCategoriesState = atom({
         {id: ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE, name: 'machinesCategories.rollDigitalEnhancement'},
         {id: ECategoryId.AUTO_BOOK_CUTTING_MACHINE, name: 'machinesCategories.autoBookCutting'},
         {id: ECategoryId.ROLL_ANALOG_ENHANCEMENT_MACHINE, name: 'machinesCategories.rollAnalogEnhancement'},
+        {id: ECategoryId.THERMAL_PLATE_PROCESSOR, name: 'machinesCategories.thermalPlateProcessor'},
     ],
 });

@@ -4,20 +4,21 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
-import { getAndSetAllCustomers } from "@/services/hooks";
-import { useRecoilState } from "recoil";
+import { getAndSetAllCustomers, getAndSetAllEmployees } from "@/services/hooks";
+import { useRecoilState , useSetRecoilState } from "recoil";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
-import { getQuotePdfApi } from "@/services/api-service/quotes/quotes-table-endpoints";
+import { duplicateQuoteApi, getQuotePdfApi } from "@/services/api-service/quotes/quotes-table-endpoints";
+import { employeesListsState } from "./states";
 
 const useQuotes = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { setSnackbarStateValue , alertRequiredFields } = useSnackBar();
+  const { setSnackbarStateValue, alertFaultUpdate, alertFaultDuplicate } = useSnackBar();
 
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
@@ -36,8 +37,12 @@ const useQuotes = () => {
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [openLogsModal, setOpenLogsModal] = useState(false);
+  const [modalLogsTitle, setModalLogsTitle] = useState<string>();
+  //const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
+  const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
   const [selectedQuote, setSelectedQuote] = useState<any>();
-  const onClcikCloseModal = () => {
+  const onClickCloseModal = () => {
     setOpenModal(false);
   };
 
@@ -45,24 +50,36 @@ const useQuotes = () => {
     setSelectedQuote(quote);
     setOpenModal(true);
   };
+
   const [agentsCategories, setAgentsCategories] = useRecoilState(
     agentsCategoriesState
   );
+
+  const onClickCloseLogsModal = () => {
+    setOpenLogsModal(false);
+  };
+
+  const onClickOpenLogsModal = (quoteNumber: string) => {
+    setModalLogsTitle(quoteNumber)
+    setOpenLogsModal(true);
+  };
+
   useEffect(() => {
     setFinalPatternSearch(debounce);
   }, [debounce]);
 
-  const getAgentCategories = async () => {
+  const getAgentCategories = async (isAgent: boolean , setState: any) => {
     const callBack = (res) => {
       if (res.success) {
         const agentNames = res.data.map((agent) => ({
           label: agent.text,
           id: agent.value,
         }));
-        setAgentsCategories(agentNames);
+        setState(agentNames);
+        
       }
     };
-    await getAndSetEmployees2(callApi, callBack, { isAgent: true });
+    await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
   };
 
   const renderOptions = () => {
@@ -108,15 +125,17 @@ const useQuotes = () => {
     );
     const data = res?.data?.data?.result;
     const totalItems = res?.data?.data?.totalItems;
+
     const mapData = data?.map((quote: any) => [
       GetDateFormat(quote?.createdDate),
       quote?.customerName,
       quote?.orderNumber,
+      quote?.quoteNumber,
       quote?.worksNames,
       quote?.totalPrice,
       quote?.notes,
       _renderQuoteStatus(quote?.statusID, quote, t),
-      <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} />,
+      <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} onClickDuplicate={onClickQuoteDuplicate} onClickLoggers={()=>onClickOpenLogsModal(quote?.quoteNumber)} />,
     ]);
     setAllQuotes(mapData);
   }, [
@@ -140,12 +159,14 @@ const useQuotes = () => {
         },
       }
     );
+
     const data = res?.data?.data?.result;
     const totalItems = res?.data?.data?.totalItems;
     const mapData = data?.map((quote: any) => [
       GetDateFormat(quote?.createdDate),
       quote?.customerName,
       quote?.orderNumber,
+      quote?.quoteNumber,
       quote?.worksNames,
       quote?.totalPrice,
       quote?.notes,
@@ -163,7 +184,7 @@ const useQuotes = () => {
     getAllQuotes();
   };
 
-  const onClcikClearFilter = () => {
+  const onClickClearFilter = () => {
     setStatusId(null);
     setAgentId(null);
     setCustomerId(null);
@@ -174,11 +195,18 @@ const useQuotes = () => {
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
     t("sales.quote.orderNumber"),
+    t("sales.quote.quoteNumber"),
     t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
     t("sales.quote.status"),
     t("sales.quote.more"),
+  ];
+
+  const logsTableHeaders = [
+    t("sales.quote.actionDate"),
+    t("sales.quote.employeeName"),
+    t("sales.quote.actionDescription"),
   ];
 
   const quoteStatuses = [
@@ -243,7 +271,10 @@ const useQuotes = () => {
   useEffect(() => {
     getAllCustomersCreateQuote();
     getAllCustomersCreateOrder();
-    getAgentCategories();
+    // get agents
+    getAgentCategories(true,setAgentsCategories);
+    // get employees
+    getAgentCategories(null,setEmployeeListValue);
   }, []);
 
   const updateQuoteStatus = useCallback(async () => {
@@ -276,11 +307,30 @@ const useQuotes = () => {
       if (res?.success) {
         const pdfLink = res.data;
         window.open(pdfLink, "_blank");
-    } else {
-        alertRequiredFields();
-    }
+      } else {
+        alertFaultUpdate();
+      }
     };
     await getQuotePdfApi(callApi, callBack, { quoteId: id });
+  };
+
+  const onClickQuoteDuplicate = async (id: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
+        const quoteId = res?.data?.quoteId;
+        console.log(quoteId)
+        if (!isAnotherQuoteInCreate) {
+          navigate("/quote");
+        }
+        else {
+          onClickOpenModal({id:quoteId })
+        }
+      } else {
+        alertFaultDuplicate();
+      }
+    };
+    await duplicateQuoteApi(callApi, callBack, { quoteId: id });
   };
 
   return {
@@ -294,7 +344,7 @@ const useQuotes = () => {
     customerId,
     agentId,
     errorColor,
-    onClcikCloseModal,
+    onClickCloseModal,
     setPatternSearch,
     setStatusId,
     setCustomerId,
@@ -305,9 +355,14 @@ const useQuotes = () => {
     updateQuoteStatus,
     onClickSearchFilter,
     getAllQuotes,
-    onClcikClearFilter,
+    onClickClearFilter,
     onClickQuotePdf,
     t,
+    openLogsModal,
+    onClickOpenLogsModal,
+    onClickCloseLogsModal,
+    modalLogsTitle,
+    logsTableHeaders
   };
 };
 

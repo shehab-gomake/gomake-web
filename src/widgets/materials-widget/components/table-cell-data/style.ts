@@ -20,6 +20,18 @@ const useStyle = () => {
                 color: primaryColor(300),
                 height: '10px'
             },
+            multiSelectStyle: {
+                display:"flex",
+               // justifyContent:"center",
+                width:"80%" 
+            },
+            multiSelectOption:{
+                width: "100%",
+                ...FONT_FAMILY.Lexend(400, 14),
+                display: "flex",
+                flexDirection : "row" as "row",
+                alignItems:'center'
+              }
         };
     }, [theme]);
     return {

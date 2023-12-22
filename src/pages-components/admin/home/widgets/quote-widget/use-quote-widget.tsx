@@ -80,9 +80,7 @@ const useQuoteWidget = () => {
   const renderOptions = () => {
     return customersListCreateQuote;
   };
-  const getAllClientTypes = useCallback(async () => {
-    await getAndSetClientTypes(callApi, setClientTypesValues);
-  }, []);
+
   const getAllProducts = useCallback(async () => {
     await getAllProductsForDropDownList(callApi, setProductValues);
   }, []);
@@ -170,12 +168,20 @@ const useQuoteWidget = () => {
       return t("home.admin.pleaseSelectProduct");
     }
   };
-
-  useEffect(() => {
-    userQuote?.result
-      ? getAllCustomersCreateQuote(userQuote?.result?.clientName)
-      : getAllCustomersCreateQuote();
-  }, [userQuote]);
+ 
+  const getAllClientTypes = useCallback(async () => {
+    try {
+      await getAndSetClientTypes(callApi, setClientTypesValues);
+      if (userQuote?.result) {
+        getAllCustomersCreateQuote(userQuote?.result?.clientName);
+      } else {
+        getAllCustomersCreateQuote();
+      }
+    } catch (error) {
+      console.error("Error fetching client types:", error);
+    }
+  }, [callApi, userQuote]);
+  
 
   return {
     clientTypesValue,

@@ -1,7 +1,7 @@
 export interface IBusinessWidget {
   label?: string;
   value?: any;
-  isAnderLine?: boolean;
+  isUnderLine?: boolean;
   onBlur?: any;
   isUpdate?: any;
   setIsUpdate?: any;
@@ -11,7 +11,9 @@ export interface IBusinessWidget {
   onInputChange?: any;
   setInputData?: any;
   speicalStyle?: any;
+  onChangeTextField?:any;
+  onClickFlag?:any;
+  flag?:any;
   sign?: string;
   isTwoDigit?: boolean;
-  onChangeTextField?: any;
 }

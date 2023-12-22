@@ -1,6 +1,6 @@
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
-const digitalPrinting = (state: Record<string, any>) => {
+const digitalPrinting = (state: Record<string, any>, printColors: {text: string, value: string}[]) => {
     return [
         {
             name: "currency",
@@ -24,11 +24,11 @@ const digitalPrinting = (state: Record<string, any>) => {
                 {
                     name: "",
                     label: "machineAttributes.color",
-                    type: "text",
+                    type: "select",
                     placeholder: "machineAttributes.color",
                     required: true,
                     parameterKey: "color",
-                    options: []
+                    options: printColors
                 },
                 {
                     name: "",

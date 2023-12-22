@@ -117,7 +117,8 @@
     "deleteSusuccessfully": "تم الحذف بنجاح",
     "deletefailed": "فشل الحذف",
     "formNotValid": "النموذج غير صالح",
-    "RequiredFields": "حقول مطلوبة مفقودة"
+    "RequiredFields": "حقول مطلوبة مفقودة",
+    "duplicateFailed" : "فشل النسخ"
   },
   "home": {
     "admin": {
@@ -1668,7 +1669,8 @@
       "writeCommentHere": "اكتب تعليقك هنا",
       "attachFiles": "إرفاق ملفات",
       "copyTo": "نسخ إلى",
-      "managerApproval": "موافقة الإدارة"
+      "managerApproval": "موافقة الإدارة",
+      "quoteNumber": "رقم العرض"
     }
   },
   "usersSettings": {
@@ -2037,7 +2039,15 @@
     "changePass": "تغيير كلمة المرور",
     "update": "تحديث",
     "loginLogo": "شعار تسجيل الدخول",
-    "companyLogo": "شعار الشركة"
+    "companyLogo": "شعار الشركة",
+    "dayOfWork": "أيام العمل",
+    "sunday": "الأحد",
+    "monday": "الاثنين",
+    "tuesday":"الثلاثاء",
+    "wednesday":"الاربعاء",
+    "thursday":"الخميس",
+    "friday" :"الجمعة",
+    "saturday":"السبت"
   },
   "remainWords": {
     "newQuote": "عرض جديد",
@@ -2282,6 +2292,19 @@
     "add": "إضافة",
     "price": "السعر",
     "chooseWorkFlow": "حدد تدفق العمل"
+  },
+  "documentingSettings": {
+    "documentNumbering": "ترقيم المستند",
+    "documentDesign": "تصميم المستند",
+    "showDeliveryTime": "عرض وقت التسليم",
+    "name": "الاسم",
+    "prefix": "البادئة",
+    "value": "القيمة",
+    "details": "التفاصيل",
+    "edit": "تحرير",
+    "editDefinition": "تحرير التعريف",
+    "update": "تحديث",
+    "nextValueTip": "يجب أن تبدأ بقيمة أكبر من"
   }
 
 }

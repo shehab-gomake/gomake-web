@@ -129,8 +129,9 @@ const QuoteNewPageWidget = () => {
     updateCancelQuote,
     onClickSendQuoteToClient,
     onChangeSelectBusiness,
-    updatePurchaseNumber
-    
+    updatePurchaseNumber,
+    updateClientAddress,
+    onClickDeleteAddress
   } = useQuoteNew();
   
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
@@ -214,6 +215,8 @@ const QuoteNewPageWidget = () => {
                   updateAgent={updateAgent}
                   onChangeSelectBusiness={onChangeSelectBusiness}
                   updatePurchaseNumber={updatePurchaseNumber}
+                  updateClientAddress={updateClientAddress}
+                  onClickDeleteAddress={onClickDeleteAddress}
                 />
                 <ContactNewWidget
                   handleShowLess={handleShowLess}

@@ -9,7 +9,7 @@ const useStyle = () => {
         return {
             container: {
                 boxShadow: '0px 4px 40px rgba(0, 0, 0, 0.08)',
-                height: convertHeightToVH(735)
+             //   height: convertHeightToVH(735)
             },
             header: {
                 ...FONT_FAMILY.Lexend(500, 20),

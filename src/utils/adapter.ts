@@ -58,3 +58,13 @@ export const DateFormatterDDMMYYYY = (date: string) => {
     return `${day}/${month}/${year} : ${hours}:${minutes}`;
   }
 };
+
+export const DateFormatter = (dateTime: string) => {
+  if (dateTime) {
+    let date = dateTime?.split("T")[0];
+    let day = date?.split("-")[2];
+    let month = date?.split("-")[1];
+    let year = date?.split("-")[0];
+    return `${day}/${month}/${year}`;
+  }
+};

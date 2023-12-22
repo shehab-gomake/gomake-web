@@ -31,7 +31,8 @@ export interface IPricingMachine {
 }
 
 export interface ICalculatedWorkFlow {
-    id: string
+    id: string;
+    monials:number;
     generalInformation: IOutput[];
     selected: boolean;
     actions: IWorkFlowAction[];

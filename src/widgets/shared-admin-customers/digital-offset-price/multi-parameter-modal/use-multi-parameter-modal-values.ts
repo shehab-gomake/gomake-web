@@ -4,11 +4,26 @@ import {maltiParameterState} from "./store/multi-param-atom";
 import {selectColorValueState} from "./store/selecte-color-value";
 import lodashClonedeep from "lodash.clonedeep";
 import {useClickAway} from "@uidotdev/usehooks";
-import {subProductsParametersState} from "@/store";
+import {subProductsCopyParametersState, subProductsParametersState} from "@/store";
 
 const userMultiParameterModalValues = (settingParameters) => {
-    
+    const selectColorValue = useRecoilValue<any>(selectColorValueState);
+
+    const getSelectedColorParameterValue = (subProducts)=>{
+        if(subProducts){
+            const subSection = settingParameters.subSection;
+            const subProductType = subSection.type;
+            let subProduct =  subProducts.find(sub => sub.type == subProductType);
+            const colorParameter = settingParameters?.parameter?.settingParameters[0];
+            return subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id && paramValue.values);
+        }
+        
+    }
     const addValueToSubProduct =(subProducts,value)=>{
+        const selectedColorParameterValue  = getSelectedColorParameterValue(subProducts);
+        if(selectColorValue?.selectedParameterValues[0]?.selectValuesCount <= selectedColorParameterValue?.valueIds?.length){
+            return subProducts;
+        }
         const section = settingParameters.section;
         const subSection = settingParameters.subSection;
         let subProductsCopy = lodashClonedeep(subProducts);
@@ -137,7 +152,8 @@ const userMultiParameterModalValues = (settingParameters) => {
     return {
         addValueToSubProduct,
         removeValueFromSubProduct,
-        setSubProductValue
+        setSubProductValue,
+        getSelectedColorParameterValue
     };
 };
 

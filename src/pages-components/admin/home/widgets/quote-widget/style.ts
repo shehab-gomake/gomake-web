@@ -12,7 +12,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "50%",
-        height: "100%",
+        height: "auto",
         paddingTop: 40,
         paddingBottom: 40,
         paddingLeft: 20,

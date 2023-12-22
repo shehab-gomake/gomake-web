@@ -71,7 +71,7 @@ const PrintingColors = ({}: IStepFormProps) => {
                    colors.length > 0 && colorsInputs.map((property: any) => (
                         <InputContainer key={property.parameterKey} attribute={property}
                                         newValue={onSelectColors}
-                                        updateValues={false}
+                                        disableUpdateValues={true}
                                         updateState={changeMachineAttributes} error={errors[property.parameterKey]}/>
                     ))
                 }
