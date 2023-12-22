@@ -16,27 +16,35 @@ const MoreMenuWidget = ({ quote, onClcikOpenModal }: any) => {
   const { user, navigate } = useMoreCircle();
   return (
     <OptionsButton>
+
+
       <MenuItem>
         <div style={clasess.menuRowStyle}>
           <PermissionCheck userPermission={Permissions.SHOW_LOGGERS_ORDER}>
               <EditingIcon />
               <div style={clasess.rowTextStyle}>{t("sales.quote.loggers")}</div>
           </PermissionCheck>
-      
         </div>
       </MenuItem>
+
+
       <MenuItem>
         <div style={clasess.menuRowStyle}>
           <PDFIcon />
           <div style={clasess.rowTextStyle}>{t("sales.quote.pdf")}</div>
         </div>
       </MenuItem>
-      <MenuItem>
+
+
+      <MenuItem onClick={()=>alert(quote?.id)}>
         <div style={clasess.menuRowStyle}>
           <ConvertIcon />
           <div style={clasess.rowTextStyle}>{t("sales.quote.duplicate")}</div>
         </div>
       </MenuItem>
+
+
+
       {(quote?.statusID === QUOTE_STATUSES.Create &&
         quote?.userID === user?.id) ||
       quote?.statusID === QUOTE_STATUSES.Open ? (
@@ -46,13 +54,16 @@ const MoreMenuWidget = ({ quote, onClcikOpenModal }: any) => {
               ? navigate(`/quote`)
               : onClcikOpenModal(quote)
           }
-        >
+        > 
           <div style={clasess.menuRowStyle}>
             <EditingIcon />
             <div style={clasess.rowTextStyle}>{t("sales.quote.edit")}</div>
           </div>
         </MenuItem>
       ) : null}
+
+
+
     </OptionsButton>
   );
 };

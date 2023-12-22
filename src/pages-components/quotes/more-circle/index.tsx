@@ -31,12 +31,15 @@ const MoreMenuWidget = ({ quote, onClickOpenModal , onClickPdf , onClickDuplicat
           <div style={classes.rowTextStyle}>{t("sales.quote.pdf")}</div>
         </div>
       </MenuItem>
+
+      
       <MenuItem onClick={()=>onClickDuplicate(quote?.id)}>
         <div style={classes.menuRowStyle}>
           <ConvertIcon />
           <div style={classes.rowTextStyle}>{t("sales.quote.duplicate")}</div>
         </div>
       </MenuItem>
+
       {(quote?.statusID === QUOTE_STATUSES.Create &&
         quote?.userID === user?.id) ||
         quote?.statusID === QUOTE_STATUSES.Open ? (
@@ -45,7 +48,7 @@ const MoreMenuWidget = ({ quote, onClickOpenModal , onClickPdf , onClickDuplicat
             quote?.statusID === QUOTE_STATUSES.Create
               ? navigate(`/quote`)
               : onClickOpenModal(quote)
-          }
+          } 
         >
           <div style={classes.menuRowStyle}>
             <EditingIcon />

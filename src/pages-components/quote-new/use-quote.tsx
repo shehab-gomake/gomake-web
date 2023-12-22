@@ -23,6 +23,7 @@ import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { addressModalState } from "@/widgets/quote-new/business-widget/address-widget/state";
 import { useQuoteGetData } from "./use-quote-get-data";
 import { addQuoteAddressApi, deleteQuoteAddressApi, updateQuoteAddressApi } from "@/services/api-service/quote/quote-addresses-api";
+import { addDocumentAddressApi, addDocumentContactApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentItemApi, updateDocumentAddressApi } from "@/services/api-service/generic-doc/documents-api";
 
 const useQuoteNew = () => {
   const {
@@ -68,7 +69,7 @@ const useQuoteNew = () => {
   const [selectedContact, setSelectedContact] = useState();
   const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
   const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
-  const [qouteItemId, setQuateItemId] = useState();
+  const [quoteItemId, setQuateItemId] = useState();
   const [
     openDuplicateWithDifferentQTYModal,
     setOpenDuplicateWithDifferentQTYModal,
@@ -246,18 +247,11 @@ const useQuoteNew = () => {
     [quoteItemValue]
   );
 
-  // update business name (client)
-  const onChangeSelectBusiness = useCallback(
-    async (item: any) => {
-      const res = await callApi(
-        EHttpMethod.PUT,
-        `/v1/erp-service/quote/change-client`,
-        {
-          quoteID: quoteItemValue?.id,
-          clientId: item?.id,
-          userId: quoteItemValue?.userID,
-        }
-      );
+
+  //////////////////////////////// CHANGE CLIENT DONE ////////////////////////////////////////
+
+  const onChangeSelectBusiness = async (item: any) => {
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
         setIsUpdateBusinessName(null);
@@ -265,9 +259,19 @@ const useQuoteNew = () => {
       } else {
         alertFaultUpdate();
       }
-    },
-    [selectBusiness, quoteItemValue]
-  );
+    }
+
+    // item.documentType
+    await changeDocumentClientApi(callApi, callBack, {
+      documentType: 0, client: {
+        documentID: quoteItemValue?.id,
+        clientId: item?.id,
+      }
+
+    })
+  }
+
+  //////////////////////////////// CHANGE CLIENT DONE ////////////////////////////////////////
 
   const onBlurContactName = async () => {
     setIsUpdateContactName(null);
@@ -295,6 +299,66 @@ const useQuoteNew = () => {
     setItems(quoteItemValue?.quoteContacts);
   }, [quoteItemValue]);
 
+
+  ////////////////////////////// CONTACT SECTION //////////////////////////////////////
+
+  const getAllClientContacts = useCallback(async () => {
+    if (quoteItemValue?.customerID) {
+      await getAndSetClientContacts(callApi, setClientContactsValue, {
+        ClientId: quoteItemValue?.customerID,
+      });
+    }
+  }, [quoteItemValue]);
+
+
+  // const onClickAddNewContact = useCallback(async () => {
+  //   const res = await callApi(
+  //     EHttpMethod.POST,
+  //     `/v1/erp-service/quote/add-quote-contact`,
+  //     {
+  //       contactID: selectedContactById?.id,
+  //       contactName: selectedContactById?.name,
+  //       contactMail: selectedContactById?.mail,
+  //       contactPhone: selectedContactById?.phone,
+  //       quoteID: quoteItemValue?.id,
+  //     }
+  //   );
+  //   if (res?.success) {
+  //     alertSuccessAdded();
+  //     setIsDisplayWidget(false);
+  //     getQuote();
+  //   } else {
+  //     alertFaultAdded();
+  //   }
+  // }, [selectedContactById, quoteItemValue]);
+
+
+  const onClickAddNewContact = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessAdded();
+        getQuote();
+        setOpenModal(false);
+      }
+      else {
+        alertFaultAdded();
+      }
+    }
+    await addDocumentContactApi(callApi, callBack, {
+      documentType: 550,
+      contact:
+      {
+        contactID: selectedContactById?.id,
+        contactName: selectedContactById?.name,
+        contactMail: selectedContactById?.mail,
+        contactPhone: selectedContactById?.phone,
+        documentID: quoteItemValue?.id,
+      }
+    })
+  }
+
+
+
   const updateClientContact = useCallback(async (item: any) => {
     const res = await callApi(
       "PUT",
@@ -319,17 +383,27 @@ const useQuoteNew = () => {
     }
   }, []);
 
-  const getAllClientContacts = useCallback(async () => {
-    if (quoteItemValue?.customerID) {
-      await getAndSetClientContacts(callApi, setClientContactsValue, {
-        ClientId: quoteItemValue?.customerID,
-      });
+
+  const onClickDeleteContact = useCallback(async (item: any) => {
+    const res = await callApi(
+      EHttpMethod.DELETE,
+      `/v1/erp-service/quote/delete-quote-contact?quoteContactId=${item?.id}`
+    );
+    if (res?.success) {
+      alertSuccessDelete();
+      onCloseDeleteModalContact();
+      getQuote();
+    } else {
+      alertFaultDelete();
     }
-  }, [quoteItemValue]);
+  }, []);
+
 
   useEffect(() => {
     getAllClientContacts();
   }, [quoteItemValue]);
+
+////////////////////////////// CONTACT SECTION //////////////////////////////////////
 
   const [displayedItems, setDisplayedItems] = useState<number>(2);
   const handleShowMore = () => {
@@ -359,26 +433,7 @@ const useQuoteNew = () => {
     onChangeUpdateClientContact("phone", v);
   };
 
-  const onClickAddNewContact = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/quote/add-quote-contact`,
-      {
-        contactID: selectedContactById?.id,
-        contactName: selectedContactById?.name,
-        contactMail: selectedContactById?.mail,
-        contactPhone: selectedContactById?.phone,
-        quoteID: quoteItemValue?.id,
-      }
-    );
-    if (res?.success) {
-      alertSuccessAdded();
-      setIsDisplayWidget(false);
-      getQuote();
-    } else {
-      alertFaultAdded();
-    }
-  }, [selectedContactById, quoteItemValue]);
+
 
   const onOpenDeleteModalContact = (item) => {
     setSelectedContact(item);
@@ -388,19 +443,7 @@ const useQuoteNew = () => {
     setOpenDeleteModalContact(false);
   };
 
-  const onClickDeleteContact = useCallback(async (item: any) => {
-    const res = await callApi(
-      EHttpMethod.DELETE,
-      `/v1/erp-service/quote/delete-quote-contact?quoteContactId=${item?.id}`
-    );
-    if (res?.success) {
-      alertSuccessDelete();
-      onCloseDeleteModalContact();
-      getQuote();
-    } else {
-      alertFaultDelete();
-    }
-  }, []);
+ 
 
   const onOpenNewItem = () => {
     setOpenAddNewItemModal(true);
@@ -446,7 +489,7 @@ const useQuoteNew = () => {
       EHttpMethod.POST,
       `/v1/erp-service/quote/duplicate-quote-with-another-quantity`,
       {
-        quoteItemId: qouteItemId,
+        quoteItemId: quoteItemId,
         amount: parseInt(amountVlue),
       }
     );
@@ -457,7 +500,7 @@ const useQuoteNew = () => {
     } else {
       alertFaultAdded();
     }
-  }, [qouteItemId, amountVlue]);
+  }, [quoteItemId, amountVlue]);
 
   const onCloseDeleteItemModal = () => {
     setOpenDeleteItemModal(false);
@@ -467,19 +510,24 @@ const useQuoteNew = () => {
     setOpenDeleteItemModal(true);
   };
 
-  const deleteQuoteItem = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.DELETE,
-      `/v1/erp-service/quote/delete-quote-item?QuoteItemId=${qouteItemId}`
-    );
-    if (res?.success) {
-      alertSuccessDelete();
-      onCloseDeleteItemModal();
-      getQuote();
-    } else {
-      alertFaultDelete();
+
+  /////////////////////////////////////////////////////
+
+  const deleteQuoteItem = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessDelete();
+        onCloseDeleteItemModal();
+        getQuote();
+      } else {
+        alertFaultDelete();
+      }
     }
-  }, [qouteItemId]);
+    await deleteDocumentItemApi(callApi, callBack, { ItemId: quoteItemId, documentType: 0 })
+  }
+
+  ///////////////////////////////////////////////////////////////////
+
 
   const onClickDeleteQouteItem = (quoteItem) => {
     onOpenDeleteItemModal();
@@ -670,6 +718,10 @@ const useQuoteNew = () => {
     [quoteItemValue]
   );
 
+
+
+
+  //////////////////// ADDRESS SECTION DONE ///////////////////////////
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
 
   const onClickAddNewAddress = useCallback(async (item: any, isUpdate: boolean) => {
@@ -705,8 +757,9 @@ const useQuoteNew = () => {
         alertFaultAdded();
       }
     }
-    await updateQuoteAddressApi(callApi, callBack,
-      {
+    await updateDocumentAddressApi(callApi, callBack, {
+      documentType: 0,
+      address: {
         id: quoteItemValue?.quoteAddresses[0]?.id,
         addressID: quoteItemValue?.quoteAddresses[0]?.addressID,
         street: item?.street,
@@ -714,8 +767,8 @@ const useQuoteNew = () => {
         entry: item?.entry,
         apartment: item?.apartment,
         notes: item?.notes || "",
-        quoteID: quoteItemValue?.id,
-      })
+        documentID: quoteItemValue?.id,
+      }})
   }
 
   const onClickAddAddress = async (item: any) => {
@@ -729,16 +782,19 @@ const useQuoteNew = () => {
         alertFaultAdded();
       }
     }
-    await addQuoteAddressApi(callApi, callBack,
-      {
-        quoteID: quoteItemValue?.id,
+    await addDocumentAddressApi(callApi, callBack, {
+      documentType: 0,
+      address: {
         addressID: item?.id,
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
         apartment: item?.apartment,
         notes: item?.notes || "",
-      })
+        documentID: quoteItemValue?.id,
+
+      }
+    })
   }
 
   const onClickDeleteAddress = async (item: any) => {
@@ -750,8 +806,10 @@ const useQuoteNew = () => {
         alertFaultDelete();
       }
     }
-    await deleteQuoteAddressApi(callApi, callBack, { quoteAddressId: item?.id })
+    await deleteDocumentAddressApi(callApi, callBack, { documentAddressId: item?.id, documentType: 0 })
   }
+  //////////////////// ADDRESS SECTION DONE ///////////////////////////
+
 
   return {
     dateRef,
