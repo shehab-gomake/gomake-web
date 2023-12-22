@@ -113,27 +113,44 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let copy = lodashClonedeep(subProducts);
     setSubProductsCopy(copy);
   }, [subProducts]);
-  useEffect(() => {
-    if (calculationResult) {
-      debugger;
-      if (calculationResult.id === calculationSessionId) {
+  useEffect(()=>{
+
+    if(calculationResult && calculationResult.pricingDto){
+
+      if(calculationResult.pricingDto.id === calculationSessionId){
         setLoading(false);
-        const currentWorkFlowsCount = calculationResult?.workFlows.length;
-        const totalWorkFlowsCount = calculationResult?.totalWorkFlows;
-        setCalculationProgress({
-          totalWorkFlowsCount: totalWorkFlowsCount,
-          currentWorkFlowsCount: currentWorkFlowsCount,
-        });
-        setWorkFlows(
-          calculationResult?.workFlows?.map((flow, index) => ({
-            id: index.toString(),
-            ...flow,
-          }))
-        );
-        setJobActions(calculationResult?.actions);
+
+        const currentWorkFlows = cloneDeep(workFlows);
+        const newWorkFlows = calculationResult?.pricingDto.workFlows?.map((flow, index) => ({
+          id: index.toString(),
+          ...flow,
+        }));
+
+        newWorkFlows.forEach(flow => {
+          if(flow.selected){
+            currentWorkFlows.forEach(f=> f.selected = false);
+          }
+          currentWorkFlows.push(flow);
+        })
+        if(calculationResult?.monials){
+          calculationResult?.monials.forEach(m=>{
+            const workFlow = currentWorkFlows.find(x=>x.id === m.workFlowId);
+            if(workFlow){
+              workFlow.monials = m.monials;
+            }
+          })
+        }
+        currentWorkFlows.sort((a,b) => b.monials - a.monials );
+        const currentWorkFlowsCount = currentWorkFlows.length;
+        const totalWorkFlowsCount = calculationResult?.pricingDto.totalWorkFlows;
+        setCalculationProgress({totalWorkFlowsCount: totalWorkFlowsCount,currentWorkFlowsCount:currentWorkFlowsCount} );
+        setWorkFlows(currentWorkFlows);
+        setJobActions(calculationResult?.pricingDto.actions);
       }
+
     }
-  }, [calculationResult, calculationSessionId]);
+
+  },[calculationResult,calculationSessionId])
   const selectBtnTypeToAction = (
     parameter,
     sectionId,
