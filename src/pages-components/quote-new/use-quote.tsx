@@ -268,11 +268,11 @@ const useQuoteNew = () => {
     },
     [selectBusiness, quoteItemValue]
   );
-
+ 
   const onBlurContactName = async () => {
     setIsUpdateContactName(null);
-    setIsDisplayWidget(false);
-  };
+  //  setIsDisplayWidget(false);
+  }; 
 
   const onBlurContactEmail = async () => {
     setIsUpdateContactEmail(null);
@@ -358,7 +358,7 @@ const useQuoteNew = () => {
   const onInputChangePhone = (v: any) => {
     onChangeUpdateClientContact("phone", v);
   };
-
+ 
   const onClickAddNewContact = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -379,6 +379,7 @@ const useQuoteNew = () => {
       alertFaultAdded();
     }
   }, [selectedContactById, quoteItemValue]);
+ 
 
   const onOpenDeleteModalContact = (item) => {
     setSelectedContact(item);
