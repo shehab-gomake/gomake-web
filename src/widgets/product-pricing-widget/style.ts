@@ -3,8 +3,12 @@ import { useMemo } from "react";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
+import {useTranslation} from "react-i18next";
+import {adaptRight} from "@/utils/adapter";
 const useStyle = () => {
   const { theme, neutralColor, primaryColor } = useGomakeTheme();
+  const {t} = useTranslation();
+  const direction = t('direction');
   const classes = useMemo(() => {
     return {
       detailTitle: {
@@ -73,9 +77,18 @@ const useStyle = () => {
         borderRadius: '16px',
         textAlign: 'center' as 'center'
 
+      },
+      subWorkFlowDividerVertical: {
+        width: '2px',
+        backgroundColor: '#667085',
+        margin: '',
+        top: 0,
+        bottom: '50%',
+        height: '50%',
+        ...adaptRight(direction, 5)
       }
     };
-  }, [theme]);
+  }, [theme, direction]);
   return {
     classes,
   };

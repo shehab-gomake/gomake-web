@@ -69,7 +69,7 @@ const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps
             <Divider/>
             {selectedWorkFlow && view === EPricingViews.SELECTED_WORKFLOW && <>
                 <SubWorkFlowsComponent isEditableActions={true} workflows={selectedWorkFlow?.subWorkFlows || []}/>
-                <Actions actions={selectedWorkFlow?.actions}/>
+                <Actions actions={selectedWorkFlow?.actions} productType={selectedWorkFlow.productType}/>
             </>
             }
             {workFlows && view === EPricingViews.OTHERS_WORKFLOWS &&

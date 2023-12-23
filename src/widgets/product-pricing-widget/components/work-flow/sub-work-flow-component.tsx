@@ -20,7 +20,7 @@ interface ISubWorkFlowsComponentProps {
 
 }
 
-const SubWorkFlowComponent = ({actions, sectionName, isEditableActions, id}: ISubWorkFlowComponentProps) => {
+const SubWorkFlowComponent = ({actions, sectionName, isEditableActions, id, productType}: ISubWorkFlowComponentProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const {classes} = useStyle();
 
@@ -50,21 +50,13 @@ const SubWorkFlowComponent = ({actions, sectionName, isEditableActions, id}: ISu
                                     i + 1 < actions?.length ? <Divider orientation={'vertical'} style={{
                                             width: '2px',
                                             backgroundColor: '#667085',
-                                            margin: i === 0 ? '-28px 0 -10px 0' : '-10px 0'
+                                            margin: i === 0 ? '-20px 0 -10px 0' : '-10px 0'
                                         }} flexItem/> :
-                                        <Divider style={{
-                                            width: '2px',
-                                            backgroundColor: '#667085',
-                                            margin: '',
-                                            top: 0,
-                                            bottom: '50%',
-                                            height: '50%',
-                                            left: '5px'
-                                        }} absolute orientation={"vertical"} />
+                                        <Divider style={classes.subWorkFlowDividerVertical} absolute orientation={"vertical"} />
                                 }
                                 <Divider orientation={'horizontal'}
                                          style={{width: '30px', height: '2px', backgroundColor: '#667085'}}/>
-                                {isEditableActions ? <ActionContainerComponent workFlowId={id} {...action}/> :
+                                {isEditableActions ? <ActionContainerComponent productType={productType} workFlowId={id} {...action}/> :
                                     <ActionComponent {...action}/>}
                             </Stack>)
                     }

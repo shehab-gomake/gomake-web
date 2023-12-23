@@ -26,16 +26,18 @@ import {SettingsIcon} from "@/icons/settings";
 interface IActionContainerComponentProps extends IWorkFlowAction {
     delay?: number;
     workFlowId?: string;
+    productType: string | null;
 }
 
 interface IActionsComponentProps {
     actions: IWorkFlowAction[];
     workFlowId?: string;
+    productType: string | null
 }
 
-const Actions = ({actions, workFlowId}: IActionsComponentProps) => {
+const Actions = ({actions, workFlowId, productType}: IActionsComponentProps) => {
     return <Stack gap={'10px'}>
-        {actions?.map((action, index) => <ActionContainerComponent workFlowId={workFlowId}
+        {actions?.map((action, index) => <ActionContainerComponent productType={productType} workFlowId={workFlowId}
                                                                    delay={index * 800} {...action} />)}
     </Stack>
 }
@@ -50,7 +52,7 @@ const ActionContainerComponent = ({
                                       totalProductionTime,
                                       totalCost,
                                       source,
-                                      supplierId, workFlowId
+                                      supplierId, workFlowId, productType
                                   }: IActionContainerComponentProps) => {
     source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -145,7 +147,7 @@ const ActionContainerComponent = ({
                                                     if (selectNewMachine(v?.value, actionId)) {
                                                         setChooseMachine(false);
                                                     }
-                                                }} style={{width: '200px'}} options={getActionMachinesList(actionId)}
+                                                }} style={{width: '200px'}} options={getActionMachinesList(actionId, productType)}
                                                                     placeholder={'Choose machine'} value={machineName}/>
                                                 <IconButton onClick={(e) => {
                                                     e.stopPropagation()

@@ -17,7 +17,8 @@ export interface IPricingWidgetProps {
 
 export interface IPricingAction {
     actionId: string;
-    machineCategories: IPricingMachineCategory[]
+    machineCategories: IPricingMachineCategory[];
+    productType: string | null;
 }
 
 export interface IPricingMachineCategory {
@@ -44,6 +45,7 @@ export interface ICalculatedWorkFlow {
     subWorkFlows: ICalculatedWorkFlow[];
     sectionName?: string;
     recommendationRang: IRecommendationRang;
+    productType: string | null
 }
 
 export interface IPrintActionType {
