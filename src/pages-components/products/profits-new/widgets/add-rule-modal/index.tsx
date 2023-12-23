@@ -297,10 +297,12 @@ const AddRuleModal = ({
       <GoMakeModal
         openModal={openModal}
         modalTitle={
-          t("products.profits.exceptions.addNewRule") +
-          " (" +
-          selectedProperties?.propertyName +
-          ")"
+          isPropertiesWidge
+            ? t("products.profits.exceptions.addNewRule") +
+              " (" +
+              selectedProperties?.propertyName +
+              ")"
+            : t("products.profits.exceptions.addNewRule")
         }
         onClose={() => {
           onCloseModal();

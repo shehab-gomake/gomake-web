@@ -10,6 +10,7 @@ const usePriceList = ({
 }) => {
   const [isUpdateCost, setIsUpdateCost] = useState(null);
   const [isUpdatTotalPrice, setIsUpdateTotalPrice] = useState(null);
+  const [isUpdatProfitValue, setIsUpdateProfitValue] = useState(null);
   const [isUpdateProfit, setIsUpdateProfit] = useState(null);
   const [isUpdateUnitPrice, setIsUpdateUnitPrice] = useState(null);
   const [profit, setProfit] = useState(0);
@@ -67,6 +68,8 @@ const usePriceList = ({
     profit,
     unitPrice,
     isUpdateUnitPrice,
+    isUpdatProfitValue,
+    setIsUpdateProfitValue,
     setIsUpdateUnitPrice,
     setIsUpdateProfit,
     onBlurProfit,

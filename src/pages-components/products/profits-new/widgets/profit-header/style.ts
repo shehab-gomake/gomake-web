@@ -1,10 +1,6 @@
-import { FONT_FAMILY } from "@/utils/font-family";
-import { convertHeightToVH } from "@/utils/adapter";
 import { useMemo } from "react";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const { neutralColor, secondColor, primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       mainHeaderContainer: {

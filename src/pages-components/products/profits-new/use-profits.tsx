@@ -298,26 +298,34 @@ const useNewProfits = () => {
     [actionProfitByActionId, selectedPricingBy, selectedPricingTableItems]
   );
 
-  const updateActionProfitRow = useCallback(async (data: any) => {
-    const res = await callApi(
-      EHttpMethod.PUT,
-      `/v1/printhouse-config/action-profit-rows/update-action-profit-row`,
-      {
+  const updateActionProfitRow = useCallback(
+    async (data: any) => {
+      const requestBody: any = {
         id: data?.id,
         actionProfitId: data?.actionProfitId,
         value: data?.value,
         pricingBy: data?.pricingBy,
         totalPrice: data?.totalPrice,
+      };
+
+      if (selectedPricingTableItems?.exceptionType !== ETypeException.DEFAULT) {
+        requestBody.actionExceptionId = selectedPricingTableItems?.id;
       }
-    );
-    if (res?.success) {
-      alertSuccessUpdate();
-      getAllActionProfitRowsByActionId();
-      getActionProfitRowChartData();
-    } else {
-      alertFaultUpdate();
-    }
-  }, []);
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/printhouse-config/action-profit-rows/update-action-profit-row`,
+        requestBody
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        getAllActionProfitRowsByActionId();
+        getActionProfitRowChartData();
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [selectedPricingTableItems]
+  );
 
   const updateMinPriceForAction = useCallback(
     async (data: number) => {
@@ -495,6 +503,7 @@ const useNewProfits = () => {
     if (res?.success) {
       alertSuccessDelete();
       getProfitsPricingTables();
+      setSelectedActionProfitRow(null);
     } else {
       alertFaultDelete();
     }

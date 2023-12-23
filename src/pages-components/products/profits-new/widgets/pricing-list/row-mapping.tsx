@@ -26,6 +26,8 @@ const RowMappingWidget = ({
     profit,
     unitPrice,
     isUpdateUnitPrice,
+    isUpdatProfitValue,
+    setIsUpdateProfitValue,
     setIsUpdateUnitPrice,
     onBlurProfit,
     onInputChangeProfit,
@@ -92,10 +94,9 @@ const RowMappingWidget = ({
           <div style={clasess.cellTextInputStyle}>
             <InputUpdatedValues
               value={selectedAdditionalProfitRow.profitValue}
-              onBlur={() => onBlurTotalPrice(item)}
-              isUpdate={isUpdatTotalPrice}
-              setIsUpdate={setIsUpdateTotalPrice}
-              sign="%"
+              onBlur={() => setIsUpdateProfitValue(0)}
+              isUpdate={false}
+              setIsUpdate={setIsUpdateProfitValue}
               onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
                 onInputChangeTotalPrice(e)
               }
