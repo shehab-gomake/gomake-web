@@ -23,6 +23,7 @@ const useStyle = () => {
         backgroundColor: '#F9FAFB',
         padding: '0 16px',
         borderRadius: 16,
+        width: '100%'
       },
       actionContainerBorder: '2px solid ' + primaryColor(500),
       toggleActionButton: {
@@ -31,10 +32,23 @@ const useStyle = () => {
         height: 40,
         width: 40,
       },
+      toggleSubWorkFlowActionButton: {
+        backgroundColor: primaryColor(600),
+        borderRadius: 8,
+        height: 40,
+        width: 40,
+        color: 'white'
+      },
       workFlowContainer: {
         padding: '10px 16px',
         borderRadius: 16,
         backgroundColor: '#F9FAFB',
+      },
+      subWorkFlowContainer: {
+        padding: '10px 16px',
+        borderRadius: 16,
+        backgroundColor: primaryColor(300),
+        color: 'white'
       },
       buttonGroup: {
         borderRadius: '5px',

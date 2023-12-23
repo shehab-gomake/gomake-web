@@ -41,14 +41,9 @@ export interface ICalculatedWorkFlow {
     profit: IOutput;
     totalPrice: IOutput;
     totalRealProductionTime: IOutput;
-    recommendationRang: {
-        deliveryTime: number;
-        price: number;
-        profit: number;
-        deliveryTimePercent: number;
-        pricePercent: number;
-        profitPercent: number;
-    }
+    subWorkFlows: ICalculatedWorkFlow[];
+    sectionName?: string;
+    recommendationRang: IRecommendationRang;
 }
 
 export interface IPrintActionType {
@@ -107,4 +102,13 @@ export interface IRectangle {
 export interface ICalculationProgress{
     totalWorkFlowsCount: number;
     currentWorkFlowsCount: number;
+}
+
+export interface IRecommendationRang{
+    deliveryTime: number;
+    price: number;
+    profit: number;
+    deliveryTimePercent: number;
+    pricePercent: number;
+    profitPercent: number;
 }

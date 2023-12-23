@@ -15,8 +15,7 @@ import {ParametersMapping} from "@/widgets/product-pricing-widget/components/act
 import {useWorkFlows} from "@/widgets/product-pricing-widget/use-work-flows";
 import {WorkflowRateComponent} from "@/widgets/product-pricing-widget/components/work-flow/workflow-rate-component";
 import {useTranslation} from "react-i18next";
-import {useRecoilState} from "recoil";
-import {currentProductItemValueState} from "@/widgets/product-pricing-widget/state";
+import {SubWorkFlowsComponent} from "@/widgets/product-pricing-widget/components/work-flow/sub-work-flow-component";
 
 interface IWorkFlowComponentProps extends ICalculatedWorkFlow {
     delay: number;
@@ -40,14 +39,14 @@ const WorkFlowComponent = ({
                                totalRealProductionTime,
                                totalCost,
                                profit,
-                               recommendationRang
+                               recommendationRang,
+    subWorkFlows
                            }: IWorkFlowComponentProps) => {
     const {t} = useTranslation();
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const {secondColor} = useGomakeTheme();
     const {classes} = useStyle();
     const {selectWorkFlow} = useWorkFlows();
-    const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
 
     const handleSelectWorkFlow = (e) => {
         e.stopPropagation();
@@ -95,7 +94,10 @@ const WorkFlowComponent = ({
                 </Stack>
             </Fade>
             <Collapse in={isOpen} collapsedSize={0} orientation={'vertical'}>
-                <Stack padding={'10px 0'} gap={'10px'} paddingLeft={'100px'}>
+                <Stack padding={'10px 0'} gap={'10px'} paddingLeft={'30px'}>
+                    {
+                        <SubWorkFlowsComponent isEditableActions={false} workflows={subWorkFlows || []}/>
+                    }
                     {
                         actions.map(action => <ActionComponent {...action} />)
                     }
