@@ -33,6 +33,7 @@ const useAddProduct = ({ clasess }) => {
   const [productState, setProductState] = useState<any>([]);
   const [changeName, setChangeName] = useState("");
   const [changeDefaultValue, setChangeDefaultValue] = useState("");
+  const { allMaterials,getAllMaterial } = useMaterials();
   const onChangeStateProduct = useCallback(
     (filedName: string, value: any) => {
       setProductState((prev) => {
@@ -102,7 +103,10 @@ const useAddProduct = ({ clasess }) => {
   }, [router, template]);
 
   useEffect(() => {
-    getProductById();
+    getAllMaterial().then(()=>{
+      getProductById();
+    })
+    
   }, [router]);
   const updateProductParameterEndPoint = async (
     sectionId: string,
@@ -176,8 +180,7 @@ const useAddProduct = ({ clasess }) => {
   const updatedProductParameteDefaultValue = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
       if (
-        changeDefaultValue !== parameter?.defaultValue &&
-        changeDefaultValue?.length
+        changeDefaultValue !== parameter?.defaultValue 
       ) {
         await updateProductParameterEndPoint(sectionId, subSectionId, {
           parameter: {
@@ -243,6 +246,7 @@ const useAddProduct = ({ clasess }) => {
       parameter: any,
       option: any
     ) => {
+      debugger;
       let temp = [...parameter?.valuesConfigs];
 
       let objectIdToUpdate = option?.id;
@@ -272,6 +276,7 @@ const useAddProduct = ({ clasess }) => {
       subSectionParameters,
       level: number
     ) => {
+      debugger;
       let temp = [...parameter?.valuesConfigs];
       if (temp?.length <= 0) {
         temp.push({
@@ -340,7 +345,7 @@ const useAddProduct = ({ clasess }) => {
           });
         }
       }
-      if (level === 1) {
+      /*if (level === 1) {
         const lvl2 = subSectionParameters?.find(
           (item) =>
             item?.materialPath[0] === parameter?.materialPath[0] &&
@@ -351,7 +356,7 @@ const useAddProduct = ({ clasess }) => {
           valuesConfigs: [],
         });
       } else if (level === 2) {
-      }
+      }*/
     },
     [router]
   );
@@ -473,7 +478,7 @@ const useAddProduct = ({ clasess }) => {
       setOpenModal(true);
     }, 100);
   };
-  const { allMaterials } = useMaterials();
+  
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
   const _renderParameterType = (

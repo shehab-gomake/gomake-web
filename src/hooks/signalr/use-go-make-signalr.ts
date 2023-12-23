@@ -30,6 +30,7 @@ const useGoMakeSignalr = <T>({accessToken, url, methodName}: ISignalRProps): {da
                 .then(() => {
                     setConnectionId(connection.connectionId)
                     connection.on(methodName, (newData) => {
+                        console.log("newData",newData)
                         setData(newData);
                     });
                 })

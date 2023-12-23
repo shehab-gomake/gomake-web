@@ -41,6 +41,8 @@ const PriceListPageWidget = ({ widgetType }) => {
     setGraphicNotes,
     setPriceRecovery,
     onCloseMultiParameterModal,
+    duplicateSection,
+    removeSection,
     duplicateParameters,
     setProductTemplate,
     multiParameterModal,
@@ -94,6 +96,8 @@ const PriceListPageWidget = ({ widgetType }) => {
                           activeIndex={activeIndex}
                           item={item}
                           productTemplate={productTemplate}
+                          onDuplicateSection={duplicateSection}
+                          onRemoveSection={removeSection}
                           setProductTemplate={setProductTemplate}
                           isAdmin={false}
                         />
@@ -125,7 +129,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                             />
                           );
                         } else {
-                          return section?.subSections?.map(
+                          return section?.subSections?.filter(x=>!x.isHidden).map(
                             (subSection: any, index: number) => {
                               if (subSection?.isAccordion) {
                                 return (

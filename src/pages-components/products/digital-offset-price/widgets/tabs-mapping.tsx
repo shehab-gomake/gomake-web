@@ -7,7 +7,6 @@ import { DoneIcon } from "@/widgets";
 import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
-import { v4 as uuidv4 } from "uuid";
 
 const TabsMappingWidget = ({
   clasess,
@@ -19,6 +18,8 @@ const TabsMappingWidget = ({
   setProductTemplate,
   isAdmin,
   getProductById,
+  onDuplicateSection, 
+   onRemoveSection,
 }: any) => {
   const { callApi } = useGomakeAxios();
   const {
@@ -28,45 +29,8 @@ const TabsMappingWidget = ({
     alertFaultDelete,
   } = useSnackBar();
   const router = useRouter();
-  const duplicateSection = () => {
-    let temp = cloneDeep(productTemplate);
-    const section = temp.sections.find((x) => x.id === item.id);
-    const sectionCopy = cloneDeep(section);
-    const numberOfCopies = temp.sections.filter(
-      (x) => x.duplicatedFromSectionId === item.id
-    ).length;
-    if (!numberOfCopies) {
-      //section.name = section.name + " 1";
-      section.index = 0;
-    }
-    sectionCopy.index = numberOfCopies + 1;
-    sectionCopy.name = sectionCopy.name + " " + (sectionCopy.index + 1);
-    sectionCopy.duplicatedFromSectionId = item.id;
-    sectionCopy.id = uuidv4();
-    sectionCopy.subSections.forEach((sub) => {
-      sub.duplicatedFromSubSectionId = sub.id;
-      sub.id = uuidv4();
-      if (sub.type) {
-        sub.type = sub.type + numberOfCopies + 1;
-      }
-    });
-    const sectionsArr = [];
-    temp.sections.forEach((sec) => {
-      sectionsArr.push(sec);
-      if (!numberOfCopies && sec.id === item.id) {
-        sectionsArr.push(sectionCopy);
-      } else if (numberOfCopies && sec.index == numberOfCopies) {
-        sectionsArr.push(sectionCopy);
-      }
-    });
-    temp.sections = sectionsArr;
-    setProductTemplate(temp);
-  };
-  const removeSection = () => {
-    let temp = cloneDeep(productTemplate);
-    temp.sections = temp.sections.filter((x) => x.id !== item.id);
-    setProductTemplate(temp);
-  };
+  
+  
   const duplicateSectionFunction = useCallback(
     async (item) => {
       const res = await callApi(
@@ -130,14 +94,14 @@ const TabsMappingWidget = ({
         {item.isCanDuplicated && !item.index && !item.isCanDeleted ? (
           <div
             onClick={() =>
-              isAdmin ? duplicateSectionFunction(item) : duplicateSection()
+              isAdmin ? duplicateSectionFunction(item) : onDuplicateSection(item)
             }
           >
             <AddNewIcon />
           </div>
         ) : null}
         {item.isCanDuplicated && item.index ? (
-          <div onClick={() => removeSection()}>
+          <div onClick={() => onRemoveSection(item)}>
             <RemoveIcon />
           </div>
         ) : (

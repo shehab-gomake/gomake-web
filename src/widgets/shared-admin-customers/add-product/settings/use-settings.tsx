@@ -16,7 +16,8 @@ const useSettings = ({
 }) => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
-  const router = useRouter();
+  const {push, query} = useRouter();
+  const {settingsRoute, id} = query;
   const { t } = useTranslation();
   const { setSnackbarStateValue } = useSnackBar();
   const [RandomId, setRandomId] = useState();
@@ -194,9 +195,9 @@ const useSettings = ({
   const updatedProduct = useCallback(async () => {
     const res = await callApi(
       "PUT",
-      `/v1/printhouse-config/products/update-product`,
+      `/v1/printhouse-config/products/update-product-settings`,
       {
-        id: router?.query?.productId,
+        id: id,
         name: productState?.name,
         details: productState?.details,
         groups: productState?.groups?.map((item) => {
@@ -216,7 +217,7 @@ const useSettings = ({
             ? productState?.templateId
             : productState?.templateId?.id,
         status: true,
-        sections: productState?.sections,
+        //sections: productState?.sections,
       }
     );
     if (res?.success) {
