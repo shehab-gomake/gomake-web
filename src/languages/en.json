@@ -1219,7 +1219,7 @@
     "cellLoadingTime": "Cell loading time",
     "loadingWhileRunning": "Loading on the run",
     "cellsAmount": "Cells amount",
-    "maxThicknessCells": "Maximum thickness in cell (mm)",
+    "maxThicknessCells": "Maximum height in cell",
     "bookletConnection": "Connection to a Booklet machine",
     "BoosbinderConnection": "Connection to a Boosbinder machine",
     "sewingConnection": "Connection to a Sewing machine",
@@ -1330,9 +1330,13 @@
     "insertTypes": "Insert types",
     "foldingUnit": "Folding unit",
     "cellNumber": "Cell number",
-    "maxThicknessInCell": "Maximum thickness in cell",
+    "maxThicknessInCell": "Maximum height in cell",
     "loadingInRun": "Loading in run",
-    "cellChargingTime": "Cell charging time"
+    "cellChargingTime": "Cell loading time",
+    "isAvailable": "Is available",
+    "collectorSpeed": "Collector max speed",
+    "cell": "Cell",
+    "cellsMaxThicknessList": "Cells Max thickness"
   },
   "tyingOptions": {
     "cross": "Cross",
@@ -2195,7 +2199,7 @@
     "framingInFixedFrame": "Framing in fixed frame machine",
     "customFraming": "Custom framing",
     "linkage": "Linkage machine",
-    "PVCBending": "PVC bending machine",
+    "PVCBending": "Flatbed bending machine",
     "collector": "Collector",
     "booklet": "Booklet machine",
     "booksBinder": "Books binder machine",
@@ -2342,7 +2346,9 @@
     "squareCM": "cm2",
     "setsHour": "sets/hour",
     "sph": "SPH",
-    "bookPh": "BookPH"
+    "bookPh": "BookPH",
+    "second": "second",
+    "pph": "PPH"
   },
   "mailingSettings": {
     "emailSetting": "Email setting",

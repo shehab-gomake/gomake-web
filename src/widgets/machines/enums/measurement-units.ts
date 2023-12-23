@@ -13,5 +13,6 @@ export enum EMeasurementUnits {
     SETS_HOUR = 'setsHour',
     SPH = 'sph',
     PPH = 'pph',
-    BOOK_PH = 'bookPh'
+    BOOK_PH = 'bookPh',
+    SECOND = 'second'
 }

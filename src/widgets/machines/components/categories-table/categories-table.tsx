@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { machineCategoriesState } from "@/store/machine-categories";
 import { EditIcon } from "@/components/icons/edit-icon";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -13,7 +13,6 @@ import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 import {useTranslation} from "react-i18next";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import {Permissions} from "@/components/CheckPermission/enum";
-import { permissionsState } from "@/store/permissions";
 import { usePermission } from "@/hooks/use-permission";
 
 const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
@@ -26,7 +25,7 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
   const categories = useCallback(() => {
     if (!!filter) {
       return categoriesList.filter((category) =>
-        category.name.toLowerCase().includes(filter.toLowerCase())
+        t(category.name).toLowerCase().includes(filter.toLowerCase())
       );
     }
     return categoriesList;
