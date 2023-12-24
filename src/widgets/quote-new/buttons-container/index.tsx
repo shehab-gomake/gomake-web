@@ -15,7 +15,9 @@ import { quoteItemState } from "@/store";
 const ButtonsContainer = ({
   onOpenNewItem,
   handleCancelBtnClick,
+  handleSaveBtnClick,
   handleSendBtnClick,
+  onOpenDeliveryModal
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -40,6 +42,7 @@ const ButtonsContainer = ({
         <GomakePrimaryButton
           leftIcon={<PlusIcon stroke={"#344054"} />}
           style={classes.btnContainer}
+          //onClick={() =>onOpenDeliveryModal()}
         >
           {t("sales.quote.addDelivery")}
         </GomakePrimaryButton>
@@ -66,7 +69,7 @@ const ButtonsContainer = ({
         </GomakePrimaryButton>
         <GomakePrimaryButton
          style={classes.btnSecondContainer}
-         onClick={onClickPrint}
+         onClick={()=>onClickPrint(0)}
          >
           {t("sales.quote.print")}
         </GomakePrimaryButton>
@@ -77,12 +80,15 @@ const ButtonsContainer = ({
         >
           {t("materials.buttons.cancel")}
         </GomakePrimaryButton>
-        <GomakePrimaryButton style={classes.btnThirdContainer}>
+        <GomakePrimaryButton
+        style={classes.btnThirdContainer}
+        onClick={handleSaveBtnClick}
+        >
           {t("materials.buttons.save")}
         </GomakePrimaryButton>
-        <GomakePrimaryButton style={classes.btnThirdContainer}>
+        {/* <GomakePrimaryButton style={classes.btnThirdContainer}>
           {t("sales.quote.managerApproval")}
-        </GomakePrimaryButton>
+        </GomakePrimaryButton> */}
         <GomakePrimaryButton style={classes.btnOrderNowContainer} onClick={onClickOpenOrderNowModal}>
           {t("sales.quote.orderNowTitle")}
         </GomakePrimaryButton>

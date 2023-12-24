@@ -1,27 +1,31 @@
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { ICallAndSetData } from "@/services/api-service/interface";
+import { DOCUMENT_TYPE } from "@/pages-components/enums";
 
 const GET_DOCUMENT_URL = '/v1/erp-service/documents/get-document';
 const GET_ALL_DOCUMENTS_URL='/v1/erp-service/documents/get-all-documents';
 const DELETE_DOCUMENT_ITEM_URL = '/v1/erp-service/documents/delete-document-item';
-
 const ADD_DOCUMENT_CONTACT_URL = '/v1/erp-service/document/add-document-contact';
 const UPDATE_DOCUMENT_CONTACT_URL = '/v1/erp-service/document/update-document-contact';
 const DELETE_DOCUMENT_CONTACT_URL = '/v1/erp-service/documents/delete-document-contact';
-
 const ADD_DOCUMENT_ADDRESS_URL = '/v1/erp-service/document/add-document-address';
 const UPDATE_DOCUMENT_ADDRESS_URL = '/v1/erp-service/document/update-document-address';
 const DELETE_DOCUMENT_ADDRESS_URL = '/v1/erp-service/documents/delete-document-address';
-
 const DUPLICATE_DOCUMENT_URL = '/v1/erp-service/documents/duplicate-document';
 const DUPLICATE_DOCUMENT_ITEM_URL = '/v1/erp-service/documents/duplicate-document-item-with-another-quantity';
-
 const CHANGE_DOCUMENT_CLIENT_URL = '/v1/erp-service/documents/change-document-client';
 const GET_IF_Exist_CART = '/v1/erp-service/documents/get-exist-document';
-
 const GET_DOCUMENT_PDF_URL = '/v1/erp-service/documents/get-document-pdf';
 const UPDATE_PURCHASE_NUMBER_URL = '/v1/erp-service/documents/update-purchase-number';
+const ADD_DELIVERY_URL = '/v1/erp-service/documents/add-delivery';
+const CANCEL_DOCUMENT_URL = '/v1/erp-service/documents/cancel-document';
+const SEND_DOCUMENT_TO_CLIENT_URL = '/v1/erp-service/documents/send-document-to-client';
+const SAVE_DOCUMENT_URL = '/v1/erp-service/documents/save-document';
+const CONVERT_QUOTE_TO_ORDER_URL = '/v1/erp-service/documents/convert-quote-to-order';
+const GET_CALCULATE_DOCUMENT_ITEM_URL = '/v1/erp-service/documents/calculate-document-item';
+const GET_CALCULATE_DOCUMENT_URL = '/v1/erp-service/documents/calculate-document';
+const ADD_ITEM_URL = '/v1/erp-service/documents/add-item';
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_DOCUMENT_URL, setState, data);
@@ -83,6 +87,43 @@ const updatePurchaseNumberApi: ICallAndSetData = async (callApi, setState, data)
     return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_PURCHASE_NUMBER_URL, setState, data);
 }
 
+const addDeliveryApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, ADD_DELIVERY_URL, setState, data);
+}
+
+const cancelDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, CANCEL_DOCUMENT_URL, setState, data);
+}
+
+const sendDocumentToClientApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, SEND_DOCUMENT_TO_CLIENT_URL, setState, data);
+}
+
+const saveDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, SAVE_DOCUMENT_URL, setState, data);
+}
+
+const createOrderApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, CONVERT_QUOTE_TO_ORDER_URL, setState, data);
+}
+
+const calculateDocumentItemApi: ICallAndSetData = async (callApi, setState, 
+    data: {documentType: DOCUMENT_TYPE,
+    ItemId : string,
+    data: number,
+    calculationType: number}) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_CALCULATE_DOCUMENT_ITEM_URL, setState, data);
+} 
+
+
+const calculateDocumentApi: ICallAndSetData = async (callApi, setState,data) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_CALCULATE_DOCUMENT_URL, setState, data);
+} 
+
+const addItemApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, ADD_ITEM_URL, setState, data);
+}
+
 export {
     getDocumentApi,
     getAllDocumentApi,
@@ -96,13 +137,18 @@ export {
     deleteDocumentAddressApi,
     changeDocumentClientApi,
     getIfCartExistApi,
-    
     duplicateDocumentApi,
     duplicateWithAnotherQuantityApi,
     getDocumentPdfApi,
 
 
-
-
-    updatePurchaseNumberApi
+    updatePurchaseNumberApi,
+    addDeliveryApi,
+    cancelDocumentApi,
+    sendDocumentToClientApi,
+    saveDocumentApi,
+    createOrderApi,
+    calculateDocumentItemApi,
+    calculateDocumentApi,
+    addItemApi
 };

@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
 import { materialsCategoriesState } from "@/store/material-categories";
-import { useGomakeAxios, useGomakeRouter } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
   getAndSetgetProductQuoteItemById,
   getAndSetProductById,
@@ -45,12 +45,14 @@ import { getOutsourcingSuppliersListApi } from "@/services/api-service/suppliers
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useCalculationsWorkFlowsSignalr } from "../signalr/use-calculations-workflows-signalr";
 import { v4 as uuidv4 } from "uuid";
+import { addItemApi } from "@/services/api-service/generic-doc/documents-api";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const router = useRouter();
+  const {alertFaultAdded} = useSnackBar();
 
   const { clientTypesValue, renderOptions, checkWhatRenderArray } =
     useQuoteWidget();
@@ -1201,27 +1203,40 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
     }
   }, [subProducts]);
-  const addItemForQuotes = useCallback(async () => {
-    const res = await callApi(
-      "POST",
-      `/v1/erp-service/quote/add-item`,
-      currentProductItemValue
-    );
-    if (res?.success) {
-      navigate("/quote");
+
+
+  // const addItemForQuotes = useCallback(async () => {
+  //   const res = await callApi(
+  //     "POST",
+  //     `/v1/erp-service/quote/add-item`,
+  //     currentProductItemValue
+  //   );
+  //   if (res?.success) {
+  //     navigate("/quote");
+  //   }
+  // }, [
+  //   router,
+  //   pricingDefaultValue,
+  //   quantity,
+  //   urgentOrder,
+  //   graphicNotes,
+  //   printingNotes,
+  //   userProfile,
+  //   itemParmetersValues,
+  //   defaultPrice,
+  //   workFlowSelected,
+  // ]);
+
+  const addItemForQuotes = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        navigate("/quote");
+      } else {
+        alertFaultAdded();
+      }
     }
-  }, [
-    router,
-    pricingDefaultValue,
-    quantity,
-    urgentOrder,
-    graphicNotes,
-    printingNotes,
-    userProfile,
-    itemParmetersValues,
-    defaultPrice,
-    workFlowSelected,
-  ]);
+    await addItemApi(callApi, callBack, { Item: currentProductItemValue , DocumentType: 0 })
+  }
 
   useEffect(() => {
     if (

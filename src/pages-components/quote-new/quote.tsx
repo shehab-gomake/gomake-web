@@ -22,6 +22,7 @@ import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { _renderQuoteStatus } from "@/utils/constants";
 import { IconButton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
+import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 
 const QuoteNewPageWidget = () => {
   const { clasess } = useStyle();
@@ -131,7 +132,12 @@ const QuoteNewPageWidget = () => {
     onChangeSelectBusiness,
     updatePurchaseNumber,
     updateClientAddress,
-    onClickDeleteAddress
+    onClickDeleteAddress,
+    onOpenDeliveryModal,
+    openAddDeliveryModal,
+    onCloseDeliveryModal,
+    onAddDelivery,
+    handleSaveBtnClick
   } = useQuoteNew();
   
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
@@ -271,7 +277,9 @@ const QuoteNewPageWidget = () => {
               <WriteCommentComp />
               <ButtonsContainer
                 onOpenNewItem={onOpenNewItem}
+                onOpenDeliveryModal={onOpenDeliveryModal}
                 handleCancelBtnClick={handleCancelBtnClick}
+                handleSaveBtnClick={handleSaveBtnClick}
                 handleSendBtnClick={handleSendBtnClick}
               />
             </div>
@@ -282,6 +290,11 @@ const QuoteNewPageWidget = () => {
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}
+      />
+       <AddDeliveryModal
+        openModal={openAddDeliveryModal}
+        onClose={onCloseDeliveryModal}
+        onClickAdd={onAddDelivery}
       />
       <DuplicateItemModal
         openModal={openDuplicateWithDifferentQTYModal}

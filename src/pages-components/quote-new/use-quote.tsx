@@ -23,7 +23,8 @@ import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { addressModalState } from "@/widgets/quote-new/business-widget/address-widget/state";
 import { useQuoteGetData } from "./use-quote-get-data";
 import { addQuoteAddressApi, deleteQuoteAddressApi, updateQuoteAddressApi } from "@/services/api-service/quote/quote-addresses-api";
-import { addDocumentAddressApi, addDocumentContactApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, updateDocumentAddressApi, updateDocumentContactApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
+import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, saveDocumentApi, sendDocumentToClientApi, updateDocumentAddressApi, updateDocumentContactApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
+import { DOCUMENT_TYPE } from "../enums";
 
 const useQuoteNew = () => {
   const {
@@ -107,6 +108,16 @@ const useQuoteNew = () => {
   const handleSendBtnClose = () => {
     setAnchorElSendBtn(null);
   };
+
+  const [openAddDeliveryModal, setOpenAddDeliveryModal] = useState(false);
+
+  const onOpenDeliveryModal = () => {
+    setOpenAddDeliveryModal(true);
+  };
+  const onCloseDeliveryModal = () => {
+    setOpenAddDeliveryModal(false);
+  };
+
   const tableHeaders = [
     "#",
     t("sales.quote.itemCode"),
@@ -272,8 +283,8 @@ const useQuoteNew = () => {
 
   const onBlurContactName = async () => {
     setIsUpdateContactName(null);
-  //  setIsDisplayWidget(false);
-  }; 
+    //  setIsDisplayWidget(false);
+  };
 
   const onBlurContactEmail = async () => {
     setIsUpdateContactEmail(null);
@@ -308,13 +319,13 @@ const useQuoteNew = () => {
 
   const onClickAddNewContact = async () => {
     const callBack = (res) => {
-    if (res?.success) {
-      alertSuccessAdded();
-      setIsDisplayWidget(false);
-      getQuote();
-    } else {
-      alertFaultAdded();
-    }
+      if (res?.success) {
+        alertSuccessAdded();
+        setIsDisplayWidget(false);
+        getQuote();
+      } else {
+        alertFaultAdded();
+      }
     }
     await addDocumentContactApi(callApi, callBack, {
       documentType: 0,
@@ -420,26 +431,25 @@ const useQuoteNew = () => {
     setOpenAddNewItemModal(false);
   };
 
-  const getCalculateQuoteItem = useCallback(
-    async (quoteItemId: string, calculationType: number, data: number) => {
-      const res = await callApi(
-        EHttpMethod.GET,
-        `/v1/erp-service/quote/get-calculate-quote-item`,
-        {
-          QuoteItemId: quoteItemId,
-          data,
-          calculationType,
-        }
-      );
+  //////////////////////// CALCULATE DOCUMENT DONE//////////////////////
+  const getCalculateQuoteItem = async (quoteItemId: string, calculationType: number, data: number) => {
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
         getQuote();
       } else {
         alertFaultUpdate();
       }
-    },
-    [quoteItemValue]
-  );
+    }
+    await calculateDocumentItemApi(callApi, callBack,
+      {
+        documentType: 0,
+        ItemId: quoteItemId,
+        data,
+        calculationType,
+      })
+  }
+  //////////////////////// CALCULATE DOCUMENT DONE//////////////////////
 
   const onCloseDuplicateWithDifferentQTY = () => {
     setOpenDuplicateWithDifferentQTYModal(false);
@@ -464,7 +474,7 @@ const useQuoteNew = () => {
         alertFaultAdded();
       }
     }
-    await duplicateWithAnotherQuantityApi(callApi, callBack, { ItemId: quoteItemId, amount: parseInt(amountValue) , documentType: 0 })
+    await duplicateWithAnotherQuantityApi(callApi, callBack, { ItemId: quoteItemId, amount: parseInt(amountValue), documentType: 0 })
   }
   /////////////////////////////// DUPLICATE DOCUMENT ITEM IS DONE /////////////////////////////// 
 
@@ -494,32 +504,44 @@ const useQuoteNew = () => {
   ////////////////////////////  DELETE QUOTE ITEM DONE  /////////////////////////
 
 
+  ////////////////////////////  ADD DELIVERY  /////////////////////////
+  const onAddDelivery = async (deliveryType: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessAdded();
+        onCloseDeliveryModal();
+        getQuote();
+      } else {
+        alertFaultAdded();
+      }
+    }
+    await addDeliveryApi(callApi, callBack, { delivery: { quoteId: quoteItemValue?.id, productType: deliveryType }, documentType: 0 })
+  }
+  ////////////////////////////  ADD DELIVERY  /////////////////////////
+
   const onClickDeleteQouteItem = (quoteItem) => {
     onOpenDeleteItemModal();
     setQuateItemId(quoteItem?.id);
   };
 
-  const getCalculateQuote = useCallback(
-    async (calculationType: number, data: number) => {
-      const res = await callApi(
-        EHttpMethod.GET,
-        `/v1/erp-service/quote/get-calculate-quote`,
-        {
-          QuoteId: quoteItemValue?.id,
-          data,
-          calculationType,
-        }
-      );
+  //////////////////////////////  CALCULATE DOCUMENT DONE///////////////////////////////
+  const getCalculateQuote = async (calculationType: number, data: number) => {
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
-
         getQuote();
       } else {
         alertFaultUpdate();
       }
-    },
-    [quoteItemValue]
-  );
+    }
+    await calculateDocumentApi(callApi, callBack, {
+      documentType: 0,
+      documentId: quoteItemValue?.id,
+      data,
+      calculationType,
+    })
+  }
+  //////////////////////////////  CALCULATE DOCUMENT DONE///////////////////////////////
 
   useEffect(() => {
     setPriceListItems(quoteItemValue?.priceListItems);
@@ -625,65 +647,86 @@ const useQuoteNew = () => {
   const onClcikCloseModal = () => {
     setOpenOtherReasonModal(false);
   };
-  const onClickCancelOffer = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.PUT,
-      `/v1/erp-service/quote/cancel-quote-state`,
-      {
-        quoteId: quoteItemValue?.id,
-        quoteStatus: QuoteStatuses.CANCELED_OTHER,
-        cancelText: reasonText,
-      }
-    );
-    if (res?.success) {
-      alertSuccessUpdate();
-      navigate("/home");
-    } else {
-      alertFaultUpdate();
-    }
-  }, [quoteItemValue, reasonText]);
 
-  const updateCancelQuote = useCallback(
-    async (quoteStatus: number) => {
-      const res = await callApi(
-        EHttpMethod.PUT,
-        `/v1/erp-service/quote/cancel-quote-state`,
-        {
-          quoteId: quoteItemValue?.id,
-          quoteStatus: quoteStatus,
-        }
-      );
+  /////////////////////////////////////////// CANCEL DOCUMENT DONE //////////////////////////////////////
+  const onClickCancelOffer = async () => {
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
         navigate("/home");
       } else {
         alertFaultUpdate();
       }
-    },
+    }
+    await cancelDocumentApi(callApi, callBack, {
+      DocumentType: 0,
+      Document: {
+        documentId: quoteItemValue?.id,
+        quoteStatus: QuoteStatuses.CANCELED_OTHER,
+        cancelText: reasonText,
+      }
+    })
+  }
 
-    [quoteItemValue]
-  );
+  const updateCancelQuote = async (quoteStatus: number) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        navigate("/home");
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await cancelDocumentApi(callApi, callBack, {
+      DocumentType: 0,
+      Document: {
+        documentId: quoteItemValue?.id,
+        quoteStatus: quoteStatus,
+      }
+    })
+  }
+  /////////////////////////////////////////// CANCEL DOCUMENT DONE//////////////////////////////////////
 
-  const onClickSendQuoteToClient = useCallback(
-    async (messageType: number) => {
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/quote/send-quote-to-clinet`,
-        {
-          quoteId: quoteItemValue?.id,
-          messageType,
-        }
-      );
+
+  /////////////////////////////////////////// SEND DOCUMENT TO CLIENT DONE//////////////////////////////////////
+  const onClickSendQuoteToClient = async (messageType: number) => {
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessAdded();
       } else {
         alertFaultAdded();
       }
-    },
-    [quoteItemValue]
-  );
+    }
+    await sendDocumentToClientApi(callApi, callBack, {
+      documentType: 0,
+      document: {
+        documentId: quoteItemValue?.id,
+        messageType,
+      }
+    })
+  }
+  /////////////////////////////////////////// SEND DOCUMENT TO CLIENT DONE//////////////////////////////////////
 
 
+
+
+  ////////////////////////////////////////// SAVE DONE////////////////////////////////////////////////////
+  const handleSaveBtnClick = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        navigate("/home");
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await saveDocumentApi(callApi, callBack, {
+      documentType: 0,
+      document: {
+        documentId: quoteItemValue?.id,
+      }
+    })
+  }
+  ////////////////////////////////////////// SAVE DONE////////////////////////////////////////////////////
 
 
   //////////////////// ADDRESS SECTION DONE ///////////////////////////
@@ -733,7 +776,8 @@ const useQuoteNew = () => {
         apartment: item?.apartment,
         notes: item?.notes || "",
         documentID: quoteItemValue?.id,
-      }})
+      }
+    })
   }
 
   const onClickAddAddress = async (item: any) => {
@@ -893,7 +937,12 @@ const useQuoteNew = () => {
     updateClientAddress,
     onClickAddAddress,
     onClickDeleteAddress,
-    onClickAddNewAddress
+    onClickAddNewAddress,
+    openAddDeliveryModal,
+    onOpenDeliveryModal,
+    onCloseDeliveryModal,
+    onAddDelivery,
+    handleSaveBtnClick
   };
 };
 
