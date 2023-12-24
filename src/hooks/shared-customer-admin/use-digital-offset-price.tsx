@@ -524,8 +524,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 }
                 if(!relatedToParameter){
                   if((parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST || parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ) && (!parameter?.valuesConfigs || parameter?.valuesConfigs.length === 0)){
-                    parameter.isHidden = true;
-                    return;
+                    //parameter.isHidden = true;
+                    //return;
                   }
                 }
                 
