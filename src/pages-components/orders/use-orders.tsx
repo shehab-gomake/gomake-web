@@ -11,12 +11,13 @@ import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-
 import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { duplicateDocumentApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
+import { duplicateDocumentApi, getAllDocumentApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
+import { DOCUMENT_TYPE } from "@/pages-components/enums";
 
 const useOrders = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { setSnackbarStateValue, alertFaultUpdate, alertSuccessUpdate , alertFaultDuplicate} = useSnackBar();
+  const { setSnackbarStateValue, alertFaultUpdate, alertSuccessUpdate , alertFaultDuplicate ,alertFaultAdded} = useSnackBar();
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
@@ -131,7 +132,7 @@ const useOrders = () => {
     }
   };
 
-
+/////////////////////////////// GET ALL GENERIC DOC ///////////////////////////
   const getAllOrders = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -174,6 +175,47 @@ const useOrders = () => {
   ]);
 
 
+  // const getAllOrders = async () => {
+  //   const callBack = (res) => {
+  //     if (res?.success) {
+  //    const data = res?.data?.data?.result;
+  //   const totalItems = res?.data?.data?.totalItems;
+  //   const mapData = data?.map((order: any) => [
+  //     GetDateFormat(order?.createdDate),
+  //     order?.customerName,
+  //     order?.boardMissionsNumbers?.length,
+  //     order?.orderNumber,
+  //     order?.worksNames,
+  //     order?.cost,
+  //     order?.totalPrice,
+  //     order?.notes,
+  //     _renderQuoteStatus(order?.statusID, order),
+  //     <MoreMenuWidget order={order} onClickOpenModal={onClickOpenModal} onClickDuplicate={onClickOrderDuplicate} onClickDocumentPdf={onClickDocumentPdf}/>,
+  //   ]);
+  //   setAllOrders(mapData);
+  //     } else {
+  //       alertFaultAdded();
+  //     }
+  //   };
+  //   await getAllDocumentApi(callApi, callBack, { 
+  //     documentType : DOCUMENT_TYPE.ORDER ,
+  //     data : 
+  //     {
+  //       model: {
+  //         pageNumber: page,
+  //         pageSize: limit,
+  //       },
+  //       statusId: statusId?.value,
+  //       patternSearch: finalPatternSearch,
+  //       customerId: customerId?.id,
+  //       dateRange,
+  //       agentId: agentId?.id,
+  //     } });
+  // };
+
+/////////////////////////////// GET ALL GENERIC DOC ///////////////////////////
+
+
   // const getAllQuotesInitial = useCallback(async () => {
   //   const res = await callApi(
   //     EHttpMethod.POST,
@@ -207,11 +249,13 @@ const useOrders = () => {
     getAllOrders();
   }, []);
 
+
+  // need filters
   const onClickSearchFilter = () => {
     getAllOrders();
   };
 
-  const onClcikClearFilter = () => {
+  const onClickClearFilter = () => {
     setStatusId(null);
     setAgentId(null);
     setCustomerId(null);
@@ -318,17 +362,18 @@ const useOrders = () => {
   const onClickOrderDuplicate = async (id: string , documentType : number) => {
     const callBack = (res) => {
       if (res?.success) {
-        console.log(res)
-        const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
+        const isAnotherDocumentInCreate = res?.data?.isAnotherDocumentInCreate;
         const quoteId = res?.data?.quoteId;
+        const documentId = res?.data?.documentId;
 
-        console.log(isAnotherQuoteInCreate)
+        console.log(res)
+        console.log(isAnotherDocumentInCreate +" " +documentId)
 
-        if (!isAnotherQuoteInCreate) {
-          documentType == 0 ? navigate("/quote") : navigate("/order")
+        if (!isAnotherDocumentInCreate) {
+          navigate("/quote") 
         }
         else {
-          onClickOpenModal({id:quoteId })
+          onClickOpenModal({ id:quoteId })
         }
       } else {
         alertFaultDuplicate();
@@ -336,7 +381,6 @@ const useOrders = () => {
     };
     await duplicateDocumentApi(callApi, callBack, { documentId: id  , documentType : documentType });
   };
-
 
   const onClickDocumentPdf = async (id: string , documentType : number) => {
     const callBack = (res) => {
@@ -372,7 +416,7 @@ const useOrders = () => {
     updateQuoteStatus,
     onClickSearchFilter,
     getAllOrders,
-    onClcikClearFilter,
+    onClickClearFilter,
     t,
   };
 };

@@ -30,7 +30,7 @@ const OrdersListPageWidget = () => {
     checkWhatRenderArray,
     updateQuoteStatus,
     onClickSearchFilter,
-    onClcikClearFilter,
+    onClickClearFilter,
     t,
   } = useOrders();
   return (
@@ -105,7 +105,7 @@ const OrdersListPageWidget = () => {
               <div style={clasess.filterLabelStyle} />
               <GomakePrimaryButton
                 style={clasess.clearBtnStyle}
-                onClick={onClcikClearFilter}
+                onClick={onClickClearFilter}
               >
                 {t("sales.quote.clear")}
               </GomakePrimaryButton>

@@ -29,14 +29,14 @@ const MoreMenuWidget = ({ order, onClickOpenModal, onClickDuplicate , onClickDoc
       </MenuItem>
 
 
-      <MenuItem onClick={()=>onClickDocumentPdf(order?.id, DOCUMENT_TYPE.Order)}>
+      <MenuItem onClick={()=>onClickDocumentPdf(order?.id, DOCUMENT_TYPE.ORDER)}>
         <div style={clasess.menuRowStyle}>
           <PDFIcon />
           <div style={clasess.rowTextStyle}>{t("sales.quote.pdf")}</div>
         </div>
       </MenuItem>
 
-      <MenuItem onClick={() => onClickDuplicate(order?.id, DOCUMENT_TYPE.Order)}>
+      <MenuItem onClick={() => onClickDuplicate(order?.id, DOCUMENT_TYPE.ORDER)}>
         <div style={clasess.menuRowStyle}>
           <ConvertIcon />
           <div style={clasess.rowTextStyle}>{t("sales.quote.duplicate")}</div>

@@ -23,7 +23,7 @@ import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { addressModalState } from "@/widgets/quote-new/business-widget/address-widget/state";
 import { useQuoteGetData } from "./use-quote-get-data";
 import { addQuoteAddressApi, deleteQuoteAddressApi, updateQuoteAddressApi } from "@/services/api-service/quote/quote-addresses-api";
-import { addDocumentAddressApi, addDocumentContactApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, updateDocumentAddressApi, updateDocumentContactApi } from "@/services/api-service/generic-doc/documents-api";
+import { addDocumentAddressApi, addDocumentContactApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, updateDocumentAddressApi, updateDocumentContactApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
 
 const useQuoteNew = () => {
   const {
@@ -163,7 +163,7 @@ const useQuoteNew = () => {
     getAllCustomers();
   }, []);
 
-  const onBlurPurchaseNumber = async (value = 5) => {
+  const onBlurPurchaseNumber = async (value) => {
     updatePurchaseNumber(value);
     setIsUpdatePurchaseNumber(null);
   };
@@ -224,16 +224,9 @@ const useQuoteNew = () => {
     [quoteItemValue]
   );
 
-  const updatePurchaseNumber = useCallback(
-    async (value: any) => {
-      const res = await callApi(
-        EHttpMethod.PUT,
-        `/v1/erp-service/quote/update-purchase-number`,
-        {
-          quoteId: quoteItemValue?.id,
-          purchaseNumber: value,
-        }
-      );
+  //////////////////////////////// UPDATE PURCHASE NUMBER DONE ////////////////////////////////////////
+  const updatePurchaseNumber = async (value: string) => {
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
         setIsUpdatePurchaseNumber(null);
@@ -241,13 +234,20 @@ const useQuoteNew = () => {
       } else {
         alertFaultUpdate();
       }
-    },
-    [quoteItemValue]
-  );
+    }
+    // item.documentType
+    await updatePurchaseNumberApi(callApi, callBack, {
+      documentType: 0, document: {
+        quoteId: quoteItemValue?.id,
+        purchaseNumber: value,
+      }
+
+    })
+  }
+  //////////////////////////////// UPDATE PURCHASE NUMBER DONE////////////////////////////////////////
 
 
   //////////////////////////////// CHANGE CLIENT DONE ////////////////////////////////////////
-
   const onChangeSelectBusiness = async (item: any) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -268,7 +268,6 @@ const useQuoteNew = () => {
 
     })
   }
-
   //////////////////////////////// CHANGE CLIENT DONE ////////////////////////////////////////
 
   const onBlurContactName = async () => {

@@ -1,4 +1,4 @@
 export enum DOCUMENT_TYPE{
-    Quote = 0,
-    Order = 1,
+    QUOTE = 0,
+    ORDER = 1,
 }

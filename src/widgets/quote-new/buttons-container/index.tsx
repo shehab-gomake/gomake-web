@@ -31,12 +31,12 @@ const ButtonsContainer = ({
         >
           {t("sales.quote.addNewItems")}
         </GomakePrimaryButton>
-        <GomakePrimaryButton
+        {/* <GomakePrimaryButton
           leftIcon={<PlusIcon stroke={"#344054"} />}
           style={classes.btnContainer}
         >
           {t("sales.quote.addExistItem")}
-        </GomakePrimaryButton>
+        </GomakePrimaryButton> */}
         <GomakePrimaryButton
           leftIcon={<PlusIcon stroke={"#344054"} />}
           style={classes.btnContainer}
@@ -45,12 +45,12 @@ const ButtonsContainer = ({
         </GomakePrimaryButton>
       </div>
       <div style={classes.btnsContainer}>
-        <GomakePrimaryButton
+        {/* <GomakePrimaryButton
           leftIcon={<UploadNewIcon />}
           style={classes.btnSecondContainer}
         >
           {t("sales.quote.attachFiles")}
-        </GomakePrimaryButton>
+        </GomakePrimaryButton> */}
         {/* <GomakePrimaryButton
           rightIcon={<ArrowDownNewIcon />}
           style={classes.btnSecondContainer}
