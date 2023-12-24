@@ -252,6 +252,33 @@ const useNewProfits = () => {
     [actionProfitByActionId]
   );
 
+  const updateTransitionForAction = useCallback(
+    async (data: SelectedPricingByType) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/printhouse-config/profits/update-action-profit`,
+        {
+          recordID: actionProfitByActionId?.recordID,
+          id: actionProfitByActionId?.id,
+          printingActionId: actionProfitByActionId?.printingActionId,
+          pricingBy: actionProfitByActionId?.pricingBy,
+          transitionType: data?.value,
+          minPrice: actionProfitByActionId?.minPrice,
+          actionProfitRows: [],
+          actionExpections: [],
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        setSelectedTransition(data);
+        getAllActionProfitRowsByActionId();
+        getActionProfitRowChartData();
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [actionProfitByActionId]
+  );
   useEffect(() => {
     setActionProfitRowsList(allActionProfitRowsByActionId);
   }, [allActionProfitRowsByActionId, selectedPricingTableItems]);
@@ -558,6 +585,7 @@ const useNewProfits = () => {
     onCloseAddStepModal,
     onOpenAddStepModal,
     updatePricingByForAction,
+    updateTransitionForAction,
     setSelectedTransition,
     setSelectedPricingBy,
     changeactionProfitRowsItems,
