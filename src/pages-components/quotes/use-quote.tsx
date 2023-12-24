@@ -14,7 +14,8 @@ import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
 import { getQuotePdfApi } from "@/services/api-service/quotes/quotes-table-endpoints";
 import { employeesListsState } from "./states";
-import { duplicateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
+import { duplicateDocumentApi, getAllDocumentsApi, getDocumentPdfApi, updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
+import { DOCUMENT_TYPE } from "../enums";
 
 const useQuotes = () => {
   const { t } = useTranslation();
@@ -107,11 +108,28 @@ const useQuotes = () => {
     }
   };
 
-  const getAllQuotes = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/quote/get-all-quotes`,
-      {
+ const getAllQuotes= async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const data = res?.data?.data;
+        const totalItems = res?.data?.totalItems;
+        const mapData = data?.map((quote: any) => [
+          GetDateFormat(quote?.createdDate),
+          quote?.customerName,
+          quote?.orderNumber,
+          quote?.quoteNumber,
+          quote?.worksNames,
+          quote?.totalPrice,
+          quote?.notes,
+          _renderQuoteStatus(quote?.statusID, quote, t),
+          <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} onClickDuplicate={onClickQuoteDuplicate} onClickLoggers={()=>onClickOpenLogsModal(quote?.quoteNumber)} />,
+        ]);
+        setAllQuotes(mapData);
+      } 
+    }
+     await getAllDocumentsApi(callApi, callBack,
+      {documentType: 0 ,
+      data : {
         model: {
           pageNumber: page,
           pageSize: limit,
@@ -120,34 +138,10 @@ const useQuotes = () => {
         patternSearch: finalPatternSearch,
         customerId: customerId?.id,
         dateRange,
-        agentId: agentId?.id,
-      }
-    );
-    const data = res?.data?.data?.result;
-    const totalItems = res?.data?.data?.totalItems;
-
-    const mapData = data?.map((quote: any) => [
-      GetDateFormat(quote?.createdDate),
-      quote?.customerName,
-      quote?.orderNumber,
-      quote?.quoteNumber,
-      quote?.worksNames,
-      quote?.totalPrice,
-      quote?.notes,
-      _renderQuoteStatus(quote?.statusID, quote, t),
-      <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} onClickDuplicate={onClickQuoteDuplicate} onClickLoggers={()=>onClickOpenLogsModal(quote?.quoteNumber)} />,
-    ]);
-    setAllQuotes(mapData);
-  }, [
-    page,
-    limit,
-    statusId,
-    customerId,
-    dateRange,
-    agentId,
-    finalPatternSearch,
-  ]);
-
+        agentId: agentId?.id,  
+      }})
+  }
+  
   const getAllQuotesInitial = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -277,32 +271,27 @@ const useQuotes = () => {
     getAgentCategories(null,setEmployeeListValue);
   }, []);
 
-  const updateQuoteStatus = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.PUT,
-      `/v1/erp-service/quote/update-quote`,
-      {
-        quoteId: selectedQuote?.id,
+
+
+  //////////////////////// UPDATE DOCUMENT DONE //////////////////
+  const updateQuoteStatus = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        navigate("/quote");
+      } else {
+        alertFaultUpdate();
       }
-    );
-    if (res?.success) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.updatedSusuccessfully"),
-        type: "sucess",
+    };
+    await updateDocumentApi(callApi, callBack,
+      {
+        documentType: 0,
+        document:{
+          documentId: selectedQuote?.id}
       });
-      navigate("/quote");
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.updatedfailed"),
-        type: "error",
-      });
-    }
-  }, [selectedQuote]);
+  };
+  //////////////////////// UPDATE DOCUMENT DONE //////////////////
 
-
-  const onClickQuotePdf = async (id: string) => {
+  const onClickQuotePdf = async (id: string , documentType : DOCUMENT_TYPE) => {
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
@@ -311,7 +300,7 @@ const useQuotes = () => {
         alertFaultUpdate();
       }
     };
-    await getQuotePdfApi(callApi, callBack, { quoteId: id });
+    await getDocumentPdfApi(callApi, callBack, { documentId: id , documentType : documentType });
   };
 
 
@@ -323,7 +312,6 @@ const useQuotes = () => {
         const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
         const quoteId = res?.data?.quoteId;
         if (!isAnotherQuoteInCreate) {
-         // documentType == 0 ? navigate("/quote") : navigate("/order")
           navigate("/quote");
         }
         else {

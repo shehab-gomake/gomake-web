@@ -25,7 +25,7 @@ const MoreMenuWidget = ({ quote, onClickOpenModal , onClickPdf , onClickDuplicat
           </PermissionCheck>
         </div>
       </MenuItem>
-      <MenuItem onClick={()=>onClickPdf(quote?.id)}>
+      <MenuItem onClick={()=>onClickPdf(quote?.id , 0)}>
         <div style={classes.menuRowStyle}>
           <PDFIcon />
           <div style={classes.rowTextStyle}>{t("sales.quote.pdf")}</div>

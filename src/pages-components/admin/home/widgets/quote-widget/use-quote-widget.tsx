@@ -15,6 +15,7 @@ import {
   QuoteIfExistState,
   QuoteNumberState,
 } from "@/pages-components/quote/store/quote";
+import { getIfCartExistApi } from "@/services/api-service/generic-doc/documents-api";
 
 const useQuoteWidget = () => {
   const { t } = useTranslation();
@@ -115,9 +116,23 @@ const useQuoteWidget = () => {
     [clientTypesValue]
   );
 
+
+  ////////////////////////////////////////////////////////////////////
+  // const getAndSetExistQuote = async () => {
+  //   const callBack = (res) => {
+  //     if (res?.success) {
+  //      console.log(res.data)
+  //     } 
+  //   }
+  //   await getIfCartExistApi(callApi, callBack,
+  //     {documentType: 0})
+  // }
+
+
   const getAndSetExistQuote = useCallback(async () => {
     await getAndSetExistQuotes(callApi, setUserQuote);
   }, []);
+  ///////////////////////////////////////////////////////////////////////
 
   const updateQuoteExist = useCallback(async () => {
     await getAndSetExistQuote();

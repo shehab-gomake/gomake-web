@@ -27,11 +27,15 @@ const GET_CALCULATE_DOCUMENT_ITEM_URL = '/v1/erp-service/documents/calculate-doc
 const GET_CALCULATE_DOCUMENT_URL = '/v1/erp-service/documents/calculate-document';
 const ADD_ITEM_URL = '/v1/erp-service/documents/add-item';
 
+const UPDATE_DOCUMENT_URL = '/v1/erp-service/documents/update-document';
+const UPDATE_DOCUMENT_ITEM_URL = '/v1/erp-service/documents/update-document-item';
+
+
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_DOCUMENT_URL, setState, data);
 }
 
-const getAllDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+const getAllDocumentsApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.POST, GET_ALL_DOCUMENTS_URL, setState, data);
 }
 
@@ -124,9 +128,13 @@ const addItemApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.POST, ADD_ITEM_URL, setState, data);
 }
 
+const updateDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_DOCUMENT_URL, setState, data);
+}
+
 export {
     getDocumentApi,
-    getAllDocumentApi,
+    getAllDocumentsApi,
 
     deleteDocumentItemApi,
     addDocumentContactApi,
@@ -150,5 +158,6 @@ export {
     createOrderApi,
     calculateDocumentItemApi,
     calculateDocumentApi,
-    addItemApi
+    addItemApi,
+    updateDocumentApi
 };

@@ -8,7 +8,4 @@ const addItemToQuoteApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.POST, ADD_ITEM_TO_QUOTE_URL, setState, data);
 }
 
-
-
-
 export {addItemToQuoteApi}
