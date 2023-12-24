@@ -98,9 +98,9 @@
     "rule": "Rule",
     "type": "Type",
     "more": "More",
-    "addNewRule": "add new rule",
-    "addRule": "add rule",
-    "editRules": "edit rules",
+    "addNewRule": "Add new rule",
+    "addRule": "Add rule",
+    "editRules": "Edit Rules",
     "cancel": "cancel",
     "create": "create",
     "statment": "statment",
@@ -1219,7 +1219,7 @@
     "cellLoadingTime": "Cell loading time",
     "loadingWhileRunning": "Loading on the run",
     "cellsAmount": "Cells amount",
-    "maxThicknessCells": "Maximum thickness in cell (mm)",
+    "maxThicknessCells": "Maximum height in cell",
     "bookletConnection": "Connection to a Booklet machine",
     "BoosbinderConnection": "Connection to a Boosbinder machine",
     "sewingConnection": "Connection to a Sewing machine",
@@ -1330,9 +1330,13 @@
     "insertTypes": "Insert types",
     "foldingUnit": "Folding unit",
     "cellNumber": "Cell number",
-    "maxThicknessInCell": "Maximum thickness in cell",
+    "maxThicknessInCell": "Maximum height in cell",
     "loadingInRun": "Loading in run",
-    "cellChargingTime": "Cell charging time"
+    "cellChargingTime": "Cell loading time",
+    "isAvailable": "Is available",
+    "collectorSpeed": "Collector max speed",
+    "cell": "Cell",
+    "cellsMaxThicknessList": "Cells Max thickness"
   },
   "tyingOptions": {
     "cross": "Cross",
@@ -1428,6 +1432,8 @@
       "itemName": "Item name",
       "admin": {
         "title": "Profits",
+        "proporties":"Proporties",
+        "OSSettings":"OS settings",
         "chooseAction": "Choose action"
       },
       "pricingListWidget": {
@@ -1446,10 +1452,16 @@
         "more": "More",
         "height": "height",
         "addNewQuantity": "add new quantity",
+        "addNewStep": "add new step",
         "saveStep": "Save step",
         "testQuantity": "Quantity",
         "unitPrice": "Unit price",
-        "testFinalPrice": "Test Final Price"
+        "testFinalPrice": "Test Final Price",
+        "materialQuantity":"Material Quantity",
+        "beats":"Beats",
+        "linear":"Linear",
+        "steps":"Steps",
+        "pleaseEnterallrequiredvalues":"Please Enter all required values"
       },
       "exceptions": {
         "title": "Exceptions",
@@ -1457,7 +1469,7 @@
         "parameter": "Parameter",
         "value": "Value",
         "scopeOfChange": "scope of change",
-        "min": "Minimum =",
+        "min": "Minimum",
         "addNewException": "Add new exception",
         "chooseScope": "choose scope",
         "selectTypeOfException": "Select type of exception",
@@ -1470,7 +1482,9 @@
         "additionalProfit": "Additional Profit",
         "deleteExceptionProfit": "Delete Exception Profit ?",
         "updateException": "Update exception",
-        "deleteException": "Delete exception"
+        "deleteException": "Delete exception",
+        "addNewRule":"Add New Rule",
+        "reorder":"Reorder"
       }
     },
     "actions": {
@@ -1648,6 +1662,7 @@
       "sendQuote": "send quote",
       "cancel": "Cancel",
       "yesBtn": "Yes",
+      "noBtn": "No",
       "subTitleCancelModal": "Are you sure you want to cancel this offer?",
       "cancelBtn": "cancelation",
       "titleCancelModal": "Confirm Cancel",
@@ -2184,7 +2199,7 @@
     "framingInFixedFrame": "Framing in fixed frame machine",
     "customFraming": "Custom framing",
     "linkage": "Linkage machine",
-    "PVCBending": "PVC bending machine",
+    "PVCBending": "Flatbed bending machine",
     "collector": "Collector",
     "booklet": "Booklet machine",
     "booksBinder": "Books binder machine",
@@ -2331,7 +2346,9 @@
     "squareCM": "cm2",
     "setsHour": "sets/hour",
     "sph": "SPH",
-    "bookPh": "BookPH"
+    "bookPh": "BookPH",
+    "second": "second",
+    "pph": "PPH"
   },
   "mailingSettings": {
     "emailSetting": "Email setting",

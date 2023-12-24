@@ -11,12 +11,9 @@ const useMaterials = () => {
   const getAllMaterial = useCallback(async () => {
     await getAllMaterials(callApi, setAllMaterials);
   }, []);
+  
 
-  useEffect(() => {
-    getAllMaterial();
-  }, []);
-
-  return { allMaterials };
+  return { allMaterials,getAllMaterial };
 };
 
 export { useMaterials };

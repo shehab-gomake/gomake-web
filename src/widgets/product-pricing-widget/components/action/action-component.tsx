@@ -14,7 +14,7 @@ import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {InOutSourceSelect} from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
 import {EWorkSource, HtmlElementType, RuleType} from "@/widgets/product-pricing-widget/enums";
 import {useActionUpdateValues} from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
-import {useRecoilState, useRecoilValue} from "recoil";
+import {useRecoilValue} from "recoil";
 import {currentProductItemValueState, outsourceSuppliersState} from "@/widgets/product-pricing-widget/state";
 import {GoMakeAutoComplate} from "@/components";
 import Button from "@mui/material/Button";
@@ -22,33 +22,37 @@ import {useTranslation} from "react-i18next";
 import {PrintImageComponent} from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import {SettingsIcon} from "@/icons/settings";
-import {SettingNavBar, SettingNewIcon} from "@/icons";
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
-    delay: number;
+    delay?: number;
+    workFlowId?: string;
+    productType: string | null;
 }
 
 interface IActionsComponentProps {
     actions: IWorkFlowAction[];
+    workFlowId?: string;
+    productType: string | null
 }
 
-const Actions = ({actions}: IActionsComponentProps) => {
+const Actions = ({actions, workFlowId, productType}: IActionsComponentProps) => {
     return <Stack gap={'10px'}>
-        {actions?.map((action, index) => <ActionContainerComponent delay={index * 800} {...action} />)}
+        {actions?.map((action, index) => <ActionContainerComponent productType={productType} workFlowId={workFlowId}
+                                                                   delay={index * 800} {...action} />)}
     </Stack>
 }
 const ActionContainerComponent = ({
                                       actionId,
                                       actionName,
                                       outputs,
-                                      delay,
+                                      delay = 0,
                                       machineName,
                                       profit,
                                       totalPrice,
                                       totalProductionTime,
                                       totalCost,
                                       source,
-                                      supplierId
+                                      supplierId, workFlowId, productType
                                   }: IActionContainerComponentProps) => {
     source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -64,7 +68,7 @@ const ActionContainerComponent = ({
         updateActionSupplier,
         getActionMachinesList,
         selectNewMachine
-    } = useActionUpdateValues();
+    } = useActionUpdateValues(workFlowId, !!workFlowId);
     const suppliersState = useRecoilValue(outsourceSuppliersState);
     const suppliers = useMemo(() => {
         return suppliersState?.map(s => ({value: s.supplierId, label: s.supplierName}))
@@ -108,14 +112,15 @@ const ActionContainerComponent = ({
         }
         return ''
     }, [supplierId, suppliers])
+
+
     return (
-        <Fade in={true} timeout={delay}>
+        <Fade in={true} timeout={delay} style={{width: '100%'}}>
             <Stack onClick={() => setIsOpen(!isOpen)}
                    style={{...classes.actionContainer, border: isOpen ? classes.actionContainerBorder : 'unset'}}>
                 <Stack padding={'10px 0'} direction={'row'} justifyContent={'space-between'}>
                     <Stack direction={'row'} gap={'16px'} alignItems={'center'} flexWrap={'wrap'}>
                         <Stack style={classes.sectionTitle} direction={'row'} alignItems={'center'} gap={'10px'}>
-                           
                             <span>{actionName}</span>
                             {
                                 source === EWorkSource.OUT ?
@@ -142,7 +147,7 @@ const ActionContainerComponent = ({
                                                     if (selectNewMachine(v?.value, actionId)) {
                                                         setChooseMachine(false);
                                                     }
-                                                }} style={{width: '200px'}} options={getActionMachinesList(actionId)}
+                                                }} style={{width: '200px'}} options={getActionMachinesList(actionId, productType)}
                                                                     placeholder={'Choose machine'} value={machineName}/>
                                                 <IconButton onClick={(e) => {
                                                     e.stopPropagation()

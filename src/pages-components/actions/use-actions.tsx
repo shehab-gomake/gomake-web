@@ -24,7 +24,10 @@ const useActions = () => {
     const data = await getAllPrintHouseActions(callApi, setAllActions);
     const mapData = data?.map((action) => [
       action?.name,
-      `${action?.isInternal ? "Yes" : "No"} / ${action?.isOutsource ? "Yes" : "No"
+      `${
+        action?.isInternal ? t("sales.quote.yesBtn") : t("sales.quote.noBtn")
+      } / ${
+        action?.isOutsource ? t("sales.quote.yesBtn") : t("sales.quote.noBtn")
       }`,
       action?.isActive ? (
         <div
@@ -47,34 +50,32 @@ const useActions = () => {
           {t("usersSettings.inactive")}
         </div>
       ),
-      <PermissionCheck userPermission={Permissions.EDIT_MACHINE} >
-             <PrimaryButton
-              startIcon={
-                <EditIcon color={primaryColor(500)} width={20} height={20} />
-              }
-              onClick={() =>
-                navigate(`/products/profits?actionId=${action?.actionId}`)
-              }
-              variant={"text"}
-            >
-              {t("materials.buttons.edit")}
-            </PrimaryButton>
-      </PermissionCheck>    
-   ,
-   <PermissionCheck userPermission={Permissions.EDIT_PROPERTIES} >
-          <PrimaryButton
-        startIcon={
-          <EditIcon color={primaryColor(500)} width={20} height={20} />
-        }
-        onClick={() =>
-          navigate(`/properties?actionId=${action?.actionId}`)
-        }
-        variant={"text"}
-      >
-        {t("materials.buttons.edit")}
-      </PrimaryButton>
-   </PermissionCheck>
-  ,
+      <PermissionCheck userPermission={Permissions.EDIT_MACHINE}>
+        <PrimaryButton
+          startIcon={
+            <EditIcon color={primaryColor(500)} width={20} height={20} />
+          }
+          onClick={() =>
+            navigate(
+              `/products/profits?actionId=${action?.actionId}&&actionName=${action?.name}`
+            )
+          }
+          variant={"text"}
+        >
+          {t("materials.buttons.edit")}
+        </PrimaryButton>
+      </PermissionCheck>,
+      <PermissionCheck userPermission={Permissions.EDIT_PROPERTIES}>
+        <PrimaryButton
+          startIcon={
+            <EditIcon color={primaryColor(500)} width={20} height={20} />
+          }
+          onClick={() => navigate(`/properties?actionId=${action?.actionId}`)}
+          variant={"text"}
+        >
+          {t("materials.buttons.edit")}
+        </PrimaryButton>
+      </PermissionCheck>,
     ]);
     setAllActions(mapData);
   }, []);
@@ -85,8 +86,9 @@ const useActions = () => {
     t("products.actions.actionName"),
     t("products.actions.internalSource"),
     t("products.actions.active"),
-    CheckPermission(Permissions.EDIT_MACHINE) &&  t("products.actions.profit"),
-    CheckPermission(Permissions.EDIT_PROPERTIES) &&  t("products.actions.properties"),
+    CheckPermission(Permissions.EDIT_MACHINE) && t("products.actions.profit"),
+    CheckPermission(Permissions.EDIT_PROPERTIES) &&
+      t("products.actions.properties"),
   ];
 
   const filterArray = (array: any, searchText: string) =>

@@ -35,5 +35,7 @@ export interface IFormArrayInputsProps {
   isValid: boolean;
   newValue?: (key, value) => void;
   disableUpdateValues?: boolean;
+  disabled?: boolean;
+  disableAddValue?: boolean;
 }
 

@@ -46,12 +46,12 @@ const connectionToPrintingMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.delayBetweenUnits",
                     required: true,
                     parameterKey: "delayBetweenUnits",
-                    value: state.attributes[parameterKey] && state.attributes[parameterKey]['delayBetweenUnits'] ? !!state.attributes[parameterKey]['delayBetweenUnits'] : '',
+                    value: state.attributes[parameterKey] && state.attributes[parameterKey]['delayBetweenUnits'] ? state.attributes[parameterKey]['delayBetweenUnits'] : '',
                     options: [],
                     machineInputType: 'input',
                     isValid: true,
                     disabled: !state.attributes[parameterKey]?.isConnect,
-                    unit: EMeasurementUnits.MINUTE
+                    unit: EMeasurementUnits.SECOND
                 },
                 {
                     name: "",

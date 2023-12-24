@@ -8,7 +8,7 @@ import {FormInput} from "./form-input";
 import {TransitionGroup} from "react-transition-group";
 import {Collapse} from "@mui/material";
 
-const FormArrayInput = ({name, inputs, updateState, parameterKey, value, isValid, newValue, disableUpdateValues}: IFormArrayInputsProps) => {
+const FormArrayInput = ({name, inputs, updateState, parameterKey, value, isValid, newValue, disableUpdateValues, disabled, disableAddValue}: IFormArrayInputsProps) => {
     const [state, setState] = useState<Record<string, any>>({});
     const [errors, setErrors] = useState<Record<string, boolean>>();
     const {t} = useTranslation();
@@ -61,26 +61,28 @@ const FormArrayInput = ({name, inputs, updateState, parameterKey, value, isValid
 
 
     return (
-        <div style={classes.container}>
+       !disabled && <div style={classes.container}>
             <h3 style={{...classes.multiInputLabel, margin: '0 0 16px 0'}}>{t(name)}</h3>
-            <div style={classes.inputsRow}>
-                {
-                    inputs.map((input: IInput, index: number) => {
-                        input.value = state[input.parameterKey] ? state[input.parameterKey] : '';
-                        return <FormInput key={input.parameterKey + index}
-                                          input={input}
-                                          error={!!input.value && !!input.regex ? !input.regex.test(input.value) : !!(errors && errors[input.parameterKey]) || !isValid}
-                                          changeState={handleInputChanges1}/>
-                    })
-                }
-                <div style={classes.addColor}>
-                    <SecondaryButton variant={'contained'} onClick={addParameter}
-                                     style={classes.button}>{t('navigationButtons.add')}</SecondaryButton>
-                </div>
-            </div>
+           {
+               ! disableAddValue &&  <div style={classes.inputsRow}>
+                   {
+                       inputs.map((input: IInput, index: number) => {
+                           input.value = state[input.parameterKey] ? state[input.parameterKey] : '';
+                           return <FormInput key={input.parameterKey + index}
+                                             input={input}
+                                             error={!!input.value && !!input.regex ? !input.regex.test(input.value) : !!(errors && errors[input.parameterKey]) || !isValid}
+                                             changeState={handleInputChanges1}/>
+                       })
+                   }
+                   <div style={classes.addColor}>
+                       <SecondaryButton variant={'contained'} onClick={addParameter}
+                                        style={classes.button}>{t('navigationButtons.add')}</SecondaryButton>
+                   </div>
+               </div>
+           }
             <TransitionGroup>
                 {
-                    value.map((v: Record<string, string>, index: number) => {
+                    value?.map((v: Record<string, string>, index: number) => {
                         return <Collapse>
                             <div key={'row' + index} style={{...classes.inputsRow, paddingTop: 12}}>
                                 {

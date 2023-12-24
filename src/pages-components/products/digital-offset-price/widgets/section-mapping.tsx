@@ -1,7 +1,7 @@
 import { GomakePrimaryButton } from "@/components";
 import { AddNewIcon } from "@/icons";
 import { WastebasketNew } from "@/icons/wastebasket-new";
-import { generalParametersState } from "@/store";
+import { subProductsParametersState } from "@/store";
 import cloneDeep from "lodash.clonedeep";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,8 +21,8 @@ const SectionMappingWidget = ({
   setTemplate,
 }: any) => {
   const { t } = useTranslation();
-  const [generalParameters, setGeneralParameters] = useRecoilState<any>(
-    generalParametersState
+  const [subProducts, setSubProducts] = useRecoilState<any>(
+    subProductsParametersState
   );
   const [groupedParameters, setGroupedParameters] = useState<any>();
   const [groupedParametersArray, setGroupedParametersArray] = useState<any>();
@@ -49,38 +49,68 @@ const SectionMappingWidget = ({
       setGroupedParametersArray(Object?.values(groupedParameters));
     }
   }, [groupedParameters]);
-  const deleteDuplicateSection = (mySectionId, mySubSectionId, index) => {
-    let temp = cloneDeep(template);
-    const myId = subSection?.id;
-    let temp2 = cloneDeep(groupedParametersArray);
-    temp2.splice(index, 1);
-    setGroupedParametersArray(temp2);
-    let myGeneralParameter = cloneDeep(generalParameters);
-    const newArray = myGeneralParameter.filter(
-      (item) =>
-        !(
-          item.sectionId === mySectionId?.id &&
-          item.subSectionId === mySubSectionId?.id &&
-          item.actionIndex === index
-        )
-    );
-    let flattenedArray = [].concat(...temp2);
-    const updatedArray = flattenedArray.map((param) => {
-      if (param.actionIndex > index) {
-        return { ...param, actionIndex: param.actionIndex - 1 };
-      }
-      return param;
-    });
-    temp.sections.forEach((section) => {
-      section.subSections.forEach((subSection) => {
-        if (subSection.id === myId) {
-          subSection.parameters = updatedArray;
-        }
-      });
-    });
 
-    setTemplate(temp);
-    setGeneralParameters(newArray);
+  const deleteDuplicateSection = (mySectionId, mySubSectionId, index) => {
+    // 1. Delete the item from groupedParametersArray
+    const updatedGroupedParametersArray = [...groupedParametersArray];
+    updatedGroupedParametersArray.splice(index, 1);
+    // 2. Delete parameters from the template
+    const updatedTemplate = cloneDeep(template);
+    const updatedTemplateCopy = JSON.parse(JSON.stringify(updatedTemplate));
+    const sectionIndex = updatedTemplateCopy.sections.findIndex(
+      (section) => section.id === mySectionId.id
+    );
+
+    if (sectionIndex !== -1) {
+      const subSectionIndex = updatedTemplateCopy.sections[
+        sectionIndex
+      ].subSections.findIndex(
+        (subSection) => subSection.id === mySubSectionId.id
+      );
+      if (subSectionIndex !== -1) {
+        const updatedArray = updatedTemplateCopy.sections[
+          sectionIndex
+        ].subSections[subSectionIndex].parameters
+          .map((param) => {
+            if (param.actionIndex > index) {
+              param.relatedParameters.forEach(
+                (related) => (related.actionIndex = related.actionIndex - 1)
+              );
+              return { ...param, actionIndex: param.actionIndex - 1 };
+            } else if (param.actionIndex === index) {
+              return null; // Remove the parameter with actionIndex === index
+            }
+            return param;
+          })
+          .filter(Boolean);
+
+        updatedTemplateCopy.sections[sectionIndex].subSections[
+          subSectionIndex
+        ].parameters = updatedArray;
+      }
+    }
+    // 3. Delete parameters from subProducts
+    const updatedSubProducts = subProducts.map((subProduct) => {
+      if (subProduct.type === subSection.type) {
+        return {
+          ...subProduct,
+          parameters: subProduct.parameters
+            .map((parameter) => {
+              if (parameter.actionIndex > index) {
+                return { ...parameter, actionIndex: parameter.actionIndex - 1 };
+              } else if (parameter.actionIndex === index) {
+                return null; // Remove the parameter with actionIndex === index
+              }
+              return parameter;
+            })
+            .filter(Boolean),
+        };
+      }
+      return subProduct;
+    });
+    setGroupedParametersArray(updatedGroupedParametersArray);
+    setTemplate(updatedTemplateCopy);
+    setSubProducts(updatedSubProducts);
   };
   return (
     <>
@@ -98,35 +128,61 @@ const SectionMappingWidget = ({
                   {subSection.name} #{index + 1}
                 </div>
                 <div style={clasess.parametersContainer}>
-                  {item?.map((parameter: any, index2: number) => {
-                    const value = _getParameter(parameter, subSection, section);
-                    return (
-                      <div key={parameter?.id} style={{ display: "flex" }}>
-                        {_renderParameterType(
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      alignItems: "flex-end",
+                      gap: 10,
+                    }}
+                  >
+                    <div>
+                      {item?.map((parameter: any, index2: number) => {
+                        const value = _getParameter(
                           parameter,
                           subSection,
-                          section,
-                          subSection?.parameters,
-                          value,
-                          subSection?.parameters,
-                          true
-                        )}
-                      </div>
-                    );
-                  })}
-                  {groupedParametersArray?.length > 1 && (
-                    <div style={clasess.WastebasketNewStyle}>
-                      <div style={{ width: "100%", height: 21 }} />
-                      <div
-                        style={{ cursor: "pointer" }}
-                        onClick={() =>
-                          deleteDuplicateSection(section, subSection, index)
-                        }
-                      >
-                        <WastebasketNew />
-                      </div>
+                          section
+                        );
+                        return (
+                          <div
+                            key={parameter?.id}
+                            style={{
+                              display: "flex",
+                            }}
+                          >
+                            {_renderParameterType(
+                              parameter,
+                              subSection,
+                              section,
+                              subSection?.parameters,
+                              value,
+                              subSection?.parameters,
+                              true
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
-                  )}
+                    <div>
+                      {groupedParametersArray?.length > 1 && (
+                        <div style={clasess.WastebasketNewStyle}>
+                          <div style={{ width: "100%", height: 21 }} />
+                          <div
+                            style={{
+                              cursor: "pointer",
+                              height: 40,
+                            }}
+                            onClick={() =>
+                              deleteDuplicateSection(section, subSection, index)
+                            }
+                          >
+                            <WastebasketNew />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </>
             );

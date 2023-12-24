@@ -1,6 +1,7 @@
 import { GoMakeAutoComplate } from "@/components";
-import { generalParametersState } from "@/store";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { subProductsParametersState } from "@/store";
+import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 
 const SelectChildParameterWidget = ({
   parameter,
@@ -8,68 +9,91 @@ const SelectChildParameterWidget = ({
   index,
   temp,
   onChangeSubProductsForPrice,
-  onChangeForPrice,
   subSection,
   section,
 }) => {
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
-  const [generalParameters, setGeneralParameters] = useRecoilState<any>(
-    generalParametersState
+  const [subProducts, setSubProducts] = useRecoilState<any>(
+    subProductsParametersState
   );
-  return (
-    <GoMakeAutoComplate
-      options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
-      placeholder={parameter.name}
-      style={clasess.dropDownListStyle}
-      getOptionLabel={(option: any) => option.updateName}
-      defaultValue={
-        index !== -1 ? { updateName: temp[index].values } : defaultObject
-      }
-      onChange={(e: any, value: any) => {
-        onChangeSubProductsForPrice(
-            parameter?.id,
-            subSection?.id,
-            section?.id,
-            parameter?.parameterType,
-            parameter?.name,
-            parameter?.actionId,
-            { valueIds: value?.id, values: value?.updateName },
-            subSection?.type,
-            index,
-            parameter?.actionIndex
-        );
-        let temp = [...generalParameters];
-        parameter?.childsParameters.forEach((parameter) => {
-          const parameterId = parameter.id;
-          if (value?.values.hasOwnProperty(parameterId)) {
-            const index = temp.findIndex(
-              (item) =>
-                item?.parameterId === parameter?.id &&
-                item?.sectionId === section?.id &&
-                item?.subSectionId === subSection?.id &&
-                item?.actionIndex === parameter?.actionIndex
+  const subProductsParams = subProducts?.find(
+    (item) => item.type === subSection?.type
+  )?.parameters;
+  const [value, setValue] = useState<any>();
+  useEffect(() => {
+    if (subProductsParams) {
+      let temp = [...subProductsParams];
+      parameter?.childsParameters.forEach((parameter) => {
+        const parameterId = parameter.id;
+        if (value?.values.hasOwnProperty(parameterId)) {
+          const myindex = temp.findIndex((item) => {
+            return (
+              item?.parameterId === parameter?.id &&
+              item?.sectionId === section?.id &&
+              item?.subSectionId === subSection?.id &&
+              item?.actionIndex === parameter?.actionIndex
             );
-            if (index !== -1) {
-              temp[index] = {
-                ...temp[index],
-                values: [value?.values[parameterId]],
-              };
-            } else {
-              temp.push({
-                parameterId: parameter?.id,
-                sectionId: section?.id,
-                subSectionId: subSection?.id,
-                ParameterType: parameter?.parameterType,
-                values: [value?.values[parameterId]],
-              });
-            }
+          });
+          if (myindex !== -1) {
+            temp[myindex] = {
+              ...temp[myindex],
+              values: [value?.values[parameterId]],
+            };
+          } else {
+            temp.push({
+              parameterId: parameter?.id,
+              sectionId: section?.id,
+              subSectionId: subSection?.id,
+              ParameterType: parameter?.parameterType,
+              values: [value?.values[parameterId]],
+            });
           }
-        });
-        setGeneralParameters(temp);
-      }}
-    />
+        }
+      });
+      const updatedSubProducts = subProducts.map((item) => {
+        if (item.type === subSection?.type) {
+          return {
+            ...item,
+            parameters: temp,
+          };
+        }
+        return item;
+      });
+      setSubProducts(updatedSubProducts);
+    }
+  }, [value]);
+  return (
+    <>
+      {subProductsParams?.length > 0 && (
+        <GoMakeAutoComplate
+          options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
+          placeholder={parameter.name}
+          key={parameter.id + "-" + parameter.actionIndex}
+          style={clasess.dropDownListStyle}
+          getOptionLabel={(option: any) => option.updateName}
+          defaultValue={
+            index !== -1 ? { updateName: temp[index].values } : defaultObject
+          }
+          onChange={(e: any, value: any) => {
+            setValue(value);
+            onChangeSubProductsForPrice(
+              parameter?.id,
+              subSection?.id,
+              section?.id,
+              parameter?.parameterType,
+              parameter?.name,
+              parameter?.actionId,
+              { valueIds: value?.id, values: value?.updateName },
+              subSection?.type,
+              index,
+              parameter?.actionIndex
+            );
+          }}
+        />
+      )}
+    </>
   );
 };
 

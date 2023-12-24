@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { useTranslation } from "react-i18next";
 import { SketchPicker } from "react-color";
@@ -36,12 +36,13 @@ const SettingsWidget = ({
     createNewProductAndGoToParameterList,
     updatedProduct,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
-  const defultProductSKU = allProductSKU?.filter(
+  const defultProductSKU = allProductSKU?.find(
     (item) => item.id === productState?.productSKUId
   );
-  const defultTemplate = allTemplate?.filter(
+  const defultTemplate = allTemplate?.find(
     (item) => item.id === productState?.templateId
   );
+
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.categoryNameStyle}>
@@ -89,14 +90,17 @@ const SettingsWidget = ({
           <div style={{ width: "100%" }}>
             {allProductSKU && (
               <GoMakeAutoComplate
+                key={defultProductSKU}
                 options={allProductSKU}
-                placeholder={
-                  defultProductSKU?.length > 0
-                    ? defultProductSKU[0]?.name
-                    : t("products.addProduct.admin.productSKU")
-                }
+                placeholder={t("products.addProduct.admin.productSKU")}
                 style={clasess.dropDownListStyle}
                 getOptionLabel={(option: any) => option.name}
+                value={
+                  typeof productState?.productSKUId === "string"
+                    ? defultProductSKU
+                    : productState.productSKU
+                }
+                // defaultValue={defultProductSKU}
                 onChange={(e: any, value: any) => {
                   onChangeStateProduct("productSKUId", value);
                 }}
@@ -109,16 +113,18 @@ const SettingsWidget = ({
             {t("products.addProduct.admin.pricingType")}
           </div>
           <div style={{ width: "100%" }}>
-            {allTemplate && defultTemplate && (
+            {allTemplate && (
               <GoMakeAutoComplate
+                key={defultTemplate}
                 options={allTemplate}
-                placeholder={
-                  defultTemplate?.length > 0
-                    ? defultTemplate[0]?.name
-                    : t("products.addProduct.admin.pricingType")
-                }
+                placeholder={t("products.addProduct.admin.pricingType")}
                 style={clasess.dropDownListStyle}
                 getOptionLabel={(option: any) => option.name}
+                value={
+                  typeof productState?.templateId
+                    ? defultTemplate
+                    : productState?.templateId
+                }
                 onChange={(e: any, value: any) => {
                   onChangeStateProduct("templateId", value);
                 }}

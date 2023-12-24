@@ -3,8 +3,12 @@ import { useMemo } from "react";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
+import {useTranslation} from "react-i18next";
+import {adaptRight} from "@/utils/adapter";
 const useStyle = () => {
   const { theme, neutralColor, primaryColor } = useGomakeTheme();
+  const {t} = useTranslation();
+  const direction = t('direction');
   const classes = useMemo(() => {
     return {
       detailTitle: {
@@ -23,6 +27,7 @@ const useStyle = () => {
         backgroundColor: '#F9FAFB',
         padding: '0 16px',
         borderRadius: 16,
+        width: '100%'
       },
       actionContainerBorder: '2px solid ' + primaryColor(500),
       toggleActionButton: {
@@ -31,10 +36,23 @@ const useStyle = () => {
         height: 40,
         width: 40,
       },
+      toggleSubWorkFlowActionButton: {
+        backgroundColor: primaryColor(600),
+        borderRadius: 8,
+        height: 40,
+        width: 40,
+        color: 'white'
+      },
       workFlowContainer: {
         padding: '10px 16px',
         borderRadius: 16,
         backgroundColor: '#F9FAFB',
+      },
+      subWorkFlowContainer: {
+        padding: '10px 16px',
+        borderRadius: 16,
+        backgroundColor: primaryColor(300),
+        color: 'white'
       },
       buttonGroup: {
         borderRadius: '5px',
@@ -59,9 +77,18 @@ const useStyle = () => {
         borderRadius: '16px',
         textAlign: 'center' as 'center'
 
+      },
+      subWorkFlowDividerVertical: {
+        width: '2px',
+        backgroundColor: '#667085',
+        margin: '',
+        top: 0,
+        bottom: '50%',
+        height: '50%',
+        ...adaptRight(direction, 5)
       }
     };
-  }, [theme]);
+  }, [theme, direction]);
   return {
     classes,
   };

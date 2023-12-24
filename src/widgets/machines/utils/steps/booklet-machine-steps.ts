@@ -9,7 +9,8 @@ import {ConnectionComponent} from "@/widgets/machines/components/forms/connectio
 import {CuttingOptions} from "@/widgets/machines/components/forms/cutting-options";
 import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/other-setting-inputs";
 import {StapleInputsComponent} from "@/widgets/machines/components/forms/staple-inputs";
-import {MachineRunComponent} from "@/widgets/machines/components/forms/run";
+
+import {BookletCollectorUnit} from "@/widgets/machines/components/forms/booklet-collector-unit";
 
 const bookletMachineSteps = (isAdmin: boolean): IStep[] => {
     return isAdmin ?
@@ -20,7 +21,7 @@ const bookletMachineSteps = (isAdmin: boolean): IStep[] => {
             {label: 'speed', component: SpeedComponent},
             {label: 'cuttingOptions', component: CuttingOptions},
             {label: 'staple', component: StapleInputsComponent},
-            {label: 'collectionInsideUnit', component: MachineRunComponent},
+            {label: 'collectionInsideUnit', component: BookletCollectorUnit},
             {label: 'foldingUnit', component: OtherSettingsInputsComponent},
 
         ] :
@@ -32,7 +33,7 @@ const bookletMachineSteps = (isAdmin: boolean): IStep[] => {
             {label: 'connection', component: ConnectionComponent},
             {label: 'cuttingOptions', component: CuttingOptions},
             {label: 'staple', component: StapleInputsComponent},
-            {label: 'collectionInsideUnit', component: MachineRunComponent},
+            {label: 'collectionInsideUnit', component: BookletCollectorUnit},
             {label: 'foldingUnit', component: OtherSettingsInputsComponent},
 
         ];

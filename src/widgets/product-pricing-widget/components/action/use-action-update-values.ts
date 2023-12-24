@@ -1,16 +1,17 @@
-import {IOutput, IWorkFlowAction} from "@/widgets/product-pricing-widget/interface";
+import {ICalculatedWorkFlow, IOutput, IWorkFlowAction} from "@/widgets/product-pricing-widget/interface";
 import {useRecoilState, useRecoilValue} from "recoil";
 import {jobActionsState, selectedWorkFlowState, workFlowsState} from "@/widgets/product-pricing-widget/state";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
 
-const useActionUpdateValues = () => {
+const useActionUpdateValues = (workFlowId: string, isSubWorkFlow: boolean) => {
     const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
     const actions = useRecoilValue(jobActionsState);
     const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
+    const selectedSubWorkFlow = selectedWorkFlow?.subWorkFlows?.find(flow => flow.id === workFlowId);
+    const flow = isSubWorkFlow ? selectedSubWorkFlow : selectedWorkFlow;
     const updateDeliveryTime = (updatedObj: IOutput, actionId: string) => {
-        const selectedWorkFlow = workFlows?.find(flow => flow.selected);
-        if (selectedWorkFlow) {
-            const updatedActions = selectedWorkFlow.actions?.map(action => action.actionId !== actionId ? action : {
+        if (flow) {
+            const updatedActions = flow.actions?.map(action => action.actionId !== actionId ? action : {
                 ...action,
                 totalProductionTime: updatedObj
             });
@@ -20,8 +21,8 @@ const useActionUpdateValues = () => {
 
     const updateCost = (cost: string, profit: string = '0', actionId: string, source: EWorkSource) => {
         const price = +cost + (+profit * +cost / 100);
-        if (selectedWorkFlow) {
-            const updatedActions = selectedWorkFlow.actions?.map(action => action.actionId !== actionId ? action : {
+        if (flow) {
+            const updatedActions = flow.actions?.map(action => action.actionId !== actionId ? action : {
                 ...action,
                 totalCost: {
                     ...action.totalCost,
@@ -41,8 +42,8 @@ const useActionUpdateValues = () => {
 
     const updateProfit = (cost: string, profit: string, actionId: string, source: EWorkSource) => {
         const price = +cost + (+profit * +cost / 100);
-        if (selectedWorkFlow) {
-            const updatedActions = selectedWorkFlow.actions?.map(action => action.actionId !== actionId ? action : {
+        if (flow) {
+            const updatedActions = flow.actions?.map(action => action.actionId !== actionId ? action : {
                 ...action,
                 profit: {
                     ...action.profit,
@@ -62,8 +63,8 @@ const useActionUpdateValues = () => {
     const updatePrice = (price: string, cost: string, actionId: string, source: EWorkSource) => {
         const profit = +price - +cost;
         const profitPercentage = profit / +cost * 100;
-        if (selectedWorkFlow) {
-            const updatedActions = selectedWorkFlow.actions?.map(action => action.actionId !== actionId ? action : {
+        if (flow) {
+            const updatedActions = flow.actions?.map(action => action.actionId !== actionId ? action : {
                 ...action,
                 profit: {
                     ...action.profit,
@@ -82,24 +83,45 @@ const useActionUpdateValues = () => {
         }
     }
 
-    const updateSelectedWorkFlow = (actions: IWorkFlowAction[]) => {
-        const totalPrice = actions.reduce((sum, action) => action.source === EWorkSource.OUT ?
+    const calculateWorkFlowActionsTotalPrice = (actions: IWorkFlowAction[]) => {
+        return actions.reduce((sum, action) => action.source === EWorkSource.OUT ?
             action.totalPrice?.outSourceValues && action.totalPrice?.outSourceValues[0] ? sum + +action.totalPrice?.outSourceValues[0] :
                 sum :
             sum + +action.totalPrice.values[0], 0);
-        const totalCost = actions.reduce((sum, action) => action.source === EWorkSource.OUT ?
+    }
+    const calculateWorkFlowActionsTotalCost = (actions: IWorkFlowAction[]) => {
+        return actions.reduce((sum, action) => action.source === EWorkSource.OUT ?
             action.totalCost?.outSourceValues && action.totalCost?.outSourceValues[0] ? sum + +action.totalCost?.outSourceValues[0] :
                 sum :
             sum + +action.totalCost.values[0], 0);
 
-        const deliveryTime = actions.reduce((sum, action) => action.source === EWorkSource.OUT ?
-            action.totalProductionTime?.outSourceValues && action.totalProductionTime?.outSourceValues[0] ? sum + +action.totalProductionTime?.outSourceValues[0] :
+    }
+    const calculateWorkFlowActionsDeliveryTime = (actions: IWorkFlowAction[]) => {
+        return actions.reduce((sum, action) => action.source === EWorkSource.OUT ?
+            action.totalCost?.outSourceValues && action.totalCost?.outSourceValues[0] ? sum + +action.totalCost?.outSourceValues[0] :
                 sum :
-            sum + +action.totalProductionTime.values[0], 0);
+            sum + +action.totalCost.values[0], 0);
 
+    }
+
+    const calculateSubsWorkFlow = (subWorkFlows: ICalculatedWorkFlow[]) => {
+        const subsTotalPrice = subWorkFlows?.reduce((sum, flow) => calculateWorkFlowActionsTotalPrice(flow.actions), 0)
+        const subsTotalCost = subWorkFlows?.reduce((sum, flow) => calculateWorkFlowActionsTotalCost(flow.actions), 0)
+        const subsDeliveryTime = subWorkFlows?.reduce((sum, flow) => calculateWorkFlowActionsDeliveryTime(flow.actions), 0)
+        return {
+            subsTotalPrice,
+            subsTotalCost,
+            subsDeliveryTime
+        }
+    }
+    const updateSelectedWorkFlow = (actions: IWorkFlowAction[]) => {
+        const totalPrice = calculateWorkFlowActionsTotalPrice(actions);
+        const totalCost = calculateWorkFlowActionsTotalCost(actions);
+        const deliveryTime = calculateWorkFlowActionsDeliveryTime(actions);
         const profit = (totalPrice - totalCost) / totalCost * 100;
-        setWorkFlows(workFlows.map(flow => !flow.selected ? flow : {
-            ...flow,
+
+        const subWorkFlows = selectedWorkFlow?.subWorkFlows?.map(subFlow => subFlow.id !== workFlowId ? subFlow : {
+            ...subFlow,
             actions: actions,
             totalPrice: {
                 ...flow.totalPrice,
@@ -117,12 +139,55 @@ const useActionUpdateValues = () => {
                 ...flow.totalRealProductionTime,
                 values: [deliveryTime.toString()]
             }
-        }))
+        })
+
+        const {subsTotalPrice, subsTotalCost, subsDeliveryTime} = calculateSubsWorkFlow(subWorkFlows);
+
+        setWorkFlows(workFlows.map(flow =>
+            !flow.selected ? flow :
+                isSubWorkFlow ?
+                    {
+                        ...flow,
+                        subWorkFlows: subWorkFlows,
+                        totalPrice: {
+                            ...flow.totalPrice,
+                            values: [(subsTotalPrice + calculateWorkFlowActionsTotalPrice(flow.actions)).toString()]
+                        },
+                        totalCost: {
+                            ...flow.totalCost,
+                            values: [(subsTotalCost + calculateWorkFlowActionsTotalCost(flow.actions)).toString()]
+                        },
+                        totalRealProductionTime: {
+                            ...flow.totalRealProductionTime,
+                            values: [(subsDeliveryTime + calculateWorkFlowActionsDeliveryTime(flow.actions)).toString()]
+                        }
+                    }
+                    :
+                    {
+                        ...flow,
+                        actions: actions,
+                        totalPrice: {
+                            ...flow.totalPrice,
+                            values: [(subsTotalPrice + totalPrice).toString()],
+                        },
+                        totalCost: {
+                            ...flow.totalCost,
+                            values: [(subsTotalCost + totalCost).toString()]
+                        },
+                        profit: {
+                            ...flow.profit,
+                            values: [!!profit ? profit.toString() : '0']
+                        },
+                        totalRealProductionTime: {
+                            ...flow.totalRealProductionTime,
+                            values: [(subsDeliveryTime + calculateWorkFlowActionsDeliveryTime(actions)).toString()]
+                        }
+                    }))
     }
 
     const changeActionWorkSource = (source: EWorkSource, actionId: string) => {
-        if (selectedWorkFlow) {
-            const updatedActions = selectedWorkFlow.actions?.map(action => action.actionId !== actionId ? action : {
+        if (flow) {
+            const updatedActions = flow.actions?.map(action => action.actionId !== actionId ? action : {
                 ...action,
                 source: source
             })
@@ -134,15 +199,22 @@ const useActionUpdateValues = () => {
     const updateActionSupplier = (supplierId: string, actionId: string) => {
         setWorkFlows(workFlows.map(flow => !flow.selected ? flow : {
             ...flow,
-            actions: flow.actions?.map(action => action.actionId !== actionId ? action : {
+            actions: isSubWorkFlow ? flow.actions : flow.actions?.map(action => action.actionId !== actionId ? action : {
                 ...action,
-                supplierId: supplierId
-            })
+                supplierId: supplierId,
+            }),
+            subWorkFlows: isSubWorkFlow ? flow?.subWorkFlows?.map(subFlow => subFlow.id === workFlowId ? {
+                ...subFlow,
+                actions: subFlow?.actions?.map(action => action.actionId !== actionId ? action : {
+                    ...action,
+                    supplierId: supplierId,
+                }),
+            } : subFlow) : flow?.subWorkFlows
         }));
     };
 
-    const getActionMachinesList = (actionId: string) => {
-        const action = actions.find(action => action.actionId === actionId);
+    const getActionMachinesList = (actionId: string, productType: string | null) => {
+        const action = actions.find(action => action.actionId === actionId && productType === action.productType);
         if (action) {
             return action?.machineCategories?.flatMap(category => category.machines)?.map(machine => ({
                 value: machine.machineId,
@@ -151,9 +223,9 @@ const useActionUpdateValues = () => {
         }
         return [];
     }
-    const compareArrays = (array1:  {id: string, machineId: string}[], array2:  {id: string, machineId: string}[]): boolean => {
-        return  array1.length === array2.length && array1.every(element =>
-            array2.some(otherElement =>  otherElement.machineId === element.machineId)
+    const compareArrays = (array1: { id: string, machineId: string }[], array2: { id: string, machineId: string }[]): boolean => {
+        return array1.length === array2.length && array1.every(element =>
+            array2.some(otherElement => otherElement.machineId === element.machineId)
         );
 
     }
@@ -170,16 +242,22 @@ const useActionUpdateValues = () => {
                     machineId: action.mongoDBMachineId
                 }));
                 return compareArrays(workFlowMachines, machines);
-                });
+            });
             if (!!workFlowSameMachines) {
-                setWorkFlows(workFlows.map(flow => workFlowSameMachines.id === flow.id ? {...flow, selected: true} : {...flow, selected: false}))
+                setWorkFlows(workFlows.map(flow => workFlowSameMachines.id === flow.id ? {
+                    ...flow,
+                    selected: true
+                } : {...flow, selected: false}))
                 return true
             } else {
                 const workFlowHasMachine = workFlows?.find(flow => {
                     return flow.actions?.flatMap(action => action.mongoDBMachineId)?.includes(machineId);
                 });
                 if (!!workFlowHasMachine) {
-                    setWorkFlows(workFlows?.map(flow => flow.id === workFlowHasMachine.id ? {...flow, selected: true} : {...flow, selected: false}));
+                    setWorkFlows(workFlows?.map(flow => flow.id === workFlowHasMachine.id ? {
+                        ...flow,
+                        selected: true
+                    } : {...flow, selected: false}));
                     return true
                 }
             }

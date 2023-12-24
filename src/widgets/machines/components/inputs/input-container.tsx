@@ -9,7 +9,7 @@ const InputContainer = ({attribute, updateState, error, newValue, disableUpdateV
             case 'multiArrayInput':
                 return <FormArrayInput newValue={newValue} name={attribute.name} parameterKey={attribute.parameterKey}
                                        value={attribute.value} inputs={attribute.inputs} updateState={updateState}
-                                       isValid={!error} disableUpdateValues={!!disableUpdateValues}/>
+                                       isValid={!error} disableUpdateValues={!!disableUpdateValues} disabled={!!attribute?.disabled} disableAddValue={attribute?.disableAddValue}/>
             case 'multiInput':
                 return <MachineMultiInput name={attribute.name} parameterKey={attribute.parameterKey}
                                           updateState={updateState}

@@ -1,13 +1,17 @@
-import { useStyle } from "./style";
+import { TabsMappingWidget } from "@/pages-components/products/digital-offset-price/widgets/tabs-mapping";
 import { GomakePrimaryButton, GomakeTextInput } from "@/components";
-import { HiddenIcon } from "../icons/hidden-icon";
+import { useAddProduct } from "@/hooks";
+
+import { ChildParameterModal } from "../child-parameter-modal";
+import { NotRequierdIcon } from "../icons/not-requierd-icon";
 import { NotHiddenIcon } from "../icons/not-hidden-icon";
 import { RequierdIcon } from "../icons/requierd-icon";
-import { NotRequierdIcon } from "../icons/not-requierd-icon";
-import { useAddProduct } from "@/hooks";
+import { HiddenIcon } from "../icons/hidden-icon";
 import { SettingIcon } from "../icons";
-import { ChildParameterModal } from "../child-parameter-modal";
-import { TabsMappingWidget } from "@/pages-components/products/digital-offset-price/widgets/tabs-mapping";
+
+import { useStyle } from "./style";
+import { EParameterTypes } from "@/enums";
+import { Tabs } from "@mui/material";
 
 const ParameterWidget = () => {
   const { clasess } = useStyle();
@@ -25,6 +29,8 @@ const ParameterWidget = () => {
     updatedProductParameteName,
     setChangeName,
     updatedValuesConfigsForParameters,
+    setTemplate,
+    getProductById,
     activeIndex,
     template,
     selectedSubSection,
@@ -40,18 +46,24 @@ const ParameterWidget = () => {
           <div style={clasess.mainRowContainer}>
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
-                {template?.sections.map((item, index) => {
-                  return (
-                    <TabsMappingWidget
-                      key={`tab-${index}`}
-                      clasess={clasess}
-                      index={index}
-                      handleTabClick={handleTabClick}
-                      activeIndex={activeIndex}
-                      item={item}
-                    />
-                  );
-                })}
+                <Tabs variant="scrollable" scrollButtons={"auto"}>
+                  {template?.sections.map((item, index) => {
+                    return (
+                      <TabsMappingWidget
+                        key={`tab-${index}`}
+                        clasess={clasess}
+                        index={index}
+                        handleTabClick={handleTabClick}
+                        activeIndex={activeIndex}
+                        productTemplate={template}
+                        setProductTemplate={setTemplate}
+                        item={item}
+                        isAdmin={true}
+                        getProductById={getProductById}
+                      />
+                    );
+                  })}
+                </Tabs>
               </div>
               <div style={{ height: "50vh", overflow: "scroll" }}>
                 <div style={clasess.sectionsContainer}>
@@ -91,7 +103,8 @@ const ParameterWidget = () => {
                                               }
                                             />
                                           </div>
-                                          {parameter?.parameterType === 6 && (
+                                          {parameter?.parameterType ===
+                                            EParameterTypes.SELECT_CHILDS_PARAMETERS && (
                                             <div
                                               style={clasess.plusIconStyle}
                                               onClick={() =>
@@ -135,33 +148,36 @@ const ParameterWidget = () => {
                                               <NotHiddenIcon />
                                             </div>
                                           )}
-                                          {parameter?.isRequired ? (
-                                            <div
-                                              style={{ cursor: "pointer" }}
-                                              onClick={() =>
-                                                updatedProductParameteRequierd(
-                                                  section?.id,
-                                                  subSection?.id,
-                                                  parameter
-                                                )
-                                              }
-                                            >
-                                              <RequierdIcon />
-                                            </div>
-                                          ) : (
-                                            <div
-                                              style={{ cursor: "pointer" }}
-                                              onClick={() =>
-                                                updatedProductParameteRequierd(
-                                                  section?.id,
-                                                  subSection?.id,
-                                                  parameter
-                                                )
-                                              }
-                                            >
-                                              <NotRequierdIcon />
-                                            </div>
-                                          )}
+                                          {
+                                            parameter?.parameterType !== EParameterTypes.SWITCH ?
+                                                parameter?.isRequired  ? (
+                                                    <div
+                                                        style={{ cursor: "pointer" }}
+                                                        onClick={() =>
+                                                            updatedProductParameteRequierd(
+                                                                section?.id,
+                                                                subSection?.id,
+                                                                parameter
+                                                            )
+                                                        }
+                                                    >
+                                                      <RequierdIcon />
+                                                    </div>
+                                                ) : (
+                                                    <div
+                                                        style={{ cursor: "pointer" }}
+                                                        onClick={() =>
+                                                            updatedProductParameteRequierd(
+                                                                section?.id,
+                                                                subSection?.id,
+                                                                parameter
+                                                            )
+                                                        }
+                                                    >
+                                                      <NotRequierdIcon />
+                                                    </div>
+                                                ) : <></>
+                                          }
                                         </div>
                                         <div
                                           style={

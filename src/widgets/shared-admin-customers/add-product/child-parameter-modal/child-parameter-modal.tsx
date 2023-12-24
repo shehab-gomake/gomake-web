@@ -115,142 +115,135 @@ const ChildParameterModal = ({
         insideStyle={clasess.insideStyle}
       >
         <div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "flex-start",
-              gap: 10,
-              marginBottom: 15,
-            }}
-          >
-            <div
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                let temp = [...state.valuesConfigs];
-                temp.push({
-                  id: uuidv4(),
-                  isHidden: false,
-                  isDefault: false,
-                  isDeleted: false,
-                  updateName: "",
-                  materialValueIds: [],
-                  values: {},
-                });
-                setState({
-                  ...state,
-                  valuesConfigs: temp,
-                });
-              }}
-            >
-              <PlusIcon width={25} height={25} />
+          <div style={{ height: 330, overflow: "scroll" }}>
+            <div style={clasess.addBtnStyle}>
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  let temp = [...state.valuesConfigs];
+                  temp.push({
+                    id: uuidv4(),
+                    isHidden: false,
+                    isDefault: false,
+                    isDeleted: false,
+                    updateName: "",
+                    materialValueIds: [],
+                    values: {},
+                  });
+                  setState({
+                    ...state,
+                    valuesConfigs: temp,
+                  });
+                }}
+              >
+                <PlusIcon width={25} height={25} />
+              </div>
+            </div>
+            <div>
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="droppable">
+                  {(provided: any, snapshot: any) => {
+                    return (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        style={getListStyle(snapshot.isDraggingOver)}
+                      >
+                        {state?.valuesConfigs?.map((item, index) => (
+                          <Draggable
+                            key={item.id}
+                            draggableId={item.id}
+                            index={index}
+                          >
+                            {(provided: any, snapshot: any) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                style={getItemStyle(
+                                  snapshot.isDragging,
+                                  provided.draggableProps.style
+                                )}
+                                // style={clasess.addNewValueContainer}
+                              >
+                                <div
+                                  style={{
+                                    cursor: "grab",
+                                  }}
+                                >
+                                  <ReOrderIcon />
+                                </div>
+
+                                <div style={clasess.textInputContainer}>
+                                  <GomakeTextInput
+                                    style={clasess.textInputStyle}
+                                    placeholder="Enter Value"
+                                    onChange={(e) =>
+                                      changeItems(
+                                        index,
+                                        "updateName",
+                                        e.target.value
+                                      )
+                                    }
+                                    defaultValue={item?.updateName}
+                                  />
+                                </div>
+
+                                {state?.childsParameters?.map(
+                                  (value: any, indexChild: number) => {
+                                    return (
+                                      <div
+                                        style={clasess.textInputContainer}
+                                        key={`child_${indexChild}`}
+                                      >
+                                        <GomakeTextInput
+                                          style={clasess.textInputStyle}
+                                          placeholder={`Enter ${value?.name}`}
+                                          onChange={(e) => {
+                                            changeItems(index, "values", {
+                                              ...state.valuesConfigs[index]
+                                                .values,
+                                              [value?.id]: e.target.value,
+                                            });
+                                          }}
+                                          defaultValue={
+                                            state.valuesConfigs[index].values[
+                                              value?.id
+                                            ]
+                                          }
+                                        />
+                                      </div>
+                                    );
+                                  }
+                                )}
+                                <div
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => deleteRow(item)}
+                                >
+                                  <RemoveIcon />
+                                </div>
+                              </div>
+                            )}
+                          </Draggable>
+                          // <ChildParameteMapping
+                          //   item={item}
+                          //   index={index}
+                          //   changeItems={changeItems}
+                          //   state={state}
+                          //   deleteRow={deleteRow}
+                          // />
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    );
+                  }}
+                </Droppable>
+              </DragDropContext>
             </div>
           </div>
-          <div style={{ height: 450, overflow: "scroll" }}>
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="droppable">
-                {(provided: any, snapshot: any) => {
-                  return (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      style={getListStyle(snapshot.isDraggingOver)}
-                    >
-                      {state?.valuesConfigs?.map((item, index) => (
-                        <Draggable
-                          key={item.id}
-                          draggableId={item.id}
-                          index={index}
-                        >
-                          {(provided: any, snapshot: any) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              style={getItemStyle(
-                                snapshot.isDragging,
-                                provided.draggableProps.style
-                              )}
-                              // style={clasess.addNewValueContainer}
-                            >
-                              <div
-                                style={{
-                                  cursor: "grab",
-                                }}
-                              >
-                                <ReOrderIcon />
-                              </div>
-
-                              <div style={clasess.textInputContainer}>
-                                <GomakeTextInput
-                                  style={clasess.textInputStyle}
-                                  placeholder="Enter Value"
-                                  onChange={(e) =>
-                                    changeItems(
-                                      index,
-                                      "updateName",
-                                      e.target.value
-                                    )
-                                  }
-                                  defaultValue={item?.updateName}
-                                />
-                              </div>
-
-                              {state?.childsParameters?.map(
-                                (value: any, indexChild: number) => {
-                                  return (
-                                    <div
-                                      style={clasess.textInputContainer}
-                                      key={`child_${indexChild}`}
-                                    >
-                                      <GomakeTextInput
-                                        style={clasess.textInputStyle}
-                                        placeholder={`Enter ${value?.name}`}
-                                        onChange={(e) => {
-                                          changeItems(index, "values", {
-                                            ...state.valuesConfigs[index]
-                                              .values,
-                                            [value?.id]: e.target.value,
-                                          });
-                                        }}
-                                        defaultValue={
-                                          state.valuesConfigs[index].values[
-                                            value?.id
-                                          ]
-                                        }
-                                      />
-                                    </div>
-                                  );
-                                }
-                              )}
-                              <div
-                                style={{ cursor: "pointer" }}
-                                onClick={() => deleteRow(item)}
-                              >
-                                <RemoveIcon />
-                              </div>
-                            </div>
-                          )}
-                        </Draggable>
-                        // <ChildParameteMapping
-                        //   item={item}
-                        //   index={index}
-                        //   changeItems={changeItems}
-                        //   state={state}
-                        //   deleteRow={deleteRow}
-                        // />
-                      ))}
-                      {provided.placeholder}
-                    </div>
-                  );
-                }}
-              </Droppable>
-            </DragDropContext>
-          </div>
           <div
             style={{
-              marginTop: 50,
+              marginTop: 10,
               display: "flex",
               justifyContent: "center",
               width: "100%",
