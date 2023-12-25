@@ -188,6 +188,16 @@ const useNewProfits = () => {
           t("products.profits.pricingListWidget.more"),
         ]);
       }
+    }
+    if (router.query.draftId) {
+      setTableHeaders([
+        "Quantity",
+        selectedPricingBy?.label,
+        t("products.profits.pricingListWidget.profit"),
+        t("products.profits.pricingListWidget.unitPrice"),
+        t("products.profits.pricingListWidget.totalPrice"),
+        t("products.profits.pricingListWidget.more"),
+      ]);
     } else {
       setTableHeaders([
         selectedPricingBy?.label,
@@ -205,7 +215,7 @@ const useNewProfits = () => {
         ]);
       }
     }
-  }, [selectedPricingBy, selectedAdditionalProfitRow]);
+  }, [selectedPricingBy, selectedAdditionalProfitRow, router]);
 
   const onCloseAddStepModal = () => {
     setOpenAddStepModal(false);
@@ -280,8 +290,17 @@ const useNewProfits = () => {
     [actionProfitByActionId]
   );
   useEffect(() => {
-    setActionProfitRowsList(allActionProfitRowsByActionId);
-  }, [allActionProfitRowsByActionId, selectedPricingTableItems]);
+    if (router.query.draftId) {
+      setActionProfitRowsList(calculateCaseValue?.caseProfitRows);
+    } else {
+      setActionProfitRowsList(allActionProfitRowsByActionId);
+    }
+  }, [
+    allActionProfitRowsByActionId,
+    selectedPricingTableItems,
+    router,
+    calculateCaseValue,
+  ]);
   const changeactionProfitRowsItems = (
     index: number,
     filedName: string,

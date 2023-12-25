@@ -99,7 +99,10 @@ const PropertiesTable = () => {
               return (
                 <StyledTableRow>
                   <StyledTableCell align={"center"}>
-                    {property.propertyName}
+                    {property.propertyName}{" "}
+                    <span style={classes.defaultUnitStyle}>
+                      {property.defaultUnit}
+                    </span>
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>
                     <div style={classes.rowItem} className="scrollBlue">

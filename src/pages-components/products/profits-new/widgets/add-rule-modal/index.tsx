@@ -34,7 +34,7 @@ const AddRuleModal = ({
     deleteRule,
     handleChange,
     addRule,
-    machincesStateValue,
+    machincesList,
     productsStateValue,
     clientTypesStateValue,
     parametersStateValue,
@@ -87,11 +87,11 @@ const AddRuleModal = ({
                 </span>
               </div>
               <GoMakeAutoComplate
-                options={machincesStateValue?.map((value) => {
+                options={machincesList?.machines?.map((value) => {
                   return {
                     ...value,
-                    label: `${value?.manufacturer} ${value?.model}`,
-                    id: value.id,
+                    label: value?.machineName,
+                    id: value.machineId,
                   };
                 })}
                 style={clasess.dropDownListContainer}
@@ -133,7 +133,7 @@ const AddRuleModal = ({
               <div style={clasess.selectTypeStyle}>
                 Enter Value
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GomakeTextInput
@@ -424,11 +424,11 @@ const AddRuleModal = ({
                         {t("properties.statment")}
                       </label>
                       <GoMakeAutoComplate
-                        options={machincesStateValue?.map((value) => {
+                        options={machincesList?.machines?.map((value) => {
                           return {
                             ...value,
-                            label: `${value?.manufacturer} ${value?.model}`,
-                            id: value.id,
+                            label: value?.machineName,
+                            id: value.machineId,
                           };
                         })}
                         style={clasess.dropDownListContainer}
@@ -469,11 +469,11 @@ const AddRuleModal = ({
                           {t("properties.statment")}
                         </label>
                         <GoMakeAutoComplate
-                          options={machincesStateValue?.map((value) => {
+                          options={machincesList?.machines?.map((value) => {
                             return {
                               ...value,
-                              label: `${value?.manufacturer} ${value?.model}`,
-                              id: value.id,
+                              label: value?.machineName,
+                              id: value.machineId,
                             };
                           })}
                           style={clasess.dropDownListContainer}

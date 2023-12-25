@@ -11,7 +11,6 @@ const PricingList = ({
   PricingBy,
   Transition,
   actionProfitRowChartData,
-  setSelectedTransition,
   selectedTransition,
   selectedPricingBy,
   updatePricingByForAction,

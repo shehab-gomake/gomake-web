@@ -4,6 +4,7 @@ import {
   getAllProductsForDropDownList,
   getAndSetAllParameters,
   getAndSetClientTypes,
+  getAndSetMachincesByActionId,
   getAndSetMachincesNew,
 } from "@/services/hooks";
 import {
@@ -130,8 +131,7 @@ const useAddRuleModal = ({
     setRules(updatedRules);
   };
 
-  const [machincesStateValue, setMachincesState] =
-    useRecoilState<any>(machincesState);
+  const [machincesList, setMachincesList] = useState<any>();
   const [productsStateValue, setProductsState] =
     useRecoilState<any>(productsState);
   const [clientTypesStateValue, setClientTypesState] =
@@ -139,9 +139,11 @@ const useAddRuleModal = ({
   const [parametersStateValue, setParametersState] =
     useRecoilState<any>(parametersState);
 
-  const getMachincesProfits = useCallback(async () => {
-    await getAndSetMachincesNew(callApi, setMachincesState);
-  }, []);
+  const getMachincesByActionId = useCallback(async () => {
+    await getAndSetMachincesByActionId(callApi, setMachincesList, {
+      actionId: router.query.actionId,
+    });
+  }, [router]);
   const getProducts = useCallback(async () => {
     await getAllProductsForDropDownList(callApi, setProductsState);
   }, []);
@@ -152,12 +154,14 @@ const useAddRuleModal = ({
     return await getAndSetAllParameters(callApi, setParametersState);
   }, []);
   useEffect(() => {
-    getMachincesProfits();
     getProducts();
     getClientTypes();
     getParameters();
     getAllMaterials();
   }, []);
+  useEffect(() => {
+    getMachincesByActionId();
+  }, [router]);
 
   const [exceptionType, setExceptionType] = useState<any>();
   const [additionalProfit, setAdditionalProfit] = useState<any>(0);
@@ -304,7 +308,7 @@ const useAddRuleModal = ({
     deleteRule,
     handleChange,
     addRule,
-    machincesStateValue,
+    machincesList,
     productsStateValue,
     clientTypesStateValue,
     parametersStateValue,

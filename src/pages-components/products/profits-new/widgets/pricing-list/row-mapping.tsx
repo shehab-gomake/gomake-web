@@ -7,6 +7,7 @@ import { PricingListTableRowProps } from "../../interface";
 import { ChangeEvent } from "react";
 import { EPricingBy } from "../../enums/profites-enum";
 import { MoreCircleIcon } from "@/icons";
+import { useRouter } from "next/router";
 
 const RowMappingWidget = ({
   item,
@@ -19,6 +20,7 @@ const RowMappingWidget = ({
   selectedAdditionalProfitRow,
 }: PricingListTableRowProps) => {
   const { clasess } = useStyle();
+  const router = useRouter();
   const {
     isUpdateCost,
     isUpdatTotalPrice,
@@ -26,7 +28,6 @@ const RowMappingWidget = ({
     profit,
     unitPrice,
     isUpdateUnitPrice,
-    isUpdatProfitValue,
     setIsUpdateProfitValue,
     setIsUpdateUnitPrice,
     onBlurProfit,
@@ -49,6 +50,21 @@ const RowMappingWidget = ({
   });
   return (
     <TableRow key={item.id}>
+      {router?.query?.draftId && (
+        <PrimaryTableCell style={clasess.cellContainerStyle}>
+          <div style={clasess.cellTextInputStyle}>
+            <InputUpdatedValues
+              value={item?.caseQuantity}
+              onBlur={() => onBlurCost(item)}
+              isUpdate={isUpdateCost}
+              setIsUpdate={setIsUpdateCost}
+              onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
+                onInputChangeCost(e)
+              }
+            />
+          </div>
+        </PrimaryTableCell>
+      )}
       <PrimaryTableCell style={clasess.cellContainerStyle}>
         <div style={clasess.cellTextInputStyle}>
           <InputUpdatedValues
@@ -99,6 +115,21 @@ const RowMappingWidget = ({
               setIsUpdate={setIsUpdateProfitValue}
               onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
                 onInputChangeTotalPrice(e)
+              }
+            />
+          </div>
+        </PrimaryTableCell>
+      )}
+      {router?.query?.draftId && (
+        <PrimaryTableCell style={clasess.cellContainerStyle}>
+          <div style={clasess.cellTextInputStyle}>
+            <InputUpdatedValues
+              value={item?.caseQuantity}
+              onBlur={() => onBlurCost(item)}
+              isUpdate={isUpdateCost}
+              setIsUpdate={setIsUpdateCost}
+              onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
+                onInputChangeCost(e)
               }
             />
           </div>

@@ -1,8 +1,8 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { generalParametersState, isLoadgingState } from "@/store";
+import { isLoadgingState, subProductsParametersState } from "@/store";
 import { Checkbox, Slider } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { EWidgetProductType } from "../enums";
@@ -35,21 +35,34 @@ const RightSideWidget = ({
   widgetType,
   setPriceRecovery,
   priceRecovery,
+  setSamlleType,
 }: any) => {
+  useEffect(() => {
+    if (typeof defaultPrice === "object") {
+      console.log("defaultPrice", { defaultPrice, workFlowSelected, template });
+    }
+  }, [defaultPrice]);
   const isLoading = useRecoilValue(isLoadgingState);
-  const generalParameters = useRecoilValue<any>(generalParametersState);
+  const subProducts = useRecoilValue<any>(subProductsParametersState);
   const calculationProgress = useRecoilValue(calculationProgressState);
-  const quantity = generalParameters?.find(
-    (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
-  );
+  const quantity = useMemo(() => {
+    if (subProducts) {
+      const generalParameters = subProducts.find((x) => !x.type)?.parameters;
+      return generalParameters?.find(
+        (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+      );
+    }
+  }, [subProducts]);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const [changePrice, setChangePrice] = useState<number>(0);
-  const handleChange = (event: Event, newValue: number | number[]) => {
+  const handleChange = (event: Event, newValue: any) => {
     setPriceRecovery(false);
-    setDefaultPrice(newValue as number);
-    setChangePrice(newValue as number);
+    const updatedDefaultPrice = { ...defaultPrice };
+    updatedDefaultPrice.values = [...updatedDefaultPrice.values];
+    updatedDefaultPrice.values[0] = newValue;
+    setDefaultPrice(updatedDefaultPrice);
+    setChangePrice(updatedDefaultPrice);
   };
-
   const { t } = useTranslation();
   return (
     <div style={clasess.rightSideMainContainer}>
@@ -88,65 +101,42 @@ const RightSideWidget = ({
           </div>
         </div>
 
-        <div style={clasess.headerRightSide}>
+        {/* <div style={clasess.headerRightSide}>
           <div style={clasess.flyerText}>
             {t("products.offsetPrice.admin.flyerPoster")}
           </div>
           <div style={clasess.flyerText}>
-            {isNaN(defaultPrice / quantity?.values[0])
+            {isNaN(defaultPrice?.values[0] / quantity?.values[0])
               ? 0
-              : (defaultPrice / quantity?.values[0]).toFixed(2)}{" "}
+              : (defaultPrice?.values[0] / quantity?.values[0]).toFixed(2)}{" "}
             USD
           </div>
-        </div>
-        <div style={clasess.imgProductContainer}>
+        </div> */}
+        {/* <div style={clasess.imgProductContainer}>
           <img src={template.img} alt="gomake" style={{ width: "100%" }} />
-        </div>
-        <div style={clasess.urgentEstimateContainer}>
-          <div style={clasess.secondText}>
-            {t("products.offsetPrice.admin.takeEstimate", {
-              data: `${template?.deliveryTime} days`,
-            })}
-          </div>
-          <div style={clasess.urgentContainer}>
-            <Checkbox
-              icon={<CheckboxIcon />}
-              checkedIcon={<CheckboxCheckedIcon />}
-              onChange={() => {
-                setUrgentOrder(!urgentOrder);
-              }}
-              checked={urgentOrder}
-            />
-            <div style={clasess.secondText}>
-              {t("products.offsetPrice.admin.urgentOrder")}
+        </div> */}
+        {typeof defaultPrice === "object" && (
+          <>
+            <div style={clasess.progress}>
+              <PermissionCheck userPermission={Permissions.EDIT_PRICE_QUOTE}>
+                <Slider
+                  defaultValue={defaultPrice?.values[0]}
+                  value={defaultPrice?.values[0]}
+                  aria-label="Default"
+                  style={{ width: "93%", marginLeft: 10 }}
+                  min={10}
+                  max={100}
+                  onChange={handleChange}
+                />
+              </PermissionCheck>
             </div>
-          </div>
-        </div>
-        <div style={clasess.orderContainer}>
-          {t("products.offsetPrice.admin.orderToral", {
-            pieceNum: quantity?.values[0],
-            price: isNaN(defaultPrice / quantity?.values[0])
-              ? 0
-              : (defaultPrice / quantity?.values[0]).toFixed(2),
-          })}
-        </div>
-        <div style={clasess.progress}>
-          <PermissionCheck userPermission={Permissions.EDIT_PRICE_QUOTE}>
-            <Slider
-              defaultValue={defaultPrice}
-              value={defaultPrice}
-              aria-label="Default"
-              style={{ width: "93%", marginLeft: 10 }}
-              min={10}
-              max={100}
-              onChange={handleChange}
-            />
-          </PermissionCheck>
-        </div>
-        <div style={clasess.labelBrogressContainer}>
-          <div style={clasess.labelStyle}>10.00</div>
-          <div style={clasess.labelStyle}>100.00</div>
-        </div>
+            <div style={clasess.labelBrogressContainer}>
+              <div style={clasess.labelStyle}>10.00</div>
+              <div style={clasess.labelStyle}>100.00</div>
+            </div>
+          </>
+        )}
+
         <div style={clasess.totalContainer}>
           <div style={clasess.totalStyle}>
             {t("products.offsetPrice.admin.total")}
@@ -163,14 +153,51 @@ const RightSideWidget = ({
                 }
                 onChange={(e: any) => {
                   setPriceRecovery(false);
-                  setDefaultPrice(e.target.value);
-                  setChangePrice(e.target.value);
+                  const updatedDefaultPrice = { ...defaultPrice };
+                  updatedDefaultPrice.values = [...updatedDefaultPrice?.values];
+                  updatedDefaultPrice.values[0] = e.target.value;
+                  setDefaultPrice(updatedDefaultPrice);
+                  setChangePrice(updatedDefaultPrice);
                 }}
                 style={clasess.inputPriceStyle}
               />
             )}
           </div>
           <span style={clasess.totalStyle}>USD</span>
+        </div>
+        {typeof defaultPrice === "object" && (
+          <div style={clasess.orderContainer}>
+            {t("products.offsetPrice.admin.orderToral", {
+              pieceNum: quantity?.values[0],
+              price: isNaN(defaultPrice?.values[0] / quantity?.values[0])
+                ? 0
+                : (defaultPrice?.values[0] / quantity?.values[0]).toFixed(2),
+            })}
+          </div>
+        )}
+
+        <div style={clasess.urgentEstimateContainer}>
+          {workFlowSelected &&
+            workFlowSelected?.totalRealProductionTime?.values[0].length > 0 && (
+              <div style={clasess.secondText}>
+                {t("products.offsetPrice.admin.takeEstimate", {
+                  data: `${workFlowSelected?.totalRealProductionTime?.values[0]} ${workFlowSelected?.totalRealProductionTime?.defaultUnit}`,
+                })}
+              </div>
+            )}
+          <div style={clasess.urgentContainer}>
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+              onChange={() => {
+                setUrgentOrder(!urgentOrder);
+              }}
+              checked={urgentOrder}
+            />
+            <div style={clasess.secondText}>
+              {t("products.offsetPrice.admin.urgentOrder")}
+            </div>
+          </div>
         </div>
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
@@ -255,7 +282,7 @@ const RightSideWidget = ({
                   getOptionLabel={(option: any) => option.text}
                   placeholder={t("products.offsetPrice.admin.sampleType")}
                   style={clasess.dropDownListStyle}
-                  // onChange={(e, value) => setSamlleType(value)}
+                  onChange={(e, value) => setSamlleType(value)}
                 />
               </div>
               <div style={clasess.multiLineContainer}>
@@ -272,18 +299,6 @@ const RightSideWidget = ({
             </div>
           ) : (
             <div style={clasess.productionStatus}>
-              <div style={clasess.sampleTypeStyle}>
-                {t("products.offsetPrice.admin.sampleType")}
-              </div>
-              <div style={clasess.autoCompleteContainer}>
-                <GoMakeAutoComplate
-                  options={exampleTypeValues}
-                  getOptionLabel={(option: any) => option.text}
-                  placeholder={t("products.offsetPrice.admin.sampleType")}
-                  style={clasess.dropDownListStyle}
-                  // onChange={(e, value) => setSamlleType(value)}
-                />
-              </div>
               <div style={clasess.multiLineContainer}>
                 <GomakeTextInput
                   multiline={6}
@@ -298,6 +313,9 @@ const RightSideWidget = ({
             </div>
           )}
         </div>
+      </div>
+      <div style={clasess.noVatStyle}>
+        {t("products.offsetPrice.admin.dontVAT")}
       </div>
       {/* <GomakePrimaryButton
         style={clasess.addOrderBtn}
