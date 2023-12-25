@@ -26,10 +26,11 @@ const CONVERT_QUOTE_TO_ORDER_URL = '/v1/erp-service/documents/convert-quote-to-o
 const GET_CALCULATE_DOCUMENT_ITEM_URL = '/v1/erp-service/documents/calculate-document-item';
 const GET_CALCULATE_DOCUMENT_URL = '/v1/erp-service/documents/calculate-document';
 const ADD_ITEM_URL = '/v1/erp-service/documents/add-item';
-
 const UPDATE_DOCUMENT_URL = '/v1/erp-service/documents/update-document';
 const UPDATE_DOCUMENT_ITEM_URL = '/v1/erp-service/documents/update-document-item';
-
+const UPDATE_DUE_DATE_URL ='/v1/erp-service/documents/update-due-date';
+const UPDATE_AGENT_URL ='/v1/erp-service/documents/update-agent';
+const GET_PRODUCT_ITEM_BY_ID_URL= '/v1/erp-service/documents/get-product-document-item-by-id';
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_DOCUMENT_URL, setState, data);
@@ -119,7 +120,6 @@ const calculateDocumentItemApi: ICallAndSetData = async (callApi, setState,
     return await getSetApiData(callApi, EHttpMethod.GET, GET_CALCULATE_DOCUMENT_ITEM_URL, setState, data);
 } 
 
-
 const calculateDocumentApi: ICallAndSetData = async (callApi, setState,data) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_CALCULATE_DOCUMENT_URL, setState, data);
 } 
@@ -131,6 +131,23 @@ const addItemApi: ICallAndSetData = async (callApi, setState, data) => {
 const updateDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_DOCUMENT_URL, setState, data);
 }
+
+const updateDocumentItemApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_DOCUMENT_ITEM_URL, setState, data);
+}
+
+const updateDueDateApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_DUE_DATE_URL, setState, data);
+}
+
+const updateAgentApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_AGENT_URL, setState, data);
+}
+
+
+const getProductByItemIdApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCT_ITEM_BY_ID_URL, setState, data);
+} 
 
 export {
     getDocumentApi,
@@ -159,5 +176,9 @@ export {
     calculateDocumentItemApi,
     calculateDocumentApi,
     addItemApi,
-    updateDocumentApi
+    updateDocumentApi,
+
+    updateDueDateApi,
+    updateAgentApi,
+    getProductByItemIdApi
 };

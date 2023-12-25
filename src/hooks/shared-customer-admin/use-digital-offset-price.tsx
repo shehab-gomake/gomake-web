@@ -45,14 +45,14 @@ import { getOutsourcingSuppliersListApi } from "@/services/api-service/suppliers
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useCalculationsWorkFlowsSignalr } from "../signalr/use-calculations-workflows-signalr";
 import { v4 as uuidv4 } from "uuid";
-import { addItemApi } from "@/services/api-service/generic-doc/documents-api";
+import { addItemApi, getProductByItemIdApi } from "@/services/api-service/generic-doc/documents-api";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const router = useRouter();
-  const {alertFaultAdded} = useSnackBar();
+  const {alertFaultAdded , alertFaultUpdate} = useSnackBar();
 
   const { clientTypesValue, renderOptions, checkWhatRenderArray } =
     useQuoteWidget();
@@ -1074,14 +1074,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
   }, [router, widgetType]);
 
-  const getProductQuoteItemById = useCallback(async () => {
-    await getAndSetgetProductQuoteItemById(callApi, (data)=>{
-      setDefaultProductTemplate(data);
-      initProduct(data);
-    }, {
-      QuoteItemId: router?.query?.quoteItem,
-    });
-  }, [router]);
+
+  ///////////// GET PRODUCT ITEM BY ID DONE/////////
+  const getProductQuoteItemById = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setDefaultProductTemplate(res?.data);
+        initProduct(res?.data);
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await getProductByItemIdApi(callApi, callBack, { documentItemId: router?.query?.quoteItem, documentType: 0 })
+  }
+  ///////////// GET PRODUCT ITEM BY ID DONE /////////
+
+
+
 
   const validateParameters = (inputArray) => {
     let isValid = true;
@@ -1261,6 +1270,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlowSelected(workFlowSelect);
     }
   }, [widgetType, productTemplate, quantity]);
+
+
+
+  ////////////////// UPDATE DOCUMENT ITEM /////////////////////
   const updateQuoteItem = useCallback(async () => {
     const res = await callApi(
       "PUT",

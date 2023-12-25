@@ -11,7 +11,7 @@ import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-
 import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { duplicateDocumentApi, getAllDocumentApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
+import { duplicateDocumentApi, getAllDocumentsApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "@/pages-components/enums";
 
 const useOrders = () => {
@@ -197,7 +197,7 @@ const useOrders = () => {
   //       alertFaultAdded();
   //     }
   //   };
-  //   await getAllDocumentApi(callApi, callBack, { 
+  //   await getAllDocumentsApi(callApi, callBack, { 
   //     documentType : DOCUMENT_TYPE.ORDER ,
   //     data : 
   //     {
