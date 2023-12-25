@@ -1,12 +1,11 @@
-import { Permissions } from "@/components/CheckPermission/enum";
 import { CustomerAuthLayout } from "@/layouts";
 import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
-import {EDocumentTypeEnum} from "@/enums";
+import { DOCUMENT_TYPE } from "@/pages-components/enums";
 
 export default function DeliveryNotes() {
   return (
     <CustomerAuthLayout>
-      <QuotesListPageWidget documentType={EDocumentTypeEnum.DeliveryNote}/>
+      <QuotesListPageWidget documentType={DOCUMENT_TYPE.DELIVERY_NOTE}/>
     </CustomerAuthLayout>
   );
 }

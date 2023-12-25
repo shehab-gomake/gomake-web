@@ -67,18 +67,21 @@ const useOrders = () => {
       return customersListCreateOrder;
     } else return customersListCreateQuote;
   };
+
   const getAllCustomersCreateQuote = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       ClientType: "C",
       onlyCreateOrderClients: false,
     });
   }, []);
+
   const getAllCustomersCreateOrder = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateOrder, {
       ClientType: "C",
       onlyCreateOrderClients: true,
     });
   }, []);
+  
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
       setCanOrder(true);
@@ -133,7 +136,7 @@ const useOrders = () => {
   };
 
 /////////////////////////////// GET ALL GENERIC DOC ///////////////////////////
-  const getAllOrders = useCallback(async () => {
+  const getAllOrderss = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/order/get-all-orders`,
@@ -173,45 +176,45 @@ const useOrders = () => {
     agentId,
     finalPatternSearch,
   ]);
+ 
 
-
-  // const getAllOrders = async () => {
-  //   const callBack = (res) => {
-  //     if (res?.success) {
-  //    const data = res?.data?.data?.result;
-  //   const totalItems = res?.data?.data?.totalItems;
-  //   const mapData = data?.map((order: any) => [
-  //     GetDateFormat(order?.createdDate),
-  //     order?.customerName,
-  //     order?.boardMissionsNumbers?.length,
-  //     order?.orderNumber,
-  //     order?.worksNames,
-  //     order?.cost,
-  //     order?.totalPrice,
-  //     order?.notes,
-  //     _renderQuoteStatus(order?.statusID, order),
-  //     <MoreMenuWidget order={order} onClickOpenModal={onClickOpenModal} onClickDuplicate={onClickOrderDuplicate} onClickDocumentPdf={onClickDocumentPdf}/>,
-  //   ]);
-  //   setAllOrders(mapData);
-  //     } else {
-  //       alertFaultAdded();
-  //     }
-  //   };
-  //   await getAllDocumentsApi(callApi, callBack, { 
-  //     documentType : DOCUMENT_TYPE.ORDER ,
-  //     data : 
-  //     {
-  //       model: {
-  //         pageNumber: page,
-  //         pageSize: limit,
-  //       },
-  //       statusId: statusId?.value,
-  //       patternSearch: finalPatternSearch,
-  //       customerId: customerId?.id,
-  //       dateRange,
-  //       agentId: agentId?.id,
-  //     } });
-  // };
+  const getAllOrders = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const data = res?.data?.data;
+        const totalItems = res?.data?.totalItems;
+    const mapData = data?.map((order: any) => [
+      GetDateFormat(order?.createdDate),
+      order?.customerName,
+      order?.boardMissionsNumbers?.length,
+      order?.orderNumber,
+      order?.worksNames,
+      order?.cost,
+      order?.totalPrice,
+      order?.notes,
+      _renderQuoteStatus(order?.statusID, order),
+      <MoreMenuWidget order={order} onClickOpenModal={onClickOpenModal} onClickDuplicate={onClickOrderDuplicate} onClickDocumentPdf={onClickDocumentPdf}/>,
+    ]);
+    setAllOrders(mapData);
+      } else {
+        alertFaultAdded();
+      }
+    };
+    await getAllDocumentsApi(callApi, callBack, { 
+      documentType : DOCUMENT_TYPE.ORDER ,
+      data : 
+      {
+        model: {
+          pageNumber: page,
+          pageSize: limit,
+        },
+        statusId: statusId?.value,
+        patternSearch: finalPatternSearch,
+        customerId: customerId?.id,
+        dateRange,
+        agentId: agentId?.id,
+      } });
+  };
 
 /////////////////////////////// GET ALL GENERIC DOC ///////////////////////////
 

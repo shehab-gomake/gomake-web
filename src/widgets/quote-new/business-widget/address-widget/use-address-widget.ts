@@ -8,7 +8,7 @@ import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data
 
 const useAddressWidget = () => {
     const { t } = useTranslation();
-    const { updateClientAddress, onClickAddAddress, onClickAddNewAddress } = useQuoteNew();
+    const { updateClientAddress, onClickAddAddress, onClickAddNewAddress } = useQuoteNew(0);
     const { getAllClientAddress, clientAddressValue, addressSelect } = useQuoteGetData();
     const quoteStateValue = useRecoilValue<any>(quoteItemState);
     const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);

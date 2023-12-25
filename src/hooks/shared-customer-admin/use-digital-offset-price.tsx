@@ -1090,8 +1090,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   ///////////// GET PRODUCT ITEM BY ID DONE /////////
 
 
-
-
   const validateParameters = (inputArray) => {
     let isValid = true;
     const allParameters = subProducts.flatMap((item) => item.parameters);

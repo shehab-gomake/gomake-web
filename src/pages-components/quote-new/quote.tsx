@@ -14,7 +14,7 @@ import { SettingNewIcon } from "@/icons";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useQuoteNew } from "./use-quote";
 import { quoteItemState } from "@/store";
-import { useStyle } from "./style";
+import { useStyle } from "./style"; 
 import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
 import { OtherReasonModal } from "@/widgets/quote/total-price-and-vat/other-reason-modal";
@@ -23,8 +23,12 @@ import { _renderQuoteStatus } from "@/utils/constants";
 import { IconButton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
+import { DOCUMENT_TYPE } from "../enums";
 
-const QuoteNewPageWidget = () => {
+interface IProps {
+  documentType : DOCUMENT_TYPE 
+}
+const QuoteNewPageWidget = ({documentType} : IProps) => {
   const { clasess } = useStyle();
   const {
     selectDate,
@@ -138,7 +142,7 @@ const QuoteNewPageWidget = () => {
     onCloseDeliveryModal,
     onAddDelivery,
     handleSaveBtnClick
-  } = useQuoteNew();
+  } = useQuoteNew(documentType);
   
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
 

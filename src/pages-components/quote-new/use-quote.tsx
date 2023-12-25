@@ -25,7 +25,7 @@ import { useQuoteGetData } from "./use-quote-get-data";
 import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, saveDocumentApi, sendDocumentToClientApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDueDateApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../enums";
 
-const useQuoteNew = () => {
+const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
   const {
     alertSuccessUpdate,
     alertFaultUpdate,
@@ -178,7 +178,7 @@ const useQuoteNew = () => {
         alertFaultAdded();
       }
     }
-    await getDocumentApi(callApi, callBack, { documentType: 0 })
+    await getDocumentApi(callApi, callBack, { documentType: docType })
   }
 
   const updateDueDate = async () => {
@@ -191,7 +191,7 @@ const useQuoteNew = () => {
       }
     }
     await updateDueDateApi(callApi, callBack, {
-      DocumentType: 0, Date: {
+      DocumentType: docType, Date: {
         documentId: quoteItemValue?.id,
         dueDate: selectDate,
       }
@@ -243,7 +243,7 @@ const useQuoteNew = () => {
       }
     }
     await updateAgentApi(callApi, callBack, {
-      documentType: 0, document: {
+      documentType: docType , document: {
         documentId: quoteItemValue?.id,
         agentId: item?.value,
       }
@@ -261,9 +261,8 @@ const useQuoteNew = () => {
         alertFaultUpdate();
       }
     }
-    // item.documentType
     await updatePurchaseNumberApi(callApi, callBack, {
-      documentType: 0, document: {
+      documentType: docType, document: {
         quoteId: quoteItemValue?.id,
         purchaseNumber: value,
       }
@@ -282,7 +281,7 @@ const useQuoteNew = () => {
       }
     }
     await changeDocumentClientApi(callApi, callBack, {
-      documentType: 0, client: {
+      documentType: docType, client: {
         documentID: quoteItemValue?.id,
         clientId: item?.id,
       }
@@ -331,7 +330,7 @@ const useQuoteNew = () => {
       }
     }
     await addDocumentContactApi(callApi, callBack, {
-      documentType: 0,
+      documentType: docType,
       contact:
       {
         contactID: selectedContactById?.id,
@@ -356,7 +355,7 @@ const useQuoteNew = () => {
       }
     }
     await updateDocumentContactApi(callApi, callBack, {
-      documentType: 0,
+      documentType: docType,
       contact:
       {
         id: item?.id,
@@ -381,7 +380,7 @@ const useQuoteNew = () => {
     }
     await deleteDocumentContactApi(callApi, callBack,
       {
-        documentType: 0,
+        documentType: docType,
         documentContactId: item?.id
       })
   }
@@ -440,7 +439,7 @@ const useQuoteNew = () => {
     }
     await calculateDocumentItemApi(callApi, callBack,
       {
-        documentType: 0,
+        documentType: docType,
         ItemId: quoteItemId,
         data,
         calculationType,
@@ -468,7 +467,7 @@ const useQuoteNew = () => {
         alertFaultAdded();
       }
     }
-    await duplicateWithAnotherQuantityApi(callApi, callBack, { ItemId: quoteItemId, amount: parseInt(amountValue), documentType: 0 })
+    await duplicateWithAnotherQuantityApi(callApi, callBack, { ItemId: quoteItemId, amount: parseInt(amountValue), documentType: docType })
   }
 
   const onCloseDeleteItemModal = () => {
@@ -489,7 +488,7 @@ const useQuoteNew = () => {
         alertFaultDelete();
       }
     }
-    await deleteDocumentItemApi(callApi, callBack, { ItemId: quoteItemId, documentType: 0 })
+    await deleteDocumentItemApi(callApi, callBack, { ItemId: quoteItemId, documentType: docType })
   }
 
   ////////////////////////////  ADD DELIVERY  /////////////////////////
@@ -503,7 +502,7 @@ const useQuoteNew = () => {
         alertFaultAdded();
       }
     }
-    await addDeliveryApi(callApi, callBack, { delivery: { quoteId: quoteItemValue?.id, productType: deliveryType }, documentType: 0 })
+    await addDeliveryApi(callApi, callBack, { delivery: { quoteId: quoteItemValue?.id, productType: deliveryType }, documentType: docType })
   }
   ////////////////////////////  ADD DELIVERY  /////////////////////////
 
@@ -522,7 +521,7 @@ const useQuoteNew = () => {
       }
     }
     await calculateDocumentApi(callApi, callBack, {
-      documentType: 0,
+      documentType: docType,
       documentId: quoteItemValue?.id,
       data,
       calculationType,
@@ -618,7 +617,7 @@ const useQuoteNew = () => {
       }
     }
     await cancelDocumentApi(callApi, callBack, {
-      DocumentType: 0,
+      DocumentType: docType,
       Document: {
         documentId: quoteItemValue?.id,
         quoteStatus: QuoteStatuses.CANCELED_OTHER,
@@ -637,7 +636,7 @@ const useQuoteNew = () => {
       }
     }
     await cancelDocumentApi(callApi, callBack, {
-      DocumentType: 0,
+      DocumentType: docType,
       Document: {
         documentId: quoteItemValue?.id,
         quoteStatus: quoteStatus,
@@ -654,7 +653,7 @@ const useQuoteNew = () => {
       }
     }
     await sendDocumentToClientApi(callApi, callBack, {
-      documentType: 0,
+      documentType: docType,
       document: {
         documentId: quoteItemValue?.id,
         messageType,
@@ -671,7 +670,7 @@ const useQuoteNew = () => {
       }
     }
     await saveDocumentApi(callApi, callBack, {
-      documentType: 0,
+      documentType: docType,
       document: {
         documentId: quoteItemValue?.id,
       }
@@ -714,7 +713,7 @@ const useQuoteNew = () => {
       }
     }
     await updateDocumentAddressApi(callApi, callBack, {
-      documentType: 0,
+      documentType: docType,
       address: {
         id: quoteItemValue?.quoteAddresses[0]?.id,
         addressID: quoteItemValue?.quoteAddresses[0]?.addressID,
@@ -740,7 +739,7 @@ const useQuoteNew = () => {
       }
     }
     await addDocumentAddressApi(callApi, callBack, {
-      documentType: 0,
+      documentType: docType,
       address: {
         addressID: item?.id,
         street: item?.street,
@@ -763,7 +762,7 @@ const useQuoteNew = () => {
         alertFaultDelete();
       }
     }
-    await deleteDocumentAddressApi(callApi, callBack, { documentAddressId: item?.id, documentType: 0 })
+    await deleteDocumentAddressApi(callApi, callBack, { documentAddressId: item?.id, documentType: docType })
   }
 
 
@@ -812,6 +811,7 @@ const useQuoteNew = () => {
     getQuote();
     getAllEmployees();
     getAllCustomers();
+    console.log("the document type is : " , docType)
   }, []);
 
   return {
@@ -936,7 +936,7 @@ const useQuoteNew = () => {
     onOpenDeliveryModal,
     onCloseDeliveryModal,
     onAddDelivery,
-    handleSaveBtnClick
+    handleSaveBtnClick,
   };
 };
 

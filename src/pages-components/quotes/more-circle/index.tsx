@@ -9,8 +9,9 @@ import { PDFIcon } from "./icons/pdf";
 import { OptionsButton } from "@/components/options-button/options-button";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { DOCUMENT_TYPE } from "@/pages-components/enums";
 
-const MoreMenuWidget = ({ quote, onClickOpenModal , onClickPdf , onClickDuplicate,onClickLoggers }: any) => {
+const MoreMenuWidget = ({ quote,documentType ,onClickEdit ,onClickOpenModal , onClickPdf , onClickDuplicate,onClickLoggers }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { user, navigate } = useMoreCircle();
@@ -25,7 +26,8 @@ const MoreMenuWidget = ({ quote, onClickOpenModal , onClickPdf , onClickDuplicat
           </PermissionCheck>
         </div>
       </MenuItem>
-      <MenuItem onClick={()=>onClickPdf(quote?.id , 0)}>
+
+      <MenuItem onClick={()=>onClickPdf(quote?.id)}>
         <div style={classes.menuRowStyle}>
           <PDFIcon />
           <div style={classes.rowTextStyle}>{t("sales.quote.pdf")}</div>
@@ -56,6 +58,21 @@ const MoreMenuWidget = ({ quote, onClickOpenModal , onClickPdf , onClickDuplicat
           </div>
         </MenuItem>
       ) : null}
+
+      
+
+
+{ documentType != DOCUMENT_TYPE.QUOTE  ? (
+        <MenuItem
+          onClick={() => onClickEdit(quote?.id)  } 
+        >
+          <div style={classes.menuRowStyle}>
+            <EditingIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.edit")}</div>
+          </div>
+        </MenuItem>
+      ) : null}
+
     </OptionsButton>
   );
 };
