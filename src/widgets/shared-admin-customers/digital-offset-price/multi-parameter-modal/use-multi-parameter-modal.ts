@@ -33,7 +33,6 @@ const useMultiParameterModal = ({ settingParameters, onClose }) => {
   });
 
   const getObjectById = () => {
-    debugger;
     for (const config of selectedValueConfig) {
       let foundParameter = generalParameters.find(
         (param) => param && param.valueIds && param.valueIds[0] === config.id
