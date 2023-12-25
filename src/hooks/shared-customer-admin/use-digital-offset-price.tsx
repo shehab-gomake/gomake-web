@@ -113,6 +113,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     let copy = lodashClonedeep(subProducts);
+    console.log("setSubProductsCopy",copy)
     setSubProductsCopy(copy);
   }, [subProducts]);
   
@@ -1071,11 +1072,55 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       Id: router?.query?.productId,
     });
   }, [router, widgetType]);
-
+  const initQuoteItemProduct = (quoteItemProduct) => {
+    if(quoteItemProduct && quoteItemProduct.itemParmetersValues){
+      setItemParmetersValues(quoteItemProduct.itemParmetersValues);
+      const quoteItemSubProducts = []
+      quoteItemProduct.itemParmetersValues.forEach(itemParmetersValue => {
+        const section = quoteItemProduct?.sections?.find(x=>x.id === itemParmetersValue?.sectionId)
+        const subSection = section?.subSections?.find(x=>x.id === itemParmetersValue?.subSectionId);
+        let parameter = subSection.parameters.find(x=>x.id === itemParmetersValue.parameterId)
+        if(!parameter && subSection.parameters && subSection.parameters.length > 0){
+          debugger;
+          const  parentParameter = subSection.parameters.find(x=>x.settingParameters?.some(y=>y.id === itemParmetersValue.parameterId));
+          parameter = parentParameter?.settingParameters?.find(x=>x.id === itemParmetersValue.parameterId);
+        }
+        const type = itemParmetersValue.subProductType ?? "";
+        const exitsSubProduct = quoteItemSubProducts.find(x=>x.type === type )
+        const newSubProductParameter = {
+          parameterId: itemParmetersValue.parameterId,
+          parameterName: parameter?.name,
+          actionId: parameter?.actionId,
+          ParameterType: parameter?.parameterType,
+          values: itemParmetersValue.values,
+          valueIds: itemParmetersValue.valueIds,
+          sectionId: itemParmetersValue?.sectionId,
+          subSectionId: itemParmetersValue?.subSectionId,
+          actionIndex: itemParmetersValue?.actionIndex,
+        };
+        if(exitsSubProduct){
+          exitsSubProduct.parameters.push(newSubProductParameter)
+        }else{
+          const newSubProduct = {
+            type: type,
+            parameters: [newSubProductParameter],
+            sectionId: itemParmetersValue.sectionId,
+            sectionName: "",
+          };
+          quoteItemSubProducts.push(newSubProduct)
+        }
+        
+      })
+      console.log("quoteItemSubProducts",quoteItemSubProducts)
+      setSubProducts(quoteItemSubProducts)
+      setSubProductsCopy(quoteItemSubProducts)
+    }
+    initProduct(quoteItemProduct);
+  }
   const getProductQuoteItemById = useCallback(async () => {
     await getAndSetgetProductQuoteItemById(callApi, (data)=>{
       setDefaultProductTemplate(data);
-      initProduct(data);
+      initQuoteItemProduct(data);
     }, {
       QuoteItemId: router?.query?.quoteItem,
     });
