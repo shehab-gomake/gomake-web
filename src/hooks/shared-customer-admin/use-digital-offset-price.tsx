@@ -1124,6 +1124,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           productId: router?.query?.productId,
           generalParameters: generalParameters,
           subProducts: calculationSubProducts,
+          itemParmetersValues:itemParmetersValues,
         },
         false,
         newRequestAbortController
