@@ -142,6 +142,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             const workFlow = currentWorkFlows.find(x=>x.id === m.workFlowId);
             if(workFlow){
               workFlow.monials = m.monials;
+              workFlow.recommendationRang = m.recommendationRang
             }
           })
         }
