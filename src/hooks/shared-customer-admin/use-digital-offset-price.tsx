@@ -147,6 +147,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           })
         }
         currentWorkFlows.sort((a,b) => b.monials - a.monials );
+        const selectedWorkFlow = currentWorkFlows?.find(x=>x.selected);
+        if(!selectedWorkFlow && currentWorkFlows && currentWorkFlows.length > 0){
+          currentWorkFlows[0].selected = true;
+        }
         const currentWorkFlowsCount = currentWorkFlows.length;
         const totalWorkFlowsCount = calculationResult?.pricingDto.totalWorkFlows;
         if(!isCalculationFinished){
