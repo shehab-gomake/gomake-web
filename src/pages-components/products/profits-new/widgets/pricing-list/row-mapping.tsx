@@ -121,6 +121,7 @@ const RowMappingWidget = ({
             ) : (
               <InputUpdatedValues
                 value={unitPrice}
+                isTwoDigit={true}
                 onBlur={() => onBlurUnitPrice(item)}
                 isUpdate={isUpdateUnitPrice}
                 setIsUpdate={setIsUpdateUnitPrice}
@@ -170,6 +171,7 @@ const RowMappingWidget = ({
           <div style={clasess.cellTextInputStyle}>
             <InputUpdatedValues
               value={unitPrice}
+              isTwoDigit={true}
               onBlur={() => onBlurUnitPrice(item)}
               isUpdate={isUpdateUnitPrice}
               setIsUpdate={setIsUpdateUnitPrice}

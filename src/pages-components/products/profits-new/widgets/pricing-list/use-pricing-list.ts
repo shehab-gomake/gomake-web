@@ -24,7 +24,7 @@ const usePriceList = ({
     if (selectedPricingBy?.value === EPricingBy.COST) {
       if (router.query.draftId) {
         setUnitPrice(
-          item?.caseQuantity != 0 ? item?.totalPrice / item?.caseQuantity : 0
+          item?.caseQuantity != 0 ? item?.totalPrice / item?.caseCost : 0
         );
       }
       item?.value === 0

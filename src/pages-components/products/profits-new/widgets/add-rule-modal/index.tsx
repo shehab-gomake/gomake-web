@@ -59,6 +59,10 @@ const AddRuleModal = ({
     selectedProperties,
     getProperitesService,
   });
+  console.log("productsStateValue", {
+    productsStateValue,
+    clientTypesStateValue,
+  });
   const [selectedOutputs, setSelectedOutputs] =
     useState<selectedOutputsProps>();
   const [selectedParameters, setSelectedParameters] =
@@ -506,17 +510,19 @@ const AddRuleModal = ({
                       <label style={clasess.inputLable}>
                         {t("properties.statment")}
                       </label>
+
                       <GoMakeAutoComplate
-                        options={productsStateValue?.map((value) => {
-                          return {
-                            ...value,
-                            label: value?.name,
-                            id: value.id,
-                          };
-                        })}
+                        options={productsStateValue
+                          ?.filter((item) => item.name !== null)
+                          .map((value) => {
+                            return {
+                              ...value,
+                              label: value?.name,
+                              id: value.id,
+                            };
+                          })}
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
-                        // getOptionLabel={(value: any) => value?.name}
                         value={rule.statement2}
                         onChange={(e, value) =>
                           handleChange(index, "statement2", value)
