@@ -645,6 +645,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setCurrentProductItemValue(productItemValue);
     }
   }, [subProducts, workFlowSelected]);
+  
   useEffect(() => {
     const allParameters = subProducts.flatMap((item) => item.parameters);
     const filteredArray = allParameters.filter((obj) => obj.values[0] !== "false");
@@ -1074,8 +1075,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
   }, [router, widgetType]);
 
-
-  ///////////// GET PRODUCT ITEM BY ID DONE/////////
   const getProductQuoteItemById = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -1085,10 +1084,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         alertFaultUpdate();
       }
     }
-    await getProductByItemIdApi(callApi, callBack, { documentItemId: router?.query?.quoteItem, documentType: 0 })
+    await getProductByItemIdApi(callApi, callBack, { documentItemId: router?.query?.quoteItem, documentType: router?.query?.documentType })
   }
-  ///////////// GET PRODUCT ITEM BY ID DONE /////////
-
 
   const validateParameters = (inputArray) => {
     let isValid = true;
@@ -1234,15 +1231,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   //   workFlowSelected,
   // ]);
 
+
   const addItemForQuotes = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        navigate("/quote");
+       // navigate("/quote");
       } else {
         alertFaultAdded();
       }
     }
-    await addItemApi(callApi, callBack, { Item: currentProductItemValue , DocumentType: 0 })
+    await addItemApi(callApi, callBack, { Item: currentProductItemValue , DocumentType: router?.query?.documentType })
   }
 
   useEffect(() => {
@@ -1269,7 +1267,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [widgetType, productTemplate, quantity]);
 
-
+ 
 
   ////////////////// UPDATE DOCUMENT ITEM /////////////////////
   const updateQuoteItem = useCallback(async () => {
@@ -1328,6 +1326,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     defaultPrice,
     productTemplate,
   ]);
+
   const navigateForRouter = () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {

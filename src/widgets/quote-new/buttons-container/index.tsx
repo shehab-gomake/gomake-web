@@ -11,17 +11,19 @@ import { OrderNowModal } from "@/widgets/quote/total-price-and-vat/order-now-mod
 import { useButtonsContainer } from "./use-buttons-container";
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const ButtonsContainer = ({
   onOpenNewItem,
   handleCancelBtnClick,
   handleSaveBtnClick,
   handleSendBtnClick,
-  onOpenDeliveryModal
+  onOpenDeliveryModal,
+  documentType,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification , onClickPrint } = useButtonsContainer();
+  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint } = useButtonsContainer(documentType);
 
   return (
     <div style={classes.writeCommentcontainer}>
@@ -42,7 +44,7 @@ const ButtonsContainer = ({
         <GomakePrimaryButton
           leftIcon={<PlusIcon stroke={"#344054"} />}
           style={classes.btnContainer}
-          //onClick={() =>onOpenDeliveryModal()}
+        //onClick={() =>onOpenDeliveryModal()}
         >
           {t("sales.quote.addDelivery")}
         </GomakePrimaryButton>
@@ -68,30 +70,30 @@ const ButtonsContainer = ({
           {t("login.send")}
         </GomakePrimaryButton>
         <GomakePrimaryButton
-         style={classes.btnSecondContainer}
-         onClick={()=>onClickPrint(0)}
-         >
+          style={classes.btnSecondContainer}
+          onClick={() => onClickPrint()}
+        >
           {t("sales.quote.print")}
         </GomakePrimaryButton>
 
-        <GomakePrimaryButton
+        {documentType === DOCUMENT_TYPE.quote && <GomakePrimaryButton
           style={classes.btnSecondContainer}
           onClick={handleCancelBtnClick}
         >
           {t("materials.buttons.cancel")}
-        </GomakePrimaryButton>
+        </GomakePrimaryButton>}
         <GomakePrimaryButton
-        style={classes.btnThirdContainer}
-        onClick={handleSaveBtnClick}
+          style={classes.btnThirdContainer}
+          onClick={handleSaveBtnClick}
         >
           {t("materials.buttons.save")}
         </GomakePrimaryButton>
         {/* <GomakePrimaryButton style={classes.btnThirdContainer}>
           {t("sales.quote.managerApproval")}
         </GomakePrimaryButton> */}
-        <GomakePrimaryButton style={classes.btnOrderNowContainer} onClick={onClickOpenOrderNowModal}>
+        {documentType === DOCUMENT_TYPE.quote && <GomakePrimaryButton style={classes.btnOrderNowContainer} onClick={onClickOpenOrderNowModal}>
           {t("sales.quote.orderNowTitle")}
-        </GomakePrimaryButton>
+        </GomakePrimaryButton>}
         <OrderNowModal
           openModal={openOrderNowModal}
           onClose={onClickCloseOrderNowModal}

@@ -14,7 +14,7 @@ import { SettingNewIcon } from "@/icons";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useQuoteNew } from "./use-quote";
 import { quoteItemState } from "@/store";
-import { useStyle } from "./style"; 
+import { useStyle } from "./style";
 import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
 import { OtherReasonModal } from "@/widgets/quote/total-price-and-vat/other-reason-modal";
@@ -26,9 +26,9 @@ import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-deliver
 import { DOCUMENT_TYPE } from "../quotes/enums";
 
 interface IProps {
-  documentType : DOCUMENT_TYPE 
+  documentType: DOCUMENT_TYPE
 }
-const QuoteNewPageWidget = ({documentType} : IProps) => {
+const QuoteNewPageWidget = ({ documentType }: IProps) => {
   const { clasess } = useStyle();
   const {
     selectDate,
@@ -144,7 +144,7 @@ const QuoteNewPageWidget = ({documentType} : IProps) => {
     handleSaveBtnClick,
     documentTitle
   } = useQuoteNew(documentType);
-  
+
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
 
   return (
@@ -156,8 +156,8 @@ const QuoteNewPageWidget = ({documentType} : IProps) => {
               <div style={clasess.titleSettingContainer}>
                 <div style={clasess.titleQuateContainer}>
                   <HeaderTitle
-                  title={documentTitle}
-                  //  title={t("sales.quote.title")}
+                    title={documentTitle}
+                    //  title={t("sales.quote.title")}
                     marginBottom={1}
                     marginTop={1}
                     color="rgba(241, 53, 163, 1)"
@@ -205,7 +205,7 @@ const QuoteNewPageWidget = ({documentType} : IProps) => {
                 {/* <div style={clasess.lineDateStyle} /> Don't Delete */}
               </div>
               <div style={clasess.bordersecondContainer}>
-                <BusinessNewWidget 
+                <BusinessNewWidget
                   values={quoteItemValue}
                   selectBusiness={selectBusiness}
                   onBlurBusinessName={onBlurBusinessName}
@@ -229,6 +229,8 @@ const QuoteNewPageWidget = ({documentType} : IProps) => {
                   updatePurchaseNumber={updatePurchaseNumber}
                   updateClientAddress={updateClientAddress}
                   onClickDeleteAddress={onClickDeleteAddress}
+                  documentType={documentType}
+
                 />
                 <ContactNewWidget
                   handleShowLess={handleShowLess}
@@ -277,6 +279,8 @@ const QuoteNewPageWidget = ({documentType} : IProps) => {
                 changeQuoteItems={changeQuoteItems}
                 getCalculateQuote={getCalculateQuote}
                 changedocumentItemsChild={changedocumentItemsChild}
+                documentType={documentType}
+
               />
             </div>
             <div style={{ width: "100%", flex: 0.1 }}>
@@ -287,6 +291,7 @@ const QuoteNewPageWidget = ({documentType} : IProps) => {
                 handleCancelBtnClick={handleCancelBtnClick}
                 handleSaveBtnClick={handleSaveBtnClick}
                 handleSendBtnClick={handleSendBtnClick}
+                documentType={documentType}
               />
             </div>
           </div>
@@ -296,8 +301,9 @@ const QuoteNewPageWidget = ({documentType} : IProps) => {
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}
+        documentType={documentType}
       />
-       <AddDeliveryModal
+      <AddDeliveryModal
         openModal={openAddDeliveryModal}
         onClose={onCloseDeliveryModal}
         onClickAdd={onAddDelivery}

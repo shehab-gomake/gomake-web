@@ -4,8 +4,9 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { createOrderApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
-const useButtonsContainer = () => {
+const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
     const { navigate } = useGomakeRouter();
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
@@ -54,7 +55,7 @@ const useButtonsContainer = () => {
             })
     }
     
-    const onClickPrint = async (documentType : number) => {
+    const onClickPrint = async () => {
         const callBack = (res) => {
             if (res?.success) {
               const pdfLink = res.data;
@@ -63,7 +64,7 @@ const useButtonsContainer = () => {
               alertFaultUpdate();
             }
           };
-          await getDocumentPdfApi(callApi, callBack, { documentId: quoteItemValue?.id , documentType : documentType  });
+          await getDocumentPdfApi(callApi, callBack, { documentId: quoteItemValue?.id , documentType : docType  });
         };
 
     return {

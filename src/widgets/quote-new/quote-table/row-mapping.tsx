@@ -18,6 +18,7 @@ const RowMappingWidget = ({
   onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
   parentIndex,
+  documentType
 }) => {
   const { clasess } = useStyle({ headerHeight });
   const {
@@ -181,6 +182,7 @@ const RowMappingWidget = ({
           quoteItem={item}
           onClickDuplicateWithDifferentQTY={onClickDuplicateWithDifferentQTY}
           onClickDeleteQouteItem={onClickDeleteQouteItem}
+          documentType={documentType}
         />
       </PrimaryTableCell>
     </TableRow>

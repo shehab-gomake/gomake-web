@@ -4,7 +4,6 @@ import {
   GoMakeModal,
   GomakePrimaryButton,
 } from "@/components";
-
 import { useStyle } from "./style";
 import { useRecoilValue } from "recoil";
 import { useCallback, useEffect, useState } from "react";
@@ -12,7 +11,7 @@ import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { quoteItemState } from "@/store";
 
-const AddNewItemModal = ({ openModal, onClose }) => {
+const AddNewItemModal = ({ openModal, onClose , documentType}) => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
@@ -28,7 +27,7 @@ const AddNewItemModal = ({ openModal, onClose }) => {
   }, []);
   const onClcikCreateQuoteForCustomer = () => {
     navigate(
-      `/products/create?clientTypeId=${quoteItemValue?.client?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${selectedProduct?.id}`
+      `/products/create?clientTypeId=${quoteItemValue?.client?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${selectedProduct?.id}&documentType=${documentType}`
     );
   };
   return (

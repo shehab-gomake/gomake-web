@@ -35,7 +35,8 @@ const BusinessNewWidget = ({
   setIsUpdateBusinessName,
   updatePurchaseNumber,
   updateClientAddress,
-  onClickDeleteAddress
+  onClickDeleteAddress,
+  documentType
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -126,7 +127,7 @@ const BusinessNewWidget = ({
         onClickConfirm={()=>{onChangeSelectBusiness(client).then(setOpenAlertModal(false)); }}
         >
         </GoMakeAlertModal> */}
-        <AddressModal isUpdate={values?.documentAddresses?.length > 0} />
+        <AddressModal isUpdate={values?.documentAddresses?.length > 0} documentType={documentType} />
       </div>
     </>
   );

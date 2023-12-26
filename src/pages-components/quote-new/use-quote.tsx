@@ -128,11 +128,8 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
   const columnWidths = ["5%", "8%", "12%", "33%", "8%", "8%", "8%", "8%"];
   const headerHeight = "44px";
 
-
   const router = useRouter();
 
-  useEffect(()=>{console.log("document type : " , docType),[]})
-  
   const getQuote = async () => {
     const callBack = (res) => {
       if (res?.success) {

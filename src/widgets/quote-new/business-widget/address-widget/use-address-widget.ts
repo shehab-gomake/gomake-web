@@ -5,11 +5,12 @@ import { addressModalState, isNewAddress } from "./state";
 import { useQuoteNew } from "@/pages-components/quote-new/use-quote";
 import { quoteItemState } from "@/store";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
-const useAddressWidget = () => {
+const useAddressWidget = (docType : DOCUMENT_TYPE) => {
     const { t } = useTranslation();
     
-    const { updateClientAddress, onClickAddAddress, onClickAddNewAddress } = useQuoteNew(1);
+    const { updateClientAddress, onClickAddAddress, onClickAddNewAddress } = useQuoteNew(docType);
     const { getAllClientAddress, clientAddressValue, addressSelect } = useQuoteGetData();
     const quoteStateValue = useRecoilValue<any>(quoteItemState);
     const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
