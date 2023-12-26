@@ -94,7 +94,7 @@ const RowMappingWidget = ({
               <InputUpdatedValues
                 value={item?.caseCost}
                 onBlur={() => onBlurCaseCost(item)}
-                isUpdate={isUpdateCaseCost}
+                isUpdate={null}
                 setIsUpdate={setIsUpdateCaseCost}
                 onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
                   onInputChangeCaseCost(e)
