@@ -9,7 +9,7 @@ import { PDFIcon } from "./icons/pdf";
 import { OptionsButton } from "@/components/options-button/options-button";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { DOCUMENT_TYPE } from "@/pages-components/enums";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const MoreMenuWidget = ({ order, onClickOpenModal, onClickDuplicate , onClickDocumentPdf}: any) => {
   const { clasess } = useStyle();
@@ -29,26 +29,26 @@ const MoreMenuWidget = ({ order, onClickOpenModal, onClickDuplicate , onClickDoc
       </MenuItem>
 
 
-      <MenuItem onClick={()=>onClickDocumentPdf(order?.id, DOCUMENT_TYPE.ORDER)}>
+      <MenuItem onClick={()=>onClickDocumentPdf(order?.id, DOCUMENT_TYPE.order)}>
         <div style={clasess.menuRowStyle}>
           <PDFIcon />
           <div style={clasess.rowTextStyle}>{t("sales.quote.pdf")}</div>
         </div>
       </MenuItem>
 
-      <MenuItem onClick={() => onClickDuplicate(order?.id, DOCUMENT_TYPE.ORDER)}>
+      <MenuItem onClick={() => onClickDuplicate(order?.id, DOCUMENT_TYPE.order)}>
         <div style={clasess.menuRowStyle}>
           <ConvertIcon />
           <div style={clasess.rowTextStyle}>{t("sales.quote.duplicate")}</div>
         </div>
       </MenuItem>
 
-      {(order?.statusID === QUOTE_STATUSES.Create &&
+      {(order?.documentStatus === QUOTE_STATUSES.Create &&
         order?.userID === user?.id) ||
-        order?.statusID === QUOTE_STATUSES.Open ? (
+        order?.documentStatus === QUOTE_STATUSES.Open ? (
         <MenuItem
           onClick={() =>
-            order?.statusID === QUOTE_STATUSES.Create
+            order?.documentStatus === QUOTE_STATUSES.Create
               ? navigate(`/quote`)
               : onClickOpenModal(order)
           }

@@ -66,8 +66,8 @@ const CustomTableWidget = ({
         {items?.map((row: any, index: number) => {
           return (
             <>
-              {row?.childsQuoteItems != null &&
-              row?.childsQuoteItems.length > 0 ? (
+              {row?.childsDocumentItems != null &&
+              row?.childsDocumentItems.length > 0 ? (
                 <div key={`body_row${index}`} style={{ width: "100%" }}>
                   <RowWithChildsTable
                     row={row}

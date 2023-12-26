@@ -1745,7 +1745,16 @@
       "actionDescription":"Action Description",
       "selectEmployee":"select employee",
       "selectDate":"select date",
-      "quoteLogs":"Logs for quote"
+      "quoteLogs":"Logs for quote",
+      "quote": "Quote",
+      "order": "Order",
+      "invoice":"Invoice",
+      "receipt": "Receipt",
+      "deliveryNote" : "Delivery Note",
+      "invoiceNumber": "Invoice Number",
+      "receiptNumber": "Receipt Number",
+      "deliveryNoteNumber": "Delivery Note Number"
+
     }
   },
   "usersSettings": {

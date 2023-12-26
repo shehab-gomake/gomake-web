@@ -90,8 +90,8 @@ const BusinessNewWidget = ({
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => updateAgent(value)}
         />
-        {values?.quoteAddresses?.length > 0 && <InputUpdatedValues
-          value={values?.quoteAddresses?.length > 0 ? `${values?.quoteAddresses[0]?.street} ${values?.quoteAddresses[0]?.apartment}, ${values?.quoteAddresses[0]?.city}` : "no address found"}
+        {values?.documentAddresses?.length > 0 && <InputUpdatedValues
+          value={values?.documentAddresses?.length > 0 ? `${values?.documentAddresses[0]?.street} ${values?.documentAddresses[0]?.apartment}, ${values?.documentAddresses[0]?.city}` : "no address found"}
           label={t("customers.modal.address")}
           isUnderLine={true}
           onBlur={onBlurAddress}
@@ -100,13 +100,13 @@ const BusinessNewWidget = ({
           flag={true}
           onClickFlag={() => setOpenModal(true)}
         />}
-        {values?.quoteAddresses?.length > 0 ?
+        {values?.documentAddresses?.length > 0 ?
           <div
             style={classes.addNewAddressStyle}
             onClick={() => null}
           >
             <MinusIcon />
-            <div style={classes.addNewAddressTextStyle} onClick={() => onClickDeleteAddress(values?.quoteAddresses[0])}>{t("sales.quote.removeAddress")}</div>
+            <div style={classes.addNewAddressTextStyle} onClick={() => onClickDeleteAddress(values?.documentAddresses[0])}>{t("sales.quote.removeAddress")}</div>
           </div> : (
             <div
               style={classes.addNewAddressStyle}
@@ -126,7 +126,7 @@ const BusinessNewWidget = ({
         onClickConfirm={()=>{onChangeSelectBusiness(client).then(setOpenAlertModal(false)); }}
         >
         </GoMakeAlertModal> */}
-        <AddressModal isUpdate={values?.quoteAddresses?.length > 0} />
+        <AddressModal isUpdate={values?.documentAddresses?.length > 0} />
       </div>
     </>
   );

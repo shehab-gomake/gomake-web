@@ -317,7 +317,7 @@ const QuotePageWidget = () => {
                 tableHeaders={tableHeaders}
                 headerWidth={tableRowPercent}
                 tableRowPercent={tableRowPercent}
-                data={quoteItemValue?.priceListItemsMapping}
+                data={quoteItemValue?.documentItemsMapping}
               />
             </div>
           </div>

@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAndSetAllCustomers } from "@/services/hooks";
-import { useRecoilState , useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
@@ -14,13 +14,13 @@ import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
 import { employeesListsState } from "./states";
 
-import { duplicateDocumentApi, getAllDocumentsApi, getDocumentApi, getDocumentPdfApi, updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
-import { DOCUMENT_TYPE } from "../enums";
+import { duplicateDocumentApi, getAllDocumentsApi, getDocumentPdfApi, updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
+import { DOCUMENT_TYPE } from "./enums";
 
-const useQuotes = (docType : DOCUMENT_TYPE) => { 
+const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { alertFaultUpdate, alertFaultDuplicate , alertFaultAdded} = useSnackBar();
+  const { alertFaultUpdate, alertFaultDuplicate, alertFaultAdded } = useSnackBar();
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
@@ -42,7 +42,7 @@ const useQuotes = (docType : DOCUMENT_TYPE) => {
   const [modalLogsTitle, setModalLogsTitle] = useState<string>();
   const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
   const [selectedQuote, setSelectedQuote] = useState<any>();
-  
+
   const onClickCloseModal = () => {
     setOpenModal(false);
   };
@@ -69,7 +69,7 @@ const useQuotes = (docType : DOCUMENT_TYPE) => {
     setFinalPatternSearch(debounce);
   }, [debounce]);
 
-  const getAgentCategories = async (isAgent: boolean , setState: any) => {
+  const getAgentCategories = async (isAgent: boolean, setState: any) => {
     const callBack = (res) => {
       if (res.success) {
         const agentNames = res.data.map((agent) => ({
@@ -77,7 +77,7 @@ const useQuotes = (docType : DOCUMENT_TYPE) => {
           id: agent.value,
         }));
         setState(agentNames);
-        
+
       }
     };
     await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
@@ -110,19 +110,8 @@ const useQuotes = (docType : DOCUMENT_TYPE) => {
       setCanOrder(false);
     }
   };
-  
-  const getDocumentById = async (id : string ) => {
-    const callBack = (res) => {
-      if (res?.success) {
-        //// TO DO navigate to /document
-      } else {
-        alertFaultAdded();
-      }
-    }
-    await getDocumentApi(callApi, callBack, { documentType: docType , Id : id })
-  }
 
- const getAllQuotes= async () => {
+  const getAllQuotes = async () => {
     const callBack = (res) => {
       if (res?.success) {
         const data = res?.data?.data;
@@ -130,33 +119,33 @@ const useQuotes = (docType : DOCUMENT_TYPE) => {
         const mapData = data?.map((quote: any) => [
           GetDateFormat(quote?.createdDate),
           quote?.customerName,
-          quote?.orderNumber,
-          quote?.quoteNumber,
+          quote?.number,
           quote?.worksNames,
           quote?.totalPrice,
           quote?.notes,
-          _renderQuoteStatus(quote?.statusID, quote, t),
-          <MoreMenuWidget quote={quote} documentType={docType} onClickEdit={getDocumentById} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} onClickDuplicate={onClickQuoteDuplicate} onClickLoggers={()=>onClickOpenLogsModal(quote?.quoteNumber)} />,
+          _renderQuoteStatus(quote?.documentStatus, quote, t),
+          <MoreMenuWidget quote={quote} documentType={docType} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} onClickDuplicate={onClickQuoteDuplicate} onClickLoggers={() => onClickOpenLogsModal(quote?.quoteNumber)} />,
         ]);
         setAllQuotes(mapData);
-      } 
+      }
     }
-     await getAllDocumentsApi(callApi, callBack,
-      {documentType: docType ,
-      data : {
-        model: {
-          pageNumber: page,
-          pageSize: limit,
-        },
-        statusId: statusId?.value,
-        patternSearch: finalPatternSearch,
-        customerId: customerId?.id,
-        dateRange,
-        agentId: agentId?.id,  
-      }})
+    await getAllDocumentsApi(callApi, callBack,
+      {
+        documentType: docType,
+        data: {
+          model: {
+            pageNumber: page,
+            pageSize: limit,
+          },
+          statusId: statusId?.value,
+          patternSearch: finalPatternSearch,
+          customerId: customerId?.id,
+          dateRange,
+          agentId: agentId?.id,
+        }
+      })
   }
-  
-  // need fix
+
   const getAllQuotesInitial = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -179,7 +168,7 @@ const useQuotes = (docType : DOCUMENT_TYPE) => {
       quote?.worksNames,
       quote?.totalPrice,
       quote?.notes,
-      _renderQuoteStatus(quote?.statusID, quote, t),
+      _renderQuoteStatus(quote?.documentStatus, quote, t),
       <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} />,
     ]);
     setAllQuotes(mapData);
@@ -203,8 +192,10 @@ const useQuotes = (docType : DOCUMENT_TYPE) => {
   const tableHeaders = [
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
-    t("sales.quote.orderNumber"),
-    t("sales.quote.quoteNumber"),
+    docType === DOCUMENT_TYPE.quote ? t("sales.quote.quoteNumber") :
+      docType === DOCUMENT_TYPE.order ? t("sales.quote.orderNumber") :
+        docType === DOCUMENT_TYPE.deliveryNote ? t("sales.quote.deliveryNoteNumber") :
+          docType === DOCUMENT_TYPE.invoice ? t("sales.quote.invoiceNumber") : t("sales.quote.receiptNumber"),
     t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
@@ -280,35 +271,37 @@ const useQuotes = (docType : DOCUMENT_TYPE) => {
   const documentsLabels = [
     {
       label: t("sales.quote.quoteList"),
-      value: DOCUMENT_TYPE.QUOTE,
+      value: DOCUMENT_TYPE.quote,
     },
     {
       label: t("sales.quote.orderList"),
-      value: DOCUMENT_TYPE.ORDER,
+      value: DOCUMENT_TYPE.order,
     },
     {
       label: t("sales.quote.invoiceList"),
-      value: DOCUMENT_TYPE.INVOICE,
+      value: DOCUMENT_TYPE.invoice,
     },
     {
       label: t("sales.quote.deliveryNoteList"),
-      value: DOCUMENT_TYPE.DELIVERY_NOTE,
+      value: DOCUMENT_TYPE.deliveryNote,
     },
     {
       label: t("sales.quote.receiptList"),
-      value: DOCUMENT_TYPE.RECEIPT,
+      value: DOCUMENT_TYPE.receipt,
     }
   ];
 
-  const documentLabel = documentsLabels[docType].label;
+  const documentLabel = documentsLabels.find(item => item.value === docType).label;
 
   useEffect(() => {
     getAllCustomersCreateQuote();
     getAllCustomersCreateOrder();
-    getAgentCategories(true,setAgentsCategories);
-    getAgentCategories(null,setEmployeeListValue);
+    getAgentCategories(true, setAgentsCategories);
+    getAgentCategories(null, setEmployeeListValue);
   }, []);
 
+
+  ////  documentType = docType later
   const updateQuoteStatus = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -319,9 +312,10 @@ const useQuotes = (docType : DOCUMENT_TYPE) => {
     };
     await updateDocumentApi(callApi, callBack,
       {
-        documentType: docType,
-        document:{
-          documentId: selectedQuote?.id}
+        documentType: 0,
+        document: {
+          documentId: selectedQuote?.id
+        }
       });
   };
 
@@ -334,8 +328,9 @@ const useQuotes = (docType : DOCUMENT_TYPE) => {
         alertFaultUpdate();
       }
     };
-    await getDocumentPdfApi(callApi, callBack, { documentId: id , documentType : docType });
+    await getDocumentPdfApi(callApi, callBack, { documentId: id, documentType: docType });
   };
+
 
   const onClickQuoteDuplicate = async (id: string) => {
     const callBack = (res) => {
@@ -346,13 +341,13 @@ const useQuotes = (docType : DOCUMENT_TYPE) => {
           navigate("/quote");
         }
         else {
-          onClickOpenModal({id:documentId })
+          onClickOpenModal({ id: documentId })
         }
       } else {
         alertFaultDuplicate();
       }
     };
-    await duplicateDocumentApi(callApi, callBack, { documentId: id  , documentType : docType });
+    await duplicateDocumentApi(callApi, callBack, { documentId: id, documentType: docType });
   };
 
   return {

@@ -12,7 +12,7 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
 import { EDocumentTypeEnum } from "@/enums";
 import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
-import { DOCUMENT_TYPE } from "../enums";
+import { DOCUMENT_TYPE } from "./enums";
 
 interface IProps {
   documentType : DOCUMENT_TYPE 

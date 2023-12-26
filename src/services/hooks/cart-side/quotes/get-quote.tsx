@@ -14,7 +14,7 @@ const getAndSetQuotes = async (
   );
 
   const _data: any = returnResult(result, undefined);
-  const mapData = _data?.priceListItems?.map((item: any, index: number) => {
+  const mapData = _data?.documentItems?.map((item: any, index: number) => {
     return {
       id: index + 1,
       itemName: item?.subProduct?.name,
@@ -29,7 +29,7 @@ const getAndSetQuotes = async (
       quoteItemId: item?.id,
     };
   });
-  _data.priceListItemsMapping = mapData;
+  _data.documentItemsMapping = mapData;
   if (setState) {
     setState(_data);
   }

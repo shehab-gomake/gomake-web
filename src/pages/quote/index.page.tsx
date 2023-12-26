@@ -1,11 +1,11 @@
 import { CustomerAuthLayout } from "@/layouts";
-import { DOCUMENT_TYPE } from "@/pages-components/enums";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { QuoteNewPageWidget } from "@/pages-components/quote-new/quote";
 
 export default function Quote() {
   return (
     <CustomerAuthLayout>
-      <QuoteNewPageWidget documentType={DOCUMENT_TYPE.QUOTE} />
+      <QuoteNewPageWidget documentType={DOCUMENT_TYPE.quote} />
     </CustomerAuthLayout>
   );
 }

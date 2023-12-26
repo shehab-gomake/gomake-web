@@ -1,7 +1,7 @@
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { ICallAndSetData } from "@/services/api-service/interface";
-import { DOCUMENT_TYPE } from "@/pages-components/enums";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const GET_DOCUMENT_URL = '/v1/erp-service/documents/get-document';
 const GET_ALL_DOCUMENTS_URL='/v1/erp-service/documents/get-all-documents';

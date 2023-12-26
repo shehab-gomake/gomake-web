@@ -23,7 +23,7 @@ import { _renderQuoteStatus } from "@/utils/constants";
 import { IconButton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
-import { DOCUMENT_TYPE } from "../enums";
+import { DOCUMENT_TYPE } from "../quotes/enums";
 
 interface IProps {
   documentType : DOCUMENT_TYPE 
@@ -51,7 +51,7 @@ const QuoteNewPageWidget = ({documentType} : IProps) => {
     openAddNewItemModal,
     openDuplicateWithDifferentQTYModal,
     openDeleteItemModal,
-    priceListItems,
+    documentItems,
     tableHeaders,
     columnWidths,
     headerHeight,
@@ -81,9 +81,9 @@ const QuoteNewPageWidget = ({documentType} : IProps) => {
     handleCancelBtnClose,
     handleSendBtnClick,
     handleSendBtnClose,
-    changepriceListItems,
+    changedocumentItems,
     changeQuoteItems,
-    changepriceListItemsChild,
+    changedocumentItemsChild,
     getCalculateQuote,
     onCloseDeleteItemModal,
     deleteQuoteItem,
@@ -141,7 +141,8 @@ const QuoteNewPageWidget = ({documentType} : IProps) => {
     openAddDeliveryModal,
     onCloseDeliveryModal,
     onAddDelivery,
-    handleSaveBtnClick
+    handleSaveBtnClick,
+    documentTitle
   } = useQuoteNew(documentType);
   
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
@@ -155,7 +156,8 @@ const QuoteNewPageWidget = ({documentType} : IProps) => {
               <div style={clasess.titleSettingContainer}>
                 <div style={clasess.titleQuateContainer}>
                   <HeaderTitle
-                    title={t("sales.quote.title")}
+                  title={documentTitle}
+                  //  title={t("sales.quote.title")}
                     marginBottom={1}
                     marginTop={1}
                     color="rgba(241, 53, 163, 1)"
@@ -167,7 +169,7 @@ const QuoteNewPageWidget = ({documentType} : IProps) => {
                 <div style={clasess.settingsStatusContainer}>
                   <div style={clasess.quoteStatusContainer}>
                     {_renderQuoteStatus(
-                      quoteItemValue?.statusID,
+                      quoteItemValue?.documentStatus,
                       quoteItemValue,
                       t
                     )}
@@ -261,11 +263,11 @@ const QuoteNewPageWidget = ({documentType} : IProps) => {
             </div>
             <div style={{ flex: 0.9, overflow: "auto" }}>
               <QuoteForPriceTable
-                priceListItems={priceListItems}
+                documentItems={documentItems}
                 tableHeaders={tableHeaders}
                 columnWidths={columnWidths}
                 headerHeight={headerHeight}
-                changepriceListItems={changepriceListItems}
+                changedocumentItems={changedocumentItems}
                 getCalculateQuoteItem={getCalculateQuoteItem}
                 onClickDuplicateWithDifferentQTY={
                   onClickDuplicateWithDifferentQTY
@@ -274,7 +276,7 @@ const QuoteNewPageWidget = ({documentType} : IProps) => {
                 quoteItems={quoteItems}
                 changeQuoteItems={changeQuoteItems}
                 getCalculateQuote={getCalculateQuote}
-                changepriceListItemsChild={changepriceListItemsChild}
+                changedocumentItemsChild={changedocumentItemsChild}
               />
             </div>
             <div style={{ width: "100%", flex: 0.1 }}>

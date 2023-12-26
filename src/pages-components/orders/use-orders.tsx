@@ -12,7 +12,7 @@ import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { duplicateDocumentApi, getAllDocumentsApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
-import { DOCUMENT_TYPE } from "@/pages-components/enums";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const useOrders = () => {
   const { t } = useTranslation();
@@ -163,7 +163,7 @@ const useOrders = () => {
       order?.cost,
       order?.totalPrice,
       order?.notes,
-      _renderQuoteStatus(order?.statusID, order),
+      _renderQuoteStatus(order?.documentStatus, order),
       <MoreMenuWidget order={order} onClickOpenModal={onClickOpenModal} onClickDuplicate={onClickOrderDuplicate} onClickDocumentPdf={onClickDocumentPdf}/>,
     ]);
     setAllOrders(mapData);
@@ -192,7 +192,7 @@ const useOrders = () => {
       order?.cost,
       order?.totalPrice,
       order?.notes,
-      _renderQuoteStatus(order?.statusID, order),
+      _renderQuoteStatus(order?.documentStatus, order),
       <MoreMenuWidget order={order} onClickOpenModal={onClickOpenModal} onClickDuplicate={onClickOrderDuplicate} onClickDocumentPdf={onClickDocumentPdf}/>,
     ]);
     setAllOrders(mapData);
@@ -201,7 +201,7 @@ const useOrders = () => {
       }
     };
     await getAllDocumentsApi(callApi, callBack, { 
-      documentType : DOCUMENT_TYPE.ORDER ,
+      documentType : DOCUMENT_TYPE.order ,
       data : 
       {
         model: {
@@ -241,7 +241,7 @@ const useOrders = () => {
   //     quote?.cost,
   //     quote?.totalPrice,
   //     quote?.notes,
-  //     _renderQuoteStatus(quote?.statusID, quote),
+  //     _renderQuoteStatus(quote?.documentStatus, quote),
   //     <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} onClickDuplicate={onClickOrderDuplicate}/>,
   //   ]);
   //   setAllOrders(mapData);

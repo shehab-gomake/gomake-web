@@ -127,7 +127,7 @@ const ContactWidget = ({
                   <div style={clasess.fieldContainer}>
                     <div style={clasess.labelStyle}></div>
                     <div style={clasess.addDeleteContainer}>
-                      {index === quoteItemValue?.quoteContacts?.length - 1 ? (
+                      {index === quoteItemValue?.documentContacts?.length - 1 ? (
                         <div>
                           {!quoteStateValue.isAddNewContactWidget && (
                             <div

@@ -23,7 +23,8 @@ import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { addressModalState } from "@/widgets/quote-new/business-widget/address-widget/state";
 import { useQuoteGetData } from "./use-quote-get-data";
 import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, saveDocumentApi, sendDocumentToClientApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDueDateApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
-import { DOCUMENT_TYPE } from "../enums";
+import { DOCUMENT_TYPE } from "../quotes/enums";
+import { useRouter } from "next/router";
 
 const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
   const {
@@ -38,8 +39,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
   const { getAllClientAddress } = useQuoteGetData();
-  const [quoteItemValue, setQuoteItemValue] =
-    useRecoilState<any>(quoteItemState);
+  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
   const [customersListValue, setCustomersListValue] =
     useRecoilState<any>(businessListsState);
@@ -77,7 +77,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [amountValue, setAmountValue] = useState();
   const [openDeleteItemModal, setOpenDeleteItemModal] = useState(false);
-  const [priceListItems, setPriceListItems] = useState<any>([]);
+  const [documentItems, setPriceListItems] = useState<any>([]);
   const [quoteItems, setquoteItems] = useState<any>([]);
   const [anchorElCancelBtn, setAnchorElCancelBtn] = useState<null | HTMLElement>(null);
   const [anchorElSendBtn, setAnchorElSendBtn] = useState<null | HTMLElement>(null);
@@ -128,15 +128,20 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
   const columnWidths = ["5%", "8%", "12%", "33%", "8%", "8%", "8%", "8%"];
   const headerHeight = "44px";
 
+
+  const router = useRouter();
+
+  useEffect(()=>{console.log("document type : " , docType),[]})
+  
   const getQuote = async () => {
     const callBack = (res) => {
       if (res?.success) {
         let indexs = 0;
         const _data = res?.data;
-        const mapData = _data?.priceListItems?.map((item: any, index: number) => {
+        const mapData = _data?.documentItems?.map((item: any, index: number) => {
           indexs++;
           const parentIndex = indexs;
-          const _childsQuoteItemsMapping = item?.childsQuoteItems?.map(
+          const _childsDocumentItemsMapping = item?.childsDocumentItems?.map(
             (child: any, index2: number) => {
               indexs++;
               return {
@@ -155,7 +160,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
             details: (
               <div
                 style={
-                  _childsQuoteItemsMapping != null
+                  _childsDocumentItemsMapping != null
                     ? { height: "100%", overflowY: "scroll", paddingRight: 5 }
                     : { height: 36, overflowY: "scroll", paddingRight: 5 }
                 }
@@ -168,17 +173,18 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
             discount: item?.discount,
             finalPrice: item?.finalPrice,
             quoteItemId: item?.id,
-            childsQuoteItems: _childsQuoteItemsMapping,
+            childsDocumentItems: _childsDocumentItemsMapping,
           };
         });
 
-        _data.priceListItemsMapping = mapData;
+        _data.documentItemsMapping = mapData;
         setQuoteItemValue(_data);
       } else {
         alertFaultAdded();
       }
     }
-    await getDocumentApi(callApi, callBack, { documentType: docType })
+    //await getDocumentApi(callApi, callBack, { documentType: docType})
+    await getDocumentApi(callApi, callBack, { documentType: docType , Id: router?.query?.Id })
   }
 
   const updateDueDate = async () => {
@@ -528,12 +534,12 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     })
   }
 
-  const changepriceListItems = (
+  const changedocumentItems = (
     index: number,
     filedName: string,
     value: any
   ) => {
-    let temp = [...priceListItems];
+    let temp = [...documentItems];
     temp[index] = {
       ...temp[index],
       [filedName]: value,
@@ -541,15 +547,15 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     setPriceListItems(temp);
   };
 
-  const changepriceListItemsChild = (
+  const changedocumentItemsChild = (
     parentIndex: number,
     childInex: number,
     filedName: string,
     value: any
   ) => {
-    let temp = lodashClonedeep(priceListItems);
-    temp[parentIndex].childsQuoteItems[childInex] = {
-      ...temp[parentIndex].childsQuoteItems[childInex],
+    let temp = lodashClonedeep(documentItems);
+    temp[parentIndex].childsDocumentItems[childInex] = {
+      ...temp[parentIndex].childsDocumentItems[childInex],
       [filedName]: value,
     };
     setPriceListItems(temp);
@@ -715,8 +721,8 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     await updateDocumentAddressApi(callApi, callBack, {
       documentType: docType,
       address: {
-        id: quoteItemValue?.quoteAddresses[0]?.id,
-        addressID: quoteItemValue?.quoteAddresses[0]?.addressID,
+        id: quoteItemValue?.documentAddresses[0]?.id,
+        addressID: quoteItemValue?.documentAddresses[0]?.addressID,
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
@@ -800,10 +806,10 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
   }, [quoteItemValue, customersListValue]);
 
   useEffect(() => {
-    setPriceListItems(quoteItemValue?.priceListItems);
+    setPriceListItems(quoteItemValue?.documentItems);
     setquoteItems(quoteItemValue);
     getAllClientContacts();
-    setItems(quoteItemValue?.quoteContacts);
+    setItems(quoteItemValue?.documentContacts);
     setSelectDate(quoteItemValue?.dueDate);
   }, [quoteItemValue]);
 
@@ -811,8 +817,33 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     getQuote();
     getAllEmployees();
     getAllCustomers();
-    console.log("the document type is : " , docType)
   }, []);
+
+
+  const documentsTitles = [
+    {
+      label: t("sales.quote.quote"),
+      value: DOCUMENT_TYPE.quote,
+    },
+    {
+      label: t("sales.quote.order"),
+      value: DOCUMENT_TYPE.order,
+    },
+    {
+      label: t("sales.quote.invoice"),
+      value: DOCUMENT_TYPE.invoice,
+    },
+    {
+      label: t("sales.quote.deliveryNote"),
+      value: DOCUMENT_TYPE.deliveryNote,
+    },
+    {
+      label: t("sales.quote.receipt"),
+      value: DOCUMENT_TYPE.receipt,
+    }
+  ];
+
+  const documentTitle = documentsTitles.find(item => item.value === docType).label;
 
   return {
     dateRef,
@@ -843,7 +874,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     openDeleteItemModal,
     columnWidths,
     headerHeight,
-    priceListItems,
+    documentItems,
     quoteItems,
     tableHeaders,
     anchorElCancelBtn,
@@ -874,8 +905,8 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     handleClickSelectDate,
     setActiveClickAway,
     changeQuoteItems,
-    changepriceListItemsChild,
-    changepriceListItems,
+    changedocumentItemsChild,
+    changedocumentItems,
     getCalculateQuote,
     onCloseDeleteItemModal,
     deleteQuoteItem,
@@ -937,6 +968,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     onCloseDeliveryModal,
     onAddDelivery,
     handleSaveBtnClick,
+    documentTitle
   };
 };
 

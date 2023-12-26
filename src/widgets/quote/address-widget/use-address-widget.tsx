@@ -24,7 +24,7 @@ const useAddressWidget = () => {
   };
 
   useEffect(() => {
-    setItems(quoteItemValue?.quoteAddresses);
+    setItems(quoteItemValue?.documentAddresses);
   }, [quoteItemValue]);
 
   const updateClientAddress = useCallback(async (item: any) => {

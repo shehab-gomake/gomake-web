@@ -8,11 +8,12 @@ import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data
 
 const useAddressWidget = () => {
     const { t } = useTranslation();
-    const { updateClientAddress, onClickAddAddress, onClickAddNewAddress } = useQuoteNew(0);
+    
+    const { updateClientAddress, onClickAddAddress, onClickAddNewAddress } = useQuoteNew(1);
     const { getAllClientAddress, clientAddressValue, addressSelect } = useQuoteGetData();
     const quoteStateValue = useRecoilValue<any>(quoteItemState);
     const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
-    const [addressState, setAddressState] = useState<any>(quoteStateValue?.quoteAddresses[0]);
+    const [addressState, setAddressState] = useState<any>(quoteStateValue?.documentAddresses[0]);
     const [selectedAddress, setSelectedAddress] = useState<any>(null);
     const [isNewAddressState, setIsNewAddressState] = useRecoilState<boolean>(isNewAddress);
     const [flag, setFlag] = useState<boolean>(false);
@@ -23,9 +24,9 @@ const useAddressWidget = () => {
 
     useEffect(() => {
         getAllClientAddress();
-        if (quoteStateValue?.quoteAddresses.length > 0) {
-            const addressId = quoteStateValue?.quoteAddresses[0]?.addressID;
-            const city = quoteStateValue?.quoteAddresses[0]?.city;
+        if (quoteStateValue?.documentAddresses.length > 0) {
+            const addressId = quoteStateValue?.documentAddresses[0]?.addressID;
+            const city = quoteStateValue?.documentAddresses[0]?.city;
             setFlag(true);
             setSelectedAddress({ label: city, value: addressId });
         }
@@ -42,7 +43,7 @@ const useAddressWidget = () => {
         else if (selectedAddress) {
             setIsNewAddressState(false);
             const address = clientAddressValue.find(x => x.id === selectedAddress.value);
-            flag ? setAddressState(quoteStateValue?.quoteAddresses[0]) : setAddressState(address)
+            flag ? setAddressState(quoteStateValue?.documentAddresses[0]) : setAddressState(address)
             setFlag(false)
         }
     }, [selectedAddress]);
