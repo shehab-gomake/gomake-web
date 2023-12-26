@@ -14,6 +14,7 @@ import { ETypeException, EValueType } from "../../enums/profites-enum";
 import { useEffect, useState } from "react";
 import { selectedOutputsProps, selectedParametersProps } from "../../interface";
 import { EParameterTypes } from "@/enums";
+import { useRouter } from "next/router";
 
 const AddRuleModal = ({
   openModal,
@@ -35,6 +36,7 @@ const AddRuleModal = ({
     handleChange,
     addRule,
     machincesList,
+    allMachincesList,
     productsStateValue,
     clientTypesStateValue,
     parametersStateValue,
@@ -59,10 +61,8 @@ const AddRuleModal = ({
     selectedProperties,
     getProperitesService,
   });
-  console.log("productsStateValue", {
-    productsStateValue,
-    clientTypesStateValue,
-  });
+  console.log("allMachincesList", allMachincesList);
+  const router = useRouter();
   const [selectedOutputs, setSelectedOutputs] =
     useState<selectedOutputsProps>();
   const [selectedParameters, setSelectedParameters] =
@@ -91,13 +91,23 @@ const AddRuleModal = ({
                 </span>
               </div>
               <GoMakeAutoComplate
-                options={machincesList?.machines?.map((value) => {
-                  return {
-                    ...value,
-                    label: value?.machineName,
-                    id: value.machineId,
-                  };
-                })}
+                options={
+                  router.query.actionId
+                    ? machincesList?.machines?.map((value) => {
+                        return {
+                          ...value,
+                          label: value?.machineName,
+                          id: value.machineId,
+                        };
+                      })
+                    : allMachincesList?.map((value) => {
+                        return {
+                          ...value,
+                          label: value?.name,
+                          id: value.id,
+                        };
+                      })
+                }
                 style={clasess.dropDownListContainer}
                 placeholder={"Select Machine"}
                 onChange={(e, value) =>
@@ -428,13 +438,23 @@ const AddRuleModal = ({
                         {t("properties.statment")}
                       </label>
                       <GoMakeAutoComplate
-                        options={machincesList?.machines?.map((value) => {
-                          return {
-                            ...value,
-                            label: value?.machineName,
-                            id: value.machineId,
-                          };
-                        })}
+                        options={
+                          router.query.actionId
+                            ? machincesList?.machines?.map((value) => {
+                                return {
+                                  ...value,
+                                  label: value?.machineName,
+                                  id: value.machineId,
+                                };
+                              })
+                            : allMachincesList?.map((value) => {
+                                return {
+                                  ...value,
+                                  label: value?.name,
+                                  id: value.id,
+                                };
+                              })
+                        }
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
                         value={rule.statement2}
@@ -473,13 +493,23 @@ const AddRuleModal = ({
                           {t("properties.statment")}
                         </label>
                         <GoMakeAutoComplate
-                          options={machincesList?.machines?.map((value) => {
-                            return {
-                              ...value,
-                              label: value?.machineName,
-                              id: value.machineId,
-                            };
-                          })}
+                          options={
+                            router.query.actionId
+                              ? machincesList?.machines?.map((value) => {
+                                  return {
+                                    ...value,
+                                    label: value?.machineName,
+                                    id: value.machineId,
+                                  };
+                                })
+                              : allMachincesList?.map((value) => {
+                                  return {
+                                    ...value,
+                                    label: value?.name,
+                                    id: value.id,
+                                  };
+                                })
+                          }
                           style={clasess.dropDownListContainer}
                           placeholder={t("properties.statment")}
                           value={rule.statement}
