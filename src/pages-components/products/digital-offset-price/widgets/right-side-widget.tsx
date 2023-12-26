@@ -110,7 +110,7 @@ const RightSideWidget = ({
         {/* <div style={clasess.imgProductContainer}>
           <img src={template.img} alt="gomake" style={{ width: "100%" }} />
         </div> */}
-        {typeof defaultPrice === "object" && (
+        {/* {typeof defaultPrice === "object" && (
           <>
             <div style={clasess.progress}>
               <PermissionCheck userPermission={Permissions.EDIT_PRICE_QUOTE}>
@@ -130,7 +130,7 @@ const RightSideWidget = ({
               <div style={clasess.labelStyle}>100.00</div>
             </div>
           </>
-        )}
+        )} */}
 
         <div style={clasess.totalContainer}>
           <div style={clasess.totalStyle}>
