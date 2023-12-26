@@ -1235,7 +1235,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const addItemForQuotes = async () => {
     const callBack = (res) => {
       if (res?.success) {
-       // navigate("/quote");
+        navigate("/quote");
       } else {
         alertFaultAdded();
       }
