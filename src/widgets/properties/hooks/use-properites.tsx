@@ -97,6 +97,7 @@ const useProperites = () => {
       );
       if (res?.success) {
         alertSuccessUpdate();
+        getProperitesService();
       } else {
         alertFaultUpdate();
       }

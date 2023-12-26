@@ -109,22 +109,24 @@ const PropertiesTable = () => {
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>
                     <div style={classes.rowItem} className="scrollBlue">
-                      {property.actionRules.map((rule, index) => {
-                        return (
-                          <div style={classes.item}>
-                            {rule.successEvent ? (
-                              <>
-                                {index + 1}- {rule.expression} value=
-                                {rule.successEvent}
-                              </>
-                            ) : (
-                              <>
-                                {index + 1}- {rule.expression}
-                              </>
-                            )}
-                          </div>
-                        );
-                      })}
+                      {property.actionRules
+                        ?.sort((a, b) => a.priority - b.priority)
+                        ?.map((rule, index) => {
+                          return (
+                            <div style={classes.item}>
+                              {rule.successEvent ? (
+                                <>
+                                  {index + 1}- {rule.expression} value=
+                                  {rule.successEvent}
+                                </>
+                              ) : (
+                                <>
+                                  {index + 1}- {rule.expression}
+                                </>
+                              )}
+                            </div>
+                          );
+                        })}
                     </div>
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>

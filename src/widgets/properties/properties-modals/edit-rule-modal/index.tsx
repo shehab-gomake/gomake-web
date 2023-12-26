@@ -40,6 +40,7 @@ const EditRulesModal = ({
       );
     } catch (error) {}
   };
+
   const onDragEnd = (result) => {
     if (!result.destination) {
       return;
@@ -60,7 +61,6 @@ const EditRulesModal = ({
     top: 0,
     left: 0,
   });
-  console.log("rules", rules);
   return (
     <>
       <GoMakeModal
