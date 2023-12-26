@@ -77,6 +77,7 @@ const useNewProfits = () => {
   const [typeExceptionSelected, setTypeExceptionSelected] = useState<number>();
   const [selectedAdditionalProfitRow, setSelectedActionProfitRow] =
     useState<ProfitsPricingTables>();
+  console.log("selectedPricingTableItems", selectedPricingTableItems);
   const [profitRowType, setProfitRowType] = useState(1);
   const [selectedPricingBy, setSelectedPricingBy] =
     useState<SelectedPricingByType>({
@@ -112,7 +113,11 @@ const useNewProfits = () => {
     };
 
     if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
-      requestBody.exceptionId = selectedPricingTableItems?.id;
+      if (router.query.draftId) {
+        requestBody.exceptionId = selectedPricingTableItems?.id;
+      } else {
+        requestBody.exceptionId = selectedPricingTableItems?.id;
+      }
     }
 
     await getAndSetAllActionProfitRowsByActionId(
@@ -123,9 +128,13 @@ const useNewProfits = () => {
   }, [router, selectedPricingTableItems]);
 
   useEffect(() => {
-    getAllActionProfitRowsByActionId();
+    if (router.query.draftId) {
+      getCalculateCaseProfits();
+    } else {
+      getAllActionProfitRowsByActionId();
+    }
     getActionProfitRowChartData();
-  }, [selectedPricingTableItems]);
+  }, [selectedPricingTableItems, router]);
   const getActionProfitByActionId = useCallback(async () => {
     await getAndSetActionProfitByActionId(callApi, setActionProfitByActionId, {
       actionId: router.query.actionId,
@@ -133,11 +142,19 @@ const useNewProfits = () => {
   }, [router]);
 
   const getCalculateCaseProfits = useCallback(async () => {
-    await getAndSetCalculateCaseProfits(callApi, setSalculateCaseValue, {
+    const requestBody: any = {
       actionId: router.query.actionId,
       productItemValueId: router.query.draftId,
-    });
-  }, [router]);
+    };
+    if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
+      requestBody.exceptionId = selectedPricingTableItems?.id;
+    }
+    await getAndSetCalculateCaseProfits(
+      callApi,
+      setSalculateCaseValue,
+      requestBody
+    );
+  }, [router, selectedPricingTableItems]);
 
   const getProfitsPricingTables = useCallback(async () => {
     await getAndSetProfitsPricingTables(callApi, setProfitsPricingTables, {
@@ -163,11 +180,14 @@ const useNewProfits = () => {
   }, [actionProfitByActionId, selectedPricingTableItems]);
 
   useEffect(() => {
-    getAllActionProfitRowsByActionId();
+    if (router.query.draftId) {
+      getCalculateCaseProfits();
+    } else {
+      getAllActionProfitRowsByActionId();
+    }
     getActionProfitByActionId();
     getProfitsPricingTables();
-    getCalculateCaseProfits();
-  }, []);
+  }, [router]);
   useEffect(() => {
     getActionProfitRowChartData();
   }, [actionProfitByActionId]);
@@ -191,13 +211,23 @@ const useNewProfits = () => {
     }
     if (router.query.draftId) {
       setTableHeaders([
-        "Quantity",
+        t("products.profits.pricingListWidget.quantity"),
         selectedPricingBy?.label,
         t("products.profits.pricingListWidget.profit"),
         t("products.profits.pricingListWidget.unitPrice"),
         t("products.profits.pricingListWidget.totalPrice"),
         t("products.profits.pricingListWidget.more"),
       ]);
+      if (selectedPricingBy?.value != EPricingBy.COST) {
+        setTableHeaders([
+          selectedPricingBy?.label,
+          t("products.profits.pricingListWidget.cost"),
+          t("products.profits.pricingListWidget.profit"),
+          t("products.profits.pricingListWidget.unitPrice"),
+          t("products.profits.pricingListWidget.totalPrice"),
+          t("products.profits.pricingListWidget.more"),
+        ]);
+      }
     } else {
       setTableHeaders([
         selectedPricingBy?.label,
@@ -253,13 +283,17 @@ const useNewProfits = () => {
       if (res?.success) {
         alertSuccessUpdate();
         setSelectedPricingBy(data);
-        getAllActionProfitRowsByActionId();
+        if (router.query.draftId) {
+          getCalculateCaseProfits();
+        } else {
+          getAllActionProfitRowsByActionId();
+        }
         getActionProfitRowChartData();
       } else {
         alertFaultUpdate();
       }
     },
-    [actionProfitByActionId]
+    [actionProfitByActionId, router]
   );
 
   const updateTransitionForAction = useCallback(
@@ -281,13 +315,17 @@ const useNewProfits = () => {
       if (res?.success) {
         alertSuccessUpdate();
         setSelectedTransition(data);
-        getAllActionProfitRowsByActionId();
+        if (router.query.draftId) {
+          getCalculateCaseProfits();
+        } else {
+          getAllActionProfitRowsByActionId();
+        }
         getActionProfitRowChartData();
       } else {
         alertFaultUpdate();
       }
     },
-    [actionProfitByActionId]
+    [actionProfitByActionId, router]
   );
   useEffect(() => {
     if (router.query.draftId) {
@@ -335,13 +373,22 @@ const useNewProfits = () => {
 
       if (res?.success) {
         alertSuccessAdded();
-        getAllActionProfitRowsByActionId();
+        if (router.query.draftId) {
+          getCalculateCaseProfits();
+        } else {
+          getAllActionProfitRowsByActionId();
+        }
         getActionProfitRowChartData();
       } else {
         alertFaultAdded();
       }
     },
-    [actionProfitByActionId, selectedPricingBy, selectedPricingTableItems]
+    [
+      actionProfitByActionId,
+      selectedPricingBy,
+      selectedPricingTableItems,
+      router,
+    ]
   );
 
   const updateActionProfitRow = useCallback(
@@ -364,13 +411,17 @@ const useNewProfits = () => {
       );
       if (res?.success) {
         alertSuccessUpdate();
-        getAllActionProfitRowsByActionId();
+        if (router.query.draftId) {
+          getCalculateCaseProfits();
+        } else {
+          getAllActionProfitRowsByActionId();
+        }
         getActionProfitRowChartData();
       } else {
         alertFaultUpdate();
       }
     },
-    [selectedPricingTableItems]
+    [selectedPricingTableItems, router]
   );
 
   const updateMinPriceForAction = useCallback(
@@ -391,13 +442,17 @@ const useNewProfits = () => {
       );
       if (res?.success) {
         alertSuccessUpdate();
-        getAllActionProfitRowsByActionId();
+        if (router.query.draftId) {
+          getCalculateCaseProfits();
+        } else {
+          getAllActionProfitRowsByActionId();
+        }
         getActionProfitByActionId();
       } else {
         alertFaultUpdate();
       }
     },
-    [actionProfitByActionId]
+    [actionProfitByActionId, router]
   );
   const [minimumValue, setMinimumValue] = useState(0);
   useEffect(() => {
@@ -532,13 +587,17 @@ const useNewProfits = () => {
       );
       if (res?.success) {
         alertSuccessDelete();
-        getAllActionProfitRowsByActionId();
+        if (router.query.draftId) {
+          getCalculateCaseProfits();
+        } else {
+          getAllActionProfitRowsByActionId();
+        }
         getActionProfitRowChartData();
       } else {
         alertFaultDelete();
       }
     },
-    [profitRowType]
+    [profitRowType, router]
   );
 
   const deleteExceptionProfit = useCallback(async (id: string) => {

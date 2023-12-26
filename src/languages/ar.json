@@ -95,6 +95,7 @@
   },
   "properties": {
     "parameter": "المعلمة",
+    "unit": "وحدة",
     "rule": "القاعدة",
     "type": "النوع",
     "more": "المزيد",

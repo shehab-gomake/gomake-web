@@ -83,6 +83,9 @@ const PropertiesTable = () => {
               <StyledTableCell align={"center"}>
                 {t("properties.parameter")}
               </StyledTableCell>
+              <StyledTableCell align={"center"}>
+                {t("properties.unit")}
+              </StyledTableCell>
               <StyledTableCell style={{ width: "30%" }} align={"center"}>
                 {t("properties.rule")}
               </StyledTableCell>
@@ -100,9 +103,9 @@ const PropertiesTable = () => {
                 <StyledTableRow>
                   <StyledTableCell align={"center"}>
                     {property.propertyName}{" "}
-                    <span style={classes.defaultUnitStyle}>
-                      {property.defaultUnit}
-                    </span>
+                  </StyledTableCell>
+                  <StyledTableCell align={"center"}>
+                    {property.defaultUnit}
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>
                     <div style={classes.rowItem} className="scrollBlue">

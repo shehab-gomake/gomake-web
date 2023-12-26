@@ -95,6 +95,7 @@
   },
   "properties": {
     "parameter": "Parameter",
+    "unit":"Unit",
     "rule": "Rule",
     "type": "Type",
     "more": "More",

@@ -95,6 +95,7 @@
   },
   "properties": {
     "parameter": "פרמטר",
+    "unit": "יחידה",
     "rule": "חוק",
     "type": "סוג",
     "more": "עוד",

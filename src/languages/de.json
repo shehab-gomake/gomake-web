@@ -95,6 +95,8 @@
   },
   "properties": {
     "parameter": "Parameter",
+    "unit": "Einheit",
+    
     "rule": "Regel",
     "type": "Typ",
     "more": "Mehr",
