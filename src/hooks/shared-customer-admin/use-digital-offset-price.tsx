@@ -126,11 +126,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setLoading(false);
 
         const currentWorkFlows = cloneDeep(workFlows);
-        const newWorkFlows = calculationResult?.pricingDto.workFlows?.map((flow, index) => ({
-          id: index.toString(),
-          ...flow,
-        }));
-
+        const newWorkFlows = calculationResult?.pricingDto.workFlows;
         newWorkFlows.forEach(flow => {
           if(flow.selected){
             currentWorkFlows.forEach(f=> f.selected = false);
