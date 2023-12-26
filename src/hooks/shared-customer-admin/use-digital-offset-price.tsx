@@ -307,7 +307,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (!isSetTemplete) {
       if (productTemplate && productTemplate?.sections?.length > 0) {
         let sectionData: any = cloneDeep(productTemplate?.sections);
-        console.log("here1");
         const typeMap = {};
         let relatedParametersArray = [];
         const subProductsArray = cloneDeep(subProducts);

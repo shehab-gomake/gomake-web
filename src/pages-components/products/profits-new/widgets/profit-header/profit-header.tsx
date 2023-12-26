@@ -7,8 +7,6 @@ const ProfitHeaderWidget = ({ calculateCaseValue }) => {
   const { clasess } = useStyle();
   const [selectedWorkFlow, setSelectedWorkFlow] = useState<any>();
   const [selectedAction, setSelectedAction] = useState<any>();
-  console.log("calculateCaseValue", { calculateCaseValue, selectedAction });
-
   const router = useRouter();
   useEffect(() => {
     if (calculateCaseValue) {

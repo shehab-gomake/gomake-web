@@ -61,7 +61,6 @@ const AddRuleModal = ({
     selectedProperties,
     getProperitesService,
   });
-  console.log("allMachincesList", allMachincesList);
   const router = useRouter();
   const [selectedOutputs, setSelectedOutputs] =
     useState<selectedOutputsProps>();

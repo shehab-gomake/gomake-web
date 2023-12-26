@@ -37,11 +37,6 @@ const RightSideWidget = ({
   priceRecovery,
   setSamlleType,
 }: any) => {
-  useEffect(() => {
-    if (typeof defaultPrice === "object") {
-      console.log("defaultPrice", { defaultPrice, workFlowSelected, template });
-    }
-  }, [defaultPrice]);
   const isLoading = useRecoilValue(isLoadgingState);
   const subProducts = useRecoilValue<any>(subProductsParametersState);
   const calculationProgress = useRecoilValue(calculationProgressState);
