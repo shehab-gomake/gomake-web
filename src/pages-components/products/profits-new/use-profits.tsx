@@ -120,11 +120,14 @@ const useNewProfits = () => {
       }
     }
 
-    await getAndSetAllActionProfitRowsByActionId(
+    const res = await getAndSetAllActionProfitRowsByActionId(
       callApi,
       setAllActionProfitRowsByActionId,
       requestBody
     );
+    if (res) {
+      getActionProfitRowChartData();
+    }
   }, [router, selectedPricingTableItems]);
 
   useEffect(() => {
@@ -133,7 +136,7 @@ const useNewProfits = () => {
     } else {
       getAllActionProfitRowsByActionId();
     }
-    getActionProfitRowChartData();
+    // getActionProfitRowChartData();
   }, [selectedPricingTableItems, router]);
   const getActionProfitByActionId = useCallback(async () => {
     await getAndSetActionProfitByActionId(callApi, setActionProfitByActionId, {
@@ -149,11 +152,14 @@ const useNewProfits = () => {
     if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
       requestBody.exceptionId = selectedPricingTableItems?.id;
     }
-    await getAndSetCalculateCaseProfits(
+    const res = await getAndSetCalculateCaseProfits(
       callApi,
       setSalculateCaseValue,
       requestBody
     );
+    if (res) {
+      getActionProfitRowChartData();
+    }
   }, [router, selectedPricingTableItems]);
 
   const getProfitsPricingTables = useCallback(async () => {
@@ -188,9 +194,9 @@ const useNewProfits = () => {
     getActionProfitByActionId();
     getProfitsPricingTables();
   }, [router]);
-  useEffect(() => {
-    getActionProfitRowChartData();
-  }, [actionProfitByActionId]);
+  // useEffect(() => {
+  //   getActionProfitRowChartData();
+  // }, [actionProfitByActionId]);
   useEffect(() => {
     if (selectedPricingBy?.value === EPricingBy.COST) {
       setTableHeaders([
@@ -288,7 +294,7 @@ const useNewProfits = () => {
         } else {
           getAllActionProfitRowsByActionId();
         }
-        getActionProfitRowChartData();
+        // getActionProfitRowChartData();
       } else {
         alertFaultUpdate();
       }
@@ -320,7 +326,7 @@ const useNewProfits = () => {
         } else {
           getAllActionProfitRowsByActionId();
         }
-        getActionProfitRowChartData();
+        // getActionProfitRowChartData();
       } else {
         alertFaultUpdate();
       }
@@ -378,7 +384,7 @@ const useNewProfits = () => {
         } else {
           getAllActionProfitRowsByActionId();
         }
-        getActionProfitRowChartData();
+        // getActionProfitRowChartData();
       } else {
         alertFaultAdded();
       }
@@ -416,7 +422,7 @@ const useNewProfits = () => {
         } else {
           getAllActionProfitRowsByActionId();
         }
-        getActionProfitRowChartData();
+        // getActionProfitRowChartData();
       } else {
         alertFaultUpdate();
       }
@@ -592,7 +598,7 @@ const useNewProfits = () => {
         } else {
           getAllActionProfitRowsByActionId();
         }
-        getActionProfitRowChartData();
+        // getActionProfitRowChartData();
       } else {
         alertFaultDelete();
       }
