@@ -128,10 +128,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const currentWorkFlows = cloneDeep(workFlows);
         const newWorkFlows = calculationResult?.pricingDto.workFlows;
         newWorkFlows.forEach(flow => {
+          const isExists = currentWorkFlows.find(x=>x.id === flow.id );
+          if(!isExists){
+            currentWorkFlows.push(flow);
+          }
           if(flow.selected){
             currentWorkFlows.forEach(f=> f.selected = false);
           }
-          currentWorkFlows.push(flow);
+          
         })
         if(calculationResult?.monials){
           calculationResult?.monials.forEach(m=>{
