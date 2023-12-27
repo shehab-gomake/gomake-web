@@ -5,14 +5,8 @@ import {
   getAndSetAllParameters,
   getAndSetClientTypes,
   getAndSetMachincesByActionId,
-  getAndSetMachincesNew,
 } from "@/services/hooks";
-import {
-  clientTypesState,
-  machincesState,
-  parametersState,
-  productsState,
-} from "@/store";
+import { clientTypesState, parametersState, productsState } from "@/store";
 import { useOutputs } from "@/widgets/properties/hooks/use-outputs";
 import { usePrintHouseClients } from "@/widgets/properties/hooks/use-print-house-clients";
 import { useRouter } from "next/router";
@@ -21,7 +15,6 @@ import { useRecoilState } from "recoil";
 import { ETypeException } from "../../enums/profites-enum";
 import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
-import { useMaterialsCategories } from "@/widgets/properties/hooks/use-materials-categories";
 import { usePrintHouseMachines } from "@/widgets/properties/hooks/use-print-house-machines";
 
 const useAddRuleModal = ({
@@ -268,6 +261,7 @@ const useAddRuleModal = ({
     router,
     typeExceptionSelected,
     selectedPricingBy,
+    selectedPricingTableItems,
     expression,
     actionProfitByActionId,
     additionalProfit,
