@@ -70,10 +70,10 @@ const useStyle = () => {
         paddingRight: 8,
         cursor: "pointer",
       },
-      gobackBtnStyle:{
-        width:120,
-        height:40
-      }
+      gobackBtnStyle: {
+        width: 140,
+        height: 40,
+      },
     };
   }, [i18next.language, t]);
   return {

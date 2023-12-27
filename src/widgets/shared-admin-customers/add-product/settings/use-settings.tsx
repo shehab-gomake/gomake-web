@@ -3,11 +3,14 @@ import {
   getAllGroups,
   getAllTemplets,
   getAlltProductSKU,
+  getAndSetAllCustomers,
+  getAndSetClientTypes,
 } from "@/services/hooks";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { v4 as uuidv4 } from "uuid";
+import { EProductClient, ProductClient } from "./settings-data";
 
 const useSettings = ({
   onClickParametersTab,
@@ -16,8 +19,8 @@ const useSettings = ({
 }) => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
-  const {push, query} = useRouter();
-  const {settingsRoute, id} = query;
+  const { push, query } = useRouter();
+  const { settingsRoute, id } = query;
   const { t } = useTranslation();
   const { setSnackbarStateValue } = useSnackBar();
   const [RandomId, setRandomId] = useState();
@@ -138,6 +141,8 @@ const useSettings = ({
         textColor: productState?.textColor,
         productSKUId: productState?.productSKUId?.id,
         templateId: productState?.templateId?.id,
+        clients: productState?.clients,
+        clientsTypes: productState?.clientsTypes,
       }
     );
     if (res?.success) {
@@ -173,6 +178,8 @@ const useSettings = ({
         textColor: productState?.textColor,
         productSKUId: productState?.productSKUId?.id,
         templateId: productState?.templateId?.id,
+        clients: productState?.clients,
+        clientsTypes: productState?.clientsTypes,
       }
     );
     if (res?.success) {
@@ -217,6 +224,8 @@ const useSettings = ({
             ? productState?.templateId
             : productState?.templateId?.id,
         status: true,
+        clients: productState?.clients,
+        clientsTypes: productState?.clientsTypes,
         //sections: productState?.sections,
       }
     );
@@ -234,8 +243,63 @@ const useSettings = ({
       });
     }
   }, [productState, RandomId]);
+  const [SelectproductClient, setSelectProductClient] =
+    useState<ProductClient>();
+  const [customersList, setCustomersList] = useState([]);
+  const [clientTypesList, setClientTypesList] = useState([]);
+  const productClientsList: ProductClient[] = useMemo(
+    () => [
+      {
+        label: t("products.addProduct.admin.allCustomers"),
+        id: EProductClient.ALL_CUSTOMERS,
+      },
+      {
+        label: t("products.addProduct.admin.byClient"),
+        id: EProductClient.BY_CLIENT,
+      },
+      {
+        label: t("products.addProduct.admin.byClientType"),
+        id: EProductClient.BY_CLIENT_TYPE,
+      },
+    ],
+    []
+  );
+
+  // useEffect(() => {
+  //   if (productState?.clients?.length > 0) {
+  //     setSelectProductClient({
+  //       label: t("products.addProduct.admin.byClient"),
+  //       id: EProductClient.BY_CLIENT,
+  //     });
+  //   } else if (productState?.clientsTypes?.length > 0) {
+  //     setSelectProductClient({
+  //       label: t("products.addProduct.admin.byClientType"),
+  //       id: EProductClient.BY_CLIENT_TYPE,
+  //     });
+  //   } else {
+  //     setSelectProductClient({
+  //       label: t("products.addProduct.admin.allCustomers"),
+  //       id: EProductClient.ALL_CUSTOMERS,
+  //     });
+  //   }
+  // }, [productState, EProductClient]);
+  const getAllClients = useCallback(async (SearchTerm?) => {
+    await getAndSetAllCustomers(callApi, setCustomersList, {
+      ClientType: "C",
+      onlyCreateOrderClients: false,
+      searchTerm: SearchTerm,
+    });
+  }, []);
+  const getAllClientTypes = useCallback(async () => {
+    await getAndSetClientTypes(callApi, setClientTypesList);
+  }, []);
+  useEffect(() => {
+    getAllClients();
+    getAllClientTypes();
+  }, []);
   return {
     t,
+    productClientsList,
     allProductSKU,
     allTemplate,
     allGroups,
@@ -246,6 +310,10 @@ const useSettings = ({
     onChangeStateProduct,
     errorName,
     errorCode,
+    SelectproductClient,
+    customersList,
+    clientTypesList,
+    setSelectProductClient,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,

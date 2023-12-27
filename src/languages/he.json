@@ -1468,7 +1468,11 @@
         "enterCode": "הזן קוד",
         "addNewProduct": "הוסף מוצר חדש",
         "addGoToList": "הוסף ועבור לרשימת הפרמטרים",
-        "updateNewProduct": "עדכן מוצר"
+        "updateNewProduct": "עדכן מוצר",
+        "clients": "לקוחות",
+        "allCustomers": "כל הלקוחות",
+        "byClient": "לפי לקוח",
+        "byClientType": "לפי סוג לקוח"
       }
     },
     "parameters": {
