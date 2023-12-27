@@ -32,7 +32,7 @@ import { SWITCHParameterWidget } from "@/pages-components/products/digital-offse
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 import { SelectMaterialsParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
 import {
-  calculationProgressState,
+  calculationProgressState, currentProductItemValueDraftId,
   currentProductItemValueState,
   itemParametersValuesState,
   jobActionsState,
@@ -82,8 +82,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [itemParmetersValues, setItemParmetersValues] = useRecoilState<any>(
     itemParametersValuesState
   );
-  const [currentProductItemValue, setCurrentProductItemValue] =
-    useRecoilState<any>(currentProductItemValueState);
+  const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
+  const [productItemValueDraftId, setCurrentProductItemValueDraftId] = useRecoilState<string>(currentProductItemValueDraftId);
+
   const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
   const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
   const [expanded, setExpanded] = useState<string | false>("panel_0");
@@ -124,7 +125,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
       if(calculationResult.productItemValue.id === calculationSessionId){
         setLoading(false);
-
+        setCurrentProductItemValueDraftId(calculationResult.productItemValue.id)
         const currentWorkFlows = cloneDeep(workFlows);
         const newWorkFlows = calculationResult?.productItemValue.workFlows;
         newWorkFlows.forEach(flow => {
