@@ -38,13 +38,6 @@ const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps
         } else if (currentProductItemValue) {
             let temp = cloneDeep(currentProductItemValue);
             temp.workFlow = [selectedWorkFlow];
-            const callBack = (res) => {
-                if (res.success) {
-                    temp.id = res.data.productItemValueDraftId;
-                    setCurrentProductItemValue(temp)
-                }
-            };
-            saveProductItemValueDraft(callApi, callBack, temp, true)
         }
     }, [selectedWorkFlow])
 
