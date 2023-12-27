@@ -9,6 +9,7 @@ import { useRecoilValue } from "recoil";
 import { useGomakeRouter } from "@/hooks";
 import { quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useRouter } from "next/router";
 
 const useMoreCircle = ({
   quoteItem,
@@ -16,6 +17,7 @@ const useMoreCircle = ({
   onClickDeleteQouteItem,
   documentType
 }) => {
+  const router = useRouter();
   const { navigate } = useGomakeRouter();
   const quoteItemValue: any = useRecoilValue(quoteItemState);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -26,14 +28,15 @@ const useMoreCircle = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const onClickEditQuoteItem = (quoteItem , documentType) => {
     navigate(
-      `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&quoteItem=${quoteItem?.id}&documentType=${documentType}`
+      `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&quoteItem=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
     );
   };
   const onClickDuplicateQuoteItem = (quoteItem , documentType) => {
     navigate(
-      `/products/duplicate?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&quoteItem=${quoteItem?.id}&documentType=${documentType}`
+      `/products/duplicate?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&quoteItem=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
     );
   };
   const menuList = [

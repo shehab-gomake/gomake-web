@@ -2,7 +2,7 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
 import { useRecoilState } from "recoil";
 import { addressModalState } from "./address-widget/state";
@@ -45,12 +45,16 @@ const BusinessNewWidget = ({
   const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
 
+
+  useEffect(() => {
+    setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
+  }, [values?.purchaseNumber]);
+
   const mappedCustomers = renderOptions().map(customer => ({
     text: customer?.name,
     id: customer?.id
   }));
 
-  //  selected agent here is : agentListValue.find((agent) => agent.value === quoteItemValue?.agentId).text  , but anyway there is a problem when updating "business name" the agent disappeared
 
   return (
     <>
@@ -68,7 +72,7 @@ const BusinessNewWidget = ({
           onChangeTextField={checkWhatRenderArray}
         />
         <InputUpdatedValues
-          value={purchaseNumber}
+           value={purchaseNumber}
           label={t("sales.quote.purchaseNumber")}
           onBlur={() => onBlurPurchaseNumber(purchaseNumber)}
           isUpdate={isUpdatePurchaseNumber}

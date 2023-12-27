@@ -45,7 +45,7 @@ import { getOutsourcingSuppliersListApi } from "@/services/api-service/suppliers
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useCalculationsWorkFlowsSignalr } from "../signalr/use-calculations-workflows-signalr";
 import { v4 as uuidv4 } from "uuid";
-import { addItemApi, getProductByItemIdApi } from "@/services/api-service/generic-doc/documents-api";
+import { addItemApi, getProductByItemIdApi, updateDocumentItemApi } from "@/services/api-service/generic-doc/documents-api";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -1238,7 +1238,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         navigate("/quote");
       } else {
         alertFaultAdded();
-      }
+      } 
     }
     await addItemApi(callApi, callBack, { Item: currentProductItemValue , DocumentType: router?.query?.documentType })
   }
@@ -1327,6 +1327,37 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     productTemplate,
   ]);
 
+  // const updateQuoteItem = async () => {
+  //   const callBack = (res) => {
+  //     if (res?.success) {
+  //       navigate("/quote");
+  //       setWorkFlows([]);
+  //       setJobActions([]);
+  //     } else {
+  //       alertFaultUpdate();
+  //     } 
+  //   }
+  //   await updateDocumentItemApi(callApi, callBack, 
+  //     { Item:
+  //       {
+  //       itemId: router?.query?.quoteItem,
+  //       productItemValueId: router?.query?.productId,
+  //         productId: router?.query?.productId,
+  //         supplierId: "",
+  //         customerID: router?.query?.customerId,
+  //         unitPrice: +defaultPrice?.values[0] / +quantity?.values[0],
+  //         amount: quantity?.values[0],
+  //         isNeedGraphics: false,
+  //         isUrgentWork: urgentOrder,
+  //         printingNotes,
+  //         graphicNotes,
+  //         isNeedExample: false,
+  //         jobDetails: pricingDefaultValue?.jobDetails,
+  //       },
+  //        DocumentType: router?.query?.documentType })
+  // }
+  ////////////////// UPDATE DOCUMENT ITEM /////////////////////
+  
   const navigateForRouter = () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {

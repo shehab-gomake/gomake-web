@@ -152,7 +152,6 @@ const getProductByItemIdApi: ICallAndSetData = async (callApi, setState, data) =
 export {
     getDocumentApi,
     getAllDocumentsApi,
-
     deleteDocumentItemApi,
     addDocumentContactApi,
     updateDocumentContactApi,
@@ -165,8 +164,6 @@ export {
     duplicateDocumentApi,
     duplicateWithAnotherQuantityApi,
     getDocumentPdfApi,
-
-
     updatePurchaseNumberApi,
     addDeliveryApi,
     cancelDocumentApi,
@@ -177,7 +174,7 @@ export {
     calculateDocumentApi,
     addItemApi,
     updateDocumentApi,
-
+    updateDocumentItemApi,
     updateDueDateApi,
     updateAgentApi,
     getProductByItemIdApi

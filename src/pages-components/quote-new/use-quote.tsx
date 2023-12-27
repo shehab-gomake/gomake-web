@@ -266,7 +266,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     }
     await updatePurchaseNumberApi(callApi, callBack, {
       documentType: docType, document: {
-        quoteId: quoteItemValue?.id,
+        documentId: quoteItemValue?.id,
         purchaseNumber: value,
       }
 
