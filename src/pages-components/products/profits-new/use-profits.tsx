@@ -641,19 +641,22 @@ const useNewProfits = () => {
     [profitRowType, router, selectedPricingTableItems]
   );
 
-  const deleteExceptionProfit = useCallback(async (id: string) => {
-    const res = await callApi(
-      "DELETE",
-      `/v1/printhouse-config/profits/delete-exception-profit?actionExceptionId=${id}`
-    );
-    if (res?.success) {
-      alertSuccessDelete();
-      getProfitsPricingTables();
-      setSelectedActionProfitRow(null);
-    } else {
-      alertFaultDelete();
-    }
-  }, []);
+  const deleteExceptionProfit = useCallback(
+    async (id: string) => {
+      const res = await callApi(
+        "DELETE",
+        `/v1/printhouse-config/profits/delete-exception-profit?actionExceptionId=${id}`
+      );
+      if (res?.success) {
+        alertSuccessDelete();
+        getProfitsPricingTables();
+        setSelectedActionProfitRow(null);
+      } else {
+        alertFaultDelete();
+      }
+    },
+    [selectedPricingTableItems]
+  );
   return {
     allActionProfitRowsByActionId,
     actionProfitRowChartData,
