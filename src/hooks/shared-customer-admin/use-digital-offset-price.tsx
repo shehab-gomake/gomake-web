@@ -120,13 +120,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   
   useEffect(()=>{
 
-    if(calculationResult && calculationResult.pricingDto){
+    if(calculationResult && calculationResult.productItemValue){
 
-      if(calculationResult.pricingDto.id === calculationSessionId){
+      if(calculationResult.productItemValue.id === calculationSessionId){
         setLoading(false);
 
         const currentWorkFlows = cloneDeep(workFlows);
-        const newWorkFlows = calculationResult?.pricingDto.workFlows;
+        const newWorkFlows = calculationResult?.productItemValue.workFlows;
         newWorkFlows.forEach(flow => {
           const isExists = currentWorkFlows.find(x=>x.id === flow.id );
           if(!isExists){
@@ -152,12 +152,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           currentWorkFlows[0].selected = true;
         }
         const currentWorkFlowsCount = currentWorkFlows.length;
-        const totalWorkFlowsCount = calculationResult?.pricingDto.totalWorkFlows;
+        const totalWorkFlowsCount = calculationResult?.productItemValue.totalWorkFlows;
         if(!isCalculationFinished){
           setCalculationProgress({totalWorkFlowsCount: totalWorkFlowsCount,currentWorkFlowsCount:currentWorkFlowsCount} );
         }
         setWorkFlows(currentWorkFlows);
-        setJobActions(calculationResult?.pricingDto.actions);
+        setJobActions(calculationResult?.productItemValue.actions);
       }
 
     }
@@ -1199,7 +1199,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
            }
            currentWorkFlows.sort((a,b) => b.monials - a.monials );
            setCalculationProgress({totalWorkFlowsCount: 0,currentWorkFlowsCount:0} );
-           setWorkFlows(currentWorkFlows);
+          // setWorkFlows(currentWorkFlows);
          }
        
          

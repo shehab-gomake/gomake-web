@@ -9,7 +9,7 @@ import {
 
 const useCalculationsWorkFlowsSignalr = () => {
     const {data,connection,connectionId} = useGoMakeSignalr<ICalculationSignalRResult>({
-        url: 'https://calculation-service.gomake-dev.net/hubs/workFlows',
+        url: config.erp_server + '/hubs/workFlows',
         accessToken: getUserToken(),
         methodName: "updateWorkFlows"
     })
@@ -17,6 +17,7 @@ const useCalculationsWorkFlowsSignalr = () => {
     useEffect(()=>{
         if(connection){
             connection.on("startCalculationSession", (newData) => {
+                console.log("startCalculationSession",newData)
                 setConnectionSessionId(newData);
             });
         }
