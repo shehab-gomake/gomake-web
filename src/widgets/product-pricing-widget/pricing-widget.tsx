@@ -16,7 +16,11 @@ import {
 import {useTranslation} from "react-i18next";
 import {useStyle} from "@/widgets/product-pricing-widget/style";
 import {useRecoilState, useRecoilValue} from "recoil";
-import {currentProductItemValueState, selectedWorkFlowState} from "@/widgets/product-pricing-widget/state";
+import {
+    currentProductItemValueDraftId,
+    currentProductItemValueState,
+    selectedWorkFlowState
+} from "@/widgets/product-pricing-widget/state";
 import {saveProductItemValueDraft} from "@/services/api-service/quotes/save-product-item-value-draft-api";
 import {useGomakeAxios} from "@/hooks";
 import cloneDeep from "lodash.clonedeep";
@@ -28,6 +32,8 @@ const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps
     const {classes} = useStyle();
     const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
     const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
+    const [productItemValueDraftId, setCurrentProductItemValueDraftId] = useRecoilState<string>(currentProductItemValueDraftId);
+
     const {callApi} = useGomakeAxios();
     useEffect(() => {
         getOutSourcingSuppliers();
@@ -38,6 +44,9 @@ const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps
         } else if (currentProductItemValue) {
             let temp = cloneDeep(currentProductItemValue);
             temp.workFlow = [selectedWorkFlow];
+            const productItemValue = cloneDeep(currentProductItemValue);
+            productItemValue.id = productItemValueDraftId;
+            setCurrentProductItemValue(productItemValue);
         }
     }, [selectedWorkFlow])
 
