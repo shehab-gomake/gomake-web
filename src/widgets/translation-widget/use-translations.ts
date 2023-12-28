@@ -210,7 +210,12 @@ const useTranslations = () => {
         const arrayBuffer = event.target.result;
         const data = new Uint8Array(arrayBuffer as ArrayBuffer);
         // Convert data to a Base64 string
-        const base64String = btoa(String.fromCharCode.apply(null, data));
+        var base64String = btoa(new Uint8Array(data).reduce(
+            function (data, byte) {
+              return data + String.fromCharCode(byte);
+            },
+            ''
+        ));
         uploadTranslationsExcelFileApi(callApi, () => {
         }, { base64: base64String })
       };
