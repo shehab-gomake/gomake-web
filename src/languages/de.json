@@ -1448,7 +1448,8 @@
         "clients": "Kunden",
         "allCustomers": "Alle Kunden",
         "byClient": "Nach Kunde",
-        "byClientType": "Nach Kundentyp"
+        "byClientType": "Nach Kundentyp",
+        "uploadImg": "Bild hochladen"
       }
     },
     "parameters": {

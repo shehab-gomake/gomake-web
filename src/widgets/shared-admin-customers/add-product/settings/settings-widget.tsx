@@ -9,6 +9,7 @@ import { AddProductSkuModal } from "./modals/add-contact-modal";
 import { useSettings } from "./use-settings";
 import { useStyle } from "./style";
 import { EProductClient } from "./settings-data";
+import { ImageUploadComponent } from "@/components/form-inputs/image-input";
 
 const SettingsWidget = ({
   onClickParametersTab,
@@ -41,6 +42,7 @@ const SettingsWidget = ({
     createNewProduct,
     createNewProductAndGoToParameterList,
     updatedProduct,
+    UploadProductImage,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
 
   console.log("productState", productState);
@@ -235,6 +237,23 @@ const SettingsWidget = ({
             />
           </div>
         </div>
+        {isUpdate && (
+          <div style={clasess.itemOnFirstContainer}>
+            <div style={clasess.labelTitleStyle}>
+              {t("products.addProduct.admin.uploadImg")}
+            </div>
+            <div>
+              <ImageUploadComponent
+                onChange={(value) => {
+                  onChangeStateProduct("img", value);
+                  UploadProductImage(productState?.id, value);
+                }}
+                value={productState.img}
+              />
+            </div>
+          </div>
+        )}
+
         <div style={clasess.itemGropupsContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.groups")}
@@ -266,6 +285,7 @@ const SettingsWidget = ({
           </div>
         </div>
       </div>
+
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.clients")}
       </div>

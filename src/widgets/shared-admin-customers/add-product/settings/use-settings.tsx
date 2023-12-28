@@ -11,6 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { v4 as uuidv4 } from "uuid";
 import { EProductClient, ProductClient } from "./settings-data";
+import { EHttpMethod } from "@/services/api-service/enums";
 
 const useSettings = ({
   onClickParametersTab,
@@ -22,7 +23,8 @@ const useSettings = ({
   const { push, query } = useRouter();
   const { settingsRoute, id } = query;
   const { t } = useTranslation();
-  const { setSnackbarStateValue } = useSnackBar();
+  const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded } =
+    useSnackBar();
   const [RandomId, setRandomId] = useState();
   useEffect(() => {
     setRandomId(uuidv4());
@@ -297,6 +299,23 @@ const useSettings = ({
     getAllClients();
     getAllClientTypes();
   }, []);
+
+  const UploadProductImage = useCallback(async (productId: any, fileBase64) => {
+    const res: any = await callApi(
+      EHttpMethod.POST,
+      `/v1/printhouse-config/products/upload-product-image`,
+      {
+        productId: productId,
+        fileBase64: fileBase64,
+      }
+    );
+    if (res?.success) {
+      alertSuccessAdded();
+    } else {
+      alertFaultAdded();
+    }
+  }, []);
+
   return {
     t,
     productClientsList,
@@ -313,6 +332,7 @@ const useSettings = ({
     SelectproductClient,
     customersList,
     clientTypesList,
+    UploadProductImage,
     setSelectProductClient,
     onClickCloseProductSKU,
     onClickOpenProductSKU,

@@ -1525,7 +1525,8 @@
         "clients":"Clients",
         "allCustomers":"all customers",
         "byClient":"by client",
-        "byClientType":"by client type"
+        "byClientType":"by client type",
+        "uploadImg":"Upload image"
 
       }
     },

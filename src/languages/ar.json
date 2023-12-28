@@ -1472,7 +1472,8 @@
         "clients": "العملاء",
         "allCustomers": "كل العملاء",
         "byClient": "حسب العميل",
-        "byClientType": "حسب نوع العميل"
+        "byClientType": "حسب نوع العميل",
+        "uploadImg": "تحميل صورة"
         
       }
     },

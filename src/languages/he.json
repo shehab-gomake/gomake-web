@@ -1472,7 +1472,8 @@
         "clients": "לקוחות",
         "allCustomers": "כל הלקוחות",
         "byClient": "לפי לקוח",
-        "byClientType": "לפי סוג לקוח"
+        "byClientType": "לפי סוג לקוח",
+        "uploadImg": "העלאת תמונה"
       }
     },
     "parameters": {
