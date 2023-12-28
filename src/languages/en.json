@@ -1708,6 +1708,9 @@
       "createdBy": "Created by {{name}}",
       "customer": "Customer",
       "orderList": "Order List",
+      "receiptList": "Receipt List",
+      "deliveryNoteList": "Delivery Note List",
+      "invoiceList": "Invoice List",
       "deleteItem": "Delete Item",
       "areYouSureDeleteItem": "Are you sure to delete this item?",
       "amount": "Amount",
@@ -1742,7 +1745,16 @@
       "actionDescription":"Action Description",
       "selectEmployee":"select employee",
       "selectDate":"select date",
-      "quoteLogs":"Logs for quote"
+      "quoteLogs":"Logs for quote",
+      "quote": "Quote",
+      "order": "Order",
+      "invoice":"Invoice",
+      "receipt": "Receipt",
+      "deliveryNote" : "Delivery Note",
+      "invoiceNumber": "Invoice Number",
+      "receiptNumber": "Receipt Number",
+      "deliveryNoteNumber": "Delivery Note Number"
+
     }
   },
   "usersSettings": {

@@ -19,8 +19,8 @@ const useCustomTable = ({ data }) => {
     value: any
   ) => {
     let temp = lodashClonedeep(items);
-    temp[parentIndex].childsQuoteItems[childInex] = {
-      ...temp[parentIndex].childsQuoteItems[childInex],
+    temp[parentIndex].childsDocumentItems[childInex] = {
+      ...temp[parentIndex].childsDocumentItems[childInex],
       [filedName]: value,
     };
     setItems(temp);

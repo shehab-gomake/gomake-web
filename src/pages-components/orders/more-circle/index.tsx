@@ -9,42 +9,48 @@ import { PDFIcon } from "./icons/pdf";
 import { OptionsButton } from "@/components/options-button/options-button";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
-const MoreMenuWidget = ({ quote, onClcikOpenModal }: any) => {
+const MoreMenuWidget = ({ order, onClickOpenModal, onClickDuplicate , onClickDocumentPdf}: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const { user, navigate } = useMoreCircle();
   return (
     <OptionsButton>
+
+
       <MenuItem>
         <div style={clasess.menuRowStyle}>
           <PermissionCheck userPermission={Permissions.SHOW_LOGGERS_ORDER}>
-              <EditingIcon />
-              <div style={clasess.rowTextStyle}>{t("sales.quote.loggers")}</div>
+            <EditingIcon />
+            <div style={clasess.rowTextStyle}>{t("sales.quote.loggers")}</div>
           </PermissionCheck>
-      
         </div>
       </MenuItem>
-      <MenuItem>
+
+
+      <MenuItem onClick={()=>onClickDocumentPdf(order?.id, DOCUMENT_TYPE.order)}>
         <div style={clasess.menuRowStyle}>
           <PDFIcon />
           <div style={clasess.rowTextStyle}>{t("sales.quote.pdf")}</div>
         </div>
       </MenuItem>
-      <MenuItem>
+
+      <MenuItem onClick={() => onClickDuplicate(order?.id, DOCUMENT_TYPE.order)}>
         <div style={clasess.menuRowStyle}>
           <ConvertIcon />
           <div style={clasess.rowTextStyle}>{t("sales.quote.duplicate")}</div>
         </div>
       </MenuItem>
-      {(quote?.statusID === QUOTE_STATUSES.Create &&
-        quote?.userID === user?.id) ||
-      quote?.statusID === QUOTE_STATUSES.Open ? (
+
+      {(order?.documentStatus === QUOTE_STATUSES.Create &&
+        order?.userID === user?.id) ||
+        order?.documentStatus === QUOTE_STATUSES.Open ? (
         <MenuItem
           onClick={() =>
-            quote?.statusID === QUOTE_STATUSES.Create
+            order?.documentStatus === QUOTE_STATUSES.Create
               ? navigate(`/quote`)
-              : onClcikOpenModal(quote)
+              : onClickOpenModal(order)
           }
         >
           <div style={clasess.menuRowStyle}>

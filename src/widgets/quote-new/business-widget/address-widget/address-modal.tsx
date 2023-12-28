@@ -7,11 +7,13 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { addressInputs } from "./address-inputs";
 import { useStyle } from "./style";
 import { useAddressWidget } from "./use-address-widget";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 interface IProps {
     isUpdate?: boolean;
+    documentType: DOCUMENT_TYPE;
 }
-const AddressModal = ({ isUpdate }: IProps) => {
+const AddressModal = ({ isUpdate , documentType }: IProps) => {
     const { classes } = useStyle();
     const { t,
         onChangeInputs,
@@ -24,7 +26,7 @@ const AddressModal = ({ isUpdate }: IProps) => {
         onClickAddAddress,
         onClickAddNewAddress,
         updateClientAddress,
-        setSelectedAddress } = useAddressWidget();
+        setSelectedAddress } = useAddressWidget(documentType);
     const buttonLabel = isUpdate ? t("sales.quote.save") : t("sales.quote.add")
 
     const handleClick = () => {
