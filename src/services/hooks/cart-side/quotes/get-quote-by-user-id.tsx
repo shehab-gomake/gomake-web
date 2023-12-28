@@ -15,10 +15,10 @@ const getAndSetQuotesByUserId = async (
   );
 
   const _data: any = returnResult(result, undefined);
-  const mapData = _data?.priceListItems?.map((item: any, index: number) => {
+  const mapData = _data?.documentItems?.map((item: any, index: number) => {
     indexs++;
     const parentIndex = indexs;
-    const _childsQuoteItemsMapping = item?.childsQuoteItems?.map(
+    const _childsDocumentItemsMapping = item?.childsDocumentItems?.map(
       (child: any, index2: number) => {
         indexs++;
         return {
@@ -38,7 +38,7 @@ const getAndSetQuotesByUserId = async (
       details: (
         <div
           style={
-            _childsQuoteItemsMapping != null
+            _childsDocumentItemsMapping != null
               ? { height: "100%", overflowY: "scroll", paddingRight: 5 }
               : { height: 36, overflowY: "scroll", paddingRight: 5 }
           }
@@ -52,10 +52,10 @@ const getAndSetQuotesByUserId = async (
       finalPrice: item?.finalPrice,
       // more: <MoreMenuWidget quoteItem={item} />,
       quoteItemId: item?.id,
-      childsQuoteItems: _childsQuoteItemsMapping,
+      childsDocumentItems: _childsDocumentItemsMapping,
     };
   });
-  _data.priceListItemsMapping = mapData;
+  _data.documentItemsMapping = mapData;
   if (setState) {
     setState(_data);
   }

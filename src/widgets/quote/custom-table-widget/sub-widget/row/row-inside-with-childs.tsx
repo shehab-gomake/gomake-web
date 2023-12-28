@@ -36,7 +36,7 @@ const RowInsideWithChilds = ({
             {entry[1]}
           </div>
           <div>
-            {row?.childsQuoteItems?.map((item, index2) => {
+            {row?.childsDocumentItems?.map((item, index2) => {
               return (
                 <div
                   key={`row_table_${index}`}
@@ -84,7 +84,7 @@ const RowInsideWithChilds = ({
             />
           </div>
           <div>
-            {row?.childsQuoteItems?.map((item, index2) => {
+            {row?.childsDocumentItems?.map((item, index2) => {
               return (
                 <div
                   key={`row_table_${index2}`}
@@ -197,7 +197,7 @@ const RowInsideWithChilds = ({
             {entry[1]}
           </div>
           <div style={{ width: "100%" }}>
-            {row?.childsQuoteItems?.map((item, index2) => {
+            {row?.childsDocumentItems?.map((item, index2) => {
               return (
                 <div
                   key={`row_table_${index2}`}

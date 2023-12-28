@@ -12,8 +12,7 @@ const getAndSetExistQuotes = async (
 
   if (setState) {
     setState(result?.data?.data?.data?.result);
-  }
-  
+  } 
   return returnResult(result?.data?.data?.data?.result, setState);
 };
 

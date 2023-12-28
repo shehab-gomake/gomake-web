@@ -8,12 +8,14 @@ const MoreMenuWidget = ({
   quoteItem,
   onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
+  documentType
 }) => {
   const { clasess } = useStyle();
   const { open, anchorEl, menuList, handleClose, handleClick } = useMoreCircle({
     quoteItem,
     onClickDuplicateWithDifferentQTY,
     onClickDeleteQouteItem,
+  documentType
   });
   return (
     <>

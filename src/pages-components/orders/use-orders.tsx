@@ -11,11 +11,13 @@ import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-
 import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
+import { duplicateDocumentApi, getAllDocumentsApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const useOrders = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { setSnackbarStateValue } = useSnackBar();
+  const { setSnackbarStateValue, alertFaultUpdate, alertSuccessUpdate , alertFaultDuplicate ,alertFaultAdded} = useSnackBar();
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
@@ -32,12 +34,13 @@ const useOrders = () => {
   const [allOrders, setAllOrders] = useState();
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
+
   const [openModal, setOpenModal] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState<any>();
   const onClcikCloseModal = () => {
     setOpenModal(false);
   };
-  const onClcikOpenModal = (quote: any) => {
+  const onClickOpenModal = (quote: any) => {
     setSelectedQuote(quote);
     setOpenModal(true);
   };
@@ -64,18 +67,21 @@ const useOrders = () => {
       return customersListCreateOrder;
     } else return customersListCreateQuote;
   };
+
   const getAllCustomersCreateQuote = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       ClientType: "C",
       onlyCreateOrderClients: false,
     });
   }, []);
+
   const getAllCustomersCreateOrder = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateOrder, {
       ClientType: "C",
       onlyCreateOrderClients: true,
     });
   }, []);
+  
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
       setCanOrder(true);
@@ -83,6 +89,7 @@ const useOrders = () => {
       setCanOrder(false);
     }
   };
+  
   const _renderQuoteStatus = (status: number, quote: any) => {
     if (status === QUOTE_STATUSES.Create) {
       return t("sales.quote.createdBy", { name: quote?.userName });
@@ -127,7 +134,9 @@ const useOrders = () => {
       return t("sales.quote.waitForPrintHouseConfirm");
     }
   };
-  const getAllQuotes = useCallback(async () => {
+
+/////////////////////////////// GET ALL GENERIC DOC ///////////////////////////
+  const getAllOrderss = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/order/get-all-orders`,
@@ -145,17 +154,17 @@ const useOrders = () => {
     );
     const data = res?.data?.data?.result;
     const totalItems = res?.data?.data?.totalItems;
-    const mapData = data?.map((quote: any) => [
-      GetDateFormat(quote?.createdDate),
-      quote?.customerName,
-      quote?.boardMissionsNumbers?.length,
-      quote?.orderNumber,
-      quote?.worksNames,
-      quote?.cost,
-      quote?.totalPrice,
-      quote?.notes,
-      _renderQuoteStatus(quote?.statusID, quote),
-      <MoreMenuWidget quote={quote} onClcikOpenModal={onClcikOpenModal} />,
+    const mapData = data?.map((order: any) => [
+      GetDateFormat(order?.createdDate),
+      order?.customerName,
+      order?.boardMissionsNumbers?.length,
+      order?.orderNumber,
+      order?.worksNames,
+      order?.cost,
+      order?.totalPrice,
+      order?.notes,
+      _renderQuoteStatus(order?.documentStatus, order),
+      <MoreMenuWidget order={order} onClickOpenModal={onClickOpenModal} onClickDuplicate={onClickOrderDuplicate} onClickDocumentPdf={onClickDocumentPdf}/>,
     ]);
     setAllOrders(mapData);
   }, [
@@ -167,45 +176,93 @@ const useOrders = () => {
     agentId,
     finalPatternSearch,
   ]);
-  const getAllQuotesInitial = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/order/get-all-orders`,
+ 
+
+  const getAllOrders = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const data = res?.data?.data;
+        const totalItems = res?.data?.totalItems;
+    const mapData = data?.map((order: any) => [
+      GetDateFormat(order?.createdDate),
+      order?.customerName,
+      order?.boardMissionsNumbers?.length,
+      order?.orderNumber,
+      order?.worksNames,
+      order?.cost,
+      order?.totalPrice,
+      order?.notes,
+      _renderQuoteStatus(order?.documentStatus, order),
+      <MoreMenuWidget order={order} onClickOpenModal={onClickOpenModal} onClickDuplicate={onClickOrderDuplicate} onClickDocumentPdf={onClickDocumentPdf}/>,
+    ]);
+    setAllOrders(mapData);
+      } else {
+        alertFaultAdded();
+      }
+    };
+    await getAllDocumentsApi(callApi, callBack, { 
+      documentType : DOCUMENT_TYPE.order ,
+      data : 
       {
         model: {
           pageNumber: page,
           pageSize: limit,
         },
-      }
-    );
-    const data = res?.data?.data?.result;
-    const totalItems = res?.data?.data?.totalItems;
-    const mapData = data?.map((quote: any) => [
-      GetDateFormat(quote?.createdDate),
-      quote?.customerName,
-      quote?.boardMissionsNumbers?.length,
-      quote?.orderNumber,
-      quote?.worksNames,
-      quote?.cost,
-      quote?.totalPrice,
-      quote?.notes,
-      _renderQuoteStatus(quote?.statusID, quote),
-      <MoreMenuWidget quote={quote} onClcikOpenModal={onClcikOpenModal} />,
-    ]);
-    setAllOrders(mapData);
-  }, [page, limit]);
-  useEffect(() => {
-    getAllQuotes();
-  }, []);
-  const onClickSearchFilter = () => {
-    getAllQuotes();
+        statusId: statusId?.value,
+        patternSearch: finalPatternSearch,
+        customerId: customerId?.id,
+        dateRange,
+        agentId: agentId?.id,
+      } });
   };
 
-  const onClcikClearFilter = () => {
+/////////////////////////////// GET ALL GENERIC DOC ///////////////////////////
+
+
+  // const getAllQuotesInitial = useCallback(async () => {
+  //   const res = await callApi(
+  //     EHttpMethod.POST,
+  //     `/v1/erp-service/order/get-all-orders`,
+  //     {
+  //       model: {
+  //         pageNumber: page,
+  //         pageSize: limit,
+  //       },
+  //     }
+  //   );
+  //   const data = res?.data?.data?.result;
+  //   const totalItems = res?.data?.data?.totalItems;
+  //   const mapData = data?.map((quote: any) => [
+  //     GetDateFormat(quote?.createdDate),
+  //     quote?.customerName,
+  //     quote?.boardMissionsNumbers?.length,
+  //     quote?.orderNumber,
+  //     quote?.worksNames,
+  //     quote?.cost,
+  //     quote?.totalPrice,
+  //     quote?.notes,
+  //     _renderQuoteStatus(quote?.documentStatus, quote),
+  //     <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} onClickDuplicate={onClickOrderDuplicate}/>,
+  //   ]);
+  //   setAllOrders(mapData);
+  // }, [page, limit]);
+
+
+  useEffect(() => {
+    getAllOrders();
+  }, []);
+
+
+  // need filters
+  const onClickSearchFilter = () => {
+    getAllOrders();
+  };
+
+  const onClickClearFilter = () => {
     setStatusId(null);
     setAgentId(null);
     setCustomerId(null);
-    getAllQuotesInitial();
+   // getAllQuotesInitial();
   };
 
   const tableHeaders = [
@@ -220,6 +277,7 @@ const useOrders = () => {
     t("sales.quote.status"),
     t("sales.quote.more"),
   ];
+
   const quoteStatuses = [
     {
       label: t("sales.quote.create"),
@@ -278,6 +336,7 @@ const useOrders = () => {
       value: QUOTE_STATUSES.WaitForPrintHouseConfirm,
     },
   ];
+
   useEffect(() => {
     getAllCustomersCreateQuote();
     getAllCustomersCreateOrder();
@@ -293,20 +352,51 @@ const useOrders = () => {
       }
     );
     if (res?.success) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.updatedSusuccessfully"),
-        type: "sucess",
-      });
+      alertSuccessUpdate();
       navigate("/quote");
     } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.updatedfailed"),
-        type: "error",
-      });
+      alertFaultUpdate();
     }
   }, []);
+
+
+
+  ////////////////////////////////// new generic doc ////////////////////////////////
+  const onClickOrderDuplicate = async (id: string , documentType : number) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const isAnotherDocumentInCreate = res?.data?.isAnotherDocumentInCreate;
+        const quoteId = res?.data?.quoteId;
+        const documentId = res?.data?.documentId;
+
+        console.log(res)
+        console.log(isAnotherDocumentInCreate +" " +documentId)
+
+        if (!isAnotherDocumentInCreate) {
+          navigate("/quote") 
+        }
+        else {
+          onClickOpenModal({ id:quoteId })
+        }
+      } else {
+        alertFaultDuplicate();
+      }
+    };
+    await duplicateDocumentApi(callApi, callBack, { documentId: id  , documentType : documentType });
+  };
+
+  const onClickDocumentPdf = async (id: string , documentType : number) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const pdfLink = res.data;
+        window.open(pdfLink, "_blank");
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await getDocumentPdfApi(callApi, callBack, { documentId: id , documentType : documentType  });
+  };
+
   return {
     patternSearch,
     tableHeaders,
@@ -328,8 +418,8 @@ const useOrders = () => {
     checkWhatRenderArray,
     updateQuoteStatus,
     onClickSearchFilter,
-    getAllQuotes,
-    onClcikClearFilter,
+    getAllOrders,
+    onClickClearFilter,
     t,
   };
 };

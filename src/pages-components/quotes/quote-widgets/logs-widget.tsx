@@ -5,7 +5,7 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { useEffect, useRef, useState } from "react";
 import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue , useResetRecoilState} from "recoil";
 import { employeesListsState, employeeListState } from "../states";
 import { DateFormatter } from "@/utils/adapter";
 
@@ -17,6 +17,7 @@ const QuoteLogsWidget = ({ logsTableHeaders }: IQuoteLogsProps) => {
     const { classes } = useStyle();
     const employeeListValue = useRecoilValue<string[]>(employeesListsState);
     const [employeeId, setEmployeeId] = useRecoilState<string>(employeeListState);
+    const resetEmployeeId = useResetRecoilState(employeeListState);
     const [selectDate, setSelectDate] = useState<string>();
     const [activeClickAway, setActiveClickAway] = useState<boolean>(false);
     const dateRef = useRef(null);
@@ -27,7 +28,8 @@ const QuoteLogsWidget = ({ logsTableHeaders }: IQuoteLogsProps) => {
 
     const onClickClearFilter = () => {
         setSelectDate(null);
-        setEmployeeId("");
+     //  setEmployeeId("");
+       resetEmployeeId();
     };
 
     return (

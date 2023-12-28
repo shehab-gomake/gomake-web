@@ -9,11 +9,14 @@ import { PDFIcon } from "./icons/pdf";
 import { OptionsButton } from "@/components/options-button/options-button";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useEffect } from "react";
 
-const MoreMenuWidget = ({ quote, onClickOpenModal , onClickPdf , onClickDuplicate,onClickLoggers }: any) => {
+const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onClickDuplicate, onClickLoggers }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { user, navigate } = useMoreCircle();
+  const documentPath = DOCUMENT_TYPE[documentType].toLowerCase();
 
   return (
     <OptionsButton>
@@ -25,24 +28,28 @@ const MoreMenuWidget = ({ quote, onClickOpenModal , onClickPdf , onClickDuplicat
           </PermissionCheck>
         </div>
       </MenuItem>
-      <MenuItem onClick={()=>onClickPdf(quote?.id)}>
+
+      <MenuItem onClick={() => onClickPdf(quote?.id)}>
         <div style={classes.menuRowStyle}>
           <PDFIcon />
           <div style={classes.rowTextStyle}>{t("sales.quote.pdf")}</div>
         </div>
       </MenuItem>
-      <MenuItem onClick={()=>onClickDuplicate(quote?.id)}>
+
+
+      <MenuItem onClick={() => onClickDuplicate(quote?.id)}>
         <div style={classes.menuRowStyle}>
           <ConvertIcon />
           <div style={classes.rowTextStyle}>{t("sales.quote.duplicate")}</div>
         </div>
       </MenuItem>
-      {(quote?.statusID === QUOTE_STATUSES.Create &&
+
+      {(quote?.documentStatus === QUOTE_STATUSES.Create &&
         quote?.userID === user?.id) ||
-        quote?.statusID === QUOTE_STATUSES.Open ? (
+        quote?.documentStatus === QUOTE_STATUSES.Open ? (
         <MenuItem
           onClick={() =>
-            quote?.statusID === QUOTE_STATUSES.Create
+            quote?.documentStatus === QUOTE_STATUSES.Create
               ? navigate(`/quote`)
               : onClickOpenModal(quote)
           }
@@ -53,6 +60,20 @@ const MoreMenuWidget = ({ quote, onClickOpenModal , onClickPdf , onClickDuplicat
           </div>
         </MenuItem>
       ) : null}
+
+
+      {documentType != DOCUMENT_TYPE.quote ? (
+        <MenuItem
+          onClick={() => navigate(`/${documentPath}?Id=${quote?.id}`)
+          }
+        >
+          <div style={classes.menuRowStyle}>
+            <EditingIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.edit")}</div>
+          </div>
+        </MenuItem>
+      ) : null}
+
     </OptionsButton>
   );
 };

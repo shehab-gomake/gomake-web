@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
 import { materialsCategoriesState } from "@/store/material-categories";
-import { useGomakeAxios, useGomakeRouter } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
   getAndSetgetProductQuoteItemById,
   getAndSetProductById,
@@ -45,12 +45,14 @@ import { getOutsourcingSuppliersListApi } from "@/services/api-service/suppliers
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useCalculationsWorkFlowsSignalr } from "../signalr/use-calculations-workflows-signalr";
 import { v4 as uuidv4 } from "uuid";
+import { addItemApi, getProductByItemIdApi, updateDocumentItemApi } from "@/services/api-service/generic-doc/documents-api";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const router = useRouter();
+  const {alertFaultAdded , alertFaultUpdate} = useSnackBar();
 
   const { clientTypesValue, renderOptions, checkWhatRenderArray } =
     useQuoteWidget();
@@ -616,43 +618,98 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [subProducts, canCalculation]);
 
+  // useEffect(() => {
+  //   if (defaultPrice && defaultPrice?.values && quantity) {
+  //     const productItemValue = {
+  //       supplierId: "",
+  //       sourceType: workFlowSelected?.actions?.every(
+  //         (action) => action?.source === EWorkSource.INTERNAL
+  //       )
+  //         ? EWorkSource.INTERNAL
+  //         : EWorkSource.PARTIALLY,
+  //       productId: router?.query?.productId,
+  //       userID: userProfile?.id,
+  //       customerID: router?.query?.customerId,
+  //       clientTypeId: router?.query?.clientTypeId,
+  //       unitPrice: +defaultPrice?.values[0] / +quantity?.values[0],
+  //       amount: quantity?.values[0],
+  //       isNeedGraphics: false,
+  //       isUrgentWork: urgentOrder,
+  //       printingNotes,
+  //       graphicNotes,
+  //       isNeedExample: false,
+  //       jobDetails: "",
+  //       itemParmetersValues: itemParmetersValues,
+  //       workFlow:
+  //         pricingDefaultValue?.workFlows.length > 0
+  //           ? [workFlowSelected]
+  //           : productTemplate?.workFlows,
+  //       actions:
+  //         pricingDefaultValue?.actions?.length > 0
+  //           ? pricingDefaultValue?.actions
+  //           : productTemplate?.actions,
+  //       outSoucreCost: 0,
+  //       outSoucreProfit: 0,
+  //       outSourceFinalPrice: 0,
+  //     };
+  //     setCurrentProductItemValue(productItemValue);
+  //   }
+  // }, [subProducts, workFlowSelected]);
+
+  
   useEffect(() => {
     if (defaultPrice && defaultPrice?.values && quantity) {
       const productItemValue = {
-        supplierId: "",
-        sourceType: workFlowSelected?.actions?.every(
-          (action) => action?.source === EWorkSource.INTERNAL
-        )
-          ? EWorkSource.INTERNAL
-          : EWorkSource.PARTIALLY,
+        // supplierId: "",
+        // sourceType: workFlowSelected?.actions?.every(
+        //   (action) => action?.source === EWorkSource.INTERNAL
+        // )
+        //   ? EWorkSource.INTERNAL
+        //   : EWorkSource.PARTIALLY,
+        // productId: router?.query?.productId,
+        // userID: userProfile?.id,
+        // customerID: router?.query?.customerId,
+        // clientTypeId: router?.query?.clientTypeId,
+        // unitPrice: +defaultPrice?.values[0] / +quantity?.values[0],
+        // amount: quantity?.values[0],
+        // isNeedGraphics: false,
+        // isUrgentWork: urgentOrder,
+        // printingNotes,
+        // graphicNotes,
+        // isNeedExample: false,
+        // jobDetails: "",
+        // itemParmetersValues: itemParmetersValues,
+        // workFlow:
+        //   pricingDefaultValue?.workFlows.length > 0
+        //     ? [workFlowSelected]
+        //     : productTemplate?.workFlows,
+        // actions:
+        //   pricingDefaultValue?.actions?.length > 0
+        //     ? pricingDefaultValue?.actions
+        //     : productTemplate?.actions,
+        // outSoucreCost: 0,
+        // outSoucreProfit: 0,
+        // outSourceFinalPrice: 0,
+        productItemValueId: productItemValueDraftId,
+       // itemId: router?.query?.quoteItem,
+        itemId:router?.query?.documentId,
         productId: router?.query?.productId,
-        userID: userProfile?.id,
+        supplierId: "",
         customerID: router?.query?.customerId,
-        clientTypeId: router?.query?.clientTypeId,
         unitPrice: +defaultPrice?.values[0] / +quantity?.values[0],
         amount: quantity?.values[0],
         isNeedGraphics: false,
         isUrgentWork: urgentOrder,
         printingNotes,
         graphicNotes,
+        jobDetails: pricingDefaultValue?.jobDetails,
         isNeedExample: false,
-        jobDetails: "",
-        itemParmetersValues: itemParmetersValues,
-        workFlow:
-          pricingDefaultValue?.workFlows.length > 0
-            ? [workFlowSelected]
-            : productTemplate?.workFlows,
-        actions:
-          pricingDefaultValue?.actions?.length > 0
-            ? pricingDefaultValue?.actions
-            : productTemplate?.actions,
-        outSoucreCost: 0,
-        outSoucreProfit: 0,
-        outSourceFinalPrice: 0,
+        isDuplicatedWithAnotherQuantity: false,
       };
       setCurrentProductItemValue(productItemValue);
     }
   }, [subProducts, workFlowSelected]);
+  
   useEffect(() => {
     const allParameters = subProducts.flatMap((item) => item.parameters);
     const filteredArray = allParameters.filter((obj) => obj.values[0] !== "false");
@@ -1081,6 +1138,22 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       Id: router?.query?.productId,
     });
   }, [router, widgetType]);
+
+
+  const getProductQuoteItemById = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setDefaultProductTemplate(res?.data);
+        //initProduct(res?.data);
+        initQuoteItemProduct(res?.data);
+
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await getProductByItemIdApi(callApi, callBack, { documentItemId: router?.query?.quoteItem, documentType: router?.query?.documentType })
+  }
+
   const initQuoteItemProduct = (quoteItemProduct) => {
     if(quoteItemProduct && quoteItemProduct.itemParmetersValues){
       setItemParmetersValues(quoteItemProduct.itemParmetersValues);
@@ -1125,14 +1198,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     initProduct(quoteItemProduct);
   }
-  const getProductQuoteItemById = useCallback(async () => {
-    await getAndSetgetProductQuoteItemById(callApi, (data)=>{
-      setDefaultProductTemplate(data);
-      initQuoteItemProduct(data);
-    }, {
-      QuoteItemId: router?.query?.quoteItem,
-    });
-  }, [router]);
 
   const validateParameters = (inputArray) => {
     let isValid = true;
@@ -1202,9 +1267,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
            setCalculationProgress({totalWorkFlowsCount: 0,currentWorkFlowsCount:0} );
           // setWorkFlows(currentWorkFlows);
          }
-       
-         
-         
           setJobActions(res?.data?.data?.data?.actions);
       }
       setLoading(false);
@@ -1270,27 +1332,43 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
     }
   }, [subProducts]);
-  const addItemForQuotes = useCallback(async () => {
-    const res = await callApi(
-      "POST",
-      `/v1/erp-service/quote/add-item`,
-      currentProductItemValue
-    );
-    if (res?.success) {
-      navigate("/quote");
+
+
+  /////////////////////// ADD ITEM //////////////////////////////////////
+  // const addItemForQuotes = useCallback(async () => {
+  //   const res = await callApi(
+  //     "POST",
+  //     `/v1/erp-service/quote/add-item`,
+  //     currentProductItemValue
+  //   );
+  //   if (res?.success) {
+  //     navigate("/quote");
+  //   }
+  // }, [
+  //   router,
+  //   pricingDefaultValue,
+  //   quantity,
+  //   urgentOrder,
+  //   graphicNotes,
+  //   printingNotes,
+  //   userProfile,
+  //   itemParmetersValues,
+  //   defaultPrice,
+  //   workFlowSelected,
+  // ]);
+  /////////////////////// ADD ITEM //////////////////////////////////////
+
+
+  const addItemForQuotes = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        router?.query?.documentType == "0" ? navigate("/quote") : navigate(`/order/Id=${router?.query?.documentId}`);
+      } else {
+        alertFaultAdded();
+      } 
     }
-  }, [
-    router,
-    pricingDefaultValue,
-    quantity,
-    urgentOrder,
-    graphicNotes,
-    printingNotes,
-    userProfile,
-    itemParmetersValues,
-    defaultPrice,
-    workFlowSelected,
-  ]);
+    await addItemApi(callApi, callBack, { Item: currentProductItemValue , DocumentType: router?.query?.documentType })
+  }
 
   useEffect(() => {
     if (
@@ -1315,7 +1393,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlowSelected(workFlowSelect);
     }
   }, [widgetType, productTemplate, quantity]);
-  const updateQuoteItem = useCallback(async () => {
+
+
+  ////////////////// UPDATE DOCUMENT ITEM /////////////////////
+  const updateQuoteItemOld = useCallback(async () => {
     const res = await callApi(
       "PUT",
       `/v1/erp-service/quote/update-quote-item`,
@@ -1371,6 +1452,41 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     defaultPrice,
     productTemplate,
   ]);
+
+  const updateQuoteItem = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        router?.query?.documentType == "0" ? navigate("/quote") : navigate(`/order/Id=${router?.query?.documentId}`);
+        setWorkFlows([]);
+        setJobActions([]);
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await updateDocumentItemApi(callApi, callBack,
+      {
+        Item:
+        {
+          productItemValueId: productItemValueDraftId,
+          itemId: router?.query?.quoteItem,
+          productId: router?.query?.productId,
+          supplierId: "",
+          customerID: router?.query?.customerId,
+          unitPrice: +defaultPrice?.values[0] / +quantity?.values[0],
+          amount: quantity?.values[0],
+          isNeedGraphics: false,
+          isUrgentWork: urgentOrder,
+          printingNotes,
+          graphicNotes,
+          jobDetails: pricingDefaultValue?.jobDetails,
+          isNeedExample: false,
+          isDuplicatedWithAnotherQuantity: false,
+        },
+        DocumentType: router?.query?.documentType
+      })
+  }
+  ////////////////// UPDATE DOCUMENT ITEM /////////////////////
+  
   const navigateForRouter = () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {

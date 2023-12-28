@@ -19,7 +19,7 @@ const RowWithChildsTable = ({
         if (
           entry[0] !== "quoteItemId" &&
           entry[0] !== "recordID" &&
-          entry[0] !== "childsQuoteItems"
+          entry[0] !== "childsDocumentItems"
         ) {
           return (
             <>

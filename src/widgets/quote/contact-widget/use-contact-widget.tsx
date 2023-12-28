@@ -24,7 +24,7 @@ const useContactWidget = () => {
   };
 
   useEffect(() => {
-    setItems(quoteItemValue?.quoteContacts);
+    setItems(quoteItemValue?.documentContacts);
   }, [quoteItemValue]);
 
   const updateClientContact = useCallback(async (item: any) => {

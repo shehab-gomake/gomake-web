@@ -12,10 +12,12 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
 import { EDocumentTypeEnum } from "@/enums";
 import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
-interface IListWidgetProps {
-  documentType: EDocumentTypeEnum
+import { DOCUMENT_TYPE } from "./enums";
+
+interface IProps {
+  documentType : DOCUMENT_TYPE 
 }
-const QuotesListPageWidget = (props:IListWidgetProps) => {
+const QuotesListPageWidget = ({documentType} : IProps) => {
   const { classes } = useStyle();
   const {
     tableHeaders,
@@ -41,13 +43,14 @@ const QuotesListPageWidget = (props:IListWidgetProps) => {
     modalLogsTitle,
     logsTableHeaders,
     t,
-  } = useQuotes();
+    documentLabel
+  } = useQuotes(documentType);
 
   return (
     <>
       <div style={classes.mainContainer}>
         <HeaderTitle
-          title={t("sales.quote.quoteList")}
+          title={documentLabel}
           marginTop={1}
           marginBottom={1}
         />

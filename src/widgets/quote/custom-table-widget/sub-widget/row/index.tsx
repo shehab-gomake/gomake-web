@@ -14,7 +14,7 @@ const RowCustomTable = ({
   return (
     <div style={clasess.bodyRow}>
       {Object.entries(row).map((entry: [string, any], index) => {
-        if (entry[0] !== "quoteItemId" && entry[0] !== "recordID" && entry[0] !== "childsQuoteItems") {
+        if (entry[0] !== "quoteItemId" && entry[0] !== "recordID" && entry[0] !== "childsDocumentItems") {
           return (
             <>
             <RowInside

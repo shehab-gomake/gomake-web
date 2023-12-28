@@ -1,17 +1,18 @@
 import { quoteItemState } from "@/store";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
-import { EHttpMethod } from "@/services/api-service/enums";
+import { createOrderApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
-const useButtonsContainer = () => {
+const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
     const { navigate } = useGomakeRouter();
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const quoteItemValue: any = useRecoilValue(quoteItemState);
     const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
-    const { alertSuccessUpdate, alertFaultUpdate , alertRequiredFields } = useSnackBar();
+    const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
 
     const onClickOpenOrderNowModal = () => {
         setOpenOrderNowModal(true);
@@ -20,61 +21,51 @@ const useButtonsContainer = () => {
         setOpenOrderNowModal(false);
     };
 
-    const onClickConfirmWithoutNotification = useCallback(async () => {
-        const res = await callApi(
-            EHttpMethod.POST,
-            `/v1/erp-service/order/create-new-order`,
+    const onClickConfirmWithoutNotification = async () => {
+        const callBack = (res) => {
+            if (res?.success) {
+                alertSuccessUpdate();
+                onClickCloseOrderNowModal();
+                navigate("/orders");
+            } else {
+                alertFaultUpdate();
+            }
+        }
+        await createOrderApi(callApi, callBack,
             {
                 quoteId: quoteItemValue?.id,
-                sendMessage:false,
-            }
-        );
-        if (res?.success) {
-            alertSuccessUpdate();
-            onClickCloseOrderNowModal();
-            navigate("/orders");
-        } else {
-            alertFaultUpdate();
-        }
-    }, [quoteItemValue]);
+                sendMessage: false
+            })
+    }
 
-    const onClickConfirmWithNotification = useCallback(async () => {
-        const res = await callApi(
-            EHttpMethod.POST,
-            `/v1/erp-service/order/create-new-order`,
+    const onClickConfirmWithNotification = async () => {
+        const callBack = (res) => {
+            if (res?.success) {
+                alertSuccessUpdate();
+                onClickCloseOrderNowModal();
+                navigate("/orders");
+            } else {
+                alertFaultUpdate();
+            }
+        }
+        await createOrderApi(callApi, callBack,
             {
                 quoteId: quoteItemValue?.id,
-                sendMessage:true,
+                sendMessage: true
+            })
+    }
+    
+    const onClickPrint = async () => {
+        const callBack = (res) => {
+            if (res?.success) {
+              const pdfLink = res.data;
+              window.open(pdfLink, "_blank");
+            } else {
+              alertFaultUpdate();
             }
-        );
-        if (res?.success) {
-            alertSuccessUpdate();
-            onClickCloseOrderNowModal();
-            navigate("/orders");
-        } else {
-            alertFaultUpdate();
-        }
-    }, [quoteItemValue]);
-
-    const onClickPrint = useCallback(async () => {
-        const res = await callApi(
-            EHttpMethod.GET,
-            `/v1/erp-service/quote/get-quote-pdf`,
-            {
-                quoteId: quoteItemValue?.id,
-            }
-        );
-        if (res?.success) {
-            const pdfLink = res.data.data.data;
-            //  window.open(pdfLink, "_blank");
-            const anchor = document.createElement('a');
-            anchor.href = pdfLink;
-            anchor.target = '_blank';
-            anchor.click();
-        } else {
-            alertRequiredFields();
-        }
-    }, [quoteItemValue]);
+          };
+          await getDocumentPdfApi(callApi, callBack, { documentId: quoteItemValue?.id , documentType : docType  });
+        };
 
     return {
         openOrderNowModal,
@@ -85,6 +76,7 @@ const useButtonsContainer = () => {
         onClickPrint,
         t,
     };
+
 };
 
 export { useButtonsContainer };
