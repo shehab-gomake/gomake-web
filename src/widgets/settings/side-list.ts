@@ -12,6 +12,7 @@ import { EditProductWidget } from "../products-settings-widget/widget/edit-produ
 import {SettingsProfileWidget} from "@/widgets/settings-profile-widget/settings-profile-widget";
 import { SettingsMailingWidget } from "../settings-mailing/settings-mailing-widget";
 import { SettingsDocumentingWidget } from "../settings-documenting/settings-documenting-widget";
+import { TranslationsWidget } from "../translation-widget/translation-widget";
 
 export const list: IListItem[] = [
   {
@@ -56,5 +57,12 @@ export const list: IListItem[] = [
     value: "7",
     icon: DollarCircleIcon,
     path: "finances",
+  },
+  {
+    component: TranslationsWidget ,
+    text: "settings.translations",
+    value: "8",
+    icon: DocumentIcon,
+    path: "translations",
   },
 ];

@@ -18,7 +18,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import PendingActionsOutlinedIcon from '@mui/icons-material/PendingActionsOutlined';
-
+import GTranslateIcon from '@mui/icons-material/GTranslate';
 const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
 
   const { isAuth } = useGomakeAuth(permissionEnumValue);
@@ -251,7 +251,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
           return <SettingNavBar />;
         },
         isProduction: true,
-      },
+      }
     ];
   }, []);
 
