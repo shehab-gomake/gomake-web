@@ -91,7 +91,8 @@
     "purchase": "Purchase",
     "purchaseOrders": "Orders",
     "purchaseInvoices": "invoices",
-    "supplierPayments": "payments"
+    "supplierPayments": "payments",
+    "translations": "Translations"
   },
   "properties": {
     "parameter": "Parameter",
@@ -1844,7 +1845,8 @@
     "finances": "Finances",
     "productManagement": "Product management",
     "shipmentsSetting": "Shipments setting",
-    "pricingSetting": "Pricing setting"
+    "pricingSetting": "Pricing setting",
+    "translations" : "Translations"
   },
   "customers": {
     "buttons": {
@@ -2542,5 +2544,22 @@
     "add": "Add",
     "price": "Price",
     "chooseWorkFlow": "Choose work flow"
+  },
+  "translations" : {
+"title" : "Translations",
+"addNew" : "add new",
+"edit" : "Edit" ,
+"add" : "Add" ,
+"addNewBlock" :"Add new block" ,
+"editTranslation" : "Edit Translation",
+"addTranslation" : "Add Translation",
+"arabic": "Arabic",
+"english": "English",
+"hebrew": "Hebrew",
+"deutsche":"Deutsche",
+"key":"Key",
+"path":"Path",
+"download" : "Download",
+"upload":"Upload"
   }
 }
