@@ -1,11 +1,10 @@
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
-import { EHttpMethod } from "@/services/api-service/enums";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAndSetAllCustomers } from "@/services/hooks";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState , useRecoilValue } from "recoil";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
@@ -13,14 +12,15 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
 import { employeesListsState } from "./states";
-
 import { duplicateDocumentApi, getAllDocumentsApi, getDocumentPdfApi, updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "./enums";
+import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { alertFaultUpdate, alertFaultDuplicate, alertFaultAdded } = useSnackBar();
+  const { alertFaultUpdate, alertFaultDuplicate } = useSnackBar();
+  const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
@@ -42,7 +42,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [modalLogsTitle, setModalLogsTitle] = useState<string>();
   const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
   const [selectedQuote, setSelectedQuote] = useState<any>();
-
   const onClickCloseModal = () => {
     setOpenModal(false);
   };
@@ -115,13 +114,12 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     const callBack = (res) => {
       if (res?.success) {
         const data = res?.data?.data;
-        const totalItems = res?.data?.totalItems;
         const mapData = data?.map((quote: any) => [
           GetDateFormat(quote?.createdDate),
           quote?.customerName,
           quote?.number,
           quote?.worksNames,
-          quote?.totalPrice,
+          quote?.totalPrice + " " + getCurrencyUnitText(quote?.Currency),
           quote?.notes,
           _renderQuoteStatus(quote?.documentStatus, quote, t),
           <MoreMenuWidget quote={quote} documentType={docType} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} onClickDuplicate={onClickQuoteDuplicate} onClickLoggers={() => onClickOpenLogsModal(quote?.quoteNumber)} />,
@@ -146,37 +144,35 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       })
   }
 
-  const getAllQuotesInitial = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/quote/get-all-quotes`,
-      {
-        model: {
-          pageNumber: page,
-          pageSize: limit,
-        },
+  const getAllQuotesInitial = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const data = res?.data?.data;
+        const mapData = data?.map((quote: any) => [
+          GetDateFormat(quote?.createdDate),
+          quote?.customerName,
+          quote?.number,
+          quote?.worksNames,
+          quote?.totalPrice + " " + getCurrencyUnitText(quote?.Currency),
+          quote?.notes,
+          _renderQuoteStatus(quote?.documentStatus, quote, t),
+          <MoreMenuWidget quote={quote} documentType={docType} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} onClickDuplicate={onClickQuoteDuplicate} onClickLoggers={() => onClickOpenLogsModal(quote?.quoteNumber)} />,
+         ]);
+        setAllQuotes(mapData);
+        console.log(data)
       }
-    );
-
-    const data = res?.data?.data?.result;
-    const totalItems = res?.data?.data?.totalItems;
-    const mapData = data?.map((quote: any) => [
-      GetDateFormat(quote?.createdDate),
-      quote?.customerName,
-      quote?.orderNumber,
-      quote?.quoteNumber,
-      quote?.worksNames,
-      quote?.totalPrice,
-      quote?.notes,
-      _renderQuoteStatus(quote?.documentStatus, quote, t),
-      <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} />,
-    ]);
-    setAllQuotes(mapData);
-  }, [page, limit]);
-
-  useEffect(() => {
-    getAllQuotes();
-  }, []);
+    }
+    await getAllDocumentsApi(callApi, callBack,
+      {
+        documentType: docType,
+        data: {
+          model: {
+            pageNumber: page,
+            pageSize: limit,
+          },
+        }
+      })
+  }
 
   const onClickSearchFilter = () => {
     getAllQuotes();
@@ -293,15 +289,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
   const documentLabel = documentsLabels.find(item => item.value === docType).label;
 
-  useEffect(() => {
-    getAllCustomersCreateQuote();
-    getAllCustomersCreateOrder();
-    getAgentCategories(true, setAgentsCategories);
-    getAgentCategories(null, setEmployeeListValue);
-  }, []);
-
-
-  ////  documentType = docType later
   const updateQuoteStatus = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -331,7 +318,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     await getDocumentPdfApi(callApi, callBack, { documentId: id, documentType: docType });
   };
 
-
   const onClickQuoteDuplicate = async (id: string) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -349,6 +335,15 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     };
     await duplicateDocumentApi(callApi, callBack, { documentId: id, documentType: docType });
   };
+
+
+  useEffect(() => {
+    getAllCustomersCreateQuote();
+    getAllCustomersCreateOrder();
+    getAgentCategories(true, setAgentsCategories);
+    getAgentCategories(null, setEmployeeListValue);
+    getAllQuotes();
+  }, []);
 
   return {
     patternSearch,
