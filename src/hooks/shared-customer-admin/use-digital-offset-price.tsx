@@ -32,7 +32,7 @@ import { SWITCHParameterWidget } from "@/pages-components/products/digital-offse
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 import { SelectMaterialsParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
 import {
-  calculationProgressState,
+  calculationProgressState, currentProductItemValueDraftId,
   currentProductItemValueState,
   itemParametersValuesState,
   jobActionsState,
@@ -84,8 +84,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [itemParmetersValues, setItemParmetersValues] = useRecoilState<any>(
     itemParametersValuesState
   );
-  const [currentProductItemValue, setCurrentProductItemValue] =
-    useRecoilState<any>(currentProductItemValueState);
+  const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
+  const [productItemValueDraftId, setCurrentProductItemValueDraftId] = useRecoilState<string>(currentProductItemValueDraftId);
+
   const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
   const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
   const [expanded, setExpanded] = useState<string | false>("panel_0");
@@ -105,6 +106,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     useRecoilState<any>(digitslPriceState);
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(false);
+  const [isCalculationFinished, setIsCalculationFinished] = useState(false);
   const setSelectParameterButton = useSetRecoilState(
     selectParameterButtonState
   );
@@ -115,42 +117,50 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     let copy = lodashClonedeep(subProducts);
+    console.log("setSubProductsCopy",copy)
     setSubProductsCopy(copy);
   }, [subProducts]);
   
   useEffect(()=>{
 
-    if(calculationResult && calculationResult.pricingDto){
+    if(calculationResult && calculationResult.productItemValue){
 
-      if(calculationResult.pricingDto.id === calculationSessionId){
+      if(calculationResult.productItemValue.id === calculationSessionId){
         setLoading(false);
-
+        setCurrentProductItemValueDraftId(calculationResult.productItemValue.id)
         const currentWorkFlows = cloneDeep(workFlows);
-        const newWorkFlows = calculationResult?.pricingDto.workFlows?.map((flow, index) => ({
-          id: index.toString(),
-          ...flow,
-        }));
-
+        const newWorkFlows = calculationResult?.productItemValue.workFlows;
         newWorkFlows.forEach(flow => {
+          const isExists = currentWorkFlows.find(x=>x.id === flow.id );
+          if(!isExists){
+            currentWorkFlows.push(flow);
+          }
           if(flow.selected){
             currentWorkFlows.forEach(f=> f.selected = false);
           }
-          currentWorkFlows.push(flow);
+          
         })
         if(calculationResult?.monials){
           calculationResult?.monials.forEach(m=>{
             const workFlow = currentWorkFlows.find(x=>x.id === m.workFlowId);
             if(workFlow){
               workFlow.monials = m.monials;
+              workFlow.recommendationRang = m.recommendationRang
             }
           })
         }
         currentWorkFlows.sort((a,b) => b.monials - a.monials );
+        const selectedWorkFlow = currentWorkFlows?.find(x=>x.selected);
+        if(!selectedWorkFlow && currentWorkFlows && currentWorkFlows.length > 0){
+          currentWorkFlows[0].selected = true;
+        }
         const currentWorkFlowsCount = currentWorkFlows.length;
-        const totalWorkFlowsCount = calculationResult?.pricingDto.totalWorkFlows;
-        setCalculationProgress({totalWorkFlowsCount: totalWorkFlowsCount,currentWorkFlowsCount:currentWorkFlowsCount} );
+        const totalWorkFlowsCount = calculationResult?.productItemValue.totalWorkFlows;
+        if(!isCalculationFinished){
+          setCalculationProgress({totalWorkFlowsCount: totalWorkFlowsCount,currentWorkFlowsCount:currentWorkFlowsCount} );
+        }
         setWorkFlows(currentWorkFlows);
-        setJobActions(calculationResult?.pricingDto.actions);
+        setJobActions(calculationResult?.productItemValue.actions);
       }
 
     }
@@ -526,8 +536,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 }
                 if(!relatedToParameter){
                   if((parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST || parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ) && (!parameter?.valuesConfigs || parameter?.valuesConfigs.length === 0)){
-                    parameter.isHidden = true;
-                    return;
+                    //parameter.isHidden = true;
+                    //return;
                   }
                 }
                 
@@ -1087,6 +1097,62 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     await getProductByItemIdApi(callApi, callBack, { documentItemId: router?.query?.quoteItem, documentType: router?.query?.documentType })
   }
 
+
+  // const getProductQuoteItemById = useCallback(async () => {
+  //   await getAndSetgetProductQuoteItemById(callApi, (data)=>{
+  //     setDefaultProductTemplate(data);
+  //     initQuoteItemProduct(data);
+  //   }, {
+  //     QuoteItemId: router?.query?.quoteItem,
+  //   });
+  // }, [router]);
+
+  // const initQuoteItemProduct = (quoteItemProduct) => {
+  //   if(quoteItemProduct && quoteItemProduct.itemParmetersValues){
+  //     setItemParmetersValues(quoteItemProduct.itemParmetersValues);
+  //     const quoteItemSubProducts = []
+  //     quoteItemProduct.itemParmetersValues.forEach(itemParmetersValue => {
+  //       const section = quoteItemProduct?.sections?.find(x=>x.id === itemParmetersValue?.sectionId)
+  //       const subSection = section?.subSections?.find(x=>x.id === itemParmetersValue?.subSectionId);
+  //       let parameter = subSection.parameters.find(x=>x.id === itemParmetersValue.parameterId)
+  //       if(!parameter && subSection.parameters && subSection.parameters.length > 0){
+  //         const  parentParameter = subSection.parameters.find(x=>x.settingParameters?.some(y=>y.id === itemParmetersValue.parameterId));
+  //         parameter = parentParameter?.settingParameters?.find(x=>x.id === itemParmetersValue.parameterId);
+  //       }
+  //       const type = itemParmetersValue.subProductType ?? "";
+  //       const exitsSubProduct = quoteItemSubProducts.find(x=>x.type === type )
+  //       const newSubProductParameter = {
+  //         parameterId: itemParmetersValue.parameterId,
+  //         parameterName: parameter?.name,
+  //         actionId: parameter?.actionId,
+  //         ParameterType: parameter?.parameterType,
+  //         values: itemParmetersValue.values,
+  //         valueIds: itemParmetersValue.valueIds,
+  //         sectionId: itemParmetersValue?.sectionId,
+  //         subSectionId: itemParmetersValue?.subSectionId,
+  //         actionIndex: itemParmetersValue?.actionIndex,
+  //       };
+  //       if(exitsSubProduct){
+  //         exitsSubProduct.parameters.push(newSubProductParameter)
+  //       }else{
+  //         const newSubProduct = {
+  //           type: type,
+  //           parameters: [newSubProductParameter],
+  //           sectionId: itemParmetersValue.sectionId,
+  //           sectionName: "",
+  //         };
+  //         quoteItemSubProducts.push(newSubProduct)
+  //       }
+        
+  //     })
+  //     console.log("quoteItemSubProducts",quoteItemSubProducts)
+  //     setSubProducts(quoteItemSubProducts)
+  //     setSubProductsCopy(quoteItemSubProducts)
+  //   }
+  //   initProduct(quoteItemProduct);
+  // }
+
+
   const validateParameters = (inputArray) => {
     let isValid = true;
     const allParameters = subProducts.flatMap((item) => item.parameters);
@@ -1108,6 +1174,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     setWorkFlows([]);
     setJobActions([]);
+    setIsCalculationFinished(false)
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
@@ -1130,19 +1197,34 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           productId: router?.query?.productId,
           generalParameters: generalParameters,
           subProducts: calculationSubProducts,
+          itemParmetersValues:itemParmetersValues,
         },
         false,
         newRequestAbortController
       );
+      setIsCalculationFinished(true)
       if (res?.success) {
-        // setPricingDefaultValue(res?.data?.data?.data);
-        /*setWorkFlows(
-                    res?.data?.data?.data?.workFlows?.map((flow, index) => ({
-                        id: index.toString(),
-                        ...flow,
-                    }))
-                );
-                setJobActions(res?.data?.data?.data?.actions);*/
+         setPricingDefaultValue(res?.data?.data?.data);
+         const workFlows = res?.data?.data?.data?.workFlows;
+         if(workFlows && workFlows.length > 0){
+           const workFlow = res?.data?.data?.data?.workFlows.find(x=>x.selected);
+           const currentWorkFlows = cloneDeep(workFlows);
+           const isExits = currentWorkFlows.find(x=>x.id === workFlow.id);
+           if(!isExits){
+             currentWorkFlows.push(workFlow)
+           }
+           if(isExits && !isExits.selected) {
+             currentWorkFlows.forEach(x => x.selected = false);
+             isExits.selected = true;
+           }
+           currentWorkFlows.sort((a,b) => b.monials - a.monials );
+           setCalculationProgress({totalWorkFlowsCount: 0,currentWorkFlowsCount:0} );
+          // setWorkFlows(currentWorkFlows);
+         }
+       
+         
+         
+          setJobActions(res?.data?.data?.data?.actions);
       }
       setLoading(false);
     }

@@ -51,7 +51,6 @@ const useMultiParameterModal = ({ settingParameters, onClose }) => {
     }
   };
   useEffect(() => {
-
     const result = getObjectById();
     setSelectColorValue(result);
   }, [generalParameters, selectedValueConfig]);

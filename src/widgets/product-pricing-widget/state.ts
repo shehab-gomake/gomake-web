@@ -56,3 +56,8 @@ export const currentProductItemValueState = atom<any>({
     key: "currentProductItemValueState",
     default: null ,
 });
+
+export const currentProductItemValueDraftId = atom<string>({
+    key: "currentProductItemValueDraftId",
+    default: null ,
+});
