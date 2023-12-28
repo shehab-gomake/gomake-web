@@ -125,9 +125,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
     if (calculationResult && calculationResult.productItemValue) {
 
-      if (calculationResult.productItemValue.id === calculationSessionId) {
+      if (calculationResult.productItemValueDraftId === calculationSessionId) {
         setLoading(false);
-        setCurrentProductItemValueDraftId(calculationResult.productItemValue.id)
+        setCurrentProductItemValueDraftId(calculationResult.productItemValueDraftId)
         const currentWorkFlows = cloneDeep(workFlows);
         const newWorkFlows = calculationResult?.productItemValue.workFlows;
         newWorkFlows.forEach(flow => {
