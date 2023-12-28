@@ -6,7 +6,6 @@ import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
 export default function Orders() {
   return (
     <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_ORDERS}>
-      {/* <OrdersListPageWidget /> */}
       <QuotesListPageWidget documentType={DOCUMENT_TYPE.order} />
     </CustomerAuthLayout>
   );
