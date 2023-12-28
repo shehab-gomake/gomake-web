@@ -114,6 +114,7 @@ const useNewProfits = () => {
         actionIdOrProductId: router.query.actionId
           ? router.query.actionId
           : router.query.productId,
+        isOutSource: router.query.isOutSource ? true : false,
       };
 
       if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
@@ -162,6 +163,7 @@ const useNewProfits = () => {
         setActionProfitByActionId,
         {
           actionId: router.query.actionId,
+          isOutSource: router.query.isOutSource ? true : false,
         }
       );
     }
@@ -171,6 +173,7 @@ const useNewProfits = () => {
     const requestBody: any = {
       actionId: router.query.actionId,
       productItemValueId: router.query.draftId,
+      isOutSource: router.query.isOutSource ? true : false,
     };
     if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
       requestBody.exceptionId = selectedPricingTableItems?.id;
@@ -191,6 +194,7 @@ const useNewProfits = () => {
         actionIdOrProductId: router.query.actionId
           ? router.query.actionId
           : router.query.productId,
+        isOutSource: router.query.isOutSource ? true : false,
       });
     }
   }, [router, actionProfitByActionId]);
@@ -309,6 +313,7 @@ const useNewProfits = () => {
         actionProfitRows: [],
         actionExpections: [],
         productId: router.query.productId,
+        isOutSource: router.query.isOutSource ? true : false,
       };
       if (router.query.productId) {
         requestBody.productId = router.query.productId;
@@ -344,6 +349,7 @@ const useNewProfits = () => {
         minPrice: actionProfitByActionId?.minPrice,
         actionProfitRows: [],
         actionExpections: [],
+        isOutSource: router.query.isOutSource ? true : false,
       };
       if (router.query.productId) {
         requestBody.productId = router.query.productId;
@@ -473,6 +479,7 @@ const useNewProfits = () => {
         minPrice: data,
         actionProfitRows: [],
         actionExpections: [],
+        isOutSource: router.query.isOutSource ? true : false,
       };
       if (router.query.productId) {
         requestBody.productId = router.query.productId;
@@ -569,7 +576,9 @@ const useNewProfits = () => {
   const reOrderPricingTables = useCallback(async (data: any) => {
     const res = await callApi(
       EHttpMethod.PUT,
-      `/v1/printhouse-config/profits/update-re-order-pricing-tables?actionIdOrProductId=${router.query.actionId}`,
+      `/v1/printhouse-config/profits/update-re-order-pricing-tables?actionIdOrProductId=${
+        router.query.actionId
+      }?isOutSourc=${router.query.isOutSource ? true : false}`,
       {
         data,
       }
