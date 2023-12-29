@@ -267,6 +267,7 @@ const useStyle = () => {
         height: 170,
         borderRadius: 16,
         overflow: "hidden",
+        marginBottom:15,
       },
       secondText: {
         color: primaryColor(200),
@@ -337,7 +338,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         marginLeft: -8,
-        marginBottom: 16,
+        marginBottom: 0,
       },
       switchAdditionsContainer: {
         display: "flex",

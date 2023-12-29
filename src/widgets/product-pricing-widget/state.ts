@@ -21,7 +21,6 @@ export const selectedWorkFlowState = selector<ICalculatedWorkFlow>({
         return workFlows?.find(flow => flow.selected);
     },
 });
-
 export const jobDetailsState = atom<any[]>({
     key: "jobDetailsState",
     default: [
@@ -56,7 +55,10 @@ export const currentProductItemValueState = atom<any>({
     key: "currentProductItemValueState",
     default: null ,
 });
-
+export const currentProductItemValuePriceState = atom<number>({
+    key: 'currentProductItemValuePriceState',
+    default: null ,
+});
 export const currentProductItemValueDraftId = atom<string>({
     key: "currentProductItemValueDraftId",
     default: null ,

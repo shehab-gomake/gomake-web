@@ -28,7 +28,6 @@ const PriceListPageWidget = ({ widgetType}) => {
     onOpeneMakeShape,
     onCloseGalleryModal,
     onCloseMakeShape,
-    setDefaultPrice,
     handleChange,
     _renderParameterType,
     _getParameter,
@@ -51,7 +50,6 @@ const PriceListPageWidget = ({ widgetType}) => {
     graphicNotes,
     printingNotes,
     urgentOrder,
-    defaultPrice,
     makeShapeOpen,
     GalleryModalOpen,
     activeIndex,
@@ -65,7 +63,6 @@ const PriceListPageWidget = ({ widgetType}) => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
-    workFlowSelected,
     relatedParameters,
     jobActions,
     workFlows,
@@ -185,8 +182,6 @@ const PriceListPageWidget = ({ widgetType}) => {
               clientTypeDefaultValue={clientTypeDefaultValue}
               clientTypesValue={clientTypesValue}
               template={productTemplate}
-              setDefaultPrice={setDefaultPrice}
-              defaultPrice={defaultPrice}
               tabs={tabs}
               activeTab={activeTab}
               onOpeneMakeShape={onOpeneMakeShape}
@@ -197,7 +192,6 @@ const PriceListPageWidget = ({ widgetType}) => {
               setGraphicNotes={setGraphicNotes}
               graphicNotes={graphicNotes}
               printingNotes={printingNotes}
-              workFlowSelected={workFlowSelected}
               widgetType={widgetType}
               setPriceRecovery={setPriceRecovery}
               priceRecovery={priceRecovery}
