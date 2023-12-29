@@ -44,6 +44,7 @@ const useStyle = () => {
         width: 330,
         minWidth: 330,
         maxWidth: 330,
+        height: "88vh",
         backgroundColor: "white",
         padding: 15,
         marginTop: -77,
@@ -445,6 +446,7 @@ const useStyle = () => {
         borderRadius: 12,
         height: 110,
         overflow: "scroll",
+        padding: 5,
       },
       pricingSectionContainer: {
         display: "flex",

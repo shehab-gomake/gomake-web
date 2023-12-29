@@ -40,6 +40,7 @@ const EditRulesModal = ({
       );
     } catch (error) {}
   };
+
   const onDragEnd = (result) => {
     if (!result.destination) {
       return;

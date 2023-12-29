@@ -54,6 +54,7 @@ const ProfitsNewPageWidget = () => {
     onCloseAddStepModal,
     onOpenAddStepModal,
     updatePricingByForAction,
+    updateTransitionForAction,
     setSelectedTransition,
     changeactionProfitRowsItems,
     addNewStepForActionProfitRow,
@@ -82,6 +83,7 @@ const ProfitsNewPageWidget = () => {
           onCloseAddStepModal={onCloseAddStepModal}
           onOpenAddStepModal={onOpenAddStepModal}
           updatePricingByForAction={updatePricingByForAction}
+          updateTransitionForAction={updateTransitionForAction}
           setSelectedTransition={setSelectedTransition}
           changeactionProfitRowsItems={changeactionProfitRowsItems}
           addNewStepForActionProfitRow={addNewStepForActionProfitRow}

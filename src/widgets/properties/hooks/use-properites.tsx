@@ -3,6 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getAndSetProperites } from "@/services/hooks/admin-side/profits/get-set-properites";
 import { EHttpMethod } from "@/services/api-service/enums";
+import { useOutputs } from "./use-outputs";
+import { useParameters } from "./use-parameters";
 
 const useProperites = () => {
   const router = useRouter();
@@ -12,6 +14,8 @@ const useProperites = () => {
     alertFaultUpdate,
     alertSuccessUpdate,
   } = useSnackBar();
+  const { Outputs } = useOutputs();
+  const { parameters } = useParameters();
   const [selectedProperties, setSelectedProperites] = useState();
   const [allProperties, setAllProperites] = useState([]);
   const [actionId, setActionId] = useState("");
@@ -57,8 +61,13 @@ const useProperites = () => {
         property.propertyName.toLowerCase().includes(filter.toLowerCase())
       );
     }
-    return allProperties;
-  }, [filter, allProperties]);
+    const updatedProperties = updateProperties(
+      allProperties,
+      parameters,
+      Outputs
+    );
+    return updatedProperties;
+  }, [filter, allProperties, parameters, Outputs]);
 
   const deleteRule = useCallback(
     async (propertyId: string, ruleType: number, id: string) => {
@@ -88,12 +97,37 @@ const useProperites = () => {
       );
       if (res?.success) {
         alertSuccessUpdate();
+        getProperitesService();
       } else {
         alertFaultUpdate();
       }
     },
     []
   );
+
+  function updateProperties(allProperties, inputs, outputs) {
+    allProperties.forEach((property) => {
+      if (property.ruleType === 0) {
+        // RuleType is 0, check for matching Output ID
+        const matchingOutput = outputs.find(
+          (output) => output.id === property.propertyId
+        );
+        if (matchingOutput) {
+          property.defaultUnit = matchingOutput.defaultUnit;
+        }
+      } else if (property.ruleType === 1) {
+        // RuleType is 1, check for matching Input ID
+        const matchingInput = inputs.find(
+          (input) => input.id === property.propertyId
+        );
+        if (matchingInput) {
+          property.defaultUnit = matchingInput.defaultUnit;
+        }
+      }
+    });
+
+    return allProperties;
+  }
   return {
     allProperties,
     actionId,

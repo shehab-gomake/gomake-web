@@ -11,7 +11,6 @@ const MinimumWidget = ({
   setIsUpdateMinimumValue,
   onInputChangeMinimumValue,
 }: ProfitRightSideProps) => {
-  console.log("minimumValue", minimumValue);
   const { clasess } = useStyle();
   const { t } = useTranslation();
 

@@ -52,6 +52,7 @@ export type PricingListProps = {
   selectedTransition: SelectedTransition;
   selectedPricingBy: SelectedPricingByType;
   updatePricingByForAction: (value: any) => void;
+  updateTransitionForAction: (value: any) => void;
   changeactionProfitRowsItems: (
     index: number,
     filedName: string,
@@ -159,6 +160,7 @@ export type ProfitLeftSideProps = {
   selectedTransition: SelectedTransition;
   selectedPricingBy: SelectedPricingByType;
   updatePricingByForAction: (value: any) => void;
+  updateTransitionForAction: (value: any) => void;
   changeactionProfitRowsItems: (
     index: number,
     filedName: string,

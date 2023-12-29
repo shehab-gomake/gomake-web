@@ -83,6 +83,9 @@ const PropertiesTable = () => {
               <StyledTableCell align={"center"}>
                 {t("properties.parameter")}
               </StyledTableCell>
+              <StyledTableCell align={"center"}>
+                {t("properties.unit")}
+              </StyledTableCell>
               <StyledTableCell style={{ width: "30%" }} align={"center"}>
                 {t("properties.rule")}
               </StyledTableCell>
@@ -99,26 +102,31 @@ const PropertiesTable = () => {
               return (
                 <StyledTableRow>
                   <StyledTableCell align={"center"}>
-                    {property.propertyName}
+                    {property.propertyName}{" "}
+                  </StyledTableCell>
+                  <StyledTableCell align={"center"}>
+                    {property.defaultUnit}
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>
                     <div style={classes.rowItem} className="scrollBlue">
-                      {property.actionRules.map((rule, index) => {
-                        return (
-                          <div style={classes.item}>
-                            {rule.successEvent ? (
-                              <>
-                                {index + 1}- {rule.expression} value=
-                                {rule.successEvent}
-                              </>
-                            ) : (
-                              <>
-                                {index + 1}- {rule.expression}
-                              </>
-                            )}
-                          </div>
-                        );
-                      })}
+                      {property.actionRules
+                        ?.sort((a, b) => a.priority - b.priority)
+                        ?.map((rule, index) => {
+                          return (
+                            <div style={classes.item}>
+                              {rule.successEvent ? (
+                                <>
+                                  {index + 1}- {rule.expression} value=
+                                  {rule.successEvent}
+                                </>
+                              ) : (
+                                <>
+                                  {index + 1}- {rule.expression}
+                                </>
+                              )}
+                            </div>
+                          );
+                        })}
                     </div>
                   </StyledTableCell>
                   <StyledTableCell align={"center"}>
