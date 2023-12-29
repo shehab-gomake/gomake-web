@@ -1287,14 +1287,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
 
   const addItemForQuotes = async () => {
+    const docType = router?.query?.documentType ?? "0";
     const callBack = (res) => {
       if (res?.success) {
-        router?.query?.documentType == "0" ? navigate("/quote") : navigate(`/order/Id=${router?.query?.documentId}`);
+        docType === "0" ? navigate("/quote") : navigate(`/order/Id=${router?.query?.documentId}`);
       } else {
         alertFaultAdded();
       }
     }
-    const docType = router?.query?.documentType ?? 0;
+    
     await addItemApi(callApi, callBack, { item: currentProductItemValue, documentType: docType })
   }
 
