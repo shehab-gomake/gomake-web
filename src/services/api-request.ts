@@ -11,7 +11,7 @@ const apiRequest = async (
   responseType:ResponseType = undefined
 ) => {
   try {
-     const SERVER = config.api_server;
+    const SERVER = config.api_server;
     // if(safdsa){
     //     trh
     // }

@@ -8,6 +8,8 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { AddProductSkuModal } from "./modals/add-contact-modal";
 import { useSettings } from "./use-settings";
 import { useStyle } from "./style";
+import { EProductClient } from "./settings-data";
+import { ImageUploadComponent } from "@/components/form-inputs/image-input";
 
 const SettingsWidget = ({
   onClickParametersTab,
@@ -26,6 +28,11 @@ const SettingsWidget = ({
     showColorPickerForNoteColor,
     errorName,
     errorCode,
+    productClientsList,
+    SelectproductClient,
+    customersList,
+    clientTypesList,
+    setSelectProductClient,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,
@@ -35,13 +42,96 @@ const SettingsWidget = ({
     createNewProduct,
     createNewProductAndGoToParameterList,
     updatedProduct,
+    UploadProductImage,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
+
+  console.log("productState", productState);
   const defultProductSKU = allProductSKU?.find(
     (item) => item.id === productState?.productSKUId
   );
   const defultTemplate = allTemplate?.find(
     (item) => item.id === productState?.templateId
   );
+  const _renderProductClientSelector = () => {
+    if (SelectproductClient?.id === EProductClient.BY_CLIENT) {
+      return (
+        <div style={clasess.itemGropupsContainer}>
+          <div style={clasess.labelTitleStyle}>
+            {t("products.addProduct.admin.byClient")}
+          </div>
+          <div style={{ width: "100%" }}>
+            <GoMakeAutoComplate
+              options={customersList.map((item) => {
+                return {
+                  ...item,
+                  label: item?.name,
+                  id: item.id,
+                };
+              })}
+              placeholder={t("products.addProduct.admin.byClient")}
+              style={clasess.multiSelectStyle}
+              multiple
+              onChange={(e: any, value: any) => {
+                onChangeStateProduct(
+                  "clients",
+                  value?.map((item: any) => item?.id)
+                );
+              }}
+              value={productState?.clients?.map((item: any) => {
+                const customer = customersList?.find(
+                  (customer: any) => customer?.id === item
+                );
+                return {
+                  label: customer?.name,
+                  id: customer?.id,
+                };
+              })}
+            />
+          </div>
+        </div>
+      );
+    } else if (SelectproductClient?.id === EProductClient.BY_CLIENT_TYPE) {
+      return (
+        <div style={clasess.itemGropupsContainer}>
+          <div style={clasess.labelTitleStyle}>
+            {t("products.addProduct.admin.byClientType")}
+          </div>
+          <div style={{ width: "100%" }}>
+            <GoMakeAutoComplate
+              key={SelectproductClient?.id}
+              options={clientTypesList.map((item) => {
+                return {
+                  ...item,
+                  label: item?.name,
+                  id: item.id,
+                };
+              })}
+              placeholder={t("products.addProduct.admin.byClientType")}
+              style={clasess.multiSelectStyle}
+              multiple
+              onChange={(e: any, value: any) => {
+                onChangeStateProduct(
+                  "clientsTypes",
+                  value?.map((item: any) => item?.id)
+                );
+              }}
+              value={productState?.clientsTypes?.map((item: any) => {
+                const clientType = clientTypesList?.find(
+                  (clientType: any) => clientType?.id === item
+                );
+                return {
+                  label: clientType?.name,
+                  id: clientType?.id,
+                };
+              })}
+            />
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
 
   return (
     <div style={clasess.mainContainer}>
@@ -147,6 +237,23 @@ const SettingsWidget = ({
             />
           </div>
         </div>
+        {isUpdate && (
+          <div style={clasess.itemOnFirstContainer}>
+            <div style={clasess.labelTitleStyle}>
+              {t("products.addProduct.admin.uploadImg")}
+            </div>
+            <div>
+              <ImageUploadComponent
+                onChange={(value) => {
+                  onChangeStateProduct("img", value);
+                  UploadProductImage(productState?.id, value);
+                }}
+                value={productState.img}
+              />
+            </div>
+          </div>
+        )}
+
         <div style={clasess.itemGropupsContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.groups")}
@@ -177,6 +284,32 @@ const SettingsWidget = ({
             )}
           </div>
         </div>
+      </div>
+
+      <div style={clasess.categoryNameStyle}>
+        {t("products.addProduct.admin.clients")}
+      </div>
+      <div style={clasess.firstContainer}>
+        <div style={clasess.itemOnFirstContainer}>
+          <div style={clasess.labelTitleStyle}>
+            {t("products.addProduct.admin.pricingType")}
+          </div>
+          <div style={{ width: "100%" }}>
+            <GoMakeAutoComplate
+              key={SelectproductClient?.id}
+              options={productClientsList}
+              placeholder={t("products.addProduct.admin.pricingType")}
+              style={clasess.dropDownListStyle}
+              value={SelectproductClient}
+              onChange={(e: any, value: any) => {
+                setSelectProductClient(value);
+                onChangeStateProduct("clientsTypes", []);
+                onChangeStateProduct("clients", []);
+              }}
+            />
+          </div>
+        </div>
+        {_renderProductClientSelector()}
       </div>
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.style")}
@@ -301,7 +434,6 @@ const SettingsWidget = ({
           </div>
         </div>
       )}
-
       <AddProductSkuModal
         openModal={isProductSKU}
         modalTitle={t("products.addProduct.admin.modalProductSKU")}

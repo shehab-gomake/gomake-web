@@ -48,6 +48,23 @@ const useStyle = () => {
         border: "0px",
         boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
+      dropDownListByTableStyle: {
+        width: "100%",
+        height: 30,
+        border: "0px",
+        boxShadow: "none",
+        justifyContent: "center",
+        textAlign: "center",
+        alignItems: "center",
+        ...FONT_FAMILY.Lexend(500, 16),
+        color: primaryColor(500),
+      },
+      profitProductsCellStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
+      },
       selectProductTextStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),

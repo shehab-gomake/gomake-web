@@ -95,6 +95,7 @@
   },
   "properties": {
     "parameter": "المعلمة",
+    "unit": "وحدة",
     "rule": "القاعدة",
     "type": "النوع",
     "more": "المزيد",
@@ -1466,7 +1467,13 @@
         "enterCode": "أدخل الرمز",
         "addNewProduct": "إضافة منتج جديد",
         "addGoToList": "إضافة والانتقال إلى قائمة المعلمات",
-        "updateNewProduct": "تحديث المنتج"
+        "updateNewProduct": "تحديث المنتج",
+        "clients": "العملاء",
+        "allCustomers": "كل العملاء",
+        "byClient": "حسب العميل",
+        "byClientType": "حسب نوع العميل",
+        "uploadImg": "تحميل صورة"
+        
       }
     },
     "parameters": {

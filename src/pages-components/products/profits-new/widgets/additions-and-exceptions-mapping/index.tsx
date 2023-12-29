@@ -19,7 +19,9 @@ const AdditionsAndExceptionsMapping = ({
             : clasess.cardItemWithMore
         }
         onClick={() => {
-          setSelectedActionProfitRow(item);
+          selectedAdditionalProfitRow?.id === item?.id
+            ? setSelectedActionProfitRow(null)
+            : setSelectedActionProfitRow(item);
         }}
       >
         <div style={clasess.firstRowStyle}>
@@ -33,6 +35,7 @@ const AdditionsAndExceptionsMapping = ({
         </div>
         <div
           onClick={(e) => {
+            e.stopPropagation();
             handleClickPricingTablesMapping(e);
             setSelectedActionProfitRow(item);
           }}

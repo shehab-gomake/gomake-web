@@ -4,14 +4,9 @@ import {
   getAllProductsForDropDownList,
   getAndSetAllParameters,
   getAndSetClientTypes,
-  getAndSetMachincesNew,
+  getAndSetMachincesByActionId,
 } from "@/services/hooks";
-import {
-  clientTypesState,
-  machincesState,
-  parametersState,
-  productsState,
-} from "@/store";
+import { clientTypesState, parametersState, productsState } from "@/store";
 import { useOutputs } from "@/widgets/properties/hooks/use-outputs";
 import { usePrintHouseClients } from "@/widgets/properties/hooks/use-print-house-clients";
 import { useRouter } from "next/router";
@@ -20,6 +15,7 @@ import { useRecoilState } from "recoil";
 import { ETypeException } from "../../enums/profites-enum";
 import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
+import { usePrintHouseMachines } from "@/widgets/properties/hooks/use-print-house-machines";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -60,6 +56,7 @@ const useAddRuleModal = ({
     Products: 7,
   };
   const { Outputs } = useOutputs();
+  const { machines } = usePrintHouseMachines();
   const [materialsTypes, setMaterialsTypes] = useState<
     { materialTypeKey: string; materialTypeName: string }[]
   >([]);
@@ -130,8 +127,8 @@ const useAddRuleModal = ({
     setRules(updatedRules);
   };
 
-  const [machincesStateValue, setMachincesState] =
-    useRecoilState<any>(machincesState);
+  const [machincesList, setMachincesList] = useState<any>();
+  const [allMachincesList, setAllMachincesList] = useState<any>();
   const [productsStateValue, setProductsState] =
     useRecoilState<any>(productsState);
   const [clientTypesStateValue, setClientTypesState] =
@@ -139,9 +136,15 @@ const useAddRuleModal = ({
   const [parametersStateValue, setParametersState] =
     useRecoilState<any>(parametersState);
 
-  const getMachincesProfits = useCallback(async () => {
-    await getAndSetMachincesNew(callApi, setMachincesState);
-  }, []);
+  const getMachincesByActionId = useCallback(async () => {
+    if (router.query.actionId) {
+      await getAndSetMachincesByActionId(callApi, setMachincesList, {
+        actionId: router.query.actionId,
+      });
+    } else {
+      setAllMachincesList(machines);
+    }
+  }, [router, machines]);
   const getProducts = useCallback(async () => {
     await getAllProductsForDropDownList(callApi, setProductsState);
   }, []);
@@ -152,12 +155,14 @@ const useAddRuleModal = ({
     return await getAndSetAllParameters(callApi, setParametersState);
   }, []);
   useEffect(() => {
-    getMachincesProfits();
     getProducts();
     getClientTypes();
     getParameters();
     getAllMaterials();
   }, []);
+  useEffect(() => {
+    getMachincesByActionId();
+  }, [router, machines]);
 
   const [exceptionType, setExceptionType] = useState<any>();
   const [additionalProfit, setAdditionalProfit] = useState<any>(0);
@@ -256,6 +261,7 @@ const useAddRuleModal = ({
     router,
     typeExceptionSelected,
     selectedPricingBy,
+    selectedPricingTableItems,
     expression,
     actionProfitByActionId,
     additionalProfit,
@@ -304,7 +310,8 @@ const useAddRuleModal = ({
     deleteRule,
     handleChange,
     addRule,
-    machincesStateValue,
+    machincesList,
+    allMachincesList,
     productsStateValue,
     clientTypesStateValue,
     parametersStateValue,

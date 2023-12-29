@@ -40,6 +40,10 @@ const useStyle = () => {
         maxHeight: 45,
         textAlign: "start" as "start",
       },
+      defaultUnitStyle: {
+        ...FONT_FAMILY.Lexend(700, 10),
+        color: "#000000",
+      },
     };
   }, [theme]);
   return {

@@ -1,10 +1,6 @@
-import { FONT_FAMILY } from "@/utils/font-family";
-import { convertHeightToVH } from "@/utils/adapter";
 import { useMemo } from "react";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const { neutralColor, secondColor, primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       mainHeaderContainer: {
@@ -18,7 +14,7 @@ const useStyle = () => {
       firstHeaderContainer: {
         display: "flex",
         width: "100%",
-        height: "170px",
+        // height: "170px",
         backgroundColor: "#FFF",
         borderRadius: 17,
         padding: "15px 20px",
@@ -26,7 +22,9 @@ const useStyle = () => {
       secondHeaderContainer: {
         display: "flex",
         width: "100%",
-        height: "128px",
+        maxWidth: "100%",
+        flexWrap: "wrap" as "wrap",
+        // height: "128px",
         backgroundColor: "#FFF",
         borderRadius: 17,
         padding: "15px 20px",

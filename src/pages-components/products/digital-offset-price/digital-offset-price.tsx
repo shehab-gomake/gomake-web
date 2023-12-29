@@ -28,7 +28,6 @@ const PriceListPageWidget = ({ widgetType}) => {
     onOpeneMakeShape,
     onCloseGalleryModal,
     onCloseMakeShape,
-    setDefaultPrice,
     handleChange,
     _renderParameterType,
     _getParameter,
@@ -51,7 +50,6 @@ const PriceListPageWidget = ({ widgetType}) => {
     graphicNotes,
     printingNotes,
     urgentOrder,
-    defaultPrice,
     makeShapeOpen,
     GalleryModalOpen,
     activeIndex,
@@ -65,10 +63,10 @@ const PriceListPageWidget = ({ widgetType}) => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
-    workFlowSelected,
     relatedParameters,
     jobActions,
     workFlows,
+    setSamlleType,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
   } = useDigitalOffsetPrice({ clasess, widgetType });
@@ -129,8 +127,9 @@ const PriceListPageWidget = ({ widgetType}) => {
                             />
                           );
                         } else {
-                          return section?.subSections?.filter(x=>!x.isHidden).map(
-                            (subSection: any, index: number) => {
+                          return section?.subSections
+                            ?.filter((x) => !x.isHidden)
+                            .map((subSection: any, index: number) => {
                               if (subSection?.isAccordion) {
                                 return (
                                   <AccordionMappingWidget
@@ -167,8 +166,7 @@ const PriceListPageWidget = ({ widgetType}) => {
                                   />
                                 );
                               }
-                            }
-                          );
+                            });
                         }
                       }
                     }
@@ -184,8 +182,6 @@ const PriceListPageWidget = ({ widgetType}) => {
               clientTypeDefaultValue={clientTypeDefaultValue}
               clientTypesValue={clientTypesValue}
               template={productTemplate}
-              setDefaultPrice={setDefaultPrice}
-              defaultPrice={defaultPrice}
               tabs={tabs}
               activeTab={activeTab}
               onOpeneMakeShape={onOpeneMakeShape}
@@ -196,10 +192,10 @@ const PriceListPageWidget = ({ widgetType}) => {
               setGraphicNotes={setGraphicNotes}
               graphicNotes={graphicNotes}
               printingNotes={printingNotes}
-              workFlowSelected={workFlowSelected}
               widgetType={widgetType}
               setPriceRecovery={setPriceRecovery}
               priceRecovery={priceRecovery}
+              setSamlleType={setSamlleType}
             />
           </div>
 
@@ -211,10 +207,11 @@ const PriceListPageWidget = ({ widgetType}) => {
               justifyContent: "flex-end",
               alignItems: "flex-start",
               position: "fixed",
-              paddingTop: "8px",
+              paddingTop: "16px",
+              paddingRight: "20px",
               gap: 20,
               bottom: 0,
-              right: 20,
+              right: 0,
               boxShadow: "0px 1px 20px rgba(0, 0, 0, 0.08)",
               background: "#FFF",
             }}
@@ -258,9 +255,6 @@ const PriceListPageWidget = ({ widgetType}) => {
               )}
 
               <div style={clasess.errorMsgStyle}>{errorMsg}</div>
-              <div style={clasess.noVatStyle}>
-                {t("products.offsetPrice.admin.dontVAT")}
-              </div>
             </div>
           </div>
         </div>
