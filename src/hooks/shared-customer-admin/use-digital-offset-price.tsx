@@ -1295,7 +1295,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     }
     const docType = router?.query?.documentType ?? 0;
-    await addItemApi(callApi, callBack, { item: currentProductItemValue, DocumentType: docType })
+    await addItemApi(callApi, callBack, { item: currentProductItemValue, documentType: docType })
   }
 
   useEffect(() => {
