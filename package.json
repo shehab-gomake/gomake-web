@@ -24,6 +24,7 @@
     "eslint-config-next": "13.2.3",
     "i18next": "^22.4.10",
     "lottie-react": "^2.4.0",
+    "moment-timezone": "^0.5.44",
     "next": "13.2.3",
     "react": "18.2.0",
     "react-date-range": "^1.4.0",
