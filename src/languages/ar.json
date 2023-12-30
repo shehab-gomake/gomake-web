@@ -30,7 +30,8 @@
     "board_col_1": "Inner pages",
     "board_col_2": "Inner pages 2",
     "board_cover": "Cover",
-    "board_vorsats": "Vorsats"
+    "board_vorsats": "Vorsats",
+    "creationDate": "Create At"
   },
   "datepicker-component": {
     "chooseDate": "Choose Date",

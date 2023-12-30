@@ -65,7 +65,7 @@ const useStyle = () => {
             },
 
             firstColHead: {
-                minWidth: '500px',
+                minWidth: '650px',
                 right: 0,
                 zIndex: 1,
                 padding: '0 5px'

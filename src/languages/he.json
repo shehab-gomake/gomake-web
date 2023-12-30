@@ -50,7 +50,8 @@
     "client": "לקוח",
     "logout": "התנתק",
     "allTasks": "כל המשימות",
-    "agents": "סוכן"
+    "agents": "סוכן",
+    "creationDate": "תאריך יצירה"
   },
   "datepicker-component": {
     "chooseDate": "בחר תאריך",

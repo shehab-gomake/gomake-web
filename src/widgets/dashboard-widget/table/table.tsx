@@ -12,6 +12,7 @@ import {EStatus} from "@/shared";
 import {getPrintHouseHost} from "@/services/storage-data";
 import {useRecoilValue} from "recoil";
 import {boardsMissionsStatusFilterState} from "@/store/boards-missions-status-filter";
+import moment from "moment-timezone";
 
 const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable) => {
     const {classes} = useStyle();
@@ -61,7 +62,12 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
         }
         return boards;
     }, [orderByMachine, boardsMissions, selectedStatusFilter]);
-
+    const getDateString = (date:Date) => {
+        const utcDate = moment(date);//2023-10-23T06:50:53.243Z
+        let  format = "DD-MM-YYYY"
+        return utcDate.format(format);
+       // return ""
+    }
     const handleMachineClicked = (machineId: string) => {
         setOrderByMachine(machineId === orderByMachine ? '' : machineId);
     };
@@ -77,8 +83,9 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
 
                                 <div style={{width: '5%'}}>#</div>
                                 <div style={{width: '5%'}}></div>
-                                <div style={{width: '30%'}}>{t('dashboard-widget.client')}</div>
+                                <div style={{width: '35%'}}>{t('dashboard-widget.client')}</div>
                                 <div style={{width: '25%'}}>{t('dashboard-widget.task')}</div>
+                                <div style={{width: '30%'}}>{t('dashboard-widget.creationDate')}</div>
                                 <div style={{width: '20%'}}>{t('dashboard-widget.product')}</div>
                                 <div style={{width: '35%'}}>{t('dashboard-widget.status')}</div>
                             </div>
@@ -120,12 +127,17 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                             <div style={{width: '5%'}}>{board.isUrgent ?
                                                                 <ElectricBoltSharpIcon color={"error"}/> : ''}
                                                             </div>
-                                                            <div style={{width: '30%'}}>
+                                                            <div style={{width: '35%'}}>
                                                                 <span>{board?.clientName && board?.clientName?.length > 10 ? board.clientName?.slice(0, 9) + '..' : board?.clientName}</span>
                                                             </div>
                                                             <div style={{width: '25%', height: '100%'}}>
                                                                 <div style={classes.tdRows}>
                                                                     <div><span>{board.code}</span></div>
+                                                                </div>
+                                                            </div>
+                                                            <div style={{width: '30%', height: '100%'}}>
+                                                                <div style={classes.tdRows}>
+                                                                    <div><span>{getDateString(board.creationDate)}</span></div>
                                                                 </div>
                                                             </div>
                                                             <div style={{width: '20%', height: '100%'}}>
@@ -181,13 +193,18 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                 <div style={{width: '5%'}}>{board.isUrgent ?
                                                     <ElectricBoltSharpIcon color={"error"}/> : ''}
                                                 </div>
-                                                <div style={{width: '30%'}}>
+                                                <div style={{width: '35%'}}>
                                                     <span>{board?.clientName && board?.clientName?.length > 10 ? board.clientName?.slice(0, 9) + '..' : board?.clientName}</span>
                                                 </div>
                                                 <div style={{width: '25%', height: '100%'}}>
                                                     <div style={classes.tdRows}>
                                                         <div><Link href={boardLink(board)} target="_blank"
                                                                    rel="noopener">{board.code}</Link></div>
+                                                    </div>
+                                                </div>
+                                                <div style={{width: '30%', height: '100%'}}>
+                                                    <div style={classes.tdRows}>
+                                                        <div><span>{getDateString(board.creationDate)}</span></div>
                                                     </div>
                                                 </div>
                                                 <div style={{width: '20%', height: '100%'}}>
