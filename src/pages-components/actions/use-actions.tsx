@@ -70,7 +70,11 @@ const useActions = () => {
           startIcon={
             <EditIcon color={primaryColor(500)} width={20} height={20} />
           }
-          onClick={() => navigate(`/properties?actionId=${action?.actionId}`)}
+          onClick={() =>
+            navigate(
+              `/properties?actionId=${action?.actionId}&actionName=${action?.name}`
+            )
+          }
           variant={"text"}
         >
           {t("materials.buttons.edit")}
