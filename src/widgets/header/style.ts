@@ -2,10 +2,14 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 
-import { convertHeightToVH, convertWidthToVW, leftRightAdapter } from "@/utils/adapter";
+import {
+  convertHeightToVH,
+  convertWidthToVW,
+  leftRightAdapter,
+} from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import {HEADER_HEIGHT} from "@/utils/layout-config";
+import { HEADER_HEIGHT } from "@/utils/layout-config";
 
 const useStyle = () => {
   const { t } = useTranslation();
@@ -20,9 +24,11 @@ const useStyle = () => {
         width: "100%",
         paddingBottom: 7,
         paddingTop: 10,
-        // marginTop: 10,
         height: convertHeightToVH(HEADER_HEIGHT),
-        maxHeight: convertHeightToVH(HEADER_HEIGHT)
+        maxHeight: convertHeightToVH(HEADER_HEIGHT),
+        backgroundColor: "#F6F6F6",
+        paddingLeft: 20,
+        paddingRight: 12,
       },
       searchInputContainer: {
         width: convertWidthToVW(375),
@@ -42,7 +48,6 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        
       },
       profileContainer: {
         display: "flex",
@@ -69,7 +74,7 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "466px",
         gap: 10,
-        overflow: "visible"
+        overflow: "visible",
       },
       accountTextStyle: {
         width: "100%",
@@ -134,9 +139,9 @@ const useStyle = () => {
         backgroundColor: "#cccccc",
       },
       avatarProps: {
-        width: '30px',
-        height: '30px',
-        fontSize: '12px'
+        width: "30px",
+        height: "30px",
+        fontSize: "12px",
       },
       menuItemTextStyle: {
         display: "flex",
@@ -148,14 +153,14 @@ const useStyle = () => {
       },
       textStyle: {
         whiteSpace: "pre-wrap" as "pre-wrap", // Preserve newlines and spaces
-  wordWrap: "break-word" as "break-word",
+        wordWrap: "break-word" as "break-word",
         ...FONT_FAMILY.Lexend(400, 16),
         color: primaryColor(900),
       },
       subTextStyle: {
         ...FONT_FAMILY.Lexend(400, 12),
         color: "#A5ACB8",
-        padding: "0px 0px 0px 64px"
+        padding: "0px 0px 0px 64px",
       },
       menuItemContainer: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -168,7 +173,7 @@ const useStyle = () => {
         color: neutralColor(600),
         display: "flex",
         alignItems: "center",
-        gap:"4px"
+        gap: "4px",
       },
       acceptBtnStyle: {
         width: "64px",
@@ -180,7 +185,7 @@ const useStyle = () => {
         height: "28px",
         color: "#3C4257",
         borderColor: "#DDDEE1",
-      }
+      },
     };
   }, [i18next.language, t]);
   return {

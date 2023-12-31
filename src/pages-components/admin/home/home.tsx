@@ -4,7 +4,6 @@ import { useStyle } from "./style";
 import { useRecoilState } from "recoil";
 import { QuoteNumberState } from "@/pages-components/quote/store/quote";
 import { QuoteTableWidget } from "./widgets/quote-table-widget/quote-table-widget";
-import { ChartWidget } from "./widgets/chart-widget/chart-widget";
 
 const HomePageComponentForAdmin = ({ isAdmin }) => {
   const { t } = useTranslation();
