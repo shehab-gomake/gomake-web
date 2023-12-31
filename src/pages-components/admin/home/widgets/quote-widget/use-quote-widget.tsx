@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useGomakeAxios, useGomakeRouter } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
   getAllProductsForDropDownList,
   getAndSetAllCustomers,
@@ -14,13 +14,14 @@ import {
   QuoteIfExistState,
   QuoteNumberState,
 } from "@/pages-components/quote/store/quote";
-import { getIfCartExistApi } from "@/services/api-service/generic-doc/documents-api";
+import { getIfCartExistApi, saveDocumentApi } from "@/services/api-service/generic-doc/documents-api";
 
 const useQuoteWidget = () => {
   const { t } = useTranslation();
   const { errorColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
+  const { alertFaultUpdate } = useSnackBar();
   const [clientTypesValue, setClientTypesValues] = useState([]);
   const [productValue, setProductValues] = useState([]);
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
@@ -147,12 +148,26 @@ const useQuoteWidget = () => {
   }, []);
 
   const onClickSaveQuote = async (quoteId) => {
-    await saveQuote(callApi, setUserQuote, quoteId);
-    setquoteNumber(null);
-    setQuoteIfExist(false);
-    //setSelectedClient(null);
-    setUserQuote(null);
-  };
+    const callBack = (res) => {
+      if (res?.success) {
+        setquoteNumber(null);
+        setQuoteIfExist(false);
+        setUserQuote(null);
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await saveDocumentApi(callApi, callBack, {
+      documentType: 0,
+      document: {
+        documentId: quoteId,
+      }
+    })
+  }
+
+
+
+
   const onClcikCreateQuote = () => {
     navigate(
       `/admin/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&productId=${selectedProduct?.id}`
