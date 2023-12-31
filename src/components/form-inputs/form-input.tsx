@@ -1,4 +1,4 @@
-import React, {ChangeEvent, SyntheticEvent,useCallback, useEffect, useState} from "react";
+import React, {ChangeEvent, SyntheticEvent, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useGomakeAxios} from "@/hooks";
 import {useStyle} from "@/components/form-inputs/style";
@@ -96,7 +96,7 @@ const FormInput = ({input, error, changeState, readonly}: IFormInput) => {
     return (
         <>
             {!input.disabled && (
-                <div style={input.direction == "row" ? classes.inputContainerRow : classes.inputContainer}
+                <div style={input.direction === "row" ? classes.inputContainerRow : classes.inputContainer}
                      key={input.parameterKey}>
                     <div style={classes.inputLbl}>
                         {

@@ -45,6 +45,9 @@ import { getOutsourcingSuppliersListApi } from "@/services/api-service/suppliers
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useCalculationsWorkFlowsSignalr } from "../signalr/use-calculations-workflows-signalr";
 import { v4 as uuidv4 } from "uuid";
+import {
+  QuantityParameter
+} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-parameter";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -96,7 +99,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [jobActions, setJobActions] = useRecoilState(jobActionsState);
   const setOutSuppliers = useSetRecoilState(outsourceSuppliersState);
   const [workFlowSelected, setWorkFlowSelected] = useState<any>();
-
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const setLoading = useSetRecoilState(isLoadgingState);
   const [digitalPriceData, setDigidatPriceData] =
@@ -282,8 +284,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (productTemplate && productTemplate?.sections?.length > 0) {
       let temp = [...isRequiredParameters];
       productTemplate?.sections?.map((section) => {
-        return section?.subSections?.map((subSection, i) => {
-          return subSection.parameters?.map((parameter, i) => {
+        return section?.subSections?.map((subSection) => {
+          return subSection.parameters?.map((parameter) => {
             const index = temp.findIndex(
               (item) =>
                 item.parameterId === parameter?.id &&
@@ -694,10 +696,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         item.subSectionId === subSection?.id &&
         item?.actionIndex === parameter?.actionIndex
     );
-    if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
+    if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER && parameter?.id === quantity?.parameterId) {
       Comp = (
-        <InputNumberParameterWidget
-          clasess={clasess}
+        <QuantityParameter
+          classes={clasess}
           parameter={parameter}
           index={index}
           temp={temp}
@@ -706,6 +708,19 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           section={section}
           type="number"
         />
+      );
+    } else if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
+      Comp = (
+          <InputNumberParameterWidget
+              clasess={clasess}
+              parameter={parameter}
+              index={index}
+              temp={temp}
+              onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+              subSection={subSection}
+              section={section}
+              type="number"
+          />
       );
     } else if (parameter?.parameterType === EParameterTypes.INPUT_TEXT) {
       Comp = (
@@ -1000,7 +1015,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         sectionId: sectionId,
         sectionName: section.name,
         parameters: temp,
-      }),
+      })
         setSubProducts(temp2);
     }
   };

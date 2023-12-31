@@ -1,7 +1,7 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import {FONT_FAMILY} from "@/utils/font-family";
-import {convertWidthToVW, leftRightAdapter} from "@/utils/adapter";
+import {convertHeightToVH, convertWidthToVW, leftRightAdapter} from "@/utils/adapter";
 import {useTranslation} from "react-i18next";
 
 const useStyle = () => {
@@ -23,7 +23,7 @@ const useStyle = () => {
         boxSizing: 'border-box' as 'border-box',
         borderRadius: '4px',
         height: '40px',
-        padding: '6.5px 14px'
+        padding: '6.5px 0px'
       },
       fileInputStyle:{
         boxSizing: 'border-box' as 'border-box',
@@ -52,7 +52,8 @@ const useStyle = () => {
       inputContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        gap: 10,
+        gap: convertHeightToVH(10),
+        paddingTop: 2
       },
       inputContainerRow: {
         display: "flex",

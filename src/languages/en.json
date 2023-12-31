@@ -2530,5 +2530,12 @@
     "add": "Add",
     "price": "Price",
     "chooseWorkFlow": "Choose work flow"
+  },
+  "quantityTypes": {
+    "quantity": "Quantity",
+    "typeAmount": "Type amount",
+    "equalQuantity": "Equal quantity",
+    "duplicateName": "Duplicate name",
+    "typeName": "Type name"
   }
 }
