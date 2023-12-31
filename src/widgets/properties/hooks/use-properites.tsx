@@ -5,8 +5,10 @@ import { getAndSetProperites } from "@/services/hooks/admin-side/profits/get-set
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useOutputs } from "./use-outputs";
 import { useParameters } from "./use-parameters";
+import { IconButton } from "@mui/material";
+import { MoreCircleIcon } from "@/icons";
 
-const useProperites = () => {
+const useProperites = ({ classes }) => {
   const router = useRouter();
   const {
     alertSuccessDelete,
@@ -28,8 +30,44 @@ const useProperites = () => {
   }, [router]);
 
   const getProperitesService = useCallback(async () => {
-    await getAndSetProperites(callApi, setAllProperites, router);
-  }, []);
+    const data = await getAndSetProperites(callApi, setAllProperites, router);
+    const updatedProperties = updateProperties(data, parameters, Outputs);
+    const mapData = updatedProperties?.map((property) => [
+      property.propertyName,
+      property.defaultUnit || "-",
+      <div style={classes.rowItem} className="scrollBlue">
+        {property.actionRules
+          ?.sort((a, b) => a.priority - b.priority)
+          ?.map((rule, index) => {
+            return (
+              <div style={classes.item}>
+                {rule.successEvent ? (
+                  <>
+                    {index + 1}- {rule.expression} value=
+                    {rule.successEvent}
+                  </>
+                ) : (
+                  <>
+                    {index + 1}- {rule.expression}
+                  </>
+                )}
+              </div>
+            );
+          })}
+      </div>,
+      property.ruleType == 0 ? "Output" : "Input",
+      <IconButton
+        onClick={(e) => {
+          handleClick(e);
+          setSelectedProperites(property);
+        }}
+      >
+        <MoreCircleIcon />
+      </IconButton>,
+    ]);
+
+    setAllProperites(mapData);
+  }, [parameters, Outputs]);
 
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
   const [openEditRule, setOpenEditRule] = useState<boolean>(false);
