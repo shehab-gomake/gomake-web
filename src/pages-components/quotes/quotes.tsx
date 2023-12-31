@@ -15,9 +15,9 @@ import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
 
 interface IProps {
-  documentType : DOCUMENT_TYPE 
+  documentType: DOCUMENT_TYPE;
 }
-const QuotesListPageWidget = ({documentType} : IProps) => {
+const QuotesListPageWidget = ({ documentType }: IProps) => {
   const { classes } = useStyle();
   const {
     tableHeaders,
@@ -43,17 +43,13 @@ const QuotesListPageWidget = ({documentType} : IProps) => {
     modalLogsTitle,
     logsTableHeaders,
     t,
-    documentLabel
+    documentLabel,
   } = useQuotes(documentType);
 
   return (
     <>
       <div style={classes.mainContainer}>
-        <HeaderTitle
-          title={documentLabel}
-          marginTop={1}
-          marginBottom={1}
-        />
+        <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
         <div style={classes.filtersContainer}>
           <div style={classes.selectedFilterContainer}>
             <div style={classes.statusFilterContainer}>
@@ -146,8 +142,9 @@ const QuotesListPageWidget = ({documentType} : IProps) => {
         insideStyle={classes.insideStyle}
         openModal={openLogsModal}
         onClose={onClickCloseLogsModal}
-        modalTitle={t('sales.quote.quoteLogs') + ' - ' + modalLogsTitle}>
-        <QuoteLogsWidget logsTableHeaders={logsTableHeaders}/>
+        modalTitle={t("sales.quote.quoteLogs") + " - " + modalLogsTitle}
+      >
+        <QuoteLogsWidget logsTableHeaders={logsTableHeaders} />
       </GoMakeModal>
     </>
   );
