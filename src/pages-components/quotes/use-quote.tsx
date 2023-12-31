@@ -123,7 +123,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           quote?.customerName,
           quote?.number,
           quote?.worksNames,
-          quote?.totalPrice + " " + getCurrencyUnitText(quote?.Currency),
+          quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
           _renderQuoteStatus(quote?.documentStatus, quote, t),
           <MoreMenuWidget
@@ -163,7 +163,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           quote?.customerName,
           quote?.number,
           quote?.worksNames,
-          quote?.totalPrice + " " + getCurrencyUnitText(quote?.Currency),
+          quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
           _renderQuoteStatus(quote?.documentStatus, quote, t),
           <MoreMenuWidget
