@@ -22,11 +22,13 @@ const PrimaryTableCell = styled(TableCell)(() => {
       color: primaryColor(900),
       ...FONT_FAMILY.Lexend(500, 14),
       padding: "5px 5px",
+      height: 47,
     },
     [`&.${tableCellClasses.body}`]: {
       ...FONT_FAMILY.Lexend(500, 14),
       color: primaryColor(500),
       padding: "3px 0",
+      height: 47,
     },
   };
 });
@@ -65,7 +67,7 @@ const ClassicTableRow = styled(TableRow)(() => {
       border: 0,
     },
     "&:first-child td, &:first-child th": {
-      borderBottom: "1px solid #e0e0e0"
+      borderBottom: "1px solid #e0e0e0",
     },
   };
 });
@@ -76,13 +78,15 @@ const PrimaryTable = ({
   stickyHeader,
   stickyFirstCol,
   maxHeight,
-  variant
+  variant,
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { classes } = useStyle(maxHeight, dir);
-  const TableCell = variant === "ClassicTable" ? ClassicTableCell : PrimaryTableCell;
-  const TableRow = variant === "ClassicTable" ? ClassicTableRow : PrimaryTableRow;
+  const TableCell =
+    variant === "ClassicTable" ? ClassicTableCell : PrimaryTableCell;
+  const TableRow =
+    variant === "ClassicTable" ? ClassicTableRow : PrimaryTableRow;
   return (
     <TableContainer style={classes.tableContainer}>
       <Table stickyHeader={stickyHeader}>
@@ -91,14 +95,10 @@ const PrimaryTable = ({
             {headers?.map((header, index) => {
               if (index === 0 && stickyHeader) {
                 return (
-                  <TableCell style={classes.stickyHeader}>
-                    {header}
-                  </TableCell>
+                  <TableCell style={classes.stickyHeader}>{header}</TableCell>
                 );
               } else {
-                return (
-                  <TableCell align={"center"}>{header}</TableCell>
-                );
+                return <TableCell align={"center"}>{header}</TableCell>;
               }
             })}
           </TableRow>
@@ -108,15 +108,9 @@ const PrimaryTable = ({
             <TableRow key={`row_${index}`}>
               {row.map((cell, index) => {
                 if (index === 0 && stickyFirstCol) {
-                  return (
-                    <TableCell style={classes.sticky}>
-                      {cell}
-                    </TableCell>
-                  );
+                  return <TableCell style={classes.sticky}>{cell}</TableCell>;
                 } else {
-                  return (
-                    <TableCell align={"center"}>{cell}</TableCell>
-                  );
+                  return <TableCell align={"center"}>{cell}</TableCell>;
                 }
               })}
             </TableRow>
