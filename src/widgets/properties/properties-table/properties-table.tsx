@@ -20,6 +20,7 @@ import { useProperites } from "../hooks/use-properites";
 import { MoreCircleIcon } from "@/icons";
 import { AddRuleModal } from "@/pages-components/products/profits-new/widgets/add-rule-modal";
 import { EditRulesModal } from "../properties-modals/edit-rule-modal";
+import { useRouter } from "next/router";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -66,12 +67,14 @@ const PropertiesTable = () => {
     deleteRule,
     reOrderPricingTables,
   } = useProperites();
-
+  const router = useRouter();
   return (
     <>
       <div style={classes.headerContainer}>
         <HeaderTitleWithSearch
-          title="Action pricing properties"
+          title={
+            router.query.actionName + " " + t("products.actions.properties")
+          }
           onChange={(e) => setFilter(e)}
         />
       </div>
