@@ -5,7 +5,6 @@ import {
   getAllProductsForDropDownList,
   getAndSetAllCustomers,
   getAndSetClientTypes,
-  saveQuote,
 } from "@/services/hooks";
 import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -164,9 +163,6 @@ const useQuoteWidget = () => {
       }
     })
   }
-
-
-
 
   const onClcikCreateQuote = () => {
     navigate(

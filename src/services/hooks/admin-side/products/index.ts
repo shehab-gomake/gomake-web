@@ -9,4 +9,3 @@ export * from "./get-set-product-by-id";
 export * from "./get-all-products-mongodb";
 export * from "./get-set-products";
 export * from "./get-all-products-for-dropdownlist";
-export * from "./get-product-quote-item-by-id";
