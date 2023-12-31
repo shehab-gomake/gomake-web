@@ -27,7 +27,7 @@ const QuoteForPriceTable = ({
   changeQuoteItems,
   getCalculateQuote,
   changedocumentItemsChild,
-  documentType
+  documentType,
 }) => {
   const { clasess } = useStyle({ headerHeight });
   const PrimaryTableCell = styled(TableCell)(() => {
@@ -45,10 +45,11 @@ const QuoteForPriceTable = ({
   return (
     <div>
       <TableContainer
-        component={Paper}
+        // component={Paper}
         style={{
           maxHeight: 420,
           overflow: "scroll",
+          border: "1px solid #EAECF0",
         }}
       >
         <Table stickyHeader={true}>
@@ -101,9 +102,7 @@ const QuoteForPriceTable = ({
                             headerHeight={headerHeight}
                             parentIndex={index}
                             childInex={childIndex}
-                            changedocumentItemsChild={
-                              changedocumentItemsChild
-                            }
+                            changedocumentItemsChild={changedocumentItemsChild}
                             onClickDeleteQouteItem={onClickDeleteQouteItem}
                             getCalculateQuoteItem={getCalculateQuoteItem}
                             childList={item?.childsDocumentItems}
