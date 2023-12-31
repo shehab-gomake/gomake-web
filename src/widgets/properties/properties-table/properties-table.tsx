@@ -21,6 +21,7 @@ import { MoreCircleIcon } from "@/icons";
 import { AddRuleModal } from "@/pages-components/products/profits-new/widgets/add-rule-modal";
 import { EditRulesModal } from "../properties-modals/edit-rule-modal";
 import { useRouter } from "next/router";
+import { PrimaryTable } from "@/components/tables/primary-table";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -57,19 +58,24 @@ const PropertiesTable = () => {
     onCloseEditModal,
     anchorEl,
     open,
-    handleClick,
     handleClose,
     selectedProperties,
-    setSelectedProperites,
-    properties,
+    allProperties,
     setFilter,
     getProperitesService,
     deleteRule,
     reOrderPricingTables,
-  } = useProperites();
+  } = useProperites({ classes });
   const router = useRouter();
+  const tableHeaders = [
+    t("properties.parameter"),
+    t("properties.unit"),
+    t("properties.rule"),
+    t("properties.type"),
+    t("properties.more"),
+  ];
   return (
-    <>
+    <div style={classes.mainContainer}>
       <div style={classes.headerContainer}>
         <HeaderTitleWithSearch
           title={
@@ -78,8 +84,13 @@ const PropertiesTable = () => {
           onChange={(e) => setFilter(e)}
         />
       </div>
-
-      <TableContainer style={classes.shadowBorder}>
+      <PrimaryTable
+        stickyFirstCol={false}
+        stickyHeader={false}
+        rows={allProperties}
+        headers={tableHeaders}
+      />
+      {/* <TableContainer style={classes.shadowBorder}>
         <Table>
           <TableHead>
             <TableRow style={{ background: "#EBECFF" }}>
@@ -150,7 +161,7 @@ const PropertiesTable = () => {
             })}
           </TableBody>
         </Table>
-      </TableContainer>
+      </TableContainer> */}
       <AddRuleModal
         openModal={openAddRule}
         onCloseModal={onCloseAddRuleModal}
@@ -173,7 +184,7 @@ const PropertiesTable = () => {
         anchorEl={anchorEl}
         open={open}
       />
-    </>
+    </div>
   );
 };
 

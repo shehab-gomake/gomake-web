@@ -6,6 +6,9 @@ const useStyle = () => {
   const { theme, primaryColor, secondColor, neutralColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
+      mainContainer: {
+        paddingLeft: 20,
+      },
       subHeader: {
         ...FONT_FAMILY.Lexend(500, 24),
         color: secondColor(500),
@@ -34,19 +37,19 @@ const useStyle = () => {
         cursor: "pointer",
       },
       clickableData: {
-        padding: '0 10px',
-        height: '26px',
-        borderRadius: '4',
+        padding: "0 10px",
+        height: "26px",
+        borderRadius: "4",
         ...FONT_FAMILY.Lexend(400, 14),
-        '&:hover': {
-          backgroundColor: neutralColor(200)
-        }
+        "&:hover": {
+          backgroundColor: neutralColor(200),
+        },
       },
       buttonsContainerStyle: {
         display: "flex",
         flexDirection: "column" as "column",
-        gap: "10px"
-      }
+        gap: "10px",
+      },
     };
   }, [theme]);
   return {
