@@ -34,6 +34,7 @@ const UpdateValuePhoneInput = ({
                     width: "230px",
                     height: "26px",
                     boxShadow: "none",
+                    background: "none"
                 }}
             >
                 <PhoneInputComponent
