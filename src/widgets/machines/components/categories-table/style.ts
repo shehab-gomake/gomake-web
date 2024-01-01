@@ -12,6 +12,8 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
       },
       headerContainer: {
         display: "flex",

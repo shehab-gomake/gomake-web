@@ -1,5 +1,4 @@
 import { useRecoilValue } from "recoil";
-
 import { DuplicateItemModal } from "@/widgets/quote/modals-widgets/duplicate-item-modal";
 import { AddNewItemModal } from "@/widgets/quote/modals-widgets/add-new-item-modal";
 import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
@@ -25,9 +24,8 @@ import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 
-
 interface IProps {
-  documentType: DOCUMENT_TYPE
+  documentType: DOCUMENT_TYPE;
 }
 const QuoteNewPageWidget = ({ documentType }: IProps) => {
   const { clasess } = useStyle();
@@ -144,16 +142,23 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
     onCloseDeliveryModal,
     onAddDelivery,
     handleSaveBtnClick,
-    documentTitle
+    documentTitle,
+    onBlurExchangeRate,
+    setIsUpdateExchangeRate,
+    isUpdateExchangeRate,
+    onBlurCurrency,
+    setIsUpdateCurrency,
+    isUpdateCurrency,
+    updateCurrency,
+    refreshExchangeRate
   } = useQuoteNew(documentType);
-
 
   return (
     <>
       {quoteItemValue?.id && (
         <div style={clasess.mainContainer}>
           <div style={clasess.secondContainer}>
-            <div>
+            <div style={{ paddingLeft: 20, paddingRight: 12 }}>
               <div style={clasess.titleSettingContainer}>
                 <div style={clasess.titleQuateContainer}>
                   <HeaderTitle
@@ -231,7 +236,6 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
                   updateClientAddress={updateClientAddress}
                   onClickDeleteAddress={onClickDeleteAddress}
                   documentType={documentType}
-
                 />
                 <ContactNewWidget
                   handleShowLess={handleShowLess}
@@ -264,7 +268,14 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
                 />
               </div>
             </div>
-            <div style={{ flex: 0.9, overflow: "auto" }}>
+            <div
+              style={{
+                flex: 0.9,
+                overflow: "auto",
+                paddingLeft: 20,
+                paddingRight: 12,
+              }}
+            >
               <QuoteForPriceTable
                 documentItems={documentItems}
                 tableHeaders={tableHeaders}
@@ -281,7 +292,6 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
                 getCalculateQuote={getCalculateQuote}
                 changedocumentItemsChild={changedocumentItemsChild}
                 documentType={documentType}
-
               />
             </div>
             <div style={{ width: "100%", flex: 0.1 }}>
@@ -298,7 +308,6 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
           </div>
         </div>
       )}
-
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}
@@ -335,6 +344,14 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
         handleClose={handleSettingMenuClose}
         open={openSettingMenu}
         anchorEl={anchorElSettingMenu}
+        onBlurExchangeRate={onBlurExchangeRate}
+        setIsUpdateExchangeRate={setIsUpdateExchangeRate}
+        isUpdateExchangeRate={isUpdateExchangeRate}
+        onBlurCurrency={onBlurCurrency}
+        setIsUpdateCurrency={setIsUpdateCurrency}
+        isUpdateCurrency={isUpdateCurrency}
+        updateCurrency={updateCurrency}
+        onClickRefresh={refreshExchangeRate}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}

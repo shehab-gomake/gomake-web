@@ -1,74 +1,72 @@
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {useMemo} from "react";
-import {FONT_FAMILY} from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useMemo } from "react";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-    const {theme, primaryColor, secondColor} = useGomakeTheme();
-    const classes = useMemo(() => {
-        return {
-            header: {
-                position: 'sticky' as 'sticky',
-                top: 0,
-                width: '100%',
-                backgroundColor: '#FFF',
-                zIndex: 1,
-                padding: 1,
-                paddingTop: 0,
-                paddingBottom: '12px'
-            },
-            headerBtn: {
-                display: 'flex',
-                justifyContent: 'flex-end' as 'flex-end',
-                gap: 16
-            },
-            footer: {
-                position: 'sticky' as 'sticky',
-                bottom: 0,
-                width: '100%',
-                backgroundColor: '#FFF',
-                zIndex: 1,
-                padding: 1,
-                paddingTop: '12px',
-                display: 'flex',
-                justifyContent: 'flex-end' as 'flex-end',
-                gap: 16
-            },
-            addBtn: {
-                ...FONT_FAMILY.Lexend(500, 16),
-                backgroundColor: primaryColor(100),
-                color: primaryColor(900),
-                '&:hover': {
-                    backgroundColor: primaryColor(200),
-                },
-                marginBottom: '20px',
-                textTransform: 'capitalize'
-    },
-            exportBtn: {
-                ...FONT_FAMILY.Lexend(500, 16),
-                backgroundColor: '#FFF',
-                color: secondColor(500),
-                border: `1px solid ${secondColor(500)}`,
-                '&:hover': {
-                    backgroundColor: secondColor(500),
-                    color: '#FFF'
-                },
-                textTransform: 'capitalize'
-
-            },
-            printBtn: {
-                ...FONT_FAMILY.Lexend(500, 16),
-                backgroundColor: secondColor(500),
-                color: '#FFF',
-                '&:hover': {
-                    backgroundColor: secondColor(200),
-                },
-            textTransform: 'capitalize'
-            },
-
-        };
-    }, [theme]);
+  const { theme, primaryColor, secondColor } = useGomakeTheme();
+  const classes = useMemo(() => {
     return {
-        classes,
+      header: {
+        position: "sticky" as "sticky",
+        top: 0,
+        width: "100%",
+        // backgroundColor: '#FFF',
+        zIndex: 1,
+        padding: 1,
+        paddingTop: 0,
+        paddingBottom: "12px",
+      },
+      headerBtn: {
+        display: "flex",
+        justifyContent: "flex-end" as "flex-end",
+        gap: 16,
+      },
+      footer: {
+        position: "sticky" as "sticky",
+        bottom: 0,
+        width: "100%",
+        // backgroundColor: "#FFF",
+        zIndex: 1,
+        padding: 1,
+        paddingTop: "12px",
+        display: "flex",
+        justifyContent: "flex-end" as "flex-end",
+        gap: 16,
+      },
+      addBtn: {
+        ...FONT_FAMILY.Lexend(500, 16),
+        backgroundColor: primaryColor(100),
+        color: primaryColor(900),
+        "&:hover": {
+          backgroundColor: primaryColor(200),
+        },
+        marginBottom: "20px",
+        textTransform: "capitalize",
+      },
+      exportBtn: {
+        ...FONT_FAMILY.Lexend(500, 16),
+        backgroundColor: "#FFF",
+        color: secondColor(500),
+        border: `1px solid ${secondColor(500)}`,
+        "&:hover": {
+          backgroundColor: secondColor(500),
+          color: "#FFF",
+        },
+        textTransform: "capitalize",
+      },
+      printBtn: {
+        ...FONT_FAMILY.Lexend(500, 16),
+        backgroundColor: secondColor(500),
+        color: "#FFF",
+        "&:hover": {
+          backgroundColor: secondColor(200),
+        },
+        textTransform: "capitalize",
+      },
     };
+  }, [theme]);
+  return {
+    classes,
+  };
 };
-export {useStyle};
+export { useStyle };

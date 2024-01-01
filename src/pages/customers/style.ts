@@ -27,6 +27,12 @@ const useStyle = () => {
         height: convertHeightToVH(30),
         marginRight: convertWidthToVW(1),
       },
+      mainContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        paddingLeft: 20,
+        paddingRight: 20,
+      },
       sameRow: {
         display: "flex",
         justifyContent: "space-between",
@@ -57,7 +63,7 @@ const useStyle = () => {
         boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
       cleanBtnStyle: {
-        backgroundColor: "#F8F8F8"
+        backgroundColor: "#F8F8F8",
       },
     };
   }, [i18next.language, t]);

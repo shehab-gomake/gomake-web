@@ -10,7 +10,6 @@ const useQuoteGetData = () => {
   const { callApi } = useGomakeAxios();
   const [clientAddressValue, setClientAddressValue] = useRecoilState<any>(clientAddressState);
   const currenciesUnits = useRecoilValue<any>(currencyUnitState);
-
   const addressSelect = useRecoilValue(addressSelectState);
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
 

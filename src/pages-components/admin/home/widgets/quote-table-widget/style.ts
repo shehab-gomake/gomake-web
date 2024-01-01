@@ -11,12 +11,13 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-       // width: "100%",
-        height:"100%",
+        // width: "100%",
+        height: "100%",
         backgroundColor: "#FFFFFF",
-        margin: '0 4px',
+        margin: "0 4px",
         borderRadius: 8,
-        boxShadow: "0 1px 0px 0 rgba(0, 0, 0, 0.08), 0 0px 5px 0 rgba(0, 0, 0, 0.08)",
+        boxShadow:
+          "0 1px 0px 0 rgba(0, 0, 0, 0.08), 0 0px 5px 0 rgba(0, 0, 0, 0.08)",
       },
       openBtnStyle: {
         display: "flex",
@@ -78,10 +79,9 @@ const useStyle = () => {
       dataRowStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         lineHeight: "17.5px",
-        color:"#292D32",
-        letterSpacing: '-1%',
-
-      }
+        color: "#292D32",
+        letterSpacing: "-1%",
+      },
     };
   }, []);
   return {
