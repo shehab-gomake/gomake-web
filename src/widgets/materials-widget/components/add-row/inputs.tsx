@@ -3,7 +3,7 @@ import { materialHeadersState } from "../../state";
 import { EDataTypeEnum } from "@/widgets/materials-widget/components/table-cell-data/data-type-enum";
 
 const rowInputs = (state, currencies, machinesCategories) => {
-    const materialHeaders = useRecoilValue<{ key: string, value: string, inputType: number, values: string[] }[]>(materialHeadersState);
+    const materialHeaders = useRecoilValue<{ key: string, value: string, inputType: number, values: any[] }[]>(materialHeadersState);
 
     const inputArray = materialHeaders
         .filter(header => header.key !== "Active")
@@ -44,7 +44,7 @@ const rowInputs = (state, currencies, machinesCategories) => {
                         placeholder: header?.key,
                         required: false,
                         parameterKey: header?.key,
-                        options: header.values ? header.values.map(value => ({ value: value, text: value })) : [],
+                        options: header.values ? header.values.map(value => ({ value: value.key, text: value.value })) : [],
                         value: "",
                         isValid: true,
                     };
