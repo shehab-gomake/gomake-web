@@ -45,11 +45,11 @@ const useStyle = () => {
         width: 330,
         minWidth: 330,
         maxWidth: 330,
-        height: "88vh",
-        backgroundColor: "white",
+        height: "87vh",
+        // backgroundColor: "white",
+        boxShadow: "0px 0px 3px 0px rgba(129, 129, 129, 0.12)",
         padding: 15,
         marginTop: -77,
-        boxShadow: "0px 4px 40px 0px rgba(129, 129, 129, 0.12)",
         borderRadius: 5,
       },
       rightSideContainer: {
@@ -445,7 +445,7 @@ const useStyle = () => {
         height: 110,
         overflow: "scroll",
         padding: 5,
-        border: "1px solid #F6F6F6",
+        border: "1px solid #ccc",
       },
       pricingSectionContainer: {
         display: "flex",
