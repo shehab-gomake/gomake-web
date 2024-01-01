@@ -5,6 +5,7 @@ import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { GomakePrimaryButton } from "@/components";
 import { WastebasketNew2 } from "@/icons";
 import { IconButton } from "@mui/material";
+import { PhoneInputUpdatedValues } from "../phone-input-updated-values";
 
 const AddContactNewWidget = ({
   clientContactsValue,
@@ -40,12 +41,11 @@ const AddContactNewWidget = ({
             setSelectedContactById(item);
           }}
         />
-
-        <InputUpdatedValues
+        <PhoneInputUpdatedValues
           value={
             selectedContactById?.phone !== null
               ? selectedContactById?.phone
-              : t("sales.quote.noMobileContact")
+              : ""
           }
           label={t("sales.quote.mobileContact")}
           onBlur={onBlurContactMobile}
