@@ -46,8 +46,7 @@ const SettingsMenu = ({
       </MenuItem>
       {machineName && (
         <MenuItem onClick={onClickMachine}>
-          {/* {t("products.profits.admin.OSSettings")} */}
-          machine
+          {t("products.offsetPrice.admin.machine")}
         </MenuItem>
       )}
     </GoMakeMenu>
