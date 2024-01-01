@@ -1,5 +1,4 @@
 import { useRecoilValue } from "recoil";
-
 import { DuplicateItemModal } from "@/widgets/quote/modals-widgets/duplicate-item-modal";
 import { AddNewItemModal } from "@/widgets/quote/modals-widgets/add-new-item-modal";
 import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
@@ -144,6 +143,14 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
     onAddDelivery,
     handleSaveBtnClick,
     documentTitle,
+    onBlurExchangeRate,
+    setIsUpdateExchangeRate,
+    isUpdateExchangeRate,
+    onBlurCurrency,
+    setIsUpdateCurrency,
+    isUpdateCurrency,
+    updateCurrency,
+    refreshExchangeRate
   } = useQuoteNew(documentType);
 
   return (
@@ -301,7 +308,6 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
           </div>
         </div>
       )}
-
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}
@@ -338,6 +344,14 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
         handleClose={handleSettingMenuClose}
         open={openSettingMenu}
         anchorEl={anchorElSettingMenu}
+        onBlurExchangeRate={onBlurExchangeRate}
+        setIsUpdateExchangeRate={setIsUpdateExchangeRate}
+        isUpdateExchangeRate={isUpdateExchangeRate}
+        onBlurCurrency={onBlurCurrency}
+        setIsUpdateCurrency={setIsUpdateCurrency}
+        isUpdateCurrency={isUpdateCurrency}
+        updateCurrency={updateCurrency}
+        onClickRefresh={refreshExchangeRate}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}

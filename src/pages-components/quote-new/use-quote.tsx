@@ -20,7 +20,7 @@ import {
 import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { addressModalState } from "@/widgets/quote-new/business-widget/address-widget/state";
 import { useQuoteGetData } from "./use-quote-get-data";
-import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, saveDocumentApi, sendDocumentToClientApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDueDateApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
+import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
 
@@ -42,12 +42,11 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
   const [customersListValue, setCustomersListValue] =
     useRecoilState<any>(businessListsState);
   const [selectBusiness, setSelectBusiness] = useState<any>({});
-  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<
-    number | null
-  >(null);
-  const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<
-    number | null
-  >(null);
+  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<number | null>(null);
+  const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<number | null>(null);
+  const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<number | null>(null);
+  const [isUpdateCurrency, setIsUpdateCurrency] = useState<string>(null);
+
 
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
@@ -227,6 +226,15 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     setIsUpdateBusinessName(null);
   };
 
+  const onBlurExchangeRate = async (value:number) => {
+    updateExchangeRate(value);
+    setIsUpdateExchangeRate(null);
+  };
+
+  const onBlurCurrency = async () => {
+    setIsUpdateCurrency(null);
+  };
+
   const getAllEmployees = useCallback(async () => {
     await getAndSetAllEmployees(callApi, setAgentListValue, {
       isAgent: true,
@@ -251,6 +259,64 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
 
     })
   }
+
+  const updateExchangeRate = async (value: number) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        setIsUpdateExchangeRate(null);
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await updateExchangeRateApi(callApi, callBack, {
+      documentType: docType , document: {
+        documentId: quoteItemValue?.id,
+        exchangeRate: value,
+      }
+
+    })
+  }
+
+  const refreshExchangeRate = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await refreshExchangeRateApi(callApi, callBack, {
+      documentType: docType , document: {
+        documentId: quoteItemValue?.id,
+      }
+    })
+  }
+
+
+  const updateCurrency = async (currency: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        setIsUpdateCurrency(null);
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await updateDocumentCurrencyApi(callApi, callBack, {
+      documentType: docType , document: {
+        documentId: quoteItemValue?.id,
+        currency: currency,
+      }
+
+    })
+  }
+
+  
+    ///////////////////////////////// currency & exchange rate /////////////////////////////////
+
 
   const updatePurchaseNumber = async (value: string) => {
     const callBack = (res) => {
@@ -286,7 +352,6 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
         documentID: quoteItemValue?.id,
         clientId: item?.id,
       }
-
     })
   }
 
@@ -484,7 +549,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
       if (res?.success) {
         alertSuccessDelete();
         onCloseDeleteItemModal();
-        getQuote();
+        quoteItemValue?.documentItems?.length === 1  ? navigate("/home") : getQuote();
       } else {
         alertFaultDelete();
       }
@@ -961,6 +1026,15 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     onAddDelivery,
     handleSaveBtnClick,
     documentTitle,
+    onBlurExchangeRate,
+    onBlurCurrency,
+    setIsUpdateExchangeRate,
+    setIsUpdateCurrency,
+    isUpdateExchangeRate,
+    isUpdateCurrency,
+    updateExchangeRate,
+    updateCurrency,
+    refreshExchangeRate
   };
 };
 
