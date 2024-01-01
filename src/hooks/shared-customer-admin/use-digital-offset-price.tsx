@@ -170,11 +170,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(()=>{
     if(updatedSelectedWorkFlow){
       const currentWorkFlows = cloneDeep(workFlows);
-      currentWorkFlows.forEach(x=>{
-        if(x.selected){
-          x = updatedSelectedWorkFlow;
-        }
-      })
+      let existsSelectedWorkFlow = currentWorkFlows.find(x=>x.selected && x.id === updatedSelectedWorkFlow.id );
+      if(existsSelectedWorkFlow != null){
+        existsSelectedWorkFlow = updatedSelectedWorkFlow
+      }else{
+        currentWorkFlows.forEach(x=>x.selected = false);
+        let workFlow = currentWorkFlows.find(x=>x.id === updatedSelectedWorkFlow.id );
+        workFlow.selected = true;
+      }
       setWorkFlows(currentWorkFlows);
     }
   },[updatedSelectedWorkFlow])
