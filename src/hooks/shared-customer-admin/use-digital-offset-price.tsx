@@ -10,6 +10,7 @@ import {
   getAndSetProductById,
 } from "@/services/hooks";
 import {
+  currentCalculationConnectionId,
   isLoadgingState, itemParmetersValuesState,
   selectedValueConfigState,
   selectParameterButtonState,
@@ -104,8 +105,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setSelectParameterButton = useSetRecoilState(
     selectParameterButtonState
   );
-  const { calculationResult, connectionId, calculationSessionId } =
+  const { calculationResult,calculationSessionId,updatedSelectedWorkFlow } =
     useCalculationsWorkFlowsSignalr();
+  const connectionId = useRecoilValue(currentCalculationConnectionId);
+
   const [requestAbortController, setRequestAbortController] =
     useState<AbortController>(null);
 
@@ -163,6 +166,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
 
   }, [calculationResult, calculationSessionId])
+  
+  useEffect(()=>{
+    if(updatedSelectedWorkFlow){
+      const currentWorkFlows = cloneDeep(workFlows);
+      currentWorkFlows.forEach(x=>{
+        if(x.selected){
+          x = updatedSelectedWorkFlow;
+        }
+      })
+      setWorkFlows(currentWorkFlows);
+    }
+  },[updatedSelectedWorkFlow])
   const selectBtnTypeToAction = (
     parameter,
     sectionId,
