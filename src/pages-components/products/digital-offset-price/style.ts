@@ -45,8 +45,8 @@ const useStyle = () => {
         width: 330,
         minWidth: 330,
         maxWidth: 330,
-        height: "87vh",
-        // backgroundColor: "white",
+        height: "85.5vh",
+        backgroundColor: "white",
         boxShadow: "0px 0px 3px 0px rgba(129, 129, 129, 0.12)",
         padding: 15,
         marginTop: -77,
@@ -314,7 +314,7 @@ const useStyle = () => {
       totalContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
         marginBottom: 8,
@@ -323,11 +323,15 @@ const useStyle = () => {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 24),
       },
+      totalCurrancyStyle: {
+        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(700, 16),
+      },
       inputPriceStyle: {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 24),
         height: 28,
-        width: "130px",
+        width: "100%",
         boxShadow: "none",
       },
       priceRecoveryContainer: {
@@ -404,7 +408,6 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-end",
         alignItems: "center",
-        // marginTop: 30,
         width: "100%",
         gap: 16,
       },
@@ -446,6 +449,8 @@ const useStyle = () => {
         overflow: "scroll",
         padding: 5,
         border: "1px solid #ccc",
+        color: "#000000",
+        ...FONT_FAMILY.Lexend(500, 14),
       },
       pricingSectionContainer: {
         display: "flex",

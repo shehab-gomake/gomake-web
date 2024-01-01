@@ -38,6 +38,8 @@ const RightSideWidget = ({
   setPriceRecovery,
   priceRecovery,
   setSamlleType,
+  includeVAT,
+  setIncludeVAT,
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
   const subProducts = useRecoilValue<any>(subProductsParametersState);
@@ -157,10 +159,11 @@ const RightSideWidget = ({
                   setChangePrice(updatedDefaultPrice);*/
                 }}
                 style={clasess.inputPriceStyle}
+                type={"number"}
               />
             )}
           </div>
-          <span style={clasess.totalStyle}>USD</span>
+          <span style={clasess.totalCurrancyStyle}>USD</span>
         </div>
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
@@ -195,6 +198,7 @@ const RightSideWidget = ({
                 : (
                     currentProductItemValueTotalPrice / quantity?.values[0]
                   ).toFixed(2),
+              unitPrice: "USD",
             })}
           </div>
         )}
@@ -257,9 +261,9 @@ const RightSideWidget = ({
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon />}
               onChange={() => {
-                setUrgentOrder(!urgentOrder);
+                setIncludeVAT(!urgentOrder);
               }}
-              checked={urgentOrder}
+              checked={includeVAT}
             />
             <div style={clasess.secondText}>
               {t("products.offsetPrice.admin.urgentOrder")}

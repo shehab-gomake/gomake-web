@@ -66,6 +66,8 @@ const PriceListPageWidget = ({ widgetType }) => {
     setSamlleType,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
+    includeVAT,
+    setIncludeVAT,
   } = useDigitalOffsetPrice({ clasess, widgetType });
   return (
     <div style={{ height: "85vh" }}>
@@ -193,6 +195,8 @@ const PriceListPageWidget = ({ widgetType }) => {
               setPriceRecovery={setPriceRecovery}
               priceRecovery={priceRecovery}
               setSamlleType={setSamlleType}
+              includeVAT={includeVAT}
+              setIncludeVAT={setIncludeVAT}
             />
           </div>
 
@@ -211,6 +215,7 @@ const PriceListPageWidget = ({ widgetType }) => {
               boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.08)",
               height: 65,
               zIndex: 5,
+              backgroundColor: "#FFF",
             }}
           >
             <div style={{ width: "68%" }}>
@@ -234,7 +239,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 ) : null}
               </div>
             </div>
-            <div style={{ width: 315 }}>
+            <div style={{ width: 315, height: 40 }}>
               {widgetType === EWidgetProductType.EDIT ? (
                 <GomakePrimaryButton
                   style={clasess.addOrderBtn}
