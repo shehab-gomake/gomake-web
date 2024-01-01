@@ -19,6 +19,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
+        paddingLeft: 20,
       },
       mainRowContainer: {
         display: "flex",
@@ -44,11 +45,11 @@ const useStyle = () => {
         width: 330,
         minWidth: 330,
         maxWidth: 330,
-        height: "88vh",
-        backgroundColor: "white",
+        height: "87vh",
+        // backgroundColor: "white",
+        boxShadow: "0px 0px 3px 0px rgba(129, 129, 129, 0.12)",
         padding: 15,
         marginTop: -77,
-        boxShadow: "0px 4px 40px 0px rgba(129, 129, 129, 0.12)",
         borderRadius: 5,
       },
       rightSideContainer: {
@@ -189,7 +190,6 @@ const useStyle = () => {
         width: "100%",
         borderRadius: 4,
         height: 40,
-        backgroundColor: "#FFF",
         border: "0px",
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#000",
@@ -198,7 +198,6 @@ const useStyle = () => {
         width: "100%",
         borderRadius: 4,
         height: 40,
-        backgroundColor: "#FFF",
         border: "0px",
         ...FONT_FAMILY.Lexend(500, 14),
       },
@@ -206,7 +205,6 @@ const useStyle = () => {
         display: "flex",
         width: "100%",
         maxWidth: "180px",
-        backgroundColor: "#FFF",
         borderRadius: 4,
       },
 
@@ -267,7 +265,7 @@ const useStyle = () => {
         height: 170,
         borderRadius: 16,
         overflow: "hidden",
-        marginBottom:15,
+        marginBottom: 15,
       },
       secondText: {
         color: primaryColor(200),
@@ -443,11 +441,11 @@ const useStyle = () => {
       },
       multiLineTextInputStyle: {
         width: "100%",
-        backgroundColor: "#EBECFF",
         borderRadius: 12,
         height: 110,
         overflow: "scroll",
         padding: 5,
+        border: "1px solid #ccc",
       },
       pricingSectionContainer: {
         display: "flex",
@@ -527,7 +525,6 @@ const useStyle = () => {
         width: "100%",
         flexWrap: "wrap" as "wrap",
         textAlign: "center" as "center",
-        backgroundColor: "#FFF",
       },
       cellContainerMod: {
         paddingRight: 22,

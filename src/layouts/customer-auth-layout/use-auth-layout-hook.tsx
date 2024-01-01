@@ -16,11 +16,10 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { ICompanyProfile, companyProfileState } from "@/store/company-profile";
 import { Permissions } from "@/components/CheckPermission/enum";
 
-import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
-import PendingActionsOutlinedIcon from '@mui/icons-material/PendingActionsOutlined';
-import GTranslateIcon from '@mui/icons-material/GTranslate';
-const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
-
+import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
+import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
+import GTranslateIcon from "@mui/icons-material/GTranslate";
+const useAuthLayoutHook = (permissionEnumValue?: Permissions) => {
   const { isAuth } = useGomakeAuth(permissionEnumValue);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
@@ -48,17 +47,17 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         },
         isProduction: true,
       },
-      {
-        isLine: false,
-        key: "partners",
-        title: "tabs.partners",
-        path: "/partners",
-        isList: false,
-        icon: () => {
-          return <PartnersIcon />;
-        },
-        isProduction: true,
-      },
+      // {
+      //   isLine: false,
+      //   key: "partners",
+      //   title: "tabs.partners",
+      //   path: "/partners",
+      //   isList: false,
+      //   icon: () => {
+      //     return <PartnersIcon />;
+      //   },
+      //   isProduction: true,
+      // },
       {
         isLine: true,
         key: "line_1",
@@ -67,45 +66,44 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
     ];
   }, []);
   const tabs2: any = useMemo(() => {
-   
-   return [
+    return [
       {
         isLine: false,
         key: "sales",
         title: "tabs.sales",
         path: "/",
         isList: true,
-        Permission:Permissions.SHOW_SALES,
+        Permission: Permissions.SHOW_SALES,
         list: [
           {
             key: "quotes",
             title: "tabs.quotes",
             path: "/quotes",
-            Permission:Permissions.SHOW_QUOTES
+            Permission: Permissions.SHOW_QUOTES,
           },
           {
             key: "orders",
             title: "tabs.orders",
             path: "/orders",
-            Permission:Permissions.SHOW_ORDERS
+            Permission: Permissions.SHOW_ORDERS,
           },
           {
             key: "delivery notes",
             title: "tabs.deliveryNotes",
             path: "/deliveryNotes",
-            Permission:Permissions.SHOW_ORDERS
+            Permission: Permissions.SHOW_ORDERS,
           },
           {
             key: "invoices",
             title: "tabs.invoices",
             path: "/invoices",
-            Permission:Permissions.SHOW_ORDERS
+            Permission: Permissions.SHOW_ORDERS,
           },
           {
             key: "receipts",
             title: "tabs.receipts",
             path: "/receipts",
-            Permission:Permissions.SHOW_ORDERS
+            Permission: Permissions.SHOW_ORDERS,
           },
         ],
         icon: () => {
@@ -130,25 +128,25 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         title: "tabs.purchase",
         path: "/",
         isList: true,
-        Permission:Permissions.SHOW_SHOPPING,
+        Permission: Permissions.SHOW_SHOPPING,
         list: [
           {
             key: "purchaseOrders",
             title: "tabs.purchaseOrders",
             path: "/purchaseOrders",
-            Permission:Permissions.SHOW_ORDERS
+            Permission: Permissions.SHOW_ORDERS,
           },
           {
             key: "purchaseInvoices",
             title: "tabs.purchaseInvoices",
             path: "/purchaseOrder",
-            Permission:Permissions.SHOW_ORDERS
+            Permission: Permissions.SHOW_ORDERS,
           },
           {
             key: "supplierPayments",
             title: "tabs.supplierPayments",
             path: "/purchaseOrder",
-            Permission:Permissions.SHOW_ORDERS
+            Permission: Permissions.SHOW_ORDERS,
           },
         ],
         icon: () => {
@@ -161,20 +159,20 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         key: "customers",
         title: "tabs.customers",
         path: "/",
-        Permission:Permissions.SHOW_CUSTOMERS,
+        Permission: Permissions.SHOW_CUSTOMERS,
         isList: true,
         list: [
           {
             key: "customers",
             title: "tabs.customers",
             path: "/customers",
-            Permission:Permissions.SHOW_CLIENT,
+            Permission: Permissions.SHOW_CLIENT,
           },
           {
             key: "suppliers",
             title: "tabs.suppliers",
             path: "/suppliers",
-            Permission:Permissions.SHOW_SUPPLIER,
+            Permission: Permissions.SHOW_SUPPLIER,
           },
         ],
         icon: () => {
@@ -182,19 +180,18 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         },
         isProduction: true,
       },
-      {
-        isLine: false,
-        key: "reports",
-        title: "tabs.reports",
-        path: "/reports",
-        Permission:Permissions.SHOW_REPORTS,
-        isList: false,
-        icon: () => {
-          return <ReportsIcon />;
-        },
-        isProduction: true,
-      },
-      
+      // {
+      //   isLine: false,
+      //   key: "reports",
+      //   title: "tabs.reports",
+      //   path: "/reports",
+      //   Permission: Permissions.SHOW_REPORTS,
+      //   isList: false,
+      //   icon: () => {
+      //     return <ReportsIcon />;
+      //   },
+      //   isProduction: true,
+      // },
     ];
   }, []);
   const tabs3: any = useMemo(() => {
@@ -208,7 +205,7 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         isLine: false,
         key: "materials",
         title: "tabs.materials",
-        Permission:Permissions.SHOW_MATERIALS,
+        Permission: Permissions.SHOW_MATERIALS,
         path: "/materials",
         isList: false,
         icon: () => {
@@ -221,10 +218,10 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         key: "machines",
         title: "tabs.machines",
         path: "/machines",
-        Permission:Permissions.SHOW_MACHINES,
+        Permission: Permissions.SHOW_MACHINES,
         isList: false,
         icon: () => {
-          return <LocalPrintshopOutlinedIcon style={{color:"#FFFFFF"}}/>;
+          return <LocalPrintshopOutlinedIcon style={{ color: "#FFFFFF" }} />;
         },
         isProduction: true,
       },
@@ -233,10 +230,10 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         key: "actions",
         title: "tabs.actions",
         path: "/actions",
-        Permission:Permissions.SHOW_ACTIONS,
+        Permission: Permissions.SHOW_ACTIONS,
         isList: false,
         icon: () => {
-          return <PendingActionsOutlinedIcon style={{color:"#FFFFFF"}} />;
+          return <PendingActionsOutlinedIcon style={{ color: "#FFFFFF" }} />;
         },
         isProduction: true,
       },
@@ -245,13 +242,13 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
         key: "settings",
         title: "tabs.settings",
         path: "/settings",
-        Permission:Permissions.SHOW_SETTINGS,
+        Permission: Permissions.SHOW_SETTINGS,
         isList: false,
         icon: () => {
           return <SettingNavBar />;
         },
         isProduction: true,
-      }
+      },
     ];
   }, []);
 
@@ -273,7 +270,6 @@ const useAuthLayoutHook = (permissionEnumValue?:Permissions) => {
   // }, []);
 
   const permissionsofTabs = [tabs1, tabs2, tabs3];
-  
 
   return {
     permissionsofTabs,

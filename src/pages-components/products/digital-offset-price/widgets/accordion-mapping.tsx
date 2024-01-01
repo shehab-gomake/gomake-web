@@ -1,10 +1,7 @@
 import { EditIcon } from "@/icons";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
-import { useTranslation } from "react-i18next";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { SectionMappingWidget } from "./section-mapping";
-import { useRecoilState } from "recoil";
-import { generalParametersState } from "@/store";
 const AccordionMappingWidget = ({
   clasess,
   expanded,
@@ -19,14 +16,11 @@ const AccordionMappingWidget = ({
   template,
   setTemplate,
 }: any) => {
-  const { t } = useTranslation();
-
   return (
     <Accordion
       expanded={expanded === `panel_${index}`}
       onChange={handleChange(`panel_${index}`)}
       key={index}
-      sx={{ borderBottom: "0px solid red" }}
     >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}

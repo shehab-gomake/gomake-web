@@ -10,12 +10,14 @@ const ProfitHeaderWidget = ({ calculateCaseValue }) => {
   const router = useRouter();
   useEffect(() => {
     if (calculateCaseValue) {
-      setSelectedWorkFlow(calculateCaseValue?.productItemValue?.workFlow[0]);
-      let temp =
-        calculateCaseValue?.productItemValue?.workFlow[0]?.actions.find(
+      const workFlow = calculateCaseValue?.productItemValue?.workFlows;
+      if (workFlow && workFlow.length > 0) {
+        setSelectedWorkFlow(workFlow[0]);
+        const temp = workFlow[0]?.actions.find(
           (action) => action.actionId === router.query.actionId
         );
-      setSelectedAction(temp);
+        setSelectedAction(temp);
+      }
     }
   }, [calculateCaseValue, router]);
   return (

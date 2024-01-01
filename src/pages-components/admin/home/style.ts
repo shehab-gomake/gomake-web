@@ -18,7 +18,9 @@ const useStyle = () => {
         width: "100%",
         height: "100%",
         gap: 16,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#F6F6F6",
+        paddingLeft: 20,
+        paddingRight: 20,
       },
       firstRowContainer: {
         display: "flex",
@@ -26,9 +28,9 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-end",
         width: "100%",
-        height:"50%",
+        height: "50%",
         gap: 20,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#F6F6F6",
         marginBottom: 15,
       },
       secondRowContainer: {
@@ -36,9 +38,8 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         width: "100%",
-       // height:"50%",
         gap: 20,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#F6F6F6",
         marginBottom: 15,
       },
       titleStyle: {

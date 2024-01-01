@@ -326,7 +326,12 @@ const ActionContainerComponent = ({
             <div onClick={(e) => e.stopPropagation()}>
               <InOutSourceSelect value={source} onChange={handleSourceChange} />
             </div>
-            <IconButton onClick={handleClick}>
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClick(e);
+              }}
+            >
               <SettingsIcon
                 stroke={"rgba(237, 2, 140, 1)"}
                 width={24}
