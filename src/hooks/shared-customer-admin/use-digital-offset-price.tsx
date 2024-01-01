@@ -7,7 +7,6 @@ import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widg
 import { materialsCategoriesState } from "@/store/material-categories";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
-  getAndSetgetProductQuoteItemById,
   getAndSetProductById,
 } from "@/services/hooks";
 import {
@@ -1374,31 +1373,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [subProducts]);
 
 
-  /////////////////////// ADD ITEM //////////////////////////////////////
-  // const addItemForQuotes = useCallback(async () => {
-  //   const res = await callApi(
-  //     "POST",
-  //     `/v1/erp-service/quote/add-item`,
-  //     currentProductItemValue
-  //   );
-  //   if (res?.success) {
-  //     navigate("/quote");
-  //   }
-  // }, [
-  //   router,
-  //   pricingDefaultValue,
-  //   quantity,
-  //   urgentOrder,
-  //   graphicNotes,
-  //   printingNotes,
-  //   userProfile,
-  //   itemParmetersValues,
-  //   defaultPrice,
-  //   workFlowSelected,
-  // ]);
-  /////////////////////// ADD ITEM //////////////////////////////////////
-
-
   const addItemForQuotes = async () => {
     const docType = router?.query?.documentType ?? "0";
     const callBack = (res) => {
@@ -1433,65 +1407,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [widgetType, productTemplate, quantity]);*/
 
-
-  ////////////////// UPDATE DOCUMENT ITEM /////////////////////
-  const updateQuoteItemOld = useCallback(async () => {
-    const res = await callApi(
-      "PUT",
-      `/v1/erp-service/quote/update-quote-item`,
-      {
-        quoteItemId: router?.query?.quoteItem,
-        productId: router?.query?.productId,
-        supplierId: "",
-        userID: userProfile?.id,
-        customerID: router?.query?.customerId,
-        clientTypeId: router?.query?.clientTypeId,
-        amount: quantity?.values[0],
-        isNeedGraphics: false,
-        isUrgentWork: urgentOrder,
-        printingNotes,
-        graphicNotes,
-        isNeedExample: false,
-        itemParmetersValues: itemParmetersValues,
-        workFlow:
-          pricingDefaultValue?.workFlows != null
-            ? [selectedWorkFlow]
-            : productTemplate?.workFlows,
-        actions:
-          pricingDefaultValue?.actions?.length > 0
-            ? pricingDefaultValue?.actions
-            : productTemplate?.actions,
-        sourceType: selectedWorkFlow?.actions?.every(
-          (action) => action?.source === EWorkSource.INTERNAL
-        )
-          ? EWorkSource.INTERNAL
-          : EWorkSource.PARTIALLY,
-        unitPrice: +currentProductItemValueTotalPrice / +quantity?.values[0],
-        outSoucreCost: 0,
-        outSoucreProfit: 0,
-        outSourceFinalPrice: 0,
-      }
-    );
-    if (res?.success) {
-      navigate("/quote");
-      setWorkFlows([]);
-      setJobActions([]);
-      setCurrentProductItemValueTotalPrice(null)
-    }
-  }, [
-    itemParmetersValues,
-    router,
-    pricingDefaultValue,
-    quantity,
-    urgentOrder,
-    graphicNotes,
-    printingNotes,
-    userProfile,
-    selectedWorkFlow,
-    currentProductItemValueTotalPrice,
-    productTemplate,
-  ]);
-
   const updateQuoteItem = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -1523,7 +1438,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         DocumentType: router?.query?.documentType
       })
   }
-  ////////////////// UPDATE DOCUMENT ITEM /////////////////////
 
   const navigateForRouter = () => {
     let checkParameter = validateParameters(isRequiredParameters);
