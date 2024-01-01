@@ -1492,7 +1492,8 @@
         "stationName": "Name der Station",
         "actionType": "Aktionstyp",
         "machine": "Maschine",
-        "loadingOptimalWorkflows": "Laden optimaler Arbeitsabläufe..."
+        "loadingOptimalWorkflows": "Laden optimaler Arbeitsabläufe...",
+        "includeVAT": "Mehrwertsteuer einbeziehen"
       }
     },
     "productManagement": {
