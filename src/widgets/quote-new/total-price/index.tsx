@@ -45,7 +45,7 @@ const TotalPriceComp = ({
             paddingLeft: 36,
           }}
         >
-          {quoteItems?.totalPrice + getCurrencyUnitText(quoteItems?.Currency)}
+          {quoteItems?.totalPrice +" "+ getCurrencyUnitText(quoteItems?.currency)}
         </div>
         <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
           {t("sales.quote.discount")}
@@ -59,14 +59,14 @@ const TotalPriceComp = ({
               setIsUpdate={setIsUpdateDiscount}
               onInputChange={(e) => onInputDiscount(e)}
             />
-            {getCurrencyUnitText(quoteItems?.Currency)}
+            {quoteItems?.discount && getCurrencyUnitText(quoteItems?.currency)}
           </div>
         </div>
         <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
           VAT (17%)
         </div>
         <div style={{ ...clasess.oddRowContainer, width: "23%" }}>
-          {Math.ceil(quoteItems?.totalVAT) + getCurrencyUnitText(quoteItems?.Currency)}
+          {Math.ceil(quoteItems?.totalVAT) + " " + getCurrencyUnitText(quoteItems?.currency)}
         </div>
       </div>
       <div style={clasess.firstRowForFooterContainer}>
@@ -98,7 +98,7 @@ const TotalPriceComp = ({
                 ...FONT_FAMILY.Inter(700, 18),
               }}
             />
-            {getCurrencyUnitText(quoteItems?.Currency)}
+            {getCurrencyUnitText(quoteItems?.currency)}
           </div>
         </div>
       </div>

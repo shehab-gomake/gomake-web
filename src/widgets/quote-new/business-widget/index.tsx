@@ -43,6 +43,7 @@ const BusinessNewWidget = ({
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
   const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
+  
   const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
 
 
