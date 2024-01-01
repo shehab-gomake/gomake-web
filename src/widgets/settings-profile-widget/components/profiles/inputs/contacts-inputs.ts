@@ -19,7 +19,7 @@ const contactsInputs = (state: IUserProfile)  => {
         {
             name: "phone",
             label: "profileSettings.phone",
-            type: "text",
+            type: "phone",
             placeholder: "profileSettings.phone",
             required: false,
             parameterKey: "phoneNumber",

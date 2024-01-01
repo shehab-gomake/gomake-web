@@ -27,7 +27,7 @@ const generalInputs = (state) => {
         {
             name: "mobile",
             label: "customers.modal.mobile",
-            type: "text",
+            type: "phone",
             placeholder: "customers.modal.mobile",
             required: false,
             parameterKey: "phone",
