@@ -24,6 +24,7 @@ import {
 import {useGomakeAxios} from "@/hooks";
 import cloneDeep from "lodash.clonedeep";
 import {SubWorkFlowsComponent} from "@/widgets/product-pricing-widget/components/work-flow/sub-work-flow-component";
+import {currentCalculationConnectionId} from "@/store";
 
 const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps) => {
     const [view, setView] = useState<EPricingViews>(EPricingViews.SELECTED_WORKFLOW);
@@ -32,6 +33,7 @@ const PricingWidget = ({workFlows, getOutSourcingSuppliers}: IPricingWidgetProps
     const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
     const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
     const [productItemValueDraftId, setCurrentProductItemValueDraftId] = useRecoilState<string>(currentProductItemValueDraftId);
+    const connectionId = useRecoilValue(currentCalculationConnectionId);
 
     const {callApi} = useGomakeAxios();
     useEffect(() => {
