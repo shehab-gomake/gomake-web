@@ -549,7 +549,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
       if (res?.success) {
         alertSuccessDelete();
         onCloseDeleteItemModal();
-        getQuote();
+        quoteItemValue?.documentItems?.length === 1  ? navigate("/home") : getQuote();
       } else {
         alertFaultDelete();
       }
