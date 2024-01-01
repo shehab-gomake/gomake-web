@@ -9,6 +9,8 @@ const SettingsMenu = ({
   actionId,
   actionName,
   currentProductItemValue,
+  machineName,
+  categoryId,
 }) => {
   const { t } = useTranslation();
   const onClickProfit = () => {
@@ -26,6 +28,11 @@ const SettingsMenu = ({
     window.open(uri, "_blank");
     handleClose();
   };
+  const onClickMachine = () => {
+    const uri = `/machines/category/${categoryId}`;
+    window.open(uri, "_blank");
+    handleClose();
+  };
   return (
     <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
       <MenuItem onClick={onClickProfit}>
@@ -37,6 +44,12 @@ const SettingsMenu = ({
       <MenuItem onClick={onClickOsSettings}>
         {t("products.profits.admin.OSSettings")}
       </MenuItem>
+      {machineName && (
+        <MenuItem onClick={onClickMachine}>
+          {/* {t("products.profits.admin.OSSettings")} */}
+          machine
+        </MenuItem>
+      )}
     </GoMakeMenu>
   );
 };
