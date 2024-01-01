@@ -1516,7 +1516,8 @@
         "stationName": "שם התחנה",
         "actionType": "סוג הפעולה",
         "machine": "מכונה",
-        "loadingOptimalWorkflows": "טוען תהליכי עבודה אופטימליים..."
+        "loadingOptimalWorkflows": "טוען תהליכי עבודה אופטימליים...",
+        "includeVAT": "כולל מע"
       }
     },
     "productManagement": {
