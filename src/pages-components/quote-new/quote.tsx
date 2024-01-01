@@ -25,11 +25,13 @@ import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 
+
 interface IProps {
   documentType: DOCUMENT_TYPE
 }
 const QuoteNewPageWidget = ({ documentType }: IProps) => {
   const { clasess } = useStyle();
+  const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const {
     selectDate,
     selectBusiness,
@@ -145,7 +147,6 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
     documentTitle
   } = useQuoteNew(documentType);
 
-  const quoteItemValue = useRecoilValue<any>(quoteItemState);
 
   return (
     <>

@@ -95,6 +95,8 @@
   },
   "properties": {
     "parameter": "Parameter",
+    "unit": "Einheit",
+    
     "rule": "Regel",
     "type": "Typ",
     "more": "Mehr",
@@ -1442,7 +1444,12 @@
         "enterCode": "Code eingeben",
         "addNewProduct": "Neues Produkt hinzufügen",
         "addGoToList": "Hinzufügen und zur Liste der Parameter gehen",
-        "updateNewProduct": "Produkt aktualisieren"
+        "updateNewProduct": "Produkt aktualisieren",
+        "clients": "Kunden",
+        "allCustomers": "Alle Kunden",
+        "byClient": "Nach Kunde",
+        "byClientType": "Nach Kundentyp",
+        "uploadImg": "Bild hochladen"
       }
     },
     "parameters": {

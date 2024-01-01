@@ -95,6 +95,7 @@
   },
   "properties": {
     "parameter": "المعلمة",
+    "unit": "وحدة",
     "rule": "القاعدة",
     "type": "النوع",
     "more": "المزيد",
@@ -280,7 +281,6 @@
       "back": "رجوع",
       "addNew": "إضافة جديدة",
       "add": "إضافة",
-      "addNew": "إضافة فئة جديدة",
       "addRow": "إضافة صف",
       "addNewRow": "إضافة صف جديد",
       "openImage": "فتح الصورة",
@@ -1467,7 +1467,13 @@
         "enterCode": "أدخل الرمز",
         "addNewProduct": "إضافة منتج جديد",
         "addGoToList": "إضافة والانتقال إلى قائمة المعلمات",
-        "updateNewProduct": "تحديث المنتج"
+        "updateNewProduct": "تحديث المنتج",
+        "clients": "العملاء",
+        "allCustomers": "كل العملاء",
+        "byClient": "حسب العميل",
+        "byClientType": "حسب نوع العميل",
+        "uploadImg": "تحميل صورة"
+        
       }
     },
     "parameters": {

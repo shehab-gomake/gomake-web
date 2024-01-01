@@ -5,6 +5,8 @@ import { useRecoilState } from "recoil";
 import { translationsBlockModal, translationsModal } from "./components/states/states";
 import { translationState } from "./components/states/interfaces";
 import { getTranslationsExcelFileApi, uploadTranslationsExcelFileApi } from "@/services/api-service/aws-s3/download-upload-excel-translations";
+import {EHttpMethod} from "@/services/api-service/enums";
+import {getUserToken} from "@/services/storage-data";
 
 const useTranslations = () => {
   const { alertFaultAdded, alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
@@ -192,15 +194,12 @@ const useTranslations = () => {
   }
 
   const downloadExcelFile = async () => {
-    const callBack = (res) => {
-      if (res.success) {
-        const downloadLink = document.createElement('a');
-        downloadLink.href = res.data.data;
-        downloadLink.download = 'translations.xlsx';
-        downloadLink.click();
-      }
-    };
-    await getTranslationsExcelFileApi(callApi, callBack);
+    const result = await callApi(EHttpMethod.GET,"/v1/S3-aws/download-translations-excel-file",undefined,true,null,"blob");
+    const downloadLink = document.createElement('a');
+    const link = URL.createObjectURL(result.data);
+    downloadLink.href = link
+    downloadLink.download = 'translations.xlsx';
+    downloadLink.click();
   };
 
   const uploadExcelFile = async (e) => {
@@ -211,7 +210,12 @@ const useTranslations = () => {
         const arrayBuffer = event.target.result;
         const data = new Uint8Array(arrayBuffer as ArrayBuffer);
         // Convert data to a Base64 string
-        const base64String = btoa(String.fromCharCode.apply(null, data));
+        var base64String = btoa(new Uint8Array(data).reduce(
+            function (data, byte) {
+              return data + String.fromCharCode(byte);
+            },
+            ''
+        ));
         uploadTranslationsExcelFileApi(callApi, () => {
         }, { base64: base64String })
       };

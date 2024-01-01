@@ -11,12 +11,10 @@ const SettingsMenu = ({
   actionName,
   currentProductItemValue,
 }) => {
-  const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
   const onClickProfit = () => {
-    navigate(
-      `/products/profits?actionId=${actionId}&actionName=${actionName}&draftId=${currentProductItemValue.id}`
-    );
+    const uri = `/products/profits?actionId=${actionId}&actionName=${actionName}&draftId=${currentProductItemValue.id}`;
+    window.open(uri, "_blank");
     handleClose();
   };
   const onClickProporties = () => {

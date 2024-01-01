@@ -5,7 +5,6 @@ import {
   getAllProductsForDropDownList,
   getAndSetAllCustomers,
   getAndSetClientTypes,
-  getAndSetExistQuotes,
   saveQuote,
 } from "@/services/hooks";
 import { useTranslation } from "react-i18next";
@@ -116,23 +115,15 @@ const useQuoteWidget = () => {
     [clientTypesValue]
   );
 
-
-  ////////////////////////////////////////////////////////////////////
-  // const getAndSetExistQuote = async () => {
-  //   const callBack = (res) => {
-  //     if (res?.success) {
-  //      console.log(res.data)
-  //     } 
-  //   }
-  //   await getIfCartExistApi(callApi, callBack,
-  //     {documentType: 0})
-  // }
-
-
-  const getAndSetExistQuote = useCallback(async () => {
-    await getAndSetExistQuotes(callApi, setUserQuote);
-  }, []);
-  ///////////////////////////////////////////////////////////////////////
+  const getAndSetExistQuote = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setUserQuote(res?.data?.result)
+      }
+    }
+    await getIfCartExistApi(callApi, callBack,
+      { documentType: 0 })
+  }
 
   const updateQuoteExist = useCallback(async () => {
     await getAndSetExistQuote();
@@ -183,7 +174,8 @@ const useQuoteWidget = () => {
       return t("home.admin.pleaseSelectProduct");
     }
   };
- 
+
+  // what is userQuote?.result !!!
   const getAllClientTypes = useCallback(async () => {
     try {
       await getAndSetClientTypes(callApi, setClientTypesValues);
@@ -196,7 +188,7 @@ const useQuoteWidget = () => {
       console.error("Error fetching client types:", error);
     }
   }, [callApi, userQuote]);
-  
+
 
   return {
     clientTypesValue,

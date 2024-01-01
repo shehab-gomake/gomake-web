@@ -58,9 +58,7 @@ const PricingListTable = ({
     <>
       <TableContainer
         style={{
-          // maxHeight: 123,
           maxHeight: 250,
-
           overflow: "scroll",
         }}
       >

@@ -11,11 +11,9 @@ import {
 } from "@/services/hooks";
 
 import {
-  addressSelectState,
   IContactData,
   agentListsState,
   businessListsState,
-  clientAddressState,
   clientContactsState,
   quoteItemState,
 } from "@/store";
@@ -767,9 +765,6 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     }
     await deleteDocumentAddressApi(callApi, callBack, { documentAddressId: item?.id, documentType: docType })
   }
-
-
-  /////////////////////// useEffect /////////////////////
  
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -965,7 +960,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     onCloseDeliveryModal,
     onAddDelivery,
     handleSaveBtnClick,
-    documentTitle
+    documentTitle,
   };
 };
 

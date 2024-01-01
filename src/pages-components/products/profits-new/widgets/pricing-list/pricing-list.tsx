@@ -11,10 +11,10 @@ const PricingList = ({
   PricingBy,
   Transition,
   actionProfitRowChartData,
-  setSelectedTransition,
   selectedTransition,
   selectedPricingBy,
   updatePricingByForAction,
+  updateTransitionForAction,
   changeactionProfitRowsItems,
   onOpenAddStepModal,
   updateActionProfitRow,
@@ -48,7 +48,7 @@ const PricingList = ({
             <GoMakeAutoComplate
               options={Transition}
               style={clasess.autoCompleteStyleContainer}
-              onChange={(e, value) => setSelectedTransition(value)}
+              onChange={(e, value) => updateTransitionForAction(value)}
               value={selectedTransition}
             />
           </div>

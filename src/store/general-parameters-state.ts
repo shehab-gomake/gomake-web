@@ -1,4 +1,5 @@
 import {atom, selector} from "recoil";
+import {workFlowsState} from "@/widgets/product-pricing-widget/state";
 
 export const generalParametersState = atom({
   key: "generalParametersState",
@@ -7,6 +8,17 @@ export const generalParametersState = atom({
 export const subProductsParametersState = atom({
   key: "subProductsParametersState",
   default: [],
+});
+export const itemParmetersValuesState = selector<any>({
+  key: 'itemParmetersValuesState',
+  get: ({get}) => {
+    const subProducts = get(subProductsParametersState);
+    const allParameters = subProducts.flatMap((item) => item.parameters);
+    const filteredArray = allParameters.filter(
+        (obj) => obj.values[0] !== "false"
+    );
+    return filteredArray;
+  },
 });
 export const subProductsCopyParametersState = atom({
   key: "subProductsCopyParametersState",
