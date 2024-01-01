@@ -279,7 +279,7 @@ const FooterInputs1 = (state)  => {
         {
             name: "Phone",
             label: "documentingDesign.Footer.Phone",
-            type: "text",
+            type: "phone",
             placeholder: "documentingDesign.Footer.Phone",
             required: false,
             parameterKey: "mobileNumber",

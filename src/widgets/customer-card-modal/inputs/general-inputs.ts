@@ -4,7 +4,7 @@ const generalInputs = (state) => {
         {
             name: "phone1",
             label: "customers.modal.phone",
-            type: "text",
+            type: "phone",
             placeholder: "customers.modal.phone",
             required: false,
             parameterKey: "tel1",
@@ -27,7 +27,7 @@ const generalInputs = (state) => {
         {
             name: "mobile",
             label: "customers.modal.mobile",
-            type: "text",
+            type: "phone",
             placeholder: "customers.modal.mobile",
             required: false,
             parameterKey: "phone",

@@ -29,7 +29,7 @@ const employeeInfoInputs = (state: Employee)  => {
         {
             name: "phone",
             label: "usersSettings.phone",
-            type: "text",
+            type: "phone",
             placeholder: "usersSettings.phone",
             required: false,
             parameterKey: "phone",

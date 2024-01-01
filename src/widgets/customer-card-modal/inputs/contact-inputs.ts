@@ -64,7 +64,7 @@ const contactInputs2 = (state)  => {
         {
             name: "phone1",
             label: "customers.modal.phone1",
-            type: "text",
+            type: "phone",
             placeholder: "customers.modal.phone1",
             required: false,
             parameterKey: "tel1",
@@ -75,7 +75,7 @@ const contactInputs2 = (state)  => {
         {
             name: "phone2",
             label: "customers.modal.phone2",
-            type: "text",
+            type: "phone",
             placeholder: "customers.modal.phone2",
             required: false,
             parameterKey: "tel2",
@@ -86,7 +86,7 @@ const contactInputs2 = (state)  => {
         {
             name: "mobile",
             label: "customers.modal.mobile",
-            type: "text",
+            type: "phone",
             placeholder: "customers.modal.mobile",
             required: false,
             parameterKey: "phone",
