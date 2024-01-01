@@ -1,14 +1,17 @@
 import {ICalculatedWorkFlow, IOutput, IWorkFlowAction} from "@/widgets/product-pricing-widget/interface";
 import {useRecoilState, useRecoilValue} from "recoil";
 import {
-    currentProductItemValueState,
+    currentProductItemValueDraftId,
     jobActionsState,
     selectedWorkFlowState,
     workFlowsState
 } from "@/widgets/product-pricing-widget/state";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
 import {useGomakeAxios} from "@/hooks";
-import {updateProductItemDraftActionMachine} from "@/services/api-service/quotes/save-product-item-value-draft-api";
+import {
+    updateProductItemDraftActionData,
+    updateProductItemDraftActionMachine
+} from "@/services/api-service/quotes/save-product-item-value-draft-api";
 
 const useActionUpdateValues = (workFlowId: string, isSubWorkFlow: boolean) => {
     const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
@@ -16,7 +19,7 @@ const useActionUpdateValues = (workFlowId: string, isSubWorkFlow: boolean) => {
     const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
     const selectedSubWorkFlow = selectedWorkFlow?.subWorkFlows?.find(flow => flow.id === workFlowId);
     const flow = isSubWorkFlow ? selectedSubWorkFlow : selectedWorkFlow;
-    const currentProductItemValue = useRecoilValue<any>(currentProductItemValueState);
+    const currentProductItemValue = useRecoilValue<any>(currentProductItemValueDraftId);
 
     const {callApi} = useGomakeAxios();
     const updateDeliveryTime = (updatedObj: IOutput, actionId: string) => {
@@ -235,16 +238,30 @@ const useActionUpdateValues = (workFlowId: string, isSubWorkFlow: boolean) => {
     }
 
     const selectNewMachine = (machineId: string, actionId: string, productType: string) => {
-        updateProductItemDraftActionMachine(callApi, () => {
-        }, {
+        const callBack = (res) => {
+            if (res.success) {
+                // alert(res.data);
+                // setWorkFlows(workFlows.map(flow => flow.id === res.data ? {...flow, selected: true} : {...flow, selected: false}))
+            }
+        }
+        updateProductItemDraftActionMachine(callApi, callBack, {
             actionId: actionId,
             machineId: machineId,
             productType: productType,
-            productItemValueId: currentProductItemValue?.id,
+            productItemValueId: currentProductItemValue,
             actionIndex: 0
         }).then()
     }
 
+    const updateActionData = async (actionId: string, newValue: number, key: string) => {
+        await updateProductItemDraftActionData(callApi, () => {}, {
+            productItemValueId: currentProductItemValue,
+            actionId: actionId,
+            value: newValue,
+            fieldName: key,
+            signalRConnectionId: "string"
+        })
+    }
     return {
         updateDeliveryTime,
         updateCost,
@@ -253,7 +270,8 @@ const useActionUpdateValues = (workFlowId: string, isSubWorkFlow: boolean) => {
         changeActionWorkSource,
         updateActionSupplier,
         getActionMachinesList,
-        selectNewMachine
+        selectNewMachine,
+        updateActionData
     }
 }
 

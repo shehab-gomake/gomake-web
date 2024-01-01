@@ -60,14 +60,11 @@ const ActionContainerComponent = ({
     const currentProductItemValue = useRecoilValue(currentProductItemValueState);
 
     const {
-        updateDeliveryTime,
-        updateCost,
-        updateProfit,
-        updatePrice,
         changeActionWorkSource,
         updateActionSupplier,
         getActionMachinesList,
-        selectNewMachine
+        selectNewMachine,
+        updateActionData
     } = useActionUpdateValues(workFlowId, !!workFlowId);
     const suppliersState = useRecoilValue(outsourceSuppliersState);
     const suppliers = useMemo(() => {
@@ -79,24 +76,19 @@ const ActionContainerComponent = ({
     const outputsParameters = outputs.filter(parameter => parameter.propertyType === RuleType.OUTPUT && parameter.htmlElementType === HtmlElementType.TEXT);
     const imageOutputs = outputs.filter(parameter => parameter.propertyType === RuleType.OUTPUT && parameter.htmlElementType === HtmlElementType.IMAGE);
     const handleDeliveryTimeUpdate = (newValue: string) => {
-        const object = {
-            ...totalProductionTime,
-            values: source === EWorkSource.INTERNAL ? [newValue] : totalProductionTime.values,
-            outSourceValues: source === EWorkSource.OUT ? [newValue] : totalProductionTime.outSourceValues
-        }
-        updateDeliveryTime(object, actionId);
+        updateActionData(actionId, +newValue, 'totalProductionTime').then()
     }
 
     const handleCostUpdate = (newCost: string) => {
-        updateCost(newCost, EWorkSource.OUT ? profit?.outSourceValues[0] : profit.values[0], actionId, source);
+        updateActionData(actionId, +newCost, 'totalCost').then();
     }
 
     const handleProfitUpdate = (profit: string) => {
-        updateProfit(source === EWorkSource.OUT ? totalCost?.outSourceValues[0] : totalCost.values[0], profit, actionId, source);
+        updateActionData(actionId, +profit, 'profit').then();
     }
 
     const handleUpdatePrice = (price: string) => {
-        updatePrice(price, source === EWorkSource.OUT ? totalCost?.outSourceValues[0] : totalCost.values[0], actionId, source);
+        updateActionData(actionId, +price, 'totalPrice').then();
     }
 
     const handleSourceChange = (source: EWorkSource) => {
