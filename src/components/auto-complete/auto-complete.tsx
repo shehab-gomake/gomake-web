@@ -20,7 +20,8 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
     lineHeight: "21px",
     display: "flex",
     alignItems: "center",
-    color: props?.error ? "red" : "#B9B9D9",
+    color: props?.error ? "red" : "#000000",
+    backgroundColor: "#FFF",
     borderBottom: props?.selectedOption
       ? "2px solid rgb(67,195,232)"
       : "2px solid rgb(237, 2, 140)",
@@ -31,7 +32,7 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
       height: props?.style?.height || 40,
       fontFamily: "Lexend",
       fontStyle: "normal",
-      fontWeight: 300,
+      fontWeight: 500,
       width: "100%",
       ...props?.style,
       "& fieldset": {
@@ -42,6 +43,10 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
       "& .MuiAutocomplete-input": {
         padding: 0,
         direction: props?.direction,
+      },
+      "& input::placeholder": {
+        color: "#B1B1B1",
+        opacity: 1,
       },
     },
     "& .MuiAutocomplete-endAdornment": {
@@ -112,7 +117,7 @@ const GoMakeAutoComplate = ({
       renderInput={(params: any) => (
         <TextField
           {...params}
-          placeholder={(defaultValue?.label || placeholder)}
+          placeholder={defaultValue?.label || placeholder}
           onChange={onChangeTextField || params.onChange}
           InputProps={
             dir === "rtl"
