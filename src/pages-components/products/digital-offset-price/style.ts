@@ -190,7 +190,6 @@ const useStyle = () => {
         width: "100%",
         borderRadius: 4,
         height: 40,
-        // backgroundColor: "#FFF",
         border: "0px",
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#000",
@@ -442,11 +441,11 @@ const useStyle = () => {
       },
       multiLineTextInputStyle: {
         width: "100%",
-        backgroundColor: "#EBECFF",
         borderRadius: 12,
         height: 110,
         overflow: "scroll",
         padding: 5,
+        border: "1px solid #F6F6F6",
       },
       pricingSectionContainer: {
         display: "flex",
@@ -558,6 +557,7 @@ const useStyle = () => {
         gap: 4,
       },
       duplicateSubSectionBtn: {
+        backgroundColor: "#FFFF",
         border: "1px solid  rgba(208, 213, 221, 1)",
         color: "rgba(52, 64, 84, 1)",
         borderRadius: 8,

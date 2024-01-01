@@ -1,9 +1,6 @@
 import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useDigitalOffsetPrice } from "@/hooks";
-import { useRecoilValue } from "recoil";
-import { useState } from "react";
-import { machineCategoriesState } from "@/store/machine-categories";
 import { GomakePrimaryButton } from "@/components";
 import { TabsMappingWidget } from "./widgets/tabs-mapping";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
@@ -18,7 +15,7 @@ import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
 import { Tabs } from "@mui/material";
 
-const PriceListPageWidget = ({ widgetType}) => {
+const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
   const {
     t,
