@@ -1,5 +1,6 @@
 import {atom, selector} from "recoil";
 import {workFlowsState} from "@/widgets/product-pricing-widget/state";
+import cloneDeep from "lodash.clonedeep";
 
 export const generalParametersState = atom({
   key: "generalParametersState",
@@ -13,8 +14,16 @@ export const itemParmetersValuesState = selector<any>({
   key: 'itemParmetersValuesState',
   get: ({get}) => {
     const subProducts = get(subProductsParametersState);
-    const allParameters = subProducts.flatMap((item) => item.parameters);
-    const filteredArray = allParameters.filter(
+    const result = [];
+    subProducts.forEach(subProduct=>{
+      subProduct?.parameters?.forEach(param =>{
+        const paramCopy = cloneDeep(param);
+        paramCopy.subProductType = subProduct.type;
+        result.push(paramCopy)
+      })
+    })
+    //const allParameters = subProducts.flatMap((item) => item.parameters?.map(x=>x.subProductType = item.sectionName));
+    const filteredArray = result.filter(
         (obj) => obj.values[0] !== "false"
     );
     return filteredArray;
