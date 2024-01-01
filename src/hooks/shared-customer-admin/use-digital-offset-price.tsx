@@ -582,13 +582,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           isHidden: false,
                           materialValueIds: null,
                           selectedParameterValues: null,
-                          updateName:val.valueId,
+                          updateName:val.value,
                           values:[val.valueId]
                         })
                       }
                       else{
                         existsValue.id = val.valueId;
-                        existsValue.updateName = val.valueId;
+                        existsValue.updateName = val.value;
                       }
                       
                     });
@@ -620,12 +620,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               isHidden: false,
                               materialValueIds: null,
                               selectedParameterValues: null,
-                              updateName:val.valueId,
+                              updateName:val.value,
                               values:[val.valueId]
                             })
                           }else{
                             existsValue.id = val.valueId;
-                            existsValue.updateName = val.valueId;
+                            existsValue.updateName = val.value;
                           }
                           
                         })
@@ -1059,7 +1059,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         isHidden: false,
                         materialValueIds: null,
                         selectedParameterValues: null,
-                        updateName:val.valueId,
+                        updateName:val.value,
                         values:[val.valueId]
                       })
                     });
