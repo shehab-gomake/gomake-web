@@ -1,9 +1,6 @@
 import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useDigitalOffsetPrice } from "@/hooks";
-import { useRecoilValue } from "recoil";
-import { useState } from "react";
-import { machineCategoriesState } from "@/store/machine-categories";
 import { GomakePrimaryButton } from "@/components";
 import { TabsMappingWidget } from "./widgets/tabs-mapping";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
@@ -18,7 +15,7 @@ import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
 import { Tabs } from "@mui/material";
 
-const PriceListPageWidget = ({ widgetType}) => {
+const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
   const {
     t,
@@ -205,15 +202,15 @@ const PriceListPageWidget = ({ widgetType}) => {
               display: "flex",
               flexDirection: "row",
               justifyContent: "flex-end",
-              alignItems: "flex-start",
+              alignItems: "center",
               position: "fixed",
-              paddingTop: "16px",
-              paddingRight: "20px",
+              paddingRight: "15px",
               gap: 20,
               bottom: 0,
               right: 0,
-              boxShadow: "0px 1px 20px rgba(0, 0, 0, 0.08)",
-              background: "#FFF",
+              boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.08)",
+              height: 65,
+              zIndex: 5,
             }}
           >
             <div style={{ width: "68%" }}>
@@ -237,7 +234,7 @@ const PriceListPageWidget = ({ widgetType}) => {
                 ) : null}
               </div>
             </div>
-            <div style={{ width: 330 }}>
+            <div style={{ width: 315 }}>
               {widgetType === EWidgetProductType.EDIT ? (
                 <GomakePrimaryButton
                   style={clasess.addOrderBtn}

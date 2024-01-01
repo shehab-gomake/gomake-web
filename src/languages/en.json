@@ -1571,7 +1571,8 @@
         "stationName": "Station name",
         "actionType": "Action type",
         "machine": "Machine",
-        "loadingOptimalWorkflows": "loading optimal workflows..."
+        "loadingOptimalWorkflows": "loading optimal workflows...",
+        "includeVAT": "Include VAT"
       }
     },
     "productManagement": {

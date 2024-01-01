@@ -25,7 +25,7 @@ import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-deliver
 import { DOCUMENT_TYPE } from "../quotes/enums";
 
 interface IProps {
-  documentType: DOCUMENT_TYPE
+  documentType: DOCUMENT_TYPE;
 }
 const QuoteNewPageWidget = ({ documentType }: IProps) => {
   const { clasess } = useStyle();
@@ -153,13 +153,12 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
     refreshExchangeRate
   } = useQuoteNew(documentType);
 
-
   return (
     <>
       {quoteItemValue?.id && (
         <div style={clasess.mainContainer}>
           <div style={clasess.secondContainer}>
-            <div>
+            <div style={{ paddingLeft: 20, paddingRight: 12 }}>
               <div style={clasess.titleSettingContainer}>
                 <div style={clasess.titleQuateContainer}>
                   <HeaderTitle
@@ -237,7 +236,6 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
                   updateClientAddress={updateClientAddress}
                   onClickDeleteAddress={onClickDeleteAddress}
                   documentType={documentType}
-
                 />
                 <ContactNewWidget
                   handleShowLess={handleShowLess}
@@ -270,7 +268,14 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
                 />
               </div>
             </div>
-            <div style={{ flex: 0.9, overflow: "auto" }}>
+            <div
+              style={{
+                flex: 0.9,
+                overflow: "auto",
+                paddingLeft: 20,
+                paddingRight: 12,
+              }}
+            >
               <QuoteForPriceTable
                 documentItems={documentItems}
                 tableHeaders={tableHeaders}
@@ -287,7 +292,6 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
                 getCalculateQuote={getCalculateQuote}
                 changedocumentItemsChild={changedocumentItemsChild}
                 documentType={documentType}
-
               />
             </div>
             <div style={{ width: "100%", flex: 0.1 }}>

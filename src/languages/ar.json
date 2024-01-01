@@ -1516,7 +1516,8 @@
         "stationName": "اسم المحطة",
         "actionType": "نوع الإجراء",
         "machine": "الجهاز",
-        "loadingOptimalWorkflows": "جارٍ تحميل سير العمل الأمثل..."
+        "loadingOptimalWorkflows": "جارٍ تحميل سير العمل الأمثل...",
+        "includeVAT": "تضمين ضريبة القيمة المضافة"
       }
     },
     "productManagement": {

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAndSetAllCustomers } from "@/services/hooks";
-import { useRecoilState, useSetRecoilState , useRecoilValue } from "recoil";
+import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
@@ -12,7 +12,12 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
 import { employeesListsState } from "./states";
-import { duplicateDocumentApi, getAllDocumentsApi, getDocumentPdfApi, updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
+import {
+  duplicateDocumentApi,
+  getAllDocumentsApi,
+  getDocumentPdfApi,
+  updateDocumentApi,
+} from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 
@@ -60,7 +65,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   };
 
   const onClickOpenLogsModal = (quoteNumber: string) => {
-    setModalLogsTitle(quoteNumber)
+    setModalLogsTitle(quoteNumber);
     setOpenLogsModal(true);
   };
 
@@ -76,7 +81,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           id: agent.value,
         }));
         setState(agentNames);
-
       }
     };
     await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
@@ -122,27 +126,33 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
           _renderQuoteStatus(quote?.documentStatus, quote, t),
-          <MoreMenuWidget quote={quote} documentType={docType} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} onClickDuplicate={onClickQuoteDuplicate} onClickLoggers={() => onClickOpenLogsModal(quote?.quoteNumber)} />,
+          <MoreMenuWidget
+            quote={quote}
+            documentType={docType}
+            onClickOpenModal={onClickOpenModal}
+            onClickPdf={onClickQuotePdf}
+            onClickDuplicate={onClickQuoteDuplicate}
+            onClickLoggers={() => onClickOpenLogsModal(quote?.quoteNumber)}
+          />,
         ]);
         setAllQuotes(mapData);
       }
-    }
-    await getAllDocumentsApi(callApi, callBack,
-      {
-        documentType: docType,
-        data: {
-          model: {
-            pageNumber: page,
-            pageSize: limit,
-          },
-          statusId: statusId?.value,
-          patternSearch: finalPatternSearch,
-          customerId: customerId?.id,
-          dateRange,
-          agentId: agentId?.id,
-        }
-      })
-  }
+    };
+    await getAllDocumentsApi(callApi, callBack, {
+      documentType: docType,
+      data: {
+        model: {
+          pageNumber: page,
+          pageSize: limit,
+        },
+        statusId: statusId?.value,
+        patternSearch: finalPatternSearch,
+        customerId: customerId?.id,
+        dateRange,
+        agentId: agentId?.id,
+      },
+    });
+  };
 
   const getAllQuotesInitial = async () => {
     const callBack = (res) => {
@@ -156,23 +166,29 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
           _renderQuoteStatus(quote?.documentStatus, quote, t),
-          <MoreMenuWidget quote={quote} documentType={docType} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} onClickDuplicate={onClickQuoteDuplicate} onClickLoggers={() => onClickOpenLogsModal(quote?.quoteNumber)} />,
-         ]);
+          <MoreMenuWidget
+            quote={quote}
+            documentType={docType}
+            onClickOpenModal={onClickOpenModal}
+            onClickPdf={onClickQuotePdf}
+            onClickDuplicate={onClickQuoteDuplicate}
+            onClickLoggers={() => onClickOpenLogsModal(quote?.quoteNumber)}
+          />,
+        ]);
         setAllQuotes(mapData);
-        console.log(data)
+        console.log(data);
       }
-    }
-    await getAllDocumentsApi(callApi, callBack,
-      {
-        documentType: docType,
-        data: {
-          model: {
-            pageNumber: page,
-            pageSize: limit,
-          },
-        }
-      })
-  }
+    };
+    await getAllDocumentsApi(callApi, callBack, {
+      documentType: docType,
+      data: {
+        model: {
+          pageNumber: page,
+          pageSize: limit,
+        },
+      },
+    });
+  };
 
   const onClickSearchFilter = () => {
     getAllQuotes();
@@ -188,10 +204,15 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const tableHeaders = [
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
-    docType === DOCUMENT_TYPE.quote ? t("sales.quote.quoteNumber") :
-      docType === DOCUMENT_TYPE.order ? t("sales.quote.orderNumber") :
-        docType === DOCUMENT_TYPE.deliveryNote ? t("sales.quote.deliveryNoteNumber") :
-          docType === DOCUMENT_TYPE.invoice ? t("sales.quote.invoiceNumber") : t("sales.quote.receiptNumber"),
+    docType === DOCUMENT_TYPE.quote
+      ? t("sales.quote.quoteNumber")
+      : docType === DOCUMENT_TYPE.order
+      ? t("sales.quote.orderNumber")
+      : docType === DOCUMENT_TYPE.deliveryNote
+      ? t("sales.quote.deliveryNoteNumber")
+      : docType === DOCUMENT_TYPE.invoice
+      ? t("sales.quote.invoiceNumber")
+      : t("sales.quote.receiptNumber"),
     t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
@@ -284,10 +305,12 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     {
       label: t("sales.quote.receiptList"),
       value: DOCUMENT_TYPE.receipt,
-    }
+    },
   ];
 
-  const documentLabel = documentsLabels.find(item => item.value === docType).label;
+  const documentLabel = documentsLabels.find(
+    (item) => item.value === docType
+  ).label;
 
   const updateQuoteStatus = async () => {
     const callBack = (res) => {
@@ -297,13 +320,12 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         alertFaultUpdate();
       }
     };
-    await updateDocumentApi(callApi, callBack,
-      {
-        documentType: 0,
-        document: {
-          documentId: selectedQuote?.id
-        }
-      });
+    await updateDocumentApi(callApi, callBack, {
+      documentType: 0,
+      document: {
+        documentId: selectedQuote?.id,
+      },
+    });
   };
 
   const onClickQuotePdf = async (id: string) => {
@@ -315,7 +337,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         alertFaultUpdate();
       }
     };
-    await getDocumentPdfApi(callApi, callBack, { documentId: id, documentType: docType });
+    await getDocumentPdfApi(callApi, callBack, {
+      documentId: id,
+      documentType: docType,
+    });
   };
 
   const onClickQuoteDuplicate = async (id: string) => {
@@ -325,17 +350,18 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         const documentId = res?.data?.documentId;
         if (!isAnotherQuoteInCreate) {
           navigate("/quote");
-        }
-        else {
-          onClickOpenModal({ id: documentId })
+        } else {
+          onClickOpenModal({ id: documentId });
         }
       } else {
         alertFaultDuplicate();
       }
     };
-    await duplicateDocumentApi(callApi, callBack, { documentId: id, documentType: docType });
+    await duplicateDocumentApi(callApi, callBack, {
+      documentId: id,
+      documentType: docType,
+    });
   };
-
 
   useEffect(() => {
     getAllCustomersCreateQuote();
@@ -376,7 +402,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     modalLogsTitle,
     logsTableHeaders,
     documentsLabels,
-    documentLabel
+    documentLabel,
   };
 };
 

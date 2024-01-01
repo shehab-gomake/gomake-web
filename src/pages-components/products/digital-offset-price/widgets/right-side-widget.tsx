@@ -4,15 +4,16 @@ import { isLoadgingState, subProductsParametersState } from "@/store";
 import { Checkbox, Slider } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {useRecoilState, useRecoilValue} from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { EWidgetProductType } from "../enums";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { exampleTypeState } from "@/store/example-type";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import {
-  calculationProgressState, currentProductItemValuePriceState,
-  selectedWorkFlowState
+  calculationProgressState,
+  currentProductItemValuePriceState,
+  selectedWorkFlowState,
 } from "@/widgets/product-pricing-widget/state";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
 
@@ -40,7 +41,10 @@ const RightSideWidget = ({
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
   const subProducts = useRecoilValue<any>(subProductsParametersState);
-  const [currentProductItemValueTotalPrice, setCurrentProductItemValueTotalPrice] = useRecoilState<number>(currentProductItemValuePriceState);
+  const [
+    currentProductItemValueTotalPrice,
+    setCurrentProductItemValueTotalPrice,
+  ] = useRecoilState<number>(currentProductItemValuePriceState);
   const calculationProgress = useRecoilValue(calculationProgressState);
   const quantity = useMemo(() => {
     if (subProducts) {
@@ -89,12 +93,13 @@ const RightSideWidget = ({
             )}
           </div>
         </div>
-        {
-            template.img ? 
+        {template.img ? (
           <div style={clasess.imgProductContainer}>
             <img src={template.img} alt="gomake" style={{ width: "100%" }} />
-          </div> : <></>
-        }
+          </div>
+        ) : (
+          <></>
+        )}
         {/* <div style={clasess.headerRightSide}>
           <div style={clasess.flyerText}>
             {t("products.offsetPrice.admin.flyerPoster")}
@@ -130,7 +135,7 @@ const RightSideWidget = ({
             </div>
           </>
         )} */}
-        
+
         <div style={clasess.totalContainer}>
           <div style={clasess.totalStyle}>
             {t("products.offsetPrice.admin.total")}
@@ -140,9 +145,9 @@ const RightSideWidget = ({
               <DotsLoader />
             ) : (
               <GomakeTextInput
-                value={currentProductItemValueTotalPrice ?? "-----"} 
+                value={currentProductItemValueTotalPrice ?? "-----"}
                 onChange={(e: any) => {
-                  setCurrentProductItemValueTotalPrice(e.target.value)
+                  setCurrentProductItemValueTotalPrice(e.target.value);
                   //e.target.value;
                   /*setPriceRecovery(false);
                   const updatedDefaultPrice = { ...defaultPrice };
@@ -158,67 +163,71 @@ const RightSideWidget = ({
           <span style={clasess.totalStyle}>USD</span>
         </div>
         {calculationProgress &&
-            calculationProgress.currentWorkFlowsCount > 0 &&
-            calculationProgress.currentWorkFlowsCount !==
+          calculationProgress.currentWorkFlowsCount > 0 &&
+          calculationProgress.currentWorkFlowsCount !==
             calculationProgress.totalWorkFlowsCount && (
-                <div style={{ marginBottom: "15px" }}>
-                  <ProgressBar
-                      bottomLeftText={t(
-                          "products.offsetPrice.admin.loadingOptimalWorkflows"
-                      )}
-                      bottomRightText={
-                          calculationProgress.currentWorkFlowsCount +
-                          "/" +
-                          calculationProgress.totalWorkFlowsCount
-                      }
-                      progress={
-                          (calculationProgress.currentWorkFlowsCount /
-                              calculationProgress.totalWorkFlowsCount) *
-                          100
-                      }
-                  />
-                </div>
-            )}
+            <div style={{ marginBottom: "15px" }}>
+              <ProgressBar
+                bottomLeftText={t(
+                  "products.offsetPrice.admin.loadingOptimalWorkflows"
+                )}
+                bottomRightText={
+                  calculationProgress.currentWorkFlowsCount +
+                  "/" +
+                  calculationProgress.totalWorkFlowsCount
+                }
+                progress={
+                  (calculationProgress.currentWorkFlowsCount /
+                    calculationProgress.totalWorkFlowsCount) *
+                  100
+                }
+              />
+            </div>
+          )}
         {currentProductItemValueTotalPrice && (
           <div style={clasess.orderContainer}>
             {t("products.offsetPrice.admin.orderToral", {
               pieceNum: quantity?.values[0],
-              price: isNaN(currentProductItemValueTotalPrice / quantity?.values[0])
+              price: isNaN(
+                currentProductItemValueTotalPrice / quantity?.values[0]
+              )
                 ? 0
-                : (currentProductItemValueTotalPrice / quantity?.values[0]).toFixed(2),
+                : (
+                    currentProductItemValueTotalPrice / quantity?.values[0]
+                  ).toFixed(2),
             })}
           </div>
         )}
         {widgetType === EWidgetProductType.EDIT ? (
-            <div style={clasess.priceRecoveryContainer}>
-              <Checkbox
-                  icon={<CheckboxIcon />}
-                  checkedIcon={<CheckboxCheckedIcon />}
-                  onChange={() => {
-                    setPriceRecovery(!priceRecovery);
-                    if (priceRecovery) {
-                      //setDefaultPrice(changePrice);
-                    } else {
-                      if (
-                          widgetType === EWidgetProductType.EDIT ||
-                          widgetType === EWidgetProductType.DUPLICATE
-                      ) {
-                        /*setDefaultPrice(
+          <div style={clasess.priceRecoveryContainer}>
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+              onChange={() => {
+                setPriceRecovery(!priceRecovery);
+                if (priceRecovery) {
+                  //setDefaultPrice(changePrice);
+                } else {
+                  if (
+                    widgetType === EWidgetProductType.EDIT ||
+                    widgetType === EWidgetProductType.DUPLICATE
+                  ) {
+                    /*setDefaultPrice(
                           template?.quoteItem?.unitPrice * quantity?.values[0]
                         );*/
-                      } else {
-                        /*setDefaultPrice(
+                  } else {
+                    /*setDefaultPrice(
                           workFlowSelected?.totalPrice?.values[0].toFixed(2)
                         );*/
-                      }
-                    }
-                  }}
-                  checked={priceRecovery}
-              />
-              <div style={clasess.secondText}>
-                {t("products.offsetPrice.admin.priceRecovery")}
-              </div>
+                  }
+                }
+              }}
+              checked={priceRecovery}
+            />
+            <div style={clasess.secondText}>
+              {t("products.offsetPrice.admin.priceRecovery")}
             </div>
+          </div>
         ) : null}
 
         <div style={clasess.urgentEstimateContainer}>
@@ -240,13 +249,24 @@ const RightSideWidget = ({
               checked={urgentOrder}
             />
             <div style={clasess.secondText}>
+              {t("products.offsetPrice.admin.includeVAT")}
+            </div>
+          </div>
+          <div style={clasess.priceRecoveryContainer}>
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+              onChange={() => {
+                setUrgentOrder(!urgentOrder);
+              }}
+              checked={urgentOrder}
+            />
+            <div style={clasess.secondText}>
               {t("products.offsetPrice.admin.urgentOrder")}
             </div>
           </div>
         </div>
-        
 
-        
         <div style={clasess.switchAdditionsContainer}>
           <div style={clasess.tabsTypesContainer}>
             {tabs?.map((tab) => {
@@ -307,16 +327,7 @@ const RightSideWidget = ({
           )}
         </div>
       </div>
-      <div style={clasess.noVatStyle}>
-        {t("products.offsetPrice.admin.dontVAT")}
-      </div>
-      {/* <GomakePrimaryButton
-        style={clasess.addOrderBtn}
-        onClick={onOpeneMakeShape}
-      >
-        {t("products.offsetPrice.admin.addOrder")}
-      </GomakePrimaryButton>
-      <div style={clasess.noVatStyle}>
+      {/* <div style={clasess.noVatStyle}>
         {t("products.offsetPrice.admin.dontVAT")}
       </div> */}
     </div>
