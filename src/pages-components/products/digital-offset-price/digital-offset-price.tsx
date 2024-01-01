@@ -202,15 +202,15 @@ const PriceListPageWidget = ({ widgetType }) => {
               display: "flex",
               flexDirection: "row",
               justifyContent: "flex-end",
-              alignItems: "flex-start",
+              alignItems: "center",
               position: "fixed",
-              paddingTop: "16px",
-              paddingRight: "20px",
+              paddingRight: "15px",
               gap: 20,
               bottom: 0,
               right: 0,
-              boxShadow: "0px 1px 20px rgba(0, 0, 0, 0.08)",
-              background: "#FFF",
+              boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.08)",
+              height: 65,
+              zIndex: 5,
             }}
           >
             <div style={{ width: "68%" }}>
@@ -234,7 +234,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 ) : null}
               </div>
             </div>
-            <div style={{ width: 330 }}>
+            <div style={{ width: 315 }}>
               {widgetType === EWidgetProductType.EDIT ? (
                 <GomakePrimaryButton
                   style={clasess.addOrderBtn}
