@@ -19,10 +19,8 @@ const useCalculationsWorkFlowsSignalr = () => {
     const [calculationSessionId,setConnectionSessionId] = useState<string>();
    
     const [updatedSelectedWorkFlow,setUpdatedSelectedWorkFlow] = useState<ICalculatedWorkFlow>();
-    const [calculationSessionConnectionId,setCalculationSessionConnectionId] = useRecoilState(currentCalculationConnectionId);
     useEffect(()=>{
         if(connection){
-            setCalculationSessionConnectionId(connection.connectionId);
             connection.on("startCalculationSession", (newData) => {
                 setConnectionSessionId(newData);
             });

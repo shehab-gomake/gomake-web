@@ -107,6 +107,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
   const { calculationResult,calculationSessionId,connectionId,updatedSelectedWorkFlow } =
     useCalculationsWorkFlowsSignalr();
+  const [calculationSessionConnectionId,setCalculationSessionConnectionId] = useRecoilState(currentCalculationConnectionId);
 
   const [requestAbortController, setRequestAbortController] =
     useState<AbortController>(null);
@@ -120,7 +121,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
 
     if (calculationResult && calculationResult.productItemValue) {
-
+      setCalculationSessionConnectionId(connectionId)
       if (calculationResult.productItemValueDraftId === calculationSessionId) {
         setLoading(false);
         setCurrentProductItemValueDraftId(calculationResult.productItemValueDraftId)
