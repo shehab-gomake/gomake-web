@@ -16,10 +16,11 @@ const useStyle = () => {
         alignItems: 'flex-end',
       },
       formControlStyle: {
-         m: 1,
+        m: 1,
         width: "auto",
         minWidth:"180px",
         height:"40px",
+
       },
       chipStyle:{
         display: 'flex',
@@ -28,7 +29,7 @@ const useStyle = () => {
       },
       paperStyle:{
         maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250
+        width: 250,
       }
     };
   }, [theme]);
