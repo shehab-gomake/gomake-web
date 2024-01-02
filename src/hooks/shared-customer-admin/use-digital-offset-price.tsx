@@ -105,9 +105,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setSelectParameterButton = useSetRecoilState(
     selectParameterButtonState
   );
-  const { calculationResult,calculationSessionId,updatedSelectedWorkFlow } =
+  const { calculationResult,calculationSessionId,connectionId,updatedSelectedWorkFlow } =
     useCalculationsWorkFlowsSignalr();
-  const connectionId = useRecoilValue(currentCalculationConnectionId);
 
   const [requestAbortController, setRequestAbortController] =
     useState<AbortController>(null);
