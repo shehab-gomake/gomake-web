@@ -458,7 +458,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         ...(data?.id > 0 && { material: data?.id }),
                         parameterType: parameter?.parameterType,
                         ...(value && {
-                          valueIds: value && value.id ? [value?.id] : null,
+                          valueIds: value && value.id ? [value?.id] : [],
                           values: [value?.updateName],
                         }),
                         sectionId: section?.id,
@@ -497,7 +497,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           ...(data?.id > 0 && { material: data?.id }),
                           parameterType: parameter?.parameterType,
                           ...(value && {
-                            valueIds: defValue ? [defValue] : null,
+                            valueIds: defValue ? [defValue] : [],
                             values: [defValue],
                           }),
                           sectionId: section?.id,
@@ -530,7 +530,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         actionId: parameter?.actionId,
                         parameterType: parameter?.parameterType,
                         ...(defaultObject && {
-                          valueIds: defaultObject && defaultObject?.id ? [defaultObject?.id] : null,
+                          valueIds: defaultObject && defaultObject?.id ? [defaultObject?.id] : [],
                           values: [defaultObject?.updateName],
                         }),
                         sectionId: section?.id,
@@ -1094,7 +1094,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         temp[findIndex] = {
           ...temp[findIndex],
           values: [data.values],
-          valueIds: data.valueIds && data.valueIds.length >0 && data.valueIds[0] ? [data.valueIds] : null,
+          valueIds: data.valueIds && data.valueIds.length >0 && data.valueIds[0] ? [data.valueIds] : [],
         };
       } else {
         temp.push({
@@ -1105,7 +1105,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           parameterName: parameterName,
           actionId: actionId,
           values: [data.values],
-          valueIds: data.valueIds && data.valueIds.length >0 && data.valueIds[0] ? [data.valueIds] : null,
+          valueIds: data.valueIds && data.valueIds.length >0 && data.valueIds[0] ? [data.valueIds] : [],
           actionIndex,
         });
       }
@@ -1198,7 +1198,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameterName: param.name,
                 actionId: param.actionId,
                 values: selectedParam.valueIds,
-                valueIds: selectedParam.valueIds && selectedParam.valueIds.length >0 && selectedParam.valueIds[0] ? [selectedParam.valueIds] : null ,
+                valueIds: selectedParam.valueIds && selectedParam.valueIds.length >0 && selectedParam.valueIds[0] ? [selectedParam.valueIds] : [] ,
                 actionIndex,
               });
             }
