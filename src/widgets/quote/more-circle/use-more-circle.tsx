@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EditMenuIcon } from "./icons/edit-menu";
 import { DuplicateMenuIcon } from "./icons/duplicate-menu";
 import { DuplicateWithDifferentMenuIcon } from "./icons/duplicate-with-different-menu";
@@ -29,6 +29,7 @@ const useMoreCircle = ({
     setAnchorEl(null);
   };
 
+
   const onClickEditQuoteItem = (quoteItem , documentType) => {
     navigate(
       `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
@@ -40,17 +41,17 @@ const useMoreCircle = ({
     );
   };
   const menuList = [
-    {
+    quoteItem.productType === 0 &&{
       name: "Edits",
       icon: <EditMenuIcon />,
       onclick: () => onClickEditQuoteItem(quoteItem , documentType),
     },
-    {
+    quoteItem.productType === 0 &&{
       name: "Duplicate", 
       icon: <DuplicateMenuIcon />,
       onclick: () => onClickDuplicateQuoteItem(quoteItem , documentType),
     },
-    documentType===DOCUMENT_TYPE.quote && {
+    quoteItem.productType === 0 && documentType===DOCUMENT_TYPE.quote && {
       name: "Duplicate with different QTY",
       icon: <DuplicateWithDifferentMenuIcon />,
       onclick: () => onClickDuplicateWithDifferentQTY(quoteItem),
@@ -60,7 +61,7 @@ const useMoreCircle = ({
       icon: <NegotiateRequestIcon />,
       // onclick: () => onOpenNegotiateRequest(),
     },
-    {
+    quoteItem.productType === 0 && {
       name: "Analysis",
       icon: <AnalysisIcon />,
       onclick: () => null,
