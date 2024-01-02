@@ -1,6 +1,10 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import {isLoadgingState, subProductsParametersState, systemCurrencyState} from "@/store";
+import {
+  isLoadgingState,
+  subProductsParametersState,
+  systemCurrencyState,
+} from "@/store";
 import { Checkbox, Slider } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,6 +20,7 @@ import {
   selectedWorkFlowState,
 } from "@/widgets/product-pricing-widget/state";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
+import { currenciesState } from "@/widgets/materials-widget/state";
 
 const RightSideWidget = ({
   clasess,
@@ -43,8 +48,17 @@ const RightSideWidget = ({
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
   const subProducts = useRecoilValue<any>(subProductsParametersState);
-  const systemCurrency = useRecoilValue<any>(systemCurrencyState);
-
+  const [systemCurrency, setSystemCurrency] =
+    useRecoilState<any>(systemCurrencyState);
+  const currencies = useRecoilValue(currenciesState);
+  useEffect(() => {
+    if (currencies?.length > 0) {
+      const data = currencies.find((c) => c.value === systemCurrency);
+      if (data) {
+        setSystemCurrency(data.label);
+      }
+    }
+  }, [systemCurrency, currencies]);
   const [
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
@@ -141,7 +155,7 @@ const RightSideWidget = ({
         )} */}
 
         <div style={clasess.totalContainer}>
-          <div style={clasess.totalStyle}>
+          <div style={clasess.totalStyleText}>
             {t("products.offsetPrice.admin.total")}
           </div>
           <div style={clasess.totalStyle}>
@@ -152,13 +166,6 @@ const RightSideWidget = ({
                 value={currentProductItemValueTotalPrice ?? "-----"}
                 onChange={(e: any) => {
                   setCurrentProductItemValueTotalPrice(e.target.value);
-                  //e.target.value;
-                  /*setPriceRecovery(false);
-                  const updatedDefaultPrice = { ...defaultPrice };
-                  updatedDefaultPrice.values = [...updatedDefaultPrice?.values];
-                  updatedDefaultPrice.values[0] = e.target.value;
-                  setDefaultPrice(updatedDefaultPrice);
-                  setChangePrice(updatedDefaultPrice);*/
                 }}
                 style={clasess.inputPriceStyle}
                 type={"number"}
@@ -200,7 +207,7 @@ const RightSideWidget = ({
                 : (
                     currentProductItemValueTotalPrice / quantity?.values[0]
                   ).toFixed(2),
-              unitPrice: "USD",
+              unitPrice: systemCurrency,
             })}
           </div>
         )}

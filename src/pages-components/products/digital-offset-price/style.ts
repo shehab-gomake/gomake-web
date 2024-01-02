@@ -322,12 +322,21 @@ const useStyle = () => {
         marginBottom: 8,
       },
       totalStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        width: "100%",
+      },
+      totalStyleText: {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 24),
+        width: "fit-content",
+        minWidth: "fit-content",
       },
       totalCurrancyStyle: {
         color: primaryColor(500),
-        ...FONT_FAMILY.Lexend(700, 16),
+        ...FONT_FAMILY.Lexend(700, 14),
+        width: "fit-content",
+        minWidth: "fit-content",
       },
       inputPriceStyle: {
         color: primaryColor(500),
