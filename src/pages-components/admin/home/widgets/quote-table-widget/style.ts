@@ -11,7 +11,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        padding : "40px 20px 40px 20px",
+        padding : "30px 20px 10px 20px",
         backgroundColor: "#FFFFFF",
         margin: "0 4px",
         borderRadius: 8,

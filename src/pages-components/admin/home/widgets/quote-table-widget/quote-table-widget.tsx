@@ -9,7 +9,7 @@ const QuoteTableWidget = ({ isAdmin = true }) => {
 
     return (
         <div style={classes.mainContainer}>
-            <PrimaryTabsComponent tabs={tabs} variant="ButtonedTabs" />
+            <PrimaryTabsComponent tabs={tabs}  variant="ButtonedTabs" />
         </div>
     );
 };
