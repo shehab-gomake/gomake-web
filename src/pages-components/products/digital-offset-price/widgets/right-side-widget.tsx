@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { isLoadgingState, subProductsParametersState } from "@/store";
+import {isLoadgingState, subProductsParametersState, systemCurrencyState} from "@/store";
 import { Checkbox, Slider } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -43,6 +43,8 @@ const RightSideWidget = ({
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
   const subProducts = useRecoilValue<any>(subProductsParametersState);
+  const systemCurrency = useRecoilValue<any>(systemCurrencyState);
+
   const [
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
@@ -163,7 +165,7 @@ const RightSideWidget = ({
               />
             )}
           </div>
-          <span style={clasess.totalCurrancyStyle}>USD</span>
+          <span style={clasess.totalCurrancyStyle}>{systemCurrency}</span>
         </div>
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&

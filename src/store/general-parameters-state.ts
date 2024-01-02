@@ -47,3 +47,7 @@ export const quantityParameterState = selector({
     return !!quantity ? +quantity?.values[0] : 0;
   },
 });
+export const currentCalculationConnectionId = atom({
+  key: "currentCalculationConnectionIdState",
+  default: "",
+});

@@ -8,8 +8,8 @@ import { materialsCategoriesState } from "@/store/material-categories";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { getAndSetProductById } from "@/services/hooks";
 import {
-  isLoadgingState,
-  itemParmetersValuesState,
+  currentCalculationConnectionId,
+  isLoadgingState, itemParmetersValuesState,
   selectedValueConfigState,
   selectParameterButtonState,
   subProductsCopyParametersState,
@@ -118,8 +118,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setSelectParameterButton = useSetRecoilState(
     selectParameterButtonState
   );
-  const { calculationResult, connectionId, calculationSessionId } =
+  const { calculationResult,calculationSessionId,connectionId,updatedSelectedWorkFlow } =
     useCalculationsWorkFlowsSignalr();
+  const [calculationSessionConnectionId,setCalculationSessionConnectionId] = useRecoilState(currentCalculationConnectionId);
+
   const [requestAbortController, setRequestAbortController] =
     useState<AbortController>(null);
 
@@ -131,6 +133,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if (calculationResult && calculationResult.productItemValue) {
+      setCalculationSessionConnectionId(connectionId)
       if (calculationResult.productItemValueDraftId === calculationSessionId) {
         setLoading(false);
         setCurrentProductItemValueDraftId(
@@ -190,7 +193,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setJobActions(calculationResult?.productItemValue.actions);
       }
     }
-  }, [calculationResult, calculationSessionId]);
+
+  }, [calculationResult, calculationSessionId])
+  
+  useEffect(()=>{
+    if(updatedSelectedWorkFlow){
+      const currentWorkFlows = cloneDeep(workFlows);
+      let existsSelectedWorkFlow = currentWorkFlows.find(x=>x.selected && x.id === updatedSelectedWorkFlow.id );
+      if(existsSelectedWorkFlow != null){
+        existsSelectedWorkFlow = updatedSelectedWorkFlow
+      }else{
+        currentWorkFlows.forEach(x=>x.selected = false);
+        let workFlow = currentWorkFlows.find(x=>x.id === updatedSelectedWorkFlow.id );
+        workFlow.selected = true;
+      }
+      setWorkFlows(currentWorkFlows);
+    }
+  },[updatedSelectedWorkFlow])
   const selectBtnTypeToAction = (
     parameter,
     sectionId,
@@ -620,12 +639,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           isHidden: false,
                           materialValueIds: null,
                           selectedParameterValues: null,
-                          updateName: val.valueId,
-                          values: [val.valueId],
-                        });
-                      } else {
+                          updateName:val.value,
+                          values:[val.valueId]
+                        })
+                      }
+                      else{
                         existsValue.id = val.valueId;
-                        existsValue.updateName = val.valueId;
+                        existsValue.updateName = val.value;
                       }
                     });
                   }
@@ -683,12 +703,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               isHidden: false,
                               materialValueIds: null,
                               selectedParameterValues: null,
-                              updateName: val.valueId,
-                              values: [val.valueId],
-                            });
-                          } else {
+                              updateName:val.value,
+                              values:[val.valueId]
+                            })
+                          }else{
                             existsValue.id = val.valueId;
-                            existsValue.updateName = val.valueId;
+                            existsValue.updateName = val.value;
                           }
                         });
                       }
@@ -1101,52 +1121,33 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const parameterValue = subSectionParameter.valuesConfigs.find(
           (x) => x.id === data.valueIds
         );
-        if (
-          subSectionParameter.materialPath &&
-          subSectionParameter.materialPath.length > 0
-        ) {
-          const materialPath =
-            subSectionParameter.materialPath[
-              subSectionParameter.materialPath.length - 1
-            ];
-          const materialRelatedParameters = subSection.parameters.filter(
-            (x) =>
-              x.id !== subSectionParameter.id &&
-              x.actionIndex === actionIndex &&
-              x.materialPath?.find((y) => compareStrings(y, materialPath))
-          );
-          materialRelatedParameters?.forEach((param) => {
-            if (param.materialPath && param.materialPath.length > 0) {
-              const index = param.materialPath.findIndex((x) =>
-                compareStrings(x, materialPath)
-              );
-              if (index != -1 && index < param.materialPath.length - 1) {
-                const materialData = allMaterials.find((x) =>
-                  compareStrings(x.pathName, materialPath)
-                )?.data;
-                const paramMaterialValues = materialData.find((x) =>
-                  parameterValue?.values?.find((y) => y === x.valueId)
-                )?.data;
-                param.valuesConfigs = [];
-                paramMaterialValues?.forEach((val) => {
-                  param.valuesConfigs.push({
-                    id: val.valueId,
-                    activateAction: false,
-                    isDefault: false,
-                    isDeleted: false,
-                    isHidden: false,
-                    materialValueIds: null,
-                    selectedParameterValues: null,
-                    updateName: val.valueId,
-                    values: [val.valueId],
-                  });
-                });
-                param.valuesConfigs = param.valuesConfigs.filter(
-                  (x) => x.values && x.values.length > 0
-                );
-              }
-            }
-          });
+        if(subSectionParameter.materialPath && subSectionParameter.materialPath.length > 0 ){
+            const materialPath = subSectionParameter.materialPath[subSectionParameter.materialPath.length - 1];
+            const materialRelatedParameters = subSection.parameters.filter(x => x.id !== subSectionParameter.id && x.actionIndex === actionIndex && x.materialPath?.find(y=> compareStrings(y,materialPath)))
+            materialRelatedParameters?.forEach(param => {
+               if(param.materialPath && param.materialPath.length > 0){
+                 const index = param.materialPath.findIndex(x=> compareStrings(x,materialPath));
+                 if(index != -1 && index < (param.materialPath.length - 1)){
+                    const materialData = allMaterials.find(x => compareStrings(x.pathName,materialPath))?.data;
+                    const paramMaterialValues = materialData.find(x=> parameterValue?.values?.find(y=> y === x.valueId))?.data;
+                    param.valuesConfigs = [];
+                    paramMaterialValues?.forEach(val => {
+                      param.valuesConfigs.push({
+                        id:val.valueId,
+                        activateAction:false,
+                        isDefault: false,
+                        isDeleted: false,
+                        isHidden: false,
+                        materialValueIds: null,
+                        selectedParameterValues: null,
+                        updateName:val.value,
+                        values:[val.valueId]
+                      })
+                    });
+                    param.valuesConfigs = param.valuesConfigs.filter(x=>x.values && x.values.length > 0);
+                 }
+               }
+            });
         }
         setProductTemplate(productTemplateCopy);
         if (

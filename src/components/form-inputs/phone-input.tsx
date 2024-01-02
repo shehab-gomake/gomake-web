@@ -1,0 +1,25 @@
+import React from "react";
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
+
+interface IProps {
+    onChange: (value: string) => void;
+    value: string;
+    autoFocus?: boolean;
+}
+
+const PhoneInputComponent = ({ onChange, value, autoFocus }: IProps) => {
+
+    return (
+        <PhoneInput
+            defaultCountry="il"
+            value={value || ""}
+            onChange={(value) => {
+                onChange(value);
+            }}
+            autoFocus={autoFocus}
+        />
+    );
+};
+
+export { PhoneInputComponent };

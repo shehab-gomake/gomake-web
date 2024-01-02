@@ -4,6 +4,7 @@ import { useStyle } from "./style";
 import { PlusNewIcon, WastebasketNew2 } from "@/icons";
 import { IconButton } from "@mui/material";
 import { useState } from "react";
+import { PhoneInputUpdatedValues } from "../phone-input-updated-values";
 
 const ContactMapping = ({
   item,
@@ -46,7 +47,7 @@ const ContactMapping = ({
           changeItems(index, "contactName", e);
         }}
       />
-      <InputUpdatedValues
+      <PhoneInputUpdatedValues
         value={
           item?.contactPhone !== null ? item?.contactPhone : "No mobile contact"
         }
@@ -56,8 +57,7 @@ const ContactMapping = ({
         setIsUpdate={setIsUpdateContactMobile}
         onInputChange={(e: any) => {
           changeItems(index, "contactPhone", e);
-        }}
-      />
+        }} />
       <InputUpdatedValues
         value={
           item?.contactMail !== null ? item?.contactMail : "No contact mail"
