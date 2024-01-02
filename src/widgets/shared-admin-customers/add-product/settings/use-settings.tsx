@@ -267,24 +267,6 @@ const useSettings = ({
     []
   );
 
-  // useEffect(() => {
-  //   if (productState?.clients?.length > 0) {
-  //     setSelectProductClient({
-  //       label: t("products.addProduct.admin.byClient"),
-  //       id: EProductClient.BY_CLIENT,
-  //     });
-  //   } else if (productState?.clientsTypes?.length > 0) {
-  //     setSelectProductClient({
-  //       label: t("products.addProduct.admin.byClientType"),
-  //       id: EProductClient.BY_CLIENT_TYPE,
-  //     });
-  //   } else {
-  //     setSelectProductClient({
-  //       label: t("products.addProduct.admin.allCustomers"),
-  //       id: EProductClient.ALL_CUSTOMERS,
-  //     });
-  //   }
-  // }, [productState, EProductClient]);
   const getAllClients = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersList, {
       ClientType: "C",

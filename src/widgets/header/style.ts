@@ -29,6 +29,7 @@ const useStyle = () => {
         backgroundColor: "#FFFFFF",
         paddingLeft: 20,
         paddingRight: 12,
+        marginBottom: 20,
       },
       searchInputContainer: {
         width: convertWidthToVW(375),

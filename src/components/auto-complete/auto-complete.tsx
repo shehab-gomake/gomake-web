@@ -30,7 +30,7 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
       paddingRight: "9px!important",
       color: props?.error ? "red" : "",
       height: props?.style?.height || 40,
-      fontFamily: "Lexend",
+      fontFamily: "Heebo",
       fontStyle: "normal",
       fontWeight: 500,
       width: "100%",
@@ -47,6 +47,9 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
       "& input::placeholder": {
         color: "#B1B1B1",
         opacity: 1,
+        fontFamily: "Heebo",
+        fontStyle: "normal",
+        fontWeight: 500,
       },
     },
     "& .MuiAutocomplete-endAdornment": {
