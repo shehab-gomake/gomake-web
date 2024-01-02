@@ -10,6 +10,8 @@ import {
 } from "@/services/api-service/profiles/company-profile-api";
 import { changeProfileImageState } from "@/widgets/settings-profile-widget/state/change-profile-image";
 import { useTranslation } from "react-i18next";
+import { getCurrencies } from "@/services/api-service/general/enums";
+import { currenciesState } from "@/widgets/materials-widget/state";
 
 const
     useCompanyProfile = () => {
@@ -17,6 +19,8 @@ const
         const { t } = useTranslation();
         const [profile, setProfile] = useRecoilState<ICompanyProfile>(companyProfileState);
         const setChangeProfileImage = useSetRecoilState<boolean>(changeProfileImageState);
+        const [currencies , setCurrencies ] = useRecoilState<{label: string, value: string}[]>(currenciesState);
+
         const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
         const getProfile = async () => {
             const callBack = (res) => {
@@ -90,6 +94,16 @@ const
             { value: '6', label: t("profileSettings.saturday") },
         ];
 
+        
+    const getCurrenciesApi = async () => {
+        const callBack = (res) => {
+            if (res.success) {
+                setCurrencies(res.data.map(({ value, text }) => ({ label: text, value })))
+            }
+        }
+        await getCurrencies(callApi, callBack)
+    }
+
         return {
             getProfile,
             profile,
@@ -99,7 +113,9 @@ const
             changeCompanyProfileImage,
             changeCompanyLoginImage,
             getCompanyLogo,
-            daysOfWork
+            daysOfWork,
+            getCurrenciesApi,
+            currencies
         }
     };
 
