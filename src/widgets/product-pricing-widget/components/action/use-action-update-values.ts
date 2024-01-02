@@ -374,15 +374,17 @@ const useActionUpdateValues = (workFlowId: string, isSubWorkFlow: boolean) => {
         action.actionId === actionId && productType === action.productType
     );
     if (action) {
-      return action?.machineCategories
-        ?.flatMap((category) => category.machines)
-        ?.map((machine) => ({
+      return action?.machineCategories?.flatMap((category) => {
+        return category.machines.map((machine) => ({
+          machineCategoryId: category.machineCategoryId,
           value: machine.machineId,
           label: machine.machineName,
         }));
+      });
     }
     return [];
   };
+
   const compareArrays = (
     array1: { id: string; machineId: string }[],
     array2: { id: string; machineId: string }[]

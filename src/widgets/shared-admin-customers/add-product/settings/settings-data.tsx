@@ -3,9 +3,9 @@ export type ProductClient = {
   id: number;
 };
 export enum EProductClient {
-  ALL_CUSTOMERS = 1,
-  BY_CLIENT = 2,
-  BY_CLIENT_TYPE = 3,
+  ALL_CUSTOMERS = 0,
+  BY_CLIENT = 1,
+  BY_CLIENT_TYPE = 2,
 }
 
 export enum EProductProfites {

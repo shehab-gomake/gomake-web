@@ -56,8 +56,8 @@ const useStyle = () => {
         justifyContent: "center",
         textAlign: "center",
         alignItems: "center",
-        ...FONT_FAMILY.Lexend(500, 16),
         color: primaryColor(500),
+        backgroundColor: "transparent",
       },
       profitProductsCellStyle: {
         display: "flex",

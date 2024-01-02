@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { IWorkFlowAction } from "@/widgets/product-pricing-widget/interface";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { Collapse, Fade, IconButton } from "@mui/material";
@@ -50,23 +50,28 @@ const Actions = ({
 }: IActionsComponentProps) => {
   return (
     <Stack gap={"10px"}>
-      {actions?.map((action, index) => (
-        <ActionContainerComponent
-          productType={productType}
-          workFlowId={workFlowId}
-          delay={index * 800}
-          {...action}
-        />
-      ))}
+      {actions?.map((action, index) => {
+        console.log("dddddddddddddddf", action);
+        return (
+          <ActionContainerComponent
+            productType={productType}
+            workFlowId={workFlowId}
+            delay={index * 800}
+            {...action}
+          />
+        );
+      })}
     </Stack>
   );
 };
+
 const ActionContainerComponent = ({
   actionId,
   actionName,
   outputs,
   delay = 0,
   machineName,
+  categoryId,
   profit,
   totalPrice,
   totalProductionTime,
@@ -80,7 +85,6 @@ const ActionContainerComponent = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
-
   const {
     updateDeliveryTime,
     updateCost,
@@ -179,6 +183,10 @@ const ActionContainerComponent = ({
     return "";
   }, [supplierId, suppliers]);
 
+  // useEffect(() => {
+  //   const data = getActionMachinesList(actionId, productType);
+  //   console.log("dsdddata", data);
+  // }, [machineName, actionId, productType]);
   return (
     <Fade in={true} timeout={delay} style={{ width: "100%" }}>
       <Stack
@@ -250,6 +258,7 @@ const ActionContainerComponent = ({
                       >
                         <GoMakeAutoComplate
                           onChange={(e, v) => {
+                            console.log("vvvv", v);
                             if (selectNewMachine(v?.value, actionId)) {
                               setChooseMachine(false);
                             }
@@ -392,6 +401,8 @@ const ActionContainerComponent = ({
           actionId={actionId}
           actionName={actionName}
           currentProductItemValue={currentProductItemValue}
+          machineName={machineName}
+          categoryId={categoryId}
         />
       </Stack>
     </Fade>

@@ -5,9 +5,10 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { adaptPaddingLeft } from "@/utils/adapter";
+import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
+  const direction = t("direction");
   const { primaryColor, secondColor, errorColor, neutralColor } =
     useGomakeTheme();
 
@@ -19,7 +20,8 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        paddingLeft: 20,
+        ...adaptPaddingRight(direction, 20),
+        // paddingLeft: 20,
       },
       mainRowContainer: {
         display: "flex",
@@ -45,8 +47,8 @@ const useStyle = () => {
         width: 330,
         minWidth: 330,
         maxWidth: 330,
-        height: "87vh",
-        // backgroundColor: "white",
+        height: "85.5vh",
+        backgroundColor: "white",
         boxShadow: "0px 0px 3px 0px rgba(129, 129, 129, 0.12)",
         padding: 15,
         marginTop: -77,
@@ -320,14 +322,27 @@ const useStyle = () => {
         marginBottom: 8,
       },
       totalStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        width: "100%",
+      },
+      totalStyleText: {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 24),
+        width: "fit-content",
+        minWidth: "fit-content",
+      },
+      totalCurrancyStyle: {
+        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(700, 14),
+        width: "fit-content",
+        minWidth: "fit-content",
       },
       inputPriceStyle: {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 24),
         height: 28,
-        width: "130px",
+        width: "100%",
         boxShadow: "none",
       },
       priceRecoveryContainer: {
@@ -404,7 +419,6 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-end",
         alignItems: "center",
-        // marginTop: 30,
         width: "100%",
         gap: 16,
       },
@@ -446,6 +460,8 @@ const useStyle = () => {
         overflow: "scroll",
         padding: 5,
         border: "1px solid #ccc",
+        color: "#000000",
+        ...FONT_FAMILY.Lexend(500, 14),
       },
       pricingSectionContainer: {
         display: "flex",
@@ -587,7 +603,7 @@ const useStyle = () => {
         cursor: "pointer",
       },
     };
-  }, [i18next.language, t]);
+  }, [i18next.language, t, direction]);
   return {
     clasess,
   };

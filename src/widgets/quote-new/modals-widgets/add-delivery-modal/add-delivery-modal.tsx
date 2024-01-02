@@ -6,35 +6,36 @@ import {
 } from "@/components";
 import { useEffect, useState } from "react";
 import { useStyle } from "../style";
+import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 
-const AddDeliveryModal = ({ openModal, onClose , onClickAdd }) => {
+const AddDeliveryModal = ({ openModal, onClose, onClickAdd }) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
-  const [deliveryTypeValue, setDeliveryTypeValue] = useState<{label: string, value: string}>();
-
+  const { getAllShipmentTypes, shipmentTypes } = useQuoteGetData();
+  const [deliveryTypeValue, setDeliveryTypeValue] = useState<{ label: string, value: string }>();
 
   useEffect(() => {
-   // getAllDeliveryTypes();
+    getAllShipmentTypes();
   }, []);
 
-  const deliveries = [
-    { label: t("delivery type 1"), value: "true" },
-    { label: t("delivery type 2"), value: "false" },
-  ];
+  const handleModalClose = () => {
+    setDeliveryTypeValue(undefined);
+    onClose();
+  };
 
   return (
     <>
       <GoMakeModal
         openModal={openModal}
         modalTitle={t("sales.quote.addDeliveryTitle")}
-        onClose={onClose}
+        onClose={handleModalClose}
         insideStyle={classes.insideStyle}
       >
         <div style={classes.mainContainer}>
           <div style={classes.autoComplateRowContainer}>
             <div style={{ width: "100%", marginTop: 15 }}>
               <GoMakeAutoComplate
-                options={deliveries}
+                options={shipmentTypes}
                 value={deliveryTypeValue}
                 placeholder={t("sales.quote.selectDelivery")}
                 style={classes.selectTypeContainer}
@@ -47,7 +48,7 @@ const AddDeliveryModal = ({ openModal, onClose , onClickAdd }) => {
           <div style={classes.btnContainer}>
             <GomakePrimaryButton
               style={classes.sendBtn}
-              onClick={()=>onClickAdd(deliveryTypeValue?.label)}
+              onClick={() => onClickAdd(deliveryTypeValue?.value)}
             >
               {t("sales.quote.add")}
             </GomakePrimaryButton>
