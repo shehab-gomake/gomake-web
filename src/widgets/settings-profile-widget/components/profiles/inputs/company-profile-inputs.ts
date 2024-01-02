@@ -25,6 +25,18 @@ const companyProfileInputs = (state: ICompanyProfile)  => {
             value: state.dashboardCode,
             isValid: !!state.dashboardCode,
         },
+        {
+            name: "Currency",
+            label: "customers.modal.currency",
+            type: "select",
+            placeholder: "customers.modal.currency",
+            required: false,
+            parameterKey: "systemCurrency",
+            options: [],
+            optionsUrl: "/v1/enum/get-enums/currency",
+            value: state?.systemCurrency,
+            isValid: true,
+        },
     ];
 }
 

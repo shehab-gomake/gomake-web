@@ -40,7 +40,9 @@ const CompanyProfileComponent = () => {
   };
 
   const formSections: { inputs: any[]; title: string }[] = [
-    { inputs: companyProfileInputs(profile), title: "profileSettings.company" },
+    { 
+      inputs: companyProfileInputs(profile), 
+      title: "profileSettings.company" },
     {
       inputs: companyContactsInputs(profile),
       title: "profileSettings.contacts",
@@ -85,7 +87,7 @@ const CompanyProfileComponent = () => {
                   error={false}
                 />
               ))}
-              {section.title === 'profileSettings.contacts' && <DaysOfWork options={daysOfWork} label={t("profileSettings.dayOfWork")} setState={profileChange} state={profile}/>}
+              {section.title === 'profileSettings.company' && <DaysOfWork options={daysOfWork} label={t("profileSettings.dayOfWork")} setState={profileChange} state={profile}/>}
             </FormInputsSectionComponent>
           );
         })}
