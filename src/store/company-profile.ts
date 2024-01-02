@@ -50,4 +50,5 @@ export interface ICompanyProfile {
     logo?: string;
     pdfLogo?: string;
     loginLogo?: string;
+    systemCurrency?: string;
 }

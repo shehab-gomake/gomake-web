@@ -163,7 +163,6 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
                 <div style={clasess.titleQuateContainer}>
                   <HeaderTitle
                     title={documentTitle}
-                    //  title={t("sales.quote.title")}
                     marginBottom={1}
                     marginTop={1}
                     color="rgba(241, 53, 163, 1)"

@@ -14,6 +14,7 @@ import {
 import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
 import { Tabs } from "@mui/material";
+import { adaptPaddingLeft } from "@/utils/adapter";
 
 const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
@@ -66,7 +67,10 @@ const PriceListPageWidget = ({ widgetType }) => {
     setSamlleType,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
+    includeVAT,
+    setIncludeVAT,
   } = useDigitalOffsetPrice({ clasess, widgetType });
+  const direction = t("direction");
   return (
     <div style={{ height: "85vh" }}>
       {productTemplate?.sections?.length > 0 && (
@@ -107,7 +111,10 @@ const PriceListPageWidget = ({ widgetType }) => {
                   {[...productTemplate?.sections, PricingTab]?.map(
                     (section: any, index: number) => {
                       if (index === activeIndex) {
-                        if (section.name === "Pricing") {
+                        if (
+                          section.name ===
+                          t("products.offsetPrice.admin.Pricing")
+                        ) {
                           return (
                             // <PricingSectionMappingWidget
                             //   clasess={clasess}
@@ -193,6 +200,8 @@ const PriceListPageWidget = ({ widgetType }) => {
               setPriceRecovery={setPriceRecovery}
               priceRecovery={priceRecovery}
               setSamlleType={setSamlleType}
+              includeVAT={includeVAT}
+              setIncludeVAT={setIncludeVAT}
             />
           </div>
 
@@ -205,12 +214,14 @@ const PriceListPageWidget = ({ widgetType }) => {
               alignItems: "center",
               position: "fixed",
               paddingRight: "15px",
+              ...adaptPaddingLeft(direction, 15),
               gap: 20,
               bottom: 0,
               right: 0,
               boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.08)",
               height: 65,
               zIndex: 5,
+              backgroundColor: "#FFF",
             }}
           >
             <div style={{ width: "68%" }}>
@@ -234,7 +245,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 ) : null}
               </div>
             </div>
-            <div style={{ width: 315 }}>
+            <div style={{ width: 315, height: 40 }}>
               {widgetType === EWidgetProductType.EDIT ? (
                 <GomakePrimaryButton
                   style={clasess.addOrderBtn}

@@ -6,12 +6,11 @@ import { useRouter } from "next/router";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
 import { materialsCategoriesState } from "@/store/material-categories";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
-import {
-  getAndSetProductById,
-} from "@/services/hooks";
+import { getAndSetProductById } from "@/services/hooks";
 import {
   currentCalculationConnectionId,
-  isLoadgingState, itemParmetersValuesState,
+  isLoadgingState,
+  itemParmetersValuesState,
   selectedValueConfigState,
   selectParameterButtonState,
   subProductsCopyParametersState,
@@ -32,22 +31,32 @@ import { SWITCHParameterWidget } from "@/pages-components/products/digital-offse
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 import { SelectMaterialsParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-materials-parameter";
 import {
-  calculationProgressState, currentProductItemValueDraftId, currentProductItemValuePriceState,
+  calculationProgressState,
+  currentProductItemValueDraftId,
+  currentProductItemValuePriceState,
   currentProductItemValueState,
   itemParametersValuesState,
   jobActionsState,
   jobDetailsState,
   outsourceSuppliersState,
-  productUrgentWorkState, selectedWorkFlowState,
+  productUrgentWorkState,
+  selectedWorkFlowState,
   workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
 import { getOutsourcingSuppliersListApi } from "@/services/api-service/suppliers/suppliers-endpoints";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useCalculationsWorkFlowsSignalr } from "../signalr/use-calculations-workflows-signalr";
 import { v4 as uuidv4 } from "uuid";
-import { addItemApi, getProductByItemIdApi, updateDocumentItemApi } from "@/services/api-service/generic-doc/documents-api";
+import {
+  addItemApi,
+  getProductByItemIdApi,
+  updateDocumentItemApi,
+} from "@/services/api-service/generic-doc/documents-api";
+import { getCurrencies } from "@/services/api-service/general/enums";
+import { currenciesState } from "@/widgets/materials-widget/state";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
+  const setCurrencies = useSetRecoilState(currenciesState);
   const { navigate } = useGomakeRouter();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -67,6 +76,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
   const [urgentOrder, setUrgentOrder] = useRecoilState(productUrgentWorkState);
+  const [includeVAT, setIncludeVAT] = useState();
   const [printingNotes, setPrintingNotes] = useState("");
   const [graphicNotes, setGraphicNotes] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -76,17 +86,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     subProductsParametersState
   );
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
-  const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
+  const setSubProductsCopy = useSetRecoilState<any>(
+    subProductsCopyParametersState
+  );
   const itemParmetersValues = useRecoilValue(itemParmetersValuesState);
-  const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
-  const [productItemValueDraftId, setCurrentProductItemValueDraftId] = useRecoilState<string>(currentProductItemValueDraftId);
-  const [currentProductItemValueTotalPrice, setCurrentProductItemValueTotalPrice] = useRecoilState<number>(currentProductItemValuePriceState);
+  const [currentProductItemValue, setCurrentProductItemValue] =
+    useRecoilState<any>(currentProductItemValueState);
+  const [productItemValueDraftId, setCurrentProductItemValueDraftId] =
+    useRecoilState<string>(currentProductItemValueDraftId);
+  const [
+    currentProductItemValueTotalPrice,
+    setCurrentProductItemValueTotalPrice,
+  ] = useRecoilState<number>(currentProductItemValuePriceState);
 
   const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
   const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
-  const [expanded, setExpanded] = useState<string | false>("panel_0");
+  const [expanded, setExpanded] = useState<string | false>("");
   const [activeIndex, setActiveIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState("Production");
+  const [activeTab, setActiveTab] = useState(t("quality.production"));
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
   const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
@@ -105,81 +122,106 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setSelectParameterButton = useSetRecoilState(
     selectParameterButtonState
   );
-  const { calculationResult,calculationSessionId,connectionId,updatedSelectedWorkFlow } =
-    useCalculationsWorkFlowsSignalr();
+  const {
+    calculationResult,
+    calculationSessionId,
+    connectionId,
+    updatedSelectedWorkFlow,
+  } = useCalculationsWorkFlowsSignalr();
+  const [calculationSessionConnectionId, setCalculationSessionConnectionId] =
+    useRecoilState(currentCalculationConnectionId);
 
   const [requestAbortController, setRequestAbortController] =
     useState<AbortController>(null);
 
   useEffect(() => {
     let copy = lodashClonedeep(subProducts);
-    console.log("setSubProductsCopy", copy)
+    console.log("setSubProductsCopy", copy);
     setSubProductsCopy(copy);
   }, [subProducts]);
 
   useEffect(() => {
-
     if (calculationResult && calculationResult.productItemValue) {
-
+      setCalculationSessionConnectionId(connectionId);
       if (calculationResult.productItemValueDraftId === calculationSessionId) {
         setLoading(false);
-        setCurrentProductItemValueDraftId(calculationResult.productItemValueDraftId)
+        setCurrentProductItemValueDraftId(
+          calculationResult.productItemValueDraftId
+        );
         const currentWorkFlows = cloneDeep(workFlows);
         const newWorkFlows = calculationResult?.productItemValue.workFlows;
-        newWorkFlows.forEach(flow => {
-          const isExists = currentWorkFlows.find(x => x.id === flow.id);
+        newWorkFlows.forEach((flow) => {
+          const isExists = currentWorkFlows.find((x) => x.id === flow.id);
           if (!isExists) {
             currentWorkFlows.push(flow);
           }
           if (flow.selected) {
-            currentWorkFlows.forEach(f => f.selected = false);
+            currentWorkFlows.forEach((f) => (f.selected = false));
           }
-
-        })
+        });
         if (calculationResult?.monials) {
-          calculationResult?.monials.forEach(m => {
-            const workFlow = currentWorkFlows.find(x => x.id === m.workFlowId);
+          calculationResult?.monials.forEach((m) => {
+            const workFlow = currentWorkFlows.find(
+              (x) => x.id === m.workFlowId
+            );
             if (workFlow) {
               workFlow.monials = m.monials;
-              workFlow.recommendationRang = m.recommendationRang
+              workFlow.recommendationRang = m.recommendationRang;
             }
           });
         }
         currentWorkFlows.sort((a, b) => b.monials - a.monials);
-        let selectedWorkFlow = currentWorkFlows?.find(x => x.selected);
-        if (!selectedWorkFlow && currentWorkFlows && currentWorkFlows.length > 0) {
+        let selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
+        if (
+          !selectedWorkFlow &&
+          currentWorkFlows &&
+          currentWorkFlows.length > 0
+        ) {
           currentWorkFlows[0].selected = true;
         }
-        selectedWorkFlow = currentWorkFlows?.find(x => x.selected);
-        if(selectedWorkFlow && selectedWorkFlow.totalPrice && selectedWorkFlow.totalPrice.values){
-           setCurrentProductItemValueTotalPrice(parseFloat(selectedWorkFlow.totalPrice.values[0]))
+        selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
+        if (
+          selectedWorkFlow &&
+          selectedWorkFlow.totalPrice &&
+          selectedWorkFlow.totalPrice.values
+        ) {
+          setCurrentProductItemValueTotalPrice(
+            parseFloat(selectedWorkFlow.totalPrice.values[0])
+          );
         }
         const currentWorkFlowsCount = currentWorkFlows.length;
-        const totalWorkFlowsCount = calculationResult?.productItemValue.totalWorkFlows;
+        const totalWorkFlowsCount =
+          calculationResult?.productItemValue.totalWorkFlows;
         if (!isCalculationFinished) {
-          setCalculationProgress({ totalWorkFlowsCount: totalWorkFlowsCount, currentWorkFlowsCount: currentWorkFlowsCount });
+          setCalculationProgress({
+            totalWorkFlowsCount: totalWorkFlowsCount,
+            currentWorkFlowsCount: currentWorkFlowsCount,
+          });
         }
         setWorkFlows(currentWorkFlows);
         setJobActions(calculationResult?.productItemValue.actions);
       }
     }
+  }, [calculationResult, calculationSessionId]);
 
-  }, [calculationResult, calculationSessionId])
-  
-  useEffect(()=>{
-    if(updatedSelectedWorkFlow){
+  useEffect(() => {
+    if (updatedSelectedWorkFlow) {
       const currentWorkFlows = cloneDeep(workFlows);
-      let existsSelectedWorkFlow = currentWorkFlows.find(x=>x.selected && x.id === updatedSelectedWorkFlow.id );
-      if(existsSelectedWorkFlow != null){
-        existsSelectedWorkFlow = updatedSelectedWorkFlow
-      }else{
-        currentWorkFlows.forEach(x=>x.selected = false);
-        let workFlow = currentWorkFlows.find(x=>x.id === updatedSelectedWorkFlow.id );
+      let existsSelectedWorkFlow = currentWorkFlows.find(
+        (x) => x.selected && x.id === updatedSelectedWorkFlow.id
+      );
+      if (existsSelectedWorkFlow != null) {
+        existsSelectedWorkFlow = updatedSelectedWorkFlow;
+      } else {
+        currentWorkFlows.forEach((x) => (x.selected = false));
+        let workFlow = currentWorkFlows.find(
+          (x) => x.id === updatedSelectedWorkFlow.id
+        );
         workFlow.selected = true;
       }
       setWorkFlows(currentWorkFlows);
     }
-  },[updatedSelectedWorkFlow])
+  }, [updatedSelectedWorkFlow]);
   const selectBtnTypeToAction = (
     parameter,
     sectionId,
@@ -250,12 +292,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     });
     productTemplateCopy.sections = sectionsArr;
-    initProduct(productTemplateCopy,allMaterials);
+    initProduct(productTemplateCopy, allMaterials);
   };
   const removeSection = (item) => {
     let temp = cloneDeep(productTemplate);
     temp.sections = temp.sections.filter((x) => x.id !== item.id);
-    initProduct(temp,allMaterials);
+    initProduct(temp, allMaterials);
   };
   const duplicateParameters = (mySubSection) => {
     let temp = cloneDeep(productTemplate);
@@ -283,7 +325,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
 
     // Update the state with the modified temp object
-    initProduct(temp,allMaterials);
+    initProduct(temp, allMaterials);
   };
   /*useEffect(() => {
     if (pricingDefaultValue?.workFlows?.length > 0 && canCalculation) {
@@ -327,7 +369,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [productTemplate]);
   const [relatedParameters, setRelatedParameters] = useState([]);
   useEffect(() => {
-
     if (!isSetTemplete) {
       if (productTemplate && productTemplate?.sections?.length > 0) {
         let sectionData: any = cloneDeep(productTemplate?.sections);
@@ -393,8 +434,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         actionIndex: parameter?.actionIndex,
                       });
                     }
-                  }
-                  else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
+                  } else if (
+                    parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST
+                  ) {
                     const value = parameter?.valuesConfigs?.find(
                       (item) => item?.isDefault == true
                     );
@@ -416,7 +458,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         ...(data?.id > 0 && { material: data?.id }),
                         parameterType: parameter?.parameterType,
                         ...(value && {
-                          valueIds: [value?.id],
+                          valueIds: value && value.id ? [value?.id] : null,
                           values: [value?.updateName],
                         }),
                         sectionId: section?.id,
@@ -455,7 +497,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           ...(data?.id > 0 && { material: data?.id }),
                           parameterType: parameter?.parameterType,
                           ...(value && {
-                            valueIds: [defValue],
+                            valueIds: defValue ? [defValue] : null,
                             values: [defValue],
                           }),
                           sectionId: section?.id,
@@ -463,10 +505,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           actionIndex: parameter?.actionIndex,
                         });
                       }
-
                     }
-                  }
-                  else if (parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS) {
+                  } else if (
+                    parameter?.parameterType ===
+                    EParameterTypes.SELECT_CHILDS_PARAMETERS
+                  ) {
                     const defaultObject = parameter.valuesConfigs.find(
                       (item) => item.isDefault === true
                     );
@@ -487,7 +530,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         actionId: parameter?.actionId,
                         parameterType: parameter?.parameterType,
                         ...(defaultObject && {
-                          valueIds: [defaultObject?.id],
+                          valueIds: defaultObject && defaultObject?.id ? [defaultObject?.id] : null,
                           values: [defaultObject?.updateName],
                         }),
                         sectionId: section?.id,
@@ -495,13 +538,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         actionIndex: parameter?.actionIndex,
                       });
                       parameter?.childsParameters?.map((item) => {
-                        const childParam = subSection.parameters.find(x => x.id === item.id);
+                        const childParam = subSection.parameters.find(
+                          (x) => x.id === item.id
+                        );
                         subProduct.parameters.push({
                           parameterId: childParam?.id,
                           parameterName: childParam?.name,
                           actionId: childParam?.actionId,
                           parameterType: childParam?.parameterType,
-                          values: item.defaultValue ? [item?.defaultValue] : [childParam?.defaultValue],
+                          values: item.defaultValue
+                            ? [item?.defaultValue]
+                            : [childParam?.defaultValue],
                           sectionId: section?.id,
                           subSectionId: subSection?.id,
                           actionIndex: parameter?.actionIndex,
@@ -536,103 +583,149 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   /*useEffect(() => {
     
   }, [productTemplate]);*/
-  const initProduct = (product,materials) => {
+  const initProduct = (product, materials) => {
     if (product && product?.sections?.length > 0) {
       let sectionData: any = product.sections;
       let relatedParametersArray = [];
       sectionData.forEach((section) => {
         section.subSections.forEach((subSection) => {
-          subSection.parameters.filter((parameter) => !parameter.isHidden)
+          subSection.parameters
+            .filter((parameter) => !parameter.isHidden)
             .forEach((parameter) => {
-              const relatedToParameter = subSection.parameters.find(subProductsParameter => subProductsParameter?.relatedParameters?.find(p => p.parameterId === parameter.id));
+              const relatedToParameter = subSection.parameters.find(
+                (subProductsParameter) =>
+                  subProductsParameter?.relatedParameters?.find(
+                    (p) => p.parameterId === parameter.id
+                  )
+              );
               if (relatedToParameter && relatedToParameter.isHidden) {
                 parameter.isHidden = true;
-                const unHiddenParameterInSubSection = subSection.parameters.find(x => !x.isHidden);
+                const unHiddenParameterInSubSection =
+                  subSection.parameters.find((x) => !x.isHidden);
                 if (!unHiddenParameterInSubSection) {
                   subSection.isHidden = true;
                 }
                 return;
               }
               if (!relatedToParameter) {
-                if ((parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST || parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) && (!parameter?.valuesConfigs || parameter?.valuesConfigs.length === 0)) {
+                if (
+                  (parameter?.parameterType ===
+                    EParameterTypes.DROP_DOWN_LIST ||
+                    parameter?.parameterType ===
+                      EParameterTypes.SELECT_MATERIALS) &&
+                  (!parameter?.valuesConfigs ||
+                    parameter?.valuesConfigs.length === 0)
+                ) {
                   //parameter.isHidden = true;
                   //return;
                 }
               }
-              if(parameter.materialPath && parameter.materialPath.length > 0 ){
-                if(parameter.name == "Spiral type"){
+              if (parameter.materialPath && parameter.materialPath.length > 0) {
+                if (parameter.name == "Spiral type") {
                   debugger;
                 }
-                if(parameter.materialPath.length == 1){
-                  const materialData = materials?.find(x=> compareStrings(x.pathName,parameter.materialPath[0]))?.data;
-                  if(!parameter.valuesConfigs){
+                if (parameter.materialPath.length == 1) {
+                  const materialData = materials?.find((x) =>
+                    compareStrings(x.pathName, parameter.materialPath[0])
+                  )?.data;
+                  if (!parameter.valuesConfigs) {
                     parameter.valuesConfigs = [];
                   }
-                  parameter.valuesConfigs = parameter.valuesConfigs.filter(x=>x.values && x.values.length > 0);
-                  if(materialData){
-                    materialData.forEach(val=>{
-                      const existsValue = parameter.valuesConfigs.find(x=>x.values && x.values.length > 0 &&  x.values[0] === val.valueId);
-                      if(!existsValue){
+                  parameter.valuesConfigs = parameter.valuesConfigs.filter(
+                    (x) => x.values && x.values.length > 0
+                  );
+                  if (materialData) {
+                    materialData.forEach((val) => {
+                      const existsValue = parameter.valuesConfigs.find(
+                        (x) =>
+                          x.values &&
+                          x.values.length > 0 &&
+                          x.values[0] === val.valueId
+                      );
+                      if (!existsValue) {
                         parameter.valuesConfigs.push({
-                          id:val.valueId,
-                          activateAction:false,
+                          id: val.valueId,
+                          activateAction: false,
                           isDefault: false,
                           isDeleted: false,
                           isHidden: false,
                           materialValueIds: null,
                           selectedParameterValues: null,
-                          updateName:val.value,
-                          values:[val.valueId]
-                        })
-                      }
-                      else{
+                          updateName: val.value,
+                          values: [val.valueId],
+                        });
+                      } else {
                         existsValue.id = val.valueId;
                         existsValue.updateName = val.value;
                       }
-                      
                     });
                   }
                 }
-                
-                const defaultValue =  parameter.valuesConfigs?.find(x=>x.isDefault);
-                if(defaultValue){
-                  const materialPath = parameter.materialPath[parameter.materialPath.length - 1];
-                  const materialRelatedParameters = subSection.parameters.filter(x => x.id !== parameter.id && x.actionIndex === parameter.actionIndex && x.materialPath?.find(y=> compareStrings(y,materialPath)))
-                  materialRelatedParameters?.forEach(param => {
-                    if(param.materialPath && param.materialPath.length > 0){
-                      const index = param.materialPath.findIndex(x=> compareStrings(x,materialPath));
-                      if(index != -1 && index < (param.materialPath.length - 1)){
-                        const materialData = materials.find(x => compareStrings(x.pathName,materialPath))?.data;
-                        const paramMaterialValues = materialData.find(x=> defaultValue.values?.find(y=> y === x.valueId))?.data;
-                        if(!parameter.valuesConfigs){
+
+                const defaultValue = parameter.valuesConfigs?.find(
+                  (x) => x.isDefault
+                );
+                if (defaultValue) {
+                  const materialPath =
+                    parameter.materialPath[parameter.materialPath.length - 1];
+                  const materialRelatedParameters =
+                    subSection.parameters.filter(
+                      (x) =>
+                        x.id !== parameter.id &&
+                        x.actionIndex === parameter.actionIndex &&
+                        x.materialPath?.find((y) =>
+                          compareStrings(y, materialPath)
+                        )
+                    );
+                  materialRelatedParameters?.forEach((param) => {
+                    if (param.materialPath && param.materialPath.length > 0) {
+                      const index = param.materialPath.findIndex((x) =>
+                        compareStrings(x, materialPath)
+                      );
+                      if (
+                        index != -1 &&
+                        index < param.materialPath.length - 1
+                      ) {
+                        const materialData = materials.find((x) =>
+                          compareStrings(x.pathName, materialPath)
+                        )?.data;
+                        const paramMaterialValues = materialData.find((x) =>
+                          defaultValue.values?.find((y) => y === x.valueId)
+                        )?.data;
+                        if (!parameter.valuesConfigs) {
                           parameter.valuesConfigs = [];
                         }
-                        param.valuesConfigs = param.valuesConfigs.filter(x=>x.values && x.values.length > 0);
-                        paramMaterialValues?.forEach(val => {
-                          const existsValue = param.valuesConfigs.find(x=>x.values && x.values.length > 0 &&  x.values[0] === val.valueId);
-                          if(!existsValue){
+                        param.valuesConfigs = param.valuesConfigs.filter(
+                          (x) => x.values && x.values.length > 0
+                        );
+                        paramMaterialValues?.forEach((val) => {
+                          const existsValue = param.valuesConfigs.find(
+                            (x) =>
+                              x.values &&
+                              x.values.length > 0 &&
+                              x.values[0] === val.valueId
+                          );
+                          if (!existsValue) {
                             param.valuesConfigs.push({
-                              id:val.valueId,
-                              activateAction:false,
+                              id: val.valueId,
+                              activateAction: false,
                               isDefault: false,
                               isDeleted: false,
                               isHidden: false,
                               materialValueIds: null,
                               selectedParameterValues: null,
-                              updateName:val.value,
-                              values:[val.valueId]
-                            })
-                          }else{
+                              updateName: val.value,
+                              values: [val.valueId],
+                            });
+                          } else {
                             existsValue.id = val.valueId;
                             existsValue.updateName = val.value;
                           }
-                          
-                        })
+                        });
                       }
                     }
                   });
                 }
-               
               }
               if (parameter?.parameterType === EParameterTypes.SWITCH) {
                 parameter.isRequired = false;
@@ -682,7 +775,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     setCanCalculation(false);
-    setCurrentProductItemValueTotalPrice(null)
+    setCurrentProductItemValueTotalPrice(null);
     setWorkFlows([]);
     setJobActions([]);
     setSubProducts([]);
@@ -728,7 +821,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       };
       setCurrentProductItemValue(productItemValue);
     }
-  }, [subProducts, selectedWorkFlow,currentProductItemValueTotalPrice]);
+  }, [subProducts, selectedWorkFlow, currentProductItemValueTotalPrice]);
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
@@ -847,21 +940,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
     } else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
       Comp = (
-          <DropDownListParameterWidget
-              parameter={parameter}
-              clasess={clasess}
-              index={index}
-              temp={temp}
-              onChangeSubProductsForPrice={onChangeSubProductsForPrice}
-              subSection={subSection}
-              section={section}
-              selectedValueConfig={selectedValueConfig}
-              inModal={inModal}
-              setSelectedValueConfig={setSelectedValueConfig}
-              onOpeneMultiParameterModal={onOpeneMultiParameterModal}
-              subSectionParameters={subSectionParameters}
-              list={list}
-          />
+        <DropDownListParameterWidget
+          parameter={parameter}
+          clasess={clasess}
+          index={index}
+          temp={temp}
+          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+          subSection={subSection}
+          section={section}
+          selectedValueConfig={selectedValueConfig}
+          inModal={inModal}
+          setSelectedValueConfig={setSelectedValueConfig}
+          onOpeneMultiParameterModal={onOpeneMultiParameterModal}
+          subSectionParameters={subSectionParameters}
+          list={list}
+        />
       );
     }
 
@@ -1001,7 +1094,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         temp[findIndex] = {
           ...temp[findIndex],
           values: [data.values],
-          valueIds: [data.valueIds],
+          valueIds: data.valueIds && data.valueIds.length >0 && data.valueIds[0] ? [data.valueIds] : null,
         };
       } else {
         temp.push({
@@ -1012,7 +1105,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           parameterName: parameterName,
           actionId: actionId,
           values: [data.values],
-          valueIds: [data.valueIds],
+          valueIds: data.valueIds && data.valueIds.length >0 && data.valueIds[0] ? [data.valueIds] : null,
           actionIndex,
         });
       }
@@ -1039,35 +1132,54 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const parameterValue = subSectionParameter.valuesConfigs.find(
           (x) => x.id === data.valueIds
         );
-        if(subSectionParameter.materialPath && subSectionParameter.materialPath.length > 0 ){
-            const materialPath = subSectionParameter.materialPath[subSectionParameter.materialPath.length - 1];
-            const materialRelatedParameters = subSection.parameters.filter(x => x.id !== subSectionParameter.id && x.actionIndex === actionIndex && x.materialPath?.find(y=> compareStrings(y,materialPath)))
-            materialRelatedParameters?.forEach(param => {
-               if(param.materialPath && param.materialPath.length > 0){
-                 const index = param.materialPath.findIndex(x=> compareStrings(x,materialPath));
-                 if(index != -1 && index < (param.materialPath.length - 1)){
-                    const materialData = allMaterials.find(x => compareStrings(x.pathName,materialPath))?.data;
-                    const paramMaterialValues = materialData.find(x=> parameterValue?.values?.find(y=> y === x.valueId))?.data;
-                    param.valuesConfigs = [];
-                    paramMaterialValues?.forEach(val => {
-                      param.valuesConfigs.push({
-                        id:val.valueId,
-                        activateAction:false,
-                        isDefault: false,
-                        isDeleted: false,
-                        isHidden: false,
-                        materialValueIds: null,
-                        selectedParameterValues: null,
-                        updateName:val.value,
-                        values:[val.valueId]
-                      })
-                    });
-                    param.valuesConfigs = param.valuesConfigs.filter(x=>x.values && x.values.length > 0);
-                 }
-               }
-            });
+        if (
+          subSectionParameter.materialPath &&
+          subSectionParameter.materialPath.length > 0
+        ) {
+          const materialPath =
+            subSectionParameter.materialPath[
+              subSectionParameter.materialPath.length - 1
+            ];
+          const materialRelatedParameters = subSection.parameters.filter(
+            (x) =>
+              x.id !== subSectionParameter.id &&
+              x.actionIndex === actionIndex &&
+              x.materialPath?.find((y) => compareStrings(y, materialPath))
+          );
+          materialRelatedParameters?.forEach((param) => {
+            if (param.materialPath && param.materialPath.length > 0) {
+              const index = param.materialPath.findIndex((x) =>
+                compareStrings(x, materialPath)
+              );
+              if (index != -1 && index < param.materialPath.length - 1) {
+                const materialData = allMaterials.find((x) =>
+                  compareStrings(x.pathName, materialPath)
+                )?.data;
+                const paramMaterialValues = materialData.find((x) =>
+                  parameterValue?.values?.find((y) => y === x.valueId)
+                )?.data;
+                param.valuesConfigs = [];
+                paramMaterialValues?.forEach((val) => {
+                  param.valuesConfigs.push({
+                    id: val.valueId,
+                    activateAction: false,
+                    isDefault: false,
+                    isDeleted: false,
+                    isHidden: false,
+                    materialValueIds: null,
+                    selectedParameterValues: null,
+                    updateName: val.value,
+                    values: [val.valueId],
+                  });
+                });
+                param.valuesConfigs = param.valuesConfigs.filter(
+                  (x) => x.values && x.values.length > 0
+                );
+              }
+            }
+          });
         }
-        setProductTemplate(productTemplateCopy)
+        setProductTemplate(productTemplateCopy);
         if (
           parameterValue &&
           parameterValue.selectedParameterValues &&
@@ -1086,7 +1198,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameterName: param.name,
                 actionId: param.actionId,
                 values: selectedParam.valueIds,
-                valueIds: selectedParam.valueIds,
+                valueIds: selectedParam.valueIds && selectedParam.valueIds.length >0 && selectedParam.valueIds[0] ? [selectedParam.valueIds] : null ,
                 actionIndex,
               });
             }
@@ -1144,7 +1256,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const handleTabClick = (index: number) => {
     if (index !== activeIndex) {
       setActiveIndex(index);
-      setCanCalculation(false)
+      setCanCalculation(false);
     }
   };
   const handleNextClick = () => {
@@ -1159,103 +1271,133 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
 
   const onClickProductionTab = () => {
-    setActiveTab("Production");
+    setActiveTab(t("quality.production"));
   };
   const onClickGraphicDesignTab = () => {
-    setActiveTab("Graphic design");
+    setActiveTab(t("products.offsetPrice.admin.graphicDesign"));
   };
   const tabs = [
     {
-      name: "Production",
+      name: t("quality.production"),
       onclick: () => onClickProductionTab,
     },
     {
-      name: "Graphic design",
+      name: t("products.offsetPrice.admin.graphicDesign"),
       onclick: () => onClickGraphicDesignTab,
     },
   ];
-  
-    
- 
-  const getProductById = async (materials)=>{
-    await getAndSetProductById(callApi, (data) => {
-      setDefaultProductTemplate(data);
-      initProduct(data,materials);
-    }, {
-      Id: router?.query?.productId,
-    });
-  }
+
+  const getProductById = async (materials) => {
+    await getAndSetProductById(
+      callApi,
+      (data) => {
+        setDefaultProductTemplate(data);
+        initProduct(data, materials);
+      },
+      {
+        Id: router?.query?.productId,
+      }
+    );
+  };
   const getProductQuoteItemById = async (materials) => {
     const callBack = (res) => {
       if (res?.success) {
         setDefaultProductTemplate(res?.data);
         //initProduct(res?.data);
-        initQuoteItemProduct(res?.data,materials);
-
+        initQuoteItemProduct(res?.data, materials);
       } else {
         alertFaultUpdate();
       }
-    }
-    await getProductByItemIdApi(callApi, callBack, { documentItemId: router?.query?.documentItemId, documentType: router?.query?.documentType })
-  }
+    };
+    await getProductByItemIdApi(callApi, callBack, {
+      documentItemId: router?.query?.documentItemId,
+      documentType: router?.query?.documentType,
+    });
+  };
 
-  const initQuoteItemProduct = (quoteItemProduct,materials) => {
-    if (quoteItemProduct && quoteItemProduct.productItemValue && quoteItemProduct.productItemValue.itemParmetersValues) {
+  const initQuoteItemProduct = (quoteItemProduct, materials) => {
+    if (
+      quoteItemProduct &&
+      quoteItemProduct.productItemValue &&
+      quoteItemProduct.productItemValue.itemParmetersValues
+    ) {
       //setItemParmetersValues(quoteItemProduct.productItemValue.itemParmetersValues);
-      const quoteItemSubProducts = []
-      quoteItemProduct.productItemValue.itemParmetersValues.forEach(itemParmetersValue => {
-        const section = quoteItemProduct?.sections?.find(x => x.id === itemParmetersValue?.sectionId)
-        const subSection = section?.subSections?.find(x => x.id === itemParmetersValue?.subSectionId);
-        let parameter = subSection.parameters.find(x => x.id === itemParmetersValue.parameterId)
-        if(parameter && parameter.valuesConfigs && parameter.valuesConfigs){
-          parameter?.valuesConfigs?.forEach(x=>{
-              if(x.materialValueIds && x.materialValueIds.length > 0){
-                x.values = x.materialValueIds.map(val => val.valueId);
+      const quoteItemSubProducts = [];
+      quoteItemProduct.productItemValue.itemParmetersValues.forEach(
+        (itemParmetersValue) => {
+          const section = quoteItemProduct?.sections?.find(
+            (x) => x.id === itemParmetersValue?.sectionId
+          );
+          const subSection = section?.subSections?.find(
+            (x) => x.id === itemParmetersValue?.subSectionId
+          );
+          let parameter = subSection.parameters.find(
+            (x) => x.id === itemParmetersValue.parameterId
+          );
+          if (parameter && parameter.valuesConfigs && parameter.valuesConfigs) {
+            parameter?.valuesConfigs?.forEach((x) => {
+              if (x.materialValueIds && x.materialValueIds.length > 0) {
+                x.values = x.materialValueIds.map((val) => val.valueId);
               }
-          });
-        }
-        if (!parameter && subSection.parameters && subSection.parameters.length > 0) {
-          const parentParameter = subSection.parameters.find(x => x.settingParameters?.some(y => y.id === itemParmetersValue.parameterId));
-          parameter = parentParameter?.settingParameters?.find(x => x.id === itemParmetersValue.parameterId);
-        }
-        const type = itemParmetersValue.subProductType ?? "";
-        const exitsSubProduct = quoteItemSubProducts.find(x => x.type === type)
-        const newSubProductParameter = {
-          parameterId: itemParmetersValue.parameterId,
-          parameterName: parameter?.name,
-          actionId: parameter?.actionId,
-          ParameterType: parameter?.parameterType,
-          values: itemParmetersValue.values,
-          valueIds: itemParmetersValue.valueIds,
-          sectionId: itemParmetersValue?.sectionId,
-          subSectionId: itemParmetersValue?.subSectionId,
-          actionIndex: itemParmetersValue?.actionIndex,
-        };
-        if (exitsSubProduct) {
-          exitsSubProduct.parameters.push(newSubProductParameter)
-        } else {
-          const newSubProduct = {
-            type: type,
-            parameters: [newSubProductParameter],
-            sectionId: itemParmetersValue.sectionId,
-            sectionName: "",
+            });
+          }
+          if (
+            !parameter &&
+            subSection.parameters &&
+            subSection.parameters.length > 0
+          ) {
+            const parentParameter = subSection.parameters.find((x) =>
+              x.settingParameters?.some(
+                (y) => y.id === itemParmetersValue.parameterId
+              )
+            );
+            parameter = parentParameter?.settingParameters?.find(
+              (x) => x.id === itemParmetersValue.parameterId
+            );
+          }
+          const type = itemParmetersValue.subProductType ?? "";
+          const exitsSubProduct = quoteItemSubProducts.find(
+            (x) => x.type === type
+          );
+          const newSubProductParameter = {
+            parameterId: itemParmetersValue.parameterId,
+            parameterName: parameter?.name,
+            actionId: parameter?.actionId,
+            ParameterType: parameter?.parameterType,
+            values: itemParmetersValue.values,
+            valueIds: itemParmetersValue.valueIds,
+            sectionId: itemParmetersValue?.sectionId,
+            subSectionId: itemParmetersValue?.subSectionId,
+            actionIndex: itemParmetersValue?.actionIndex,
           };
-          quoteItemSubProducts.push(newSubProduct)
+          if (exitsSubProduct) {
+            exitsSubProduct.parameters.push(newSubProductParameter);
+          } else {
+            const newSubProduct = {
+              type: type,
+              parameters: [newSubProductParameter],
+              sectionId: itemParmetersValue.sectionId,
+              sectionName: "",
+            };
+            quoteItemSubProducts.push(newSubProduct);
+          }
         }
-      })
-      setCurrentProductItemValueTotalPrice(quoteItemProduct.quoteItem.finalPrice)
-      setCurrentProductItemValue(quoteItemProduct.productItemValue)
-      setWorkFlows(quoteItemProduct.productItemValue.workFlows)
-      setJobActions(quoteItemProduct.productItemValue.actions)
-      setSubProducts(quoteItemSubProducts)
-      setSubProductsCopy(quoteItemSubProducts)
+      );
+      setCurrentProductItemValueTotalPrice(
+        quoteItemProduct.quoteItem.finalPrice
+      );
+      setCurrentProductItemValue(quoteItemProduct.productItemValue);
+      setWorkFlows(quoteItemProduct.productItemValue.workFlows);
+      setJobActions(quoteItemProduct.productItemValue.actions);
+      setSubProducts(quoteItemSubProducts);
+      setSubProductsCopy(quoteItemSubProducts);
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
       });
     }
-    initProduct(quoteItemProduct,materials);
-  }
+    initProduct(quoteItemProduct, materials);
+  };
 
   const validateParameters = (inputArray) => {
     let isValid = true;
@@ -1277,9 +1419,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       requestAbortController.abort();
     }
     setWorkFlows([]);
-    setCurrentProductItemValueTotalPrice(null)
+    setCurrentProductItemValueTotalPrice(null);
     setJobActions([]);
-    setIsCalculationFinished(false)
+    setIsCalculationFinished(false);
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
@@ -1307,24 +1449,31 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         false,
         newRequestAbortController
       );
-      setIsCalculationFinished(true)
+      setIsCalculationFinished(true);
       if (res?.success) {
         setPricingDefaultValue(res?.data?.data?.data);
         const workFlows = res?.data?.data?.data?.workFlows;
         if (workFlows && workFlows.length > 0) {
-          const workFlow = res?.data?.data?.data?.workFlows.find(x => x.selected);
+          const workFlow = res?.data?.data?.data?.workFlows.find(
+            (x) => x.selected
+          );
           const currentWorkFlows = cloneDeep(workFlows);
-          const isExits = currentWorkFlows.find(x => x.id === workFlow.id);
+          const isExits = currentWorkFlows.find((x) => x.id === workFlow.id);
           if (!isExits) {
-            currentWorkFlows.push(workFlow)
+            currentWorkFlows.push(workFlow);
           }
           if (isExits && !isExits.selected) {
-            currentWorkFlows.forEach(x => x.selected = false);
+            currentWorkFlows.forEach((x) => (x.selected = false));
             isExits.selected = true;
           }
-          setCurrentProductItemValueTotalPrice(parseFloat(workFlow?.totalPrice?.values[0]))
+          setCurrentProductItemValueTotalPrice(
+            parseFloat(workFlow?.totalPrice?.values[0])
+          );
           currentWorkFlows.sort((a, b) => b.monials - a.monials);
-          setCalculationProgress({ totalWorkFlowsCount: 0, currentWorkFlowsCount: 0 });
+          setCalculationProgress({
+            totalWorkFlowsCount: 0,
+            currentWorkFlowsCount: 0,
+          });
           // setWorkFlows(currentWorkFlows);
         }
         setJobActions(res?.data?.data?.data?.actions);
@@ -1348,9 +1497,22 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }).then();
   };
 
+  const getCurrenciesApi = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        setCurrencies(
+          res.data.map(({ value, text }) => ({ label: text, value }))
+        );
+      }
+    };
+    await getCurrencies(callApi, callBack);
+  };
+  useEffect(() => {
+    getCurrenciesApi().then();
+  }, []);
   const PricingTab = {
     id: "c66465de-95d6-4ea3-bd3f-7efe60f4cb0555",
-    name: "Pricing",
+    name: t("products.offsetPrice.admin.Pricing"),
     icon: "pricing",
     jobDetails: pricingDefaultValue?.jobDetails,
     actions: pricingDefaultValue?.actions,
@@ -1389,19 +1551,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [subProducts]);
 
-
   const addItemForQuotes = async () => {
     const docType = router?.query?.documentType ?? "0";
     const callBack = (res) => {
       if (res?.success) {
-        docType === "0" ? navigate("/quote") : navigate(`/order/Id=${router?.query?.documentId}`);
+        docType === "0"
+          ? navigate("/quote")
+          : navigate(`/order/Id=${router?.query?.documentId}`);
       } else {
         alertFaultAdded();
       }
-    }
-    
-    await addItemApi(callApi, callBack, { item: currentProductItemValue, documentType: docType })
-  }
+    };
+
+    await addItemApi(callApi, callBack, {
+      item: currentProductItemValue,
+      documentType: docType,
+    });
+  };
 
   /*useEffect(() => {
     if (
@@ -1427,34 +1593,34 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const updateQuoteItem = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        router?.query?.documentType == "0" ? navigate("/quote") : navigate(`/order/Id=${router?.query?.documentId}`);
+        router?.query?.documentType == "0"
+          ? navigate("/quote")
+          : navigate(`/order/Id=${router?.query?.documentId}`);
         setWorkFlows([]);
         setJobActions([]);
       } else {
         alertFaultUpdate();
       }
-    }
-    await updateDocumentItemApi(callApi, callBack,
-      {
-        Item:
-        {
-          productItemValueId: productItemValueDraftId,
-          itemId: router?.query?.documentItemId,
-          productId: router?.query?.productId,
-          supplierId: "",
-          customerID: router?.query?.customerId,
-          unitPrice: +currentProductItemValueTotalPrice / +quantity?.values[0],
-          amount: quantity?.values[0],
-          isNeedGraphics: false,
-          isUrgentWork: urgentOrder,
-          printingNotes,
-          graphicNotes,
-          isNeedExample: false,
-          isDuplicatedWithAnotherQuantity: false,
-        },
-        DocumentType: router?.query?.documentType
-      })
-  }
+    };
+    await updateDocumentItemApi(callApi, callBack, {
+      Item: {
+        productItemValueId: productItemValueDraftId,
+        itemId: router?.query?.documentItemId,
+        productId: router?.query?.productId,
+        supplierId: "",
+        customerID: router?.query?.customerId,
+        unitPrice: +currentProductItemValueTotalPrice / +quantity?.values[0],
+        amount: quantity?.values[0],
+        isNeedGraphics: false,
+        isUrgentWork: urgentOrder,
+        printingNotes,
+        graphicNotes,
+        isNeedExample: false,
+        isDuplicatedWithAnotherQuantity: false,
+      },
+      DocumentType: router?.query?.documentType,
+    });
+  };
 
   const navigateForRouter = () => {
     let checkParameter = validateParameters(isRequiredParameters);
@@ -1528,6 +1694,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     workFlows,
     jobDetails,
     jobActions,
+    includeVAT,
+    setIncludeVAT,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
   };

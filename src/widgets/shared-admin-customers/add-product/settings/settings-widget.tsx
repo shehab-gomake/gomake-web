@@ -53,83 +53,85 @@ const SettingsWidget = ({
     (item) => item.id === productState?.templateId
   );
   const _renderProductClientSelector = () => {
-    if (SelectproductClient?.id === EProductClient.BY_CLIENT) {
-      return (
-        <div style={clasess.itemGropupsContainer}>
-          <div style={clasess.labelTitleStyle}>
-            {t("products.addProduct.admin.byClient")}
+    if (customersList?.length > 0 && clientTypesList?.length) {
+      if (productState?.pricingType === EProductClient.BY_CLIENT) {
+        return (
+          <div style={clasess.itemGropupsContainer}>
+            <div style={clasess.labelTitleStyle}>
+              {t("products.addProduct.admin.byClient")}
+            </div>
+            <div style={{ width: "100%" }}>
+              <GoMakeAutoComplate
+                options={customersList?.map((item) => {
+                  return {
+                    ...item,
+                    label: item?.name,
+                    id: item.id,
+                  };
+                })}
+                placeholder={t("products.addProduct.admin.byClient")}
+                style={clasess.multiSelectStyle}
+                multiple
+                onChange={(e: any, value: any) => {
+                  onChangeStateProduct(
+                    "clients",
+                    value?.map((item: any) => item?.id)
+                  );
+                }}
+                value={productState?.clients?.map((item: any) => {
+                  const customer = customersList?.find(
+                    (customer: any) => customer?.id === item
+                  );
+                  return {
+                    label: customer?.name,
+                    id: customer?.id,
+                  };
+                })}
+              />
+            </div>
           </div>
-          <div style={{ width: "100%" }}>
-            <GoMakeAutoComplate
-              options={customersList.map((item) => {
-                return {
-                  ...item,
-                  label: item?.name,
-                  id: item.id,
-                };
-              })}
-              placeholder={t("products.addProduct.admin.byClient")}
-              style={clasess.multiSelectStyle}
-              multiple
-              onChange={(e: any, value: any) => {
-                onChangeStateProduct(
-                  "clients",
-                  value?.map((item: any) => item?.id)
-                );
-              }}
-              value={productState?.clients?.map((item: any) => {
-                const customer = customersList?.find(
-                  (customer: any) => customer?.id === item
-                );
-                return {
-                  label: customer?.name,
-                  id: customer?.id,
-                };
-              })}
-            />
+        );
+      } else if (productState?.pricingType === EProductClient.BY_CLIENT_TYPE) {
+        return (
+          <div style={clasess.itemGropupsContainer}>
+            <div style={clasess.labelTitleStyle}>
+              {t("products.addProduct.admin.byClientType")}
+            </div>
+            <div style={{ width: "100%" }}>
+              <GoMakeAutoComplate
+                key={SelectproductClient?.id}
+                options={clientTypesList.map((item) => {
+                  return {
+                    ...item,
+                    label: item?.name,
+                    id: item.id,
+                  };
+                })}
+                placeholder={t("products.addProduct.admin.byClientType")}
+                style={clasess.multiSelectStyle}
+                multiple
+                onChange={(e: any, value: any) => {
+                  onChangeStateProduct(
+                    "clientsTypes",
+                    value?.map((item: any) => item?.id)
+                  );
+                }}
+                value={productState?.clientsTypes?.map((item: any) => {
+                  const clientType = clientTypesList?.find(
+                    (clientType: any) => clientType?.id === item
+                  );
+                  return {
+                    label: clientType?.name,
+                    id: clientType?.id,
+                  };
+                })}
+              />
+            </div>
           </div>
-        </div>
-      );
-    } else if (SelectproductClient?.id === EProductClient.BY_CLIENT_TYPE) {
-      return (
-        <div style={clasess.itemGropupsContainer}>
-          <div style={clasess.labelTitleStyle}>
-            {t("products.addProduct.admin.byClientType")}
-          </div>
-          <div style={{ width: "100%" }}>
-            <GoMakeAutoComplate
-              key={SelectproductClient?.id}
-              options={clientTypesList.map((item) => {
-                return {
-                  ...item,
-                  label: item?.name,
-                  id: item.id,
-                };
-              })}
-              placeholder={t("products.addProduct.admin.byClientType")}
-              style={clasess.multiSelectStyle}
-              multiple
-              onChange={(e: any, value: any) => {
-                onChangeStateProduct(
-                  "clientsTypes",
-                  value?.map((item: any) => item?.id)
-                );
-              }}
-              value={productState?.clientsTypes?.map((item: any) => {
-                const clientType = clientTypesList?.find(
-                  (clientType: any) => clientType?.id === item
-                );
-                return {
-                  label: clientType?.name,
-                  id: clientType?.id,
-                };
-              })}
-            />
-          </div>
-        </div>
-      );
-    } else {
-      return null;
+        );
+      } else {
+        return null;
+      }
     }
   };
 
@@ -190,7 +192,6 @@ const SettingsWidget = ({
                     ? defultProductSKU
                     : productState.productSKU
                 }
-                // defaultValue={defultProductSKU}
                 onChange={(e: any, value: any) => {
                   onChangeStateProduct("productSKUId", value);
                 }}
@@ -300,12 +301,14 @@ const SettingsWidget = ({
               options={productClientsList}
               placeholder={t("products.addProduct.admin.pricingType")}
               style={clasess.dropDownListStyle}
-              value={SelectproductClient}
               onChange={(e: any, value: any) => {
-                setSelectProductClient(value);
+                onChangeStateProduct("pricingType", value.id);
                 onChangeStateProduct("clientsTypes", []);
                 onChangeStateProduct("clients", []);
               }}
+              value={productClientsList.find(
+                (item) => item.id === productState?.pricingType
+              )}
             />
           </div>
         </div>
