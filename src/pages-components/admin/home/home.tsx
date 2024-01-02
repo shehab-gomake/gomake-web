@@ -1,28 +1,20 @@
-import { useTranslation } from "react-i18next";
 import { QuoteWidget } from "./widgets/quote-widget/quote-widget";
 import { useStyle } from "./style";
-import { useRecoilValue } from "recoil";
-import { QuoteNumberState } from "@/pages-components/quote/store/quote";
 import { QuoteTableWidget } from "./widgets/quote-table-widget/quote-table-widget";
+import { useHome } from "./use-home";
 
 const HomePageComponentForAdmin = ({ isAdmin }) => {
-  const { t } = useTranslation();
   const { classes } = useStyle();
-  const quoteNumber = useRecoilValue<any>(QuoteNumberState);
+  const { Title } = useHome();
 
   return (
     <div style={classes.mainContainer}>
-      <div style={classes.titleStyle}>
-        {quoteNumber
-          ? t("remainWords.AddItemtoQuote") + " " + quoteNumber
-          : t("remainWords.newQuote")}
-      </div>
       <div style={classes.firstRowContainer}>
+        <div style={classes.titleStyle}>{Title} </div>
         <QuoteWidget isAdmin={isAdmin} />
-        {/* <ChartWidget /> */}
       </div>
       <div style={classes.secondRowContainer}>
-        {/* <div style={classes.titleStyle}>{t("home.quoteOutput")}</div> */}
+        <div style={classes.titleStyle}>Quote output</div>
         <QuoteTableWidget isAdmin={isAdmin} />
       </div>
     </div>
