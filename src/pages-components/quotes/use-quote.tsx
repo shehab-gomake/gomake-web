@@ -132,7 +132,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickOpenLogsModal(quote?.quoteNumber)}
+            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
           />,
         ]);
         setAllQuotes(mapData);
@@ -172,7 +172,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickOpenLogsModal(quote?.quoteNumber)}
+            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
           />,
         ]);
         setAllQuotes(mapData);

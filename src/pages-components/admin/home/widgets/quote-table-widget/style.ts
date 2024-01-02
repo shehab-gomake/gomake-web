@@ -35,7 +35,7 @@ const useStyle = () => {
         alignItems: "center",
         justifyContent: "center",
         width: "98.47px",
-        height: "26px",
+        height: "fit-content",
         padding: "4px, 12px, 4px, 12px",
         borderRadius: "4px",
         gap: "10px",

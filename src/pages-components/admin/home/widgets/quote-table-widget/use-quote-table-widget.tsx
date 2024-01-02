@@ -3,10 +3,16 @@ import { useStyle } from "./style";
 import { MoreMenuWidget } from "../more-circle";
 import { ITab } from "@/components/tabs/interface";
 import { PrimaryTable } from "@/components/tables/primary-table";
+import { useEffect, useState } from "react";
+import { getAllDocumentsApi } from "@/services/api-service/generic-doc/documents-api";
+import { useGomakeAxios } from "@/hooks";
+import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
+import { useQuoteWidget } from "../quote-widget/use-quote-widget";
 
 const useQuoteTableWidget = () => {
     const { t } = useTranslation();
     const { classes } = useStyle();
+    const { callApi } = useGomakeAxios();
 
     const tabLabels = [
         t('home.tabs.Quotes'),
@@ -18,7 +24,7 @@ const useQuoteTableWidget = () => {
     ];
 
     const tableHeaders = [
-        t("home.headers.offerNumber"),
+        t("home.headers.documentNumber"),
         t("home.headers.clientType"),
         t("home.headers.jobName"),
         t("home.headers.productDate"),
@@ -67,6 +73,51 @@ const useQuoteTableWidget = () => {
         ['10100679', 'Tester 1', 'US006_CheckPrinting', '02-23-2023 at 10:07pm', 'NIS 9,822', <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.closeBtnStyle}>closed</h2></div>, 'Get a signed', <MoreMenuWidget></MoreMenuWidget>],
         ['10100689', 'Tester 2', 'US006_CheckPrinting', '02-23-2023 at 10:07pm', 'NIS 9,822', <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.closeBtnStyle}>closed</h2></div>, 'Get a signed', <MoreMenuWidget></MoreMenuWidget>]
     ];
+
+    const [allDocuments, setAllDocuments] = useState([]);
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const { getCurrencyUnitText } = useQuoteGetData();
+    const {selectedClient , userQuote , getAndSetExistQuote} = useQuoteWidget();
+
+    const getAllQuotes = async (docType) => {
+        const callBack = (res) => {
+          if (res?.success) {
+            const data = res?.data?.data;
+            const mapData = data?.map((document: any) => [
+             // GetDateFormat(quote?.createdDate),
+              document?.number,
+              document?.clientType,
+              document?.worksNames,
+              document?.totalPrice + " " + getCurrencyUnitText(document?.currency),
+              document?.notes,
+              "open",
+              <MoreMenuWidget
+                // document={document}
+                // documentType={docType}
+                // onClickDuplicate={onClickQuoteDuplicate}
+                // onClickLoggers={() => onClickOpenLogsModal(document?.number)}
+              />,
+            ]);
+            setAllDocuments(mapData);
+          }
+        };
+        await getAllDocumentsApi(callApi, callBack, {documentType: docType,  data: {
+            model: {
+              pageNumber: page,
+              pageSize: limit,
+            },
+            customerId: selectedClient,
+          }}); 
+      };
+    
+
+      useEffect(() => {
+        getAllQuotes(0);
+        console.log("heeeeeeeeeeeeeeeeee " , selectedClient)
+    }, []);
+
+
 
     const tabs: ITab[] = [
         {
