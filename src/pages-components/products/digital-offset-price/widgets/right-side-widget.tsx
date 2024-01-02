@@ -288,7 +288,7 @@ const RightSideWidget = ({
               );
             })}
           </div>
-          {activeTab === "Production" ? (
+          {activeTab === t("quality.production") ? (
             <div style={clasess.productionStatus}>
               <div style={clasess.sampleTypeStyle}>
                 {t("products.offsetPrice.admin.sampleType")}
@@ -310,7 +310,9 @@ const RightSideWidget = ({
                     setPrintingNotes(e.target.value);
                   }}
                   value={printingNotes}
-                  placeholder="Production comment"
+                  placeholder={t(
+                    "products.offsetPrice.admin.productionComment"
+                  )}
                 />
               </div>
             </div>
@@ -324,7 +326,9 @@ const RightSideWidget = ({
                   }}
                   value={graphicNotes}
                   style={clasess.multiLineTextInputStyle}
-                  placeholder="Graphic design comment"
+                  placeholder={t(
+                    "products.offsetPrice.admin.graphicDesignComment"
+                  )}
                 />
               </div>
             </div>

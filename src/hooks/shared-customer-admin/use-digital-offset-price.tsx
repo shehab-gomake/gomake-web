@@ -99,7 +99,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
   const [expanded, setExpanded] = useState<string | false>("");
   const [activeIndex, setActiveIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState("Production");
+  const [activeTab, setActiveTab] = useState(t("quality.production"));
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
   const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
@@ -1240,18 +1240,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
 
   const onClickProductionTab = () => {
-    setActiveTab("Production");
+    setActiveTab(t("quality.production"));
   };
   const onClickGraphicDesignTab = () => {
-    setActiveTab("Graphic design");
+    setActiveTab(t("products.offsetPrice.admin.graphicDesign"));
   };
   const tabs = [
     {
-      name: "Production",
+      name: t("quality.production"),
       onclick: () => onClickProductionTab,
     },
     {
-      name: "Graphic design",
+      name: t("products.offsetPrice.admin.graphicDesign"),
       onclick: () => onClickGraphicDesignTab,
     },
   ];
@@ -1468,7 +1468,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const PricingTab = {
     id: "c66465de-95d6-4ea3-bd3f-7efe60f4cb0555",
-    name: "Pricing",
+    name: t("products.offsetPrice.admin.Pricing"),
     icon: "pricing",
     jobDetails: pricingDefaultValue?.jobDetails,
     actions: pricingDefaultValue?.actions,

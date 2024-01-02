@@ -5,9 +5,10 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { adaptPaddingLeft } from "@/utils/adapter";
+import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
+  const direction = t("direction");
   const { primaryColor, secondColor, errorColor, neutralColor } =
     useGomakeTheme();
 
@@ -19,7 +20,8 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        paddingLeft: 20,
+        ...adaptPaddingRight(direction, 20),
+        // paddingLeft: 20,
       },
       mainRowContainer: {
         display: "flex",
@@ -592,7 +594,7 @@ const useStyle = () => {
         cursor: "pointer",
       },
     };
-  }, [i18next.language, t]);
+  }, [i18next.language, t, direction]);
   return {
     clasess,
   };
