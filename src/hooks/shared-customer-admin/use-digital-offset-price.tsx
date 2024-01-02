@@ -97,7 +97,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
   const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
-  const [expanded, setExpanded] = useState<string | false>("panel_0");
+  const [expanded, setExpanded] = useState<string | false>("");
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("Production");
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();

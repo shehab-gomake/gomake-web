@@ -314,7 +314,7 @@ const useStyle = () => {
       totalContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "flex-start",
+        justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
         marginBottom: 8,

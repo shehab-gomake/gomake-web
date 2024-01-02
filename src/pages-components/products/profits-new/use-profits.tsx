@@ -89,6 +89,7 @@ const useNewProfits = () => {
       label: "",
       value: 0,
     });
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [allActionProfitRowsByActionId, setAllActionProfitRowsByActionId] =
     useState([]);
@@ -109,6 +110,7 @@ const useNewProfits = () => {
   ]);
   // console.log("selectedPricingTableItems", selectedPricingTableItems);
   const getAllActionProfitRowsByActionId = useCallback(async () => {
+    setIsLoading(true);
     if (actionProfitByActionId?.id) {
       const requestBody: any = {
         actionIdOrProductId: router.query.actionId
@@ -132,6 +134,7 @@ const useNewProfits = () => {
       );
       if (res) {
         getActionProfitRowChartData();
+        setIsLoading(false);
       }
     }
   }, [
@@ -168,7 +171,6 @@ const useNewProfits = () => {
       );
     }
   }, [router]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const getCalculateCaseProfits = useCallback(async () => {
     setIsLoading(true);
     const requestBody: any = {
@@ -186,8 +188,8 @@ const useNewProfits = () => {
       setIsLoading
     );
     if (res) {
-      setIsLoading(false);
       getActionProfitRowChartData();
+      setIsLoading(false);
     }
   }, [router, selectedPricingTableItems]);
   const getProfitsPricingTables = useCallback(async () => {
