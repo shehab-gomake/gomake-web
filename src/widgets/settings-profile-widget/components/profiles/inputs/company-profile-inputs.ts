@@ -35,7 +35,7 @@ const companyProfileInputs = (state: ICompanyProfile, currencies) => {
             parameterKey: "systemCurrency",
             options: currencies.map(currency => ({
                 value: currency.value,
-                text: currency.value
+                text: currency.label
             })),
             // optionsUrl: "/v1/enum/get-enums/currency",
             value: state?.systemCurrency,
