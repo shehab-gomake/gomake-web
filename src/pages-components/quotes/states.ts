@@ -9,3 +9,8 @@ export const employeeListState = atom<string>({
   key: "employeeListState",
   default: "",
 });
+
+export const selectedClientState = atom<any>({
+  key: "selectedClientState",
+  default: [],
+});

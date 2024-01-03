@@ -7,7 +7,7 @@ import { ITabsProps } from "@/components/tabs/interface";
 import Stack from "@mui/material/Stack";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useRecoilState } from "recoil";
-import { selectedTabState } from "./state";
+import { selectedHorizontalTabState } from "./state";
 import { useEffect } from "react";
 import { useStyle } from "./style";
 
@@ -95,20 +95,16 @@ const PrimaryTabsComponent = ({
   variant,
 }: ITabsProps) => {
   const { classes } = useStyle();
-  const [value, setValue] = useRecoilState<number>(selectedTabState);
+  const [value, setValue] = useRecoilState<number>(selectedHorizontalTabState);
   const TabComponent = variant === "ButtonedTabs" ? ButtonTab : UnderlinedTab;
-  const TabsContainer =
-    variant === "ButtonedTabs" ? ButtonTabs : UnderlinedTabs;
-
-  useEffect(() => {
-    setValue(0);
-  }, []);
+  const TabsContainer = variant === "ButtonedTabs" ? ButtonTabs : UnderlinedTabs;
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
 
     if (!!onSelectTab) {
       onSelectTab(newValue);
+
     }
   };
 
