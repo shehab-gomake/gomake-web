@@ -14,6 +14,11 @@ import {
   QuoteNumberState,
 } from "@/pages-components/quote/store/quote";
 import { getIfCartExistApi, saveDocumentApi } from "@/services/api-service/generic-doc/documents-api";
+import { ITab } from "@/components/tabs/interface";
+import { _renderQuoteStatus } from "@/utils/constants";
+import { selectedClientState } from "@/pages-components/quotes/states";
+import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const useQuoteWidget = () => {
   const { t } = useTranslation();
@@ -25,17 +30,14 @@ const useQuoteWidget = () => {
   const [productValue, setProductValues] = useState([]);
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [userQuote, setUserQuote] = useState<any>(null);
-  const [canOrder, setCanOrder] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
-  const [selectedClient, setSelectedClient] = useState<any>({});
-  const [QuoteIfExist, setQuoteIfExist] =
-    useRecoilState<any>(QuoteIfExistState);
+  const [selectedClient, setSelectedClient] = useRecoilState<any>(selectedClientState);
+  const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
   const [quoteNumber, setquoteNumber] = useRecoilState<any>(QuoteNumberState);
-
   const [selectedProduct, setSelectedProduct] = useState<any>({});
-
   const [isDisabled, setIsDisabled] = useState(true);
+
   const onClcikOpenModal = (quoteId: any) => {
     setOpenModal(true);
   };
@@ -200,6 +202,16 @@ const useQuoteWidget = () => {
     }
   }, [callApi, userQuote]);
 
+  const tabs: ITab[] = [
+    {
+      title: t('home.tabs.Quotes'),
+      component: <QuotesListPageWidget documentType={DOCUMENT_TYPE.quote} isFromHomePage={true} />
+    },
+    {
+      title: t('home.tabs.Orders'),
+      component: <QuotesListPageWidget documentType={DOCUMENT_TYPE.order} isFromHomePage={true} />
+    }
+  ];
 
   return {
     clientTypesValue,
@@ -235,7 +247,8 @@ const useQuoteWidget = () => {
     onClcikCreateQuoteForCustomer,
     _renderErrorMessage,
     onClickSaveQuote,
+    tabs,
   };
-};
+}; 
 
 export { useQuoteWidget };
