@@ -2,16 +2,16 @@ import { useQuoteWidget } from "../quote-widget/use-quote-widget";
 import { useStyle } from "./style";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 
-const QuoteTableWidget = ({ isAdmin = true }) => {
+const HomeTableWidget = () => {
 
-    const { tabs , handleTabChange } = useQuoteWidget();
+    const { tabs } = useQuoteWidget();
     const { classes } = useStyle();
-
+    
     return (
         <div style={classes.mainContainer}>
-            <PrimaryTabsComponent tabs={tabs} onSelectTab={handleTabChange} variant="ButtonedTabs" />
+            <PrimaryTabsComponent tabs={tabs} variant="ButtonedTabs" />
         </div>
-    );
+    ); 
 };
 
-export { QuoteTableWidget };
+export { HomeTableWidget };

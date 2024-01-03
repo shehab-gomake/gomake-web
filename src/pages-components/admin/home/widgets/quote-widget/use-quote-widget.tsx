@@ -13,15 +13,12 @@ import {
   QuoteIfExistState,
   QuoteNumberState,
 } from "@/pages-components/quote/store/quote";
-import { getAllDocumentsApi, getIfCartExistApi, saveDocumentApi } from "@/services/api-service/generic-doc/documents-api";
-import { PrimaryTable } from "@/components/tables/primary-table";
-import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
-import { MoreMenuWidget } from "../more-circle";
-import { useStyle } from "../quote-table-widget/style";
+import { getIfCartExistApi, saveDocumentApi } from "@/services/api-service/generic-doc/documents-api";
 import { ITab } from "@/components/tabs/interface";
-import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
 import { selectedClientState } from "@/pages-components/quotes/states";
+import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const useQuoteWidget = () => {
   const { t } = useTranslation();
@@ -33,7 +30,6 @@ const useQuoteWidget = () => {
   const [productValue, setProductValues] = useState([]);
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [userQuote, setUserQuote] = useState<any>(null);
-  const [canOrder, setCanOrder] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
   const [selectedClient, setSelectedClient] = useRecoilState<any>(selectedClientState);
@@ -41,12 +37,6 @@ const useQuoteWidget = () => {
   const [quoteNumber, setquoteNumber] = useRecoilState<any>(QuoteNumberState);
   const [selectedProduct, setSelectedProduct] = useState<any>({});
   const [isDisabled, setIsDisabled] = useState(true);
-  const { classes } = useStyle();
-  const [allDocuments, setAllDocuments] = useState([]);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const { getCurrencyUnitText } = useQuoteGetData();
-  const { GetDateFormat } = useDateFormat();
 
   const onClcikOpenModal = (quoteId: any) => {
     setOpenModal(true);
@@ -212,102 +202,15 @@ const useQuoteWidget = () => {
     }
   }, [callApi, userQuote]);
 
-
-  const tableHeaders = [
-      t("home.headers.documentNumber"),
-      t("home.headers.clientType"),
-      t("home.headers.jobName"),
-      t("home.headers.productDate"),
-      t("home.headers.finalPrice"),
-      t("home.headers.status"),
-      t("home.headers.remark"),
-      t("home.headers.more")
-  ];
-
-  const testRows = [
-      ['10100669', 'Tester 3', 'US006_CheckPrinting', '02-23-2023 at 10:07pm', 'NIS 9,822', <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.closeBtnStyle}>closed</h2></div>, 'Get a signed', <MoreMenuWidget></MoreMenuWidget>],
-      ['10100679', 'Tester 1', 'US006_CheckPrinting', '02-23-2023 at 10:07pm', 'NIS 9,822', <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.closeBtnStyle}>closed</h2></div>, 'Get a signed', <MoreMenuWidget></MoreMenuWidget>],
-      ['10100689', 'Tester 2', 'US006_CheckPrinting', '02-23-2023 at 10:07pm', 'NIS 9,822', <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={classes.closeBtnStyle}>closed</h2></div>, 'Get a signed', <MoreMenuWidget></MoreMenuWidget>]
-  ];
-
-  const getAllDocuments = async (docType) => {
-      const callBack = (res) => {
-        if (res?.success) {
-          const data = res?.data?.data;
-          const mapData = data?.map((document: any) => [
-            document?.number,
-            document?.clientType,
-            document?.worksNames,
-            GetDateFormat(document?.createdDate),
-            document?.totalPrice + " " + getCurrencyUnitText(document?.currency),
-            <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={document?.documentStatus == 2 ?classes.openBtnStyle :classes.closeBtnStyle }>{_renderQuoteStatus(document?.documentStatus, document, t)}</h2></div>,
-            document?.notes,
-            <MoreMenuWidget
-              // document={document}
-              // documentType={docType}
-              // onClickDuplicate={onClickQuoteDuplicate}
-              // onClickLoggers={() => onClickOpenLogsModal(document?.number)}
-            />,
-          ]);
-          setAllDocuments(mapData);
-        }
-      };
-      await getAllDocumentsApi(callApi, callBack, {documentType: docType,  data: {
-          model: {
-            pageNumber: page,
-            pageSize: limit,
-          },
-          customerId: selectedClient?.id,
-        }});
-    };
-  
-    useEffect(() => {
-      getAllDocuments(0)
-  }, []);
-
-
-  const handleTabChange = (tabIndex) => {
-    getAllDocuments(tabIndex);
-    
-  };
-
   const tabs: ITab[] = [
-      {
-          title: t('home.tabs.Quotes'), component: 
-          <PrimaryTable
-              rows={allDocuments}
-              headers={tableHeaders}
-              variant="ClassicTable"
-          />
-      },
-      {
-          title: t('home.tabs.Orders'), component: <PrimaryTable
-              rows={allDocuments}
-              headers={tableHeaders}
-              variant="ClassicTable"
-          />
-      },
-      {
-          title: t('home.tabs.Delivery'), component: <PrimaryTable
-              rows={testRows}
-              headers={tableHeaders}
-              variant="ClassicTable"
-          />
-      },
-      {
-          title: t('home.tabs.Invoice'), component: <PrimaryTable
-              rows={testRows}
-              headers={tableHeaders}
-              variant="ClassicTable"
-          />
-      },
-      {
-          title: t('home.tabs.Receipt'), component: <PrimaryTable
-              rows={testRows}
-              headers={tableHeaders}
-              variant="ClassicTable"
-          />
-      }
+    {
+      title: t('home.tabs.Quotes'),
+      component: <QuotesListPageWidget documentType={DOCUMENT_TYPE.quote} isFromHomePage={true} />
+    },
+    {
+      title: t('home.tabs.Orders'),
+      component: <QuotesListPageWidget documentType={DOCUMENT_TYPE.order} isFromHomePage={true} />
+    }
   ];
 
   return {
@@ -345,8 +248,7 @@ const useQuoteWidget = () => {
     _renderErrorMessage,
     onClickSaveQuote,
     tabs,
-    handleTabChange
   };
-};
+}; 
 
 export { useQuoteWidget };
