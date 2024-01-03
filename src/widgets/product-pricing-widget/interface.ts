@@ -66,6 +66,7 @@ export interface IWorkFlowAction {
     outputs: IOutput[];
     source?: EWorkSource;
     supplierId?: string;
+    actionIndex: number;
 
 
 }
