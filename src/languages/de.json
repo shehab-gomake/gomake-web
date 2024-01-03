@@ -2039,7 +2039,9 @@
     "newQuote": "Neues Angebot",
     "convertToInactive": "Inaktiv umwandeln",
     "convertToActive": "Aktiv umwandeln",
-    "editing": "Bearbeitung"
+    "editing": "Bearbeitung",
+    "createSubProduct": "Unterprodukt erstellen",
+    "goToSubProducts": "Zu den Unterprodukten gehen"
   },
   "materialsTrans": {
     "additions": "Zusätze",

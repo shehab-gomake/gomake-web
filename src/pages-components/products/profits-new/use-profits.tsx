@@ -77,7 +77,6 @@ const useNewProfits = () => {
   const [typeExceptionSelected, setTypeExceptionSelected] = useState<number>();
   const [selectedAdditionalProfitRow, setSelectedActionProfitRow] =
     useState<ProfitsPricingTables>();
-  console.log("selectedAdditionalProfitRow", selectedAdditionalProfitRow);
   const [profitRowType, setProfitRowType] = useState(1);
   const [selectedPricingBy, setSelectedPricingBy] =
     useState<SelectedPricingByType>({
@@ -108,7 +107,6 @@ const useNewProfits = () => {
     t("products.profits.pricingListWidget.totalPrice"),
     t("products.profits.pricingListWidget.more"),
   ]);
-  // console.log("selectedPricingTableItems", selectedPricingTableItems);
   const getAllActionProfitRowsByActionId = useCallback(async () => {
     setIsLoading(true);
     if (actionProfitByActionId?.id) {

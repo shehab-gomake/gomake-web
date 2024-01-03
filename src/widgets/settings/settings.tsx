@@ -9,7 +9,7 @@ import { IListItem } from "@/components/containers/interface";
 const SettingsWidget = () => {
   const { t } = useTranslation();
   const { push, query } = useRouter();
-  const { settingsRoute, id } = query;
+  const { settingsRoute, id, productId } = query;
   const [selected, setSelected] = useState<IListItem>();
   const onSelectItem = (value: string) => {
     const selectedItem = list.find((item) => item.value === value);
@@ -41,6 +41,11 @@ const SettingsWidget = () => {
       {selected && selected.component && selected.editComponent && id && (
         <selected.editComponent />
       )}
+      {selected &&
+        selected.component &&
+        selected.subProductComponent &&
+        productId && <selected.subProductComponent /> &&
+        !id}
     </SideBarContainer>
   );
 };

@@ -2068,7 +2068,9 @@
     "newQuote": "ציטוט חדש",
     "convertToInactive": "המר לבלתי פעיל",
     "convertToActive": "המר לפעיל",
-    "editing": "עֲרִיכָה"
+    "editing": "עֲרִיכָה",
+    "createSubProduct": "יצירת מוצר משנה",
+    "goToSubProducts": "עבור למוצרים משניים"
   },
   "materialsTrans": {
     "additions": "תוספות",

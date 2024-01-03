@@ -51,7 +51,6 @@ const Actions = ({
   return (
     <Stack gap={"10px"}>
       {actions?.map((action, index) => {
-        console.log("dddddddddddddddf", action);
         return (
           <ActionContainerComponent
             productType={productType}
@@ -183,10 +182,6 @@ const ActionContainerComponent = ({
     return "";
   }, [supplierId, suppliers]);
 
-  // useEffect(() => {
-  //   const data = getActionMachinesList(actionId, productType);
-  //   console.log("dsdddata", data);
-  // }, [machineName, actionId, productType]);
   return (
     <Fade in={true} timeout={delay} style={{ width: "100%" }}>
       <Stack
@@ -258,7 +253,6 @@ const ActionContainerComponent = ({
                       >
                         <GoMakeAutoComplate
                           onChange={(e, v) => {
-                            console.log("vvvv", v);
                             if (selectNewMachine(v?.value, actionId)) {
                               setChooseMachine(false);
                             }
