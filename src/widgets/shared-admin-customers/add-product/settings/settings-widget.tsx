@@ -45,7 +45,6 @@ const SettingsWidget = ({
     UploadProductImage,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
 
-  console.log("productState", productState);
   const defultProductSKU = allProductSKU?.find(
     (item) => item.id === productState?.productSKUId
   );

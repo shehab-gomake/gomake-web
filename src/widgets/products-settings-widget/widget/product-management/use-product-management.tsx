@@ -15,8 +15,11 @@ import {
 } from "@/widgets/shared-admin-customers/add-product/settings/settings-data";
 import { SettingIcon } from "@/widgets/shared-admin-customers";
 import { EHttpMethod } from "@/services/api-service/enums";
+import { useRouter } from "next/router";
+import { getAllSubProducts } from "@/services/hooks/admin-side/products/get-all-sub-products";
 
 const useProductManagement = () => {
+  const router = useRouter();
   const { callApi } = useGomakeAxios();
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -84,7 +87,12 @@ const useProductManagement = () => {
     []
   );
   const getActions = useCallback(async () => {
-    const data = await getAllProductsMongoDB(callApi, setAllProducts);
+    const data = router.query.productId
+      ? await getAllSubProducts(callApi, setAllProducts, {
+          productId: router.query.productId,
+        })
+      : await getAllProductsMongoDB(callApi, setAllProducts);
+
     const mapData = data?.map((item) => [
       item?.code,
       item?.name,
@@ -169,6 +177,7 @@ const useProductManagement = () => {
     term,
     productSearched,
     allProductSKU,
+    router,
     setTerm,
   };
 };

@@ -136,7 +136,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     let copy = lodashClonedeep(subProducts);
-    console.log("setSubProductsCopy", copy);
     setSubProductsCopy(copy);
   }, [subProducts]);
 

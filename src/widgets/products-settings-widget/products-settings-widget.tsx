@@ -13,53 +13,58 @@ import { LeftArrowIcon } from "@/icons";
 import { EWidgetProductSettingsTabs } from "./enums";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { useRouter } from "next/router";
 
 const ProductsSettingsWidget = () => {
   const { clasess } = useStyle();
+  const router = useRouter();
   const { tabs, value, handleChange, setValue, t } = useProductsSettings();
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.mainHeadecontainer}>
         <PermissionCheck userPermission={Permissions.SHOW_PRODUCTS_SETTINGS}>
-            <UsersSettingsTabs
-              value={value}
-              onChange={handleChange}
-              aria-label="tabs example"
-            >
-              {tabs?.map((tab) => {
-                return <UsersSettingsTab label={tab?.name} />;
-              })}
-            </UsersSettingsTabs>
-        </PermissionCheck>
-       
-        {value === 3 ? (
-          <GomakePrimaryButton
-            style={clasess.gobackBtnStyle}
-            leftIcon={<LeftArrowIcon />}
-            onClick={() =>
-              setValue(EWidgetProductSettingsTabs.PRODUCT_MANAGMENT)
-            }
+          <UsersSettingsTabs
+            value={value}
+            onChange={handleChange}
+            aria-label="tabs example"
           >
-            {t("products.productManagement.admin.goBack")}
-          </GomakePrimaryButton>
-        ) : (
-          <PermissionCheck userPermission={Permissions.ADD_PRODUCT} >
-                  <AddButton
-                    label={t("products.productManagement.admin.addProduct")}
-                    onClick={() => setValue(EWidgetProductSettingsTabs.ADD_PRODUCT)}
-                  />
-          </PermissionCheck>
-        
+            {tabs?.map((tab) => {
+              return <UsersSettingsTab label={tab?.name} />;
+            })}
+          </UsersSettingsTabs>
+        </PermissionCheck>
+        {!router.query.productId && (
+          <>
+            {value === 3 ? (
+              <GomakePrimaryButton
+                style={clasess.gobackBtnStyle}
+                leftIcon={<LeftArrowIcon />}
+                onClick={() =>
+                  setValue(EWidgetProductSettingsTabs.PRODUCT_MANAGMENT)
+                }
+              >
+                {t("products.productManagement.admin.goBack")}
+              </GomakePrimaryButton>
+            ) : (
+              <PermissionCheck userPermission={Permissions.ADD_PRODUCT}>
+                <AddButton
+                  label={t("products.productManagement.admin.addProduct")}
+                  onClick={() =>
+                    setValue(EWidgetProductSettingsTabs.ADD_PRODUCT)
+                  }
+                />
+              </PermissionCheck>
+            )}
+          </>
         )}
       </div>
       <CustomTabPanel
         value={value}
         index={EWidgetProductSettingsTabs.PRODUCT_MANAGMENT}
       >
-        <PermissionCheck userPermission={Permissions.SHOW_PRODUCT_MANAGMENT} >
+        <PermissionCheck userPermission={Permissions.SHOW_PRODUCT_MANAGMENT}>
           <ProductManagementWidget />
         </PermissionCheck>
-      
       </CustomTabPanel>
       <CustomTabPanel
         value={value}

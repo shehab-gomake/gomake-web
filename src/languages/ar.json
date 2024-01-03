@@ -2067,7 +2067,9 @@
     "newQuote": "عرض جديد",
     "convertToInactive": "تحويل إلى غير نشط",
     "convertToActive": "تحويل إلى نشط",
-    "editing": "تحرير"
+    "editing": "تحرير",
+    "createSubProduct": "إنشاء منتج فرعي",
+    "goToSubProducts": "الانتقال إلى المنتجات الفرعية"
   },
   "materialsTrans": {
     "additions": "إضافات",
