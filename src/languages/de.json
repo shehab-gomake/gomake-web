@@ -1493,7 +1493,11 @@
         "actionType": "Aktionstyp",
         "machine": "Maschine",
         "loadingOptimalWorkflows": "Laden optimaler Arbeitsabläufe...",
-        "includeVAT": "Mehrwertsteuer einbeziehen"
+        "includeVAT": "Mehrwertsteuer einbeziehen",
+        "graphicDesign": "Grafikdesign",
+        "productionComment": "Produktionskommentar",
+        "graphicDesignComment": "Kommentar zum Grafikdesign",
+        "Pricing": "Preisgestaltung"
       }
     },
     "productManagement": {
@@ -1636,6 +1640,9 @@
       "createdBy": "Erstellt von {{name}}",
       "customer": "Kunde",
       "orderList": "Bestellliste",
+      "receiptList": "Quittungsliste",
+      "deliveryNoteList": "Lieferscheinliste",
+      "invoiceList": "Rechnungsliste",
       "deleteItem": "Element löschen",
       "areYouSureDeleteItem": "Sind Sie sicher, dass Sie dieses Element löschen möchten?",
       "amount": "Betrag",
@@ -2032,7 +2039,9 @@
     "newQuote": "Neues Angebot",
     "convertToInactive": "Inaktiv umwandeln",
     "convertToActive": "Aktiv umwandeln",
-    "editing": "Bearbeitung"
+    "editing": "Bearbeitung",
+    "createSubProduct": "Unterprodukt erstellen",
+    "goToSubProducts": "Zu den Unterprodukten gehen"
   },
   "materialsTrans": {
     "additions": "Zusätze",

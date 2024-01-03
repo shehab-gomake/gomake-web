@@ -1,6 +1,10 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import {isLoadgingState, subProductsParametersState, systemCurrencyState} from "@/store";
+import {
+  isLoadgingState,
+  subProductsParametersState,
+  systemCurrencyState,
+} from "@/store";
 import { Checkbox, Slider } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,6 +20,7 @@ import {
   selectedWorkFlowState,
 } from "@/widgets/product-pricing-widget/state";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
+import { currenciesState } from "@/widgets/materials-widget/state";
 
 const RightSideWidget = ({
   clasess,
@@ -38,11 +43,22 @@ const RightSideWidget = ({
   setPriceRecovery,
   priceRecovery,
   setSamlleType,
+  includeVAT,
+  setIncludeVAT,
 }: any) => {
   const isLoading = useRecoilValue(isLoadgingState);
   const subProducts = useRecoilValue<any>(subProductsParametersState);
-  const systemCurrency = useRecoilValue<any>(systemCurrencyState);
-
+  const [systemCurrency, setSystemCurrency] =
+    useRecoilState<any>(systemCurrencyState);
+  const currencies = useRecoilValue(currenciesState);
+  useEffect(() => {
+    if (currencies?.length > 0) {
+      const data = currencies.find((c) => c.value === systemCurrency);
+      if (data) {
+        setSystemCurrency(data.label);
+      }
+    }
+  }, [systemCurrency, currencies]);
   const [
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
@@ -139,7 +155,7 @@ const RightSideWidget = ({
         )} */}
 
         <div style={clasess.totalContainer}>
-          <div style={clasess.totalStyle}>
+          <div style={clasess.totalStyleText}>
             {t("products.offsetPrice.admin.total")}
           </div>
           <div style={clasess.totalStyle}>
@@ -150,19 +166,13 @@ const RightSideWidget = ({
                 value={currentProductItemValueTotalPrice ?? "-----"}
                 onChange={(e: any) => {
                   setCurrentProductItemValueTotalPrice(e.target.value);
-                  //e.target.value;
-                  /*setPriceRecovery(false);
-                  const updatedDefaultPrice = { ...defaultPrice };
-                  updatedDefaultPrice.values = [...updatedDefaultPrice?.values];
-                  updatedDefaultPrice.values[0] = e.target.value;
-                  setDefaultPrice(updatedDefaultPrice);
-                  setChangePrice(updatedDefaultPrice);*/
                 }}
                 style={clasess.inputPriceStyle}
+                type={"number"}
               />
             )}
           </div>
-          <span style={clasess.totalStyle}>{systemCurrency}</span>
+          <span style={clasess.totalCurrancyStyle}>{systemCurrency}</span>
         </div>
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
@@ -197,6 +207,7 @@ const RightSideWidget = ({
                 : (
                     currentProductItemValueTotalPrice / quantity?.values[0]
                   ).toFixed(2),
+              unitPrice: systemCurrency,
             })}
           </div>
         )}
@@ -259,9 +270,9 @@ const RightSideWidget = ({
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon />}
               onChange={() => {
-                setUrgentOrder(!urgentOrder);
+                setIncludeVAT(!urgentOrder);
               }}
-              checked={urgentOrder}
+              checked={includeVAT}
             />
             <div style={clasess.secondText}>
               {t("products.offsetPrice.admin.urgentOrder")}
@@ -286,7 +297,7 @@ const RightSideWidget = ({
               );
             })}
           </div>
-          {activeTab === "Production" ? (
+          {activeTab === t("quality.production") ? (
             <div style={clasess.productionStatus}>
               <div style={clasess.sampleTypeStyle}>
                 {t("products.offsetPrice.admin.sampleType")}
@@ -308,7 +319,9 @@ const RightSideWidget = ({
                     setPrintingNotes(e.target.value);
                   }}
                   value={printingNotes}
-                  placeholder="Production comment"
+                  placeholder={t(
+                    "products.offsetPrice.admin.productionComment"
+                  )}
                 />
               </div>
             </div>
@@ -322,7 +335,9 @@ const RightSideWidget = ({
                   }}
                   value={graphicNotes}
                   style={clasess.multiLineTextInputStyle}
-                  placeholder="Graphic design comment"
+                  placeholder={t(
+                    "products.offsetPrice.admin.graphicDesignComment"
+                  )}
                 />
               </div>
             </div>

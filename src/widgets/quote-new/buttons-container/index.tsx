@@ -44,7 +44,7 @@ const ButtonsContainer = ({
         <GomakePrimaryButton
           leftIcon={<PlusIcon stroke={"#344054"} />}
           style={classes.btnContainer}
-        //onClick={() =>onOpenDeliveryModal()}
+          onClick={() =>onOpenDeliveryModal()}
         >
           {t("sales.quote.addDelivery")}
         </GomakePrimaryButton>

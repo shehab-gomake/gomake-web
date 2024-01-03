@@ -77,7 +77,6 @@ const useNewProfits = () => {
   const [typeExceptionSelected, setTypeExceptionSelected] = useState<number>();
   const [selectedAdditionalProfitRow, setSelectedActionProfitRow] =
     useState<ProfitsPricingTables>();
-  console.log("selectedAdditionalProfitRow", selectedAdditionalProfitRow);
   const [profitRowType, setProfitRowType] = useState(1);
   const [selectedPricingBy, setSelectedPricingBy] =
     useState<SelectedPricingByType>({
@@ -89,6 +88,7 @@ const useNewProfits = () => {
       label: "",
       value: 0,
     });
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [allActionProfitRowsByActionId, setAllActionProfitRowsByActionId] =
     useState([]);
@@ -107,8 +107,8 @@ const useNewProfits = () => {
     t("products.profits.pricingListWidget.totalPrice"),
     t("products.profits.pricingListWidget.more"),
   ]);
-  // console.log("selectedPricingTableItems", selectedPricingTableItems);
   const getAllActionProfitRowsByActionId = useCallback(async () => {
+    setIsLoading(true);
     if (actionProfitByActionId?.id) {
       const requestBody: any = {
         actionIdOrProductId: router.query.actionId
@@ -132,6 +132,7 @@ const useNewProfits = () => {
       );
       if (res) {
         getActionProfitRowChartData();
+        setIsLoading(false);
       }
     }
   }, [
@@ -168,8 +169,8 @@ const useNewProfits = () => {
       );
     }
   }, [router]);
-
   const getCalculateCaseProfits = useCallback(async () => {
+    setIsLoading(true);
     const requestBody: any = {
       actionId: router.query.actionId,
       productItemValueId: router.query.draftId,
@@ -181,13 +182,14 @@ const useNewProfits = () => {
     const res = await getAndSetCalculateCaseProfits(
       callApi,
       setSalculateCaseValue,
-      requestBody
+      requestBody,
+      setIsLoading
     );
     if (res) {
       getActionProfitRowChartData();
+      setIsLoading(false);
     }
   }, [router, selectedPricingTableItems]);
-
   const getProfitsPricingTables = useCallback(async () => {
     if (actionProfitByActionId?.id) {
       await getAndSetProfitsPricingTables(callApi, setProfitsPricingTables, {
@@ -217,11 +219,11 @@ const useNewProfits = () => {
   }, [actionProfitByActionId, selectedPricingTableItems]);
 
   useEffect(() => {
-    if (router.query.draftId) {
-      getCalculateCaseProfits();
-    } else {
-      getAllActionProfitRowsByActionId();
-    }
+    // if (router.query.draftId) {
+    //   getCalculateCaseProfits();
+    // } else {
+    //   getAllActionProfitRowsByActionId();
+    // }
     getActionProfitByActionId();
   }, [router]);
   useEffect(() => {
@@ -244,6 +246,17 @@ const useNewProfits = () => {
           selectedPricingBy?.label,
           t("products.profits.pricingListWidget.cost"),
           t("products.profits.pricingListWidget.profit"),
+          t("products.profits.pricingListWidget.unitPrice"),
+          t("products.profits.pricingListWidget.totalPrice"),
+          t("products.profits.pricingListWidget.more"),
+        ]);
+      }
+      if (selectedAdditionalProfitRow?.id) {
+        setTableHeaders([
+          t("products.profits.pricingListWidget.quantity"),
+          selectedPricingBy?.label,
+          t("products.profits.pricingListWidget.profit"),
+          "Profit value",
           t("products.profits.pricingListWidget.unitPrice"),
           t("products.profits.pricingListWidget.totalPrice"),
           t("products.profits.pricingListWidget.more"),
@@ -696,6 +709,7 @@ const useNewProfits = () => {
     anchorElAdditionalProfitMenu,
     openAdditionalProfitMenu,
     calculateCaseValue,
+    isLoading,
     handleCloseAdditionalProfitMenu,
     handleClickAdditionalProfitMenu,
     setSelectedActionProfitRow,

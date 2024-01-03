@@ -1572,7 +1572,12 @@
         "actionType": "Action type",
         "machine": "Machine",
         "loadingOptimalWorkflows": "loading optimal workflows...",
-        "includeVAT": "Include VAT"
+        "includeVAT": "Include VAT",
+        "graphicDesign":"Graphic design",
+        "productionComment":"Production comment",
+        "graphicDesignComment":"Graphic design comment",
+        "Pricing":"Pricing"
+
       }
     },
     "productManagement": {
@@ -2149,7 +2154,9 @@
     "AddItemtoQuote": "Add item to quote",
     "convertToInactive": "Convert to inactive",
     "convertToActive": "Convert to active",
-    "editing": "Editing"
+    "editing": "Editing",
+    "createSubProduct": "Create sub product",
+    "goToSubProducts": "Go to sub products"
   },
   "materialsTrans": {
     "additions": "Additions",

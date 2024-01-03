@@ -14,7 +14,7 @@ const StyledTextField = styled(TextField, {
     boxSizing: "border-box",
     borderRadius: props?.style?.borderRadius || 4,
     height: 56,
-    fontFamily: "Lexend",
+    fontFamily: "Heebo",
     fontStyle: "normal",
     fontWeight: 500,
     fontSize: 14,
@@ -54,6 +54,9 @@ const StyledTextField = styled(TextField, {
   "& input::placeholder": {
     color: "#B1B1B1",
     opacity: 1,
+    fontFamily: "Heebo",
+    fontStyle: "normal",
+    fontWeight: 500,
   },
 }));
 

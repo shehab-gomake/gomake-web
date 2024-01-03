@@ -1517,7 +1517,11 @@
         "actionType": "סוג הפעולה",
         "machine": "מכונה",
         "loadingOptimalWorkflows": "טוען תהליכי עבודה אופטימליים...",
-        "includeVAT": "כולל מע"
+        "includeVAT": "כולל מע",
+        "graphicDesign": "עיצוב גרפי",
+        "productionComment": "הערה על הייצור",
+        "graphicDesignComment": "הערה על עיצוב גרפי",
+        "Pricing": "מחירים"
       }
     },
     "productManagement": {
@@ -1663,6 +1667,9 @@
       "createdBy": "נוצר על ידי {{name}}",
       "customer": "לקוח",
       "orderList": "רשימת הזמנות",
+      "receiptList": "רשימת קבלות",
+      "deliveryNoteList": "רשימת דוחות משלוח",
+      "invoiceList": "רשימת חשבוניות",
       "deleteItem": "מחיקת פריט",
       "areYouSureDeleteItem": "האם אתה בטוח שברצונך למחוק פריט זה?",
       "amount": "סכום",
@@ -2061,7 +2068,9 @@
     "newQuote": "ציטוט חדש",
     "convertToInactive": "המר לבלתי פעיל",
     "convertToActive": "המר לפעיל",
-    "editing": "עֲרִיכָה"
+    "editing": "עֲרִיכָה",
+    "createSubProduct": "יצירת מוצר משנה",
+    "goToSubProducts": "עבור למוצרים משניים"
   },
   "materialsTrans": {
     "additions": "תוספות",

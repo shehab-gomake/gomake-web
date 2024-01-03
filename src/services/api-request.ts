@@ -1,4 +1,4 @@
-import axios, {AxiosRequestConfig, ResponseType} from "axios";
+import axios, { AxiosRequestConfig, ResponseType } from "axios";
 import config from "@/config";
 import { getUserToken } from "./storage-data";
 // import { clearStorage } from './storage'
@@ -8,7 +8,7 @@ const apiRequest = async (
   data: any = {},
   language?: string,
   requestAbortController?: AbortController,
-  responseType:ResponseType = undefined
+  responseType: ResponseType = undefined
 ) => {
   try {
     const SERVER = config.api_server;
@@ -22,7 +22,7 @@ const apiRequest = async (
       method,
       url: reqUrl,
       data,
-      responseType:  responseType ?? "json",
+      responseType: responseType ?? "json",
       signal: requestAbortController?.signal,
       headers: {
         Accept: "application/json",

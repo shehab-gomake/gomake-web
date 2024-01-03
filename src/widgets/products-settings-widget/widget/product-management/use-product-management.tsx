@@ -7,25 +7,25 @@ import { useGomakeAxios } from "@/hooks";
 
 import { useStyle } from "./style";
 import { MoreMenuWidget } from "../more-circle";
-import { useRecoilState } from "recoil";
-import { permissionsState } from "@/store/permissions";
-import { Permissions } from "@/components/CheckPermission/enum";
 import { GoMakeAutoComplate } from "@/components";
 import {
+  EProductClient,
   EProductProfites,
   ProductClient,
 } from "@/widgets/shared-admin-customers/add-product/settings/settings-data";
 import { SettingIcon } from "@/widgets/shared-admin-customers";
 import { EHttpMethod } from "@/services/api-service/enums";
+import { useRouter } from "next/router";
+import { getAllSubProducts } from "@/services/hooks/admin-side/products/get-all-sub-products";
 
 const useProductManagement = () => {
+  const router = useRouter();
   const { callApi } = useGomakeAxios();
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const [allProducts, setAllProducts] = useState<any>();
   const [term, setTerm] = useState<any>("");
   const [productSearched, setProductSearched] = useState([]);
-  const [permissions, setPermissions] = useRecoilState(permissionsState);
   const [selectProfitsModal, setSelectProfitsModal] = useState<ProductClient>();
 
   const [allProductSKU, setAllProductSKU] = useState<any>();
@@ -64,6 +64,15 @@ const useProductManagement = () => {
       return false;
     }
   }, []);
+  const _renderPricingType = (item: number) => {
+    if (item === EProductClient.BY_CLIENT_TYPE) {
+      return t("products.addProduct.admin.byClientType");
+    } else if (item === EProductClient.BY_CLIENT) {
+      return t("products.addProduct.admin.byClient");
+    } else if (item === EProductClient.ALL_CUSTOMERS) {
+      return t("products.addProduct.admin.allCustomers");
+    }
+  };
   const productProfitesList: ProductClient[] = useMemo(
     () => [
       {
@@ -78,11 +87,16 @@ const useProductManagement = () => {
     []
   );
   const getActions = useCallback(async () => {
-    const data = await getAllProductsMongoDB(callApi, setAllProducts);
+    const data = router.query.productId
+      ? await getAllSubProducts(callApi, setAllProducts, {
+          productId: router.query.productId,
+        })
+      : await getAllProductsMongoDB(callApi, setAllProducts);
+
     const mapData = data?.map((item) => [
       item?.code,
       item?.name,
-      // item?.details,
+      _renderPricingType(item.pricingType),
       <div style={clasess.profitProductsCellStyle}>
         <div
           style={{
@@ -120,19 +134,7 @@ const useProductManagement = () => {
           </div>
         )}
       </div>,
-      // <div style={{ display: "inline-flex" }}>
-      //   {item?.groups.map((group) => {
-      //     return (
-      //       <div
-      //         style={{
-      //           marginBottom: 5,
-      //         }}
-      //       >
-      //         {group.name}
-      //       </div>
-      //     );
-      //   })}
-      // </div>,
+
       <div style={{ display: "inline-flex" }}>
         {item?.status === false ? (
           <div style={clasess.inActiveTabStyle}>
@@ -153,14 +155,10 @@ const useProductManagement = () => {
   const tableHeaders = [
     t("products.productManagement.admin.productCode"),
     t("products.productManagement.admin.prouctName"),
+    t("products.addProduct.admin.pricingType"),
     t("tabs.profits"),
-    // t("products.productManagement.admin.details"),
-    // t("products.productManagement.admin.groups"),
     t("products.productManagement.admin.status"),
     t("products.productManagement.admin.more"),
-    // permissions && permissions[Permissions.EDIT_PRODUCT]
-    //   ? t("products.productManagement.admin.more")
-    //   : null,
   ];
   const filterArray = (array: any, searchText: string) =>
     array.filter((item) => {
@@ -179,6 +177,7 @@ const useProductManagement = () => {
     term,
     productSearched,
     allProductSKU,
+    router,
     setTerm,
   };
 };

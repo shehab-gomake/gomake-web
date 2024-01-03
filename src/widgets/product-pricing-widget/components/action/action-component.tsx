@@ -4,6 +4,7 @@ import {useCallback, useMemo, useState} from "react";
 import {IWorkFlowAction} from "@/widgets/product-pricing-widget/interface";
 import {useStyle} from "@/widgets/product-pricing-widget/style";
 import {Collapse, Fade, IconButton} from "@mui/material";
+
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import {
@@ -60,7 +61,9 @@ const Actions = ({
             ))}
         </Stack>
     );
+
 };
+
 const ActionContainerComponent = ({
                                       actionId,
                                       actionName,
@@ -116,6 +119,7 @@ const ActionContainerComponent = ({
     );
     const handleDeliveryTimeUpdate = (newValue: string) => {
         updateActionData(actionId, +newValue, 'totalProductionTime', productType).then()
+
     };
 
     const handleCostUpdate = (newCost: string) => {
@@ -360,6 +364,7 @@ const ActionContainerComponent = ({
             </Stack>
         </Fade>
     );
+
 };
 
 const ActionComponent = ({

@@ -294,7 +294,6 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     })
   }
 
-
   const updateCurrency = async (currency: string) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -557,8 +556,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     await deleteDocumentItemApi(callApi, callBack, { ItemId: quoteItemId, documentType: docType })
   }
 
-  ////////////////////////////  ADD DELIVERY  /////////////////////////
-  const onAddDelivery = async (deliveryType: string) => {
+  const onAddDelivery = async (shipmentType: string) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessAdded();
@@ -568,9 +566,8 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
         alertFaultAdded();
       }
     }
-    await addDeliveryApi(callApi, callBack, { delivery: { quoteId: quoteItemValue?.id, productType: deliveryType }, documentType: docType })
+    await addDeliveryApi(callApi, callBack, { delivery: { documentId: quoteItemValue?.id, shipmentTypeId: shipmentType }, documentType: docType })
   }
-  ////////////////////////////  ADD DELIVERY  /////////////////////////
 
   const onClickDeleteQouteItem = (quoteItem) => {
     onOpenDeleteItemModal();

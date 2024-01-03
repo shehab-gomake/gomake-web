@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { IInput } from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
 import { SecondaryButton } from "@/components/button/secondary-button";
-
 import { companyContactsInputs } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-contacts-inputs";
 import { companyProfileInputs } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-profile-inputs";
 import { companyLocationInputs } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-location-inputs";
@@ -17,6 +16,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import DaysOfWork from "./working-days/working-days";
 
 const CompanyProfileComponent = () => {
+  const { t } = useTranslation();
   const {
     getProfile,
     profileChange,
@@ -24,12 +24,15 @@ const CompanyProfileComponent = () => {
     updateProfileChanges,
     changeCompanyProfileImage,
     changeCompanyLoginImage,
-    daysOfWork
+    daysOfWork,
+    getCurrenciesApi,
+    currencies
   } = useCompanyProfile();
 
-  const { t } = useTranslation();
   useEffect(() => {
-    getProfile().then();
+    getCurrenciesApi().then(()=>{
+      getProfile();
+    });
   }, []);
 
   const changeState = (key, value) => {
@@ -40,7 +43,9 @@ const CompanyProfileComponent = () => {
   };
 
   const formSections: { inputs: any[]; title: string }[] = [
-    { inputs: companyProfileInputs(profile), title: "profileSettings.company" },
+    { 
+      inputs: companyProfileInputs(profile , currencies), 
+      title: "profileSettings.company" },
     {
       inputs: companyContactsInputs(profile),
       title: "profileSettings.contacts",
@@ -85,7 +90,7 @@ const CompanyProfileComponent = () => {
                   error={false}
                 />
               ))}
-              {section.title === 'profileSettings.contacts' && <DaysOfWork options={daysOfWork} label={t("profileSettings.dayOfWork")} setState={profileChange} state={profile}/>}
+              {section.title === 'profileSettings.company' && <DaysOfWork options={daysOfWork} label={t("profileSettings.dayOfWork")} setState={profileChange} state={profile}/>}
             </FormInputsSectionComponent>
           );
         })}
