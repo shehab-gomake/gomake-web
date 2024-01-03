@@ -69,7 +69,7 @@ const HeaderWidget = () => {
       <div style={{ width: "100%" }} />
       <div style={clasess.rightSideContainer}>
         {QuoteIfExist == true && (
-          <IconButton onClick={() => navigate("quote")}>
+          <IconButton onClick={() => navigate("/quote")}>
             <CartIcon />
           </IconButton>
         )}
