@@ -136,7 +136,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     let copy = lodashClonedeep(subProducts);
-    console.log("setSubProductsCopy", copy);
     setSubProductsCopy(copy);
   }, [subProducts]);
 
@@ -530,7 +529,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         actionId: parameter?.actionId,
                         parameterType: parameter?.parameterType,
                         ...(defaultObject && {
-                          valueIds: defaultObject && defaultObject?.id ? [defaultObject?.id] : [],
+                          valueIds:
+                            defaultObject && defaultObject?.id
+                              ? [defaultObject?.id]
+                              : [],
                           values: [defaultObject?.updateName],
                         }),
                         sectionId: section?.id,
@@ -1094,7 +1096,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         temp[findIndex] = {
           ...temp[findIndex],
           values: [data.values],
-          valueIds: data.valueIds && data.valueIds.length >0 && data.valueIds[0] ? [data.valueIds] : [],
+          valueIds:
+            data.valueIds && data.valueIds.length > 0 && data.valueIds[0]
+              ? [data.valueIds]
+              : [],
         };
       } else {
         temp.push({
@@ -1105,7 +1110,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           parameterName: parameterName,
           actionId: actionId,
           values: [data.values],
-          valueIds: data.valueIds && data.valueIds.length >0 && data.valueIds[0] ? [data.valueIds] : [],
+          valueIds:
+            data.valueIds && data.valueIds.length > 0 && data.valueIds[0]
+              ? [data.valueIds]
+              : [],
           actionIndex,
         });
       }
@@ -1198,7 +1206,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameterName: param.name,
                 actionId: param.actionId,
                 values: selectedParam.valueIds,
-                valueIds: selectedParam.valueIds && selectedParam.valueIds.length >0 && selectedParam.valueIds[0] ? [selectedParam.valueIds] : [] ,
+                valueIds:
+                  selectedParam.valueIds &&
+                  selectedParam.valueIds.length > 0 &&
+                  selectedParam.valueIds[0]
+                    ? [selectedParam.valueIds]
+                    : [],
                 actionIndex,
               });
             }

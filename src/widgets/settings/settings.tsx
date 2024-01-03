@@ -25,7 +25,6 @@ const SettingsWidget = () => {
       setSelected(!!item ? item : list[0]);
     }
   }, [settingsRoute, id]);
-  console.log("selected", selected);
   const Side = () => {
     return (
       <SideList
