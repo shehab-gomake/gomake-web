@@ -21,6 +21,7 @@ import { useStyle } from "../quote-table-widget/style";
 import { ITab } from "@/components/tabs/interface";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
+import { selectedClientState } from "@/pages-components/quotes/states";
 
 const useQuoteWidget = () => {
   const { t } = useTranslation();
@@ -35,7 +36,7 @@ const useQuoteWidget = () => {
   const [canOrder, setCanOrder] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
-  const [selectedClient, setSelectedClient] = useState<any>({});
+  const [selectedClient, setSelectedClient] = useRecoilState<any>(selectedClientState);
   const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
   const [quoteNumber, setquoteNumber] = useRecoilState<any>(QuoteNumberState);
   const [selectedProduct, setSelectedProduct] = useState<any>({});
@@ -256,7 +257,7 @@ const useQuoteWidget = () => {
             pageNumber: page,
             pageSize: limit,
           },
-          customerId: userQuote?.client?.id,
+          customerId: selectedClient?.id,
         }});
     };
   
@@ -266,7 +267,7 @@ const useQuoteWidget = () => {
 
 
   const handleTabChange = (tabIndex) => {
-    getAndSetExistQuote().then(()=>getAllDocuments(tabIndex))
+    getAllDocuments(tabIndex);
     
   };
 
