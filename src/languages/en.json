@@ -2154,7 +2154,9 @@
     "AddItemtoQuote": "Add item to quote",
     "convertToInactive": "Convert to inactive",
     "convertToActive": "Convert to active",
-    "editing": "Editing"
+    "editing": "Editing",
+    "createSubProduct": "Create sub product",
+    "goToSubProducts": "Go to sub products"
   },
   "materialsTrans": {
     "additions": "Additions",
