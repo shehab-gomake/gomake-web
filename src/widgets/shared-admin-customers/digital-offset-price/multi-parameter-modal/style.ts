@@ -12,7 +12,6 @@ const useStyle = () => {
         height: 747,
         backgroundColor: "#FFFFFF",
         padding: 20,
-        position: "relative" as "relative",
       },
       mainContainer: {
         display: "flex",
