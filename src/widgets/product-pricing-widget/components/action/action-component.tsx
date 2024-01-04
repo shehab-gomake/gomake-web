@@ -360,6 +360,8 @@ const ActionContainerComponent = ({
                     actionId={actionId}
                     actionName={actionName}
                     currentProductItemValue={currentProductItemValue}
+                    machineName={machineName}
+                    categoryId={""}
                 />
             </Stack>
         </Fade>
