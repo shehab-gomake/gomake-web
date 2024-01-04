@@ -77,7 +77,8 @@ const ActionContainerComponent = ({
                                       source,
                                       supplierId,
                                       productType,
-                                      actionIndex
+                                      actionIndex,
+                                      categoryId,
                                   }: IActionContainerComponentProps) => {
     source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -361,7 +362,7 @@ const ActionContainerComponent = ({
                     actionName={actionName}
                     currentProductItemValue={currentProductItemValue}
                     machineName={machineName}
-                    categoryId={""}
+                    categoryId={categoryId}
                 />
             </Stack>
         </Fade>

@@ -401,7 +401,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         setAllDocuments(mapData);
       }
     };
-    await getAllDocumentsApi(callApi, callBack, {documentType: docType,  data: {
+    selectedClient?.id && await getAllDocumentsApi(callApi, callBack, {documentType: docType,  data: {
         model: {
           pageNumber: page,
           pageSize: 10,
