@@ -86,6 +86,7 @@ const useQuoteWidget = () => {
   const getAllProducts = useCallback(async () => {
     await getAllProductsForDropDownList(callApi, setProductValues);
   }, []);
+
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       ClientType: "C",

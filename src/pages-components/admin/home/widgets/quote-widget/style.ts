@@ -4,7 +4,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
   const { errorColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -63,7 +63,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };
