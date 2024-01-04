@@ -132,7 +132,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     useEffect(() => {
 
         if (calculationResult && calculationResult.productItemValue) {
-            setCalculationSessionConnectionId(connectionId)
+           
             if (calculationResult.productItemValueDraftId === calculationSessionId) {
                 setLoading(false);
                 setCurrentProductItemValueDraftId(calculationResult.productItemValueDraftId)
@@ -177,8 +177,19 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
             }
         }
 
-    }, [calculationResult, calculationSessionId])
+    }, [calculationResult])
 
+    useEffect(() => {
+        setWorkFlows([]);
+        setCurrentProductItemValueTotalPrice(null)
+        setJobActions([]);
+        setIsCalculationFinished(false)
+        setCalculationProgress({
+            totalWorkFlowsCount: 0,
+            currentWorkFlowsCount: 0,
+        });
+        setCalculationSessionConnectionId(connectionId)
+    }, [calculationSessionId])
     useEffect(() => {
         setWorkFlows(workFlows.map(flow => flow.id === updatedSelectedWorkFlow?.id ? updatedSelectedWorkFlow : {
             ...flow,
@@ -1315,7 +1326,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                 false,
                 newRequestAbortController
             );
-            setIsCalculationFinished(true)
+            /*setIsCalculationFinished(true)
             if (res?.success) {
                 setPricingDefaultValue(res?.data?.data?.data);
                 const workFlows = res?.data?.data?.data?.workFlows;
@@ -1337,7 +1348,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                 }
                 setJobActions(res?.data?.data?.data?.actions);
             }
-            setLoading(false);
+            setLoading(false);*/
         }
     }, [subProducts, router, isRequiredParameters, validateParameters]);
 
