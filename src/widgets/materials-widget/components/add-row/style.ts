@@ -7,7 +7,6 @@ const useStyle = () => {
         width: "25%",
         height: "60%",
         padding: 20,
-        position: "relative" as "relative",
       },
       inputsDivStyle: {
         display: "flex",

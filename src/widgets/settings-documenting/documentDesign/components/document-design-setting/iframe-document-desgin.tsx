@@ -1,7 +1,4 @@
 
-import { useTranslation } from "react-i18next";
-import { useStyle } from "../../style";
-import { Stack } from "@mui/material";
 interface IframeProps {
     src: string;
  };
@@ -14,10 +11,6 @@ const IframeDocumentDesign = ({ src } : IframeProps) => {
                         allowFullScreen
                 ></iframe>
             </div>
-            
-       
-      
-  
     );
 };
 

@@ -7,7 +7,6 @@ const useStyle = () => {
         width: "430px",
         height: "400px",
         padding: 20,
-        position: "relative" as "relative",
       },
       addBtnStyle: {
         display: "flex",
