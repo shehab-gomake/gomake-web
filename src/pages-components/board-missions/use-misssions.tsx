@@ -1,6 +1,7 @@
 
 import { useGomakeAxios } from "@/hooks";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
+import { getAllProductsForDropDownList } from "@/services/hooks";
 import { getAndSetAllCustomers } from "@/services/hooks/cart-side/customers/get-all-customers";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -14,10 +15,11 @@ const useMissions = () => {
     const [status, setStatus] = useState<{label:string , value:number}>();
     const [agentsCategories, setAgentsCategories] = useState<[]>();
     const [selectedValues, setSelectedValues] = useState<string[]>([]);
+    const [productsList, setProductsList] = useState([]);
 
     const productionStatuses = [
-        { label: t("boardMissions.inProduction"), value: "0" },
-        { label: t("boardMissions.done"), value: "1" },
+        { label: t("boardMissions.inProduction"), value: 0 },
+        { label: t("boardMissions.done"), value: 1},
       ];
 
     const getAllCustomers = useCallback(async (SearchTerm?) => {
@@ -61,12 +63,15 @@ const useMissions = () => {
         t("boardMissions.currentBoardMissionStatus"),
     ];
 
-
     const handleMultiSelectChange = (newValues: string[]) => {
       setSelectedValues(newValues);
-      console.log("from handle " , newValues)
     };
   
+    const getAllProducts = useCallback(async () => {
+      const products = await getAllProductsForDropDownList(callApi, setProductsList);
+      setProductsList(products.map(({ id, name }) => ({ label: name, value: id })))
+      console.log(products)
+    }, []);
 
     return {
         tableHeader,
@@ -83,7 +88,9 @@ const useMissions = () => {
         status,
         productionStatuses,
         handleMultiSelectChange,
-        selectedValues
+        selectedValues,
+        productsList,
+        getAllProducts
 
     };
 };

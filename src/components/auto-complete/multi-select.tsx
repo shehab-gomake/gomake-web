@@ -13,7 +13,7 @@ interface IProps {
     placeholder?: string;
 }
 
-const GoMakeMultiSelect = ({ options, values, style, onChange , placeholder="" }: IProps) => {
+const GoMakeMultiSelect = ({ options, values, style, onChange, placeholder = "" }: IProps) => {
     const { classes } = useStyle();
     const reorderedOptions = options.sort((a, b) => {
         const isSelectedA = values.includes(a.value);
@@ -31,12 +31,12 @@ const GoMakeMultiSelect = ({ options, values, style, onChange , placeholder="" }
     const selectedLabels = values.map(selectedId => options.find(opt => opt.value === selectedId)?.label)
         .filter(label => label !== null && label !== undefined);
 
-        const handleSelectCheck = (isChecked: boolean, option: any) => {
-            const updatedValues = isChecked
-              ? [...values, option?.value]
-              : values.filter(v => v !== option?.value);
-            onChange && onChange(updatedValues);
-          };
+    const handleSelectCheck = (isChecked: boolean, option: any) => {
+        const updatedValues = isChecked
+            ? [...values, option?.value]
+            : values.filter(v => v !== option?.value);
+        onChange && onChange(updatedValues);
+    };
 
     return (
         <GoMakeAutoComplate

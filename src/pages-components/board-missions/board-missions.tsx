@@ -5,7 +5,7 @@ import { useMissions } from "./use-misssions";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 
 
@@ -26,12 +26,15 @@ const BoardMissionsListWidget = () => {
     getAgentCategories,
     productionStatuses,
     selectedValues,
-    handleMultiSelectChange
+    handleMultiSelectChange,
+    getAllProducts,
+    productsList
   } = useMissions();
 
   useEffect(() => {
     getAllCustomers();
     getAgentCategories(true);
+    getAllProducts();
   }, [])
 
 
@@ -84,10 +87,12 @@ const BoardMissionsListWidget = () => {
               <GoMakeMultiSelect
                 onChange={handleMultiSelectChange}
                 style={classes.textInputStyle}
-                options={productionStatuses}
+                options={productsList}
                 values={selectedValues}
                 placeholder="Select products" />
             </div>
+
+            
             <GomakePrimaryButton
               style={classes.searchBtnStyle}
               onClick={() => null}
@@ -98,6 +103,8 @@ const BoardMissionsListWidget = () => {
               onClick={() => null}
             >{t("sales.quote.clear")}
             </GomakePrimaryButton>
+      
+
           </div>
           <SearchInputComponent onChange={(e) => alert(e)} />
         </div>
