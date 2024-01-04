@@ -2,13 +2,15 @@ import { QuoteWidget } from "./widgets/quote-widget/quote-widget";
 import { useStyle } from "./style";
 import { HomeTableWidget } from "./widgets/home-table-widget/home-table-widget";
 import { useHome } from "./use-home";
-import { useRecoilValue } from "recoil";
-import { selectedClientState } from "@/pages-components/quotes/states";
+import { useEffect } from "react";
 
 const HomePageComponentForAdmin = ({ isAdmin }) => {
   const { classes } = useStyle();
-  const { Title , t} = useHome();
-  const selectedClient =useRecoilValue<any>(selectedClientState);
+  const { Title ,  setIsDisplay , isDisplay , flag , selectedClient ,t} = useHome();
+
+  useEffect(() => {
+    setIsDisplay(flag);
+  }, [selectedClient]);
 
   return (
     <div style={classes.mainContainer}>
@@ -16,8 +18,8 @@ const HomePageComponentForAdmin = ({ isAdmin }) => {
         <div style={classes.titleStyle}>{Title}</div>
         <QuoteWidget isAdmin={isAdmin} />
       </div>
-    { selectedClient && <div style={classes.secondRowContainer}>
-        <div style={classes.titleStyle}>{t("Quote output")}</div>
+    { isDisplay && <div style={classes.secondRowContainer}>
+        <div style={classes.titleStyle}>{t('sales.quote.documents')}</div>
         <HomeTableWidget/>
       </div>}
     </div>
