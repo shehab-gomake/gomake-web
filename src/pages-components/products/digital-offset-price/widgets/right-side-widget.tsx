@@ -1,26 +1,10 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import {
-  isLoadgingState,
-  subProductsParametersState,
-  systemCurrencyState,
-} from "@/store";
-import { Checkbox, Slider } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { Checkbox } from "@mui/material";
 import { EWidgetProductType } from "../enums";
-import { PermissionCheck } from "@/components/CheckPermission";
-import { Permissions } from "@/components/CheckPermission/enum";
-import { exampleTypeState } from "@/store/example-type";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
-import {
-  calculationProgressState,
-  currentProductItemValuePriceState,
-  selectedWorkFlowState,
-} from "@/widgets/product-pricing-widget/state";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
-import { currenciesState } from "@/widgets/materials-widget/state";
+import { useRightSideWidget } from "./use-right-side-widget";
 
 const RightSideWidget = ({
   clasess,
@@ -45,36 +29,28 @@ const RightSideWidget = ({
   setSamlleType,
   includeVAT,
   setIncludeVAT,
+  setBillingMethod,
+  billingMethod,
+  samlleType,
+  graphicDesigner,
+  setGraphicDesigner,
 }: any) => {
-  const isLoading = useRecoilValue(isLoadgingState);
-  const subProducts = useRecoilValue<any>(subProductsParametersState);
-  const [systemCurrency, setSystemCurrency] =
-    useRecoilState<any>(systemCurrencyState);
-  const currencies = useRecoilValue(currenciesState);
-  useEffect(() => {
-    if (currencies?.length > 0) {
-      const data = currencies.find((c) => c.value === systemCurrency);
-      if (data) {
-        setSystemCurrency(data.label);
-      }
-    }
-  }, [systemCurrency, currencies]);
-  const [
+  const {
     currentProductItemValueTotalPrice,
+    calculationProgress,
+    exampleTypeValues,
+    billingMethodList,
+    systemCurrency,
+    listEmployees,
+    isLoading,
+    quantity,
     setCurrentProductItemValueTotalPrice,
-  ] = useRecoilState<number>(currentProductItemValuePriceState);
-  const calculationProgress = useRecoilValue(calculationProgressState);
-  const quantity = useMemo(() => {
-    if (subProducts) {
-      const generalParameters = subProducts.find((x) => !x.type)?.parameters;
-      return generalParameters?.find(
-        (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
-      );
-    }
-  }, [subProducts]);
-  const exampleTypeValues = useRecoilValue(exampleTypeState);
-  const [changePrice, setChangePrice] = useState<number>(0);
-  const { t } = useTranslation();
+    t,
+  } = useRightSideWidget();
+  console.log(
+    "currentProductItemValueTotalPrice",
+    currentProductItemValueTotalPrice
+  );
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -163,12 +139,12 @@ const RightSideWidget = ({
               <DotsLoader />
             ) : (
               <GomakeTextInput
-                value={currentProductItemValueTotalPrice ?? "-----"}
+                value={currentProductItemValueTotalPrice ?? "---------"}
                 onChange={(e: any) => {
                   setCurrentProductItemValueTotalPrice(e.target.value);
                 }}
                 style={clasess.inputPriceStyle}
-                type={"number"}
+                type={currentProductItemValueTotalPrice ? "number" : "text"}
               />
             )}
           </div>
@@ -270,7 +246,7 @@ const RightSideWidget = ({
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon />}
               onChange={() => {
-                setIncludeVAT(!urgentOrder);
+                setIncludeVAT(!includeVAT);
               }}
               checked={includeVAT}
             />
@@ -304,11 +280,13 @@ const RightSideWidget = ({
               </div>
               <div style={clasess.autoCompleteContainer}>
                 <GoMakeAutoComplate
+                  key={samlleType}
                   options={exampleTypeValues}
                   getOptionLabel={(option: any) => option.text}
                   placeholder={t("products.offsetPrice.admin.sampleType")}
                   style={clasess.dropDownListStyle}
                   onChange={(e, value) => setSamlleType(value)}
+                  value={samlleType}
                 />
               </div>
               <div style={clasess.multiLineContainer}>
@@ -327,6 +305,40 @@ const RightSideWidget = ({
             </div>
           ) : (
             <div style={clasess.productionStatus}>
+              <div style={clasess.sampleTypeStyle}>Billing method</div>
+              <div style={clasess.autoCompleteContainer}>
+                <GoMakeAutoComplate
+                  key={billingMethod}
+                  options={billingMethodList}
+                  getOptionLabel={(option: any) => option.lable}
+                  placeholder="Billing method"
+                  style={clasess.dropDownListStyle}
+                  onChange={(e, value) => setBillingMethod(value)}
+                  value={billingMethod}
+                />
+              </div>
+              <div style={clasess.sampleTypeStyle}>Graphic designer</div>
+              <div style={clasess.autoCompleteContainer}>
+                <GoMakeAutoComplate
+                  key={graphicDesigner}
+                  options={[
+                    {
+                      id: "00415c86-165f-463a-bde0-f37c66f00000",
+                      firstname: "Recommeded",
+                      lastname: "",
+                      email: "recommeded@gomake.net",
+                    },
+                    ...listEmployees,
+                  ]}
+                  getOptionLabel={(option: any) =>
+                    `${option.firstname}` + ` ${option.lastname}`
+                  }
+                  placeholder={"Graphic designer"}
+                  style={clasess.dropDownListStyle}
+                  onChange={(e, value) => setGraphicDesigner(value)}
+                  value={graphicDesigner}
+                />
+              </div>
               <div style={clasess.multiLineContainer}>
                 <GomakeTextInput
                   multiline={6}

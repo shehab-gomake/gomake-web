@@ -71,6 +71,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     selectedValueConfigState
   );
   const [samlleType, setSamlleType] = useState();
+  const [billingMethod, setBillingMethod] = useState<any>();
+  const [graphicDesigner, setGraphicDesigner] = useState<any>();
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
@@ -529,7 +531,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         actionId: parameter?.actionId,
                         parameterType: parameter?.parameterType,
                         ...(defaultObject && {
-                          valueIds: defaultObject && defaultObject?.id ? [defaultObject?.id] : undefined,
+                          valueIds:
+                            defaultObject && defaultObject?.id
+                              ? [defaultObject?.id]
+                              : undefined,
                           values: [defaultObject?.updateName],
                         }),
                         sectionId: section?.id,
@@ -817,6 +822,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         graphicNotes,
         isNeedExample: false,
         isDuplicatedWithAnotherQuantity: false,
+        graphicsEmployeeId: graphicDesigner?.id,
+        graphicsPricingType: billingMethod?.value,
       };
       setCurrentProductItemValue(productItemValue);
     }
@@ -1093,7 +1100,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         temp[findIndex] = {
           ...temp[findIndex],
           values: [data.values],
-          valueIds: data.valueIds && data.valueIds.length >0 && data.valueIds[0] ? [data.valueIds] : undefined,
+          valueIds:
+            data.valueIds && data.valueIds.length > 0 && data.valueIds[0]
+              ? [data.valueIds]
+              : undefined,
         };
       } else {
         temp.push({
@@ -1104,7 +1114,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           parameterName: parameterName,
           actionId: actionId,
           values: [data.values],
-          valueIds: data.valueIds && data.valueIds.length >0 && data.valueIds[0] ? [data.valueIds] : undefined,
+          valueIds:
+            data.valueIds && data.valueIds.length > 0 && data.valueIds[0]
+              ? [data.valueIds]
+              : undefined,
           actionIndex,
         });
       }
@@ -1197,7 +1210,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameterName: param.name,
                 actionId: param.actionId,
                 values: selectedParam.valueIds,
-                valueIds: selectedParam.valueIds && selectedParam.valueIds.length >0 && selectedParam.valueIds[0] ? selectedParam.valueIds : undefined ,
+                valueIds:
+                  selectedParam.valueIds &&
+                  selectedParam.valueIds.length > 0 &&
+                  selectedParam.valueIds[0]
+                    ? selectedParam.valueIds
+                    : undefined,
                 actionIndex,
               });
             }
@@ -1271,9 +1289,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const onClickProductionTab = () => {
     setActiveTab(t("quality.production"));
+    setBillingMethod(null);
+    setGraphicDesigner(null);
   };
   const onClickGraphicDesignTab = () => {
     setActiveTab(t("products.offsetPrice.admin.graphicDesign"));
+    setSamlleType(null);
   };
   const tabs = [
     {
@@ -1670,6 +1691,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     duplicateParameters,
     setProductTemplate,
     setSamlleType,
+    setBillingMethod,
     multiParameterModal,
     settingParameters,
     priceRecovery,
@@ -1694,6 +1716,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     jobDetails,
     jobActions,
     includeVAT,
+    billingMethod,
+    samlleType,
+    graphicDesigner,
+    setGraphicDesigner,
     setIncludeVAT,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
