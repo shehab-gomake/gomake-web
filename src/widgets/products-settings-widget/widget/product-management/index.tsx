@@ -4,6 +4,7 @@ import { GoMakeAutoComplate } from "@/components";
 import { useProductManagement } from "./use-product-management";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { PrimaryTable } from "@/components/tables/primary-table";
+import { HeaderTitle } from "@/widgets/header-title";
 
 const ProductManagementWidget = () => {
   const { t } = useTranslation();
@@ -22,7 +23,7 @@ const ProductManagementWidget = () => {
     <div style={clasess.mainContainer}>
       <div style={clasess.subHeaderContainer}>
         <div style={clasess.subHeaderLeftSide}>
-          {!router.query.productId && (
+          {!router.query.productId ? (
             <div style={clasess.selectProductContainer}>
               <div style={clasess.selectProductTextStyle}>
                 {t("products.productManagement.admin.selectProductSKU")}
@@ -38,6 +39,14 @@ const ProductManagementWidget = () => {
                   }}
                 />
               </div>
+            </div>
+          ) : (
+            <div>
+              <HeaderTitle
+                title={router.query.productName}
+                marginTop={1}
+                marginBottom={1}
+              />
             </div>
           )}
         </div>
