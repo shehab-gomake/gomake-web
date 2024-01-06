@@ -132,7 +132,6 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     useEffect(() => {
 
         if (calculationResult && calculationResult.productItemValue) {
-           
             if (calculationResult.productItemValueDraftId === calculationSessionId) {
                 setLoading(false);
                 setCurrentProductItemValueDraftId(calculationResult.productItemValueDraftId)
@@ -1347,8 +1346,8 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                     // setWorkFlows(currentWorkFlows);
                 }
                 setJobActions(res?.data?.data?.data?.actions);
-            }
-            setLoading(false);*/
+            }*/
+            setLoading(false);
         }
     }, [subProducts, router, isRequiredParameters, validateParameters]);
 

@@ -21,8 +21,7 @@ const useCalculationsWorkFlowsSignalr = () => {
     const [updatedSelectedWorkFlow,setUpdatedSelectedWorkFlow] = useState<ICalculatedWorkFlow>();
     useEffect(()=>{
         if(connection){
-            connection.on("updateWorkFlows", (newData) => {
-                console.log("signalrRWorkFlows",newData)
+            connection.on("updateWorkFlows", (newData:ICalculationSignalRResult) => {
                 setSignalrRWorkFlows(newData);
             });
             connection.on("startCalculationSession", (newData) => {
