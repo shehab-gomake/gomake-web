@@ -1,8 +1,12 @@
 import { useCustomer, useGomakeAxios, useGomakeRouter } from "@/hooks";
-import { QuoteIfExistState } from "@/pages-components/quote/store/quote";
+import {
+  QuoteIfExistState,
+  QuoteNumberState,
+} from "@/pages-components/quote/store/quote";
+import { selectedClientState } from "@/pages-components/quotes/states";
 import { getIfCartExistApi } from "@/services/api-service/generic-doc/documents-api";
 import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 
 const useHeader = () => {
   const { navigate } = useGomakeRouter();
@@ -46,11 +50,18 @@ const useHeader = () => {
   useEffect(() => {
     getAndSetExistQuote();
   }, []);
+  const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
+  const resetSelectedClient = useResetRecoilState(selectedClientState);
   useEffect(() => {
-    if (userQuote) {
-      setQuoteIfExist(true);
-    } else {
-      setQuoteIfExist(false);
+    if (window.location.pathname != "/home") {
+      if (userQuote) {
+        setQuoteNumber(userQuote.number);
+        setQuoteIfExist(true);
+      } else {
+        resetSelectedClient();
+        setQuoteNumber(null);
+        setQuoteIfExist(false);
+      }
     }
   }, [userQuote]);
   return {
