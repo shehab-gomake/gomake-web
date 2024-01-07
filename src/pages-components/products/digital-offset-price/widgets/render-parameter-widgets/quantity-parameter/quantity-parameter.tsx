@@ -9,6 +9,11 @@ import {
 import {
     QuantityTypesComponent
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/quantity-types-component";
+import {useRecoilValue} from "recoil";
+import {
+    productQuantityTypesValuesState
+} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
+import {useEffect} from "react";
 
 const QuantityParameter = ({
                                classes,
@@ -20,7 +25,22 @@ const QuantityParameter = ({
                                section,
                                type
                            }) => {
-    const {openModal, setOpenModal, productTypesNumber} = useQuantityParameter()
+    const {openModal, setOpenModal, productTypesNumber} = useQuantityParameter();
+    const quantityTypes = useRecoilValue(productQuantityTypesValuesState);
+    useEffect(() => {
+        onChangeSubProductsForPrice(
+            parameter?.id,
+            subSection?.id,
+            section?.id,
+            parameter?.parameterType,
+            parameter?.name,
+            parameter?.actionId,
+            {values: quantityTypes.reduce((acc, val) => acc + val.quantity, 0) },
+            subSection?.type,
+            index,
+            parameter?.actionIndex
+        );
+    }, [quantityTypes])
     return (
         <Stack direction={"row"}>
             <GomakeTextInput
