@@ -1,4 +1,4 @@
-import { IconButton, MenuItem } from "@mui/material";
+import { IconButton, MenuItem, Popover } from "@mui/material";
 import { MoreCircleIcon, PlusIcon } from "@/icons";
 import { GoMakeMenu } from "@/components";
 import { useMoreCircle } from "./use-more-circle";
@@ -22,10 +22,16 @@ const MoreMenuWidget = ({ item, updatedProduct }: any) => {
     navigate,
     updatedProductInside,
     createSubProduct,
+    setAllProducts,
+    idPopover,
+    openPopover,
+    anchorElPopover,
+    handleClosePopover,
+    handleClickPopover,
   } = useMoreCircle({
     updatedProduct,
+    item,
   });
-
   return (
     <>
       <PermissionCheck userPermission={Permissions.EDIT_PRODUCT}>
@@ -64,8 +70,12 @@ const MoreMenuWidget = ({ item, updatedProduct }: any) => {
               <MenuItem>
                 <div
                   style={clasess.menuRowStyle}
-                  onClick={() =>
-                    navigate(`/settings/products/sub-product/${item?.id}`)
+                  onClick={(e: any) =>
+                    setAllProducts?.length > 0
+                      ? navigate(
+                          `/settings/products/sub-product/${item?.id}?productName=${item?.name}`
+                        )
+                      : handleClickPopover(e)
                   }
                 >
                   <DocumentIcon />
@@ -78,6 +88,18 @@ const MoreMenuWidget = ({ item, updatedProduct }: any) => {
           )}
         </GoMakeMenu>
       </PermissionCheck>
+      <Popover
+        id={idPopover}
+        open={openPopover}
+        anchorEl={anchorElPopover}
+        onClose={handleClosePopover}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+      >
+        <div style={clasess.errorMsgStyle}>no sub products founded</div>
+      </Popover>
     </>
   );
 };
