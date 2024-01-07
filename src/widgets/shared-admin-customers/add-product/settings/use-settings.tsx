@@ -293,6 +293,7 @@ const useSettings = ({
     );
     if (res?.success) {
       alertSuccessAdded();
+      onChangeStateProduct("img", res?.data?.data?.result);
     } else {
       alertFaultAdded();
     }

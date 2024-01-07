@@ -18,13 +18,11 @@ const UploadImgProduct = ({
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        onChangeStateProduct("img", e.target.result);
         UploadProductImage(productState?.id, e.target.result);
       };
       reader.readAsDataURL(file);
     }
   };
-  console.log("productState.img", productState.img);
   return (
     <div style={clasess.itemOnFirstContainer}>
       <div style={clasess.labelTitleStyle}>
@@ -53,11 +51,14 @@ const UploadImgProduct = ({
             </IconButton>
           }
         >
-          <Avatar sx={{ ...clasess.avatar }}>
-            <img
-              src={productState.img}
+          <Avatar
+            sx={clasess.avatar}
+            src={`${productState.img}?${new Date().toString()}`}
+          >
+            {/* <img
+              src={`${productState.img}?${new Date().toString()}`}
               style={{ width: "100%", height: "100%" }}
-            />
+            /> */}
           </Avatar>
         </Badge>
       </div>

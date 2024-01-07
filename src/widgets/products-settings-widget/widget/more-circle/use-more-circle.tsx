@@ -24,7 +24,6 @@ const useMoreCircle = ({ updatedProduct, item }) => {
   const [selectProduct, setSelectProduct] = useState<any>();
   const [setAllProducts, setSetAllProducts] = useState<any>([]);
 
-  console.log("setAllProducts", setAllProducts);
   const { navigate } = useGomakeRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
