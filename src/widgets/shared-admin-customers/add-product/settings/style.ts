@@ -130,6 +130,21 @@ const useStyle = () => {
         cursor: "pointer",
         height: 40,
       },
+      button: {
+        height: 32,
+        width: 32,
+        backgroundColor: primaryColor(300),
+        color: "white",
+        "&:hover": {
+          backgroundColor: primaryColor(300),
+          color: "white",
+        },
+      },
+      avatar: {
+        width: "100px",
+        height: "100px",
+        border: "6px solid " + primaryColor(300),
+      },
     };
   }, [i18next.language, t]);
   return {
