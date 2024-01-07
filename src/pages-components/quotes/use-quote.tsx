@@ -11,7 +11,7 @@ import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
-import { employeesListsState } from "./states";
+import { employeesListsState, selectedClientState } from "./states";
 import {
   duplicateDocumentApi,
   getAllDocumentsApi,
@@ -20,9 +20,11 @@ import {
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
+import { useStyle } from "./style";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
+  const{classes} = useStyle();
   const { callApi } = useGomakeAxios();
   const { alertFaultUpdate, alertFaultDuplicate } = useSnackBar();
   const { getCurrencyUnitText } = useQuoteGetData();
@@ -47,6 +49,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [modalLogsTitle, setModalLogsTitle] = useState<string>();
   const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
   const [selectedQuote, setSelectedQuote] = useState<any>();
+  
+  const [allDocuments, setAllDocuments] = useState([]);
+  const selectedClient = useRecoilValue<any>(selectedClientState);
+  
   const onClickCloseModal = () => {
     setOpenModal(false);
   };
@@ -132,7 +138,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickOpenLogsModal(quote?.quoteNumber)}
+            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
           />,
         ]);
         setAllQuotes(mapData);
@@ -172,7 +178,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickOpenLogsModal(quote?.quoteNumber)}
+            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
           />,
         ]);
         setAllQuotes(mapData);
@@ -371,6 +377,54 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     getAllQuotes();
   }, []);
 
+  const getAllDocuments = async (docType) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const data = res?.data?.data;
+        const mapData = data?.map((document: any) => [
+          document?.number,
+          document?.clientType,
+          document?.worksNames,
+          GetDateFormat(document?.createdDate),
+          document?.totalPrice + " " + getCurrencyUnitText(document?.currency),
+          <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={document?.documentStatus == 2 ?classes.openBtnStyle :classes.closeBtnStyle }>{_renderQuoteStatus(document?.documentStatus, document, t)}</h2></div>,
+          document?.notes,
+          <MoreMenuWidget
+            quote={document}
+            documentType={docType}
+            onClickOpenModal={onClickOpenModal}
+            onClickPdf={onClickQuotePdf}
+            onClickDuplicate={onClickQuoteDuplicate}
+            onClickLoggers={() => onClickOpenLogsModal(document?.number)}
+          />,
+        ]);
+        setAllDocuments(mapData);
+      }
+    };
+    selectedClient?.id && await getAllDocumentsApi(callApi, callBack, {documentType: docType,  data: {
+        model: {
+          pageNumber: page,
+          pageSize: 10,
+        },
+        customerId: selectedClient?.id,
+      }});
+  };
+
+  useEffect(() => {
+    getAllDocuments(docType)
+}, [selectedClient]);
+
+const tableHomeHeader = [
+  t("home.headers.documentNumber"),
+  t("home.headers.clientType"),
+  t("home.headers.jobName"),
+  t("home.headers.productDate"),
+  t("home.headers.finalPrice"),
+  t("home.headers.status"),
+  t("home.headers.remark"),
+  t("home.headers.more")
+];
+
   return {
     patternSearch,
     tableHeaders,
@@ -403,6 +457,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     logsTableHeaders,
     documentsLabels,
     documentLabel,
+    allDocuments,
+    tableHomeHeader
+
   };
 };
 

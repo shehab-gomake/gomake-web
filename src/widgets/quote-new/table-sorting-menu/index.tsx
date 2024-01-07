@@ -1,10 +1,13 @@
 import React from "react";
-import { GoMakeMenu, SecondSwitch } from "@/components";
+import { GoMakeMenu } from "@/components";
 import { Divider } from "@mui/material";
 import { useStyle } from "./style";
+import { useTranslation } from "react-i18next";
 
 const TableSortingMenu = ({ handleClose, open, anchorEl }) => {
   const { clasess } = useStyle();
+  const { t } = useTranslation();
+
   return (
     <GoMakeMenu
       handleClose={handleClose}
@@ -14,15 +17,15 @@ const TableSortingMenu = ({ handleClose, open, anchorEl }) => {
     >
       <div style={clasess.bodyContainer}>
         <div style={clasess.menuTabStyle} className="table-sorting">
-          Creation Date
+        {t("sales.quote.creationDate")}
         </div>
         <Divider />
         <div style={clasess.menuTabStyle} className="table-sorting">
-          Product Name
+        {t("sales.quote.productName")}
         </div>
         <Divider />
         <div style={clasess.menuTabStyle} className="table-sorting">
-          Job Name
+        {t("sales.quote.jobName")}
         </div>
       </div>
     </GoMakeMenu>

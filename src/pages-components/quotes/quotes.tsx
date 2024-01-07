@@ -10,14 +10,14 @@ import {
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
-import { EDocumentTypeEnum } from "@/enums";
 import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
+  isFromHomePage?: boolean
 }
-const QuotesListPageWidget = ({ documentType }: IProps) => {
+const QuotesListPageWidget = ({ documentType, isFromHomePage = false }: IProps) => {
   const { classes } = useStyle();
   const {
     tableHeaders,
@@ -42,13 +42,15 @@ const QuotesListPageWidget = ({ documentType }: IProps) => {
     onClickCloseLogsModal,
     modalLogsTitle,
     logsTableHeaders,
-    t,
     documentLabel,
+    allDocuments,
+    tableHomeHeader,
+    t
   } = useQuotes(documentType);
 
   return (
     <>
-      <div style={classes.mainContainer}>
+      {!isFromHomePage && <div style={classes.mainContainer}>
         <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
         <div style={classes.filtersContainer}>
           <div style={classes.selectedFilterContainer}>
@@ -128,7 +130,12 @@ const QuotesListPageWidget = ({ documentType }: IProps) => {
           rows={allQuotes}
           headers={tableHeaders}
         />
-      </div>
+      </div>}
+      {isFromHomePage && <PrimaryTable
+        rows={allDocuments}
+        headers={tableHomeHeader}
+        variant="ClassicTable"
+      />}
       <GoMakeDeleteModal
         icon={<WarningAmberIcon style={classes.warningIconStyle} />}
         title={t("sales.quote.titleModal")}

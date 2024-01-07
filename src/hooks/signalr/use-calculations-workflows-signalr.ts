@@ -17,10 +17,13 @@ const useCalculationsWorkFlowsSignalr = () => {
         methodName: "updateWorkFlows"
     })
     const [calculationSessionId,setConnectionSessionId] = useState<string>();
-   
+    const [signalrRWorkFlows,setSignalrRWorkFlows] = useState<ICalculationSignalRResult>();
     const [updatedSelectedWorkFlow,setUpdatedSelectedWorkFlow] = useState<ICalculatedWorkFlow>();
     useEffect(()=>{
         if(connection){
+            connection.on("updateWorkFlows", (newData:ICalculationSignalRResult) => {
+                setSignalrRWorkFlows(newData);
+            });
             connection.on("startCalculationSession", (newData) => {
                 setConnectionSessionId(newData);
             });
@@ -30,7 +33,7 @@ const useCalculationsWorkFlowsSignalr = () => {
         }
     },[connection])
     return {
-        calculationResult:data,calculationSessionId,connectionId,updatedSelectedWorkFlow
+        calculationResult:signalrRWorkFlows,calculationSessionId,connectionId,updatedSelectedWorkFlow
     }
 };
 export {useCalculationsWorkFlowsSignalr}

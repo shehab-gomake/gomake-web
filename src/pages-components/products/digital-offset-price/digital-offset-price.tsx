@@ -72,8 +72,6 @@ const PriceListPageWidget = ({ widgetType }) => {
     setSamlleType,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
-    includeVAT,
-    setIncludeVAT,
   } = useDigitalOffsetPrice({ clasess, widgetType });
   const direction = t("direction");
   return (

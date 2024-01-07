@@ -1,30 +1,27 @@
-import { useTranslation } from "react-i18next";
 import { QuoteWidget } from "./widgets/quote-widget/quote-widget";
 import { useStyle } from "./style";
-import { useRecoilState } from "recoil";
-import { QuoteNumberState } from "@/pages-components/quote/store/quote";
-import { QuoteTableWidget } from "./widgets/quote-table-widget/quote-table-widget";
+import { HomeTableWidget } from "./widgets/home-table-widget/home-table-widget";
+import { useHome } from "./use-home";
+import { useEffect } from "react";
 
 const HomePageComponentForAdmin = ({ isAdmin }) => {
-  const { t } = useTranslation();
   const { classes } = useStyle();
-  const [quoteNumber, setquoteNumber] = useRecoilState<any>(QuoteNumberState);
+  const { Title ,  setIsDisplay , isDisplay , flag , selectedClient ,t} = useHome();
+
+  useEffect(() => {
+    setIsDisplay(flag);
+  }, [selectedClient]);
 
   return (
     <div style={classes.mainContainer}>
-      <div style={classes.titleStyle}>
-        {quoteNumber
-          ? t("remainWords.AddItemtoQuote") + " " + quoteNumber
-          : t("remainWords.newQuote")}
-      </div>
       <div style={classes.firstRowContainer}>
+        <div style={classes.titleStyle}>{Title}</div>
         <QuoteWidget isAdmin={isAdmin} />
-        {/* <ChartWidget /> */}
       </div>
-      <div style={classes.secondRowContainer}>
-        <div style={classes.titleStyle}>{t("home.quoteOutput")}</div>
-        <QuoteTableWidget isAdmin={isAdmin} />
-      </div>
+    { isDisplay && <div style={classes.secondRowContainer}>
+        <div style={classes.titleStyle}>{t('sales.quote.documents')}</div>
+        <HomeTableWidget/>
+      </div>}
     </div>
   );
 };

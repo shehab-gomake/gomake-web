@@ -24,9 +24,8 @@ const useStyle = () => {
       },
       firstRowContainer: {
         display: "flex",
-        flexDirection: "row" as "row",
+        flexDirection: "column" as "column",
         justifyContent: "flex-start",
-        alignItems: "flex-end",
         width: "100%",
         height: "50%",
         gap: 20,
@@ -38,6 +37,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         width: "100%",
+        height:"100%",
         gap: 20,
         backgroundColor: "#F6F6F6",
         marginBottom: 15,
