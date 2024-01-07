@@ -1,22 +1,39 @@
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { getAllSubProducts } from "@/services/hooks/admin-side/products/get-all-sub-products";
 import { useRouter } from "next/router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-const useMoreCircle = ({ updatedProduct }) => {
+const useMoreCircle = ({ updatedProduct, item }) => {
+  const [anchorElPopover, setAnchorElPopover] =
+    useState<HTMLButtonElement | null>(null);
+  const openPopover = Boolean(anchorElPopover);
+  const idPopover = openPopover ? "simple-popover" : undefined;
+  const handleClosePopover = () => {
+    setAnchorElPopover(null);
+    handleClose();
+  };
+  const handleClickPopover = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorElPopover(event.currentTarget);
+  };
   const { callApi } = useGomakeAxios();
   const router = useRouter();
   const { t } = useTranslation();
   const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded } =
     useSnackBar();
+  const [selectProduct, setSelectProduct] = useState<any>();
+  const [setAllProducts, setSetAllProducts] = useState<any>([]);
+
   const { navigate } = useGomakeRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+    setSelectProduct(item);
   };
   const handleClose = () => {
     setAnchorEl(null);
+    setSelectProduct(null);
   };
 
   const updatedProductInside = useCallback(async (product: any) => {
@@ -52,6 +69,17 @@ const useMoreCircle = ({ updatedProduct }) => {
       handleClose();
     }
   }, []);
+
+  const getSubProducts = useCallback(async () => {
+    if (selectProduct?.id && !router.query.productId) {
+      await getAllSubProducts(callApi, setSetAllProducts, {
+        productId: selectProduct?.id,
+      });
+    }
+  }, [selectProduct]);
+  useEffect(() => {
+    getSubProducts();
+  }, [selectProduct]);
   return {
     open,
     anchorEl,
@@ -64,6 +92,12 @@ const useMoreCircle = ({ updatedProduct }) => {
     callApi,
     updatedProductInside,
     createSubProduct,
+    setAllProducts,
+    openPopover,
+    anchorElPopover,
+    idPopover,
+    handleClosePopover,
+    handleClickPopover,
   };
 };
 

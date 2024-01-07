@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import { useTranslation } from "react-i18next";
 import { SketchPicker } from "react-color";
@@ -9,8 +9,7 @@ import { AddProductSkuModal } from "./modals/add-contact-modal";
 import { useSettings } from "./use-settings";
 import { useStyle } from "./style";
 import { EProductClient } from "./settings-data";
-import { ImageUploadComponent } from "@/components/form-inputs/image-input";
-
+import { UploadImgProduct } from "./upload-widget";
 const SettingsWidget = ({
   onClickParametersTab,
   productState,
@@ -44,7 +43,6 @@ const SettingsWidget = ({
     updatedProduct,
     UploadProductImage,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
-
   const defultProductSKU = allProductSKU?.find(
     (item) => item.id === productState?.productSKUId
   );
@@ -133,13 +131,20 @@ const SettingsWidget = ({
       }
     }
   };
-
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.productCategory")}
       </div>
+
       <div style={clasess.firstContainer}>
+        {isUpdate && (
+          <UploadImgProduct
+            productState={productState}
+            onChangeStateProduct={onChangeStateProduct}
+            UploadProductImage={UploadProductImage}
+          />
+        )}
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.productName")}
@@ -237,22 +242,6 @@ const SettingsWidget = ({
             />
           </div>
         </div>
-        {isUpdate && (
-          <div style={clasess.itemOnFirstContainer}>
-            <div style={clasess.labelTitleStyle}>
-              {t("products.addProduct.admin.uploadImg")}
-            </div>
-            <div>
-              <ImageUploadComponent
-                onChange={(value) => {
-                  onChangeStateProduct("img", value);
-                  UploadProductImage(productState?.id, value);
-                }}
-                value={productState.img}
-              />
-            </div>
-          </div>
-        )}
 
         <div style={clasess.itemGropupsContainer}>
           <div style={clasess.labelTitleStyle}>

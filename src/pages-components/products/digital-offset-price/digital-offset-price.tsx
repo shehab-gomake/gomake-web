@@ -64,9 +64,16 @@ const PriceListPageWidget = ({ widgetType }) => {
     relatedParameters,
     jobActions,
     workFlows,
+    billingMethod,
+    setBillingMethod,
+    samlleType,
+    graphicDesigner,
+    setGraphicDesigner,
     setSamlleType,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
+    includeVAT,
+    setIncludeVAT,
   } = useDigitalOffsetPrice({ clasess, widgetType });
   const direction = t("direction");
   return (
@@ -198,6 +205,13 @@ const PriceListPageWidget = ({ widgetType }) => {
               setPriceRecovery={setPriceRecovery}
               priceRecovery={priceRecovery}
               setSamlleType={setSamlleType}
+              includeVAT={includeVAT}
+              setIncludeVAT={setIncludeVAT}
+              setBillingMethod={setBillingMethod}
+              billingMethod={billingMethod}
+              samlleType={samlleType}
+              graphicDesigner={graphicDesigner}
+              setGraphicDesigner={setGraphicDesigner}
             />
           </div>
 
