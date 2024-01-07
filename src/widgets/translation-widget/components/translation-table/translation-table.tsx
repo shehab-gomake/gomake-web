@@ -4,16 +4,25 @@ import {
 import {useEffect} from "react";
 import {PrimaryTable} from "@/components/tables/primary-table";
 import Pagination from "@mui/material/Pagination";
+import {SearchInputComponent} from "@/components/form-inputs/search-input-component";
 
 
 const TranslationTable = () =>{
-    const {getTranslationsTable,translationsTableHeaders,translationsTableRows,totalPages, currentPage, setCurrentPage} = useTranslationsTable();
+    const {
+        getTranslationsTable,
+        translationsTableHeaders,
+        translationsTableRows,totalPages, 
+        currentPage, 
+        setCurrentPage,
+        setSearchFilter,
+        searchFilter
+    } = useTranslationsTable();
     useEffect(()=>{
-        debugger;
         getTranslationsTable()
-    },[currentPage])
+    },[currentPage,searchFilter])
     return(
         <div>
+            <SearchInputComponent onChange={(e) => setSearchFilter(e)} />
             <PrimaryTable
                 stickyFirstCol={false}
                 stickyHeader={false}
