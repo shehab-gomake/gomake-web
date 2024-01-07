@@ -15,7 +15,7 @@ interface IProps {
 
 const GoMakeMultiSelect = ({ options, values, style, onChange, placeholder = "" }: IProps) => {
     const { classes } = useStyle();
-    const reorderedOptions = options.sort((a, b) => {
+    const reorderedOptions = options?.sort((a, b) => {
         const isSelectedA = values.includes(a.value);
         const isSelectedB = values.includes(b.value);
 
@@ -28,7 +28,7 @@ const GoMakeMultiSelect = ({ options, values, style, onChange, placeholder = "" 
         }
     });
 
-    const selectedLabels = values.map(selectedId => options.find(opt => opt.value === selectedId)?.label)
+    const selectedLabels = values.map(selectedId => options?.find(opt => opt.value === selectedId)?.label)
         .filter(label => label !== null && label !== undefined);
 
     const handleSelectCheck = (isChecked: boolean, option: any) => {

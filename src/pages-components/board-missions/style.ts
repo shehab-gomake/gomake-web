@@ -50,7 +50,6 @@ const useStyle = () => {
       },
       filterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
-        height: 21,
       },
       textInputStyle: {
         width: "100%",
@@ -64,7 +63,7 @@ const useStyle = () => {
         width: "12.5%",
       },
     };
-  }, [i18next.language, t, theme]);
+  }, [theme]);
   return {
     classes,
   };

@@ -1,12 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
-import { useMissions } from "./use-misssions";
+import { useBoardMissions } from "./use-board-missions";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { useEffect } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
+import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 
 
 const BoardMissionsListWidget = () => {
@@ -16,20 +17,25 @@ const BoardMissionsListWidget = () => {
     tableHeader,
     getAllCustomers,
     renderOptions,
-    setCustomerId,
-    customerId,
-    setAgentId,
-    agentId,
+    setCustomer,
+    customer,
+    setAgent,
+    agent,
     setStatus,
     status,
     agentsCategories,
     getAgentCategories,
     productionStatuses,
-    selectedValues,
+    productIds,
     handleMultiSelectChange,
     getAllProducts,
-    productsList
-  } = useMissions();
+    productsList,
+    onChangeMissionsSearch,
+    handleClickSearch,
+    handleClickClear,
+    allBoardMissions,
+    patternSearch,
+  } = useBoardMissions();
 
   useEffect(() => {
     getAllCustomers();
@@ -47,32 +53,35 @@ const BoardMissionsListWidget = () => {
             <div style={classes.statusFilterContainer}>
               <h3 style={classes.filterLabelStyle}>{t("sales.quote.agent")}</h3>
               <GoMakeAutoComplate
+                key={agent?.id}
                 options={agentsCategories}
                 style={classes.textInputStyle}
                 getOptionLabel={(option: any) => option.label}
                 placeholder={t("sales.quote.ChooseAgent")}
                 onChange={(e: any, value: any) => {
-                  setAgentId(value);
+                  setAgent(value);
                 }}
-                value={agentId}
+                value={agent}
               />
             </div>
             <div style={classes.statusFilterContainer}>
               <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
               <GoMakeAutoComplate
+                key={customer?.id}
                 options={renderOptions()}
                 getOptionLabel={(option: any) => `${option.name}`}
                 style={classes.textInputStyle}
                 placeholder={t("sales.quote.chooseCustomer")}
                 onChange={(e: any, value: any) => {
-                  setCustomerId(value);
+                  setCustomer(value);
                 }}
-                value={customerId}
+                value={customer}
               />
             </div>
             <div style={classes.statusFilterContainer}>
               <h3 style={classes.filterLabelStyle}>{t("boardMissions.productionStatus")}</h3>
               <GoMakeAutoComplate
+                key={status?.value}
                 options={productionStatuses}
                 style={classes.textInputStyle}
                 placeholder={t("boardMissions.productionStatus")}
@@ -88,30 +97,30 @@ const BoardMissionsListWidget = () => {
                 onChange={handleMultiSelectChange}
                 style={classes.textInputStyle}
                 options={productsList}
-                values={selectedValues}
+                values={productIds}
                 placeholder="Select products" />
             </div>
-
-            
+            <div style={classes.statusFilterContainer}>
+              <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+              <GoMakeDatepicker />
+            </div>
             <GomakePrimaryButton
               style={classes.searchBtnStyle}
-              onClick={() => null}
+              onClick={handleClickSearch}
             >{t("sales.quote.search")}
             </GomakePrimaryButton>
             <GomakePrimaryButton
               style={classes.clearBtnStyle}
-              onClick={() => null}
+              onClick={handleClickClear}
             >{t("sales.quote.clear")}
             </GomakePrimaryButton>
-      
-
           </div>
-          <SearchInputComponent onChange={(e) => alert(e)} />
+          <SearchInputComponent onChange={onChangeMissionsSearch} value={patternSearch} />
         </div>
         <PrimaryTable
           stickyFirstCol={false}
           stickyHeader={false}
-          rows={null}
+          rows={allBoardMissions}
           headers={tableHeader}
         />
       </div>

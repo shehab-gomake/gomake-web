@@ -36,15 +36,15 @@ const useGoMakeSignalr = <T>({
         .start()
         .then(() => {
           setConnectionId(connection.connectionId);
-          /*connection.on(methodName, (newData) => {
+          connection.on(methodName, (newData) => {
             setData(newData);
-          });*/
+          });
         })
         .catch((error) => console.log(error));
     }
   }, [connection]);
   return {
-    data,
+    data, 
     connection,
     connectionId,
   };
