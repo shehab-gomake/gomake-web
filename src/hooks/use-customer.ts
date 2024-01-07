@@ -1,5 +1,5 @@
 import {clearStorage} from "@/services/storage-data";
-import {systemCurrencyState, userState} from "@/store";
+import {systemCurrencyState, systemVATState, userState} from "@/store";
 import {permissionsState} from "@/store/permissions";
 import {useCallback, useState} from "react";
 import {useRecoilState, useSetRecoilState} from "recoil";
@@ -16,6 +16,7 @@ const useCustomer = (permissionEnumValue?:Permissions) => {
     const {callApi} = useGomakeAxios();
     const [user, setUser] = useRecoilState<any>(userState);
     const [systemCurrency, setSystemCurrency] = useRecoilState<any>(systemCurrencyState);
+    const [systemVAT, setSystemVAT] = useRecoilState<number>(systemVATState);
     const setUserProfile = useSetRecoilState(userProfileState);
     const [userType, setUserType] = useRecoilState<any>(userTypeState);
     const [adminsAutoComplate, setAdminsAutoComplate] = useState([]);
@@ -39,6 +40,7 @@ const useCustomer = (permissionEnumValue?:Permissions) => {
             setUserType({type: "user"});
             setUserProfile(validate?.data?.data?.customer);
             setSystemCurrency(user.systemCurrency)
+            setSystemVAT(user.systemVat);
             if (validate?.data?.data?.customer?.systemLang) {
                 localStorage.setItem('systemLanguage', validate?.data?.data?.customer?.systemLang)
                 i18n.changeLanguage(validate?.data?.data?.customer?.systemLang).then();
