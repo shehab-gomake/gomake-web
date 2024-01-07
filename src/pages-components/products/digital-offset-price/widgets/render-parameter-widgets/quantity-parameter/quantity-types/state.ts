@@ -7,10 +7,12 @@ interface IQuantityTypes {
     values: IQuantityTypesValue[];
     duplicatedName: boolean;
 }
+
 export interface IQuantityTypesValue {
     name: string;
     quantity: number;
 }
+
 export const productQuantityTypesState = atom<IQuantityTypes>({
     key: 'productQuantityTypesState',
     default: {
@@ -20,15 +22,17 @@ export const productQuantityTypesState = atom<IQuantityTypes>({
         values: [],
         duplicatedName: false
     }
-})
+});
 
-export const productQuantityTypesValuesState = selector<IQuantityTypesValue[]>({
+export const productQuantityTypesValuesState = atom<IQuantityTypesValue[]>({
     key: 'productQuantityTypesValuesState',
-    get: ({get}) => {
-        const state = get(productQuantityTypesState);
-        return state.values;
-    },
-});export const productQuantityTypesEqualQuantityState = selector<number>({
+    default: []
+});
+export const tempProductQuantityTypesValuesState = atom<IQuantityTypesValue[]>({
+    key: 'tempProductQuantityTypesValuesState',
+    default: []
+});
+export const productQuantityTypesEqualQuantityState = selector<number>({
     key: 'productQuantityTypesEqualQuantityState',
     get: ({get}) => {
         const state = get(productQuantityTypesState);

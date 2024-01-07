@@ -48,6 +48,9 @@ import { v4 as uuidv4 } from "uuid";
 import {
   QuantityParameter
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-parameter";
+import {
+  productQuantityTypesValuesState
+} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -109,6 +112,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setSelectParameterButton = useSetRecoilState(
     selectParameterButtonState
   );
+  const productQuantityTypes = useRecoilValue(productQuantityTypesValuesState);
   const { calculationResult, connectionId, calculationSessionId } =
     useCalculationsWorkFlowsSignalr();
   const [requestAbortController, setRequestAbortController] =
@@ -1193,6 +1197,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           generalParameters: generalParameters,
           subProducts: calculationSubProducts,
           itemParmetersValues:itemParmetersValues,
+          workTypes: productQuantityTypes
         },
         false,
         newRequestAbortController

@@ -1,38 +1,38 @@
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import {productTypesNumberState} from "@/store";
 import {
-    IQuantityTypesValue,
     openQuantityComponentModalState,
     productQuantityTypesDuplicatedNameState,
     productQuantityTypesEqualQuantityState,
-    productQuantityTypesState
+     productQuantityTypesValuesState, tempProductQuantityTypesValuesState
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 
 const useQuantityTypesTable = (save: boolean) => {
     const productTypesNumber = useRecoilValue<number>(productTypesNumberState);
-    const [quantityTypes, setQuantityTypes] = useRecoilState(productQuantityTypesState);
-    const [valuesState, setValuesState] = useState<IQuantityTypesValue[]>([]);
+    const [quantityTypes, setQuantityTypes] = useRecoilState(productQuantityTypesValuesState);
+    const [valuesState, setValuesState] = useRecoilState(tempProductQuantityTypesValuesState);
     const equalQuantity = useRecoilValue(productQuantityTypesEqualQuantityState);
     const isDuplicatedName = useRecoilValue(productQuantityTypesDuplicatedNameState);
     const setOpenModal = useSetRecoilState(openQuantityComponentModalState);
 
     useEffect(() => {
-        let values = [...quantityTypes.values];
-        if (values.length !== productTypesNumber) {
-            for (let i = 1; i <= productTypesNumber; i++) {
-                values.push({name: 'Name ' + i, quantity: 0})
+        if (quantityTypes.length === productTypesNumber) {
+            setValuesState(quantityTypes)
+        } else if (quantityTypes.length < productTypesNumber) {
+            const array = [];
+            for (let i = quantityTypes.length + 1; i <= productTypesNumber; i++) {
+                array.push({name: 'Name ' + i, quantity: 0});
+                setValuesState([...quantityTypes, ...array]);
             }
+        }else if (quantityTypes.length > productTypesNumber) {
+            setValuesState(quantityTypes.slice(0, productTypesNumber))
         }
-        setValuesState(values)
     }, [productTypesNumber, quantityTypes]);
 
     useEffect(() => {
         if (save) {
-            setQuantityTypes({
-                ...quantityTypes,
-                values: valuesState
-            });
+            setQuantityTypes(valuesState);
             setOpenModal(false)
         }
     }, [save])
