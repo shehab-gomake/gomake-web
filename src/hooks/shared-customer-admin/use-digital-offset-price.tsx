@@ -21,10 +21,12 @@ import {useMaterials} from "../use-materials";
 import {digitslPriceState} from "./store";
 import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
-import {userProfileState} from "@/store/user-profile";
 import {EWidgetProductType} from "@/pages-components/products/digital-offset-price/enums";
 import {compareStrings} from "@/utils/constants";
 import {EButtonTypes, EParameterTypes} from "@/enums";
+import {
+    QuantityParameter
+} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-parameter";
 import {
     InputNumberParameterWidget
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
@@ -58,6 +60,9 @@ import {
     getProductByItemIdApi,
     updateDocumentItemApi
 } from "@/services/api-service/generic-doc/documents-api";
+import {
+    productQuantityTypesValuesState
+} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 
 const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const {navigate} = useGomakeRouter();
@@ -101,7 +106,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
     const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
     const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
     const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
-
+    const productQuantityTypes = useRecoilValue(productQuantityTypesValuesState);
     const setCalculationProgress = useSetRecoilState(calculationProgressState);
     const jobDetails = useRecoilValue(jobDetailsState);
     const [jobActions, setJobActions] = useRecoilState(jobActionsState);
@@ -786,7 +791,20 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                 item.subSectionId === subSection?.id &&
                 item?.actionIndex === parameter?.actionIndex
         );
-        if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
+        if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER && parameter?.id === quantity?.parameterId) {
+            Comp = (
+                <QuantityParameter
+                    classes={clasess}
+                    parameter={parameter}
+                    index={index}
+                    temp={temp}
+                    onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+                    subSection={subSection}
+                    section={section}
+                    type="number"
+                />
+            );
+        } else if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
             Comp = (
                 <InputNumberParameterWidget
                     clasess={clasess}
@@ -1329,6 +1347,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                     generalParameters: generalParameters,
                     subProducts: calculationSubProducts,
                     itemParmetersValues: itemParmetersValues,
+                    workTypes: productQuantityTypes
                 },
                 false,
                 newRequestAbortController

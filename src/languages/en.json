@@ -2576,5 +2576,12 @@
 "path":"Path",
 "download" : "Download",
 "upload":"Upload"
+  },
+  "quantityTypes": {
+    "quantity": "Quantity",
+    "typeAmount": "Type amount",
+    "equalQuantity": "Equal quantity",
+    "duplicateName": "Duplicate name",
+    "typeName": "Type name"
   }
 }
