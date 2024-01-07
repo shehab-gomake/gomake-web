@@ -68,8 +68,8 @@ const HeaderWidget = () => {
       {/* <SearchInputComponent onChange={() => null} searchInputStyle={clasess.searchInputContainer} /> */}
       <div style={{ width: "100%" }} />
       <div style={clasess.rightSideContainer}>
-        {QuoteIfExist == true && (
-          <IconButton onClick={() => navigate("quote")}>
+        {QuoteIfExist == true && window.location.pathname != "/quote" && (
+          <IconButton onClick={() => navigate("/quote")}>
             <CartIcon />
           </IconButton>
         )}

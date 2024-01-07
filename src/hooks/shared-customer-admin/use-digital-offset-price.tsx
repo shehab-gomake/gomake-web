@@ -122,7 +122,9 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
 
     const [requestAbortController, setRequestAbortController] =
         useState<AbortController>(null);
-
+  const [billingMethod, setBillingMethod] = useState<any>();
+  const [graphicDesigner, setGraphicDesigner] = useState<any>();
+  const [includeVAT, setIncludeVAT] = useState();
     useEffect(() => {
         let copy = lodashClonedeep(subProducts);
         console.log("setSubProductsCopy", copy)
@@ -741,6 +743,8 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
                 graphicNotes,
                 isNeedExample: false,
                 isDuplicatedWithAnotherQuantity: false,
+                graphicsEmployeeId: graphicDesigner?.id,
+                graphicsPricingType: billingMethod?.value,
             };
             setCurrentProductItemValue(productItemValue);
         }
@@ -1174,22 +1178,25 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         }
     };
 
-    const onClickProductionTab = () => {
-        setActiveTab("Production");
-    };
-    const onClickGraphicDesignTab = () => {
-        setActiveTab("Graphic design");
-    };
-    const tabs = [
-        {
-            name: "Production",
-            onclick: () => onClickProductionTab,
-        },
-        {
-            name: "Graphic design",
-            onclick: () => onClickGraphicDesignTab,
-        },
-    ];
+  const onClickProductionTab = () => {
+    setActiveTab(t("quality.production"));
+    setBillingMethod(null);
+    setGraphicDesigner(null);
+  };
+  const onClickGraphicDesignTab = () => {
+    setActiveTab(t("products.offsetPrice.admin.graphicDesign"));
+    setSamlleType(null);
+  };
+  const tabs = [
+    {
+      name: t("quality.production"),
+      onclick: () => onClickProductionTab,
+    },
+    {
+      name: t("products.offsetPrice.admin.graphicDesign"),
+      onclick: () => onClickGraphicDesignTab,
+    },
+  ];
 
 
     const getProductById = async (materials) => {
@@ -1488,66 +1495,73 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
         }
     };
 
-    useEffect(() => {
-        setPricingDefaultValue({
-            actions: jobActions,
-            workFlows,
-            jobDetails,
-        });
-    }, [workFlows, jobActions, jobDetails]);
-    return {
-        t,
-        handleTabClick,
-        handleNextClick,
-        handlePreviousClick,
-        onOpeneMakeShape,
-        onCloseGalleryModal,
-        onCloseMakeShape,
-        handleChange,
-        _renderParameterType,
-        _getParameter,
-        createProfitTestCase,
-        renderOptions,
-        checkWhatRenderArray,
-        navigate,
-        navigateForRouter,
-        updateQuoteItem,
-        setUrgentOrder,
-        setPrintingNotes,
-        setGraphicNotes,
-        setPriceRecovery,
-        onOpeneMultiParameterModal,
-        onCloseMultiParameterModal,
-        duplicateSection,
-        removeSection,
-        duplicateParameters,
-        setProductTemplate,
-        setSamlleType,
-        multiParameterModal,
-        settingParameters,
-        priceRecovery,
-        graphicNotes,
-        printingNotes,
-        urgentOrder,
-        makeShapeOpen,
-        GalleryModalOpen,
-        activeIndex,
-        productTemplate,
-        tabs,
-        activeTab,
-        PricingTab,
-        expanded,
-        clientDefaultValue,
-        clientTypeDefaultValue,
-        clientTypesValue,
-        pricingDefaultValue,
-        errorMsg,
-        relatedParameters,
-        workFlows,
-        jobDetails,
-        jobActions,
-        getOutSourcingSuppliers,
-        onChangeSubProductsForPrice,
-    };
+  useEffect(() => {
+    setPricingDefaultValue({
+      actions: jobActions,
+      workFlows,
+      jobDetails,
+    });
+  }, [workFlows, jobActions, jobDetails]);
+  return {
+    t,
+    handleTabClick,
+    handleNextClick,
+    handlePreviousClick,
+    onOpeneMakeShape,
+    onCloseGalleryModal,
+    onCloseMakeShape,
+    handleChange,
+    _renderParameterType,
+    _getParameter,
+    createProfitTestCase,
+    renderOptions,
+    checkWhatRenderArray,
+    navigate,
+    navigateForRouter,
+    updateQuoteItem,
+    setUrgentOrder,
+    setPrintingNotes,
+    setGraphicNotes,
+    setPriceRecovery,
+    onOpeneMultiParameterModal,
+    onCloseMultiParameterModal,
+    duplicateSection,
+    removeSection,
+    duplicateParameters,
+    setProductTemplate,
+    setSamlleType,
+    setBillingMethod,
+    multiParameterModal,
+    settingParameters,
+    priceRecovery,
+    graphicNotes,
+    printingNotes,
+    urgentOrder,
+    makeShapeOpen,
+    GalleryModalOpen,
+    activeIndex,
+    productTemplate,
+    tabs,
+    activeTab,
+    PricingTab,
+    expanded,
+    clientDefaultValue,
+    clientTypeDefaultValue,
+    clientTypesValue,
+    pricingDefaultValue,
+    errorMsg,
+    relatedParameters,
+    workFlows,
+    jobDetails,
+    jobActions,
+    includeVAT,
+    billingMethod,
+    samlleType,
+    graphicDesigner,
+    setGraphicDesigner,
+    setIncludeVAT,
+    getOutSourcingSuppliers,
+    onChangeSubProductsForPrice,
+  };
 };
 export {useDigitalOffsetPrice};

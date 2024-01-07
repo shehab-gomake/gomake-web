@@ -42,6 +42,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     removeSection,
     duplicateParameters,
     setProductTemplate,
+    setBillingMethod,
     multiParameterModal,
     settingParameters,
     priceRecovery,
@@ -64,6 +65,10 @@ const PriceListPageWidget = ({ widgetType }) => {
     relatedParameters,
     jobActions,
     workFlows,
+    billingMethod,
+    samlleType,
+    graphicDesigner,
+    setGraphicDesigner,
     setSamlleType,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
@@ -198,6 +203,13 @@ const PriceListPageWidget = ({ widgetType }) => {
               setPriceRecovery={setPriceRecovery}
               priceRecovery={priceRecovery}
               setSamlleType={setSamlleType}
+              includeVAT={includeVAT}
+              setIncludeVAT={setIncludeVAT}
+              setBillingMethod={setBillingMethod}
+              billingMethod={billingMethod}
+              samlleType={samlleType}
+              graphicDesigner={graphicDesigner}
+              setGraphicDesigner={setGraphicDesigner}
             />
           </div>
 
