@@ -35,7 +35,7 @@ const QuantityParameter = ({
             parameter?.parameterType,
             parameter?.name,
             parameter?.actionId,
-            {values: quantityTypes.reduce((acc, val) => acc + val.quantity, 0) },
+            {values: quantityTypes.reduce((acc, val) => acc + val.quantity, 0).toString() },
             subSection?.type,
             index,
             parameter?.actionIndex
