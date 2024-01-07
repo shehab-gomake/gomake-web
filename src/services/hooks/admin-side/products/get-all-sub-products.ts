@@ -9,7 +9,8 @@ const getAllSubProducts = async (
   const result: any = await callApi(
     "GET",
     "/v1/printhouse-config/products/get-all-sub-products",
-    data
+    data,
+    false
   );
   return returnResult(result, setState);
 };
