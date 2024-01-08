@@ -1,5 +1,5 @@
 import {useTranslation} from "react-i18next";
-import {useCallback, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {GoMakeModal, GomakePrimaryButton, GomakeTextInput} from "@/components";
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
@@ -9,10 +9,12 @@ import Stack from "@mui/material/Stack";
 import {Clear} from "@mui/icons-material";
 import {staticDateRange} from "@/components/date-picker/const";
 interface IGoMakeDatepicker {
-
+    onChange: (fromDate: Date, toDate: Date) => void;
+    placeholder?: string;
+    reset?: boolean;
 }
 
-const GoMakeDatepicker = ({}: IGoMakeDatepicker) => {
+const GoMakeDatepicker = ({onChange, placeholder , reset}: IGoMakeDatepicker) => {
     const {t} = useTranslation();
     const [state, setState] = useState({
         selection: {
@@ -24,29 +26,15 @@ const GoMakeDatepicker = ({}: IGoMakeDatepicker) => {
     const [openDatepicker, setOpenDatepicker] = useState<boolean>(false);
     const {dateStringFormat} = useDatePicker()
     const handleSelectDates = () => {
+        onChange(state.selection.startDate, state.selection.endDate);
         setOpenDatepicker(false);
     }
     const handleInputClick = () => {
-        if (state.selection.endDate === null) {
-            setState({
-                ...state, selection: {
-                    ...state.selection,
-                    endDate: new Date()
-                }
-            })
-        }
-        if (state.selection.startDate === null) {
-            setState({
-                ...state, selection: {
-                    ...state.selection,
-                    startDate: new Date()
-                }
-            })
-        }
         setOpenDatepicker(true);
     }
 
     const handleClear = () => {
+        onChange(null, null);
         setState({
             ...state,
             selection: {
@@ -57,6 +45,12 @@ const GoMakeDatepicker = ({}: IGoMakeDatepicker) => {
         })
     }
 
+    useEffect(() => {
+        if (reset) {
+            handleClear();
+        }
+    }, [reset]);
+    
     const dateString = useCallback(() => {
         if (state.selection.startDate === null || state.selection.endDate === null) {
             return '';
@@ -68,8 +62,8 @@ const GoMakeDatepicker = ({}: IGoMakeDatepicker) => {
     return (
         <div>
             <Stack direction={'row'} gap={'3px'} alignItems={'center'}>
-                <GomakeTextInput disabled={false} style={{height: '35px', cursor: 'pointer', minWidth: '190px'}}
-                                 value={dateString()} labelText={'select'} placeholder={'select date'}
+                <GomakeTextInput disabled={false} style={{height: '40px', cursor: 'pointer'}}
+                                 value={dateString()} labelText={'select'} placeholder={placeholder}
                                  onClick={handleInputClick}/>
                 <Clear onClick={handleClear}/>
             </Stack>

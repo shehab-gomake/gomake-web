@@ -61,7 +61,7 @@ const ProductionFloorWidget = () => {
         </ButtonGroup>
         <Stack direction={"row"} gap={"10px"} alignItems={"center"}>
           <SelectComponent buttonLabel={"employee"} list={demo} />
-          <GoMakeDatepicker />
+          <GoMakeDatepicker onChange={()=>null} />
           <SearchInputComponent onChange={() => {}} />
         </Stack>
       </Stack>
