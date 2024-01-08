@@ -1,7 +1,7 @@
 import { useGomakeAxios } from "@/hooks";
 import { getMaterialCategoryDataApi } from "@/services/api-service/materials/materials-endpoints";
 import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   materialCategoryDataState,
@@ -11,10 +11,10 @@ import { useState } from "react";
 
 const useMaterialsCategories = () => {
   const { callApi } = useGomakeAxios();
-  const setActiveFilter = useSetRecoilState(activeFilterState);
   const setMaterialCategoryData = useSetRecoilState<IMaterialCategoryRow[]>(
     materialCategoryDataState
   );
+  const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
   const [pagesCount, setPagesCount] = useState(0);
   const getMaterialCategoryData = async (
     materialType: string,
@@ -28,17 +28,24 @@ const useMaterialsCategories = () => {
         setMaterialCategoryData(
           res.data?.data?.map((row) => ({ ...row, checked: false }))
         );
-        res.data?.data?.every((row) => !row.isActive)
-          ? setActiveFilter(EMaterialActiveFilter.ALL)
-          : setActiveFilter(EMaterialActiveFilter.ACTIVE);
+        // res.data?.data?.every((row) => !row.isActive)
+        //   ? setActiveFilter(EMaterialActiveFilter.ALL)
+        //   : setActiveFilter(EMaterialActiveFilter.ACTIVE);
       }
     };
+    const isActive =
+      activeFilter === EMaterialActiveFilter.ACTIVE
+        ? true
+        : activeFilter === EMaterialActiveFilter.INACTIVE
+        ? false
+        : "";
     const data = await getMaterialCategoryDataApi(callApi, callBack, {
       materialKey: materialType,
       categoryKey: materialCategory,
       supplierId,
       pageNumber,
       pageSize,
+      isActive,
     });
     setPagesCount(Math.ceil(data?.data?.totalItems / pageSize));
   };
