@@ -94,7 +94,6 @@ const useNewProfits = () => {
     useState([]);
   const [actionProfitByActionId, setActionProfitByActionId] =
     useState<ActionProfit>();
-  console.log("actionProfitByActionId", actionProfitByActionId);
   const [calculateCaseValue, setSalculateCaseValue] = useState<any>();
   const [actionProfitRowChartData, setActionProfitRowChartData] =
     useState<ActionProfitRowChartData>();
@@ -311,10 +310,6 @@ const useNewProfits = () => {
     let defaultTransitionValue = Transition.find(
       (item) => item?.value === actionProfitByActionId?.transitionType
     );
-    console.log("defaultPricingByValuessss", {
-      defaultPricingByValue,
-      defaultTransitionValue,
-    });
     setSelectedPricingBy(defaultPricingByValue);
     setSelectedTransition(defaultTransitionValue);
   }, [actionProfitByActionId]);
