@@ -94,6 +94,7 @@ const useNewProfits = () => {
     useState([]);
   const [actionProfitByActionId, setActionProfitByActionId] =
     useState<ActionProfit>();
+  console.log("actionProfitByActionId", actionProfitByActionId);
   const [calculateCaseValue, setSalculateCaseValue] = useState<any>();
   const [actionProfitRowChartData, setActionProfitRowChartData] =
     useState<ActionProfitRowChartData>();
@@ -310,6 +311,10 @@ const useNewProfits = () => {
     let defaultTransitionValue = Transition.find(
       (item) => item?.value === actionProfitByActionId?.transitionType
     );
+    console.log("defaultPricingByValuessss", {
+      defaultPricingByValue,
+      defaultTransitionValue,
+    });
     setSelectedPricingBy(defaultPricingByValue);
     setSelectedTransition(defaultTransitionValue);
   }, [actionProfitByActionId]);
@@ -321,7 +326,7 @@ const useNewProfits = () => {
         id: actionProfitByActionId?.id,
         printingActionId: actionProfitByActionId?.printingActionId,
         pricingBy: data?.value,
-        transitionType: actionProfitByActionId?.transitionType,
+        transitionType: selectedTransition?.value,
         minPrice: actionProfitByActionId?.minPrice,
         actionProfitRows: [],
         actionExpections: [],
@@ -357,7 +362,7 @@ const useNewProfits = () => {
         recordID: actionProfitByActionId?.recordID,
         id: actionProfitByActionId?.id,
         printingActionId: actionProfitByActionId?.printingActionId,
-        pricingBy: actionProfitByActionId?.pricingBy,
+        pricingBy: selectedPricingBy?.value,
         transitionType: data?.value,
         minPrice: actionProfitByActionId?.minPrice,
         actionProfitRows: [],
@@ -384,7 +389,12 @@ const useNewProfits = () => {
         alertFaultUpdate();
       }
     },
-    [actionProfitByActionId, router, selectedPricingTableItems]
+    [
+      actionProfitByActionId,
+      router,
+      selectedPricingTableItems,
+      selectedPricingBy,
+    ]
   );
   useEffect(() => {
     if (router.query.draftId) {
@@ -487,8 +497,8 @@ const useNewProfits = () => {
         recordID: actionProfitByActionId?.recordID,
         id: actionProfitByActionId?.id,
         printingActionId: actionProfitByActionId?.printingActionId,
-        pricingBy: actionProfitByActionId?.pricingBy,
-        transitionType: actionProfitByActionId?.transitionType,
+        pricingBy: selectedPricingBy?.value,
+        transitionType: selectedTransition?.value,
         minPrice: data,
         actionProfitRows: [],
         actionExpections: [],
@@ -514,7 +524,13 @@ const useNewProfits = () => {
         alertFaultUpdate();
       }
     },
-    [actionProfitByActionId, router, selectedPricingTableItems]
+    [
+      actionProfitByActionId,
+      router,
+      selectedPricingTableItems,
+      selectedPricingBy,
+      selectedTransition,
+    ]
   );
   const [minimumValue, setMinimumValue] = useState(0);
   useEffect(() => {
@@ -732,7 +748,6 @@ const useNewProfits = () => {
     updatePricingByForAction,
     updateTransitionForAction,
     setSelectedTransition,
-    setSelectedPricingBy,
     changeactionProfitRowsItems,
     addNewStepForActionProfitRow,
     updateActionProfitRow,
