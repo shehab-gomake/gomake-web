@@ -87,6 +87,7 @@ const useBoardMissions = () => {
         setAgent(null);
         setCustomer(null);
         setStatus(null);
+        setProductIds([]);
         setPatternSearch("");
         getAllBoardMissionsClear();
     };
