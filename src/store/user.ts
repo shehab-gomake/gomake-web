@@ -8,3 +8,7 @@ export const systemCurrencyState = atom({
     key: "systemCurrencyState",
     default: "",
 });
+export const systemVATState = atom({
+    key: "systemVATState",
+    default: 0,
+});
