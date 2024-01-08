@@ -1415,7 +1415,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
       );
       setCurrentProductItemValueTotalPrice(
-        quoteItemProduct.quoteItem.finalPrice
+        quoteItemProduct.docmentItem.finalPrice
       );
       setCurrentProductItemValue(quoteItemProduct.productItemValue);
       setWorkFlows(quoteItemProduct.productItemValue.workFlows);
