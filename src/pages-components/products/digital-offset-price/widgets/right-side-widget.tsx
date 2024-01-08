@@ -46,11 +46,8 @@ const RightSideWidget = ({
     quantity,
     setCurrentProductItemValueTotalPrice,
     t,
-  } = useRightSideWidget();
-  console.log(
-    "currentProductItemValueTotalPrice",
-    currentProductItemValueTotalPrice
-  );
+  } = useRightSideWidget({ includeVAT });
+
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -139,7 +136,9 @@ const RightSideWidget = ({
               <DotsLoader />
             ) : (
               <GomakeTextInput
-                value={currentProductItemValueTotalPrice ?? "---------"}
+                value={
+                  currentProductItemValueTotalPrice?.toFixed(2) ?? "---------"
+                }
                 onChange={(e: any) => {
                   setCurrentProductItemValueTotalPrice(e.target.value);
                 }}
@@ -233,9 +232,9 @@ const RightSideWidget = ({
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon />}
               onChange={() => {
-                setUrgentOrder(!urgentOrder);
+                setIncludeVAT(!includeVAT);
               }}
-              checked={urgentOrder}
+              checked={includeVAT}
             />
             <div style={clasess.secondText}>
               {t("products.offsetPrice.admin.includeVAT")}
@@ -246,9 +245,9 @@ const RightSideWidget = ({
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon />}
               onChange={() => {
-                setIncludeVAT(!includeVAT);
+                setUrgentOrder(!urgentOrder);
               }}
-              checked={includeVAT}
+              checked={urgentOrder}
             />
             <div style={clasess.secondText}>
               {t("products.offsetPrice.admin.urgentOrder")}
