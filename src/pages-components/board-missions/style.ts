@@ -17,6 +17,9 @@ const useStyle = () => {
         gap: 20,
         paddingLeft: 20,
         paddingRight: 20,
+        height:"100%",
+        overflowY: 'auto' as 'auto',
+
       },
       filtersContainer: {
         display: "flex",
@@ -62,6 +65,11 @@ const useStyle = () => {
         color: secondColor(500),
         width: "12.5%",
       },
+      paginationStyle: {
+        paddingLeft: 20,
+        paddingRight: 20,
+        height:'50px'
+      }
     };
   }, [theme]);
   return {

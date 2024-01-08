@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { PStatus } from "./enums";
 import { setBoardMissionsFiltersApi } from "@/services/api-service/board-missions-table/set-borad-missions-filters-api";
 import { useDateFormat } from "@/hooks/use-date-format";
+import { DEFAULT_VALUES } from "@/pages/customers/enums";
 
 const useBoardMissions = () => {
     const { t } = useTranslation();
@@ -17,6 +18,8 @@ const useBoardMissions = () => {
     const [canOrder, setCanOrder] = useState(false);
     const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
     const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
+    const [pageNumber, setPageNumber] = useState(1);
+    const [pagesCount, setPagesCount] = useState(0);
     const [customer, setCustomer] = useState<{ label: string, id: string } | null>();
     const [agent, setAgent] = useState<{ label: string, id: string } | null>();
     const [status, setStatus] = useState<{ label: string, value: PStatus } | null>();
@@ -24,11 +27,19 @@ const useBoardMissions = () => {
     const [productIds, setProductIds] = useState<string[]>([]);
     const [productsList, setProductsList] = useState([]);
     const [patternSearch, setPatternSearch] = useState<string>();
-    const [fromDate, setFromDate] = useState();
-    const [toDate, setToDate] = useState();
+    const [fromDate, setFromDate] = useState<Date>();
+    const [toDate, setToDate] = useState<Date>();
     const [allBoardMissions, setAllBoardMissions] = useState([]);
+    const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
     const { GetDateFormat } = useDateFormat();
+    const pageSize = DEFAULT_VALUES.PageSize;
 
+    const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
+        setResetDatePicker(false);
+        setFromDate(fromDate);
+        setToDate(toDate);
+    }
+    
     const getAgentCategories = async (isAgent: boolean) => {
         const callBack = (res) => {
             if (res.success) {
@@ -67,10 +78,6 @@ const useBoardMissions = () => {
         setProductIds(newValues);
     };
 
-    const handleClickSearch = () => {
-        getAllBoardMissions();
-    }
-
     const handleAgentChange = (e: any, value: any) => {
         setAgent(value);
     };
@@ -82,13 +89,21 @@ const useBoardMissions = () => {
         setStatus(value);
     };
 
+    const handleClickSearch = () => {
+        setPageNumber(1);
+        getAllBoardMissions();
+    }
+
     const handleClickClear = () => {
         setAgent(null);
         setCustomer(null);
         setStatus(null);
         setProductIds([]);
         setPatternSearch("");
-        getAllBoardMissionsClear();
+        setFromDate(null); 
+        setToDate(null);   
+        setResetDatePicker(true);
+        pageNumber === 1 ? getAllBoardMissionsClear() : setPageNumber(1);
     };
 
     const onChangeMissionsSearch = (value: string) => {
@@ -113,12 +128,12 @@ const useBoardMissions = () => {
                     clientId: customer?.id,
                     agentId: agent?.id,
                     search: patternSearch,
-                    fromDate: fromDate,
-                    toDate: toDate,
+                    fromDate: fromDate && GetDateFormat(fromDate),
+                    toDate: toDate && GetDateFormat(toDate),
                     productsIds: productIds,
                     productionStatus: status?.value,
-                    pageNumber: 1,
-                    pageSize: 20,
+                    pageNumber: pageNumber,
+                    pageSize: pageSize,
                 })
         }
     };
@@ -127,22 +142,17 @@ const useBoardMissions = () => {
         if (connectionId) {
             const callBack = (res) => {
                 if (res?.success) {
-                    // do nothing
                 }
             }
             await setBoardMissionsFiltersApi(callApi, callBack,
                 {
                     signalrConnectionId: connectionId,
                     productsIds: [],
-                    pageNumber: 1,
-                    pageSize: 20,
+                    pageNumber: pageNumber,
+                    pageSize: pageSize,
                 })
         }
     };
-
-    useEffect(() => {
-        handleClickSearch();
-    }, [connectionId]);
 
     useEffect(() => {
         const mapData = data?.data?.map((mission: any) => [
@@ -161,6 +171,7 @@ const useBoardMissions = () => {
             mission?.status
         ]);
         setAllBoardMissions(mapData);
+        setPagesCount(Math.ceil(data?.totalItems / pageSize));
     }, [data, connectionId]);
 
     const renderOptions = () => {
@@ -191,6 +202,14 @@ const useBoardMissions = () => {
         }
     };
 
+    useEffect(() => {
+        getAllBoardMissions();
+    }, [connectionId, pageNumber])
+
+    const handlePageChange = (event, value) => {
+        setPageNumber(value);
+    };
+
     return {
         tableHeader,
         getAgentCategories,
@@ -215,6 +234,13 @@ const useBoardMissions = () => {
         checkWhatRenderArray,
         getAllCustomersCreateQuote,
         getAllCustomersCreateOrder,
+        pagesCount,
+        pageNumber,
+        handlePageChange,
+        onSelectDeliveryTimeDates,
+        fromDate,
+        toDate,
+        resetDatePicker
     };
 };
 
