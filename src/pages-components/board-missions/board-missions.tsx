@@ -41,24 +41,19 @@ const BoardMissionsListWidget = () => {
     pagesCount,
     pageNumber,
     onSelectDeliveryTimeDates,
-    resetDatePicker } = useBoardMissions();
+    resetDatePicker
+  } = useBoardMissions();
 
   useEffect(() => {
     getAllCustomersCreateQuote();
     getAllCustomersCreateOrder();
     getAgentCategories(true);
     getAllProducts();
-  }, [])
+  },[]);
 
   return (
     <>
-      <Stack
-        direction="column"
-        justifyContent="space-between"
-        display="flex"
-        spacing={1}
-        height="100%"
-      >
+      <Stack direction="column" justifyContent="space-between" display="flex" spacing={1} height="100%" >
         <div style={classes.mainContainer}>
           <HeaderTitle title={t("boardMissions.title")} marginTop={1} marginBottom={1} />
           <div style={classes.filtersContainer}>
@@ -69,7 +64,7 @@ const BoardMissionsListWidget = () => {
                   key={agent?.id}
                   options={agentsCategories}
                   style={classes.textInputStyle}
-                  getOptionLabel={(option: any) => option.label}
+                  getOptionLabel={(option: any) => option.dlabel}
                   placeholder={t("sales.quote.ChooseAgent")}
                   onChange={handleAgentChange}
                   value={agent}

@@ -10,6 +10,7 @@ import { PStatus } from "./enums";
 import { setBoardMissionsFiltersApi } from "@/services/api-service/board-missions-table/set-borad-missions-filters-api";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
+import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 
 const useBoardMissions = () => {
     const { t } = useTranslation();
@@ -39,7 +40,7 @@ const useBoardMissions = () => {
         setFromDate(fromDate);
         setToDate(toDate);
     }
-    
+
     const getAgentCategories = async (isAgent: boolean) => {
         const callBack = (res) => {
             if (res.success) {
@@ -59,7 +60,7 @@ const useBoardMissions = () => {
     ];
 
     const tableHeader = [
-        t("boardMissions.image"),
+        // t("boardMissions.image"),
         t("boardMissions.creationDate"),
         t("boardMissions.dueDate"),
         t("boardMissions.clientName"),
@@ -100,8 +101,8 @@ const useBoardMissions = () => {
         setStatus(null);
         setProductIds([]);
         setPatternSearch("");
-        setFromDate(null); 
-        setToDate(null);   
+        setFromDate(null);
+        setToDate(null);
         setResetDatePicker(true);
         pageNumber === 1 ? getAllBoardMissionsClear() : setPageNumber(1);
     };
@@ -156,22 +157,22 @@ const useBoardMissions = () => {
 
     useEffect(() => {
         const mapData = data?.data?.map((mission: any) => [
-            "image test",
             GetDateFormat(mission?.createdDate),
             GetDateFormat(mission?.dueDate),
             mission?.clientName,
             mission?.number,
-            mission?.outSourceType,
+            EWorkSource[mission?.outSourceType],
             mission?.quantity,
             mission?.cost,
             mission?.price,
-            "job name test",
-            "test",
+            mission?.jobName,
+            mission?.numberOfBoardMissions,
             mission?.productName,
             mission?.status
         ]);
         setAllBoardMissions(mapData);
         setPagesCount(Math.ceil(data?.totalItems / pageSize));
+        console.log(data)
     }, [data, connectionId]);
 
     const renderOptions = () => {
