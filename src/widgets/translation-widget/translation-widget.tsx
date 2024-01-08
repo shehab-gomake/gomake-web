@@ -9,9 +9,12 @@ import { AddBlockModal } from './components/translation-modals/add-block-modal';
 import { useTranslation } from 'react-i18next';
 import { useTranslations } from './use-translations';
 import { ExcelButtons } from './components/excel-translations-buttons';
-import {JSONEditor} from "@/widgets/translation-widget/components/json-editor/json-editor";
 import {PrimaryTable} from "@/components/tables/primary-table";
 import {TranslationTable} from "@/widgets/translation-widget/components/translation-table/translation-table";
+import {PrimaryTabsComponent} from "@/components/tabs/primary-tabs";
+import {
+  TranslationsFileEditor
+} from "@/widgets/translation-widget/components/tranlation-files-editor/tranlation-files-editor";
 
 const TranslationsWidget = () => {
   const { classes } = useStyle()
@@ -83,7 +86,11 @@ const TranslationsWidget = () => {
       </div>
       <ExcelButtons />
       <div style={{width:'100%'}}>
-        <TranslationTable/>
+        <PrimaryTabsComponent 
+            tabs={[{title:'table view',component:<TranslationTable/>},{title:'json view',component:<TranslationsFileEditor/>}]}
+        
+        />
+        
       </div>
       {/* <NestedAccordion data={data} openModal={openModal} setOpenModal={setOpenModal} state={state} setState={setState} />*/}
       <TranslationModal state={state} setState={setState} translationFiles={translationFiles} />

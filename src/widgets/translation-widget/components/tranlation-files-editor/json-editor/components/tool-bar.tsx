@@ -14,7 +14,7 @@ export interface ToolBarProps {
     onClearClick: () => void;
     onAutoPrettifyChange: () => void;
     onDownloadClick: () => void;
-    onUploadClick: (fileContent: File) => void;
+    onUploadClick: () => void;
     onFixClick: () => void;
     isAutoPrettifyOn: boolean;
     isValidJson: boolean;
@@ -74,35 +74,8 @@ export const ToolBar: React.FC<ToolBarProps> = ({
     const leftItems: ICommandBarItemProps[] = [
         {
             key: "upload",
-            onRender: () => <FileUploader onFileHandle={onUploadClick} />,
-        },
-        {
-            key: "download",
-            text: "Download",
-            ariaLabel: "Grid view",
-            iconProps: { iconName: "Download" },
-            onClick: onDownloadClick,
-            disabled: !isValidJson,
-        },
-        {
-            key: "clear",
-            text: "Clear",
-            iconProps: { iconName: "Delete" },
-            onClick: onClearClick,
-        },
-        {
-            key: "fix",
-            text: "Fix",
-            iconProps: { iconName: "DeveloperTools" },
-            onClick: onFixClick,
-            disabled: isValidJson,
-        },
-        {
-            key: "minify",
-            text: "Minify",
-            iconProps: { iconName: "MinimumValue" },
-            onClick: onMinifyClick,
-            disabled: !isValidJson || isAutoPrettifyOn,
+            text: "upload",
+            onClick: onUploadClick,
         },
         {
             key: "prettify",
@@ -110,18 +83,6 @@ export const ToolBar: React.FC<ToolBarProps> = ({
             iconProps: { iconName: "Code" },
             onClick: onPrettifyClick,
             disabled: !isValidJson || isAutoPrettifyOn,
-        },
-        {
-            key: "auto-prettify",
-            onRender: () => (
-                <CommandButton>
-                    <Checkbox
-                        label="Auto Prettify"
-                        onChange={onAutoPrettifyChange}
-                        checked={isAutoPrettifyOn}
-                    />
-                </CommandButton>
-            ),
         },
     ];
 

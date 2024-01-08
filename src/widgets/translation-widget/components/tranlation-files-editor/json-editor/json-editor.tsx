@@ -9,7 +9,7 @@ import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
 import { ErrorMessageBar } from "./components/error-message-bar";
 import { TitleBar } from "./components/title-bar";
 import { ToolBar } from "./components/tool-bar";
-import {downloadJsonFile,parseJsonSchemaString,prettifyJsonString,minifyJsonString} from "@/widgets/translation-widget/components/json-editor/utils";
+import {downloadJsonFile,parseJsonSchemaString,prettifyJsonString,minifyJsonString} from "@/widgets/translation-widget/components/tranlation-files-editor/json-editor/utils";
 
 
 const stackStyles: IStackStyles = {
@@ -28,6 +28,7 @@ interface JSONEditorProps {
     path?: string;
     isSchemaSampleDataOn: boolean;
     onChange?: (value?: string) => void;
+    onUploadClick?: () => void;
 }
 
 interface RefObject extends Monaco.editor.ICodeEditor {
@@ -41,6 +42,7 @@ export const JSONEditor = ({
                                path = "",
                                isSchemaSampleDataOn,
                                onChange,
+                               onUploadClick
                            }: JSONEditorProps) => {
     const monaco = useMonaco();
     const [errors, setErrors] = useState<string[]>([]);
@@ -154,13 +156,8 @@ export const JSONEditor = ({
         editor.setValue(minifiedValue);
     };
 
-    const handleUploadClick = (file: File) => {
-        const fileReader = new FileReader();
-        fileReader.onload = () => {
-            const result = fileReader.result as string;
-            handleEditorUpdateValue(result);
-        };
-        fileReader.readAsText(file);
+    const handleUploadClick = () => {
+        onUploadClick();
     };
 
     const handleDownloadClick = () => {
@@ -200,7 +197,7 @@ export const JSONEditor = ({
                     onDownloadClick={handleDownloadClick}
                     onMinifyClick={handleMinifyClick}
                     onPrettifyClick={handleEditorPrettify}
-                    onUploadClick={handleUploadClick}
+                    onUploadClick={onUploadClick}
                     onFixClick={handleFixClick}
                 />
             </Stack.Item>
