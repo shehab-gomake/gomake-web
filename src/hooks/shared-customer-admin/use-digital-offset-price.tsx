@@ -1182,6 +1182,7 @@ const useDigitalOffsetPrice = ({clasess, widgetType}) => {
 
     const handleTabClick = (index: number) => {
         if (index !== activeIndex) {
+            setCanCalculation(false)
             setActiveIndex(index);
             setCanCalculation(false)
         }
