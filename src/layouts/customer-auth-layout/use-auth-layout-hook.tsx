@@ -76,6 +76,11 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions) => {
         Permission: Permissions.SHOW_SALES,
         list: [
           {
+            key: "boardMissions",
+            title: "home.tabs.boardMissions",
+            path: "/board-missions",
+          },
+          {
             key: "quotes",
             title: "tabs.quotes",
             path: "/quotes",

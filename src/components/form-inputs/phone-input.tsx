@@ -15,6 +15,7 @@ const PhoneInputComponent = ({ onChange, value, autoFocus }: IProps) => {
             defaultCountry="il"
             value={value || ""}
             onChange={(value) => {
+                value.length!==4 && 
                 onChange(value);
             }}
             autoFocus={autoFocus}
