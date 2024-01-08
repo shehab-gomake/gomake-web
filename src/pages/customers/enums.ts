@@ -9,7 +9,7 @@ export enum CLIENT_TYPE {
 }
 
 export enum DEFAULT_VALUES {
-    PageSize = 10,
+    PageSize = 20,
 }
 export enum CUSTOMER_ACTIONS{
     Add = 0,
