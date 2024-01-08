@@ -5,7 +5,7 @@ import { useRecoilState } from "recoil";
 import { agentsCategoriesState, clientTypesCategoriesState } from "./customer-states";
 import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
-import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/api-service/customers/customers-api";
+import { getAndSetCustomerById, getAndSetCustomersPagination , exportClientApi,importClientApi } from "@/services/api-service/customers/customers-api";
 import { DEFAULT_VALUES } from "./enums";
 import { useSnackBar } from "@/hooks";
 import { permissionsState } from "@/store/permissions";
@@ -120,6 +120,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
     await getAndSetEmployees2(callApi, callBack, { isAgent: true })
   }
   const [customerForEdit, setCustomerForEdit] = useState([]);
+
   const getCustomerForEdit = async (id) => {
     const callBack = (res) => {
       if (res.success) {
@@ -227,6 +228,26 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
     return true;
   };
 
+
+  // const importClient = async (file) => {
+  //   const callBack = (res) => {
+  //     if (res.success) {
+      
+  //     }
+  //   }
+  //   await importClientApi(callApi, callBack, {fileBase64: file , clientType :clientType })
+  // }
+
+  
+  // const onClickExportClient = async () => {
+  //   const callBack = (res) => {
+  //     if (res.success) {
+
+  //     }
+  //   }
+  //   await exportClientApi(callApi, callBack, {clientType :clientType })
+  // }
+  
   return {
     getAgentCategories,
     getClientTypesCategories,

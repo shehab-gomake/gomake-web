@@ -81,8 +81,8 @@ export default function Home() {
 
   return (
     <CustomerAuthLayout>
-      <div style={classes.maonContainer}>
-        <div style={classes.headerStyle}>
+      <Stack direction="column" justifyContent="space-between" display="flex" spacing={2} height="100%" >
+        <div style={classes.mainContainer}>        <div style={classes.headerStyle}>
           <HeaderTitle marginBottom="20px" title={t("suppliers.title")} />
           <PermissionCheck userPermission={Permissions.EDIT_SUPPLIER}>
             <AddCustomerButton
@@ -92,51 +92,51 @@ export default function Home() {
             ></AddCustomerButton>
           </PermissionCheck>
         </div>
-        <HeaderFilter
-          typeClient={CLIENT_TYPE.SUPPLIER}
-          agentsCategories={agentsCategories}
-          clientTypesCategories={clientTypesCategories}
-          statuses={statuses}
-          onChangeAgent={onChangeAgent}
-          onChangeCustomer={onChangeCustomer}
-          onChangeClientType={onChangeClientType}
-          onChangeStatus={onChangeStatus}
-          handleClean={handleClean}
-          customerName={name}
-          agentName={agentName}
-          valClientType={valClientType}
-          valStatus={valStatus}
-        />
-        <Stack spacing={3}>
-          <PrimaryTable
-            stickyFirstCol={false}
-            stickyHeader={false}
-            rows={getCustomersRows()}
-            headers={tableHeaders}
-          ></PrimaryTable>
-          <CustomerCardWidget
-            isValidCustomer={isValidCustomer}
-            customerAction={CUSTOMER_ACTIONS.Edit}
+          <HeaderFilter
             typeClient={CLIENT_TYPE.SUPPLIER}
-            getAllCustomers={getAllCustomers}
-            openModal={showCustomerModal}
-            modalTitle={t("suppliers.editModalTitle")}
-            onClose={() => setShowCustomerModal(false)}
-            customer={customerForEdit}
-            setCustomer={setCustomerForEdit}
-            showUpdateButton={true}
+            agentsCategories={agentsCategories}
+            clientTypesCategories={clientTypesCategories}
+            statuses={statuses}
+            onChangeAgent={onChangeAgent}
+            onChangeCustomer={onChangeCustomer}
+            onChangeClientType={onChangeClientType}
+            onChangeStatus={onChangeStatus}
+            handleClean={handleClean}
+            customerName={name}
+            agentName={agentName}
+            valClientType={valClientType}
+            valStatus={valStatus}
           />
-          <div style={{ marginBottom: "5px" }}>
-            <Pagination
-              count={pagesCount}
-              variant="outlined"
-              color="primary"
-              page={pageNumber}
-              onChange={(event, value) => setPageNumber(value)}
+          <Stack spacing={3}>
+            <PrimaryTable
+              stickyFirstCol={false}
+              stickyHeader={false}
+              rows={getCustomersRows()}
+              headers={tableHeaders}
+            ></PrimaryTable>
+            <CustomerCardWidget
+              isValidCustomer={isValidCustomer}
+              customerAction={CUSTOMER_ACTIONS.Edit}
+              typeClient={CLIENT_TYPE.SUPPLIER}
+              getAllCustomers={getAllCustomers}
+              openModal={showCustomerModal}
+              modalTitle={t("suppliers.editModalTitle")}
+              onClose={() => setShowCustomerModal(false)}
+              customer={customerForEdit}
+              setCustomer={setCustomerForEdit}
+              showUpdateButton={true}
             />
-          </div>
-        </Stack>
-      </div>
+          </Stack>
+        </div>
+        <Pagination
+          count={pagesCount}
+          variant="outlined"
+          color="primary"
+          page={pageNumber}
+          style={classes.paginationStyle}
+          onChange={(event, value) => setPageNumber(value)}
+        />
+      </Stack>
     </CustomerAuthLayout>
   );
 }
