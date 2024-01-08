@@ -15,13 +15,9 @@ const BoardMissionsListWidget = () => {
   const { t } = useTranslation();
   const {
     tableHeader,
-    getAllCustomers,
     renderOptions,
-    setCustomer,
     customer,
-    setAgent,
     agent,
-    setStatus,
     status,
     agentsCategories,
     getAgentCategories,
@@ -35,10 +31,17 @@ const BoardMissionsListWidget = () => {
     handleClickClear,
     allBoardMissions,
     patternSearch,
+    handleAgentChange,
+    handleStatusChange,
+    handleCustomerChange,
+    checkWhatRenderArray,
+    getAllCustomersCreateOrder,
+    getAllCustomersCreateQuote
   } = useBoardMissions();
 
   useEffect(() => {
-    getAllCustomers();
+    getAllCustomersCreateQuote();
+    getAllCustomersCreateOrder();
     getAgentCategories(true);
     getAllProducts();
   }, [])
@@ -58,9 +61,7 @@ const BoardMissionsListWidget = () => {
                 style={classes.textInputStyle}
                 getOptionLabel={(option: any) => option.label}
                 placeholder={t("sales.quote.ChooseAgent")}
-                onChange={(e: any, value: any) => {
-                  setAgent(value);
-                }}
+                onChange={handleAgentChange}
                 value={agent}
               />
             </div>
@@ -69,12 +70,11 @@ const BoardMissionsListWidget = () => {
               <GoMakeAutoComplate
                 key={customer?.id}
                 options={renderOptions()}
+                onChangeTextField={checkWhatRenderArray}
                 getOptionLabel={(option: any) => `${option.name}`}
                 style={classes.textInputStyle}
                 placeholder={t("sales.quote.chooseCustomer")}
-                onChange={(e: any, value: any) => {
-                  setCustomer(value);
-                }}
+                onChange={handleCustomerChange}
                 value={customer}
               />
             </div>
@@ -85,9 +85,7 @@ const BoardMissionsListWidget = () => {
                 options={productionStatuses}
                 style={classes.textInputStyle}
                 placeholder={t("boardMissions.productionStatus")}
-                onChange={(e: any, value: any) => {
-                  setStatus(value);
-                }}
+                onChange={handleStatusChange}
                 value={status}
               />
             </div>

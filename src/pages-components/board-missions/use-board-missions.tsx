@@ -10,15 +10,16 @@ import { PStatus } from "./enums";
 import { setBoardMissionsFiltersApi } from "@/services/api-service/board-missions-table/set-borad-missions-filters-api";
 import { useDateFormat } from "@/hooks/use-date-format";
 
-
 const useBoardMissions = () => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const { data, connectionId } = useBoardMissionsSignalr();
+    const [canOrder, setCanOrder] = useState(false);
+    const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
+    const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
     const [customer, setCustomer] = useState<{ label: string, id: string } | null>();
     const [agent, setAgent] = useState<{ label: string, id: string } | null>();
     const [status, setStatus] = useState<{ label: string, value: PStatus } | null>();
-    const [customersList, setCustomersList] = useState([]);
     const [agentsCategories, setAgentsCategories] = useState<[]>();
     const [productIds, setProductIds] = useState<string[]>([]);
     const [productsList, setProductsList] = useState([]);
@@ -27,15 +28,6 @@ const useBoardMissions = () => {
     const [toDate, setToDate] = useState();
     const [allBoardMissions, setAllBoardMissions] = useState([]);
     const { GetDateFormat } = useDateFormat();
-
-
-    const getAllCustomers = useCallback(async (SearchTerm?) => {
-        await getAndSetAllCustomers(callApi, setCustomersList, {
-            ClientType: "C",
-            onlyCreateOrderClients: false,
-            searchTerm: SearchTerm,
-        });
-    }, []);
 
     const getAgentCategories = async (isAgent: boolean) => {
         const callBack = (res) => {
@@ -48,10 +40,6 @@ const useBoardMissions = () => {
             }
         };
         await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
-    };
-
-    const renderOptions = () => {
-        return customersList;
     };
 
     const productionStatuses = [
@@ -82,6 +70,17 @@ const useBoardMissions = () => {
     const handleClickSearch = () => {
         getAllBoardMissions();
     }
+
+    const handleAgentChange = (e: any, value: any) => {
+        setAgent(value);
+    };
+
+    const handleCustomerChange = (e: any, value: any) => {
+        setCustomer(value);
+    };
+    const handleStatusChange = (e: any, value: any) => {
+        setStatus(value);
+    };
 
     const handleClickClear = () => {
         setAgent(null);
@@ -164,18 +163,41 @@ const useBoardMissions = () => {
         setAllBoardMissions(mapData);
     }, [data, connectionId]);
 
+    const renderOptions = () => {
+        if (!!canOrder) {
+            return customersListCreateOrder;
+        } else return customersListCreateQuote;
+    };
+
+    const getAllCustomersCreateQuote = useCallback(async () => {
+        await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
+            ClientType: "C",
+            onlyCreateOrderClients: false,
+        });
+    }, []);
+
+    const getAllCustomersCreateOrder = useCallback(async () => {
+        await getAndSetAllCustomers(callApi, setCustomersListCreateOrder, {
+            ClientType: "C",
+            onlyCreateOrderClients: true,
+        });
+    }, []);
+
+    const checkWhatRenderArray = (e) => {
+        if (e.target.value) {
+            setCanOrder(true);
+        } else {
+            setCanOrder(false);
+        }
+    };
+
     return {
         tableHeader,
-        getAllCustomers,
         getAgentCategories,
         agentsCategories,
-        customersList,
         renderOptions,
-        setCustomer,
         customer,
-        setAgent,
         agent,
-        setStatus,
         status,
         productionStatuses,
         handleMultiSelectChange,
@@ -187,6 +209,12 @@ const useBoardMissions = () => {
         onChangeMissionsSearch,
         allBoardMissions,
         patternSearch,
+        handleAgentChange,
+        handleStatusChange,
+        handleCustomerChange,
+        checkWhatRenderArray,
+        getAllCustomersCreateQuote,
+        getAllCustomersCreateOrder,
     };
 };
 
