@@ -19,17 +19,20 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { convertHeightToVH } from "@/utils/adapter";
-import { HEADER_HEIGHT, SCREEN_HEIGHT } from "@/utils/layout-config";
 import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
+import Pagination from "@mui/material/Pagination";
+import { DEFAULT_VALUES } from "@/pages/customers/enums";
 
 const MaterialsWidget = () => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
-  const { getMaterialCategoryData } = useMaterialsCategories();
+  const { getMaterialCategoryData, pagesCount } = useMaterialsCategories();
+  const pageSize = DEFAULT_VALUES.PageSize;
+  const [pageNumber, setPageNumber] = useState(1);
+
   const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
   const supplierId = useRecoilValue(selectedSupplierIdState);
@@ -134,7 +137,7 @@ const MaterialsWidget = () => {
   useEffect(() => {
     getCurrenciesApi().then();
     getMachinesMaterials();
-  }, []);
+  }, [pageNumber]);
 
   useEffect(() => {
     getMaterialCategories(materialType).then();
@@ -147,7 +150,9 @@ const MaterialsWidget = () => {
         getMaterialCategoryData(
           materialType?.toString(),
           materialCategory?.toString(),
-          supplierId
+          supplierId,
+          pageNumber,
+          pageSize
         ).then();
       } else {
         getPrintHouseMaterialCategorySuppliers(
@@ -156,7 +161,7 @@ const MaterialsWidget = () => {
         ).then();
       }
     }
-  }, [materialType, materialCategory, supplierId]);
+  }, [materialType, materialCategory, supplierId, pageNumber, pageSize]);
   return (
     <div style={classes.mainContainer}>
       <SideBarContainer
@@ -174,31 +179,46 @@ const MaterialsWidget = () => {
               <h4 style={classes.subHeader}>{materialCategory?.toString()}</h4>
               <FiltersActionsBar />
             </Stack>
-            {materialCategoryData.length > 0 ? (
-              <div style={{ paddingBottom: "1%" }}>
-                <PrimaryTable rows={tableRowData} headers={tableHeadersNew()} />
-              </div>
-            ) : flag &&
-              materialCategories.find(
-                (category) => category.categoryKey === materialCategory
-              )?.isAddedByPrintHouse ? (
-              <PrimaryTable rows={tableRowsNew} headers={tableHeadersNew()} />
-            ) : (
-              <div style={classes.noData}>
-                {t("materials.sheetPaper.supplierAddedSheetYet")}
-                <span
-                  style={classes.noDataSpan}
-                  onClick={() => {
-                    setOpenAddSupplierModal(true);
-                  }}
-                >
-                  {t("materials.sheetPaper.pleaseAddNow")}
-                </span>
-              </div>
-            )}
+            <div style={{ minHeight: 550 }}>
+              {materialCategoryData.length > 0 ? (
+                <div style={{ paddingBottom: "1%" }}>
+                  <PrimaryTable
+                    rows={tableRowData}
+                    headers={tableHeadersNew()}
+                  />
+                </div>
+              ) : flag &&
+                materialCategories.find(
+                  (category) => category.categoryKey === materialCategory
+                )?.isAddedByPrintHouse ? (
+                <PrimaryTable rows={tableRowsNew} headers={tableHeadersNew()} />
+              ) : (
+                <div style={classes.noData}>
+                  {t("materials.sheetPaper.supplierAddedSheetYet")}
+                  <span
+                    style={classes.noDataSpan}
+                    onClick={() => {
+                      setOpenAddSupplierModal(true);
+                    }}
+                  >
+                    {t("materials.sheetPaper.pleaseAddNow")}
+                  </span>
+                </div>
+              )}
+            </div>
+            <div style={{ marginBottom: "5px" }}>
+              <Pagination
+                count={pagesCount}
+                variant="outlined"
+                color="primary"
+                page={pageNumber}
+                onChange={(event, value) => setPageNumber(value)}
+              />
+            </div>
           </Stack>
         )}
       </SideBarContainer>
+
       <AddSupplierModal />
       <AddCategoryModal />
       <AddRowModal />
