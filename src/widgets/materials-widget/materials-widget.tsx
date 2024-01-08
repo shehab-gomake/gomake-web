@@ -9,6 +9,7 @@ import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
+  activeFilterState,
   flagState,
   openAddCategoryModalState,
   openAddSupplierModalState,
@@ -32,7 +33,7 @@ const MaterialsWidget = () => {
   const { getMaterialCategoryData, pagesCount } = useMaterialsCategories();
   const pageSize = DEFAULT_VALUES.PageSize;
   const [pageNumber, setPageNumber] = useState(1);
-
+  const activeFilter = useRecoilValue(activeFilterState);
   const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
   const supplierId = useRecoilValue(selectedSupplierIdState);
@@ -161,7 +162,14 @@ const MaterialsWidget = () => {
         ).then();
       }
     }
-  }, [materialType, materialCategory, supplierId, pageNumber, pageSize]);
+  }, [
+    materialType,
+    materialCategory,
+    supplierId,
+    pageNumber,
+    pageSize,
+    activeFilter,
+  ]);
   return (
     <div style={classes.mainContainer}>
       <SideBarContainer
