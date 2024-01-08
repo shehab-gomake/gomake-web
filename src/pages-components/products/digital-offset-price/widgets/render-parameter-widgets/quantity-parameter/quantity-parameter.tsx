@@ -28,18 +28,21 @@ const QuantityParameter = ({
     const {openModal, setOpenModal, productTypesNumber} = useQuantityParameter();
     const quantityTypes = useRecoilValue(productQuantityTypesValuesState);
     useEffect(() => {
-        onChangeSubProductsForPrice(
-            parameter?.id,
-            subSection?.id,
-            section?.id,
-            parameter?.parameterType,
-            parameter?.name,
-            parameter?.actionId,
-            {values: quantityTypes.reduce((acc, val) => acc + val.quantity, 0).toString() },
-            subSection?.type,
-            index,
-            parameter?.actionIndex
-        );
+        if(quantityTypes.length > 1){
+            onChangeSubProductsForPrice(
+                parameter?.id,
+                subSection?.id,
+                section?.id,
+                parameter?.parameterType,
+                parameter?.name,
+                parameter?.actionId,
+                {values: quantityTypes.reduce((acc, val) => acc + val.quantity, 0).toString() },
+                subSection?.type,
+                index,
+                parameter?.actionIndex
+            );
+        }
+        
     }, [quantityTypes])
     return (
         <Stack direction={"row"}>
