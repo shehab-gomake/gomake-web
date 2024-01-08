@@ -28,12 +28,13 @@ const getMaterialCategoryDataApi: ICallAndSetData = async (
     supplierId: string;
     pageNumber: number;
     pageSize: number;
+    isActive: boolean;
   }
 ) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
-    `${GET_MATERIAL_CATEGORY_DATA_URL}?materialKey=${material.materialKey}&categoryKey=${material.categoryKey}&supplierId=${material.supplierId}&pageNumber=${material.pageNumber}&pageSize=${material.pageSize}`,
+    `${GET_MATERIAL_CATEGORY_DATA_URL}?materialKey=${material.materialKey}&categoryKey=${material.categoryKey}&supplierId=${material.supplierId}&pageNumber=${material.pageNumber}&pageSize=${material.pageSize}&isActive=${material.isActive}`,
     setState
   );
 };
