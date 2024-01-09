@@ -1416,6 +1416,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         quoteItemProduct.docmentItem.finalPrice
       );
       setCurrentProductItemValue(quoteItemProduct.productItemValue);
+      setCurrentProductItemValueDraftId(quoteItemProduct.productItemValueDraftId)
       setWorkFlows(quoteItemProduct.productItemValue.workFlows);
       setJobActions(quoteItemProduct.productItemValue.actions);
       setSubProducts(quoteItemSubProducts);
