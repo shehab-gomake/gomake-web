@@ -22,6 +22,9 @@ const useTranslationsFilesEditor = () => {
     return [{value:"en",label:"en"},{value:"ar",label:"ar"},{value:"de",label:"de"},{value:"he",label:"he"}]
   }
   const uploadEditedJsonFile = async () => {
+    if(!editedLangJsonFile){
+      return;
+    }
     const S3_BUCKET = "gomake-translations";
     const REGION = "eu-central-1";
     const fileName = `web/${selectedLang}.json`;
