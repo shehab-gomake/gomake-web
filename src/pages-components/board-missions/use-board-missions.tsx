@@ -16,9 +16,7 @@ const useBoardMissions = () => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const { data, connectionId } = useBoardMissionsSignalr();
-    const [canOrder, setCanOrder] = useState(false);
     const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
-    const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
     const [pageNumber, setPageNumber] = useState(1);
     const [pagesCount, setPagesCount] = useState(0);
     const [customer, setCustomer] = useState<{ label: string, id: string } | null>();
@@ -175,32 +173,34 @@ const useBoardMissions = () => {
         console.log(data)
     }, [data, connectionId]);
 
-    const renderOptions = () => {
-        if (!!canOrder) {
-            return customersListCreateOrder;
-        } else return customersListCreateQuote;
-    };
+  
 
-    const getAllCustomersCreateQuote = useCallback(async () => {
+    const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
         await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
             ClientType: "C",
+            searchTerm: SearchTerm, 
             onlyCreateOrderClients: false,
         });
     }, []);
 
-    const getAllCustomersCreateOrder = useCallback(async () => {
-        await getAndSetAllCustomers(callApi, setCustomersListCreateOrder, {
+    const getAllCustomersCreateOrder = useCallback(async (SearchTerm?) => {
+        await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
             ClientType: "C",
+            searchTerm: SearchTerm, 
             onlyCreateOrderClients: true,
         });
     }, []);
 
     const checkWhatRenderArray = (e) => {
         if (e.target.value) {
-            setCanOrder(true);
+            getAllCustomersCreateOrder(e.target.value)
         } else {
-            setCanOrder(false);
+            getAllCustomersCreateQuote();
         }
+    };
+
+    const renderOptions = () => {
+      return  customersListCreateQuote
     };
 
     useEffect(() => {

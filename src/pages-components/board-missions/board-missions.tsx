@@ -35,7 +35,6 @@ const BoardMissionsListWidget = () => {
     handleStatusChange,
     handleCustomerChange,
     checkWhatRenderArray,
-    getAllCustomersCreateOrder,
     getAllCustomersCreateQuote,
     handlePageChange,
     pagesCount,
@@ -46,7 +45,6 @@ const BoardMissionsListWidget = () => {
 
   useEffect(() => {
     getAllCustomersCreateQuote();
-    getAllCustomersCreateOrder();
     getAgentCategories(true);
     getAllProducts();
   },[]);
