@@ -64,6 +64,7 @@ const useMoreCircle = ({ updatedProduct, item }) => {
     if (res?.success) {
       alertSuccessAdded();
       handleClose();
+      navigate(`/settings/products/edit/${res?.data?.data?.data}`);
     } else {
       alertFaultAdded();
       handleClose();

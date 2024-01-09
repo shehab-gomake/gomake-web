@@ -8,7 +8,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor, secondColor, errorColor } = useGomakeTheme();
+  const { primaryColor, secondColor } = useGomakeTheme();
 
   const clasess = useMemo(() => {
     return {
@@ -18,6 +18,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
+        backgroundColor: "transparent",
       },
       categoryNameStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
@@ -177,6 +178,19 @@ const useStyle = () => {
         gap: "10px",
         height: "40px",
         borderRadius: "4px",
+      },
+      fileInputStyle: {
+        boxSizing: "border-box" as "border-box",
+        borderRadius: "4px",
+        height: "40px",
+        padding: "7px",
+        ...FONT_FAMILY.Lexend(300, 14),
+        display: "flex",
+        alignItems: "center",
+        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+        color: "#8283BE",
+        justifyContent: "space-between",
+        backgroundColor: "#FFFFFF",
       },
     };
   }, [i18next.language, t]);

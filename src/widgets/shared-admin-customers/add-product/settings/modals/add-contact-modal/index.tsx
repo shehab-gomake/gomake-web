@@ -46,7 +46,9 @@ const AddProductSkuModal = ({
                   }}
                 />
                 {errorName && (
-                  <div style={clasess.errorlabelStyle}>Field is required</div>
+                  <div style={clasess.errorlabelStyle}>
+                    {t("products.addProduct.admin.FieldIsRequired")}
+                  </div>
                 )}
               </div>
               <div style={{ width: "100%" }}>
@@ -58,7 +60,9 @@ const AddProductSkuModal = ({
                   }}
                 />
                 {errorCode && (
-                  <div style={clasess.errorlabelStyle}>Field is required</div>
+                  <div style={clasess.errorlabelStyle}>
+                    {t("products.addProduct.admin.FieldIsRequired")}
+                  </div>
                 )}
               </div>
             </div>
