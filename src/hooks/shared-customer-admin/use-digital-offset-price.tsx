@@ -130,10 +130,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [billingMethod, setBillingMethod] = useState<any>();
   const [graphicDesigner, setGraphicDesigner] = useState<any>();
   const [includeVAT, setIncludeVAT] = useState<boolean>(false);
-  console.log("fFFFF", includeVAT);
   useEffect(() => {
     let copy = lodashClonedeep(subProducts);
-    console.log("setSubProductsCopy", copy);
     setSubProductsCopy(copy);
   }, [subProducts]);
 
