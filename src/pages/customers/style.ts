@@ -32,6 +32,8 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         paddingLeft: 20,
         paddingRight: 20,
+        height:"100%",
+        overflowY: 'auto' as 'auto',
       },
       sameRow: {
         display: "flex",
@@ -65,6 +67,15 @@ const useStyle = () => {
       cleanBtnStyle: {
         backgroundColor: "#F8F8F8",
       },
+      paginationStyle: {
+        display: "flex",
+        paddingLeft: 20,
+        paddingRight: 20,
+        height:'50px',
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+
+      }
     };
   }, [i18next.language, t]);
   return {

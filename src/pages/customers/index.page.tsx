@@ -15,6 +15,7 @@ import { customerMapFunction } from "@/services/api-service/customers/customers-
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { ExcelButtons } from "./export-import-buttons";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -54,6 +55,8 @@ export default function Home() {
     setShowCustomerModal,
     getCustomerForEdit,
     getAllCustomers,
+    onClickExportClient,
+    onClickImportClient
   } = useCustomers(CLIENT_TYPE.CUSTOMER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
@@ -88,33 +91,33 @@ export default function Home() {
 
   return (
     <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_CUSTOMERS}>
-      <div style={classes.mainContainer}>
-        <div style={classes.sameRow}>
-          <HeaderTitle marginBottom="20px" title={t("customers.title")} />
-          <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
-            <AddCustomerButton
-              isValidCustomer={isValidCustomer}
-              onCustomerAdd={onCustomerAdd}
-              typeClient={CLIENT_TYPE.CUSTOMER}
-            />
-          </PermissionCheck>
-        </div>
-        <HeaderFilter
-          typeClient={CLIENT_TYPE.CUSTOMER}
-          agentsCategories={agentsCategories}
-          clientTypesCategories={clientTypesCategories}
-          statuses={statuses}
-          onChangeAgent={onChangeAgent}
-          onChangeCustomer={onChangeCustomer}
-          onChangeClientType={onChangeClientType}
-          onChangeStatus={onChangeStatus}
-          handleClean={handleClean}
-          customerName={name}
-          agentName={agentName}
-          valClientType={valClientType}
-          valStatus={valStatus}
-        />
-        <Stack spacing={3}>
+      <Stack direction="column" justifyContent="space-between" display="flex" spacing={2} height="100%" >
+        <div style={classes.mainContainer}>
+          <div style={classes.sameRow}>
+            <HeaderTitle marginBottom="20px" title={t("customers.title")} />
+            <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
+              <AddCustomerButton
+                isValidCustomer={isValidCustomer}
+                onCustomerAdd={onCustomerAdd}
+                typeClient={CLIENT_TYPE.CUSTOMER}
+              />
+            </PermissionCheck>
+          </div>
+          <HeaderFilter
+            typeClient={CLIENT_TYPE.CUSTOMER}
+            agentsCategories={agentsCategories}
+            clientTypesCategories={clientTypesCategories}
+            statuses={statuses}
+            onChangeAgent={onChangeAgent}
+            onChangeCustomer={onChangeCustomer}
+            onChangeClientType={onChangeClientType}
+            onChangeStatus={onChangeStatus}
+            handleClean={handleClean}
+            customerName={name}
+            agentName={agentName}
+            valClientType={valClientType}
+            valStatus={valStatus}
+          />
           <PrimaryTable
             stickyFirstCol={false}
             stickyHeader={false}
@@ -134,17 +137,18 @@ export default function Home() {
             setCustomer={setCustomerForEdit}
             showUpdateButton={true}
           />
-          <div style={{ marginBottom: "5px" }}>
-            <Pagination
-              count={pagesCount}
-              variant="outlined"
-              color="primary"
-              page={pageNumber}
-              onChange={(event, value) => setPageNumber(value)}
-            />
-          </div>
-        </Stack>
-      </div>
+        </div>
+        <div style={classes.paginationStyle}>
+          <Pagination
+            count={pagesCount}
+            variant="outlined"
+            color="primary"
+            page={pageNumber}
+            onChange={(event, value) => setPageNumber(value)}
+          />
+          <ExcelButtons onClickExport={onClickExportClient} onClickImport={onClickImportClient}/>
+        </div>
+      </Stack>
     </CustomerAuthLayout>
   );
 }

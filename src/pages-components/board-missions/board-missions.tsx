@@ -35,7 +35,6 @@ const BoardMissionsListWidget = () => {
     handleStatusChange,
     handleCustomerChange,
     checkWhatRenderArray,
-    getAllCustomersCreateOrder,
     getAllCustomersCreateQuote,
     handlePageChange,
     pagesCount,
@@ -46,7 +45,6 @@ const BoardMissionsListWidget = () => {
 
   useEffect(() => {
     getAllCustomersCreateQuote();
-    getAllCustomersCreateOrder();
     getAgentCategories(true);
     getAllProducts();
   },[]);
@@ -64,7 +62,7 @@ const BoardMissionsListWidget = () => {
                   key={agent?.id}
                   options={agentsCategories}
                   style={classes.textInputStyle}
-                  getOptionLabel={(option: any) => option.dlabel}
+                  getOptionLabel={(option: any) => option.label}
                   placeholder={t("sales.quote.ChooseAgent")}
                   onChange={handleAgentChange}
                   value={agent}

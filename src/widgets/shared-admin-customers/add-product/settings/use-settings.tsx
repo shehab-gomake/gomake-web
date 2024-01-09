@@ -20,8 +20,8 @@ const useSettings = ({
 }) => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
-  const { push, query } = useRouter();
-  const { settingsRoute, id } = query;
+  const { query } = useRouter();
+  const { id } = query;
   const { t } = useTranslation();
   const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded } =
     useSnackBar();
@@ -110,139 +110,149 @@ const useSettings = ({
       }
     }
   }, [productSKU, errorName, errorCode]);
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const [showColorPickerForNoteColor, setShowColorPickerForNoteColor] =
-    useState(false);
-  const toggleColorPicker = () => {
-    setShowColorPicker(!showColorPicker);
-  };
-  const toggleColorPickerForNoteColor = () => {
-    setShowColorPickerForNoteColor(!showColorPickerForNoteColor);
-  };
-  const closeColorPicker = () => {
-    if (showColorPicker) {
-      setShowColorPicker(false);
-    }
-  };
 
   const createNewProduct = useCallback(async () => {
-    const res = await callApi(
-      "POST",
-      `/v1/printhouse-config/products/create-product`,
-      {
-        id: RandomId,
-        name: productState?.name,
-        details: productState?.details,
-        groups: productState?.groups?.map((item) => {
-          return item;
-        }),
-        deliveryTime: productState?.deliveryTime,
-        startingPrice: productState?.startingPrice,
-        additionPrice: productState?.additionPrice,
-        noteColor: productState?.noteColor,
-        textColor: productState?.textColor,
-        productSKUId: productState?.productSKUId?.id,
-        templateId: productState?.templateId?.id,
-        clients: productState?.clients,
-        clientsTypes: productState?.clientsTypes,
-      }
-    );
-    if (res?.success) {
+    if (!productState.name || !productState.productSKUId) {
       setSnackbarStateValue({
         state: true,
-        message: t("modal.addedSusuccessfully"),
-        type: "sucess",
-      });
-      navigate("/settings/products");
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedfailed"),
+        message: t("products.addProduct.admin.requiredField"),
         type: "error",
       });
+    } else {
+      const res = await callApi(
+        "POST",
+        `/v1/printhouse-config/products/create-product`,
+        {
+          id: RandomId,
+          name: productState?.name,
+          details: productState?.details,
+          groups: productState?.groups?.map((item) => {
+            return item;
+          }),
+          deliveryTime: productState?.deliveryTime,
+          startingPrice: productState?.startingPrice,
+          additionPrice: productState?.additionPrice,
+          noteColor: productState?.noteColor,
+          textColor: productState?.textColor,
+          productSKUId: productState?.productSKUId?.id,
+          templateId: productState?.templateId?.id,
+          clients: productState?.clients,
+          clientsTypes: productState?.clientsTypes,
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        navigate("/settings/products");
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
     }
   }, [productState, RandomId]);
   const createNewProductAndGoToParameterList = useCallback(async () => {
-    const res = await callApi(
-      "POST",
-      `/v1/printhouse-config/products/create-product`,
-      {
-        id: RandomId,
-        name: productState?.name,
-        details: productState?.details,
-        groups: productState?.groups?.map((item) => {
-          return item;
-        }),
-        deliveryTime: productState?.deliveryTime,
-        startingPrice: productState?.startingPrice,
-        additionPrice: productState?.additionPrice,
-        noteColor: productState?.noteColor,
-        textColor: productState?.textColor,
-        productSKUId: productState?.productSKUId?.id,
-        templateId: productState?.templateId?.id,
-        clients: productState?.clients,
-        clientsTypes: productState?.clientsTypes,
-      }
-    );
-    if (res?.success) {
+    if (!productState.name || !productState.productSKUId) {
       setSnackbarStateValue({
         state: true,
-        message: t("modal.addedSusuccessfully"),
-        type: "sucess",
-      });
-      navigate(`/settings/products/edit/${RandomId}`);
-      onClickParametersTab();
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedfailed"),
+        message: t("products.addProduct.admin.requiredField"),
         type: "error",
       });
+    } else {
+      const res = await callApi(
+        "POST",
+        `/v1/printhouse-config/products/create-product`,
+        {
+          id: RandomId,
+          name: productState?.name,
+          details: productState?.details,
+          groups: productState?.groups?.map((item) => {
+            return item;
+          }),
+          deliveryTime: productState?.deliveryTime,
+          startingPrice: productState?.startingPrice,
+          additionPrice: productState?.additionPrice,
+          noteColor: productState?.noteColor,
+          textColor: productState?.textColor,
+          productSKUId: productState?.productSKUId?.id,
+          templateId: productState?.templateId?.id,
+          clients: productState?.clients,
+          clientsTypes: productState?.clientsTypes,
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+        navigate(`/settings/products/edit/${RandomId}`);
+        onClickParametersTab();
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
     }
   }, [productState, RandomId]);
 
   const updatedProduct = useCallback(async () => {
-    const res = await callApi(
-      "PUT",
-      `/v1/printhouse-config/products/update-product-settings`,
-      {
-        id: id,
-        name: productState?.name,
-        details: productState?.details,
-        groups: productState?.groups?.map((item) => {
-          return item;
-        }),
-        deliveryTime: productState?.deliveryTime,
-        startingPrice: productState?.startingPrice,
-        additionPrice: productState?.additionPrice,
-        noteColor: productState?.noteColor,
-        textColor: productState?.textColor,
-        productSKUId:
-          typeof productState?.productSKUId === "string"
-            ? productState?.productSKUId
-            : productState?.productSKUId?.id,
-        templateId:
-          typeof productState?.templateId === "string"
-            ? productState?.templateId
-            : productState?.templateId?.id,
-        status: true,
-        clients: productState?.clients,
-        clientsTypes: productState?.clientsTypes,
-        //sections: productState?.sections,
-      }
-    );
-    if (res?.success) {
+    if (!productState.name || !productState.productSKUId) {
       setSnackbarStateValue({
         state: true,
-        message: t("modal.addedSusuccessfully"),
-        type: "sucess",
-      });
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedfailed"),
+        message: t("products.addProduct.admin.requiredField"),
         type: "error",
       });
+    } else {
+      const res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/products/update-product-settings`,
+        {
+          id: id,
+          name: productState?.name,
+          details: productState?.details,
+          groups: productState?.groups?.map((item) => {
+            return item;
+          }),
+          deliveryTime: productState?.deliveryTime,
+          startingPrice: productState?.startingPrice,
+          additionPrice: productState?.additionPrice,
+          noteColor: productState?.noteColor,
+          textColor: productState?.textColor,
+          productSKUId:
+            typeof productState?.productSKUId === "string"
+              ? productState?.productSKUId
+              : productState?.productSKUId?.id,
+          templateId:
+            typeof productState?.templateId === "string"
+              ? productState?.templateId
+              : productState?.templateId?.id,
+          status: true,
+          clients: productState?.clients,
+          clientsTypes: productState?.clientsTypes,
+          //sections: productState?.sections,
+        }
+      );
+      if (res?.success) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedSusuccessfully"),
+          type: "sucess",
+        });
+      } else {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.addedfailed"),
+          type: "error",
+        });
+      }
     }
   }, [productState, RandomId]);
   const [SelectproductClient, setSelectProductClient] =
@@ -306,8 +316,6 @@ const useSettings = ({
     allTemplate,
     allGroups,
     isProductSKU,
-    showColorPicker,
-    showColorPickerForNoteColor,
     productState,
     onChangeStateProduct,
     errorName,
@@ -321,9 +329,6 @@ const useSettings = ({
     onClickOpenProductSKU,
     onChangeStateProductSKU,
     createNewProductSKU,
-    toggleColorPicker,
-    toggleColorPickerForNoteColor,
-    closeColorPicker,
     createNewProduct,
     createNewProductAndGoToParameterList,
     updatedProduct,
