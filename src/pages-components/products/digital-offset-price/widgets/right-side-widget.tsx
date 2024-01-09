@@ -137,7 +137,7 @@ const RightSideWidget = ({
             ) : (
               <GomakeTextInput
                 value={
-                  currentProductItemValueTotalPrice?.toFixed(2) ?? "---------"
+                  currentProductItemValueTotalPrice ?? "---------"
                 }
                 onChange={(e: any) => {
                   setCurrentProductItemValueTotalPrice(e.target.value);
