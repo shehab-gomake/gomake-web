@@ -5,12 +5,13 @@ import { useRecoilState } from "recoil";
 import { agentsCategoriesState, clientTypesCategoriesState } from "./customer-states";
 import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
-import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/api-service/customers/customers-api";
+import { getAndSetCustomerById, getAndSetCustomersPagination , exportClientApi,importClientApi } from "@/services/api-service/customers/customers-api";
 import { DEFAULT_VALUES } from "./enums";
 import { useSnackBar } from "@/hooks";
 import { permissionsState } from "@/store/permissions";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { usePermission } from "@/hooks/use-permission";
+import { EHttpMethod } from "@/services/api-service/enums";
 export interface IStatus {
   label: string;
   value: string;
@@ -120,6 +121,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
     await getAndSetEmployees2(callApi, callBack, { isAgent: true })
   }
   const [customerForEdit, setCustomerForEdit] = useState([]);
+
   const getCustomerForEdit = async (id) => {
     const callBack = (res) => {
       if (res.success) {
@@ -227,6 +229,48 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
     return true;
   };
 
+
+  // const importClient = async (file) => {
+  //   const callBack = (res) => {
+  //     if (res.success) {
+      
+  //     }
+  //   }
+  //   await importClientApi(callApi, callBack, {fileBase64: file , clientType :clientType })
+  // }
+
+  
+
+  const onClickImportClient = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const arrayBuffer = event.target.result;
+        const data = new Uint8Array(arrayBuffer as ArrayBuffer);
+        var base64String = btoa(new Uint8Array(data).reduce(
+          function (data, byte) {
+            return data + String.fromCharCode(byte);
+          },
+          ''
+        ));
+        importClientApi(callApi, () => {
+        }, { fileBase64: base64String, clientType: clientType })
+      };
+      reader.readAsArrayBuffer(file)
+    }
+  }
+
+
+  const onClickExportClient = async () => {
+    const result = await callApi(EHttpMethod.GET,"/v1/crm-service/customer/export-client", { clientType: clientType },true,null,"blob");
+    const downloadLink = document.createElement('a');
+    const link = URL.createObjectURL(result?.data);
+    downloadLink.href = link
+    downloadLink.download = 'clients.xlsx';
+    downloadLink.click();
+  };
+
   return {
     getAgentCategories,
     getClientTypesCategories,
@@ -240,7 +284,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
     onChangeClientType,
     onChangeStatus,
     setAllCustomers,
-    handleClean,
+    handleClean, 
     name,
     agentName,
     valStatus,
@@ -248,7 +292,7 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
     pagesCount,
     customerForEdit,
     setCustomerForEdit,
-    showCustomerModal,
+    showCustomerModal, 
     setShowCustomerModal,
     getCustomerForEdit,
     getAllCustomers,
@@ -261,6 +305,8 @@ const useCustomers = (clientType: "C" | "S", pageNumber: number, setPageNumber: 
     filters,
     clientType,
     isValidCustomer,
+    onClickExportClient,
+    onClickImportClient
   };
 };
 export { useCustomers };
