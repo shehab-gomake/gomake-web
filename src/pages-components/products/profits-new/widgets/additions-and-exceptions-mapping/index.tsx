@@ -7,6 +7,7 @@ const AdditionsAndExceptionsMapping = ({
   handleClickPricingTablesMapping,
   selectedAdditionalProfitRow,
   setSelectedActionProfitRow,
+  ProfitCurrency,
 }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -31,7 +32,9 @@ const AdditionsAndExceptionsMapping = ({
           <div style={clasess.ruleTextStyle}>
             {t("products.profits.exceptions.value")}
           </div>
-          <div style={clasess.valueStyle}>{item?.profitValue}$</div>
+          <div style={clasess.valueStyle}>
+            {item?.profitValue} {ProfitCurrency}
+          </div>
         </div>
         <div
           onClick={(e) => {

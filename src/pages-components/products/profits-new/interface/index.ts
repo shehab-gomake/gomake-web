@@ -138,6 +138,7 @@ export type ProfitRightSideProps = {
   selectedPricingTableItems?: any;
   setSelectedPricingTableItems?: (value: any) => void;
   dataForExceptions?: ProfitsPricingTables[];
+  dataForDefault?: ProfitsPricingTables[];
   dataForPricing?: ProfitsPricingTables[];
   onDragEnd?: (res) => void;
   deleteExceptionProfit?: (id: string) => void;
@@ -148,6 +149,7 @@ export type ProfitRightSideProps = {
   setTypeExceptionSelected?: (value: any) => void;
   selectedAdditionalProfitRow?: ProfitsPricingTables;
   setSelectedActionProfitRow?: (value: any) => void;
+  ProfitCurrency?: string;
 };
 
 export type ProfitLeftSideProps = {
