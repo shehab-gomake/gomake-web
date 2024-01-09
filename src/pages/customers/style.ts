@@ -69,11 +69,9 @@ const useStyle = () => {
       },
       paginationStyle: {
         display: "flex",
-
         paddingLeft: 20,
         paddingRight: 20,
         height:'50px',
-
         flexDirection: "row" as "row",
         justifyContent: "space-between",
 

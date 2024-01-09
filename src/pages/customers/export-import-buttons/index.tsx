@@ -5,9 +5,8 @@ import { Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 
 interface IProps {
-  onClickExport?: () => void;
-  onClickImport?: () => void;
-  typeClient?: CLIENT_TYPE;
+  onClickExport: () => void;
+  onClickImport: (file) => void;
 }
 
 const ExcelButtons = ({ onClickExport, onClickImport}: IProps) => {
@@ -16,8 +15,8 @@ const ExcelButtons = ({ onClickExport, onClickImport}: IProps) => {
 
   return (
     <Stack gap={'10px'} direction={'row'} justifyContent={'space-between'} >
-      <SecondaryButton onClick={onClickImport} variant={'contained'}>{t("customers.buttons.export")}</SecondaryButton>
-      <input ref={elementRef} onChange={onClickExport} type="file" accept=".xlsx" hidden={true} />
+      <SecondaryButton onClick={onClickExport} variant={'contained'}>{t("customers.buttons.export")}</SecondaryButton>
+      <input ref={elementRef} onChange={onClickImport} type="file" accept=".xlsx" hidden={true} />
       <SecondaryButton onClick={() => elementRef && elementRef.current.click()} variant={'outlined'}>{t("customers.buttons.import")}</SecondaryButton>
     </Stack>
 

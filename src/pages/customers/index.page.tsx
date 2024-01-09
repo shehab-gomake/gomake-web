@@ -55,6 +55,8 @@ export default function Home() {
     setShowCustomerModal,
     getCustomerForEdit,
     getAllCustomers,
+    onClickExportClient,
+    onClickImportClient
   } = useCustomers(CLIENT_TYPE.CUSTOMER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
@@ -144,7 +146,7 @@ export default function Home() {
             page={pageNumber}
             onChange={(event, value) => setPageNumber(value)}
           />
-          <ExcelButtons />
+          <ExcelButtons onClickExport={onClickExportClient} onClickImport={onClickImportClient}/>
         </div>
       </Stack>
     </CustomerAuthLayout>

@@ -15,6 +15,7 @@ import { useEffect } from "react";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "../../components/CheckPermission/enum";
+import { ExcelButtons } from "../customers/export-import-buttons";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -52,6 +53,8 @@ export default function Home() {
     setShowCustomerModal,
     getCustomerForEdit,
     getAllCustomers,
+    onClickExportClient,
+    onClickImportClient
   } = useCustomers(CLIENT_TYPE.SUPPLIER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
@@ -126,16 +129,18 @@ export default function Home() {
               setCustomer={setCustomerForEdit}
               showUpdateButton={true}
             />
-          </Stack>
+          </Stack> 
         </div>
-        <Pagination
-          count={pagesCount}
-          variant="outlined"
-          color="primary"
-          page={pageNumber}
-          style={classes.paginationStyle}
-          onChange={(event, value) => setPageNumber(value)}
-        />
+        <div style={classes.paginationStyle}>
+          <Pagination
+            count={pagesCount}
+            variant="outlined"
+            color="primary"
+            page={pageNumber}
+            onChange={(event, value) => setPageNumber(value)}
+          />
+          <ExcelButtons onClickExport={onClickExportClient} onClickImport={onClickImportClient}/>
+        </div>
       </Stack>
     </CustomerAuthLayout>
   );
