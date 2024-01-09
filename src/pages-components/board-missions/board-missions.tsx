@@ -62,7 +62,7 @@ const BoardMissionsListWidget = () => {
                   key={agent?.id}
                   options={agentsCategories}
                   style={classes.textInputStyle}
-                  getOptionLabel={(option: any) => option.dlabel}
+                  getOptionLabel={(option: any) => option.label}
                   placeholder={t("sales.quote.ChooseAgent")}
                   onChange={handleAgentChange}
                   value={agent}
