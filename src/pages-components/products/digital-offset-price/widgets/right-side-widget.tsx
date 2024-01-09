@@ -136,9 +136,7 @@ const RightSideWidget = ({
               <DotsLoader />
             ) : (
               <GomakeTextInput
-                value={
-                  currentProductItemValueTotalPrice ?? "---------"
-                }
+                value={currentProductItemValueTotalPrice ?? "---------"}
                 onChange={(e: any) => {
                   setCurrentProductItemValueTotalPrice(e.target.value);
                 }}

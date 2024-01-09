@@ -1,14 +1,15 @@
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
-import { Avatar, Badge, IconButton } from "@mui/material";
-import CameraAltIcon from "@mui/icons-material/CameraAlt";
+import { Avatar, Stack } from "@mui/material";
 import { useRef } from "react";
+import { AddNewButton } from "@/components/button/add-new-button";
 
 const UploadImgProduct = ({
   productState,
   onChangeStateProduct,
   UploadProductImage,
 }) => {
+  console.log("productState", productState);
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -28,40 +29,26 @@ const UploadImgProduct = ({
       <div style={clasess.labelTitleStyle}>
         {t("products.addProduct.admin.uploadImg")}
       </div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 16,
-        }}
+      <Stack
+        style={clasess.attachmentContainer}
+        onClick={() => inputRef.current?.click()}
       >
-        <Badge
-          overlap="circular"
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: dir === "rtl" ? "left" : "right",
-          }}
-          badgeContent={
-            <IconButton
-              onClick={() => inputRef.current?.click()}
-              sx={clasess.button}
-              size={"small"}
-            >
-              <CameraAltIcon sx={{ width: 13, height: 18 }} />
-            </IconButton>
-          }
-        >
+        <Stack style={clasess.attachmentStyle}>
           <Avatar
             sx={clasess.avatar}
             src={`${productState.img}?${new Date().toString()}`}
-          >
-            {/* <img
-              src={`${productState.img}?${new Date().toString()}`}
-              style={{ width: "100%", height: "100%" }}
-            /> */}
-          </Avatar>
-        </Badge>
-      </div>
+          />
+          <label style={clasess.labelStyle}>
+            {productState?.img
+              ? "image  uploaded"
+              : t("mailingSettings.noAttachment")}
+          </label>
+        </Stack>
+      </Stack>
+      {/* <AddNewButton
+        onClick={() => inputRef.current?.click()}
+        label={t("mailingSettings.addNewAttachment")}
+      /> */}
       <input
         type="file"
         accept=".jpg, .jpeg, .png, .gif, .svg"

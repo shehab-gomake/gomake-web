@@ -8,15 +8,15 @@ const useStyle = () => {
     return {
       insideStyle: {
         width: "500px",
-        borderRadius: 5,
-        height: "250px",
+        borderRadius: 8,
+        height: "300px",
+        backgroundColor: "#F6F6F6",
       },
       textInputStyle: {
+        display: "flex",
         width: "100%",
-        border: "1px solid #2E3092",
-        borderRadius: 5,
-        height: 40,
-        boxShadow: "none",
+        height: "40px",
+        borderRadius: 4,
       },
       mainInputsContainer: {
         display: "flex",
@@ -25,6 +25,7 @@ const useStyle = () => {
         alignItems: "flex-start",
         gap: 25,
         width: "100%",
+        height: "100%",
       },
       btnContainer: {
         display: "flex",

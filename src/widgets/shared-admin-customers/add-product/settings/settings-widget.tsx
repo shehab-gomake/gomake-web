@@ -1,15 +1,16 @@
 import React from "react";
 
+import { MuiColorInput } from "mui-color-input";
 import { useTranslation } from "react-i18next";
-import { SketchPicker } from "react-color";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { AddProductSkuModal } from "./modals/add-contact-modal";
+import { UploadImgProduct } from "./upload-widget";
+import { EProductClient } from "./settings-data";
 import { useSettings } from "./use-settings";
 import { useStyle } from "./style";
-import { EProductClient } from "./settings-data";
-import { UploadImgProduct } from "./upload-widget";
+
 const SettingsWidget = ({
   onClickParametersTab,
   productState,
@@ -23,21 +24,16 @@ const SettingsWidget = ({
     allTemplate,
     allGroups,
     isProductSKU,
-    showColorPicker,
-    showColorPickerForNoteColor,
     errorName,
     errorCode,
     productClientsList,
     SelectproductClient,
     customersList,
     clientTypesList,
-    setSelectProductClient,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,
     createNewProductSKU,
-    toggleColorPicker,
-    toggleColorPickerForNoteColor,
     createNewProduct,
     createNewProductAndGoToParameterList,
     updatedProduct,
@@ -148,7 +144,7 @@ const SettingsWidget = ({
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.productName")}
-            <span style={clasess.requierdInput}> *</span>
+            <span style={clasess.requierdInput}>*</span>
           </div>
           <div>
             <GomakeTextInput
@@ -178,7 +174,7 @@ const SettingsWidget = ({
         </div>
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
-            {t("products.addProduct.admin.productSKU")}{" "}
+            {t("products.addProduct.admin.productSKU")}
             <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
               +
             </span>
@@ -290,7 +286,7 @@ const SettingsWidget = ({
               placeholder={t("products.addProduct.admin.pricingType")}
               style={clasess.dropDownListStyle}
               onChange={(e: any, value: any) => {
-                onChangeStateProduct("pricingType", value.id);
+                onChangeStateProduct("pricingType", value?.id);
                 onChangeStateProduct("clientsTypes", []);
                 onChangeStateProduct("clients", []);
               }}
@@ -310,67 +306,38 @@ const SettingsWidget = ({
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.noteColor")}
           </div>
-          <div onClick={toggleColorPickerForNoteColor}>
-            <GomakeTextInput
-              style={clasess.textInputStyle}
-              placeholder={t("products.addProduct.admin.textColor")}
-              disabled={true}
-              value={productState?.noteColor}
+          <div style={clasess.fileInputStyle}>
+            <MuiColorInput
+              value={
+                productState?.noteColor ??
+                t("products.addProduct.admin.noteColor")
+              }
+              onChange={(value: any) => {
+                onChangeStateProduct("noteColor", value);
+              }}
+              format="hex"
             />
           </div>
-          <div
-            onClick={toggleColorPickerForNoteColor}
-            style={{
-              width: 20,
-              height: 20,
-              backgroundColor: productState?.noteColor,
-              position: "absolute",
-              right: 15,
-              bottom: 11,
-            }}
-          />
         </div>
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.textColor")}
           </div>
-          <div onClick={toggleColorPicker}>
-            <GomakeTextInput
-              style={clasess.textInputStyle}
-              placeholder={t("products.addProduct.admin.textColor")}
-              disabled={true}
-              value={productState?.textColor}
+          <div style={clasess.fileInputStyle}>
+            <MuiColorInput
+              value={
+                productState?.textColor ??
+                t("products.addProduct.admin.textColor")
+              }
+              onChange={(value: any) => {
+                onChangeStateProduct("textColor", value);
+              }}
+              format="hex"
             />
           </div>
-          <div
-            onClick={toggleColorPicker}
-            style={{
-              width: 20,
-              height: 20,
-              backgroundColor: productState?.textColor,
-              position: "absolute",
-              right: 15,
-              bottom: 11,
-            }}
-          />
         </div>
       </div>
-      {showColorPicker && (
-        <SketchPicker
-          color={productState?.textColor}
-          onChangeComplete={(value: any) => {
-            onChangeStateProduct("textColor", value?.hex);
-          }}
-        />
-      )}
-      {showColorPickerForNoteColor && (
-        <SketchPicker
-          color={productState?.noteColor}
-          onChangeComplete={(value: any) => {
-            onChangeStateProduct("noteColor", value?.hex);
-          }}
-        />
-      )}
+
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.graphicsRequired")}
       </div>
