@@ -24,6 +24,9 @@ import {
 import { getAndSetProfitsPricingTables } from "./services/get-profits-pricing-tables";
 import { getAndSetCalculateCaseProfits } from "./services/get-calculate-case-profits";
 import { getAndSetProductProfitByProductId } from "./services/get-product-profit-by-product-id";
+import { useRecoilValue } from "recoil";
+import { systemCurrencyState } from "@/store";
+import { currencyUnitState } from "@/store/currency-units";
 const useNewProfits = () => {
   const {
     alertFaultUpdate,
@@ -72,6 +75,21 @@ const useNewProfits = () => {
       value: EPricingBy.CUBIC_METER,
     },
   ];
+  const systemCurrency = useRecoilValue<any>(systemCurrencyState);
+  const currenciesUnits = useRecoilValue<any>(currencyUnitState);
+  const [ProfitCurrency, setProfitCurrency] = useState("");
+  const getCurrencyUnitText = (currency) => {
+    const foundCurrency = currenciesUnits.find((c) => c.value === currency);
+    if (foundCurrency) {
+      return foundCurrency.text;
+    } else {
+      return "";
+    }
+  };
+  useEffect(() => {
+    const data = getCurrencyUnitText(systemCurrency);
+    setProfitCurrency(data);
+  }, [systemCurrency]);
   const [selectedPricingTableItems, setSelectedPricingTableItems] =
     useState<ProfitsPricingTables>();
   const [typeExceptionSelected, setTypeExceptionSelected] = useState<number>();
@@ -235,62 +253,97 @@ const useNewProfits = () => {
     if (router.query.draftId) {
       setTableHeaders([
         t("products.profits.pricingListWidget.quantity"),
-        selectedPricingBy?.label,
+        `${selectedPricingBy?.label}` +
+          (selectedPricingBy?.value === EPricingBy.COST
+            ? ` ${ProfitCurrency}`
+            : ""),
         t("products.profits.pricingListWidget.profit"),
         t("products.profits.pricingListWidget.unitPrice"),
-        t("products.profits.pricingListWidget.totalPrice"),
+        `${t(
+          "products.profits.pricingListWidget.totalPrice"
+        )} ${ProfitCurrency}`,
         t("products.profits.pricingListWidget.more"),
       ]);
       if (selectedPricingBy?.value != EPricingBy.COST) {
         setTableHeaders([
-          selectedPricingBy?.label,
+          `${selectedPricingBy?.label}` +
+            (selectedPricingBy?.value === EPricingBy.COST
+              ? ` ${ProfitCurrency}`
+              : ""),
           t("products.profits.pricingListWidget.cost"),
           t("products.profits.pricingListWidget.profit"),
           t("products.profits.pricingListWidget.unitPrice"),
-          t("products.profits.pricingListWidget.totalPrice"),
+          `${t(
+            "products.profits.pricingListWidget.totalPrice"
+          )} ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.more"),
         ]);
       }
       if (selectedAdditionalProfitRow?.id) {
         setTableHeaders([
           t("products.profits.pricingListWidget.quantity"),
-          selectedPricingBy?.label,
+          `${selectedPricingBy?.label}` +
+            (selectedPricingBy?.value === EPricingBy.COST
+              ? ` ${ProfitCurrency}`
+              : ""),
           t("products.profits.pricingListWidget.profit"),
-          "Profit value",
+          `Profit value ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.unitPrice"),
-          t("products.profits.pricingListWidget.totalPrice"),
+          `${t(
+            "products.profits.pricingListWidget.totalPrice"
+          )} ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.more"),
         ]);
       }
     } else if (selectedPricingBy?.value === EPricingBy.COST) {
       setTableHeaders([
-        selectedPricingBy?.label,
+        `${selectedPricingBy?.label}` +
+          (selectedPricingBy?.value === EPricingBy.COST
+            ? ` ${ProfitCurrency}`
+            : ""),
         t("products.profits.pricingListWidget.profit"),
-        t("products.profits.pricingListWidget.totalPrice"),
+        `${t(
+          "products.profits.pricingListWidget.totalPrice"
+        )} ${ProfitCurrency}`,
         t("products.profits.pricingListWidget.more"),
       ]);
       if (selectedAdditionalProfitRow?.id) {
         setTableHeaders([
-          selectedPricingBy?.label,
+          `${selectedPricingBy?.label}` +
+            (selectedPricingBy?.value === EPricingBy.COST
+              ? ` ${ProfitCurrency}`
+              : ""),
           t("products.profits.pricingListWidget.profit"),
-          "Profit value",
-          t("products.profits.pricingListWidget.totalPrice"),
+          `Profit value ${ProfitCurrency}`,
+          `${t(
+            "products.profits.pricingListWidget.totalPrice"
+          )} ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.more"),
         ]);
       }
     } else {
       setTableHeaders([
-        selectedPricingBy?.label,
+        `${selectedPricingBy?.label}` +
+          (selectedPricingBy?.value === EPricingBy.COST
+            ? ` ${ProfitCurrency}`
+            : ""),
         t("products.profits.pricingListWidget.unitPrice"),
-        t("products.profits.pricingListWidget.totalPrice"),
+        `${t(
+          "products.profits.pricingListWidget.totalPrice"
+        )} ${ProfitCurrency}`,
         t("products.profits.pricingListWidget.more"),
       ]);
       if (selectedAdditionalProfitRow?.id) {
         setTableHeaders([
-          selectedPricingBy?.label,
+          `${selectedPricingBy?.label}` +
+            (selectedPricingBy?.value === EPricingBy.COST
+              ? ` ${ProfitCurrency}`
+              : ""),
           t("products.profits.pricingListWidget.unitPrice"),
-          "Profit value",
-          t("products.profits.pricingListWidget.totalPrice"),
+          `Profit value ${ProfitCurrency}`,
+          `${t(
+            "products.profits.pricingListWidget.totalPrice"
+          )} ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.more"),
         ]);
       }
@@ -594,6 +647,8 @@ const useNewProfits = () => {
   }, [selectedPricingTableItems]);
   const [dataForPricing, setDataForPricing] =
     useState<ProfitsPricingTables[]>();
+  const [dataForDefault, setDataForDefault] =
+    useState<ProfitsPricingTables[]>();
   const [dataForExceptions, setDataForExceptions] =
     useState<ProfitsPricingTables[]>();
 
@@ -608,6 +663,7 @@ const useNewProfits = () => {
       }
     );
   }, []);
+
   useEffect(() => {
     const filteredArray = profitsPricingTables?.reduce(
       (result, item) => {
@@ -624,21 +680,33 @@ const useNewProfits = () => {
       },
       [[], []]
     );
+
     if (filteredArray) {
+      // Filter items for setDataForPricing (item.exceptionType !== ETypeException.DEFAULT)
+      const filteredPricing = filteredArray[1].filter(
+        (item) => item.exceptionType !== ETypeException.DEFAULT
+      );
+      // Filter items for setDataForDefaultPricing (item.exceptionType === ETypeException.DEFAULT)
+      const filteredDefaultPricing = filteredArray[1].filter(
+        (item) => item.exceptionType === ETypeException.DEFAULT
+      );
+      setDataForPricing(filteredPricing);
+      setDataForDefault(filteredDefaultPricing);
       setDataForExceptions(filteredArray[0]);
-      setDataForPricing(filteredArray[1]);
     }
   }, [profitsPricingTables]);
   const onDragEnd = (result) => {
     if (!result.destination) {
       return;
     }
+
     const newData = Array.from(dataForPricing);
     const [removed] = newData.splice(result.source.index, 1);
     newData.splice(result.destination.index, 0, removed);
-    const transformedArray = newData
-      .filter((item) => item.exceptionType !== ETypeException.DEFAULT)
-      .map((item, index) => ({ id: item?.id, index: index + 1 }));
+    const transformedArray = newData.map((item, index) => ({
+      id: item?.id,
+      index: index + 1,
+    }));
     setDataForPricing(newData);
     reOrderPricingTables(transformedArray);
   };
@@ -690,6 +758,7 @@ const useNewProfits = () => {
     },
     [selectedPricingTableItems]
   );
+
   return {
     allActionProfitRowsByActionId,
     actionProfitRowChartData,
@@ -711,6 +780,7 @@ const useNewProfits = () => {
     anchorElPricingTablesMapping,
     openPricingTablesMapping,
     dataForExceptions,
+    dataForDefault,
     dataForPricing,
     anchorElMorePriceTable,
     openMorePriceTable,
@@ -721,6 +791,7 @@ const useNewProfits = () => {
     openAdditionalProfitMenu,
     calculateCaseValue,
     isLoading,
+    ProfitCurrency,
     handleCloseAdditionalProfitMenu,
     handleClickAdditionalProfitMenu,
     setSelectedActionProfitRow,

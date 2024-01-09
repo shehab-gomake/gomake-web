@@ -26,6 +26,7 @@ const ProfitsNewPageWidget = () => {
     openPricingTablesMapping,
     selectedPricingTableItems,
     dataForExceptions,
+    dataForDefault,
     dataForPricing,
     anchorElMorePriceTable,
     openMorePriceTable,
@@ -37,6 +38,7 @@ const ProfitsNewPageWidget = () => {
     openAdditionalProfitMenu,
     calculateCaseValue,
     isLoading,
+    ProfitCurrency,
     handleCloseAdditionalProfitMenu,
     handleClickAdditionalProfitMenu,
     setSelectedActionProfitRow,
@@ -65,6 +67,7 @@ const ProfitsNewPageWidget = () => {
     deleteExceptionProfit,
     getProfitsPricingTables,
   } = useNewProfits();
+
   return (
     <div style={classes.mainGridContainer}>
       {router.query.draftId && (
@@ -143,6 +146,7 @@ const ProfitsNewPageWidget = () => {
           selectedPricingTableItems={selectedPricingTableItems}
           setSelectedPricingTableItems={setSelectedPricingTableItems}
           dataForExceptions={dataForExceptions}
+          dataForDefault={dataForDefault}
           dataForPricing={dataForPricing}
           onDragEnd={onDragEnd}
           deleteExceptionProfit={deleteExceptionProfit}
@@ -157,6 +161,7 @@ const ProfitsNewPageWidget = () => {
           openAdditionalProfitMenu={openAdditionalProfitMenu}
           handleCloseAdditionalProfitMenu={handleCloseAdditionalProfitMenu}
           handleClickAdditionalProfitMenu={handleClickAdditionalProfitMenu}
+          ProfitCurrency={ProfitCurrency}
         />
       </div>
     </div>
