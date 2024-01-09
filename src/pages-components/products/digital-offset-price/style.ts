@@ -354,6 +354,7 @@ const useStyle = () => {
         width: "100%",
         maxHeight: 35,
         boxShadow: "none",
+        textAlign: "center" as "center",
       },
       priceRecoveryContainer: {
         display: "flex",

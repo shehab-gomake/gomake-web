@@ -4,6 +4,7 @@ import {
   isLoadgingState,
   subProductsParametersState,
   systemCurrencyState,
+  systemVATState,
 } from "@/store";
 import { exampleTypeState } from "@/store/example-type";
 import { currenciesState } from "@/widgets/materials-widget/state";
@@ -15,9 +16,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-const useRightSideWidget = () => {
+const useRightSideWidget = ({ includeVAT }) => {
   const isLoading = useRecoilValue(isLoadgingState);
   const subProducts = useRecoilValue<any>(subProductsParametersState);
+  const systemVAT = useRecoilValue<number>(systemVATState);
+
   const [systemCurrency, setSystemCurrency] =
     useRecoilState<any>(systemCurrencyState);
   const currencies = useRecoilValue(currenciesState);
@@ -63,6 +66,20 @@ const useRightSideWidget = () => {
   useEffect(() => {
     getAllUsers();
   }, []);
+
+  useEffect(() => {
+    if (currentProductItemValueTotalPrice != null) {
+      if (includeVAT) {
+        setCurrentProductItemValueTotalPrice(
+          currentProductItemValueTotalPrice * (1 + systemVAT)
+        );
+      } else {
+        setCurrentProductItemValueTotalPrice(
+          currentProductItemValueTotalPrice / (1 + systemVAT)
+        );
+      }
+    }
+  }, [includeVAT]);
   return {
     currentProductItemValueTotalPrice,
     calculationProgress,
