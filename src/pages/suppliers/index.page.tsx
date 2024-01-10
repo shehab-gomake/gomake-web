@@ -43,6 +43,7 @@ export default function Home() {
     onChangeStatus,
     handleClean,
     name,
+    finalPatternSearch,
     agentName,
     valClientType,
     valStatus,
@@ -54,7 +55,7 @@ export default function Home() {
     getCustomerForEdit,
     getAllCustomers,
     onClickExportClient,
-    onClickImportClient
+    onClickImportClient,
   } = useCustomers(CLIENT_TYPE.SUPPLIER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
@@ -76,7 +77,7 @@ export default function Home() {
     clientType,
     pageNumber,
     pageSize,
-    name,
+    finalPatternSearch,
     ClientTypeId,
     agentId,
     isActive,
@@ -84,17 +85,28 @@ export default function Home() {
 
   return (
     <CustomerAuthLayout>
-      <Stack direction="column" justifyContent="space-between" display="flex" spacing={2} height="100%" >
-        <div style={classes.mainContainer}>        <div style={classes.headerStyle}>
-          <HeaderTitle marginBottom="20px" title={t("suppliers.title")} />
-          <PermissionCheck userPermission={Permissions.EDIT_SUPPLIER}>
-            <AddCustomerButton
-              isValidCustomer={isValidCustomer}
-              onCustomerAdd={onCustomerAdd}
-              typeClient={CLIENT_TYPE.SUPPLIER}
-            ></AddCustomerButton>
-          </PermissionCheck>
-        </div>
+      <Stack
+        direction="column"
+        justifyContent="space-between"
+        display="flex"
+        spacing={2}
+        height="100%"
+      >
+        <div style={classes.mainContainer}>
+          <div style={classes.headerStyle}>
+            <HeaderTitle
+              marginTop={1}
+              marginBottom={1}
+              title={t("suppliers.title")}
+            />
+            <PermissionCheck userPermission={Permissions.EDIT_SUPPLIER}>
+              <AddCustomerButton
+                isValidCustomer={isValidCustomer}
+                onCustomerAdd={onCustomerAdd}
+                typeClient={CLIENT_TYPE.SUPPLIER}
+              ></AddCustomerButton>
+            </PermissionCheck>
+          </div>
           <HeaderFilter
             typeClient={CLIENT_TYPE.SUPPLIER}
             agentsCategories={agentsCategories}
@@ -129,7 +141,7 @@ export default function Home() {
               setCustomer={setCustomerForEdit}
               showUpdateButton={true}
             />
-          </Stack> 
+          </Stack>
         </div>
         <div style={classes.paginationStyle}>
           <Pagination
@@ -139,7 +151,10 @@ export default function Home() {
             page={pageNumber}
             onChange={(event, value) => setPageNumber(value)}
           />
-          <ExcelButtons onClickExport={onClickExportClient} onClickImport={onClickImportClient}/>
+          <ExcelButtons
+            onClickExport={onClickExportClient}
+            onClickImport={onClickImportClient}
+          />
         </div>
       </Stack>
     </CustomerAuthLayout>

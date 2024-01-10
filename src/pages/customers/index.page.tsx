@@ -45,6 +45,7 @@ export default function Home() {
     onChangeStatus,
     handleClean,
     name,
+    finalPatternSearch,
     agentName,
     valClientType,
     valStatus,
@@ -56,7 +57,7 @@ export default function Home() {
     getCustomerForEdit,
     getAllCustomers,
     onClickExportClient,
-    onClickImportClient
+    onClickImportClient,
   } = useCustomers(CLIENT_TYPE.CUSTOMER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
@@ -83,7 +84,7 @@ export default function Home() {
     clientType,
     pageNumber,
     pageSize,
-    name,
+    finalPatternSearch,
     ClientTypeId,
     agentId,
     isActive,
@@ -91,10 +92,20 @@ export default function Home() {
 
   return (
     <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_CUSTOMERS}>
-      <Stack direction="column" justifyContent="space-between" display="flex" spacing={2} height="100%" >
+      <Stack
+        direction="column"
+        justifyContent="space-between"
+        display="flex"
+        spacing={2}
+        height="100%"
+      >
         <div style={classes.mainContainer}>
           <div style={classes.sameRow}>
-            <HeaderTitle marginBottom="20px" title={t("customers.title")} />
+            <HeaderTitle
+              marginTop={1}
+              marginBottom={1}
+              title={t("customers.title")}
+            />
             <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
               <AddCustomerButton
                 isValidCustomer={isValidCustomer}
@@ -146,7 +157,10 @@ export default function Home() {
             page={pageNumber}
             onChange={(event, value) => setPageNumber(value)}
           />
-          <ExcelButtons onClickExport={onClickExportClient} onClickImport={onClickImportClient}/>
+          <ExcelButtons
+            onClickExport={onClickExportClient}
+            onClickImport={onClickImportClient}
+          />
         </div>
       </Stack>
     </CustomerAuthLayout>
