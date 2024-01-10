@@ -71,7 +71,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
       setQuoteNumber(null);
       setQuoteIfExist(false);
     }
-  }, [userQuote]);
+  }, [userQuote, clientTypesValue]);
 
   return (
     <div style={classes.mainContainer}>
