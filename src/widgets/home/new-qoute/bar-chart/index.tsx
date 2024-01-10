@@ -8,7 +8,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Bar , Line} from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,
@@ -23,10 +23,20 @@ export function BarChart() {
   const state = {
     data: {
       labels: [
-        "January", "February", "March", "April",
-        "May", "June", "July", "August",
-        "September", "October", "November", "December"
-      ], datasets: [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ],
+      datasets: [
         {
           fill: true,
           label: null,
@@ -37,7 +47,6 @@ export function BarChart() {
           gap: 20,
           data: [150, 300, 180, 200, 120, 100, 150, 450, 180, 200, 120, 50],
           barThickness: 40,
-          
         },
       ],
     },
@@ -47,20 +56,20 @@ export function BarChart() {
           display: false,
         },
       },
-      
+
       scales: {
         x: {
           title: {
             display: true,
-            text: 'Months',
-            color: '#979699',
+            text: "Months",
+            color: "#979699",
             font: {
               size: 14,
-              weight: '400',
-              family: 'Lexend',
+              weight: "400",
+              family: "Lexend",
             },
           },
-          
+
           grid: {
             display: false,
           },
@@ -72,12 +81,12 @@ export function BarChart() {
         y: {
           title: {
             display: true,
-            text: 'Total Orders',
-            color: '#B5B7C0',
+            text: "Total Orders",
+            color: "#B5B7C0",
             font: {
               size: 14,
-              weight: '400',
-              family: 'Lexend',
+              weight: "400",
+              family: "Lexend",
             },
           },
           beginAtZero: true,
@@ -93,10 +102,9 @@ export function BarChart() {
       data={state.data}
       options={state.options}
       style={{
-        width: 600,
+        width: "100%",
         height: 300,
       }}
     />
-    
   );
 }
