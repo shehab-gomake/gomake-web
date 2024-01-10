@@ -168,6 +168,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     const callBack = (res) => {
       if (res?.success) {
         const data = res?.data?.data;
+        const totalItems = res?.data?.totalItems;
         const mapData = data?.map((quote: any) => [
           GetDateFormat(quote?.createdDate),
           quote?.customerName,
@@ -186,6 +187,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           />,
         ]);
         setAllQuotes(mapData);
+        setPagesCount(Math.ceil(totalItems / pageSize));
       }
     };
     await getAllDocumentsApi(callApi, callBack, {
@@ -201,6 +203,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
   const onClickSearchFilter = () => {
     getAllQuotes();
+    setPage(1);
   };
 
   const onClickClearFilter = () => {
@@ -208,6 +211,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setAgentId(null);
     setCustomerId(null);
     getAllQuotesInitial();
+    setPage(1);
   };
 
   const tableHeaders = [
