@@ -6,6 +6,7 @@ import {
   systemCurrencyState,
   systemVATState,
 } from "@/store";
+import { billingMethodState } from "@/store/billing-method";
 import { exampleTypeState } from "@/store/example-type";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import {
@@ -46,10 +47,8 @@ const useRightSideWidget = ({ includeVAT }) => {
     }
   }, [subProducts]);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
-  const billingMethodList = [
-    { lable: "By working hours", value: "workingHours" },
-    { lable: "fixed price", value: "fixedPrice" },
-  ];
+  const billingMethodValues = useRecoilValue(billingMethodState);
+
   const [changePrice, setChangePrice] = useState<number>(0);
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
@@ -84,7 +83,7 @@ const useRightSideWidget = ({ includeVAT }) => {
     currentProductItemValueTotalPrice,
     calculationProgress,
     exampleTypeValues,
-    billingMethodList,
+    billingMethodValues,
     systemCurrency,
     listEmployees,
     isLoading,
