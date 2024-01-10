@@ -3,7 +3,6 @@ import { useStyle } from "./style";
 import { HomeTableWidget } from "./widgets/home-table-widget/home-table-widget";
 import { useHome } from "./use-home";
 import { useEffect } from "react";
-import { ChartWidget } from "./widgets/chart-widget/chart-widget";
 
 const HomePageComponentForAdmin = ({ isAdmin }) => {
   const { classes } = useStyle();
