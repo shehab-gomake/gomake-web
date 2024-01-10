@@ -21,10 +21,11 @@ import {
 import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { useStyle } from "./style";
+import { DEFAULT_VALUES } from "@/pages/customers/enums";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
-  const{classes} = useStyle();
+  const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const { alertFaultUpdate, alertFaultDuplicate } = useSnackBar();
   const { getCurrencyUnitText } = useQuoteGetData();
@@ -34,7 +35,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const debounce = useDebounce(patternSearch, 500);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [pagesCount, setPagesCount] = useState(0);
+  const pageSize = DEFAULT_VALUES.PageSize;
   const { GetDateFormat } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
   const [customerId, setCustomerId] = useState<any>();
@@ -49,10 +51,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [modalLogsTitle, setModalLogsTitle] = useState<string>();
   const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
   const [selectedQuote, setSelectedQuote] = useState<any>();
-  
+
   const [allDocuments, setAllDocuments] = useState([]);
   const selectedClient = useRecoilValue<any>(selectedClientState);
-  
+
   const onClickCloseModal = () => {
     setOpenModal(false);
   };
@@ -124,6 +126,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     const callBack = (res) => {
       if (res?.success) {
         const data = res?.data?.data;
+        const totalItems = res?.data?.totalItems;
         const mapData = data?.map((quote: any) => [
           GetDateFormat(quote?.createdDate),
           quote?.customerName,
@@ -142,6 +145,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           />,
         ]);
         setAllQuotes(mapData);
+        setPagesCount(Math.ceil(totalItems / pageSize));
       }
     };
     await getAllDocumentsApi(callApi, callBack, {
@@ -149,7 +153,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       data: {
         model: {
           pageNumber: page,
-          pageSize: limit,
+          pageSize: pageSize,
         },
         statusId: statusId?.value,
         patternSearch: finalPatternSearch,
@@ -164,6 +168,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     const callBack = (res) => {
       if (res?.success) {
         const data = res?.data?.data;
+        const totalItems = res?.data?.totalItems;
         const mapData = data?.map((quote: any) => [
           GetDateFormat(quote?.createdDate),
           quote?.customerName,
@@ -182,7 +187,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           />,
         ]);
         setAllQuotes(mapData);
-        console.log(data);
+        setPagesCount(Math.ceil(totalItems / pageSize));
       }
     };
     await getAllDocumentsApi(callApi, callBack, {
@@ -190,7 +195,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       data: {
         model: {
           pageNumber: page,
-          pageSize: limit,
+          pageSize: pageSize,
         },
       },
     });
@@ -198,6 +203,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
   const onClickSearchFilter = () => {
     getAllQuotes();
+    setPage(1);
   };
 
   const onClickClearFilter = () => {
@@ -205,6 +211,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setAgentId(null);
     setCustomerId(null);
     getAllQuotesInitial();
+    setPage(1);
   };
 
   const tableHeaders = [
@@ -374,8 +381,11 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     getAllCustomersCreateOrder();
     getAgentCategories(true, setAgentsCategories);
     getAgentCategories(null, setEmployeeListValue);
-    getAllQuotes();
   }, []);
+
+  useEffect(() => {
+    getAllQuotes();
+  }, [page, finalPatternSearch]);
 
   const getAllDocuments = async (docType) => {
     const callBack = (res) => {
@@ -387,7 +397,17 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           document?.worksNames,
           GetDateFormat(document?.createdDate),
           document?.totalPrice + " " + getCurrencyUnitText(document?.currency),
-          <div style={{ display: "flex", justifyContent: "center" }} ><h2 style={document?.documentStatus == 2 ?classes.openBtnStyle :classes.closeBtnStyle }>{_renderQuoteStatus(document?.documentStatus, document, t)}</h2></div>,
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <h2
+              style={
+                document?.documentStatus == 2
+                  ? classes.openBtnStyle
+                  : classes.closeBtnStyle
+              }
+            >
+              {_renderQuoteStatus(document?.documentStatus, document, t)}
+            </h2>
+          </div>,
           document?.notes,
           <MoreMenuWidget
             quote={document}
@@ -401,29 +421,33 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         setAllDocuments(mapData);
       }
     };
-    selectedClient?.id && await getAllDocumentsApi(callApi, callBack, {documentType: docType,  data: {
-        model: {
-          pageNumber: page,
-          pageSize: 10,
+    selectedClient?.id &&
+      (await getAllDocumentsApi(callApi, callBack, {
+        documentType: docType,
+        data: {
+          model: {
+            pageNumber: page,
+            pageSize: 10,
+          },
+          customerId: selectedClient?.id,
         },
-        customerId: selectedClient?.id,
-      }});
+      }));
   };
 
   useEffect(() => {
-    getAllDocuments(docType)
-}, [selectedClient]);
+    getAllDocuments(docType);
+  }, [selectedClient]);
 
-const tableHomeHeader = [
-  t("home.headers.documentNumber"),
-  t("home.headers.clientType"),
-  t("home.headers.jobName"),
-  t("home.headers.productDate"),
-  t("home.headers.finalPrice"),
-  t("home.headers.status"),
-  t("home.headers.remark"),
-  t("home.headers.more")
-];
+  const tableHomeHeader = [
+    t("home.headers.documentNumber"),
+    t("home.headers.clientType"),
+    t("home.headers.jobName"),
+    t("home.headers.productDate"),
+    t("home.headers.finalPrice"),
+    t("home.headers.status"),
+    t("home.headers.remark"),
+    t("home.headers.more"),
+  ];
 
   return {
     patternSearch,
@@ -458,8 +482,10 @@ const tableHomeHeader = [
     documentsLabels,
     documentLabel,
     allDocuments,
-    tableHomeHeader
-
+    tableHomeHeader,
+    pagesCount,
+    page,
+    setPage,
   };
 };
 

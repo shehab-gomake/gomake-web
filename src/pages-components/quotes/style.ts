@@ -7,7 +7,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { theme, secondColor, errorColor ,successColor} = useGomakeTheme();
+  const { theme, secondColor, errorColor, successColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -62,6 +62,14 @@ const useStyle = () => {
         color: secondColor(500),
         width: "50%",
       },
+      paginationStyle: {
+        display: "flex",
+        paddingLeft: 20,
+        paddingRight: 20,
+        height: "50px",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+      },
       warningIconStyle: {
         width: 120,
         height: 120,
@@ -97,8 +105,6 @@ const useStyle = () => {
         background: errorColor(200),
         ...FONT_FAMILY.Lexend(500, 14),
       },
-
-
     };
   }, [i18next.language, t, theme]);
   return {

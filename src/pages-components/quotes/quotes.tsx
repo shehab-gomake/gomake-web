@@ -12,12 +12,16 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
 import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
+import { Pagination } from "@mui/material";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
-  isFromHomePage?: boolean
+  isFromHomePage?: boolean;
 }
-const QuotesListPageWidget = ({ documentType, isFromHomePage = false }: IProps) => {
+const QuotesListPageWidget = ({
+  documentType,
+  isFromHomePage = false,
+}: IProps) => {
   const { classes } = useStyle();
   const {
     tableHeaders,
@@ -45,97 +49,113 @@ const QuotesListPageWidget = ({ documentType, isFromHomePage = false }: IProps) 
     documentLabel,
     allDocuments,
     tableHomeHeader,
-    t
+    pagesCount,
+    page,
+    setPage,
+    t,
   } = useQuotes(documentType);
 
   return (
     <>
-      {!isFromHomePage && <div style={classes.mainContainer}>
-        <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
-        <div style={classes.filtersContainer}>
-          <div style={classes.selectedFilterContainer}>
-            <div style={classes.statusFilterContainer}>
-              <div style={classes.filterLabelStyle}>
-                {t("sales.quote.status")}
+      {!isFromHomePage && (
+        <div style={classes.mainContainer}>
+          <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
+          <div style={classes.filtersContainer}>
+            <div style={classes.selectedFilterContainer}>
+              <div style={classes.statusFilterContainer}>
+                <div style={classes.filterLabelStyle}>
+                  {t("sales.quote.status")}
+                </div>
+                <GoMakeAutoComplate
+                  key={statusId?.value}
+                  options={quoteStatuses}
+                  style={classes.textInputStyle}
+                  getOptionLabel={(option: any) => option.label}
+                  placeholder={t("sales.quote.chooseStatus")}
+                  onChange={(e: any, value: any) => {
+                    setStatusId(value);
+                  }}
+                  value={statusId}
+                />
               </div>
-              <GoMakeAutoComplate
-                key={statusId?.value}
-                options={quoteStatuses}
-                style={classes.textInputStyle}
-                getOptionLabel={(option: any) => option.label}
-                placeholder={t("sales.quote.chooseStatus")}
-                onChange={(e: any, value: any) => {
-                  setStatusId(value);
-                }}
-                value={statusId}
-              />
-            </div>
-            <div style={classes.statusFilterContainer}>
-              <div style={classes.filterLabelStyle}>
-                {t("sales.quote.customer")}
+              <div style={classes.statusFilterContainer}>
+                <div style={classes.filterLabelStyle}>
+                  {t("sales.quote.customer")}
+                </div>
+                <GoMakeAutoComplate
+                  key={customerId?.id}
+                  options={renderOptions()}
+                  getOptionLabel={(option: any) => `${option.name}`}
+                  onChangeTextField={checkWhatRenderArray}
+                  style={classes.textInputStyle}
+                  placeholder={t("sales.quote.chooseCustomer")}
+                  onChange={(e: any, value: any) => {
+                    setCustomerId(value);
+                  }}
+                  value={customerId}
+                />
               </div>
-              <GoMakeAutoComplate
-                key={customerId?.id}
-                options={renderOptions()}
-                getOptionLabel={(option: any) => `${option.name}`}
-                onChangeTextField={checkWhatRenderArray}
-                style={classes.textInputStyle}
-                placeholder={t("sales.quote.chooseCustomer")}
-                onChange={(e: any, value: any) => {
-                  setCustomerId(value);
-                }}
-                value={customerId}
-              />
-            </div>
-            <div style={classes.statusFilterContainer}>
-              <div style={classes.filterLabelStyle}>
-                {t("sales.quote.agent")}
+              <div style={classes.statusFilterContainer}>
+                <div style={classes.filterLabelStyle}>
+                  {t("sales.quote.agent")}
+                </div>
+                <GoMakeAutoComplate
+                  key={agentId?.id}
+                  options={agentsCategories}
+                  style={classes.textInputStyle}
+                  getOptionLabel={(option: any) => option.label}
+                  placeholder={t("sales.quote.ChooseAgent")}
+                  onChange={(e: any, value: any) => {
+                    setAgentId(value);
+                  }}
+                  value={agentId}
+                />
               </div>
-              <GoMakeAutoComplate
-                key={agentId?.id}
-                options={agentsCategories}
-                style={classes.textInputStyle}
-                getOptionLabel={(option: any) => option.label}
-                placeholder={t("sales.quote.ChooseAgent")}
-                onChange={(e: any, value: any) => {
-                  setAgentId(value);
-                }}
-                value={agentId}
-              />
+              <div style={classes.statusFilterContainer}>
+                <div style={classes.filterLabelStyle} />
+                <GomakePrimaryButton
+                  style={classes.searchBtnStyle}
+                  onClick={onClickSearchFilter}
+                >
+                  {t("sales.quote.search")}
+                </GomakePrimaryButton>
+              </div>
+              <div style={classes.statusFilterContainer}>
+                <div style={classes.filterLabelStyle} />
+                <GomakePrimaryButton
+                  style={classes.clearBtnStyle}
+                  onClick={onClickClearFilter}
+                >
+                  {t("sales.quote.clear")}
+                </GomakePrimaryButton>
+              </div>
             </div>
-            <div style={classes.statusFilterContainer}>
-              <div style={classes.filterLabelStyle} />
-              <GomakePrimaryButton
-                style={classes.searchBtnStyle}
-                onClick={onClickSearchFilter}
-              >
-                {t("sales.quote.search")}
-              </GomakePrimaryButton>
-            </div>
-            <div style={classes.statusFilterContainer}>
-              <div style={classes.filterLabelStyle} />
-              <GomakePrimaryButton
-                style={classes.clearBtnStyle}
-                onClick={onClickClearFilter}
-              >
-                {t("sales.quote.clear")}
-              </GomakePrimaryButton>
-            </div>
+            <SearchInputComponent onChange={(e) => setPatternSearch(e)} />
           </div>
-          <SearchInputComponent onChange={(e) => setPatternSearch(e)} />
+          <PrimaryTable
+            stickyFirstCol={false}
+            stickyHeader={false}
+            rows={allQuotes}
+            headers={tableHeaders}
+          />
+          <div style={classes.paginationStyle}>
+            <Pagination
+              count={pagesCount}
+              variant="outlined"
+              color="primary"
+              page={page}
+              onChange={(event, value) => setPage(value)}
+            />
+          </div>
         </div>
+      )}
+      {isFromHomePage && (
         <PrimaryTable
-          stickyFirstCol={false}
-          stickyHeader={false}
-          rows={allQuotes}
-          headers={tableHeaders}
+          rows={allDocuments}
+          headers={tableHomeHeader}
+          variant="ClassicTable"
         />
-      </div>}
-      {isFromHomePage && <PrimaryTable
-        rows={allDocuments}
-        headers={tableHomeHeader}
-        variant="ClassicTable"
-      />}
+      )}
       <GoMakeDeleteModal
         icon={<WarningAmberIcon style={classes.warningIconStyle} />}
         title={t("sales.quote.titleModal")}
