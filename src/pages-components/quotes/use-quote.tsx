@@ -385,7 +385,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
   useEffect(() => {
     getAllQuotes();
-  }, [page]);
+  }, [page, finalPatternSearch]);
 
   const getAllDocuments = async (docType) => {
     const callBack = (res) => {
