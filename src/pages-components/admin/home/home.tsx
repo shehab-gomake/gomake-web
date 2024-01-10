@@ -21,18 +21,18 @@ const HomePageComponentForAdmin = ({ isAdmin }) => {
           <div style={classes.widgetStyle}>
             <QuoteWidget isAdmin={isAdmin} />
           </div>
-          <div style={classes.widgetStyle}>
+          {/* <div style={classes.widgetStyle}>
             <ChartWidget />
-          </div>
+          </div> */}
         </div>
       </div>
 
       {isDisplay && (
         <div style={classes.secondRowContainer}>
           <div style={classes.titleStyle}>
-            {t("sales.quote.documents")} /{" "}
+            {t("sales.quote.documents")}{" "}
             <span style={{ color: "rgb(213, 214, 233)" }}>
-              {selectedClient?.name}
+              / {selectedClient?.name}
             </span>
           </div>
           <HomeTableWidget />

@@ -39,7 +39,7 @@ const RightSideWidget = ({
     currentProductItemValueTotalPrice,
     calculationProgress,
     exampleTypeValues,
-    billingMethodList,
+    billingMethodValues,
     systemCurrency,
     listEmployees,
     isLoading,
@@ -306,8 +306,8 @@ const RightSideWidget = ({
               <div style={clasess.autoCompleteContainer}>
                 <GoMakeAutoComplate
                   key={billingMethod}
-                  options={billingMethodList}
-                  getOptionLabel={(option: any) => option.lable}
+                  options={billingMethodValues}
+                  getOptionLabel={(option: any) => option.text}
                   placeholder="Billing method"
                   style={clasess.dropDownListStyle}
                   onChange={(e, value) => setBillingMethod(value)}
