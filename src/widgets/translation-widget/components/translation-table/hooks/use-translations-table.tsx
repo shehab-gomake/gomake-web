@@ -98,7 +98,7 @@ const useTranslationsTable = () => {
 
       const rows = translationsTableData.map((dataRow) => {
         return [
-          dataRow.path,
+          dataRow.path && dataRow.path.length > 0 ? dataRow.path.join(".") : "",
           dataRow.key,
           ...dataRow.translations.map((header) => (
             <TextareaAutosize
