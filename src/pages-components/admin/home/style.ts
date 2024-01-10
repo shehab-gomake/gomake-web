@@ -27,7 +27,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         width: "100%",
-        height: "50%",
+        // height: "50%",
         gap: 20,
         backgroundColor: "#F6F6F6",
         marginBottom: 15,
@@ -37,7 +37,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         width: "100%",
-        height:"100%",
+        height: "100%",
         gap: 20,
         backgroundColor: "#F6F6F6",
         marginBottom: 15,
@@ -45,6 +45,15 @@ const useStyle = () => {
       titleStyle: {
         ...FONT_FAMILY.Lexend(600, 25),
         color: primaryColor(500),
+      },
+      containerStyle: {
+        display: "grid",
+        gridTemplateColumns: "50% 50%",
+        gap: "16px",
+      },
+      widgetStyle: {
+        height: "100%",
+        width: "100%",
       },
     };
   }, [i18next.language, t]);
