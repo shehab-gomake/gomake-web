@@ -2,7 +2,6 @@ import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-
 const useStyle = () => {
   const classes = useMemo(() => {
     return {
@@ -12,8 +11,23 @@ const useStyle = () => {
         marginRight: convertWidthToVW(10),
         backgroundColor: "#F135A3",
       },
-      insideStyle: { width: "64%", height: "93%", maxWidth: "1240px", maxHeight: "1007px", paddingLeft: "32px", paddingRight: "48px", paddingTop: "27px", paddingBottom: "27px", background: "#FDFDFD" },
-      secondInsideStyle: { paddingLeft: 0, paddingRight: 0, height: 'fit-content', width: 380},
+      insideStyle: {
+        width: "64%",
+        height: "93%",
+        maxWidth: "1240px",
+        maxHeight: "1007px",
+        paddingLeft: "32px",
+        paddingRight: "48px",
+        paddingTop: "27px",
+        paddingBottom: "27px",
+        background: "#FDFDFD",
+      },
+      secondInsideStyle: {
+        paddingLeft: 0,
+        paddingRight: 0,
+        height: "fit-content",
+        width: 380,
+      },
       subTitleStyle: {
         fontStyle: "normal",
         lineHeight: "normal",
@@ -46,7 +60,7 @@ const useStyle = () => {
         padding: "0.5rem",
         display: "inline-block",
         boxShadow: "none",
-        outline: '1px solid white',
+        outline: "1px solid white",
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#8283BE",
       },
@@ -72,7 +86,7 @@ const useStyle = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        gap: '27px',
+        gap: "27px",
         fontStyle: "normal",
         lineHeight: "normal",
         borderRadius: "4px",
@@ -84,7 +98,7 @@ const useStyle = () => {
         width: "50%",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: '7px',
+        marginBottom: "7px",
       },
       headers3Style: {
         color: "#F135A3",
@@ -136,14 +150,23 @@ const useStyle = () => {
         color: "var(--medium-300, #9695C7)",
         fontStyle: "normal",
         lineHeight: "normal",
-        ...FONT_FAMILY.Lexend(500, 12)
+        ...FONT_FAMILY.Lexend(500, 12),
       },
       footerStyle: {
         display: "flex",
         justifyContent: "flex-end",
         position: "fixed" as "fixed",
         bottom: "10px",
-      }
+      },
+      customerInfoStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        marginBottom: 10,
+        flexWrap: "wrap" as "wrap",
+        gap: 10,
+      },
     };
   }, []);
   return {

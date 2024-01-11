@@ -24,6 +24,7 @@ const useStyle = () => {
         borderRadius: "4px",
         height: "40px",
         padding: "6.5px 14px",
+        paddingLeft: 0,
       },
       fileInputStyle: {
         boxSizing: "border-box" as "border-box",
