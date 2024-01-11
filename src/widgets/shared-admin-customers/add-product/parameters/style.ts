@@ -197,6 +197,13 @@ const useStyle = () => {
         paddingLeft: 2,
         boxShadow: "none",
       },
+      paramNameStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: primaryColor(900),
+        minWidth: 120,
+        height: 25,
+        paddingLeft: 2,
+      },
       plusIconStyle: {
         cursor: "pointer",
       },

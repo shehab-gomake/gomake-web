@@ -84,7 +84,10 @@ const ParameterWidget = () => {
                                         <div
                                           style={clasess.parameterLabelStyle}
                                         >
-                                          <div>
+                                          <div style={clasess.paramNameStyle}>
+                                            {parameter?.name}
+                                          </div>
+                                          {/* <div>
                                             <GomakeTextInput
                                               style={
                                                 clasess.textInputWithoutStyle
@@ -102,7 +105,7 @@ const ParameterWidget = () => {
                                                 )
                                               }
                                             />
-                                          </div>
+                                          </div> */}
                                           {parameter?.parameterType ===
                                             EParameterTypes.SELECT_CHILDS_PARAMETERS && (
                                             <div
@@ -148,36 +151,38 @@ const ParameterWidget = () => {
                                               <NotHiddenIcon />
                                             </div>
                                           )}
-                                          {
-                                            parameter?.parameterType !== EParameterTypes.SWITCH ?
-                                                parameter?.isRequired  ? (
-                                                    <div
-                                                        style={{ cursor: "pointer" }}
-                                                        onClick={() =>
-                                                            updatedProductParameteRequierd(
-                                                                section?.id,
-                                                                subSection?.id,
-                                                                parameter
-                                                            )
-                                                        }
-                                                    >
-                                                      <RequierdIcon />
-                                                    </div>
-                                                ) : (
-                                                    <div
-                                                        style={{ cursor: "pointer" }}
-                                                        onClick={() =>
-                                                            updatedProductParameteRequierd(
-                                                                section?.id,
-                                                                subSection?.id,
-                                                                parameter
-                                                            )
-                                                        }
-                                                    >
-                                                      <NotRequierdIcon />
-                                                    </div>
-                                                ) : <></>
-                                          }
+                                          {parameter?.parameterType !==
+                                          EParameterTypes.SWITCH ? (
+                                            parameter?.isRequired ? (
+                                              <div
+                                                style={{ cursor: "pointer" }}
+                                                onClick={() =>
+                                                  updatedProductParameteRequierd(
+                                                    section?.id,
+                                                    subSection?.id,
+                                                    parameter
+                                                  )
+                                                }
+                                              >
+                                                <RequierdIcon />
+                                              </div>
+                                            ) : (
+                                              <div
+                                                style={{ cursor: "pointer" }}
+                                                onClick={() =>
+                                                  updatedProductParameteRequierd(
+                                                    section?.id,
+                                                    subSection?.id,
+                                                    parameter
+                                                  )
+                                                }
+                                              >
+                                                <NotRequierdIcon />
+                                              </div>
+                                            )
+                                          ) : (
+                                            <></>
+                                          )}
                                         </div>
                                         <div
                                           style={
