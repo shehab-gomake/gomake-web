@@ -1,6 +1,6 @@
 const customerInputs = (typeClient, codeFlag, state, clientTypesCategories) => {
   return [
-    codeFlag && {
+    {
       name: "code",
       label: "customers.modal.code",
       type: "text",
@@ -10,7 +10,7 @@ const customerInputs = (typeClient, codeFlag, state, clientTypesCategories) => {
       options: [],
       value: state?.code,
       isValid: true,
-      readonly: true,
+      readonly: codeFlag ?? true,
     },
     {
       name: "name",

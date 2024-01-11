@@ -251,7 +251,17 @@ const useCustomers = (
     filteredAddresses,
     filteredUsers
   ) => {
-    if (!(customer && customer.name && customer.clientTypeId)) {
+    console.log("customer", customer);
+    if (
+      !(
+        customer &&
+        customer.name &&
+        customer.clientTypeId &&
+        customer.tel1 &&
+        customer.phone &&
+        customer.mail
+      )
+    ) {
       return false;
     }
     for (const contact of filteredContacts) {

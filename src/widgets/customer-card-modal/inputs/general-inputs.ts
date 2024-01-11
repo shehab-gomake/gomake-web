@@ -5,7 +5,7 @@ const generalInputs = (typeClient, state) => {
       label: "customers.modal.phone",
       type: "phone",
       placeholder: "customers.modal.phone",
-      required: false,
+      required: true,
       parameterKey: "tel1",
       options: [],
       value: state?.tel1,
@@ -28,7 +28,7 @@ const generalInputs = (typeClient, state) => {
       label: "customers.modal.mobile",
       type: "phone",
       placeholder: "customers.modal.mobile",
-      required: false,
+      required: true,
       parameterKey: "phone",
       options: [],
       value: state?.phone,
@@ -51,7 +51,7 @@ const generalInputs = (typeClient, state) => {
       label: "customers.modal.email",
       type: "text",
       placeholder: "customers.modal.email",
-      required: false,
+      required: true,
       parameterKey: "mail",
       options: [],
       value: state?.mail,
@@ -119,6 +119,7 @@ const lastOrderInputs = (state) => {
       options: [],
       value: state?.lastOrderContactName,
       isValid: true,
+      readonly: true,
     },
     {
       name: "lastOrderContactPhone",
@@ -130,6 +131,7 @@ const lastOrderInputs = (state) => {
       options: [],
       value: state?.lastOrderContactPhone,
       isValid: true,
+      readonly: true,
     },
     {
       name: "lastOrderContactMail",
@@ -141,6 +143,7 @@ const lastOrderInputs = (state) => {
       options: [],
       value: state?.lastOrderContactMail,
       isValid: true,
+      readonly: true,
     },
     {
       name: "lastOrderContactAddress",
@@ -152,6 +155,7 @@ const lastOrderInputs = (state) => {
       options: [],
       value: state?.lastOrderContactAddress,
       isValid: true,
+      readonly: true,
     },
   ];
 };

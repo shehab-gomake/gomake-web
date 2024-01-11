@@ -33,6 +33,7 @@ const useStyle = () => {
         lineHeight: "normal",
         color: "#ED028C",
         ...FONT_FAMILY.Lexend(600, 16),
+        marginBottom: 10,
       },
       colStyle: {
         display: "flex",

@@ -462,34 +462,10 @@ const CustomerCardWidget = ({
 
       {selectedTab == 0 && (
         <div>
-          <Stack direction={"row"}>
-            <span
-              style={{
-                color: "var(--second-500, #ED028C)",
-                fontStyle: "normal",
-                ...FONT_FAMILY.Lexend(500, 14),
-                lineHeight: "normal",
-              }}
-            >
-              {t("customers.modal.lastOrderDetails")}
-            </span>
-          </Stack>
-          <div style={classes.customerInfoStyle}>
-            {lastOrderInputs(customer).map((item) => (
-              <div style={{ marginBottom: 10 }}>
-                <FormInput
-                  input={item as IInput}
-                  changeState={onChangeInputs}
-                  error={false}
-                  readonly={false}
-                />
-              </div>
-            ))}
-          </div>
           <Stack
             direction={"row"}
-            marginTop={"24px"}
-            marginBottom={"24px"}
+            marginTop={"8px"}
+            marginBottom={"8px"}
             gap="20px"
           >
             {tabPanelTextArea(
@@ -509,6 +485,35 @@ const CustomerCardWidget = ({
                 setCustomer({ ...customer, closeOrderNotes: e.target.value })
             )}
           </Stack>
+          {codeFlag && (
+            <>
+              <Stack direction={"row"}>
+                <span
+                  style={{
+                    color: "var(--second-500, #ED028C)",
+                    fontStyle: "normal",
+                    ...FONT_FAMILY.Lexend(500, 14),
+                    lineHeight: "normal",
+                    marginBottom: 10,
+                  }}
+                >
+                  {t("customers.modal.lastOrderDetails")}
+                </span>
+              </Stack>
+              <div style={classes.customerInfoStyle}>
+                {lastOrderInputs(customer).map((item) => (
+                  <div style={{ marginBottom: 10 }}>
+                    <FormInput
+                      input={item as IInput}
+                      changeState={onChangeInputs}
+                      error={false}
+                      readonly={!!item.readonly}
+                    />
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       )}
       <div>
