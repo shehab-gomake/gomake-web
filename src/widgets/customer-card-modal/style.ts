@@ -78,6 +78,7 @@ const useStyle = () => {
         border: "none",
         background: "#FFF",
         ...FONT_FAMILY.Lexend(500, 14),
+        cursor: "pointer",
       },
       tabStyle: {
         width: "62px",

@@ -515,7 +515,24 @@ const CustomerCardWidget = ({
         {
           //contacts info
           selectedTab == 1 && (
-            <Stack direction={"row"} gap={"15px"}>
+            <Stack direction={"column"} gap={"15px"}>
+              <Stack direction={"column"}>
+                <a
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                    gap: "5px",
+                    cursor: "pointer",
+                  }}
+                  onClick={addEmptyContact}
+                >
+                  <AddIcon />
+                  <button style={classes.buttonsStyle}>
+                    {t("customers.buttons.addContact")}
+                  </button>
+                </a>
+              </Stack>
               <Stack direction={"column"}>
                 {contacts
                   .filter((contact) => !contact.isMainContact)
@@ -527,24 +544,8 @@ const CustomerCardWidget = ({
                       setContact={(updatedContactData) =>
                         updateContact(x.index, updatedContactData)
                       }
-                    ></ContactForm>
+                    />
                   ))}
-              </Stack>
-              <Stack direction={"column"} marginTop={"52px"}>
-                <a
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "5px",
-                  }}
-                  onClick={addEmptyContact}
-                >
-                  <AddIcon></AddIcon>
-                  <button style={classes.buttonsStyle}>
-                    {t("customers.buttons.addContact")}
-                  </button>
-                </a>
               </Stack>
             </Stack>
           )
@@ -552,7 +553,23 @@ const CustomerCardWidget = ({
         {
           //address info
           selectedTab == 2 && (
-            <Stack direction={"row"} gap={"15px"}>
+            <Stack direction={"column"} gap={"15px"}>
+              <Stack direction={"column"}>
+                <a
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                    gap: "3px",
+                  }}
+                  onClick={addEmptyAddress}
+                >
+                  <AddIcon></AddIcon>
+                  <button style={classes.buttonsStyle}>
+                    {t("customers.buttons.newAddress")}
+                  </button>
+                </a>
+              </Stack>
               <Stack direction={"column"}>
                 {addresses.map((x) => (
                   <AddressForm
@@ -565,29 +582,29 @@ const CustomerCardWidget = ({
                   ></AddressForm>
                 ))}
               </Stack>
-              <Stack direction={"column"} marginTop={"52px"}>
-                <a
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "3px",
-                  }}
-                  onClick={addEmptyAddress}
-                >
-                  <AddIcon></AddIcon>
-                  <button style={classes.buttonsStyle}>
-                    {t("customers.buttons.newAddress")}
-                  </button>
-                </a>
-              </Stack>
             </Stack>
           )
         }
         {
           //GOMAKEUSER info
           selectedTab == 3 && (
-            <Stack direction={"row"} gap={"15px"}>
+            <Stack direction={"column"} gap={"15px"}>
+              <Stack direction={"column"}>
+                <a
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                    gap: "5px",
+                  }}
+                  onClick={addEmptyClient}
+                >
+                  <AddIcon></AddIcon>
+                  <button style={classes.buttonsStyle}>
+                    {t("customers.buttons.addUser")}
+                  </button>
+                </a>
+              </Stack>
               <Stack direction={"column"}>
                 {users?.map((x) => (
                   <UserForm
@@ -599,22 +616,6 @@ const CustomerCardWidget = ({
                     }
                   ></UserForm>
                 ))}
-              </Stack>
-              <Stack direction={"column"} marginTop={"52px"}>
-                <a
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "5px",
-                  }}
-                  onClick={addEmptyClient}
-                >
-                  <AddIcon></AddIcon>
-                  <button style={classes.buttonsStyle}>
-                    {t("customers.buttons.addUser")}
-                  </button>
-                </a>
               </Stack>
             </Stack>
           )
