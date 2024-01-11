@@ -1171,16 +1171,27 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               x.actionIndex === actionIndex &&
               x.materialPath?.find((y) => compareStrings(y, materialPath))
           );
+          
           materialRelatedParameters?.forEach((param) => {
             if (param.materialPath && param.materialPath.length > 0) {
               const index = param.materialPath.findIndex((x) =>
                 compareStrings(x, materialPath)
               );
+              let allMaterialsCopy = cloneDeep(allMaterials)
+              let materialData =[];
+              if(index > 0){
+                for(let i = 0 ;i<index;i++){
+                  allMaterialsCopy = allMaterialsCopy?.find((x) =>
+                      compareStrings(x.pathName, param.materialPath[i])
+                  )?.data;
+                }
+               
+              }
               if (index != -1 && index < param.materialPath.length - 1) {
-                const materialData = allMaterials.find((x) =>
+                 materialData = allMaterialsCopy.find((x) =>
                   compareStrings(x.pathName, materialPath)
                 )?.data;
-                const paramMaterialValues = materialData.find((x) =>
+                const paramMaterialValues = materialData?.find((x) =>
                   parameterValue?.values?.find((y) => y === x.valueId)
                 )?.data;
                 param.valuesConfigs = [];
