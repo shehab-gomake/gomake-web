@@ -2,11 +2,18 @@ import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-
 const useStyle = () => {
   const clasess = useMemo(() => {
     return {
-
+      customerInfoStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        marginBottom: 10,
+        flexWrap: "wrap" as "wrap",
+        gap: 10,
+      },
       headerStyle: {
         color: "var(--primary-900, #090A1D)",
         fontStyle: "normal",
@@ -47,14 +54,15 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#8283BE",
       },
-      
+
       buttonsStyle: {
         color: "var(--error-500, #D92C2C)",
         ...FONT_FAMILY.Lexend(500, 14),
-        fontStyle: 'normal',
-        lineHeight: 'normal',
+        fontStyle: "normal",
+        lineHeight: "normal",
         border: "none",
         background: "#FFF",
+        cursor: "pointer",
       },
 
       switchHeaderStyle: {
@@ -64,7 +72,6 @@ const useStyle = () => {
         TextAlign: "center",
         ...FONT_FAMILY.Lexend(500, 14),
       },
-
     };
   }, []);
   return {
@@ -72,4 +79,3 @@ const useStyle = () => {
   };
 };
 export { useStyle };
-

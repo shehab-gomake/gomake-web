@@ -46,36 +46,51 @@ const HeaderFilter = ({
         {typeClient == "C" ? (
           <>
             {agentsCategories?.length > 0 ? (
-              <GoMakeAutoComplate
-                options={agentsCategories}
-                style={classes.dropDownListStyle}
-                placeholder={t("customers.selectAgent")}
-                onChange={onChangeAgent}
-                value={agentName}
-              />
+              <div style={classes.filterSectionContainer}>
+                <div style={classes.labelFilterStyle}>
+                  {t("sales.quote.agent")}
+                </div>
+                <GoMakeAutoComplate
+                  options={agentsCategories}
+                  style={classes.dropDownListStyle}
+                  placeholder={t("customers.selectAgent")}
+                  onChange={onChangeAgent}
+                  value={agentName}
+                />
+              </div>
             ) : (
               <Skeleton variant="rectangular" width={200} height={40} />
             )}
             {clientTypesCategories?.length > 0 ? (
-              <GoMakeAutoComplate
-                options={clientTypesCategories}
-                style={classes.dropDownListStyle}
-                placeholder={t("customers.selectCustomerType")}
-                onChange={onChangeClientType}
-                value={valClientType}
-              />
+              <div style={classes.filterSectionContainer}>
+                <div style={classes.labelFilterStyle}>
+                  {t("customers.customerType")}
+                </div>
+                <GoMakeAutoComplate
+                  options={clientTypesCategories}
+                  style={classes.dropDownListStyle}
+                  placeholder={t("customers.selectCustomerType")}
+                  onChange={onChangeClientType}
+                  value={valClientType}
+                />
+              </div>
             ) : (
               <Skeleton variant="rectangular" width={200} height={40} />
             )}
             {statuses?.length > 0 ? (
-              <GoMakeAutoComplate
-                options={statuses}
-                style={classes.dropDownListStyle}
-                placeholder={t("customers.selectStatus")}
-                onChange={onChangeStatus}
-                value={valStatus}
-                disableClearable={true}
-              />
+              <div style={classes.filterSectionContainer}>
+                <div style={classes.labelFilterStyle}>
+                  {t("sales.quote.status")}
+                </div>
+                <GoMakeAutoComplate
+                  options={statuses}
+                  style={classes.dropDownListStyle}
+                  placeholder={t("customers.selectStatus")}
+                  onChange={onChangeStatus}
+                  value={valStatus}
+                  disableClearable={true}
+                />
+              </div>
             ) : (
               <Skeleton variant="rectangular" width={200} height={40} />
             )}
@@ -83,15 +98,20 @@ const HeaderFilter = ({
         ) : (
           <>
             {statuses?.length > 0 ? (
-              <GoMakeAutoComplate
-                options={statuses}
-                style={classes.dropDownListStyle}
-                placeholder={t("customers.selectStatus")}
-                onChange={onChangeStatus}
-                defaultValue={{ label: t("customers.active"), value: "true" }}
-                value={valStatus}
-                disableClearable={true}
-              />
+              <div style={classes.filterSectionContainer}>
+                <div style={classes.labelFilterStyle}>
+                  {t("sales.quote.status")}
+                </div>
+                <GoMakeAutoComplate
+                  options={statuses}
+                  style={classes.dropDownListStyle}
+                  placeholder={t("customers.selectStatus")}
+                  onChange={onChangeStatus}
+                  defaultValue={{ label: t("customers.active"), value: "true" }}
+                  value={valStatus}
+                  disableClearable={true}
+                />
+              </div>
             ) : (
               <Skeleton variant="rectangular" width={200} height={40} />
             )}{" "}
