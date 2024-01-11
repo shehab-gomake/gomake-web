@@ -41,6 +41,10 @@ const useMaterialsActions = () => {
         setUpdatedValue(v);
     }
 
+    const onInputChange = ( key: string , v: any) => {
+        setUpdatedValue(v);
+    }
+
     const onUpdate = async () => {
         if (action !== null) {
             await updateMaterialsPropApi(callApi, onUpdateCallBack, {
@@ -78,6 +82,7 @@ const useMaterialsActions = () => {
         action,
         updatedValue,
         onTextInputChange,
+        onInputChange,
         onUpdate
     }
 }
