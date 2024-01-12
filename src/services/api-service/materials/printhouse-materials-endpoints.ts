@@ -7,13 +7,10 @@ const GET_MATERIAL_CATEGORIES_URL = "/v1/printhouse-materials/GetPrintHouseMater
 const GET_MATERIAL_CATEGORY_DATA_URL = "/v1/printhouse-materials/GetPrintHouseMaterialCategoryData";
 const UPDATE_MATERIAL_PROPS_URL = "/v1/printhouse-materials/updatePrintHouseMaterial";
 const UPDATE_MATERIALS_PROPS_URL = "/v1/printhouse-materials/updatePrintHouseMaterials";
-const DOWNLOAD_MATERIAL_EXCEL_FILE = "/v1/printhouse-materials/download-material-excel";
-const UPLOAD_MATERIAL_EXCEL_FILE = "/v1/printhouse-materials/upload-material-excel-file";
-const ADD_MATERIAL_CATEGORY_URL = "/v1/printhouse-materials/add-material-category";
-const DELETE_MATERIAL_CATEGORY_URL = "/v1/printhouse-materials/delete-material-category";
-const ADD_MATERIAL_CATEGORY_ROW_URL = "/v1/printhouse-materials/add-material-category-row";
-const DELETE_MATERIAL_CATEGORY_Row_URL =
-  "/v1/materials/delete-material-category-row";
+const ADD_MATERIAL_CATEGORY_URL = "/v1/printhouse-materials/add-printhouse-material-category";
+const DELETE_MATERIAL_CATEGORY_URL = "/v1/printhouse-materials/delete-printhouse-material-category";
+const ADD_MATERIAL_CATEGORY_ROW_URL = "/v1/printhouse-materials/add-printhouse-material-category-row";
+const DELETE_MATERIAL_CATEGORY_Row_URL = "/v1/printhouse-materials/delete-printhouse-material-category-row";
 
 
 const getPrintHouseMaterialCategoriesApi: ICallAndSetData = async (
@@ -75,11 +72,6 @@ const updatePrintHouseMaterialsPropApi: ICallAndSetData = async (
     data
   );
 };
-
-
-
-
-
 const addPrintHouseMaterialCategoryApi: ICallAndSetData = async (
   callApi,
   callBack,
@@ -148,5 +140,5 @@ export {
       addPrintHouseMaterialCategoryApi,
       deletePrintHouseMaterialCategoryApi,
       addPrintHouseMaterialCategoryRowApi,
-      deleteMaterialCategoryRowApi,
+      deletePrintHouseMaterialCategoryRowApi,
 };

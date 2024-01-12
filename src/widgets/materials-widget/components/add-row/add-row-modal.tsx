@@ -11,12 +11,14 @@ import { useStyle } from "./style";
 import { Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAddCategoryRow } from "./use-add-row";
-
-const AddRowModal = () => {
+interface IAddRowModalProps{
+    isAdmin:boolean;
+}
+const AddRowModal = (props:IAddRowModalProps) => {
     const { t } = useTranslation();
     const { classes } = useStyle()
     const [rowData, setRowData] = useState<any>({});
-    const { onAddCategoryRow } = useAddCategoryRow();
+    const { onAddCategoryRow } = useAddCategoryRow(props.isAdmin);
     const currencies = useRecoilValue(currenciesState);
     const machinesCategories =useRecoilValue<any>(materialsMachinesState);
     const [openModal, setOpenModal] = useRecoilState<boolean>(openAddRowModalState);

@@ -8,8 +8,9 @@ import {useRouter} from "next/router";
 import {useTranslation} from "react-i18next";
 import {useFilteredMaterials} from "@/widgets/materials-widget/use-filtered-materials";
 import {updatePrintHouseMaterialsPropApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
+import {updateMaterialsPropApi} from "@/services/api-service/materials/materials-endpoints";
 
-const useMaterialsActions = () => {
+const useMaterialsActions = (isAdmin:boolean) => {
     const {callApi} = useGomakeAxios();
     const {query} = useRouter();
     const {materialType, materialCategory} = query;
@@ -43,14 +44,26 @@ const useMaterialsActions = () => {
 
     const onUpdate = async () => {
         if (action !== null) {
-            await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
-                materialTypeKey: materialType.toString(),
-                categoryKey: materialCategory.toString(),
-                ids: getSelectedMaterialsIds(),
-                action: action.action,
-                priceIndex: 0,
-                updatedValue
-            })
+            if(isAdmin){
+                await updateMaterialsPropApi(callApi, onUpdateCallBack, {
+                    materialTypeKey: materialType.toString(),
+                    categoryKey: materialCategory.toString(),
+                    ids: getSelectedMaterialsIds(),
+                    action: action.action,
+                    priceIndex: 0,
+                    updatedValue
+                })
+            }else{
+                await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
+                    materialTypeKey: materialType.toString(),
+                    categoryKey: materialCategory.toString(),
+                    ids: getSelectedMaterialsIds(),
+                    action: action.action,
+                    priceIndex: 0,
+                    updatedValue
+                })
+            }
+            
         }
     }
 
@@ -64,13 +77,24 @@ const useMaterialsActions = () => {
         setUpdatedValue('')
     }
     const updateStatus = async (eAction: EMaterialsActions) => {
-        await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
-            materialTypeKey: materialType.toString(),
-            categoryKey: materialCategory.toString(),
-            ids: getSelectedMaterialsIds(),
-            action: eAction,
-            priceIndex: 0,
-        })
+        if(isAdmin){
+            await updateMaterialsPropApi(callApi, onUpdateCallBack, {
+                materialTypeKey: materialType.toString(),
+                categoryKey: materialCategory.toString(),
+                ids: getSelectedMaterialsIds(),
+                action: eAction,
+                priceIndex: 0,
+            })
+        }else{
+            await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
+                materialTypeKey: materialType.toString(),
+                categoryKey: materialCategory.toString(),
+                ids: getSelectedMaterialsIds(),
+                action: eAction,
+                priceIndex: 0,
+            })
+        }
+        
     }
     return {
         getSelectedMaterialsIds,

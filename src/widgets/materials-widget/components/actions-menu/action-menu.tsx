@@ -10,11 +10,13 @@ import Stack from "@mui/material/Stack";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import {useRecoilValue} from "recoil";
 import {currenciesState, materialActionState} from "@/widgets/materials-widget/state";
-
-const ActionMenu = () => {
+interface IActionMenuProps{
+    isAdmin:boolean;
+}
+const ActionMenu = (props:IActionMenuProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const {t} = useTranslation();
-    const {onChooseAction, action, updatedValue, onTextInputChange, onUpdate} = useMaterialsActions();
+    const {onChooseAction, action, updatedValue, onTextInputChange, onUpdate} = useMaterialsActions(props.isAdmin);
     const currencies = useRecoilValue(currenciesState);
     const materialActions = useRecoilValue(materialActionState);
 

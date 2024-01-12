@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
+  deleteMaterialCategoryApi,
+  getMaterialCategoriesApi,
   getMaterialExcelFileApi,
   getMaterialTableHeadersApi, uploadMaterialExcelFileApi
 } from "@/services/api-service/materials/materials-endpoints";
@@ -67,7 +69,7 @@ const useMaterials = (isAdmin:boolean) => {
   const setCurrencies = useSetRecoilState(currenciesState);
   const setOpenModal = useSetRecoilState<any>(openAddRowModalState);
   const { getFilteredMaterials } = useFilteredMaterials();
-  const { onDeleteCategoryRow } = useAddCategoryRow();
+  const { onDeleteCategoryRow } = useAddCategoryRow(isAdmin);
   const setActiveFilter = useSetRecoilState(activeFilterState);
   const setFlagState = useSetRecoilState(flagState);
   const { primaryColor, errorColor } = useGomakeTheme();
@@ -90,10 +92,17 @@ const useMaterials = (isAdmin:boolean) => {
         alertFaultDelete();
       }
     };
-    await deletePrintHouseMaterialCategoryApi(callApi, callBack, {
-      materialTypeKey: materialType.toString(),
-      categoryKey: categoryKey,
-    });
+    if(isAdmin){
+      await deleteMaterialCategoryApi(callApi, callBack, {
+        materialTypeKey: materialType.toString(),
+        categoryKey: categoryKey,
+      });
+    }else{
+      await deletePrintHouseMaterialCategoryApi(callApi, callBack, {
+        materialTypeKey: materialType.toString(),
+        categoryKey: categoryKey,
+      });
+    }
   };
 
   const getMaterialCategories = async (material) => {
@@ -104,7 +113,12 @@ const useMaterials = (isAdmin:boolean) => {
         push("/materials");
       }
     };
-    await getPrintHouseMaterialCategoriesApi(callApi, callBack, material);
+    if(isAdmin){
+      await getMaterialCategoriesApi(callApi, callBack, material);
+    }else{
+      await getPrintHouseMaterialCategoriesApi(callApi, callBack, material);
+    }
+    
   };
 
   const materialsCategoriesList = useCallback(() => {
@@ -196,6 +210,7 @@ const useMaterials = (isAdmin:boolean) => {
             {...dataRow.rowData[header.key]}
             id={dataRow.id}
             parameterKey={header.key}
+            isAdmin={isAdmin}
           />
         )),
       ];

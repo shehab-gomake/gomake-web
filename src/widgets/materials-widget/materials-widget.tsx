@@ -32,7 +32,7 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
-  const { getMaterialCategoryData, pagesCount } = useMaterialsCategories();
+  const { getMaterialCategoryData, pagesCount } = useMaterialsCategories(props.isAdmin);
   const pageSize = DEFAULT_VALUES.PageSize;
   const [pageNumber, setPageNumber] = useState(1);
   const activeFilter = useRecoilValue(activeFilterState);
@@ -242,8 +242,8 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
       </SideBarContainer>
 
       <AddSupplierModal />
-      <AddCategoryModal />
-      <AddRowModal />
+      <AddCategoryModal isAdmin={props.isAdmin} />
+      <AddRowModal isAdmin={props.isAdmin} />
     </div>
   );
 };

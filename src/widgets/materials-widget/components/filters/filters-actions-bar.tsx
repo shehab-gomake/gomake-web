@@ -100,7 +100,7 @@ const FiltersActionsBar = (props:FiltersActionsBarProps) => {
                         </Paper>;
                     }}
                 />:<></>}
-                <ActionMenu />
+                <ActionMenu isAdmin={props.isAdmin} />
             </Stack>
         </Stack>
     )

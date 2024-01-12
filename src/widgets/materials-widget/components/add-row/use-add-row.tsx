@@ -5,17 +5,18 @@ import { openAddRowModalState, selectedSupplierIdState } from "../../state";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import {
     addPrintHouseMaterialCategoryRowApi,
-    deletePrintHouseMaterialCategoryApi
+    deletePrintHouseMaterialCategoryRowApi
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import {addMaterialCategoryRowApi, deleteMaterialCategoryRowApi} from "@/services/api-service/materials/materials-endpoints";
 
-const useAddCategoryRow = () => {
+const useAddCategoryRow = (isAdmin:boolean) => {
     const { callApi } = useGomakeAxios();
     const { query } = useRouter();
     const { materialType, materialCategory } = query;
     const { alertSuccessAdded, alertFaultAdded, alertSuccessDelete, alertFaultDelete } = useSnackBar();
     const supplierId = useRecoilValue(selectedSupplierIdState)
     const setOpenModal = useSetRecoilState<boolean>(openAddRowModalState);
-    const {getMaterialCategoryData} =useMaterialsCategories();
+    const {getMaterialCategoryData} =useMaterialsCategories(isAdmin);
 
 
     const onAddCategoryRow = async (dataRow) => {
@@ -28,12 +29,20 @@ const useAddCategoryRow = () => {
                 alertFaultAdded();
             }
         }
-        await addPrintHouseMaterialCategoryRowApi(callApi, callBack, {
-            materialKey: materialType,
-            categoryKey: materialCategory,
-            supplierId: supplierId,
-            rowData: dataRow
-        })
+        if(isAdmin){
+            await addMaterialCategoryRowApi(callApi, callBack, {
+                materialKey: materialType,
+                categoryKey: materialCategory,
+                rowData: dataRow
+            })
+        }else{
+            await addPrintHouseMaterialCategoryRowApi(callApi, callBack, {
+                materialKey: materialType,
+                categoryKey: materialCategory,
+                supplierId: supplierId,
+                rowData: dataRow
+            })
+        }
     }
 
     const onDeleteCategoryRow = async (id: string) => {
@@ -45,7 +54,11 @@ const useAddCategoryRow = () => {
                 alertFaultDelete();
             }
         }
-        await deletePrintHouseMaterialCategoryApi(callApi, callBack, { rowId: id })
+        if(isAdmin){
+            await deleteMaterialCategoryRowApi(callApi, callBack, { rowId: id })
+        }else{
+            await deletePrintHouseMaterialCategoryRowApi(callApi, callBack, { rowId: id })
+        }
     }
 
     return {
