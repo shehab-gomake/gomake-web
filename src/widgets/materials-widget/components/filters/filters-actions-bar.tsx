@@ -12,8 +12,10 @@ import {
 } from "@/widgets/materials-widget/state";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-
-const FiltersActionsBar = () => {
+interface FiltersActionsBarProps{
+    isAdmin:boolean;
+}
+const FiltersActionsBar = (props:FiltersActionsBarProps) => {
     const { t } = useTranslation();
     const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
     const { primaryColor, secondColor } = useGomakeTheme();
@@ -56,7 +58,7 @@ const FiltersActionsBar = () => {
                 disableClearable={true}
             />
             <Stack direction={'row'} gap={"5px"} alignItems={'center'}>
-                <GoMakeAutoComplate
+                {props.isAdmin === false ? <GoMakeAutoComplate
                     style={{ width: '300px' }}
                     options={materialSuppliers}
                     placeholder={t("materials.sheetPaper.selectSupplier")}
@@ -97,8 +99,8 @@ const FiltersActionsBar = () => {
                             </Button>
                         </Paper>;
                     }}
-                />
-                <ActionMenu />
+                />:<></>}
+                <ActionMenu isAdmin={props.isAdmin} />
             </Stack>
         </Stack>
     )

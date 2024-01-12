@@ -1,5 +1,4 @@
 import { useGomakeAxios } from "@/hooks";
-import { getMaterialCategoryDataApi } from "@/services/api-service/materials/materials-endpoints";
 import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -8,8 +7,10 @@ import {
 } from "@/widgets/materials-widget/state";
 import { EMaterialActiveFilter } from "./enums";
 import { useState } from "react";
+import {getPrintHouseMaterialCategoryDataApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
+import {getMaterialCategoryDataApi} from "@/services/api-service/materials/materials-endpoints";
 
-const useMaterialsCategories = () => {
+const useMaterialsCategories = (isAdmin:boolean) => {
   const { callApi } = useGomakeAxios();
   const setMaterialCategoryData = useSetRecoilState<IMaterialCategoryRow[]>(
     materialCategoryDataState
@@ -39,15 +40,26 @@ const useMaterialsCategories = () => {
         : activeFilter === EMaterialActiveFilter.INACTIVE
         ? false
         : "";
-    const data = await getMaterialCategoryDataApi(callApi, callBack, {
-      materialKey: materialType,
-      categoryKey: materialCategory,
-      supplierId,
-      pageNumber,
-      pageSize,
-      isActive,
-    });
-    setPagesCount(Math.ceil(data?.data?.totalItems / pageSize));
+    if(isAdmin){
+      const data = await getMaterialCategoryDataApi(callApi, callBack, {
+        materialKey: materialType,
+        categoryKey: materialCategory,
+        pageNumber,
+        pageSize,
+      });
+      setPagesCount(Math.ceil(data?.data?.totalItems / pageSize));
+    }else{
+      const data = await getPrintHouseMaterialCategoryDataApi(callApi, callBack, {
+        materialKey: materialType,
+        categoryKey: materialCategory,
+        supplierId,
+        pageNumber,
+        pageSize,
+        isActive,
+      });
+      setPagesCount(Math.ceil(data?.data?.totalItems / pageSize));
+    }
+    
   };
 
   return {

@@ -10,14 +10,15 @@ import {useStyle} from "@/widgets/materials-widget/style";
 
 interface ICurrencyInputProps {
     value: string;
-    id: string
+    id: string;
+    isAdmin: boolean;
 }
 
-const CurrencyInput = ({value, id}: ICurrencyInputProps) => {
+const CurrencyInput = ({value, id,isAdmin}: ICurrencyInputProps) => {
     const {classes} = useStyle();
     const [isUpdate, setIsUpdate] = useState<boolean>(false);
     const currencies = useRecoilValue(currenciesState);
-    const {updateCellData} = useTableCellData();
+    const {updateCellData} = useTableCellData(isAdmin);
     const popUpRef = useRef(null);
     const onSelectLanguage = async (event: SyntheticEvent, value) => {
         await updateCellData(id, 'currency', value?.value);

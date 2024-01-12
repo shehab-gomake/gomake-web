@@ -4,9 +4,11 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 import { useTranslation } from "react-i18next";
 import { useMaterialsTypes } from "@/widgets/materials-widget/components/materials-table/use-materials-types";
-
-const MaterialsTableComponent = () => {
-  const { getAllMaterials, getTableRows, onFilterChange } = useMaterialsTypes();
+interface IMaterialsTableComponentProps{
+    isAdmin:boolean;
+}
+const MaterialsTableComponent = (props:IMaterialsTableComponentProps) => {
+  const { getAllMaterials, getTableRows, onFilterChange } = useMaterialsTypes(props.isAdmin);
   const { t } = useTranslation();
   const { classes } = useStyle();
   const tableHeaders = [t("Materials Type"), t("Edit")];
