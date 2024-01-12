@@ -3,11 +3,11 @@ import {IMaterialCategoryRow} from "@/widgets/materials-widget/interface";
 import {materialCategoryDataState} from "@/widgets/materials-widget/state";
 import {useState} from "react";
 import {EMaterialsActions} from "@/widgets/materials-widget/enums";
-import {updateMaterialsPropApi} from "@/services/api-service/materials/materials-endpoints";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {useRouter} from "next/router";
 import {useTranslation} from "react-i18next";
 import {useFilteredMaterials} from "@/widgets/materials-widget/use-filtered-materials";
+import {updatePrintHouseMaterialsPropApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
 
 const useMaterialsActions = () => {
     const {callApi} = useGomakeAxios();
@@ -43,7 +43,7 @@ const useMaterialsActions = () => {
 
     const onUpdate = async () => {
         if (action !== null) {
-            await updateMaterialsPropApi(callApi, onUpdateCallBack, {
+            await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
                 materialTypeKey: materialType.toString(),
                 categoryKey: materialCategory.toString(),
                 ids: getSelectedMaterialsIds(),
@@ -64,7 +64,7 @@ const useMaterialsActions = () => {
         setUpdatedValue('')
     }
     const updateStatus = async (eAction: EMaterialsActions) => {
-        await updateMaterialsPropApi(callApi, onUpdateCallBack, {
+        await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: materialCategory.toString(),
             ids: getSelectedMaterialsIds(),

@@ -1,7 +1,7 @@
 import {useGomakeAxios} from "@/hooks";
-import {updateMaterialPropApi} from "@/services/api-service/materials/materials-endpoints";
 import {useRecoilState} from "recoil";
 import {materialCategoryDataState} from "@/widgets/materials-widget/state";
+import {updatePrintHouseMaterialPropApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
 
 const useTableCellData = () => {
     const {callApi} = useGomakeAxios();
@@ -13,7 +13,7 @@ const useTableCellData = () => {
                 setData(data.map(row => row.id === id ? {...row, ...res.data} : row));
             }
         }
-        await updateMaterialPropApi(callApi, callBack, {
+        await updatePrintHouseMaterialPropApi(callApi, callBack, {
             key: key,
             id,
             updatedValue: value,

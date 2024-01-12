@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { activeFilterState, flagState, openAddCategoryModalState } from "@/widgets/materials-widget/state";
 import { useMaterials } from "../../use-materials";
-import { addMaterialCategoryApi } from "@/services/api-service/materials/materials-endpoints";
 import { useState } from "react";
 import { EMaterialActiveFilter } from "../../enums";
 import { useTranslation } from "react-i18next";
+import {addPrintHouseMaterialCategoryApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
 
 const useAddMaterialCategory = () => {
     const { callApi } = useGomakeAxios();
@@ -36,7 +36,7 @@ const useAddMaterialCategory = () => {
                 alertFaultAdded();
             }
         }
-        await addMaterialCategoryApi(callApi, callBack, {
+        await addPrintHouseMaterialCategoryApi(callApi, callBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: newCategory
         })

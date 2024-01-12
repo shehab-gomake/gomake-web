@@ -1,9 +1,12 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
-import { addMaterialCategoryRowApi, deleteMaterialCategoryRowApi } from "@/services/api-service/materials/materials-endpoints";
 import { useSetRecoilState, useRecoilValue} from "recoil";
 import { openAddRowModalState, selectedSupplierIdState } from "../../state";
 import { useMaterialsCategories } from "../../use-materials-categories";
+import {
+    addPrintHouseMaterialCategoryRowApi,
+    deletePrintHouseMaterialCategoryApi
+} from "@/services/api-service/materials/printhouse-materials-endpoints";
 
 const useAddCategoryRow = () => {
     const { callApi } = useGomakeAxios();
@@ -25,7 +28,7 @@ const useAddCategoryRow = () => {
                 alertFaultAdded();
             }
         }
-        await addMaterialCategoryRowApi(callApi, callBack, {
+        await addPrintHouseMaterialCategoryRowApi(callApi, callBack, {
             materialKey: materialType,
             categoryKey: materialCategory,
             supplierId: supplierId,
@@ -42,7 +45,7 @@ const useAddCategoryRow = () => {
                 alertFaultDelete();
             }
         }
-        await deleteMaterialCategoryRowApi(callApi, callBack, { rowId: id })
+        await deletePrintHouseMaterialCategoryApi(callApi, callBack, { rowId: id })
     }
 
     return {

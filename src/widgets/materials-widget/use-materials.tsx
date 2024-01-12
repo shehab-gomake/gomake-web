@@ -2,12 +2,13 @@ import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
-  deleteMaterialCategoryApi,
-  getMaterialCategoriesApi,
   getMaterialExcelFileApi,
-  getMaterialTableHeadersApi,
-  uploadMaterialExcelFileApi,
+  getMaterialTableHeadersApi, uploadMaterialExcelFileApi
 } from "@/services/api-service/materials/materials-endpoints";
+import {
+  deletePrintHouseMaterialCategoryApi,
+  getPrintHouseMaterialCategoriesApi,
+} from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 import { TableCellData } from "@/widgets/materials-widget/components/table-cell-data/table-cell";
 import { Checkbox, IconButton, Tooltip } from "@mui/material";
@@ -38,7 +39,8 @@ import { WastebasketNew } from "@/icons/wastebasket-new";
 
 import { getAndSetMachincesNew } from "@/services/hooks";
 
-const useMaterials = () => {
+
+const useMaterials = (isAdmin:boolean) => {
   const { query, push, replace } = useRouter();
   const { materialType, materialCategory } = query;
   const [materialHeaders, setMaterialHeaders] =
@@ -73,7 +75,8 @@ const useMaterials = () => {
 
   const onSelectCategory = (category: string) => {
     setDefaultSupplier("");
-    push(`/materials/${materialType}?materialCategory=${category}`);
+    const path = isAdmin ? "/materials-admin" : "/materials";
+    push(path+`/${materialType}?materialCategory=${category}`);
     setFlagState(false);
   };
 
@@ -87,7 +90,7 @@ const useMaterials = () => {
         alertFaultDelete();
       }
     };
-    await deleteMaterialCategoryApi(callApi, callBack, {
+    await deletePrintHouseMaterialCategoryApi(callApi, callBack, {
       materialTypeKey: materialType.toString(),
       categoryKey: categoryKey,
     });
@@ -101,7 +104,7 @@ const useMaterials = () => {
         push("/materials");
       }
     };
-    await getMaterialCategoriesApi(callApi, callBack, material);
+    await getPrintHouseMaterialCategoriesApi(callApi, callBack, material);
   };
 
   const materialsCategoriesList = useCallback(() => {
