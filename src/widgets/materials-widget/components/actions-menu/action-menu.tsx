@@ -12,11 +12,13 @@ import { currenciesState, materialActionState, materialHeadersState, materialsMa
 import { rowInputs } from "../add-row/inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-
-const ActionMenu = () => {
+interface IActionMenuProps{
+    isAdmin:boolean;
+}
+const ActionMenu = (props:IActionMenuProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const { t } = useTranslation();
-    const { onChooseAction, action, updatedValue, onTextInputChange, onInputChange, onUpdate } = useMaterialsActions();
+    const { onChooseAction, action, updatedValue, onTextInputChange, onInputChange, onUpdate } = useMaterialsActions(props.isAdmin);
     const currencies = useRecoilValue(currenciesState);
     const materialActions = useRecoilValue(materialActionState);
     const materialHeaders = useRecoilValue<{ key: string, value: string, inputType: number, values: any[] }[]>(materialHeadersState);

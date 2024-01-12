@@ -15,6 +15,7 @@ export interface IRowData {
     values?:any[]
     parameterKey?: string;
     id?: string;
+    isAdmin:boolean,
 }
 
 export interface IDynamicRowData {

@@ -6,7 +6,7 @@ import {EditIcon} from "@/components/icons/edit-icon";
 import {useTranslation} from "react-i18next";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 
-const useMaterialsTypes = () => {
+const useMaterialsTypes = (isAdmin:boolean) => {
     const {callApi} = useGomakeAxios();
     const [filter, setFilter] = useState<string>("");
     const [materialsTypes, setMaterialsTypes] = useState<{ materialTypeKey: string; materialTypeName: string }[]>([]);
@@ -24,6 +24,8 @@ const useMaterialsTypes = () => {
     }
 
     const getTableRows = useCallback(() => {
+        const basePath = isAdmin ? '/materials-admin' : '/materials'
+        
         const materials = !!filter ?
             materialsTypes.filter(material => material.materialTypeName.toLowerCase().includes(filter.toLowerCase()))
             : materialsTypes;
@@ -31,7 +33,7 @@ const useMaterialsTypes = () => {
             <>{material.materialTypeName}</>,
             <PrimaryButton
                 startIcon={<EditIcon color={primaryColor(500)} width={20} height={20}/>}
-                href={`/materials/${material.materialTypeKey}`}
+                href={basePath+`/${material.materialTypeKey}`}
                 variant={"text"}
             >
                 {t('machineAttributes.edit')}

@@ -7,7 +7,7 @@ import { useMaterials } from "../../use-materials";
 
 const AddSupplierModal = () => {
     const {getPrintHouseSuppliersList, suppliers, onSelectSupplier, onAddSupplier, setOpenModal, openModal} = useAddMaterialSupplier();
-    const {materialCategories} = useMaterials();
+    const {materialCategories} = useMaterials(false);
 
     useEffect(() => {
         getPrintHouseSuppliersList().then();

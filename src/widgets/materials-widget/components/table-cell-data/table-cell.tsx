@@ -9,8 +9,8 @@ import { ImageInput } from "./image-input";
 import { MultiSelectInput } from "./multi-select-input";
 import { SelectInput } from "./select-input";
 
-const TableCellData = ({ value, type, isEditable, parameterKey, id, values }: IRowData) => {
-    const { updateCellData } = useTableCellData();
+const TableCellData = ({ value, type, isEditable, parameterKey, id, values,isAdmin }: IRowData) => {
+    const { updateCellData } = useTableCellData(isAdmin);
 
     const toggleIsActive = async () => {
         await updateCellData(id, parameterKey, !value)
@@ -20,17 +20,17 @@ const TableCellData = ({ value, type, isEditable, parameterKey, id, values }: IR
         case EDataTypeEnum.BOOLEAN:
             return <SecondSwitch checked={value} onChange={toggleIsActive} />
         case EDataTypeEnum.CURRENCY:
-            return <CurrencyInput value={value as string} id={id} key={parameterKey} />
+            return <CurrencyInput value={value as string} id={id} key={parameterKey} isAdmin={isAdmin} />
         case EDataTypeEnum.ARRAY_INPUT:
-            return <ArrayInput valueArray={value as string[]} type={type} isEditable={isEditable} parameterKey={parameterKey} id={id} />
+            return <ArrayInput valueArray={value as string[]} type={type} isEditable={isEditable} parameterKey={parameterKey} id={id} isAdmin={isAdmin}/>
         case EDataTypeEnum.IMAGE:
-            return <ImageInput parameterKey={parameterKey} id={id} value={value.toString()} />
+            return <ImageInput parameterKey={parameterKey} id={id} value={value.toString()} isAdmin={isAdmin} />
         case EDataTypeEnum.LIST:
-            return <SelectInput values={values} parameterKey={parameterKey} id={id} value={value as string} />
+            return <SelectInput values={values} parameterKey={parameterKey} id={id} value={value as string} isAdmin={isAdmin} />
         case EDataTypeEnum.MACHINES_LIST:
-            return <MultiSelectInput values={value as string[]} parameterKey={parameterKey} id={id} />
+            return <MultiSelectInput values={value as string[]} parameterKey={parameterKey} id={id} isAdmin={isAdmin}/>
         default:
-            return <NumberStringInput type={type} isEditable={isEditable} parameterKey={parameterKey} id={id} value={value} />
+            return <NumberStringInput type={type} isEditable={isEditable} parameterKey={parameterKey} id={id} value={value} isAdmin={isAdmin}/>
     }
 
 }

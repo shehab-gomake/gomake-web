@@ -25,12 +25,14 @@ import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
 import Pagination from "@mui/material/Pagination";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
-
-const MaterialsWidget = () => {
+interface IMaterialsWidgetProps{
+  isAdmin:boolean;
+}
+const MaterialsWidget = (props:IMaterialsWidgetProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
-  const { getMaterialCategoryData, pagesCount } = useMaterialsCategories();
+  const { getMaterialCategoryData, pagesCount } = useMaterialsCategories(props.isAdmin);
   const pageSize = DEFAULT_VALUES.PageSize;
   const [pageNumber, setPageNumber] = useState(1);
   const activeFilter = useRecoilValue(activeFilterState);
@@ -59,7 +61,7 @@ const MaterialsWidget = () => {
     tableHeadersNew,
     tableRowsNew,
     getMachinesMaterials,
-  } = useMaterials();
+  } = useMaterials(props.isAdmin);
 
   const tableRowData = materialCategories.find(
     (category) => category.categoryKey === materialCategory
@@ -72,7 +74,7 @@ const MaterialsWidget = () => {
     <Stack direction={"column"} gap={"10px"}>
       <SecondaryButton
         variant={"text"}
-        href={"/materials"}
+        href={props.isAdmin ? "/materials-admin" :"/materials"}
         startIcon={dir === "ltr" ? <ArrowBackIcon /> : <ArrowForwardIcon />}
         style={{ gap: 5 }}
       >
@@ -146,21 +148,33 @@ const MaterialsWidget = () => {
   }, [materialType]);
 
   useEffect(() => {
+    debugger
     if (!!materialType && !!materialCategory) {
-      if (supplierId) {
+      if(props.isAdmin){
         getMaterialCategoryData(
-          materialType?.toString(),
-          materialCategory?.toString(),
-          supplierId,
-          pageNumber,
-          pageSize
+            materialType?.toString(),
+            materialCategory?.toString(),
+            supplierId,
+            pageNumber,
+            pageSize
         ).then();
-      } else {
-        getPrintHouseMaterialCategorySuppliers(
-          materialType?.toString(),
-          materialCategory?.toString()
-        ).then();
+      }else{
+        if (supplierId ) {
+          getMaterialCategoryData(
+              materialType?.toString(),
+              materialCategory?.toString(),
+              supplierId,
+              pageNumber,
+              pageSize
+          ).then();
+        } else {
+          getPrintHouseMaterialCategorySuppliers(
+              materialType?.toString(),
+              materialCategory?.toString()
+          ).then();
+        }
       }
+      
     }
   }, [
     materialType,
@@ -185,7 +199,7 @@ const MaterialsWidget = () => {
               alignItems={"flex-start"}
             >
               <h4 style={classes.subHeader}>{materialCategory?.toString()}</h4>
-              <FiltersActionsBar />
+              <FiltersActionsBar isAdmin={props.isAdmin} />
             </Stack>
             <div style={{ minHeight: 550 }}>
               {materialCategoryData.length > 0 ? (
@@ -228,8 +242,8 @@ const MaterialsWidget = () => {
       </SideBarContainer>
 
       <AddSupplierModal />
-      <AddCategoryModal />
-      <AddRowModal />
+      <AddCategoryModal isAdmin={props.isAdmin} />
+      <AddRowModal isAdmin={props.isAdmin} />
     </div>
   );
 };
