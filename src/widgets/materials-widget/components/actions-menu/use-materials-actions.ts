@@ -42,6 +42,10 @@ const useMaterialsActions = (isAdmin:boolean) => {
         setUpdatedValue(v);
     }
 
+    const onInputChange = ( key: string , v: any) => {
+        setUpdatedValue(v);
+    }
+
     const onUpdate = async () => {
         if (action !== null) {
             if(isAdmin){
@@ -102,6 +106,7 @@ const useMaterialsActions = (isAdmin:boolean) => {
         action,
         updatedValue,
         onTextInputChange,
+        onInputChange,
         onUpdate
     }
 }
