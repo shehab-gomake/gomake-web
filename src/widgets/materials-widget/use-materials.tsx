@@ -45,7 +45,7 @@ const useMaterials = (isAdmin:boolean) => {
   const { query, push, replace } = useRouter();
   const { materialType, materialCategory } = query;
   const [materialHeaders, setMaterialHeaders] =
-    useRecoilState<{ key: string; value: string }[]>(materialHeadersState);
+    useRecoilState<{ key: string; value: string ,unit?: string}[]>(materialHeadersState);
   const [materialCategories, setMaterialCategories] = useRecoilState<
     {
       categoryKey: string;
@@ -180,7 +180,7 @@ const useMaterials = (isAdmin:boolean) => {
   const tableHeadersNew = useCallback(() => {
     return [
       <Checkbox onChange={onChangeHeaderCheckBox} checked={isAllSelected()} />,
-      ...materialHeaders.map((header) => header.value),
+      ...materialHeaders.map((header) => header.unit ? <div> <span>{header.value}</span> <small>{header.unit}</small></div>  : header.value),
       <Tooltip title={t("materials.buttons.addRow")}>
         <IconButton
           type="button"
