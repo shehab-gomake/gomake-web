@@ -6,7 +6,6 @@ import {EMaterialsActions} from "@/widgets/materials-widget/enums";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {useRouter} from "next/router";
 import {useTranslation} from "react-i18next";
-import {useFilteredMaterials} from "@/widgets/materials-widget/use-filtered-materials";
 import {updatePrintHouseMaterialsPropApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {updateMaterialsPropApi} from "@/services/api-service/materials/materials-endpoints";
 
