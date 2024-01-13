@@ -1,7 +1,7 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
 import { useSetRecoilState, useRecoilValue} from "recoil";
-import { openAddRowModalState, selectedSupplierIdState } from "../../state";
+import {filterState, openAddRowModalState, selectedSupplierIdState} from "../../state";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import {
     addPrintHouseMaterialCategoryRowApi,
@@ -17,6 +17,7 @@ const useAddCategoryRow = (isAdmin:boolean) => {
     const supplierId = useRecoilValue(selectedSupplierIdState)
     const setOpenModal = useSetRecoilState<boolean>(openAddRowModalState);
     const {getMaterialCategoryData} =useMaterialsCategories(isAdmin);
+    const materialFilter = useRecoilValue(filterState);
 
 
     const onAddCategoryRow = async (dataRow) => {
@@ -24,7 +25,7 @@ const useAddCategoryRow = (isAdmin:boolean) => {
             if (res.success) {
                 alertSuccessAdded();
                 setOpenModal(false);
-                getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(), supplierId).then();
+                getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(),[], supplierId).then();
             } else {
                 alertFaultAdded();
             }
@@ -49,7 +50,7 @@ const useAddCategoryRow = (isAdmin:boolean) => {
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessDelete();
-                getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(), supplierId).then();
+                getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(),materialFilter, supplierId).then();
             } else {
                 alertFaultDelete();
             }
