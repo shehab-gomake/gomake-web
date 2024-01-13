@@ -19,9 +19,8 @@ const useMaterialsActions = (isAdmin:boolean) => {
     const [updatedValue, setUpdatedValue] = useState<string>('');
     const {setSnackbarStateValue} = useSnackBar();
     const {t} = useTranslation();
-    const {getFilteredMaterials} = useFilteredMaterials();
 
-    const getSelectedMaterialsIds = () => getFilteredMaterials().filter(row => row.checked).map(row => row.id);
+    const getSelectedMaterialsIds = () => materialCategoryData.filter(row => row.checked).map(row => row.id);
     const onChooseAction = async (action: { action: EMaterialsActions, key: string } | null) => {
         if (getSelectedMaterialsIds().length === 0) {
             setSnackbarStateValue({

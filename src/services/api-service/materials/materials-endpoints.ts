@@ -1,7 +1,7 @@
 import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { IDynamicRowData } from "@/widgets/materials-widget/interface";
+import {IDynamicRowData, IMaterialTableFilteringValue} from "@/widgets/materials-widget/interface";
 
 const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
 const GET_MATERIAL_TABLE_HEADERS_URL = "/v1/materials/GetMaterialTypeTableHeader";
@@ -73,14 +73,17 @@ const getMaterialCategoryDataApi: ICallAndSetData = async (
       categoryKey: string;
       pageNumber: number;
       pageSize: number;
+      customFiltersKeyValueList: IMaterialTableFilteringValue[]
     }
 ) => {
-  return await getSetApiData(
-      callApi,
-      EHttpMethod.GET,
-      `${GET_MATERIAL_CATEGORY_DATA_URL}?materialKey=${material.materialKey}&categoryKey=${material.categoryKey}&pageNumber=${material.pageNumber}&pageSize=${material.pageSize}`,
-      setState
-  );
+    return await getSetApiData(
+        callApi,
+        EHttpMethod.POST,
+        GET_MATERIAL_CATEGORY_DATA_URL,
+        setState,
+        material,
+        true
+    );
 };
 const updateMaterialPropApi: ICallAndSetData = async (
     callApi,
