@@ -13,6 +13,7 @@ export const currenciesState = atom<{label: string, value: string}[]>({
 export const materialHeadersState = atom<{
     key: string;
     value: string;
+    unit?: string;
     filterType: EFilterType
     isFilter: boolean
     inputType: number,

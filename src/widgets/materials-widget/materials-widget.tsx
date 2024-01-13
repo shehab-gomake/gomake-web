@@ -212,16 +212,11 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
               {materialCategoryData.length > 0 ? (
                 <div style={{ paddingBottom: "1%" }}>
                   <PrimaryTable
-                    rows={tableRowData}
+                    rows={tableRowsNew}
                     headers={tableHeadersNew()}
                   />
                 </div>
-              ) : flag &&
-                materialCategories.find(
-                  (category) => category.categoryKey === materialCategory
-                )?.isAddedByPrintHouse ? (
-                <PrimaryTable rows={tableRowsNew} headers={tableHeadersNew()} />
-              ) : (
+              )  : (
                 <div style={classes.noData}>
                   {t("materials.sheetPaper.supplierAddedSheetYet")}
                   <span
