@@ -1,5 +1,9 @@
 import {atom} from "recoil";
-import {IMaterialCategoryRow} from "@/widgets/materials-widget/interface";
+import {
+    IMaterialCategoryRow,
+    IMaterialsTableFilter,
+    IMaterialTableFilteringValue
+} from "@/widgets/materials-widget/interface";
 import {EFilterType, EMaterialActiveFilter, EMaterialsActions} from "@/widgets/materials-widget/enums";
 
 export const currenciesState = atom<{label: string, value: string}[]>({
@@ -29,7 +33,10 @@ export const materialCategoryDataState = atom<IMaterialCategoryRow[]>({
     key: "materialCategoryDataState",
     default: [],
 });
-
+export const materialTableFiltersState = atom<IMaterialsTableFilter[]>({
+    key: "materialTableFiltersState",
+    default: [],
+});
 export const openAddSupplierModalState = atom<boolean>({
     key: "openAddSupplierModalState",
     default: false,
@@ -55,9 +62,9 @@ export const activeFilterState = atom<EMaterialActiveFilter>({
     default: EMaterialActiveFilter.ACTIVE
 });
 
-export const filterState = atom<{key: string; value: string} | null>({
+export const filterState = atom<IMaterialTableFilteringValue[]>({
     key: 'filterState',
-    default: null
+    default: []
 });
 
 export const flagState = atom<boolean>({
@@ -73,4 +80,9 @@ export const openAddRowModalState = atom<boolean>({
 export const materialsMachinesState = atom<[]>({
     key: 'materialsMachinesState',
     default: []
+});
+
+export const materialsTablePageState = atom<number>({
+    key: 'materialsTablePageState',
+    default: 1
 });

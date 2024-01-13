@@ -1,7 +1,7 @@
 import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { IDynamicRowData } from "@/widgets/materials-widget/interface";
+import {IDynamicRowData, IMaterialTableFilteringValue} from "@/widgets/materials-widget/interface";
 
 const GET_MATERIAL_CATEGORIES_URL = "/v1/printhouse-materials/GetPrintHouseMaterialCategories";
 const GET_MATERIAL_CATEGORY_DATA_URL = "/v1/printhouse-materials/GetPrintHouseMaterialCategoryData";
@@ -35,13 +35,16 @@ const getPrintHouseMaterialCategoryDataApi: ICallAndSetData = async (
     pageNumber: number;
     pageSize: number;
     isActive: boolean;
+    customFiltersKeyValueList: IMaterialTableFilteringValue[]
   }
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.GET,
-    `${GET_MATERIAL_CATEGORY_DATA_URL}?materialKey=${material.materialKey}&categoryKey=${material.categoryKey}&supplierId=${material.supplierId}&pageNumber=${material.pageNumber}&pageSize=${material.pageSize}&isActive=${material.isActive}`,
-    setState
+    EHttpMethod.POST, 
+    GET_MATERIAL_CATEGORY_DATA_URL,
+    setState, 
+    material,
+true
   );
 };
 const updatePrintHouseMaterialPropApi: ICallAndSetData = async (

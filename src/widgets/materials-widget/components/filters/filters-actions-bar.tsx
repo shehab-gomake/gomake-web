@@ -28,8 +28,8 @@ const FiltersActionsBar = (props:FiltersActionsBarProps) => {
         supplierId,
         onSelectSupplier,
         onSetDefaultSupplier,
-        getFilters,
-        onChange
+        materialTableFilters,
+        setFilterValue
     } = useMaterialFilters();
     const [supplierName, setSupplierName] = useState<{ value: string, label: string, isDefault: boolean } | null>({ value: '', label: '', isDefault: false });
 
@@ -41,11 +41,11 @@ const FiltersActionsBar = (props:FiltersActionsBarProps) => {
     return (
         <Stack direction={'row'} gap={2} alignItems={'center'}>
             {
-                getFilters().map(({ key, options }) => {
+                materialTableFilters && materialTableFilters.map(({ key, values }) => {
                     return <GoMakeAutoComplate
-                        onChange={(e, v) => onChange(v?.value ? { value: v.value, key: key } : null)}
+                        onChange={(e, v) => setFilterValue(key,v)}
                         style={{ width: '200px' }}
-                        options={options}
+                        options={values}
                         placeholder={key}
                     />
                 })

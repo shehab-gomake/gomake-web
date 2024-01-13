@@ -1,9 +1,13 @@
 import { useGomakeAxios } from "@/hooks";
-import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
+import {
+  IMaterialCategoryRow,
+  IMaterialsTableFilter,
+  IMaterialTableFilteringValue
+} from "@/widgets/materials-widget/interface";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
-  materialCategoryDataState,
+  materialCategoryDataState, materialsTablePageState, materialTableFiltersState,
 } from "@/widgets/materials-widget/state";
 import { EMaterialActiveFilter } from "./enums";
 import { useState } from "react";
@@ -15,23 +19,29 @@ const useMaterialsCategories = (isAdmin:boolean) => {
   const setMaterialCategoryData = useSetRecoilState<IMaterialCategoryRow[]>(
     materialCategoryDataState
   );
+  const setMaterialTableFilters = useSetRecoilState<IMaterialsTableFilter[]>(
+      materialTableFiltersState
+  );
   const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
   const [pagesCount, setPagesCount] = useState(0);
+  const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
   const getMaterialCategoryData = async (
     materialType: string,
     materialCategory: string,
+    customFiltersKeyValueList: IMaterialTableFilteringValue[],
     supplierId: string,
     pageNumber?: number,
-    pageSize?: number
+    pageSize?: number,
+    
   ) => {
     const callBack = (res) => {
       if (res.success) {
         setMaterialCategoryData(
-          res.data?.data?.map((row) => ({ ...row, checked: false }))
+          res.data?.result?.data?.map((row) => ({ ...row, checked: false }))
         );
-        // res.data?.data?.every((row) => !row.isActive)
-        //   ? setActiveFilter(EMaterialActiveFilter.ALL)
-        //   : setActiveFilter(EMaterialActiveFilter.ACTIVE);
+        setPagesCount(Math.ceil( res.data?.result?.totalItems / pageSize));
+        const filters =  res.data?.filters;
+        setMaterialTableFilters(filters);
       }
     };
     const isActive =
@@ -39,25 +49,27 @@ const useMaterialsCategories = (isAdmin:boolean) => {
         ? true
         : activeFilter === EMaterialActiveFilter.INACTIVE
         ? false
-        : "";
+        : null;
     if(isAdmin){
       const data = await getMaterialCategoryDataApi(callApi, callBack, {
         materialKey: materialType,
         categoryKey: materialCategory,
         pageNumber,
         pageSize,
+        customFiltersKeyValueList
       });
       setPagesCount(Math.ceil(data?.data?.totalItems / pageSize));
     }else{
-      const data = await getPrintHouseMaterialCategoryDataApi(callApi, callBack, {
+       await getPrintHouseMaterialCategoryDataApi(callApi, callBack, {
         materialKey: materialType,
         categoryKey: materialCategory,
         supplierId,
         pageNumber,
         pageSize,
         isActive,
+         customFiltersKeyValueList
       });
-      setPagesCount(Math.ceil(data?.data?.totalItems / pageSize));
+     
     }
     
   };
@@ -65,6 +77,8 @@ const useMaterialsCategories = (isAdmin:boolean) => {
   return {
     getMaterialCategoryData,
     pagesCount,
+    pageNumber,
+    setPageNumber,
   };
 };
 

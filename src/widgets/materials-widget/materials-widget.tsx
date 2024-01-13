@@ -32,9 +32,12 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
-  const { getMaterialCategoryData, pagesCount } = useMaterialsCategories(props.isAdmin);
+  const { 
+    getMaterialCategoryData, 
+    pagesCount, 
+    pageNumber,
+    setPageNumber } = useMaterialsCategories(props.isAdmin);
   const pageSize = DEFAULT_VALUES.PageSize;
-  const [pageNumber, setPageNumber] = useState(1);
   const activeFilter = useRecoilValue(activeFilterState);
   const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
@@ -61,6 +64,7 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
     tableHeadersNew,
     tableRowsNew,
     getMachinesMaterials,
+    materialFilter,
   } = useMaterials(props.isAdmin);
 
   const tableRowData = materialCategories.find(
@@ -154,6 +158,7 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
         getMaterialCategoryData(
             materialType?.toString(),
             materialCategory?.toString(),
+            materialFilter,
             supplierId,
             pageNumber,
             pageSize
@@ -163,6 +168,7 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
           getMaterialCategoryData(
               materialType?.toString(),
               materialCategory?.toString(),
+              materialFilter,
               supplierId,
               pageNumber,
               pageSize
@@ -183,6 +189,7 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
     pageNumber,
     pageSize,
     activeFilter,
+    materialFilter
   ]);
   return (
     <div style={classes.mainContainer}>
