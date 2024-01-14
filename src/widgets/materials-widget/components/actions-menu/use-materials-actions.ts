@@ -1,6 +1,6 @@
-import {useRecoilState} from "recoil";
+import {useRecoilState, useSetRecoilState} from "recoil";
 import {IMaterialCategoryRow} from "@/widgets/materials-widget/interface";
-import {materialCategoryDataState} from "@/widgets/materials-widget/state";
+import {materialCategoryDataState, openAddRowModalState} from "@/widgets/materials-widget/state";
 import {useState} from "react";
 import {EMaterialsActions} from "@/widgets/materials-widget/enums";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
@@ -18,9 +18,14 @@ const useMaterialsActions = (isAdmin:boolean) => {
     const [updatedValue, setUpdatedValue] = useState<string>('');
     const {setSnackbarStateValue} = useSnackBar();
     const {t} = useTranslation();
-
+    const setOpenAddRowModal = useSetRecoilState<boolean>(openAddRowModalState);
     const getSelectedMaterialsIds = () => materialCategoryData.filter(row => row.checked).map(row => row.id);
     const onChooseAction = async (action: { action: EMaterialsActions, key: string } | null) => {
+        
+        if(action.action === EMaterialsActions.AddNew){
+            setOpenAddRowModal(true);
+            return;
+        }
         if (getSelectedMaterialsIds().length === 0) {
             setSnackbarStateValue({
                 state: true,

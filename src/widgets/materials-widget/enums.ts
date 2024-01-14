@@ -8,8 +8,11 @@ export enum EMaterialsActions {
     UpdatePricePerUnitPercents,
     ActionTest1,
     ActionTest2,
-    ActionTest3,
+    AddNew,
     Duplicate,
+    Delete,
+    DownLoadExcel,
+    UploadExcel
 
 }
 

@@ -21,7 +21,7 @@ const useStyle = () => {
         alignSelf: 'flex-end',
         position: "fixed" as "fixed",
         bottom: "10px",
-      },
+      }
     };
   }, []);
   return {
