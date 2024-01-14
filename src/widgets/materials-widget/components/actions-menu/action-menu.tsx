@@ -123,9 +123,11 @@ const ActionMenu = (props: IActionMenuProps) => {
             <MenuItem
               style={clasess.menuItemContainer}
               key={action.action}
-              onClick={() => onChooseAction(action) }
+              onClick={() => onChooseAction(action)}
             >
-              <div style={clasess.actionIconStyle}>{_renderIcons(action.icon)}</div>
+              <div style={clasess.actionIconStyle}>
+                {_renderIcons(action.icon)}
+              </div>
               <div style={clasess.rowTextStyle}>
                 {t("materialsActions." + action.key)}
               </div>
@@ -147,12 +149,14 @@ const ActionMenu = (props: IActionMenuProps) => {
           minWidth={"350px"}
         >
           {action?.action === EMaterialsActions.UpdateCurrency ? (
-            <GoMakeAutoComplate
-              style={{ width: "100%" }}
-              value={updatedValue}
-              options={currencies}
-              onChange={(e, value) => onTextInputChange(value.value)}
-            />
+            <>
+              <GoMakeAutoComplate
+                style={{ width: "100%" }}
+                value={updatedValue}
+                options={currencies}
+                onChange={(e, value) => onTextInputChange(value.value)}
+              />
+            </>
           ) : action?.action === EMaterialsActions.Duplicate ? (
             <div
               style={{
