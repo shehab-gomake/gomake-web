@@ -10,12 +10,11 @@ import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/componen
 import { useTableCellData } from "../table-cell-data/use-table-cell-data";
 import { DuplicateIcon } from "@/components/icons/duplicate-icon";
 
-const MaterialMenuWidget = ({ dataRow }) => {
+const MaterialMenuWidget = ({ dataRow, isAdmin }) => {
   const { clasess } = useStyle();
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle();
   const { t } = useTranslation();
-  console.log("dataRow", dataRow);
-  const { updateCellData } = useTableCellData();
+  const { updateCellData } = useTableCellData(isAdmin);
 
   const toggleIsActive = async (id, parameterKey, value) => {
     await updateCellData(id, parameterKey, !value);
@@ -43,12 +42,10 @@ const MaterialMenuWidget = ({ dataRow }) => {
         </MenuItem>
         <Divider />
         <MenuItem style={clasess.menuItemContainer}>
-          <EditingIcon />
-          <div style={clasess.rowTextStyle}>{t("sales.quote.edit")}</div>
-          {/* <DuplicateIcon /> */}
-          {/* <div style={clasess.rowTextStyle}>
+          <DuplicateIcon height={20} width={20} color={clasess.iconColor} />{" "}
+          <div style={clasess.rowTextStyle}>
             {t("navigationButtons.duplicate")}
-          </div> */}
+          </div>
         </MenuItem>
         <Divider />
         <MenuItem style={clasess.menuItemContainer}>
