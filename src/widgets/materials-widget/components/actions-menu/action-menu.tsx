@@ -123,9 +123,9 @@ const ActionMenu = (props: IActionMenuProps) => {
             <MenuItem
               style={clasess.menuItemContainer}
               key={action.action}
-              onClick={() => onChooseAction(action)}
+              onClick={() => onChooseAction(action) }
             >
-              <div>{_renderIcons(action.icon)}</div>
+              <div style={clasess.actionIconStyle}>{_renderIcons(action.icon)}</div>
               <div style={clasess.rowTextStyle}>
                 {t("materialsActions." + action.key)}
               </div>

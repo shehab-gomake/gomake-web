@@ -36,6 +36,14 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 10),
         color: "rgba(130, 131, 190, 1)",
       },
+      actionIconStyle:{
+        width:20,
+        height:20,
+        objectFit:"cover" as "cover",
+        display: "flex",
+        justifyContent:"center",
+        alignItems:"center"
+      }
     };
   }, []);
   return {
