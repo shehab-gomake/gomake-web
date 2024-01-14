@@ -83,28 +83,6 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
         isHaveDeleteIcon={true}
       >
         <Stack style={classes.buttonsContainerStyle}>
-          <Stack
-            gap={"10px"}
-            direction={"row"}
-            justifyContent={"space-between"}
-          >
-            <PrimaryButton onClick={downloadExcelFile} variant={"outlined"}>
-              {t("materials.buttons.download")}
-            </PrimaryButton>
-            <input
-              ref={elementRef}
-              onChange={uploadExcelFile}
-              type="file"
-              accept=".xlsx"
-              hidden={true}
-            />
-            <SecondaryButton
-              onClick={() => elementRef && elementRef.current.click()}
-              variant={"outlined"}
-            >
-              {t("materials.buttons.upload")}
-            </SecondaryButton>
-          </Stack>
           <PrimaryButton
             onClick={() => setOpenAddCategoryModal(true)}
             variant={"contained"}
