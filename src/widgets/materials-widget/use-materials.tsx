@@ -37,9 +37,12 @@ import { useAddCategoryRow } from "./components/add-row/use-add-row";
 import { WastebasketNew } from "@/icons/wastebasket-new";
 
 import { getAndSetMachincesNew } from "@/services/hooks";
+import { MaterialMenuWidget } from "./components/more-circle";
+import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 
 const useMaterials = () => {
   const { query, push, replace } = useRouter();
+
   const { materialType, materialCategory } = query;
   const [materialHeaders, setMaterialHeaders] =
     useRecoilState<{ key: string; value: string }[]>(materialHeadersState);
@@ -121,7 +124,11 @@ const useMaterials = () => {
   const getMaterialTableHeaders = async (materialType: string) => {
     const callBack = (res) => {
       if (res.success) {
-        setMaterialHeaders(res.data?.tableHeaders);
+        const tableHeaders = res.data?.tableHeaders;
+        const updatedArray = tableHeaders.filter(
+          (item) => item.key !== "Active"
+        );
+        setMaterialHeaders(updatedArray);
         setMaterialActions(res.data?.actions);
       }
     };
@@ -166,16 +173,17 @@ const useMaterials = () => {
     return [
       <Checkbox onChange={onChangeHeaderCheckBox} checked={isAllSelected()} />,
       ...materialHeaders.map((header) => header.value),
-      <Tooltip title={t("materials.buttons.addRow")}>
-        <IconButton
-          type="button"
-          onClick={() => {
-            setOpenModal(true);
-          }}
-        >
-          <AddBoxOutlinedIcon style={{ color: primaryColor(500) }} />
-        </IconButton>
-      </Tooltip>,
+      t("properties.more"),
+      // <Tooltip title={t("materials.buttons.addRow")}>
+      //   <IconButton
+      //     type="button"
+      //     onClick={() => {
+      //       setOpenModal(true);
+      //     }}
+      //   >
+      //     <AddBoxOutlinedIcon style={{ color: primaryColor(500) }} />
+      //   </IconButton>
+      // </Tooltip>,
     ];
   }, [materialHeaders, materialCategoryData]);
 
@@ -195,6 +203,7 @@ const useMaterials = () => {
             parameterKey={header.key}
           />
         )),
+        <MaterialMenuWidget dataRow={dataRow} />,
       ];
     });
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
@@ -213,6 +222,7 @@ const useMaterials = () => {
             parameterKey={header.key}
           />
         )),
+        <MaterialMenuWidget dataRow={dataRow} />,
         <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
           <WastebasketNew width={"30px"} height={"30px"} />
         </IconButton>,
