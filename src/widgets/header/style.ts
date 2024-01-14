@@ -30,6 +30,7 @@ const useStyle = () => {
         paddingLeft: 20,
         paddingRight: 12,
         marginBottom: 20,
+        boxShadow: "0 0 10px rgb(221 223 226)"
       },
       searchInputContainer: {
         width: convertWidthToVW(375),

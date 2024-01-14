@@ -22,6 +22,7 @@ import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { useStyle } from "./style";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
+import { Tooltip } from "@mui/material";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
@@ -397,7 +398,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           document?.worksNames,
           GetDateFormat(document?.createdDate),
           document?.totalPrice + " " + getCurrencyUnitText(document?.currency),
-          <div style={{ display: "flex", justifyContent: "center" }}>
+          document?.documentStatus !== 0 && <div style={{ display: "flex", justifyContent: "center" }}>
+            <Tooltip title={_renderQuoteStatus(document?.documentStatus, document, t)}>
             <h2
               style={
                 document?.documentStatus == 2
@@ -406,7 +408,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               }
             >
               {_renderQuoteStatus(document?.documentStatus, document, t)}
-            </h2>
+            </h2></Tooltip>
           </div>,
           document?.notes,
           <MoreMenuWidget
