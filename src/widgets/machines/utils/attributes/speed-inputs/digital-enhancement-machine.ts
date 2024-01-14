@@ -1,33 +1,20 @@
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const digitalEnhancementMachine = (state: Record<string, any>) => {
     return [
+        ...setupTimeInput(state),
         {
-            name: 'machineAttributes.maxSpeed',
-            parameterKey: 'maxSpeed',
-            value: state.attributes?.maxSpeed || [],
-            machineInputType: 'multiArrayInput',
-            isValid: state.attributes?.maxSpeed?.length > 0,
-            inputs: [
-                {
-                    name: "speed",
-                    label: "machineAttributes.speed",
-                    type: "text",
-                    placeholder: "machineAttributes.speed",
-                    required: true,
-                    parameterKey: "speed",
-                    options: []
-                },
-                {
-                    name: "mediaWeightMaxSpeed",
-                    label: "machineAttributes.mediaWeightMaxSpeed",
-                    type: "text",
-                    placeholder: "machineAttributes.mediaWeightMaxSpeed",
-                    required: true,
-                    parameterKey: "mediaWeightMaxSpeed",
-                    options: []
-                },
-            ]
+            name: "maxSpeed",
+            label: "machineAttributes.maxSpeed",
+            type: "text",
+            placeholder: "machineAttributes.maxSpeed",
+            required: true,
+            parameterKey: "maxSpeed",
+            options: [],
+            unit: EMeasurementUnits.SPH,
+            value: state?.attributes?.maxSpeed
         },
-
         {
             name: 'machineAttributes.speedByMediaWeight',
             parameterKey: 'speedByMediaWeight',
@@ -42,7 +29,8 @@ const digitalEnhancementMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.weight",
                     required: true,
                     parameterKey: "weight",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.GRAM
                 },
                 {
                     name: "speedPercentage",
@@ -51,7 +39,8 @@ const digitalEnhancementMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.speedPercentage",
                     required: true,
                     parameterKey: "speedPercentage",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.PERCENTAGE
                 },
 
             ]

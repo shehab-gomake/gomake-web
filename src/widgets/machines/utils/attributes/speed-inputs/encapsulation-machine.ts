@@ -1,6 +1,9 @@
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const encapsulationMachine = (state: Record<string, any>) => {
     return [
+        ...setupTimeInput(state),
         {
             name: "maxSpeed",
             label: "machineAttributes.maxSpeed",
@@ -12,6 +15,7 @@ const encapsulationMachine = (state: Record<string, any>) => {
             value: state?.attributes?.maxSpeed ? state?.attributes?.maxSpeed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxSpeed,
+            unit: EMeasurementUnits.SPH
         },
         {
             name: 'machineAttributes.speedByMediaWeight',
@@ -27,16 +31,8 @@ const encapsulationMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.weight",
                     required: true,
                     parameterKey: "weight",
-                    options: []
-                },
-                {
-                    name: "targetWeight",
-                    label: "machineAttributes.targetWeight",
-                    type: "text",
-                    placeholder: "machineAttributes.targetWeight",
-                    required: true,
-                    parameterKey: "targetWeight",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.GRAM
                 },
                 {
                     name: "speedPercentage",
@@ -45,7 +41,8 @@ const encapsulationMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.speedPercentage",
                     required: true,
                     parameterKey: "speedPercentage",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.PERCENTAGE
                 },
 
             ]

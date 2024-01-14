@@ -1,17 +1,9 @@
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const pressingMachine = (state: Record<string, any>) => {
     return [
-        {
-            name: "setupTime",
-            label: "machineAttributes.setupTime",
-            type: "text",
-            placeholder: "machineAttributes.setupTime",
-            required: true,
-            parameterKey: "setupTime",
-            options: [],
-            value: state.attributes?.setupTime ? state.attributes?.setupTime : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.setupTime,
-        },
+        ...setupTimeInput(state),
         {
             name: "speed",
             label: "machineAttributes.speed",
@@ -23,6 +15,7 @@ const pressingMachine = (state: Record<string, any>) => {
             value: state.attributes?.speed ? state.attributes?.speed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.speed,
+            unit: EMeasurementUnits.BOOK_PH
         },
 
 

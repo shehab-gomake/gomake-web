@@ -44,18 +44,6 @@ const collectorMachine = (state: Record<string, any>) => {
             unit: EMeasurementUnits.MINUTE
         },
         {
-            name: "loadingWhileRunning",
-            label: "machineAttributes.loadingWhileRunning",
-            type: "switch",
-            placeholder: "machineAttributes.loadingWhileRunning",
-            required: true,
-            parameterKey: "loadingWhileRunning",
-            value: state.attributes?.loadingWhileRunning,
-            options: [],
-            machineInputType: 'input',
-            isValid: true,
-        },
-        {
             name: "cellNumber",
             label: "machineAttributes.cellNumber",
             type: "text",
@@ -68,17 +56,16 @@ const collectorMachine = (state: Record<string, any>) => {
             isValid: !!state?.attributes?.cellNumber,
         },
         {
-            name: "maxThicknessCells",
-            label: "machineAttributes.maxThicknessCells",
-            type: "text",
-            placeholder: "machineAttributes.maxThicknessCells",
+            name: "loadingWhileRunning",
+            label: "machineAttributes.loadingWhileRunning",
+            type: "switch",
+            placeholder: "machineAttributes.loadingWhileRunning",
             required: true,
-            parameterKey: "maxThicknessCells",
+            parameterKey: "loadingWhileRunning",
+            value: state.attributes?.loadingWhileRunning,
             options: [],
-            value: state.attributes?.maxThicknessCells ? state.attributes?.maxThicknessCells : '',
             machineInputType: 'input',
-            isValid: !!state?.attributes?.maxThicknessCells,
-            unit: EMeasurementUnits.MM
+            isValid: true,
         },
         {
             name: 'machineAttributes.speedByPaperSizeByColor',

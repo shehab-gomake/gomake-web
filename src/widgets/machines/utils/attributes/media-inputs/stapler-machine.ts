@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const staplerMachine = (state: Record<string, any>) => {
     return [
         {
@@ -11,6 +13,7 @@ const staplerMachine = (state: Record<string, any>) => {
             options: [],
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxStaplerThickness,
+            unit: EMeasurementUnits.MM
         },
         {
             name: "maxStapleLength",
@@ -23,6 +26,7 @@ const staplerMachine = (state: Record<string, any>) => {
             options: [],
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxStapleLength,
+            unit: EMeasurementUnits.CM
         },
         {
             name: "maxStapleWidth",
@@ -35,6 +39,7 @@ const staplerMachine = (state: Record<string, any>) => {
             options: [],
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxStapleWidth,
+            unit: EMeasurementUnits.CM
         },
     ]
 }
