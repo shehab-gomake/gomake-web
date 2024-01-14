@@ -199,16 +199,6 @@ const useMaterials = (isAdmin: boolean) => {
         )
       ),
       t("properties.more"),
-      // <Tooltip title={t("materials.buttons.addRow")}>
-      //   <IconButton
-      //     type="button"
-      //     onClick={() => {
-      //       setOpenModal(true);
-      //     }}
-      //   >
-      //     <AddBoxOutlinedIcon style={{ color: primaryColor(500) }} />
-      //   </IconButton>
-      // </Tooltip>,
     ];
   }, [materialHeaders, materialCategoryData]);
 
@@ -248,10 +238,7 @@ const useMaterials = (isAdmin: boolean) => {
             parameterKey={header.key}
           />
         )),
-        <MaterialMenuWidget dataRow={dataRow} isAdmin={isAdmin} />,
-        <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
-          <WastebasketNew width={"30px"} height={"30px"} />
-        </IconButton>,
+        <MaterialMenuWidget dataRow={dataRow} isAdmin={isAdmin} />
       ];
     });
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
