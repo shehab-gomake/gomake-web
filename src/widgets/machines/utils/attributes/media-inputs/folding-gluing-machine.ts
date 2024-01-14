@@ -1,5 +1,6 @@
 import {mediaSheetLossInput} from "@/widgets/machines/utils/attributes/media-inputs/media-sheet-loss-input";
 import {mediaDimensionsSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-dimensions-settings";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const foldingGluingMachine = (state: Record<string, any>) => {
     return [
@@ -23,7 +24,8 @@ const foldingGluingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state.attributes?.mediaASize?.min ? state.attributes?.mediaASize?.min : ''
+                    value: state.attributes?.mediaASize?.min ? state.attributes?.mediaASize?.min : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -33,8 +35,8 @@ const foldingGluingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state.attributes?.mediaASize?.max ? state.attributes?.mediaASize?.max : ''
-
+                    value: state.attributes?.mediaASize?.max ? state.attributes?.mediaASize?.max : '',
+                    unit: EMeasurementUnits.CM
                 },
             ]
         },
@@ -55,7 +57,8 @@ const foldingGluingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state.attributes?.mediaBSize?.min ? state.attributes?.mediaBSize?.min : ''
+                    value: state.attributes?.mediaBSize?.min ? state.attributes?.mediaBSize?.min : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -65,8 +68,8 @@ const foldingGluingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state.attributes?.mediaBSize?.max ? state.attributes?.mediaBSize?.max : ''
-
+                    value: state.attributes?.mediaBSize?.max ? state.attributes?.mediaBSize?.max : '',
+                    unit: EMeasurementUnits.CM
                 },
             ]
         },
@@ -87,7 +90,8 @@ const foldingGluingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state.attributes?.mediaCSize?.min ? state.attributes?.mediaCSize?.min : ''
+                    value: state.attributes?.mediaCSize?.min ? state.attributes?.mediaCSize?.min : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -97,8 +101,8 @@ const foldingGluingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state.attributes?.mediaCSize?.max ? state.attributes?.mediaCSize?.max : ''
-
+                    value: state.attributes?.mediaCSize?.max ? state.attributes?.mediaCSize?.max : '',
+                    unit: EMeasurementUnits.CM
                 },
             ]
         },
@@ -119,7 +123,9 @@ const foldingGluingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state.attributes?.mediaDSize?.min ? state.attributes?.mediaDSize?.min : ''
+                    value: state.attributes?.mediaDSize?.min ? state.attributes?.mediaDSize?.min : '',
+                    unit: EMeasurementUnits.CM
+
                 },
                 {
                     name: "",
@@ -129,7 +135,8 @@ const foldingGluingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state.attributes?.mediaDSize?.max ? state.attributes?.mediaDSize?.max : ''
+                    value: state.attributes?.mediaDSize?.max ? state.attributes?.mediaDSize?.max : '',
+                    unit: EMeasurementUnits.CM
 
                 },
             ]

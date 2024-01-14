@@ -6,12 +6,11 @@ import {
 import {MachineDimensionsComponent} from "@/widgets/machines/components/forms/machine-dimensions";
 import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 
-
-const shrinkPackingMachineSteps: IStep[] = [
+const creatingDiesMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
     {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'packageSettings',  component: MediaSettingComponent},
+    {label: 'media',  component: MediaSettingComponent},
     {label: 'speed',  component: SpeedComponent},
 ];
 
-export {shrinkPackingMachineSteps};
+export {creatingDiesMachineSteps};

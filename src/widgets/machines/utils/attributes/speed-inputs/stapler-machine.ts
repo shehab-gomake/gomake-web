@@ -1,9 +1,11 @@
 import {maxSpeedInput} from "@/widgets/machines/utils/attributes/speed-inputs/max-speed-input";
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
 
 const staplerMachine = (state: Record<string, any>) => {
     return [
-        ...maxSpeedInput(state, EMeasurementUnits.MINUTE),
+        ...setupTimeInput(state),
+        ...maxSpeedInput(state, EMeasurementUnits.STAPLES_P_MIN),
         {
             name: "setDelay",
             label: "machineAttributes.setDelay",
@@ -15,7 +17,7 @@ const staplerMachine = (state: Record<string, any>) => {
             value: state.attributes?.setDelay ? state.attributes?.setDelay : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.setDelay,
-            unit: EMeasurementUnits.MINUTE
+            unit: EMeasurementUnits.SECOND
         },
     ]
 }

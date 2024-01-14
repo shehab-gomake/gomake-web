@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const bookSewingMachine = (state: Record<string, any>) => {
     return [
         {
@@ -11,6 +13,7 @@ const bookSewingMachine = (state: Record<string, any>) => {
             value: state?.attributes?.maxSpeed ? state?.attributes?.maxSpeed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxSpeed,
+            unit: EMeasurementUnits.SETS_MIN
         },
         {
             name: "setDelay",
@@ -23,6 +26,7 @@ const bookSewingMachine = (state: Record<string, any>) => {
             value: state?.attributes?.setDelay ? state?.attributes?.setDelay : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.setDelay,
+            unit: EMeasurementUnits.SECOND
         },
     ]
 }

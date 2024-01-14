@@ -1,3 +1,4 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const punchingMachine = (state: Record<string, any>) => {
     return [
@@ -12,6 +13,7 @@ const punchingMachine = (state: Record<string, any>) => {
             value: state.attributes?.maxHeightClick ? state.attributes?.maxHeightClick : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxHeightClick,
+            unit: EMeasurementUnits.CM
         },
         {
             name: "speed",
@@ -24,6 +26,7 @@ const punchingMachine = (state: Record<string, any>) => {
             value: state.attributes?.speed ? state.attributes?.speed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.speed,
+            unit: EMeasurementUnits.CHICKS_PM
         },
         {
             name: "clickDelay",
@@ -36,6 +39,7 @@ const punchingMachine = (state: Record<string, any>) => {
             value: state.attributes?.clickDelay ? state.attributes?.clickDelay : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.clickDelay,
+            unit: EMeasurementUnits.SECOND
         },
         {
             name: "maxHoles",

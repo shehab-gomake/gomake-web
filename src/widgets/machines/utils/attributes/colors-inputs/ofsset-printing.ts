@@ -82,19 +82,6 @@ const ofssetPrinting = (state: Record<string, any>) => {
 
             ]
         },
-
-        {
-            name: "Pantoon",
-            label: "machineAttributes.pantoon",
-            type: "text",
-            placeholder: "machineAttributes.pantoon",
-            required: true,
-            parameterKey: "pantoon",
-            options: [],
-            machineInputType: 'input',
-            value: state?.attributes?.pantoon ? state?.attributes?.pantoon : '',
-            isValid: !!state?.attributes?.pantoon
-        },
     ]
 };
 

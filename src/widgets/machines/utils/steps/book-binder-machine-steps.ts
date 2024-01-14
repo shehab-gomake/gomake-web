@@ -15,7 +15,7 @@ const bookBinderMachineSteps = (isAdmin: boolean): IStep[] => {
      [
          {label: 'basic',  component: BasicInputsComponent},
          {label: 'machineDimensions',  component: MachineDimensionsComponent},
-         {label: 'bookSettings',  component: MediaSettingComponent},
+         {label: 'media',  component: MediaSettingComponent},
          {label: 'speed',  component: SpeedComponent},
          {label: 'glueSettings',  component: CuttingOptions},
          {label: 'addons',  component: OtherSettingsInputsComponent},
@@ -25,7 +25,7 @@ const bookBinderMachineSteps = (isAdmin: boolean): IStep[] => {
      [
          {label: 'basic',  component: BasicInputsComponent},
          {label: 'machineDimensions',  component: MachineDimensionsComponent},
-         {label: 'bookSettings',  component: MediaSettingComponent},
+         {label: 'media',  component: MediaSettingComponent},
          {label: 'speed',  component: SpeedComponent},
          {label: 'connection',  component: ConnectionComponent},
          {label: 'glueSettings',  component: CuttingOptions},

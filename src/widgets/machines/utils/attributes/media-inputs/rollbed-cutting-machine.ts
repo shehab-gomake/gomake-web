@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const rollbedCuttingMachine = (state: Record<string, any>) => {
     return [
         {
@@ -23,6 +25,7 @@ const rollbedCuttingMachine = (state: Record<string, any>) => {
             options: [],
             machineInputType: 'input',
             isValid: !!state?.attributes?.minWidthMarginCutting,
+            unit: EMeasurementUnits.MM
         },
         {
             name: 'machineAttributes.media',
@@ -41,7 +44,8 @@ const rollbedCuttingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "width",
                     options: [],
-                    value: state.attributes?.media?.width ? state.attributes?.media?.width : ''
+                    value: state.attributes?.media?.width ? state.attributes?.media?.width : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -51,8 +55,8 @@ const rollbedCuttingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "length",
                     options: [],
-                    value: state.attributes?.media?.length ? state.attributes?.media?.length : ''
-
+                    value: state.attributes?.media?.length ? state.attributes?.media?.length : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -62,8 +66,8 @@ const rollbedCuttingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "thickness",
                     options: [],
-                    value: state.attributes?.media?.thickness ? state.attributes?.media?.thickness : ''
-
+                    value: state.attributes?.media?.thickness ? state.attributes?.media?.thickness : '',
+                    unit: EMeasurementUnits.CM
                 },
             ]
         },

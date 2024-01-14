@@ -45,18 +45,17 @@ const bookletMachine = (state: Record<string, any>) => {
             disabled: !state.attributes?.isAvailableCollectorUnit
         },
         {
-            name: "maxThicknessInCell",
-            label: "machineAttributes.maxThicknessInCell",
+            name: "cellChargingTime",
+            label: "machineAttributes.cellChargingTime",
             type: "text",
-            placeholder: "machineAttributes.maxThicknessInCell",
+            placeholder: "machineAttributes.cellChargingTime",
             required: true,
-            parameterKey: "maxThicknessInCell",
+            parameterKey: "cellChargingTime",
             options: [],
-            value: state.attributes?.maxThicknessInCell ? state.attributes?.maxThicknessInCell : '',
+            value: state.attributes?.cellChargingTime ? state.attributes?.cellChargingTime : '',
             machineInputType: 'input',
-            isValid: !!state?.attributes?.maxThicknessInCell,
-            unit: EMeasurementUnits.MM,
-            disabled: !state.attributes?.isAvailableCollectorUnit
+            isValid: !!state?.attributes?.cellChargingTime,
+            unit: EMeasurementUnits.MINUTE,
         },
         {
             name: "loadingInRun",
@@ -69,20 +68,6 @@ const bookletMachine = (state: Record<string, any>) => {
             value: state.attributes?.loadingInRun ? state.attributes?.loadingInRun : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.loadingInRun,
-            disabled: !state.attributes?.isAvailableCollectorUnit
-        },
-        {
-            name: "cellChargingTime",
-            label: "machineAttributes.cellChargingTime",
-            type: "text",
-            placeholder: "machineAttributes.cellChargingTime",
-            required: true,
-            parameterKey: "cellChargingTime",
-            options: [],
-            value: state.attributes?.cellChargingTime ? state.attributes?.cellChargingTime : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.cellChargingTime,
-            unit: EMeasurementUnits.MINUTE,
             disabled: !state.attributes?.isAvailableCollectorUnit
         },
         {

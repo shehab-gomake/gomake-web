@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const ofssetPrinting = (state: Record<string, any>) => {
     return [
         {
@@ -17,7 +19,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "length",
                     options: [],
-                    value: state?.attributes?.blanketDimensions?.length ? state?.attributes?.blanketDimensions?.length : ''
+                    value: state?.attributes?.blanketDimensions?.length ? state?.attributes?.blanketDimensions?.length : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "width",
@@ -27,8 +30,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "width",
                     options: [],
-                    value: state?.attributes?.blanketDimensions?.width ? state?.attributes?.blanketDimensions?.width : ''
-
+                    value: state?.attributes?.blanketDimensions?.width ? state?.attributes?.blanketDimensions?.width : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "thickness",
@@ -38,7 +41,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "thickness",
                     options: [],
-                    value: state?.attributes?.blanketDimensions?.thickness ? state?.attributes?.blanketDimensions?.thickness : ''
+                    value: state?.attributes?.blanketDimensions?.thickness ? state?.attributes?.blanketDimensions?.thickness : '',
+                    unit: EMeasurementUnits.MM
 
                 },
             ]
@@ -59,7 +63,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "length",
                     options: [],
-                    value: state.attributes?.packingSheet?.length ? state.attributes?.packingSheet?.length : ''
+                    value: state.attributes?.packingSheet?.length ? state.attributes?.packingSheet?.length : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "width",
@@ -69,8 +74,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "width",
                     options: [],
-                    value: state.attributes?.packingSheet?.width ? state.attributes?.packingSheet?.width : ''
-
+                    value: state.attributes?.packingSheet?.width ? state.attributes?.packingSheet?.width : '',
+                    unit: EMeasurementUnits.CM
                 },
             ]
         },
