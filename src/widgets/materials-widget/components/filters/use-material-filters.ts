@@ -3,7 +3,7 @@ import {
     activeFilterState, filterState,
     materialCategoryDataState,
     materialCategorySuppliersState,
-    materialHeadersState,
+    materialHeadersState, materialsTablePageState, materialTableFiltersState,
     selectedSupplierIdState
 } from "@/widgets/materials-widget/state";
 import {EFilterType, EMaterialActiveFilter} from "@/widgets/materials-widget/enums";
@@ -16,6 +16,7 @@ import {useTranslation} from "react-i18next";
 const useMaterialFilters = () => {
     const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
     const materialHeaders = useRecoilValue(materialHeadersState);
+    const materialTableFilters = useRecoilValue(materialTableFiltersState);
     const [materialSuppliers, setMaterialsSuppliers] = useRecoilState(materialCategorySuppliersState);
     const [supplierId, setSupplierId] = useRecoilState(selectedSupplierIdState);
     const materialData = useRecoilValue(materialCategoryDataState);
@@ -24,7 +25,9 @@ const useMaterialFilters = () => {
     const {materialType, materialCategory} = query;
     const {callApi} = useGomakeAxios();
     const {t} = useTranslation();
-    const setFilter = useSetRecoilState(filterState)
+    const [filters,setFilters] = useRecoilState(filterState);
+    const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
+
     const activeFilterOptions = [
         {value: EMaterialActiveFilter.ALL, label: t('materialsStatus.all')},
         {value: EMaterialActiveFilter.ACTIVE, label: t('materialsStatus.active')},
@@ -38,6 +41,7 @@ const useMaterialFilters = () => {
 
     const onActiveFilterChange = (value: any) => {
         setActiveFilter(value);
+        setPageNumber(1);
     }
     const onSelectSupplier = (supplierId: string) => {
         setSupplierId(supplierId);
@@ -56,22 +60,22 @@ const useMaterialFilters = () => {
             materialTypeKey: materialType?.toString(),
             categoryKey: materialCategory?.toString(),
             supplierId
-        })
+        });
+        setPageNumber(1);
     }
-
-    const getFilters = useCallback(() => {
-        return materialHeaders?.filter(header => header.isFilter && header.filterType === EFilterType.SELECT).map(header => ({
-            key: header.key,
-            label: header.value,
-            options: Array.from(new Set(materialData.map(material => material.rowData[header.key].value))).map(v => ({value: v, label: v}))
-        }))
-
-    }, [materialHeaders, materialData])
-
-    const onChange = (filter: {key: string, value: string} | null) => {
-        setFilter(filter)
+    const setFilterValue = (key:string,value:string) => {
+        if(!value){
+            setFilters(filters.filter(x=>x.key !== key));
+        }else{
+            setFilters(filters.find(x=>x.key === key ) ? filters.map(x=>{
+                if(x.key === key){
+                    return {key:key,value:value}
+                }
+                return x;
+            }) : [...filters,{key:key,value:value}]);
+        }
+        setPageNumber(1);
     }
-
     return {
         onActiveFilterChange,
         activeFilter,
@@ -81,8 +85,9 @@ const useMaterialFilters = () => {
         onSelectSupplier,
         supplierId,
         onSetDefaultSupplier,
-        getFilters,
-        onChange
+        materialTableFilters,
+        setFilterValue,
+        
     }
 }
 

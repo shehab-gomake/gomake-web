@@ -15,8 +15,17 @@ export interface IRowData {
     values?:any[]
     parameterKey?: string;
     id?: string;
+    isAdmin:boolean,
 }
 
 export interface IDynamicRowData {
     [key: string]: string | boolean | number |any[] | any ; 
-  }
+}
+export interface IMaterialsTableFilter{
+    key:string;
+    values:string[]
+}
+export interface IMaterialTableFilteringValue{
+    key: string;
+    value: string;
+}

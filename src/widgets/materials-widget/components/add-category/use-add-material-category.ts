@@ -3,18 +3,19 @@ import { useRouter } from "next/router";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { activeFilterState, flagState, openAddCategoryModalState } from "@/widgets/materials-widget/state";
 import { useMaterials } from "../../use-materials";
-import { addMaterialCategoryApi } from "@/services/api-service/materials/materials-endpoints";
 import { useState } from "react";
 import { EMaterialActiveFilter } from "../../enums";
 import { useTranslation } from "react-i18next";
+import {addPrintHouseMaterialCategoryApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
+import {addMaterialCategoryApi} from "@/services/api-service/materials/materials-endpoints";
 
-const useAddMaterialCategory = () => {
+const useAddMaterialCategory = (isAdmin:boolean) => {
     const { callApi } = useGomakeAxios();
     const { query } = useRouter();
     const { materialType } = query;
     const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
     const [openModal, setOpenModal] = useRecoilState(openAddCategoryModalState);
-    const { getMaterialCategories } = useMaterials();
+    const { getMaterialCategories } = useMaterials(isAdmin);
     const [newCategory, setNewCategory] = useState<string>(null);
     const setActiveFilter = useSetRecoilState(activeFilterState);
     const setFlagState = useSetRecoilState(flagState);
@@ -36,10 +37,17 @@ const useAddMaterialCategory = () => {
                 alertFaultAdded();
             }
         }
-        await addMaterialCategoryApi(callApi, callBack, {
-            materialTypeKey: materialType.toString(),
-            categoryKey: newCategory
-        })
+        if(isAdmin){
+            await addMaterialCategoryApi(callApi, callBack, {
+                materialTypeKey: materialType.toString(),
+                categoryKey: newCategory
+            })
+        }else{
+            await addPrintHouseMaterialCategoryApi(callApi, callBack, {
+                materialTypeKey: materialType.toString(),
+                categoryKey: newCategory
+            })
+        }
     }
 
     return {

@@ -220,6 +220,18 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions) => {
       },
       {
         isLine: false,
+        key: "materialsAdmin",
+        title: "tabs.materialsAdmin",
+        Permission: Permissions.SHOW_MATERIALS,
+        path: "/materials-admin",
+        isList: false,
+        icon: () => {
+          return <CubeIcon width={24} height={24} color={"white"} />;
+        },
+        isProduction: true,
+      },
+      {
+        isLine: false,
         key: "machines",
         title: "tabs.machines",
         path: "/machines",

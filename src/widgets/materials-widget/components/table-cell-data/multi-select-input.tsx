@@ -12,11 +12,12 @@ interface IProps {
     parameterKey: string;
     values: string[];
     id: string;
+    isAdmin: boolean;
 }
 
-const MultiSelectInput = ({ values, parameterKey, id }: IProps) => {
+const MultiSelectInput = ({ values, parameterKey, id, isAdmin }: IProps) => {
     const { classes } = useStyle();
-    const { updateCellData } = useTableCellData();
+    const { updateCellData } = useTableCellData(isAdmin);
     const machinesCategories = useRecoilValue<any>(materialsMachinesState);
 
 

@@ -5,9 +5,12 @@ import {
   deleteMaterialCategoryApi,
   getMaterialCategoriesApi,
   getMaterialExcelFileApi,
-  getMaterialTableHeadersApi,
-  uploadMaterialExcelFileApi,
+  getMaterialTableHeadersApi, uploadMaterialExcelFileApi
 } from "@/services/api-service/materials/materials-endpoints";
+import {
+  deletePrintHouseMaterialCategoryApi,
+  getPrintHouseMaterialCategoriesApi,
+} from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 import { TableCellData } from "@/widgets/materials-widget/components/table-cell-data/table-cell";
 import { Checkbox, IconButton, Tooltip } from "@mui/material";
@@ -28,7 +31,6 @@ import {
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
-import { useFilteredMaterials } from "@/widgets/materials-widget/use-filtered-materials";
 import { EMaterialActiveFilter } from "./enums";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
@@ -40,12 +42,13 @@ import { getAndSetMachincesNew } from "@/services/hooks";
 import { MaterialMenuWidget } from "./components/more-circle";
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 
-const useMaterials = () => {
+
+const useMaterials = (isAdmin:boolean) => {
   const { query, push, replace } = useRouter();
 
   const { materialType, materialCategory } = query;
   const [materialHeaders, setMaterialHeaders] =
-    useRecoilState<{ key: string; value: string }[]>(materialHeadersState);
+    useRecoilState<{ key: string; value: string ,unit?: string}[]>(materialHeadersState);
   const [materialCategories, setMaterialCategories] = useRecoilState<
     {
       categoryKey: string;
@@ -67,8 +70,7 @@ const useMaterials = () => {
   const { alertSuccessDelete, alertFaultDelete } = useSnackBar();
   const setCurrencies = useSetRecoilState(currenciesState);
   const setOpenModal = useSetRecoilState<any>(openAddRowModalState);
-  const { getFilteredMaterials } = useFilteredMaterials();
-  const { onDeleteCategoryRow } = useAddCategoryRow();
+  const { onDeleteCategoryRow } = useAddCategoryRow(isAdmin);
   const setActiveFilter = useSetRecoilState(activeFilterState);
   const setFlagState = useSetRecoilState(flagState);
   const { primaryColor, errorColor } = useGomakeTheme();
@@ -76,7 +78,8 @@ const useMaterials = () => {
 
   const onSelectCategory = (category: string) => {
     setDefaultSupplier("");
-    push(`/materials/${materialType}?materialCategory=${category}`);
+    const path = isAdmin ? "/materials-admin" : "/materials";
+    push(path+`/${materialType}?materialCategory=${category}`);
     setFlagState(false);
   };
 
@@ -90,10 +93,17 @@ const useMaterials = () => {
         alertFaultDelete();
       }
     };
-    await deleteMaterialCategoryApi(callApi, callBack, {
-      materialTypeKey: materialType.toString(),
-      categoryKey: categoryKey,
-    });
+    if(isAdmin){
+      await deleteMaterialCategoryApi(callApi, callBack, {
+        materialTypeKey: materialType.toString(),
+        categoryKey: categoryKey,
+      });
+    }else{
+      await deletePrintHouseMaterialCategoryApi(callApi, callBack, {
+        materialTypeKey: materialType.toString(),
+        categoryKey: categoryKey,
+      });
+    }
   };
 
   const getMaterialCategories = async (material) => {
@@ -104,7 +114,12 @@ const useMaterials = () => {
         push("/materials");
       }
     };
-    await getMaterialCategoriesApi(callApi, callBack, material);
+    if(isAdmin){
+      await getMaterialCategoriesApi(callApi, callBack, material);
+    }else{
+      await getPrintHouseMaterialCategoriesApi(callApi, callBack, material);
+    }
+    
   };
 
   const materialsCategoriesList = useCallback(() => {
@@ -136,12 +151,12 @@ const useMaterials = () => {
   };
 
   const isAllSelected = useCallback(() => {
-    return getFilteredMaterials().every((row) => row.checked);
+    return materialCategoryData.every((row) => row.checked);
   }, [materialCategoryData]);
 
   const onChangeHeaderCheckBox = useCallback(() => {
     const checked = isAllSelected();
-    const materialsIds = getFilteredMaterials().map((material) => material.id);
+    const materialsIds = materialCategoryData.map((material) => material.id);
     setMaterialCategoryData(
       materialCategoryData.map((row) =>
         materialsIds.includes(row.id)
@@ -152,7 +167,7 @@ const useMaterials = () => {
           : { ...row, checked: false }
       )
     );
-  }, [materialCategoryData, getFilteredMaterials(), isAllSelected()]);
+  }, [materialCategoryData, materialCategoryData, isAllSelected()]);
 
   const onChangeRowCheckBox = (id: string) => {
     setMaterialCategoryData(
@@ -172,7 +187,7 @@ const useMaterials = () => {
   const tableHeadersNew = useCallback(() => {
     return [
       <Checkbox onChange={onChangeHeaderCheckBox} checked={isAllSelected()} />,
-      ...materialHeaders.map((header) => header.value),
+      ...materialHeaders.map((header) => header.unit ? <div> <span>{header.value}</span> <small>{header.unit}</small></div>  : header.value),
       t("properties.more"),
       // <Tooltip title={t("materials.buttons.addRow")}>
       //   <IconButton
@@ -190,7 +205,7 @@ const useMaterials = () => {
   ///////////////////////////////////////////////////////////
 
   const tableRows = useMemo(() => {
-    return getFilteredMaterials().map((dataRow) => {
+    return materialCategoryData.map((dataRow) => {
       return [
         <Checkbox
           onChange={() => onChangeRowCheckBox(dataRow.id)}
@@ -201,6 +216,7 @@ const useMaterials = () => {
             {...dataRow.rowData[header.key]}
             id={dataRow.id}
             parameterKey={header.key}
+            isAdmin={isAdmin}
           />
         )),
         <MaterialMenuWidget dataRow={dataRow} />,
@@ -209,7 +225,7 @@ const useMaterials = () => {
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
 
   const tableRowsNew = useMemo(() => {
-    return getFilteredMaterials().map((dataRow) => {
+    return materialCategoryData.map((dataRow) => {
       return [
         <Checkbox
           onChange={() => onChangeRowCheckBox(dataRow.id)}
@@ -327,6 +343,7 @@ const useMaterials = () => {
     tableHeadersNew,
     tableRowsNew,
     getMachinesMaterials,
+    materialFilter,
   };
 };
 

@@ -3,13 +3,13 @@ import {IMaterialCategoryRow} from "@/widgets/materials-widget/interface";
 import {materialCategoryDataState} from "@/widgets/materials-widget/state";
 import {useState} from "react";
 import {EMaterialsActions} from "@/widgets/materials-widget/enums";
-import {updateMaterialsPropApi} from "@/services/api-service/materials/materials-endpoints";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {useRouter} from "next/router";
 import {useTranslation} from "react-i18next";
-import {useFilteredMaterials} from "@/widgets/materials-widget/use-filtered-materials";
+import {updatePrintHouseMaterialsPropApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
+import {updateMaterialsPropApi} from "@/services/api-service/materials/materials-endpoints";
 
-const useMaterialsActions = () => {
+const useMaterialsActions = (isAdmin:boolean) => {
     const {callApi} = useGomakeAxios();
     const {query} = useRouter();
     const {materialType, materialCategory} = query;
@@ -18,9 +18,8 @@ const useMaterialsActions = () => {
     const [updatedValue, setUpdatedValue] = useState<string>('');
     const {setSnackbarStateValue} = useSnackBar();
     const {t} = useTranslation();
-    const {getFilteredMaterials} = useFilteredMaterials();
 
-    const getSelectedMaterialsIds = () => getFilteredMaterials().filter(row => row.checked).map(row => row.id);
+    const getSelectedMaterialsIds = () => materialCategoryData.filter(row => row.checked).map(row => row.id);
     const onChooseAction = async (action: { action: EMaterialsActions, key: string } | null) => {
         if (getSelectedMaterialsIds().length === 0) {
             setSnackbarStateValue({
@@ -41,16 +40,32 @@ const useMaterialsActions = () => {
         setUpdatedValue(v);
     }
 
+    const onInputChange = ( key: string , v: any) => {
+        setUpdatedValue(v);
+    }
+
     const onUpdate = async () => {
         if (action !== null) {
-            await updateMaterialsPropApi(callApi, onUpdateCallBack, {
-                materialTypeKey: materialType.toString(),
-                categoryKey: materialCategory.toString(),
-                ids: getSelectedMaterialsIds(),
-                action: action.action,
-                priceIndex: 0,
-                updatedValue
-            })
+            if(isAdmin){
+                await updateMaterialsPropApi(callApi, onUpdateCallBack, {
+                    materialTypeKey: materialType.toString(),
+                    categoryKey: materialCategory.toString(),
+                    ids: getSelectedMaterialsIds(),
+                    action: action.action,
+                    priceIndex: 0,
+                    updatedValue
+                })
+            }else{
+                await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
+                    materialTypeKey: materialType.toString(),
+                    categoryKey: materialCategory.toString(),
+                    ids: getSelectedMaterialsIds(),
+                    action: action.action,
+                    priceIndex: 0,
+                    updatedValue
+                })
+            }
+            
         }
     }
 
@@ -64,13 +79,24 @@ const useMaterialsActions = () => {
         setUpdatedValue('')
     }
     const updateStatus = async (eAction: EMaterialsActions) => {
-        await updateMaterialsPropApi(callApi, onUpdateCallBack, {
-            materialTypeKey: materialType.toString(),
-            categoryKey: materialCategory.toString(),
-            ids: getSelectedMaterialsIds(),
-            action: eAction,
-            priceIndex: 0,
-        })
+        if(isAdmin){
+            await updateMaterialsPropApi(callApi, onUpdateCallBack, {
+                materialTypeKey: materialType.toString(),
+                categoryKey: materialCategory.toString(),
+                ids: getSelectedMaterialsIds(),
+                action: eAction,
+                priceIndex: 0,
+            })
+        }else{
+            await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
+                materialTypeKey: materialType.toString(),
+                categoryKey: materialCategory.toString(),
+                ids: getSelectedMaterialsIds(),
+                action: eAction,
+                priceIndex: 0,
+            })
+        }
+        
     }
     return {
         getSelectedMaterialsIds,
@@ -78,6 +104,7 @@ const useMaterialsActions = () => {
         action,
         updatedValue,
         onTextInputChange,
+        onInputChange,
         onUpdate
     }
 }

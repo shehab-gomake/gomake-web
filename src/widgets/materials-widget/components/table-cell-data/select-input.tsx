@@ -7,10 +7,11 @@ interface IProps {
     id: string;
     values: any[];
     value: string
+    isAdmin: boolean;
 }
 
-const SelectInput = ({ values, parameterKey, id, value }: IProps) => {
-    const { updateCellData } = useTableCellData();
+const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
+    const { updateCellData } = useTableCellData(isAdmin);
     const options = values ? values.map(inputValue => ({
         id: inputValue.key,
         label: inputValue.value

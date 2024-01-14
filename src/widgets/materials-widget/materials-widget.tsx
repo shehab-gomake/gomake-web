@@ -25,14 +25,19 @@ import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
 import Pagination from "@mui/material/Pagination";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
-
-const MaterialsWidget = () => {
+interface IMaterialsWidgetProps{
+  isAdmin:boolean;
+}
+const MaterialsWidget = (props:IMaterialsWidgetProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
-  const { getMaterialCategoryData, pagesCount } = useMaterialsCategories();
+  const { 
+    getMaterialCategoryData, 
+    pagesCount, 
+    pageNumber,
+    setPageNumber } = useMaterialsCategories(props.isAdmin);
   const pageSize = DEFAULT_VALUES.PageSize;
-  const [pageNumber, setPageNumber] = useState(1);
   const activeFilter = useRecoilValue(activeFilterState);
   const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
@@ -59,7 +64,8 @@ const MaterialsWidget = () => {
     tableHeadersNew,
     tableRowsNew,
     getMachinesMaterials,
-  } = useMaterials();
+    materialFilter,
+  } = useMaterials(props.isAdmin);
 
   const tableRowData = materialCategories.find(
     (category) => category.categoryKey === materialCategory
@@ -137,21 +143,35 @@ const MaterialsWidget = () => {
   }, [materialType]);
 
   useEffect(() => {
+    debugger
     if (!!materialType && !!materialCategory) {
-      if (supplierId) {
+      if(props.isAdmin){
         getMaterialCategoryData(
-          materialType?.toString(),
-          materialCategory?.toString(),
-          supplierId,
-          pageNumber,
-          pageSize
+            materialType?.toString(),
+            materialCategory?.toString(),
+            materialFilter,
+            supplierId,
+            pageNumber,
+            pageSize
         ).then();
-      } else {
-        getPrintHouseMaterialCategorySuppliers(
-          materialType?.toString(),
-          materialCategory?.toString()
-        ).then();
+      }else{
+        if (supplierId ) {
+          getMaterialCategoryData(
+              materialType?.toString(),
+              materialCategory?.toString(),
+              materialFilter,
+              supplierId,
+              pageNumber,
+              pageSize
+          ).then();
+        } else {
+          getPrintHouseMaterialCategorySuppliers(
+              materialType?.toString(),
+              materialCategory?.toString()
+          ).then();
+        }
       }
+      
     }
   }, [
     materialType,
@@ -160,6 +180,7 @@ const MaterialsWidget = () => {
     pageNumber,
     pageSize,
     activeFilter,
+    materialFilter
   ]);
   return (
     <div style={classes.mainContainer}>
@@ -184,7 +205,7 @@ const MaterialsWidget = () => {
         >
           <PrimaryButton
             variant={"text"}
-            href={"/materials"}
+            href={props.isAdmin ? "/materials-admin" :"/materials"}
             startIcon={dir === "ltr" ? <ArrowBackIcon /> : <ArrowForwardIcon />}
             style={{
               height: 30,
@@ -199,7 +220,7 @@ const MaterialsWidget = () => {
           <h1 style={classes.header}>{materialType?.toString()}</h1>
           <h4 style={classes.subHeader}>/ {materialCategory?.toString()}</h4>
         </div>
-        <FiltersActionsBar />
+        <FiltersActionsBar isAdmin={props.isAdmin} />
       </div>
       <SideBarContainer side={Side()} subHeader={""}>
         {materialCategory && (
@@ -245,8 +266,8 @@ const MaterialsWidget = () => {
       </SideBarContainer>
 
       <AddSupplierModal />
-      <AddCategoryModal />
-      <AddRowModal />
+      <AddCategoryModal isAdmin={props.isAdmin} />
+      <AddRowModal isAdmin={props.isAdmin} />
     </div>
   );
 };

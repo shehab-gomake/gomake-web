@@ -3,8 +3,11 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAddMaterialCategory } from "./use-add-material-category";
 import Stack from "@mui/material/Stack";
 
-const AddCategoryModal = () => {
-    const { setOpenModal, openModal , onSetCategory , onAddCategory , t  } = useAddMaterialCategory();
+interface IAddCategoryModalProps{
+    isAdmin:boolean;
+}
+const AddCategoryModal = (props:IAddCategoryModalProps) => {
+    const { setOpenModal, openModal , onSetCategory , onAddCategory , t  } = useAddMaterialCategory(props.isAdmin);
 
     return (
         <GoMakeModal

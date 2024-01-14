@@ -6,11 +6,11 @@ import { UpdateValueInput } from "@/components/text-input/update-value-input";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useStyle } from "@/widgets/materials-widget/style";
 
-const ArrayInput = ({ valueArray, isEditable, parameterKey, id }: IRowData) => {
+const ArrayInput = ({ valueArray, isEditable, parameterKey, id ,isAdmin}: IRowData) => {
   const { classes } = useStyle();
   const [isUpdate, setIsUpdate] = useState<number | null>(null);
   const [updateValue, setUpdateValue] = useState("");
-  const { updateCellData } = useTableCellData();
+  const { updateCellData } = useTableCellData(isAdmin);
   const onClick = (index) => {
     if (isEditable) {
       setIsUpdate(index);
