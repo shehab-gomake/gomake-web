@@ -21,13 +21,13 @@ import {
   activeFilterState,
   currenciesState,
   filterState,
-  flagState,
+  flagState, isAllMaterialsCheckedState,
   materialActionState,
   materialCategoriesState,
   materialCategoryDataState,
   materialCategorySuppliersState,
   materialHeadersState,
-  materialsMachinesState,
+  materialsMachinesState, materialsUnCheckedState,
   openAddRowModalState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
@@ -42,6 +42,7 @@ import { WastebasketNew } from "@/icons/wastebasket-new";
 import { getAndSetMachincesNew } from "@/services/hooks";
 import { MaterialMenuWidget } from "./components/more-circle";
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
+import cloneDeep from "lodash.clonedeep";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -61,6 +62,9 @@ const useMaterials = (isAdmin: boolean) => {
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
+  const [isAllMaterialsChecked, setIsAllMaterialsChecked] = useRecoilState<boolean>(isAllMaterialsCheckedState);
+  const [materialsUnChecked, setMaterialsUnChecked] = useRecoilState<string[]>(materialsUnCheckedState);
+
   const setMaterialCategorySuppliers = useSetRecoilState(
     materialCategorySuppliersState
   );
@@ -155,7 +159,8 @@ const useMaterials = (isAdmin: boolean) => {
     return materialCategoryData.every((row) => row.checked);
   }, [materialCategoryData]);
 
-  const onChangeHeaderCheckBox = useCallback(() => {
+  const onChangeHeaderCheckBox = useCallback((isAllChecked:boolean) => {
+    setIsAllMaterialsChecked(isAllChecked)
     const checked = isAllSelected();
     const materialsIds = materialCategoryData.map((material) => material.id);
     setMaterialCategoryData(
@@ -170,7 +175,15 @@ const useMaterials = (isAdmin: boolean) => {
     );
   }, [materialCategoryData, materialCategoryData, isAllSelected()]);
 
-  const onChangeRowCheckBox = (id: string) => {
+  const onChangeRowCheckBox = (id: string,checked:boolean) => {
+    if(isAllMaterialsChecked && !checked){
+      const temp = cloneDeep(materialsUnChecked);
+      temp.push(id);
+      setMaterialsUnChecked(temp)
+    }
+    if(isAllMaterialsChecked && checked){
+      setMaterialsUnChecked(materialsUnChecked.filter(materialId => materialId != id))
+    }
     setMaterialCategoryData(
       materialCategoryData.map((row) =>
         id === row.id ? { ...row, checked: !row.checked } : row
@@ -180,14 +193,14 @@ const useMaterials = (isAdmin: boolean) => {
 
   const tableHeaders = useCallback(() => {
     return [
-      <Checkbox onChange={onChangeHeaderCheckBox} checked={isAllSelected()} />,
+      <Checkbox onChange={(event, checked)=>onChangeHeaderCheckBox(checked)} checked={isAllSelected()} />,
       ...materialHeaders.map((header) => header.value),
     ];
   }, [materialHeaders, materialCategoryData]);
 
   const tableHeadersNew = useCallback(() => {
     return [
-      <Checkbox onChange={onChangeHeaderCheckBox} checked={isAllSelected()} />,
+      <Checkbox onChange={(event, checked)=>onChangeHeaderCheckBox(checked)} checked={isAllSelected()} />,
       ...materialHeaders.map((header) =>
         header.unit ? (
           <div>
@@ -208,7 +221,7 @@ const useMaterials = (isAdmin: boolean) => {
     return materialCategoryData.map((dataRow) => {
       return [
         <Checkbox
-          onChange={() => onChangeRowCheckBox(dataRow.id)}
+          onChange={(e,checked) => onChangeRowCheckBox(dataRow.id,checked)}
           checked={dataRow.checked}
         />,
         ...materialHeaders.map((header) => (
@@ -228,7 +241,7 @@ const useMaterials = (isAdmin: boolean) => {
     return materialCategoryData.map((dataRow) => {
       return [
         <Checkbox
-          onChange={() => onChangeRowCheckBox(dataRow.id)}
+          onChange={(e,checked) => onChangeRowCheckBox(dataRow.id,checked)}
           checked={dataRow.checked}
         />,
         ...materialHeaders.map((header) => (
@@ -282,39 +295,7 @@ const useMaterials = (isAdmin: boolean) => {
     });
   };
 
-  const downloadExcelFile = async () => {
-    const callBack = (res) => {
-      if (res.success) {
-        const downloadLink = document.createElement("a");
-        downloadLink.href = res.data; // Use the provided file URL
-        downloadLink.download = materialType + ".xlsx"; // Replace with the desired file name
-        downloadLink.click();
-      }
-    };
-    await getMaterialExcelFileApi(callApi, callBack, materialType);
-  };
-
-  const uploadExcelFile = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const arrayBuffer = event.target.result;
-        const data = new Uint8Array(arrayBuffer as ArrayBuffer);
-        // Convert data to a Base64 string
-        var base64String = btoa(
-          new Uint8Array(data).reduce(function (data, byte) {
-            return data + String.fromCharCode(byte);
-          }, "")
-        );
-        uploadMaterialExcelFileApi(callApi, () => {}, {
-          key: materialType.toString(),
-          base64: base64String,
-        });
-      };
-      reader.readAsArrayBuffer(file);
-    }
-  };
+ 
 
   const setMachinesState = useSetRecoilState<[]>(materialsMachinesState);
   const getMachinesMaterials = useCallback(async () => {
@@ -335,8 +316,6 @@ const useMaterials = (isAdmin: boolean) => {
     materialCategoryData,
     materialCategories,
     replace,
-    downloadExcelFile,
-    uploadExcelFile,
     tableHeadersNew,
     tableRowsNew,
     getMachinesMaterials,

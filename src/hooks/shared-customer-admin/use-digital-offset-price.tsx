@@ -1177,23 +1177,46 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               const index = param.materialPath.findIndex((x) =>
                 compareStrings(x, materialPath)
               );
+              debugger;
               let allMaterialsCopy = cloneDeep(allMaterials)
-              let materialData =[];
+              let paramMaterialValues =[];
               if(index > 0){
-                for(let i = 0 ;i<index;i++){
-                  allMaterialsCopy = allMaterialsCopy?.find((x) =>
-                      compareStrings(x.pathName, param.materialPath[i])
-                  )?.data;
+                allMaterialsCopy = allMaterialsCopy?.find((x) =>
+                    compareStrings(x.pathName, param.materialPath[0])
+                )?.data;
+                for(let i = 0 ;i<=index;i++){
+                  
+                  const prevPath = param.materialPath[i];
+                  const prevPathParam = subSection.parameters.find(x=>x.materialPath && x.materialPath.length > i && x.materialPath[i] === prevPath && x.actionIndex === actionIndex);
+                  if(subSectionParameter.id === prevPathParam.id){
+                    allMaterialsCopy = allMaterialsCopy?.find((x) =>
+                        x.valueId === parameterValue?.id
+                    )?.data;
+                  }else{
+                    const subProductParam = targetSubProduct?.parameters?.find(
+                        (item) =>
+                            item.parameterId === prevPathParam.id &&
+                            item.sectionId === sectionId &&
+                            item.subSectionId === subSectionId &&
+                            item.actionIndex === actionIndex
+                    );
+                    allMaterialsCopy = allMaterialsCopy?.find((x) =>
+                         x.valueId === subProductParam?.valueIds[0]
+                    )?.data;
+                  }
                 }
-               
+                paramMaterialValues = allMaterialsCopy;
+              }else if(index === 0){
+                allMaterialsCopy = allMaterialsCopy.find((x) =>
+                    compareStrings(x.pathName, materialPath)
+                )?.data;
+                paramMaterialValues = allMaterialsCopy?.find((x) =>
+                    parameterValue?.values?.find((y) => y === x.valueId)
+                )?.data;
               }
               if (index != -1 && index < param.materialPath.length - 1) {
-                 materialData = allMaterialsCopy.find((x) =>
-                  compareStrings(x.pathName, materialPath)
-                )?.data;
-                const paramMaterialValues = materialData?.find((x) =>
-                  parameterValue?.values?.find((y) => y === x.valueId)
-                )?.data;
+               
+                
                 param.valuesConfigs = [];
                 paramMaterialValues?.forEach((val) => {
                   param.valuesConfigs.push({

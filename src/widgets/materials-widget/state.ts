@@ -104,3 +104,11 @@ export const materialsTablePageState = atom<number>({
   key: "materialsTablePageState",
   default: 1,
 });
+export const isAllMaterialsCheckedState = atom<boolean>({
+    key: "isAllMaterialsCheckedState",
+    default: false,
+});
+export const materialsUnCheckedState = atom<string[]>({
+    key: "materialsUnCheckedState",
+    default: [],
+});
