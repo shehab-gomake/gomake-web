@@ -14,7 +14,7 @@ const useStyle = () => {
       mainContainer: {
         padding: "0 3px",
         maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
-        height: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
+        // height: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
         ...adaptPaddingLeft(direction, 20),
       },
       container: {
@@ -22,7 +22,7 @@ const useStyle = () => {
         gap: 26,
         paddingTop: 20,
         minHeight: "100%",
-        maxHeight: convertHeightToVH(750),
+        maxHeight: 750,
         position: "relative" as "relative",
       },
       sideList: {

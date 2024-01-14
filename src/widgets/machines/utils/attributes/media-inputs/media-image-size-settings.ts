@@ -1,3 +1,4 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const mediaImageSizeSettings = (state: Record<string, any>) => {
     return [
@@ -17,8 +18,8 @@ const mediaImageSizeSettings = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "imageWidth",
                     options: [],
-                    value: state.attributes?.imageSize?.imageWidth ? state.attributes?.imageSize?.imageWidth : ''
-
+                    value: state.attributes?.imageSize?.imageWidth ? state.attributes?.imageSize?.imageWidth : '',
+                    unit: EMeasurementUnits.MM
                 },
                 {
                     name: "imageLength",
@@ -28,8 +29,8 @@ const mediaImageSizeSettings = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "imageLength",
                     options: [],
-                    value: state.attributes?.imageSize?.imageLength ? state.attributes?.imageSize?.imageLength  : ''
-
+                    value: state.attributes?.imageSize?.imageLength ? state.attributes?.imageSize?.imageLength  : '',
+                    unit: EMeasurementUnits.MM
                 },
             ]
         },

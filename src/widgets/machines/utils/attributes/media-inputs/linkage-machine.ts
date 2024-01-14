@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const linkageMachine = (state: Record<string, any>) => {
     return [
         {
@@ -11,6 +13,7 @@ const linkageMachine = (state: Record<string, any>) => {
             options: [],
             machineInputType: 'input',
             isValid: !!state?.attributes?.mediaLossMeter,
+            unit: EMeasurementUnits.METER
         },
         {
             name: 'machineAttributes.rolls',
@@ -29,7 +32,8 @@ const linkageMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "maxWidth",
                     options: [],
-                    value: state.attributes?.rolls?.maxWidth ? state.attributes?.rolls?.maxWidth : ''
+                    value: state.attributes?.rolls?.maxWidth ? state.attributes?.rolls?.maxWidth : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -39,8 +43,8 @@ const linkageMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "maxLength",
                     options: [],
-                    value: state.attributes?.rolls?.maxLength ? state.attributes?.rolls?.maxLength : ''
-
+                    value: state.attributes?.rolls?.maxLength ? state.attributes?.rolls?.maxLength : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -50,8 +54,8 @@ const linkageMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "maxThickness",
                     options: [],
-                    value: state.attributes?.rolls?.maxThickness ? state.attributes?.rolls?.maxThickness : ''
-
+                    value: state.attributes?.rolls?.maxThickness ? state.attributes?.rolls?.maxThickness : '',
+                    unit: EMeasurementUnits.MM
                 },
             ]
         },
@@ -72,7 +76,8 @@ const linkageMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "maxWidth",
                     options: [],
-                    value: state.attributes?.flatbeds?.maxWidth ? state.attributes?.flatbeds?.maxWidth : ''
+                    value: state.attributes?.flatbeds?.maxWidth ? state.attributes?.flatbeds?.maxWidth : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -82,8 +87,8 @@ const linkageMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "maxLength",
                     options: [],
-                    value: state.attributes?.flatbeds?.maxLength ? state.attributes?.flatbeds?.maxLength : ''
-
+                    value: state.attributes?.flatbeds?.maxLength ? state.attributes?.flatbeds?.maxLength : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -93,8 +98,8 @@ const linkageMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "maxThickness",
                     options: [],
-                    value: state.attributes?.flatbeds?.maxThickness ? state.attributes?.flatbeds?.maxThickness : ''
-
+                    value: state.attributes?.flatbeds?.maxThickness ? state.attributes?.flatbeds?.maxThickness : '',
+                    unit: EMeasurementUnits.MM
                 },
             ]
         },

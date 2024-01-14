@@ -1,5 +1,6 @@
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 import {printingGeneral} from "@/widgets/machines/utils/attributes/speed-inputs/printing-general";
+import {maxSpeedInput} from "@/widgets/machines/utils/attributes/speed-inputs/max-speed-input";
 
 const ofssetPrinting = (state: Record<string, any>) => {
     return [
@@ -16,6 +17,7 @@ const ofssetPrinting = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: !!state?.attributes?.stationWashTime,
         },
+        ...maxSpeedInput(state, EMeasurementUnits.PPM),
         {
             name: 'machineAttributes.setupTimeSheetWaste',
             parameterKey: 'setupTimeSheetWaste',

@@ -1,7 +1,7 @@
 export interface ISideBarContainer {
   side: JSX.Element;
   children: any;
-  header: string;
+  header?: string;
   subHeader: string;
   actions?: JSX.Element;
   sideAction?: JSX.Element;

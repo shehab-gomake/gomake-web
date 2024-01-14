@@ -9,6 +9,7 @@ import {rollDieCutMachine} from "@/widgets/machines/utils/attributes/other-setti
 import {rollLaserCutMachine} from "@/widgets/machines/utils/attributes/other-settings/roll-laser-cut-machine";
 import {analogEnhancementMachine} from "@/widgets/machines/utils/attributes/other-settings/analog-enhancement-machine";
 import {collectorMachine} from "@/widgets/machines/utils/attributes/other-settings/collector-machine";
+import {widePrinting} from "@/widgets/machines/utils/attributes/other-settings/wide-printing";
 
 
 const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[] => {
@@ -27,7 +28,7 @@ const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[
             return rollVarnishMachine(state);
         case ECategoryId.ROLL_DIE_CUT_MACHINE:
             return rollDieCutMachine(state);
-        case ECategoryId.ROLL_LASER_CUT_MACHINE:
+        case ECategoryId.ROLL_FINISH_MACHINE:
             return rollLaserCutMachine(state);
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
             return analogEnhancementMachine(state);
@@ -35,6 +36,8 @@ const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[
             return collectorMachine(state);
         case ECategoryId.BOOKS_SEWING_MACHINE:
             return bookletMachine(state);
+        case ECategoryId.ROLL_WIDE_PRINTING:
+            return widePrinting(state)
         default:
             return []
     }

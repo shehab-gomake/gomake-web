@@ -3,10 +3,10 @@ import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const scoringMachine = (state: Record<string, any>) => {
     return [
-        ...maxSpeedInput(state, EMeasurementUnits.METER),
+        ...maxSpeedInput(state, EMeasurementUnits.SPH),
         {
             name: "unitDelay",
-            label: "machineAttributes.unitDelay",
+            label: "machineAttributes.scoringPerforationUnitDelay",
             type: "text",
             placeholder: "machineAttributes.unitDelay",
             required: true,
@@ -15,18 +15,6 @@ const scoringMachine = (state: Record<string, any>) => {
             value: state?.attributes?.unitDelay ? state?.attributes?.unitDelay : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.unitDelay,
-        },
-        {
-            name: "scoringDelay",
-            label: "machineAttributes.scoringDelay",
-            type: "text",
-            placeholder: "machineAttributes.scoringDelay",
-            required: true,
-            parameterKey: "scoringDelay",
-            options: [],
-            value: state?.attributes?.scoringDelay ? state?.attributes?.scoringDelay : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.scoringDelay,
         },
         {
             name: 'machineAttributes.speedByMediaWeight',
@@ -42,16 +30,8 @@ const scoringMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.weight",
                     required: true,
                     parameterKey: "weight",
-                    options: []
-                },
-                {
-                    name: "targetWeight",
-                    label: "machineAttributes.targetWeight",
-                    type: "text",
-                    placeholder: "machineAttributes.targetWeight",
-                    required: true,
-                    parameterKey: "targetWeight",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.GRAM
                 },
                 {
                     name: "speedPercentage",
@@ -60,7 +40,38 @@ const scoringMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.speedPercentage",
                     required: true,
                     parameterKey: "speedPercentage",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.PERCENTAGE
+                },
+
+            ]
+        },
+        {
+            name: 'machineAttributes.speedByMediaLength',
+            parameterKey: 'speedByMediaLength',
+            value: state.attributes?.speedByMediaLength || [],
+            isValid: state.attributes?.speedByMediaLength?.length > 0,
+            machineInputType: 'multiArrayInput',
+            inputs: [
+                {
+                    name: "length",
+                    label: "machineAttributes.length",
+                    type: "text",
+                    placeholder: "machineAttributes.length",
+                    required: true,
+                    parameterKey: "length",
+                    options: [],
+                    unit: EMeasurementUnits.CM
+                },
+                {
+                    name: "speedPercentage",
+                    label: "machineAttributes.speedPercentage",
+                    type: "text",
+                    placeholder: "machineAttributes.speedPercentage",
+                    required: true,
+                    parameterKey: "speedPercentage",
+                    options: [],
+                    unit: EMeasurementUnits.PERCENTAGE
                 },
 
             ]

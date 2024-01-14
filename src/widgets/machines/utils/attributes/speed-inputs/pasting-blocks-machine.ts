@@ -1,3 +1,4 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const pastingBlocksMachine = (state: Record<string, any>) => {
     return [
@@ -12,6 +13,7 @@ const pastingBlocksMachine = (state: Record<string, any>) => {
             value: state?.attributes?.pastingMaxHigh ? state?.attributes?.pastingMaxHigh : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.pastingMaxHigh,
+            unit: EMeasurementUnits.CM
         },
         {
             name: "speed",
@@ -24,6 +26,7 @@ const pastingBlocksMachine = (state: Record<string, any>) => {
             value: state?.attributes?.speed ? state?.attributes?.speed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.speed,
+            unit: EMeasurementUnits.SQUARE_CM
         },
         {
             name: "pastingDelay",
@@ -36,6 +39,7 @@ const pastingBlocksMachine = (state: Record<string, any>) => {
             value: state?.attributes?.pastingDelay ? state?.attributes?.pastingDelay : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.pastingDelay,
+            unit: EMeasurementUnits.SECOND
         },
         {
             name: "cuttingSets",
@@ -48,6 +52,7 @@ const pastingBlocksMachine = (state: Record<string, any>) => {
             value: state?.attributes?.cuttingSets ? state?.attributes?.cuttingSets : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.cuttingSets,
+            unit: EMeasurementUnits.SETS_HOUR
         },
         {
             name: "baseCollectionSpeed",
@@ -60,6 +65,7 @@ const pastingBlocksMachine = (state: Record<string, any>) => {
             value: state?.attributes?.baseCollectionSpeed ? state?.attributes?.baseCollectionSpeed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.baseCollectionSpeed,
+            unit: EMeasurementUnits.SETS_HOUR
         },
     ]
 }

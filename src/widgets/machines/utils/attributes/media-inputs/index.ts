@@ -38,6 +38,9 @@ import {
     thermalPlateProcessorMachine
 } from "@/widgets/machines/utils/attributes/media-inputs/thermal-plate-processor-machine";
 import {analogEnhacmentMachine} from "@/widgets/machines/utils/attributes/media-inputs/analog-enhacment-machine";
+import {creatingDiesMachine} from "@/widgets/machines/utils/attributes/media-inputs/creating-dies-machine";
+import {meshProcessorMachine} from "@/widgets/machines/utils/attributes/media-inputs/mesh-processor-machine";
+import {silkPrinter} from "@/widgets/machines/utils/attributes/media-inputs/silk-printer";
 
 const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) => {
     switch (categoryId) {
@@ -50,7 +53,7 @@ const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) 
         case ECategoryId.FLEXO_PRINTING:
             return rollDigitalPrinting(state);
         case ECategoryId.ROLL_WIDE_PRINTING:
-            return rollDigitalPrinting(state);
+            return flatbedWidePrinting(state);
         case ECategoryId.FLATBED_WIDE_PRINTING:
             return flatbedWidePrinting(state);
         case ECategoryId.LAMINATION_MACHINE:
@@ -121,7 +124,7 @@ const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) 
             return packageTyingMachine(state);
         case ECategoryId.CARTOON_PACKAGING_MACHINE:
             return cartoonPackagingMachine(state);
-        case ECategoryId.ROLL_LASER_CUT_MACHINE:
+        case ECategoryId.ROLL_FINISH_MACHINE:
             return rollMediaSettings(state);
         case ECategoryId.ROLL_LAMINATION_MACHINE:
             return rollMediaSettings(state);
@@ -140,7 +143,13 @@ const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) 
         case ECategoryId.THERMAL_PLATE_PROCESSOR:
             return thermalPlateProcessorMachine(state);
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
-            return analogEnhacmentMachine(state)
+            return analogEnhacmentMachine(state);
+        case ECategoryId.CREATING_DIES_MACHINE:
+            return creatingDiesMachine(state);
+        case ECategoryId.MESH_PROCESSORS:
+            return meshProcessorMachine(state);
+        case ECategoryId.SILK_PRINTER:
+            return silkPrinter(state);
         default:
             return []
     }

@@ -1,7 +1,10 @@
 import {cuttingLevel} from "@/widgets/machines/utils/const/cutting-level";
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const flatbedCuttingMachine = (state: Record<string, any>) => {
     return [
+        ...setupTimeInput(state),
         {
             name: "speed",
             label: "machineAttributes.speed",
@@ -13,18 +16,6 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
             value: state.attributes?.speed ? state.attributes?.speed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.speed,
-        },
-        {
-            name: "feeder",
-            label: "machineAttributes.feeder",
-            type: "switch",
-            placeholder: "machineAttributes.feeder",
-            required: true,
-            parameterKey: "feeder",
-            value: state.attributes?.feeder,
-            options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
-            machineInputType: 'input',
-            isValid: true,
         },
         {
             name: "feederSpeed",
@@ -39,7 +30,7 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
             isValid: !!state?.attributes?.feederSpeed,
         },
         {
-            name: '',
+            name: 'machineAttributes.speedByComplexity',
             parameterKey: 'speedByMediaWeight',
             value: state.attributes?.speedByMediaWeight || [],
             isValid: state.attributes?.speedByMediaWeight?.length > 0,
@@ -61,7 +52,8 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.speedPercentage",
                     required: true,
                     parameterKey: "speedPercentage",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.PERCENTAGE
                 },
 
             ]
