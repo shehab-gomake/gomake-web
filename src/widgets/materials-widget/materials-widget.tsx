@@ -43,7 +43,6 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const flag = useRecoilValue(flagState);
-  const elementRef = useRef(null);
 
   const {
     materialCategory,
@@ -59,8 +58,6 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
     materialCategoryData,
     replace,
     materialCategories,
-    downloadExcelFile,
-    uploadExcelFile,
     tableHeadersNew,
     tableRowsNew,
     getMachinesMaterials,
