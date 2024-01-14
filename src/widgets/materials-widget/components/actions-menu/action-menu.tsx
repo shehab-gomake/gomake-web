@@ -1,4 +1,4 @@
-import { Divider, IconButton, Menu, MenuItem } from "@mui/material";
+import { Checkbox, Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import { SettingsIcon } from "@/icons/settings";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,6 +22,8 @@ import { EMaterialsTabsIcon } from "@/enums";
 import {
   ActiveMaterial,
   AddNewMaterial,
+  CheckboxCheckedIcon,
+  CheckboxIcon,
   CurrencyMaterial,
   DeActiveMaterial,
   DeleteMaterial,
@@ -45,6 +47,9 @@ const ActionMenu = (props: IActionMenuProps) => {
     onTextInputChange,
     onInputChange,
     onUpdate,
+    checkedPrice,
+    setCheckedPrice,
+    setRate,
   } = useMaterialsActions(props.isAdmin);
   const currencies = useRecoilValue(currenciesState);
   const materialActions = useRecoilValue(materialActionState);
@@ -105,6 +110,7 @@ const ActionMenu = (props: IActionMenuProps) => {
       return <UploadExcelSheet />;
     }
   };
+
   return (
     <>
       <IconButton onClick={handleMoreOptionIconClick}>
@@ -149,14 +155,32 @@ const ActionMenu = (props: IActionMenuProps) => {
           minWidth={"350px"}
         >
           {action?.action === EMaterialsActions.UpdateCurrency ? (
-            <>
+            <div style={clasess.UpdateCurrencyView}>
               <GoMakeAutoComplate
                 style={{ width: "100%" }}
                 value={updatedValue}
                 options={currencies}
-                onChange={(e, value) => onTextInputChange(value.value)}
+                onChange={(e, value) => {
+                  setCheckedPrice(true);
+                  onTextInputChange(value?.value);
+                }}
+                disableClearable
               />
-            </>
+              <div style={clasess.priceCheckedContainer}>
+                <Checkbox
+                  icon={<CheckboxIcon />}
+                  checkedIcon={<CheckboxCheckedIcon />}
+                  onChange={() => {
+                    setCheckedPrice(!checkedPrice);
+                    if (!checkedPrice) {
+                      setRate(null);
+                    }
+                  }}
+                  checked={checkedPrice}
+                />
+                <div style={clasess.secondText}>update prices</div>
+              </div>
+            </div>
           ) : action?.action === EMaterialsActions.Duplicate ? (
             <div
               style={{

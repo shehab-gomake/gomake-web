@@ -4,13 +4,14 @@ import {
   materialCategoryDataState,
   openAddRowModalState,
 } from "@/widgets/materials-widget/state";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EMaterialsActions } from "@/widgets/materials-widget/enums";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import { updatePrintHouseMaterialsPropApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { updateMaterialsPropApi } from "@/services/api-service/materials/materials-endpoints";
+import { useExchangeRate } from "@/hooks/use-exchange-rate";
 
 const useMaterialsActions = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
@@ -24,6 +25,12 @@ const useMaterialsActions = (isAdmin: boolean) => {
     key: string;
   } | null>(null);
   const [updatedValue, setUpdatedValue] = useState<string>("");
+  console.log("updatedValue", updatedValue);
+  const [checkedPrice, setCheckedPrice] = useState(false);
+  const { rate, setRate, getExchangeRate } = useExchangeRate();
+  useEffect(() => {
+    if (checkedPrice) getExchangeRate("usd", updatedValue);
+  }, [checkedPrice, updatedValue]);
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
   const setOpenAddRowModal = useSetRecoilState<boolean>(openAddRowModalState);
@@ -71,7 +78,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
           ids: getSelectedMaterialsIds(),
           action: action.action,
           priceIndex: 0,
-          updatedValue,
+          exchangeRate: rate,
         });
       } else {
         await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
@@ -81,6 +88,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
           action: action.action,
           priceIndex: 0,
           updatedValue,
+          exchangeRate: rate,
         });
       }
     }
@@ -129,6 +137,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
     onTextInputChange,
     onInputChange,
     onUpdate,
+    checkedPrice,
+    setCheckedPrice,
+    setRate,
   };
 };
 
