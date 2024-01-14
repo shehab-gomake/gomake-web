@@ -9,10 +9,13 @@ const useStyle = () => {
       mainContainer: {
         paddingLeft: 20,
       },
+      header: {
+        ...FONT_FAMILY.Lexend(700, 20),
+        color: "#000",
+      },
       subHeader: {
-        ...FONT_FAMILY.Lexend(500, 24),
-        color: secondColor(500),
-        paddingBottom: 12,
+        ...FONT_FAMILY.Lexend(600, 20),
+        color: "#5759A8",
       },
       noData: {
         width: "100%",

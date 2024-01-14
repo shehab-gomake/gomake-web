@@ -5,7 +5,8 @@ import {
   deleteMaterialCategoryApi,
   getMaterialCategoriesApi,
   getMaterialExcelFileApi,
-  getMaterialTableHeadersApi, uploadMaterialExcelFileApi
+  getMaterialTableHeadersApi,
+  uploadMaterialExcelFileApi,
 } from "@/services/api-service/materials/materials-endpoints";
 import {
   deletePrintHouseMaterialCategoryApi,
@@ -39,13 +40,17 @@ import { useAddCategoryRow } from "./components/add-row/use-add-row";
 import { WastebasketNew } from "@/icons/wastebasket-new";
 
 import { getAndSetMachincesNew } from "@/services/hooks";
+import { MaterialMenuWidget } from "./components/more-circle";
+import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 
-
-const useMaterials = (isAdmin:boolean) => {
+const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
+
   const { materialType, materialCategory } = query;
   const [materialHeaders, setMaterialHeaders] =
-    useRecoilState<{ key: string; value: string ,unit?: string}[]>(materialHeadersState);
+    useRecoilState<{ key: string; value: string; unit?: string }[]>(
+      materialHeadersState
+    );
   const [materialCategories, setMaterialCategories] = useRecoilState<
     {
       categoryKey: string;
@@ -76,7 +81,7 @@ const useMaterials = (isAdmin:boolean) => {
   const onSelectCategory = (category: string) => {
     setDefaultSupplier("");
     const path = isAdmin ? "/materials-admin" : "/materials";
-    push(path+`/${materialType}?materialCategory=${category}`);
+    push(path + `/${materialType}?materialCategory=${category}`);
     setFlagState(false);
   };
 
@@ -90,12 +95,12 @@ const useMaterials = (isAdmin:boolean) => {
         alertFaultDelete();
       }
     };
-    if(isAdmin){
+    if (isAdmin) {
       await deleteMaterialCategoryApi(callApi, callBack, {
         materialTypeKey: materialType.toString(),
         categoryKey: categoryKey,
       });
-    }else{
+    } else {
       await deletePrintHouseMaterialCategoryApi(callApi, callBack, {
         materialTypeKey: materialType.toString(),
         categoryKey: categoryKey,
@@ -111,12 +116,11 @@ const useMaterials = (isAdmin:boolean) => {
         push("/materials");
       }
     };
-    if(isAdmin){
+    if (isAdmin) {
       await getMaterialCategoriesApi(callApi, callBack, material);
-    }else{
+    } else {
       await getPrintHouseMaterialCategoriesApi(callApi, callBack, material);
     }
-    
   };
 
   const materialsCategoriesList = useCallback(() => {
@@ -136,7 +140,11 @@ const useMaterials = (isAdmin:boolean) => {
   const getMaterialTableHeaders = async (materialType: string) => {
     const callBack = (res) => {
       if (res.success) {
-        setMaterialHeaders(res.data?.tableHeaders);
+        const tableHeaders = res.data?.tableHeaders;
+        const updatedArray = tableHeaders.filter(
+          (item) => item.key !== "Active"
+        );
+        setMaterialHeaders(updatedArray);
         setMaterialActions(res.data?.actions);
       }
     };
@@ -180,17 +188,27 @@ const useMaterials = (isAdmin:boolean) => {
   const tableHeadersNew = useCallback(() => {
     return [
       <Checkbox onChange={onChangeHeaderCheckBox} checked={isAllSelected()} />,
-      ...materialHeaders.map((header) => header.unit ? <div> <span>{header.value}</span> <small>{header.unit}</small></div>  : header.value),
-      <Tooltip title={t("materials.buttons.addRow")}>
-        <IconButton
-          type="button"
-          onClick={() => {
-            setOpenModal(true);
-          }}
-        >
-          <AddBoxOutlinedIcon style={{ color: primaryColor(500) }} />
-        </IconButton>
-      </Tooltip>,
+      ...materialHeaders.map((header) =>
+        header.unit ? (
+          <div>
+            {" "}
+            <span>{header.value}</span> <small>{header.unit}</small>
+          </div>
+        ) : (
+          header.value
+        )
+      ),
+      t("properties.more"),
+      // <Tooltip title={t("materials.buttons.addRow")}>
+      //   <IconButton
+      //     type="button"
+      //     onClick={() => {
+      //       setOpenModal(true);
+      //     }}
+      //   >
+      //     <AddBoxOutlinedIcon style={{ color: primaryColor(500) }} />
+      //   </IconButton>
+      // </Tooltip>,
     ];
   }, [materialHeaders, materialCategoryData]);
 
@@ -211,6 +229,7 @@ const useMaterials = (isAdmin:boolean) => {
             isAdmin={isAdmin}
           />
         )),
+        <MaterialMenuWidget dataRow={dataRow} isAdmin={isAdmin} />,
       ];
     });
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
@@ -229,6 +248,7 @@ const useMaterials = (isAdmin:boolean) => {
             parameterKey={header.key}
           />
         )),
+        <MaterialMenuWidget dataRow={dataRow} isAdmin={isAdmin} />,
         <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
           <WastebasketNew width={"30px"} height={"30px"} />
         </IconButton>,

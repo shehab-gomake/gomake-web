@@ -23,8 +23,8 @@ const MoreMenuWidget = ({ item, updatedStatus, onClickEdit }: any) => {
 
   return (
     <>
-    <PermissionCheck userPermission={Permissions.EDIT_CLIENT} >
-      <IconButton onClick={handleClick}>
+      <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
+        <IconButton onClick={handleClick}>
           <MoreCircleIcon />
         </IconButton>
         <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
@@ -44,10 +44,8 @@ const MoreMenuWidget = ({ item, updatedStatus, onClickEdit }: any) => {
               </div>
             </div>
           </MenuItem>
-      </GoMakeMenu>
-
-    </PermissionCheck>
-    
+        </GoMakeMenu>
+      </PermissionCheck>
     </>
   );
 };

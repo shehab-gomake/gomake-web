@@ -72,18 +72,9 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
   )?.isAddedByPrintHouse
     ? tableRowsNew
     : tableRows;
-  // const tableHeadersData = (materialCategories.find(category => category.categoryKey === materialCategory)?.isAddedByPrintHouse) ? tableHeadersNew() : tableHeaders();
 
   const Side = () => (
     <Stack direction={"column"} gap={"10px"}>
-      <SecondaryButton
-        variant={"text"}
-        href={props.isAdmin ? "/materials-admin" :"/materials"}
-        startIcon={dir === "ltr" ? <ArrowBackIcon /> : <ArrowForwardIcon />}
-        style={{ gap: 5 }}
-      >
-        {t("materials.buttons.back")}
-      </SecondaryButton>
       <SideList
         list={materialsCategoriesList()}
         selectedItem={materialCategory?.toString()}
@@ -193,21 +184,47 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
   ]);
   return (
     <div style={classes.mainContainer}>
-      <SideBarContainer
-        side={Side()}
-        header={materialType?.toString()}
-        subHeader={""}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+          paddingRight: 12,
+        }}
       >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            gap: 5,
+          }}
+        >
+          <PrimaryButton
+            variant={"text"}
+            href={props.isAdmin ? "/materials-admin" :"/materials"}
+            startIcon={dir === "ltr" ? <ArrowBackIcon /> : <ArrowForwardIcon />}
+            style={{
+              height: 30,
+              marginRight: 5,
+              background: "#CBCBE5",
+              width: 90,
+              borderRadius: 8,
+            }}
+          >
+            {t("materials.buttons.back")}
+          </PrimaryButton>
+          <h1 style={classes.header}>{materialType?.toString()}</h1>
+          <h4 style={classes.subHeader}>/ {materialCategory?.toString()}</h4>
+        </div>
+        <FiltersActionsBar isAdmin={props.isAdmin} />
+      </div>
+      <SideBarContainer side={Side()} subHeader={""}>
         {materialCategory && (
           <Stack gap={2}>
-            <Stack
-              direction={"row"}
-              justifyContent={"space-between"}
-              alignItems={"flex-start"}
-            >
-              <h4 style={classes.subHeader}>{materialCategory?.toString()}</h4>
-              <FiltersActionsBar isAdmin={props.isAdmin} />
-            </Stack>
             <div style={{ minHeight: 550 }}>
               {materialCategoryData.length > 0 ? (
                 <div style={{ paddingBottom: "1%" }}>
