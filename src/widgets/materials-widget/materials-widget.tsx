@@ -2,12 +2,12 @@ import { SideBarContainer } from "@/components/containers/side-container/side-ba
 import { SideList } from "@/components/containers/side-container/side-list/side-list";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useMaterials } from "@/widgets/materials-widget/use-materials";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import {useRecoilValue, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   flagState,
@@ -17,7 +17,6 @@ import {
 } from "@/widgets/materials-widget/state";
 import { AddSupplierModal } from "@/widgets/materials-widget/components/add-supplier/add-supplier-modal";
 import { PrimaryButton } from "@/components/button/primary-button";
-import { SecondaryButton } from "@/components/button/secondary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { AddCategoryModal } from "./components/add-category/add-category-modal";
@@ -49,7 +48,6 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
     materialType,
     materialsCategoriesList,
     onSelectCategory,
-    tableHeaders,
     tableRows,
     getCurrenciesApi,
     getMaterialCategories,
@@ -62,7 +60,11 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
     tableRowsNew,
     getMachinesMaterials,
     materialFilter,
+    materialName
   } = useMaterials(props.isAdmin);
+
+  const subCategory = materialCategories.find(
+    (category) => category.categoryKey === materialCategory?.toString())?.categoryName;
 
   const tableRowData = materialCategories.find(
     (category) => category.categoryKey === materialCategory
@@ -156,6 +158,7 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
     activeFilter,
     materialFilter
   ]);
+
   return (
     <div style={classes.mainContainer}>
       <div
@@ -191,8 +194,8 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
           >
             {t("materials.buttons.back")}
           </PrimaryButton>
-          <h1 style={classes.header}>{materialType?.toString()}</h1>
-          <h4 style={classes.subHeader}>/ {materialCategory?.toString()}</h4>
+          <h1 style={classes.header}>{materialName}</h1>
+          <h4 style={classes.subHeader}>/ {subCategory}</h4>
         </div>
         <FiltersActionsBar isAdmin={props.isAdmin} />
       </div>
