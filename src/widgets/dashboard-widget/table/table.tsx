@@ -6,8 +6,8 @@ import {IMachine} from "@/shared/interfaces";
 import {StatusView} from "@/components/status-view";
 import ElectricBoltSharpIcon from '@mui/icons-material/ElectricBoltSharp';
 import {TYPE_MISSION_NAME_KEY} from "@/shared/constant";
-import {Link} from "@mui/material";
-import {useCallback, useState} from "react";
+import {Box, Link, TableSortLabel} from "@mui/material";
+import React, {useCallback, useState} from "react";
 import {EStatus} from "@/shared";
 import {getPrintHouseHost} from "@/services/storage-data";
 import {useRecoilValue} from "recoil";
@@ -19,6 +19,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
     const {t} = useTranslation();
     const [orderByMachine, setOrderByMachine] = useState<string>('');
     const selectedStatusFilter = useRecoilValue(boardsMissionsStatusFilterState);
+    const [isOrderByCreationDate,SetIsOrderByCreationDate] = useState<boolean>(false);
     const boardLink = (boardMissions: IBoardMissions): string => {
         const host = getPrintHouseHost();
         return `https://${host}/Kanban/Board/${boardMissions.boardId}?missionId=${boardMissions.id}`;
@@ -53,6 +54,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
         return data;
     }
     const boards = useCallback(() => {
+        debugger;
         let boards = getFilteredBoardMissions(selectedStatusFilter) //littedBoards = x.splittedBoards.filter(y=>y.status == selectedStatusFilter) ).filter()] : [...boardsMissions];
         if (orderByMachine) {
             boards = boards.sort((board1: IBoardMissions, board2: IBoardMissions) => {
@@ -60,8 +62,18 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
             });
             return boards
         }
+        if (isOrderByCreationDate) {
+            boards = boards.sort((board1: IBoardMissions, board2: IBoardMissions) => {
+                return board2.creationDate < board1.creationDate ? -1 : board2.creationDate > board1.creationDate ? 1 : 0
+            });
+            return boards
+        }
         return boards;
-    }, [orderByMachine, boardsMissions, selectedStatusFilter]);
+    }, [orderByMachine, boardsMissions, selectedStatusFilter,isOrderByCreationDate]);
+    const sortByCreationDate = () => {
+        SetIsOrderByCreationDate(!isOrderByCreationDate);
+        setOrderByMachine('');
+    }
     const getDateString = (date:Date) => {
         const utcDate = moment(date);//2023-10-23T06:50:53.243Z
         let  format = "DD-MM-YYYY"
@@ -70,6 +82,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
     }
     const handleMachineClicked = (machineId: string) => {
         setOrderByMachine(machineId === orderByMachine ? '' : machineId);
+        SetIsOrderByCreationDate(false);
     };
 
     return (
@@ -85,7 +98,9 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                 <div style={{width: '5%'}}></div>
                                 <div style={{width: '35%'}}>{t('dashboard-widget.client')}</div>
                                 <div style={{width: '25%'}}>{t('dashboard-widget.task')}</div>
-                                <div style={{width: '30%'}}>{t('dashboard-widget.creationDate')}</div>
+                                <div style={isOrderByCreationDate ? {...classes.tableHead, ...classes.selectedMachine,width:'30%'} : {...classes.tableHead,width:'30%'}}  onClick={()=>sortByCreationDate()}>
+                                    {t('dashboard-widget.creationDate')}
+                                </div>
                                 <div style={{width: '20%'}}>{t('dashboard-widget.product')}</div>
                                 <div style={{width: '35%'}}>{t('dashboard-widget.status')}</div>
                             </div>
