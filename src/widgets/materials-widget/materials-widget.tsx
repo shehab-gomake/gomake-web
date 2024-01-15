@@ -62,6 +62,10 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     onClickCloseDeleteRowModal,
     onDeleteCategory,
     selectedCategory,
+    openDeleteTableRowModal,
+    onClickCloseDeleteTableRowModal,
+    onDeleteCategoryRow,
+    selectedTableRow,
   } = useMaterials(props.isAdmin);
 
   const tableRowData = materialCategories.find(
@@ -246,6 +250,11 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         openModal={openDeleteRowModal}
         onClose={onClickCloseDeleteRowModal}
         onClickDelete={() => onDeleteCategory(selectedCategory?.categoryKey)}
+      />
+      <GoMakeDeleteModal
+        openModal={openDeleteTableRowModal}
+        onClose={onClickCloseDeleteTableRowModal}
+        onClickDelete={() => onDeleteCategoryRow(selectedTableRow?.id)}
       />
     </div>
   );

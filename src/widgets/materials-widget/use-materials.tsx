@@ -77,6 +77,14 @@ const useMaterials = (isAdmin: boolean) => {
   const onClickOpenDeleteRowModal = () => {
     setOpenDeleteRowModal(true);
   };
+  const [openDeleteTableRowModal, setOpenDeleteTableRowModal] =
+    useState<boolean>(false);
+  const onClickCloseDeleteTableRowModal = () => {
+    setOpenDeleteTableRowModal(false);
+  };
+  const onClickOpenDeleteTableRowModal = () => {
+    setOpenDeleteTableRowModal(true);
+  };
   const setMaterialCategorySuppliers = useSetRecoilState(
     materialCategorySuppliersState
   );
@@ -100,8 +108,7 @@ const useMaterials = (isAdmin: boolean) => {
     push(path + `/${materialType}?materialCategory=${category}`);
     setFlagState(false);
   };
-
-  // delete category which is added by PrintHouse
+  const [selectedTableRow, setSelectedTableRow] = useState<any>();
   const onDeleteCategory = async (categoryKey) => {
     const callBack = (res) => {
       if (res.success) {
@@ -145,9 +152,6 @@ const useMaterials = (isAdmin: boolean) => {
       value: category.categoryKey,
       icon: category.isAddedByPrintHouse
         ? () => (
-            // <IconButton onClick={() => onDeleteCategory(category?.categoryKey)}>
-            //   <WastebasketNew width={"30px"} height={"30px"} />
-            // </IconButton>
             <SideLeftMenuWidget
               onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
               setSelectedCategory={setSelectedCategory}
@@ -260,7 +264,15 @@ const useMaterials = (isAdmin: boolean) => {
             isAdmin={isAdmin}
           />
         )),
-        <MaterialMenuWidget dataRow={dataRow} isAdmin={isAdmin} />,
+        <MaterialMenuWidget
+          dataRow={dataRow}
+          isAdmin={isAdmin}
+          setSelectedTableRow={setSelectedTableRow}
+          onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
+        />,
+        // <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
+        //   <WastebasketNew width={"30px"} height={"30px"} />
+        // </IconButton>,
       ];
     });
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
@@ -279,7 +291,15 @@ const useMaterials = (isAdmin: boolean) => {
             parameterKey={header.key}
           />
         )),
-        <MaterialMenuWidget dataRow={dataRow} isAdmin={isAdmin} />,
+        <MaterialMenuWidget
+          dataRow={dataRow}
+          isAdmin={isAdmin}
+          setSelectedTableRow={setSelectedTableRow}
+          onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
+        />,
+        // <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
+        //   <WastebasketNew width={"30px"} height={"30px"} />
+        // </IconButton>,
       ];
     });
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
@@ -350,6 +370,10 @@ const useMaterials = (isAdmin: boolean) => {
     onClickCloseDeleteRowModal,
     onDeleteCategory,
     selectedCategory,
+    openDeleteTableRowModal,
+    onClickCloseDeleteTableRowModal,
+    onDeleteCategoryRow,
+    selectedTableRow,
   };
 };
 
