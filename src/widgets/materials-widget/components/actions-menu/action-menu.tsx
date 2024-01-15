@@ -52,7 +52,6 @@ const ActionMenu = (props: IActionMenuProps) => {
     setRate,
     rate,
   } = useMaterialsActions(props.isAdmin);
-  console.log("rate", rate);
   const currencies = useRecoilValue(currenciesState);
   const materialActions = useRecoilValue(materialActionState);
   const materialHeaders =
