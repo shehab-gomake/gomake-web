@@ -1,7 +1,7 @@
 import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { EHttpMethod } from "@/services/api-service/enums";
-import {IDynamicRowData, IMaterialTableFilteringValue} from "@/widgets/materials-widget/interface";
+import { IDynamicRowData, IMaterialTableFilteringValue } from "@/widgets/materials-widget/interface";
 
 const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
 const GET_MATERIAL_TABLE_HEADERS_URL = "/v1/materials/GetMaterialTypeTableHeader";
@@ -16,9 +16,6 @@ const ADD_MATERIAL_CATEGORY_ROW_URL = "/v1/materials/add-material-category-row";
 const DELETE_MATERIAL_CATEGORY_URL = "/v1/materials/delete-material-category";
 const DELETE_MATERIAL_CATEGORY_Row_URL = "/v1/materials/delete-material-category-row";
 
-
-
-
 const getMaterialTableHeadersApi: ICallAndSetData = async (callApi, setState, material: string
 ) => {
   return await getSetApiData(
@@ -28,6 +25,7 @@ const getMaterialTableHeadersApi: ICallAndSetData = async (callApi, setState, ma
     setState
   );
 };
+
 const getMaterialsTypesApi: ICallAndSetData = async (callApi, setState) => {
   return await getSetApiData(
     callApi,
@@ -36,7 +34,6 @@ const getMaterialsTypesApi: ICallAndSetData = async (callApi, setState) => {
     setState
   );
 };
-
 
 const getMaterialExcelFileApi: ICallAndSetData = async (callApi, setState, material: string
 ) => {
@@ -57,119 +54,123 @@ const uploadMaterialExcelFileApi: ICallAndSetData = async (callApi, callBack, da
     data
   );
 };
+
 const getMaterialCategoriesApi: ICallAndSetData = async (callApi, setState, material: string) => {
   return await getSetApiData(
-      callApi,
-      EHttpMethod.GET,
-      `${GET_MATERIAL_CATEGORIES_URL}?materialKey=${material}`,
-      setState
+    callApi,
+    EHttpMethod.GET,
+    `${GET_MATERIAL_CATEGORIES_URL}?materialKey=${material}`,
+    setState
   );
 };
+
 const getMaterialCategoryDataApi: ICallAndSetData = async (
-    callApi,
-    setState,
-    material: {
-      materialKey: string;
-      categoryKey: string;
-      pageNumber: number;
-      pageSize: number;
-      customFiltersKeyValueList: IMaterialTableFilteringValue[]
-    }
-) => {
-    return await getSetApiData(
-        callApi,
-        EHttpMethod.POST,
-        GET_MATERIAL_CATEGORY_DATA_URL,
-        setState,
-        material,
-        true
-    );
-};
-const updateMaterialPropApi: ICallAndSetData = async (
-    callApi,
-    callBack,
-    data
+  callApi,
+  setState,
+  material: {
+    materialKey: string;
+    categoryKey: string;
+    pageNumber: number;
+    pageSize: number;
+    customFiltersKeyValueList: IMaterialTableFilteringValue[]
+  }
 ) => {
   return await getSetApiData(
-      callApi,
-      EHttpMethod.POST,
-      UPDATE_MATERIAL_PROPS_URL,
-      callBack,
-      data,
-      false
+    callApi,
+    EHttpMethod.POST,
+    GET_MATERIAL_CATEGORY_DATA_URL,
+    setState,
+    material,
+    true
+  );
+};
+
+const updateMaterialPropApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_MATERIAL_PROPS_URL,
+    callBack,
+    data,
+    false
   );
 };
 
 const updateMaterialsPropApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
     callApi,
+    EHttpMethod.POST,
+    UPDATE_MATERIALS_PROPS_URL,
     callBack,
     data
-) => {
-  return await getSetApiData(
-      callApi,
-      EHttpMethod.POST,
-      UPDATE_MATERIALS_PROPS_URL,
-      callBack,
-      data
   );
 };
+
 const addMaterialCategoryApi: ICallAndSetData = async (
-    callApi,
-    callBack,
-    category: { materialTypeKey: string; categoryKey: string }
+  callApi,
+  callBack,
+  category: { materialTypeKey: string; categoryKey: string }
 ) => {
   return await getSetApiData(
-      callApi,
-      EHttpMethod.POST,
-      ADD_MATERIAL_CATEGORY_URL,
-      callBack,
-      category
+    callApi,
+    EHttpMethod.POST,
+    ADD_MATERIAL_CATEGORY_URL,
+    callBack,
+    category
   );
 };
+
 const addMaterialCategoryRowApi: ICallAndSetData = async (
-    callApi,
-    callBack,
-    row: {
-      materialKey: string;
-      categoryKey: string;
-      rowData: Record<string, IDynamicRowData>;
-    }
+  callApi,
+  callBack,
+  row: {
+    materialKey: string;
+    categoryKey: string;
+    rowData: Record<string, IDynamicRowData>;
+  }
 ) => {
   return await getSetApiData(
-      callApi,
-      EHttpMethod.POST,
-      ADD_MATERIAL_CATEGORY_ROW_URL,
-      callBack,
-      row
+    callApi,
+    EHttpMethod.POST,
+    ADD_MATERIAL_CATEGORY_ROW_URL,
+    callBack,
+    row
   );
 };
+
 const deleteMaterialCategoryApi: ICallAndSetData = async (
-    callApi,
-    callBack,
-    category: { materialTypeKey: string; categoryKey: string }
+  callApi,
+  callBack,
+  category: { materialTypeKey: string; categoryKey: string }
 ) => {
   return await getSetApiData(
-      callApi,
-      EHttpMethod.POST,
-      DELETE_MATERIAL_CATEGORY_URL,
-      callBack,
-      category
+    callApi,
+    EHttpMethod.POST,
+    DELETE_MATERIAL_CATEGORY_URL,
+    callBack,
+    category
   );
 };
-
-
 
 const deleteMaterialCategoryRowApi: ICallAndSetData = async (
-    callApi,
-    callBack,
-    row: { rowId: string }
+  callApi,
+  callBack,
+  row: { rowId: string }
 ) => {
   return await getSetApiData(
-      callApi,
-      EHttpMethod.POST,
-      DELETE_MATERIAL_CATEGORY_Row_URL,
-      callBack,
-      row
+    callApi,
+    EHttpMethod.POST,
+    DELETE_MATERIAL_CATEGORY_Row_URL,
+    callBack,
+    row
   );
 };
 

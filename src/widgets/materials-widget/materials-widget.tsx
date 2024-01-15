@@ -2,12 +2,12 @@ import { SideBarContainer } from "@/components/containers/side-container/side-ba
 import { SideList } from "@/components/containers/side-container/side-list/side-list";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useMaterials } from "@/widgets/materials-widget/use-materials";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import {useRecoilValue, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   flagState,
@@ -17,27 +17,23 @@ import {
 } from "@/widgets/materials-widget/state";
 import { AddSupplierModal } from "@/widgets/materials-widget/components/add-supplier/add-supplier-modal";
 import { PrimaryButton } from "@/components/button/primary-button";
-import { SecondaryButton } from "@/components/button/secondary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
 import Pagination from "@mui/material/Pagination";
-import { DEFAULT_VALUES } from "@/pages/customers/enums";
-interface IMaterialsWidgetProps{
-  isAdmin:boolean;
+import { GoMakeDeleteModal } from "@/components";
+interface IMaterialsWidgetProps {
+  isAdmin: boolean;
 }
-const MaterialsWidget = (props:IMaterialsWidgetProps) => {
+const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
-  const { 
-    getMaterialCategoryData, 
-    pagesCount, 
-    pageNumber,
-    setPageNumber } = useMaterialsCategories(props.isAdmin);
-  const pageSize = DEFAULT_VALUES.PageSize;
+  const { getMaterialCategoryData, pagesCount, pageNumber, setPageNumber } =
+    useMaterialsCategories(props.isAdmin);
+  const pageSize = 12;
   const activeFilter = useRecoilValue(activeFilterState);
   const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
@@ -49,7 +45,6 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
     materialType,
     materialsCategoriesList,
     onSelectCategory,
-    tableHeaders,
     tableRows,
     getCurrenciesApi,
     getMaterialCategories,
@@ -62,7 +57,19 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
     tableRowsNew,
     getMachinesMaterials,
     materialFilter,
+    openDeleteRowModal,
+    onClickCloseDeleteRowModal,
+    onDeleteCategory,
+    selectedCategory,
+    openDeleteTableRowModal,
+    onClickCloseDeleteTableRowModal,
+    onDeleteCategoryRow,
+    selectedTableRow,
+    materialName
   } = useMaterials(props.isAdmin);
+
+  const subCategory = materialCategories.find(
+    (category) => category.categoryKey === materialCategory?.toString())?.categoryName;
 
   const tableRowData = materialCategories.find(
     (category) => category.categoryKey === materialCategory
@@ -118,35 +125,33 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
   }, [materialType]);
 
   useEffect(() => {
-    debugger
     if (!!materialType && !!materialCategory) {
-      if(props.isAdmin){
+      if (props.isAdmin) {
         getMaterialCategoryData(
+          materialType?.toString(),
+          materialCategory?.toString(),
+          materialFilter,
+          supplierId,
+          pageNumber,
+          pageSize
+        ).then();
+      } else {
+        if (supplierId) {
+          getMaterialCategoryData(
             materialType?.toString(),
             materialCategory?.toString(),
             materialFilter,
             supplierId,
             pageNumber,
             pageSize
-        ).then();
-      }else{
-        if (supplierId ) {
-          getMaterialCategoryData(
-              materialType?.toString(),
-              materialCategory?.toString(),
-              materialFilter,
-              supplierId,
-              pageNumber,
-              pageSize
           ).then();
         } else {
           getPrintHouseMaterialCategorySuppliers(
-              materialType?.toString(),
-              materialCategory?.toString()
+            materialType?.toString(),
+            materialCategory?.toString()
           ).then();
         }
       }
-      
     }
   }, [
     materialType,
@@ -155,8 +160,9 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
     pageNumber,
     pageSize,
     activeFilter,
-    materialFilter
+    materialFilter,
   ]);
+
   return (
     <div style={classes.mainContainer}>
       <div
@@ -180,7 +186,7 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
         >
           <PrimaryButton
             variant={"text"}
-            href={props.isAdmin ? "/materials-admin" :"/materials"}
+            href={props.isAdmin ? "/materials-admin" : "/materials"}
             startIcon={dir === "ltr" ? <ArrowBackIcon /> : <ArrowForwardIcon />}
             style={{
               height: 30,
@@ -192,15 +198,15 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
           >
             {t("materials.buttons.back")}
           </PrimaryButton>
-          <h1 style={classes.header}>{materialType?.toString()}</h1>
-          <h4 style={classes.subHeader}>/ {materialCategory?.toString()}</h4>
+          <h1 style={classes.header}>{materialName}</h1>
+          <h4 style={classes.subHeader}>/ {subCategory}</h4>
         </div>
         <FiltersActionsBar isAdmin={props.isAdmin} />
       </div>
       <SideBarContainer side={Side()} subHeader={""}>
         {materialCategory && (
           <Stack gap={2}>
-            <div style={{ minHeight: 550 }}>
+            <div style={{ minHeight: "70vh" }}>
               {materialCategoryData.length > 0 ? (
                 <div style={{ paddingBottom: "1%" }}>
                   <PrimaryTable
@@ -239,10 +245,19 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
           </Stack>
         )}
       </SideBarContainer>
-
       <AddSupplierModal />
       <AddCategoryModal isAdmin={props.isAdmin} />
       <AddRowModal isAdmin={props.isAdmin} />
+      <GoMakeDeleteModal
+        openModal={openDeleteRowModal}
+        onClose={onClickCloseDeleteRowModal}
+        onClickDelete={() => onDeleteCategory(selectedCategory?.categoryKey)}
+      />
+      <GoMakeDeleteModal
+        openModal={openDeleteTableRowModal}
+        onClose={onClickCloseDeleteTableRowModal}
+        onClickDelete={() => onDeleteCategoryRow(selectedTableRow?.id)}
+      />
     </div>
   );
 };

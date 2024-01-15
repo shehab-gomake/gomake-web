@@ -22,7 +22,7 @@ const useMaterialsTypes = (isAdmin:boolean) => {
         }
         await getMaterialsTypesApi(callApi, callBack)
     }
-
+ 
     const getTableRows = useCallback(() => {
         const basePath = isAdmin ? '/materials-admin' : '/materials'
         
