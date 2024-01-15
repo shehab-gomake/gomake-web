@@ -2,14 +2,17 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 import {
   activeFilterState,
+  currenciesState,
   filterState,
   isAllMaterialsCheckedState,
+  materialActionState,
   materialCategoryDataState,
+  materialHeadersState,
   materialsUnCheckedState,
   openAddRowModalState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   EMaterialActiveFilter,
   EMaterialsActions,
@@ -18,7 +21,18 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import { updatePrintHouseMaterialsPropApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
-
+import {
+  ActiveMaterial,
+  AddNewMaterial,
+  CurrencyMaterial,
+  DeActiveMaterial,
+  DeleteMaterial,
+  DownloadExcelSheet,
+  DuplicateMaterial,
+  PercentageMaterial,
+  UnitsPriceMaterial,
+  UploadExcelSheet,
+} from "@/icons";
 import {
   getMaterialExcelFileApi,
   updateMaterialsPropApi,
@@ -26,11 +40,18 @@ import {
 } from "@/services/api-service/materials/materials-endpoints";
 import { useExchangeRate } from "@/hooks/use-exchange-rate";
 import { useMaterialsCategories } from "../../use-materials-categories";
+import { useStyle } from "./style";
+import { EMaterialsTabsIcon } from "@/enums";
+import { EHttpMethod } from "@/services/api-service/enums";
+import { setPriority } from "os";
 
 const useMaterialsActions = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
+  const { clasess } = useStyle();
   const { query } = useRouter();
   const { materialType, materialCategory } = query;
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
@@ -103,6 +124,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   };
 
   const onInputChange = (key: string, v: any) => {
+    // handleChange(index, "key", value);
     setUpdatedValue(v);
   };
 
@@ -134,31 +156,35 @@ const useMaterialsActions = (isAdmin: boolean) => {
           exchangeRate: rate,
         });
       } else {
-        await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
-          materialTypeKey: materialType.toString(),
-          categoryKey: materialCategory.toString(),
-          ids: getSelectedMaterialsIds(),
-          action: action.action,
-          priceIndex: 0,
-          updatedValue,
-          isAllMaterialsChecked: isAllMaterialsChecked,
-          uncheckedMaterials: uncheckedMaterials,
-          tableFilters: {
-            materialKey: materialType,
-            categoryKey: materialCategory,
-            supplierId,
-            pageNumber: null,
-            pageSize: null,
-            isActive:
-              activeFilter === EMaterialActiveFilter.ACTIVE
-                ? true
-                : activeFilter === EMaterialActiveFilter.INACTIVE
-                ? false
-                : null,
-            customFiltersKeyValueList: materialFilter,
-          },
-          exchangeRate: rate,
-        });
+        if (action.key === "Duplicate") {
+          duplicatePrintHouseMaterials();
+        } else {
+          await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
+            materialTypeKey: materialType.toString(),
+            categoryKey: materialCategory.toString(),
+            ids: getSelectedMaterialsIds(),
+            action: action.action,
+            priceIndex: 0,
+            updatedValue,
+            isAllMaterialsChecked: isAllMaterialsChecked,
+            uncheckedMaterials: uncheckedMaterials,
+            tableFilters: {
+              materialKey: materialType,
+              categoryKey: materialCategory,
+              supplierId,
+              pageNumber: null,
+              pageSize: null,
+              isActive:
+                activeFilter === EMaterialActiveFilter.ACTIVE
+                  ? true
+                  : activeFilter === EMaterialActiveFilter.INACTIVE
+                  ? false
+                  : null,
+              customFiltersKeyValueList: materialFilter,
+            },
+            exchangeRate: rate,
+          });
+        }
       }
     }
   };
@@ -281,6 +307,117 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
   };
 
+  const currencies = useRecoilValue(currenciesState);
+  const materialActions = useRecoilValue(materialActionState);
+
+  const materialHeaders =
+    useRecoilValue<
+      { key: string; value: string; inputType: number; values: any[] }[]
+    >(materialHeadersState);
+  const [property, setProperty] = useState<any[]>();
+
+  const handleMoreOptionIconClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const _renderIcons = (iconName: string) => {
+    if (iconName === EMaterialsTabsIcon.UPDATE_PRICE_PER_TON) {
+      return <UnitsPriceMaterial />;
+    }
+    if (iconName === EMaterialsTabsIcon.UPDATE_UNIT_PRICE) {
+      return <UnitsPriceMaterial />;
+    }
+    if (iconName === EMaterialsTabsIcon.ADD_PERCENT_TO_UNIT_PRICE) {
+      return <PercentageMaterial />;
+    }
+    if (iconName === EMaterialsTabsIcon.ADD_PERCENT_TO_PRICE_PER_TON) {
+      return <PercentageMaterial />;
+    }
+    if (iconName === EMaterialsTabsIcon.UPDATE_CURRENCY) {
+      return <CurrencyMaterial />;
+    }
+    if (iconName === EMaterialsTabsIcon.CHANGE_TO_ACTIVE) {
+      return <ActiveMaterial />;
+    }
+    if (iconName === EMaterialsTabsIcon.CHANGE_TO_INACTIVE) {
+      return <DeActiveMaterial />;
+    }
+    if (iconName === EMaterialsTabsIcon.ADD_NEW) {
+      return <AddNewMaterial />;
+    }
+    if (iconName === EMaterialsTabsIcon.DUPLICATE) {
+      return <DuplicateMaterial />;
+    }
+    if (iconName === EMaterialsTabsIcon.DELETE) {
+      return <DeleteMaterial />;
+    }
+    if (iconName === EMaterialsTabsIcon.DOWNLOAD_EXCEL) {
+      return <DownloadExcelSheet />;
+    }
+    if (iconName === EMaterialsTabsIcon.UPLOAD_EXCEL) {
+      return <UploadExcelSheet />;
+    }
+  };
+  const initialProperties = {
+    key: "",
+    value: "",
+  };
+  const [properties, setProperties] = useState<any>([initialProperties]);
+  const addProperty = () => {
+    setProperties([...properties, initialProperties]);
+  };
+  const deleteProperty = (index) => {
+    const updatedProperty = [...properties];
+    updatedProperty.splice(index, 1);
+    setProperties(updatedProperty);
+  };
+  const handleChange = (index, field, value) => {
+    const updatedProperty = [...properties];
+    updatedProperty[index][field] = value;
+    setProperties(updatedProperty);
+  };
+  const duplicatePrintHouseMaterials = useCallback(async () => {
+    const transformedArray = properties.map((item) => {
+      const key = item.key.key.toLowerCase();
+      const value = item.value;
+
+      return {
+        key,
+        value,
+      };
+    });
+
+    const requestBody: any = {
+      props: transformedArray,
+      ids: getSelectedMaterialsIds(),
+    };
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/printhouse-materials/duplicate-print-house-materials`,
+      requestBody
+    );
+
+    if (res?.success) {
+      alertSuccessAdded();
+      getMaterialCategoryData(
+        materialType?.toString(),
+        materialCategory?.toString(),
+        [],
+        supplierId
+      ).then();
+      handleCloseModal();
+    } else {
+      alertFaultAdded();
+    }
+  }, [properties]);
+  const handleCloseModal = () => {
+    onChooseAction(null);
+    setProperty(null);
+    setProperties([initialProperties]);
+  };
   return {
     getSelectedMaterialsIds,
     onChooseAction,
@@ -295,6 +432,18 @@ const useMaterialsActions = (isAdmin: boolean) => {
     setRate,
     rate,
     elementRef,
+    handleMoreOptionIconClick,
+    anchorEl,
+    handleCloseMenu,
+    materialActions,
+    _renderIcons,
+    handleCloseModal,
+    currencies,
+    properties,
+    materialHeaders,
+    handleChange,
+    deleteProperty,
+    addProperty,
   };
 };
 
