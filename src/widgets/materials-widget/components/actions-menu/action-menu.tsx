@@ -1,4 +1,4 @@
-import { Divider, IconButton, Menu, MenuItem } from "@mui/material";
+import { Checkbox, Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import { SettingsIcon } from "@/icons/settings";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,6 +22,8 @@ import { EMaterialsTabsIcon } from "@/enums";
 import {
   ActiveMaterial,
   AddNewMaterial,
+  CheckboxCheckedIcon,
+  CheckboxIcon,
   CurrencyMaterial,
   DeActiveMaterial,
   DeleteMaterial,
@@ -46,6 +48,10 @@ const ActionMenu = (props: IActionMenuProps) => {
     onTextInputChange,
     onInputChange,
     onUpdate,
+    checkedPrice,
+    setCheckedPrice,
+    setRate,
+    rate,
     uploadExcelFile,
     elementRef
   } = useMaterialsActions(props.isAdmin);
@@ -108,6 +114,7 @@ const ActionMenu = (props: IActionMenuProps) => {
       return <UploadExcelSheet />;
     }
   };
+
   return (
     <>
       <IconButton onClick={handleMoreOptionIconClick}>
@@ -133,9 +140,11 @@ const ActionMenu = (props: IActionMenuProps) => {
             <MenuItem
               style={clasess.menuItemContainer}
               key={action.action}
-              onClick={() => onChooseAction(action) }
+              onClick={() => onChooseAction(action)}
             >
-              <div style={clasess.actionIconStyle}>{_renderIcons(action.icon)}</div>
+              <div style={clasess.actionIconStyle}>
+                {_renderIcons(action.icon)}
+              </div>
               <div style={clasess.rowTextStyle}>
                 {t("materialsActions." + action.key)}
               </div>
@@ -157,12 +166,46 @@ const ActionMenu = (props: IActionMenuProps) => {
           minWidth={"350px"}
         >
           {action?.action === EMaterialsActions.UpdateCurrency ? (
-            <GoMakeAutoComplate
-              style={{ width: "100%" }}
-              value={updatedValue}
-              options={currencies}
-              onChange={(e, value) => onTextInputChange(value.value)}
-            />
+            <div style={clasess.UpdateCurrencyView}>
+              <GoMakeAutoComplate
+                style={{ width: "100%" }}
+                value={updatedValue}
+                options={currencies}
+                onChange={(e, value) => {
+                  setCheckedPrice(true);
+                  onTextInputChange(value?.value);
+                }}
+                disableClearable
+              />
+              <div style={clasess.priceCheckedContainer}>
+                <Checkbox
+                  icon={<CheckboxIcon />}
+                  checkedIcon={<CheckboxCheckedIcon />}
+                  onChange={() => {
+                    setCheckedPrice(!checkedPrice);
+                    if (!checkedPrice) {
+                      setRate(null);
+                    }
+                  }}
+                  checked={checkedPrice}
+                />
+                <div style={clasess.secondText}>update prices</div>
+              </div>
+              {rate && (
+                <GomakeTextInput
+                  style={{
+                    border: "0px",
+                    background: "#fff",
+                    borderRadius: 4,
+                    height: 40,
+                  }}
+                  onChange={(e: any) => {
+                    setRate(e.target.value);
+                  }}
+                  value={rate}
+                />
+              )}
+            </div>
           ) : action?.action === EMaterialsActions.Duplicate ? (
             <div
               style={{
