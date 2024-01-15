@@ -4,10 +4,11 @@ import { materialsState } from "@/store";
 import { ICallAndSetData } from "@/services/api-service/interface";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
+import { useState } from "react";
 
 const useExchangeRate = () => {
   const { callApi } = useGomakeAxios();
-  const [rate, setRate] = useRecoilState<any>(materialsState);
+  const [rate, setRate] = useState<any>();
 
   const calculateExchangeRate: ICallAndSetData = async (
     callApi,

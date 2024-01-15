@@ -25,12 +25,12 @@ const useMaterialsActions = (isAdmin: boolean) => {
     key: string;
   } | null>(null);
   const [updatedValue, setUpdatedValue] = useState<string>("");
-  console.log("updatedValue", updatedValue);
+  const [currentCurrency, setCurrentCurrency] = useState<any>("");
   const [checkedPrice, setCheckedPrice] = useState(false);
   const { rate, setRate, getExchangeRate } = useExchangeRate();
   useEffect(() => {
-    if (checkedPrice) getExchangeRate("usd", updatedValue);
-  }, [checkedPrice, updatedValue]);
+    if (checkedPrice) getExchangeRate(currentCurrency, updatedValue);
+  }, [checkedPrice, updatedValue, currentCurrency]);
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
   const setOpenAddRowModal = useSetRecoilState<boolean>(openAddRowModalState);
@@ -39,6 +39,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const onChooseAction = async (
     action: { action: EMaterialsActions; key: string } | null
   ) => {
+    if (getSelectedMaterialsIds().length > 0) {
+      const myId = getSelectedMaterialsIds()[0];
+      const selectedRow = materialCategoryData.find((row) => row.id === myId);
+      setCurrentCurrency(selectedRow?.rowData?.currency?.value);
+    }
     if (action?.action === EMaterialsActions.AddNew) {
       setOpenAddRowModal(true);
       return;
@@ -140,6 +145,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     checkedPrice,
     setCheckedPrice,
     setRate,
+    rate,
   };
 };
 

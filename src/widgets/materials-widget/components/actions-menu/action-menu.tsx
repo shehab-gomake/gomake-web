@@ -50,7 +50,9 @@ const ActionMenu = (props: IActionMenuProps) => {
     checkedPrice,
     setCheckedPrice,
     setRate,
+    rate,
   } = useMaterialsActions(props.isAdmin);
+  console.log("rate", rate);
   const currencies = useRecoilValue(currenciesState);
   const materialActions = useRecoilValue(materialActionState);
   const materialHeaders =
@@ -180,6 +182,20 @@ const ActionMenu = (props: IActionMenuProps) => {
                 />
                 <div style={clasess.secondText}>update prices</div>
               </div>
+              {rate && (
+                <GomakeTextInput
+                  style={{
+                    border: "0px",
+                    background: "#fff",
+                    borderRadius: 4,
+                    height: 40,
+                  }}
+                  onChange={(e: any) => {
+                    setRate(e.target.value);
+                  }}
+                  value={rate}
+                />
+              )}
             </div>
           ) : action?.action === EMaterialsActions.Duplicate ? (
             <div
