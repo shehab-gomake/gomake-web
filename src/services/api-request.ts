@@ -11,11 +11,8 @@ const apiRequest = async (
   responseType: ResponseType = undefined
 ) => {
   try {
-    // const SERVER = config.api_server;
-    // if(safdsa){
-    //     trh
-    // }
-    const SERVER = "http://localhost:9600";
+    //please don't change the server url!!! 
+    const SERVER = config.api_server;
     const reqUrl = SERVER + url;
     const controller = new AbortController();
     const options: AxiosRequestConfig = {
