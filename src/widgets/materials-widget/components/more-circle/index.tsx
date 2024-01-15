@@ -18,7 +18,6 @@ const MaterialMenuWidget = ({
   isAdmin,
   setSelectedTableRow,
   onClickOpenDeleteTableRowModal,
-  onClickDelete,
 }) => {
   setSelectedTableRow(dataRow);
   const { clasess } = useStyle();
@@ -78,10 +77,7 @@ const MaterialMenuWidget = ({
           }}
         >
           <DeleteIcon />
-          <div
-            style={clasess.rowTextStyle}
-            onClick={() => onClickDelete(dataRow.id)}
-          >
+          <div style={clasess.rowTextStyle}>
             {t("navigationButtons.delete")}
           </div>
         </MenuItem>

@@ -262,7 +262,6 @@ const useMaterials = (isAdmin: boolean) => {
           isAdmin={isAdmin}
           setSelectedTableRow={setSelectedTableRow}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
-          onClickDelete={onDeleteCategoryRow}
         />,
       ];
     });
@@ -287,7 +286,6 @@ const useMaterials = (isAdmin: boolean) => {
           isAdmin={isAdmin}
           setSelectedTableRow={setSelectedTableRow}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
-          onClickDelete={onDeleteCategoryRow}
         />,
       ];
     });
