@@ -4,9 +4,7 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   deleteMaterialCategoryApi,
   getMaterialCategoriesApi,
-  getMaterialExcelFileApi,
   getMaterialTableHeadersApi,
-  uploadMaterialExcelFileApi,
 } from "@/services/api-service/materials/materials-endpoints";
 import {
   deletePrintHouseMaterialCategoryApi,
@@ -34,16 +32,12 @@ import {
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
-import { EMaterialActiveFilter } from "./enums";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import { useTranslation } from "react-i18next";
 import { useAddCategoryRow } from "./components/add-row/use-add-row";
 import { WastebasketNew } from "@/icons/wastebasket-new";
 
 import { getAndSetMachincesNew } from "@/services/hooks";
 import { MaterialMenuWidget } from "./components/more-circle";
-import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import cloneDeep from "lodash.clonedeep";
 import { SideLeftMenuWidget } from "./components/side-list-menu";
 
@@ -88,6 +82,7 @@ const useMaterials = (isAdmin: boolean) => {
   const setMaterialCategorySuppliers = useSetRecoilState(
     materialCategorySuppliersState
   );
+  const [materialName, setMaterialName] = useState<string>();
   const setMaterialActions = useSetRecoilState(materialActionState);
   const setDefaultSupplier = useSetRecoilState(selectedSupplierIdState);
   const activeFilter = useRecoilValue(activeFilterState);
@@ -95,11 +90,8 @@ const useMaterials = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
   const { alertSuccessDelete, alertFaultDelete } = useSnackBar();
   const setCurrencies = useSetRecoilState(currenciesState);
-  const setOpenModal = useSetRecoilState<any>(openAddRowModalState);
   const { onDeleteCategoryRow } = useAddCategoryRow(isAdmin);
-  const setActiveFilter = useSetRecoilState(activeFilterState);
   const setFlagState = useSetRecoilState(flagState);
-  const { primaryColor, errorColor } = useGomakeTheme();
   const { t } = useTranslation();
 
   const onSelectCategory = (category: string) => {
@@ -171,6 +163,7 @@ const useMaterials = (isAdmin: boolean) => {
         );
         setMaterialHeaders(updatedArray);
         setMaterialActions(res.data?.actions);
+        setMaterialName(res.data?.materialTypeName)
       }
     };
     await getMaterialTableHeadersApi(callApi, callBack, materialType);
@@ -269,6 +262,7 @@ const useMaterials = (isAdmin: boolean) => {
           isAdmin={isAdmin}
           setSelectedTableRow={setSelectedTableRow}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
+          onClickDelete={onDeleteCategoryRow}
         />,
         // <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
         //   <WastebasketNew width={"30px"} height={"30px"} />
@@ -296,6 +290,7 @@ const useMaterials = (isAdmin: boolean) => {
           isAdmin={isAdmin}
           setSelectedTableRow={setSelectedTableRow}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
+          onClickDelete={onDeleteCategoryRow}
         />,
         // <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
         //   <WastebasketNew width={"30px"} height={"30px"} />
@@ -374,6 +369,7 @@ const useMaterials = (isAdmin: boolean) => {
     onClickCloseDeleteTableRowModal,
     onDeleteCategoryRow,
     selectedTableRow,
+    materialName
   };
 };
 

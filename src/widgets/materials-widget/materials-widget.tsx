@@ -7,7 +7,7 @@ import Stack from "@mui/material/Stack";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import {useRecoilValue, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   flagState,
@@ -45,7 +45,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     materialType,
     materialsCategoriesList,
     onSelectCategory,
-    tableHeaders,
     tableRows,
     getCurrenciesApi,
     getMaterialCategories,
@@ -66,7 +65,11 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     onClickCloseDeleteTableRowModal,
     onDeleteCategoryRow,
     selectedTableRow,
+    materialName
   } = useMaterials(props.isAdmin);
+
+  const subCategory = materialCategories.find(
+    (category) => category.categoryKey === materialCategory?.toString())?.categoryName;
 
   const tableRowData = materialCategories.find(
     (category) => category.categoryKey === materialCategory
@@ -122,7 +125,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   }, [materialType]);
 
   useEffect(() => {
-    debugger;
     if (!!materialType && !!materialCategory) {
       if (props.isAdmin) {
         getMaterialCategoryData(
@@ -160,6 +162,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     activeFilter,
     materialFilter,
   ]);
+
   return (
     <div style={classes.mainContainer}>
       <div
@@ -195,8 +198,8 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           >
             {t("materials.buttons.back")}
           </PrimaryButton>
-          <h1 style={classes.header}>{materialType?.toString()}</h1>
-          <h4 style={classes.subHeader}>/ {materialCategory?.toString()}</h4>
+          <h1 style={classes.header}>{materialName}</h1>
+          <h4 style={classes.subHeader}>/ {subCategory}</h4>
         </div>
         <FiltersActionsBar isAdmin={props.isAdmin} />
       </div>
@@ -242,7 +245,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           </Stack>
         )}
       </SideBarContainer>
-
       <AddSupplierModal />
       <AddCategoryModal isAdmin={props.isAdmin} />
       <AddRowModal isAdmin={props.isAdmin} />
