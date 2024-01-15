@@ -52,27 +52,24 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const onChooseAction = async (
     action: { action: EMaterialsActions; key: string } | null
   ) => {
-      if(action.action === EMaterialsActions.AddNew){
-          setOpenAddRowModal(true);
-          return;
-      }
-      if(action.action === EMaterialsActions.DownLoadExcel){
-          downloadExcelFile().then();
-          return;
-      }
-      if(action.action === EMaterialsActions.UploadExcel){
-          elementRef.current.click()
-          return;
-      }
+    if(action.action === EMaterialsActions.AddNew){
+        setOpenAddRowModal(true);
+        return;
+    }
+    if(action.action === EMaterialsActions.DownLoadExcel){
+        downloadExcelFile().then();
+        return;
+    }
+    if(action.action === EMaterialsActions.UploadExcel){
+        elementRef.current.click()
+        return;
+    }
     if (getSelectedMaterialsIds().length > 0) {
       const myId = getSelectedMaterialsIds()[0];
       const selectedRow = materialCategoryData.find((row) => row.id === myId);
       setCurrentCurrency(selectedRow?.rowData?.currency?.value);
     }
-    if (action?.action === EMaterialsActions.AddNew) {
-      setOpenAddRowModal(true);
-      return;
-    }
+
     if (getSelectedMaterialsIds().length === 0) {
       setSnackbarStateValue({
         state: true,
@@ -157,18 +154,19 @@ const useMaterialsActions = (isAdmin: boolean) => {
   };
 
   const onUpdateCallBack = (res) => {
-    if (res.success) {
-      setMaterialCategoryData(
-        materialCategoryData.map((material) =>
-          material.checked
-            ? {
-                ...material,
-                ...res.data?.find((row) => row.id === material.id),
-              }
-            : material
-        )
-      );
-    }
+      if (res.success) {
+          setMaterialCategoryData(
+              materialCategoryData.map((material) =>
+                  material.checked
+                      ? {
+                          ...material,
+                          ...res.data?.find((row) => row.id === material.id),
+                      }
+                      : material
+              )
+          );
+      }
+  }
     const updateStatus = async (eAction: EMaterialsActions) => {
         if(isAdmin){
             await updateMaterialsPropApi(callApi, onUpdateCallBack, {
@@ -217,7 +215,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
                 priceIndex: 0,
             })
         }
-        
+
     }
 
     const downloadExcelFile = async () => {
@@ -253,6 +251,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
             reader.readAsArrayBuffer(file);
         }
     };
+ 
     return {
         getSelectedMaterialsIds,
         onChooseAction,
