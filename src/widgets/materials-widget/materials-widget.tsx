@@ -118,7 +118,6 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
   }, [materialType]);
 
   useEffect(() => {
-    debugger
     if (!!materialType && !!materialCategory) {
       if(props.isAdmin){
         getMaterialCategoryData(

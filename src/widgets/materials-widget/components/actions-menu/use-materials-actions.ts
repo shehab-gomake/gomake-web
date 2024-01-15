@@ -17,6 +17,7 @@ import {
     updateMaterialsPropApi,
     uploadMaterialExcelFileApi
 } from "@/services/api-service/materials/materials-endpoints";
+import { useMaterialsCategories } from "../../use-materials-categories";
 
 const useMaterialsActions = (isAdmin:boolean) => {
     const {callApi} = useGomakeAxios();
@@ -28,13 +29,13 @@ const useMaterialsActions = (isAdmin:boolean) => {
     const {setSnackbarStateValue} = useSnackBar();
     const {t} = useTranslation();
     const setOpenAddRowModal = useSetRecoilState<boolean>(openAddRowModalState);
-
     const isAllMaterialsChecked = useRecoilValue<boolean>(isAllMaterialsCheckedState);
     const uncheckedMaterials = useRecoilValue<string[]>(materialsUnCheckedState);
     const supplierId = useRecoilValue(selectedSupplierIdState);
     const activeFilter = useRecoilValue(activeFilterState);
     const materialFilter = useRecoilValue(filterState);
     const elementRef = useRef(null);
+    const {getMaterialCategoryData} =useMaterialsCategories(isAdmin);
 
     const getSelectedMaterialsIds = () => materialCategoryData.filter(row => row.checked).map(row => row.id);
     const onChooseAction = async (action: { action: EMaterialsActions, key: string } | null) => {
@@ -142,7 +143,7 @@ const useMaterialsActions = (isAdmin:boolean) => {
     }
     const updateStatus = async (eAction: EMaterialsActions) => {
         if(isAdmin){
-            await updateMaterialsPropApi(callApi, onUpdateCallBack, {
+          const result = await updateMaterialsPropApi(callApi, onUpdateCallBack, {
                 materialTypeKey: materialType.toString(),
                 categoryKey: materialCategory.toString(),
                 ids: getSelectedMaterialsIds(),
@@ -165,8 +166,11 @@ const useMaterialsActions = (isAdmin:boolean) => {
                 },
                 priceIndex: 0,
             })
+            if(result?.success){
+                getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(),[], supplierId).then();
+            }
         }else{
-            await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
+            const result = await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
                 materialTypeKey: materialType.toString(),
                 categoryKey: materialCategory.toString(),
                 ids: getSelectedMaterialsIds(),
@@ -187,6 +191,9 @@ const useMaterialsActions = (isAdmin:boolean) => {
                 },
                 priceIndex: 0,
             })
+            if(result?.success){
+                getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(),[], supplierId).then();
+            }
         }
         
     }

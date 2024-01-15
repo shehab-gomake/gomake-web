@@ -232,7 +232,7 @@ const useMaterials = (isAdmin: boolean) => {
             isAdmin={isAdmin}
           />
         )),
-        <MaterialMenuWidget dataRow={dataRow} isAdmin={isAdmin} />,
+        <MaterialMenuWidget dataRow={dataRow} isAdmin={isAdmin} onClickDelete={onDeleteCategoryRow}/>,
       ];
     });
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
@@ -251,7 +251,7 @@ const useMaterials = (isAdmin: boolean) => {
             parameterKey={header.key}
           />
         )),
-        <MaterialMenuWidget dataRow={dataRow} isAdmin={isAdmin} />
+        <MaterialMenuWidget dataRow={dataRow} isAdmin={isAdmin} onClickDelete={onDeleteCategoryRow}/>
       ];
     });
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);

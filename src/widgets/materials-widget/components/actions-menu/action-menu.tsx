@@ -209,8 +209,7 @@ const ActionMenu = (props: IActionMenuProps) => {
             onClick={onUpdate}
             sx={{ width: "100%" }}
             variant={"contained"}
-          >
-            update
+          >{t("profileSettings.update")}
           </SecondaryButton>
         </Stack>
       </GoMakeModal>
